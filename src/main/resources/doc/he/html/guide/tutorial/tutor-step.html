@@ -1,70 +1,70 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Tutorial: step by step mode
+        הדרכה: מצב צעד אחר צעד
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <p>
-        <b>Previous:</b> <a href="tutor-test.html">Step 4: Testing your circuit</a>
+        <b>הקודם:</b> <a href="tutor-test.html">שלב 4: בדיקת המעגל שלך</a>
     </p>
     <h2>
-        Step 5: The step by step mode
+        שלב 5: מצב צעד אחר צעד
     </h2>
     <p>
-        In certain circumstances of study or in case of subtle problem related to the propagation of the signals, it is
-        very useful to be able to observe these phenomena. Logisim simulates in a slightly naive way the propagation in
-        gates. (the gates all have the same propagation delay), but it still allows to observe the main problems related
-        to these parameters.
+        בנסיבות מסוימות של מחקר או במקרה של בעיה עדינה הקשורה להתפשטות האותות, זה כן
+        מאוד שימושי להיות מסוגל לצפות בתופעות אלו. Logisim מדמה בצורה מעט נאיבית את ההתפשטות פנימה
+        שערים. (לכולם יש את אותו עיכוב התפשטות), אבל זה עדיין מאפשר לצפות בבעיות העיקריות הקשורות
+        לפרמטרים הללו.
     </p>
     <p>
-        For the example, I only give you the key combinations needed for this exercise; you should know that for each
-        key combination there is an equivalent submenu in the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>.
+        לדוגמא, אני נותן לך רק את שילובי המקשים הדרושים לתרגיל זה; אתה צריך לדעת את זה עבור כל אחד
+        שילוב מקשים יש תת-תפריט שווה ערך בתפריט <b class=menu>|&nbsp;הדמיה&nbsp;|</b>.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/tutorial-step1.png">
     </p>
     <p>
-        If you build the circuit above you will find that each change from 0 to 1 of the input <var>e</var> disturbs the
-        flip-flop D.
+        אם תבנה את המעגל למעלה תגלה שכל שינוי מ-0 ל-1 של הקלט <var>e</var> מפריע ל-
+        כפכף ד.
     </p>
     <p>
-        To observe the phenomenon proceed as follows : Bring the circuit to the state where <var>e</var> is 0. Then do
-        <b class="tkeybd">Ctrl-E</b> to disable automatic simulation. Push on the input <var>e</var> to switch it to 1.
-        Nothing happens, it's normal. Then use the combination <b class="tkeybd">Ctr-I</b> and observe. Do it as many
-        times as necessary.
+        כדי לצפות בתופעה בצע את הפעולות הבאות: הבא את המעגל למצב שבו <var>e</var> הוא 0. לאחר מכן בצע
+        <b class="tkeybd">Ctrl-E</b> כדי להשבית סימולציה אוטומטית. לחץ על הקלט <var>e</var> כדי להעביר אותו ל-1.
+        לא קורה כלום, זה נורמלי. לאחר מכן השתמש בשילוב <b class="tkeybd">Ctr-I</b> ותתבונן. תעשה את זה כמה שיותר
+        פעמים לפי הצורך.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/tutorial-step2.png">
     </p>
     <p>
-        You will notice blue circles on some ends of thread, these indicate that there is a change in the state of this
-        thread at this step of the simulation. You can observe the brief passage through 1 of the output of the AND
-        gate.
+        תבחין בעיגולים כחולים בחלק מהקצוות של החוט, אלה מצביעים על שינוי במצב זה
+        שרשור בשלב זה של הסימולציה. אתה יכול לראות את המעבר הקצר דרך 1 של הפלט של ה-AND
+        שַׁעַר.
     </p>
     <p>
-        This method also makes it possible to observe asynchronous counter operation or propagation of the carry in an
-        adder.
+        שיטה זו גם מאפשרת לצפות בפעולת נגד אסינכרונית או התפשטות של ה-carrier ב-an
+        פֶּתֶן.
     </p>
     <p align="center">
         <img alt="#########" src="../../../../img-guide/tutorial-step3.gif">
     </p>
     <p>
-        Now that you are finished with tutorial, you can experiment with Logisim by building your own circuits. If you
-        want to build circuits with more sophisticated features, then you should navigate through the rest of the help
-        system to see what else you can do. Logisim is a powerful program, allowing you to build up and test huge
-        circuits; this step-by-step learning process just scratches the surface.
+        כעת, לאחר שסיימתם עם המדריך, תוכלו להתנסות עם Logisim על ידי בניית מעגלים משלכם. אם אתה
+        רוצה לבנות מעגלים עם תכונות מתוחכמות יותר, אז אתה צריך לנווט דרך שאר העזרה
+        מערכת כדי לראות מה עוד אתה יכול לעשות. Logisim היא תוכנית רבת עוצמה, המאפשרת לך לבנות ולבדוק ענק
+        מעגלים; תהליך הלמידה הזה שלב אחר שלב פשוט מגרד את פני השטח.
     </p>
     <p>
-        <b>Return to</b> <a href="../index.html">User guide</a>
+        <b>חזור אל</b> <a href="../index.html">מדריך למשתמש</a>
     </p>
 </div>
 </body>

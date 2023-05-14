@@ -1,38 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Poking memory
+        זיכרון מחטט
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Poking memory
+        זיכרון מחטט
     </h1>
     <p>
-        You can manipulate the contents of memory using the <b class=propertie>Poke</b> Tool (<img alt="#########"
-                                                                                                   class="icontxt"
-                                                                                                   src="../../../../icons/1616/toolpoke.png">),
-        but the interface for this is severely limited by space constraints: For more than the simplest editing, you
-        will probably find <a href="mem-hex.html">the integrated hex editor</a> far more convenient.
+        אתה יכול לתפעל את תוכן הזיכרון באמצעות הכלי <b class=propertie>Poke</b> (<img alt="#########"
+                                                                                      class="icontxt"
+                                                                                      src="../../../../icons/1616/toolpoke.png">),
+        אבל הממשק עבור זה מוגבל מאוד על ידי אילוצי מקום: עבור יותר מהעריכה הפשוטה ביותר, אתה
+        כנראה ימצא את <a href="mem-hex.html">עורך ה-hex המשולב</a> הרבה יותר נוח.
     </p>
     <p>
-        Nonetheless, to view and edit values within the circuit, the Poke Tool has two modes of operation: You can edit
-        the address displayed, and you can edit an individual value.
+        עם זאת, כדי להציג ולערוך ערכים בתוך המעגל, לכלי Poke יש שני מצבי פעולה: אתה יכול לערוך
+        הכתובת המוצגת, ותוכל לערוך ערך בודד.
     </p>
     <h2>
-        Address selection
+        בחירת כתובת
     </h2>
     <p>
-        To edit the address displayed, click outside the display rectangle. Logisim will draw a red rectangle around the
-        top address.
+        כדי לערוך את הכתובת המוצגת, לחץ מחוץ למלבן התצוגה. Logisim תצייר מלבן אדום מסביב ל
+        כתובת עליונה.
     </p>
     <p align="center">
         <img alt="pokememadr" class="notscal" src="../../../../img-guide/pokememadr.png">
@@ -40,31 +40,31 @@
     <ul>
         <li>
             <p>
-                Typing hexadecimal digits will change the top address accordingly.
+                הקלדת ספרות הקסדצימליות תשנה את הכתובת העליונה בהתאם.
             </p>
         </li>
         <li>
             <p>
-                Typing the <b class="tkeybd">Enter key</b> will scroll down one line.
+                הקלדת <b class="tkeybd">מקש Enter</b> תגלול שורה אחת למטה.
             </p>
         </li>
         <li>
             <p>
-                Typing the <b class="tkeybd">Backspace key</b> will scroll up one line.
+                הקלדת <b class="tkeybd">מקש Backspace</b> תגלול למעלה שורה אחת.
             </p>
         </li>
         <li>
             <p>
-                Typing the <b class="tkeybd">space bar</b> will scroll down one page (four lines).
+                הקלדת <b class="tkeybd">מקש הרווח</b> תגלול למטה עמוד אחד (ארבע שורות).
             </p>
         </li>
     </ul>
     <h2>
-        Modification of data
+        שינוי נתונים
     </h2>
     <p>
-        To edit a particular value, click the value within the display rectangle. Logisim will draw a red rectangle
-        around that address.
+        כדי לערוך ערך מסוים, לחץ על הערך בתוך מלבן התצוגה. לוגיסים יצייר מלבן אדום
+        סביב הכתובת הזו.
     </p>
     <p align="center">
         <img alt="pokememdata" class="notscal" src="../../../../img-guide/pokememdata.png">
@@ -72,31 +72,31 @@
     <ul>
         <li>
             <p>
-                Typing hexadecimal digits will change the value at the address currently being edited.
+                הקלדת ספרות הקסדצימליות תשנה את הערך בכתובת הנערכת כעת.
             </p>
         </li>
         <li>
             <p>
-                The <b class="tkeybd">Enter key</b> or <b class="tkeybd">Ctrl+Down arrow</b> ill scroll the cursor down
-                one line.
+                <b class="tkeybd">מקש Enter</b> או <b class="tkeybd">Ctrl+חץ למטה</b> כדי לגלול את הסמן מטה
+                שורה אחת.
             </p>
         </li>
         <li>
             <p>
-                The <b class="tkeybd">Backspace key</b> or <b class="tkeybd">Ctrl+Left Arrow</b> will scroll the cursor
-                one cell backwards.
+                <b class="tkeybd">מקש Backspace</b> או <b class="tkeybd">Ctrl+חץ שמאלה</b> יגלול את הסמן
+                תא אחד לאחור.
             </p>
         </li>
         <li>
             <p>
-                The <b class="tkeybd">Space key</b> or <b class="tkeybd">Ctrl+right Arrow</b> will scroll the cursor one
-                cell forward.
+                <b class="tkeybd">מקש הרווח</b> או <b class="tkeybd">Ctrl+חץ ימינה</b> יגלול את הסמן
+                תא קדימה.
             </p>
         </li>
         <li>
             <p>
-                The <b class="tkeybd">mouse wheel</b> or <b class="tkeybd">Ctrl+up arrow</b>, <b class="tkeybd">Ctrl+Down
-                arrow</b> moves the cursor up/down a line.
+                <b class="tkeybd">גלגל העכבר</b> או <b class="tkeybd">Ctrl+חץ למעלה</b>, <b class="tkeybd">Ctrl+Down
+                חץ</b> מזיז את הסמן למעלה/למטה בשורה.
             </p>
         </li>
         <li>
@@ -106,7 +106,7 @@
         )
     </ul>
     <p>
-        <strong>Next:</strong> <a href="mem-menu.html">Pop-up menus and files</a>.
+        <strong>הבא:</strong> <a href="mem-menu.html">תפריטים וקבצים קופצים</a>.
     </p>
 </div>
 </body>

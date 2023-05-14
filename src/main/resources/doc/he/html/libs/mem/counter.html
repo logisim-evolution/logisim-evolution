@@ -1,29 +1,29 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Counter
+        מוֹנֶה
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/counter.png" width="32"> <em>Counter</em>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/counter.png" width="32"> <em>מוֹנֶה</em>
     </h1>
     <table>
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Memory</a>
+                <a href="index.html">זיכרון</a>
             </td>
             <td rowspan="3">
                 <img alt="#########" class="appearancelibshaut" height="128" src="../../../../img-libs/lcounter.png"
@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
                 2.3.0
@@ -40,7 +40,7 @@
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/counter.png"
@@ -50,50 +50,50 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The counter holds a single value, whose value is emitted on the output <var>Q</var>. Each time the clock input
-        (diagrammed with a triangle on the component's south edge) triggers according to its Trigger attribute, the
-        value in the counter may update based on the two inputs on the component's west edge: The upper input is called
-        <var>load</var> and the lower is called <var>count</var>, and they are interpreted as follows.
+        המונה מחזיק ערך בודד, שערכו נפלט על הפלט <var>Q</var>. בכל פעם קלט השעון
+        (בדיאגרמה עם משולש בקצה הדרומי של הרכיב) מפעילים לפי תכונת ה- Trigger שלו,
+        הערך במונה עשוי להתעדכן על סמך שתי הכניסות בקצה המערבי של הרכיב: הקלט העליון נקרא
+        <var>load</var> והתחתון נקרא <var>count</var>, והם מתפרשים כדלקמן.
     </p>
     <div style="text-align: center;">
         <table>
             <thead>
             <tr>
                 <td>
-                    <var>load</var>
+                    <var>טען</var>
                 </td>
                 <td>
                     <var>count</var>
                 </td>
                 <td>
-                    trigger action
+                    להפעיל פעולה
                 </td>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td align="center">
-                    0 or z
+                    0 או z
                 </td>
                 <td align="center">
                     0
                 </td>
                 <td>
-                    The counter remains unchanged.
+                    המונה נשאר ללא שינוי.
                 </td>
             </tr>
             <tr>
                 <td align="center">
-                    0 or z
+                    0 או z
                 </td>
                 <td align="center">
-                    1 or z
+                    1 או ז
                 </td>
                 <td>
-                    The counter increments.
+                    המונה גדל.
                 </td>
             </tr>
             <tr>
@@ -104,7 +104,7 @@
                     0
                 </td>
                 <td>
-                    The counter loads the value found at the <var>D</var> input.
+                    המונה טוען את הערך שנמצא בקלט <var>D</var>.
                 </td>
             </tr>
             <tr>
@@ -112,175 +112,175 @@
                     1
                 </td>
                 <td align="center">
-                    1 or z
+                    1 או ז
                 </td>
                 <td>
-                    The counter decrements.
+                    המונה מוריד.
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
     <p>
-        The range of counting can be configured using the Maximum Value attribute. When the counter reaches this value,
-        the next increment wraps the counter back to 0; and if it is at 0, then a decrement will wrap the counter around
-        back to its maximum value.
+        ניתן להגדיר את טווח הספירה באמצעות תכונת הערך המקסימלי. כאשר המונה מגיע לערך זה,
+        התוספת הבאה מחזירה את המונה ל-0; ואם הוא ב-0, אז ירידה תעטוף את המונה
+        לחזור לערכו המקסימלי.
     </p>
     <p>
-        In addition to the output <var>Q</var>, the component also includes a single-bit output <var>carry</var>. This
-        is 1 whenever the counter is at its maximum and the <var>load</var> and <var>count</var> inputs indicate that
-        the component should increment on the next step - or when the counter is at 0 and the <var>load</var> and <var>count</var>
-        inputs indicate to decrement at the next step.
+        בנוסף לפלט <var>Q</var>, הרכיב כולל גם פלט של סיביות בודדות <var>carry</var>. זֶה
+        הוא 1 בכל פעם שהמונה במקסימום והכניסות <var>load</var> ו-<var>count</var> מצביעות על כך
+        הרכיב צריך לעלות בשלב הבא - או כאשר המונה עומד על 0 ו<var>טעינה</var> ו<var>ספירה</var>
+        תשומות מצביעות על ירידה בשלב הבא.
     </p>
     <p>
-        The <var>clear</var> input resets the counter's value to 0 (all zeroes) asynchronously; that is, as long as the
-        <var>clr</var> input is 1, the value is pinned to 0, regardless of the clock input.
+        הקלט <var>clear</var> מאפס את ערך המונה ל-0 (כל האפסים) באופן אסינכרוני; כלומר, כל עוד ה
+        הקלט <var>clr</var> הוא 1, הערך מוצמד ל-0, ללא קשר לקלט השעון.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <dl>
         <dt>
-            East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute)
+            East edge, שכותרתו <var>Q</var> (פלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            Outputs the value currently stored by the counter.
+            מוציא את הערך המאוחסן כעת על ידי המונה.
         </dd>
         <dt>
-            East edge, lower pin (output, bit width 1)
+            קצה מזרחי, סיכה תחתונה (פלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Carry: When <var>load</var> and <var>count</var> indicate to increment, this output is 1 whenever the
-            counter is at its maximum. When <var>load</var> and <var>count</var> indicate to decrement, this output is 1
-            whenever the counter is at 0. At all other times, this output is 0.
+            Carry: כאשר <var>load</var> ו-<var>count</var> מציינים להגדיל, פלט זה הוא 1 בכל פעם
+            המונה במקסימום. כאשר <var>load</var> ו-<var>count</var> מצביעים על ירידה, הפלט הזה הוא 1
+            בכל פעם שהמונה הוא 0. בכל הזמנים האחרים, פלט זה הוא 0.
         </dd>
         <dt>
-            West edge, top pin (input, bit width 1)
+            קצה מערבי, סיכה עליונה (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Load: When this is 1 while the <var>count</var> input is 0, the counter will load the value found at the
-            <var>data</var> input at the next clock trigger - or, if the <var>count</var> input happens to be 1, the
-            counter's value will decrement.
+            טען: כאשר זה הוא 1 בעוד שהקלט <var>count</var> הוא 0, המונה יטען את הערך שנמצא ב-
+            קלט <var>נתונים</var> בהדק השעון הבא - או, אם הקלט של <var>count</var> הוא במקרה 1,
+            הערך של המונה יקטן.
         </dd>
         <dt>
-            West edge, middle pin labeled <var>D</var> (input, bit with matches Data Bits attribute)
+            קצה מערבי, סיכה אמצעית שכותרתה <var>D</var> (קלט, סיביות עם תכונת Data Bits)
         </dt>
         <dd>
-            Data: When the clock triggers while <var>load</var> is 1 and <var>count</var> is 0, the counter's value
-            changes to the value found at this input.
+            נתונים: כאשר השעון מופעל כאשר <var>load</var> הוא 1 ו-<var>count</var> הוא 0, ערך המונה
+            שינויים בערך שנמצא בקלט זה.
         </dd>
         <dt>
-            West edge, lower pin labeled <var>ct</var> (input, bit width 1)
+            קצה מערבי, סיכה תחתונה שכותרתה <var>ct</var> (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Count: When this is 1 or unconnected, the value in the counter increments whenever the clock input is
-            triggered - or it decrements if the <var>load</var> input happens to also be 1.
+            ספירה: כאשר זה 1 או לא מחובר, הערך במונה גדל בכל פעם שכניסת השעון היא
+            מופעל - או שהוא מוריד אם הקלט <var>load</var> הוא במקרה גם 1.
         </dd>
         <dt>
-            South edge, indicated with a triangle (input, bit width 1)
+            קצה דרומי, מסומן במשולש (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Clock: At the instant that this is triggered as specified by the Trigger attribute, the counter updates as
-            indicated by the <var>load</var> and <var>count</var> inputs.
+            שעון: ברגע שזה מופעל כפי שצוין על ידי התכונה Trigger, המונה מתעדכן כ-
+            מסומן על ידי כניסות <var>load</var> ו-<var>count</var>.
         </dd>
         <dt>
-            South edge, labeled 0 (input, bit width 1)
+            קצה דרום, מסומן 0 (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Clear: When 0 or undefined, this input has no effect. As long as it is 1, the counter's value is
-            asynchronously pinned to 0. This occurs asynchronously - that is, without regard to the current clock input
-            value. As long as this is 1, the other inputs have no effect.
+            נקה: כאשר 0 או לא מוגדר, לקלט זה אין השפעה. כל עוד הוא 1, הערך של המונה הוא
+            מוצמד באופן אסינכרוני ל-0. זה מתרחש באופן אסינכרוני - כלומר, ללא קשר לכניסת השעון הנוכחית
+            ערך. כל עוד זה 1, לכניסות האחרות אין השפעה.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+        כאשר הרכיב נבחר או מתווסף, Alt-0 עד Alt-9 משנים את תכונת <q>Data Bits</q> שלו.
     </p>
     <dl>
         <dt>
-            Data Bits
+            פיסות מידע
         </dt>
         <dd>
-            The bit width of the value emitted by the component.
+            רוחב הסיביות של הערך שנפלט מהרכיב.
         </dd>
         <dt>
-            Maximum Value
+            ערך מקסימלי
         </dt>
         <dd>
-            The maximum value, at which point the counter will set its carry output.
+            הערך המקסימלי, בשלב זה המונה יקבע את פלט ה-carrier שלו.
         </dd>
         <dt>
-            Action On Overflow
+            פעולה על הצפה
         </dt>
         <dd>
-            The behavior when the counter attempts to increment beyond the maximum value or decrement beyond 0. Four
-            possible actions are supported:
+            ההתנהגות כאשר המונה מנסה לעלות מעבר לערך המקסימלי או להקטין מעבר ל-0. ארבע
+            פעולות אפשריות נתמכות:
             <dl>
                 <dt>
-                    Wrap around
+                    לעטוף
                 </dt>
                 <dd>
-                    The next value is 0 (if incrementing - the maximum value if decrementing)
+                    הערך הבא הוא 0 (אם גדל - הערך המקסימלי אם יורד)
                 </dd>
                 <dt>
-                    Stay at value
+                    להישאר במחיר
                 </dt>
                 <dd>
-                    The counter's value remains at the maximum (or 0 if decrementing)
+                    ערך המונה נשאר במקסימום (או 0 אם מופחת)
                 </dd>
                 <dt>
-                    Continue counting
+                    המשך לספור
                 </dt>
                 <dd>
-                    The counter continues incrementing/decrementing, keeping the number of bits as provided by the Data
-                    Bits attribute
+                    המונה ממשיך להגדיל/להפחית, תוך שמירה על מספר הביטים כפי שסופק על ידי הנתונים
+                    תכונת Bits
                 </dd>
                 <dt>
-                    Load next value
+                    טען את הערך הבא
                 </dt>
                 <dd>
-                    The next value is loaded from the D input.
+                    הערך הבא נטען מכניסת D.
                 </dd>
             </dl>
         </dd>
         <dt>
-            Trigger
+            הדק
         </dt>
         <dd>
-            Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the counter
-            should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value
-            indicates that it should update at the instant the clock falls from 1 to 0.
+            מגדיר כיצד מתפרש קלט השעון. הערך <q>קצה עולה</q> מציין שהמונה
+            צריך לעדכן את הערך שלו ברגע שהשעון עולה מ-0 ל-1. הערך <q>הקצה הנופל</q>
+            מציין שהוא אמור להתעדכן ברגע שהשעון יורד מ-1 ל-0.
         </dd>
         <dt>
-            Label
+            תווית
         </dt>
         <dd>
-            The text within the label associated with the component.
+            הטקסט בתוך התווית המשויכת לרכיב.
         </dd>
         <dt>
-            Label Font
+            תווית גופן
         </dt>
         <dd>
-            The font with which to render the label.
+            הגופן שבאמצעותו יש לעבד את התווית.
         </dd>
     </dl>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        Clicking the counter brings keyboard focus to the component (indicated by a red rectangle), and typing
-        hexadecimal digits will change the value stored in the counter.
+        לחיצה על המונה מביאה את מיקוד המקלדת לרכיב (מסומן על ידי מלבן אדום), והקלדה
+        ספרות הקסדצימליות ישנו את הערך המאוחסן במונה.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        Allows the label associated with the component to be edited.
+        מאפשר לערוך את התווית המשויכת לרכיב.
     </p>
     <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
     </p>
 </div>
 </body>

@@ -1,67 +1,67 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2019-03-16T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Command-line options
+        אפשרויות שורת הפקודה
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Command-line options
+        אפשרויות שורת הפקודה
     </h1>
     <p>
-        You can configure many of Logisim's application preferences via command line options. This can be particularly
-        useful in a laboratory of single-student computers where you want Logisim to start up the same for students
-        every time, regardless of how previous students may have configured the program.
+        אתה יכול להגדיר הרבה מהעדפות היישום של Logisim באמצעות אפשרויות שורת הפקודה. זה יכול להיות במיוחד
+        שימושי במעבדה של מחשבים עם תלמיד יחיד, שבה אתה רוצה ש-Logisim יתחיל אותו דבר עבור סטודנטים
+        בכל פעם, ללא קשר לאופן שבו סטודנטים קודמים הגדירו את התוכנית.
     </p>
     <p>
-        The overall command-line syntax is as follows.
+        התחביר הכולל של שורת הפקודה הוא כדלקמן.
     </p>
     <blockquote>
-        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
+         <pre>java -jar <i><b>jarFileName</b></i> <i>[אפשרויות]</i> <i>[שמות קבצים]</i>
 </pre>
     </blockquote>
     <p>
-        The optional additional files named on the command line will be opened as separate windows within Logisim.
+        הקבצים הנוספים האופציונליים הנקראים בשורת הפקודה ייפתחו כחלונות נפרדים בתוך Logisim.
     </p>
     <p>
-        The following example starts Logisim in its basic configuration.
+        הדוגמה הבאה מתחילה את Logisim בתצורה הבסיסית שלה.
     </p>
     <blockquote>
-        <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
+         <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
 </pre>
     </blockquote>
     <p>
-        Supported options include the following.
+        האפשרויות הנתמכות כוללות את הדברים הבאים.
     </p>
     <dl>
         <dt>
-            <tt>-plain</tt>
+            <tt>-רגיל</tt>
         </dt>
         <dt>
-            <tt>-empty</tt>
+            <tt>-ריק</tt>
         </dt>
         <dt>
             <tt>-template <b><i>templateFile</i></b></tt>
         </dt>
         <dd>
             <p>
-                Configures the template for Logisim to use.
+                מגדיר את התבנית לשימוש של Logisim.
             </p>
         </dd>
         <dt>
-            <tt>-gates <i>[<b>shaped</b>|<b>rectangular</b>]</i></tt>
+            <tt>-שערים <i>[<b>בצורת</b>|<b>מלבני</b>]</i></tt>
         </dt>
         <dd>
             <p>
-                Configures which type of gate to use.
+                מגדיר באיזה סוג שער להשתמש.
             </p>
         </dd>
         <dt>
@@ -69,72 +69,72 @@
         </dt>
         <dd>
             <p>
-                Configures which translation to use. As of this writing, the supported locales include:
+                מגדיר באיזה תרגום להשתמש. נכון לכתיבת שורות אלה, המקומות הנתמכים כוללים:
             </p>
             <table>
                 <tbody>
                 <tr>
                     <td>
-                        <tt>de</tt> German
+                        <tt>de</tt> גרמנית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>el</tt> Greek
+                        <tt>el</tt> יוונית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>en</tt> English
+                        <tt>en</tt> אנגלית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>es</tt> Spanish
+                        <tt>es</tt> ספרדית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>fr</tt> French
+                        <tt>fr</tt> צרפתית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>pt</tt> Portugais
+                        <tt>pt</tt> פורטוגזית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>ru</tt> Russian
+                        <tt>ru</tt> רוסית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>it</tt> Italian
+                        <tt>it</tt> איטלקית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>nl</tt> Dutch
+                        <tt>nl</tt> הולנדית
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <tt>jp</tt> Japanese
+                        <tt>jp</tt> יפנית
                     </td>
                 </tr>
                 </tbody>
             </table>
         </dd>
         <dt>
-            <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
+            <tt>-מבטאים <i>[<b>כן</b>|<b>לא</b>]</i></tt>
         </dt>
         <dd>
             <p>
-                This is only relevant for languages that use characters outside the 7-bit ASCII character set; this
-                would include languages using accented characters, and it would not include English. If <i>no</i>,
-                characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the
-                language; this would be useful for Java/OS combinations where such characters are not supported well.
+                זה רלוונטי רק לשפות שמשתמשות בתווים מחוץ לקבוצת התווים של 7 סיביות ASCII; זֶה
+                יכלול שפות המשתמשות בתווים מודגשים, והוא לא יכלול אנגלית. אם <i>לא</i>,
+                תווים מחוץ לקבוצת התווים של 7 סיביות ASCII מוחלפים במקבילות המתאימות ל-
+                שפה; זה יהיה שימושי עבור שילובי Java/OS שבהם תווים כאלה אינם נתמכים היטב.
             </p>
         </dd>
         <dt>
@@ -142,8 +142,8 @@
         </dt>
         <dd>
             <p>
-                Clear all application preferences at startup, so Logisim will act as if it were being executed on the
-                host system for the first time.
+                נקה את כל העדפות האפליקציה בעת ההפעלה, כך ש-Logisim תפעל כאילו היא מבוצעת ב-
+                מערכת מארח בפעם הראשונה.
             </p>
         </dd>
         <dt>
@@ -151,23 +151,23 @@
         </dt>
         <dd>
             <p>
-                Hides the initial Logisim splash screen.
+                מסתיר את מסך הפתיחה הראשוני של Logisim.
             </p>
         </dd>
         <dt>
-            <tt>-help</tt>
+            <tt>-עזרה</tt>
         </dt>
         <dd>
             <p>
-                Displays a summary of the command line options.
+                מציג סיכום של אפשרויות שורת הפקודה.
             </p>
         </dd>
         <dt>
-            <tt>-version</tt>
+            <tt>-גרסה</tt>
         </dt>
         <dd>
             <p>
-                Displays the Logisim version number.
+                מציג את מספר הגרסה של Logisim.
             </p>
         </dd>
         <dt>
@@ -175,15 +175,15 @@
         </dt>
         <dd>
             <p>
-                Displays the combinatorial analysis menus.
+                מציג את תפריטי הניתוח הקומבינטורי.
             </p>
         </dd>
         <dt>
-            <tt>-load <i><b>filename</b></i></tt>
+            <tt>-טען <i><b>שם קובץ</b></i></tt>
         </dt>
         <dd>
             <p>
-                Load an image in RAM (works only with -tty)
+                טען תמונה ב-RAM (עובד רק עם -tty)
             </p>
         </dd>
         <dt>
@@ -191,16 +191,16 @@
         </dt>
         <dd>
             <p>
-                load the file by replacing the library file (file1) with the library file (file2). More information in
-                <a href="../verify/sub.html">Substituting libraries</a>
+                טען את הקובץ על ידי החלפת קובץ הספרייה (קובץ1) בקובץ הספרייה (קובץ2). מידע נוסף ב
+                <a href="../verify/sub.html">החלפת ספריות</a>
             </p>
         </dd>
         <dt>
-            <tt>-tty</tt> [<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]
+            <tt>-tty</tt> [<b>טבלה</b>|<b>מהירות</b>|<b>tty</b>|<b>עצירה</b>|<b>סטטיסטיקות </b>]
         </dt>
         <dd>
             <p>
-                Run without GUI. More information in <a href="../verify/other.html">Other verification</a>
+                הפעל ללא GUI. מידע נוסף ב-<a href="../verify/other.html">אימות אחר</a>
             </p>
         </dd>
         <dt>
@@ -208,8 +208,8 @@
         </dt>
         <dd>
             <p>
-                Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More
-                information in <a href="../verify/test.html">Window Text Vector</a>
+                הפעל את בדיקות <b>circuitname</b> ב-<b>projectfile</b> בהתבסס על וקטורים ב-<b>vectorfile</b>. יותר
+                מידע ב<a href="../verify/test.html">וקטור טקסט של חלון</a>
             </p>
         </dd>
         <dt>
@@ -217,14 +217,14 @@
         </dt>
         <dd>
             <p>
-                Opens Logisim with a window dimensioned according to the parameters W (width) and H (height) or with the
-                upper left corner positioned according to the parameters X,Y.<br>
-                Example: -geom 600x400+100+100
+                פותח את Logisim עם חלון במידות לפי הפרמטרים W (רוחב) ו-H (גובה) או עם
+                הפינה השמאלית העליונה ממוקמת לפי הפרמטרים X,Y.<br>
+                דוגמה: -geom 600x400+100+100
             </p>
         </dd>
     </dl>
     <h2>
-        Undocumented Options
+        אפשרויות לא מתועדות
     </h2>
     <dl>
         <dt>
@@ -241,12 +241,12 @@
         </dt>
         <dd></dd>
         <dt>
-            <tt>-questa<i>[<b>yes</b>|<b>no</b>]</i></tt>
+            <tt>-questa<i>[<b>כן</b>|<b>לא</b>]</i></tt>
         </dt>
         <dd></dd>
     </dl>
     <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+        <b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.
     </p>
 </div>
 </body>

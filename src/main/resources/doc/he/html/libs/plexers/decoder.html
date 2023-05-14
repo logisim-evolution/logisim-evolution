@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Decoder
     </title>
@@ -20,7 +20,7 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
                 <a href="index.html">Plexers</a>
@@ -28,15 +28,15 @@
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 11
+                2.0 בטא 11
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/decoder.png"
@@ -46,101 +46,101 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        Emits 1 on exactly one output; which output is 1 depends on the current value received through the input on the
-        south edge.
+        פולט 1 בדיוק על פלט אחד; איזה פלט הוא 1 תלוי בערך הנוכחי המתקבל דרך הקלט ב-
+        קצה דרום.
     </p>
     <h2>
-        Pins (assuming component faces east, select is bottom/left)
+        סיכות (בהנחה שהרכיב פונה מזרחה, הבחירה היא למטה/שמאל)
     </h2>
     <dl>
         <dt>
-            East edge, variable number (outputs, bit width 1)
+            קצה מזרחי, מספר משתנה (פלטים, רוחב סיביות 1)
         </dt>
         <dd>
-            The outputs are numbered starting with 0 on the north. Each output will be 1 if its number matches the value
-            currently received through the select input on the south; otherwise, its value will be either zero or
-            floating, depending on the value of the Three-State? attribute. If the select input contains any unspecified
-            bits, then all outputs are floating.
+            הפלטים ממוספרים החל מ-0 בצפון. כל פלט יהיה 1 אם מספרו תואם את הערך
+            מתקבל כעת דרך קלט הבחירה בדרום; אחרת, הערך שלו יהיה אפס או
+            צף, תלוי בערך שלוש המדינות? תְכוּנָה. אם קלט הבחירה מכיל כל לא צוין
+            סיביות, אז כל הפלטים צפים.
         </dd>
         <dt>
-            South edge, left side (input, bit width 1)
+            קצה דרומי, צד שמאל (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Enable: When 0, all outputs consist of all floating bits (or zeros), regardless of the select input.
+            Enable: כאשר 0, כל הפלטים מורכבים מכל הסיביות הצפות (או אפסים), ללא קשר לקלט הבחירה.
         </dd>
         <dt>
-            South edge, right side indicated by gray circle (input, bit width matches Select Bits attribute)
+            קצה דרומי, צד ימין מסומן בעיגול אפור (קלט, רוחב סיביות תואם את תכונת Select Bits)
         </dt>
         <dd>
-            Select input: The value of this input determines which of the outputs is 1.
+            בחר קלט: הערך של קלט זה קובע איזה מהפלטים הוא 1.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute
-        and the arrow keys alter its <q>Facing</q> attribute.
+        כאשר הרכיב נבחר או מתווסף, הספרות '1' עד '4' משנות את התכונה <q>Select Bits</q> שלו
+        ומקשי החצים משנים את תכונת ה<q>Facing</q> שלו.
     </p>
     <dl>
         <dt>
-            Facing
+            מוּל
         </dt>
         <dd>
-            The direction of the component (specifying which side has the outputs).
+            כיוון הרכיב (ציון לאיזה צד יש את הפלטים).
         </dd>
         <dt>
-            Select Location
+            תבחר מיקום
         </dt>
         <dd>
-            The location of the select and enable lines relative to the component.
+            המיקום של קווי הבחירה והאפשרות ביחס לרכיב.
         </dd>
         <dt>
-            Select Bits
+            בחר Bits
         </dt>
         <dd>
-            The bit width of the component's select input on its south edge. The number of outputs for the decoder will
-            be 2<sup><var>selectBits</var></sup>.
+            רוחב הסיביות של קלט הבחירה של הרכיב בקצה הדרומי שלו. מספר היציאות עבור המפענח יהיה
+            להיות 2<sup><var>selectBits</var></sup>.
         </dd>
         <dt>
-            Three-state?
+            שלוש מדינות?
         </dt>
         <dd>
-            Specifies whether the unselected outputs should be floating (Yes) or zero (No).
+            מציין אם הפלטים שלא נבחרו צריכים להיות צפים (כן) או אפס (לא).
         </dd>
         <dt>
-            Disabled Output
+            פלט מושבת
         </dt>
         <dd>
-            Specifies what each bit of the outputs should be when the component is disabled (i.e., when the enable pin
-            is 0). Options include zero and floating; in the latter case, the outputs are effectively disconnected from
-            any other ports.
+            מציין מה צריך להיות כל סיביות מהפלטים כאשר הרכיב מושבת (כלומר, מתי ה-Enable PIN
+            הוא 0). האפשרויות כוללות אפס וצף; במקרה האחרון, היציאות מנותקות למעשה מהן
+            כל יציאות אחרות.
         </dd>
         <dt>
-            Include Enable?
+            לכלול הפעל?
         </dt>
         <dd>
-            The component has an enable input when this attribute is <q>yes.</q> The attribute is primarily for
-            supporting circuits built using older versions of Logisim that did not provide an enable input.
+            לרכיב יש קלט הפעלה כאשר תכונה זו היא <q>כן.</q> התכונה מיועדת בעיקר עבור
+            מעגלים תומכים שנבנו באמצעות גרסאות ישנות יותר של Logisim שלא סיפקו קלט הפעלה.
         </dd>
     </dl>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
     </p>
 </div>
 </body>

@@ -1,28 +1,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Generating a circuit
+        יצירת מעגל
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Generating a circuit
+        יצירת מעגל
     </h1>
     <p>
-        The <b class="button">Build Circuit</b> button will construct a circuit whose gates correspond to the currently
-        chosen expressions for each output. The circuit's inputs and outputs will be displayed in top-down order
-        corresponding to how they appear under the Inputs and Outputs tabs. Generally speaking, the constructed circuit
-        will be attractive; and, indeed, one application of Logisim's Combinational Analysis module is to beautify
-        poorly drawn circuits. Still, as with any automatic formatting, it will not express the structural details that
-        a human-drawn circuit would.
+        הלחצן <b class="button">בנה מעגל</b> יבנה מעגל שהשערים שלו תואמים לערך הנוכחי
+        ביטויים שנבחרו עבור כל פלט. הכניסות והיציאות של המעגל יוצגו בסדר מלמעלה למטה
+        בהתאם לאופן שבו הם מופיעים בכרטיסיות קלט ופלטים. באופן כללי, המעגל הבנוי
+        יהיה אטרקטיבי; ואכן, יישום אחד של מודול הניתוח המשולב של Logisim הוא לייפות
+        מעגלים מצוירים בצורה גרועה. ובכל זאת, כמו בכל עיצוב אוטומטי, זה לא יבטא את הפרטים המבניים ש
+        מעגל שנמשך לאדם יעשה זאת.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/analyze-circuit.png">
@@ -35,27 +35,27 @@
         <img alt="#########" class="notscal" src="../../../img-guide/analyze-build.png">
     </p>
     <p>
-        If you type the name of an existing circuit, then that circuit will be replaced (after Logisim prompts you to
-        confirm that you really want to do this).
+        אם תקליד את השם של מעגל קיים, המעגל הזה יוחלף (לאחר שלוגיסים יבקש ממך
+        לאשר שאתה באמת רוצה לעשות זאת).
     </p>
     <p>
-        The <b class=propertie>Build Circuit</b> dialog includes two options.
+        תיבת הדו-שיח <b class=propertie>בנה מעגל</b> כוללת שתי אפשרויות.
     </p>
     <ul>
-        <li>The <b class="button">Use Two-Input Gates Only</b> option specifies that you want all gates constructed to
-            have two inputs. (NOT gates, of course, constitute an exception to this rule.)
+        <li>האפשרות <b class="button">השתמש בשערים עם שני כניסות בלבד</b> מציינת שברצונך שכל השערים ייבנו כך
+            יש שתי כניסות. (לא שערים, כמובן, מהווים חריג לכלל זה.)
         </li>
-        <li>The<b class="button">Use NAND Gates Only</b> option specifies that you would like it to translate the
-            circuit into one using only NAND gates. You can select both options if you want to use only two-input NAND
-            gates.
+        <li>האפשרות<b class="button">השתמש בשערי NAND בלבד</b> מציינת שתרצה שהיא תתרגם את
+            מעגל לתוך אחד באמצעות שערי NAND בלבד. אתה יכול לבחור בשתי האפשרויות אם אתה רוצה להשתמש רק ב-NAND בעל שתי כניסות
+            שערים.
         </li>
     </ul>
     <p>
-        Logisim cannot construct a NAND-only circuit for an expression containing any XOR operators. This option will
-        therefore be disabled if any outputs' expressions contain XORs.
+        Logisim לא יכולה לבנות מעגל NAND בלבד עבור ביטוי המכיל אופרטורים XOR כלשהם. אפשרות זו תהיה
+        לכן יהיה מושבת אם ביטויי פלט כלשהם מכילים XORs.
     </p>
     <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+        <b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.
     </p>
 </div>
 </body>

@@ -1,46 +1,44 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <META content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created"/>
     <meta content="2023-04-29T16:00:00.000000000" name="changed"/>
     <META content="text/html; charset=UTF-8" http-equiv="content-type">
-    <META content="en" http-equiv="Content-Language">
-    <title>Simulating test benchs</title>
+    <META content="he" http-equiv="Content-Language">
+    <title>הדמיית ספסלי בדיקה</title>
     <LINK href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 <div class="maindiv">
-    <h1>Simulating test benchs</h1>
+    <h1>הדמיית ספסלי בדיקה</h1>
 
-    <p>You can add a test bench to your circuit to test it, but you have to
-        consider the following restrictions due to the simulation
-        architecture.
+    <p>תוכל להוסיף ספסל בדיקה למעגל שלך כדי לבדוק אותו, אבל אתה חייב
+        שקול את ההגבלות הבאות עקב הסימולציה
+        ארכיטקטורה.
     </p>
 
     <p align="center"><img src="../../../../img-guide/hdl-ip-tb.png"/></p>
 
-    <h2>Simulation must be driven by Logisim</h2>
+    <h2>הסימולציה חייבת להיות מונעת על ידי Logisim</h2>
 
-    <p>You cannot add event generating elements to your test bench, for
-        example, you cannot add a clock generator process. Your test bench
-        must take an external clock from Logisim as input.
+    <p>אינך יכול להוסיף אלמנטים יצירת אירועים לספסל הבדיקה שלך, עבור
+        לדוגמה, אתה לא יכול להוסיף תהליך מחולל שעונים. ספסל המבחן שלך
+        חייב לקחת שעון חיצוני מלוגיסים כקלט.
     </p>
 
-    <h2>Don't use time based conditions</h2>
+    <h2>אל תשתמש בתנאים מבוססי זמן</h2>
 
-    <p>The time representation does not exist in Logisim, no you cannot have
-        event based on time, for example <i>wait for 5 ns</i>. If you want to
-        make asynchronous verification, you must add a <i>sysclk</i> who has
-        at least twice the frequency of the mainclk. This way, you will be
-        able to check the signals not only on the main clock rising edges but
-        at any time you need.
+    <p>ייצוג הזמן לא קיים ב-Logisim, לא אתה לא יכול לקבל
+        אירוע המבוסס על זמן, למשל <i>המתנה ל-5 ns</i>. אם אתה רוצה
+        לבצע אימות אסינכרוני, עליך להוסיף <i>sysclk</i> שיש לו
+        לפחות פי שניים מהתדירות של mainclk. בדרך זו, אתה תהיה
+        מסוגל לבדוק את האותות לא רק בקצוות העולה של השעון הראשי אלא
+        בכל עת שאתה צריך.
     </p>
 
-    <p><b>Next:</b> <a href="../index.html">User's Guide
-    </a>.
-    </p>
+    <p><b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.</p>
 </div>
 </body>
 </html>

@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Splitter
     </title>
@@ -20,23 +20,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Wiring</a>
+                <a href="index.html">חיווט</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:&nbsp;</strong>
+                <strong>הוצג:&nbsp;</strong>
             </td>
             <td>
-                2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)
+                2.0 Beta 1 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="notscal" height="44" src="../../../../img-libs/splitter.png" width="24">
@@ -45,32 +45,32 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits.
-        Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts
-        into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in
-        the <a class=refguide href="../../guide/feature/fet-splitting.html">Splitters</a> section of the <a
-            href="../index.html">User guide</a>
+        המפצל יוצר התאמה בין ערך מרובה סיביות למספר תת-קבוצות נפרדות של אותם סיביות.
+        למרות שמו, הוא יכול לפצל ערך מרובה סיביות לחלקים מרכיבים, או שהוא יכול לשלב חלקים מרכיבים
+        לערך מרובה סיביות - או שהוא יכול לעשות את שניהם בבת אחת. תיאור מלא יותר של מפצלים נמצא ב
+        הקטע <a class=refguide href="../../guide/feature/fet-splitting.html">מפצלים</a> של <a
+            href="../index.html">מדריך למשתמש</a>
     </p>
     <p>
-        Logisim treats splitters specially when propagating values within a circuit: Whereas all other components have a
-        computed delay for purposes of simulating their behavior, values propagate through splitters (as well as wires)
-        instantaneously.
+        Logisim מטפלת במפצלים במיוחד בעת הפצת ערכים בתוך מעגל: בעוד שלכל שאר הרכיבים יש א
+        השהיה מחושבת למטרות הדמיית התנהגותם, ערכים מתפשטים דרך מפצלים (כמו גם חוטים)
+        באופן מיידי.
     </p>
     <p>
-        <b class="note">Note:</b> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as
-        I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus
-        ripper</em>, but this term is unnecessarily violent for my tastes.
+        <b class="note">הערה:</b> המונח <em>מפצל</em> הוא מונח לא סטנדרטי, שייחודי ללוגיסים באשר
+        אני יודע. אני לא מודע למונח סטנדרטי כלשהו למושג כזה; המונח היחיד ששמעתי בשימוש הוא <em>אוטובוס
+        ripper</em>, אבל המונח הזה אלים שלא לצורך לטעמי.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <p>
-        To distinguish the several connecting points for a splitter, we refer to the single connecting point one side as
-        its <em>combined end</em>, and we refer to the multiple connecting points on the other side as its <em>split
-        ends</em>. (see figure below)
+        כדי להבחין בין מספר נקודות החיבור של מפצל, אנו מתייחסים לנקודת החיבור הבודדת מצד אחד בתור
+        ה<em>קצה המשולב</em> שלו, ואנו מתייחסים לנקודות החיבור המרובות בצד השני כ<em>הפיצול שלו
+        מסתיים</em>. (ראה איור למטה)
     </p>
     <div style="text-align: center;">
         <table>
@@ -78,13 +78,13 @@
             <tr>
                 <td></td>
                 <td valign="top">
-                    Bus
+                    אוֹטוֹבּוּס
                 </td>
                 <td>
                     <img alt="#########" src="../../../../img-libs/splitter-right.png">
                 </td>
                 <td>
-                    Split ends
+                    קצוות מפוצלים
                 </td>
             </tr>
             </tbody>
@@ -93,39 +93,39 @@
     <dl>
         <dd></dd>
         <dt>
-            <b class="propertie">Bus :</b>
+            <b class="propertie">אוטובוס :</b>
         </dt>
         <dd>
-            the bit width of the bus corresponds to the <b class="propertie">Bit width</b> attribute and it is the value
-            counting all the conductors transiting the bus.
+            רוחב הסיביות של האוטובוס מתאים לתכונה <b class="propertie">רוחב סיביות</b> וזהו הערך
+            ספירת כל המוליכים המעבירים את האוטובוס.
         </dd>
         <dt>
-            <b class="propertie">Split ends :</b>
+            <b class="propertie">קצוות מפוצלים :</b>
         </dt>
         <dd>
-            The bit width of the terminations is determined by the bit width of the bus divided (integer division) by
-            the number of terminations. In other cases, the widths will be distributed in a balanced fractional way.
-            For example, a 10-bit bus with 4 terminations will have two 3-bit terminations and two 2-bit terminations.
+            רוחב הסיביות של ההפסקות נקבע לפי רוחב הסיביות של האפיק חלקי (חלוקה שלמים) ב-
+            מספר הפסקות. במקרים אחרים, הרוחבים יחולקו בצורה חלקית מאוזנת.
+            לדוגמה, לאפיק של 10 סיביות עם 4 נקודות סיום יהיו שני חיבורים של 3 סיביות ושני נקודות חיבור של 2 סיביות.
         </dd>
     </dl>
 
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b
-            class="tkeybd">9</b> alter its <b class="propertie">Fan Out</b> attribute, <b class="tkeybd">Alt-0</b>
-        through <b class="tkeybd">Alt-9</b> alter both the <<b class="propertie">Fan Out</b> and <b class="propertie">Bit
-        Width In</b> attributes, and the arrow keys alter its <b class="propertie">Facing</b> attribute.
+        כאשר הרכיב נבחר או מתווסף, הספרות <b class="tkeybd">0</b> עד <b
+            class="tkeybd">9</b> שנה את התכונה ה<b class="propertie">Fan Out</b> שלו, <b class="tkeybd">Alt-0</b>
+        דרך <b class="tkeybd">Alt-9</b> שנה את ה<b class="propertie">Fan Out</b> וגם את ה<b class="propertie">Bit
+        Width In</b> תכונות, ומקשי החצים משנים את תכונת ה<b class="propertie">Facing</b> שלה.
     </p>
     <div class="attliste">
         <dl>
             <dt>
-                <b class="propertie">Facing</b>
+                <b class="propertie">לפנים</b>
             </dt>
             <dd>
                 <p>
-                    The location of the split ends relative to the combined end.
+                    מיקום הקצוות המפוצלים ביחס לקצה המשולב.
                 </p>
             </dd>
             <dt>
@@ -133,29 +133,29 @@
             </dt>
             <dd>
                 <p>
-                    The number of split ends.
+                    מספר הקצוות המפוצלים.
                 </p>
             </dd>
             <dt>
-                <b class="propertie">Bit Width In</b>
+                <b class="propertie">רוחב סיביות ב</b>
             </dt>
             <dd>
                 <p>
-                    The bit width of the bus.
+                    רוחב הסיביות של האוטובוס.
                 </p>
             </dd>
             <dt>
-                <b class="propertie">Appearance</b>
+                <b class="propertie">מראה</b>
             </dt>
             <dd>
                 <p>
-                    Supports different ways of depicting the splitter in the circuit. The <q>Left-handed</q> option (the
-                    default) draws a spine going left from the combined end, with a labeled line coming from the spine
-                    for each split end. The <q>Right-handed</q> option is the same except the spine goes
-                    right (if you're facing according to the Facing attribute). The <q>Centered</q> option centers the
-                    spine so it goes in roughly equal directions left and right. And the <q>Legacy</q> option draws
-                    diagonal lines to each split end, without labels; this option is primarily for compatibility
-                    with versions older than 2.7.0, when this was the only option for splitter appearance.
+                    תומך בדרכים שונות לתיאור המפצל במעגל. האפשרות <q>יד שמאל</q> (ה
+                    ברירת מחדל) מצייר עמוד שדרה שהולך שמאלה מהקצה המשולב, כאשר קו מסומן מגיע מעמוד השדרה
+                    לכל קצה מפוצל. האפשרות <q>ימני</q> זהה למעט שעמוד השדרה הולך
+                    נכון (אם אתה מתמודד לפי התכונה Facing). האפשרות <q>מרוכז</q> מרכזת את
+                    עמוד השדרה כך שהוא הולך בכיוונים שווים בערך ימינה ושמאלה. והאפשרות <q>מורשת</q> מציירת
+                    קווים אלכסוניים לכל קצה מפוצל, ללא תוויות; אפשרות זו מיועדת בעיקר לתאימות
+                    עם גרסאות ישנות יותר מ-2.7.0, כאשר זו הייתה האפשרות היחידה להופעת מפצל.
                 </p>
                 <div style="text-align: center;">
                     <table>
@@ -180,16 +180,16 @@
                         </tr>
                         <tr>
                             <td>
-                                Left-handed
+                                שמאלי
                             </td>
                             <td>
-                                Right-handed
+                                ימני
                             </td>
                             <td>
-                                Centered
+                                מְרוּכָּז
                             </td>
                             <td>
-                                Legacy
+                                מוֹרֶשֶׁת
                             </td>
                         </tr>
                         </tbody>
@@ -197,47 +197,47 @@
                 </div>
             </dd>
             <dt>
-                <b class="propertie">Spacing</b>
+                <b class="propertie">ריווח</b>
             </dt>
             <dd>
-                Determines the spacing between terminations.
+                קובע את המרווח בין הסיום.
             <dt>
             <dt>
-                <b class="propertie">Bit <var>x</var></b>
+                <b class="propertie">ביט <var>x</var></b>
             </dt>
             <dd>
                 <p>
-                    The index of the split end to which bit <var>x</var> of the combined end corresponds. The split ends
-                    are indexed starting from 0 at the top (for a splitter facing east or west) or from 0 at the
-                    left/west (for a splitter facing north or south). A bit can be specified to correspond to
-                    none of the split ends. There is no way for a bit to correspond to multiple split ends.
+                    האינדקס של הקצה המפוצל שאליו מתאימה סיביות <var>x</var> של הקצה המשולב. הפיצול מסתיים
+                    מתווספים לאינדקס החל מ-0 בחלק העליון (עבור מפצל הפונה מזרחה או מערבה) או מ-0 ב-
+                    שמאל/מערב (למפצל הפונה לצפון או לדרום). ניתן לציין ביט שיתאים אליו
+                    אף אחד מהקצוות המפוצלים. אין דרך לקצת להתאים למספר קצוות מפוצלים.
                 </p>
                 <p>
-                    Sometimes you can avoid twiddling each individual Bit <var>x</var> attribute by bringing up the
-                    pop-up menu for a splitter (usually by right-clicking or control-clicking it). The pop-up menu
-                    includes options labeled Distribute Ascending and Distribute Descending. The Distribute
-                    Ascending option distributes the bits so that each split end receives the same number of bits,
-                    starting from end 0. (If the number of split ends doesn't divide exactly into the number of bits,
-                    then the bits are distributed as evenly as possible.) Distribute Descending does the same but
-                    starts from the highest-numbered end.
+                    לפעמים אתה יכול להימנע מלהטות כל תכונה בודדת של Bit <var>x</var> על ידי העלאת ה-
+                    תפריט מוקפץ עבור מפצל (בדרך כלל על ידי לחיצה ימנית או לחיצה על Control). התפריט המוקפץ
+                    כולל אפשרויות שכותרתו 'הפצה עולה' ו'הפצה בירידה'. ההפצה
+                    אפשרות עולה מפיצה את הביטים כך שכל קצה מפוצל מקבל את אותו מספר ביטים,
+                    החל מסוף 0. (אם מספר הקצוות המפוצלים אינו מתחלק בדיוק למספר הביטים,
+                    ואז הביטים מחולקים בצורה שווה ככל האפשר.) חלוקה בירידה עושה את אותו הדבר אבל
+                    מתחיל מהקצה בעל המספר הגבוה ביותר.
                 </p>
             </dd>
         </dl>
     </div>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
     </p>
 </div>
 </body>

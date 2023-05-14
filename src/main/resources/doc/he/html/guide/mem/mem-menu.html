@@ -1,94 +1,94 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2019-03-16T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Pop-up menus and files
+        תפריטים וקבצים קופצים
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Pop-up menus and files
+        תפריטים וקבצים קופצים
     </h1>
     <h2>
-        Pop-up menu
+        תפריט קופץ
     </h2>
     <p>
-        The pop-up menu for memory includes four options in addition to the options common to all components:
+        התפריט המוקפץ לזיכרון כולל ארבע אפשרויות בנוסף לאפשרויות המשותפות לכל הרכיבים:
     </p>
     <dl>
         <dt>
-            <b>Edit Contents:</b>
+            <b>ערוך תוכן:</b>
         </dt>
         <dd>
-            Bring up a <a href="mem-hex.html">hex editor</a> for editing the contents of memory.
+            העלה <a href="mem-hex.html">עורך hex</a> לעריכת תוכן הזיכרון.
         </dd>
         <dt>
-            <b>Clear Contents:</b>
+            <b>נקה תוכן:</b>
         </dt>
         <dd>
-            Resets all values in memory to 0 and for RAM to 0 or randomly depending on the parameters in <a
-                href="../opts/index.html">Project options </a>.
+            מאפס את כל הערכים בזיכרון ל-0 ול-RAM ל-0 או באופן אקראי בהתאם לפרמטרים ב-<a
+                href="../opts/index.html">אפשרויות פרויקט </a>.
         </dd>
         <dt>
-            <b>Load Image...:</b>
+            <b>טען תמונה...:</b>
         </dt>
         <dd>
-            Resets all values in memory to the values found in a file. The file format is recognized automatically and
-            if it is not the case a <a href="mem-filepanel.html">window Memory file panel</a> opens for an appropriate
-            selection.
+            מאפס את כל הערכים בזיכרון לערכים שנמצאו בקובץ. פורמט הקובץ מזוהה אוטומטית ו
+            אם זה לא המקרה, <a href="mem-filepanel.html">חלונית קבצי זיכרון</a> נפתחת עבור חלון מתאים
+            בְּחִירָה.
         </dd>
         <dt>
-            <b>Save Image...:</b>
+            <b>שמור תמונה...:</b>
         </dt>
         <dd>
-            Stores all values in memory in a file using one of the formats described below.
+            מאחסן את כל הערכים בזיכרון בקובץ באמצעות אחד מהפורמטים המתוארים להלן.
         </dd>
     </dl>
     <h2>
-        File format
+        פורמט קובץ
     </h2>
     <ul>
         <li>
-            <b><a href="mem-v2raw.html">v2.0 raw</a></b> Historical version of logisim allows "run.length" coding.
+            <b><a href="mem-v2raw.html">v2.0 raw</a></b> גרסה היסטורית של logisim מאפשרת קידוד "run.length".
         </li>
         <li>
-            <b><a href="mem-v3word.html">v3.0 hex words plain</a></b> Close to v2.0 word structured.
+            <b><a href="mem-v3word.html">v3.0 מילים hex plain</a></b> קרוב ל-v2.0 מילה מובנית.
         </li>
         <li>
-            <b><a href="mem-v3word.html#addr">v3.0 hex words addressed</a></b> As before with the possibility to define
-            a start address for each line of the file.
+            <b><a href="mem-v3word.html#addr">v3.0 מילות hex מטופלות</a></b> כמו קודם עם אפשרות להגדיר
+            כתובת התחלה עבור כל שורה בקובץ.
         </li>
         <li>
-            <b><a href="mem-v3byte.html">v3.0 hex bytes plain big-endian</a></b><br>
-            <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> Organized in byte streams.
+            <b><a href="mem-v3byte.html">v3.0 hex bytes רגיל big-endian</a></b><br>
+            <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> מאורגן בזרמי בתים.
         </li>
         <li>
-            <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a></b><br>
-            <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a></b> Organized in byte flow as
-            before with the possibility to define an address.
+            <b><a href="mem-v3byte.html#little">v3.0 hex bytes כתובות big-endian</a></b><br>
+            <b><a href="mem-v3byte.html#little">v3.0 hex bytes כתובות little-endian</a></b> מאורגן בזרימת בתים כמו
+            לפני עם אפשרות להגדיר כתובת.
         </li>
         <li>
-            <b><a href="mem-vbinary.html#">Binary data big-endian</a></b><br>
-            <b><a href="mem-vbinary.html#">Binary data little-endian</a></b> Image of the memory uncoded in hexadecimal.
+            <b><a href="mem-vbinary.html#">נתונים בינאריים big-endian</a></b><br>
+            <b><a href="mem-vbinary.html#">נתונים בינאריים little-endian</a></b> תמונה של הזיכרון ללא קידוד בהקסדצימלי.
         </li>
         <li>
             <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br>
-            <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> ASCII encoded file with escape code, as
-            in C for non-printable characters.
+            <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> קובץ מקודד ASCII עם קוד בריחה, כמו
+            ב-C עבור תווים שאינם ניתנים להדפסה.
         </li>
     </ul>
     <p>
 
     </p>
     <p>
-        <b>Next:</b> <a href="mem-filepanel.html">Memory file panel</a>.
+        <b>הבא:</b> <a href="mem-filepanel.html">חלונית קבצי זיכרון</a>.
     </p>
 </div>
 </body>

@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Transistor
     </title>
@@ -22,15 +22,15 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Wiring</a>
+                <a href="index.html">חיווט</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
                 2.7.0
@@ -38,28 +38,30 @@
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <table>
                     <tbody>
                     <tr>
-                        <th>P-type
+                        <th>סוג P
                         </th>
                         <th>
                         </th>
-                        <th>N-type
+                        <th>סוג N
                         </th>
                     </tr>
                     <tr>
                         <td>
-                            <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans0.png"
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/trans0.png"
                                  width="64">
                         </td>
                         <td>&nbsp;
                         </td>
                         <td>
-                            <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans1.png"
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/trans1.png"
                                  width="64">
                         </td>
                     </tr>
@@ -70,20 +72,20 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        A transistor has two inputs, called <b>gate</b> and <b>source</b>, and one output, called <b>drain</b>. When
-        diagrammed, the <b>source</b> input and <b>drain</b> output are drawn connected by a plate; Logisim draws an
-        arrowhead to indicate the direction of flow from input to output. The <b>gate</b> input is drawn connected to a
-        plate that is parallel to the plate connecting <b>source</b> to <b>drain</b>.</p>
+        לטרנזיסטור יש שתי כניסות, הנקראות <b>שער</b> ו<b>מקור</b>, ויציאה אחת הנקראת <b>drain</b>. מתי
+        בתרשים, קלט <b>מקור</b> ופלט <b>ניקוז</b> מצוירים מחוברים באמצעות לוח; לוגיסים מצייר א
+        ראש חץ לציון כיוון הזרימה מקלט לפלט. כניסת <b>שער</b> נמשכת מחוברת ל-a
+        צלחת המקבילה לצלחת המחברת את <b>מקור</b> ל<b>ניקוז</b>.</p>
     <div style="text-align: center;">
         <table>
             <tbody>
             <tr>
                 <td></td>
                 <td align="center">
-                    <em>gate</em>
+                    <em>שער</em>
                 </td>
                 <td></td>
                 <td>
@@ -91,29 +93,29 @@
                 </td>
                 <td></td>
                 <td align="center">
-                    <em>gate</em>
+                    <em>שער</em>
                 </td>
                 <td></td>
             </tr>
             <tr>
                 <td valign="bottom">
-                    <em>source</em>
+                    <em>מקור</em>
                 </td>
                 <td align="center" valign="middle">
                     <img alt="#########" src="../../../../img-libs/trans1.png">
                 </td>
                 <td valign="bottom">
-                    <em>drain</em>
+                    <em>ניקוז</em>
                 </td>
                 <td></td>
                 <td valign="bottom">
-                    <em>source</em>
+                    <em>מקור</em>
                 </td>
                 <td align="center" valign="middle">
                     <img alt="#########" src="../../../../img-libs/trans0.png">
                 </td>
                 <td valign="bottom">
-                    <em>drain</em>
+                    <em>ניקוז</em>
                 </td>
             </tr>
             <tr>
@@ -133,16 +135,16 @@
         </table>
     </div>
 
-    <p> Logisim supports two types of transistors, with slightly different behaviors described below; the P-type
-        transistor is indicated by a circle connecting the <b>gate</b> input to its plate, while the N-type transistor
-        has no such circle.
+    <p> Logisim תומכת בשני סוגים של טרנזיסטורים, עם התנהגויות שונות במקצת המתוארות להלן; מסוג P
+        הטרנזיסטור מסומן על ידי מעגל המחבר את כניסת ה<b>שער</b> לצלחת שלו, בעוד שהטרנזיסטור מסוג N
+        אין מעגל כזה.
     </p>
     <p>
-        Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or
-        there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of
-        transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on
-        the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle)
-        transmits when <b>gate</b> is 1. The behavior is summarized by the following tables.
+        בהתאם לערך שנמצא ב-<b>שער</b>, הערך ב-<b>מקור</b> עשוי להיות משודר אל <b>drain</b>; אוֹ
+        ייתכן שאין חיבור מ<b>מקור</b>, כך ש<b>ניקוז</b> נותר צף. הקביעה של
+        שידור או ניתוק תלוי בסוג הטרנזיסטור: טרנזיסטור מסוג P (מסומן בעיגול על
+        קו ה<b>שער</b>) משדר כאשר <b>שער</b> הוא 0, בעוד טרנזיסטור מסוג N (שאין לו עיגול כזה)
+        משדר כאשר <b>שער</b> הוא 1. ההתנהגות מסוכמת בטבלאות הבאות.
     </p>
     <div style="text-align: center;">
         <table class="encapsul">
@@ -310,7 +312,7 @@
                 </td>
                 <td>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    </td>
+                </td>
                 <td colspan=3>
                     <table class="truthtable">
                         <tbody>
@@ -417,7 +419,7 @@
         </table>
     </div>
     <p>
-        Or in summarized form:
+        או בצורה מסוכמת:
     </p>
     <div style="text-align: center;">
         <table class="encapsul">
@@ -536,100 +538,100 @@
             </tbody>
         </table>
         <p>
-            * If source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b
+            * אם המקור הוא <b class="uvalue">U</b>, הניקוז הוא <b class="uvalue">U</b>; אחרת ניקוז הוא <b
                 class="evalue">E</b>.
         </p>
     </div>
     <p>
-        <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and
-        <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high
-        impedance) and X (Error) in other documents</p>
+        <b class=note>הערה:</b>מכיוון ש-Logisim משתמשת בסמנים <b class="uvalue">U</b> (עכבה גבוהה / לא מוגדר) ו
+        <b class="evalue">E</b> (שגיאה) השתמשתי באותו באיורים ולא ב-Z הנפוץ יותר (גבוהה
+        עכבה) ו-X (שגיאה) במסמכים אחרים</p>
     <p>
-        If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit,
-        but its value is applied simultaneously to each of the <b>source</b> input's bits.
+        אם התכונה <b class="propertie">Data Bits</b> היא יותר מ-1, הקלט <b>gate</b> הוא עדיין סיביות בודדת,
+        אבל הערך שלו מוחל בו-זמנית על כל אחת מהסיביות של קלט ה<b>מקור</b>.
     </p>
     <p>
-        An N-type transistor behaves very similarly to a <a href="../gates/controlled.html">Controlled Buffer</a>. The
-        primary difference is that a transistor is meant for more basic circuit designs.
+        טרנזיסטור מסוג N מתנהג בצורה דומה מאוד ל<a href="../gates/controlled.html">מאגר נשלט</a>. ה
+        ההבדל העיקרי הוא שטרנזיסטור מיועד לעיצובי מעגלים בסיסיים יותר.
     </p>
     <h2>
-        Pins (assuming component faces east, gate line top/left)
+        סיכות (בהנחה שהרכיב פונה מזרחה, קו השער למעלה/שמאל)
     </h2>
     <dl>
         <dt>
-            West edge (input, bit width matches Data Bits attribute)
+            קצה מערב (קלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The component's <b>source</b> input that will transmit to the output if triggered by the <b>gate</b> input.
+            קלט <b>מקור</b> של הרכיב שישדר לפלט אם יופעל על ידי כניסת <b>שער</b>.
         </dd>
         <dt>
-            North edge (input, bit width 1)
+            קצה צפון (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            The component's <b>gate</b> input. For P-type transistors, the transistor will transmit if the <b>gate</b>
-            value is <b class="zerov">0</b>; for N-type transistors, this will trigger the transistor if the <b>gate</b>
-            value is <b class="unov">1</b>.
+            קלט <b>שער</b> של הרכיב. עבור טרנזיסטורים מסוג P, הטרנזיסטור ישדר אם ה<b>שער</b>
+            הערך הוא <b class="zerov">0</b>; עבור טרנזיסטורים מסוג N, זה יפעיל את הטרנזיסטור אם ה<b>שער</b>
+            הערך הוא <b class="unov">1</b>.
         </dd>
         <dt>
-            East edge (output, bit width matches Data Bits attribute)
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or
-            will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is
-            floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output
-            will be an error value (<b class="evalue">E</b>).
+            הפלט של הרכיב, שיתאים לקלט <b>מקור</b> אם מצוין על ידי קלט <b>gate</b>, או
+            יהיה צף אם הקלט <b>שער</b> הוא שלילה של מה שמציין שלילה. אם <b>שער</b> הוא
+            ערך צף (<b class="uvalue">U</b>) או ערך שגיאה (<b class="evalue">E</b>), ולאחר מכן הפלט
+            יהיה ערך שגיאה (<b class="evalue">E</b>).
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b>
-        alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b
-            class="propertie">Facing</b> attribute.
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו ומקשי החצים משנים את ה<b
+            class="propertie">מאפיין מול</b>.
     </p>
     <div class="attliste">
         <dl>
             <dt>
-                <b class="propertie">Type</b>
+                <b class="propertie">סוג</b>
             </dt>
             <dd>
-                Determines whether the transistor is P-type or N-type.
+                קובע אם הטרנזיסטור הוא מסוג P או מסוג N.
             </dd>
             <dt>
-                <b class="propertie">Facing</b>
+                <b class="propertie">לפנים</b>
             </dt>
             <dd>
-                The direction of the component (its output relative to its input).
+                כיוון הרכיב (הפלט שלו ביחס לקלט שלו).
             </dd>
             <dt>
-                <b class="propertie">Gate Location</b>
+                <b class="propertie">מיקום השער</b>
             </dt>
             <dd>
-                The location of the gate input.
+                מיקום כניסת השער.
             </dd>
             <dt>
-                <b class="propertie">Data Bits</b>
+                <b class="propertie">סיביות נתונים</b>
             </dt>
             <dd>
-                The bit width of the component's inputs and outputs.
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
             </dd>
         </dl>
     </div>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
     </p>
 </div>
 </body>

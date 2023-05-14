@@ -1,57 +1,57 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <META content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created"/>
     <meta content="2023-04-29T16:00:00.000000000" name="changed"/>
     <META content="text/html; charset=UTF-8" http-equiv="content-type">
-    <META content="en" http-equiv="Content-Language">
-    <title>The File tab</title>
+    <META content="he" http-equiv="Content-Language">
+    <title>הכרטיסייה קובץ</title>
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>The File tab</h1>
+<h1>הכרטיסייה קובץ</h1>
 
-<p>The File tab allows you to specify a file into which the log should
-    be placed.</p>
+<p>הכרטיסייה קובץ מאפשרת לך לציין קובץ שלתוכו יומן הרישום
+    להיות ממוקם.</p>
 
-<p align="center"><img height="387" src="../../../img-guide/log-file.png" width="466" alt=""></p>
+<p align="center"><img height="387" src="../../../img-guide/log-file.png" width="466" alt=""></p >
 
-<p>At the top is an indicator of whether file logging is in progress and
-    a button for enabling or disabling it. (Note that you cannot enable it
-    until a file is selected below.) The button allows you to pause and
-    restart file entry. When you switch in the project window to viewing
-    another simulation, the file logging is automatically halted; if you
-    return to the original one and want logging to continue, you will need
-    to re-enable the file logging manually using the button at top.</p>
+<p>למעלה מופיע אינדיקטור של האם רישום קבצים מתבצע
+    כפתור להפעלה או השבתה. (שים לב שאינך יכול להפעיל אותו
+    עד שנבחר קובץ למטה.) הכפתור מאפשר לך להשהות ו
+    הפעל מחדש את הזנת הקובץ. כאשר אתה עובר בחלון הפרויקט לצפייה
+    סימולציה נוספת, רישום הקבצים נעצר אוטומטית; אם אתה
+    לחזור למקור ולרצות שהרישום ימשיך, תצטרך
+    כדי להפעיל מחדש את רישום הקבצים באופן ידני באמצעות הכפתור בחלק העליון.</p>
 
-<p>In the middle is an indicator of what file is being logged to. To
-    change it, use the Select... button. On selecting a file, file logging
-    will automatically start. If you select a pre-existing file, Logisim
-    will ask whether you want to overwrite the file or append the new
-    entries onto the end.</p>
+<p>באמצע יש אינדיקטור לאיזה קובץ נכנס. ל
+    שנה אותו, השתמש בלחצן בחר... בבחירת קובץ, רישום קבצים
+    יתחיל אוטומטית. אם תבחר קובץ קיים מראש, Logisim
+    ישאל אם אתה רוצה להחליף את הקובץ או להוסיף את החדש
+    ערכים לסוף.</p>
 
-<p>At bottom you can control whether a header line should be placed into
-    the file indicating which items are in the selection. If header lines
-    are added, then a new header line will be placed into the file whenever
-    the selection changes.</p>
+<p>למטה תוכל לקבוע אם יש להציב שורת כותרת ב
+    הקובץ המציין אילו פריטים נמצאים בבחירה. אם שורות כותרת
+    יתווספו, אז תוצב שורת כותרת חדשה בקובץ בכל פעם
+    הבחירה משתנה.</p>
 
-<h2>File format</h2>
+<h2>פורמט קובץ</h2>
 
-<p>Entries are placed into the file in tab-delimited format
-    corresponding closely to what appears under the Table tab. (One
-    difference is that any header lines will give the full path to
-    components lying in subcircuits.) The format is intentionally simple so
-    that you can feed it into another program for processing, such as a
-    Python/Perl script or a spreadsheet program.</p>
+<p>ערכים ממוקמים בקובץ בפורמט מופרד בטאבים
+    תואם באופן הדוק למה שמופיע תחת הכרטיסייה טבלה. (אחד
+    ההבדל הוא שכל שורות כותרת יתנו את הנתיב המלא
+    רכיבים השוכבים במעגלי משנה.) הפורמט פשוט בכוונה ולכן
+    שאתה יכול להזין אותו לתוכנית אחרת לעיבוד, כגון א
+    סקריפט Python/Perl או תוכנית גיליון אלקטרוני.</p>
 
-<p>So that a script can process the file at the same time as Logisim
-    is running, Logisim will flush the new records onto the disk every
-    500 ms. Note that Logisim may also intermittently close and later
-    re-open the file during the simulation, particularly if several seconds
-    have elapsed without any new records being added.</p>
+<p>כדי שסקריפט יוכל לעבד את הקובץ במקביל ללוגיסים
+    פועל, Logisim תשטוף את הרשומות החדשות לדיסק כל פעם
+    500 אלפיות השנייה שימו לב שגם לוגיסים עשויה להיסגר לסירוגין ומאוחר יותר
+    פתח מחדש את הקובץ במהלך הסימולציה, במיוחד אם מספר שניות
+    חלפו מבלי שנוספו רשומות חדשות.</p>
 
-<p><b>Next:</b> <a href="../index.html">User's Guide</a>.</p>
+<p><b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.</p>
 
 </body>
 </html>

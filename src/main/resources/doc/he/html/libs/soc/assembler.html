@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         assembler
     </title>
@@ -14,175 +14,175 @@
 <body>
 <div class="maindiv">
     <h1>
-        Introduction
+        מבוא
     </h1>
     <p>
-        The build in assembler of logisim-evolution supports besides the instructions provided by the used processor
-        several features as described in this help page.The assembler uses syntax highlighting and error detection.
-        Furthermore it translates the instructions into byte-code that can be executed by the processor. Although the
-        structure of the assembler would allow to write out an elf-file this feature is not yet implemented.
+        האסמבלר המובנה של logisim-evolution תומך מלבד ההוראות שסופקו על ידי המעבד המשומש
+        מספר תכונות כמתואר בדף עזרה זה. האסמבלר משתמש בהדגשת תחביר וזיהוי שגיאות.
+        יתר על כן, הוא מתרגם את ההוראות לקוד בתים שניתן לבצע על ידי המעבד. למרות ש
+        המבנה של האסמבלר יאפשר לכתוב קובץ elf-file תכונה זו עדיין לא מיושמת.
     </p>
     <h1>
-        Using the GUI
+        שימוש ב-GUI
     </h1>
     <p>
-        When opening the assembler you are presented with a new window as shown below:
+        בעת פתיחת האסמבלר מוצג בפניך חלון חדש כפי שמוצג להלן:
     </p>
     <p>
         <img alt="assembler" src="../../../../img-guide/assembler_gui.png" title="The assembler gui">
     </p>
     <p>
-        The GUI consists of three components:
+        ה-GUI מורכב משלושה מרכיבים:
     </p>
     <ol>
-        <li>The tool bar which is on top of the editing area.
+        <li>סרגל הכלים שנמצא בחלק העליון של אזור העריכה.
         </li>
-        <li>The line indication bar with error indicators to the left of the editing area.
+        <li>שורת חיווי הקו עם מחווני שגיאה משמאל לאזור העריכה.
         </li>
-        <li>The editing area.
+        <li>אזור העריכה.
         </li>
     </ol>
     <h2>
-        The toolbar
+        סרגל הכלים
     </h2>
     <p>
-        The toolbar provides the main functions of the assembler by use of several icons:
+        סרגל הכלים מספק את הפונקציות העיקריות של האסמבלר באמצעות מספר אייקונים:
     </p>
     <p>
-        <img alt="load" class="notscal" src="../../../../img-guide/assembler_load.png"> This icon activates the loading
-        of an assembly file into the editing area. The load function can also be activated by the keyboard shortcut
+        <img alt="load" class="notscal" src="../../../../img-guide/assembler_load.png"> סמל זה מפעיל את הטעינה
+        של קובץ assembly לתוך אזור העריכה. ניתן להפעיל את פונקציית הטעינה גם על ידי קיצור המקלדת
         (Ctrl-L).
     </p>
     <p>
-        <img alt="save" class="notscal" src="../../../../img-guide/assembler_save.png" title="assembler save"> This icon
-        activates the saving of the current contents in the editing area. The save function can also be activated by the
-        keyboard shortcut (Ctrl-S).
+        <img alt="save" class="notscal" src="../../../../img-guide/assembler_save.png" title="assembler save"> סמל זה
+        מפעיל את שמירת התוכן הנוכחי באזור העריכה. ניתן להפעיל את פונקציית השמירה גם על ידי
+        קיצור מקשים (Ctrl-S).
     </p>
     <p>
-        <img alt="save as" class="notscal" src="../../../../img-guide/assembler_save_as.png"> This icon activates the
-        save-as function of the current contents in the editing area. The save-as function has no keyboard shortcut.
+        <img alt="שמור בשם" class="notscal" src="../../../../img-guide/assembler_save_as.png"> סמל זה מפעיל את
+        שמירה-כפונקציה של התוכן הנוכחי באזור העריכה. לפונקציית שמירה בשם אין קיצור מקלדת.
     </p>
     <p>
-        <img alt="assemble" class="notscal" src="../../../../img-guide/assembler_assemble.png"> This icon activates the
-        assemble function of the current contents in the editing area. The assemble function cal also be activated by
-        the keyboard shortcut (ALT-A).
+        <img alt="assemble" class="notscal" src="../../../../img-guide/assembler_assemble.png"> סמל זה מפעיל את
+        פונקציית הרכבה של התוכן הנוכחי באזור העריכה. פונקציית ההרכבה cal גם להיות מופעלת על ידי
+        קיצור המקשים (ALT-A).
     </p>
     <p>
-        <img alt="previous error" class="notscal" src="../../../../img-guide/assembler_prev_error.png"> This icon jumps
-        to an error detected before the current cursor position. This function is also available by the keyboard
-        shortcut (Ctrl-P).
+        <img alt="שגיאה קודמת" class="notscal" src="../../../../img-guide/assembler_prev_error.png"> סמל זה קופץ
+        לשגיאה שזוהתה לפני מיקום הסמן הנוכחי. פונקציה זו זמינה גם על ידי המקלדת
+        קיצור דרך (Ctrl-P).
     </p>
     <p>
-        <img alt="next error" class="notscal" src="../../../../img-guide/assembler_next_error.png"> This icon jumps to
-        an error detected after the current cursor position. This function is also available by the keyboard shortcut
+        <img alt="השגיאה הבאה" class="notscal" src="../../../../img-guide/assembler_next_error.png"> סמל זה קופץ אל
+        שגיאה שזוהתה לאחר מיקום הסמן הנוכחי. פונקציה זו זמינה גם על ידי קיצור המקלדת
         (Ctrl-N).
     </p>
     <p>
-        <img alt="run" class="notscal" src="../../../../img-guide/assembler_run.png"> This icon activated the assemble
-        function and, when no errors are detected, loads the program into memory. The run function can also be activated
-        by the keyboard shortcut (ALT-R).
+        <img alt="run" class="notscal" src="../../../../img-guide/assembler_run.png"> סמל זה הפעיל את ההרכבה
+        פונקציה וכאשר לא מזוהות שגיאות, טוען את התוכנית לזיכרון. ניתן להפעיל גם את פונקציית הריצה
+        על ידי קיצור המקלדת (ALT-R).
     </p>
     <p>
-        <img alt="help" class="notscal" src="../../../../img-guide/assembler_help.png"> This icon show this help screen.
+        <img alt="help" class="notscal" src="../../../../img-guide/assembler_help.png"> סמל זה מציג מסך עזרה זה.
     </p>
     <p>
-        To the right of the toolbar the current line of the cursor and the total number of lines in the editing area are
-        displayed. In case this indicator lights up yellow there are changes detected in the editing area.
-    </p>
-    <h2>
-        The line indicator bar
-    </h2>
-    <p>
-        The line indicator bar hold, besides the current line number, also the error indicator icons. Hovering over the
-        error indicator bar will show (one of) the error(s) detected on the given line in the editing area.
+        מימין לסרגל הכלים השורה הנוכחית של הסמן ומספר השורות הכולל באזור העריכה נמצאים
+        מוצג. במקרה שהמחוון הזה נדלק בצהוב, יתגלו שינויים באזור העריכה.
     </p>
     <h2>
-        The editing area
+        סרגל חיווי הקו
     </h2>
     <p>
-        The editing area contains all the code you might want to use. In case your code contains errors (after
-        activating the assemble or run function) the errors will be displayed by an error icon in the line indicator bar
-        and a small red line underneath the text causing the problem. hovering over this text with the mouse will
-        display the error cause. It is important to note that, when multiple errors are present in one line, only one
-        will be displayed by the error marker in the line indicator bar. Furthermore, in case of calculations (like in
-        line 17 in the above showed image) it might be that only the 8 is marked instead of the complete calculation.
+        סרגל מחוון הקו מכיל, מלבד מספר השורה הנוכחי, גם את סמלי מחוון השגיאה. מרחף מעל ה
+        סרגל מחוון השגיאה יציג (אחת מהשגיאות) שזוהו בשורה הנתונה באזור העריכה.
+    </p>
+    <h2>
+        אזור העריכה
+    </h2>
+    <p>
+        אזור העריכה מכיל את כל הקוד שאולי תרצה להשתמש בו. במקרה שהקוד שלך מכיל שגיאות (אחרי
+        הפעלת פונקציית ההרכבה או ההפעלה) השגיאות יוצגו על ידי סמל שגיאה בסרגל מחוון הקו
+        וקו אדום קטן מתחת לטקסט שגורם לבעיה. מרחף מעל הטקסט הזה עם העכבר
+        להציג את סיבת השגיאה. חשוב לציין שכאשר קיימות שגיאות מרובות בשורה אחת, רק אחת
+        יוצג על ידי סמן השגיאה בסרגל מחוון הקו. יתר על כן, במקרה של חישובים (כמו ב
+        שורה 17 בתמונה שהוצגה למעלה) יכול להיות שרק ה-8 מסומן במקום החישוב המלא.
     </p>
     <h1>
-        Using calculations
+        שימוש בחישובים
     </h1>
     <p>
-        The assembler supports two types of calculations:
+        האסמבלר תומך בשני סוגי חישובים:
     </p>
     <ol>
-        <li>Program counter (PC) relative calculations
+        <li>חישובים יחסיים של מונה תוכניות (PC).
         </li>
-        <li>Absolute calculations
+        <li>חישובים מוחלטים
         </li>
     </ol>
     <h2>
-        Program counter relative calculations
+        תוכנית נגד חישובים יחסיים
     </h2>
     <p>
-        In case an address is required relative to the current program counter these calculations can be performed by
-        using the reserved register <b>pc</b>. Also the usage of labels and constants are allowed in these calculations.
+        במקרה שנדרשת כתובת ביחס למונה התוכנית הנוכחית ניתן לבצע חישובים אלו על ידי
+        באמצעות הפנקס השמור <b>pc</b>. כמו כן, השימוש בתוויות וקבועים מותר בחישובים אלה.
     </p>
     <p>
-        Examples: <b>pc</b>+8 , <b>pc</b>-0x40, mylabel-<b>pc</b>, etc.
-    </p>
-    <h2>
-        Absolute calculations
-    </h2>
-    <p>
-        In absolute calculations a constant value is calculated. To perform absolute calculations labels and constants
-        are allowed.
+        דוגמאות: <b>pc</b>+8 , <b>pc</b>-0x40, mylabel-<b>pc</b> וכו'.
     </p>
     <h2>
-        Calculation types
+        חישובים מוחלטים
     </h2>
     <p>
-        Following calculation types are supported:
+        בחישובים מוחלטים מחושב ערך קבוע. לביצוע חישובים מוחלטים תוויות וקבועים
+        מורשים.
+    </p>
+    <h2>
+        סוגי חישוב
+    </h2>
+    <p>
+        סוגי החישוב הבאים נתמכים:
     </p>
     <ul>
-        <li>+ =&gt; Addition
+        <li>+ =&gt; חיבור
         </li>
-        <li>- =&gt; Subtraction
+        <li>- =&gt; חִסוּר
         </li>
-        <li>* =&gt; Multiplication
+        <li>* =&gt; כֶּפֶל
         </li>
-        <li>/ =&gt; Integer division
+        <li>/ =&gt; חלוקה שלמים
         </li>
-        <li>% =&gt; Integer remainder
+        <li>% =&gt; שארית מספר שלם
         </li>
-        <li>&lt;&lt; =&gt; Shift left
+        <li>&lt;&lt; =&gt; העבר שמאלה
         </li>
-        <li>&gt;&gt; =&gt; Shift right
+        <li>&gt;&gt; =&gt; העבר ימינה
         </li>
     </ul>
-    <em>Note:</em> Currently the parentheses are not supported.<br>
+    <em>הערה:</em> כרגע אין תמיכה בסוגריים.<br>
     <h2>
-        Calculation order
+        סדר חישוב
     </h2>
     <p>
-        <i><b>Important:</b></i> For the moment the calculations are performed left-to-right independent of the
-        hierarchy of the operator!
+        <i><b>חשוב:</b></i> כרגע החישובים מבוצעים משמאל לימין ללא תלות ב
+        היררכיה של המפעיל!
     </p>
     <p>
-        This means:
+        זה אומר:
     </p>
     <p>
-        5+10*2 is calculated as (5+10)*2 = 30
+        5+10*2 מחושב כ-(5+10)*2 = 30
     </p>
     <p>
-        10*2+5 is calculated as (10*2)+5 = 25
+        10*2+5 מחושב כ-(10*2)+5 = 25
     </p>
     <p>
-        It is on the todo list to improve this poor calculation support.
+        זה ברשימת המשימות כדי לשפר את תמיכת החישוב הגרועה הזו.
     </p>
     <h1>
-        Using macros
+        שימוש בפקודות מאקרו
     </h1>
     <p>
-        The build in assembler supports macros. The syntax for a macro is:
+        ה-Build-in assembler תומך בפקודות מאקרו. התחביר עבור מאקרו הוא:
     </p>
     <p>
         <strong>.macro</strong> <em>&lt;name&gt;</em> <em>&lt;nr_of_variables&gt;</em>
@@ -194,149 +194,153 @@
         <strong>.endm</strong>
     </p>
     <p>
-        A macro definition needs two parameters:
+        הגדרת מאקרו צריכה שני פרמטרים:
     </p>
     <ol>
         <li>
-            <em>&lt;name&gt;</em> This parameter is the name of the macro to be used in the rest of your program.
+            <em>&lt;name&gt;</em> פרמטר זה הוא שם המאקרו שיש להשתמש בו בשאר התוכנית שלך.
         </li>
         <li>
-            <em>&lt;nr_of_variables&gt;</em> This parameter specifies the number of variables that are used inside the
-            macro. This parameter should be a positive integer value (e.g. 0,1,2,....)
+            <em>&lt;nr_of_variables&gt;</em> פרמטר זה מציין את מספר המשתנים המשמשים בתוך
+            מאקרו. פרמטר זה צריך להיות ערך שלם חיובי (למשל 0,1,2,....)
         </li>
     </ol>
     <h2>
-        Allowed constructs inside a macro
+        מבנים מותרים בתוך מאקרו
     </h2>
     <p>
-        Inside a macro you can use only instructions, labels, calculations, and calls to other macros. It is important
-        to note that labels defined inside the &lt;BODY&gt; of a macro are local to the macro and cannot be referenced
-        outside the macro.
+        בתוך מאקרו אתה יכול להשתמש רק בהוראות, תוויות, חישובים וקריאות לפקודות מאקרו אחרות. זה חשוב
+        לשים לב שתוויות המוגדרות בתוך &lt;BODY&gt; של מאקרו הם מקומיים למאקרו ולא ניתן להתייחס אליהם
+        מחוץ למאקרו.
     </p>
     <h2>
-        Using variables inside a macro
+        שימוש במשתנים בתוך מאקרו
     </h2>
     <p>
-        If the parameter <em>&lt;nr_of_variables&gt;</em> is a number bigger than 0, the macro must be called with this
-        number of values. Each of this values can be referenced inside a macro with the indicator @<em>&lt;x&gt;</em>
-        where <em>&lt;x&gt;</em> is a number. Hence @1 references parameter 1, @2 parameter 2, etc.
+        אם הפרמטר <em>&lt;nr_of_variables&gt;</em> הוא מספר גדול מ-0, יש לקרוא למאקרו עם זה
+        מספר ערכים. ניתן להפנות לכל אחד מהערכים הללו בתוך מאקרו עם המחוון @<em>&lt;x&gt;</em>
+        כאשר <em>&lt;x&gt;</em> הוא מספר. מכאן ש-@1 מתייחס לפרמטר 1, לפרמטר @2 2 וכו'.
     </p>
     <h2>
-        Using macro calls inside a macro
+        שימוש בקריאות מאקרו בתוך מאקרו
     </h2>
     <p>
-        Macros allow to call other macros, however there are two restrictions:
+        פקודות מאקרו מאפשרות להתקשר לפקודות מאקרו אחרות, אולם קיימות שתי הגבלות:
     </p>
     <ol>
-        <li>A macro cannot call itself; recursive macros are not supported.
+        <li>מאקרו אינו יכול לקרוא לעצמו; פקודות מאקרו רקורסיביות אינן נתמכות.
         </li>
-        <li>Two macros cannot call each other; circular calls are not supported.
+        <li>שתי פקודות מאקרו אינן יכולות לקרוא זו לזו; שיחות מעגליות אינן נתמכות.
         </li>
     </ol>
     <h1>
-        Assembler directives
+        הנחיות אסמבלר
     </h1>
     <p>
-        There are several directives supported as described below.
+        קיימות מספר הנחיות הנתמכות כמתואר להלן.
     </p>
     <h2>
-        Labels
+        תוויות
     </h2>
     <p>
-        Labels can be used by the syntax <em>&lt;name&gt;</em><strong>:</strong> The <em>&lt;name&gt;</em> must start
-        with a letter and may contain letters (a..z;A..Z), numbers (0..9), and underscores (_). Note that labels
-        specified inside a macro are local to the macro. All other labels are global (hence a global label can be
-        referenced inside a macro).
+        ניתן להשתמש בתוויות על ידי התחביר <em>&lt;name&gt;</em><strong>:</strong> ה<em>&lt;name&gt;</em> חייב להתחיל
+        עם אות ויכול להכיל אותיות (a..z;A..Z), מספרים (0..9) וקווים תחתונים (_). שימו לב שתוויות
+        המצוינים בתוך מאקרו הם מקומיים למאקרו. כל שאר התוויות הן גלובליות (לכן תווית גלובלית יכולה להיות
+        הפניה בתוך מאקרו).
     </p>
     <h2>
-        Named constants
+        קבועים בשם
     </h2>
     <p>
-        Named constants can be defined by the syntax <strong>.equ</strong> <em>&lt;name&gt;</em> <em>&lt;value&gt;</em>.
-        The <em>&lt;name&gt;</em> parameter must start with a letter and may contain letters (a..z;A..Z), numbers
-        (0..9), and underscores (_). The <em>&lt;value&gt;</em> field can contain a number or a calculation.
+        ניתן להגדיר קבועים בעלי שם על ידי התחביר <strong>.equ</strong> <em>&lt;name&gt;</em> <em>&lt;value&gt;</em>.
+        הפרמטר <em>&lt;name&gt;</em> חייב להתחיל באות ויכול להכיל אותיות (a..z;A..Z), מספרים
+        (0..9), וקווים תחתונים (_). השדה <em>&lt;value&gt;</em> יכול להכיל מספר או חישוב.
     </p>
     <h2>
-        Sections
+        מקטעים
     </h2>
     <p>
-        You can divide your program into sections by using <strong>.section</strong> <em>&lt;name&gt;</em>. The <em>&lt;name&gt;</em>
-        parameter must start with a letter and may contain letters (a..z;A..Z), numbers (0..9), and underscores (_).
-        There are four predefined section names being <strong>.text</strong>, <strong>.data</strong>,
-        <strong>.rodata</strong>, <strong>.bss</strong>. These do not require the <strong>.section</strong> keyword in
-        front of them.
+        אתה יכול לחלק את התוכנית שלך למקטעים באמצעות <strong>.section</strong> <em>&lt;name&gt;</em>.
+        ה<em>&lt;name&gt;</em>
+        הפרמטר חייב להתחיל באות ויכול להכיל אותיות (a..z;A..Z), מספרים (0..9) וקווים תחתונים (_).
+        ישנם ארבעה שמות מקטעים מוגדרים מראש שהם <strong>.text</strong>, <strong>.data</strong>,
+        <strong>.rodata</strong>, <strong>.bss</strong>. אלה אינם דורשים את מילת המפתח <strong>.section</strong> ב
+        מולם.
     </p>
     <h2>
-        Remarks
+        הערות
     </h2>
     <p>
-        Remarks are supported by placing a <strong>#</strong> in front of them and extend until the end of the line.
-        Multi line remarks can be realized by putting in front of each line the <strong>#</strong>.
+        הערות נתמכות על ידי הצבת <strong>#</strong> לפניהן ומתארכות עד סוף השורה.
+        ניתן לממש הערות מרובות שורות על ידי הצבת ה<strong>#</strong> לפני כל שורה.
     </p>
     <h2>
-        Strings
+        מחרוזות
     </h2>
     <p>
-        Strings can be specified by <strong>.string "</strong><em>&lt;str&gt;</em><strong>"</strong>,
-        <strong>.ascii"</strong><em>&lt;str&gt;</em><strong>"</strong>, or
-        <strong>.asciz"</strong><em>&lt;str&gt;</em><strong>"</strong>. The <em>&lt;str&gt;</em> can contain any
-        contents and may be multiple lines. Following escape codes can be used:
+        ניתן לציין מחרוזות על ידי <strong>.string "</strong><em>&lt;str&gt;</em><strong>"</strong>,
+        <strong>.ascii"</strong><em>&lt;str&gt;</em><strong>"</strong>, או
+        <strong>.asciz"</strong><em>&lt;str&gt;</em><strong>"</strong>. ה-<em>&lt;str&gt;</em> יכול להכיל כל
+        תוכן ויכול להיות מספר שורות. ניתן להשתמש בקודי בריחה הבאים:
     </p>
     <ol>
-        <li>\n -&gt; insert a new-line character.
+        <li>\n -&gt; הוסף תו שורה חדשה.
         </li>
-        <li>\" -&gt; insert a double quote.
+        <li>\" -&gt; הוסף מרכאות כפולות.
         </li>
-        <li>\t -&gt; insert a tab-character.
+        <li>\t -&gt; הכנס תו טאב.
         </li>
-        <li>\r -&gt; insert a carriage return character.
+        <li>\r -&gt; הכנס תו החזרת עגלה.
         </li>
-        <li>\f -&gt; insert a form feed.
+        <li>\f -&gt; הוסף הזנת טופס.
         </li>
-        <li>\\ -&gt; insert a back slash.
+        <li>\\ -&gt; הכנס לוכסן אחורי.
         </li>
     </ol>
     <p>
-        Both <strong>.string</strong> and <strong>.asciz</strong> will automatically insert a zero character at the end
-        of the string.
+        גם <strong>.string</strong> וגם <strong>.asciz</strong> יוסיפו אוטומטית תו אפס בסוף
+        של המחרוזת.
     </p>
     <h2>
-        Memory addresses
+        כתובות זיכרון
     </h2>
     <p>
-        By default the assembler will start at memory address 0x00000000. To be able to change the current memory
-        address the directive <strong>.org</strong> <em>&lt;address&gt;</em> can be used, where the
-        <em>&lt;address&gt;</em> is a value within a 32-bit address space. <em>Note:</em> only inter-section overlap
-        will be checked by the assembler. If inside a section an address is specified that is already being occupied,
-        the values are overwritten.
+        כברירת מחדל, האסמבלר יתחיל בכתובת הזיכרון 0x00000000. כדי להיות מסוגל לשנות את הזיכרון הנוכחי
+        כתובת בהנחיה <strong>.org</strong> ניתן להשתמש ב<em>&lt;address&gt;</em>, כאשר
+        <em>&lt;address&gt;</em> הוא ערך בתוך מרחב כתובות של 32 סיביות. <em>הערה:</em> רק חפיפה בין מקטעים
+        ייבדק על ידי ההרכב. אם בתוך קטע צוינה כתובת שכבר תפוסה,
+        הערכים מוחלפים.
     </p>
     <h2>
-        Constants
+        קבועים
     </h2>
     <p>
-        There are several ways to fill the memory with constant values. Besides from the byte-based way, all the others
-        use a little-endian storage method, meaning that the least significant byte is stored at the lowest memory
-        address, and the most significant byte at the highest memory address. The supported directives are:
+        ישנן מספר דרכים למלא את הזיכרון בערכים קבועים. חוץ מהדרך המבוססת על בתים, כל האחרים
+        השתמש בשיטת אחסון קטנה-אנדיאנית, כלומר הבתים הכי פחות משמעותיים מאוחסנים בזיכרון הנמוך ביותר
+        כתובת, והבייט המשמעותי ביותר בכתובת הזיכרון הגבוהה ביותר. ההנחיות הנתמכות הן:
     </p>
     <ol>
         <li>
-            <strong>.byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> This directive stores the value(s)
-            interpreted as bytes one after the other into memory.
+            <strong>.byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> הוראה זו מאחסנת את הערכים
+            מתפרשים כבייטים בזה אחר זה לזיכרון.
         </li>
         <li>
-            <strong>.half</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.2byte</strong> <em><em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em></em>
-            <strong>.short</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> These directives store the value(s)
-            interpreted as 16-bit values one after the other into memory.
+            <strong>.half</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.2byte</strong> <em><em>&lt
+            ;value1&gt;[,&lt;value2&gt;,...]<br></em></em>
+            <strong>.short</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> הנחיות אלו מאחסנות את הערכים
+            מתפרשים כערכים של 16 סיביות בזה אחר זה לזיכרון.
         </li>
         <li>
-            <strong>.word</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.4byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em>
-            <strong>.long</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> These directives store the value(s)
-            interpreted as 32-bit values one after the other into memory.
+            <strong>.word</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.4byte</strong> <em>&lt;value1&gt;
+            [,&lt;value2&gt;,...]<br></em>
+            <strong>.long</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> הנחיות אלו מאחסנות את הערכים
+            מתפרשים כערכים של 32 סיביות בזה אחר זה לתוך הזיכרון.
         </li>
         <li>
-            <strong>.dword</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.8byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em>
-            <strong>.quad</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> These directives store the value(s)
-            interpreted as 64-bit values one after the other into memory.
+            <strong>.dword</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.8byte</strong> <em>&lt;value1&gt;
+            [,&lt;value2&gt;,...]<br></em>
+            <strong>.quad</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> הנחיות אלו מאחסנות את הערכים
+            מתפרשים כערכים של 64 סיביות בזה אחר זה לתוך הזיכרון.
         </li>
     </ol>
 </div>

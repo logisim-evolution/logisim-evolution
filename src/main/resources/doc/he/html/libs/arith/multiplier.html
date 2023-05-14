@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Multiplier
+        מַכפִּיל
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
@@ -21,23 +21,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Arithmetic</a>
+                <a href="index.html">חשבון</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 20
+                2.0 בטא 20
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/multiplier.png"
@@ -47,89 +47,89 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        This component multiplies two values coming in via the west inputs and outputs the product on the east output.
-        The component is designed so that it can be cascaded with other multipliers to multiply a multiplicand with more
-        bits than is possible with a single multiplier: The carry-in input provides a multi-bit value to be added into
-        the product (if it is specified), and a carry-out output provides the upper half of the product result, which
-        can be fed into another multiplier.
+        רכיב זה מכפיל שני ערכים הנכנסים דרך כניסות המערב ומוציא את המוצר בפלט המזרחי.
+        הרכיב תוכנן כך שניתן לשלב אותו עם מכפילים אחרים כדי להכפיל כפל עם יותר
+        סיביות ממה שאפשר עם מכפיל יחיד: קלט ה-carrier-in מספק ערך מרובה סיביות שיש להוסיף לתוכו
+        המוצר (אם הוא צוין), ופלט ביצוע מספק את המחצית העליונה של תוצאת המוצר, אשר
+        ניתן להזין למכפיל אחר.
     </p>
     <p>
-        If the multiplicand, the multiplier, or the carry-in input contain some floating bits or some error bits, then
-        the component will perform a partial multiplication. That is, it will compute as many low-order bits as
-        possible. But above the floating or error bit, the result will have floating or error bits. Note that if the
-        carry-in input is completely floating, then it will be assumed to be all-zeroes.
+        אם הכפיל, המכפיל או הקלט הנכנס מכילים כמה סיביות צפות או כמה סיביות שגיאה, אז
+        הרכיב יבצע כפל חלקי. כלומר, הוא יחשב כמה ביטים מסדר נמוך ככל
+        אפשרי. אבל מעל סיביות צף או שגיאה, לתוצאה יהיו סיביות צפות או שגיאה. שימו לב שאם ה
+        קלט ה-carrier-in צף לחלוטין, ואז נניח שהוא אפסים לחלוטין.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <dl>
         <dt>
-            West edge, north end (input, bit width matches Data Bits attribute)
+            קצה מערב, קצה צפוני (קלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The multiplicand (that is, the first of the two numbers to multiply).
+            הכפל (כלומר, הראשון מבין שני המספרים להכפיל).
         </dd>
         <dt>
-            West edge, south end (input, bit width matches Data Bits attribute)
+            קצה מערבי, קצה דרום (קלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The multiplier (that is, the second of the two numbers to multiply).
+            המכפיל (כלומר, השני מבין שני המספרים שיש להכפיל).
         </dd>
         <dt>
-            North edge, labeled <var>c in</var> (input, bit width matches Data Bits attribute)
+            קצה צפון, שכותרתו <var>c in</var> (קלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            A carry value to add into the product. If all bits of the value are unknown (i.e., floating), then they are
-            assumed to be 0.
+            ערך נשיאה להוסיף למוצר. אם כל הביטים של הערך אינם ידועים (כלומר, צפים), אז הם כן
+            ההנחה היא 0.
         </dd>
         <dt>
-            East edge (output, bit width matches Data Bits attribute)
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The lower <var>dataBits</var> bits of the product of the two values coming in the west edge, plus the
-            <var>c</var><sub><var>in</var></sub> value.
+            הסיביות התחתונות של <var>dataBits</var> של המכפלה של שני הערכים המגיעים בקצה המערבי, בתוספת ה-
+            ערך <var>c</var><sub><var>in</var></sub>.
         </dd>
         <dt>
-            South edge, labeled <var>c out</var> (output, bit width matches Data Bits attribute)
+            קצה דרום, שכותרתו <var>c out</var> (פלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The upper <var>dataBits</var> bits of the product.
+            הסיביות העליונות של <var>dataBits</var> של המוצר.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b>
-        alter its <b class="propertie">Data Bits</b> attribute.
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> דרך <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו.
     </p>
     <div class="attliste">
         <dl>
             <dt>
-                <b class="propertie">Data Bits</b>
+                <b class="propertie">סיביות נתונים</b>
             </dt>
             <dd>
-                The bit width of the values to be multiplied and of the result.
+                רוחב הסיביות של הערכים שיש להכפיל ושל התוצאה.
             </dd>
         </dl>
     </div>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
     </p>
 </div>
 </body>

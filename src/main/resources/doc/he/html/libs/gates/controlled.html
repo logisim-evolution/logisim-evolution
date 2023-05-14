@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Controlled Buffer/Inverter
+        מאגר/מהפך מבוקר
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
@@ -28,7 +28,7 @@
             </td>
             <td valign="center">
                 <h1>
-                    <em>Controlled Buffer/Inverter</em>
+                    <em>מאגר/מהפך מבוקר</em>
                 </h1>
             </td>
         </tr>
@@ -38,23 +38,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Gates</a>
+                <a href="index.html">שערים</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 1
+                2.0 בטא 1
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <table>
@@ -77,25 +77,25 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The controlled buffer and inverter often called <em>three-state buffers/inverters</em>, each have a one-bit
-        "control" input pin on the south side. The value at this control pin affects how the component behaves:
+        המאגר והמהפך המבוקרים הנקראים לעתים קרובות <em>3-state buffers/inverters</em>, לכל אחד מהם יש סיביות אחת
+        פין קלט "שליטה" בצד הדרומי. הערך בפין בקרה זה משפיע על אופן הפעולה של הרכיב:
     </p>
     <ul>
-        <li>When the value on this pin is <b class="unov">1</b> then the component behaves just like the respective
-            component a <a href="buffer.html">buffer</a> or a <a href="not.html">inverter</a> (NOT gate).
+        <li>כאשר הערך בסיכה זו הוא <b class="unov">1</b> אז הרכיב מתנהג בדיוק כמו הרכיב המתאים
+            רכיב <a href="buffer.html">מאגר</a> או <a href="not.html">מהפך</a> (לא שער).
         </li>
-        <li>When the value is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>) the component's output is
-            floating (<b class="uvalue">U</b>).
+        <li>כאשר הערך הוא <b class="zerov">0</b> או צף (<b class="uvalue">U</b>) הפלט של הרכיב הוא
+            צף (<b class="uvalue">U</b>).
         </li>
-        <li>When the value is an error value (<b class="evalue">E</b>) (such as would occur when two conflicting values
-            are being fed into the input) then the output is also an error value (<b class="evalue">E</b>).
+        <li>כאשר הערך הוא ערך שגיאה (<b class="evalue">E</b>) (כגון שיתרחש כאשר שני ערכים מתנגשים
+            מוזנים לקלט) אז הפלט הוא גם ערך שגיאה (<b class="evalue">E</b>).
         </li>
     </ul>
     <p>
-    <center>
+    <div style="text-align: center;">
         <table>
             <tbody>
             <tr>
@@ -220,107 +220,107 @@
             </tr>
             </tbody>
         </table>
-    </center>
-    </p>
+    </div>
     <p>
-        Controlled buffers can be useful when you have a wire (often called a <em>bus</em>) whose value should match the
-        output of one of several components. By placing a controlled buffer between each component output and the bus,
-        you can control whether that component's output is fed onto the bus or not.
+        מאגרים מבוקרים יכולים להיות שימושיים כאשר יש לך חוט (המכונה לעתים קרובות <em>אוטובוס</em>) שהערך שלו צריך להתאים
+        ל-
+        פלט של אחד מכמה רכיבים. על ידי הצבת מאגר מבוקר בין כל פלט רכיב והאוטובוס,
+        אתה יכול לשלוט אם הפלט של הרכיב הזה יוזן לאוטובוס או לא.
     </p>
     <h2>
-        Pins (assuming component faces east, control line right-handed)
+        סיכות (בהנחה שהרכיב פונה מזרחה, קו הבקרה ימני)
     </h2>
     <div class="attliste">
         <dl>
             <dt class="lib">
-                West edge:
+                קצה מערב:
             </dt>
             <dd>
-                The component input that will be used to compute the output if the control input is <b
-                    class="unov">1</b>. Bit width matches <b class="propertie">Data Bits</b> attribute.
+                קלט הרכיב שישמש לחישוב הפלט אם קלט הבקרה הוא <b
+                    class="unov">1</b>. רוחב סיביות תואם לתכונת <b class="propertie">נתונים</b>.
             </dd>
             <dt class="lib">
-                South edge:
-                </dd>
-            <dd>
-                The component's control input. Bit width 1.
-            </dd>
-            <dt class="lib">
-                East edge:
+                קצה דרום:
             </dt>
             <dd>
-                The component's output, which will be floating (<b class="uvalue">U</b>) if the control input is <b
-                    class="zerov">0</b> or floating (<b class="uvalue">U</b>), the error value (<b class="evalue">E</b>)
-                if the control input is the error value (<b class="evalue">E</b>), and will be computed based on the
-                west-side input if the control input is <b class="unov">1</b>. Bit width matches <b class="propertie">Data
-                Bits</b> attribute.
+                קלט הבקרה של הרכיב. רוחב סיביות 1.
+            </dd>
+            <dt class="lib">
+                קצה מזרח:
+            </dt>
+            <dd>
+                הפלט של הרכיב, שיהיה צף (<b class="uvalue">U</b>) אם קלט הבקרה הוא <b
+                    class="zerov">0</b> או צף (<b class="uvalue">U</b>), ערך השגיאה (<b class="evalue">E</b>)
+                אם קלט הבקרה הוא ערך השגיאה (<b class="evalue">E</b>), והוא יחושב על סמך
+                קלט צד מערב אם קלט הבקרה הוא <b class="unov">1</b>. רוחב סיביות תואם ל<b class="propertie">נתונים
+                תכונת Bits</b>.
             </dd>
         </dl>
     </div>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b>
-        alter its <b class="propertie">Data Bits </b>attribute and the arrow keys alter its <b
-            class="propertie">Facing</b> attribute.
+        כאשר הרכיב נבחר או מתווסף <b class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b>
+        שנה את התכונה <b class="propertie">נתונים </b> ומקשי החצים משנים את ה<b
+            class="propertie">מאפיין מול</b>.
     </p>
     <div class="attliste">
         <dl>
             <dt class="lib">
-                Facing
+                מוּל
             </dt>
             <dd>
-                The direction of the component, its output relative to input.
+                כיוון הרכיב, הפלט שלו ביחס לקלט.
             </dd>
             <dt class="lib">
-                Data Bits
+                פיסות מידע
             </dt>
             <dd>
-                The bit width of the component's inputs and outputs.
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
             </dd>
             <dt class="lib">
-                Gate Size
+                גודל שער
             </dt>
             <dd>
-                (Controlled inverter only) Determines whether to draw a larger or a smaller version of the component.
+                (מהפך נשלט בלבד) קובע אם לצייר גרסה גדולה יותר או קטנה יותר של הרכיב.
             </dd>
             <dt class="lib">
-                Control Line Location
+                מיקום קו בקרה
             </dt>
             <dd>
-                The location of the control line, imagining we are facing the output from the input: If the component
-                faces east and is <q>right-handed,</q> the control line is to the south; but if it is
-                <q>left-handed,</q> the control line is to the north.
+                מיקום קו הבקרה, מדמיינת שאנו עומדים מול הפלט מהקלט: אם הרכיב
+                פונה מזרחה ו<q>ימני,</q> קו השליטה הוא מדרום; אבל אם כן
+                <q>יד שמאל,</q> קו השליטה הוא צפונה.
             </dd>
             <dt class="lib">
-                Label
+                תווית
             </dt>
             <dd>
-                The text within the label associated with the gate.
+                הטקסט בתוך התווית המשויכת לשער.
             </dd>
             <dt class="lib">
-                Label Font
+                תווית גופן
             </dt>
             <dd>
-                The font with which to render the label.
+                הגופן שבאמצעותו יש לעבד את התווית.
             </dd>
         </dl>
     </div>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        Allows the label associated with the gate to be edited.
+        מאפשר לערוך את התווית המשויכת לשער.
     </p>
     <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
     </p>
 </div>
 </body>

@@ -1,79 +1,83 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Debugging subcircuits
+        איתור באגים במעגלי משנה
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Debugging subcircuits
+        איתור באגים במעגלי משנה
     </h1>
     <p>
-        As you test larger circuits, you will likely find bugs. To nail down what's going wrong, exploring what's going
-        on in the subcircuits while running the overall circuit can help. To enter the subcircuit's state, you can use
-        any of three different techniques.
+        ככל שתבדוק מעגלים גדולים יותר, סביר להניח שתמצא באגים. למסמר מה משתבש, לחקור מה קורה
+        על במעגלי המשנה בזמן הפעלת המעגל הכולל יכול לעזור. כדי להיכנס למצב תת-המעגל, אתה יכול להשתמש
+        כל אחת משלוש טכניקות שונות.
     <p>
     </p>
-    The most straightforward is probably to view the simulation hierarchy by by clicking on the <b class="button">&nbsp;Simulate&nbsp;</b>
-    tab, or by selecting menu <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>| View Simulation Tree&nbsp;|</b>.
-    This switches the explorer pane so that it shows the hierarchy of subcircuits being simulated.
+    הפשוט ביותר הוא כנראה להציג את היררכיית הסימולציה על ידי לחיצה על <b class="button">&nbsp;הדמיה&nbsp;</b>
+    לשונית, או על ידי בחירה בתפריט <b class=menu>|&nbsp;פרויקט&nbsp;|</b>→<b class=menu>| הצג את עץ הסימולציה&nbsp;|</b>.
+    <p>
+        זה מחליף את חלונית הסייר כך שתראה את ההיררכיה של תת-מעגלים המדומים.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/subcirc-hierarchy.png">
     </p>
     <p>
-        <b class="tkeybd">Double-clicking</b> an element in this hierarchy will display what is happening inside that
-        subcircuit.
+        <b class="tkeybd">לחיצה כפולה</b> על רכיב בהיררכיה זו תציג את מה שקורה בתוך זה
+        תת-מעגל.
     </p>
     <p>
-        The second way you can enter a subcircuit is to bring up its popup menu by <b class="tkeybd">right-clic</b> or
-        <b class="tkeybd">Ctrl+Click</b> it, and then choosing the option <b class=menu>|&nbsp;View&nbsp;<i>"circuit_name"</i>&nbsp;|</b>.
+        הדרך השנייה שבה אתה יכול להיכנס למעגל משנה היא להעלות את התפריט הקופץ שלו על ידי <b class="tkeybd">קליק ימני</b>
+        או
+        <b class="tkeybd">Ctrl+לחץ</b> עליו, ולאחר מכן בחירה באפשרות <b class=menu>|&nbsp;הצג&nbsp;<i>"circuit_name"</i>&nbsp;|</b>
+        .
     </p>
     <p align="center">
         <img alt="#########" src="../../../img-guide/subcirc-8-delve.png">
     </p>
     <p>
-        And the third way is to first ensure the Poke Tool (<img alt="#########"
-                                                                 class="icontxt"
-                                                                 src="../../../../icons/1616/toolpoke.png">) is selected and then <b
-            class="tkeybd">click</b> the subcircuit you want to enter; a magnifying glass will appear over the
-        subcircuit's center, and <b class="tkeybd">double-clicking</b> the magnifying glass will enter the subcircuit's
-        state.
+        והדרך השלישית היא קודם כל להבטיח את הכלי Poke (<img alt="#########"
+                                                            class="icontxt"
+                                                            src="../../../../icons/1616/toolpoke.png">) נבחר ולאחר מכן
+        <b
+                class="tkeybd">לחץ</b> על תת-המעגל שאליו ברצונך להיכנס; זכוכית מגדלת תופיע מעל
+        מרכז המשנה, ו<b class="tkeybd">לחיצה כפולה</b> על הזכוכית המגדלת תיכנס למעגל המשנה
+        מדינה.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/subcirc-delve.png">
     </p>
     <p>
-        In any case, once you enter the subcircuit, you'll see that the pins' values in the subcircuit match the values
-        being sent through them from the containing circuit.
+        בכל מקרה, ברגע שתיכנסו למעגל המשנה, תראו שהערכים של הפינים במעגל המשנה תואמים את הערכים
+        נשלח דרכם מהמעגל המכיל.
     </p>
     <p align="center">
         <img alt="#########" src="../../../../img-guide/subcirc-delve2.png">
     </p>
     <p>
-        While in the subcircuit, you are allowed to alter the circuit. If the changes affect any of the subcircuit's
-        outputs, they are propagated into the containing circuit. One exception: The subcircuit inputs are determined
-        based on the values coming into the circuit from the supercircuit, so it doesn't make sense to toggle those
-        values. If you attempt to poke a subcircuit's input, a dialog will pop up asking, <b class=refquest>The pin is
-        tied to the supercircuit state. Create a new circuit state?</b> Clicking No will cancel the toggle request,
-        while clicking Yes will create a copy of the viewed state, divorced from the outer circuit, with the input pin
-        toggled.
+        בזמן שאתה נמצא במעגל המשנה, אתה רשאי לשנות את המעגל. אם השינויים משפיעים על אחד ממעגלי המשנה
+        פלטים, הם מופצים לתוך המעגל המכיל. חריג אחד: כניסות המעגל המשנה נקבעות
+        מבוסס על הערכים המגיעים למעגל ממעגל העל, אז זה לא הגיוני להחליף אותם
+        ערכים. אם תנסה לתקוע קלט של תת-מעגל, תופיע תיבת דו-שיח ושואלת: <b class=refquest>הסיכה היא
+        קשור למצב מעגל העל. ליצור מצב מעגל חדש?</b> לחיצה על לא תבטל את בקשת החלפת המצב,
+        תוך כדי לחיצה על כן תיצור עותק של המצב הנצפה, מנותק מהמעגל החיצוני, עם פין הקלט
+        התחלף.
     </p>
     <p>
-        Once you have completed viewing and/or editing, you can return to the parent circuit either by double-clicking
-        the parent circuit in the explorer pane, or via the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→ <b
-            class=menu>|&nbsp;Go Out To State&nbsp;<i>"circuit_name"</i>&nbsp;|</b>.
+        לאחר השלמת הצפייה ו/או העריכה, תוכל לחזור למעגל האב על ידי לחיצה כפולה
+        מעגל האב בחלונית הסייר, או דרך התפריט <b class=menu>|&nbsp;הדמיה&nbsp;|</b>→ <b
+            class=menu>|&nbsp;צא למדינה&nbsp;<i>"circuit_name"</i>&nbsp;|</b>.
     </p>
     <p>
-        <b>Next:</b> <a href="sub-library.html">Logisim libraries</a>.
+        <b>הבא:</b> <a href="sub-library.html">ספריות לוגיסים</a>.
     </p>
 </div>
 </body>

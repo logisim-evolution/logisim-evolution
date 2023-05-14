@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Subtractor
+        מחסיר
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
@@ -21,23 +21,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Arithmetic</a>
+                <a href="index.html">חשבון</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 11
+                2.0 בטא 11
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/subtractor.png"
@@ -47,95 +47,96 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        This component subtracts values coming in via the west inputs (the upper minus the lower) and outputs the
-        difference on the east output. The component is designed so that it can be cascaded with other subtractors to
-        provide subtract more bits than is possible with a single subtractor: The borrow-in input provides a one-bit
-        value to be borrowed out of the difference (if the borrow-in input is specified), and a borrow-out output
-        indicates whether the component needs to borrow an upper-order bit to complete the subtraction without underflow
-        (assuming unsigned subtraction).
+        רכיב זה מפחית ערכים הנכנסים דרך הכניסות המערביות (העליון מינוס התחתון) ומוציא את
+        הבדל בתפוקה המזרחית. הרכיב מתוכנן כך שניתן לשלב אותו עם מחסירים אחרים
+        לספק להחסיר יותר סיביות ממה שאפשר עם מחסיר יחיד: הקלט ההשאלה מספק סיביות אחת
+        ערך להשאלה מההפרש (אם צוין קלט ההשאלה), ופלט שאולה
+        מציין אם הרכיב צריך לשאול סיביות מסדר עליון כדי להשלים את החיסור ללא זרימה נמוכה
+        (בהנחה של חיסור ללא סימן).
     </p>
     <p>
-        Internally, the subtractor simply performs a bitwise NOT on the subtrahend, and add this to the minuend along
-        with the NOT of the borrow-in input. (The <em>minuend</em> is the first operand (upper input) to the
-        subtraction, and the <em>subtrahend</em> is the second (lower input). I happen to like the antiquated terms.)
+        באופן פנימי, המחסיר פשוט מבצע בצורה סיבית NOT על המשנה, ומוסיפים את זה למיניאנד לאורך
+        עם ה-NOT של קלט ההשאלה. (ה<em>minuend</em> הוא האופרנד הראשון (קלט עליון) ל-
+        חיסור, וה-<em>subtrahend</em> הוא השני (קלט נמוך יותר). במקרה אני אוהב את המונחים המיושנים.)
     </p>
     <p>
-        If either of the operands contains some floating bits or some error bits, then the component will perform a
-        partial subtraction. That is, it will compute as many low-order bits as possible. But above the floating or
-        error bit, the result will have floating or error bits.
+        אם אחד מהאופרנדים מכיל כמה סיביות צפות או כמה סיביות שגיאה, אז הרכיב יבצע
+        חיסור חלקי. כלומר, הוא יחשב כמה שיותר ביטים מסדר נמוך. אבל מעל הצף או
+        סיביות שגיאה, לתוצאה יהיו סיביות צפות או שגיאה.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <dl>
         <dt>
-            West edge, north end (input, bit width matches Data Bits attribute)
+            קצה מערב, קצה צפוני (קלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The minuend of the subtraction; that is, the number from which to subtract.
+            המינואנד של החיסור; כלומר, המספר שממנו יש להחסיר.
         </dd>
         <dt>
-            West edge, south end (input, bit width matches Data Bits attribute)
+            קצה מערבי, קצה דרום (קלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The subtrahend of the subtraction; that is, the number to subtract from the minuend.
+            ה-subtrahend של החיסור; כלומר, המספר שיש לגרוע מהמינואנד.
         </dd>
         <dt>
-            North edge, labeled <var>b in</var> (input, bit width 1)
+            קצה צפון, שכותרתו <var>b in</var> (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            If 1, then 1 is borrowed out of the difference. If the value is unknown (i.e., floating), then it is assumed
-            to be 0.
+            אם 1, אז 1 מושאל מתוך ההפרש. אם הערך אינו ידוע (כלומר, צף), מניחים אותו
+            להיות 0.
         </dd>
         <dt>
-            East edge (output, bit width matches Data Bits attribute)
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The lower <var>dataBits</var> bits of the difference of the two values coming in the west edge, minus the
-            <var>b</var><sub><var>in</var></sub> bit.
+            הסיביות התחתונות של <var>dataBits</var> של ההפרש של שני הערכים המגיעים בקצה המערבי, פחות
+            <var>b</var><sub><var>ב</var></sub> סיביות.
         </dd>
         <dt>
-            South edge, labeled <var>b out</var> (output, bit width 1)
+            קצה דרום, שכותרתו <var>b out</var> (פלט, רוחב סיביות 1)
         </dt>
         <dd>
-            The borrow bit computed for the difference. If the values subtracted as unsigned values yield a negative
-            value, then this bit will be 1; otherwise, it will be 0.
+            ביט ההשאלה מחושב עבור ההפרש. אם הערכים מופחתים כערכים ללא סימנים מניבים שלילי
+            ערך, אז הביט הזה יהיה 1; אחרת, זה יהיה 0.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b>
-        alter its <b class="propertie">Data Bits</b> attribute.
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> דרך <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו.
     </p>
     <div class="attliste">
         <dl>
             <dt>
-                <b class="propertie">Data Bits</b>
+                <b class="propertie">סיביות נתונים</b>
             </dt>
             <dd>
-                The bit width of the values to be subtracted and of the result.
+                רוחב הסיביות של הערכים שיש לגרוע ושל התוצאה.
             </dd>
         </dl>
         <h2>
-            Poke Tool Behavior
+            התנהגות כלי לתקוע
         </h2>
         <p>
-            None.
+            אף אחד.
         </p>
         <h2>
-            Text Tool Behavior
+            התנהגות כלי טקסט
         </h2>
         <p>
-            None.
+            אף אחד.
         </p>
         <p>
-            <b>Back to</b> <a href="../index.html">Library Reference</a>
+            <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
         </p>
     </div>
+</div>
 </body>
 </html>

@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Multiplexer
     </title>
@@ -20,7 +20,7 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
                 <a href="index.html">Plexers</a>
@@ -28,15 +28,15 @@
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 11
+                2.0 בטא 11
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/mux.png" width="64">
@@ -45,115 +45,115 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        Copies an input on the west edge onto the output on the east edge; which of the inputs to copy is specified via
-        the current value received through the input on the south edge. I find it useful to think of a multiplexer as
-        analogous to a railroad switch, controlled by the select input.
+        מעתיק קלט בקצה המערבי אל הפלט בקצה המזרחי; באמצעות אילו מהכניסות להעתקה צוין
+        הערך הנוכחי שהתקבל דרך הקלט בקצה הדרומי. אני מוצא את זה שימושי לחשוב על מרובה כמו
+        אנלוגי למתג רכבת, נשלט על ידי קלט הבחירה.
     </p>
     <p>
-        (Incidentally, some authorities spell this <em>multiplex<strong>o</strong>r</em>, but
-        <em>multiplex<strong>e</strong>r</em> is the predominant spelling.)
+        (אגב, רשויות מסוימות מאייתות את ה<em>ריבוי<strong>o</strong>r</em> הזה, אבל
+        <em>multiplex<strong>e</strong>r</em> הוא האיות השולט.)
     </p>
     <h2>
-        Pins (assuming component faces east, select is bottom/left)
+        סיכות (בהנחה שהרכיב פונה מזרחה, הבחירה היא למטה/שמאל)
     </h2>
     <dl>
         <dt>
-            West edge, variable number (inputs, bit width matches Data Bits attribute)
+            קצה מערבי, מספר משתנה (תשומות, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            Data values, one of which is to be routed to the output. Each input data value is numbered, starting with 0
-            on the north.
+            ערכי נתונים, שאחד מהם אמור להיות מנותב לפלט. כל ערך נתוני קלט ממוספר, מתחיל ב-0
+            בצפון.
         </dd>
         <dt>
-            East edge (output, bit width matches Data Bits attribute)
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
         </dt>
         <dd>
-            The output value will match the input values on the west edge whose number is the same as the value
-            currently received through the select input on the south. If the select input contains any unspecified
-            (i.e., floating) bits, then the output is completely floating.
+            ערך הפלט יתאים לערכי הקלט בקצה המערבי שמספרם זהה לערך
+            מתקבל כעת דרך קלט הבחירה בדרום. אם קלט הבחירה מכיל כל לא צוין
+            (כלומר, צפים) ביטים, ואז הפלט צף לחלוטין.
         </dd>
         <dt>
-            South edge, left side indicated by gray circle (input, bit width matches Select Bits attribute)
+            קצה דרומי, צד שמאל מסומן בעיגול אפור (קלט, רוחב סיביות תואם את תכונת Select Bits)
         </dt>
         <dd>
-            Select input: The value of this input determines which input on the west edge to route to the output on the
-            east edge.
+            בחר קלט: הערך של קלט זה קובע איזו קלט בקצה המערבי לנתב לפלט ב-
+            קצה מזרחי.
         </dd>
         <dt>
-            South edge, right side (input, bit width 1)
+            קצה דרומי, צד ימין (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Enable: When 0, the multiplexer's output consists of all floating bits, regardless of the data and select
-            inputs.
+            הפעל: כאשר 0, הפלט של המרבב מורכב מכל הסיביות הצפות, ללא קשר לנתונים ובחירה
+            תשומות.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q>
-        attribute, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, and the arrow keys alter its <q>Facing</q>
-        attribute.
+        כאשר הרכיב נבחר או מתווסף, הספרות '1' עד '4' משנות את <q>Select Bits</q> שלו
+        תכונה, Alt-0 עד Alt-9 משנים את התכונה <q>נתונים</q> שלה, ומקשי החצים משנים את ה<q>פניות</q> שלה.
+        תְכוּנָה.
     </p>
     <dl>
         <dt>
-            Facing
+            מוּל
         </dt>
         <dd>
-            The direction of the component (its output relative to its input).
+            כיוון הרכיב (הפלט שלו ביחס לקלט שלו).
         </dd>
         <dt>
-            Select Location
+            תבחר מיקום
         </dt>
         <dd>
-            The location of the select and enable lines relative to the component.
+            המיקום של קווי הבחירה והאפשרות ביחס לרכיב.
         </dd>
         <dt>
-            Select Bits
+            בחר Bits
         </dt>
         <dd>
-            The bit width of the component's select input on its south edge. The number of inputs to the multiplexer
-            will be 2<sup><var>selectBits</var></sup>.
+            רוחב הסיביות של קלט הבחירה של הרכיב בקצה הדרומי שלו. מספר הכניסות למרבב
+            יהיו 2<sup><var>selectBits</var></sup>.
         </dd>
         <dt>
-            Data Bits
+            פיסות מידע
         </dt>
         <dd>
-            The bit width of the data being routed through the multiplexer.
+            רוחב הסיביות של הנתונים המנותבים דרך המרבב.
         </dd>
         <dt>
-            Disabled Output
+            פלט מושבת
         </dt>
         <dd>
-            Specifies what each bit of the output should be when the component is disabled (i.e., when the enable pin is
-            0). Options include zero and floating; in the latter case, the output is effectively disconnected from any
-            other ports.
+            מציין מה צריך להיות כל סיביות של הפלט כאשר הרכיב מושבת (כלומר, כאשר פין ההפעלה הוא
+            0). האפשרויות כוללות אפס וצף; במקרה האחרון, הפלט מנותק למעשה מכל
+            יציאות אחרות.
         </dd>
         <dt>
-            Include Enable?
+            לכלול הפעל?
         </dt>
         <dd>
-            The component has an enable input when this attribute is <q>yes.</q> The attribute is primarily for
-            supporting circuits built using older versions of Logisim that did not provide an enable input.
+            לרכיב יש קלט הפעלה כאשר תכונה זו היא <q>כן.</q> התכונה מיועדת בעיקר עבור
+            מעגלים תומכים שנבנו באמצעות גרסאות ישנות יותר של Logisim שלא סיפקו קלט הפעלה.
         </dd>
     </dl>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
     </p>
 </div>
 </body>

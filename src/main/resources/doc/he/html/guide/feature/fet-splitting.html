@@ -1,54 +1,54 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2019-12-31T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Splitters
+        מפצלים
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Splitters
+        מפצלים
     </h1>
     <p>
-        When you work with multi-bit values, you will often want to route different bits in different directions. The
-        Wiring library's <b class=propertie>splitter</b> tool (<img alt="#########"
-                                                                    class=intxt
-                                                                    src="../../../../img-guide/splitter1.png">) allows you to accomplish this.
+        כאשר אתה עובד עם ערכי ריבוי סיביות, לעתים קרובות תרצה לנתב ביטים שונים לכיוונים שונים. ה
+        כלי ה<b class=propertie>מפצל</b> של ספריית החיווט (<img alt="#########"
+                                                                class=intxt
+                                                                src="../../../../img-guide/splitter1.png">) מאפשר לך להשיג זאת.
     </p>
     <p>
-        For example, suppose we want a circuit that computes the bitwise AND of the two nibbles of its eight-bit input
-        (the upper four bits and the lower four bits). We will have an eight-bit value coming from the input pin, and we
-        want to split that into two four-bit values. In the below circuit, we have used a splitter to accomplish this:
-        The 8-bit input comes into the splitter, which divides the 8 bits into two 4-bit values, which are then fed into
-        the AND gate and from there to the output.
+        לדוגמה, נניח שאנחנו רוצים מעגל שמחשב את ה-AND של שני הנגיסות של קלט שמונה הסיביות שלו
+        (ארבעת הביטים העליונים וארבעת הביטים התחתונים). יהיה לנו ערך שמונה סיביות שיגיע מפין הקלט, ואנחנו
+        רוצה לפצל את זה לשני ערכי ארבע סיביות. במעגל שלהלן, השתמשנו במפצל כדי להשיג זאת:
+        קלט 8 סיביות מגיע אל המפצל, אשר מחלק את 8 הסיביות לשני ערכי 4 סיביות, אשר מוזנים לתוך
+        שער ה-AND ומשם ליציאה.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/bundles-splitter-circ.png">
     </p>
     <p>
-        In this example, the splitter <b>splits</b> an incoming value into multiple outgoing values. But splitters can
-        also work the other way: It can <b>combine</b> multiple values into a single value. In fact, they are
-        non-directional: They can send values one way at one time and another way later, and they can even do both at
-        the same time, as in the below example where a value travels eastward through the two splitters, then is routed
-        back westward through them again, and then back eastward where it finally reaches its output.
+        בדוגמה זו, המפצל <b>מפצל</b> ערך נכנס למספר ערכים יוצאים. אבל מפצלים יכולים
+        עובד גם הפוך: הוא יכול <b>לשלב</b> ערכים מרובים לערך בודד. למעשה, הם כן
+        לא כיווני: הם יכולים לשלוח ערכים בכיוון אחד בכל פעם ובדרך אחרת מאוחר יותר, והם יכולים אפילו לעשות את שניהם ב
+        באותו זמן, כמו בדוגמה למטה שבה ערך נוסע מזרחה דרך שני המפצלים, ואז מנותב
+        חזרה מערבה דרכם שוב, ואז חזרה מזרחה, שם היא מגיעה לבסוף למוצא שלה.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/bundles-splitter-2way.png">
     </p>
     <p>
-        The key to understanding splitters is their attributes. In the following, the term <b>Split End</b> refers to
-        one of the multiple wires on one side, while the term <b>data bus</b> refers to the single wire on the other
-        side.
+        המפתח להבנת המפצלים הוא התכונות שלהם. בהמשך, המונח <b>קצה מפוצל</b> מתייחס אליו
+        אחד מהחוטים המרובים בצד אחד, בעוד שהמונח <b>אוטובוס נתונים</b> מתייחס לחוט היחיד בצד השני
+        צַד.
     </p>
     <ul>
-        <li>The <b class=propertie>Facing</b> attribute tells where the split ends should be relative to the Fan Out.
+        <li>התכונה <b class=propertie>Facing</b> מציינת היכן הקצוות המפוצלים צריכים להיות ביחס ל-Fan Out.
             <div>
                 <table>
                     <tbody>
@@ -69,11 +69,11 @@
                 </table>
             </div>
         </li>
-        <li>The <b class=propertie>Fan Out</b> attribute specifies how many split ends there are.
+        <li>התכונה <b class=propertie>Fan Out</b> מציינת כמה קצוות מפוצלים יש.
         </li>
-        <li>The <b class=propertie>Bit Width In</b> attribute specifies the bit width of the combined end.
+        <li>התכונה <b class=propertie>Bit Width In</b> מציינת את רוחב הסיביות של הקצה המשולב.
         </li>
-        <li>The <b class=propertie>Appearence</b> defines how the split end is drawn relative to its data bus.<br>
+        <li>ה<b class=propertie>מראה</b> מגדיר כיצד הקצה המפוצל מצויר ביחס לאפיק הנתונים שלו.<br>
             <div class="twodiv">
                 <table>
                     <tbody>
@@ -89,10 +89,10 @@
                     </tr>
                     <tr>
                         <td>
-                            Right
+                            ימין
                         </td>
                         <td>
-                            Left
+                            שמאלה
                         </td>
                     </tr>
                     </tbody>
@@ -113,31 +113,31 @@
                     </tr>
                     <tr>
                         <td>
-                            Center
+                            מֶרְכָּז
                         </td>
                         <td>
-                            Legacy
+                            מוֹרֶשֶׁת
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </li>
-        <li>The <b class=propertie>Spacing</b> specifies the space between the split end.
+        <li>ה<b class=propertie>מרווח</b> מציין את הרווח בין הקצה המפוצל.
         </li>
         <li>
-            The <b class=propertie>Bit <var>x</var></b> attributes define which separate split end corresponds to which
-            bit <b>x</b> of the data bus. It is modifiable and allows you to organize the order of split end by hand. If
-            several bits correspond to the same split end (first example above), then the relative order will be the
-            same as in the bus. Logisim distributors cannot have a bus bit linked to more than one split end.
+            המאפיינים <b class=propertie>Bit <var>x</var></b> מגדירים איזה קצה מפוצל נפרד מתאים לאיזה
+            סיביות <b>x</b> של אפיק הנתונים. זה ניתן לשינוי ומאפשר לך לארגן את סדר הקצה המפוצל ביד. אם
+            מספר סיביות מתאימות לאותו קצה מפוצל (דוגמה ראשונה לעיל), ואז הסדר היחסי יהיה
+            כמו באוטובוס. למפיצים של Logisim לא תהיה ביט אוטובוס מקושר ליותר מקצה מפוצל אחד.
         </li>
     </ul>
     <p>
-        Note that any change to the Fan Out or Bit Width In attributes will reset all Bit <var>x</var> attributes so
-        that they will distribute the bits of the combined value as evenly as possible among the split ends.
+        שימו לב שכל שינוי בתכונות Fan Out או Bit Width In יאפס את כל תכונות Bit <var>x</var> כך
+        שהם יחלקו את הסיביות של הערך המשולב בצורה שווה ככל האפשר בין הקצוות המפוצלים.
     </p>
     <p>
-        <b>Next:</b> <a href="fet-colors.html">Wire colors</a>.
+        <b>הבא:</b> <a href="fet-colors.html">צבעי חוטים</a>.
     </p>
 </div>
 </body>

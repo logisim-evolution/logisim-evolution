@@ -1,60 +1,60 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Oscillation errors
+        שגיאות תנודה
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Oscillation errors
+        שגיאות תנודה
     </h1>
     <p>
-        The propagation algorithm, which normally works silently without any problems, will become very visible when you
-        create a circuit that oscillates.
+        אלגוריתם ההפצה, שבדרך כלל פועל בשקט ללא בעיות, יהפוך לגלוי מאוד כאשר אתה
+        ליצור מעגל שמתנודד.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/prop-oscillate-before.png">
     </p>
     <p>
-        This circuit is currently in a stable condition. But if you change the input to 1, the circuit will effectively
-        enter an infinite loop. After a while, Logisim will simply give up and show an "Oscillation apparent" message
-        telling you that it believes that the circuit is oscillating.
+        מעגל זה נמצא כעת במצב יציב. אבל אם תשנה את הקלט ל-1, המעגל יעשה זאת ביעילות
+        להיכנס ללולאה אינסופית. לאחר זמן מה, לוגיסים פשוט תוותר ותציג הודעת "תנודה לכאורה".
+        אומר לך שהוא מאמין שהמעגל מתנודד.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../img-guide/prop-oscillate-error.png">
     </p>
     <p>
-        It will display the values it has at the time it gives up. These values will look wrong - in this screen shot,
-        the AND gate is emitting 1 although one of its inputs is 0, but it could be that the NOT gate has a 1 input and
-        a 1 output.
+        זה יציג את הערכים שיש לו בזמן שהוא מוותר. ערכים אלה ייראו שגויים - בצילום מסך זה,
+        שער ה-AND פולט 1 למרות שאחת מהכניסות שלו היא 0, אבל יכול להיות שלשער NOT יש כניסת 1 ו
+        פלט 1.
     </p>
     <p>
-        Logisim helpfully circles in red each location that seems to be involved in the oscillation. If an involved
-        point lies within a subcircuit, Logisim will draw that subcircuit's outline in red.
+        לוגיסים מקיף באדום באדום כל מיקום שנראה כמעורב בתנודה. אם מעורב
+        הנקודה נמצאת בתוך תת-מעגל, לוגיסים יצייר את קווי המתאר של תת-המעגל באדום.
     </p>
     <p>
-        When Logisim detects oscillation, it shuts down all further simulation. You can re-enable simulation using the
-        menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b>.
+        כאשר Logisim מזהה תנודה, היא משביתה כל סימולציה נוספת. אתה יכול להפעיל מחדש סימולציה באמצעות
+        תפריט <b class=menu>|&nbsp;הדמיה&nbsp;|</b>→<b class=menu>|&nbsp;הדמיה מופעלת&nbsp;|</b>.
     </p>
     <p>
-        Logisim detects oscillation using a fairly simple technique: If the circuit simulation seems to many iterations,
-        then it will simply give up and report oscillation. (The points it identifies as being involved are those that
-        were touched in the last 25% of the iterations.) Thus, it could erroneously report oscillation, particularly if
-        you are working with an exceptionally large circuit; but it would be one that is larger than any I have built
-        using Logisim. In any case, if you are confident that the reporting is in error, you can configure the number of
-        iterations completed before oscillation occurs via the <a href="../opts/index.html">Project Options</a> window's
-        <a href="../opts/opts-simulate.html">Simulation tab</a>.
+        Logisim מזהה תנודה באמצעות טכניקה פשוטה למדי: אם הדמיית המעגל נראית לאיטרציות רבות,
+        אז הוא פשוט יוותר וידווח על תנודה. (הנקודות שהוא מזהה כמעורבות הן אלו
+        נגעו ב-25% האחרונים מהאיטרציות.) לפיכך, הוא יכול לדווח בטעות על תנודה, במיוחד אם
+        אתה עובד עם מעגל גדול במיוחד; אבל זה יהיה אחד גדול יותר מכל מה שבניתי
+        באמצעות Logisim. בכל מקרה, אם אתה בטוח שהדיווח שגוי, תוכל להגדיר את המספר של
+        איטרציות שהושלמו לפני שהתנודה מתרחשת דרך חלון <a href="../opts/index.html">אפשרויות הפרויקט</a>
+        <a href="../opts/opts-simulate.html">כרטיסיית סימולציה</a>.
     </p>
     <p>
-        <b>Next:</b> <a href="shortcome.html">Shortcomings</a>.
+        <b>הבא:</b> <a href="shortcome.html">חסרונות</a>.
     </p>
 </div>
 </body>

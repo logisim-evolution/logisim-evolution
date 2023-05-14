@@ -1,32 +1,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Other verification options
+        אפשרויות אימות אחרות
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Other verification options
+        אפשרויות אימות אחרות
     </h1>
     <p>
-        There are a some additional options related to command-line execution.
+        ישנן כמה אפשרויות נוספות הקשורות לביצוע שורת הפקודה.
     </p>
     <h2>
-        The <tt>-load</tt> command-line parameter
+        פרמטר שורת הפקודה <tt>-load</tt>
     </h2>
     <p>
-        A more complex circuit might include a RAM component that needs to be loaded with a program in order for the
-        circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded
-        into any RAM component in the circuit before simulation begins. (This does not work when loading the GUI - it is
-        only for command-line execution.)
+        מעגל מורכב יותר עשוי לכלול רכיב RAM שצריך לטעון עם תוכנית על מנת שה
+        מעגל שיש לו מה לעשות. אתה יכול לציין קובץ תמונת זיכרון בשורת הפקודה, שיטען
+        לתוך כל רכיב RAM במעגל לפני שהסימולציה מתחילה. (זה לא עובד בעת טעינת ה-GUI - זה כן
+        רק לביצוע שורת פקודה.)
     </p>
     <blockquote>
         <div class=forcode>
@@ -34,88 +34,88 @@
         </div>
     </blockquote>
     <p>
-        The order of the parameters is not important (except the <tt>table</tt> parameter must be immediately after <tt>-tty</tt>,
-        and the memory image's filename must be immediately after <tt>-load</tt>). The memory image file should be in <a
-            href="../mem/mem-menu.html">Logisim's memory image format</a>.
+        סדר הפרמטרים אינו חשוב (למעט הפרמטר <tt>table</tt> חייב להיות מיד אחרי <tt>-tty</tt>,
+        ושם הקובץ של תמונת הזיכרון חייב להיות מיד לאחר <tt>-load</tt>). קובץ תמונת הזיכרון צריך להיות ב-<a
+            href="../mem/mem-menu.html">פורמט תמונת הזיכרון של לוגיסים</a>.
     </p>
     <p>
-        Logisim searches for RAM recursively, so this will still work if RAM is nested within a subcircuit. There is no
-        way, though, to distinguish different RAM components: Logisim will attempt to load the same file into every RAM
-        that it can find.
+        Logisim מחפשת RAM באופן רקורסיבי, כך שזה עדיין יעבוד אם RAM מקונן בתוך תת-מעגל. אין
+        עם זאת, דרך להבחין בין רכיבי זיכרון RAM שונים: Logisim תנסה לטעון את אותו קובץ לכל זיכרון RAM
+        שהוא יכול למצוא.
     </p>
     <h2>
-        Options for the <tt>-tty</tt> parameter
+        אפשרויות עבור הפרמטר <tt>-tty</tt>
     </h2>
     <p>
-        In our examples thus far, we've always used <tt><b>-tty&nbsp;table</b></tt> to indicate that a table of output
-        values should be displayed. You can customize the behavior in other ways by listing one or more options,
-        separated by commas. For instance, you might write <q><tt>-tty&nbsp;table,halt,speed</tt></q>, and the program
-        will perform all three behaviors listed below. (The order in which they are listed does not matter.)
+        בדוגמאות שלנו עד כה, תמיד השתמשנו ב<tt><b>-tty&nbsp;table</b></tt> כדי לציין שטבלת פלט
+        יש להציג ערכים. אתה יכול להתאים אישית את ההתנהגות בדרכים אחרות על ידי רישום אפשרות אחת או יותר,
+        מופרד בפסיקים. לדוגמה, תוכל לכתוב <q><tt>-tty&nbsp;table,halt,speed</tt></q>, ואת התוכנית
+        יבצע את כל שלושת ההתנהגויות המפורטות להלן. (הסדר שבו הם מופיעים לא משנה.)
     </p>
     <dl>
         <dt>
-            <tt>halt</tt>
+            <tt>עצור</tt>
         </dt>
         <dd>
             <p>
-                After the simulation ends, a one-line message is displayed explaining why the simulation ended. Error
-                conditions - such as a detected oscillation - are displayed in any case.
+                לאחר סיום הסימולציה, מוצגת הודעה בת שורה אחת המסבירה מדוע הסתיימה הסימולציה. שְׁגִיאָה
+                תנאים - כגון תנודה שזוהתה - מוצגים בכל מקרה.
             </p>
         </dd>
         <dt>
-            <tt>speed</tt>
+            <tt>מהירות</tt>
         </dt>
         <dd>
             <p>
-                If you use <tt>speed</tt> in conjunction with <tt>-tty</tt>, then after completing the simulation
-                Logisim will display a summary of how quickly the circuit was simulated, such as:
+                אם אתה משתמש ב-<tt>מהירות</tt> בשילוב עם <tt>-tty</tt>, לאחר השלמת הסימולציה
+                Logisim תציג סיכום של מהירות הדמיה של המעגל, כגון:
             </p>
             <blockquote>
-                <tt>714 Hz (509 ticks in 712 milliseconds)</tt>&lt; /blockquote&gt;
+                <tt>714 הרץ (509 תקתוקים ב-712 מילישניות)</tt>&lt; /blockquote&gt;
                 <p>
-                    Note that displaying information during the simulation makes the simulation go much slower. As just
-                    one comparison, the same circuit and image ran at 714&nbsp;Hz above with just the <tt>speed</tt>
-                    option but 490&nbsp;Hz with the <tt>table</tt> option as well.
+                    שימו לב שהצגת מידע במהלך הסימולציה גורמת לסימולציה לעבור הרבה יותר לאט. כמו רק
+                    השוואה אחת, אותו מעגל ותמונה פעלו ב-714&nbsp;Hz למעלה עם <tt>מהירות</tt> בלבד
+                    אפשרות אלא 490&nbsp;Hz עם אפשרות ה<tt>טבלה</tt> גם כן.
                 </p>
             </blockquote>
         </dd>
         <dt>
-            <tt>stats</tt>
+            <tt>סטטיסטיקות</tt>
         </dt>
         <dd>
             <p>
-                Shows a tab-delimited table containing statistics about components used by the top-level "main" circuit
-                in the project. The table includes four columns:
+                מציג טבלה מופרדת בטאבים המכילה נתונים סטטיסטיים לגבי רכיבים המשמשים את המעגל ה"ראשי" ברמה העליונה
+                בפרוייקט. הטבלה כוללת ארבע עמודות:
             </p>
             <ul>
-                <li>Unique: The number of times that component appears in the circuit's hierarchy, where each subcircuit
-                    within the hierarchy is counted only once.
+                <li>ייחודי: מספר הפעמים שרכיב זה מופיע בהיררכיה של המעגל, כאשר כל תת-מעגל
+                    בתוך ההיררכיה נספר פעם אחת בלבד.
                 </li>
-                <li>Recursive: The number of times that component appears in the circuit's hierarchy, where we count
-                    each subcircuit as many times as it appears in the hierarchy.
+                <li>רקורסיבי: מספר הפעמים שרכיב זה מופיע בהיררכיה של המעגל, שבה אנו סופרים
+                    כל תת-מעגל כמה פעמים שהוא מופיע בהיררכיה.
                 </li>
-                <li>Component: The name of the component.
+                <li>רכיב: שם הרכיב.
                 </li>
-                <li>Library: The name of the library from which the component came.
+                <li>ספרייה: שם הספרייה שממנה הגיע הרכיב.
                 </li>
             </ul>
             <p>
-                The distinction between "Unique" and "Recursive" is explained further under <q><a
-                    href="../menu/project.html">Project menu</a></q> section. If the file uses circuits from a loaded
-                Logisim library, those components are considered to be "black boxes": The contents of the library's
-                circuits are not included in the unique and recursive counts.
+                ההבחנה בין "ייחודי" ל"רקורסיבית" מוסברת עוד תחת <q><a
+                    href="../menu/project.html">קטע תפריט פרויקט</a></q>. אם הקובץ משתמש במעגלים מקובץ טעון
+                ספריית Logisim, אותם רכיבים נחשבים ל"קופסאות שחורות": התוכן של הספרייה
+                מעגלים אינם כלולים בספירות הייחודיות והרקורסיביות.
             </p>
             <p>
-                (This feature can be useful for instructors who assign students to build projects using a subset of
-                Logisim's libraries.)
+                (תכונה זו יכולה להיות שימושית עבור מדריכים שמקצים לתלמידים לבנות פרויקטים באמצעות קבוצת משנה של
+                הספריות של לוגיסים.)
             </p>
         </dd>
         <dt>
-            <tt>table</tt>
+            <tt>טבלה</tt>
         </dt>
         <dd>
             <p>
-                (as already discussed)
+                (כפי שכבר נאמר)
             </p>
         </dd>
         <dt>
@@ -123,14 +123,14 @@
         </dt>
         <dd>
             <p>
-                Any TTY components send their output to the display (standard output), and any information typed at the
-                keyboard is sent to all Keyboard components in the circuit. These components are included even if they
-                are nested deeply in the subcircuit hierarchy.
+                כל רכיבי TTY שולחים את הפלט שלהם לתצוגה (פלט סטנדרטי), וכל מידע שהוקלד ב-
+                המקלדת נשלחת לכל רכיבי המקלדת במעגל. רכיבים אלה כלולים גם אם הם
+                מקוננים עמוק בהיררכיית תת-המעגל.
             </p>
         </dd>
     </dl>
     <p>
-        <b>Next:</b> <a href="multi.html">Testing multiple files</a>.
+        <b>הבא:</b> <a href="multi.html">בדיקת קבצים מרובים</a>.
     </p>
 </div>
 </body>

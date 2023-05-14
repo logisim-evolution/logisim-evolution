@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Joystick
+        ג'ויסטיק
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
@@ -15,21 +15,21 @@
 <div class="maindiv">
     <h1>
         <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/joystick.png"
-             width="32"> <em>Joystick</em>
+             width="32"> <em>ג'ויסטיק</em>
     </h1>
     <table>
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Input/Output</a>
+                <a href="index.html">קלט/פלט</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
                 2.2.0
@@ -37,7 +37,7 @@
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/joystick.png"
@@ -47,70 +47,70 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The user can drag the red knob within the rounded-square area, and the outputs update to indicate the knob's
-        current <var>x</var>- and <var>y</var>-coordinates. This is meant to emulate the joysticks known from the days
-        of classical arcade games.
+        המשתמש יכול לגרור את הכפתור האדום בתוך אזור הריבוע המעוגל, והפלטים מתעדכנים כדי לציין את הכפתור של הכפתור
+        קואורדינטות <var>x</var>- ו-<var>y</var> הנוכחיות. זה נועד לחקות את הג'ויסטיקים הידועים מהימים
+        של משחקי ארקייד קלאסיים.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <dl>
         <dt>
-            West edge, north pin (output, bit width matches Bit Width attribute)
+            קצה מערב, סיכה צפונית (פלט, רוחב סיביות תואם לתכונת Bit Width)
         </dt>
         <dd>
-            Indicates knob's <var>x</var>-coordinate, to be interpreted as an unsigned integer whose value will never be
-            0. Thus, a value of 1 represents the far left, and the maximum value for the bit width indicates the far
-            right. When the knob is at rest (in the center), the value has the bit pattern 10...00.
+            מציין את קואורדינטת <var>x</var> של הכפתור, שיש לפרש כמספר שלם ללא סימן שערכו לעולם לא יהיה
+            0. לפיכך, ערך של 1 מייצג את הקיצוני השמאלי, והערך המקסימלי עבור רוחב הסיביות מציין את הרחוק
+            ימין. כאשר הכפתור במנוחה (במרכז), לערך יש תבנית סיביות 10...00.
         </dd>
         <dt>
-            West edge, south pin (output, bit width matches Bit Width attribute)
+            קצה מערב, סיכה דרומית (פלט, רוחב סיביות תואם לתכונת Bit Width)
         </dt>
         <dd>
-            Indicates knob's <var>y</var>-coordinate, whose value ranges as with the <var>x</var>-coordinate pin. When
-            the knob is pulled to the top, this output's value is 1, and when the knob is pulled to the bottom, the
-            output is the maximum value for the bit width selected.
+            מציין את קואורדינטת <var>y</var> של הכפתור, שהערך שלה נע כמו בסיכת הקואורדינטה <var>x</var>. מתי
+            הכפתור נמשך למעלה, הערך של פלט זה הוא 1, וכאשר הכפתור נמשך למטה,
+            פלט הוא הערך המרבי עבור רוחב הסיביות שנבחר.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, Alt-2 through Alt-5 alter its <q>Bit Width</q> attribute.
+        כאשר הרכיב נבחר או מתווסף, Alt-2 עד Alt-5 משנים את תכונת ה<q>Bit Width</q> שלו.
     </p>
     <dl>
         <dt>
-            Bit Width
+            רוחב סיביות
         </dt>
         <dd>
-            The number of bits used to indicate each of the knob's coordinates.
+            מספר הביטים המשמשים לציון כל אחת מהקואורדינטות של הכפתור.
         </dd>
         <dt>
-            Color
+            צֶבַע
         </dt>
         <dd>
-            The knob's color as it is drawn on the screen.
+            צבע הכפתור כפי שהוא מצויר על המסך.
         </dd>
     </dl>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        Pressing the mouse button while within the joystick area moves the knob to that location and updates the
-        outputs. Dragging the mouse continues to move the knob and update the outputs, keeping the knob within the
-        joystick's area. Releasing the mouse button reverts the knob back to its rest position.
+        לחיצה על לחצן העכבר בתוך אזור הג'ויסטיק מעבירה את הכפתור למיקום זה ומעדכנת את
+        תפוקות. גרירת העכבר ממשיכה להזיז את הכפתור ולעדכן את הפלטים, תוך שמירה על הכפתור בתוך
+        אזור הג'ויסטיק. שחרור כפתור העכבר מחזיר את הכפתור למצב המנוחה שלו.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
     </p>
 </div>
 </body>

@@ -1,86 +1,85 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <META content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created"/>
     <meta content="2023-04-29T16:00:00.000000000" name="changed"/>
     <META content="text/html; charset=UTF-8" http-equiv="content-type">
-    <META content="en" http-equiv="Content-Language">
-    <title>VHDL simulator</title>
+    <META content="he" http-equiv="Content-Language">
+    <title>סימולטור VHDL</title>
     <LINK href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 <div class="maindiv">
-    <h1>VHDL simulator</h1>
+    <h1>סימולטור VHDL</h1>
 
-    <p>Logisim cannot directly perform VHDL content simulation. Instead,
-        QuestaSim is used as a background task.
+    <p>Logisim לא יכול לבצע הדמיית תוכן VHDL ישירות. במקום זאת,
+        QuestaSim משמש כמשימת רקע.
     </p>
 
-    <h2>Enable simulator</h2>
+    <h2>הפעל סימולטור</h2>
 
-    <p>You can enable the simulator through the <i>Simulate</i> > <i>VHDL
-        Simulation Enabled</i> menu. When you do this, the simulator console
-        log appears on the bottom of the drawing pane. At the bottom bar of
-        the simulator log, you have the simulator status indicator. The
-        states are :
+    <p>אתה יכול להפעיל את הסימולטור דרך <i>סימולציה</i> > <i>VHDL
+        תפריט סימולציה מופעלת</i>. כאשר אתה עושה זאת, קונסולת הסימולטור
+        יומן מופיע בחלק התחתון של חלונית הציור. בסרגל התחתון של
+        ביומן הסימולטור, יש לך את מחוון מצב הסימולטור. ה
+        מדינות הן:
 
-    <p align="center"><img src="../../../img-guide/hdl-ip-sim-log.png"/></p>
+    <p align="center"><img src="../../../img-guide/hdl-ip-sim-log.png" alt=""/></p>
 
     <ul>
-        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-disabled.png"/>
-            Disabled (console disappears)
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-disabled.png" alt=""/>
+            מושבת (קונסולה נעלמת)
         </li>
-        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-enabled.png"/>
-            Enabled (but inactive)
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-enabled.png" alt=""/>
+            מופעל (אך לא פעיל)
         </li>
-        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-starting.png"/>
-            Starting
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-starting.png" alt=""/>
+            מתחיל
         </li>
-        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-active.png"/>
-            Active
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-active.png" alt=""/>
+            פָּעִיל
         </li>
     </ul>
+
+    <p>הסימולטור מופעל אוטומטית כאשר הוא מופעל והמעגל
+        מכיל רכיבי VHDL. לא ניתן להפעיל את הסימולטור
+        כאשר אין רכיבי VHDL במעגל.
     </p>
 
-    <p>The simulator starts automatically when it's enabled and the circuit
-        contains VHDL components. It is not possible to start the simulator
-        when there aren't any VHDL components in the circuit.
+    <h2>הפעל מחדש</h2>
+
+    <p>הדמיית VHDL מופעלת מחדש כאשר אתה מאפס את ה-Logisim
+        סימולציה. זה נוגע רק למצב הסימולציה, זה לא
+        טען מחדש את הסימולציה (וקובצי המקור).
     </p>
 
-    <h2>Restart</h2>
-
-    <p>The VHDL simulation is restarted when you reset the Logisim
-        simulation. This concerns only the simulation state, it does not
-        reload the simulation (and the source files).
+    <p>אם שינית את התוכן של רכיב VHDL כלשהו, עליך לעשות זאת
+        הפעל מחדש את סימולטור VHDL. זה אף פעם לא נעשה אוטומטית. אתה יכול
+        הפעל מחדש את הסימולטור דרך תפריט <i>הדמיה</i>.
     </p>
 
-    <p>If you have changed the content of some VHDL component you have to
-        restart the VHDL simulator. This is never done automatically. You can
-        restart the simulator through the <i>Simulate</i> menu.
-    </p>
+    <h2>זמן</h2>
 
-    <h2>Time</h2>
-
-    <p>The QuestaSim simulation step time has to be considered
-        unpredictable, as it depends on the number of VHDL components in the
-        circuit. The absolute minimum step is 100ns. Therefore, usage of
-        time-based simulation events must be avoided (like <i>wait for
-            10ns</i>). You must only have signal-based events.
+    <p>יש לקחת בחשבון את זמן הצעד של סימולציית QuestaSim
+        בלתי צפוי, מכיוון שזה תלוי במספר רכיבי VHDL ב-
+        מעגל חשמלי. הצעד המינימלי המוחלט הוא 100ns. לכן, שימוש ב
+        יש להימנע מאירועי סימולציה מבוססי זמן (כמו <i>wait for
+            10ns</i>). אתה חייב רק אירועים מבוססי אותות.
     </p>
 
 
-    <h2>Multiple instances</h2>
+    <h2>מספר מופעים</h2>
 
-    <p>Actually, you can only have a single instance of VHDL simulator.
-        That means that you have to disable it on the first project if you
-        want to have it enabled on a second one. If you try to enable it on
-        two projects it will fail and show you an error message.
+    <p>למעשה, אתה יכול לקבל רק מופע בודד של סימולטור VHDL.
+        זה אומר שאתה צריך להשבית אותו בפרויקט הראשון אם אתה
+        רוצה להפעיל את זה בשני. אם תנסה להפעיל את זה
+        שני פרויקטים זה ייכשל ויראה לך הודעת שגיאה.
     </p>
 
-    <p><b>Next:</b> <a href="testbenchs.html">Simulating test
-        benchs</a>.
+    <p><b>הבא:</b> <a href="testbenchs.html">בדיקת סימולציה
+        ספסלים</a>.
     </p>
 </div>
 </body>

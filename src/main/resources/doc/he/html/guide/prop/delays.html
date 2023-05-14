@@ -1,69 +1,69 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2019-03-16T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Gate delays
+        עיכובים בשער
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Gate delays
+        עיכובים בשער
     </h1>
     <p>
-        As an example of the level of sophistication of Logisim's algorithm, consider the following circuit.
+        כדוגמה לרמת התחכום של האלגוריתם של Logisim, שקול את המעגל הבא.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/prop-const0.png">
     </p>
     <p>
-        This "obviously" always outputs 0. But NOT gates don't react instantaneously to their inputs in reality, and
-        neither do they in Logisim. As a result, when this circuit's input changes from 0 to 1, the AND gate will
-        briefly see two 1 inputs, and it will emit a 1 briefly. You won't see it on the screen. But the effect is
-        observable when we use the AND gate's output as an input into the clock of a D flip-flop.
+        זה "ברור" תמיד מוציא 0. אבל שערים NOT לא מגיבים באופן מיידי לכניסות שלהם במציאות, ו
+        גם לא בלוגיסים. כתוצאה מכך, כאשר הקלט של מעגל זה משתנה מ-0 ל-1, שער ה-AND ישתנה
+        ראה בקצרה שתי כניסות 1, והוא יפלוט 1 לזמן קצר. לא תראה את זה על המסך. אבל ההשפעה היא
+        ניתן לצפייה כאשר אנו משתמשים בפלט של שער ה-AND כקלט לשעון של כפכף D.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/prop-using-const0.png">
     </p>
     <p>
-        Poking the 0 input to become 1 leads to an instantaneous 1 going into the D flip-flop, and thus the flip-flop's
-        value will toggle every time the circuit input goes from 0 to 1. The detailed sequence can also be observed
-        thanks to the <a href="../tutorial/tutor-step.html">step-by-step</a> mode of the simulation.
+        דחיפה של קלט ה-0 כדי להפוך ל-1 מובילה ל-1 מיידי שנכנס לכפכף D, וכך לכפכף הכפכף.
+        הערך יתחלף בכל פעם שהקלט המעגל יעבור מ-0 ל-1. ניתן גם לראות את הרצף המפורט
+        הודות למצב <a href="../tutorial/tutor-step.html">שלב אחר שלב</a> של הסימולציה.
     </p>
     <p>
-        Every component has a delay associated with it. More sophisticated components built into Logisim tend to have
-        larger delays, but these delays are somewhat arbitrary and may not reflect reality.
+        לכל רכיב יש עיכוב הקשור אליו. נוטים להיות רכיבים מתוחכמים יותר המובנים ב-Logisim
+        עיכובים גדולים יותר, אך עיכובים אלו הם שרירותיים במקצת ועשויים שלא לשקף את המציאות.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/propagat.gif"><br>
-        Logisim world<br><br>
+        עולם לוגיסים<br><br>
         <img alt="#########" class="notscal" src="../../../../img-guide/reallife2.png"><br>
-        Real world
+        עולם אמיתי
     </p>
     <p>
-        From a technical point of view, it is relatively easy to deal with this level of sophistication in a single
-        circuit. Dealing with gate delays well across subcircuits, though, is a bit more complex; Logisim does attempt
-        to address this correctly by placing all primitive component's propagation values into a single schedule
-        regardless of the subcircuit in which the component lies.
+        מנקודת מבט טכנית, קל יחסית להתמודד עם רמת התחכום הזו בסינגל
+        מעגל חשמלי. עם זאת, התמודדות עם עיכובי שער היטב על פני תת-מעגלים היא קצת יותר מורכבת; לוגיסים אכן מנסה
+        לטפל בזה בצורה נכונה על ידי הצבת כל ערכי ההתפשטות של הרכיבים הפרימיטיביים בלוח זמנים אחד
+        ללא קשר למעגל המשנה בו הרכיב נמצא.
     </p>
     <p>
-        Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation
-        tab</a>, you can configure Logisim to add a random, occasional delay to a component's propagation. This is
-        intended to simulate the unevenness of real circuits. In particular, an R-S latch built using two NOR gates will
-        oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is
-        disabled by default.
+        דרך <a href="../opts/index.html">אפשרויות הפרויקט</a> של <a href="../opts/opts-simulate.html">הדמיה של חלון
+        tab</a>, תוכל להגדיר את Logisim להוסיף עיכוב אקראי, מדי פעם, להפצה של רכיב. זה
+        נועד לדמות את חוסר האחידות של מעגלים אמיתיים. בפרט, תפס R-S שנבנה באמצעות שני שערי NOR יעשה זאת
+        להתנדנד ללא האקראיות הזו, מכיוון ששני השערים יעבדו את התשומות שלהם בשלב נעילה. האקראיות הזו היא
+        מושבת כברירת מחדל.
     </p>
     <p>
-        Note that I'm stopping short of saying that Logisim always addresses gate delays well. But at least it tries.
+        שימו לב שאני מפסיק לומר שלוגיסים תמיד מטפל היטב בעיכובי שער. אבל לפחות זה מנסה.
     </p>
     <p>
-        <b>Next:</b> <a href="oscillate.html">Oscillation errors</a>.
+        <b>הבא:</b> <a href="oscillate.html">שגיאות תנודה</a>.
     </p>
 </div>
 </body>

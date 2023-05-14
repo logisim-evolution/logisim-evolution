@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Pull Resistor
     </title>
@@ -21,23 +21,23 @@
     <tbody>
     <tr>
         <td>
-            <strong>Library:</strong>
+            <strong>ספרייה:</strong>
         </td>
         <td>
-            <a href="index.html">Wiring</a>
+            <a href="index.html">חיווט</a>
         </td>
     </tr>
     <tr>
         <td>
-            <strong>Introduced:</strong>
+            <strong>הוצג:</strong>
         </td>
         <td>
-            2.5.0 (in Base library, moved to Wiring in 2.7.0)
+            2.5.0 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
         </td>
     </tr>
     <tr>
         <td valign="top">
-            <strong>Appearance:</strong>
+            <strong>מראה:</strong>
         </td>
         <td valign="top">
             <table>
@@ -47,7 +47,7 @@
                         ANSI:
                     </th>
                     <th colspan="2">
-                        IEC:
+                        חברת החשמל:
                     </th>
                 </tr>
                 <tr>
@@ -75,65 +75,64 @@
     </tbody>
 </table>
 <h2>
-    Behavior
+    התנהגות
 </h2>
 <p>
-    When connected to a point, this component has an effect only when the value at that point is the floating value
-    (<b class="uvalue">U</b>). In this case, the resistor pulls the wire to which it is connected toward the value
-    indicated in its <b class="propertie">Pull Direction</b> attribute.
+    כאשר הוא מחובר לנקודה, לרכיב זה יש השפעה רק כאשר הערך באותה נקודה הוא הערך הצף
+    (<b class="uvalue">U</b>). במקרה זה, הנגד מושך את החוט שאליו הוא מחובר לכיוון הערך
+    המצוין בתכונת ה<b class="propertie">כיוון משיכה</b> שלו.
 </p>
 <p>
-    If it is connected to a multiple-bit value, then each bit in the value that is floating is pulled in the
-    direction specified, while the bits that are not floating are left unchanged.
+    אם הוא מחובר לערך מרובה סיביות, אז כל סיביות בערך הצף נמשכות אל
+    הכיוון שצוין, בעוד שהסיביות שאינן צפות נשארות ללא שינוי.
 </p>
 <h2>
-    Pins
+    סיכות
 </h2>
 <p>
-    The resistor has just one pin, which is an output and has a bit width that is derived from whichever component
-    it is connected.
+    לנגד יש רק פין אחד, שהוא פלט ויש לו קצת רוחב שנגזר מכל רכיב
+    זה מחובר.
 </p>
 <h2>
-    Attributes
+    תכונות
 </h2>
 
 <p>
-    When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b>
-    attribute.
+    כאשר הרכיב נבחר או מתווסף, מקשי החצים משנים את ה<b class="propertie">פניו</b> שלו
+    תְכוּנָה.
 </p>
 <dl>
     <div class="attliste">
         <dt>
-            <b class="propertie">Facing</b>
+            <b class="propertie">לפנים</b>
         </dt>
         <dd>
-            The direction in which the component's pin lies from component's center.
+            הכיוון שבו סיכת הרכיב נמצאת ממרכז הרכיב.
         </dd>
         <dt>
-            <b class="propertie">Pull Direction</b>
+            <b class="propertie">כיוון משיכה</b>
         </dt>
         <dd>
-            Specifies the value to which a floating value should be pulled. This could be <b class="zerov">0</b>, <b
-                class="unov">1</b>, or the error value (<b class="evalue">E</b>).
+            מציין את הערך שאליו יש למשוך ערך צף. זה יכול להיות <b class="zerov">0</b>, <b
+                class="unov">1</b>, או ערך השגיאה (<b class="evalue">E</b>).
         </dd>
     </div>
 </dl>
 <h2>
-    Poke Tool Behavior
+    התנהגות כלי לתקוע
 </h2>
 <p>
-    None.
+    אף אחד.
 </p>
 <h2>
-    Text Tool Behavior
+    התנהגות כלי טקסט
 </h2>
 <p>
-    None.
+    אף אחד.
 </p>
 <p>
-    <b>Back to</b> <a href="../index.html">Library Reference</a>
+    <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
 </p>
 
-</div>
 </body>
 </html>

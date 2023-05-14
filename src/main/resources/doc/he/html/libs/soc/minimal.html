@@ -1,63 +1,63 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Minimal requirements
+        דרישות מינימליות
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Minimal requirements
+        דרישות מינימליות
     </h1>
     <h2>
-        Minimal requirements for a successful simulation
+        דרישות מינימליות לסימולציה מוצלחת
     </h2>
     <p>
-        To be able to perform a System On Chip (SOC) simulation you require to have in your sheet at least:
+        כדי להיות מסוגל לבצע סימולציית System On Chip (SOC) עליך להצטייד בגיליון שלך לפחות:
     </p>
     <ol>
-        <li>One of the processors marked with the <img alt="up" class="notscal" src="../../../../icons/up.png">.
+        <li>אחד המעבדים המסומנים ב-<img alt="up" class="notscal" src="../../../../icons/up.png">.
         </li>
-        <li>One bus marked with the <img alt="socbus" class="notscal" src="../../../../icons/socbus.png">
+        <li>אוטובוס אחד מסומן ב-<img alt="socbus" class="notscal" src="../../../../icons/socbus.png">
         </li>
-        <li>One memory simulator marked with the <img alt="socmem" class="notscal" src="../../../../icons/socmem.png">
+        <li>סימולטור זיכרון אחד מסומן ב-<img alt="socmem" class="notscal" src="../../../../icons/socmem.png">
         </li>
     </ol>
     <p>
-        Furthermore, both the memory simulator and the processor need to be connected to the bus. This can be achieved
-        by defining the <em><strong>Connected bus</strong></em> attribute of the respective components.
+        יתר על כן, גם סימולטור הזיכרון וגם המעבד צריכים להיות מחוברים לאוטובוס. ניתן להשיג זאת
+        על ידי הגדרת התכונה <em><strong>אוטובוס מחובר</strong></em> של הרכיבים המתאימים.
     </p>
     <h2>
-        Restrictions
+        הגבלות
     </h2>
     <p>
-        A SOC system can only be local on one sheet, meaning that a given bus component is only visible on the sheet it
-        is placed. Building hierarchical systems is only possible when having the base system on one sheet and the
-        extensions, for example VHDL-extentions or circuits, connected through the base system by means of input- and
-        output pins.
+        מערכת SOC יכולה להיות מקומית רק בגיליון אחד, כלומר רכיב אוטובוס נתון גלוי רק בגיליון שלה
+        ממוקם. בניית מערכות היררכיות אפשרית רק כאשר מערכת הבסיס נמצאת על גיליון אחד וה-
+        הרחבות, למשל הרחבות VHDL או מעגלים, המחוברים דרך מערכת הבסיס באמצעות קלט ו
+        פיני פלט.
     </p>
     <h2>
-        Simulation speed
+        מהירות סימולציה
     </h2>
     <p>
-        One has to realize that this library is intended to visualize what is going on in a SOC. Hence it provides in no
-        way the means to perform (near) real-time simulations of your SOC. For this purpose more adequate systems are
-        for example <a href="https://www.qemu.org" target="_blank">QEMU</a>.
+        צריך להבין שהספרייה הזו נועדה לדמיין מה קורה ב-SOC. לפיכך הוא מספק ב- No
+        דרך האמצעים לבצע סימולציות בזמן אמת (כמעט) של ה-SOC שלך. למטרה זו מערכות מתאימות יותר
+        לדוגמה <a href="https://www.qemu.org" target="_blank">QEMU</a>.
     </p>
     <p>
-        On the test system with all parts of the system visible a maximum of 3 Hz tick-frequency was measured. Disabling
-        some of the details for faster simulation improved the speed to 8 Hz. The best simulation speed can be achieved
-        to use super-circuits with dynamic elements. Here the simulation speed went up to approx. 3kHz.
+        במערכת הבדיקה כאשר כל חלקי המערכת גלויים נמדד תדר טיק של 3 הרץ לכל היותר. השבתה
+        חלק מהפרטים לסימולציה מהירה יותר שיפרו את המהירות ל-8 הרץ. ניתן להשיג את מהירות הסימולציה הטובה ביותר
+        להשתמש במעגלי-על עם אלמנטים דינמיים. כאן מהירות הסימולציה עלתה לכ. 3kHz.
     </p>
     <p>
-        <a href="./index.html">Back to <em>System On Chip components library</em></a>
+        <a href="./index.html">חזרה אל <em>ספריית רכיבי System On Chip</em></a>
     </p>
 </div>
 </body>

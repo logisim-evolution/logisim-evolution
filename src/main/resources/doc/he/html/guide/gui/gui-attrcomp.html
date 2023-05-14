@@ -1,67 +1,67 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Attributes of tools and components
+        תכונות של כלים ורכיבים
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="maindiv">
     <h1>
-        Attributes of tools and components
+        תכונות של כלים ורכיבים
     </h1>
     <p>
-        Every tool for adding components to a circuit also has a set of attributes, which are imparted to the components
-        created by the tool, although the components' attributes may be changed later without affecting the tool's
-        attributes. When you select a tool, Logisim will change the attribute table to display that tool's attributes.
+        לכל כלי להוספת רכיבים למעגל יש גם קבוצה של תכונות, המוענקות לרכיבים
+        נוצר על ידי הכלי, אם כי תכונות הרכיבים עשויות להשתנות מאוחר יותר מבלי להשפיע על הכלי
+        תכונות. כאשר אתה בוחר כלי, Logisim תשנה את טבלת התכונות כדי להציג את התכונות של הכלי הזה.
     </p>
     <p>
-        For example, suppose we want to create smaller AND gates. Right now, each time we select the AND tool, it
-        creates a large AND gate. But if we edit the Gate Size attribute just after selecting the tool (before placing
-        its AND gate into the circuit), we'll be changing the attributes for the tool, so that future AND gates added
-        using the tool would be narrow instead.
+        לדוגמה, נניח שאנו רוצים ליצור שערי AND קטנים יותר. כרגע, בכל פעם שאנו בוחרים בכלי AND, זה
+        יוצר שער AND גדול. אבל אם נערוך את התכונה Gate Size רק לאחר בחירת הכלי (לפני הצבתו
+        שער ה-AND שלו למעגל), נשנה את התכונות של הכלי, כך שיתווספו שערים ו-AND עתידיים
+        השימוש בכלי יהיה צר במקום זאת.
     </p>
     <p align="center">
         <img alt="#########" src="../../../img-guide/gui-4-and-narrow.png">
     </p>
     <p>
-        Now, we can delete the two existing AND gates and add two new AND gates in their place. This time, they will be
-        narrow. (If you chose to reduce the number of inputs to 3, the AND gate would not have vertical extension on the
-        left side. But you'd also have to rewire the circuit so that the wires hit the AND gate's left side.)
+        כעת, אנו יכולים למחוק את שני שערי ה-AND הקיימים ולהוסיף שני שערי AND חדשים במקומם. הפעם, הם יהיו
+        לְצַמְצֵם. (אם תבחר לצמצם את מספר הכניסות ל-3, לשער AND לא תהיה הרחבה אנכית על
+        צד שמאל. אבל תצטרך גם לחבר מחדש את המעגל כך שהחוטים יפגעו בצד שמאל של שער ה-AND.)
     </p>
     <p align="center">
         <img alt="#########" src="../../../img-guide/gui-5-and-replace.png">
     </p>
     <p>
-        With some tools, the tool's icon reflects some of the attributes' values. One example of this is the Pin tool,
-        whose icon faces the same way as its Facing attribute says.
+        בכלים מסוימים, סמל הכלי משקף חלק מערכי התכונות. דוגמה אחת לכך היא הכלי Pin,
+        שהסמל שלו פונה באותה צורה כפי שאומרת התכונה Facing שלו.
     </p>
     <p>
-        The tools in the toolbar each have a separate attribute set from the corresponding tools in the explorer pane.
-        Thus, even though we changed the toolbar's AND tool to create narrow AND gates, the AND tool in the Gates
-        library will still create wide AND gates unless you change its attributes too.
+        לכלים בסרגל הכלים יש ערכת תכונות נפרדת מהכלים המתאימים בחלונית הסייר.
+        לפיכך, למרות ששינינו את הכלי AND של סרגל הכלים כדי ליצור שערי AND צרים, הכלי AND בשערים
+        הספרייה עדיין תיצור שערי AND רחבים אלא אם תשנה גם את התכונות שלה.
     </p>
     <p>
-        In fact, the input pin and output pin tools in the default toolbar are both instances of the Wiring library's
-        Pin tool, but the attribute sets are different. The icon for the Pin tool is drawn as a circle or a square
-        depending on the value of its <b class=propertie>Output?</b> attribute.
+        למעשה, כלי פין הקלט ופין הפלט בסרגל הכלים המוגדר כברירת מחדל הם שני המופעים של ספריית Wiring
+        כלי סיכה, אבל ערכות התכונות שונות. הסמל של כלי הסיכה מצויר כעיגול או ריבוע
+        בהתאם לערך של התכונה <b class=propertie>Output?</b> שלו.
     </p>
     <p align="center">
         <img alt="#########" class="notscal" src="../../../../img-guide/gui-output.png">
     </p>
     <p>
-        Logisim provides a handy shortcut for changing the Facing attribute that controls the direction in which many
-        components face: Typing an <b class="tkeybd">arrow key</b> while that tool is selected automatically changes the
-        direction of the component.
+        Logisim מספקת קיצור דרך שימושי לשינוי התכונה Facing השולטת בכיוון שבו רבים
+        רכיבים פנים: הקלדת <b class="tkeybd">מקש חץ</b> בזמן שהכלי הזה נבחר משנה אוטומטית את
+        כיוון הרכיב.
     </p>
     <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+        <b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.
     </p>
 </div>
 </body>

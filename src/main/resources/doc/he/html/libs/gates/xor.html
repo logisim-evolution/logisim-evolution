@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         XOR/XNOR/Odd Parity/Even Parity Gate
     </title>
@@ -46,23 +46,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Gates</a>
+                <a href="index.html">שערים</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 1 for XOR/Odd/Even; 2.0 Beta 6 for XNOR
+                2.0 בטא 1 עבור XOR/אי זוגי/זוגי; 2.0 בטא 6 עבור XNOR
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <table>
@@ -76,10 +76,10 @@
                             XNOR
                         </th>
                         <th width="50">
-                            Odd Parity
+                            זוגיות מוזרה
                         </th>
                         <th width="50">
-                            Even Parity
+                            זוגיות אפילו
                         </th>
                     </tr>
                     <tr>
@@ -105,7 +105,7 @@
                     </tr>
                     <tr>
                         <td align="left" valign="middle">
-                            IEC:
+                            חברת החשמל:
                         </td>
                         <td>
                             <img alt="#########" class="appearancelibs" height="64"
@@ -131,26 +131,26 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The XOR, XNOR, Even Parity, and Odd Parity gates each compute the respective function of the inputs, and emit
-        the result on the output.
+        השערים XOR, XNOR, זוגיות זוגית וזוגיות מוזרה מחשבים כל אחד את הפונקציה המתאימה של התשומות, ופולטים
+        התוצאה על הפלט.
     </p>
     <p>
-        By default, any inputs that are left unconnected are ignored — that's if the input truly has nothing attached to
-        it, not even a wire. In this way, you can insert a 5-input gate but only attach two inputs, and it will work as
-        a 2-input gate; this relieves you from having to worry about
-        configuring the number of inputs every time you create a gate. (If all inputs are unconnected, the output is the
-        error value <em>X</em>.) Some users, though, prefer that Logisim insist that all inputs be connected, since this
-        is what corresponds to real-world gates. You can enable this
-        behavior by going to the Project &gt; Options… menu item, selecting the Simulation tab, and selecting <q>Error
-        for undefined inputs</q> for <q>Gate Output When Undefined.</q>
+        כברירת מחדל, מתעלמים מכל כניסות שנותרו לא מחוברות - זה אם לקלט באמת אין שום דבר מחובר אליו
+        זה, אפילו לא חוט. בדרך זו, אתה יכול להכניס שער 5 כניסות אבל לצרף רק שתי כניסות, וזה יעבוד כמו
+        שער בעל 2 כניסות; זה משחרר אותך מהצורך לדאוג
+        הגדרת מספר הכניסות בכל פעם שאתה יוצר שער. (אם כל הכניסות אינן מחוברות, הפלט הוא
+        ערך שגיאה <em>X</em>.) חלק מהמשתמשים, עם זאת, מעדיפים ש-Logisim יתעקש שכל הכניסות יהיו מחוברות, שכן זה
+        זה מה שמתאים לשערים בעולם האמיתי. אתה יכול להפעיל את זה
+        התנהגות על ידי מעבר לפרויקט &gt; פריט תפריט אפשרויות... בחירה בכרטיסייה סימולציה ובחירה ב<q>שגיאה
+        עבור כניסות לא מוגדרות</q> עבור <q>פלט שער כאשר לא מוגדר.</q>
     </p>
     <p>
-        The two-input truth table for the gates is the following.
+        טבלת האמת של שתי כניסות עבור השערים היא הבאה.
     </p>
-    <center>
+    <div style="text-align: center;">
         <table>
             <tbody>
             <tr>
@@ -255,139 +255,139 @@
             </tr>
             </tbody>
         </table>
-    </center>
+    </div>
     <p>
-        As you can see, the Odd Parity gate and the XOR gate behave identically with two inputs; similarly, the even
-        parity gate and the XNOR gate behave identically. But if there are more than two specified inputs, the XOR gate
-        will emit 1 only when there is exactly one 1 input, whereas the Odd Parity gate will emit 1 if there are an odd
-        number of 1 inputs. The XNOR gate will emit 1 only when there is <em>not</em> exactly one 1 input, while the
-        Even Parity gate will emit 1 if there are an even number of 1 inputs. The XOR and XNOR gates include an
-        attribute titled Multiple-Input Behavior that allow them to be configured to use the Odd Parity and Even Parity
-        behavior.
+        כפי שניתן לראות, שער ה-Od Parity ושער XOR מתנהגים באופן זהה עם שתי כניסות; באופן דומה, הזוגי
+        שער זוגיות ושער XNOR מתנהגים באופן זהה. אבל אם יש יותר משתי כניסות שצוינו, שער ה-XOR
+        יפלוט 1 רק כאשר יש קלט 1 אחד בדיוק, בעוד שער השוויון המוזר יפלוט 1 אם יש אי-זוגי
+        מספר 1 כניסות. שער XNOR יפלוט 1 רק כאשר יש <em>אין</em> קלט 1 בדיוק אחד, בעוד
+        שער זוגיות זוגי יפלוט 1 אם יש מספר זוגי של 1 כניסות. שערי XOR ו-XNOR כוללים
+        תכונה בשם Multiple-Input Behavior המאפשרת להגדיר אותם לשימוש בשוויון אי זוגי ובשוויון זוגי
+        התנהגות.
     </p>
     <p>
-        If any of the inputs are the error value (e.g., if conflicting values are coming into the same wire) or
-        floating, then the output will be the error value.
+        אם אחת מהכניסות היא ערך השגיאה (למשל, אם ערכים סותרים נכנסים לאותו חוט) או
+        צף, אז הפלט יהיה ערך השגיאה.
     </p>
     <p>
-        The multi-bit versions of each gate will perform its one-bit transformation bitwise on its inputs.
+        גרסאות מרובות הסיביות של כל שער יבצעו את הטרנספורמציה של סיביות אחת שלו בסיביות בכניסות שלו.
     </p>
     <p>
-        <strong>Note:</strong> Many authorities contend that the shaped XOR gate's behavior should correspond to the odd
-        parity gate, but there is not agreement on this point. Logisim's default behavior for XOR gates is based on the
-        IEEE 91 standard. It is also consistent with the intuitive meaning underlying the term <em>exclusive or</em>: A
-        waiter asking whether you want a side dish of mashed potatoes, carrots, peas, or cole slaw will only accept one
-        choice, not three, whatever some authorities may tell you. (I must admit, though, that I have not subjected this
-        statement to a rigorous test.) You can configure the XOR and XNOR gates to use parity by changing its <q>Multiple-Input
-        Behavior</q> attribute.
+        <strong>הערה:</strong> רשויות רבות טוענות שההתנהגות של שער ה-XOR המעוצב צריכה להתאים למוזר
+        שער זוגיות, אך אין הסכמה בנקודה זו. התנהגות ברירת המחדל של Logisim עבור שערי XOR מבוססת על
+        תקן IEEE 91. זה גם תואם את המשמעות האינטואיטיבית שבבסיס המונח <em>בלעדי או</em>: א
+        מלצר ששואל אם אתה רוצה תוספת של פירה, גזר, אפונה או סלאו קולי יקבל רק אחד
+        בחירה, לא שלוש, מה שרשויות מסוימות יגידו לך. (אני חייב להודות, עם זאת, שלא הכנתי את זה
+        אתה יכול להגדיר את השערים XOR ו-XNOR להשתמש בזוגיות על ידי שינוי ה-<q>ריבוי קלט שלו
+        תכונת התנהגות</q>.
     </p>
     <h2>
-        Pins (assuming component faces east)
+        סיכות (בהנחה שהרכיב פונה מזרחה)
     </h2>
     <dl>
         <dt>
-            West edge (inputs, bit width according to Data Bits attribute)
+            קצה מערב (כניסות, רוחב סיביות לפי תכונת Data Bits)
         </dt>
         <dd>
             <p>
-                The inputs into the component. There will be as many of these as specified in the Number of Inputs
-                attribute.
+                הכניסות לרכיב. יהיו כמה כאלה כפי שצוין במספר הכניסות
+                תְכוּנָה.
             </p>
             <p>
-                Note that if you are using shaped gates, the west side of XOR and XNOR gates will be curved.
-                Nonetheless, the input pins are in a line. Logisim will draw short stubs illustrating this; and if you
-                overshoot a stub, it will silently assume that you did not mean to overshoot it. In "printer view",
-                these stubs will not be drawn unless they are connected to wires.
+                שימו לב שאם אתם משתמשים בשערים מעוצבים, הצד המערבי של שערי XOR ו-XNOR יהיה מעוקל.
+                עם זאת, פיני הקלט נמצאים בשורה. לוגיסים יציירו בולים קצרים הממחישים זאת; ואם אתה
+                לעקוף בדל, הוא יניח בשקט שלא התכוונת לעקוף אותו. ב"תצוגת מדפסת",
+                בלמים אלה לא יצוירו אלא אם כן הם מחוברים לחוטים.
             </p>
         </dd>
         <dt>
-            East edge (output, bit width according to Data Bits attribute)
+            קצה מזרח (פלט, רוחב סיביות לפי תכונת Data Bits)
         </dt>
         <dd>
             <p>
-                The gate's output, whose value is computed based on the current inputs as described above.
+                הפלט של השער, שערכו מחושב על סמך הכניסות הנוכחיות כמתואר לעיל.
             </p>
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, the digits '0' through '9' alter its <q>Number of Inputs</q>
-        attribute, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, and the arrow keys alter its <q>Facing</q>
-        attribute.
+        כאשר הרכיב נבחר או מתווסף, הספרות '0' עד '9' משנות את <q>מספר הכניסות</q> שלו
+        תכונה, Alt-0 עד Alt-9 משנים את התכונה <q>נתונים</q> שלה, ומקשי החצים משנים את ה<q>פניות</q> שלה.
+        תְכוּנָה.
     </p>
     <dl>
         <dt>
-            Facing
+            מוּל
         </dt>
         <dd>
-            The direction of the component (its output relative to its inputs).
+            כיוון הרכיב (הפלט שלו ביחס לתשומות שלו).
         </dd>
         <dt>
-            Data Bits
+            פיסות מידע
         </dt>
         <dd>
-            The bit width of the component's inputs and outputs.
+            רוחב הסיביות של הכניסות והיציאות של הרכיב.
         </dd>
         <dt>
-            Gate Size
+            גודל שער
         </dt>
         <dd>
-            Determines whether to draw a wider or narrower version of the component. This does not affect the number of
-            inputs, which is specified by the Number of Inputs attribute; however, if the number of inputs exceeds 3
-            (for a narrow component) or 5 (for a wide component), then the gate will be drawn with "wings" to be able to
-            accommodate the number of inputs requested.
+            קובע אם לצייר גרסה רחבה יותר או צרה יותר של הרכיב. זה לא משפיע על מספר
+            תשומות, המצוין על ידי התכונה מספר כניסות; עם זאת, אם מספר הכניסות עולה על 3
+            (עבור רכיב צר) או 5 (עבור רכיב רחב), אז השער יהיה מצויר עם "כנפיים" כדי להיות מסוגל
+            להכיל את מספר התשומות המבוקש.
         </dd>
         <dt>
-            Number of Inputs
+            מספר כניסות
         </dt>
         <dd>
-            Determines how many pins to have for the component on its west side.
+            קובע כמה פינים יש לרכיב בצד המערבי שלו.
         </dd>
         <dt>
-            Output Value
+            ערך פלט
         </dt>
         <dd>
-            Indicates how false and true results should be translated into output values. By default, false is indicated
-            by a low voltage (0) and true by a high voltage (1), but one or the other can be replaced by a
-            high-impedance (<q>floating</q>) value instead. This allows wired-or and wired-and onnections, as
-            illustrated in the <a href="basic.html">AND/OR/NAND/NOR Gate documentation</a>.
+            מציין כיצד יש לתרגם תוצאות שגויות ואמיתיות לערכי פלט. כברירת מחדל, מסומן false
+            במתח נמוך (0) ונכון במתח גבוה (1), אבל אפשר להחליף את האחד או השני ב-
+            במקום זאת ערך בעל עכבה גבוהה (<q>צף</q>). זה מאפשר חיבורים קוויים או קוויים וחיבורים, כמו
+            מודגם בתיעוד <a href="basic.html">AND/OR/NAND/NOR Gate</a>.
         </dd>
         <dt>
-            Label
+            תווית
         </dt>
         <dd>
-            The text within the label associated with the gate.
+            הטקסט בתוך התווית המשויכת לשער.
         </dd>
         <dt>
-            Label Font
+            תווית גופן
         </dt>
         <dd>
-            The font with which to render the label.
+            הגופן שבאמצעותו יש לעבד את התווית.
         </dd>
         <dt>
-            Multiple-Input Behavior (XOR and XNOR only)
+            התנהגות מרובה קלט (XOR ו-XNOR בלבד)
         </dt>
         <dd>
-            When three or more inputs are provided, the XOR/XNOR gate's output will either be based on whether exactly
-            one input is 1 (the default) or an odd number of inputs are 1.
+            כאשר מסופקות שלוש כניסות או יותר, הפלט של שער XOR/XNOR יתבסס על האם בדיוק
+            קלט אחד הוא 1 (ברירת המחדל) או מספר אי זוגי של כניסות הוא 1.
         </dd>
     </dl>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        Allows the label associated with the gate to be edited.
+        מאפשר לערוך את התווית המשויכת לשער.
     </p>
     <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
     </p>
 </div>
 </body>

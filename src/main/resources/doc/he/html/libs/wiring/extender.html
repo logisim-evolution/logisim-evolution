@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Bit Extender
     </title>
@@ -21,23 +21,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Wiring</a>
+                <a href="index.html">חיווט</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.5.0 (in Base library, moved to Wiring in 2.7.0)
+                2.5.0 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <table>
@@ -59,93 +59,94 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The bit extender transforms a value into a value of another bit width. If it's being transformed into a smaller
-        bit width, it is simply truncated to keep the lowest-order bits. If it's being transformed into a large bit
-        width, the lowest-order bits are the same, and you have a choice about what the additional high-order bits will
-        be: They can all be 0, all be 1, all match the input's <q>sign bit</q> (its highest-order bit), or the component
-        can have an additional one-bit input that determines the identity of these other bits.
+        מאריך הסיביות הופך ערך לערך ברוחב סיביות אחר. אם זה הופך לקטן יותר
+        רוחב סיביות, הוא פשוט קטוע כדי לשמור על הביטים מהסדר הנמוך ביותר. אם זה הופך לחלק גדול
+        רוחב, הביטים מהסדר הנמוך ביותר זהים, ויש לך אפשרות לבחור מה יהיו הביטים הנוספים בסדר גבוה
+        be: כולם יכולים להיות 0, כולם יכולים להיות 1, כולם תואמים ל<q>סיבית הסימן</q> של הקלט (הסיביות מהסדר הגבוה ביותר
+        שלו), או לרכיב
+        יכול להיות קלט נוסף של סיביות אחד שקובע את הזהות של סיביות אחרות אלה.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <dl>
         <dt>
-            West edge (input, bit width from Bit Width In attribute)
+            קצה מערב (קלט, רוחב סיביות מתכונת Bit Width In)
         </dt>
         <dd>
             <p>
-                The multi-bit input whose value is to be transformed.
+                קלט רב-סיביות שהערך שלו אמור לעבור טרנספורמציה.
             </p>
         </dd>
         <dt>
-            East edge (output, bit width from Bit Width Out attribute)
+            קצה מזרח (פלט, רוחב סיביות מתכונת Bit Width Out)
         </dt>
         <dd>
             <p>
-                The computed output.
+                הפלט המחושב.
             </p>
         </dd>
         <dt>
-            North edge (input, bit width 1)
+            קצה צפון (קלט, רוחב סיביות 1)
         </dt>
         <dd>
             <p>
-                Specifies what the additional bits in the output should be. This pin is available only when the
-                Extension Type attribute is <q>Input.</q>
+                מציין מה צריכים להיות הביטים הנוספים בפלט. סיכה זו זמינה רק כאשר
+                תכונת סוג ההרחבה היא <q>קלט.</q>
             </p>
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b
-            class="tkeybd">9</b> alter the <b class="propertie">Bit Width In</b> attribute and <b
-            class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Bit Width
-        Out</b> attribute.
+        כאשר הרכיב נבחר או מתווסף, הספרות <b class="tkeybd">0</b> עד <b
+            class="tkeybd">9</b> שנה את התכונה <b class="propertie">Bit Width In</b> ו<b
+            class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b> משנים את <b class="propertie">רוחב הסיביות שלו
+        מאפיין Out</b>.
     </p>
     <div class="attliste">
         <dl>
             <dt>
-                <b class="propertie">Bit Width In</b>
+                <b class="propertie">רוחב סיביות ב</b>
             </dt>
             <dd>
-                The input's bit width.
+                רוחב הסיביות של הקלט.
             </dd>
             <dt>
                 <b class="propertie">Bit Width Out</b>
             </dt>
             <dd>
-                The output's bit width.
+                רוחב הסיביות של הפלט.
             </dd>
             <dt>
-                <b class="propertie">Extension Type</b>
+                <b class="propertie">סוג הרחבה</b>
             </dt>
             <dd>
-                Assuming the output bit width exceeds the input bit width, this attribute configures what the additional
-                output bits should be. If <q>Zero</q> or <q>One,</q> the additional bits are 0 or 1 accordingly. If <q>Sign,</q>
-                the additional bits are taken to match the highest-order bit in the input. And if <q>Input,</q> the
-                component has a second input on its north side whose one-bit value is used for the additional bits.
+                בהנחה שרוחב סיביות הפלט חורג מרוחב סיביות הקלט, תכונה זו מגדירה את התוספת
+                סיביות פלט צריכות להיות. אם <q>אפס</q> או <q>אחד,</q> הסיביות הנוספות הן 0 או 1 בהתאם. אם <q>חתום,</q>
+                הביטים הנוספים נלקחים כדי להתאים לסיביות מהסדר הגבוה ביותר בקלט. ואם <q>קלט,</q> את
+                לרכיב יש קלט שני בצד הצפוני שלו שהערך של סיביות אחד שלו משמש עבור הביטים הנוספים.
             </dd>
         </dl>
     </div>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        None.
+        אף אחד.
     </p>
     <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
     </p>
 </div>
 </body>

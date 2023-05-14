@@ -1,91 +1,91 @@
-<html lang="en">
+<html lang="he">
 <head>
-    <title>Label</title>
+    <title>תווית</title>
 </head>
 
-<body bgcolor="FFFFFF">
+<body>
 
-<h1><img align="center" alt="" height="32" src="../../../../img-guide/text.png" width="32">
-    <em>Label</em></h1>
+<h1><img alt="" height="32" src="../../../../img-guide/text.png" width="32">
+    <em>תווית</em></h1>
 
 <p>
 <table>
     <tr>
-        <td><strong>Library:</strong></td>
-        <td><a href="index.html">Base</a></td>
+        <td><strong>ספרייה:</strong></td>
+        <td><a href="index.html">בסיס</a></td>
     </tr>
     <tr>
-        <td><strong>Introduced:</strong></td>
-        <td>2.0 Beta 1</td>
+        <td><strong>הצגה:</strong></td>
+        <td>2.0 בטא 1</td>
     </tr>
     <tr>
-        <td valign="top"><strong>Appearance:</strong></td>
-        <td valign="top"><img src="../../../../img-libs/label.png" height="10" width="59" alt=""></td>
+        <td><strong>מראה:</strong></td>
+        <td><img alt="" height="10" src="../../../../img-libs/label.png" width="59"></td>
     </tr>
 </table>
 
-<h2>Behavior</h2>
+<h2>התנהגות</h2>
 
-<p>This is a simple text label that can be placed anywhere in the circuit.
-    It does not interact with values traveling through the circuit
-    in any way, except inasmuch as it will be visible when the circuit is
-    drawn.</p>
+<p>זוהי תווית טקסט פשוטה שניתן למקם בכל מקום במעגל.
+    הוא אינו יוצר אינטראקציה עם ערכים העוברים במעגל
+    בכל דרך שהיא, למעט ככל שזה יהיה גלוי כאשר המעגל נמצא
+    מצוייר.</p>
 
-<p>In contrast to all other components in the current built-in
-    libraries, label components can be placed anywhere on the canvas;
-    they do not snap to the grid.</p>
+<p>בניגוד לכל שאר הרכיבים המובנה הנוכחי
+    ספריות, ניתן למקם רכיבי תווית בכל מקום על הבד;
+    הם לא נצמדים לרשת.</p>
 
-<h2>Pins</h2>
+<h2>סיכות</h2>
 
-<p>None.</p>
+<p>אין.</p>
 
-<h2>Attributes</h2>
+<h2>מאפיינים</h2>
 
 <dl>
 
-    <dt>Text</dt>
-    <dd>The text appearing in the label. This value can be edited in the
-        attribute table or, using the text tool, on the canvas.
+    <dt>טקסט</dt>
+    <dd>הטקסט המופיע בתווית. ניתן לערוך ערך זה ב-
+        טבלת תכונות או, באמצעות כלי הטקסט, על הבד.
     </dd>
 
-    <dt>Font</dt>
-    <dd>The font to use when drawing the label.</dd>
+    <dt>גופן</dt>
+    <dd>הגופן לשימוש בעת ציור התווית.</dd>
 
-    <dt>Horizontal Alignment</dt>
-    <dd>The horizontal positioning technique for the text relative to the label's official location
-        (where the mouse was clicked in creating the label). "Left"
-        means that the text should be drawn so that its left edge
-        is at the location; "right" means that the text should be
-        drawn so that its right edge is at the location; and "center" means that
-        the text should be drawn so that its center (horizontally) is at the
-        location.
+    <dt>יישור אופקי</dt>
+    <dd>טכניקת המיקום האופקי של הטקסט ביחס למיקום הרשמי של התווית
+        (היכן לחצו על העכבר ביצירת התווית). "שמאלה"
+        פירושו שיש לצייר את הטקסט כך שהקצה השמאלי שלו
+        נמצא במקום; "נכון" פירושו שהטקסט צריך להיות
+        מצויר כך שהקצה הימני שלו נמצא במיקום; ו"מרכז" פירושו זאת
+        יש לצייר את הטקסט כך שמרכזו (אופקי) יהיה ב-
+        מקום.
     </dd>
 
-    <dt>Vertical Alignment</dt>
-    <dd><p>The vertical positioning technique for the text relative to the
-        label's official location (where the mouse was clicked in creating the
-        label). "Base" means that the baseline should intersect the location;
-        "Top" means that the text's top should intersect the location; "Bottom"
-        means that the text's bottom should intersect the location; and "Center"
-        means that the text should be centered (vertically) at the location.</p>
+    <dt>יישור אנכי</dt>
+    <dd><p>טכניקת המיקום האנכי של הטקסט ביחס ל-
+        המיקום הרשמי של התווית (היכן לחצו על העכבר ביצירת ה
+        תווית). "בסיס" פירושו שקו הבסיס צריך לחצות את המיקום;
+        "למעלה" פירושו שהחלק העליון של הטקסט צריך לחצות את המיקום; "תַחתִית"
+        פירושו שהחלק התחתון של הטקסט צריך לחצות את המיקום; ו"מרכז"
+        פירושו שהטקסט צריך להיות מרוכז (אנכית) במיקום.</p>
 
-        <p>The text's top and bottom is computed based on the font's
-            standard ascent and descent values; thus, even if the actual text
-            contains no tall letters (such as <em>b</em>) or descending letters
-            (such as <em>g</em>), it is assumed to contain such letters for the
-            purposes of vertical positioning.</p></dd>
+        <p>החלק העליון והתחתון של הטקסט מחושבים על סמך הגופן
+            ערכי עליה וירידה סטנדרטיים; כך, גם אם הטקסט בפועל
+            אינו מכיל אותיות גבוהות (כגון <em>b</em>) או אותיות יורדות
+            (כגון <em>g</em>), מניחים שהוא מכיל אותיות כאלה עבור ה
+            מטרות של מיקום אנכי.</p></dd>
 
 </dl>
 
-<h2>Poke Tool Behavior</h2>
+<h2>התנהגות כלי חיטוי</h2>
 
-<p>None.</p>
+<p>אין.</p>
 
-<h2>Text Tool Behavior</h2>
+<h2>התנהגות כלי טקסט</h2>
 
-<p>Allows the text appearing within the label to be edited.</p>
+<p>מאפשר לערוך את הטקסט המופיע בתוך התווית.</p>
 
-<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+<p><a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a></p>
 
 </body>
 </html>

@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        D/T/J-K/S-R Flip-Flop
+        D/T/J-K/S-R דלגלג
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
@@ -18,39 +18,39 @@
         <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/tflipflop.png" width="32">
         <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/jkflipflop.png" width="32">
         <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/srflipflop.png" width="32">
-        <em> D/T/J-K/S-R Flip-Flop</em>
+        <em> D/T/J-K/S-R דלגלג</em>
     </h1>
     <table>
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Memory</a>
+                <a href="index.html">זיכרון</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 1
+                2.0 בטא 1
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <table>
                 <tbody>
                 <tr>
                     <th></th>
                     <th width="50">
-                        D
+                        ד
                     </th>
                     <th width="50">
-                        T
+                        ט
                     </th>
                     <th width="50">
                         J-K
@@ -61,7 +61,7 @@
                 </tr>
                 <tr>
                     <td align="left" valign="middle">
-                        Logisim:
+                        לוגיזם:
                     </td>
                     <td>
                         <img alt="#########" class="appearancelibs" height="64"
@@ -82,7 +82,7 @@
                 </tr>
                 <tr>
                     <td align="left" valign="middle">
-                        Evolution:
+                        אבולוציה:
                     </td>
                     <td>
                         <img alt="#########" class="appearancelibs" height="64"
@@ -103,21 +103,17 @@
                 </tr>
                 </tbody>
             </table>
-            </td>
         </tr>
         </tbody>
     </table>
-    </tr>
-    </tbody>
-    </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        Each flip-flop stores a single bit of data, which is emitted through the <var>Q</var> output on the east side.
-        Normally, the value can be controlled via the inputs to the west side. In particular, the value changes when the
-        <strong>clock</strong> input, marked by a triangle on each flip-flop, rises from 0 to 1 (or otherwise as
-        configured); on this rising edge, the value changes according to the table below.
+        כל כפכף מאחסן סיבית נתונים בודדת, הנפלטת דרך פלט <var>Q</var> בצד המזרחי.
+        בדרך כלל, ניתן לשלוט בערך באמצעות הכניסות לצד המערבי. בפרט, הערך משתנה כאשר
+        קלט <strong>שעון</strong>, המסומן במשולש בכל כפכף, עולה מ-0 ל-1 (או באופן אחר
+        מוגדר); בקצה העולה הזה, הערך משתנה בהתאם לטבלה למטה.
     </p>
     <div style="text-align: center;">
         <table>
@@ -324,143 +320,143 @@
         </table>
     </div>
     <p>
-        Another way of describing the different behavior of the flip-flops is in English text.
+        דרך נוספת לתאר את ההתנהגות השונה של הכפכפים היא בטקסט באנגלית.
     </p>
     <ul>
         <li>
             <p>
-                <strong>D Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop becomes the
-                value of the <var>D</var> input (<em>Data</em>) at that instant.
+                <strong>כפכף D:</strong> כאשר השעון מופעל, הערך הנזכר על ידי הכפכף הופך ל-
+                הערך של הקלט <var>D</var> (<em>Data</em>) באותו רגע.
             </p>
         </li>
         <li>
             <p>
-                <strong>T Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop either
-                toggles or remains the same depending on whether the <var>T</var> input (<em>Toggle</em>) is 1 or 0.
+                <strong>כפכף T:</strong> כאשר השעון מופעל, הערך שנזכר על ידי הכפכף
+                משתנה או נשאר זהה, תלוי אם הקלט <var>T</var> (<em>Toggle</em>) הוא 1 או 0.
             </p>
         </li>
         <li>
             <p>
-                <strong>J-K Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop toggles
-                if the <var>J</var> and <var>K</var> inputs are both 1 and the value remains the same if both are 0; if
-                they are different, then the value becomes 1 if the <var>J</var> (<em>Jump</em>) input is 1 and 0 if the
-                <var>K</var> (<em>Kill</em>) input is 1.
+                <strong>כפכף J-K:</strong> כאשר השעון מופעל, הערך הזכור על ידי הכפכף מתחלף
+                אם הקלט <var>J</var> ו-<var>K</var> שניהם 1 והערך נשאר זהה אם שניהם 0; אם
+                הם שונים, אז הערך הופך ל-1 אם הקלט <var>J</var> (<em>Jump</em>) הוא 1 ו-0 אם
+                הקלט של <var>K</var> (<em>Kill</em>) הוא 1.
             </p>
         </li>
         <li>
             <p>
-                <strong>S-R Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop remains
-                unchanged if <var>R</var> and <var>S</var> are both 0, becomes 0 if the <var>R</var> input
-                (<em>Reset</em>) is 1, and becomes 1 if the <var>S</var> input (<em>Set</em>) is 1. The behavior in
-                unspecified if both inputs are 1. (In Logisim, the value in the flip-flop remains unchanged.)
+                <strong>S-R כפכף:</strong> כאשר השעון מופעל, הערך שנזכר על ידי הכפכף נשאר
+                ללא שינוי אם <var>R</var> ו-<var>S</var> הם שניהם 0, הופך ל-0 אם הקלט <var>R</var>
+                (<em>איפוס</em>) הוא 1, והופך ל-1 אם הקלט <var>S</var> (<em>Set</em>) הוא 1. ההתנהגות ב
+                לא מצוין אם שתי הכניסות הן 1. (ב-Logisim, הערך בכפכף נשאר ללא שינוי.)
             </p>
         </li>
     </ul>
     <p>
-        By default, the clock triggers on a rising edge — that is, when the clock input changes from 0 to 1. However,
-        the Trigger attribute allows this to change to a falling edge (when the clock input changes from 1 to 0), a high
-        level (for the duration that the clock input is 1), or a low level (for the duration that the clock input is 0).
-        The level-trigger options are unavailable for the T and J-K flip-flops, because a flip-flop behaves
-        unpredictably when told to toggle for an indeterminate amount of time.
+        כברירת מחדל, השעון מופעל בקצה עולה - כלומר, כאשר קלט השעון משתנה מ-0 ל-1. עם זאת,
+        התכונה Trigger מאפשרת לשנות זאת לקצה נופל (כאשר קלט השעון משתנה מ-1 ל-0), גבוה
+        רמה (למשך הזמן שבו כניסת השעון היא 1), או רמה נמוכה (למשך הזמן שבו כניסת השעון היא 0).
+        אפשרויות ההפעלה של הרמה אינן זמינות עבור כפכפי T ו-J-K, מכיוון שכפכפים מתנהגים
+        באופן בלתי צפוי כשאומרים לו לעבור לפרק זמן בלתי מוגדר.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <dl>
         <dt>
-            West edge, marked by triangle (input, bit width 1)
+            קצה מערבי, מסומן במשולש (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Clock input: At the instant that this input value switches from 0 to 1 (the rising edge), the value will be
-            updated according to the other inputs on the west edge. As long as this remains 0 or 1, the other inputs on
-            the west edge have no effect.
+            קלט שעון: ברגע שערך קלט זה עובר מ-0 ל-1 (הקצה העולה), הערך יהיה
+            מעודכן בהתאם לשאר הקלטים בקצה המערבי. כל עוד זה נשאר 0 או 1, שאר הקלטים פועלים
+            לקצה המערבי אין השפעה.
         </dd>
         <dt>
-            West edge, other labeled pin(s) (input(s), bit width 1)
+            קצה מערבי, פינים מסומנים אחרים (כניסות, רוחב סיביות 1)
         </dt>
         <dd>
-            These inputs control how the flip-flop's value changes during the rising edge of the clock. Their exact
-            behavior depends on the flip-flop; the above tables summarize their behavior.
+            כניסות אלו שולטות כיצד משתנה הערך של הכפכף במהלך הקצה העולה של השעון. המדויק שלהם
+            ההתנהגות תלויה בכפכף; הטבלאות לעיל מסכמות את התנהגותם.
         </dd>
         <dt>
-            East edge, labeled <var>Q</var>, north end (output, bit width 1)
+            קצה מזרחי, שכותרתו <var>Q</var>, קצה צפון (פלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Outputs the value currently stored by the flip-flop.
+            מוציא את הערך המאוחסן כעת על ידי הכפכף.
         </dd>
         <dt>
-            East edge, south end (output, bit width 1)
+            קצה מזרח, קצה דרום (פלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Outputs the complement of the value currently stored by the flip-flop.
+            מוציא את ההשלמה של הערך המאוחסן כעת על ידי הכפכף.
         </dd>
         <dt>
-            South edge, east end (input, bit width 1)
+            קצה דרום, קצה מזרחי (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Asynchronous reset: When 0 or undefined, this input has no effect. As long as it is 1, the flip-flop's value
-            is pinned to 0. This occurs asynchronously - that is, without regard to the current clock input value. As
-            long as this is 1, the other inputs have no effect.
+            איפוס אסינכרוני: כאשר 0 או לא מוגדר, לקלט זה אין השפעה. כל עוד הוא 1, הערך של הכפכף
+            מוצמד ל-0. זה מתרחש באופן אסינכרוני - כלומר, ללא קשר לערך קלט השעון הנוכחי. כפי ש
+            כל עוד זה 1, לכניסות האחרות אין השפעה.
         </dd>
         <dt>
-            South edge, west end or Nort edge (input, bit width 1)
+            קצה דרומי, קצה מערבי או קצה צפון (קלט, רוחב סיביות 1)
         </dt>
         <dd>
-            Asynchronous set: When 1 or undefined, this input has no effect. When 1, the flip-flop's value is pinned to
-            1. This occurs asynchronously - that is, without regard to the current clock input value. As long as this
-            input is 1, the other inputs have no effect, except for the asynchronous reset input, which has priority.
+            סט אסינכרוני: כאשר 1 או לא מוגדר, לקלט זה אין השפעה. כאשר 1, הערך של הכפכף מוצמד
+            1. זה מתרחש באופן אסינכרוני - כלומר, ללא קשר לערך קלט השעון הנוכחי. כל עוד זה
+            הקלט הוא 1, לכניסות האחרות אין השפעה, למעט קלט האיפוס האסינכרוני, שיש לו עדיפות.
         </dd>
     </dl>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <dl>
         <dt>
-            Trigger
+            הדק
         </dt>
         <dd>
-            Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the flip-flop
-            should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value
-            indicates that it should update at the instant the clock falls from 1 to 0. The <q>high level</q> value
-            indicates that the flip-flop should update continuously whenever the clock input is 1. And the <q>low
-            level</q> value indicates that it should update continuously when the clock input is 0. Note that the latter
-            two options are unavailable for T and J-K flip-flops.
+            מגדיר כיצד מתפרש קלט השעון. הערך <q>קצה עולה</q> מציין שהכפכף
+            צריך לעדכן את הערך שלו ברגע שהשעון עולה מ-0 ל-1. הערך <q>הקצה הנופל</q>
+            מציין שהוא צריך להתעדכן ברגע שהשעון יורד מ-1 ל-0. הערך <q>רמה גבוהה</q>
+            מציין שהכפכף צריך להתעדכן ברציפות בכל פעם שכניסת השעון היא 1. וה-<q>נמוך
+            ערך level</q> מציין שהוא צריך להתעדכן ברציפות כאשר כניסת השעון היא 0. שימו לב שהאחרון
+            שתי אפשרויות אינן זמינות עבור כפכפי T ו-J-K.
         </dd>
         <dt>
-            Label
+            תווית
         </dt>
         <dd>
-            The text within the label associated with the flip-flop.
+            הטקסט בתוך התווית המשויכת לכפכף.
         </dd>
         <dt>
-            Label Font
+            תווית גופן
         </dt>
         <dd>
-            The font with which to render the label.
+            הגופן שבאמצעותו יש לעבד את התווית.
         </dd>
         <dt>
-            Appaerance
+            מראה
         </dt>
         <dd>
-            Classic Logisim : Presents flipflops as the legacy of logisim
-            Logisim-HolyCross / Logsim-Evolutions : New presentation of flipflops in the IEC way
+            לוגיזם קלאסי: מציג כפכפים כמורשת הלוגיסים
+            Logisim-HolyCross / Logsim-Evolutions : מצגת חדשה של כפכפים בדרך חברת החשמל
         </dd>
     </dl>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        Clicking a flip-flop using the Poke Tool toggles the bit stored in the flip-flop, unless the asynchronous
-        set/reset inputs currently pin the flip-flop's value.
+        לחיצה על כפכף באמצעות הכלי Poke מחליפה את הביט המאוחסן בכפכף, אלא אם כן ה-Asynchronous
+        קבע/אפס כניסות כרגע מצמידים את הערך של הכפכף.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        Allows the label associated with the component to be edited.
+        מאפשר לערוך את התווית המשויכת לרכיב.
     </p>
     <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
     </p>
 </div>
 </body>

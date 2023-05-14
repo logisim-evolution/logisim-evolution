@@ -1,33 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
-        Gray Code Incrementer
+        Gray Code מגדיל
     </title>
     <link href="../../style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class=codediv>
     <h1>
-        Gray Code Incrementer
+        Gray Code מגדיל
     </h1>
     <p>
-        Each component included in a library is defined by creating a subclass of <code>InstanceFactory</code> found in
-        the <code>com.cburch.logisim.instance</code> package. This subclass has all the code involved
+        כל רכיב הכלול בספריה מוגדר על ידי יצירת תת מחלקה של <code>InstanceFactory</code> שנמצאת ב-
+        החבילה <code>com.cburch.logisim.instance</code>. תת-מחלקה זו כוללת את כל הקוד המעורב
     </p>
     <p>
-        (Here we're describing the API for the current version of Logisim. You may find some libraries developed for
-        older versions of Logisim, in which components were developed by defining two classes, one extending <code>Component</code>
-        and another extending <code>ComponentFactory</code>. Version 2.3.0 introduced the much simpler <code>InstanceFactory</code>
-        API; the older technique is deprecated.)
+        (כאן אנו מתארים את ה-API עבור הגרסה הנוכחית של Logisim. ייתכן שתמצא מספר ספריות שפותחו עבור
+        גרסאות ישנות יותר של Logisim, שבהן פותחו רכיבים על ידי הגדרת שתי מחלקות, אחת המרחיבה את <code>Component</code>
+        ועוד <code>ComponentFactory</code> מרחיב. גרסה 2.3.0 הציגה את <code>InstanceFactory</code> הפשוט הרבה יותר
+        API; הטכניקה הישנה יותר הוצאה משימוש.)
     </p>
     <p>
-        Three Logisim packages define most of the classes relevant to defining component libraries.
+        שלוש חבילות Logisim מגדירות את רוב המחלקות הרלוונטיות להגדרת ספריות רכיבים.
     </p>
     <dl>
         <dt>
@@ -35,8 +35,8 @@
         </dt>
         <dd>
             <p>
-                Contains classes specifically related to defining components, including the <code>InstanceFactory</code>,
-                <code>InstanceState</code>, <code>InstancePainter</code>, and <code>Instance</code> classes.
+                מכיל מחלקות הקשורות ספציפית להגדרת רכיבים, כולל <code>InstanceFactory</code>,
+                מחלקות <code>InstanceState</code>, <code>InstancePainter</code> ו-<code>Instance</code>.
             </p>
         </dd>
         <dt>
@@ -44,9 +44,9 @@
         </dt>
         <dd>
             <p>
-                Contains classes related to data elements associated with components, such as the <code>Bounds</code>
-                class for representing bounding rectangles or the <code>Value</code> class for representing values that
-                can exist on a wire.
+                מכיל מחלקות הקשורות לרכיבי נתונים המשויכים לרכיבים, כגון <code>Bounds</code>
+                מחלקה לייצוג מלבנים תוחמים או המחלקה <code>Value</code> לייצוג ערכים
+                יכול להתקיים על חוט.
             </p>
         </dd>
         <dt>
@@ -54,21 +54,21 @@
         </dt>
         <dd>
             <p>
-                Contains classes related to the library definition.
+                מכיל שיעורים הקשורים להגדרת הספרייה.
             </p>
         </dd>
     </dl>
     <h2>
-        About Gray codes
+        לגבי קודים אפורים
     </h2>
     <p>
-        Before we go on, let me briefly describe the Gray code on which these examples are based. It's not really
-        important to understanding how these examples work, so you can safely skip to the code below if you wish -
-        particularly if you already know Gray codes.
+        לפני שנמשיך, הרשו לי לתאר בקצרה את הקוד האפור שעליו מבוססות דוגמאות אלו. זה לא באמת
+        חשוב להבין כיצד דוגמאות אלו פועלות, כך שתוכל לדלג בבטחה לקוד למטה אם תרצה -
+        במיוחד אם אתה כבר מכיר קודי גריי.
     </p>
     <p>
-        Gray code is a technique (named after Frank Gray) for iterating through <var>n</var>-bit sequences with only one
-        bit changed for each step. As an example, consider the 4-bit Gray code listed below.
+        קוד אפור הוא טכניקה (על שם פרנק גריי) לאיטרציה דרך רצפי <var>n</var>-bit עם אחד בלבד
+        קצת השתנה עבור כל שלב. כדוגמה, שקול את קוד האפור 4 סיביות המפורט להלן.
     </p>
     <blockquote>
         <table>
@@ -112,19 +112,19 @@
         </table>
     </blockquote>
     <p>
-        Each value has the bit underlined that will change for the next value in the sequence. For example, after 0000
-        comes 0001, in which the final bit has been toggled, so the final bit is underlined.
+        לכל ערך יש את הסיביות בקו תחתון שישתנה עבור הערך הבא ברצף. לדוגמה, אחרי 0000
+        מגיע 0001, שבו ה-bit הסופי הוחלף, כך שה-bit הסופי מסומן בקו תחתון.
     </p>
     <p>
-        Logisim's built-in components don't include anything working with Gray codes. But electronics designers find
-        Gray codes useful sometimes. One particularly notable instance of Gray codes is along the axes in Karnaugh maps.
+        הרכיבים המובנים של Logisim לא כוללים שום דבר שעובד עם קודי גריי. אבל מעצבי אלקטרוניקה מוצאים
+        קודים אפורים שימושיים לפעמים. מופע בולט במיוחד של קודי גריי הוא לאורך הצירים במפות קרנו.
     </p>
     <h2>
         GrayIncrementer
     </h2>
     <p>
-        This is a minimal example illustrating the essential elements to defining a component. This particular component
-        is an incrementer, which takes an multibit input and produces the next Gray code following it in sequence.
+        זוהי דוגמה מינימלית הממחישה את המרכיבים החיוניים להגדרת רכיב. הרכיב הספציפי הזה
+        הוא מגדיל, שלוקח קלט רב-סיביות ומפיק את הקוד האפור הבא אחריו ברצף.
     </p>
     <pre>package com.cburch.gray;
 
@@ -238,11 +238,11 @@ class GrayIncrementer extends InstanceFactory {
 }
 </pre>
     <p>
-        This example by itself is not enough to create a working JAR file; you must also provide a Library class, as
-        illustrated on the next page.
+        דוגמה זו כשלעצמה אינה מספיקה ליצירת קובץ JAR עובד; עליך לספק גם שיעור ספרייה, כמו
+        מאויר בעמוד הבא.
     </p>
     <p>
-        <b>Next:</b> <a href="library.html">Library Class</a>.
+        <b>הבא:</b> <a href="library.html">שיעור ספרייה</a>.
     </p>
 </div>
 </body>

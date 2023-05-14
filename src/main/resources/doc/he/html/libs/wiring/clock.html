@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="he">
 <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="2018-10-23T06:18:10.521000000" name="created">
     <meta content="2023-04-29T16:00:00.000000000" name="changed">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta content="en" http-equiv="Content-Language">
+    <meta content="he" http-equiv="Content-Language">
     <title>
         Clock
     </title>
@@ -21,23 +21,23 @@
         <tbody>
         <tr>
             <td>
-                <strong>Library:</strong>
+                <strong>ספרייה:</strong>
             </td>
             <td>
-                <a href="index.html">Wiring</a>
+                <a href="index.html">חיווט</a>
             </td>
         </tr>
         <tr>
             <td>
-                <strong>Introduced:</strong>
+                <strong>הוצג:</strong>
             </td>
             <td>
-                2.0 Beta 13 (in Base library, moved to Wiring in 2.7.0)
+                2.0 Beta 13 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
             </td>
         </tr>
         <tr>
             <td valign="top">
-                <strong>Appearance:</strong>
+                <strong>מראה:</strong>
             </td>
             <td valign="top">
                 <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/clock.png" width="64">
@@ -46,105 +46,105 @@
         </tbody>
     </table>
     <h2>
-        Behavior
+        התנהגות
     </h2>
     <p>
-        The clock toggles its output value on a regular schedule as long as ticks are enabled via the option <b
-            class="menu">Auto-tick enabled</b> of <a href="../../guide/menu/simulate.html">Simulate menu</a>. (Ticks are
-        disabled by default.) A "tick" is Logisim's unit of time; the speed at which ticks occur can be selected from
-        the submenu<b class="menu">Tick Frequency</b> of the <b class="menu">Simulate</b>
-        menu.
+        השעון מחליף את ערך הפלט שלו בלוח זמנים רגיל כל עוד תקציות מופעלות באמצעות האפשרות <b
+            class="menu">סימון אוטומטי מופעל</b> של <a href="../../guide/menu/simulate.html">תפריט הדמיה</a>. (קרציות הן
+        מושבת כברירת מחדל.) "טיק" היא יחידת הזמן של לוגסים; ניתן לבחור את המהירות שבה מתרחשות קרציות
+        תפריט המשנה<b class="menu">תדירות סימון</b> של ה<b class="menu">סימולציה</b>
+        תַפרִיט.
     </p>
-    <p>The clock's cycle can be configured using its <b class="propertie">High Duration</b> and <b class="propertie">Low
-        Duration attributes</b>.</p>
-    <p>In the <a href="../../guide/tutorial/tutor-step.html">step-by-step mode</a> the clocks advance by one tick with
-        each keystroke.
+    <p>ניתן להגדיר את מחזור השעון באמצעות ה<b class="propertie">משך הגבוה</b> ו<b class="propertie">הנמוך שלו
+        מאפייני משך</b>.</p>
+    <p>ב<a href="../../guide/tutorial/tutor-step.html">מצב שלב אחר שלב</a> השעונים מתקדמים בסימון אחד עם
+        כל הקשה.
     </p>
     <p>
-        <b class="note">Note</b> that Logisim's simulation of clocks is quite unrealistic: In real circuits, multiple
-        clocks will drift from one another and will never move in lockstep. But in Logisim, all clocks experience ticks
-        at the same rate.
+        <b class="note">שימו לב</b> שהסימולציה של השעונים של Logisim היא די לא מציאותית: במעגלים אמיתיים, מספר רב של
+        שעונים ייסחפו זה מזה ולעולם לא ינועו במנעול. אבל בלוגיסים כל השעונים חווים תקתוקים
+        באותו קצב.
     </p>
     <h2>
-        Pins
+        סיכות
     </h2>
     <p>
-        A clock has only one pin, an output with a bit width of 1, whose value will represent the current value of the
-        clock. The location of this pin is specified in the <b class="propertie">Facing</b> attribute.<br> The clock's
-        value will toggle on its schedule whenever ticks are enabled, and it will advance by one tick each time it is
-        clicked with the Poke tool.
+        לשעון יש רק פין אחד, פלט עם רוחב סיביות של 1, שערכו ייצג את הערך הנוכחי של ה-
+        שָׁעוֹן. המיקום של סיכה זו מצוין בתכונה <b class="propertie">לפנים</b>.<br> השעון
+        הערך יתחלף בלוח הזמנים שלו בכל פעם שתקציות מופעלות, והוא יתקדם בסימון אחד בכל פעם שהוא
+        לחצו עם הכלי Poke.
     </p>
     <h2>
-        Attributes
+        תכונות
     </h2>
     <p>
-        When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b>
-        attribute.
+        כאשר הרכיב נבחר או מתווסף, מקשי החצים משנים את ה<b class="propertie">פניו</b> שלו
+        תְכוּנָה.
     </p>
     <div class="attliste">
         <dl>
             <dt>
-                <b class="propertie">Facing</b>
+                <b class="propertie">לפנים</b>
             </dt>
             <dd>
-                The side of the component where its output pin should be.
+                הצד של הרכיב שבו צריך להיות סיכת הפלט שלו.
             </dd>
             <dt>
-                <b class="propertie">High Duration</b>
+                <b class="propertie">משך זמן גבוה</b>
             </dt>
             <dd>
-                The length of time within each cycle that the clock's output should be 1.
+                משך הזמן בתוך כל מחזור שבו תפוקת השעון צריכה להיות 1.
             </dd>
             <dt>
-                <b class="propertie">Low Duration</b>
+                <b class="propertie">משך נמוך</b>
             </dt>
             <dd>
-                The length of time within each cycle that the clock's output should be 0.
+                משך הזמן בכל מחזור שבו תפוקת השעון צריכה להיות 0.
             </dd>
             <dt>
-                <b class="propertie">Phase Offset</b>
+                <b class="propertie">הסטת שלב</b>
             </dt>
             <dd>
-                The phase Offset in tick of the clock. Below are two identical clock, one of which (in gray) has a phase
-                shift of 1 tick.<br>
+                היסט הפאזה בתקתוק השעון. להלן שני שעונים זהים, לאחד מהם (באפור) יש פאזה
+                העברה של סימון אחד.<br>
                 <div style="text-align: center;">
                     <img alt="#########" src="../../../../img-libs/clockshift.png">
                 </div>
             </dd>
             <dt>
-                <b class="propertie">Label</b>
+                <b class="propertie">תווית</b>
             </dt>
             <dd>
-                The text within the label associated with the clock component.
+                הטקסט בתוך התווית המשויכת לרכיב השעון.
             </dd>
             <dt>
-                <b class="propertie">Label Location</b>
+                <b class="propertie">מיקום התווית</b>
             </dt>
             <dd>
-                The location of the label relative to the component.
+                מיקום התווית ביחס לרכיב.
             </dd>
             <dt>
-                <b class="propertie">Label Font</b>
+                <b class="propertie">גופן תווית</b>
             </dt>
             <dd>
-                The font with which to render the label.
+                הגופן שבאמצעותו יש לעבד את התווית.
             </dd>
         </dl>
     </div>
     <h2>
-        Poke Tool Behavior
+        התנהגות כלי לתקוע
     </h2>
     <p>
-        By clicking on a clock component, you advance all the clocks by one tick.
+        בלחיצה על רכיב שעון, מקדמים את כל השעונים בסימון אחד.
     </p>
     <h2>
-        Text Tool Behavior
+        התנהגות כלי טקסט
     </h2>
     <p>
-        Allows the label associated with the component to be edited.
+        מאפשר לערוך את התווית המשויכת לרכיב.
     </p>
     <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
     </p>
 </div>
 </body>
