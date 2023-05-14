@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        חוֹצֵץ
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansbuffergate.png" width="32">&nbsp;
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecbuffergate.png" width="32">&nbsp;
+        <em>חוֹצֵץ</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">שערים</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 בטא 1
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <table>
+                    <tbody>
+                    <tr>
+                        <th>
+                            ANSI:
+                        </th>
+                        <th>
+                            חברת החשמל:
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansbuffergate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecbuffergate.png" width="64">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        המאגר פשוט עובר אל הפלט הימני שלו כל קלט שהוא מקבל בצד שמאל. הדרך נתונים
+        מוצג על הפלט מוגדר על ידי התכונה <b class="propertie">ערך פלט</b>. טבלת האמת
+        עבור מאגר סיביות אחד הוא הבא.
+    </p>
+    <div style="text-align: center;">
+        <table class="encapsul">
+            <tbody>
+            <tr>
+                <th class="tspace">
+                    &nbsp;In&nbsp;
+                </th>
+                <th class="tspace" colspan="3">
+                    &nbsp;Out&nbsp;
+                </th>
+            </tr>
+            <tr>
+                <th class="tspace"></th>
+                <th class="tspace">
+                    &nbsp;&nbsp;O/1&nbsp;&nbsp;
+                </th>
+                <th class="tspace">
+                    O/flt.
+                </th>
+                <th class="tspace">
+                    flt./1
+                </th>
+            </tr>
+            <tr>
+                <td class="tzerov">
+                    0
+                </td>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+            </tr>
+            <tr>
+                <td class="tunov">
+                    1
+                </td>
+                <td class="unov">
+                    1
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+                <td class="unov">
+                    1
+                </td>
+            </tr>
+            <tr>
+                <td class="tuvalue">
+                    U
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+            </tr>
+            <tr>
+                <td class="tevalue">
+                    E
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        אם הקלט לא מצוין (כלומר, צף <b class="uvalue">U</b>), אז גם הפלט לא יצוין.
+        אם הקלט הוא ערך שגיאה (<b class="evalue">E</b>), אז הפלט יהיה גם.
+    </p>
+    <p>
+        חוצצים הם חסרי התועלת ביותר מבין רכיבי השער הניתנים ב-Logisim; נוכחותו בספריית גייטס היא
+        עניין של שלמות (רכיב לכל טבלת אמת אפשרית עם קלט אחד) באותה מידה שזה עניין של
+        מתן פונקציונליות שימושית. ובכל זאת, זה יכול להיות שימושי מדי פעם להבטיח שערכים מתפשטים רק באחד
+        כיוון לאורך חוט.
+    </p>
+    <h2>
+        סיכות (בהנחה שהרכיב פונה מזרחה)
+    </h2>
+    <dl>
+        <dt>
+            קצה מערבי:
+        </dt>
+        <dd>
+            הקלט לתוך הרכיב. רוחב סיביות לפי נתונים <b class="propertie">תכונת סיביות</b>.
+        </dd>
+        <dt>
+            קצה מזרח:
+        </dt>
+        <dd>
+            הפלט, שתמיד תואם את הקלט לצד שמאל. <b class="propertie">תכונת Bits</b>.
+            מצב הצגת הנתונים מוגדר על ידי התכונה <b class="propertie">ערך פלט</b>.
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו ומקשי החצים משנים את ה<b
+            class="propertie">מאפיין מול</b>.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">לפנים</b>
+            </dt>
+            <dd>
+                כיוון הרכיב (הפלט שלו ביחס לקלט שלו).
+            </dd>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
+            </dd>
+            <dt>
+                <b class="propertie">ערך פלט</b>
+            </dt>
+            <dd>
+                מציין כיצד יש לתרגם תוצאות שגויות ואמיתיות לערכי פלט. כברירת מחדל, שקר הוא
+                מסומן על ידי מתח נמוך (<b class="zerov">0</b>) ונכון על ידי מתח גבוה (<b class="unov">1</b>),
+                אבל אפשר להחליף את זה או את זה בערך בעל עכבה גבוהה (<q>צף</q>) במקום זאת. זה מאפשר
+                חיבורים קוויים או קוויים וחיבורים, כפי שמוצג בשער <a href="basic.html">AND/OR/NAND/NOR
+                תיעוד</a>.
+            </dd>
+            <dt>
+                <b class="propertie">תווית</b>
+            </dt>
+            <dd>
+                הטקסט בתוך התווית המשויכת לשער.
+            </dd>
+            <dt>
+                <b class="propertie">גופן תווית</b>
+            </dt>
+            <dd>
+                הגופן שבאמצעותו יש לעבד את התווית.
+            </dd>
+        </dl>
+        <h2>
+            התנהגות כלי לתקוע
+        </h2>
+        <p>
+            אף אחד.
+        </p>
+        <h2>
+            התנהגות כלי טקסט
+        </h2>
+        <p>
+            מאפשר לערוך את התווית המשויכת לשער.
+        </p>
+        <p>
+            <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

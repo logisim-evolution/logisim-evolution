@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Clock
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/clock.png" width="32">
+        <em> Clock</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חיווט</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 Beta 13 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/clock.png" width="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        השעון מחליף את ערך הפלט שלו בלוח זמנים רגיל כל עוד תקציות מופעלות באמצעות האפשרות <b
+            class="menu">סימון אוטומטי מופעל</b> של <a href="../../guide/menu/simulate.html">תפריט הדמיה</a>. (קרציות הן
+        מושבת כברירת מחדל.) "טיק" היא יחידת הזמן של לוגסים; ניתן לבחור את המהירות שבה מתרחשות קרציות
+        תפריט המשנה<b class="menu">תדירות סימון</b> של ה<b class="menu">סימולציה</b>
+        תַפרִיט.
+    </p>
+    <p>ניתן להגדיר את מחזור השעון באמצעות ה<b class="propertie">משך הגבוה</b> ו<b class="propertie">הנמוך שלו
+        מאפייני משך</b>.</p>
+    <p>ב<a href="../../guide/tutorial/tutor-step.html">מצב שלב אחר שלב</a> השעונים מתקדמים בסימון אחד עם
+        כל הקשה.
+    </p>
+    <p>
+        <b class="note">שימו לב</b> שהסימולציה של השעונים של Logisim היא די לא מציאותית: במעגלים אמיתיים, מספר רב של
+        שעונים ייסחפו זה מזה ולעולם לא ינועו במנעול. אבל בלוגיסים כל השעונים חווים תקתוקים
+        באותו קצב.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <p>
+        לשעון יש רק פין אחד, פלט עם רוחב סיביות של 1, שערכו ייצג את הערך הנוכחי של ה-
+        שָׁעוֹן. המיקום של סיכה זו מצוין בתכונה <b class="propertie">לפנים</b>.<br> השעון
+        הערך יתחלף בלוח הזמנים שלו בכל פעם שתקציות מופעלות, והוא יתקדם בסימון אחד בכל פעם שהוא
+        לחצו עם הכלי Poke.
+    </p>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, מקשי החצים משנים את ה<b class="propertie">פניו</b> שלו
+        תְכוּנָה.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">לפנים</b>
+            </dt>
+            <dd>
+                הצד של הרכיב שבו צריך להיות סיכת הפלט שלו.
+            </dd>
+            <dt>
+                <b class="propertie">משך זמן גבוה</b>
+            </dt>
+            <dd>
+                משך הזמן בתוך כל מחזור שבו תפוקת השעון צריכה להיות 1.
+            </dd>
+            <dt>
+                <b class="propertie">משך נמוך</b>
+            </dt>
+            <dd>
+                משך הזמן בכל מחזור שבו תפוקת השעון צריכה להיות 0.
+            </dd>
+            <dt>
+                <b class="propertie">הסטת שלב</b>
+            </dt>
+            <dd>
+                היסט הפאזה בתקתוק השעון. להלן שני שעונים זהים, לאחד מהם (באפור) יש פאזה
+                העברה של סימון אחד.<br>
+                <div style="text-align: center;">
+                    <img alt="#########" src="../../../../img-libs/clockshift.png">
+                </div>
+            </dd>
+            <dt>
+                <b class="propertie">תווית</b>
+            </dt>
+            <dd>
+                הטקסט בתוך התווית המשויכת לרכיב השעון.
+            </dd>
+            <dt>
+                <b class="propertie">מיקום התווית</b>
+            </dt>
+            <dd>
+                מיקום התווית ביחס לרכיב.
+            </dd>
+            <dt>
+                <b class="propertie">גופן תווית</b>
+            </dt>
+            <dd>
+                הגופן שבאמצעותו יש לעבד את התווית.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        בלחיצה על רכיב שעון, מקדמים את כל השעונים בסימון אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        מאפשר לערוך את התווית המשויכת לרכיב.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

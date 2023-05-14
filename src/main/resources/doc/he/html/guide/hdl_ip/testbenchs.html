@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="he">
+<head>
+    <META content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+    <meta content="2023-04-29T16:00:00.000000000" name="changed"/>
+    <META content="text/html; charset=UTF-8" http-equiv="content-type">
+    <META content="he" http-equiv="Content-Language">
+    <title>הדמיית ספסלי בדיקה</title>
+    <LINK href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div class="maindiv">
+    <h1>הדמיית ספסלי בדיקה</h1>
+
+    <p>תוכל להוסיף ספסל בדיקה למעגל שלך כדי לבדוק אותו, אבל אתה חייב
+        שקול את ההגבלות הבאות עקב הסימולציה
+        ארכיטקטורה.
+    </p>
+
+    <p align="center"><img src="../../../../img-guide/hdl-ip-tb.png"/></p>
+
+    <h2>הסימולציה חייבת להיות מונעת על ידי Logisim</h2>
+
+    <p>אינך יכול להוסיף אלמנטים יצירת אירועים לספסל הבדיקה שלך, עבור
+        לדוגמה, אתה לא יכול להוסיף תהליך מחולל שעונים. ספסל המבחן שלך
+        חייב לקחת שעון חיצוני מלוגיסים כקלט.
+    </p>
+
+    <h2>אל תשתמש בתנאים מבוססי זמן</h2>
+
+    <p>ייצוג הזמן לא קיים ב-Logisim, לא אתה לא יכול לקבל
+        אירוע המבוסס על זמן, למשל <i>המתנה ל-5 ns</i>. אם אתה רוצה
+        לבצע אימות אסינכרוני, עליך להוסיף <i>sysclk</i> שיש לו
+        לפחות פי שניים מהתדירות של mainclk. בדרך זו, אתה תהיה
+        מסוגל לבדוק את האותות לא רק בקצוות העולה של השעון הראשי אלא
+        בכל עת שאתה צריך.
+    </p>
+
+    <p><b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2021-06-12T10:36:10.000000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        לחצנים ייצוא / ייבוא טבלה
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        לחצנים ייצוא / ייבוא טבלה
+    </h1>
+    <p>
+        שני הלחצנים <b class="button">ייבוא טבלה</b> ו<b class="button">ייצוא טבלה</b> מאפשרים לשמור ו
+        בהתאמה טען מחדש הגדרת טבלת אמת.
+    </p>
+    <p>
+        המידע מאוחסן בקובץ TEXT בפורמט זה:
+    </p>
+    <blockquote>
+        <pre>a b c_in | s c_out
+~~~~~~~~~~~~~~~~~~
+0 0  0   | 0   0  
+0 0  1   | 1   0  
+0 1  0   | 1   0  
+0 1  1   | 0   1  
+1 0  0   | 1   0  
+1 0  1   | 0   1  
+1 1  0   | 0   1  
+1 1  1   | 1   1</pre>
+    </blockquote>
+    הכללים הבאים חלים:
+    <ul>
+        <li>כל מה שאחרי '#' הוא הערה ויתעלם ממנו.
+        </li>
+        <li> מתעלמים משורות ריקות וקווי הפרדה (לדוגמה, ~~~~~~).
+        </li>
+        <li>שמור על שמות עמודות פשוטים (ללא רווחים, סימני פיסוק וכו').
+        </li>
+        <li>שם[N..0]' מציין משתנה N+1 סיביות, בעוד 'שם' כשלעצמו מציין משתנה של 1 סיביות.
+        </li>
+        <li>תוכל להשתמש ב-'x' או '-' כדי לציין מאילו סיביות קלט ופלט יש להתעלם.
+        </li>
+        <li>תוכל להשתמש בסימון בינארי (לדוגמה, '10100011xxxx') או בסימון הקסדצימלי (לדוגמה, 'C3x').
+            לוגיסים יקבע מי זה איזה.
+        </li>
+    </ul>
+    <p>
+        ניתן לייצא את הטבלה לקובץ, לשנות אותה ולייבא אותה מחדש. זה יכול להיות עזר שימושי עבור טבלאות מורכבות.
+    </p>
+    <p>
+        <b>הבא:</b> <a href="ana-table.html#impexp">עריכת טבלת האמת</a>.
+    </p>
+</div>
+</body>
+</html>

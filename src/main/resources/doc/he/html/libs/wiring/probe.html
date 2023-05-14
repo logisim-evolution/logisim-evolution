@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Probe
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/probe.png" width="32">
+        <em> Probe</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חיווט</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0.3 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td>
+                <table>
+                    <tbody>
+                    <tr>
+                        <th colspan=2>
+                            צורות חצים:
+                        </th>
+                        <th colspan=2>
+                            לוגיסים קלאסי
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/probe0.png"
+                                 width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/probe1.png"
+                                 width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/probe2.png"
+                                 width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/probe3.png"
+                                 width="64">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        בדיקה היא אלמנט שפשוט מציג את הערך בנקודה נתונה במעגל. זה לא מקיים אינטראקציה בעצמה
+        עם רכיבים אחרים.
+    </p>
+    <p>
+        ברוב המובנים, רכיב הבדיקה משכפל את הפונקציונליות שנמצאת ב<a href="../wiring/pin.html">Pin
+        רכיב</a> מוגדר כסיכת פלט. ההבדל העיקרי הוא שאם המעגל משמש כתת-מעגל
+        רכיב, אז פין פלט יהיה חלק מהממשק הזה, בעוד שבדיקה לא. הם גם שונים
+        בכך שאין לבדיקה תכונת Data Bits שיש להגדיר: רוחב הסיביות מוסק מכל דבר אחר
+        ערך שהוא רואה במקרה בקלט שלו. מבחינה גרפית, הם דומים אבל יש להם גבולות מעט שונים: סיכה
+        יש גבול עבה ושחור, ואילו לבדיקה יש גבול דק ואפור.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <p>
+        לרכיב בדיקה יש רק סיכה אחת, שתשמש כקלט לבדיקה. הרוחב שהסיכה הזו מקבלת הוא
+        אדפטיבי: הגשושית תסתגל לכניסות בכל רוחב.
+    </p>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, מקשי החצים משנים את ה<b class="propertie">פניו</b> שלו
+        תְכוּנָה.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">לפנים </b>
+            </dt>
+            <dd>
+                הצד של הרכיב שבו צריך להיות פין הקלט שלו.
+            </dd>
+            <dt>
+                <b class="propertie">Radix</b>
+            </dt>
+            <dd>
+                מאפשר לך להגדיר את הבסיס שבו הערכים יוצגו.<br>
+                דוגמה ל-1010 בבינארי<br>
+                &emsp;בינארי&emsp;: <b>1010<sub>b</sub></b><br>
+                &emsp;Octal&emsp;: <b>12<sub>o</sub></b><br>
+                &emsp;עשרוני חתום&emsp;: <b>-6<sub>s</sub></b><br>
+                &emsp;Unsigned deciaml&emsp;: <b>10<sub>u</sub></b><br>
+                &emsp;הקסדצימלי&emsp;: <b>A<sub>h</sub></b><br>
+                &emsp;Float&emsp;: <b>1.4E-44<sub>f</sub> </b> רק ב-32 או 64 סיביות 1 או 0. אם לא הצג את הערך
+                <b>NaN<sub>f</sub></b> <br>
+            </dd>
+            <dt>
+                <b class="propertie">תווית </b>
+            </dt>
+            <dd>
+                הטקסט בתוך התווית המשויכת לרכיב.
+            </dd>
+            <dt>
+                <b class="propertie">מיקום התווית </b>
+            </dt>
+            <dd>
+                מיקום התווית ביחס לרכיב.
+            </dd>
+            <dt>
+                <b class="propertie">גופן תווית </b>
+            </dt>
+            <dd>
+                הגופן שבאמצעותו יש לעבד את התווית.
+            </dd>
+            <b class="propertie">מראה </b>
+            <dd>
+                ישנם שני סוגים של מראה, לוגיסים קלאסיים וצורות חץ. ראה את הדוגמאות בראש הדף
+                עמוד
+            </dd>
+
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        מאפשר לערוך את התווית המשויכת לרכיב.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

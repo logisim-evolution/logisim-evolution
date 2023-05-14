@@ -1,0 +1,638 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Transistor
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/trans0.png" width="32">
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/trans1.png" width="32">
+        <em>Transistor</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חיווט</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.7.0
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <table>
+                    <tbody>
+                    <tr>
+                        <th>סוג P
+                        </th>
+                        <th>
+                        </th>
+                        <th>סוג N
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/trans0.png"
+                                 width="64">
+                        </td>
+                        <td>&nbsp;
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/trans1.png"
+                                 width="64">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        לטרנזיסטור יש שתי כניסות, הנקראות <b>שער</b> ו<b>מקור</b>, ויציאה אחת הנקראת <b>drain</b>. מתי
+        בתרשים, קלט <b>מקור</b> ופלט <b>ניקוז</b> מצוירים מחוברים באמצעות לוח; לוגיסים מצייר א
+        ראש חץ לציון כיוון הזרימה מקלט לפלט. כניסת <b>שער</b> נמשכת מחוברת ל-a
+        צלחת המקבילה לצלחת המחברת את <b>מקור</b> ל<b>ניקוז</b>.</p>
+    <div style="text-align: center;">
+        <table>
+            <tbody>
+            <tr>
+                <td></td>
+                <td align="center">
+                    <em>שער</em>
+                </td>
+                <td></td>
+                <td>
+                    &nbsp; &nbsp;
+                </td>
+                <td></td>
+                <td align="center">
+                    <em>שער</em>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td valign="bottom">
+                    <em>מקור</em>
+                </td>
+                <td align="center" valign="middle">
+                    <img alt="#########" src="../../../../img-libs/trans1.png">
+                </td>
+                <td valign="bottom">
+                    <em>ניקוז</em>
+                </td>
+                <td></td>
+                <td valign="bottom">
+                    <em>מקור</em>
+                </td>
+                <td align="center" valign="middle">
+                    <img alt="#########" src="../../../../img-libs/trans0.png">
+                </td>
+                <td valign="bottom">
+                    <em>ניקוז</em>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align="center">
+                    <b>N-Type</b>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="center">
+                    <b>P-Type</b>
+                </td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p> Logisim תומכת בשני סוגים של טרנזיסטורים, עם התנהגויות שונות במקצת המתוארות להלן; מסוג P
+        הטרנזיסטור מסומן על ידי מעגל המחבר את כניסת ה<b>שער</b> לצלחת שלו, בעוד שהטרנזיסטור מסוג N
+        אין מעגל כזה.
+    </p>
+    <p>
+        בהתאם לערך שנמצא ב-<b>שער</b>, הערך ב-<b>מקור</b> עשוי להיות משודר אל <b>drain</b>; אוֹ
+        ייתכן שאין חיבור מ<b>מקור</b>, כך ש<b>ניקוז</b> נותר צף. הקביעה של
+        שידור או ניתוק תלוי בסוג הטרנזיסטור: טרנזיסטור מסוג P (מסומן בעיגול על
+        קו ה<b>שער</b>) משדר כאשר <b>שער</b> הוא 0, בעוד טרנזיסטור מסוג N (שאין לו עיגול כזה)
+        משדר כאשר <b>שער</b> הוא 1. ההתנהגות מסוכמת בטבלאות הבאות.
+    </p>
+    <div style="text-align: center;">
+        <table class="encapsul">
+            <tbody>
+            <tr>
+                <th colspan=3>
+                    P-type
+                </th>
+                <td>
+                </td>
+                <th colspan=3>
+                    N-Type
+                </th>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td class="center">
+                    G
+                </td>
+                <td>
+                </td>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td class="center">
+                    G
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="right">
+                    S
+                </td>
+                <td>
+                    <p align="center">
+                        <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans0.png"
+                             width="64">
+                    </p>
+                </td>
+                <td class="left">
+                    D
+                </td>
+                <td>
+                </td>
+                <td class="right">
+                    S
+                </td>
+                <td>
+                    <p align="center">
+                        <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans1.png"
+                             width="64">
+                    </p>
+                </td>
+                <td class="left">
+                    D
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3>
+                    <table class="truthtable">
+                        <tbody>
+                        <tr>
+                            <th></th>
+                            <th colspan="5">
+                                Gate
+                            </th>
+                        </tr>
+                        <tr>
+                            <th rowspan="6">
+                                Source
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                            </td>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="tuvalue">
+                                U
+                            </td>
+                            <td class="tevalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tuvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tevalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td colspan=3>
+                    <table class="truthtable">
+                        <tbody>
+                        <tr>
+                            <th></th>
+                            <th colspan="5">
+                                Gate
+                            </th>
+                        </tr>
+                        <tr>
+                            <th rowspan="6">
+                                Source
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                            </td>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="tuvalue">
+                                U
+                            </td>
+                            <td class="tevalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tuvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tevalue">
+                                E
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        או בצורה מסוכמת:
+    </p>
+    <div style="text-align: center;">
+        <table class="encapsul">
+            <tbody>
+            <tr>
+                <td>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th colspan="2">
+                                P-type
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p align="center">
+                                    <img alt="#########" class="appearancelibs" height="64"
+                                         src="../../../../img-libs/trans0.png" width="64">
+                                </p>
+                            </td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th class="tspace">
+                                Gate
+                            </th>
+                            <th class="tspace">
+                                Drain
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="space">
+                                Source
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="space">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                            <td class="space">
+                                *
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td width="60px">
+
+                </td>
+                <td>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th colspan="2">
+                                <b>N-type</b>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p align="center">
+                                    <img alt="#########" class="appearancelibs" height="64"
+                                         src="../../../../img-libs/trans1.png" width="64">
+                                </p>
+                            </td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th class="tspace">
+                                Gate
+                            </th>
+                            <th class="tspace">
+                                Drain
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="uvalue">
+                                U
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td align="center">
+                                Source
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="space">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                            <td class="space">
+                                *
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>
+            * אם המקור הוא <b class="uvalue">U</b>, הניקוז הוא <b class="uvalue">U</b>; אחרת ניקוז הוא <b
+                class="evalue">E</b>.
+        </p>
+    </div>
+    <p>
+        <b class=note>הערה:</b>מכיוון ש-Logisim משתמשת בסמנים <b class="uvalue">U</b> (עכבה גבוהה / לא מוגדר) ו
+        <b class="evalue">E</b> (שגיאה) השתמשתי באותו באיורים ולא ב-Z הנפוץ יותר (גבוהה
+        עכבה) ו-X (שגיאה) במסמכים אחרים</p>
+    <p>
+        אם התכונה <b class="propertie">Data Bits</b> היא יותר מ-1, הקלט <b>gate</b> הוא עדיין סיביות בודדת,
+        אבל הערך שלו מוחל בו-זמנית על כל אחת מהסיביות של קלט ה<b>מקור</b>.
+    </p>
+    <p>
+        טרנזיסטור מסוג N מתנהג בצורה דומה מאוד ל<a href="../gates/controlled.html">מאגר נשלט</a>. ה
+        ההבדל העיקרי הוא שטרנזיסטור מיועד לעיצובי מעגלים בסיסיים יותר.
+    </p>
+    <h2>
+        סיכות (בהנחה שהרכיב פונה מזרחה, קו השער למעלה/שמאל)
+    </h2>
+    <dl>
+        <dt>
+            קצה מערב (קלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            קלט <b>מקור</b> של הרכיב שישדר לפלט אם יופעל על ידי כניסת <b>שער</b>.
+        </dd>
+        <dt>
+            קצה צפון (קלט, רוחב סיביות 1)
+        </dt>
+        <dd>
+            קלט <b>שער</b> של הרכיב. עבור טרנזיסטורים מסוג P, הטרנזיסטור ישדר אם ה<b>שער</b>
+            הערך הוא <b class="zerov">0</b>; עבור טרנזיסטורים מסוג N, זה יפעיל את הטרנזיסטור אם ה<b>שער</b>
+            הערך הוא <b class="unov">1</b>.
+        </dd>
+        <dt>
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            הפלט של הרכיב, שיתאים לקלט <b>מקור</b> אם מצוין על ידי קלט <b>gate</b>, או
+            יהיה צף אם הקלט <b>שער</b> הוא שלילה של מה שמציין שלילה. אם <b>שער</b> הוא
+            ערך צף (<b class="uvalue">U</b>) או ערך שגיאה (<b class="evalue">E</b>), ולאחר מכן הפלט
+            יהיה ערך שגיאה (<b class="evalue">E</b>).
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו ומקשי החצים משנים את ה<b
+            class="propertie">מאפיין מול</b>.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">סוג</b>
+            </dt>
+            <dd>
+                קובע אם הטרנזיסטור הוא מסוג P או מסוג N.
+            </dd>
+            <dt>
+                <b class="propertie">לפנים</b>
+            </dt>
+            <dd>
+                כיוון הרכיב (הפלט שלו ביחס לקלט שלו).
+            </dd>
+            <dt>
+                <b class="propertie">מיקום השער</b>
+            </dt>
+            <dd>
+                מיקום כניסת השער.
+            </dd>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

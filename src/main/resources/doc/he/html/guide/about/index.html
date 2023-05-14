@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2019-03-21T16:12:10.000000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        על התוכנית Logisim-evolution
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <img alt="#########" height=276 src="../../../../img-guide/logisim.png" width=734>
+    <h1>
+        על התוכנית Logisim-evolution
+    </h1>
+    <p>
+        <strong>לוגיסים</strong> לוגיסים הוא כלי חינוכי לתכנון והדמיה של מעגלים לוגיים דיגיטליים. זה
+        נוצר במקור על ידי <a href="https://www.cburch.com/logisim/" rel="nofollow">Dr. קארל בורך</a>ו
+        פותח באופן פעיל עד 2011. לאחר תאריך זה המחבר התמקד בפרויקטים אחרים, ולאחרונה ב
+        הפיתוח הופסק רשמית <a href="https://www.cburch.com/logisim/retire-note.html"
+                              rel="nofollow">(ראה את הודעתו כאן)</a>.
+    </p>
+    <p>
+        בינתיים, אנשים מקבוצה של מכונים שוויצרים (<a href="https://www.bfh.ch" rel="nofollow">גָבוֹהַ
+        בית ספר מיוחד ברנז'ה</a>,<a href="https://hepia.hesge.ch/" rel="nofollow">בית ספר תיכון לנוף,
+        להנדסה ואדריכלות של ז'נבה</a>,<a href="https://heig-vd.ch/" rel="nofollow">בית ספר תיכון
+        להנדסה וניהול של קנטון ווד</a>) החלו לפתח גרסה של Logisim שמתאימה להם
+        קורסים, המשלבים מספר כלים -- למשל כרונוגרמה, אפשרות לבדוק את הסכמות ישירות
+        על לוח אלקטרוני, קונסולות TCL/TK, ...
+    </p>
+    <p>
+        החלטנו לשחרר את הגרסה החדשה הזו של Logisim תחת השם <b><a
+            href="https://github.com/logisim-evolution/logisim-evolution/blob/master/README.md">
+        Logisim-evolution</a></b>, כדי להדגיש את מספר השינויים הרב שחלו בשנים אלו, ואנחנו
+        לחפש באופן פעיל את תרומת הקהילה.
+    </p>
+    <p>
+        תוכנית זו היא תוכנה חופשית: אתה יכול להפיץ אותה מחדש ו/או לשנות אותה תחת התנאים של גנו הכללי
+        רישיון ציבורי כפי שפורסם על ידי קרן התוכנה החופשית, בגרסה 3 של הרישיון. התוכנית הזו היא
+        מופץ בתקווה שזה יהיה שימושי, אך ללא כל אחריות; אפילו ללא האחריות המשתמעת של
+        סחירות או התאמה למטרה מסוימת. ראה את הרישיון הציבורי הכללי של GNU לפרטים נוספים. (לִרְאוֹת
+        מתחת לרישיון)
+    </p>
+    <h2>
+        שפות
+    </h2>
+    <p>
+        Logisim תומכת בשפות רבות. רבים מהם תורגמו אוטומטית באמצעות DeepL. אם אתה צריך למצוא
+        תרגומים מוזרים, אנא אל תהסס לתקן אותם בקבצי המאפיינים המתאימים וליצור א
+        בקשה למשוך!
+    </p>
+    <h2>
+        מה חדש ב-logisim-evolution
+    </h2>
+    <ul>
+        <li>כרונוגרמה -- כדי לראות את התפתחות האותות במעגל שלך
+        </li>
+        <li>שילוב לוח אלקטרוני -- כעת ניתן לדמות סכמות על חומרה אמיתית!
+        </li>
+        <li>עורך לוח -- להוספת לוחות אלקטרוניים חדשים
+        </li>
+        <li>רכיב VHDL -- סוג רכיב חדש שהתנהגותו מצוינת ב-רכיב VHDL - סוג רכיב חדש שהתנהגותו מצוינת בהתנהגות VHDL מצוינת
+            ב
+            VHDL
+        </li>
+        <li>מסוף TCL/TK -- ממשקים בין המעגל למשתמש
+        </li>
+        <li>מתגי DIP
+        </li>
+        <li>נוריות RGB
+        </li>
+        <li>מספר רב של תיקוני באגים
+        </li>
+        <li>שיפורי GUI
+        </li>
+        <li>עדכונים אוטומטיים
+        </li>
+        <li>שינוי קוד
+        </li>
+        <li>...
+        </li>
+    </ul>
+    <h2>
+        תאימות רטרו
+    </h2>איננו יכולים להבטיח תאימות רטרו של logisim-evolution עם קבצים שנוצרו עם ה-Logisim המקורי. יש לנו
+    שילב מנתח שמשנה את שם הרכיבים כדי לעמוד בדרישות VHDL עבור שמות משתנים, אבל
+    רכיבים התפתחו בצורתם מאז (חשבו, למשל, על זיכרון RAM ומונה). אולי תצטרך לעבוד קצת מחדש
+    המעגלים שלך בעת פתיחתם עם logisim-evolution -- אבל השינויים יאוחסנו בפורמט החדש,
+    לכן אתה צריך לעשות את העבודה שלך רק פעם אחת.
+    <h2>
+        רשימת משאלות
+    </h2>
+    <p>
+        Logisim-evolution היא תוכנה בצמיחה מתמדת, ויש לנו כמה רעיונות שהיינו רוצים ליישם. ב
+        במיוחד, נרצה לקבל:
+    </p>בדיקות יחידה עבור הקוד
+    <ul>
+        <li>תיעוד נרחב
+        </li>
+        <li>מעגלי בדיקה
+        </li>
+        <li>... אם אתה מוכן לתרום עם כל אחד מאלה, אל תהסס לפנות אלינו!
+        </li>
+    </ul>
+    <h2>
+        כיצד לקבל תמיכה עבור logisim-evolution
+    </h2>
+    <p>
+        למרבה הצער, אין לנו מספיק משאבים כדי לספק תמיכה ישירה ל-logisim-evolution. אנחנו נהיה,
+        עם זאת, נסה להתמודד עם הנושאים שהועלו בצורה הטובה ביותר.
+    </p>
+    <p>
+        אם אתה מוצא באג או יש לך רעיון לתכונה מעניינת, אנא אל תהסס לפתוח כרטיס!
+    </p>
+    <p>
+        <a href="https://github.com/logisim-evolution/logisim-evolution/blob/master/README.md">Logisim-evolution</a>
+    </p>
+    <h2>
+        רישיון
+    </h2>
+    <p>
+        הקוד מורשה תחת <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GENERAL PUBLIC
+        רישיון, גרסה 3.</a><br>
+        גרסה מקומית <a href="../../../../gpl.html">GPL</a>
+    </p>
+    <p align="center">
+        <img alt="GPL" class="notscal" src="../../../../img-guide/gplv3-127x51.png">
+    </p>
+
+    <h2>
+        נקודות זכות
+    </h2>
+    פרויקט Logisim-evolution מבוסס על תוכנת Logisim על ידי:
+    <ul>
+        <li>Carl Burch - <a href="https://www.hendrix.edu/">Hendrix College</a>, ארה"ב</li>
+    </ul>
+    האנשים והמוסדות הבאים תרמו באופן פעיל לפיתוח נוסף של `לוגיסים-אבולוציה`:
+    <ul>
+        <li>דיוויד ה. האצ'נס, <a href="https://www.millersville.edu/">אוניברסיטת מילרסוויל</a>, פנסילבניה, ארה"ב
+        </li>
+        <li>קווין וולש - [מכללת הצלב הקדוש](http://www.holycross.edu/), ארה"ב</li>
+        <li>משה ברמן, <a href="http://www.brooklyn.cuny.edu/">מכללת ברוקלין</a>, ארה"ב</li>
+        <li><a href="https://www.pucminas.br/destaques/Paginas/default.aspx">תלדו קרוז פרנקיירה - [פונטיפיסיה]
+            אוניברסיטת קטוליקה דה מינאס ז'ראיס</a>, ברזיל
+        </li>
+        <li>תיאו קלוטר, <a href="http://www.microlab.ch/">אוניברסיטת ברן למדעים יישומיים</a>, שוויץ.</li>
+        <li><a href="http://MarcinOrlowski.com/">מרסין אורלובסקי</a>, פולין</li>
+        <li><a href="https://github.com/zdimension/">טום ניגט</a>, <a href="https://leat.univ-cotedazur.fr/">LEAT</a>,
+            <a href="https://polytech.univ-cotedazur.fr/">פוליטק ניס-סופיה</a>, צרפת
+        </li>
+        <li><a href="http://www.bfh.ch/">אוניברסיטת ברן למדעים יישומיים</a>, שוויץ</li>
+        <li><a href="http://hepia.hesge.ch/">בית הספר התיכון לנוף, הנדסה ואדריכלות של ז'נבה</a>,
+            שוויץ
+        </li>
+        <li><a href="http://www.heig-vd.ch/">בית ספר תיכון להנדסה וניהול של קנטון ווד</a>, שוויץ
+        </li>
+    </ul>
+    אם אתה מרגיש שהשם שלך צריך להיות ברשימה זו, אנא אל תהסס
+    כדי <a href="https://github.com/logisim-evolution/logisim-evolution/issues">לפתוח כרטיס</a>.
+    <p>
+        <strong>הבא: </strong> <em><a href="../index.html">מדריך למשתמש</a></em>.
+    </p>
+</div>
+</body>
+</html>

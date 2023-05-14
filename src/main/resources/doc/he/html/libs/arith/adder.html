@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Adder
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/adder.png"
+             width="32"> <em>Adder</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חשבון</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 בטא 11
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/adder.png" width="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        רכיב זה מוסיף שני ערכים הנכנסים דרך כניסות המערב ומוציא את הסכום בפלט המזרחי. הרכיב מתוכנן כך שניתן לשלב אותו עם
+        מאפרים אחרים כדי לספק תוספת של יותר ביטים ממה שאפשר עם מוסיף יחיד: קלט ה-carrier-in מספק ערך של סיביות אחד
+        שיתווספו גם לסכום (אם הוא צוין) , ופלט ביצוע מספק ערך גלישה של סיביות אחד שניתן להזין למוסיף אחר.
+    </p>
+    <p>
+        אם אחד מהתוספים מכיל כמה סיביות צפות או כמה סיביות שגיאה, אז הרכיב יבצע תוספת חלקית. כלומר, הוא יחשב כמה שיותר
+        ביטים מסדר נמוך. אבל מעל סיביות צף או שגיאה, לתוצאה יהיו סיביות צפות או שגיאה.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <dl>
+        <dt>
+            קצה מערב, קצה צפוני (קלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            אחד משני הערכים שיש להוסיף.
+        </dd>
+        <dt>
+            קצה מערבי, קצה דרום (קלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            הערכים האחרים משני הערכים להוסיף.
+        </dd>
+        <dt>
+            קצה צפון, שכותרתו <var>c in</var> (קלט, רוחב סיביות 1)
+        </dt>
+        <dd>
+            ערך נשיאה שיש להוסיף לסכום. אם הערך אינו ידוע (כלומר, צף), מניחים שהוא 0.
+        </dd>
+        <dt>
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            הסיביות התחתונות של <var>dataBits</var> של סכום שני הערכים המגיעים בקצה המערבי, בתוספת הסיביות
+            <var>c</var><sub><var>in</var></sub> .
+        </dd>
+        <dt>
+            קצה דרום, שכותרתו <var>c out</var> (פלט, רוחב סיביות 1)
+        </dt>
+        <dd>
+            סיבית העברה מחושבת עבור הסכום. אם הערכים שנוספו יחד כערכים ללא סימנים מניבים תוצאה שתתאים לסיביות <var>dataBits</var>,
+            אז הסיביות הזו תהיה 0; אחרת, זה יהיה 1.
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> דרך <b class="tkeybd">Alt-9</b> משנה את ה<b
+            class="propertie"> שלו תכונה סיביות נתונים</b>.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הערכים שיש להוסיף ושל התוצאה.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

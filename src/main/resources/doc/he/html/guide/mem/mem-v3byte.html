@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2020-01-10T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        v3.0 hex byte plain
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>
+    v3.0 hex byte רגיל big-endian
+</h1>
+<div class="maindiv">
+    <p>
+        קובץ זה בנוי כמו בגרסאות קודמות, השורה הראשונה מציינת את סוג המבנה ולאחר מכן את
+        השורות הבאות מייצגות את רצף הביטים בזיכרון. הם ב-ASCII עם סמלים הקסדצימליים בלבד
+        (שתי ספרות) ללא תג 0x.
+    </p>
+    <blockquote>
+        <pre>v3.0 hex bytes plain big-endian
+3f45a8c96ea00042f261613443f8b2cb
+50950e0604427da5a9641e91526c7970
+a7eb2d655343913e6b7d39db17730c77
+058ea8ae931cbe211d218d412c76a495</pre>
+    </blockquote>
+    <p>
+        השורה חוזרת שלו לא פירשו. למעט השורה הראשונה, אין כללי פריסה. רווחים
+        מתעלמים.
+    </p>
+    <p>
+        אתה יכול להוסיף הערות בקובץ באמצעות הסמל '#'. כל התווים בשורה המתחילים בסמל '#'
+        יתעלמו.
+    </p>
+    <p>
+        אין צורך לציין את הקידומת 0x לפני הנתונים, אולם אם הם קיימים פשוט יתעלמו מהם.
+    </p>
+    <p>
+        אם אורך מערך הנתונים של הקובץ קצר משטח הזיכרון, התאים הנותרים יהיו
+        אתחול ל-0 עבור ROM ועבור RAM ל-0 או באופן אקראי לפי הפרמטרים ב-<a
+            href="../opts/index.html">אפשרויות פרויקט</a>.
+    </p>
+    <p align="center">
+        <img alt="#########" height=348 src="../../../../img-guide/membyteplainbe.png" width=480>
+    </p>
+    <p>
+        במצב big-endian הזיכרון נחשב כרצף של בתים ללא קשר לגודל המילים שלו, עם
+        משמאל לימין את הבתים הגבוהים ולאחר מכן את הבתים הנמוכים. באיור שלמעלה, הסימנים ההקסדצימליים מיוצגים
+        בערך הבינארי שלהם באזור הכחול/ירוק וניתן לראות שהבתים של הקובץ (למעלה) מועתקים
+        לתוך הזיכרון ברצף עם דוגמאות לזיכרונות עם מילים של 4 סיביות, 7 סיביות ו-12 סיביות. שים לב ליישור
+        היסט עבור מילים שאינן כפולות של 8, למשל בזיכרון המילים של 7 סיביות.
+    </p>
+    <p>
+    <h1 id='little'>
+        v3.0 hex byte plain little-endian
+    </h1>
+    <div class="maindiv">
+        <p>
+            פורמט זה פועל לפי אותם כללים כמו פורמטים קודמים. בניגוד לכיוון הקריאה, בקטנה
+            במצב זה נקרא מימין לשמאל.
+        </p>
+        <blockquote>
+         <pre>v3.0 hex bytes plain little-endian
+3f45a8c96ea00042f261613443f8b2cb
+50950e0604427da5a9641e91526c7970
+a7eb2d655343913e6b7d39db17730c77
+058ea8ae931cbe211d218d412c76a495</pre>
+        </blockquote>
+
+        <p align="center">
+            <img alt="#########" height=348 src="../../../../img-guide/membyteplainle.png" width=480>
+        </p>
+        <p>
+            במצב little-endian הזיכרון נחשב כרצף של בתים עם הנמוך מימין לשמאל
+            סיביות נמוכות ואחר כך סיביות גבוהות. באיור למעלה נוכל לראות שהבתים של הקובץ (למעלה) מועתקים
+            לתוך הזיכרון ברצף עם דוגמאות לזיכרונות עם מילים של 4 סיביות, 7 סיביות ו-12 סיביות. אתה יכול להתבונן
+            היסט היישור למשל עבור זיכרון מילים של 7 סיביות.
+        <p align="center">
+            <img alt="#########" class="notscal" src="../../../../img-guide/memelitle.png">
+        </p>
+        אותן דוגמאות מוצגות ברכיב.
+        <h1>
+            v3.0 hex bytes מטופלים ב- big-endian
+        </h1>
+        <p>
+            פורמט זה זהה לקודמים עם אפשרות לציין את הכתובת של מילת הזיכרון
+            או כדי להתחיל להקליט את הנתונים של הקו.<br>
+            זה הוא בהקסדצימלי ואחריו התו <b>:</b>.
+        </p>
+        <blockquote>
+         <pre>v3.0 hex bytes כתובות ביג-אנדיאן
+00: 3f45a8c96ea75086cce5d39d87456709
+20: 56788888882efff0ec45670900000000
+30: 9863fec8a2d75d342e1f008090445578</pre>
+        </blockquote>
+        <p>
+            בדוגמה זו 8 המילים בכתובת 0x10 אינן מצויינות. תאים אלו יאותחלו ל-0 ועבור
+            זיכרון RAM לפי הפרמטרים ב<a href="../opts/index.html">אפשרויות פרויקט</a>, עד 0 או באופן אקראי.
+        </p>
+        <p align="center">
+            <img alt="#########" class="notscal" src="../../../../img-guide/membytepleinadrbig.png">
+        </p>
+        <h1 id='addr'>
+            v3.0 hex bytes כתובות Little-endian
+        </h1>
+        <p>
+            פורמט זה זהה לקודמים עם אפשרות לציין את הכתובת של מילת הזיכרון
+            או להתחיל להקליט את נתוני הקו.
+        </p>
+        <blockquote>
+         <pre>v3.0 hex bytes כתובות Little-endian
+00: 3f45a8c96ea75086cce5d39d87456709
+20: 56788888882efff0ec45670900000000
+30: 9863fec8a2d75d342e1f008090445578</pre>
+        </blockquote>
+        <p>
+            <strong>הבא:</strong> <a href="mem-menu.html">תפריטים וקבצים קופצים</a>.
+        </p>
+    </div>
+</div>
+</body>
+</html>

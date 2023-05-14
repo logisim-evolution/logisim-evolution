@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        חלון לוח זמנים
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        חלון לוח זמנים
+    </h1>
+    <p>
+        חלון זה מאפשר להציג את הכרונוגרמות של האותות שנבחרו קודם לכן. אתה תבחין בתפריט,
+        סרגל הכלים, שני אזורי תצוגה והלחצנים.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/log-graph1.png">
+    </p>
+    <p>
+        התפריט <b class=menu>|&nbsp;windows&nbsp;|</b> מכיל רק אפשרות אחת כדי לציין אם החלון נשאר
+        מוצג מעל האחרים או אם הוא יכול ללכת ברקע. כברירת מחדל, זה נשאר מעל.
+    </p>
+    <p>
+        <b>סרגל הכלים</b> כולל חמישה לחצנים<br>
+    </p>
+    <blockquote>
+        <table>
+            <tbody>
+            <tr>
+                <td align="right">
+                    <img alt="#########" class=intxt src="../../../../icons/simstop.png">
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    מאפשר להפעיל את הסימולציה או להפסיק. שווה ערך ל<b
+                        class=menu>|&nbsp;הדמיה&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;סימולציה
+                    תפריט&nbsp;|</b></a> מופעל.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <img alt="#########" class=intxt src="../../../../icons/simstep.png">
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    הקדימו סימון בסימולציה. מקבילה של <b class=menu>|&nbsp;הדמיית&nbsp;|</b> <a
+                        href="../menu/simulate.html"><b class=menu>|&nbsp;סמן פעם אחת&nbsp;|</b></a> תפריט.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <img alt="#########" class=intxt src="../../../../icons/simtplay.png">
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    הפעל או השבת את השעון <var>sysclk</var>. מקבילה של <b class=menu>|&nbsp;הדמיה&nbsp;|</b>
+                    תפריט <a href="../menu/simulate.html"><b class=menu>|&nbsp;Ticks Enabled&nbsp;|</b></a>.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <img alt="#########" class=intxt src="../../../../icons/simtstep.png">
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    חצי תקופה הקדימו את השעון <var>sysclk</var>. מקבילה של <b class=menu>|&nbsp;הדמיה&nbsp;|</b>
+                    <a href="../menu/simulate.html"><b class=menu>|&nbsp;סמן פעם אחת&nbsp;|</b></a> תפריט.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <img alt="#########" class=intxt src="../../../../icons/clock.gif">
+                </td>
+                <td></td>
+                <td>
+                    התקדמות תקופה או חצי תקופה של השעון <var>clk</var>. מקבילה של <b class=menu>|&nbsp;הדמיה&nbsp;|</b>
+                    <a href="../menu/simulate.html"><b class=menu>|&nbsp;'Clk' סימון פעם אחת&nbsp;|</b></a> תפריט.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </blockquote>
+    <p>
+        <b>אזור התצוגה</b>בשלושת העמודות הימניות: הראשונה מציגה סמל של סוג האות (אוטובוס או
+        singlle) אז יש לנו את השם ולבסוף את ערך האות מתחת לסמן (הקו האדום בגרף). זה
+        אפשר להזיז את הסמן עם העכבר, פשוט לחץ והזז. <b class="tkeybd">לחיצה ימנית</b> על השורה
+        של אות מסוג אוטובוס מציג תפריט מוקפץ עם שתי אפשרויות:
+    </p>
+    <ul>
+        <li>
+            <b class=menu>|&nbsp;פורמט&nbsp;|</b> תפריט זה פותח מבחר של בסיס תצוגת האותות (בינארי,
+            הקסדצימלי, אוקטלי, חתום, ללא סימן)
+        </li>
+        <li>
+            <b class=menu>|&nbsp;הרחב&nbsp;|</b> הצג למטה את הכרונוגרמה של כל אות.
+        </li>
+    </ul>
+    <p>
+        <b>לחצנים:</b> ישנם שלושה לחצנים בתחתית החלון שלנו.
+    </p>
+    <ul>
+        <li>
+            <b class="button">טען קובץ</b> טוען ומציג את התוצאה מקובץ שנשמר בעבר. זה לא
+            אפשר להגדיר את הסימולציה.
+        </li>
+        <li>
+            <b class="button">ייצוא...</b> מייצא את הנתונים לקובץ טקסט. תצטרך לציין את שם הקובץ ב
+            חלון הבחירה. פורמט הקובץ קל. השורה הראשונה מכילה את שמות העמודות המופרדים ב-a
+            לשונית. השורה השנייה מציגה את האות ואת סולם הזמן אם נבחר. השורות הבאות מציגות את הערך שלו
+            אותות מופרדים בכרטיסייה. השורה השלישית היא האתחול ולאחר מכן כל שורה מייצגת חצי תקופה
+            של השעון <var>sysclk</var>.
+            <pre>sysclk     X       a       b       c
+clk:X:1:Hz
+0       11      0       0       0       
+0       11      0       0       0       
+1       01      1       1       0       
+0       01      0       1       0       
+1       10      1       0       1       
+0       10      0       0       1       
+1       00      1       1       1       
+0       00      0       1       1       
+</pre>
+        </li>
+        <li>
+            <b class="button">ייצוא כתמונה</b> מייצא כרונוגרמות בתמונת png. תצטרך לציין את הקובץ
+            שם בחלון הבחירה.
+        </li>
+    </ul>
+    <p>
+        <b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.
+    </p>
+</div>
+</body>
+</html>

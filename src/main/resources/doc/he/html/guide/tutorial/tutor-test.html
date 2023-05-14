@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        הדרכה: בדיקת המעגל שלך
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <p>
+        <b>הקודם:</b><a href="tutor-text.html">שלב 3: הוספת טקסט</a>
+    </p>
+    <h2>
+        שלב 4: בדיקת המעגל שלך
+    </h2>
+    <p>
+        הצעד האחרון שלנו הוא לבדוק את המעגל שלנו כדי לוודא שהוא באמת עושה את מה שהתכוונו. לוגיסים כבר
+        הדמיית המעגל. בואו נסתכל שוב איפה היינו.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/tutorial-7-all2.png">
+    </p>
+    <p>
+        שימו לב שפיני הקלט מכילים שניהם 0s; וכך גם פין הפלט. זה כבר אומר לנו שהמעגל
+        מחשב כבר 0 כאשר שתי הכניסות הן 0.
+    </p>
+    <p>
+        עכשיו לנסות שילוב נוסף של כניסות. בחר בכלי <b class=propertie>"Poke"</b> (<img alt="#########"
+                                                                                       class="icontxt"
+                                                                                       src="../../../../icons/1616/toolpoke.png">)
+        ולהתחיל לתקוע את התשומות על ידי לחיצה עליהם. בכל פעם שאתה תוקע קלט, הערך שלו ישתנה. ל
+        לדוגמה, אנו עשויים לתקוע תחילה את הקלט התחתון (<var>y</var>).
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/tutorial-8-test.png">
+    </p>
+    <p>
+        כאשר תשנה את ערך הקלט, Logisim תראה לך אילו ערכים עוברים לאורך החוטים על ידי משיכתם באור
+        ירוק לציון ערך 1 או ירוק כהה (כמעט שחור) לציון ערך 0. אתה יכול גם לראות שהפלט
+        הערך השתנה ל-1.
+    </p>
+    <p>
+        עד כה, בדקנו את שתי השורות הראשונות של טבלת האמת שלנו, והפלטים (0 ו-1) תואמים את הרצוי
+        תפוקות.
+    </p>
+    <div style="text-align: center;">
+        <table class=truthtable>
+            <tbody>
+            <tr>
+                <th class="tspace">
+                    &nbsp;x&nbsp;
+                </th>
+                <th class="tspace">
+                    &nbsp;y&nbsp;
+                </th>
+                <th class="tspace">
+                    x&nbsp;XOR&nbsp;y
+                </th>
+            </tr>
+            <tr>
+                <td class=zerov>
+                    0
+                </td>
+                <td class=zerov>
+                    0
+                </td>
+                <td class=zerov>
+                    0
+                </td>
+            </tr>
+            <tr>
+                <td class=unov>
+                    1
+                </td>
+                <td class=zerov>
+                    0
+                </td>
+                <td class=unov>
+                    1
+                </td>
+            </tr>
+            <tr>
+                <td class=zerov>
+                    0
+                </td>
+                <td class=unov>
+                    1
+                </td>
+                <td class=unov>
+                    1
+                </td>
+            </tr>
+            <tr>
+                <td class=unov>
+                    1
+                </td>
+                <td class=unov>
+                    1
+                </td>
+                <td class=zerov>
+                    0
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        על ידי העברת המתגים דרך שילובים שונים, נוכל לאמת את שתי השורות האחרות. אם כולם תואמים, אז
+        סיימנו: המעגל עובד!
+    </p>
+    <p>
+        כדי לאחסן את העבודה שהושלמת, אולי תרצה לשמור או להדפיס את המעגל שלך. ה<b class=menu>|&nbsp;קובץ&nbsp;|</b>
+        menu מאפשר זאת, וכמובן שהוא גם מאפשר לצאת מלוגיסים. אבל למה להפסיק עכשיו?
+    </p>
+    <p>
+        <b>הבא:</b> <a href="tutor-step.html">שלב 5: מצב צעד אחר צעד</a>
+    </p>
+</div>
+</body>
+</html>

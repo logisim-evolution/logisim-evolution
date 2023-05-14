@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        TCL Library
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        TCL library
+    </h1>
+    <p>
+        רכיבי TCL מאפשרים לך לקבל רכיב שהתנהגותו מוגדרת על ידי סקריפט TCL.
+    </p>
+    <table>
+        <tbody>
+        <tr>
+            <td align="right">
+                <a href="redsconsole.html"><img alt="#########" class="iconlibs" src="../../../../icons/tcl.gif "></a>
+            </td>
+            <td>
+                <a href="redsconsole.html">מסוף REDS</a>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">
+                <a href="tclgeneric.html"><img alt="#########" class="iconlibs"
+                                               src="../../../../icons/tcl.gif"></a>
+            </td>
+            <td>
+                <a href="tclgeneric.html">TCL גנרי</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        מפרט סקריפט TCL
+    </h2>
+    <p>
+        סקריפט TCL מופעל על ידי Logisim לתוך עטיפה.
+    </p>
+    <h3>
+        API של Wrapper
+    </h3>
+    <p>
+        המעטפת משרתת API התואם ל-Questasim/Modelsim API להפעלת סימולציות. רק כמה
+        פונקציות מוצעות:
+    </p>
+    <dl>
+        <dt>
+            <code>בדוק את &lt;signal&gt;</code>
+        </dt>
+        <dd>
+            מקבל ערך אות מוצץ. הערך המוחזר הוא מחרוזת עם הערך הבינארי של האות.
+        </dd>
+        <dd>
+            &lt;אות&gt; שם האות. אם יש לו נתיב לאות (עבור Questasim), הנתיב יתעלם (למשל.
+            <code>/top_sim/component2/Signal_2_i</code> יהפוך ל-<code>Signal_2_i</code>.
+        </dd>
+        <dd>
+            <i>קריאה של סיביות בודדת (למשל <code>examine Signal_2_i(3)</code>) אינה נתמכת.</i>
+        </dd>
+        <dd>
+            <br>
+        </dd>
+        <dt>
+            <code>כוח &lt;אות&gt; &lt;value&gt;</code>
+        </dt>
+        <dd>
+            הגדר ערך אות מאגר.
+        </dd>
+        <dd>
+            &lt;אות&gt; שם האות. אם יש לו נתיב לאות (עבור Questasim), הנתיב יתעלם (למשל.
+            <code>/top_sim/component2/Signal_2_i</code> יהפוך ל-<code>Signal_2_i</code>.
+        </dd>
+        <dd>
+            &lt;ערך&gt; מחרוזת של הערך הבינארי. אם המחרוזת אינה שלמה (MSB חסר) היא תושלם על ידי
+            X (לדוגמה, 10100 מוגדר לאות של 8 סיביות הופך ל-XXX10100).
+        </dd>
+        <dd>
+            <br>
+        </dd>
+        <dt>
+            <code>הפעלה</code>
+        </dt>
+        <dd>
+            בקש שלב סימולציה בודד ללוגיסים.
+        </dd>
+    </dl>
+    <h3>
+        התקשרות חוזרת עוטפת
+    </h3>
+    <p>
+        בכל שלב סימולציה, המעטפת קוראת להתקשרות חוזרת של <code>רענון {}</code>. אתה יכול בדרך כלל לשים את הקוד
+        הכרחי כדי לקרוא את הקלט, לחשב את הפלט, לרענן את ה-GUI ולהגדיר את הפלטים בעטיפה זו.
+    </p>
+    <p>
+        ההתקשרות חזרה לרענון אינה מורשית להכיל את קריאת הפונקציה <code>run</code>. אם תעשה זאת, אתה תיצור
+        en infinite loop, שכן הפונקציה <code>run</code> עושה שלב סימולציה שיתקשר ל-refresh callback.
+    </p><code>רענן את {} {<br></code>
+    <dl>
+        <dd>
+            <code># קריאת קלט עם פונקציית בדיקה</code>
+        </dd>
+        <dd>
+            <code># חשב כמה ערכים</code>
+        </dd>
+        <dd>
+            <code># רענן את ממשק המשתמש</code>
+        </dd>
+        <dd>
+            <code># הגדר את הפלטים עם פונקציית כוח</code>
+        </dd>
+        <dt>
+            <code>}</code><br>
+            <a href="../index.html">חזרה ל<em>הפניה לספרייה</em></a><br>
+            <br>
+        </dt>
+    </dl>
+</div>
+</body>
+</html>

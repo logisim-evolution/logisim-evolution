@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        מַכפִּיל
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/multiplier.png"
+             width="32"> <em>Multiplier</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חשבון</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 בטא 20
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/multiplier.png"
+                     width="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        רכיב זה מכפיל שני ערכים הנכנסים דרך כניסות המערב ומוציא את המוצר בפלט המזרחי.
+        הרכיב תוכנן כך שניתן לשלב אותו עם מכפילים אחרים כדי להכפיל כפל עם יותר
+        סיביות ממה שאפשר עם מכפיל יחיד: קלט ה-carrier-in מספק ערך מרובה סיביות שיש להוסיף לתוכו
+        המוצר (אם הוא צוין), ופלט ביצוע מספק את המחצית העליונה של תוצאת המוצר, אשר
+        ניתן להזין למכפיל אחר.
+    </p>
+    <p>
+        אם הכפיל, המכפיל או הקלט הנכנס מכילים כמה סיביות צפות או כמה סיביות שגיאה, אז
+        הרכיב יבצע כפל חלקי. כלומר, הוא יחשב כמה ביטים מסדר נמוך ככל
+        אפשרי. אבל מעל סיביות צף או שגיאה, לתוצאה יהיו סיביות צפות או שגיאה. שימו לב שאם ה
+        קלט ה-carrier-in צף לחלוטין, ואז נניח שהוא אפסים לחלוטין.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <dl>
+        <dt>
+            קצה מערב, קצה צפוני (קלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            הכפל (כלומר, הראשון מבין שני המספרים להכפיל).
+        </dd>
+        <dt>
+            קצה מערבי, קצה דרום (קלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            המכפיל (כלומר, השני מבין שני המספרים שיש להכפיל).
+        </dd>
+        <dt>
+            קצה צפון, שכותרתו <var>c in</var> (קלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            ערך נשיאה להוסיף למוצר. אם כל הביטים של הערך אינם ידועים (כלומר, צפים), אז הם כן
+            ההנחה היא 0.
+        </dd>
+        <dt>
+            קצה מזרח (פלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            הסיביות התחתונות של <var>dataBits</var> של המכפלה של שני הערכים המגיעים בקצה המערבי, בתוספת ה-
+            ערך <var>c</var><sub><var>in</var></sub>.
+        </dd>
+        <dt>
+            קצה דרום, שכותרתו <var>c out</var> (פלט, רוחב סיביות תואם לתכונת Data Bits)
+        </dt>
+        <dd>
+            הסיביות העליונות של <var>dataBits</var> של המוצר.
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> דרך <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הערכים שיש להכפיל ושל התוצאה.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

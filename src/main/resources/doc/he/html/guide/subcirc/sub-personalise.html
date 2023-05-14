@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        מראה מותאם אישית
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        מראה מותאם אישית
+    </h1>
+    <p>
+        מראה ברירת המחדל מאוד שמיש, ואכן לוגיסים התקיימה שנים רבות ללא אפשרות אחרת. אם,
+        עם זאת, אתה מעדיף שמעגל המשנה יצויר אחרת, אתה יכול לבחור <b
+            class=menu>|&nbsp;פרויקט&nbsp;|</b>→<b class=menu>|&nbsp;ערוך את מראה המעגל&nbsp;|</b> , וכן
+        הממשק של Logisim יעבור מממשק עריכת פריסה רגיל לממשק לציור של
+        המראה של המעגל. אתה יכול גם ללחוץ על הסמל הקיצוני הימני (<img alt="#########"
+                                                                      class="icontxt"
+                                                                      height=16
+                                                                      src="../../../../img-guide/projdesign.png"
+                                                                      width=16>) ב-
+        סרגל הכלים העליון של חלונית הסייר.<br> להלן, אנו עורכים את המראה של מרובה 2:1 כך שהוא מצויר
+        עם הטרפז הרגיל ולא עם מלבן.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/subcirc-5-custom-appear.png">
+    </p>
+    <p>
+        כשהמראה של מרבבי ה-2:1 מצויר כמתואר לעיל, הפריסה של מרבב ה-4:1 תופיע אז
+        בתור הבא.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/subcirc-6-custom-layout.png">
+    </p>
+    <p>
+        עורך המראה הוא כמו תוכנית ציור מסורתית, אבל יש כמה סמלים מיוחדים לציון
+        כיצד פועל הציור כאשר הוא ממוקם בפריסה של מעגל. אי אפשר להסיר את הסמלים המיוחדים האלה.
+    </p>
+    <ul>
+        <li>
+            <p>
+                העיגול הירוק עם קו שיוצא ממנו, שנכנה אותו ה<b>עוגן.</b> (<img alt="#########"
+                                                                              class="icontxt"
+                                                                              src="../../../../img-guide/anchor.png">)
+                יש בדיוק עוגן אחד בכל הופעה של תת-מעגל. לכל רכיב במעגל יש יחיד
+                נקודה לזיהוי שלה
+                מקום; משתמש רואה זאת בעת יצירת רכיב חדש: לחיצת העכבר מזהה רק יחיד
+                מיקום, והרכיב ממוקם ביחס לזה (בדרך כלל עם הפלט הראשי אצל העכבר
+                מיקום) העוגן מזהה את מיקומו של העכבר ביחס לשרטוט הכולל
+                כאשר תת המעגל נוצר.
+            </p>
+            <p>
+                ה<b>עוגן</b> מזהה גם את פניו של המראה, כפי שמצוין בכיוון של העוגן
+                נקודות קו מהמעגל שלו. בעת הצבת מעגל המשנה לפריסה, המשתמש יכול לשנות את
+                פני תת-מעגל; פניו של העוגן מציינים לאיזה כיוון המראה
+                מכוון. בדוגמה שלנו, העוגן פונה מזרחה, וכל מופע של תת-המעגל ב-<b
+                    class=reffig>Mux_4to1</b> פונה גם למזרח, כך שכולם מצוירים באותו כיוון כמו
+                הופעת <b class=reffig>Mux_2to1</b>.
+            </p>
+        </li>
+        <li>
+            <p>
+                העיגולים הכחולים (<img alt="#########" class="icontxt" src="../../../../img-guide/pinoutput.png">) ו
+                ריבועים עם נקודות (<img alt="#########" class="icontxt" src="../../../../img-guide/pininput.png">) ב
+                הם ה<q>יציאות</q> של תת-המעגל. יש בדיוק כמה יציאות שיש
+                פיני קלט ופלט במעגל. יציאות המתאימות לכניסות מצוירות כריבועים, בעוד יציאות
+                המתאימים לפלט מצוירים כמעגלים. כל יציאה מציינת כיצד חוט מתחבר לתוך
+                המעגל יתאים לפין קלט או פלט בתוך הפריסה.
+            </p>
+        </li>
+    </ul>
+    <p>
+        כאשר אתה בוחר יציאה, Logisim תציין את הסיכה המתאימה על ידי הצגת דיאגרמה מיניאטורית של
+        פריסה בפינה הימנית התחתונה של החלון, כשהסיכה המתאימה מצוירת בכחול. זה לא קורה
+        כאשר כל היציאות נבחרות.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/subcirc-7-custom-layout.png">
+    </p>
+    <p>
+        אנו יכולים לשנות את הזום של התמונה באמצעות <b class="tkeybd">Ctrl+גלגל עכבר</b> או באמצעות ההגדלה
+        לחצני זכוכית או המחוון בפינה השמאלית התחתונה של סביבת העבודה. התעריף מוצג.
+    </p>
+    <p>
+        סרגל הכלים מכיל כלים להוספת צורות נוספות, כפי שמוצג להלן. כמה מקשים (<b class="tkeybd">Ctrl,Alt,Shift</b>)
+        יש השפעה על האופן שבו צורות מצוירות. ניתן לשלב מפתחות אלו אחד עם השני.
+    </p>
+    <blockquote>
+        <b class="tkeybd">Ctrl</b>: יישור נקודות הקצה ברשת.<br>
+        <b class="tkeybd">Shift</b>: כוון את הקווים בכפולת זווית של 45° או הפוך את הדמויות לסימטריות
+        (ריבוע, ריבוע מעוגל, עיגול).<br>
+        <b class="tkeybd">Alt</b>: מצייר את הדמויות ממרכזן.
+    </blockquote>
+    <p>
+        להלן מצגת קטנה של כל כלי
+    </p>
+    <table class=toolslist>
+        <tbody>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/toolselect.png">
+            </td>
+            <td>
+                <strong>כלי בחירה :</strong> בחר, הזז, העתק, הדבק את הסמלים.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooltext.png">
+            </td>
+            <td>
+                <strong>כלי טקסט:</strong> הוסף, הוסף או ערוך טקסט.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawline.png">
+            </td>
+            <td>
+                <strong>כלי קו :</strong> יוצר קטע קו.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawcurv.png">
+            </td>
+            <td>
+                <strong>כלי עקומה:</strong> צור עקומת Bezier ריבועית. <b class="tkeybd">הקליק</b> הראשון ו
+                גרירה מציינת את תחילת השורה, ה<b class="tkeybd">לחיצה</b> השנייה וגרירה מסיימת את השורה
+                וקובע את העקמומיות. <b class="tkeybd">לחיצה</b> על השורה מראה לך
+                שלוש נקודות הבקרה. <b class="tkeybd">Shift</b> ולחץ על נקודת בקרה מרכזית כפה א
+                עקומה סימטרית. <b class="tkeybd">Alt</b> ולחיצה על נקודת המרכז מצייר את העקומה דרך
+                נקודת שליטה (מתחת לעכבר).
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawplin.png">
+            </td>
+            <td>
+                <strong>כלי Polylines</strong> יוצר רצף של קווים מחוברים, כל <b class="tkeybd">קליק</b>
+                מתחיל שורה חדשה. A <b class=
+                                              tkeybd>לחיצה כפולה</b> מסיימת את הרצף.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawrect.png">
+            </td>
+            <td>
+                <strong>כלי מלבן</strong> צור מלבן או ריבוע עם קצוות מעוגלים ( <b class="tkeybd">Shift</b>
+                ) דרך גרירה מפינה אחת לפינה הנגדית.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawrrct.png">
+            </td>
+            <td>
+                <strong>כלי מלבן</strong> צור מלבן או ריבוע ( <b class="tkeybd">Shift</b> ) דרך
+                גרירה מפינה אחת לפינה הנגדית.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawoval.png">
+            </td>
+            <td>
+                <strong>כלי סגלגל</strong> יוצר אליפסה או עיגול ( <b class="tkeybd">Shift</b> ) באמצעות גרירה
+                מפינה אחת של התיבה התוחמת שלו לפינה הנגדית.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawpoly.png">
+            </td>
+            <td>
+                <strong>כלי מצולע</strong> צור מצולע שרירותי, כל <b class="tkeybd">קליק</b> מתחיל חדש
+                פָּנִים. מקש <b class="tkeybd">לחיצה כפולה</b> או <b class="tkeybd">Enter</b> או <b
+                    class="tkeybd">לחץ</b> על קודקוד ההתחלה כדי להשלים את הצורה.
+            </td>
+        </tr>
+        <tr>
+            <td class=toolslist valign="top">
+                <img alt="#########" border="1" class=inbullet src="../../../../img-guide/tooldrawdyncomp.png">
+            </td>
+            <td>
+                <strong>רכיבים דינמיים</strong> הצב רכיב דינמי <b class="tkeybd">לחיצה</b> פותח חלון
+                לבחירת רכיבים בתת-מעגלים.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>
+        <b>הבא:</b> <a href="sub-debug.html">ניפוי באגים במעגל משנה</a>.
+    </p>
+</div>
+</body>
+</html>

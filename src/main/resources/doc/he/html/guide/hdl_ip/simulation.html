@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="he">
+<head>
+    <META content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+    <meta content="2023-04-29T16:00:00.000000000" name="changed"/>
+    <META content="text/html; charset=UTF-8" http-equiv="content-type">
+    <META content="he" http-equiv="Content-Language">
+    <title>סימולטור VHDL</title>
+    <LINK href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div class="maindiv">
+    <h1>סימולטור VHDL</h1>
+
+    <p>Logisim לא יכול לבצע הדמיית תוכן VHDL ישירות. במקום זאת,
+        QuestaSim משמש כמשימת רקע.
+    </p>
+
+    <h2>הפעל סימולטור</h2>
+
+    <p>אתה יכול להפעיל את הסימולטור דרך <i>סימולציה</i> > <i>VHDL
+        תפריט סימולציה מופעלת</i>. כאשר אתה עושה זאת, קונסולת הסימולטור
+        יומן מופיע בחלק התחתון של חלונית הציור. בסרגל התחתון של
+        ביומן הסימולטור, יש לך את מחוון מצב הסימולטור. ה
+        מדינות הן:
+
+    <p align="center"><img src="../../../img-guide/hdl-ip-sim-log.png" alt=""/></p>
+
+    <ul>
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-disabled.png" alt=""/>
+            מושבת (קונסולה נעלמת)
+        </li>
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-enabled.png" alt=""/>
+            מופעל (אך לא פעיל)
+        </li>
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-starting.png" alt=""/>
+            מתחיל
+        </li>
+        <li><img class=intxt src="../../../../img-guide/hdl-ip-state-active.png" alt=""/>
+            פָּעִיל
+        </li>
+    </ul>
+
+    <p>הסימולטור מופעל אוטומטית כאשר הוא מופעל והמעגל
+        מכיל רכיבי VHDL. לא ניתן להפעיל את הסימולטור
+        כאשר אין רכיבי VHDL במעגל.
+    </p>
+
+    <h2>הפעל מחדש</h2>
+
+    <p>הדמיית VHDL מופעלת מחדש כאשר אתה מאפס את ה-Logisim
+        סימולציה. זה נוגע רק למצב הסימולציה, זה לא
+        טען מחדש את הסימולציה (וקובצי המקור).
+    </p>
+
+    <p>אם שינית את התוכן של רכיב VHDL כלשהו, עליך לעשות זאת
+        הפעל מחדש את סימולטור VHDL. זה אף פעם לא נעשה אוטומטית. אתה יכול
+        הפעל מחדש את הסימולטור דרך תפריט <i>הדמיה</i>.
+    </p>
+
+    <h2>זמן</h2>
+
+    <p>יש לקחת בחשבון את זמן הצעד של סימולציית QuestaSim
+        בלתי צפוי, מכיוון שזה תלוי במספר רכיבי VHDL ב-
+        מעגל חשמלי. הצעד המינימלי המוחלט הוא 100ns. לכן, שימוש ב
+        יש להימנע מאירועי סימולציה מבוססי זמן (כמו <i>wait for
+            10ns</i>). אתה חייב רק אירועים מבוססי אותות.
+    </p>
+
+
+    <h2>מספר מופעים</h2>
+
+    <p>למעשה, אתה יכול לקבל רק מופע בודד של סימולטור VHDL.
+        זה אומר שאתה צריך להשבית אותו בפרויקט הראשון אם אתה
+        רוצה להפעיל את זה בשני. אם תנסה להפעיל את זה
+        שני פרויקטים זה ייכשל ויראה לך הודעת שגיאה.
+    </p>
+
+    <p><b>הבא:</b> <a href="testbenchs.html">בדיקת סימולציה
+        ספסלים</a>.
+    </p>
+</div>
+</body>
+</html>

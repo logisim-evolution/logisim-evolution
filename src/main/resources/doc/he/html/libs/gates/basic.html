@@ -1,0 +1,567 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        AND/OR/NAND/NOR שער
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansandgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansorgate.png" width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansnandgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansnorgate.png"
+                     width="32"><br>
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecandgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecorgate.png" width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecnandgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecnorgate.png"
+                     width="32">
+            </td>
+            <td>
+                <h1>
+                    <em>AND/OR/NAND/NOR שער</em>
+                </h1>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">שערים</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 בטא 1
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <table>
+                    <tbody>
+                    <tr>
+                        <th></th>
+                        <th width="50">
+                            ו
+                        </th>
+                        <th width="50">
+                            אוֹ
+                        </th>
+                        <th width="50">
+                            NAND
+                        </th>
+                        <th width="50">
+                            ולא
+                        </th>
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            ANSI:
+                        </th>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansandgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansorgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansnandgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansnorgate.png" width="64">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            חברת החשמל:
+                        </th>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecandgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecorgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecnandgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecnorgate.png" width="64">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        השערים AND, OR, NAND ו- NOT מחשבים כל אחד את הפונקציה המתאימה של הכניסות, ופולטים את התוצאה על
+        תְפוּקָה.
+    </p>
+    <p>
+        כברירת מחדל, מתעלמים מכל כניסות שנותרו לא מחוברות - זה אם לקלט באמת אין שום דבר מחובר אליו
+        זה, אפילו לא חוט. בדרך זו, אתה יכול להכניס שער 5 כניסות אבל לצרף רק שתי כניסות, וזה יעבוד כמו
+        שער בעל 2 כניסות; זה משחרר אותך מהצורך לדאוג לגבי הגדרת מספר הכניסות בכל פעם שאתה
+        ליצור שער.<br>
+        אם כל הכניסות אינן מחוברות, הפלט הוא ערך השגיאה (<b class="evalue">E</b>). עם זאת, חלק מהמשתמשים
+        מעדיפים ש-Logisim יתעקשו שכל הכניסות יהיו מחוברות, שכן זה מה שמתאים לשערים בעולם האמיתי. אתה
+        יכול לאפשר התנהגות זו על ידי מעבר אל <b class="menu">|&nbsp;פרויקט&nbsp;|</b> &gt; <b class="menu">|&nbsp;אפשרויות...&nbsp;|</b>
+        פריט תפריט ובחירה בכרטיסייה <b class="menu">|&nbsp;סימולציה&nbsp;|</b>, ובחירה ב<q>שגיאה עבור
+        כניסות לא מוגדרות</q> עבור <q>פלט שער כאשר לא מוגדר</q>.
+    </p>
+    <p>
+        טבלת האמת של שתי כניסות עבור השערים היא הבאה. האות <b class="evalue">E</b> מייצגת את
+        ערך שגיאה, והאות <b class="uvalue">U</b> מייצגת את הערך הצף.
+    </p>
+    <div style="text-align: center;">
+        <table border="0" class="encapsul">
+            <tbody>
+            <tr>
+                <td>
+                    <table class="truthtable">
+                        <tbody>
+                        <tr>
+                            <th colspan="4">
+                                AND
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                -
+                            </td>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                    <table class="truthtable">
+                        <tbody>
+                        <tr>
+                            <th colspan="4">
+                                OR
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                -
+                            </td>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="truthtable">
+                        <tbody>
+                        <tr>
+                            <th colspan="4">
+                                NAND
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                -
+                            </td>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td></td>
+                <td>
+                    <table class="truthtable">
+                        <tbody>
+                        <tr>
+                            <th colspan="4">
+                                NOR
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                -
+                            </td>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tzerov">
+                                0
+                            </td>
+                            <td class="unov">
+                                1
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tunov">
+                                1
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tspace">
+                                <b class="uvalue">U</b>/<b class="evalue">E</b>
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                            <td class="zerov">
+                                0
+                            </td>
+                            <td class="evalue">
+                                E
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        בקיצור, רכיבים אלה עובדים כצפוי כל עוד כל התשומות הן 0 או 1. אם קלט אינו 0
+        וגם לא 1. הוא צף (<b class="uvalue">U</b>) או שזה ערך השגיאה (<b class="evalue">E</b>) ואז הערך
+        הרכיב מתייחס אליו כאל 0 <em>ו</em> 1: אם הפלט יהיה זהה לשני הכיוונים כמו כאשר יש לשער AND
+        קלט אחד שהוא בהחלט 0 וקלט שני מפוקפק, זה יהיה ערך הפלט; אבל אם הפלט
+        משתנה בהתאם אם הוא 0 או 1, הפלט הוא ערך השגיאה (<b class="evalue">E</b>).
+    </p>
+    <p>
+        גרסאות מרובות הסיביות של כל שער יבצעו את הטרנספורמציה של סיביות אחת שלו בסיביות בכניסות שלו.
+    </p>
+    <h2>
+        סיכות (בהנחה שהרכיב פונה מזרחה)
+    </h2>
+    <dl>
+        <dt>
+            קצה מערבי:
+        </dt>
+        <dd>
+            הכניסות לרכיב. יהיו כמה כאלה כפי שצוין במספר הכניסות
+            תְכוּנָה. רוחב סיביות לפי נתונים <b class="propertie">תכונת סיביות</b>.
+            <p>
+                שים לב שאם אתה משתמש בשערים מעוצבים, הצד המערבי של שערי OR ו- NOR יהיה מעוקל. בְּכָל זֹאת,
+                פיני הקלט נמצאים בשורה. לוגיסים יציירו בולים קצרים הממחישים זאת; ואם חורגת א
+                בדל, הוא יניח בשקט שלא התכוונת לעקוף אותו. ב"תצוגת מדפסת", הסטבים האלה יעשו זאת
+                אין לצייר אלא אם כן הם מחוברים לחוטים.
+            </p>
+        </dd>
+        <dt>
+            קצה מזרח:
+        </dt>
+        <dd>
+            הפלט של השער, שערכו מחושב על סמך הכניסות הנוכחיות כמתואר לעיל. רוחב סיביות
+            לפי הנתונים <b class="propertie">תכונת Bits</b>.
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, הספרות <b class="tkeybd">0</b> עד <b class="tkeybd">9</b>
+        שנה את התכונה <b class="propertie">מספר הכניסות</b> שלו, <b class="tkeybd">Alt-0</b> עד <b
+            class="tkeybd">Alt-9</b> משנה את תכונת ה<b class="propertie">נתונים</b> שלו, ומקשי החצים משתנים
+        תכונת ה<b class="propertie">פניה</b> שלו.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">לפנים</b>
+            </dt>
+            <dd>
+                כיוון הרכיב (הפלט שלו ביחס לתשומות שלו).
+            </dd>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
+            </dd>
+            <dt>
+                <b class="propertie">גודל שער</b>
+            </dt>
+            <dd>
+                קובע אם לצייר גרסה רחבה יותר או צרה יותר של הרכיב. זה לא משפיע על המספר
+                של תשומות, המצוין על ידי התכונה Number of Inputs. עם זאת, אם נבחרים שערים מעוצבים,
+                אז השער יצויר עם <q>כנפיים</q> כדי להכיל כניסות נוספות מעבר לצורה
+                מתאים באופן טבעי.
+            </dd>
+            <dt>
+                <b class="propertie">מספר כניסות</b>
+            </dt>
+            <dd>
+                קובע כמה פינים יש לרכיב בצד המערבי שלו.
+            </dd>
+            <dt>
+                <b class="propertie">ערך פלט</b>
+            </dt>
+            <dd>
+                מציין כיצד יש לתרגם תוצאות שגויות ואמיתיות לערכי פלט. כברירת מחדל, שקר הוא
+                מסומן במתח נמוך (0) ונכון במתח גבוה (1), אך ניתן להחליף אחד או אחר ב-
+                במקום זאת ערך בעל עכבה גבוהה (<q>צף</q>). זה מאפשר חיבורים קוויים או קוויים וחיבורים, כמו
+                מוצג להלן: משמאל, תכונת ערך היציאה של המאגרים היא צפה/1 והנגד מושך אל
+                0, מתן התנהגות קווית או; מימין, תכונת Output Value של המאגרים היא 0/צף וה-
+                הנגד מושך ל-1, נותן חוטי-והתנהגות.
+                <div style="text-align: center;">
+                    <img alt="#########" height="91" src="../../../../img-libs/wand-wor.png" width="220">
+                </div>
+            </dd>
+            <dt>
+                <b class="propertie">Label</b>
+            </dt>
+            <dd>
+                הטקסט בתוך התווית המשויכת לשער.
+            </dd>
+            <dt>
+                <b class="propertie">גופן תווית</b>
+            </dt>
+            <dd>
+                הגופן שבאמצעותו יש לעבד את התווית.
+            </dd>
+            <dt>
+                <b class="propertie">שלילת <var>x</var></b>
+            </dt>
+            <dd>
+                אם <q>כן</q>, הקלט מבוטל לפני שהוא מוזן לשער. התשומות נספרות מלמעלה למטה אם
+                הצד הוא מזרח או מערב, והם נספרים משמאל לימין אם הפנייה היא צפונה או דרומה.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        מאפשר לערוך את התווית המשויכת לשער.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

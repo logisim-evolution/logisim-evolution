@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        החלפת ספריות
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        החלפת ספריות
+    </h1>
+    <p>
+        עכשיו נניח שיש לנו שני מעגלי Logisim שאמורים לעשות את אותו הדבר. בתור מדריך, אולי
+        ביקשו מהתלמידים להשלים מטלה: יש לך קובץ אחד המכיל את הפתרון שלך, אבל יש לך כמה
+        תיקי תלמידים המכילים את עבודתם. אולי המשימה הייתה לבנות מוסיף שני סיביות.
+    </p>
+    <p>
+        אני אתאר לעצמי שיש לנו שני קבצים, בשם <tt><b>master.circ</b></tt> ו-<tt><b>query.circ</b></tt>. כל קובץ
+        מכיל מעגל בשם <b class=propertie>Adder2</b> (חשוב שהמעגל לבדיקה יקרא בדיוק בשם
+        אותו הדבר), שהמראה שלו הוא הבא.
+    </p>
+    <blockquote>
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <tt>Adder2 ב-master.circ</tt>
+                </td>
+                <td>
+                    <tt>Adder2 ב-query.circ</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img alt="#########" src="../../../../img-guide/verify-adder-master.png">
+                </td>
+                <td>
+                    <img alt="#########" src="../../../../img-guide/verify-adder-query.png">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </blockquote>
+    <p>
+        כפי שניתן לראות, המעגל הראשי משתמש באדר המובנה של לוגסים, בעוד שמעגל השאילתה משתמש בשני מעגלים משנה
+        המייצגים חצי מוסיף ומוסיף מלא (שבעצמם בנויים משערים פשוטים). במטרה ל
+        הדוגמה שלנו, למעגל השאילתה יש שגיאה מטופשת: ה-<var>carry</var> מ-חצי המוסיף אינו מחובר
+        לתוך המוסיף המלא.
+    </p>
+    <p>
+        אנו בונים את מעגל הבדיקה שלנו לקובץ אחר <tt><b>test.circ</b></tt>. שם, אנחנו מעמיסים
+        <tt><b>master.circ</b></tt> כספריית Logisim <b class=menu>|&nbsp;פרויקט&nbsp;|</b>→<b class=menu>|&nbsp;טען
+        ספריה&nbsp;|</b>→ <b class=menu>|&nbsp;ספריית לוגיסים&nbsp;|</b>, ואנחנו מכניסים את המוסיף 2-bit שלה כקובץ
+        תת-מעגל. נוכל לבצע מעגל זה ישירות כדי לקבל את הפלט הרצוי לפתרון מושלם.
+    </p>
+    <blockquote>
+        <div class=forcode>
+            <tt>java -jar logisim-evolution.jar test.circ -tty table</tt>
+        </div>
+    </blockquote>
+    <p>
+        אבל אנחנו רוצים להפעיל את המעגל באמצעות <tt><b>query.circ</b></tt> במקום <tt><b>master.circ</b></tt> בתור
+        הספרייה הטעונה. הגישה הנאיבית תהיה לפתוח את Logisim ולטעון את הספרייה הזו במקום; או שאולי
+        פשוט הסר את הקובץ <tt><b>master.circ</b></tt> ושנה את שם <tt><b>query.circ</b></tt> כדי לקבל את השם <tt><b>master
+        .circ</b></tt>
+        במקום זאת. אבל Logisim כולל אפשרות שימושית <b calls="porpertie"><tt>-sub</tt></b> שמחליפה זמנית אחת
+        קובץ אחר במהלך אותה הפעלה - מבלי לבצע שינויים כלשהם בדיסק.
+    </p>
+    <blockquote>
+        <div class=forcode>
+            <tt>java -jar logisim-evolution.jar test.circ -tty table -sub master.circ query.circ</tt>
+        </div>
+    </blockquote>
+    <p>
+        הפלט שתראה מזה מוצג להלן; זה כמובן שונה ממה שראינו ב<a
+            href="index.html">הסעיף הקודם</a> מכיוון שהספרייה המשותפת ל<tt><b>adder2</b></tt> הייתה
+        הוחלף במעגל הבדיקה בזה של <tt><b>query.circ</b></tt> שגוי.
+    </p>
+    <blockquote>
+         <pre>00 00 0E0
+01 00 0E1
+10 00 EE0
+11 00 EE1
+00 01 0E1
+01 01 0E0
+10 01 EE1
+11 01 EE0
+00 10 EE0
+01 10 EE1
+10 10 1E0
+11 10 1E1
+00 11 EE1
+01 11 EE0
+10 11 1E1
+11 11 1E0
+</pre>
+    </blockquote>
+    <p>
+        <b>הבא:</b> <a href="other.html">אפשרויות אימות אחרות</a>.
+    </p>
+</div>
+</body>
+</html>

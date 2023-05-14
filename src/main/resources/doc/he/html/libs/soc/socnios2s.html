@@ -1,0 +1,728 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        nios2
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="nios2" class="iconlibs" src="../../../../icons/up.png" title="nios2 simulator"> Nios2 simulator
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">רכיבי System On Chip</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                3.2
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="nios2" class="notscal" src="../../../../img-libs/nios2.png" title="nios2"><br>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        סימולטור Nios2 הוא סימולטור ISA שלם של הליבה הרכה Nios2 של אינטל (פרט לגרסת f). זה יכול להיות
+        משמש להצגת ביצוע של תוכנית במערכת משובצת. שימו לב שלמרות שהסימולטור מבצע אחד
+        הוראה לכל מחזור שעון, זה לא סימולציה מדויקת של מחזור שכן היבטים כמו מטמון-דוכנים, תלות בנתונים
+        דוכנים, מחזורי המתנה באוטובוס וכו' אינם נלקחים בחשבון בסימולציה. זה מספק סימולציה פונקציונלית
+        להצגת עיצוב SOC כאשר החומרה עדיין אינה זמינה.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <p>
+        בצד הצפוני של רכיב הסימולציה Nios2 תמצאו את אותות ממשק ההוראות המותאמות אישית היכן
+        אתה יכול להוסיף חומרה/מאיצים המותאמים אישית שלך לשימוש בסימולציות שלך. בבקשה התייחס ל
+        התיעוד של אינטל על הוראות מותאמות אישית עם ה-nios2 על אופן השימוש בהן.
+    </p>
+    <p>
+        בצד המערבי של Nios2 יש רכיבי סימולציה הבאים:
+    </p>
+    <ul>
+        <li>
+            <strong><em>איפוס</em></strong>: זהו קלט האיפוס של רכיב הסימולציה Nios2 שיתאפס
+            באופן אסינכרוני את ה-Nios2 ב-'1' ותן למעבד לפעול ב-'0'.
+        </li>
+        <li>
+            <strong><em>שעון</em></strong>: זהו קלט השעון של רכיב סימולטור Nios2. בכל פעם א
+            קצה חיובי נראה בקלט זה פקודה חדשה תובא ותבוצע.
+        </li>
+        <li>
+            <strong><em>IRQ[0..31]</em></strong>: סימולטור Nios2 מספק עד 32 כניסות IRQ (מוגדרות לפי הסעיפים למטה
+            IRQ של מאפיינים המתוארים). כל אחת מכניסות ה-IRQ הללו היא פעילה גבוהה. אנא עיין בתיעוד של אינטל בנושא
+            התנהגות IRQ כיצד לספק אותות נאותים לכניסות אלה.
+        </li>
+    </ul>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        רכיב הסימולציה Nios2 מספק את התכונות הבאות:
+    </p>
+    <ul>
+        <li>
+            <strong><em>איפוס וקטור</em></strong>: תכונה זו מציינת את כתובת הזיכרון של ההוראה הראשונה
+            לביצוע כאשר סיכת האיפוס מופעל. באופן כללי הערך שצוין כאן צריך להיות הכתובת של
+            נקודת הכניסה של התוכנית שלך. שים לב שכל הכתובות הן ערכי 32 סיביות.
+        </li>
+        <li>
+            <strong><em>וקטור חריג</em></strong>: לאחר זיהוי של IRQ (ראה פיני IRQ למעלה), או תוכנה
+            הוראת חריג, סימולטור Nios2 יתחיל להפעיל את התוכנית החל מכתובת זו. ב
+            כללי הערך שצוין כאן צריך להיות הכתובת של שגרת הטיפול בחריגים בתוכנית שלך.
+        </li>
+        <li>
+            <strong><em>וקטור הפסקה</em></strong>: תכונה זו מציינת את כתובת הזיכרון של שירות הפסקה
+            שגרה שמתבצעת עם זיהוי הוראת הפסקה.
+        </li>
+        <li>
+            <strong><em>מספר קווי IRQ</em></strong>: תכונה זו מציינת כמה פיני IRQ חיצוניים הם
+            זמין. הערך שלו יכול להיות בטווח של 0 (ללא קווי IRQ) ו-32 (מספר מרבי של קווי IRQ).
+        </li>
+        <li>
+            <strong><em>מצב גלוי</em></strong>:כאשר משביתים את המצב על ידי ציון לא עבור תכונה זו,
+            ניתן לשפר את מהירות הסימולציה (ראה הערה על מהירות הסימולציה ב<a href="index.html">ספרייה
+            תיאור</a>).
+        </li>
+        <li>
+            <em><strong>תווית</strong></em>: כאן ניתן לציין את התווית של הרכיבים. שימו לב שהתווית היא
+            משמש במקומות רבים כדי להתייחס לרכיב זה. במקרה שהתווית לא מוגדרת הרכיבים יהיו
+            המכונה "<em>Nios2s simulator @x,y</em>" כאשר <em>x</em> ו-<em>y</em> הן הקואורדינטות המוחלטות
+            של העוגן של רכיב זה בתוך הסדין.
+        </li>
+        <li>
+            <em><strong>גופן תווית</strong></em>: בעזרת תכונה זו ניתן לציין את הגופן של התווית.
+        </li>
+        <li>
+            <strong><em>תווית גלויה</em></strong>: בעזרת תכונה זו תוכל לציין אם התווית גלויה או לא.
+        </li>
+        <li>
+            <em><strong>אוטובוס מחובר</strong></em>: תכונה זו מאפשרת לך לחבר את סימולטור Nios2 ל-<a
+                href="socbus.html">רכיב אוטובוס</a>. לסימולציה מוצלחת עליך לחבר את ה-Nios2 שלך
+            סימולטור לרכיב כזה.
+        </li>
+    </ul>
+    <h2>
+        רכיבים גלויים
+    </h2>
+    <p>
+        לסימולטור Nios2 יש מספר רכיבי מצב הנראים כאשר ה<em><strong>מצב
+        התכונה visible</strong></em> מוגדרת ל<em><strong>True</strong></em>. רוב הרכיבים הללו יכולים להיות גם
+        מוצג בחלון נפרד כאשר הרכיב מוסתר בתת-מעגל (ראה תפריט רכיב-על להלן).
+        המרכיבים השונים הם:
+    </p>
+    <ol>
+        <li>קובץ הרישום. מעבד Nios2 מכיל 32 אוגרים לשימוש כללי (r0..r31). הערכים הנוכחיים
+            מבין האוגרים הללו מוצגים בריבוע השמאלי העליון המסומן ב<em><strong>קובץ רישום</strong></em>. מתי
+            ערך רישום מוצג על ידי רצף של סימני שאלה, זה אומר שהערך אינו ידוע (רגיל
+            התנהגות האתחול של המעבד). בכל פעם שערך נכתב לרגיסטר הוא יודגש בו
+            כחול והערך החדש יוצג.
+        </li>
+        <li>מונה התוכנית. מונה התוכניות (PC) מחזיק את הכתובת הנוכחית שממנה תהיה ההוראה הבאה
+            להיות מביאים.
+        </li>
+        <li>רישום הסטטוס. מאגר המצב (סטטוס) מחזיק את המצב הנוכחי של מעבד ה-Nios2. ל
+            מידע על מרשם הסטטוסים נא לעיין בתיעוד של אינטל על מעבד nios2.
+        </li>
+        <li>רישום סטטוס החריגה. מאגר סטטוס החריג (estatus) מחזיק עותק של מרשם המצבים
+            בעת הזנת חריגה. למידע על estatus register, עיין בתיעוד של אינטל בנושא
+            מעבד nios2.
+        </li>
+        <li>רישום מצב ההפסקה. פנקס מצב הפסקה (bstatus) מחזיק עותק של פנקס הסטטוס כאשר א
+            מבוצעת הוראת הפסקה. למידע על ה-bstatus register, עיין בתיעוד של אינטל
+            במעבד nios2.
+        </li>
+        <li>חלון מעקב הביצוע. חלון מעקב הביצוע מציג את 21 ההוראות האחרונות שבוצעו על ידי nios2
+            מעבד. ההוראה האחרונה שבוצעה מוצגת למעלה. חלון הטייס מספק שלושה חלקים של
+            מידע, כלומר:<br>
+            <ol>
+                <li>ערך מונה התוכנית שבו הובאה ההוראה.
+                </li>
+                <li>קוד האופטימיזציה הבינארי של ההוראה שנלקחה.
+                </li>
+                <li>מזכרון ההרכבה של ההוראה שנלקחה למקרה שלהוראה שהובאה יש קוד נכון
+                    אופקוד בינארי.
+                </li>
+            </ol>
+            רכיב זה יתעדכן בכל שליפת הוראות.
+        </li>
+        <li>התצוגה של IRQ, irq-mask ו-irq-pending. במקרה שלפחות קלט IRQ אחד נבחר על ידי
+            תכונה <strong><em>מספר קווי IRQ</em></strong>, רכיב זה יוצג. עבור כל אחד מה
+            IRQ-pins ריבוע בחלק העליון של הרכיב יציין את המצב הנוכחי של קו IRQ. הכיכר
+            להלן יציין את הסיביות המקבילה באוגר IRQ-mask. לבסוף הריבוע בתחתית יהיה
+            ציין אם IRQ חשוף ממתין. <em>הערה:</em> רכיב זה אינו מציג את מצב הגלובל
+            סיביות להפעלת IRQ אשר קיימת במאגר המצבים.
+        </li>
+        <li>
+            <em><strong>תווית</strong></em>: כאן ניתן לציין את התווית של הרכיבים. שימו לב שהתווית היא
+            משמש במקומות רבים כדי להתייחס לרכיב זה. במקרה שהתווית לא מוגדרת הרכיבים יהיו
+            המכונה "<em>Nios2s simulator @x,y</em>" כאשר <em>x</em> ו-<em>y</em> הן הקואורדינטות המוחלטות
+            של העוגן של רכיב זה בתוך הסדין.
+        </li>
+        <li>
+            <em><strong>גופן תווית</strong></em>: בעזרת תכונה זו ניתן לציין את הגופן של התווית.
+        </li>
+        <li>
+            <strong><em>תווית גלויה</em></strong>: בעזרת תכונה זו תוכל לציין אם התווית גלויה או לא.
+        </li>
+        <li>
+            <em><strong>אוטובוס מחובר</strong></em>: תכונה זו מאפשרת לך לחבר את סימולטור Nios2 ל-<a
+                href="socbus.html">רכיב אוטובוס</a>. לסימולציה מוצלחת עליך לחבר את ה-Nios2 שלך
+            סימולטור לרכיב כזה.
+        </li>
+    </ol>
+    <h2>
+        רכיבים גלויים
+    </h2>
+    <p>
+        לסימולטור Nios2 יש מספר רכיבי מצב הנראים כאשר ה<em><strong>מצב
+        התכונה visible</strong></em> מוגדרת ל<em><strong>True</strong></em>. רוב הרכיבים הללו יכולים להיות גם
+        מוצג בחלון נפרד כאשר הרכיב מוסתר בתת-מעגל (ראה תפריט רכיב-על להלן).
+        המרכיבים השונים הם:
+    </p>
+    <ol>
+        <li>קובץ הרישום. מעבד Nios2 מכיל 32 אוגרים לשימוש כללי (r0..r31). הערכים הנוכחיים
+            מבין האוגרים הללו מוצגים בריבוע השמאלי העליון המסומן ב<em><strong>קובץ רישום</strong></em>. מתי
+            ערך רישום מוצג על ידי רצף של סימני שאלה, זה אומר שהערך אינו ידוע (רגיל
+            התנהגות האתחול של המעבד). בכל פעם שערך נכתב לרגיסטר הוא יודגש בו
+            כחול והערך החדש יוצג.
+        </li>
+        <li>מונה התוכנית. מונה התוכניות (PC) מחזיק את הכתובת הנוכחית שממנה תהיה ההוראה הבאה
+            להיות מביאים.
+        </li>
+        <li>רישום הסטטוס. מאגר המצב (סטטוס) מחזיק את המצב הנוכחי של מעבד ה-Nios2. ל
+            מידע על מרשם הסטטוסים נא לעיין בתיעוד של אינטל על מעבד nios2.
+        </li>
+        <li>רישום סטטוס החריגה. מאגר סטטוס החריג (estatus) מחזיק עותק של מרשם המצבים
+            בעת הזנת חריגה. למידע על estatus register, עיין בתיעוד של אינטל בנושא
+            מעבד nios2.
+        </li>
+        <li>רישום מצב ההפסקה. פנקס מצב הפסקה (bstatus) מחזיק עותק של פנקס הסטטוס כאשר א
+            מבוצעת הוראת הפסקה. למידע על ה-bstatus register, עיין בתיעוד של אינטל
+            במעבד nios2.
+        </li>
+        <li>חלון מעקב הביצוע. חלון מעקב הביצוע מציג את 21 ההוראות האחרונות שבוצעו על ידי nios2
+            מעבד. ההוראה האחרונה שבוצעה מוצגת למעלה. חלון הטייס מספק שלושה חלקים של
+            מידע, כלומר:<br>
+            <ol>
+                <li>ערך מונה התוכנית שבו הובאה ההוראה.
+                </li>
+                <li>קוד האופטימיזציה הבינארי של ההוראה שנלקחה.
+                </li>
+                <li>מזכרון ההרכבה של ההוראה שנלקחה למקרה שלהוראה שהובאה יש קוד נכון
+                    אופקוד בינארי.
+                </li>
+            </ol>
+            רכיב זה יתעדכן בכל שליפת הוראות.
+        </li>
+        <li>התצוגה של IRQ, irq-mask ו-irq-pending. במקרה שלפחות קלט IRQ אחד נבחר על ידי
+            תכונה <strong><em>מספר קווי IRQ</em></strong>, רכיב זה יוצג. עבור כל אחד מה
+            IRQ-pins ריבוע בחלק העליון של הרכיב יציין את המצב הנוכחי של קו IRQ. הכיכר
+            להלן יציין את הסיביות המקבילה באוגר IRQ-mask. לבסוף הריבוע בתחתית יהיה
+            ציין אם IRQ חשוף ממתין. <em>הערה:</em> רכיב זה אינו מציג את מצב הגלובל
+            סיביות להפעלת IRQ אשר קיימת במאגר המצבים.
+        </li>
+    </ol>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            and
+        </td>
+        <td style="text-align: center;">
+            or
+        </td>
+        <td style="text-align: center;">
+            xor
+        </td>
+        <td style="text-align: center;">
+            nor
+        </td>
+        <td style="text-align: center;">
+            sub
+        </td>
+        <td style="text-align: center;">
+            mul
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            div
+        </td>
+        <td style="text-align: center;">
+            divu
+        </td>
+        <td style="text-align: center;">
+            mulxss
+        </td>
+        <td style="text-align: center;">
+            mulxuu
+        </td>
+        <td style="text-align: center;">
+            mulxsu
+        </td>
+        <td style="text-align: center;">
+            andi
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            ori
+        </td>
+        <td style="text-align: center;">
+            xori
+        </td>
+        <td style="text-align: center;">
+            andhi
+        </td>
+        <td style="text-align: center;">
+            orhi
+        </td>
+        <td style="text-align: center;">
+            xorhi
+        </td>
+        <td style="text-align: center;">
+            addi
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            subi
+        </td>
+        <td style="text-align: center;">
+            muli
+        </td>
+        <td style="text-align: center;">
+            nop
+        </td>
+        <td style="text-align: center;">
+            mov
+        </td>
+        <td style="text-align: center;">
+            movhi
+        </td>
+        <td style="text-align: center;">
+            movi
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            movui
+        </td>
+        <td style="text-align: center;">
+            movia
+        </td>
+        <td colspan="4" rowspan="1" style="text-align: center;">
+            <br>
+        </td>
+    </tr>
+    <tr align="left">
+        <td colspan="6" rowspan="1">
+            <em>הוראות השוואה</em>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            cmpeq
+        </td>
+        <td style="text-align: center;">
+            cmpne
+        </td>
+        <td style="text-align: center;">
+            cmpge
+        </td>
+        <td style="text-align: center;">
+            cmpgeu
+        </td>
+        <td style="text-align: center;">
+            cmplt
+        </td>
+        <td style="text-align: center;">
+            cmpltu
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            cmpgt
+        </td>
+        <td style="text-align: center;">
+            cmpgtu
+        </td>
+        <td style="text-align: center;">
+            cmple
+        </td>
+        <td style="text-align: center;">
+            cmpleu
+        </td>
+        <td style="text-align: center;">
+            cmpeqi
+        </td>
+        <td style="text-align: center;">
+            cmpnei
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            cmpgei
+        </td>
+        <td style="text-align: center;">
+            cmpgeui
+        </td>
+        <td style="text-align: center;">
+            cmplti
+        </td>
+        <td style="text-align: center;">
+            cmpltui
+        </td>
+        <td style="text-align: center;">
+            cmpgti
+        </td>
+        <td style="text-align: center;">
+            cmpgtui
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            cmplei
+        </td>
+        <td style="text-align: center;">
+            cmpleui
+        </td>
+        <td colspan="4" rowspan="1" style="text-align: center;">
+            <br>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" rowspan="1">
+            <em>הוראות מותאמות אישית</em>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            custom
+        </td>
+        <td colspan="5" rowspan="1">
+            <br>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" rowspan="1">
+            <em>הוראות להעברת נתונים</em>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            ldw
+        </td>
+        <td style="text-align: center;">
+            ldh
+        </td>
+        <td style="text-align: center;">
+            ldhu
+        </td>
+        <td style="text-align: center;">
+            ldb
+        </td>
+        <td style="text-align: center;">
+            ldbu
+        </td>
+        <td style="text-align: center;">
+            ldwio
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            ldhio
+        </td>
+        <td style="text-align: center;">
+            ldhuio
+        </td>
+        <td style="text-align: center;">
+            ldbio
+        </td>
+        <td style="text-align: center;">
+            ldbuio
+        </td>
+        <td style="text-align: center;">
+            stw
+        </td>
+        <td style="text-align: center;">
+            sth
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            stb
+        </td>
+        <td style="text-align: center;">
+            stwio
+        </td>
+        <td style="text-align: center;">
+            sthio
+        </td>
+        <td style="text-align: center;">
+            stbio
+        </td>
+        <td colspan="2" rowspan="1" style="text-align: center;">
+            <br>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" rowspan="1">
+            <em>הוראות בקרה אחרות</em>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            trap
+        </td>
+        <td style="text-align: center;">
+            eret
+        </td>
+        <td style="text-align: center;">
+            break
+        </td>
+        <td style="text-align: center;">
+            bret
+        </td>
+        <td style="text-align: center;">
+            rdctl
+        </td>
+        <td style="text-align: center;">
+            wrctl
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            flushd
+        </td>
+        <td style="text-align: center;">
+            flushda
+        </td>
+        <td style="text-align: center;">
+            flushi
+        </td>
+        <td style="text-align: center;">
+            initd
+        </td>
+        <td style="text-align: center;">
+            initda
+        </td>
+        <td style="text-align: center;">
+            initi
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            flushp
+        </td>
+        <td style="text-align: center;">
+            sync
+        </td>
+        <td colspan="4" rowspan="1" style="text-align: center;">
+            <br>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" rowspan="1">
+            <em>הוראות בקרת תוכנית</em>
+        </td>
+    </tr>
+    <tr>
+        <td style="height: 19px; text-align: center;">
+            callr
+        </td>
+        <td style="text-align: center;">
+            ret
+        </td>
+        <td style="text-align: center;">
+            jmp
+        </td>
+        <td style="text-align: center;">
+            call
+        </td>
+        <td style="text-align: center;">
+            jmpi
+        </td>
+        <td style="text-align: center;">
+            br
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            bge
+        </td>
+        <td style="text-align: center;">
+            bgeu
+        </td>
+        <td style="text-align: center;">
+            blt
+        </td>
+        <td style="text-align: center;">
+            bltu
+        </td>
+        <td style="text-align: center;">
+            beq
+        </td>
+        <td style="text-align: center;">
+            bne
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            bgt
+        </td>
+        <td style="text-align: center;">
+            bgtu
+        </td>
+        <td style="text-align: center;">
+            ble
+        </td>
+        <td style="text-align: center;">
+            bleu
+        </td>
+        <td colspan="2" rowspan="1" style="text-align: center;">
+            <br>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6" rowspan="1">
+            <em>העבר וסובב הוראות</em>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">
+            rol
+        </td>
+        <td style="text-align: center;">
+            ror
+        </td>
+        <td style="text-align: center;">
+            sll
+        </td>
+        <td style="text-align: center;">
+            sra
+        </td>
+        <td style="text-align: center;">
+            srl
+        </td>
+        <td style="text-align: center;">
+            roli
+        </td>
+    </tr>
+    <td style="text-align: center;">
+        slli
+    </td>
+    <td style="text-align: center;">
+        srai
+    </td>
+    <td style="text-align: center;">
+        srli
+    </td>
+    <td colspan="3" rowspan="1" style="text-align: center;">
+        <br>
+    </td>
+    <h2>
+        הטמעה אוגרי בקרה
+    </h2>
+    <table border="1" style="width: 852px; height: 157px;">
+        <tbody>
+        <tr>
+            <td style="width: 111px; text-align: center;">
+                <strong>Register</strong>
+            </td>
+            <td style="text-align: center;">
+                <strong>Name</strong>
+            </td>
+            <td style="text-align: center;">
+                <strong>Remarks</strong>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                0
+            </td>
+            <td style="text-align: center;">
+                status
+            </td>
+            <td>
+                Only <em>RSIE</em> constant at 1 and <em>PIE</em>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                1
+            </td>
+            <td style="text-align: center; width: 130.583px;">
+                estatus
+            </td>
+            <td style="width: 588.45px;">
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                2
+            </td>
+            <td style="text-align: center;">
+                bstatus
+            </td>
+            <td>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                3
+            </td>
+            <td style="text-align: center;">
+                ienable
+            </td>
+            <td>
+                מספר הביטים תלוי בתכונה <strong><em>מספר קווי IRQ</em></strong>.
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                4
+            </td>
+            <td style="text-align: center;">
+                בהמתנה
+            </td>
+            <td>
+                מספר הביטים תלוי בתכונה <strong><em>מספר קווי IRQ</em></strong>.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>
+        <a href="index.html">חזרה ל<em>ספריית SOC</em></a>
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2019-03-16T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        וקטור טקסט של חלון
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        צופה להרכבה
+    </h1>
+    <p>
+        חלון ה-Assembly viewer מציג ערך כתובת המאוחסן באוגר במעגל הנוכחי, יחד עם
+        הוראת שפת ההרכבה בכתובת זו.
+    </p>
+    <p align="center">
+        <img alt="#########" class="notscal" src="../../../../img-guide/assembly-viewer.png">
+    </p>
+    <p>
+        בכל פעם שהערך המאוחסן ברישום משתנה, הכתובת החדשה מודגשת במציג ה-Assembly.
+    </p>
+    <p>
+        בחר את הרישום לתצוגה וטען קובץ טקסט המכיל את הוראות שפת ההרכבה.
+    </p>
+    <p>
+        לשם הקובץ חייב להיות סיומת .lss. קובץ טקסט לדוגמה הוא<br>
+    </p>
+    <blockquote>
+        <pre>    0: LOD A,[1005h]
+    3: ADD A,[1001h]
+    6: STO [1005h],A
+
+    9: LOD A,[1004h]
+    C: ADC A,[1000h]
+    F: STO [1004h],A
+
+   12: LOD A,[1003h]
+   15: ADD A,[001Eh]
+   18: STO [1003h],A
+
+   1B: JNZ 0000h
+
+   1E: FFh
+
+ 1000: 00h, A7h
+ 1002: 00h, 1Ch
+ 1004: 00h, 00h
+</pre>
+    </blockquote>
+    <p>
+        כתובות ההוראות בקובץ הטקסט הן בהקסדצימליות ללא אפסים מובילים ועם לפחות מוביל אחד
+        רווח בתחילת השורה, ואחריו נקודתיים והוראת שפת ההרכבה.
+    </p>
+    <p>
+        לחיצה על <b class="tkeybd">F2</b> בחלון ההרכבה מקדימה את השעון בשני תקתוקים.
+    </p>
+</div>
+</body>
+</html>

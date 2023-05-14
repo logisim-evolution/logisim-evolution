@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        הדרכה: הוספת שערים
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <p>
+        <b>הבא:</b> <a href="tutor-wires.html">שלב 0: התמצאות</a>
+    </p>
+    <h2>
+        שלב 1: הוספת שערים
+    </h2>
+    <p>
+        נזכיר שאנו מנסים לבנות את המעגל הבא ב-Logisim.
+    </p>
+    <p>
+    <p align="center">
+        <img alt="#########" class="notscal" src="../../../../img-guide/tutorial-xor-circ.png">
+    </p>
+    <p>
+        אני מציע לבנות מעגל על ידי הכנסת השערים תחילה כמעין שלד ואז לחבר אותם
+        חוטים מאוחר יותר. הדבר הראשון שנעשה הוא להוסיף את שני שערי ה-AND. לחץ על <b class=propertie>"AND"</b>
+        כלי בסרגל הכלים (<img alt="#########" class=intxt src="../../../../img-guide/tutorial-toolsbar-and.png">,
+        הכלי הבא אחרון הרשום). לאחר מכן לחץ באזור העריכה שבו אתה רוצה שהשער הראשון ו-AND יעבור. תהיה בטוח
+        להשאיר הרבה מקום לדברים בצד שמאל. לאחר מכן לחץ שוב על הכלי AND והצב את שער ה-AND השני למטה
+        זה.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/tutorial-1-ands.png">
+    </p>
+    <p>
+        שימו לב לחמש הנקודות בצד שמאל של שער ה-AND. אלו נקודות בהן ניתן לחבר חוטים. זה קורה
+        שפשוט נשתמש בשניים מהם עבור מעגל ה-XOR שלנו; אבל עבור מעגלים אחרים, אתה עשוי לגלות שיש יותר מ
+        שימושי שני חוטים שעוברים לשער AND. ניתן לשנות את מספר הכניסות במאפיינים <b
+            class=propertie>"מספר כניסות"</b>
+    </p>
+    <p>
+        כעת הוסף את השערים האחרים. תחילה לחץ על הכלי <b class=propertie>"OR"</b> (<img alt="#########"
+                                                                                       class=intxt
+                                                                                       src="../../../../img-guide/tutorial-toolsbar-or.png">);
+        לאחר מכן לחץ
+        איפה שאתה רוצה את זה. והצב את שני שערי NOT לתוך הבד באמצעות הכלי <b class=propertie>"NOT"</b> (<img
+            alt="#########" class=intxt src="../../../../img-guide/tutorial-toolsbar-not.png">).
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/tutorial-2-gates.png">
+    </p>
+    <p>
+        השארתי רווח קטן בין שערי NOT לשערי AND; אם אתה רוצה, עם זאת, אתה יכול להעלות אותם
+        אחד מול השני וחסוך לעצמך את המאמץ לחבר אותם עם חוט מאוחר יותר.
+    </p>
+    <p>
+        כעת אנו רוצים להוסיף את שני הכניסות <var>x</var> ו-<var>y</var> לתוך הדיאגרמה. בחר את <b
+            class=propertie>"קלט"</b>
+        כלי (<img alt="#########" class="icontxt" src="../../../../icons/1616/toolpininput.png">), ומקם את הסיכות
+        מטה. עליך גם למקם פין פלט ליד היציאה של שער ה-OR באמצעות <b class=propertie>"פלט"</b>
+        כלי (<img alt="#########" class="icontxt" src=
+            "../../../../icons/1616/toolpinoutput.png">). (שוב, אני משאיר קצת רווח בין
+        OR שער ופין הפלט, אך ייתכן שתבחר למקם אותם ממש ליד זה.)
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/tutorial-3-comps.png">
+    </p>
+    <p>
+        אם אתה מחליט שאתה לא אוהב את המקום שבו מיקמת משהו, תוכל לבחור בו באמצעות <b class=propertie>"עריכה"</b>
+        כלי (<img alt="#########" class="icontxt" src="../../../../icons/1616/toolselect.png">) וגרור אותו אל ה
+        מקום רצוי. לחלופין, תוכל למחוק אותו לחלוטין על ידי בחירה ב<b class=menu>|&nbsp;ערוך&nbsp;|</b> → <b class=menu>|&nbsp;מחק&nbsp;|</b>
+        או לחיצה על מקש <b class="tkeybd">Delete</b> או מקש <b class="tkeybd">Ctrl-X</b>.
+    </p>
+    <p>
+        כשתמקם כל רכיב במעגל, תבחין שברגע שהרכיב מוצב, לוגיסים
+        חוזר לכלי <b class=propertie>"עריכה"</b> (<img alt="#########"
+                                                       class="icontxt"
+                                                       src="../../../../icons/1616/toolselect.png">) כדי שתוכל להזיז את
+        רכיב שהוצב לאחרונה או (כפי שנראה בקרוב) חבר את הרכיב לאחרים על ידי יצירת חוטים. אם אתה רוצה
+        כדי להוסיף עותק של הרכיב שהוצב לאחרונה, קיצור דרך הוא ללחוץ על <b class="tkeybd">Ctrl-D</b> כדי לשכפל
+        הבחירה. (מחשבים מסוימים משתמשים במקש אחר לתפריטים, כמו מקש Command במקינטוש
+        לחץ על המקש הזה עם מקש D.)
+    </p>
+    <p>
+        <b>הבא:</b> <a href="tutor-wires.html">שלב 2: הוספת חוטים</a>
+    </p>
+</div>
+</body>
+</html>

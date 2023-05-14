@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2020-01-24T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Ascii byte escape
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>
+    Ascii byte escape big-endian
+</h1>
+<div class="maindiv">
+    <p>
+        קידוד ASCII עם קוד בריחה, הנתונים יוקלטו בייט אחר בייט למעט לא ניתנים להדפסה ולא סטנדרטיים
+        דמויות. תתעלם מתווים מחוץ לטווח 0x20 - 0x7E. עבור תווים מסוג זה עליך להשתמש
+        קוד הבריחה ההקסדצימלי \x... או אחד מהקודים הנפוצים \0 \a \b \t \n \v \f \r.
+    </p>
+    <blockquote>
+         <pre>\0\0שלום עולם\r\nבוקר טוב!\r\n
+\xCD\xCD\xCD\xCD\xCD\0\0\0\0</pre>
+    </blockquote>
+    <p>
+        במצב big-endian הזיכרון נחשב כרצף של בתים ללא קשר לגודל המילים שלו, עם
+        משמאל לימין את הבתים הגבוהים ולאחר מכן את הבתים הנמוכים. ניתן למצוא איורים ב<a
+            href="mem-v3byte.html#little">v3.0 hex bytes כתובות big-endian</a>
+    </p>
+    <h1 id="addr">
+        Ascii byte escape little-endian
+    </h1>
+    <p>
+        פורמט זה זהה לקודמת עם אותם מאפיינים. במצב little-endian, ה
+        זיכרון נחשב כרצף של בתים עם הסיביות הכי פחות משמעותיות מימין לשמאל ולאחר מכן הכי הרבה
+        חלקים משמעותיים. אתה יכול למצוא איורים ב-<a href="mem-v3byte.html#little">v3.0 hex bytes כתובות
+        little-endian</a>
+    </p>
+    <p>
+        <b>סוויטה:</b> <a href="mem-menu.html">תפריט ההקשר והקבצים</a>.
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Transmission Gate
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/transmis.png" width="32"> <em>Transmission
+        Gate</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חיווט</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.7.0
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/transmis.png"
+                     width="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        לשער שידור יש שלוש כניסות, הנקראות <em>מקור</em>, <em>n-gate</em> ו<em>p-gate</em>; ויש לזה
+        פלט אחד, הנקרא <em>drain</em>. כשמתווים בתרשים, הקלט <em>מקור</em> ופלט <em>ניקוז</em> הם
+        מצויר מחובר על ידי שתי לוחות; Logisim מציירת ראש חץ כדי לציין את כיוון הזרימה מהקלט אל
+        תְפוּקָה. שתי כניסות ה<em>שער</em> מצויירות כקווים המחוברים ללוחות במקביל לכל אחת מהלוחות
+        חיבור <em>מקור</em> ל<em>ניקוז</em>. לקו הקלט <em>p-gate</em> יש מעגל, בעוד ש-<em>n-gate</em>
+        הקו של הקלט לא.
+    </p>
+    <div style="text-align: center;">
+        <table>
+            <tbody>
+            <tr>
+                <td></td>
+                <td align="center">
+                    <em>p-gate</em>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td valign="middle">
+                    <em>מקור</em>
+                </td>
+                <td align="center" valign="middle">
+                    <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/transmis.png"
+                         width="64">
+                </td>
+                <td valign="middle">
+                    <em>ניקוז</em>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align="center">
+                    <em>n-gate</em>
+                </td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        שער השידור הוא פשוט שילוב של שני טרנזיסטורים משלימים. ואכן, אותה התנהגות יכולה
+        ניתן להשיג ב-Logisim באמצעות טרנזיסטור אחד בלבד. עם זאת, מעצבים לפעמים מעדיפים להשתמש בזוגות תואמים של
+        טרנזיסטורים עקב בעיות חשמליות עם מתח ניקוז מורכב יותר ממה שלוגיסים מנסה לעשות
+        לְחַקוֹת.
+    </p>
+    <p>
+        הערכים ב-<em>n-gate</em> ו-<em>p-gate</em> צפויים להיות מנוגדים זה לזה. אם <em>p-gate</em>
+        הוא 0 בעוד ש<em>n-gate</em> הוא 1, אז הערך שנמצא ב<em>מקור</em> מועבר ל<em>ניקוז</em>. אם
+        <em>p-gate</em> הוא 1 בעוד ש<em>p-gate</em> הוא 0, ואז החיבור מנותק, כך שהערך ב-<em>drain</em>
+        נותר צף. בכל שאר המקרים, <em>drain</em> מקבל פלט שגיאה - אלא אם כן <em>מקור</em> הוא
+        צף, ובמקרה זה <em>נקז</em> צף גם כן. התנהגות זו מסוכמת בטבלה הבאה.
+    </p>
+    <div style="text-align: center;">
+        <table>
+            <tbody>
+            <tr>
+                <th class="tspace">
+                    p-gate
+                </th>
+                <th class="tspace">
+                    n-gate
+                </th>
+                <th class="tspace">
+                    drain
+                </th>
+            </tr>
+            <tr>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="space">
+                    *
+                </td>
+            </tr>
+            <tr>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="unov">
+                    1
+                </td>
+                <td align="center">
+                    source
+                </td>
+            </tr>
+            <tr>
+                <td class="unov">
+                    1
+                </td>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+            </tr>
+            <tr>
+                <td class="unov">
+                    1
+                </td>
+                <td class="unov">
+                    1
+                </td>
+                <td class="space">
+                    *
+                </td>
+            </tr>
+            <tr>
+                <td class="space">
+                    <b class="uvalue">U</b>/<b class="evalue">E</b>
+                </td>
+                <td class="space">
+                    all
+                </td>
+                <td class="space">
+                    *
+                </td>
+            </tr>
+            <tr>
+                <td class="space">
+                    all
+                </td>
+                <td class="space">
+                    <b class="uvalue">U</b>/<b class="evalue">E</b>
+                </td>
+                <td class="space">
+                    *
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        * אם <em>מקור</em> הוא High impedance (<b class="uvalue">U</b>), <em>drain</em> הוא High impedance (<b
+            class="uvalue">U</b>) אחרת שגיאה ב<em>ניקוז</em> (<b class="evalue">E</b>).
+    </p>
+    <p>
+        <b class="note">הערה:</b>מכיוון ש-Logisim משתמשת בסמנים <b class="uvalue">U</b> (עכבה גבוהה) ו-<b
+            class="evalue">E</b> (שגיאה) השתמשתי באותו באיורים ולא ב-Z הנפוץ יותר (High
+        עכבה) ו-X (שגיאה) במסמכים אחרים
+    </p>
+    <p>
+        אם התכונה Data Bits היא יותר מ-1, כל קלט <em>gate</em> הוא עדיין סיביות בודדת, אך ה<em>gate</em>
+        ערכים מוחלים בו-זמנית על כל אחת מהסיביות של קלט <em>מקור</em>.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <p>לרכיב הזה יש ארבעה פינים, שלושה הם כניסות <q>מקור</q>,<q>P-gate</q>,<q>N-gate</q> אחד הוא פלט <q>Drain </q>
+        אשר ניתן לראות באיור למעלה.
+    </p>
+    <dl>
+        <dt>
+            קצה מערבי: המקור
+        </dt>
+        <dd>
+            קלט <em>מקור</em> של הרכיב שישדר לפלט אם יופעל על ידי <em>p-gate</em>
+            וכניסות <em>n-gate</em>. רוחב סיביות תואם לתכונת <b class="propertie">נתונים</b>.
+        </dd>
+        <dt>
+            קצה צפון: שער p
+        </dt>
+        <dd>
+            כניסת <em>p-gate</em> של הרכיב, שולטת בשידור. בדרך כלל, ערכי בקרה הפוכים הם
+            מיושם על תשומות אלה. רוחב הסיביות הוא תמיד 1.
+        </dd>
+        <dt>
+            קצה דרום: n-שער
+        </dt>
+        <dd>
+            כניסת <em>n-gate</em> של הרכיב, שולטת בשידור. בדרך כלל, ערכי בקרה הפוכים הם
+            מיושם על תשומות אלה. רוחב הסיביות הוא תמיד 1.
+        </dd>
+        <dt>
+            קצה מזרח : הניקוז
+        </dt>
+        <dd>
+            הפלט של הרכיב, שיתאים לקלט <em>מקור</em> אם <em>p-gate</em> הוא <b
+                class="zerov">0</b> ו-<em>n-gate</em> הוא <b class="unov">1</b>, או שהוא יהיה צף (<b
+                class="uvalue">U</b>) אם <em>p-gate</em> הוא <b class="unov">1</b> ו-<em>n-gate</em><b> הוא
+            class="zerov">0</b>. עבור כל הערכים האחרים ב-<em>p-gate</em> ו-<em>n-gate</em>, הפלט הוא שגיאה
+            ערך (<b class="evalue">E</b>). רוחב סיביות תואם לתכונת <b class="propertie">נתונים</b>.
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, <b class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b>
+        שנה את תכונת ה<b class="propertie">נתונים</b> שלו ומקשי החצים משנים את ה<b
+            class="propertie">מאפיין מול</b>.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">לפנים</b>
+            </dt>
+            <dd>
+                כיוון הרכיב (הפלט שלו ביחס לקלט שלו).
+            </dd>
+            <dt>
+                <b class="propertie">מיקום השער</b>
+            </dt>
+            <dd>
+                מיקום כניסת השער.
+            </dd>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

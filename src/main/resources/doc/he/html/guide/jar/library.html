@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        מַחלָקָה סִפְרִיָה
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class=codediv>
+    <h1>
+        סִפְרִיָה מַחלָקָה
+    </h1>
+    <p>
+        נקודת הגישה לספריית JAR היא מחלקה שמרחיבה את המחלקה <code>Library</code>. הראשית של הספרייה
+        התפקיד הוא לרשום את הכלים הזמינים דרך הספרייה; לרוב, הכלים הם כולם כלים להוספת
+        רכיבים שונים מוגדרים - כלומר, מופעים של מחלקת <code>AddTool</code> עובדים עם שונות
+        מפעלי רכיבים.
+    </p>
+    <h2>
+        רכיבים
+    </h2>
+    <pre>package com.cburch.gray;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.Library;
+
+/** The library of components that the user can access. */
+public class Components extends Library {
+    /** The list of all tools contained in this library. Technically,
+     * libraries contain tools, which is a slightly more general concept
+     * than components; practically speaking, though, you'll most often want
+     * to create AddTools for new components that can be added into the circuit.
+     */
+    private List&lt;AddTool&gt; tools;
+    
+    /** Constructs an instance of this library. This constructor is how
+     * Logisim accesses first when it opens the JAR file: It looks for
+     * a no-arguments constructor method of the user-designated class.
+     */
+    public Components() {
+        tools = Arrays.asList(new AddTool[] {
+                new AddTool(new GrayIncrementer()),
+                new AddTool(new SimpleGrayCounter()),
+                new AddTool(new GrayCounter()),
+        });
+    }
+    
+    /** Returns the name of the library that the user will see. */ 
+    public String getDisplayName() {
+        return "Gray Tools";
+    }
+    
+    /** Returns a list of all the tools available in this library. */
+    public List&lt;AddTool&gt; getTools() {
+        return tools;
+    }
+}
+</pre>
+    <p>
+        <b>Next:</b> <a href="simpctr.html">מונה קוד אפור פשוט</a>.
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Bit Extender
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/extender.png" width="32"> <em>Bit
+        Extender</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חיווט</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.5.0 (בספריית Base, הועבר ל-Wiring ב-2.7.0)
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/extender.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/extender1.png" width="64">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        מאריך הסיביות הופך ערך לערך ברוחב סיביות אחר. אם זה הופך לקטן יותר
+        רוחב סיביות, הוא פשוט קטוע כדי לשמור על הביטים מהסדר הנמוך ביותר. אם זה הופך לחלק גדול
+        רוחב, הביטים מהסדר הנמוך ביותר זהים, ויש לך אפשרות לבחור מה יהיו הביטים הנוספים בסדר גבוה
+        be: כולם יכולים להיות 0, כולם יכולים להיות 1, כולם תואמים ל<q>סיבית הסימן</q> של הקלט (הסיביות מהסדר הגבוה ביותר
+        שלו), או לרכיב
+        יכול להיות קלט נוסף של סיביות אחד שקובע את הזהות של סיביות אחרות אלה.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <dl>
+        <dt>
+            קצה מערב (קלט, רוחב סיביות מתכונת Bit Width In)
+        </dt>
+        <dd>
+            <p>
+                קלט רב-סיביות שהערך שלו אמור לעבור טרנספורמציה.
+            </p>
+        </dd>
+        <dt>
+            קצה מזרח (פלט, רוחב סיביות מתכונת Bit Width Out)
+        </dt>
+        <dd>
+            <p>
+                הפלט המחושב.
+            </p>
+        </dd>
+        <dt>
+            קצה צפון (קלט, רוחב סיביות 1)
+        </dt>
+        <dd>
+            <p>
+                מציין מה צריכים להיות הביטים הנוספים בפלט. סיכה זו זמינה רק כאשר
+                תכונת סוג ההרחבה היא <q>קלט.</q>
+            </p>
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, הספרות <b class="tkeybd">0</b> עד <b
+            class="tkeybd">9</b> שנה את התכונה <b class="propertie">Bit Width In</b> ו<b
+            class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b> משנים את <b class="propertie">רוחב הסיביות שלו
+        מאפיין Out</b>.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">רוחב סיביות ב</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הקלט.
+            </dd>
+            <dt>
+                <b class="propertie">Bit Width Out</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הפלט.
+            </dd>
+            <dt>
+                <b class="propertie">סוג הרחבה</b>
+            </dt>
+            <dd>
+                בהנחה שרוחב סיביות הפלט חורג מרוחב סיביות הקלט, תכונה זו מגדירה את התוספת
+                סיביות פלט צריכות להיות. אם <q>אפס</q> או <q>אחד,</q> הסיביות הנוספות הן 0 או 1 בהתאם. אם <q>חתום,</q>
+                הביטים הנוספים נלקחים כדי להתאים לסיביות מהסדר הגבוה ביותר בקלט. ואם <q>קלט,</q> את
+                לרכיב יש קלט שני בצד הצפוני שלו שהערך של סיביות אחד שלו משמש עבור הביטים הנוספים.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        אימות שורת הפקודה
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        אימות שורת הפקודה
+    </h1>
+    <blockquote>
+        <em>תתי סעיפים:</em><br>
+        <a href="sub.html">החלפת ספריות</a><br>
+        <a href="other.html">אפשרויות אימות אחרות</a><br>
+        <a href="multi.html">בדיקת קבצים מרובים</a><br>
+        <a href="test.html">בדיקת וקטורים</a>
+    </blockquote>
+    <p>
+        Logisim כוללת תמיכה בסיסית לביצוע מעגלים משורת הפקודה. זה נועד גם לעזור
+        אימות תסריטאי של עיצובי מעגלים וכדי לעזור למדריכים לבצע בדיקות אוטומטיות של התלמידים
+        פתרונות.
+    </p>
+    <p>
+        נתחיל בלראות כיצד לבצע מעגל משורת הפקודה. לדוגמה שלנו, נניח שבנינו
+        המעגל שלמטה בקובץ בשם <tt>adder-test.circ</tt>. הוא משתמש במוסיף שני סיביות כתת-מעגל וחוזר על עצמו
+        באמצעות מונה דרך כל 16 הכניסות האפשריות אליו.
+    </p>
+    <p align="center">
+        <img alt="#########" class="notscal" src="../../../../img-guide/verify-adder-test.png">
+    </p>
+    <p>
+        לאחר בניית המעגל הזה, אנו מבצעים את Logisim משורת הפקודה, ומספקים את שם הקובץ של
+        הפרויקט והאפשרות <b class=propertie>-tty</b> עם הפרמטר &lt;<b class=propertie>table</b>.
+    </p>
+    <blockquote>
+        <div class=forcode>
+            <tt>java -jar logisim-filename.jar adder-test.circ -tty table</tt>
+        </div>
+    </blockquote>
+    <p>
+        מבלי להעלות שום חלונות, לוגיסים טוענת את המעגל ומתחילה להפעיל אותו, ומתקתקת כל שעונים באותה מהירות
+        כפי שהוא יכול תוך השלמת ההתפשטות בין כל קרציה. לאחר השלמת כל ריבוי, Logisim נטען
+        הערכים הנוכחיים של פיני הפלט; אם יש שינויים מההפצה הקודמת, אז כל הערכים הם
+        מוצג בפורמט מופרד בטאבים. אם יש סיכת פלט המסומנת במילה המיוחדת <var>halt</var> (case
+        רגיש), הפלט שלו לא מוצג - אבל ברגע שערך הסיכה מגיע ל-1 לאחר השלמת ההפצה,
+        לוגיזם מסיים את הסימולציה.
+    </p>
+    <p>
+        לדוגמא שלנו, Logisim מציגה את הטבלה שלהלן. כי יש לנו שני פיני פלט המתאימים לשניים
+        מכניסות <var>a</var> ו-<var>b</var> לתוך המוסיף שני סיביות, יציאות אלו נכללות כשתי העמודות הראשונות
+        של הפלט. ויש עוד פין פלט <var>sum</var> המתאים לפלט של המוסיף שני סיביות, אז זה
+        הוא העמודה השלישית. העמודות מסודרות משמאל לימין לפי הסדר מלמעלה למטה בתוך
+        מעגל חשמלי.
+    </p>
+    <blockquote>
+         <pre>00 00,000
+01 00 001
+10 00 010
+11 00 011
+00 01 001
+01 01 010
+10 01 011
+11 01 100
+00 10 010
+01 10 011
+10 10 100
+11 10 101
+00 11 011
+01 11 100
+10 11 101
+11 11 110
+</pre>
+    </blockquote>
+    <p>
+        <b>הבא:</b> <a href="sub.html">החלפת ספריות</a>.
+    </p>
+</div>
+</body>
+</html>

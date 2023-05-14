@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2019-03-16T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        תפריטים וקבצים קופצים
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        תפריטים וקבצים קופצים
+    </h1>
+    <h2>
+        תפריט קופץ
+    </h2>
+    <p>
+        התפריט המוקפץ לזיכרון כולל ארבע אפשרויות בנוסף לאפשרויות המשותפות לכל הרכיבים:
+    </p>
+    <dl>
+        <dt>
+            <b>ערוך תוכן:</b>
+        </dt>
+        <dd>
+            העלה <a href="mem-hex.html">עורך hex</a> לעריכת תוכן הזיכרון.
+        </dd>
+        <dt>
+            <b>נקה תוכן:</b>
+        </dt>
+        <dd>
+            מאפס את כל הערכים בזיכרון ל-0 ול-RAM ל-0 או באופן אקראי בהתאם לפרמטרים ב-<a
+                href="../opts/index.html">אפשרויות פרויקט </a>.
+        </dd>
+        <dt>
+            <b>טען תמונה...:</b>
+        </dt>
+        <dd>
+            מאפס את כל הערכים בזיכרון לערכים שנמצאו בקובץ. פורמט הקובץ מזוהה אוטומטית ו
+            אם זה לא המקרה, <a href="mem-filepanel.html">חלונית קבצי זיכרון</a> נפתחת עבור חלון מתאים
+            בְּחִירָה.
+        </dd>
+        <dt>
+            <b>שמור תמונה...:</b>
+        </dt>
+        <dd>
+            מאחסן את כל הערכים בזיכרון בקובץ באמצעות אחד מהפורמטים המתוארים להלן.
+        </dd>
+    </dl>
+    <h2>
+        פורמט קובץ
+    </h2>
+    <ul>
+        <li>
+            <b><a href="mem-v2raw.html">v2.0 raw</a></b> גרסה היסטורית של logisim מאפשרת קידוד "run.length".
+        </li>
+        <li>
+            <b><a href="mem-v3word.html">v3.0 מילים hex plain</a></b> קרוב ל-v2.0 מילה מובנית.
+        </li>
+        <li>
+            <b><a href="mem-v3word.html#addr">v3.0 מילות hex מטופלות</a></b> כמו קודם עם אפשרות להגדיר
+            כתובת התחלה עבור כל שורה בקובץ.
+        </li>
+        <li>
+            <b><a href="mem-v3byte.html">v3.0 hex bytes רגיל big-endian</a></b><br>
+            <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> מאורגן בזרמי בתים.
+        </li>
+        <li>
+            <b><a href="mem-v3byte.html#little">v3.0 hex bytes כתובות big-endian</a></b><br>
+            <b><a href="mem-v3byte.html#little">v3.0 hex bytes כתובות little-endian</a></b> מאורגן בזרימת בתים כמו
+            לפני עם אפשרות להגדיר כתובת.
+        </li>
+        <li>
+            <b><a href="mem-vbinary.html#">נתונים בינאריים big-endian</a></b><br>
+            <b><a href="mem-vbinary.html#">נתונים בינאריים little-endian</a></b> תמונה של הזיכרון ללא קידוד בהקסדצימלי.
+        </li>
+        <li>
+            <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br>
+            <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> קובץ מקודד ASCII עם קוד בריחה, כמו
+            ב-C עבור תווים שאינם ניתנים להדפסה.
+        </li>
+    </ul>
+    <p>
+
+    </p>
+    <p>
+        <b>הבא:</b> <a href="mem-filepanel.html">חלונית קבצי זיכרון</a>.
+    </p>
+</div>
+</body>
+</html>

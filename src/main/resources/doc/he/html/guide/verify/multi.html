@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        בדיקת מספר קבצים
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        בדיקת מספר קבצים
+    </h1>
+    <p>
+        בדוגמה של הכיתה, יהיו לך קבצים רבים שברצונך לבדוק את שקילותם, ולא
+        רוצה לקרוא את הפלט של כל אחד מהפתרונות של התלמיד.
+    </p>
+    <h2>
+        בניית השוואה לתוך המעגל
+    </h2>
+    <p>
+        גישה אחת היא לבנות מעגל בדיקה שעושה את ההשוואה ישירות. כאן, אנו יוצרים מעגל נוסף
+        בתוך קובץ הבדיקה שמכיל את מעגל הפתרון שלנו. במעגל הבדיקה הכולל שלנו, אנו כוללים את שניהם
+        תת-מעגל מ-<tt><b>master.circ</b></tt> ומעגל המשנה ממעגל הפתרון הממוקם ישירות לתוך
+        המעגל המקנן. אנו חוטים אותו כך שיהיה רק פלט אחד, שאורכו 1 כמו שני מעגלי המשנה
+        לְהַסכִּים.
+    </p>
+    <blockquote>
+        <img alt="#########" src="../../../../img-guide/verify-adder-test2.png">
+    </blockquote>
+    <p>
+        כעת אנו יכולים פשוט להפעיל את Logisim במקום כל קובץ שאילתה. עבור כל פתרון נכון, הפלט היחיד יהיה
+        "1".
+    </p>
+    <h2>
+        שימוש בסקריפטים של ניתוב מחדש ומעטפת
+    </h2>
+    <p>
+        אם אתה די נוח עם שורת הפקודה, אתה יכול לבנות סקריפט מעטפת משלך כדי להשיג זאת. כאן,
+        נשתמש בניתוב מחדש (האופרטור &gt;) כדי לשמור את הפלט של כל מעגל בקובץ. למשל, אולי
+        הפק את שתי הפקודות הבאות כדי לאסוף את הפלט של מעגל האב ומעגל השאילתה.
+    </p>
+    <blockquote>
+        <div class=forcode>
+            <tt>java -jar logisim-evolution.jar test.circ -tty table &gt; out-master.txt</tt>
+        </div>
+        <div class=forcode>
+            <tt>java -jar logisim-evolution.jar test.circ -tty&nbsp;טבלה -sub master.circ query.circ &gt;
+                out-query.txt</tt>
+        </div>
+    </blockquote>
+    <p>
+        כעת יצרנו שני קבצים שונים. לאחר מכן נוכל להשוות את שני קבצי הפלט באמצעות תוכנית שנבנתה לכך
+        מַטָרָה. תחת Linux או MacOS X, ייתכן שתרצה להשתמש בכלי השירות של שורת הפקודה <b>cmp</b> או <b>diff</b>.
+        תחת Windows, ייתכן שתרצה להשתמש בכלי שירות שורת הפקודה <b>fc</b> או WinMerge.
+    </p>
+    <p>
+        כדי לעבד מספר קבצי שאילתה, תרצה לבנות תוכנית פשוטה כגון סקריפט מעטפת לחזרה
+        דרך כל אחד והשוואת הפלט. הנה איך הייתי עושה את זה תחת <b>bash</b> של לינוקס:
+    </p>
+    <blockquote>
+        <tt>RUN_TEST="java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table"<br>
+            ${RUN_TEST}&nbsp;&gt;&nbsp;output-master.txt<br>
+            עבור&nbsp;QUERY_FILE&nbsp;בשאילתה*.circ<br>
+            לעשות<br>
+            &nbsp;&nbsp;if&nbsp;${RUN_TEST}&nbsp;-sub&nbsp;^master.circ&nbsp;${QUERY_FILE}&nbsp;|&nbsp;cmp&nbsp;-s&nbsp;output-master.txt<br>
+            &nbsp;&nbsp;ואז<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;הדהוד&nbsp;"${QUERY_FILE}&nbsp;בסדר"<br>
+            &nbsp;&nbsp;אחר<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;הדהוד&nbsp;"${QUERY_FILE}&nbsp;שונה"<br>
+            &nbsp;&nbsp;fi<br>
+            בוצע</tt>
+    </blockquote>
+    <p>
+        <b>הבא:</b> <a href="test.html">בדיקת וקטור</a>.
+    </p>
+</div>
+</body>
+</html>

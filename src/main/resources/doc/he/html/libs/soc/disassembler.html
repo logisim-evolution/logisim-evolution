@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        disassembler
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        Disassembler
+    </h1>
+    <p>
+        <img alt="disassembler" class="iconlibs" src="../../../../img-libs/disassembler.png" title="disassembler"><br>
+    </p>
+    <p>
+        המפרק לוקח את התוכנית המאוחסנת בזיכרון והופך אותה לתוכן קריא אנושי. אם זמין
+        המפרק משתמש בכותרות קטעי האלף כדי לחלץ תוויות וקטעים מוגדרים. אחרת הוא משתמש ישירות
+        המידע המאוחסן בזיכרון כדי לפענח את המידע. לפירוק יש כמה תכונות שכן
+        המתואר להלן.
+    </p>
+    <h2>
+        זיהוי תווית אוטומטי
+    </h2>
+    <p>
+        במידת האפשר, המפרק מנסה לזהות אוטומטית תוויות בתוכנית שלך. התוויות שזוהו יהיו
+        להיקרא <em><strong>logisim_label_&lt;x&gt;</strong>&nbsp;</em> כאשר <strong>&lt;x&gt;</strong> הוא מספר
+        החל מ-1. התוויות מסודרות מלמעלה למטה, כך שמקל על החיפוש אחר תווית.
+    </p>
+    <h2>
+        מונה תוכניות אוטומטית והכנסת קוד אופציה
+    </h2>
+    <p>
+        לאחר כל שורה שבה מתגלה פקודה המפרק יכניס הערה המכילה את התוכנית
+        ערך counter (pc) והאופקוד הבינארי של ההוראה.
+    </p>
+    <h2>
+        תמיכה בנקודת שבירה
+    </h2>
+    <p>
+        המפרק תומך בנקודות שבירה. ניתן להגדיר/לנקות נקודות שבירה על ידי לחיצה באנכי השמאלי
+        סרגל ליד ההוראה, או על ידי בחירת שורה ולחיצה על ה<strong>b</strong> או לחיצה על אחד מהם
+        הלחצן <em>הוסף נקודת שבירה</em> או <em>הסר נקודת שבירה</em>.
+    </p>
+    <p>
+        ברגע שהמעבד יגיע לנקודת שבירה הוא יפסיק לבצע את ה<a href="socsimcontrol.html">סימולציה
+        בקר המדינה</a> יציין נקודת שבירה שהושגה. ההוראה ליד נקודת השבירה לא תהיה
+        יצא לפועל. לבסוף בהגיעו לנקודת שבירה המפרק יקפוץ אוטומטית לקו שבו
+        נתקלה בנקודת שבירה.<br>
+    </p>
+</div>
+</body>
+</html>

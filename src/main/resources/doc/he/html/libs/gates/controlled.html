@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        מאגר/מהפך מבוקר
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/anscontrolledbuffer.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/anscontrolledinverter.png"
+                     width="32"><br>
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ieccontrolledbuffer.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ieccontrolledinverter.png"
+                     width="32">
+            </td>
+            <td valign="center">
+                <h1>
+                    <em>מאגר/מהפך מבוקר</em>
+                </h1>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">שערים</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 בטא 1
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <img alt="#########" class="appearancelibs"
+                                 height="64" src="../../../../img-libs/anscontrolledbuffer.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs"
+                                 height="64" src="../../../../img-libs/anscontrolledinverter.png" width="64">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        המאגר והמהפך המבוקרים הנקראים לעתים קרובות <em>3-state buffers/inverters</em>, לכל אחד מהם יש סיביות אחת
+        פין קלט "שליטה" בצד הדרומי. הערך בפין בקרה זה משפיע על אופן הפעולה של הרכיב:
+    </p>
+    <ul>
+        <li>כאשר הערך בסיכה זו הוא <b class="unov">1</b> אז הרכיב מתנהג בדיוק כמו הרכיב המתאים
+            רכיב <a href="buffer.html">מאגר</a> או <a href="not.html">מהפך</a> (לא שער).
+        </li>
+        <li>כאשר הערך הוא <b class="zerov">0</b> או צף (<b class="uvalue">U</b>) הפלט של הרכיב הוא
+            צף (<b class="uvalue">U</b>).
+        </li>
+        <li>כאשר הערך הוא ערך שגיאה (<b class="evalue">E</b>) (כגון שיתרחש כאשר שני ערכים מתנגשים
+            מוזנים לקלט) אז הפלט הוא גם ערך שגיאה (<b class="evalue">E</b>).
+        </li>
+    </ul>
+    <p>
+    <div style="text-align: center;">
+        <table>
+            <tbody>
+            <tr>
+                <th class="tspace" colspan="2">
+                    Inputs
+                </th>
+                <th class="tspace" colspan="2">
+                    Outputs
+                </th>
+            </tr>
+            <tr>
+                <th class="tspace">
+                    In
+                </th>
+                <th class="tspace">
+                    En.
+                </th>
+                <th class="tspace">
+                    Buf.
+                </th>
+                <th class="tspace">
+                    Inv.
+                </th>
+            </tr>
+            <tr>
+                <td class="tspace">
+                    All
+                </td>
+                <td class="tzerov">
+                    0
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+            </tr>
+            <tr>
+                <td class="tspace">
+                    All
+                </td>
+                <td class="tuvalue">
+                    U
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+            </tr>
+            <tr>
+                <td class="tzerov">
+                    0
+                </td>
+                <td class="tunov">
+                    1
+                </td>
+                <td class="zerov">
+                    0
+                </td>
+                <td class="unov">
+                    1
+                </td>
+            </tr>
+            <tr>
+                <td class="tunov">
+                    1
+                </td>
+                <td class="tunov">
+                    1
+                </td>
+                <td class="unov">
+                    1
+                </td>
+                <td class="zerov">
+                    0
+                </td>
+            </tr>
+            <tr>
+                <td class="tspace">
+                    <b class="uvalue">U</b>
+                </td>
+                <td class="tunov">
+                    1
+                </td>
+                <td class="uvalue">
+                    U
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+            </tr>
+            <tr>
+                <td class="tspace">
+                    <b class="evalue">E</b>
+                </td>
+                <td class="tunov">
+                    1
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+            </tr>
+            <tr>
+                <td class="tspace">
+                    All
+                </td>
+                <td class="tspace">
+                    <b class="evalue">E</b>
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+                <td class="evalue">
+                    E
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        מאגרים מבוקרים יכולים להיות שימושיים כאשר יש לך חוט (המכונה לעתים קרובות <em>אוטובוס</em>) שהערך שלו צריך להתאים
+        ל-
+        פלט של אחד מכמה רכיבים. על ידי הצבת מאגר מבוקר בין כל פלט רכיב והאוטובוס,
+        אתה יכול לשלוט אם הפלט של הרכיב הזה יוזן לאוטובוס או לא.
+    </p>
+    <h2>
+        סיכות (בהנחה שהרכיב פונה מזרחה, קו הבקרה ימני)
+    </h2>
+    <div class="attliste">
+        <dl>
+            <dt class="lib">
+                קצה מערב:
+            </dt>
+            <dd>
+                קלט הרכיב שישמש לחישוב הפלט אם קלט הבקרה הוא <b
+                    class="unov">1</b>. רוחב סיביות תואם לתכונת <b class="propertie">נתונים</b>.
+            </dd>
+            <dt class="lib">
+                קצה דרום:
+            </dt>
+            <dd>
+                קלט הבקרה של הרכיב. רוחב סיביות 1.
+            </dd>
+            <dt class="lib">
+                קצה מזרח:
+            </dt>
+            <dd>
+                הפלט של הרכיב, שיהיה צף (<b class="uvalue">U</b>) אם קלט הבקרה הוא <b
+                    class="zerov">0</b> או צף (<b class="uvalue">U</b>), ערך השגיאה (<b class="evalue">E</b>)
+                אם קלט הבקרה הוא ערך השגיאה (<b class="evalue">E</b>), והוא יחושב על סמך
+                קלט צד מערב אם קלט הבקרה הוא <b class="unov">1</b>. רוחב סיביות תואם ל<b class="propertie">נתונים
+                תכונת Bits</b>.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף <b class="tkeybd">Alt-0</b> עד <b class="tkeybd">Alt-9</b>
+        שנה את התכונה <b class="propertie">נתונים </b> ומקשי החצים משנים את ה<b
+            class="propertie">מאפיין מול</b>.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt class="lib">
+                מוּל
+            </dt>
+            <dd>
+                כיוון הרכיב, הפלט שלו ביחס לקלט.
+            </dd>
+            <dt class="lib">
+                פיסות מידע
+            </dt>
+            <dd>
+                רוחב הסיביות של הכניסות והיציאות של הרכיב.
+            </dd>
+            <dt class="lib">
+                גודל שער
+            </dt>
+            <dd>
+                (מהפך נשלט בלבד) קובע אם לצייר גרסה גדולה יותר או קטנה יותר של הרכיב.
+            </dd>
+            <dt class="lib">
+                מיקום קו בקרה
+            </dt>
+            <dd>
+                מיקום קו הבקרה, מדמיינת שאנו עומדים מול הפלט מהקלט: אם הרכיב
+                פונה מזרחה ו<q>ימני,</q> קו השליטה הוא מדרום; אבל אם כן
+                <q>יד שמאל,</q> קו השליטה הוא צפונה.
+            </dd>
+            <dt class="lib">
+                תווית
+            </dt>
+            <dd>
+                הטקסט בתוך התווית המשויכת לשער.
+            </dd>
+            <dt class="lib">
+                תווית גופן
+            </dt>
+            <dd>
+                הגופן שבאמצעותו יש לעבד את התווית.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        מאפשר לערוך את התווית המשויכת לשער.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

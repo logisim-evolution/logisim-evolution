@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        ROM
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/rom.png" width="32"> <em>ROM</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">זיכרון</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.1.0
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/rom.png" width="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        רכיב ה-ROM מאחסן עד 16,777,216 ערכים (המצוינים בתכונת Address Bit Width), שכל אחד מהם
+        יכול לכלול עד 32 סיביות (מצוין בתכונה Data Bit Width). מעגל יכול לגשת לזרם
+        ערכים ב-ROM, אבל זה לא יכול לשנות אותם. המשתמש יכול לשנות ערכים בודדים באופן אינטראקטיבי באמצעות הכלי Poke,
+        או שהמשתמש יכול לשנות את כל התוכן באמצעות כלי התפריט.
+    </p>
+    <p>
+        שלא כמו רכיב ה-RAM, התוכן הנוכחי של רכיב ה-ROM מאוחסן כתכונה של הרכיב.
+        לפיכך, אם נעשה שימוש פעמיים במעגל המכיל רכיב ROM, אז שני רכיבי ה-ROM יחזיקו באותם ערכים.
+        גם בגלל התנהגות זו, תוכן ה-ROM הנוכחי מאוחסן בקבצים שנוצרו על ידי Logisim.
+    </p>
+    <p>
+        ערכים נוכחיים מוצגים ברכיב. הכתובות המוצגות מופיעות באפור משמאל לתצוגה
+        אֵזוֹר. בפנים, כל ערך רשום באמצעות הקסדצימלי. הערך בכתובת שנבחרה כעת יהיה
+        מוצג בטקסט הפוך (לבן על שחור).
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <dl>
+        <dt>
+            <var>A</var> בקצה המערבי (קלט, רוחב סיביות תואם לתכונת כתובת Bit Width)
+        </dt>
+        <dd>
+            בוחר לאילו מהערכים המעגל ניגש כעת.
+        </dd>
+        <dt>
+            <var>D</var> בקצה המזרחי (קלט/פלט, רוחב סיביות תואם לתכונת Data Bit Width)
+        </dt>
+        <dd>
+            מוציא את הערך בכתובת שנבחרה כעת בפין <var>D</var> אם <var>sel</var> הוא 1 או
+            צָף. אם <var>sel</var> הוא 0, אז <var>D</var> יהיה צף.
+        </dd>
+        <dt>
+            <var>sel</var> בקצה הדרומי (קלט, רוחב סיביות 1)
+        </dt>
+        <dd>
+            אם יש לך רק מודול ROM אחד, התעלם מקלט זה. אם יש לך מספר מודולי ROM במקביל, אתה יכול
+            השתמש בקלט זה כדי להפעיל או לבטל את כל מודול ה-ROM, על סמך אם הערך הוא 1 או 0.
+            מילים, כאשר זה 0, לא נפלט ערך בפלט <var>D</var>.
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, הספרות '0' עד '9' משנות את <q>כתובת סיביות</q> שלו
+        תכונה ו-Alt-0 עד Alt-9 משנים את תכונת <q>נתונים סיביות</q> שלו.
+    </p>
+    <dl>
+        <dt>
+            כתובת ביט רוחב
+        </dt>
+        <dd>
+            רוחב הסיביות של סיביות הכתובת. מספר הערכים המאוחסנים ב-ROM הוא 2<sup><var>addrBitWidth</var></sup>.
+        </dd>
+        <dt>
+            רוחב סיביות נתונים
+        </dt>
+        <dd>
+            רוחב הסיביות של כל ערך בודד בזיכרון.
+        </dd>
+        <dt>
+            תוכן
+        </dt>
+        <dd>
+            מאחסן את תוכן הזיכרון.
+        </dd>
+    </dl>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        ראה <a href="../../guide/mem/mem-poke.html">זיכרון חיטוט</a> ב<em>מדריך למשתמש</em>.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי תפריט
+    </h2>
+    <p>
+        ראה <a href="../../guide/mem/mem-menu.html">תפריטים וקבצים קופצים</a> ב<em>מדריך למשתמש</em>.
+    </p>
+    <p>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
+    </p>
+</div>
+</body>
+</html>

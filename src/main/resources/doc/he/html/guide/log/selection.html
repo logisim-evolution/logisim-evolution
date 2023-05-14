@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        הכרטיסייה בחירה
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        הכרטיסייה בחירה
+    </h1>
+    <p>
+        הכרטיסייה בחירה מאפשרת לך לבחור אילו ערכים יש לכלול ביומן. החלון למטה מתאים
+        למעגל הבא.
+    </p>
+    <p align="center">
+        <img alt="#########" class="notscal" src="../../../../img-guide/log-counter.png">
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/log-selection.png">
+    </p>
+    <p>
+        הכרטיסייה מחולקת לשלושה אזורים אנכיים. הראשון (השמאלי ביותר) הוא רשימה של כל הרכיבים במעגל
+        שניתן לרשום את ערכיו. בין הספריות המובנות, סוגי הרכיבים הבאים תומכים ברישום.<br>
+    </p>
+    <blockquote>
+        ספריית חיווט: רכיבי Pin, Probe ו-Clock<br>
+        ספריית I/O: רכיבי לחצנים ו-LED<br>
+        ספריית זיכרון: כל הרכיבים מלבד ROM
+    </blockquote>
+    עבור רכיבים שיש להם תוויות הקשורות אליהם, שמותיהם תואמים לתוויות; שמות של רכיבים אחרים
+    ציין את סוגם ומיקומם בתוך המעגל.<br>
+    כל תת-מעגלים יופיעו גם ברשימה; לא ניתן לבחור אותם לרישום, אבל רכיבים כשירים בתוכם
+    הם יכולים להיות. שים לב שרכיב ה-RAM דורש ממך לבחור אילו כתובות זיכרון יש לרשום; זה מאפשר
+    רישום רק עבור 256 הכתובות הראשונות.
+    <p>
+        האזור האנכי האחרון (הימני ביותר) מפרט את הרכיבים שנבחרו. כמו כן, זה מציין את הרדיוס
+        (בסיס) שבו ירשמו ערכי רב-סיביות של הרכיב; לרדיוס אין השפעה משמעותית על
+        ערכי סיביות אחת.
+    </p>
+    <p>
+        L'horloge <var>sysclk</var> doit y figurer, elle ne sera pas affichée dans le graphe.
+    </p>
+    <p>
+        העמודה האמצעית של הכפתורים מאפשרת מניפולציה של הפריטים בתוך הבחירה.
+    </p>
+    <ul>
+        <li>
+            <b class="button">הוסף&gt;&gt;</b> מוסיף את הפריטים שנבחרו כעת בצד שמאל לבחירה.
+            Il est actif seulement pour les composants éligibles.
+        </li>
+        <li>
+            <b class="button">Change Radix</b> מחזיר את הרדיוס עבור הרכיב הנבחר כעת בבחירה
+            בין 2 (בינארי), 10 (עשרוני) ו-16 (הקסדצימלי).
+        </li>
+        <li>
+            <b class="button">העבר למעלה</b> מזיז את הרכיב שנבחר כעת בבחירה נקודה אחת קדימה.
+        </li>
+        <li>
+            <b class="button">הזז למטה</b> מזיז את הרכיב שנבחר כעת בבחירה למקום אחד אחורה.
+        </li>
+        <li>
+            <b class="button">&lt;&lt; הסר</b> מסיר את הרכיב שנבחר כעת בבחירה.
+        </li>
+    </ul>
+    <p>
+        החלק הרביעי למטה מאפשר לך להגדיר אם אתה רוצה תצוגת זמן מעל הגרף. בשביל זה זה הכרחי
+        כדי לסמן את התיבה <b class=reffig>"הפניה לזמן"</b> ולבחור את האות שיהווה את ההפניה. ה
+        התדירות תגדיר את סולם הזמן המוצג. זה לא פותר את מהירות הביצוע של המעגל
+        סימולציה. לדוגמה להלן בחרנו את האות <b class=reffig>B0</b> ותדר של 100 הרץ.
+    </p>
+    <p align="center">
+        <img alt="#########" src="../../../img-guide/log-graph1.png">
+    </p>
+    <p>
+        <b>הבא:</b> <a href="timetable.html">חלון לוח זמנים</a>.
+    </p>
+</div>
+</body>
+</html>

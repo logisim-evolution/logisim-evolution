@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        Bit Adder
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/bitadder.png"
+             width="32"> <em>Bit Adder</em>
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">חשבון</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.6.0
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/bitadder.png"
+                     width="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        הרכיב קובע כמה 1 סיביות יש בקלט/ים שלו ופולט את המספר הכולל של 1 סיביות בפלט שלו. לדוגמה, בהינתן קלט 8 סיביות
+        10011101, הפלט יהיה 5, מכיוון שיש חמש סיביות 1 בקלט (הראשון, האחרון ומחרוזת של שלושה סיביות באמצע).
+    </p>
+    <p>
+        אם כל אחד מביטי הקלט הוא ערכי צפים או שגיאה, אז הפלט יכיל סיביות שגיאה בפלט התואמות לטווח הפלטים האפשריים, תלוי
+        אם ערכי צפים/שגיאה אלה נספרים כאפסים או כאחד. לדוגמה, אם הקלט של 14 סיביות הוא 111x10110x1101, הפלט חייב להיות
+        לפחות 9 (אם ה-x מתפרשים כאפסים) ולכל היותר 11 (אם הם מתפרשים כאחדים). לפיכך, הפלט יהיה 10EE: שני הסיביות
+        העליונות יהיו 1 ו-0 מכיוון שלכל המספרים השלמים בין 9 ל-11 יש 1 ו-0 כשני הסיביות העליונות שלהם, אך שני הסיביות
+        התחתונות הם EE שכן מספרים שלמים בין 9 ל-11 משתנים בתוך אלה ביטים.
+    </p>
+    <h2>
+        סיכות
+    </h2>
+    <dl>
+        <dt>
+            קצה מערב (כניסות, רוחב סיביות תואם לתכונת סיביות נתונים)
+        </dt>
+        <dd>
+            הכניסות שיש לספור את 1 הסיביות שלהן. מספר הכניסות מבוסס על התכונה Number of Inputs.
+        </dd>
+        <dt>
+            קצה מזרחי (פלט, רוחב סיביות מחושב כמתואר להלן)
+        </dt>
+        <dd>
+            מספר סיביות הקלט שהם 1. רוחב הסיביות של הפלט הוא המספר המינימלי של סיביות לאחסון הערך המקסימלי האפשרי (שיהיה
+            המכפלה של תכונת ה-Data Bits והתכונה Number of Inputs).
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, הספרות '0' עד '9' משנות את התכונה <q>מספר כניסות</q> שלו ו<b class="tkeybd">Alt-0</b>
+        עד <b class="tkeybd">Alt-9</b> משנה את תכונת ה<b class="propertie">נתונים</b> שלו.
+    </p>
+    <div class="attliste">
+        <dl>
+            <dt>
+                <b class="propertie">סיביות נתונים</b>
+            </dt>
+            <dd>
+                רוחב הסיביות של הקלט/ים.
+            </dd>
+            <dt>
+                <b class="propertie">מספר כניסות</b>
+            </dt>
+            <dd>
+                מספר ערכי הקלט.
+            </dd>
+        </dl>
+    </div>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <p>
+        <b>חזרה ל</b> <a href="../index.html">הפניה לספרייה</a>
+    </p>
+</div>
+</body>
+</html>

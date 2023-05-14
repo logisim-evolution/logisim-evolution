@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        דרישות מינימליות
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        דרישות מינימליות
+    </h1>
+    <h2>
+        דרישות מינימליות לסימולציה מוצלחת
+    </h2>
+    <p>
+        כדי להיות מסוגל לבצע סימולציית System On Chip (SOC) עליך להצטייד בגיליון שלך לפחות:
+    </p>
+    <ol>
+        <li>אחד המעבדים המסומנים ב-<img alt="up" class="notscal" src="../../../../icons/up.png">.
+        </li>
+        <li>אוטובוס אחד מסומן ב-<img alt="socbus" class="notscal" src="../../../../icons/socbus.png">
+        </li>
+        <li>סימולטור זיכרון אחד מסומן ב-<img alt="socmem" class="notscal" src="../../../../icons/socmem.png">
+        </li>
+    </ol>
+    <p>
+        יתר על כן, גם סימולטור הזיכרון וגם המעבד צריכים להיות מחוברים לאוטובוס. ניתן להשיג זאת
+        על ידי הגדרת התכונה <em><strong>אוטובוס מחובר</strong></em> של הרכיבים המתאימים.
+    </p>
+    <h2>
+        הגבלות
+    </h2>
+    <p>
+        מערכת SOC יכולה להיות מקומית רק בגיליון אחד, כלומר רכיב אוטובוס נתון גלוי רק בגיליון שלה
+        ממוקם. בניית מערכות היררכיות אפשרית רק כאשר מערכת הבסיס נמצאת על גיליון אחד וה-
+        הרחבות, למשל הרחבות VHDL או מעגלים, המחוברים דרך מערכת הבסיס באמצעות קלט ו
+        פיני פלט.
+    </p>
+    <h2>
+        מהירות סימולציה
+    </h2>
+    <p>
+        צריך להבין שהספרייה הזו נועדה לדמיין מה קורה ב-SOC. לפיכך הוא מספק ב- No
+        דרך האמצעים לבצע סימולציות בזמן אמת (כמעט) של ה-SOC שלך. למטרה זו מערכות מתאימות יותר
+        לדוגמה <a href="https://www.qemu.org" target="_blank">QEMU</a>.
+    </p>
+    <p>
+        במערכת הבדיקה כאשר כל חלקי המערכת גלויים נמדד תדר טיק של 3 הרץ לכל היותר. השבתה
+        חלק מהפרטים לסימולציה מהירה יותר שיפרו את המהירות ל-8 הרץ. ניתן להשיג את מהירות הסימולציה הטובה ביותר
+        להשתמש במעגלי-על עם אלמנטים דינמיים. כאן מהירות הסימולציה עלתה לכ. 3kHz.
+    </p>
+    <p>
+        <a href="./index.html">חזרה אל <em>ספריית רכיבי System On Chip</em></a>
+    </p>
+</div>
+</body>
+</html>

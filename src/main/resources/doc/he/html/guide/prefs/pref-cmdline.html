@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2019-03-16T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        אפשרויות שורת הפקודה
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <h1>
+        אפשרויות שורת הפקודה
+    </h1>
+    <p>
+        אתה יכול להגדיר הרבה מהעדפות היישום של Logisim באמצעות אפשרויות שורת הפקודה. זה יכול להיות במיוחד
+        שימושי במעבדה של מחשבים עם תלמיד יחיד, שבה אתה רוצה ש-Logisim יתחיל אותו דבר עבור סטודנטים
+        בכל פעם, ללא קשר לאופן שבו סטודנטים קודמים הגדירו את התוכנית.
+    </p>
+    <p>
+        התחביר הכולל של שורת הפקודה הוא כדלקמן.
+    </p>
+    <blockquote>
+         <pre>java -jar <i><b>jarFileName</b></i> <i>[אפשרויות]</i> <i>[שמות קבצים]</i>
+</pre>
+    </blockquote>
+    <p>
+        הקבצים הנוספים האופציונליים הנקראים בשורת הפקודה ייפתחו כחלונות נפרדים בתוך Logisim.
+    </p>
+    <p>
+        הדוגמה הבאה מתחילה את Logisim בתצורה הבסיסית שלה.
+    </p>
+    <blockquote>
+         <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
+</pre>
+    </blockquote>
+    <p>
+        האפשרויות הנתמכות כוללות את הדברים הבאים.
+    </p>
+    <dl>
+        <dt>
+            <tt>-רגיל</tt>
+        </dt>
+        <dt>
+            <tt>-ריק</tt>
+        </dt>
+        <dt>
+            <tt>-template <b><i>templateFile</i></b></tt>
+        </dt>
+        <dd>
+            <p>
+                מגדיר את התבנית לשימוש של Logisim.
+            </p>
+        </dd>
+        <dt>
+            <tt>-שערים <i>[<b>בצורת</b>|<b>מלבני</b>]</i></tt>
+        </dt>
+        <dd>
+            <p>
+                מגדיר באיזה סוג שער להשתמש.
+            </p>
+        </dd>
+        <dt>
+            <tt>-locale <i><b>localeIdentifier</b></i></tt>
+        </dt>
+        <dd>
+            <p>
+                מגדיר באיזה תרגום להשתמש. נכון לכתיבת שורות אלה, המקומות הנתמכים כוללים:
+            </p>
+            <table>
+                <tbody>
+                <tr>
+                    <td>
+                        <tt>de</tt> גרמנית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>el</tt> יוונית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>en</tt> אנגלית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>es</tt> ספרדית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>fr</tt> צרפתית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>pt</tt> פורטוגזית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>ru</tt> רוסית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>it</tt> איטלקית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>nl</tt> הולנדית
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <tt>jp</tt> יפנית
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </dd>
+        <dt>
+            <tt>-מבטאים <i>[<b>כן</b>|<b>לא</b>]</i></tt>
+        </dt>
+        <dd>
+            <p>
+                זה רלוונטי רק לשפות שמשתמשות בתווים מחוץ לקבוצת התווים של 7 סיביות ASCII; זֶה
+                יכלול שפות המשתמשות בתווים מודגשים, והוא לא יכלול אנגלית. אם <i>לא</i>,
+                תווים מחוץ לקבוצת התווים של 7 סיביות ASCII מוחלפים במקבילות המתאימות ל-
+                שפה; זה יהיה שימושי עבור שילובי Java/OS שבהם תווים כאלה אינם נתמכים היטב.
+            </p>
+        </dd>
+        <dt>
+            <tt>-clearprops</tt>
+        </dt>
+        <dd>
+            <p>
+                נקה את כל העדפות האפליקציה בעת ההפעלה, כך ש-Logisim תפעל כאילו היא מבוצעת ב-
+                מערכת מארח בפעם הראשונה.
+            </p>
+        </dd>
+        <dt>
+            <tt>-nosplash</tt>
+        </dt>
+        <dd>
+            <p>
+                מסתיר את מסך הפתיחה הראשוני של Logisim.
+            </p>
+        </dd>
+        <dt>
+            <tt>-עזרה</tt>
+        </dt>
+        <dd>
+            <p>
+                מציג סיכום של אפשרויות שורת הפקודה.
+            </p>
+        </dd>
+        <dt>
+            <tt>-גרסה</tt>
+        </dt>
+        <dd>
+            <p>
+                מציג את מספר הגרסה של Logisim.
+            </p>
+        </dd>
+        <dt>
+            <tt>-analyze</tt>
+        </dt>
+        <dd>
+            <p>
+                מציג את תפריטי הניתוח הקומבינטורי.
+            </p>
+        </dd>
+        <dt>
+            <tt>-טען <i><b>שם קובץ</b></i></tt>
+        </dt>
+        <dd>
+            <p>
+                טען תמונה ב-RAM (עובד רק עם -tty)
+            </p>
+        </dd>
+        <dt>
+            <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
+        </dt>
+        <dd>
+            <p>
+                טען את הקובץ על ידי החלפת קובץ הספרייה (קובץ1) בקובץ הספרייה (קובץ2). מידע נוסף ב
+                <a href="../verify/sub.html">החלפת ספריות</a>
+            </p>
+        </dd>
+        <dt>
+            <tt>-tty</tt> [<b>טבלה</b>|<b>מהירות</b>|<b>tty</b>|<b>עצירה</b>|<b>סטטיסטיקות </b>]
+        </dt>
+        <dd>
+            <p>
+                הפעל ללא GUI. מידע נוסף ב-<a href="../verify/other.html">אימות אחר</a>
+            </p>
+        </dd>
+        <dt>
+            <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
+        </dt>
+        <dd>
+            <p>
+                הפעל את בדיקות <b>circuitname</b> ב-<b>projectfile</b> בהתבסס על וקטורים ב-<b>vectorfile</b>. יותר
+                מידע ב<a href="../verify/test.html">וקטור טקסט של חלון</a>
+            </p>
+        </dd>
+        <dt>
+            <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
+        </dt>
+        <dd>
+            <p>
+                פותח את Logisim עם חלון במידות לפי הפרמטרים W (רוחב) ו-H (גובה) או עם
+                הפינה השמאלית העליונה ממוקמת לפי הפרמטרים X,Y.<br>
+                דוגמה: -geom 600x400+100+100
+            </p>
+        </dd>
+    </dl>
+    <h2>
+        אפשרויות לא מתועדות
+    </h2>
+    <dl>
+        <dt>
+            <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+            <tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b>
+                <b>cicuitimpboard</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+            <tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+            <tt>-questa<i>[<b>כן</b>|<b>לא</b>]</i></tt>
+        </dt>
+        <dd></dd>
+    </dl>
+    <p>
+        <b>הבא:</b> <a href="../index.html">מדריך למשתמש</a>.
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2018-10-23T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        XOR/XNOR/Odd Parity/Even Parity Gate
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="maindiv">
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansxorgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansxnorgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansparityoddgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansparityevengate.png"
+                     width="32"><br>
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecxorgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecxnorgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecparityoddgate.png"
+                     width="32">
+                <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecparityevengate.png"
+                     width="32">
+            </td>
+            <td>
+                <h1>
+                    <em>XOR/XNOR/<br>Odd Parity/Even Parity Gate</em>
+                </h1>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <strong>ספרייה:</strong>
+            </td>
+            <td>
+                <a href="index.html">שערים</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>הוצג:</strong>
+            </td>
+            <td>
+                2.0 בטא 1 עבור XOR/אי זוגי/זוגי; 2.0 בטא 6 עבור XNOR
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <strong>מראה:</strong>
+            </td>
+            <td valign="top">
+                <table>
+                    <tbody>
+                    <tr>
+                        <th></th>
+                        <th width="50">
+                            XOR
+                        </th>
+                        <th width="50">
+                            XNOR
+                        </th>
+                        <th width="50">
+                            זוגיות מוזרה
+                        </th>
+                        <th width="50">
+                            זוגיות אפילו
+                        </th>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="middle">
+                            ANSI:
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansxorgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/ansxnorgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/oddparitygate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/evenparitygate.png" width="64">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="middle">
+                            חברת החשמל:
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecxorgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/iecxnorgate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/oddparitygate.png" width="64">
+                        </td>
+                        <td>
+                            <img alt="#########" class="appearancelibs" height="64"
+                                 src="../../../../img-libs/evenparitygate.png" width="64">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>
+        התנהגות
+    </h2>
+    <p>
+        השערים XOR, XNOR, זוגיות זוגית וזוגיות מוזרה מחשבים כל אחד את הפונקציה המתאימה של התשומות, ופולטים
+        התוצאה על הפלט.
+    </p>
+    <p>
+        כברירת מחדל, מתעלמים מכל כניסות שנותרו לא מחוברות - זה אם לקלט באמת אין שום דבר מחובר אליו
+        זה, אפילו לא חוט. בדרך זו, אתה יכול להכניס שער 5 כניסות אבל לצרף רק שתי כניסות, וזה יעבוד כמו
+        שער בעל 2 כניסות; זה משחרר אותך מהצורך לדאוג
+        הגדרת מספר הכניסות בכל פעם שאתה יוצר שער. (אם כל הכניסות אינן מחוברות, הפלט הוא
+        ערך שגיאה <em>X</em>.) חלק מהמשתמשים, עם זאת, מעדיפים ש-Logisim יתעקש שכל הכניסות יהיו מחוברות, שכן זה
+        זה מה שמתאים לשערים בעולם האמיתי. אתה יכול להפעיל את זה
+        התנהגות על ידי מעבר לפרויקט &gt; פריט תפריט אפשרויות... בחירה בכרטיסייה סימולציה ובחירה ב<q>שגיאה
+        עבור כניסות לא מוגדרות</q> עבור <q>פלט שער כאשר לא מוגדר.</q>
+    </p>
+    <p>
+        טבלת האמת של שתי כניסות עבור השערים היא הבאה.
+    </p>
+    <div style="text-align: center;">
+        <table>
+            <tbody>
+            <tr>
+                <th>
+                    <var>x</var>
+                </th>
+                <th>
+                    <var>y</var>
+                </th>
+                <th>
+                    XOR
+                </th>
+                <th>
+                    XNOR
+                </th>
+                <th>
+                    Odd
+                </th>
+                <th>
+                    Even
+                </th>
+            </tr>
+            <tr>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+                <td align="center">
+                    0
+                </td>
+                <td align="center">
+                    1
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        כפי שניתן לראות, שער ה-Od Parity ושער XOR מתנהגים באופן זהה עם שתי כניסות; באופן דומה, הזוגי
+        שער זוגיות ושער XNOR מתנהגים באופן זהה. אבל אם יש יותר משתי כניסות שצוינו, שער ה-XOR
+        יפלוט 1 רק כאשר יש קלט 1 אחד בדיוק, בעוד שער השוויון המוזר יפלוט 1 אם יש אי-זוגי
+        מספר 1 כניסות. שער XNOR יפלוט 1 רק כאשר יש <em>אין</em> קלט 1 בדיוק אחד, בעוד
+        שער זוגיות זוגי יפלוט 1 אם יש מספר זוגי של 1 כניסות. שערי XOR ו-XNOR כוללים
+        תכונה בשם Multiple-Input Behavior המאפשרת להגדיר אותם לשימוש בשוויון אי זוגי ובשוויון זוגי
+        התנהגות.
+    </p>
+    <p>
+        אם אחת מהכניסות היא ערך השגיאה (למשל, אם ערכים סותרים נכנסים לאותו חוט) או
+        צף, אז הפלט יהיה ערך השגיאה.
+    </p>
+    <p>
+        גרסאות מרובות הסיביות של כל שער יבצעו את הטרנספורמציה של סיביות אחת שלו בסיביות בכניסות שלו.
+    </p>
+    <p>
+        <strong>הערה:</strong> רשויות רבות טוענות שההתנהגות של שער ה-XOR המעוצב צריכה להתאים למוזר
+        שער זוגיות, אך אין הסכמה בנקודה זו. התנהגות ברירת המחדל של Logisim עבור שערי XOR מבוססת על
+        תקן IEEE 91. זה גם תואם את המשמעות האינטואיטיבית שבבסיס המונח <em>בלעדי או</em>: א
+        מלצר ששואל אם אתה רוצה תוספת של פירה, גזר, אפונה או סלאו קולי יקבל רק אחד
+        בחירה, לא שלוש, מה שרשויות מסוימות יגידו לך. (אני חייב להודות, עם זאת, שלא הכנתי את זה
+        אתה יכול להגדיר את השערים XOR ו-XNOR להשתמש בזוגיות על ידי שינוי ה-<q>ריבוי קלט שלו
+        תכונת התנהגות</q>.
+    </p>
+    <h2>
+        סיכות (בהנחה שהרכיב פונה מזרחה)
+    </h2>
+    <dl>
+        <dt>
+            קצה מערב (כניסות, רוחב סיביות לפי תכונת Data Bits)
+        </dt>
+        <dd>
+            <p>
+                הכניסות לרכיב. יהיו כמה כאלה כפי שצוין במספר הכניסות
+                תְכוּנָה.
+            </p>
+            <p>
+                שימו לב שאם אתם משתמשים בשערים מעוצבים, הצד המערבי של שערי XOR ו-XNOR יהיה מעוקל.
+                עם זאת, פיני הקלט נמצאים בשורה. לוגיסים יציירו בולים קצרים הממחישים זאת; ואם אתה
+                לעקוף בדל, הוא יניח בשקט שלא התכוונת לעקוף אותו. ב"תצוגת מדפסת",
+                בלמים אלה לא יצוירו אלא אם כן הם מחוברים לחוטים.
+            </p>
+        </dd>
+        <dt>
+            קצה מזרח (פלט, רוחב סיביות לפי תכונת Data Bits)
+        </dt>
+        <dd>
+            <p>
+                הפלט של השער, שערכו מחושב על סמך הכניסות הנוכחיות כמתואר לעיל.
+            </p>
+        </dd>
+    </dl>
+    <h2>
+        תכונות
+    </h2>
+    <p>
+        כאשר הרכיב נבחר או מתווסף, הספרות '0' עד '9' משנות את <q>מספר הכניסות</q> שלו
+        תכונה, Alt-0 עד Alt-9 משנים את התכונה <q>נתונים</q> שלה, ומקשי החצים משנים את ה<q>פניות</q> שלה.
+        תְכוּנָה.
+    </p>
+    <dl>
+        <dt>
+            מוּל
+        </dt>
+        <dd>
+            כיוון הרכיב (הפלט שלו ביחס לתשומות שלו).
+        </dd>
+        <dt>
+            פיסות מידע
+        </dt>
+        <dd>
+            רוחב הסיביות של הכניסות והיציאות של הרכיב.
+        </dd>
+        <dt>
+            גודל שער
+        </dt>
+        <dd>
+            קובע אם לצייר גרסה רחבה יותר או צרה יותר של הרכיב. זה לא משפיע על מספר
+            תשומות, המצוין על ידי התכונה מספר כניסות; עם זאת, אם מספר הכניסות עולה על 3
+            (עבור רכיב צר) או 5 (עבור רכיב רחב), אז השער יהיה מצויר עם "כנפיים" כדי להיות מסוגל
+            להכיל את מספר התשומות המבוקש.
+        </dd>
+        <dt>
+            מספר כניסות
+        </dt>
+        <dd>
+            קובע כמה פינים יש לרכיב בצד המערבי שלו.
+        </dd>
+        <dt>
+            ערך פלט
+        </dt>
+        <dd>
+            מציין כיצד יש לתרגם תוצאות שגויות ואמיתיות לערכי פלט. כברירת מחדל, מסומן false
+            במתח נמוך (0) ונכון במתח גבוה (1), אבל אפשר להחליף את האחד או השני ב-
+            במקום זאת ערך בעל עכבה גבוהה (<q>צף</q>). זה מאפשר חיבורים קוויים או קוויים וחיבורים, כמו
+            מודגם בתיעוד <a href="basic.html">AND/OR/NAND/NOR Gate</a>.
+        </dd>
+        <dt>
+            תווית
+        </dt>
+        <dd>
+            הטקסט בתוך התווית המשויכת לשער.
+        </dd>
+        <dt>
+            תווית גופן
+        </dt>
+        <dd>
+            הגופן שבאמצעותו יש לעבד את התווית.
+        </dd>
+        <dt>
+            התנהגות מרובה קלט (XOR ו-XNOR בלבד)
+        </dt>
+        <dd>
+            כאשר מסופקות שלוש כניסות או יותר, הפלט של שער XOR/XNOR יתבסס על האם בדיוק
+            קלט אחד הוא 1 (ברירת המחדל) או מספר אי זוגי של כניסות הוא 1.
+        </dd>
+    </dl>
+    <h2>
+        התנהגות כלי לתקוע
+    </h2>
+    <p>
+        אף אחד.
+    </p>
+    <h2>
+        התנהגות כלי טקסט
+    </h2>
+    <p>
+        מאפשר לערוך את התווית המשויכת לשער.
+    </p>
+    <p>
+        <a href="../index.html">חזרה אל <em>הפניה לספרייה</em></a>
+    </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="he">
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="2020-01-10T06:18:10.521000000" name="created">
+    <meta content="2023-04-29T16:00:00.000000000" name="changed">
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta content="he" http-equiv="Content-Language">
+    <title>
+        v3.0 מילות hex רגילות
+    </title>
+    <link href="../../style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>
+    v3.0 מילות hex רגילות
+</h1>
+<div class="maindiv">
+    <p>
+        פורמט זה דומה מאוד ל<a href="mem-v2raw.html">v2.0 raw</a>
+    </p>
+    <p>
+        מילות נתונים מוצגות בהקסדצימליות ומופרדות באמצעות תו רווח. זה חשוב עבור
+        יישור נכון של הנתונים.
+    </p>
+    <blockquote>
+         <pre>
+כתובות מילות hex v3.0
+000 00a 00a 00a fdd 077 fc0 008
+070 05a fe4 fcd 076 ff0 fec 067
+002 f85 f8b ffe 021 016 f9e fc6</pre>
+        זיכרון של 24 מילים של 12 ביטים
+    </blockquote>
+    <p>
+        השורה חוזרת שלו לא פירשו. למעט רווחים והשורה הראשונה, אין פריסה
+        כללים.
+    </p>
+    <p>
+        אתה יכול להוסיף הערות בקובץ באמצעות הסמל '#'. לוגיסים
+        יתעלם מכל התווים בשורה החל מהסמל '#'. לחלל כפול יהיה אותו אפקט.
+    </p>
+    <p>
+        אין צורך לציין את הקידומת 0x לפני הנתונים, אולם אם הם קיימים פשוט יתעלמו מהם.
+    </p>
+    <p>
+        אם המילים בקובץ גדולות מהמילים בזיכרון, יתעלמו מהסיביות המשמעותיות ביותר.
+    </p>
+    <p>
+        אם אורך ערכת הנתונים של הקבצים קצר משטח הזיכרון, התאים הנותרים יאותחלו ל-0
+        ול-RAM לפי הפרמטרים ב<a href="../opts/index.html">אפשרויות פרויקט</a>, ל-0 או באופן אקראי.
+    </p>
+    <h1 id='addr'>
+        כתובות מילות hex v3.0
+    </h1>
+    <p>
+        פורמט זה זהה לקודמת עם אותם מאפיינים. בנוסף, אינדיקציה ל-
+        כתובת בתחילת השורות. הכתובת ניתנת בהקסדצימלי ואחריו התו <b>:</b>
+    </p>
+    <p>
+    <blockquote>
+         <pre>
+כתובות מילות hex v3.0
+00: 000 00a 00a 00a fdd 077 fc0 008
+08: 070 05a fe4 fcd 076 ff0 fec 067
+18: fc1 010 035 049 030 07a fd6 f9f</pre>
+        זיכרון של 32 מילים של 12 ביטים
+    </blockquote>
+    <p>
+        בדוגמה זו 8 המילים בכתובת 0x10 אינן מצויינות. תאים אלה יאותחלו ל-0 ולעבור זיכרון RAM
+        לפי הפרמטרים ב<a href="../opts/index.html">אפשרויות פרויקט</a>, ל-0 או באופן אקראי.
+    </p>
+    <p>
+    <p align="center">
+        <img alt="#########" class="notscal" src="../../../../img-guide/memwordaddr.png">
+    </p>
+    <p>
+        <strong>הבא:</strong> <a href="mem-menu.html">תפריטים וקבצים קופצים</a>.
+    </p>
+</div>
+</body>
+</html>
