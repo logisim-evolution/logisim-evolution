@@ -38,7 +38,7 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.7")
   implementation("org.slf4j:slf4j-simple:2.0.7")
-  implementation("com.formdev:flatlaf:3.1")
+  implementation("com.formdev:flatlaf:3.1.1")
   implementation("commons-cli:commons-cli:1.5.0")
   implementation("org.apache.commons:commons-text:1.10.0")
 
@@ -49,10 +49,9 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.9.2"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-  testImplementation("org.mockito:mockito-inline:5.2.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.2.0")
+  testImplementation(platform("org.junit:junit-bom:5.9.3"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
 }
 
 /**
@@ -170,7 +169,7 @@ extra.apply {
   set(LINUX_PARAMS, linuxParams)
 
   // All the macOS specific stuff.
-  val uppercaseProjectName = project.name.capitalize().trim()
+  val uppercaseProjectName = project.name.replaceFirstChar { it.uppercase() }.trim()
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
   set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
@@ -278,8 +277,7 @@ fun runCommand(params: List<String>, exceptionMsg: String): String {
   if (rc != 0) {
     logger.error(proc.errorStream.bufferedReader().readText().trim())
     logger.error("Command \"${params[0]}\" failed with RC ${rc}.")
-    var exMsg = exceptionMsg ?: ""
-    throw GradleException(exMsg)
+    throw GradleException(exceptionMsg)
   }
 
   return proc.inputStream.bufferedReader().readText().trim()
@@ -311,7 +309,7 @@ tasks.register("createDeb") {
   }
 
   doLast {
-    val params = ext.get(LINUX_PARAMS) as List<String> + listOf("--type", "deb")
+    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
   }
 }
@@ -336,7 +334,7 @@ tasks.register("createRpm") {
   }
 
   doLast {
-    val params = ext.get(LINUX_PARAMS) as List<String> + listOf("--type", "rpm")
+    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
   }
 }
@@ -367,7 +365,7 @@ tasks.register("createMsi") {
   doLast {
     val targetDir = ext.get(TARGET_DIR) as String
     val version = ext.get(APP_VERSION_SHORT) as String
-    val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
+    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
         "--name", project.name,
         "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
@@ -419,8 +417,7 @@ tasks.register("createApp") {
   doLast {
     delete(appDirName)
 
-    var params = ext.get(SHARED_PARAMS) as List<String>
-    params += listOf(
+    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
         "--dest", "${buildDir}/macOS-${ext.get(OS_ARCH) as String}",
         "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
         "--file-associations", "${supportDir}/macos/file.jpackage",
@@ -513,7 +510,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
   val appVersion = ext.get(APP_VERSION) as String
-  val projectName = project.name.capitalize().trim()
+  val projectName = project.name.replaceFirstChar { it.uppercase() }.trim()
   val displayName = "${projectName} v${appVersion}"
   val url = ext.get(APP_URL) as String
 

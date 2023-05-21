@@ -63,6 +63,7 @@ class AboutCredits extends JComponent {
         .text("Theo Kluter")
         .text("Marcin Orłowski")
         .text("Tom Niget")
+        .text("Liu Yuchen")
         .tiny(S.get("creditsDevelopedByAndOthers"))
         .space()
         .h1(S.get("creditsRoleFork"))
