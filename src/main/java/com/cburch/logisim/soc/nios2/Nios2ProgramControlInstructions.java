@@ -252,7 +252,7 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
         } else {
           sourceA = sourceB = 0;
           long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
-          long imml = pc - target - 4L;
+          long imml = target - pc - 4L;
           if (imml >= (1L << 15) || imml < -(1L << 15)) {
             valid = false;
             instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
@@ -276,7 +276,7 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
           instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
         }
         long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
-        long imml = pc - target - 4L;
+        long imml = target - pc - 4L;
         if (imml >= (1L << 15) || imml < -(1L << 15)) {
           valid = false;
           instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
