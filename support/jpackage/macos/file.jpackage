@@ -1,4 +1,4 @@
 extension=circ
-mime-type=application/octet-stream
+mime-type=application/x-logisim-circuit
 icon=support/jpackage/macos/Logisim-evolution-circ.icns
 description=Logisim circuit file
