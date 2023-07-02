@@ -75,7 +75,7 @@ public class OpenFpgaDownload  implements VendorDownload {
   @Override
   public String getStageMessage(int stage) {
     if (HdlType.equals(HdlGeneratorFactory.VHDL)) {
-      return switch(stage) {
+      return switch (stage) {
         case 0 -> S.get("OpenFpgaGhdl");
         case 1 -> S.get("OpenFpgaYosys");
         case 2 -> S.get("OpenFpganNextpnr");
@@ -83,7 +83,7 @@ public class OpenFpgaDownload  implements VendorDownload {
         default -> "unknown";
       };
     }
-    return switch(stage) {
+    return switch (stage) {
       case 0 -> S.get("OpenFpgaYosys");
       case 1 -> S.get("OpenFpganNextpnr");
       case 2 -> S.get("OpenFpganEcppack");
@@ -94,7 +94,7 @@ public class OpenFpgaDownload  implements VendorDownload {
   @Override
   public ProcessBuilder performStep(int stage) {
     if (HdlType.equals(HdlGeneratorFactory.VHDL)) {
-      return switch(stage) {
+      return switch (stage) {
         case 0 -> stageGhdl();
         case 1 -> stageYosys();
         case 2 -> stageNextpnrEcp5();
@@ -102,7 +102,7 @@ public class OpenFpgaDownload  implements VendorDownload {
         default -> null;
       };
     }
-    return switch(stage) {
+    return switch (stage) {
       case 0 -> stageYosys();
       case 1 -> stageNextpnrEcp5();
       case 2 -> stageEcppack();
@@ -174,7 +174,7 @@ public class OpenFpgaDownload  implements VendorDownload {
     final var pinInfo = LineBuffer.getBuffer();
     for (final var key : mapInfo.getMappableResources().keySet()) {
       final var map = mapInfo.getMappableResources().get(key);
-      for (var pin = 0 ; pin < map.getNrOfPins(); pin++) {
+      for (var pin = 0; pin < map.getNrOfPins(); pin++) {
         if (map.isMapped(pin) && !map.isOpenMapped(pin) && !map.isConstantMapped(pin) && !map.isInternalMapped(pin)) {
           pinInfo.add("LOCATE COMP \"{{1}}{{2}}\" SITE \"{{3}}\";", 
               map.isExternalInverted(pin) ? "n_" : "",
