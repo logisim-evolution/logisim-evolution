@@ -13,11 +13,11 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.46.0"
+  id("com.github.ben-manes.versions") version "0.47.0"
   java
   application
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("org.sonarqube") version "4.0.0.2929"
+  id("org.sonarqube") version "4.2.1.3168"
 }
 
 repositories {
@@ -51,7 +51,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:5.9.3"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
 }
 
 /**
