@@ -756,7 +756,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> VivadoToolPath =
       create(new PrefMonitorString("VivadoToolPath", ""));
   public static final PrefMonitor<String> OpenFpgaToolPath =
-          create(new PrefMonitorString("OpenFpgaToolPath", ""));
+      create(new PrefMonitorString("OpenFpgaToolPath", ""));
 
   // hidden window preferences - not part of the preferences dialog, changes
   // to preference does not affect current windows, and the values are not

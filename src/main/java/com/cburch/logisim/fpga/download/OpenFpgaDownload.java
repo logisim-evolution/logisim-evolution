@@ -129,11 +129,11 @@ public class OpenFpgaDownload  implements VendorDownload {
   @Override
   public boolean createDownloadScripts() {
     var yosysScript = FileWriter.getFilePointer(scriptPath, YOSYS_SCRIPT_FILE);
-    var contraintFile = FileWriter.getFilePointer(scriptPath, PIN_CONSTRAINT_FILE);
-    if (yosysScript == null || contraintFile == null) {
+    var constraintFile = FileWriter.getFilePointer(scriptPath, PIN_CONSTRAINT_FILE);
+    if (yosysScript == null || constraintFile == null) {
       yosysScript = new File(scriptPath + YOSYS_SCRIPT_FILE);
-      contraintFile = new File(scriptPath + PIN_CONSTRAINT_FILE);
-      return yosysScript.exists() && contraintFile.exists();
+      constraintFile = new File(scriptPath + PIN_CONSTRAINT_FILE);
+      return yosysScript.exists() && constraintFile.exists();
     }
     final var content = LineBuffer.getBuffer();
     if (HdlType.equals(HdlGeneratorFactory.VHDL)) {
@@ -155,8 +155,7 @@ public class OpenFpgaDownload  implements VendorDownload {
           .add("FREQUENCY PORT \"{{1}}\" {{2}};", TickComponentHdlGeneratorFactory.FPGA_CLOCK, Download.getClockFrequencyString(boardInfo).toUpperCase());
     }
     content.add(getPinLocations());
-    if (!FileWriter.writeContents(contraintFile, content.get())) return false;
-    return true;
+    return FileWriter.writeContents(constraintFile, content.get());
   }
 
   @Override
@@ -277,5 +276,4 @@ public class OpenFpgaDownload  implements VendorDownload {
     stage.directory(new File(sandboxPath));
     return stage;
   }
-
 }
