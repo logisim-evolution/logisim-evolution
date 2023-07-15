@@ -347,36 +347,36 @@ class ExpressionTab extends AnalyzerTab {
     final var actionMap = table.getActionMap();
     actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
     actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    setLayout(gb);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    setLayout(gbl);
     setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    gc.weightx = 1.0;
-    gc.gridx = 0;
-    gc.gridy = GridBagConstraints.RELATIVE;
-    gc.weighty = 0.0;
-    gc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = 1.0;
+    gbc.gridx = 0;
+    gbc.gridy = GridBagConstraints.RELATIVE;
+    gbc.weighty = 0.0;
+    gbc.fill = GridBagConstraints.BOTH;
     final var control = control();
-    gb.setConstraints(control, gc);
+    gbl.setConstraints(control, gbc);
     add(control);
 
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gb.setConstraints(infoLabel, gc);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbl.setConstraints(infoLabel, gbc);
     add(infoLabel);
 
     final var scroll = new JScrollPane(table,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     scroll.setPreferredSize(new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
-    gc.weighty = 1.0;
-    gc.fill = GridBagConstraints.BOTH;
-    gb.setConstraints(scroll, gc);
+    gbc.weighty = 1.0;
+    gbc.fill = GridBagConstraints.BOTH;
+    gbl.setConstraints(scroll, gbc);
     add(scroll);
 
-    gc.weighty = 0.0;
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gb.setConstraints(error, gc);
+    gbc.weighty = 0.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbl.setConstraints(error, gbc);
     add(error);
 
     final var f =
@@ -401,22 +401,22 @@ class ExpressionTab extends AnalyzerTab {
 
   private JPanel control() {
     final var control = new JPanel();
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    control.setLayout(gb);
-    gc.weightx = 1.0;
-    gc.gridwidth = 1;
-    gc.gridy = 0;
-    gc.gridx = 0;
-    gc.fill = GridBagConstraints.VERTICAL;
-    gc.anchor = GridBagConstraints.EAST;
-    gc.insets = new Insets(3, 10, 3, 10);
-    gb.setConstraints(notationLabel, gc);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    control.setLayout(gbl);
+    gbc.weightx = 1.0;
+    gbc.gridwidth = 1;
+    gbc.gridy = 0;
+    gbc.gridx = 0;
+    gbc.fill = GridBagConstraints.VERTICAL;
+    gbc.anchor = GridBagConstraints.EAST;
+    gbc.insets = new Insets(3, 10, 3, 10);
+    gbl.setConstraints(notationLabel, gbc);
     control.add(notationLabel);
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gc.anchor = GridBagConstraints.WEST;
-    gb.setConstraints(notationChoice, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbl.setConstraints(notationChoice, gbc);
     control.add(notationChoice);
     notationChoice.addItemListener(myListener);
     return control;
