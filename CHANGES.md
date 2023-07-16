@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added first support for the openFpga toolchain for the ecp5 famely
+    Note that this is experimental for the moment, so use it at your own risk.
   * Improved Chinese localization
     * Changed language code from `cn` to `zh`.
     * Chinese users (also including those who use other forks of Logisim

@@ -165,6 +165,15 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
               myBoardInformation,
               entities,
               architectures);
+      case VendorSoftware.VENDOR_OPENFPGA -> downloader =
+          new OpenFpgaDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures,
+              AppPreferences.HdlType.get(),
+              writeToFlash);
       default -> {
         Reporter.report.addFatalError("BUG: Tried to Download to an unknown target");
         return;

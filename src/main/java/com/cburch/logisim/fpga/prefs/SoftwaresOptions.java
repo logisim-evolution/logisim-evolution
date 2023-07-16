@@ -48,6 +48,8 @@ public class SoftwaresOptions extends OptionsPanel {
         FpgaCommander.selectToolPath(VendorSoftware.VENDOR_XILINX);
       } else if (source == vivadoPathButton) {
         FpgaCommander.selectToolPath(VendorSoftware.VENDOR_VIVADO);
+      } else if (source == openfpgaPathButton) {
+        FpgaCommander.selectToolPath(VendorSoftware.VENDOR_OPENFPGA);
       }
     }
 
@@ -65,6 +67,8 @@ public class SoftwaresOptions extends OptionsPanel {
         isePathField.setText(AppPreferences.ISEToolPath.get());
       } else if (property.equals(AppPreferences.VivadoToolPath.getIdentifier())) {
         vivadoPathField.setText(AppPreferences.VivadoToolPath.get());
+      } else if (property.equals(AppPreferences.OpenFpgaToolPath.getIdentifier())) {
+        openfpgaPathField.setText(AppPreferences.OpenFpgaToolPath.get());
       }
     }
   }
@@ -86,6 +90,9 @@ public class SoftwaresOptions extends OptionsPanel {
   private final JLabel vivadoPathLabel = new JLabel();
   private final JTextField vivadoPathField = new JTextField(40);
   private final JButton vivadoPathButton = new JButton();
+  private final JLabel openfpgaPathLabel = new JLabel();
+  private final JTextField openfpgaPathField = new JTextField(40);
+  private final JButton openfpgaPathButton = new JButton();
 
   public SoftwaresOptions(PreferencesFrame window) {
     super(window);
@@ -95,6 +102,7 @@ public class SoftwaresOptions extends OptionsPanel {
     quartusPathButton.addActionListener(myListener);
     isePathButton.addActionListener(myListener);
     vivadoPathButton.addActionListener(myListener);
+    openfpgaPathButton.addActionListener(myListener);
     AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 
     final var sep = new JSeparator(JSeparator.HORIZONTAL);
@@ -106,7 +114,6 @@ public class SoftwaresOptions extends OptionsPanel {
     gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
     var gridY = 0;
-
     gbc.gridx = 0;
     gbc.gridy = gridY++;
     gbc.gridwidth = 4;
@@ -220,6 +227,31 @@ public class SoftwaresOptions extends OptionsPanel {
     gbc.fill = GridBagConstraints.NONE;
     add(vivadoPathButton, gbc);
 
+    c.gridx = 0;
+    c.gridy = gridY++;
+    c.gridwidth = 4;
+    c.weightx = 1.0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    add(new JSeparator(JSeparator.HORIZONTAL), c);
+
+    c.gridx = 0;
+    c.gridy = gridY++;
+    c.gridwidth = 4;
+    c.weightx = 1.0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    add(openfpgaPathLabel, c);
+
+    c.gridx = 0;
+    c.gridy = gridY;
+    c.gridwidth = 2;
+    c.weightx = 1.0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    add(openfpgaPathField, c);
+    c.gridx = 2;
+    c.gridy = gridY++;
+    c.fill = GridBagConstraints.NONE;
+    add(openfpgaPathButton, c);
+
     questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
 
     quartusPathField.setText(AppPreferences.QuartusToolPath.get());
@@ -230,6 +262,8 @@ public class SoftwaresOptions extends OptionsPanel {
     vivadoPathField.setEditable(false);
     questaPathField.setText(AppPreferences.QUESTA_PATH.get());
     questaPathField.setEditable(false);
+    openfpgaPathField.setText(AppPreferences.OpenFpgaToolPath.get());
+    openfpgaPathField.setEditable(false);
   }
 
   @Override
@@ -253,5 +287,7 @@ public class SoftwaresOptions extends OptionsPanel {
     isePathLabel.setText(S.get("ISEToolPath"));
     vivadoPathButton.setText(S.get("softwaresQuestaPathButton"));
     vivadoPathLabel.setText(S.get("VivadoToolPath"));
+    openfpgaPathButton.setText(S.get("softwaresQuestaPathButton"));
+    openfpgaPathLabel.setText(S.get("openfpgaToolPath"));
   }
 }
