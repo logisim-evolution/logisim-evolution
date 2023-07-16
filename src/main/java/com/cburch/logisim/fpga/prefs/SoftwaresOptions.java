@@ -227,30 +227,31 @@ public class SoftwaresOptions extends OptionsPanel {
     gbc.fill = GridBagConstraints.NONE;
     add(vivadoPathButton, gbc);
 
-    c.gridx = 0;
-    c.gridy = gridY++;
-    c.gridwidth = 4;
-    c.weightx = 1.0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    add(new JSeparator(JSeparator.HORIZONTAL), c);
+    gbc.gridx = 0;
+    gbc.gridy = gridY++;
+    gbc.gridwidth = 4;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    add(new JSeparator(JSeparator.HORIZONTAL), gbc);
 
-    c.gridx = 0;
-    c.gridy = gridY++;
-    c.gridwidth = 4;
-    c.weightx = 1.0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    add(openfpgaPathLabel, c);
+    gbc.gridx = 0;
+    gbc.gridy = gridY++;
+    gbc.gridwidth = 4;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    add(openfpgaPathLabel, gbc);
 
-    c.gridx = 0;
-    c.gridy = gridY;
-    c.gridwidth = 2;
-    c.weightx = 1.0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    add(openfpgaPathField, c);
-    c.gridx = 2;
-    c.gridy = gridY++;
-    c.fill = GridBagConstraints.NONE;
-    add(openfpgaPathButton, c);
+    gbc.gridx = 0;
+    gbc.gridy = gridY;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    add(openfpgaPathField, gbc);
+
+    gbc.gridx = 2;
+    gbc.gridy = gridY++;
+    gbc.fill = GridBagConstraints.NONE;
+    add(openfpgaPathButton, gbc);
 
     questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
 
