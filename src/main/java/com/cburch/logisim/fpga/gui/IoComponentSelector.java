@@ -29,23 +29,23 @@ public class IoComponentSelector implements ActionListener {
   public IoComponentSelector(Frame parent) {
     action_id = CancelStr;
     diag = new JDialog(parent, S.get("FpgaBoardIOResources"));
-    GridBagConstraints c = new GridBagConstraints();
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridx = 0;
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.gridx = 0;
     diag.setLayout(new GridBagLayout());
     JButton button;
     for (String comp : FpgaIoInformationContainer.getComponentTypes()) {
       button = new JButton(S.get("FpgaBoardDefine", comp));
       button.setActionCommand(comp);
       button.addActionListener(this);
-      c.gridy++;
-      diag.add(button, c);
+      gbc.gridy++;
+      diag.add(button, gbc);
     }
     JButton cancel = new JButton(S.get("FpgaBoardCancel"));
     cancel.setActionCommand(CancelStr);
     cancel.addActionListener(this);
-    c.gridy++;
-    diag.add(cancel, c);
+    gbc.gridy++;
+    diag.add(cancel, gbc);
     diag.pack();
     diag.setLocationRelativeTo(parent);
     diag.setModal(true);

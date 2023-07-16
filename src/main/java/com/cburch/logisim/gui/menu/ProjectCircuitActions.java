@@ -269,25 +269,25 @@ public class ProjectCircuitActions {
     }
     final var field = new JTextField(15);
     field.setText(initialValue);
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
     final var strut = new JPanel(null);
     strut.setPreferredSize(new Dimension(3 * field.getPreferredSize().width / 2, 0));
-    gc.gridx = 0;
-    gc.gridy = GridBagConstraints.RELATIVE;
-    gc.weightx = 1.0;
-    gc.fill = GridBagConstraints.NONE;
-    gc.anchor = GridBagConstraints.LINE_START;
+    gbc.gridx = 0;
+    gbc.gridy = GridBagConstraints.RELATIVE;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.anchor = GridBagConstraints.LINE_START;
     final var label = new JLabel(prompt);
-    gb.setConstraints(label, gc);
-    final var panel = new JPanel(gb);
+    gbl.setConstraints(label, gbc);
+    final var panel = new JPanel(gbl);
     panel.add(label);
-    gb.setConstraints(field, gc);
+    gbl.setConstraints(field, gbc);
     panel.add(field);
     final var error = new JLabel(" ");
-    gb.setConstraints(error, gc);
+    gbl.setConstraints(error, gbc);
     panel.add(error);
-    gb.setConstraints(strut, gc);
+    gbl.setConstraints(strut, gbc);
     panel.add(strut);
     final var pane =
         new JOptionPane(panel, OptionPane.QUESTION_MESSAGE, OptionPane.OK_CANCEL_OPTION);
