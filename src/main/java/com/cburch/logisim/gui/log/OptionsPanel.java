@@ -212,43 +212,43 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
     JPanel inner = new ScrollablePanel();
 
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
-    inner.setLayout(gb);
+    GridBagLayout gbl = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    inner.setLayout(gbl);
 
-    gc.fill = GridBagConstraints.BOTH;
-    gc.insets = new Insets(5, 5, 5, 5);
-    gc.weightx = gc.weighty = 0.0f;
-    gc.gridx = gc.gridy = 0;
-    gb.setConstraints(selectionPanel, gc);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.insets = new Insets(5, 5, 5, 5);
+    gbc.weightx = gbc.weighty = 0.0f;
+    gbc.gridx = gbc.gridy = 0;
+    gbl.setConstraints(selectionPanel, gbc);
     inner.add(selectionPanel);
 
-    gc.gridy = 1;
+    gbc.gridy = 1;
 
-    gb.setConstraints(modePanel, gc);
+    gbl.setConstraints(modePanel, gbc);
     inner.add(modePanel);
 
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gc.gridheight = 2;
-    gb.setConstraints(optionsPanel, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.gridheight = 2;
+    gbl.setConstraints(optionsPanel, gbc);
     inner.add(optionsPanel);
 
-    gc.gridx = 2;
-    gb.setConstraints(historyPanel, gc);
+    gbc.gridx = 2;
+    gbl.setConstraints(historyPanel, gbc);
     inner.add(historyPanel);
 
     java.awt.Component fill = Box.createGlue();
-    gc.gridx = 3;
-    gb.setConstraints(fill, gc);
+    gbc.gridx = 3;
+    gbl.setConstraints(fill, gbc);
     inner.add(fill);
 
-    gc.weightx = gc.weighty = 1.0f;
-    gc.gridx = 0;
-    gc.gridy = 2;
-    gc.gridheight = 1;
-    gc.gridwidth = 4;
-    gb.setConstraints(description, gc);
+    gbc.weightx = gbc.weighty = 1.0f;
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbc.gridheight = 1;
+    gbc.gridwidth = 4;
+    gbl.setConstraints(description, gbc);
     inner.add(description);
     description.setFont(description.getFont().deriveFont(Font.PLAIN));
 
