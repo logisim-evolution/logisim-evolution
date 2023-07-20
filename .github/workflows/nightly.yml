@@ -3,7 +3,7 @@
 # https://github.com/logisim-evolution/logisim-evolution
 #
 # Cron driven Github Action builder, intended to create nightly builds
-# from Logisim-evolution's "develop" branch. It assumes to be invoked
+# from Logisim-evolution's "main" branch. It assumes to be invoked
 # daily (once per 24 hrs) and skips building if there was no repo activity
 # during last 24 hours.
 #
@@ -18,8 +18,8 @@ on:
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
   pull_request:
-  # Nightly must be run against "develop" branch only.
-    branches: [ develop ]
+  # Nightly must be run against "main" branch only.
+    branches: [ main ]
     types: [ closed ]
   schedule:
     # every day at midnight
@@ -77,7 +77,7 @@ jobs:
             echo "*** No code changes since yesterday. Skipping."
           fi
 
-          # I need to export current version, even if is incorrect for develop branch as it
+          # I need to export current version, even if is incorrect for main branch as it
           # is part of produced artifacts. We will strip it prior uploading anyway.
 
           # LSe version string can have additional "unstable" indicator (i.e. "-dev") but
@@ -114,7 +114,7 @@ jobs:
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
         uses: actions/checkout@v3
         with:
-          ref: 'develop'
+          ref: 'main'
 
       - name: 'Build Snap package'
         # https://github.com/snapcore/action-build

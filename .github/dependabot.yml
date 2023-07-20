@@ -4,7 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "develop"
+    target-branch: "main"
     ignore:
       - dependency-name: "de.jflex:jflex"
 
@@ -13,4 +13,4 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "develop"
+    target-branch: "main"

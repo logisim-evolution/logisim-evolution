@@ -8,11 +8,10 @@
 name: "Code style"
 on:
   push:
-    # No need to run on push to "develop" as there should not be any direct pushes.
-    # master is left just for emergency cases.
-    branches: [ master ]
+    # main is left just for emergency cases.
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   analyze_sources:
@@ -99,8 +98,8 @@ jobs:
           echo "*********************************************************"
           echo "* FIXME! Code style guide violations detected: ${cnt}"
           echo "*"
-          echo "* For more information about used code style guile see:"
-          echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
+          echo "* For more information about used code style guide see:"
+          echo "* https://github.com/logisim-evolution/logisim-evolution/blob/main/docs/style.md"
           echo "*********************************************************"
           cat "${REPORT_FILE}"
           exit 1
