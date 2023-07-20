@@ -4,9 +4,9 @@ name: "MD Lint"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   markdown_lint:
