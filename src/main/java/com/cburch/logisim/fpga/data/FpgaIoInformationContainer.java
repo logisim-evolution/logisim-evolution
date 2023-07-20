@@ -16,8 +16,10 @@ import com.cburch.logisim.fpga.gui.PartialMapDialog;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.DotMatrix;
+import com.cburch.logisim.std.io.HexDigit;
 import com.cburch.logisim.std.io.LedBar;
 import com.cburch.logisim.std.io.RgbLed;
+import com.cburch.logisim.std.io.SevenSegment;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -312,6 +314,14 @@ public class FpgaIoInformationContainer implements Cloneable {
       myOutputPins.clear();
       for (var i = 0; i < nrOfPins; i++)
         myOutputPins.add(i);
+    }
+    if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
+      nrOfExternalPins = nrOfPins;
+      nrOfPins = nrOfRows * 8;
+      setNrOfPins(nrOfPins);
+      myOutputPins.clear();
+      for (var pinNr = 0; pinNr < nrOfPins; pinNr++)
+        myOutputPins.add(pinNr);
     }
   }
 
@@ -946,6 +956,32 @@ public class FpgaIoInformationContainer implements Cloneable {
     }
     return false;
   }
+  
+  public boolean tryScanningMap(JPanel parent) {
+    var map = selComp.getMap();
+    if (selComp.getPin() >= 0 && selectedPin >= 0) {
+      /* single pin on a selected Pin */
+      map.unmap(selComp.getPin());
+      return map.tryMap(selComp.getPin(), this, selectedPin);
+    }
+    /* okay, the map component has more than one pin, we see if it is a seven segment
+     * display, or a hex display, otherwise we use the partialmapdialog
+     */
+    final var fact = map.getComponentFactory(); 
+    if (fact instanceof SevenSegment || fact instanceof HexDigit) {
+      final var hasDp = map.getAttributeSet().getValue(SevenSegment.ATTR_DP);
+      final var nrOfSegments = (hasDp) ? 8 : 7;
+      final var selectedSegment = selectedPin/8;
+      var canMap = true;
+      map.unmap();
+      for (var segment = 0; segment < nrOfSegments; segment++) {
+        canMap &= map.tryMap(segment, this, segment + selectedSegment * 8);
+      }
+      return canMap;
+    }
+    var diag = new PartialMapDialog(selComp, this, parent);
+    return diag.doit();
+  }
 
   public boolean tryLedArrayMap(JPanel parent) {
     var map = selComp.getMap();
@@ -1010,6 +1046,8 @@ public class FpgaIoInformationContainer implements Cloneable {
     if (selComp == null) return false;
     if (myType.equals(IoComponentTypes.LedArray))
       return tryLedArrayMap(parent);
+    if (myType.equals(IoComponentTypes.SevenSegmentScanning))
+      return tryScanningMap(parent);
     var map = selComp.getMap();
     if (selComp.getPin() >= 0 && nrOfPins == 1) {
       /* single pin only */
