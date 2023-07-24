@@ -28,6 +28,11 @@ public class IoStandards {
     }
     return UNKNOWN;
   }
+  
+  public static String getIoString(char id) {
+    if (id == DEFAULT_STANDARD || id > LVTTL) return null;
+    return BEHAVIOR_STRINGS[id];
+  }
 
   public static List<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();

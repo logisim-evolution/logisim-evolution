@@ -44,6 +44,7 @@ public enum IoComponentTypes {
   Pin,
   SevenSegment,
   SevenSegmentNoDp,
+  SevenSegmentScanning,
   DIPSwitch,
   RgbLed,
   LedArray,
@@ -105,6 +106,7 @@ public enum IoComponentTypes {
       case RgbLed -> 3;
       case LocalBus -> 2;
       case LedArray -> 16;
+      case SevenSegmentScanning -> 9;
       default -> 0;
     };
   }
@@ -131,7 +133,7 @@ public enum IoComponentTypes {
 
   public static Boolean hasRotationAttribute(IoComponentTypes comp) {
     return switch (comp) {
-      case DIPSwitch, SevenSegment, LedArray -> true;
+      case DIPSwitch, SevenSegment, LedArray, SevenSegmentScanning -> true;
       default -> false;
     };
   }
@@ -143,7 +145,7 @@ public enum IoComponentTypes {
         case ROTATION_CCW_90 -> S.get("DipSwitchCCW90");
         default -> S.get("DipSwitchZero");
       };
-      case SevenSegment -> switch (rotation) {
+      case SevenSegment, SevenSegmentScanning -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
         default -> S.get("SevenSegmentZero");
@@ -494,7 +496,8 @@ public enum IoComponentTypes {
           IoComponentTypes.RgbLed,
           IoComponentTypes.SevenSegment,
           IoComponentTypes.LedArray,
-          IoComponentTypes.SevenSegmentNoDp);
+          IoComponentTypes.SevenSegmentNoDp,
+          IoComponentTypes.SevenSegmentScanning);
 
   public static final Set<IoComponentTypes> IN_OUT_COMPONENT_SET =
       EnumSet.of(IoComponentTypes.Pin, IoComponentTypes.PortIo);

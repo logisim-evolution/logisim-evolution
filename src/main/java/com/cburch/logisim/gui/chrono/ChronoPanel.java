@@ -81,29 +81,29 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     final var simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
     final var toolbar = new Toolbar(simTools);
     final var toolpanel = new JPanel();
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    toolpanel.setLayout(gb);
-    gc.fill = GridBagConstraints.NONE;
-    gc.weightx = gc.weighty = 0.0;
-    gc.gridx = gc.gridy = 0;
-    gb.setConstraints(toolbar, gc);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    toolpanel.setLayout(gbl);
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.gridx = gbc.gridy = 0;
+    gbl.setConstraints(toolbar, gbc);
     toolpanel.add(toolbar);
 
     final var b = logFrame.makeSelectionButton();
     b.setFont(b.getFont().deriveFont(10.0f));
-    Insets insets = gc.insets;
-    gc.insets = new Insets(2, 0, 2, 0);
-    gc.gridx = 1;
-    gb.setConstraints(b, gc);
+    Insets insets = gbc.insets;
+    gbc.insets = new Insets(2, 0, 2, 0);
+    gbc.gridx = 1;
+    gbl.setConstraints(b, gbc);
     toolpanel.add(b);
-    gc.insets = insets;
+    gbc.insets = insets;
 
     final var filler = Box.createHorizontalGlue();
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.weightx = 1.0;
-    gc.gridx = 2;
-    gb.setConstraints(filler, gc);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = 1.0;
+    gbc.gridx = 2;
+    gbl.setConstraints(filler, gbc);
     toolpanel.add(filler);
     add(toolpanel, BorderLayout.NORTH);
 

@@ -98,7 +98,7 @@ Note that these (except for Snap) are not maintained by the core developers.
 If you should observe a bug in Logisim-evolution while using one of these packages,
 first make sure that it can be reproduced with the most recent official packages
 [provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases)
-and ideally the HEAD of our [develop branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
+and ideally the HEAD of our [main branch](https://github.com/logisim-evolution/logisim-evolution/tree/main)
 before [creating an issue](https://github.com/logisim-evolution/logisim-evolution/issues) on
 the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).  
 Otherwise, report the issue to the package maintainer!
@@ -114,11 +114,11 @@ Otherwise, report the issue to the package maintainer!
 ### Nightly builds ###
 
 We also offer builds based on the current state of the
-[develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop) branch.
-If the develop branch has been changed,
+[main](https://github.com/logisim-evolution/logisim-evolution/tree/main) branch.
+If the main branch has been changed,
 a new `Nightly build` is created at midnight [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
-Note that these builds may be unstable since the develop branch is a work in progress.
+Note that these builds may be unstable since the main branch is a work in progress.
 
 To get nightly downloads, please
 [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
@@ -133,5 +133,5 @@ if you found a bug or have suggestions for improvement.
 
 ## License ##
 
-* `Logisim-evolution` is copyrighted ©2001-2022 by Logisim-evolution [developers](docs/credits.md).
+* `Logisim-evolution` is copyrighted ©2001-2023 by Logisim-evolution [developers](docs/credits.md).
 * This is free software licensed under [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
