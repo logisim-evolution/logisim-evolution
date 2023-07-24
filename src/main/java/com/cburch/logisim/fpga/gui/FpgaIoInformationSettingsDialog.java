@@ -96,20 +96,32 @@ public class FpgaIoInformationSettingsDialog {
   }
   
   private static void updateScanningRequirements (
-      int nrOfRows,
+      int nrOfDigits,
+      int nrOfDecodedBits,
       char driveMode,
+      FpgaIoInformationContainer info,
       JPanel pinPanel,
       ArrayList<JTextField> LocInputs,
       ArrayList<String> oldLocations,
       HashMap<Integer, Integer> NrOfPins) {
     var pinLabels = new ArrayList<String>();
+    final var isDecoded = driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED;
+    decodedBits.setVisible(isDecoded);
+    decodedString.setVisible(isDecoded);
+    if (isDecoded) {
+      final var nrOfDecodeBits = Math.max((int) Math.ceil(Math.log(nrOfDigits) / Math.log(2.0)), nrOfDecodedBits);
+      if (nrOfDecodedBits < nrOfDecodeBits) {
+        decodedBits.setSelectedIndex(nrOfDecodeBits - 1);
+        info.setNrOfColumns(nrOfDecodeBits);
+      }
+    }
     NrOfPins.clear();
     NrOfPins.put(INPUT_ID, 0);
     NrOfPins.put(IO_ID, 0);
     var nrOfPins = 8;
     pinLabels.addAll(SevenSegment.getLabels());
     final var nrOfControlPins = (driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED) ? 
-        (int)Math.ceil(Math.log(nrOfRows) / Math.log(2.0)): nrOfRows;
+        Math.max((int)Math.ceil(Math.log(nrOfDigits) / Math.log(2.0)), nrOfDecodedBits) : nrOfDigits;
     nrOfPins += nrOfControlPins;
     final var pinName = (driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED) ? "A" : "Seg";
     for (var contrPin = 0; contrPin < nrOfControlPins; contrPin++)
@@ -262,6 +274,9 @@ public class FpgaIoInformationSettingsDialog {
       rectPanel.add(rectLocations.get(gbc.gridy), gbc);
     return rectPanel;
   }
+  
+  private static JComboBox<Integer> decodedBits;
+  private static JLabel decodedString;
 
   public static void getSimpleInformationDialog(Boolean deleteButton, IoComponentsInformation IOcomps, FpgaIoInformationContainer info) {
     final var nrOfPins = new HashMap<Integer, Integer>();
@@ -358,11 +373,15 @@ public class FpgaIoInformationSettingsDialog {
               return;
             }
             case "ScanningArray" -> {
-              info.setNrOfRows(rowSize.getSelectedIndex() + 1);
-              info.setArrayDriveMode((char) eEncoding.getSelectedIndex());
+              final var driveMode = (char) eEncoding.getSelectedIndex();
+              info.setNrOfRows(rowSize.getSelectedIndex() + 2);
+              info.setArrayDriveMode(driveMode);
+              info.setNrOfColumns(driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED ? decodedBits.getSelectedIndex() + 1 : -1);
               updateScanningRequirements(
                       info.getNrOfRows(),
+                      info.getNrOfColumns(),
                       info.getArrayDriveMode(),
+                      info,
                       outputsPanel,
                       locOutputs,
                       oldOutputLocations,
@@ -479,13 +498,23 @@ public class FpgaIoInformationSettingsDialog {
               BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaScanningDefinition")));
       scanningPanel.setLayout(new GridBagLayout());
       rowSize.removeAll();
-      for (var nrOfSegments = 1 ; nrOfSegments < 16 ; nrOfSegments++) 
+      for (var nrOfSegments = 2 ; nrOfSegments < 16 ; nrOfSegments++) 
         rowSize.addItem(nrOfSegments);
-      rowSize.setSelectedIndex(info.getNrOfRows() - 1);
+      rowSize.setSelectedIndex(info.getNrOfRows() - 2);
       eEncoding.removeAll();
       for (var val : SevenSegmentScanningDriving.getDisplayStrings())
         eEncoding.addItem(val);
       eEncoding.setSelectedIndex(info.getArrayDriveMode());
+      decodedBits = new JComboBox<Integer>();
+      for (var nrOfDecodedBits = 1; nrOfDecodedBits < 6; nrOfDecodedBits++)
+          decodedBits.addItem(nrOfDecodedBits);
+      if (info.getArrayDriveMode() != SevenSegmentScanningDriving.SEVEN_SEG_DECODED)
+          decodedBits.setVisible(false);
+      else
+          decodedBits.setSelectedIndex(info.getNrOfColumns() - 1);
+      decodedString = new JLabel(S.get("FpgaNrOfDecodeBits"));
+      decodedBits.setActionCommand("ScanningArray");
+      decodedBits.addActionListener(actionListener);
       rowSize.setActionCommand("ScanningArray");
       rowSize.addActionListener(actionListener);
       eEncoding.setActionCommand("ScanningArray");
@@ -500,6 +529,10 @@ public class FpgaIoInformationSettingsDialog {
       panel.add(rowSize, arr);
       arr.gridx--;
       panel.add(new JLabel(S.get("FpgaNrOfSegments")), arr);
+      arr.gridy++;
+      panel.add(decodedString, arr);
+      arr.gridx++;
+      panel.add(decodedBits, arr);
       gbc.gridy++;
       gbc.gridwidth = 2;
       contents.add(panel, gbc);
@@ -560,7 +593,9 @@ public class FpgaIoInformationSettingsDialog {
       } else {
         updateScanningRequirements(
             info.getNrOfRows(),
+            info.getNrOfColumns(),
             info.getArrayDriveMode(),
+            info,
             outputsPanel,
             locOutputs,
             oldOutputLocations,

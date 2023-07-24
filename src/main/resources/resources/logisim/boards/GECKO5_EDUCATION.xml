@@ -15,7 +15,7 @@
       <Button ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" InputPinSet="M17" Rect_x_y_w_h="686,154,41,39"/>
       <Button ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" InputPinSet="M18" Rect_x_y_w_h="688,201,40,37"/>
       <DIPSwitch ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" InputPinSet="D19,D17,J16,H16,C20,C18,D18,D20" Rect_x_y_w_h="680,251,54,143" rotation="90"/>
-      <SevenSegmentScanning ActivityLevel="Active low" FPGAPinDriveStrength="4 mA" FPGAPinIOStandard="LVCMOS33" OutputPinSet="D14,C13,E14,D15,C15,E15,B13,B15,C17,D16" Rect_x_y_w_h="134,76,99,278" rotation="90"/>
+      <SevenSegmentScanning ActivityLevel="Active low" FPGAPinDriveStrength="4 mA" FPGAPinIOStandard="LVCMOS33" OutputPinSet="D14,C13,E14,D15,C15,E15,B13,B15,C17,D16,C16" Rect_x_y_w_h="134,76,99,278" ScanningSevenSegInfo="4,3,SevenSegDecoded" rotation="90"/>
    </IOComponents>
    <BoardPicture>
       <!--This section hold the board picture-->

@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.SevenSegmentScanningDriving;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
@@ -30,6 +31,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.LedArrayGenericHdlGeneratorFactory;
+import com.cburch.logisim.std.io.SevenSegmentScanningGenericHdlGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -286,6 +288,28 @@ public abstract class DownloadBase {
         }
       }
     }
+    if (top.hasScanningSevenSeg()) {
+      for (var type : SevenSegmentScanningDriving.DRIVING_STRINGS) {
+        if (top.hasScanningSevenSegmentType(type)) {
+          worker = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLGenerator(type);
+          final var name =SevenSegmentScanningGenericHdlGenerator.getSpecificHDLName(type);
+          if (worker != null && name != null) {
+             if (!Hdl.writeEntity(
+                 projectDir + worker.getRelativeDirectory(), 
+                 worker.getEntity(rootSheet.getNetList(), null, name),
+                 name)) {
+               return false;
+             }
+             if (!Hdl.writeArchitecture(
+                 projectDir + worker.getRelativeDirectory(),
+                 worker.getArchitecture(rootSheet.getNetList(), null, name), 
+                 name)) {
+               return false;
+             }
+          }
+        }
+      }
+    }
     if (!Hdl.writeEntity(
         projectDir + top.getRelativeDirectory(),
         top.getEntity(
@@ -367,17 +391,18 @@ public abstract class DownloadBase {
     }
   }
 
-  public static Map<String, String> getLedArrayMaps(
+  public static Map<String, String> getScanningMaps(
       MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
-    final var ledArrayMaps = new HashMap<String, String>();
+    final var pinMaps = new HashMap<String, String>();
     var hasMappedClockedArray = false;
+    var hasScanningSevenSegment = false;
     for (final var comp : maps.getIoComponentInformation().getComponents()) {
       if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
           hasMappedClockedArray |=
               LedArrayGenericHdlGeneratorFactory.requiresClock(comp.getArrayDriveMode());
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
-            ledArrayMaps.put(
+            pinMaps.put(
                 LedArrayGenericHdlGeneratorFactory.getExternalSignalName(
                     comp.getArrayDriveMode(),
                     comp.getNrOfRows(),
@@ -388,13 +413,27 @@ public abstract class DownloadBase {
           }
         }
       }
+      if (comp.getType().equals(IoComponentTypes.SevenSegmentScanning)) {
+        if (comp.hasMap()) {
+          hasScanningSevenSegment = true;
+          for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
+            pinMaps.put(
+                SevenSegmentScanningGenericHdlGenerator.getExternalSignalName(
+                    comp.getNrOfRows(), 
+                    comp.getArrayId(), 
+                    pin), 
+                comp.getPinLocation(pin));
+          }
+        }
+      }
     }
-    if (hasMappedClockedArray
+    if ((hasMappedClockedArray || hasScanningSevenSegment)
         && (nets.numberOfClockTrees() == 0)
         && !nets.requiresGlobalClockConnection()) {
-      ledArrayMaps.put(
+      pinMaps.put(
           TickComponentHdlGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
     }
-    return ledArrayMaps;
+    return pinMaps;
   }
+  
 }

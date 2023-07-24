@@ -216,6 +216,20 @@ public class FpgaIoInformationContainer implements Cloneable {
           }
         }
       }
+      if (thisAttr.getNodeName().equals(BoardWriterClass.SCANNING_SEVEN_SEGMENT_INFO_STRING)) {
+        final var vals = thisAttr.getNodeValue().split(",");
+        if (vals.length == 3) {
+          try {
+            nrOfRows = Integer.parseUnsignedInt(vals[0]);
+            nrOfColumns = Integer.parseInt(vals[1]);  
+            driving = SevenSegmentScanningDriving.getId(vals[2]);
+          } catch (NumberFormatException e) {
+            nrOfRows = 4;
+            nrOfColumns = 2;
+            driving = SevenSegmentScanningDriving.SEVEN_SEG_DECODED;
+          }
+        }
+      }
       if (thisAttr.getNodeName().equals(BoardWriterClass.PIN_LOCATION_STRING)) {
         setNrOfPins(1);
         myPinLocations.put(0, thisAttr.getNodeValue());
@@ -495,6 +509,11 @@ public class FpgaIoInformationContainer implements Cloneable {
             + nrOfColumns
             + ","
             + LedArrayDriving.getStrings().get(driving));
+      }
+      if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
+        result.setAttribute(
+          BoardWriterClass.SCANNING_SEVEN_SEGMENT_INFO_STRING, 
+          String.format("%d,%d,%s", nrOfRows, nrOfColumns, SevenSegmentScanningDriving.getStrings().get(driving)));
       }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
@@ -993,7 +1012,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     /* okay, the map component has more than one pin, then we treat first the RGB-LED,
      * DotMatrix, and LedBar, all others will be handled by a partialmapdialog
      */
-    var fact = map.getComponentFactory();
+    final var fact = map.getComponentFactory();
     if (fact instanceof DotMatrix) {
       var nrOfMatrixRows = map.getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_ROWS).getWidth();
       var nrOfMatrixColumns = map.getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_COLS).getWidth();
