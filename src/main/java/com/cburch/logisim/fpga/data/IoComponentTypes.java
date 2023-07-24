@@ -85,6 +85,7 @@ public enum IoComponentTypes {
     return switch (comp) {
       case PortIo -> 8;
       case LocalBus -> 16;
+      case Pin -> 1;
       default -> 0;
     };
   }
