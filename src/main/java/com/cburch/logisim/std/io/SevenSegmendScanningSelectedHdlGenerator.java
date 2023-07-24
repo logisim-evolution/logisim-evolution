@@ -41,19 +41,19 @@ public class SevenSegmendScanningSelectedHdlGenerator extends SevenSegmentScanni
   
   public static LineBuffer getGenericMap(
           int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow, boolean selectActiveLow) {
-      final var scanningReload = (int) (fpgaClockFrequency / 1000);
-      final var nrOfScanningBitsCount = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(scanningReload);
-      final var nrOfControl = nrOfControlBits(nrOfRows, nrOfColumns);
-     final var generics = new HashMap<String, String>();
-      generics.put(NR_OF_SEGMENTS_STRING, Integer.toString(nrOfRows * 8));
-      generics.put(NR_OF_DIGITS_STRING, Integer.toString(nrOfRows));
-      generics.put(NR_OF_CONTROL_STRING, Integer.toString(nrOfControl));
-      generics.put(ACTIVE_LOW_STRING, activeLow ? "1" : "0");
-      generics.put(SELECT_DIGIT_INVERTED_STRING, selectActiveLow ? "1" : "0");
-      generics.put(SCANNING_COUNTER_BITS_STRING, Integer.toString(nrOfScanningBitsCount));
-      generics.put(SCANNING_COUNTER_VALUE_STRING, Integer.toString(scanningReload - 1));
-      return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
-    }
+    final var scanningReload = (int) (fpgaClockFrequency / 1000);
+    final var nrOfScanningBitsCount = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(scanningReload);
+    final var nrOfControl = nrOfControlBits(nrOfRows, nrOfColumns);
+    final var generics = new HashMap<String, String>();
+    generics.put(NR_OF_SEGMENTS_STRING, Integer.toString(nrOfRows * 8));
+    generics.put(NR_OF_DIGITS_STRING, Integer.toString(nrOfRows));
+    generics.put(NR_OF_CONTROL_STRING, Integer.toString(nrOfControl));
+    generics.put(ACTIVE_LOW_STRING, activeLow ? "1" : "0");
+    generics.put(SELECT_DIGIT_INVERTED_STRING, selectActiveLow ? "1" : "0");
+    generics.put(SCANNING_COUNTER_BITS_STRING, Integer.toString(nrOfScanningBitsCount));
+    generics.put(SCANNING_COUNTER_VALUE_STRING, Integer.toString(scanningReload - 1));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
+  }
   
   
   public static List<String> getDecodedCode() {

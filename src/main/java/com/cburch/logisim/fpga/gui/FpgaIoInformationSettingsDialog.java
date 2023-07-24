@@ -95,7 +95,7 @@ public class FpgaIoInformationSettingsDialog {
     }
   }
   
-  private static void updateScanningRequirements (
+  private static void updateScanningRequirements(
       int nrOfDigits,
       int nrOfDecodedBits,
       char driveMode,
@@ -120,8 +120,8 @@ public class FpgaIoInformationSettingsDialog {
     NrOfPins.put(IO_ID, 0);
     var nrOfPins = 8;
     pinLabels.addAll(SevenSegment.getLabels());
-    final var nrOfControlPins = (driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED) ? 
-        Math.max((int)Math.ceil(Math.log(nrOfDigits) / Math.log(2.0)), nrOfDecodedBits) : nrOfDigits;
+    final var nrOfControlPins = (driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED) 
+        ? Math.max((int) Math.ceil(Math.log(nrOfDigits) / Math.log(2.0)), nrOfDecodedBits) : nrOfDigits;
     nrOfPins += nrOfControlPins;
     final var pinName = (driveMode == SevenSegmentScanningDriving.SEVEN_SEG_DECODED) ? "A" : "Seg";
     for (var contrPin = 0; contrPin < nrOfControlPins; contrPin++)
@@ -498,7 +498,7 @@ public class FpgaIoInformationSettingsDialog {
               BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaScanningDefinition")));
       scanningPanel.setLayout(new GridBagLayout());
       rowSize.removeAll();
-      for (var nrOfSegments = 2 ; nrOfSegments < 16 ; nrOfSegments++) 
+      for (var nrOfSegments = 2; nrOfSegments < 16; nrOfSegments++) 
         rowSize.addItem(nrOfSegments);
       rowSize.setSelectedIndex(info.getNrOfRows() - 2);
       eEncoding.removeAll();

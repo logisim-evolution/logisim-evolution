@@ -304,20 +304,20 @@ public enum IoComponentTypes {
           for (var h = 0; h < height; h++) {
             switch (mapRotation) {
               case ROTATION_CCW_90 -> {
-                selectedSegment = nrOfRows - 1 - (int)((float) h / segmentWidth);
+                selectedSegment = nrOfRows - 1 - (int) ((float) h / segmentWidth);
                 selectedSegmentIndex = (float) h % segmentWidth;
                 xIndex = (int) ((segmentWidth - selectedSegmentIndex) / partY);
                 if (xIndex < 0) xIndex = 0;
                 yIndex = (int) ((float) w / partX);
               }
               case ROTATION_CW_90 -> {
-                selectedSegment = (int)((float) h / segmentWidth);
+                selectedSegment = (int) ((float) h / segmentWidth);
                 selectedSegmentIndex = (float) h % segmentWidth;
                 xIndex = (int) (selectedSegmentIndex / partY);
                 yIndex = (int) ((float) w / partX);
               }
               default -> {
-                selectedSegment = (int)((float) w / segmentWidth);
+                selectedSegment = (int) ((float) w / segmentWidth);
                 selectedSegmentIndex = (float) w % segmentWidth;
                 xIndex = (int) (selectedSegmentIndex / partX);
                 yIndex = (int) ((float) h / partY);
@@ -488,36 +488,36 @@ public enum IoComponentTypes {
           }
         }
         for (var xIndex = 0; xIndex < 5; xIndex++) {
-            for (var yIndex = 0; yIndex < 7; yIndex++) {
-              if (segments[yIndex][xIndex] == searchNr) {
-                switch (mapRotation) {
-                  case ROTATION_CCW_90 -> {
-                    realXIndex = yIndex;
-                    realXIndexPlusOne = yIndex + 1;
-                    realYIndex = 4 - xIndex + (nrOfRows - 1 - segment) * 5;
-                    realYIndexPlusOne = 5 - xIndex + (nrOfRows - 1 - segment) * 5;
-                  }
-                  case ROTATION_CW_90 -> {
-                    realXIndex = 6 - yIndex;
-                    realXIndexPlusOne = 7 - yIndex;
-                    realYIndex = xIndex + segment * 5;
-                    realYIndexPlusOne = xIndex + 1 + segment * 5;
-                  }
-                  default -> {
-                    realXIndex = xIndex;
-                    realXIndexPlusOne = xIndex + 1;
-                    realYIndex = yIndex;
-                    realYIndexPlusOne = yIndex + 1;
-                  }
+          for (var yIndex = 0; yIndex < 7; yIndex++) {
+            if (segments[yIndex][xIndex] == searchNr) {
+              switch (mapRotation) {
+                case ROTATION_CCW_90 -> {
+                  realXIndex = yIndex;
+                  realXIndexPlusOne = yIndex + 1;
+                  realYIndex = 4 - xIndex + (nrOfRows - 1 - segment) * 5;
+                  realYIndexPlusOne = 5 - xIndex + (nrOfRows - 1 - segment) * 5;
                 }
-                boxXpos = x + (int) ((float) realXIndex * partX);
-                boxYpos = y + (int) ((float) realYIndex * partY);
-                /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
-                boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
-                boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
-                g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
+                case ROTATION_CW_90 -> {
+                  realXIndex = 6 - yIndex;
+                  realXIndexPlusOne = 7 - yIndex;
+                  realYIndex = xIndex + segment * 5;
+                  realYIndexPlusOne = xIndex + 1 + segment * 5;
+                }
+                default -> {
+                  realXIndex = xIndex;
+                  realXIndexPlusOne = xIndex + 1;
+                  realYIndex = yIndex;
+                  realYIndexPlusOne = yIndex + 1;
+                }
               }
+              boxXpos = x + (int) ((float) realXIndex * partX);
+              boxYpos = y + (int) ((float) realYIndex * partY);
+              /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
+              boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
+              boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
+              g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
             }
+          }
         }
         break;
       case LedArray:

@@ -44,7 +44,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private final ArrayList<FpgaIoInformationContainer> myScanningSevenSegs = new ArrayList<FpgaIoInformationContainer>();
   private final ArrayList<FpgaIoInformationContainer> myLedArrays;
   private final HashMap<String, Boolean> ledArrayTypesUsed;
-  final private HashMap<String, Boolean> ScanningSevenSegmentsUsed = new HashMap<String, Boolean>();
+  private final HashMap<String, Boolean> ScanningSevenSegmentsUsed = new HashMap<String, Boolean>();
   private final SynthesizedClockHdlGeneratorFactory mySynthesizedClockHdlGeneratorFactory;
   public static final String HDL_DIRECTORY = "toplevel";
 

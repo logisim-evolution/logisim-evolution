@@ -292,20 +292,20 @@ public abstract class DownloadBase {
       for (var type : SevenSegmentScanningDriving.DRIVING_STRINGS) {
         if (top.hasScanningSevenSegmentType(type)) {
           worker = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLGenerator(type);
-          final var name =SevenSegmentScanningGenericHdlGenerator.getSpecificHDLName(type);
+          final var name = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLName(type);
           if (worker != null && name != null) {
-             if (!Hdl.writeEntity(
-                 projectDir + worker.getRelativeDirectory(), 
-                 worker.getEntity(rootSheet.getNetList(), null, name),
-                 name)) {
-               return false;
-             }
-             if (!Hdl.writeArchitecture(
-                 projectDir + worker.getRelativeDirectory(),
-                 worker.getArchitecture(rootSheet.getNetList(), null, name), 
-                 name)) {
-               return false;
-             }
+            if (!Hdl.writeEntity(
+                projectDir + worker.getRelativeDirectory(), 
+                worker.getEntity(rootSheet.getNetList(), null, name),
+                name)) {
+              return false;
+            }
+            if (!Hdl.writeArchitecture(
+                projectDir + worker.getRelativeDirectory(),
+                worker.getArchitecture(rootSheet.getNetList(), null, name), 
+                name)) {
+              return false;
+            }
           }
         }
       }

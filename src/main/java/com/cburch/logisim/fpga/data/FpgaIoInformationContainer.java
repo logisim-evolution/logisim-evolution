@@ -512,8 +512,8 @@ public class FpgaIoInformationContainer implements Cloneable {
       }
       if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
         result.setAttribute(
-          BoardWriterClass.SCANNING_SEVEN_SEGMENT_INFO_STRING, 
-          String.format("%d,%d,%s", nrOfRows, nrOfColumns, SevenSegmentScanningDriving.getStrings().get(driving)));
+            BoardWriterClass.SCANNING_SEVEN_SEGMENT_INFO_STRING, 
+            String.format("%d,%d,%s", nrOfRows, nrOfColumns, SevenSegmentScanningDriving.getStrings().get(driving)));
       }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
@@ -990,7 +990,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     if (fact instanceof SevenSegment || fact instanceof HexDigit) {
       final var hasDp = map.getAttributeSet().getValue(SevenSegment.ATTR_DP);
       final var nrOfSegments = (hasDp) ? 8 : 7;
-      final var selectedSegment = selectedPin/8;
+      final var selectedSegment = selectedPin / 8;
       var canMap = true;
       map.unmap();
       for (var segment = 0; segment < nrOfSegments; segment++) {
