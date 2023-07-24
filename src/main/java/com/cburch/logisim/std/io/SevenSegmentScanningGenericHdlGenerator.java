@@ -79,8 +79,8 @@ public class SevenSegmentScanningGenericHdlGenerator {
                 : getSpecificHDLName(typeId));
     switch (typeId) {
       case SevenSegmentScanningDriving.SEVEN_SEG_DECODED: componentMap.add(
-        SevenSegmentScanningDecodedHdlGeneratorFactory.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, false)
-                  .getWithIndent());
+          SevenSegmentScanningDecodedHdlGeneratorFactory.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, false)
+              .getWithIndent());
       case SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI,
         SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW: componentMap.add(
             SevenSegmendScanningSelectedHdlGenerator.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, 
