@@ -239,11 +239,11 @@ fun runCommand(params: List<String>, exceptionMsg: String): String {
  * Helper function to remove all contents from the given directory
 */
 fun deleteDirectoryContents(directory: String) {
-    for (file in File(directory).list()) {
-      if (!delete("${directory}/${file}")) {
-        throw GradleException("Failed to remove old file: ${directory}${file}")
-      }
+  for (file in File(directory).list()) {
+    if (!delete("${directory}/${file}")) {
+      throw GradleException("Failed to remove old file: ${directory}${file}")
     }
+  }
 }
 
 /**
