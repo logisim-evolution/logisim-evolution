@@ -509,12 +509,12 @@ public class FpgaIoInformationSettingsDialog {
       eEncoding.setSelectedIndex(info.getArrayDriveMode());
       decodedBits = new JComboBox<Integer>();
       for (var nrOfDecodedBits = 1; nrOfDecodedBits < 6; nrOfDecodedBits++) {
-          decodedBits.addItem(nrOfDecodedBits);
+        decodedBits.addItem(nrOfDecodedBits);
       }
       if (info.getArrayDriveMode() != SevenSegmentScanningDriving.SEVEN_SEG_DECODED) {
-          decodedBits.setVisible(false);
+        decodedBits.setVisible(false);
       } else {
-          decodedBits.setSelectedIndex(info.getNrOfColumns() - 1);
+        decodedBits.setSelectedIndex(info.getNrOfColumns() - 1);
       }
       decodedString = new JLabel(S.get("FpgaNrOfDecodeBits"));
       decodedBits.setActionCommand("ScanningArray");

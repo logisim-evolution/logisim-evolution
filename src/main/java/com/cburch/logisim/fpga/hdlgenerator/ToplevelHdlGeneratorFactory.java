@@ -173,7 +173,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               ledArray.getNrOfColumns(),
               myLedArrays.indexOf(ledArray));
       for (final var port : ports.keySet()) {
-          myPorts.add(Port.OUTPUT, port, ports.get(port), null);
+        myPorts.add(Port.OUTPUT, port, ports.get(port), null);
       }
     }
     for (final var scanningSevenSeg : myScanningSevenSegs) {
