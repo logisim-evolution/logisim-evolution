@@ -35,8 +35,9 @@ public class SevenSegmendScanningSelectedHdlGenerator extends SevenSegmentScanni
         .add(Port.OUTPUT, SevenSegmentScanningGenericHdlGenerator.SevenSegmentControlOutput, NR_OF_DIGITS_ID, 10)
         .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 11);
     var id = 0;
-    for (final var segName : SevenSegment.getLabels())
+    for (final var segName : SevenSegment.getLabels()) {
       myPorts.add(Port.OUTPUT, segName, 1, id++);
+    }
   }
   
   public static LineBuffer getGenericMap(

@@ -172,8 +172,9 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               ledArray.getNrOfRows(),
               ledArray.getNrOfColumns(),
               myLedArrays.indexOf(ledArray));
-      for (final var port : ports.keySet()) 
+      for (final var port : ports.keySet()) {
           myPorts.add(Port.OUTPUT, port, ports.get(port), null);
+      }
     }
     for (final var scanningSevenSeg : myScanningSevenSegs) {
       myWires.addAllWires(
@@ -186,8 +187,9 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               scanningSevenSeg.getNrOfRows(),
               scanningSevenSeg.getNrOfColumns(),
               myScanningSevenSegs.indexOf(scanningSevenSeg));
-      for (final var port : ports.keySet())
+      for (final var port : ports.keySet()) {
         myPorts.add(Port.OUTPUT, port, ports.get(port), null);
+      }
     }
     if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock)
       myPorts.add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, null);
@@ -260,8 +262,9 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (hasScanningSevenSegmentType(type)) {
         final var worker = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLGenerator(type);
         final var name = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLName(type);
-        if (worker != null && name != null)
+        if (worker != null && name != null) {
           components.add(worker.getComponentInstantiation(theNetlist, null, name)).empty();
+        }
       }
     }
     final var worker = new CircuitHdlGeneratorFactory(myCircuit);

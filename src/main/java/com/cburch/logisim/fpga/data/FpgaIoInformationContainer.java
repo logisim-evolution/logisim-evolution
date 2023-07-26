@@ -334,8 +334,9 @@ public class FpgaIoInformationContainer implements Cloneable {
       nrOfPins = nrOfRows * 8;
       setNrOfPins(nrOfPins);
       myOutputPins.clear();
-      for (var pinNr = 0; pinNr < nrOfPins; pinNr++)
+      for (var pinNr = 0; pinNr < nrOfPins; pinNr++) {
         myOutputPins.add(pinNr);
+      }
     }
   }
 
@@ -1063,10 +1064,12 @@ public class FpgaIoInformationContainer implements Cloneable {
   public boolean tryMap(JPanel parent) {
     if (!selectable) return false;
     if (selComp == null) return false;
-    if (myType.equals(IoComponentTypes.LedArray))
+    if (myType.equals(IoComponentTypes.LedArray)) {
       return tryLedArrayMap(parent);
-    if (myType.equals(IoComponentTypes.SevenSegmentScanning))
+    }
+    if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
       return tryScanningMap(parent);
+    }
     var map = selComp.getMap();
     if (selComp.getPin() >= 0 && nrOfPins == 1) {
       /* single pin only */
