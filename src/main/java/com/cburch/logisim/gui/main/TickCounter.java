@@ -88,7 +88,7 @@ public class TickCounter implements Simulator.Listener {
     if (tickCount > TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION) {
       tickCount -= WEIGHT_REDUCTION_TICKS_COUNT;
       final var nanoseconds = WEIGHT_REDUCTION_TICKS_COUNT / ticksPerNanoseconds;
-      startTime += nanoseconds;
+      startTime += (long) nanoseconds;
     }
 
     if (useKiloHertz) {

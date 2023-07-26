@@ -198,7 +198,7 @@ public class Buzzer extends InstanceFactory {
     g.fillOval(x, y, 40, 40);
     g.setColor(Color.GRAY);
     GraphicsUtil.switchToWidth(g, 2);
-    for (byte k = 8; k <= 16; k += 4) {
+    for (var k = 8; k <= 16; k += 4) {
       g.drawOval(x + 20 - k, y + 20 - k, k * 2, k * 2);
     }
     GraphicsUtil.switchToWidth(g, 2);
@@ -364,7 +364,7 @@ public class Buzzer extends InstanceFactory {
             if (wf != BuzzerWaveform.Sine && smoothLevel > 0 && smoothWidth > 0) {
               var nsig = new double[values.length];
               for (var k = 0; k < smoothLevel; k++) {
-                var sum = 0;
+                double sum = 0.0;
                 for (var i = 0; i < values.length; i++) {
                   if (i > 2 * smoothWidth) {
                     nsig[i - smoothWidth - 1] =
