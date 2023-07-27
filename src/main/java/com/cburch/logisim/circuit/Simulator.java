@@ -186,7 +186,7 @@ public class Simulator {
       var smoothFactor = 1;
       if (prop != null) {
         final var opts = prop.getRootState().getProject().getOptions();
-//        smoothFactor = opts.getAttributeSet().getValue(Options.ATTR_SIM_SMOOTH); #TODO: implement smooth factor
+        //smoothFactor = opts.getAttributeSet().getValue(Options.ATTR_SIM_SMOOTH); #TODO: implement smooth factor
         if (smoothFactor < 1) {
           smoothFactor = 1;
         }
@@ -597,13 +597,13 @@ public class Simulator {
 
   public void addSimulatorListener(StatusListener listener) {
     if (listener instanceof Listener) {
-      synchronized(lock) {
+      synchronized (lock) {
         statusListeners.add(listener);
         activityListeners.add((Listener) listener);
         if (numListeners >= 0) {
           if (numListeners >= listeners.length) {
             final var newArray = new Listener[2 * listeners.length];
-            for (var idx = 0 ; idx < numListeners; idx++) {
+            for (var idx = 0; idx < numListeners; idx++) {
               newArray[idx] = listeners[idx];
             }
             listeners = newArray;
@@ -619,7 +619,7 @@ public class Simulator {
         }
       }
     } else {
-      synchronized(lock) {
+      synchronized (lock) {
         statusListeners.add(listener);
       }
     }
@@ -627,7 +627,7 @@ public class Simulator {
 
   public void removeSimulatorListener(StatusListener listener) {
     if (listener instanceof Listener) {
-      synchronized(lock) {
+      synchronized (lock) {
         if (listener == progressListener) {
           progressListener = null;
         }
@@ -636,7 +636,7 @@ public class Simulator {
         numListeners = -1;
       }
     } else {
-      synchronized(lock) {
+      synchronized (lock) {
         statusListeners.remove(listener);
       }
     }
@@ -679,7 +679,7 @@ public class Simulator {
     final var event = new Event(this, t, s, p);
     var nrListeners = numListeners;
     if (nrListeners < 0) {
-      synchronized(lock) {
+      synchronized (lock) {
         nrListeners = activityListeners.size();
         if (nrListeners > listeners.length) {
           listeners = new Listener[2 * nrListeners];
