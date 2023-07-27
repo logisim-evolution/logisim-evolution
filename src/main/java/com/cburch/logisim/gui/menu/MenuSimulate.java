@@ -324,7 +324,7 @@ public class MenuSimulate extends Menu {
     }
   }
 
-  private class MyListener implements ActionListener, Simulator.Listener, ChangeListener {
+  private class MyListener implements ActionListener, Simulator.StatusListener, ChangeListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
