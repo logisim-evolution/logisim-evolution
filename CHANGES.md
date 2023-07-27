@@ -8,21 +8,19 @@
   * Modified MenuFile MenuEdit MenuSimulate to implement that abstract method
   * After my modification, 11 menuitem in the menu-bar are now available in hotkey settings. Changes will be updated immediately.
 The 11 menuitem are as follows.
-    * ###### Simulation
     * Auto-Propagate
     * Reset Simulation
     * Single-Step Propagation
     * Manual Tick Half Cycle
     * Manual Tick Full Cycle
     * Auto-Tick Enabled
-    * ###### Edit
     * Undo
     * Redo
-    * ###### File
     * Export
     * Print
     * Quit
-  * I'd like to insert more hotkeys to make logisim-evolution more fun. Such as press *SPACE* to rotate the component to be placed on.
+  * I'd like to insert more hotkeys to make logisim-evolution more fun. 
+  * Such as press *SPACE* to rotate the component to be placed on.
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
