@@ -56,6 +56,7 @@ class HotkeyOptions extends OptionsPanel {
     /* TODO: localize */
     JLabel headerLabel=new JLabel("Note that the hotkeys on the menubar need to be started with CTRL.");
     add(headerLabel);
+    add(new JLabel(" "));
 
     JPanel p=new JPanel();
     p.setLayout(new TableLayout(2));
@@ -74,8 +75,17 @@ class HotkeyOptions extends OptionsPanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         AppPreferences.resetHotkeys();
+        try {
+          AppPreferences.getPrefs().flush();
+          for(int i=0;i<hotkeys.length;i++){
+            key_buttons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          }
+        } catch (BackingStoreException ex) {
+          throw new RuntimeException(ex);
+        }
       }
     });
+    add(new JLabel(" "));
     add(resetBtn);
   }
 
