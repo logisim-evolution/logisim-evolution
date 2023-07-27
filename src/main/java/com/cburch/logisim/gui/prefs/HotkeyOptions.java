@@ -12,6 +12,8 @@ package com.cburch.logisim.gui.prefs;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitor;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
 
@@ -27,37 +29,37 @@ import static com.cburch.logisim.gui.Strings.S;
 
 class HotkeyOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
+  private static final PrefMonitor<KeyStroke>[] hotkeys=new PrefMonitor[]{
+          AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE,
+          AppPreferences.HOTKEY_SIM_RESET,
+          AppPreferences.HOTKEY_SIM_STEP,
+          AppPreferences.HOTKEY_SIM_TICK_HALF,
+          AppPreferences.HOTKEY_SIM_TICK_FULL,
+          AppPreferences.HOTKEY_SIM_TICK_ENABLED,
+          AppPreferences.HOTKEY_EDIT_UNDO,
+          AppPreferences.HOTKEY_EDIT_REDO,
+          AppPreferences.HOTKEY_EDIT_EXPORT,
+          AppPreferences.HOTKEY_EDIT_PRINT,
+          AppPreferences.HOTKEY_EDIT_QUIT,
+  };
 
+  private JLabel[] key_labels=new JLabel[hotkeys.length];
+  private JButton[] key_buttons=new JButton[hotkeys.length];
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
-
+    this.setLayout(new TableLayout(1));
     final var listener = new SettingsChangeListener();
-    final var panel = new JPanel(new TableLayout(2));
+    for(int i=0;i<hotkeys.length;i++){
+      final var panel = new JPanel(new TableLayout(2));
+      key_labels[i] = new JLabel(((PrefMonitorKeyStroke)hotkeys[i]).getName());
+      key_buttons[i]=new JButton(hotkeys[i].get().toString());
+      key_buttons[i].addActionListener(listener);
+      panel.add(key_labels[i]);
+      panel.add(key_buttons[i]);
+      add(panel);
+    }
 
-
-
-    final var gridColorsResetButton = new JButton();
-    gridColorsResetButton.addActionListener(listener);
-    gridColorsResetButton.setText(S.get("windowGridColorsReset"));
-    panel.add(new JLabel());
-    panel.add(gridColorsResetButton);
-
-    panel.add(new JLabel(" "));
-    panel.add(new JLabel(" "));
-
-
-
-    panel.add(new JLabel(" "));
-    panel.add(new JLabel(" "));
-
-
-    setLayout(new TableLayout(1));
-    final var but = new JButton();
-    but.addActionListener(listener);
-    but.setText(S.get("windowToolbarReset"));
-    add(but);
-    add(panel);
   }
 
   @Override

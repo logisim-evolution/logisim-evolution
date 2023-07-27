@@ -38,8 +38,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class AppPreferences {
   //
@@ -824,30 +823,36 @@ public class AppPreferences {
       create(new PrefMonitorString("dialogDirectory", ""));
 
   /* Hotkey Settings */
-  public static final PrefMonitor<Integer> HOTKEY_SIM_AUTO_PROPAGATE=
-          create(new PrefMonitorInt("hotkeySimAutoPropagate", KeyEvent.VK_E));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE=
+          create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_SIM_RESET=
-          create(new PrefMonitorInt("hotkeySimReset", KeyEvent.VK_R));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_RESET=
+          create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_SIM_STEP=
-          create(new PrefMonitorInt("hotkeySimStep", KeyEvent.VK_I));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_STEP=
+          create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_SIM_TICK_HALF=
-          create(new PrefMonitorInt("hotkeySimTickHalf", KeyEvent.VK_T));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_HALF=
+          create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_SIM_TICK_FULL=
-          create(new PrefMonitorInt("hotkeySimTickFull", KeyEvent.VK_F9));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_FULL=
+          create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_SIM_TICK_ENABLED=
-          create(new PrefMonitorInt("hotkeySimTickEnabled", KeyEvent.VK_K));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_ENABLED=
+          create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_EDIT_UNDO=
-          create(new PrefMonitorInt("hotkeyEditUndo", KeyEvent.VK_Z));
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_UNDO=
+          create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z,0));
 
-  public static final PrefMonitor<Integer> HOTKEY_EDIT_REDO=
-          create(new PrefMonitorInt("hotkeyEditRedo", KeyEvent.VK_Z|KeyEvent.SHIFT_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO=
+          create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK));
 
-  public static final PrefMonitor<Integer> HOTKEY_EDIT_REDO=
-          create(new PrefMonitorInt("hotkeyEditRedo", KeyEvent.VK_Z|KeyEvent.SHIFT_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_EXPORT=
+          create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_PRINT=
+          create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P,0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_QUIT=
+          create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q,0));
 }
