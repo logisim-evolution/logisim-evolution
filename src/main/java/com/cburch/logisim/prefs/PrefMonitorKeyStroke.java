@@ -18,7 +18,6 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     private final byte[] dflt;
     private byte[] value;
     private boolean isMenuKey = true;
-
     private String _name;
 
     public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
