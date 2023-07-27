@@ -269,7 +269,7 @@ public class Propagator {
     return propagate(null, null);
   }
 
-  public boolean propagate(Simulator.Listener propListener, Simulator.Event propEvent) {
+  public boolean propagate(Simulator.ProgressListener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
     root.processDirtyPoints();
     root.processDirtyComponents();
