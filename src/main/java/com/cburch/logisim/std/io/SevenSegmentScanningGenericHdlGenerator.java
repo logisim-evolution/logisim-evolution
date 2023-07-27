@@ -81,12 +81,12 @@ public class SevenSegmentScanningGenericHdlGenerator {
       case SevenSegmentScanningDriving.SEVEN_SEG_DECODED: componentMap.add(
           SevenSegmentScanningDecodedHdlGeneratorFactory.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, false)
               .getWithIndent());
-      break;
+        break;
       case SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI,
         SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW: componentMap.add(
             SevenSegmendScanningSelectedHdlGenerator.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, 
                 typeId == SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW)).getWithIndent();
-      break;
+        break;
     }
     if (Hdl.isVerilog()) componentMap.add("   sevenSegScan{{1}}", identifier);
     switch (typeId) {
