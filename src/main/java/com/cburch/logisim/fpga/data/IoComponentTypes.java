@@ -326,7 +326,7 @@ public enum IoComponentTypes {
             }
             if (xIndex > 4) xIndex = 4;
             if (yIndex > 7) yIndex = 7;
-            final var pinNr = segments[yIndex][xIndex] < 0 ? -1 : segments[yIndex][xIndex] + (8 * selectedSegment); 
+            final var pinNr = segments[yIndex][xIndex] < 0 ? -1 : segments[yIndex][xIndex] + (8 * selectedSegment);
             partialMap[w][h] = pinNr;
           }
         break;
@@ -505,8 +505,8 @@ public enum IoComponentTypes {
                   realYIndexPlusOne = xIndex + 1 + segment * 5;
                 }
                 default -> {
-                  realXIndex = xIndex;
-                  realXIndexPlusOne = xIndex + 1;
+                  realXIndex = xIndex + segment * 5;
+                  realXIndexPlusOne = xIndex + 1 + segment * 5;
                   realYIndex = yIndex;
                   realYIndexPlusOne = yIndex + 1;
                 }
