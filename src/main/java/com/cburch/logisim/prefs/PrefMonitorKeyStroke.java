@@ -54,14 +54,14 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     byte[] res=new byte[8];
     int code=k.getKeyCode();
     int mod=k.getModifiers();
-    res[0]=(byte)(code);
-    res[1]=(byte)(code>>8);
-    res[2]=(byte)(code>>16);
-    res[3]=(byte)(code>>24);
-    res[4]=(byte)(mod);
-    res[5]=(byte)(mod>>8);
-    res[6]=(byte)(mod>>16);
-    res[7]=(byte)(mod>>24);
+    res[0]=(byte)(code&0xff);
+    res[1]=(byte)((code>>8)&0xff);
+    res[2]=(byte)((code>>16)&0xff);
+    res[3]=(byte)((code>>24)&0xff);
+    res[4]=(byte)(mod&0xff);
+    res[5]=(byte)((mod>>8)&0xff);
+    res[6]=(byte)((mod>>16)&0xff);
+    res[7]=(byte)((mod>>24)&0xff);
     return res;
   }
 

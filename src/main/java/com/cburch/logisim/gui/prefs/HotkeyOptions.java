@@ -9,19 +9,14 @@
 
 package com.cburch.logisim.gui.prefs;
 
-import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
-import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
 
 import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -48,8 +43,8 @@ class HotkeyOptions extends OptionsPanel {
           AppPreferences.HOTKEY_FILE_QUIT,
   };
 
-  private JLabel[] key_labels=new JLabel[hotkeys.length];
-  private JButton[] key_buttons=new JButton[hotkeys.length];
+  private final JLabel[] key_labels=new JLabel[hotkeys.length];
+  private final JButton[] key_buttons=new JButton[hotkeys.length];
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
@@ -73,29 +68,21 @@ class HotkeyOptions extends OptionsPanel {
     add(p);
 
     JButton resetBtn=new JButton("Reset to default");
-    resetBtn.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        AppPreferences.resetHotkeys();
-        try {
-          AppPreferences.getPrefs().flush();
-          for(int i=0;i<hotkeys.length;i++){
-            key_buttons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
-          }
-          AppPreferences.hotkeySync();
-        } catch (BackingStoreException ex) {
-          throw new RuntimeException(ex);
+    resetBtn.addActionListener(e -> {
+      AppPreferences.resetHotkeys();
+      try {
+        AppPreferences.getPrefs().flush();
+        for(int i=0;i<hotkeys.length;i++){
+          key_buttons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
         }
+        AppPreferences.hotkeySync();
+      } catch (BackingStoreException ex) {
+        throw new RuntimeException(ex);
       }
     });
     add(new JLabel(" "));
     add(resetBtn);
-    AppPreferences.addPropertyChangeListener(new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        AppPreferences.hotkeySync();
-      }
-    });
+    AppPreferences.addPropertyChangeListener(evt -> AppPreferences.hotkeySync());
   }
 
   @Override
@@ -136,29 +123,21 @@ class HotkeyOptions extends OptionsPanel {
       JButton cancel=new JButton("Cancel");
 
       ok.setFocusable(false);
-      ok.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          if(code!=0){
-            HotkeyOptions.hotkeys[index].set(KeyStroke.getKeyStroke(code,modifier));
-            try {
-              AppPreferences.getPrefs().flush();
-              owner.key_buttons[index].setText(((PrefMonitorKeyStroke)HotkeyOptions.hotkeys[index]).getString());
-              AppPreferences.hotkeySync();
-            } catch (BackingStoreException ex) {
-              throw new RuntimeException(ex);
-            }
+      ok.addActionListener(e1 -> {
+        if(code!=0){
+          HotkeyOptions.hotkeys[index].set(KeyStroke.getKeyStroke(code,modifier));
+          try {
+            AppPreferences.getPrefs().flush();
+            owner.key_buttons[index].setText(((PrefMonitorKeyStroke)HotkeyOptions.hotkeys[index]).getString());
+            AppPreferences.hotkeySync();
+          } catch (BackingStoreException ex) {
+            throw new RuntimeException(ex);
           }
-          dl.setVisible(false);
         }
+        dl.setVisible(false);
       });
       cancel.setFocusable(false);
-      cancel.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          dl.setVisible(false);
-        }
-      });
+      cancel.addActionListener(ev -> dl.setVisible(false));
 
       sub.setLayout(new TableLayout(2));
       p.setLayout(new TableLayout(1));
@@ -170,7 +149,7 @@ class HotkeyOptions extends OptionsPanel {
       p.add(waitingLabel);
       p.add(sub);
 
-      dl.addKeyListener(new keycaptureListener(dl,waitingLabel,((PrefMonitorKeyStroke)owner.hotkeys[index]).isMenuHotkey(),this));
+      dl.addKeyListener(new keycaptureListener(dl,waitingLabel,((PrefMonitorKeyStroke)hotkeys[index]).isMenuHotkey(),this));
       dl.setContentPane(p);
       dl.setLocationRelativeTo(null);
       dl.setSize(400,100);
@@ -184,10 +163,10 @@ class HotkeyOptions extends OptionsPanel {
   }
 
   private class keycaptureListener implements KeyListener {
-    private JDialog dialog;
-    private JLabel label;
-    private boolean isMenuKey;
-    private SettingsChangeListener scl;
+    private final JDialog dialog;
+    private final JLabel label;
+    private final boolean isMenuKey;
+    private final SettingsChangeListener scl;
 
     public keycaptureListener(JDialog j,JLabel l, boolean is_menu_key,SettingsChangeListener se){
       dialog=j;
@@ -204,6 +183,8 @@ class HotkeyOptions extends OptionsPanel {
     public void keyPressed(KeyEvent e) {
       if(e.getKeyCode()>=32) {
         int modifier=e.getModifiersEx();
+        int code=e.getKeyCode();
+        /* TODO: be compatible with other scenes */
         if(isMenuKey){
           if((modifier&KeyEvent.CTRL_DOWN_MASK)!=KeyEvent.CTRL_DOWN_MASK){
             /* TODO: localize */
@@ -213,7 +194,16 @@ class HotkeyOptions extends OptionsPanel {
             return;
           }
         }
-        int code=e.getKeyCode();
+        for(var item:hotkeys){
+          if((KeyEvent.getModifiersExText(modifier)+" + "+KeyEvent.getKeyText(code)).equals(((PrefMonitorKeyStroke)item).getString())){
+            /* TODO: localize */
+            /* TODO: the name of the key */
+            label.setText("This key combo is conflicted with "+ ((PrefMonitorKeyStroke)item).getName());
+            scl.code=0;
+            scl.modifier=0;
+            return;
+          }
+        }
         scl.code=code;
         scl.modifier=modifier;
         label.setText(KeyEvent.getModifiersExText(modifier)+" + "+KeyEvent.getKeyText(code));

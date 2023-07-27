@@ -864,6 +864,11 @@ public class AppPreferences {
     HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
     HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
     HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+    try {
+      AppPreferences.getPrefs().flush();
+    } catch (BackingStoreException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static final ArrayList<Menu> gui_sync_objects=new ArrayList<>();
