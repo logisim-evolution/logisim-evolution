@@ -824,35 +824,49 @@ public class AppPreferences {
 
   /* Hotkey Settings */
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE=
-          create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E,0));
+          create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_RESET=
-          create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R,0));
+          create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_STEP=
-          create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I,0));
+          create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_HALF=
-          create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T,0));
+          create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_FULL=
-          create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9,0));
+          create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_ENABLED=
-          create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K,0));
+          create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_UNDO=
-          create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z,0));
+          create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO=
-          create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK));
+          create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT=
-          create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK));
+          create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT=
-          create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P,0));
+          create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT=
-          create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q,0));
+          create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+
+  public static void resetHotkeys(){
+    HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+  }
 }

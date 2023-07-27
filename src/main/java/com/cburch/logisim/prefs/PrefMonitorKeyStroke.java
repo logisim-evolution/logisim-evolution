@@ -68,19 +68,24 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private KeyStroke byteArrayToKeyStroke(byte[] b){
     /* Little Endian */
     int code=0,mod=0;
-    code|=b[0];
-    code|=(b[1]<<8);
-    code|=(b[2]<<16);
-    code|=(b[3]<<24);
+    code|=b[0]&0xff;
+    code|=(b[1]<<8)&0xff;
+    code|=(b[2]<<16)&0xff;
+    code|=(b[3]<<24)&0xff;
 
-    mod|=b[4];
-    mod|=(b[5]<<8);
-    mod|=(b[6]<<16);
-    mod|=(b[7]<<24);
+    mod|=b[4]&0xff;
+    mod|=(b[5]<<8)&0xff;
+    mod|=(b[6]<<16)&0xff;
+    mod|=(b[7]<<24)&0xff;
     return KeyStroke.getKeyStroke(code,mod);
   }
   public KeyStroke get() {
     return byteArrayToKeyStroke(value);
+  }
+
+  public String getString(){
+    KeyStroke tmp=byteArrayToKeyStroke(this.value);
+    return KeyEvent.getModifiersExText(tmp.getModifiers())+" + "+KeyEvent.getKeyText(tmp.getKeyCode());
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {
