@@ -24,6 +24,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import static com.cburch.logisim.gui.Strings.S;
 
@@ -49,11 +51,12 @@ class HotkeyOptions extends OptionsPanel {
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
     this.setLayout(new TableLayout(2));
-    final var listener = new SettingsChangeListener();
+    final var listener = new SettingsChangeListener(this);
     for(int i=0;i<hotkeys.length;i++){
       key_labels[i] = new JLabel(((PrefMonitorKeyStroke)hotkeys[i]).getName()+"  ");
       key_buttons[i]=new JButton(hotkeys[i].get().toString());
       key_buttons[i].addActionListener(listener);
+      key_buttons[i].setActionCommand(i+"");
       add(key_labels[i]);
       add(key_buttons[i]);
     }
@@ -78,35 +81,60 @@ class HotkeyOptions extends OptionsPanel {
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {
-
+    HotkeyOptions owner;
+    public SettingsChangeListener(HotkeyOptions ht){
+      owner=ht;
+    }
     @Override
-    public void stateChanged(ChangeEvent e) {
-      /* TODO: Update Settings */
+    public void actionPerformed(ActionEvent e) {
+      int index=Integer.parseInt(e.getActionCommand());
+      /* TODO:localize */
+      JDialog dl=new JDialog(
+              owner.getPreferencesFrame(),
+              ((PrefMonitorKeyStroke)hotkeys[index]).getName(),
+              true);
+      JPanel p=new JPanel();
+      p.setLayout(new TableLayout(1));
+      JLabel waitingLabel=new JLabel("Receiving Your Input Key");
+      p.add(waitingLabel);
+      dl.addKeyListener(new keycaptureListener(dl,waitingLabel));
+      dl.setContentPane(p);
+      dl.setLocationRelativeTo(null);
+      dl.setSize(300,100);
+      dl.setVisible(true);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-//      if (e.getActionCommand().equals(cmdResetWindowLayout)) {
-//        AppPreferences.resetWindow();
-//        final var nowOpen = Projects.getOpenProjects();
-//        for (final var proj : nowOpen) {
-//          proj.getFrame().resetLayout();
-//          proj.getFrame().revalidate();
-//          proj.getFrame().repaint();
-//        }
-//      } else if (e.getActionCommand().equals(cmdResetGridColors)) {
-//        //        AppPreferences.resetWindow();
-//        final var nowOpen = Projects.getOpenProjects();
-//        AppPreferences.setDefaultGridColors();
-//        for (final var proj : nowOpen) {
-//          proj.getFrame().repaint();
-//        }
-//      } else if (e.getActionCommand().equals(cmdSetAutoScaleFactor)) {
-//        final var tmp = AppPreferences.getAutoScaleFactor();
-//        AppPreferences.SCALE_FACTOR.set(tmp);
-//        AppPreferences.getPrefs().remove(AppPreferences.SCALE_FACTOR.getIdentifier());
-//        zoomValue.setValue((int) (tmp * 100));
-//      }
+    public void stateChanged(ChangeEvent e) {
+
+    }
+  }
+
+  private class keycaptureListener implements KeyListener {
+    private JDialog dialog;
+    private JLabel label;
+
+    public keycaptureListener(JDialog j,JLabel l){
+      dialog=j;
+      label=l;
+    }
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+      if(e.getKeyCode()>=32) {
+        int modifier=e.getModifiersEx();
+        int code=e.getKeyCode();
+        label.setText(KeyEvent.getModifiersExText(modifier)+" + "+KeyEvent.getKeyText(code));
+      }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
   }
 }
