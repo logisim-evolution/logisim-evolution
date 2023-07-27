@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -821,4 +822,32 @@ public class AppPreferences {
 
   public static final PrefMonitor<String> DIALOG_DIRECTORY =
       create(new PrefMonitorString("dialogDirectory", ""));
+
+  /* Hotkey Settings */
+  public static final PrefMonitor<Integer> HOTKEY_SIM_AUTO_PROPAGATE=
+          create(new PrefMonitorInt("hotkeySimAutoPropagate", KeyEvent.VK_E));
+
+  public static final PrefMonitor<Integer> HOTKEY_SIM_RESET=
+          create(new PrefMonitorInt("hotkeySimReset", KeyEvent.VK_R));
+
+  public static final PrefMonitor<Integer> HOTKEY_SIM_STEP=
+          create(new PrefMonitorInt("hotkeySimStep", KeyEvent.VK_I));
+
+  public static final PrefMonitor<Integer> HOTKEY_SIM_TICK_HALF=
+          create(new PrefMonitorInt("hotkeySimTickHalf", KeyEvent.VK_T));
+
+  public static final PrefMonitor<Integer> HOTKEY_SIM_TICK_FULL=
+          create(new PrefMonitorInt("hotkeySimTickFull", KeyEvent.VK_F9));
+
+  public static final PrefMonitor<Integer> HOTKEY_SIM_TICK_ENABLED=
+          create(new PrefMonitorInt("hotkeySimTickEnabled", KeyEvent.VK_K));
+
+  public static final PrefMonitor<Integer> HOTKEY_EDIT_UNDO=
+          create(new PrefMonitorInt("hotkeyEditUndo", KeyEvent.VK_Z));
+
+  public static final PrefMonitor<Integer> HOTKEY_EDIT_REDO=
+          create(new PrefMonitorInt("hotkeyEditRedo", KeyEvent.VK_Z|KeyEvent.SHIFT_DOWN_MASK));
+
+  public static final PrefMonitor<Integer> HOTKEY_EDIT_REDO=
+          create(new PrefMonitorInt("hotkeyEditRedo", KeyEvent.VK_Z|KeyEvent.SHIFT_DOWN_MASK));
 }
