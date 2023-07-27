@@ -45,13 +45,13 @@ class HotkeyOptions extends OptionsPanel {
 
   private final JLabel[] key_labels=new JLabel[hotkeys.length];
   private final JButton[] key_buttons=new JButton[hotkeys.length];
+  private final JLabel headerLabel;
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
     this.setLayout(new TableLayout(1));
     final var listener = new SettingsChangeListener(this);
-    /* TODO: localize */
-    JLabel headerLabel=new JLabel("Note that the hotkeys on the menubar need to be started with CTRL.");
+    headerLabel=new JLabel();
     add(headerLabel);
     add(new JLabel(" "));
 
@@ -67,7 +67,7 @@ class HotkeyOptions extends OptionsPanel {
     }
     add(p);
 
-    JButton resetBtn=new JButton("Reset to default");
+    JButton resetBtn=new JButton(S.get("hotkeyOptResetBtn"));
     resetBtn.addActionListener(e -> {
       AppPreferences.resetHotkeys();
       try {
@@ -87,19 +87,18 @@ class HotkeyOptions extends OptionsPanel {
 
   @Override
   public String getHelpText() {
-    /* TODO: localize */
-    return "This is the help of hotkey settings. Remember to localize it.";
+    return S.get("hotkeyOptHelp");
   }
 
   @Override
   public String getTitle() {
-    /* TODO: localize */
-    return "Hotkey Settings";
+    return S.get("hotkeyOptTitle");
   }
 
   @Override
   public void localeChanged() {
     /* TODO: localize */
+    headerLabel.setText(S.get("hotkeyOptHeader"));
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {
@@ -112,10 +111,9 @@ class HotkeyOptions extends OptionsPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       int index=Integer.parseInt(e.getActionCommand());
-      /* TODO:localize */
       JDialog dl=new JDialog(
               owner.getPreferencesFrame(),
-              ((PrefMonitorKeyStroke)hotkeys[index]).getName(),
+              S.get(((PrefMonitorKeyStroke)hotkeys[index]).getName()),
               true);
       JPanel p=new JPanel();
       JPanel sub=new JPanel();
@@ -152,7 +150,7 @@ class HotkeyOptions extends OptionsPanel {
       dl.addKeyListener(new keycaptureListener(dl,waitingLabel,((PrefMonitorKeyStroke)hotkeys[index]).isMenuHotkey(),this));
       dl.setContentPane(p);
       dl.setLocationRelativeTo(null);
-      dl.setSize(400,100);
+      dl.setSize(400,200);
       dl.setVisible(true);
     }
 
@@ -187,8 +185,7 @@ class HotkeyOptions extends OptionsPanel {
         /* TODO: be compatible with other scenes */
         if(isMenuKey){
           if((modifier&KeyEvent.CTRL_DOWN_MASK)!=KeyEvent.CTRL_DOWN_MASK){
-            /* TODO: localize */
-            label.setText("This key combo must start with CTRL.");
+            label.setText(S.get("hotkeyErrCtrl"));
             scl.code=0;
             scl.modifier=0;
             return;
@@ -196,9 +193,7 @@ class HotkeyOptions extends OptionsPanel {
         }
         for(var item:hotkeys){
           if((KeyEvent.getModifiersExText(modifier)+" + "+KeyEvent.getKeyText(code)).equals(((PrefMonitorKeyStroke)item).getString())){
-            /* TODO: localize */
-            /* TODO: the name of the key */
-            label.setText("This key combo is conflicted with "+ ((PrefMonitorKeyStroke)item).getName());
+            label.setText(S.get("hotkeyErrConflict")+ S.get(((PrefMonitorKeyStroke)item).getName()));
             scl.code=0;
             scl.modifier=0;
             return;
