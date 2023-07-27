@@ -466,34 +466,36 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
 
   public void setObjectsForce(List<? extends CanvasObject> shapesBase, boolean isDefault) {
-    // This shouldn't ever be an issue, but just to make doubly sure, we'll
-    // check that the anchor and all ports are in their proper places.
-    
+    // Outside the appearance editor, the anchor is not drawn at all, and ports
+    // are always drawn last (as the top layer) by the simulation rendering
+    // code. So, the layer-order of ports and anchor within the shape lists does
+    // not really matter much. However, we force the anchor to be in the last
+    // position (top  layer), so it is easier to move, and we force the ports to
+    // be next to last (near top layer), so it matches the simulation rendering.
+      
     // Must manually deep-copy arrays in Java...
     // final var shapes = new ArrayList<CanvasObject>(shapesBase);
-    final var n = shapesBase.size();
-    final var shapes = new ArrayList<CanvasObject>(n);
-    for (var i = 0; i < n; i++) {
-      shapes.add(shapesBase.get(i).clone());
+    final var nrOfShapes = shapesBase.size();
+    final var shapes = new ArrayList<CanvasObject>(nrOfShapes);
+    final var end = nrOfShapes - 1;
+    for (var shapeCount = 0; shapeCount < nrOfShapes; shapeCount++) {
+      shapes.add(shapesBase.get(shapeCount).clone());
     }
-    var ports = 0;
-    for (var i = n - 1; i >= 0; i--) { // count ports, move anchor to end
-      final var obj = shapes.get(i);
+    var reserved = 0;
+    for (var shapeIndex = end; shapeIndex >= 0; shapeIndex--) { // count ports, move anchor to end
+      final var obj = shapes.get(shapeIndex);
       if (obj instanceof AppearanceAnchor) {
-        if (i != n - 1) {
-          shapes.remove(i);
+        if (shapeIndex != end) {
+          shapes.remove(shapeIndex);
           shapes.add(obj);
         }
+        reserved++;
       } else if (obj instanceof AppearancePort) {
-        ports++;
-      }
-    }
-    for (var i = (n - ports - 1) - 1; i >= 0; i--) { // move ports to top
-      final var obj = shapes.get(i);
-      if (obj instanceof AppearancePort) {
-        shapes.remove(i);
-        shapes.add(n - ports - 1, obj);
-        i--;
+        if (shapeIndex != end-reserved) {
+          shapes.remove(shapeIndex);
+          shapes.add(end - reserved, obj);
+        }
+        reserved++;
       }
     }
 
