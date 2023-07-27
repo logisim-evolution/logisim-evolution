@@ -847,12 +847,12 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO=
           create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_EXPORT=
+  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT=
           create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_PRINT=
+  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT=
           create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P,0));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_QUIT=
+  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT=
           create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q,0));
 }

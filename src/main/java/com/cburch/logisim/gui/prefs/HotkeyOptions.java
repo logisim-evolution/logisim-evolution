@@ -38,9 +38,9 @@ class HotkeyOptions extends OptionsPanel {
           AppPreferences.HOTKEY_SIM_TICK_ENABLED,
           AppPreferences.HOTKEY_EDIT_UNDO,
           AppPreferences.HOTKEY_EDIT_REDO,
-          AppPreferences.HOTKEY_EDIT_EXPORT,
-          AppPreferences.HOTKEY_EDIT_PRINT,
-          AppPreferences.HOTKEY_EDIT_QUIT,
+          AppPreferences.HOTKEY_FILE_EXPORT,
+          AppPreferences.HOTKEY_FILE_PRINT,
+          AppPreferences.HOTKEY_FILE_QUIT,
   };
 
   private JLabel[] key_labels=new JLabel[hotkeys.length];
@@ -48,16 +48,14 @@ class HotkeyOptions extends OptionsPanel {
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
-    this.setLayout(new TableLayout(1));
+    this.setLayout(new TableLayout(2));
     final var listener = new SettingsChangeListener();
     for(int i=0;i<hotkeys.length;i++){
-      final var panel = new JPanel(new TableLayout(2));
-      key_labels[i] = new JLabel(((PrefMonitorKeyStroke)hotkeys[i]).getName());
+      key_labels[i] = new JLabel(((PrefMonitorKeyStroke)hotkeys[i]).getName()+"  ");
       key_buttons[i]=new JButton(hotkeys[i].get().toString());
       key_buttons[i].addActionListener(listener);
-      panel.add(key_labels[i]);
-      panel.add(key_buttons[i]);
-      add(panel);
+      add(key_labels[i]);
+      add(key_buttons[i]);
     }
 
   }
