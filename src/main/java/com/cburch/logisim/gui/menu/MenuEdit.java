@@ -11,11 +11,15 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
@@ -37,13 +41,14 @@ class MenuEdit extends Menu {
   private final MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
   private final MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
   private final MyListener myListener = new MyListener();
+  private int menuMask;
 
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
-    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
-    redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(menuMask));
+    redo.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
     cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, menuMask));
     copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask));
     paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, menuMask));
@@ -98,6 +103,11 @@ class MenuEdit extends Menu {
     menubar.registerItem(LogisimMenuBar.ADD_CONTROL, addCtrl);
     menubar.registerItem(LogisimMenuBar.REMOVE_CONTROL, remCtrl);
     computeEnabled();
+  }
+
+  public void hotkeyUpdate(){
+    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(menuMask));
+    redo.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
   }
 
   @Override

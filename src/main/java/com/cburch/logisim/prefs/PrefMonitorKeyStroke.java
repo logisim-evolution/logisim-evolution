@@ -83,6 +83,11 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return byteArrayToKeyStroke(value);
   }
 
+  public KeyStroke getWithMask(int mask) {
+    KeyStroke tmp=byteArrayToKeyStroke(value);
+    return KeyStroke.getKeyStroke(tmp.getKeyCode(),tmp.getModifiers()|mask);
+  }
+
   public String getString(){
     KeyStroke tmp=byteArrayToKeyStroke(this.value);
     return KeyEvent.getModifiersExText(tmp.getModifiers())+" + "+KeyEvent.getKeyText(tmp.getKeyCode());

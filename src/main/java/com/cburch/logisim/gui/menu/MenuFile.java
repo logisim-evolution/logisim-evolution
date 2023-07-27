@@ -13,6 +13,8 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.MacCompatibility;
@@ -20,6 +22,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
@@ -38,12 +42,13 @@ class MenuFile extends Menu implements ActionListener {
   private final MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
   private final JMenuItem prefs = new JMenuItem();
   private final JMenuItem quit = new JMenuItem();
+  private final int menuMask;
 
   public MenuFile(LogisimMenuBar menubar) {
     this.menubar = menubar;
     openRecent = new OpenRecent(menubar);
 
-    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+    menuMask = getToolkit().getMenuShortcutKeyMaskEx();
 
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
@@ -53,10 +58,10 @@ class MenuFile extends Menu implements ActionListener {
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
     saveAs.setAccelerator(
         KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    exportProj.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
-    quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(menuMask));
+    print.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
+    quit.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
+
 
     add(newi);
     add(merge);
@@ -99,6 +104,12 @@ class MenuFile extends Menu implements ActionListener {
     menubar.registerItem(LogisimMenuBar.PRINT, print);
     prefs.addActionListener(this);
     quit.addActionListener(this);
+  }
+
+  public void hotkeyUpdate(){
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(menuMask));
+    print.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
+    quit.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
   }
 
   @Override
