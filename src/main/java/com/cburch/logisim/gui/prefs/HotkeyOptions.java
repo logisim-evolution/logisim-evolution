@@ -94,6 +94,9 @@ class HotkeyOptions extends OptionsPanel {
               ((PrefMonitorKeyStroke)hotkeys[index]).getName(),
               true);
       JPanel p=new JPanel();
+      JPanel sub=new JPanel();
+      JButton
+      sub.setLayout(new TableLayout(2));
       p.setLayout(new TableLayout(1));
       JLabel waitingLabel=new JLabel("Receiving Your Input Key");
       p.add(waitingLabel);

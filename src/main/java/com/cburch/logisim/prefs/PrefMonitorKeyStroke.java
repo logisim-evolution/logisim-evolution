@@ -16,6 +16,7 @@ import java.util.prefs.PreferenceChangeEvent;
 public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private final byte[] dflt;
   private byte[] value;
+  private boolean isMenuKey=true;
 
   private String _name;
 
@@ -29,8 +30,24 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     prefs.addPreferenceChangeListener(this);
   }
 
+  public PrefMonitorKeyStroke(String name, int keycode, int modifier, boolean notMenu) {
+    super(name);
+    _name=name;
+    if(notMenu){
+      isMenuKey=false;
+    }
+    this.dflt = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    final var prefs = AppPreferences.getPrefs();
+    set(prefs.getByteArray(name, dflt));
+    prefs.addPreferenceChangeListener(this);
+  }
+
   public String getName(){
     return _name;
+  }
+  public boolean isMenuHotkey(){
+    return isMenuKey;
   }
   private byte[] keystrokeToByteArray(KeyStroke k){
     /* Little Endian */
