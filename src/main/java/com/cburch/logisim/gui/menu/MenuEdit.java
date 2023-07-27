@@ -62,6 +62,9 @@ class MenuEdit extends Menu {
     lowerBottom.setAccelerator(
         KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
 
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
+
     add(undo);
     add(redo);
     addSeparator();

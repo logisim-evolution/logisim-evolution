@@ -62,6 +62,9 @@ class MenuFile extends Menu implements ActionListener {
     print.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
     quit.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
 
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
+
 
     add(newi);
     add(merge);

@@ -92,6 +92,9 @@ public class MenuSimulate extends Menu {
     tickFull.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
     ticksEnabled.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
 
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
+
     final var bgroup = new ButtonGroup();
     for (var i = 0; i < SUPPORTED_TICK_FREQUENCIES.length; i++) {
       tickFreqs[i] = new TickFrequencyChoice(SUPPORTED_TICK_FREQUENCIES[i]);

@@ -20,20 +20,16 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Toolkit;
+import com.cburch.logisim.gui.menu.Menu;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -868,5 +864,18 @@ public class AppPreferences {
     HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
     HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
     HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+  }
+
+  public static final ArrayList<Menu> gui_sync_objects=new ArrayList<>();
+
+  public static final void hotkeySync(){
+    try {
+      AppPreferences.getPrefs().flush();
+      for(Menu m:gui_sync_objects){
+        m.hotkeyUpdate();
+      }
+    } catch (BackingStoreException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

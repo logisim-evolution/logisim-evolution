@@ -117,6 +117,11 @@ class MenuProject extends Menu {
     menubar.fireEnableChanged();
   }
 
+  @Override
+  public void hotkeyUpdate() {
+
+  }
+
   public void localeChanged() {
     setText(S.get("projectMenu"));
     addCircuit.setText(S.get("projectAddCircuitItem"));
