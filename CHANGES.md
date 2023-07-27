@@ -2,32 +2,27 @@
 
 # Changes #
 
-* @dev (????-??-??)
-  * Added support for scanning 7-segment display on FPGA-boards
-  * Added first support for the openFpga toolchain for the ecp5 famely
-    Note that this is experimental for the moment, so use it at your own risk.
-  * Improved Chinese localization
-    * Changed language code from `cn` to `zh`.
-    * Chinese users (also including those who use other forks of Logisim
-      that are using `cn` language code) will be required to manually modify language settings.
-  * Fixed select port positioning on Multiplexer to be more consistent in some cases [#1734]
-  * Fixed appearance of LSe desktop icon [#1662]
-  * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
-  * Introduced user-defined color for components.
-  * Made component icons more uniform.
-  * Added architecture designation to macOS build.
-  * Fixed Karnaugh map color index bug.
-  * Attribute sheet now honors application color theme.
-  * Attribute sheet now displays HEX value of color properties.
-  * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
-  * Added TTL 74151: 8-line to 1 line data selector
-  * Added TTL 74153: dual 4-line to 1 line data selector
-  * Added TTL 74181: arithmetic logic unit
-  * Added TTL 74182: look-ahead carry generator
-  * Added TTL 74299: 8-bit universal shift register with three-state outputs
-  * Added TTL 74381: arithmetic logic unit
-  * Added TTL 74541: Octal buffers with three-state outputs
-  * Added TTL 74670: 4-by-4 register file with three-state outputs
+* @gtxzsxxk (2023-07-27)
+  * Added a new class HotkeyOptions, a new TAB in the preferences.
+  * Modified Menu class, setting up a new abstract method so that the hotkey can be sync via the gui
+  * Modified MenuFile MenuEdit MenuSimulate to implement that abstract method
+  * After my modification, 11 menuitem in the menu-bar are now available in hotkey settings. Changes will be updated immediately.
+The 11 menuitem are as follows.
+    * ###### Simulation
+    * Auto-Propagate
+    * Reset Simulation
+    * Single-Step Propagation
+    * Manual Tick Half Cycle
+    * Manual Tick Full Cycle
+    * Auto-Tick Enabled
+    * ###### Edit
+    * Undo
+    * Redo
+    * ###### File
+    * Export
+    * Print
+    * Quit
+  * I'd like to insert more hotkeys to make logisim-evolution more fun. Such as press *SPACE* to rotate the component to be placed on.
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
