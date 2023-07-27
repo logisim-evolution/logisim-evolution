@@ -58,7 +58,7 @@ class HotkeyOptions extends OptionsPanel {
     JPanel p=new JPanel();
     p.setLayout(new TableLayout(2));
     for(int i=0;i<hotkeys.length;i++){
-      key_labels[i] = new JLabel(((PrefMonitorKeyStroke)hotkeys[i]).getName()+"  ");
+      key_labels[i] = new JLabel(S.get(((PrefMonitorKeyStroke)hotkeys[i]).getName())+"  ");
       key_buttons[i]=new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
       key_buttons[i].addActionListener(listener);
       key_buttons[i].setActionCommand(i+"");
