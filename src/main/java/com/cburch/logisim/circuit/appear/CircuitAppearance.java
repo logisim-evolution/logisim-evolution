@@ -491,7 +491,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
         }
         reserved++;
       } else if (obj instanceof AppearancePort) {
-        if (shapeIndex != end-reserved) {
+        if (shapeIndex != end - reserved) {
           shapes.remove(shapeIndex);
           shapes.add(end - reserved, obj);
         }
