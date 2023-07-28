@@ -28,6 +28,7 @@ import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -268,55 +269,53 @@ public class EditTool extends Tool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    /* Rotate if ctrl is pressed and space also*/
+    int code=e.getKeyCode();
+    /* My coding is silly, right? */
+    if(code==KeyEvent.VK_BACK_SPACE){
 
-    // ctrlPressLast = false;
-    switch (e.getKeyCode()) {
-      case KeyEvent.VK_BACK_SPACE:
-      case KeyEvent.VK_DELETE:
-        if (!canvas.getSelection().isEmpty()) {
-          final var act = SelectionActions.clear(canvas.getSelection());
-          canvas.getProject().doAction(act);
-          e.consume();
-        } else {
-          wiring.keyPressed(canvas, e);
-        }
-        break;
-      case KeyEvent.VK_INSERT:
-        final var act = SelectionActions.duplicate(canvas.getSelection());
+    }else if(code==KeyEvent.VK_DELETE){
+      if (!canvas.getSelection().isEmpty()) {
+        final var act = SelectionActions.clear(canvas.getSelection());
         canvas.getProject().doAction(act);
         e.consume();
-        break;
-      case KeyEvent.VK_UP:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.NORTH, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_DOWN:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.SOUTH, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_LEFT:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.WEST, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_RIGHT:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.EAST, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_ALT:
-        updateLocation(canvas, e);
-        e.consume();
-        break;
-      case KeyEvent.VK_SPACE:
-        /* Check if ctrl was pressed or not */
-        if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-          attemptRotate(canvas, e);
-        } else {
-          select.keyPressed(canvas, e);
-        }
-        break;
-      default:
+      } else {
+        wiring.keyPressed(canvas, e);
+      }
+    }
+    else if(code==AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE.get().getKeyCode()){
+      final var act = SelectionActions.duplicate(canvas.getSelection());
+      canvas.getProject().doAction(act);
+      e.consume();
+    }
+    else if(code==AppPreferences.HOTKEY_DIR_NORTH.get().getKeyCode()){
+      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.NORTH, e);
+      else select.keyPressed(canvas, e);
+    }
+    else if(code==AppPreferences.HOTKEY_DIR_SOUTH.get().getKeyCode()){
+      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.SOUTH, e);
+      else select.keyPressed(canvas, e);
+    }
+    else if(code==AppPreferences.HOTKEY_DIR_EAST.get().getKeyCode()){
+      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.EAST, e);
+      else select.keyPressed(canvas, e);
+    }
+    else if(code==AppPreferences.HOTKEY_DIR_WEST.get().getKeyCode()){
+      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.WEST, e);
+      else select.keyPressed(canvas, e);
+    }
+    else if(code==KeyEvent.VK_ALT){
+      updateLocation(canvas, e);
+      e.consume();
+    }
+    else if(code==KeyEvent.VK_SPACE){
+      /* Check if ctrl was pressed or not */
+      if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+        attemptRotate(canvas, e);
+      } else {
         select.keyPressed(canvas, e);
+      }
+    }else{
+      select.keyPressed(canvas, e);
     }
   }
 

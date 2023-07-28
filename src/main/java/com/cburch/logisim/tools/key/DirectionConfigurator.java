@@ -11,6 +11,7 @@ package com.cburch.logisim.tools.key;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.event.KeyEvent;
 
 public class DirectionConfigurator implements KeyConfigurator, Cloneable {

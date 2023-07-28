@@ -861,6 +861,21 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT =
       create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
 
+  public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
+      create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_DIR_SOUTH =
+      create(new PrefMonitorKeyStroke("hotkeyDirSouth", KeyEvent.VK_DOWN, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_DIR_EAST =
+      create(new PrefMonitorKeyStroke("hotkeyDirEast", KeyEvent.VK_RIGHT, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_DIR_WEST =
+      create(new PrefMonitorKeyStroke("hotkeyDirWest", KeyEvent.VK_LEFT, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_TOOL_DUPLICATE =
+      create(new PrefMonitorKeyStroke("hotkeyEditToolDuplicate", KeyEvent.VK_INSERT, 0));
+
   public static void resetHotkeys() {
     try {
       HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
@@ -874,6 +889,11 @@ public class AppPreferences {
       HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
       HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_DIR_NORTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
+      HOTKEY_DIR_SOUTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
+      HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
+      HOTKEY_DIR_WEST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
+      HOTKEY_EDIT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
       AppPreferences.getPrefs().flush();
     } catch (BackingStoreException e) {
       throw new RuntimeException(e);
