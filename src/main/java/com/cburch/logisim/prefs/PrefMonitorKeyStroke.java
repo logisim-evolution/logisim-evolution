@@ -9,7 +9,8 @@
 
 package com.cburch.logisim.prefs;
 
-import javax.swing.*;
+
+import javax.swing.KeyStroke;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.prefs.PreferenceChangeEvent;
