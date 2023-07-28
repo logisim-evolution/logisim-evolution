@@ -26,8 +26,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -44,12 +42,18 @@ class HotkeyOptions extends OptionsPanel {
    * Description:
    * This is the hotkey settings Tab in the preferences.
    * Allowing users to decide which hotkey to bind to the specific function.
+   *
    * To implement this into your code
    * Firstly add your hotkey configurations to AppPreferences and set up their strings in resources
    * Fill the resetHotkeys in AppPreferences with your own code
    * Then add your AppPreferences.HOTKEY_ADD_BY_YOU to hotkeys array in HotkeyOptions.java
    * Setting up the hotkey in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
    * Do not forget to sync with the user's settings. You should go modifying hotkeySync in AppPreferences, adding your codes there.
+   *
+   * Now the hotkey options don't involve all the bindings in logisim. The hotkeys chosen by the user might have conflict with
+   * some build-in key bindings until all key bindings can be set in this tab.
+   * If you are available, you can bind them to make logisim better
+   *
    * */
   @SuppressWarnings("unchecked")
   protected static final PrefMonitor<KeyStroke>[] hotkeys = new PrefMonitor[]{

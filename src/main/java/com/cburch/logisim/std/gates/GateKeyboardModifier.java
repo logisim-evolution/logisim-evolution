@@ -13,6 +13,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.tools.SetAttributeAction;
+
 import java.awt.event.KeyEvent;
 
 public class GateKeyboardModifier {
@@ -24,7 +25,8 @@ public class GateKeyboardModifier {
       SetAttributeAction act,
       boolean CreateAction) {
     switch (KeyCode) {
-      case KeyEvent.VK_N:
+      /* not-used, comment this in case of having conflict with future hotkey settings */
+//      case KeyEvent.VK_N:
       case KeyEvent.VK_S:
         if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
           if (CreateAction) act.set(comp, GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
@@ -52,8 +54,9 @@ public class GateKeyboardModifier {
           }
         }
         return true;
-      case KeyEvent.VK_EQUALS:
-      case KeyEvent.VK_PLUS:
+      /* not-used, comment this in case of having conflict with future hotkey settings */
+//      case KeyEvent.VK_EQUALS:
+//      case KeyEvent.VK_PLUS:
       case KeyEvent.VK_ADD:
         if (attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) {
           int NrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
@@ -66,7 +69,8 @@ public class GateKeyboardModifier {
           }
         }
         return true;
-      case KeyEvent.VK_MINUS:
+      /* not-used, comment this in case of having conflict with future hotkey settings */
+//      case KeyEvent.VK_MINUS:
       case KeyEvent.VK_SUBTRACT:
         if (attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) {
           int NrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
