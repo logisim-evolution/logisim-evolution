@@ -23,7 +23,6 @@
     * I'd like to insert more hotkeys to make logisim-evolution more fun.
     * Such as press *SPACE* to rotate the component to be placed on.
 
-
 * @dev (????-??-??)
     * Added support for scanning 7-segment display on FPGA-boards
     * Added first support for the openFpga toolchain for the ecp5 famely
