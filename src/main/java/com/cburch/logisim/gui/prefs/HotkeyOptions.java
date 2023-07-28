@@ -14,10 +14,18 @@ import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.TableLayout;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.prefs.BackingStoreException;
 
 import static com.cburch.logisim.gui.Strings.S;
@@ -60,7 +68,7 @@ class HotkeyOptions extends OptionsPanel {
   };
   private final JButton[] keyButtons = new JButton[hotkeys.length];
   private final JLabel headerLabel;
-  private JButton northBtn,southBtn,eastBtn,westBtn;
+  private JButton northBtn, southBtn, eastBtn, westBtn;
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
@@ -75,23 +83,23 @@ class HotkeyOptions extends OptionsPanel {
     final JLabel[] keyLabels = new JLabel[hotkeys.length];
     for (int i = 0; i < hotkeys.length; i++) {
       /* I do this chore because they have a different layout */
-      if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH||hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH||
-          hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST||hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
-        if(hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH){
-          northBtn=new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
-          keyButtons[i]=northBtn;
+      if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH || hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH ||
+          hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST || hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
+        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH) {
+          northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          keyButtons[i] = northBtn;
         }
-        if(hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH){
-          southBtn=new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
-          keyButtons[i]=southBtn;
+        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH) {
+          southBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          keyButtons[i] = southBtn;
         }
-        if(hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST){
-          eastBtn=new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
-          keyButtons[i]=eastBtn;
+        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST) {
+          eastBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          keyButtons[i] = eastBtn;
         }
-        if(hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST){
-          westBtn=new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
-          keyButtons[i]=westBtn;
+        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
+          westBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          keyButtons[i] = westBtn;
         }
         keyButtons[i].addActionListener(listener);
         keyButtons[i].setActionCommand(i + "");
@@ -106,16 +114,16 @@ class HotkeyOptions extends OptionsPanel {
     }
 
     /* Layout for arrow hotkeys */
-    JPanel dirPLeft=new JPanel();
-    JPanel dirPRight=new JPanel();
+    JPanel dirPLeft = new JPanel();
+    JPanel dirPRight = new JPanel();
     dirPLeft.setLayout(new TableLayout(3));
     dirPRight.setLayout(new TableLayout(3));
     dirPLeft.add(new JLabel(" "));
-    dirPLeft.add(new JLabel(" "+S.get("hotkeyDirNorth")+" "));
+    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirNorth") + " "));
     dirPLeft.add(new JLabel(" "));
-    dirPLeft.add(new JLabel(" "+S.get("hotkeyDirWest")+" "));
-    dirPLeft.add(new JLabel(" "+S.get("hotkeyDirSouth")+" "));
-    dirPLeft.add(new JLabel(" "+S.get("hotkeyDirEast")+" "));
+    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirWest") + " "));
+    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirSouth") + " "));
+    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirEast") + " "));
     p.add(dirPLeft);
     dirPRight.add(new JLabel(" "));
     dirPRight.add(northBtn);

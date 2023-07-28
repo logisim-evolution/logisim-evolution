@@ -22,14 +22,14 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
-import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
