@@ -83,19 +83,15 @@ class HotkeyOptions extends OptionsPanel {
     JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
     resetBtn.addActionListener(e -> {
       AppPreferences.resetHotkeys();
-      try {
-        AppPreferences.getPrefs().flush();
-        for (int i = 0; i < hotkeys.length; i++) {
-          keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
-        }
-        AppPreferences.hotkeySync();
-      } catch (BackingStoreException ex) {
-        throw new RuntimeException(ex);
-      }
     });
     add(new JLabel(" "));
     add(resetBtn);
-    AppPreferences.addPropertyChangeListener(evt -> AppPreferences.hotkeySync());
+    AppPreferences.addPropertyChangeListener(evt -> {
+      AppPreferences.hotkeySync();
+      for (int i = 0; i < hotkeys.length; i++) {
+        keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+      }
+    });
   }
 
   @Override
@@ -196,14 +192,6 @@ class HotkeyOptions extends OptionsPanel {
       if (e.getKeyCode() >= 32) {
         int modifier = e.getModifiersEx();
         int code = e.getKeyCode();
-        /* TODO: be compatible with other scenes */
-        if (isMenuKey && (modifier & InputEvent.CTRL_DOWN_MASK) != InputEvent.CTRL_DOWN_MASK) {
-          label.setText(S.get("hotkeyErrCtrl"));
-          scl.code = 0;
-          scl.modifier = 0;
-          return;
-        }
-
         for (var item : hotkeys) {
           if ((InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code)).equals(((PrefMonitorKeyStroke) item).getString())) {
             label.setText(S.get("hotkeyErrConflict") + S.get(((PrefMonitorKeyStroke) item).getName()));

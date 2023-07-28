@@ -85,12 +85,13 @@ public class MenuSimulate extends Menu {
     menubar.registerItem(LogisimMenuBar.TICK_FULL, tickFull);
 
     menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(menuMask));
-    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(menuMask));
-    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(menuMask));
-    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(menuMask));
-    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
-    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
+    /* Allow user itself to set the mask */
+    runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
+    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(0));
+    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(0));
+    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(0));
+    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(0));
+    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(0));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
@@ -156,12 +157,12 @@ public class MenuSimulate extends Menu {
   }
 
   public void hotkeyUpdate() {
-    runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(menuMask));
-    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(menuMask));
-    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(menuMask));
-    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(menuMask));
-    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
-    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
+    runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
+    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(0));
+    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(0));
+    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(0));
+    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(0));
+    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(0));
   }
 
   public static List<String> getTickFrequencyStrings() {

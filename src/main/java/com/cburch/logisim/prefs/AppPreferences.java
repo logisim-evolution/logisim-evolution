@@ -14,36 +14,36 @@ import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.gui.menu.Menu;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.cburch.logisim.gui.menu.Menu;
 
+import javax.swing.KeyStroke;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.KeyStroke;
 
 public class AppPreferences {
   //
@@ -862,18 +862,18 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
 
   public static void resetHotkeys() {
-    HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
     try {
+      HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+      HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
       AppPreferences.getPrefs().flush();
     } catch (BackingStoreException e) {
       throw new RuntimeException(e);

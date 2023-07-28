@@ -46,8 +46,9 @@ class MenuEdit extends Menu {
     this.menubar = menubar;
 
     menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(menuMask));
-    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
+    //Rather than adding a default CTRL_DOWN_MASK, we allow user itself to set the mask
+    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
+    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
     cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, menuMask));
     copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask));
     paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, menuMask));
@@ -108,8 +109,8 @@ class MenuEdit extends Menu {
   }
 
   public void hotkeyUpdate() {
-    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(menuMask));
-    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
+    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
+    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
   }
 
   @Override

@@ -119,7 +119,7 @@ class MenuProject extends Menu {
 
   @Override
   public void hotkeyUpdate() {
-
+    /* not-used */
   }
 
   public void localeChanged() {
