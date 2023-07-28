@@ -26,6 +26,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.prefs.BackingStoreException;
 
 import static com.cburch.logisim.gui.Strings.S;
@@ -140,10 +142,13 @@ class HotkeyOptions extends OptionsPanel {
     });
     add(new JLabel(" "));
     add(resetBtn);
-    AppPreferences.addPropertyChangeListener(evt -> {
-      AppPreferences.hotkeySync();
-      for (int i = 0; i < hotkeys.length; i++) {
-        keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+    AppPreferences.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        AppPreferences.hotkeySync();
+        for (int i = 0; i < hotkeys.length; i++) {
+          keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+        }
       }
     });
   }
