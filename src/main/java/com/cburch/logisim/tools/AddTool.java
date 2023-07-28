@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.tools;
 
-import static com.cburch.logisim.tools.Strings.S;
-
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitException;
 import com.cburch.logisim.circuit.CircuitMutation;
@@ -31,6 +29,7 @@ import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.base.BaseLibrary;
@@ -40,17 +39,21 @@ import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.SyntaxChecker;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+
+import static com.cburch.logisim.tools.Strings.S;
 
 public class AddTool extends Tool implements Transferable, PropertyChangeListener {
   private class MyAttributeListener implements AttributeListener {
@@ -340,12 +343,13 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public void keyPressed(Canvas canvas, KeyEvent event) {
     processKeyEvent(canvas, event, KeyConfigurationEvent.KEY_PRESSED);
-
-    if (!event.isConsumed() && event.getModifiersEx() == 0) {
+    /* Allow user to bind modifiers */
+    if (!event.isConsumed()) {
       final var keyEventB = event.getKeyCode();
       final var component = getFactory().getDisplayName();
       if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB, null, attrs, canvas, null, false))
         if (autoLabeler.labelKeyboardHandler(keyEventB,
+            event.getModifiersEx(),
             getAttributeSet(),
             component,
             null,
@@ -355,47 +359,42 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             false)) {
           canvas.repaint();
         } else {
-          switch (keyEventB) {
-            case KeyEvent.VK_X:
-              matrixPlace = !matrixPlace;
-              canvas.repaint();
-              break;
-            case KeyEvent.VK_UP:
-              setFacing(canvas, Direction.NORTH);
-              break;
-            case KeyEvent.VK_DOWN:
-              setFacing(canvas, Direction.SOUTH);
-              break;
-            case KeyEvent.VK_LEFT:
-              setFacing(canvas, Direction.WEST);
-              break;
-            case KeyEvent.VK_RIGHT:
-              setFacing(canvas, Direction.EAST);
-              break;
-            case KeyEvent.VK_R:
-              final var current = getFacing();
-              if (current == Direction.NORTH) setFacing(canvas, Direction.EAST);
-              else if (current == Direction.EAST) setFacing(canvas, Direction.SOUTH);
-              else if (current == Direction.SOUTH) setFacing(canvas, Direction.WEST);
-              else setFacing(canvas, Direction.NORTH);
-              break;
-            case KeyEvent.VK_ESCAPE:
-              final var proj = canvas.getProject();
-              final var base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
-              final var next = (base == null) ? null : base.getTool(EditTool._ID);
-              if (next != null) {
-                proj.setTool(next);
-                final var act = SelectionActions.dropAll(canvas.getSelection());
-                if (act != null) {
-                  proj.doAction(act);
-                }
+          int code = event.getKeyCode();
+          int modifier = event.getModifiersEx();
+          String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
+          if (code == KeyEvent.VK_X) {
+            matrixPlace = !matrixPlace;
+            canvas.repaint();
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getString())) {
+            setFacing(canvas, Direction.NORTH);
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getString())) {
+            setFacing(canvas, Direction.SOUTH);
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getString())) {
+            setFacing(canvas, Direction.WEST);
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getString())) {
+            setFacing(canvas, Direction.EAST);
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_ADD_TOOL_ROTATE).getString())) {
+            final var current = getFacing();
+            if (current == Direction.NORTH) setFacing(canvas, Direction.EAST);
+            else if (current == Direction.EAST) setFacing(canvas, Direction.SOUTH);
+            else if (current == Direction.SOUTH) setFacing(canvas, Direction.WEST);
+            else setFacing(canvas, Direction.NORTH);
+          } else if (code == KeyEvent.VK_ESCAPE) {
+            final var proj = canvas.getProject();
+            final var base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
+            final var next = (base == null) ? null : base.getTool(EditTool._ID);
+            if (next != null) {
+              proj.setTool(next);
+              final var act = SelectionActions.dropAll(canvas.getSelection());
+              if (act != null) {
+                proj.doAction(act);
               }
-              break;
-            case KeyEvent.VK_BACK_SPACE:
-              if (lastAddition != null && canvas.getProject().getLastAction() == lastAddition) {
-                canvas.getProject().undoAction();
-                lastAddition = null;
-              }
+            }
+          } else if (code == KeyEvent.VK_BACK_SPACE) {
+            if (lastAddition != null && canvas.getProject().getLastAction() == lastAddition) {
+              canvas.getProject().undoAction();
+              lastAddition = null;
+            }
           }
         }
     }
@@ -687,19 +686,21 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   public static final DataFlavor dataFlavor;
+
   static {
     DataFlavor f = null;
     try {
       f = new DataFlavor(
           String.format("%s;class=\"%s\"",
-            DataFlavor.javaJVMLocalObjectMimeType,
-            AddTool.class.getName()));
+              DataFlavor.javaJVMLocalObjectMimeType,
+              AddTool.class.getName()));
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
     dataFlavor = f;
   }
-  public static final DataFlavor[] dataFlavors = new DataFlavor[] { dataFlavor };
+
+  public static final DataFlavor[] dataFlavors = new DataFlavor[]{dataFlavor};
 
   @Override
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {

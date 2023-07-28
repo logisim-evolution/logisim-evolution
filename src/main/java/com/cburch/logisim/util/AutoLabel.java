@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.util;
 
-import static com.cburch.logisim.util.Strings.S;
-
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -19,8 +17,12 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.SetAttributeAction;
+
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,9 +31,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static com.cburch.logisim.util.Strings.S;
+
 public class AutoLabel {
 
-  public static final Integer[] USED_KEY_STROKES = new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
+  public static final Integer[] USED_KEY_STROKES = new Integer[]{KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
   public static final Set<Integer> KEY_STROKES = new HashSet<>(Arrays.asList(USED_KEY_STROKES));
 
   private final HashMap<Circuit, String> labelBase = new HashMap<>();
@@ -190,13 +194,13 @@ public class AutoLabel {
   }
 
   public String askAndSetLabel(String componentName, String oldLabel, Circuit circ, Component comp, ComponentFactory compFactory,
-      AttributeSet attrs, SetAttributeAction act, boolean createAction) {
+                               AttributeSet attrs, SetAttributeAction act, boolean createAction) {
     var correct = false;
     var newLabel = oldLabel;
     while (!correct) {
       newLabel = (String)
-              OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
-                  S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
+          OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
+              S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
         if (Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
@@ -213,60 +217,55 @@ public class AutoLabel {
     return newLabel;
   }
 
-  public boolean labelKeyboardHandler(int keyCode, AttributeSet attrs, String componentName, Component comp,
-      ComponentFactory compFactory, Circuit circ, SetAttributeAction act, boolean createAction) {
-    switch (keyCode) {
-      case KeyEvent.VK_L -> {
-        if (attrs.containsAttribute(StdAttr.LABEL)) {
-          final var oldLabel = attrs.getValue(StdAttr.LABEL);
-          final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
-              attrs, act, createAction);
-          if (!newLabel.equals(oldLabel)) {
-            if (!newLabel.isEmpty() && labelEndsWithNumber(newLabel)) {
-              activate(circ);
-            } else {
-              active.put(circ, false);
-            }
+  public boolean labelKeyboardHandler(int keyCode, int keyModifiers, AttributeSet attrs, String componentName, Component comp,
+                                      ComponentFactory compFactory, Circuit circ, SetAttributeAction act, boolean createAction) {
+    /* TODO: bind more hotkeys */
+    int code = keyCode;
+    int modifier = keyModifiers;
+    String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
+    if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_OPEN).getString())) {
+      if (attrs.containsAttribute(StdAttr.LABEL)) {
+        final var oldLabel = attrs.getValue(StdAttr.LABEL);
+        final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
+            attrs, act, createAction);
+        if (!newLabel.equals(oldLabel)) {
+          if (!newLabel.isEmpty() && labelEndsWithNumber(newLabel)) {
+            activate(circ);
+          } else {
+            active.put(circ, false);
           }
         }
-        return true;
       }
-      case KeyEvent.VK_T -> {
-        if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction)
-            act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
-          else
-            attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
-        }
-        return true;
+      return true;
+    } else if (code == KeyEvent.VK_T) {
+      if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
+        if (createAction)
+          act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
+        else
+          attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
       }
-      case KeyEvent.VK_V -> {
-        if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
-            && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction)
-            act.set(comp, StdAttr.LABEL_VISIBILITY, true);
-          else
-            attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
-        }
-        return true;
+      return true;
+    } else if (code == KeyEvent.VK_V) {
+      if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
+          && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
+        if (createAction)
+          act.set(comp, StdAttr.LABEL_VISIBILITY, true);
+        else
+          attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
       }
-      case KeyEvent.VK_H -> {
-        if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
-            && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction)
-            act.set(comp, StdAttr.LABEL_VISIBILITY, false);
-          else
-            attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
-        }
-        return true;
+      return true;
+    } else if (code == KeyEvent.VK_H) {
+      if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
+          && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
+        if (createAction)
+          act.set(comp, StdAttr.LABEL_VISIBILITY, false);
+        else
+          attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
       }
-      case KeyEvent.VK_A -> {
-        stop(circ);
-        return true;
-      }
-      default -> {
-        // nothing
-      }
+      return true;
+    } else if (code == KeyEvent.VK_A) {
+      stop(circ);
+      return true;
     }
     return false;
   }

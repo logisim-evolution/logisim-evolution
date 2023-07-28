@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.tools;
 
-import static com.cburch.logisim.tools.Strings.S;
-
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -29,11 +27,14 @@ import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -42,11 +43,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 public class EditTool extends Tool {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   *
+   * <p>
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Edit Tool";
@@ -269,11 +272,13 @@ public class EditTool extends Tool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    int code=e.getKeyCode();
-    /* My coding is silly, right? */
-    if(code==KeyEvent.VK_BACK_SPACE){
+    /* My coding is silly, right? Doing so make sure that the hotkey can support both keycode and modifier */
+    int code = e.getKeyCode();
+    int modifier = e.getModifiersEx();
+    String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
+    if (code == KeyEvent.VK_BACK_SPACE) {
 
-    }else if(code==KeyEvent.VK_DELETE){
+    } else if (code == KeyEvent.VK_DELETE) {
       if (!canvas.getSelection().isEmpty()) {
         final var act = SelectionActions.clear(canvas.getSelection());
         canvas.getProject().doAction(act);
@@ -281,40 +286,33 @@ public class EditTool extends Tool {
       } else {
         wiring.keyPressed(canvas, e);
       }
-    }
-    else if(code==AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE.get().getKeyCode()){
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE).getString())) {
       final var act = SelectionActions.duplicate(canvas.getSelection());
       canvas.getProject().doAction(act);
       e.consume();
-    }
-    else if(code==AppPreferences.HOTKEY_DIR_NORTH.get().getKeyCode()){
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.NORTH, e);
       else select.keyPressed(canvas, e);
-    }
-    else if(code==AppPreferences.HOTKEY_DIR_SOUTH.get().getKeyCode()){
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.SOUTH, e);
       else select.keyPressed(canvas, e);
-    }
-    else if(code==AppPreferences.HOTKEY_DIR_EAST.get().getKeyCode()){
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.EAST, e);
       else select.keyPressed(canvas, e);
-    }
-    else if(code==AppPreferences.HOTKEY_DIR_WEST.get().getKeyCode()){
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.WEST, e);
       else select.keyPressed(canvas, e);
-    }
-    else if(code==KeyEvent.VK_ALT){
+    } else if (code == KeyEvent.VK_ALT) {
       updateLocation(canvas, e);
       e.consume();
-    }
-    else if(code==KeyEvent.VK_SPACE){
+    } else if (code == KeyEvent.VK_SPACE) {
       /* Check if ctrl was pressed or not */
       if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
         attemptRotate(canvas, e);
       } else {
         select.keyPressed(canvas, e);
       }
-    }else{
+    } else {
       select.keyPressed(canvas, e);
     }
   }

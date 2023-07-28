@@ -352,6 +352,7 @@ public class SelectTool extends Tool {
           keyTaken |=
               autoLabeler.labelKeyboardHandler(
                   keybEvent,
+                  e.getModifiersEx(),
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
                   comp,

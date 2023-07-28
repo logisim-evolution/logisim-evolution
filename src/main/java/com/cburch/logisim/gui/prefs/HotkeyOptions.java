@@ -69,6 +69,8 @@ class HotkeyOptions extends OptionsPanel {
       AppPreferences.HOTKEY_DIR_EAST,
       AppPreferences.HOTKEY_DIR_WEST,
       AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE,
+      AppPreferences.HOTKEY_AUTO_LABEL_OPEN,
+      AppPreferences.HOTKEY_ADD_TOOL_ROTATE,
   };
   private final JButton[] keyButtons = new JButton[hotkeys.length];
   private final JLabel headerLabel;

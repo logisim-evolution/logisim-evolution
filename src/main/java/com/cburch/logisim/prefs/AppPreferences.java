@@ -876,6 +876,12 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_TOOL_DUPLICATE =
       create(new PrefMonitorKeyStroke("hotkeyEditToolDuplicate", KeyEvent.VK_INSERT, 0));
 
+  public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_OPEN =
+      create(new PrefMonitorKeyStroke("hotkeyAutoLabelOpen", KeyEvent.VK_L, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_ADD_TOOL_ROTATE =
+      create(new PrefMonitorKeyStroke("hotkeyAddToolRotate", KeyEvent.VK_R, 0));
+
   public static void resetHotkeys() {
     try {
       HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
@@ -894,6 +900,8 @@ public class AppPreferences {
       HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
       HOTKEY_DIR_WEST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
       HOTKEY_EDIT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
+      HOTKEY_AUTO_LABEL_OPEN.set(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
+      HOTKEY_ADD_TOOL_ROTATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
       AppPreferences.getPrefs().flush();
     } catch (BackingStoreException e) {
       throw new RuntimeException(e);
