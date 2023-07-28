@@ -45,8 +45,8 @@ public class AppPreferences {
       Locale[] check;
       for (int set = 0; set < 2; set++) {
         check = (set == 0)
-          ? new Locale[] {Locale.getDefault(), Locale.ENGLISH}
-          : Locale.getAvailableLocales();
+            ? new Locale[]{Locale.getDefault(), Locale.ENGLISH}
+            : Locale.getAvailableLocales();
         for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
@@ -443,7 +443,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> GATE_SHAPE =
       create(
           new PrefMonitorStringOpts(
-              "gateShape", new String[] {SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
+              "gateShape", new String[]{SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
   public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 
   // FPGA Commander Preferences
@@ -455,7 +455,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "afterAdd",
-              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              new String[]{HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
@@ -479,12 +479,12 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "toolbarPlacement",
-              new String[] {
-                Direction.NORTH.toString(),
-                Direction.SOUTH.toString(),
-                Direction.EAST.toString(),
-                Direction.WEST.toString(),
-                TOOLBAR_HIDDEN
+              new String[]{
+                  Direction.NORTH.toString(),
+                  Direction.SOUTH.toString(),
+                  Direction.EAST.toString(),
+                  Direction.WEST.toString(),
+                  TOOLBAR_HIDDEN
               },
               Direction.NORTH.toString()));
 
@@ -492,9 +492,9 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "canvasPlacement",
-              new String[] {
-                      Direction.EAST.toString(),
-                      Direction.WEST.toString()},
+              new String[]{
+                  Direction.EAST.toString(),
+                  Direction.WEST.toString()},
               Direction.EAST.toString()));
 
   public static final PrefMonitor<String> LookAndFeel =
@@ -534,7 +534,7 @@ public class AppPreferences {
       create(new PrefMonitorInt("componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_GHOST_COLOR =
       create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
-  
+
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
@@ -555,10 +555,10 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "defaultAppearance",
-              new String[] {
-                StdAttr.APPEAR_CLASSIC.toString(),
-                StdAttr.APPEAR_FPGA.toString(),
-                StdAttr.APPEAR_EVOLUTION.toString()
+              new String[]{
+                  StdAttr.APPEAR_CLASSIC.toString(),
+                  StdAttr.APPEAR_FPGA.toString(),
+                  StdAttr.APPEAR_EVOLUTION.toString()
               },
               StdAttr.APPEAR_EVOLUTION.toString()));
 
@@ -581,9 +581,9 @@ public class AppPreferences {
 
   public static double getAutoScaleFactor() {
     return (((!GraphicsEnvironment.isHeadless())
-                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                  : 0)
-              / 1000);
+        ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+        : 0)
+        / 1000);
   }
 
   public static final PrefMonitor<Double> SCALE_FACTOR =
@@ -596,7 +596,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> ADD_AFTER =
       create(
           new PrefMonitorStringOpts(
-              "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
+              "afterAdd", new String[]{ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
   public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
   public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
@@ -606,11 +606,11 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "pinAppearance",
-              new String[] {
-                PIN_APPEAR_DOT_SMALL,
-                PIN_APPEAR_DOT_MEDIUM,
-                PIN_APPEAR_DOT_BIG,
-                PIN_APPEAR_DOT_BIGGER
+              new String[]{
+                  PIN_APPEAR_DOT_SMALL,
+                  PIN_APPEAR_DOT_MEDIUM,
+                  PIN_APPEAR_DOT_BIG,
+                  PIN_APPEAR_DOT_BIGGER
               },
               PIN_APPEAR_DOT_SMALL));
 
@@ -734,7 +734,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "graphicsAcceleration",
-              new String[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D},
+              new String[]{ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D},
               ACCEL_DEFAULT));
   public static final PrefMonitor<Boolean> AntiAliassing =
       create(new PrefMonitorBoolean("AntiAliassing", true));
@@ -784,8 +784,8 @@ public class AppPreferences {
           new PrefMonitorInt(
               "windowWidth",
               ((!GraphicsEnvironment.isHeadless())
-                      ? Toolkit.getDefaultToolkit().getScreenSize().width
-                      : 0)
+                  ? Toolkit.getDefaultToolkit().getScreenSize().width
+                  : 0)
                   / 2));
 
   public static final PrefMonitor<Integer> WINDOW_HEIGHT =
@@ -819,51 +819,51 @@ public class AppPreferences {
       create(new PrefMonitorString("dialogDirectory", ""));
 
   /* Hotkey Settings */
-  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE=
-          create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE =
+      create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_RESET=
-          create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_RESET =
+      create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_STEP=
-          create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_STEP =
+      create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_HALF=
-          create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_HALF =
+      create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_FULL=
-          create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_FULL =
+      create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_ENABLED=
-          create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_ENABLED =
+      create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_UNDO=
-          create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_UNDO =
+      create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO=
-          create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO =
+      create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT=
-          create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT =
+      create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT=
-          create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
+      create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT=
-          create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+  public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT =
+      create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
 
-  public static void resetHotkeys(){
-    HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
-    HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+  public static void resetHotkeys() {
+    HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+    HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
     try {
       AppPreferences.getPrefs().flush();
     } catch (BackingStoreException e) {
@@ -871,12 +871,12 @@ public class AppPreferences {
     }
   }
 
-  public static final ArrayList<Menu> gui_sync_objects=new ArrayList<>();
+  public static final ArrayList<Menu> gui_sync_objects = new ArrayList<>();
 
-  public static final void hotkeySync(){
+  public static final void hotkeySync() {
     try {
       AppPreferences.getPrefs().flush();
-      for(Menu m:gui_sync_objects){
+      for (Menu m : gui_sync_objects) {
         m.hotkeyUpdate();
       }
     } catch (BackingStoreException e) {

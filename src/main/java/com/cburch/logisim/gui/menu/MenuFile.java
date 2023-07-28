@@ -18,6 +18,7 @@ import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.MacCompatibility;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -58,9 +59,9 @@ class MenuFile extends Menu implements ActionListener {
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
     saveAs.setAccelerator(
         KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    exportProj.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(menuMask));
-    print.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
-    quit.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
+    exportProj.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(menuMask));
+    print.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
+    quit.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
@@ -109,10 +110,10 @@ class MenuFile extends Menu implements ActionListener {
     quit.addActionListener(this);
   }
 
-  public void hotkeyUpdate(){
-    exportProj.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(menuMask));
-    print.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
-    quit.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
+  public void hotkeyUpdate() {
+    exportProj.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(menuMask));
+    print.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_PRINT).getWithMask(menuMask));
+    quit.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_QUIT).getWithMask(menuMask));
   }
 
   @Override

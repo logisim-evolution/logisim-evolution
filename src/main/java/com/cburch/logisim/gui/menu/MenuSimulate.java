@@ -37,8 +37,8 @@ import javax.swing.event.ChangeListener;
 public class MenuSimulate extends Menu {
 
   public static final Double[] SUPPORTED_TICK_FREQUENCIES = {
-    2048000.0, 1024000.0, 512000.0, 256000.0, 128000.0, 64000.0, 32000.0, 16000.0, 8000.0, 4000.0,
-    2000.0, 1000.0, 512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
+      2048000.0, 1024000.0, 512000.0, 256000.0, 128000.0, 64000.0, 32000.0, 16000.0, 8000.0, 4000.0,
+      2000.0, 1000.0, 512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
   };
   private final LogisimMenuBar menubar;
   private final MyListener myListener = new MyListener();
@@ -86,11 +86,11 @@ public class MenuSimulate extends Menu {
 
     menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(menuMask));
-    reset.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_RESET).getWithMask(menuMask));
-    step.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_STEP).getWithMask(menuMask));
-    tickHalf.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(menuMask));
-    tickFull.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
-    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
+    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(menuMask));
+    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(menuMask));
+    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(menuMask));
+    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
+    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
@@ -155,13 +155,13 @@ public class MenuSimulate extends Menu {
     computeEnabled();
   }
 
-  public void hotkeyUpdate(){
+  public void hotkeyUpdate() {
     runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(menuMask));
-    reset.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_RESET).getWithMask(menuMask));
-    step.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_STEP).getWithMask(menuMask));
-    tickHalf.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(menuMask));
-    tickFull.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
-    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
+    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(menuMask));
+    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(menuMask));
+    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(menuMask));
+    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(menuMask));
+    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(menuMask));
   }
 
   public static List<String> getTickFrequencyStrings() {

@@ -15,6 +15,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -46,7 +47,7 @@ class MenuEdit extends Menu {
 
     menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(menuMask));
-    redo.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
+    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
     cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, menuMask));
     copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask));
     paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, menuMask));
@@ -106,9 +107,9 @@ class MenuEdit extends Menu {
     computeEnabled();
   }
 
-  public void hotkeyUpdate(){
+  public void hotkeyUpdate() {
     undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(menuMask));
-    redo.setAccelerator(((PrefMonitorKeyStroke)AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
+    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(menuMask));
   }
 
   @Override

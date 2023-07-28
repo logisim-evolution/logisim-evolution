@@ -15,5 +15,6 @@ public abstract class Menu extends JMenu {
   private static final long serialVersionUID = 1L;
 
   abstract void computeEnabled();
+
   public abstract void hotkeyUpdate();
 }
