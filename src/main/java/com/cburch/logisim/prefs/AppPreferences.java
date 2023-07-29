@@ -881,8 +881,35 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_OPEN =
       create(new PrefMonitorKeyStroke("hotkeyAutoLabelOpen", KeyEvent.VK_L, 0));
 
+  public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_TOGGLE =
+      create(new PrefMonitorKeyStroke("hotkeyAutoLabelToggle", KeyEvent.VK_T, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_VIEW =
+      create(new PrefMonitorKeyStroke("hotkeyAutoLabelView", KeyEvent.VK_V, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_HIDE =
+      create(new PrefMonitorKeyStroke("hotkeyAutoLabelHide", KeyEvent.VK_H, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP =
+      create(new PrefMonitorKeyStroke("hotkeyAutoLabelSelfNumberedStop", KeyEvent.VK_A, 0));
+
   public static final PrefMonitor<KeyStroke> HOTKEY_ADD_TOOL_ROTATE =
       create(new PrefMonitorKeyStroke("hotkeyAddToolRotate", KeyEvent.VK_R, 0));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_SMALL =
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", KeyEvent.VK_S, 0, false));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_MEDIUM =
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeMedium", KeyEvent.VK_M, 0, false));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_WIDE =
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeWide", KeyEvent.VK_W, 0, false));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_ADD =
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd", KeyEvent.VK_ADD, 0, false));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_SUB =
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub", KeyEvent.VK_SUBTRACT, 0, false));
 
   public static void resetHotkeys() {
     try {
@@ -904,7 +931,16 @@ public class AppPreferences {
       HOTKEY_DIR_WEST.set(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
       HOTKEY_EDIT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
       HOTKEY_AUTO_LABEL_OPEN.set(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
+      HOTKEY_AUTO_LABEL_TOGGLE.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, 0));
+      HOTKEY_AUTO_LABEL_VIEW.set(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));
+      HOTKEY_AUTO_LABEL_HIDE.set(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
       HOTKEY_ADD_TOOL_ROTATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
+      HOTKEY_GATE_MODIFIER_SIZE_SMALL.set(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
+      HOTKEY_GATE_MODIFIER_SIZE_MEDIUM.set(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0));
+      HOTKEY_GATE_MODIFIER_SIZE_WIDE.set(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0));
+      HOTKEY_GATE_MODIFIER_INPUT_ADD.set(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0));
+      HOTKEY_GATE_MODIFIER_INPUT_SUB.set(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0));
+      HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP.set(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0));
       AppPreferences.getPrefs().flush();
     } catch (BackingStoreException e) {
       throw new RuntimeException(e);

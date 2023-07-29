@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.tools;
 
-import static com.cburch.logisim.tools.Strings.S;
-
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.comp.Component;
@@ -35,6 +33,7 @@ import com.cburch.logisim.tools.move.MoveRequestListener;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -46,12 +45,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 public class SelectTool extends Tool {
 
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   *
+   * <p>
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Select Tool";
@@ -137,7 +138,6 @@ public class SelectTool extends Tool {
       }
     }
   }
-
 
 
   private void computeDxDy(Project proj, MouseEvent e, Graphics g) {
@@ -253,10 +253,10 @@ public class SelectTool extends Tool {
   @Override
   public Cursor getCursor() {
     return state == IDLE
-           ? selectCursor
-           : (state == RECT_SELECT
-              ? rectSelectCursor
-              : moveCursor);
+        ? selectCursor
+        : (state == RECT_SELECT
+        ? rectSelectCursor
+        : moveCursor);
   }
 
   @Override
@@ -343,7 +343,7 @@ public class SelectTool extends Tool {
       var keyTaken = false;
       for (final var comp : comps) {
         final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-        keyTaken |= GateKeyboardModifier.tookKeyboardStrokes(keybEvent, comp, comp.getAttributeSet(), canvas, act, true);
+        keyTaken |= GateKeyboardModifier.tookKeyboardStrokes(keybEvent, e.getModifiersEx(), comp, comp.getAttributeSet(), canvas, act, true);
         if (!act.isEmpty()) canvas.getProject().doAction(act);
       }
       if (!keyTaken) {

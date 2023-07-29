@@ -19,6 +19,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private final byte[] dflt;
   private byte[] value;
   private String _name;
+  private boolean canModify = true;
 
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
     super(name);
@@ -28,6 +29,21 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, dflt));
     prefs.addPreferenceChangeListener(this);
+  }
+
+  public PrefMonitorKeyStroke(String name, int keycode, int modifier, boolean canModify) {
+    super(name);
+    _name = name;
+    this.dflt = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    final var prefs = AppPreferences.getPrefs();
+    set(prefs.getByteArray(name, dflt));
+    prefs.addPreferenceChangeListener(this);
+    this.canModify = canModify;
+  }
+
+  public Boolean canModify(){
+    return canModify;
   }
 
   public String getName() {

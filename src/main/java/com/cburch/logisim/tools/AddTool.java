@@ -347,7 +347,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     if (!event.isConsumed()) {
       final var keyEventB = event.getKeyCode();
       final var component = getFactory().getDisplayName();
-      if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB, null, attrs, canvas, null, false))
+      if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB, event.getModifiersEx(), null, attrs, canvas, null, false))
         if (autoLabeler.labelKeyboardHandler(keyEventB,
             event.getModifiersEx(),
             getAttributeSet(),

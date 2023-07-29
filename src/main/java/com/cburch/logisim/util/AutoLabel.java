@@ -237,7 +237,7 @@ public class AutoLabel {
         }
       }
       return true;
-    } else if (code == KeyEvent.VK_T) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
         if (createAction)
           act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
@@ -245,7 +245,7 @@ public class AutoLabel {
           attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
       }
       return true;
-    } else if (code == KeyEvent.VK_V) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_VIEW).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
           && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
         if (createAction)
@@ -254,7 +254,7 @@ public class AutoLabel {
           attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
       }
       return true;
-    } else if (code == KeyEvent.VK_H) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_HIDE).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
           && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
         if (createAction)
@@ -263,7 +263,7 @@ public class AutoLabel {
           attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
       }
       return true;
-    } else if (code == KeyEvent.VK_A) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP).getCompareString())) {
       stop(circ);
       return true;
     }

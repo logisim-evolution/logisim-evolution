@@ -18,9 +18,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -74,7 +78,16 @@ class HotkeyOptions extends OptionsPanel {
       AppPreferences.HOTKEY_DIR_WEST,
       AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE,
       AppPreferences.HOTKEY_AUTO_LABEL_OPEN,
+      AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE,
+      AppPreferences.HOTKEY_AUTO_LABEL_VIEW,
+      AppPreferences.HOTKEY_AUTO_LABEL_HIDE,
+      AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP,
       AppPreferences.HOTKEY_ADD_TOOL_ROTATE,
+      AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_SMALL,
+      AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_MEDIUM,
+      AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_WIDE,
+      AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_ADD,
+      AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_SUB,
   };
   private final JButton[] keyButtons = new JButton[hotkeys.length];
   private final JLabel headerLabel;
@@ -89,6 +102,7 @@ class HotkeyOptions extends OptionsPanel {
     add(new JLabel(" "));
 
     JPanel p = new JPanel();
+    p.setMaximumSize(new Dimension(400,400));
     p.setLayout(new TableLayout(2));
     final JLabel[] keyLabels = new JLabel[hotkeys.length];
     for (int i = 0; i < hotkeys.length; i++) {
@@ -113,12 +127,14 @@ class HotkeyOptions extends OptionsPanel {
         }
         keyButtons[i].addActionListener(listener);
         keyButtons[i].setActionCommand(i + "");
+        keyButtons[i].setEnabled(((PrefMonitorKeyStroke) hotkeys[i]).canModify());
         continue;
       }
       keyLabels[i] = new JLabel(S.get(((PrefMonitorKeyStroke) hotkeys[i]).getName()) + "  ");
       keyButtons[i] = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
       keyButtons[i].addActionListener(listener);
       keyButtons[i].setActionCommand(i + "");
+      keyButtons[i].setEnabled(((PrefMonitorKeyStroke) hotkeys[i]).canModify());
       p.add(keyLabels[i]);
       p.add(keyButtons[i]);
     }
@@ -146,7 +162,16 @@ class HotkeyOptions extends OptionsPanel {
     dirPRight.add(southBtn);
     dirPRight.add(eastBtn);
     p.add(dirPRight);
-    add(p);
+    JScrollPane scrollPane = new JScrollPane(p, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER){
+        @Override
+        public Dimension getPreferredSize(){
+          int w=p.getWidth();
+          return new Dimension(800,400);
+        }
+    };
+
+    add(scrollPane);
 
     JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
     resetBtn.addActionListener(e -> {
