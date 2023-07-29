@@ -365,15 +365,15 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
           if (code == KeyEvent.VK_X) {
             matrixPlace = !matrixPlace;
             canvas.repaint();
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
             setFacing(canvas, Direction.NORTH);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
             setFacing(canvas, Direction.SOUTH);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
             setFacing(canvas, Direction.WEST);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
             setFacing(canvas, Direction.EAST);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_ADD_TOOL_ROTATE).getString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_ADD_TOOL_ROTATE).getCompareString())) {
             final var current = getFacing();
             if (current == Direction.NORTH) setFacing(canvas, Direction.EAST);
             else if (current == Direction.EAST) setFacing(canvas, Direction.SOUTH);

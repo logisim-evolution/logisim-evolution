@@ -92,9 +92,18 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return KeyStroke.getKeyStroke(tmp.getKeyCode(), tmp.getModifiers() | mask);
   }
 
-  public String getString() {
+  public String getCompareString() {
     KeyStroke tmp = byteArrayToKeyStroke(this.value);
     return InputEvent.getModifiersExText(tmp.getModifiers()) + " + " + KeyEvent.getKeyText(tmp.getKeyCode());
+  }
+
+  public String getDisplayString() {
+    KeyStroke tmp = byteArrayToKeyStroke(this.value);
+    String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
+    if(modifierString.equals("")){
+      return KeyEvent.getKeyText(tmp.getKeyCode());
+    }
+    return modifierString + "+" + KeyEvent.getKeyText(tmp.getKeyCode());
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {

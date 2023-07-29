@@ -286,20 +286,20 @@ public class EditTool extends Tool {
       } else {
         wiring.keyPressed(canvas, e);
       }
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE).getString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE).getCompareString())) {
       final var act = SelectionActions.duplicate(canvas.getSelection());
       canvas.getProject().doAction(act);
       e.consume();
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.NORTH, e);
       else select.keyPressed(canvas, e);
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.SOUTH, e);
       else select.keyPressed(canvas, e);
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.EAST, e);
       else select.keyPressed(canvas, e);
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
       if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.WEST, e);
       else select.keyPressed(canvas, e);
     } else if (code == KeyEvent.VK_ALT) {

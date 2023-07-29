@@ -52,7 +52,7 @@ class HotkeyOptions extends OptionsPanel {
    *
    * Now the hotkey options don't involve all the bindings in logisim. The hotkeys chosen by the user might have conflict with
    * some build-in key bindings until all key bindings can be set in this tab.
-   * If you are available, you can bind them to make logisim better
+   * TODO: If you are available, you can bind them in order to make logisim feel better
    *
    * */
   @SuppressWarnings("unchecked")
@@ -96,19 +96,19 @@ class HotkeyOptions extends OptionsPanel {
       if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH || hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH ||
           hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST || hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
         if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH) {
-          northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
           keyButtons[i] = northBtn;
         }
         if (hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH) {
-          southBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          southBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
           keyButtons[i] = southBtn;
         }
         if (hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST) {
-          eastBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          eastBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
           keyButtons[i] = eastBtn;
         }
         if (hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
-          westBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          westBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
           keyButtons[i] = westBtn;
         }
         keyButtons[i].addActionListener(listener);
@@ -116,7 +116,7 @@ class HotkeyOptions extends OptionsPanel {
         continue;
       }
       keyLabels[i] = new JLabel(S.get(((PrefMonitorKeyStroke) hotkeys[i]).getName()) + "  ");
-      keyButtons[i] = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+      keyButtons[i] = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
       keyButtons[i].addActionListener(listener);
       keyButtons[i].setActionCommand(i + "");
       p.add(keyLabels[i]);
@@ -124,6 +124,10 @@ class HotkeyOptions extends OptionsPanel {
     }
 
     /* Layout for arrow hotkeys */
+    p.add(new JLabel(" "));
+    p.add(new JLabel(" "));
+    p.add(new JLabel(S.get("hotkeyOptOrientDesc")));
+    p.add(new JLabel(" "));
     JPanel dirPLeft = new JPanel();
     JPanel dirPRight = new JPanel();
     dirPLeft.setLayout(new TableLayout(3));
@@ -155,7 +159,7 @@ class HotkeyOptions extends OptionsPanel {
       public void preferenceChange(PreferenceChangeEvent evt) {
         AppPreferences.hotkeySync();
         for (int i = 0; i < hotkeys.length; i++) {
-          keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getString());
+          keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
         }
       }
     });
@@ -204,7 +208,7 @@ class HotkeyOptions extends OptionsPanel {
           HotkeyOptions.hotkeys[index].set(KeyStroke.getKeyStroke(code, modifier));
           try {
             AppPreferences.getPrefs().flush();
-            owner.keyButtons[index].setText(((PrefMonitorKeyStroke) HotkeyOptions.hotkeys[index]).getString());
+            owner.keyButtons[index].setText(((PrefMonitorKeyStroke) HotkeyOptions.hotkeys[index]).getDisplayString());
             AppPreferences.hotkeySync();
           } catch (BackingStoreException ex) {
             throw new RuntimeException(ex);
@@ -221,14 +225,19 @@ class HotkeyOptions extends OptionsPanel {
       sub.add(ok);
       sub.add(cancel);
 
+      JPanel top = new JPanel();
+      top.setLayout(new TableLayout(3));
       JLabel waitingLabel = new JLabel("Receiving Your Input Key");
-      p.add(waitingLabel);
+      top.add(new JLabel("  "));
+      top.add(waitingLabel);
+      top.add(new JLabel("  "));
+      p.add(top);
       p.add(sub);
 
       dl.addKeyListener(new KeyCaptureListener(waitingLabel, ((PrefMonitorKeyStroke) hotkeys[index]).isMenuHotkey(), this));
       dl.setContentPane(p);
       dl.setLocationRelativeTo(null);
-      dl.setSize(400, 100);
+      dl.setSize(500, 100);
       dl.setVisible(true);
     }
 
@@ -260,7 +269,7 @@ class HotkeyOptions extends OptionsPanel {
         int modifier = e.getModifiersEx();
         int code = e.getKeyCode();
         for (var item : hotkeys) {
-          if ((InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code)).equals(((PrefMonitorKeyStroke) item).getString())) {
+          if ((InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code)).equals(((PrefMonitorKeyStroke) item).getCompareString())) {
             label.setText(S.get("hotkeyErrConflict") + S.get(((PrefMonitorKeyStroke) item).getName()));
             scl.code = 0;
             scl.modifier = 0;
@@ -269,7 +278,12 @@ class HotkeyOptions extends OptionsPanel {
         }
         scl.code = code;
         scl.modifier = modifier;
-        label.setText(InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code));
+        String modifierString = InputEvent.getModifiersExText(modifier);
+        if(modifierString.equals("")){
+          label.setText(KeyEvent.getKeyText(code));
+        }else{
+          label.setText(InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code));
+        }
       }
     }
 

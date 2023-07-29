@@ -223,7 +223,7 @@ public class AutoLabel {
     int code = keyCode;
     int modifier = keyModifiers;
     String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
-    if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_OPEN).getString())) {
+    if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_OPEN).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var oldLabel = attrs.getValue(StdAttr.LABEL);
         final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
