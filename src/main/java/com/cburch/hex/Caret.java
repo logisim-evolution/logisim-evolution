@@ -252,7 +252,7 @@ public class Caret {
     @Override
     public void keyPressed(KeyEvent e) {
       final var shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
-      movecursor(e.getKeyCode(),shift);
+      movecursor(e.getKeyCode(), shift);
     }
 
     @Override
