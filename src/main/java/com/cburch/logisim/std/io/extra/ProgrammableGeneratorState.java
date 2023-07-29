@@ -126,7 +126,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
     gbc.gridx = 2;
     panel.add(down, gbc);
     // 2 inputs a row
-    for (byte i = 0; i < inputs.length; i += 2) {
+    for (var i = 0; i < inputs.length; i += 2) {
       // number of state to edit
       statenumber = new JLabel(String.valueOf(i / 2 + 1));
       statenumber.setFont(state);

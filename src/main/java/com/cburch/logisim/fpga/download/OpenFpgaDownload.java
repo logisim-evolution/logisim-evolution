@@ -201,7 +201,7 @@ public class OpenFpgaDownload  implements VendorDownload {
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getLedArrayMaps(mapInfo, rootNetList, boardInfo);
+    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
     // TODO: add pull, drive and ioStandard
     for (var key : LedArrayMap.keySet()) {
       pinInfo.add("LOCATE COMP \"{{1}}\" SITE \"{{2}}\";", key, LedArrayMap.get(key));
