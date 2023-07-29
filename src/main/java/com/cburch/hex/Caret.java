@@ -152,92 +152,92 @@ public class Caret {
           BaseMouseMotionListenerContract,
           BaseKeyListenerContract,
           FocusListener {
-   
-      private void movecursor(int m, boolean shift) {
-          final var cols = hex.getMeasures().getColumnCount();
-          int rows;
-          switch (m) {
-              case KeyEvent.VK_UP -> {
-                  if (cursor >= cols) {
-                      setDot(cursor - cols, shift);
-                  }
-              }
-              case KeyEvent.VK_LEFT -> {
-                  if (cursor >= 1) {
-                      setDot(cursor - 1, shift);
-                  }
-              }
-              case KeyEvent.VK_DOWN -> {
-                  if (cursor >= hex.getModel().getFirstOffset()
-                          && cursor <= hex.getModel().getLastOffset() - cols) {
-                      setDot(cursor + cols, shift);
-                  }
-              }
-              case KeyEvent.VK_RIGHT -> {
-                  if (cursor >= hex.getModel().getFirstOffset()
-                          && cursor <= hex.getModel().getLastOffset() - 1) {
-                      setDot(cursor + 1, shift);
-                  }
-              }
-              case KeyEvent.VK_HOME -> {
-                  if (cursor >= 0) {
-                      final var dist = (int) (cursor % cols);
-                      if (dist == 0) {
-                          setDot(0, shift);
-                      } else {
-                          setDot(cursor - dist, shift);
-                      }
-                  }
-              }
-              case KeyEvent.VK_END -> {
-                  if (cursor >= 0) {
-                      final var model = hex.getModel();
-                      var dest = (cursor / cols * cols) + cols - 1;
-                      if (model != null) {
-                          final var end = model.getLastOffset();
-                          if (dest > end || dest == cursor) {
-                              dest = end;
-                          }
-                      }
-                      setDot(dest, shift);
-                  }
-              }
-              case KeyEvent.VK_PAGE_DOWN -> {
-                  rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
-                  if (rows > 2) {
-                      rows--;
-                  }
-                  if (cursor >= 0) {
-                      final var max = hex.getModel().getLastOffset();
-                      if (cursor + rows * cols <= max) {
-                          setDot(cursor + rows * cols, shift);
-                      } else {
-                          var n = cursor;
-                          while (n + cols < max) {
-                              n += cols;
-                          }
-                          setDot(n, shift);
-                      }
-                  }
-              }
-              case KeyEvent.VK_PAGE_UP -> {
-                  rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
-                  if (rows > 2) {
-                      rows--;
-                  }
-                  if (cursor >= rows * cols) {
-                      setDot(cursor - rows * cols, shift);
-                  } else if (cursor >= cols) {
-                      setDot(cursor % cols, shift);
-                  }
-              }
 
-              default -> {
-              }
+    private void movecursor(int m, boolean shift) {
+      final var cols = hex.getMeasures().getColumnCount();
+      int rows;
+      switch (m) {
+        case KeyEvent.VK_UP -> {
+          if (cursor >= cols) {
+            setDot(cursor - cols, shift);
           }
-          // do nothing
-                }
- 
+        }
+        case KeyEvent.VK_LEFT -> {
+          if (cursor >= 1) {
+            setDot(cursor - 1, shift);
+          }
+        }
+        case KeyEvent.VK_DOWN -> {
+          if (cursor >= hex.getModel().getFirstOffset()
+                  && cursor <= hex.getModel().getLastOffset() - cols) {
+            setDot(cursor + cols, shift);
+          }
+        }
+        case KeyEvent.VK_RIGHT -> {
+          if (cursor >= hex.getModel().getFirstOffset()
+                  && cursor <= hex.getModel().getLastOffset() - 1) {
+            setDot(cursor + 1, shift);
+          }
+        }
+        case KeyEvent.VK_HOME -> {
+          if (cursor >= 0) {
+            final var dist = (int) (cursor % cols);
+            if (dist == 0) {
+              setDot(0, shift);
+            } else {
+              setDot(cursor - dist, shift);
+            }
+          }
+        }
+        case KeyEvent.VK_END -> {
+          if (cursor >= 0) {
+            final var model = hex.getModel();
+            var dest = (cursor / cols * cols) + cols - 1;
+            if (model != null) {
+              final var end = model.getLastOffset();
+              if (dest > end || dest == cursor) {
+                dest = end;
+              }
+            }
+            setDot(dest, shift);
+          }
+        }
+        case KeyEvent.VK_PAGE_DOWN -> {
+          rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
+          if (rows > 2) {
+            rows--;
+          }
+          if (cursor >= 0) {
+            final var max = hex.getModel().getLastOffset();
+            if (cursor + rows * cols <= max) {
+              setDot(cursor + rows * cols, shift);
+            } else {
+              var n = cursor;
+              while (n + cols < max) {
+                n += cols;
+              }
+              setDot(n, shift);
+            }
+          }
+        }
+        case KeyEvent.VK_PAGE_UP -> {
+          rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
+          if (rows > 2) {
+            rows--;
+          }
+          if (cursor >= rows * cols) {
+            setDot(cursor - rows * cols, shift);
+          } else if (cursor >= cols) {
+            setDot(cursor % cols, shift);
+          }
+        }
+
+        default -> {
+        }
+      }
+      // do nothing
+    }
+
     
     @Override
     public void focusGained(FocusEvent e) {
@@ -256,50 +256,50 @@ public class Caret {
     }
 
     @Override
-      public void keyTyped(KeyEvent e) {
-          final var shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
-          final var ctrlx = e.isControlDown();
-          switch (e.getKeyChar()) {
-              case ' ' -> {
-                  if (ctrlx) {
-                      movecursor(KeyEvent.VK_PAGE_DOWN, shift);
-                  } else {
-                      movecursor(KeyEvent.VK_RIGHT, shift);
-                  }
-              }
-              case '\n' -> {
-                  if (ctrlx) {
-                      movecursor(KeyEvent.VK_UP, shift);
-                  } else {
-                      movecursor(KeyEvent.VK_DOWN, shift);
-                  }
-              }
-
-              case '\u0008' ->
-                  movecursor(KeyEvent.VK_LEFT, shift);
-              case '\u007f' -> {
-                  if (ctrlx) {
-                      movecursor(KeyEvent.VK_PAGE_UP, shift);
-                  } else {
-                      hex.delete();
-                  }
-              }
-
-              default -> {
-                  final var digit = Character.digit(e.getKeyChar(), 16);
-                  if (digit >= 0) {
-                      final var model = hex.getModel();
-                      if (model != null
-                              && cursor >= model.getFirstOffset()
-                              && cursor <= model.getLastOffset()) {
-                          final var curValue = model.get(cursor);
-                          final var newValue = 16 * curValue + digit;
-                          model.set(cursor, newValue);
-                      }
-                  }
-              }
+    public void keyTyped(KeyEvent e) {
+      final var shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
+      final var ctrlx = e.isControlDown();
+      switch (e.getKeyChar()) {
+        case ' ' -> {
+          if (ctrlx) {
+            movecursor(KeyEvent.VK_PAGE_DOWN, shift);
+          } else {
+            movecursor(KeyEvent.VK_RIGHT, shift);
           }
+        }
+        case '\n' -> {
+          if (ctrlx) {
+            movecursor(KeyEvent.VK_UP, shift);
+          } else {
+            movecursor(KeyEvent.VK_DOWN, shift);
+          }
+        }
+
+        case '\u0008' ->
+          movecursor(KeyEvent.VK_LEFT, shift);
+        case '\u007f' -> {
+          if (ctrlx) {
+            movecursor(KeyEvent.VK_PAGE_UP, shift);
+          } else {
+            hex.delete();
+          }
+        }
+
+        default -> {
+          final var digit = Character.digit(e.getKeyChar(), 16);
+          if (digit >= 0) {
+            final var model = hex.getModel();
+            if (model != null
+                    && cursor >= model.getFirstOffset()
+                    && cursor <= model.getLastOffset()) {
+              final var curValue = model.get(cursor);
+              final var newValue = 16 * curValue + digit;
+              model.set(cursor, newValue);
+            }
+          }
+        }
       }
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
