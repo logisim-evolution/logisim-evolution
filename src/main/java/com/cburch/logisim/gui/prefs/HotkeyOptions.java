@@ -234,7 +234,7 @@ class HotkeyOptions extends OptionsPanel {
       p.add(top);
       p.add(sub);
 
-      dl.addKeyListener(new KeyCaptureListener(waitingLabel, ((PrefMonitorKeyStroke) hotkeys[index]).isMenuHotkey(), this));
+      dl.addKeyListener(new KeyCaptureListener(waitingLabel, this));
       dl.setContentPane(p);
       dl.setLocationRelativeTo(null);
       dl.setSize(500, 100);
@@ -249,12 +249,10 @@ class HotkeyOptions extends OptionsPanel {
 
   private class KeyCaptureListener implements KeyListener {
     private final JLabel label;
-    private final boolean isMenuKey;
     private final SettingsChangeListener scl;
 
-    public KeyCaptureListener(JLabel l, boolean isMenuKey, SettingsChangeListener se) {
+    public KeyCaptureListener(JLabel l, SettingsChangeListener se) {
       label = l;
-      this.isMenuKey = isMenuKey;
       scl = se;
     }
 
