@@ -7,21 +7,18 @@
   * Modified Menu class, setting up a new abstract method so that the hotkey can be sync via the gui
   * Modified MenuFile MenuEdit MenuSimulate to implement that abstract method
   * After my modification, 11 menuitem in the menu-bar are now available in hotkey settings. Changes will be updated
-      immediately.
-      The 11 menuitem are as follows.
-      * Auto-Propagate
-      * Reset Simulation
-      * Single-Step Propagation
-      * Manual Tick Half Cycle
-      * Manual Tick Full Cycle
-      * Auto-Tick Enabled
-      * Undo
-      * Redo
-      * Export
-      * Print
-      * Quit
-    * I'd like to insert more hotkeys to make logisim-evolution more fun.
-  * Such as press *SPACE* to rotate the component to be placed on.
+    immediately.
+  * Also, after modified more classes, which can be clearly
+    viewed in the FILE CHANGED, I added 26 other hotkey bindings, supporting changing the hotkeys
+    for component rotation/direction, auto-labeler and gate-modifier.
+  * With more options added, I use JScrollPane to get them all in.
+  * And there are some important key bindings that have clear meanings
+    and are accepted by nearly each person, I set them as uneditable.
+  * However uneditable, people can treat this tab as a 
+    key-binding reference.
+  * In addition, I'd like to insert more hotkeys to make logisim-evolution more fun.
+  * Such as press *SPACE* to flip a splitter or transistor, 
+    getting their image along the Y axis.
 
 * @dev (????-??-??)
   * Added support for scanning 7-segment display on FPGA-boards

@@ -167,7 +167,7 @@ class HotkeyOptions extends OptionsPanel {
         @Override
         public Dimension getPreferredSize(){
           int w=p.getWidth();
-          return new Dimension(800,400);
+          return new Dimension(800,500);
         }
     };
 
