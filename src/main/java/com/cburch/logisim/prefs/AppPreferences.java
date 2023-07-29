@@ -24,6 +24,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.Container;
@@ -828,38 +829,39 @@ public class AppPreferences {
       create(new PrefMonitorString("dialogDirectory", ""));
 
   /* Hotkey Settings */
+  private static final int hotkeyMenuMask = new JMenu().getToolkit().getMenuShortcutKeyMaskEx();
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE =
-      create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_RESET =
-      create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_STEP =
-      create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_HALF =
-      create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_FULL =
-      create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_ENABLED =
-      create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_UNDO =
-      create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO =
-      create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT =
-      create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
-      create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT =
-      create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
+      create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
       create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
@@ -884,21 +886,22 @@ public class AppPreferences {
 
   public static void resetHotkeys() {
     try {
-      HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
-      HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
+      int menuMask = hotkeyMenuMask;
+      HOTKEY_SIM_AUTO_PROPAGATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask));
+      HOTKEY_SIM_RESET.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, menuMask));
+      HOTKEY_SIM_STEP.set(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuMask));
+      HOTKEY_SIM_TICK_HALF.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuMask));
+      HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9, menuMask));
+      HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
+      HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
+      HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
+      HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
       HOTKEY_DIR_NORTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
       HOTKEY_DIR_SOUTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
-      HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
-      HOTKEY_DIR_WEST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
+      HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
+      HOTKEY_DIR_WEST.set(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
       HOTKEY_EDIT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
       HOTKEY_AUTO_LABEL_OPEN.set(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
       HOTKEY_ADD_TOOL_ROTATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));

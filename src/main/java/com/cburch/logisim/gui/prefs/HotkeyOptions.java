@@ -228,7 +228,7 @@ class HotkeyOptions extends OptionsPanel {
       dl.addKeyListener(new KeyCaptureListener(waitingLabel, ((PrefMonitorKeyStroke) hotkeys[index]).isMenuHotkey(), this));
       dl.setContentPane(p);
       dl.setLocationRelativeTo(null);
-      dl.setSize(400, 200);
+      dl.setSize(400, 100);
       dl.setVisible(true);
     }
 
