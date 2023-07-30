@@ -852,10 +852,12 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO =
-      create(new PrefMonitorKeyStroke("hotkeyEditRedo", KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeyEditRedo",
+          KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT =
-      create(new PrefMonitorKeyStroke("hotkeyFileExport", KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeyFileExport",
+          KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
       create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask));
@@ -906,10 +908,12 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeWide", KeyEvent.VK_W, 0, false));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_ADD =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd", KeyEvent.VK_ADD, 0, false));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd",
+          KeyEvent.VK_ADD, 0, false));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_SUB =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub", KeyEvent.VK_SUBTRACT, 0, false));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub",
+          KeyEvent.VK_SUBTRACT, 0, false));
 
   public static void resetHotkeys() {
     try {
@@ -921,8 +925,10 @@ public class AppPreferences {
       HOTKEY_SIM_TICK_FULL.set(KeyStroke.getKeyStroke(KeyEvent.VK_F9, menuMask));
       HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
       HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
-      HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | menuMask));
-      HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+          KeyEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+          KeyEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
       HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
       HOTKEY_DIR_NORTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));

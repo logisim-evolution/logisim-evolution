@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EmptyBorder;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Dimension;
@@ -52,9 +52,11 @@ class HotkeyOptions extends OptionsPanel {
    * Fill the resetHotkeys in AppPreferences with your own code
    * Then add your AppPreferences.HOTKEY_ADD_BY_YOU to hotkeys array in HotkeyOptions.java
    * Setting up the hotkey in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
-   * Do not forget to sync with the user's settings. You should go modifying hotkeySync in AppPreferences, adding your codes there.
+   * Do not forget to sync with the user's settings.
+   * You should go modifying hotkeySync in AppPreferences, adding your codes there.
    *
-   * Now the hotkey options don't involve all the bindings in logisim. The hotkeys chosen by the user might have conflict with
+   * Now the hotkey options don't involve all the bindings in logisim.
+   * The hotkeys chosen by the user might have conflict with
    * some build-in key bindings until all key bindings can be set in this tab.
    * TODO: If you are available, you can bind them in order to make logisim feel better
    *
@@ -91,7 +93,12 @@ class HotkeyOptions extends OptionsPanel {
   };
   private final JButton[] keyButtons = new JButton[hotkeys.length];
   private final JLabel headerLabel;
-  private JButton northBtn, southBtn, eastBtn, westBtn;
+  private JButton northBtn;
+  private JButton southBtn;
+  private JButton eastBtn;
+  private JButton westBtn;
+  private int preferredWidth = 800;
+  private boolean preferredWidthSet = false;
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
@@ -102,13 +109,15 @@ class HotkeyOptions extends OptionsPanel {
     add(new JLabel(" "));
 
     JPanel p = new JPanel();
-    p.setMaximumSize(new Dimension(400,400));
+    p.setMaximumSize(new Dimension(400, 400));
     p.setLayout(new TableLayout(2));
     final JLabel[] keyLabels = new JLabel[hotkeys.length];
     for (int i = 0; i < hotkeys.length; i++) {
       /* I do this chore because they have a different layout */
-      if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH || hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH ||
-          hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST || hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
+      if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH
+          || hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH
+          || hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST
+          || hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
         if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH) {
           northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
           keyButtons[i] = northBtn;
@@ -163,15 +172,26 @@ class HotkeyOptions extends OptionsPanel {
     dirPRight.add(eastBtn);
     p.add(dirPRight);
     JScrollPane scrollPane = new JScrollPane(p, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER){
-        @Override
-        public Dimension getPreferredSize(){
-          int w=p.getWidth();
-          return new Dimension(800,500);
-        }
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
+      @Override
+      public Dimension getPreferredSize() {
+        return new Dimension(preferredWidth, 500);
+      }
     };
-
     add(scrollPane);
+    var that = this;
+    /* this timer deals with the preferred width */
+    new Timer(200, new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int width = p.getWidth();
+        if (width > 0 && width < that.getWidth() * 0.8 && !preferredWidthSet) {
+          preferredWidth = width + 40;
+          p.setPreferredSize(p.getSize());
+          preferredWidthSet = true;
+        }
+      }
+    }).start();
 
     JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
     resetBtn.addActionListener(e -> {
@@ -222,8 +242,7 @@ class HotkeyOptions extends OptionsPanel {
           owner.getPreferencesFrame(),
           S.get(((PrefMonitorKeyStroke) hotkeys[index]).getName()),
           true);
-      JPanel p = new JPanel();
-      JPanel sub = new JPanel();
+
       JButton ok = new JButton("OK");
       JButton cancel = new JButton("Cancel");
 
@@ -233,7 +252,8 @@ class HotkeyOptions extends OptionsPanel {
           HotkeyOptions.hotkeys[index].set(KeyStroke.getKeyStroke(code, modifier));
           try {
             AppPreferences.getPrefs().flush();
-            owner.keyButtons[index].setText(((PrefMonitorKeyStroke) HotkeyOptions.hotkeys[index]).getDisplayString());
+            owner.keyButtons[index].setText(
+                ((PrefMonitorKeyStroke) HotkeyOptions.hotkeys[index]).getDisplayString());
             AppPreferences.hotkeySync();
           } catch (BackingStoreException ex) {
             throw new RuntimeException(ex);
@@ -244,8 +264,10 @@ class HotkeyOptions extends OptionsPanel {
       cancel.setFocusable(false);
       cancel.addActionListener(ev -> dl.setVisible(false));
 
+      JPanel sub = new JPanel();
       sub.setLayout(new TableLayout(2));
-      p.setLayout(new TableLayout(1));
+      JPanel contentPanel = new JPanel();
+      contentPanel.setLayout(new TableLayout(1));
 
       sub.add(ok);
       sub.add(cancel);
@@ -256,11 +278,11 @@ class HotkeyOptions extends OptionsPanel {
       top.add(new JLabel("  "));
       top.add(waitingLabel);
       top.add(new JLabel("  "));
-      p.add(top);
-      p.add(sub);
+      contentPanel.add(top);
+      contentPanel.add(sub);
 
       dl.addKeyListener(new KeyCaptureListener(waitingLabel, this));
-      dl.setContentPane(p);
+      dl.setContentPane(contentPanel);
       dl.setLocationRelativeTo(null);
       dl.setSize(500, 100);
       dl.setVisible(true);
@@ -292,8 +314,11 @@ class HotkeyOptions extends OptionsPanel {
         int modifier = e.getModifiersEx();
         int code = e.getKeyCode();
         for (var item : hotkeys) {
-          if ((InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code)).equals(((PrefMonitorKeyStroke) item).getCompareString())) {
-            label.setText(S.get("hotkeyErrConflict") + S.get(((PrefMonitorKeyStroke) item).getName()));
+          if ((InputEvent.getModifiersExText(modifier) + " + "
+              + KeyEvent.getKeyText(code)).equals(
+              ((PrefMonitorKeyStroke) item).getCompareString())) {
+            label.setText(S.get("hotkeyErrConflict")
+                + S.get(((PrefMonitorKeyStroke) item).getName()));
             scl.code = 0;
             scl.modifier = 0;
             return;
@@ -302,9 +327,9 @@ class HotkeyOptions extends OptionsPanel {
         scl.code = code;
         scl.modifier = modifier;
         String modifierString = InputEvent.getModifiersExText(modifier);
-        if(modifierString.equals("")){
+        if (modifierString.equals("")) {
           label.setText(KeyEvent.getKeyText(code));
-        }else{
+        } else {
           label.setText(InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code));
         }
       }

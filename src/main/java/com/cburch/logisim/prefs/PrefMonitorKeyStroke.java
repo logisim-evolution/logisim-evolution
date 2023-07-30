@@ -18,12 +18,12 @@ import java.util.prefs.PreferenceChangeEvent;
 public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private final byte[] dflt;
   private byte[] value;
-  private String _name;
+  private String pName;
   private boolean canModify = true;
 
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
     super(name);
-    _name = name;
+    pName = name;
     this.dflt = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     final var prefs = AppPreferences.getPrefs();
@@ -33,7 +33,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   public PrefMonitorKeyStroke(String name, int keycode, int modifier, boolean canModify) {
     super(name);
-    _name = name;
+    pName = name;
     this.dflt = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     final var prefs = AppPreferences.getPrefs();
@@ -42,12 +42,12 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     this.canModify = canModify;
   }
 
-  public Boolean canModify(){
+  public Boolean canModify() {
     return canModify;
   }
 
   public String getName() {
-    return _name;
+    return pName;
   }
 
   private byte[] keystrokeToByteArray(KeyStroke k) {
@@ -68,12 +68,13 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   private KeyStroke byteArrayToKeyStroke(byte[] b) {
     /* Little Endian */
-    int code = 0, mod = 0;
+    int code = 0;
     code |= b[0] & 0xff;
     code |= (b[1] << 8) & 0xff;
     code |= (b[2] << 16) & 0xff;
     code |= (b[3] << 24) & 0xff;
 
+    int mod = 0;
     mod |= b[4] & 0xff;
     mod |= (b[5] << 8) & 0xff;
     mod |= (b[6] << 16) & 0xff;
@@ -92,13 +93,14 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   public String getCompareString() {
     KeyStroke tmp = byteArrayToKeyStroke(this.value);
-    return InputEvent.getModifiersExText(tmp.getModifiers()) + " + " + KeyEvent.getKeyText(tmp.getKeyCode());
+    return InputEvent.getModifiersExText(tmp.getModifiers())
+        + " + " + KeyEvent.getKeyText(tmp.getKeyCode());
   }
 
   public String getDisplayString() {
     KeyStroke tmp = byteArrayToKeyStroke(this.value);
     String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
-    if(modifierString.equals("")){
+    if (modifierString.equals("")) {
       return KeyEvent.getKeyText(tmp.getKeyCode());
     }
     return modifierString + "+" + KeyEvent.getKeyText(tmp.getKeyCode());

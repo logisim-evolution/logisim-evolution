@@ -60,9 +60,12 @@ class MenuFile extends Menu implements ActionListener {
     saveAs.setAccelerator(
         KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
     /* Allow user itself to set the mask */
-    exportProj.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
-    print.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
-    quit.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_QUIT).getWithMask(0));
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
+    print.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
+    quit.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_QUIT).getWithMask(0));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
@@ -112,9 +115,12 @@ class MenuFile extends Menu implements ActionListener {
   }
 
   public void hotkeyUpdate() {
-    exportProj.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
-    print.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
-    quit.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_FILE_QUIT).getWithMask(0));
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
+    print.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
+    quit.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_QUIT).getWithMask(0));
   }
 
   @Override
