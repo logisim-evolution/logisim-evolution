@@ -3,6 +3,13 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added support for scanning 7-segment display on FPGA-boards
+  * Added first support for the openFpga toolchain for the ecp5 famely
+    Note that this is experimental for the moment, so use it at your own risk.
+  * Improved Chinese localization
+    * Changed language code from `cn` to `zh`.
+    * Chinese users (also including those who use other forks of Logisim
+      that are using `cn` language code) will be required to manually modify language settings.
   * Fixed select port positioning on Multiplexer to be more consistent in some cases [#1734]
   * Fixed appearance of LSe desktop icon [#1662]
   * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]

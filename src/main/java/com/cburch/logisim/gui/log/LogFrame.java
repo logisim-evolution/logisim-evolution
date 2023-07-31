@@ -45,7 +45,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private final LogMenuListener menuListener;
 
   private class MyListener
-      implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
+      implements ProjectListener, LibraryListener, Simulator.ProgressListener, LocaleListener {
 
     @Override
     public void libraryChanged(LibraryEvent event) {
@@ -87,7 +87,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
 
     @Override
-    public boolean wantProgressEvents() {
+    public boolean wantsProgressEvents() {
       return curModel.isFine();
     }
 

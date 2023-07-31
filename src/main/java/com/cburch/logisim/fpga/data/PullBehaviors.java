@@ -20,6 +20,15 @@ public class PullBehaviors {
       default -> "";
     };
   }
+  
+  public static String getPullString(char id) {
+    if (id == FLOAT || id > PULL_DOWN) return null;
+    return switch (id) {
+      case PULL_UP -> "UP";
+      case PULL_DOWN -> "DOWN";
+      default -> "NONE";
+    };
+  }
 
   public static char getId(String identifier) {
     char result = 0;

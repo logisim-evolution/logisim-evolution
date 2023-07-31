@@ -5,11 +5,10 @@
 name: "Build"
 on:
   push:
-    # No need to run on push to "develop" as there should not be any direct pushes.
-    # master is left just for emergency cases.
-    branches: [ master ]
+    # main is left just for emergency cases.
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 env:
   JDK_VERSION: 16
@@ -88,4 +87,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ([ -z $SONAR_TOKEN ] || ./gradlew sonarqube)
+      run: ([ -z $SONAR_TOKEN ] || ./gradlew sonar)

@@ -3,7 +3,7 @@
 # https://github.com/logisim-evolution/logisim-evolution
 #
 # Cron driven Github Action builder, intended to create nightly builds
-# from Logisim-evolution's "develop" branch. It assumes to be invoked
+# from Logisim-evolution's "main" branch. It assumes to be invoked
 # daily (once per 24 hrs) and skips building if there was no repo activity
 # during last 24 hours.
 #
@@ -12,15 +12,10 @@
 
 name: "Nightly"
 on:
-  # The "pull_request" trigger is here for debugging purposes and
-  # as work-around for having this worker not yet in main branch.
-  # Keep it disabled once it's merged into main branch as we only
-  # want "schedule" to be the trigger.
-  # NOTE: remove `if` condition marked with `HACK` once merged.
-  pull_request:
-  # Nightly must be run against "develop" branch only.
-    branches: [ develop ]
-    types: [ closed ]
+  # To enable "nightly" on closing pull requests uncomment the following:
+  #pull_request:
+  #  branches: [ main ]
+  #  types: [ closed ]
   schedule:
     # every day at midnight
     - cron: "0 0 * * *"
@@ -33,9 +28,6 @@ jobs:
   git_check:
     name: "Any changes since last run?"
     runs-on: ubuntu-latest
-    # HACK: Temporary workaround for `schedule` not working outside main
-    # branch and lack of `type: merged` for `pull_request` trigger.
-    # if: github.event.pull_request.merged == true
 
     # Export build vars so other steps can use it.
     outputs:
@@ -77,7 +69,7 @@ jobs:
             echo "*** No code changes since yesterday. Skipping."
           fi
 
-          # I need to export current version, even if is incorrect for develop branch as it
+          # I need to export current version, even if is incorrect for main branch as it
           # is part of produced artifacts. We will strip it prior uploading anyway.
 
           # LSe version string can have additional "unstable" indicator (i.e. "-dev") but
@@ -114,7 +106,7 @@ jobs:
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
         uses: actions/checkout@v3
         with:
-          ref: 'develop'
+          ref: 'main'
 
       - name: 'Build Snap package'
         # https://github.com/snapcore/action-build

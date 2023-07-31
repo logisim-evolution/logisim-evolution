@@ -218,48 +218,48 @@ public class VariableTab extends AnalyzerTab {
     final var inputsTablePane = wrap(inputsTable);
     final var outputsTablePane = wrap(outputsTable);
 
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    setLayout(gb);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    setLayout(gbl);
 
-    gc.insets = new Insets(10, 10, 2, 10);
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.weightx = gc.weighty = 0.0;
+    gbc.insets = new Insets(10, 10, 2, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = gbc.weighty = 0.0;
 
     inputsLabel = new JLabel("Input Variables");
 
-    gc.gridx = 0;
-    gc.gridy = 0;
-    gb.setConstraints(inputsLabel, gc);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbl.setConstraints(inputsLabel, gbc);
     add(inputsLabel);
 
     outputsLabel = new JLabel("Output Variables");
 
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gb.setConstraints(outputsLabel, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbl.setConstraints(outputsLabel, gbc);
     add(outputsLabel);
 
-    gc.insets = new Insets(2, 10, 3, 10);
-    gc.fill = GridBagConstraints.BOTH;
-    gc.weightx = gc.weighty = 1.0;
-    gc.gridx = 0;
-    gc.gridy = 1;
-    gb.setConstraints(inputsTablePane, gc);
+    gbc.insets = new Insets(2, 10, 3, 10);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = gbc.weighty = 1.0;
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbl.setConstraints(inputsTablePane, gbc);
     add(inputsTablePane);
 
-    gc.gridx = 1;
-    gc.gridy = 1;
-    gb.setConstraints(outputsTablePane, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    gbl.setConstraints(outputsTablePane, gbc);
     add(outputsTablePane);
 
-    gc.insets = new Insets(3, 10, 10, 10);
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.weightx = gc.weighty = 0.0;
-    gc.gridwidth = 2;
-    gc.gridx = 0;
-    gc.gridy = 2;
-    gb.setConstraints(error, gc);
+    gbc.insets = new Insets(3, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.gridwidth = 2;
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbl.setConstraints(error, gbc);
     add(error);
     error.setForeground(Color.RED);
 
