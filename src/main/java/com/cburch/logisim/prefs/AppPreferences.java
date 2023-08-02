@@ -829,7 +829,9 @@ public class AppPreferences {
       create(new PrefMonitorString("dialogDirectory", ""));
 
   /* Hotkey Settings */
-  private static final int hotkeyMenuMask = new JMenu().getToolkit().getMenuShortcutKeyMaskEx();
+  /* Watch whether in headless mode */
+  private static final int hotkeyMenuMask =
+      GraphicsEnvironment.isHeadless()?KeyEvent.ALT_DOWN_MASK:new JMenu().getToolkit().getMenuShortcutKeyMaskEx();
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE =
       create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, hotkeyMenuMask));
 
