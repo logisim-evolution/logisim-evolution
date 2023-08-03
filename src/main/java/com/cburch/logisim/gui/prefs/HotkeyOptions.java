@@ -21,6 +21,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -61,38 +64,8 @@ class HotkeyOptions extends OptionsPanel {
    *
    * */
   @SuppressWarnings("unchecked")
-  protected static final PrefMonitor<KeyStroke>[] hotkeys = new PrefMonitor[]{
-      AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE,
-      AppPreferences.HOTKEY_SIM_RESET,
-      AppPreferences.HOTKEY_SIM_STEP,
-      AppPreferences.HOTKEY_SIM_TICK_HALF,
-      AppPreferences.HOTKEY_SIM_TICK_FULL,
-      AppPreferences.HOTKEY_SIM_TICK_ENABLED,
-      AppPreferences.HOTKEY_EDIT_UNDO,
-      AppPreferences.HOTKEY_EDIT_REDO,
-      AppPreferences.HOTKEY_FILE_EXPORT,
-      AppPreferences.HOTKEY_FILE_PRINT,
-      AppPreferences.HOTKEY_FILE_QUIT,
-      AppPreferences.HOTKEY_DIR_NORTH,
-      AppPreferences.HOTKEY_DIR_SOUTH,
-      AppPreferences.HOTKEY_DIR_EAST,
-      AppPreferences.HOTKEY_DIR_WEST,
-      AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE,
-      AppPreferences.HOTKEY_PROJ_MOVE_UP,
-      AppPreferences.HOTKEY_PROJ_MOVE_DOWN,
-      AppPreferences.HOTKEY_AUTO_LABEL_OPEN,
-      AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE,
-      AppPreferences.HOTKEY_AUTO_LABEL_VIEW,
-      AppPreferences.HOTKEY_AUTO_LABEL_HIDE,
-      AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP,
-      AppPreferences.HOTKEY_ADD_TOOL_ROTATE,
-      AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_SMALL,
-      AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_MEDIUM,
-      AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_WIDE,
-      AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_ADD,
-      AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_SUB,
-  };
-  private final JButton[] keyButtons = new JButton[hotkeys.length];
+  protected static List<PrefMonitor<KeyStroke>> hotkeys = new ArrayList<>();
+  private final List<JButton> keyButtons;
   private final JLabel headerLabel;
   private JButton northBtn;
   private JButton southBtn;
@@ -109,44 +82,63 @@ class HotkeyOptions extends OptionsPanel {
     add(headerLabel);
     add(new JLabel(" "));
 
+    Field[] fields = AppPreferences.class.getDeclaredFields();
+    try {
+      for (var f : fields) {
+        String name = f.getName();
+        if (name.contains("HOTKEY_")) {
+          @SuppressWarnings("unchecked")
+          PrefMonitor<KeyStroke> keyStroke = (PrefMonitor<KeyStroke>) f.get(AppPreferences.class);
+          hotkeys.add(keyStroke);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    keyButtons = new ArrayList<>();
+    for (int i = 0; i < hotkeys.size(); i++) {
+      keyButtons.add(new JButton());
+    }
+
     JPanel p = new JPanel();
     p.setMaximumSize(new Dimension(400, 400));
     p.setLayout(new TableLayout(2));
-    final JLabel[] keyLabels = new JLabel[hotkeys.length];
-    for (int i = 0; i < hotkeys.length; i++) {
+    final JLabel[] keyLabels = new JLabel[hotkeys.size()];
+    for (int i = 0; i < hotkeys.size(); i++) {
       /* I do this chore because they have a different layout */
-      if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH
-          || hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH
-          || hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST
-          || hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
-        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_NORTH) {
-          northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
-          keyButtons[i] = northBtn;
+      if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
+        if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH) {
+          northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyButtons.set(i, northBtn);
         }
-        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_SOUTH) {
-          southBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
-          keyButtons[i] = southBtn;
+        if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH) {
+          southBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyButtons.set(i, southBtn);
         }
-        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_EAST) {
-          eastBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
-          keyButtons[i] = eastBtn;
+        if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST) {
+          eastBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyButtons.set(i, eastBtn);
         }
-        if (hotkeys[i] == AppPreferences.HOTKEY_DIR_WEST) {
-          westBtn = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
-          keyButtons[i] = westBtn;
+        if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
+          westBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyButtons.set(i, westBtn);
         }
-        keyButtons[i].addActionListener(listener);
-        keyButtons[i].setActionCommand(i + "");
-        keyButtons[i].setEnabled(((PrefMonitorKeyStroke) hotkeys[i]).canModify());
+        keyButtons.get(i).addActionListener(listener);
+        keyButtons.get(i).setActionCommand(i + "");
+        keyButtons.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
         continue;
       }
-      keyLabels[i] = new JLabel(S.get(((PrefMonitorKeyStroke) hotkeys[i]).getName()) + "  ");
-      keyButtons[i] = new JButton(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
-      keyButtons[i].addActionListener(listener);
-      keyButtons[i].setActionCommand(i + "");
-      keyButtons[i].setEnabled(((PrefMonitorKeyStroke) hotkeys[i]).canModify());
+      keyLabels[i] = new JLabel(S.get(((PrefMonitorKeyStroke) hotkeys.get(i)).getName()) + "  ");
+      keyButtons.set(i, new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString()));
+      keyButtons.get(i).addActionListener(listener);
+      keyButtons.get(i).setActionCommand(i + "");
+      keyButtons.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
       p.add(keyLabels[i]);
-      p.add(keyButtons[i]);
+      p.add(keyButtons.get(i));
     }
 
     /* Layout for arrow hotkeys */
@@ -204,8 +196,8 @@ class HotkeyOptions extends OptionsPanel {
       @Override
       public void preferenceChange(PreferenceChangeEvent evt) {
         AppPreferences.hotkeySync();
-        for (int i = 0; i < hotkeys.length; i++) {
-          keyButtons[i].setText(((PrefMonitorKeyStroke) hotkeys[i]).getDisplayString());
+        for (int i = 0; i < hotkeys.size(); i++) {
+          keyButtons.get(i).setText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
         }
       }
     });
@@ -241,7 +233,7 @@ class HotkeyOptions extends OptionsPanel {
       int index = Integer.parseInt(e.getActionCommand());
       JDialog dl = new JDialog(
           owner.getPreferencesFrame(),
-          S.get(((PrefMonitorKeyStroke) hotkeys[index]).getName()),
+          S.get(((PrefMonitorKeyStroke) hotkeys.get(index)).getName()),
           true);
 
       JButton ok = new JButton("OK");
@@ -250,11 +242,11 @@ class HotkeyOptions extends OptionsPanel {
       ok.setFocusable(false);
       ok.addActionListener(e1 -> {
         if (code != 0) {
-          HotkeyOptions.hotkeys[index].set(KeyStroke.getKeyStroke(code, modifier));
+          HotkeyOptions.hotkeys.get(index).set(KeyStroke.getKeyStroke(code, modifier));
           try {
             AppPreferences.getPrefs().flush();
-            owner.keyButtons[index].setText(
-                ((PrefMonitorKeyStroke) HotkeyOptions.hotkeys[index]).getDisplayString());
+            owner.keyButtons.get(index).setText(
+                ((PrefMonitorKeyStroke) HotkeyOptions.hotkeys.get(index)).getDisplayString());
             AppPreferences.hotkeySync();
           } catch (BackingStoreException ex) {
             throw new RuntimeException(ex);
