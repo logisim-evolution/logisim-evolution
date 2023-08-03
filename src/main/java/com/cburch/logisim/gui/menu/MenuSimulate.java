@@ -188,7 +188,7 @@ public class MenuSimulate extends Menu {
   }
 
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     final var present = currentState != null;
     setEnabled(present);
     runToggle.setEnabled(present);

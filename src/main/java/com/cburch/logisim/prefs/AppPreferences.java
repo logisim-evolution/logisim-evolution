@@ -9,12 +9,15 @@
 
 package com.cburch.logisim.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.menu.Menu;
+import com.cburch.logisim.gui.menu.MenuItemImpl;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
@@ -27,11 +30,13 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -831,7 +836,7 @@ public class AppPreferences {
   /* Watch whether in headless mode */
   private static final int hotkeyMenuMask =
       GraphicsEnvironment.isHeadless()
-          ? KeyEvent.ALT_DOWN_MASK : new JMenu().getToolkit().getMenuShortcutKeyMaskEx();
+          ? InputEvent.ALT_DOWN_MASK : new JMenu().getToolkit().getMenuShortcutKeyMaskEx();
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE =
       create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, hotkeyMenuMask));
 
@@ -855,11 +860,19 @@ public class AppPreferences {
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO =
       create(new PrefMonitorKeyStroke("hotkeyEditRedo",
-          KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+          KeyEvent.VK_Z, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_WINDOW_CLOSE =
+      create(new PrefMonitorKeyStroke("hotkeyWindowClose",
+          KeyEvent.VK_W, hotkeyMenuMask));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_WINDOW_MINIMIZE =
+      create(new PrefMonitorKeyStroke("hotkeyWindowMinimize",
+          KeyEvent.VK_M, hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT =
       create(new PrefMonitorKeyStroke("hotkeyFileExport",
-          KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+          KeyEvent.VK_E, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
       create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask));
@@ -884,11 +897,11 @@ public class AppPreferences {
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_UP =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveUp",
-          KeyEvent.VK_U, KeyEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_DOWN =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveDown",
-          KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_OPEN =
       create(new PrefMonitorKeyStroke("hotkeyAutoLabelOpen", KeyEvent.VK_L, 0));
@@ -936,15 +949,17 @@ public class AppPreferences {
       HOTKEY_SIM_TICK_ENABLED.set(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
       HOTKEY_EDIT_UNDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
       HOTKEY_EDIT_REDO.set(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-          KeyEvent.SHIFT_DOWN_MASK | menuMask));
+          InputEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_WINDOW_CLOSE.set(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask));
+      HOTKEY_WINDOW_MINIMIZE.set(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
       HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-          KeyEvent.SHIFT_DOWN_MASK | menuMask));
+          InputEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
       HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
-          KeyEvent.VK_U, KeyEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
-          KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK));
       HOTKEY_DIR_NORTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
       HOTKEY_DIR_SOUTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
       HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
@@ -967,9 +982,9 @@ public class AppPreferences {
     }
   }
 
-  public static final ArrayList<Menu> gui_sync_objects = new ArrayList<>();
+  public static final List<Menu> gui_sync_objects = new ArrayList<>();
 
-  public static final void hotkeySync() {
+  public static void hotkeySync() {
     try {
       AppPreferences.getPrefs().flush();
       for (Menu m : gui_sync_objects) {
@@ -978,5 +993,56 @@ public class AppPreferences {
     } catch (BackingStoreException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static void hotkeyReflectError(Exception e) {
+    e.printStackTrace();
+  }
+
+  public static String hotkeyCheckConflict(int keyCode, int modifier) {
+    try {
+      /* Check myself */
+      Field[] fields = AppPreferences.class.getDeclaredFields();
+
+      for (var f : fields) {
+        String name = f.getName();
+        if (name.contains("HOTKEY_")) {
+          @SuppressWarnings("unchecked")
+          PrefMonitor<KeyStroke> keyStroke = (PrefMonitor<KeyStroke>) f.get(AppPreferences.class);
+          if ((InputEvent.getModifiersExText(modifier) + " + "
+              + KeyEvent.getKeyText(keyCode)).equals(
+              ((PrefMonitorKeyStroke) keyStroke).getCompareString())) {
+            return S.get("hotkeyErrConflict")
+                + S.get(((PrefMonitorKeyStroke) keyStroke).getName());
+          }
+        }
+      }
+
+      /* Check all the menu items */
+      for (var m : gui_sync_objects) {
+        Field[] menuFields = m.getClass().getDeclaredFields();
+        for (var f : menuFields) {
+          f.setAccessible(true);
+          if (f.getType().toString().contains("com.cburch.logisim.gui.menu.MenuItemImpl")) {
+            MenuItemImpl item = (MenuItemImpl) f.get(m);
+            KeyStroke itemStroke = item.getAccelerator();
+            if (itemStroke == null) {
+              continue;
+            }
+            String compareString = InputEvent.getModifiersExText(itemStroke.getModifiers()) + "+"
+                + KeyEvent.getKeyText(itemStroke.getKeyCode());
+            String expectedKey = InputEvent.getModifiersExText(modifier) + "+"
+                + KeyEvent.getKeyText(keyCode);
+            if (expectedKey.equals(compareString)) {
+              return S.get("hotkeyErrConflict")
+                  + item.getText();
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      hotkeyReflectError(e);
+    }
+    return "";
   }
 }

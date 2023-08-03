@@ -52,7 +52,6 @@ class HotkeyOptions extends OptionsPanel {
    * To implement this into your code
    * Firstly add your hotkey configurations to AppPreferences and set up their strings in resources
    * Fill the resetHotkeys in AppPreferences with your own code
-   * Then add your AppPreferences.HOTKEY_ADD_BY_YOU to hotkeys array in HotkeyOptions.java
    * Setting up the hotkey in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
    * Do not forget to sync with the user's settings.
    * You should go modifying hotkeySync in AppPreferences, adding your codes there.
@@ -93,7 +92,7 @@ class HotkeyOptions extends OptionsPanel {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      AppPreferences.hotkeyReflectError(e);
     }
 
     keyButtons = new ArrayList<>();
@@ -306,16 +305,12 @@ class HotkeyOptions extends OptionsPanel {
       if (e.getKeyCode() >= 32) {
         int modifier = e.getModifiersEx();
         int code = e.getKeyCode();
-        for (var item : hotkeys) {
-          if ((InputEvent.getModifiersExText(modifier) + " + "
-              + KeyEvent.getKeyText(code)).equals(
-              ((PrefMonitorKeyStroke) item).getCompareString())) {
-            label.setText(S.get("hotkeyErrConflict")
-                + S.get(((PrefMonitorKeyStroke) item).getName()));
-            scl.code = 0;
-            scl.modifier = 0;
-            return;
-          }
+        String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
+        if (!checkPass.equals("")) {
+          label.setText(checkPass);
+          scl.code = 0;
+          scl.modifier = 0;
+          return;
         }
         scl.code = code;
         scl.modifier = modifier;

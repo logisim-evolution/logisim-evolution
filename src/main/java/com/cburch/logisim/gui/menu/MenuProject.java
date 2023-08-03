@@ -117,7 +117,7 @@ class MenuProject extends Menu {
   }
 
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     setEnabled(
         menubar.getSaveProject() != null
             || addCircuit.hasListeners()

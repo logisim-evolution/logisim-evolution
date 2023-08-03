@@ -193,7 +193,7 @@ class MenuFile extends Menu implements ActionListener {
   }
 
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     setEnabled(true);
     menubar.fireEnableChanged();
   }
