@@ -47,10 +47,14 @@ public class WindowMenu extends Menu {
 
     private WindowMenuItem findOwnerItem() {
       for (WindowMenuItem i : persistentItems) {
-        if (i.getJFrame() == owner) return i;
+        if (i.getJFrame() == owner) {
+          return i;
+        }
       }
       for (WindowMenuItem i : transientItems) {
-        if (i.getJFrame() == owner) return i;
+        if (i.getJFrame() == owner) {
+          return i;
+        }
       }
       return null;
     }
@@ -88,8 +92,10 @@ public class WindowMenu extends Menu {
     WindowMenuManager.addMenu(this);
 
     final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    minimize.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
-    close.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
+    minimize.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
+    close.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
@@ -113,13 +119,18 @@ public class WindowMenu extends Menu {
 
   @Override
   public void hotkeyUpdate() {
-    minimize.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
-    close.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
+    minimize.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
+    close.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
   }
 
   void addMenuItem(Object source, WindowMenuItem item, boolean isPersistent) {
-    if (isPersistent) persistentItems.add(item);
-    else transientItems.add(item);
+    if (isPersistent) {
+      persistentItems.add(item);
+    } else {
+      transientItems.add(item);
+    }
     item.addActionListener(myListener);
     computeContents();
   }
@@ -188,7 +199,9 @@ public class WindowMenu extends Menu {
   }
 
   void doZoom() {
-    if (owner == null) return;
+    if (owner == null) {
+      return;
+    }
 
     owner.pack();
     final var screenSize = owner.getToolkit().getScreenSize();
@@ -214,8 +227,12 @@ public class WindowMenu extends Menu {
       }
     }
 
-    if (locChanged) owner.setLocation(windowLoc);
-    if (sizeChanged) owner.setSize(windowSize);
+    if (locChanged) {
+      owner.setLocation(windowLoc);
+    }
+    if (sizeChanged) {
+      owner.setSize(windowSize);
+    }
   }
 
   void removeMenuItem(Object source, JRadioButtonMenuItem item) {

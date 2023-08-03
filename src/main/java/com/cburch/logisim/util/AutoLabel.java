@@ -34,7 +34,8 @@ import java.util.TreeSet;
 
 public class AutoLabel {
 
-  public static final Integer[] USED_KEY_STROKES = new Integer[]{KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
+  public static final Integer[] USED_KEY_STROKES = new Integer[]{
+      KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
   public static final Set<Integer> KEY_STROKES = new HashSet<>(Arrays.asList(USED_KEY_STROKES));
 
   private final HashMap<Circuit, String> labelBase = new HashMap<>();
@@ -58,7 +59,9 @@ public class AutoLabel {
   }
 
   public boolean hasNext(Circuit circ) {
-    if (circ == null || !active.containsKey(circ)) return false;
+    if (circ == null || !active.containsKey(circ)) {
+      return false;
+    }
     return active.get(circ);
   }
 
@@ -66,7 +69,8 @@ public class AutoLabel {
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) {
       return "";
     }
-    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false)) {
+    if (Circuit.isCorrectLabel(circ.getName(),
+        currentLabel.get(circ), circ.getNonWires(), null, me, false)) {
       return currentLabel.get(circ);
     }
 
@@ -78,29 +82,43 @@ public class AutoLabel {
     return "";
   }
 
-  public boolean correctMatrixBaseLabel(Circuit circ, ComponentFactory me, String common, int maxX, int maxY) {
-    if (StringUtil.isNullOrEmpty(common) || (maxX < 0) || (maxY < 0)) return true;
-    if (!SyntaxChecker.isVariableNameAcceptable(common, true)) return false;
-    for (var x = 0; x < maxX; x++)
+  public boolean correctMatrixBaseLabel(Circuit circ, ComponentFactory me,
+                                        String common, int maxX, int maxY) {
+    if (StringUtil.isNullOrEmpty(common) || (maxX < 0) || (maxY < 0)) {
+      return true;
+    }
+    if (!SyntaxChecker.isVariableNameAcceptable(common, true)) {
+      return false;
+    }
+    for (var x = 0; x < maxX; x++) {
       for (var y = 0; y < maxY; y++) {
         if (getMatrixLabel(circ, me, common, x, y).isEmpty()) {
           return false;
         }
       }
+    }
     return true;
   }
 
   public String getMatrixLabel(Circuit circ, ComponentFactory me, String common, int x, int y) {
-    if (StringUtil.isNullOrEmpty(common) || (x < 0) || (y < 0)) return "";
-    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) return "";
+    if (StringUtil.isNullOrEmpty(common) || (x < 0) || (y < 0)) {
+      return "";
+    }
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) {
+      return "";
+    }
     final var label = common.concat("_X" + x + "_Y" + y);
     if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
-        && SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
+        && SyntaxChecker.isVariableNameAcceptable(label, false)) {
+      return label;
+    }
     return "";
   }
 
   public String getNext(Circuit circ, ComponentFactory me) {
-    if (circ == null) return "";
+    if (circ == null) {
+      return "";
+    }
     if (useLabelBaseOnly.get(circ)) {
       useLabelBaseOnly.put(circ, false);
       return labelBase.get(circ);
@@ -115,21 +133,28 @@ public class AutoLabel {
     do {
       curIdx++;
       newLabel = baseLabel;
-      if (undescore) newLabel = newLabel.concat("_");
+      if (undescore) {
+        newLabel = newLabel.concat("_");
+      }
       newLabel = newLabel.concat(Integer.toString(curIdx));
-    } while (!Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), null, me, false));
+    } while (!Circuit.isCorrectLabel(circ.getName(),
+        newLabel, circ.getNonWires(), null, me, false));
     currentIndex.put(circ, curIdx);
     currentLabel.put(circ, newLabel);
     return newLabel;
   }
 
   public boolean isActive(Circuit circ) {
-    if (circ != null && active.containsKey(circ)) return active.get(circ);
+    if (circ != null && active.containsKey(circ)) {
+      return active.get(circ);
+    }
     return false;
   }
 
   public void setLabel(String label, Circuit circ, ComponentFactory me) {
-    if (circ != null) update(circ, label, true, me);
+    if (circ != null) {
+      update(circ, label, true, me);
+    }
   }
 
   public void activate(Circuit circ) {
@@ -137,7 +162,9 @@ public class AutoLabel {
       if (labelBase.containsKey(circ)
           && currentIndex.containsKey(circ)
           && useLabelBaseOnly.containsKey(circ)
-          && useUnderscore.containsKey(circ)) active.put(circ, !labelBase.get(circ).isEmpty());
+          && useUnderscore.containsKey(circ)) {
+        active.put(circ, !labelBase.get(circ).isEmpty());
+      }
     }
   }
 
@@ -154,12 +181,16 @@ public class AutoLabel {
 
   private int getLabelBaseEndIndex(String label) {
     var index = label.length();
-    while ((index > 1) && CorrectLabel.NUMBERS.contains(label.substring(index - 1, index))) index--;
+    while ((index > 1) && CorrectLabel.NUMBERS.contains(label.substring(index - 1, index))) {
+      index--;
+    }
     return (index - 1);
   }
 
   private void update(Circuit circ, String label, boolean useFirstLabel, ComponentFactory me) {
-    if (circ == null) return;
+    if (circ == null) {
+      return;
+    }
     if (label.isEmpty() || !SyntaxChecker.isVariableNameAcceptable(label, false)) {
       labelBase.put(circ, "");
       currentIndex.put(circ, 0);
@@ -192,7 +223,8 @@ public class AutoLabel {
     return sorted;
   }
 
-  public String askAndSetLabel(String componentName, String oldLabel, Circuit circ, Component comp, ComponentFactory compFactory,
+  public String askAndSetLabel(String componentName, String oldLabel, Circuit circ,
+                               Component comp, ComponentFactory compFactory,
                                AttributeSet attrs, SetAttributeAction act, boolean createAction) {
     var correct = false;
     var newLabel = oldLabel;
@@ -201,11 +233,15 @@ public class AutoLabel {
           OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
               S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
-        if (Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
+        if (Circuit.isCorrectLabel(circ.getName(),
+            newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
             && !CorrectLabel.isKeyword(newLabel, true)) {
-          if (createAction) act.set(comp, StdAttr.LABEL, newLabel);
-          else setLabel(newLabel, circ, compFactory);
+          if (createAction) {
+            act.set(comp, StdAttr.LABEL, newLabel);
+          } else {
+            setLabel(newLabel, circ, compFactory);
+          }
           correct = true;
         }
       } else {
@@ -216,13 +252,16 @@ public class AutoLabel {
     return newLabel;
   }
 
-  public boolean labelKeyboardHandler(int keyCode, int keyModifiers, AttributeSet attrs, String componentName, Component comp,
-                                      ComponentFactory compFactory, Circuit circ, SetAttributeAction act, boolean createAction) {
+  public boolean labelKeyboardHandler(int keyCode, int keyModifiers, AttributeSet attrs,
+                                      String componentName, Component comp,
+                                      ComponentFactory compFactory, Circuit circ,
+                                      SetAttributeAction act, boolean createAction) {
     /* TODO: bind more hotkeys */
     int code = keyCode;
     int modifier = keyModifiers;
     String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
-    if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_OPEN).getCompareString())) {
+    if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_AUTO_LABEL_OPEN).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var oldLabel = attrs.getValue(StdAttr.LABEL);
         final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
@@ -236,33 +275,40 @@ public class AutoLabel {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE).getCompareString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
-        if (createAction)
+        if (createAction) {
           act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
-        else
+        } else {
           attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
+        }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_VIEW).getCompareString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_AUTO_LABEL_VIEW).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
           && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-        if (createAction)
+        if (createAction) {
           act.set(comp, StdAttr.LABEL_VISIBILITY, true);
-        else
+        } else {
           attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
+        }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_HIDE).getCompareString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_AUTO_LABEL_HIDE).getCompareString())) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
           && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-        if (createAction)
+        if (createAction) {
           act.set(comp, StdAttr.LABEL_VISIBILITY, false);
-        else
+        } else {
           attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
+        }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP).getCompareString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP).getCompareString())) {
       stop(circ);
       return true;
     }

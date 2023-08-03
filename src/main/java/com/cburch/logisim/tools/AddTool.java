@@ -144,10 +144,11 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
-    if (AppPreferences.DefaultAppearance.isSource(evt))
+    if (AppPreferences.DefaultAppearance.isSource(evt)) {
       attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
-    else if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.isSource(evt))
+    } else if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.isSource(evt)) {
       attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
+    }
   }
 
   @Override
@@ -184,15 +185,20 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     // repaint problems on OpenJDK under Ubuntu
     final var x = lastX;
     final var y = lastY;
-    if (x == INVALID_COORD || y == INVALID_COORD) return;
+    if (x == INVALID_COORD || y == INVALID_COORD) {
+      return;
+    }
     final var source = getFactory();
-    if (source == null) return;
+    if (source == null) {
+      return;
+    }
     final var base = getBaseAttributes();
     final var bds = source.getOffsetBounds(base);
     Color drawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      drawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.MAGENTA : new Color(AppPreferences.COMPONENT_GHOST_COLOR.get());
+      drawColor = autoLabeler.isActive(canvas.getCircuit())
+          ? Color.MAGENTA : new Color(AppPreferences.COMPONENT_GHOST_COLOR.get());
       source.drawGhost(context, drawColor, x, y, getBaseAttributes());
       if (matrixPlace) {
         source.drawGhost(context, drawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
@@ -222,7 +228,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof final AddTool o)) return false;
+    if (!(other instanceof final AddTool o)) {
+      return false;
+    }
     if (this.description != null) {
       return this.descriptionBase == o.descriptionBase && this.description.equals(o.description);
     } else {
@@ -257,7 +265,8 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       } else {
         final var base = getBaseAttributes();
         final var bds = source.getOffsetBounds(base);
-        final var mbds = Bounds.create(bds.getX(), bds.getY(), bds.getWidth() * 2, bds.getHeight() * 2);
+        final var mbds = Bounds.create(bds.getX(),
+            bds.getY(), bds.getWidth() * 2, bds.getHeight() * 2);
         ret = mbds.expand(5);
       }
       bounds = ret;
@@ -346,7 +355,8 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     if (!event.isConsumed()) {
       final var keyEventB = event.getKeyCode();
       final var component = getFactory().getDisplayName();
-      if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB, event.getModifiersEx(), null, attrs, canvas, null, false))
+      if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB,
+          event.getModifiersEx(), null, attrs, canvas, null, false)) {
         if (autoLabeler.labelKeyboardHandler(keyEventB,
             event.getModifiersEx(),
             getAttributeSet(),
@@ -360,24 +370,35 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         } else {
           int code = event.getKeyCode();
           int modifier = event.getModifiersEx();
-          String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
+          String compare = InputEvent.getModifiersExText(modifier)
+              + " + " + KeyEvent.getKeyText(code);
           if (code == KeyEvent.VK_X) {
             matrixPlace = !matrixPlace;
             canvas.repaint();
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke)
+              AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
             setFacing(canvas, Direction.NORTH);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke)
+              AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
             setFacing(canvas, Direction.SOUTH);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke)
+              AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
             setFacing(canvas, Direction.WEST);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke)
+              AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
             setFacing(canvas, Direction.EAST);
-          } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_ADD_TOOL_ROTATE).getCompareString())) {
+          } else if (compare.equals(((PrefMonitorKeyStroke)
+              AppPreferences.HOTKEY_ADD_TOOL_ROTATE).getCompareString())) {
             final var current = getFacing();
-            if (current == Direction.NORTH) setFacing(canvas, Direction.EAST);
-            else if (current == Direction.EAST) setFacing(canvas, Direction.SOUTH);
-            else if (current == Direction.SOUTH) setFacing(canvas, Direction.WEST);
-            else setFacing(canvas, Direction.NORTH);
+            if (current == Direction.NORTH) {
+              setFacing(canvas, Direction.EAST);
+            } else if (current == Direction.EAST) {
+              setFacing(canvas, Direction.SOUTH);
+            } else if (current == Direction.SOUTH) {
+              setFacing(canvas, Direction.WEST);
+            } else {
+              setFacing(canvas, Direction.NORTH);
+            }
           } else if (code == KeyEvent.VK_ESCAPE) {
             final var proj = canvas.getProject();
             final var base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
@@ -396,6 +417,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             }
           }
         }
+      }
     }
   }
 
@@ -412,7 +434,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public void mouseDragged(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state != SHOW_NONE) {
-      if (shouldSnap) Canvas.snapToGrid(event);
+      if (shouldSnap) {
+        Canvas.snapToGrid(event);
+      }
       moveTo(canvas, gfx, event.getX(), event.getY());
     }
   }
@@ -442,7 +466,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public void mouseMoved(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state != SHOW_NONE) {
-      if (shouldSnap) Canvas.snapToGrid(event);
+      if (shouldSnap) {
+        Canvas.snapToGrid(event);
+      }
       moveTo(canvas, gfx, event.getX(), event.getY());
     }
   }
@@ -463,7 +489,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       }
     }
 
-    if (shouldSnap) Canvas.snapToGrid(e);
+    if (shouldSnap) {
+      Canvas.snapToGrid(e);
+    }
     moveTo(canvas, g, e.getX(), e.getY());
     setState(canvas, SHOW_ADD);
   }
@@ -473,24 +501,33 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     final var added = new ArrayList<Component>();
     if (state == SHOW_ADD) {
       final var circ = canvas.getCircuit();
-      if (!canvas.getProject().getLogisimFile().contains(circ)) return;
-      if (shouldSnap) Canvas.snapToGrid(event);
+      if (!canvas.getProject().getLogisimFile().contains(circ)) {
+        return;
+      }
+      if (shouldSnap) {
+        Canvas.snapToGrid(event);
+      }
       moveTo(canvas, gfx, event.getX(), event.getY());
 
       final var source = getFactory();
-      if (source == null) return;
+      if (source == null) {
+        return;
+      }
       String label = null;
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         label = attrs.getValue(StdAttr.LABEL);
         /* Here we make sure to not overrride labels that have default value */
         if (autoLabeler.isActive(canvas.getCircuit()) && ((label == null) || label.isEmpty())) {
           label = autoLabeler.getCurrent(canvas.getCircuit(), source);
-          if (autoLabeler.hasNext(canvas.getCircuit()))
+          if (autoLabeler.hasNext(canvas.getCircuit())) {
             autoLabeler.getNext(canvas.getCircuit(), source);
-          else autoLabeler.stop(canvas.getCircuit());
+          } else {
+            autoLabeler.stop(canvas.getCircuit());
+          }
         }
-        if (!autoLabeler.isActive(canvas.getCircuit()))
+        if (!autoLabeler.isActive(canvas.getCircuit())) {
           autoLabeler.setLabel("", canvas.getCircuit(), source);
+        }
       }
 
       final var matrix = new MatrixPlacerInfo(label);
@@ -498,10 +535,13 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         final var base = getBaseAttributes();
         final var bds = source.getOffsetBounds(base).expand(5);
         matrix.setBounds(bds);
-        final var dialog = new MatrixPlacerDialog(matrix, source.getName(), autoLabeler.isActive(canvas.getCircuit()));
+        final var dialog = new MatrixPlacerDialog(matrix,
+            source.getName(), autoLabeler.isActive(canvas.getCircuit()));
         var okay = false;
         while (!okay) {
-          if (!dialog.execute()) return;
+          if (!dialog.execute()) {
+            return;
+          }
           if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
             autoLabeler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
@@ -515,12 +555,14 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             if (!okay) {
               OptionPane.showMessageDialog(
                   null,
-                  "Base label either has wrong syntax or is contained in circuit",  // FIXME: hardcoded string
+                  S.get("MatrixPlacerException"),
                   "Matrixplacer",
                   OptionPane.ERROR_MESSAGE);
               matrix.undoLabel();
             }
-          } else matrix.undoLabel();
+          } else {
+            matrix.undoLabel();
+          }
         }
       }
 
@@ -533,10 +575,10 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
                 event.getY() + (matrix.getDeltaY() * y), true);
             final var attrsCopy = (AttributeSet) attrs.clone();
             if (matrix.getLabel() != null) {
-              if (matrixPlace)
+              if (matrixPlace) {
                 attrsCopy.setValue(StdAttr.LABEL, autoLabeler.getMatrixLabel(canvas.getCircuit(),
                     source, matrix.getLabel(), x, y));
-              else {
+              } else {
                 attrsCopy.setValue(StdAttr.LABEL, matrix.getLabel());
               }
             }
@@ -557,7 +599,8 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             added.add(comp);
           }
         }
-        final var action = mutation.toAction(S.getter("addComponentAction", factory.getDisplayGetter()));
+        final var action = mutation.toAction(
+            S.getter("addComponentAction", factory.getDisplayGetter()));
         canvas.getProject().doAction(action);
         lastAddition = action;
         canvas.repaint();
@@ -579,15 +622,21 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       if (act != null) {
         proj.doAction(act);
       }
-      if (!added.isEmpty()) canvas.getSelection().addAll(added);
+      if (!added.isEmpty()) {
+        canvas.getSelection().addAll(added);
+      }
     }
   }
 
   private synchronized void moveTo(Canvas canvas, Graphics g, int x, int y) {
-    if (state != SHOW_NONE) expose(canvas, lastX, lastY);
+    if (state != SHOW_NONE) {
+      expose(canvas, lastX, lastY);
+    }
     lastX = x;
     lastY = y;
-    if (state != SHOW_NONE) expose(canvas, lastX, lastY);
+    if (state != SHOW_NONE) {
+      expose(canvas, lastX, lastY);
+    }
   }
 
   @Override
@@ -637,7 +686,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   private void setFacing(Canvas canvas, Direction facing) {
     final var source = getFactory();
-    if (source == null) return;
+    if (source == null) {
+      return;
+    }
     final var base = getBaseAttributes();
     Object feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
     @SuppressWarnings("unchecked")
@@ -650,13 +701,18 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   private Direction getFacing() {
     final var source = getFactory();
-    if (source == null) return Direction.NORTH;
+    if (source == null) {
+      return Direction.NORTH;
+    }
     final var base = getBaseAttributes();
     Object feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
     @SuppressWarnings("unchecked")
     Attribute<Direction> attr = (Attribute<Direction>) feature;
-    if (attr != null) return base.getValue(attr);
-    else return Direction.NORTH;
+    if (attr != null) {
+      return base.getValue(attr);
+    } else {
+      return Direction.NORTH;
+    }
   }
 
   private void setState(Canvas canvas, int value) {
@@ -674,7 +730,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public boolean sharesSource(Tool other) {
-    if (!(other instanceof final AddTool o)) return false;
+    if (!(other instanceof final AddTool o)) {
+      return false;
+    }
     if (this.sourceLoadAttempted && o.sourceLoadAttempted) {
       return this.factory.equals(o.factory);
     } else if (this.description == null) {
@@ -703,8 +761,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-    if (!isDataFlavorSupported(flavor))
+    if (!isDataFlavorSupported(flavor)) {
       throw new UnsupportedFlavorException(flavor);
+    }
     return this;
   }
 

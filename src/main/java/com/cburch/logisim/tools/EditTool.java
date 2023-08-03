@@ -154,7 +154,9 @@ public class EditTool extends Tool {
     canvas.getSelection().setSuppressHandles(null);
     cache.clear();
     final var circ = canvas.getCircuit();
-    if (circ != null) circ.removeCircuitListener(listener);
+    if (circ != null) {
+      circ.removeCircuitListener(listener);
+    }
     canvas.getSelection().removeListener(listener);
   }
 
@@ -253,30 +255,41 @@ public class EditTool extends Tool {
       if (sel != null) {
         for (final var c : sel) {
           if (c instanceof final Wire w) {
-            if (w.contains(loc) && !w.endsAt(loc)) return select;
+            if (w.contains(loc) && !w.endsAt(loc)) {
+              return select;
+            }
           }
         }
       }
     }
 
     final var circ = canvas.getCircuit();
-    if (circ == null) return false;
+    if (circ == null) {
+      return false;
+    }
     final var at = circ.getComponents(loc);
-    if (CollectionUtil.isNotEmpty(at)) return wiring;
+    if (CollectionUtil.isNotEmpty(at)) {
+      return wiring;
+    }
     for (final var w : circ.getWires()) {
-      if (w.contains(loc)) return wiring;
+      if (w.contains(loc)) {
+        return wiring;
+      }
     }
     return select;
   }
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    /* My coding is silly, right? Doing so make sure that the hotkey can support both keycode and modifier */
+    /*
+     * My coding is silly, right? Doing so make sure
+     * that the hotkey can support both keycode and modifier
+     * */
     int code = e.getKeyCode();
     int modifier = e.getModifiersEx();
     String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
     if (code == KeyEvent.VK_BACK_SPACE) {
-
+      /* Wait for more interesting codes */
     } else if (code == KeyEvent.VK_DELETE) {
       if (!canvas.getSelection().isEmpty()) {
         final var act = SelectionActions.clear(canvas.getSelection());
@@ -285,22 +298,39 @@ public class EditTool extends Tool {
       } else {
         wiring.keyPressed(canvas, e);
       }
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE).getCompareString())) {
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE).getCompareString())) {
       final var act = SelectionActions.duplicate(canvas.getSelection());
       canvas.getProject().doAction(act);
       e.consume();
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
-      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.NORTH, e);
-      else select.keyPressed(canvas, e);
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
-      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.SOUTH, e);
-      else select.keyPressed(canvas, e);
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
-      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.EAST, e);
-      else select.keyPressed(canvas, e);
-    } else if (compare.equals(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
-      if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.WEST, e);
-      else select.keyPressed(canvas, e);
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
+      if (e.getModifiersEx() == 0) {
+        attemptReface(canvas, Direction.NORTH, e);
+      } else {
+        select.keyPressed(canvas, e);
+      }
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
+      if (e.getModifiersEx() == 0) {
+        attemptReface(canvas, Direction.SOUTH, e);
+      } else {
+        select.keyPressed(canvas, e);
+      }
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
+      if (e.getModifiersEx() == 0) {
+        attemptReface(canvas, Direction.EAST, e);
+      } else {
+        select.keyPressed(canvas, e);
+      }
+    } else if (compare.equals(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
+      if (e.getModifiersEx() == 0) {
+        attemptReface(canvas, Direction.WEST, e);
+      } else {
+        select.keyPressed(canvas, e);
+      }
     } else if (code == KeyEvent.VK_ALT) {
       updateLocation(canvas, e);
       e.consume();
@@ -371,7 +401,9 @@ public class EditTool extends Tool {
       for (final var w : circ.getWires()) {
         if (selected.contains(w)) {
           if (w.contains(oldWireLoc)) {
-            if (suppress == null) suppress = new ArrayList<>();
+            if (suppress == null) {
+              suppress = new ArrayList<>();
+            }
             suppress.add(w);
           }
         }
@@ -411,7 +443,9 @@ public class EditTool extends Tool {
     lastCanvas = canvas;
     cache.clear();
     final var circ = canvas.getCircuit();
-    if (circ != null) circ.addCircuitListener(listener);
+    if (circ != null) {
+      circ.addCircuitListener(listener);
+    }
     canvas.getSelection().addListener(listener);
     select.select(canvas);
   }
@@ -427,7 +461,9 @@ public class EditTool extends Tool {
     final var dx = mx - snapx;
     final var dy = my - snapy;
     var isEligible = dx * dx + dy * dy < 36;
-    if ((mods & MouseEvent.ALT_DOWN_MASK) != 0) isEligible = true;
+    if ((mods & MouseEvent.ALT_DOWN_MASK) != 0) {
+      isEligible = true;
+    }
     if (!isEligible) {
       snapx = -1;
       snapy = -1;
@@ -475,19 +511,28 @@ public class EditTool extends Tool {
     }
   }
 
-  private void repaintIndicators(Canvas canvas, Location a, Location b) {
-    if (a.equals(b)) return;
-    if (a != NULL_LOCATION) canvas.repaint(a.getX() - 6, a.getY() - 6, 12, 12);
-    if (b != NULL_LOCATION) canvas.repaint(b.getX() - 6, b.getY() - 6, 12, 12);
-  }
-
   private boolean updateLocation(Canvas canvas, KeyEvent e) {
     int x = lastRawX;
-    if (x >= 0) return updateLocation(canvas, x, lastRawY, e.getModifiersEx());
-    else return false;
+    if (x >= 0) {
+      return updateLocation(canvas, x, lastRawY, e.getModifiersEx());
+    } else {
+      return false;
+    }
   }
 
   private boolean updateLocation(Canvas canvas, MouseEvent e) {
     return updateLocation(canvas, e.getX(), e.getY(), e.getModifiersEx());
+  }
+
+  private void repaintIndicators(Canvas canvas, Location a, Location b) {
+    if (a.equals(b)) {
+      return;
+    }
+    if (a != NULL_LOCATION) {
+      canvas.repaint(a.getX() - 6, a.getY() - 6, 12, 12);
+    }
+    if (b != NULL_LOCATION) {
+      canvas.repaint(b.getX() - 6, b.getY() - 6, 12, 12);
+    }
   }
 }

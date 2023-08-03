@@ -145,24 +145,24 @@ class HotkeyOptions extends OptionsPanel {
     p.add(new JLabel(" "));
     p.add(new JLabel(S.get("hotkeyOptOrientDesc")));
     p.add(new JLabel(" "));
-    JPanel dirPLeft = new JPanel();
-    JPanel dirPRight = new JPanel();
-    dirPLeft.setLayout(new TableLayout(3));
-    dirPRight.setLayout(new TableLayout(3));
-    dirPLeft.add(new JLabel(" "));
-    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirNorth") + " "));
-    dirPLeft.add(new JLabel(" "));
-    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirWest") + " "));
-    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirSouth") + " "));
-    dirPLeft.add(new JLabel(" " + S.get("hotkeyDirEast") + " "));
-    p.add(dirPLeft);
-    dirPRight.add(new JLabel(" "));
-    dirPRight.add(northBtn);
-    dirPRight.add(new JLabel(" "));
-    dirPRight.add(westBtn);
-    dirPRight.add(southBtn);
-    dirPRight.add(eastBtn);
-    p.add(dirPRight);
+    JPanel panelLeft = new JPanel();
+    JPanel panelRight = new JPanel();
+    panelLeft.setLayout(new TableLayout(3));
+    panelRight.setLayout(new TableLayout(3));
+    panelLeft.add(new JLabel(" "));
+    panelLeft.add(new JLabel(" " + S.get("hotkeyDirNorth") + " "));
+    panelLeft.add(new JLabel(" "));
+    panelLeft.add(new JLabel(" " + S.get("hotkeyDirWest") + " "));
+    panelLeft.add(new JLabel(" " + S.get("hotkeyDirSouth") + " "));
+    panelLeft.add(new JLabel(" " + S.get("hotkeyDirEast") + " "));
+    p.add(panelLeft);
+    panelRight.add(new JLabel(" "));
+    panelRight.add(northBtn);
+    panelRight.add(new JLabel(" "));
+    panelRight.add(westBtn);
+    panelRight.add(southBtn);
+    panelRight.add(eastBtn);
+    p.add(panelRight);
     JScrollPane scrollPane = new JScrollPane(p, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
       @Override

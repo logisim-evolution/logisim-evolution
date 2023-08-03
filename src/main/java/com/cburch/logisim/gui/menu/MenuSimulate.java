@@ -83,12 +83,18 @@ public class MenuSimulate extends Menu {
 
     menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     /* Allow user itself to set the mask */
-    runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
-    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(0));
-    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(0));
-    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(0));
-    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(0));
-    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(0));
+    runToggle.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
+    reset.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_RESET).getWithMask(0));
+    step.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_STEP).getWithMask(0));
+    tickHalf.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(0));
+    tickFull.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(0));
+    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(0));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
@@ -154,12 +160,18 @@ public class MenuSimulate extends Menu {
   }
 
   public void hotkeyUpdate() {
-    runToggle.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
-    reset.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getWithMask(0));
-    step.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getWithMask(0));
-    tickHalf.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(0));
-    tickFull.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(0));
-    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(0));
+    runToggle.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
+    reset.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_RESET).getWithMask(0));
+    step.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_STEP).getWithMask(0));
+    tickHalf.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_TICK_HALF).getWithMask(0));
+    tickFull.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_TICK_FULL).getWithMask(0));
+    ticksEnabled.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_SIM_TICK_ENABLED).getWithMask(0));
   }
 
   public static List<String> getTickFrequencyStrings() {
@@ -347,11 +359,15 @@ public class MenuSimulate extends Menu {
       final var src = e.getSource();
 
       final var proj = menubar.getSimulationProject();
-      if (proj == null) return;
+      if (proj == null) {
+        return;
+      }
       final var vhdl = proj.getVhdlSimulator();
-      if (vhdl != null && (src == simulateVhdlEnable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
+      if (vhdl != null && (src == simulateVhdlEnable
+          || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
         vhdl.setEnabled(!vhdl.isEnabled());
-      } else if (vhdl != null && (src == vhdlSimFiles || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
+      } else if (vhdl != null && (src == vhdlSimFiles
+          || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
         vhdl.restart();
       } else if (src == log) {
         proj.getLogFrame().setVisible(true);

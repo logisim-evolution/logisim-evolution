@@ -190,7 +190,9 @@ public class AppPreferences {
   }
 
   public static Template getEmptyTemplate() {
-    if (emptyTemplate == null) emptyTemplate = Template.createEmpty();
+    if (emptyTemplate == null) {
+      emptyTemplate = Template.createEmpty();
+    }
     return emptyTemplate;
   }
 
@@ -301,7 +303,9 @@ public class AppPreferences {
 
   public static void setTemplateFile(File value, Template template) {
     getPrefs();
-    if (value != null && !value.canRead()) value = null;
+    if (value != null && !value.canRead()) {
+      value = null;
+    }
     if (!Objects.equals(value, templateFile)) {
       try {
         customTemplateFile = template == null ? null : value;
@@ -324,7 +328,9 @@ public class AppPreferences {
 
   public static void setScaledFonts(Component[] comp) {
     for (final var component : comp) {
-      if (component instanceof Container) setScaledFonts(((Container) component).getComponents());
+      if (component instanceof Container) {
+        setScaledFonts(((Container) component).getComponents());
+      }
       try {
         component.setFont(getScaledFont(component.getFont()));
         component.revalidate();
@@ -385,13 +391,19 @@ public class AppPreferences {
   }
 
   public static Font getScaledFont(Font myfont) {
-    if (myfont != null) return myfont.deriveFont(getScaled((float) FONT_SIZE));
-    else return null;
+    if (myfont != null) {
+      return myfont.deriveFont(getScaled((float) FONT_SIZE));
+    } else {
+      return null;
+    }
   }
 
   public static Font getScaledFont(Font myfont, float scale) {
-    if (myfont != null) return myfont.deriveFont(getScaled((float) FONT_SIZE, scale));
-    else return null;
+    if (myfont != null) {
+      return myfont.deriveFont(getScaled((float) FONT_SIZE, scale));
+    } else {
+      return null;
+    }
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon) {
@@ -577,17 +589,21 @@ public class AppPreferences {
               StdAttr.APPEAR_EVOLUTION.toString()));
 
   public static AttributeOption getDefaultAppearance() {
-    if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString()))
+    if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString())) {
       return StdAttr.APPEAR_EVOLUTION;
-    else return StdAttr.APPEAR_CLASSIC;
+    } else {
+      return StdAttr.APPEAR_CLASSIC;
+    }
   }
 
   public static AttributeOption getDefaultCircuitAppearance() {
-    if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString()))
+    if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString())) {
       return StdAttr.APPEAR_EVOLUTION;
-    else if (DefaultAppearance.get().equals(StdAttr.APPEAR_FPGA.toString()))
+    } else if (DefaultAppearance.get().equals(StdAttr.APPEAR_FPGA.toString())) {
       return StdAttr.APPEAR_FPGA;
-    else return StdAttr.APPEAR_CLASSIC;
+    } else {
+      return StdAttr.APPEAR_CLASSIC;
+    }
   }
 
   public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES =

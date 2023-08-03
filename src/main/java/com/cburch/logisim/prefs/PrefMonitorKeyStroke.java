@@ -16,28 +16,28 @@ import java.util.prefs.PreferenceChangeEvent;
 import javax.swing.KeyStroke;
 
 public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
-  private final byte[] dflt;
+  private final byte[] defaultData;
   private byte[] value;
-  private String pName;
+  private String prefName;
   private boolean canModify = true;
 
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
     super(name);
-    pName = name;
-    this.dflt = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    prefName = name;
+    this.defaultData = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     final var prefs = AppPreferences.getPrefs();
-    set(prefs.getByteArray(name, dflt));
+    set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
   }
 
   public PrefMonitorKeyStroke(String name, int keycode, int modifier, boolean canModify) {
     super(name);
-    pName = name;
-    this.dflt = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    prefName = name;
+    this.defaultData = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
     final var prefs = AppPreferences.getPrefs();
-    set(prefs.getByteArray(name, dflt));
+    set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
     this.canModify = canModify;
   }
@@ -47,18 +47,18 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   }
 
   public String getName() {
-    return pName;
+    return prefName;
   }
 
   private byte[] keystrokeToByteArray(KeyStroke k) {
     /* Little Endian */
     byte[] res = new byte[8];
     int code = k.getKeyCode();
-    int mod = k.getModifiers();
     res[0] = (byte) (code & 0xff);
     res[1] = (byte) ((code >> 8) & 0xff);
     res[2] = (byte) ((code >> 16) & 0xff);
     res[3] = (byte) ((code >> 24) & 0xff);
+    int mod = k.getModifiers();
     res[4] = (byte) (mod & 0xff);
     res[5] = (byte) ((mod >> 8) & 0xff);
     res[6] = (byte) ((mod >> 16) & 0xff);
@@ -112,7 +112,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     final var name = getIdentifier();
     if (prop.equals(name)) {
       final var oldValue = value;
-      final var newValue = prefs.getByteArray(name, dflt);
+      final var newValue = prefs.getByteArray(name, defaultData);
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);

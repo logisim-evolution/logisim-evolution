@@ -153,8 +153,11 @@ class MenuEdit extends Menu {
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
       final var proj = menubar.getSaveProject();
-      if (src == undo && proj != null) proj.undoAction();
-      else if (src == redo && proj != null) proj.redoAction();
+      if (src == undo && proj != null) {
+        proj.undoAction();
+      } else if (src == redo && proj != null) {
+        proj.redoAction();
+      }
     }
 
     @Override
