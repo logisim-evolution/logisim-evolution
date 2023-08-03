@@ -10,10 +10,10 @@
 package com.cburch.logisim.prefs;
 
 
-import javax.swing.KeyStroke;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.prefs.PreferenceChangeEvent;
+import javax.swing.KeyStroke;
 
 public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private final byte[] dflt;

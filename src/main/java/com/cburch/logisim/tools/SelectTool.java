@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.comp.Component;
@@ -33,7 +35,6 @@ import com.cburch.logisim.tools.move.MoveRequestListener;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -44,8 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
-import static com.cburch.logisim.tools.Strings.S;
 
 public class SelectTool extends Tool {
 

@@ -15,7 +15,6 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.tools.SetAttributeAction;
-
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 

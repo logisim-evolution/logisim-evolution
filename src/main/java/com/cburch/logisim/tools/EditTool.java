@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -30,7 +32,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -42,8 +43,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
-
-import static com.cburch.logisim.tools.Strings.S;
 
 public class EditTool extends Tool {
   /**

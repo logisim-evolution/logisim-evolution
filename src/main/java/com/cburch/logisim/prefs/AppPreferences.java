@@ -21,11 +21,6 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -45,6 +40,10 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.KeyStroke;
 
 public class AppPreferences {
   //
@@ -883,6 +882,14 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_TOOL_DUPLICATE =
       create(new PrefMonitorKeyStroke("hotkeyEditToolDuplicate", KeyEvent.VK_INSERT, 0));
 
+  public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_UP =
+      create(new PrefMonitorKeyStroke("hotkeyProjMoveUp",
+          KeyEvent.VK_U, KeyEvent.SHIFT_DOWN_MASK));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_DOWN =
+      create(new PrefMonitorKeyStroke("hotkeyProjMoveDown",
+          KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK));
+
   public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_OPEN =
       create(new PrefMonitorKeyStroke("hotkeyAutoLabelOpen", KeyEvent.VK_L, 0));
 
@@ -902,21 +909,21 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyAddToolRotate", KeyEvent.VK_R, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_SMALL =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", KeyEvent.VK_S, 0, false));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", KeyEvent.VK_S, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_MEDIUM =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeMedium", KeyEvent.VK_M, 0, false));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeMedium", KeyEvent.VK_M, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_WIDE =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeWide", KeyEvent.VK_W, 0, false));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeWide", KeyEvent.VK_W, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_ADD =
       create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd",
-          KeyEvent.VK_ADD, 0, false));
+          KeyEvent.VK_ADD, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_SUB =
       create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub",
-          KeyEvent.VK_SUBTRACT, 0, false));
+          KeyEvent.VK_SUBTRACT, 0));
 
   public static void resetHotkeys() {
     try {
@@ -934,6 +941,10 @@ public class AppPreferences {
           KeyEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
       HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
+      HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
+          KeyEvent.VK_U, KeyEvent.SHIFT_DOWN_MASK));
+      HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
+          KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK));
       HOTKEY_DIR_NORTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
       HOTKEY_DIR_SOUTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
       HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));

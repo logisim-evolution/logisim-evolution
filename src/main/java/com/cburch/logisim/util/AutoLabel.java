@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -21,7 +23,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.SetAttributeAction;
-
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -30,8 +31,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import static com.cburch.logisim.util.Strings.S;
 
 public class AutoLabel {
 

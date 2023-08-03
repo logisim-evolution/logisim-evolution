@@ -9,11 +9,21 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.TableLayout;
-
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -24,17 +34,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-
-import static com.cburch.logisim.gui.Strings.S;
 
 class HotkeyOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
@@ -74,6 +73,8 @@ class HotkeyOptions extends OptionsPanel {
       AppPreferences.HOTKEY_FILE_EXPORT,
       AppPreferences.HOTKEY_FILE_PRINT,
       AppPreferences.HOTKEY_FILE_QUIT,
+      AppPreferences.HOTKEY_PROJ_MOVE_UP,
+      AppPreferences.HOTKEY_PROJ_MOVE_DOWN,
       AppPreferences.HOTKEY_DIR_NORTH,
       AppPreferences.HOTKEY_DIR_SOUTH,
       AppPreferences.HOTKEY_DIR_EAST,
