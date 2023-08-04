@@ -310,7 +310,8 @@ class HotkeyOptions extends OptionsPanel {
       int code = e.getKeyCode();
       if (code == KeyEvent.VK_CONTROL
           || code == KeyEvent.VK_ALT
-          || code == KeyEvent.VK_SHIFT) {
+          || code == KeyEvent.VK_SHIFT
+          || code == KeyEvent.VK_META) {
         return;
       }
       if (!((PrefMonitorKeyStroke) keyStrokePrefMonitor).metaCheckPass(modifier)) {
