@@ -926,12 +926,12 @@ public class AppPreferences {
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_UP =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveUp",
-          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK,
+          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
           true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_DOWN =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveDown",
-          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK,
+          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
           true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_OPEN =
@@ -996,9 +996,9 @@ public class AppPreferences {
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
       HOTKEY_FILE_QUIT.set(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
-          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
-          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_DIR_NORTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
       HOTKEY_DIR_SOUTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
       HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
