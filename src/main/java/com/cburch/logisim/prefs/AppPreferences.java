@@ -850,51 +850,64 @@ public class AppPreferences {
 
   /* Hotkey Settings */
   /* Watch whether in headless mode */
-  private static final int hotkeyMenuMask =
+  public static final int hotkeyMenuMask =
       GraphicsEnvironment.isHeadless()
           ? InputEvent.ALT_DOWN_MASK : new JMenu().getToolkit().getMenuShortcutKeyMaskEx();
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_AUTO_PROPAGATE =
-      create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeySimAutoPropagate", KeyEvent.VK_E, hotkeyMenuMask,
+      true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_RESET =
-      create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeySimReset", KeyEvent.VK_R, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_STEP =
-      create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeySimStep", KeyEvent.VK_I, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_HALF =
-      create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeySimTickHalf", KeyEvent.VK_T, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_FULL =
-      create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeySimTickFull", KeyEvent.VK_F9, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_SIM_TICK_ENABLED =
-      create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeySimTickEnabled", KeyEvent.VK_K, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_UNDO =
-      create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeyEditUndo", KeyEvent.VK_Z, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_REDO =
       create(new PrefMonitorKeyStroke("hotkeyEditRedo",
-          KeyEvent.VK_Z, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+          KeyEvent.VK_Z, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_WINDOW_CLOSE =
       create(new PrefMonitorKeyStroke("hotkeyWindowClose",
-          KeyEvent.VK_W, hotkeyMenuMask));
+          KeyEvent.VK_W, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_WINDOW_MINIMIZE =
       create(new PrefMonitorKeyStroke("hotkeyWindowMinimize",
-          KeyEvent.VK_M, hotkeyMenuMask));
+          KeyEvent.VK_M, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT =
       create(new PrefMonitorKeyStroke("hotkeyFileExport",
-          KeyEvent.VK_E, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
+          KeyEvent.VK_E, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
-      create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_QUIT =
-      create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, hotkeyMenuMask));
+      create(new PrefMonitorKeyStroke("hotkeyFileQuit", KeyEvent.VK_Q, hotkeyMenuMask,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
       create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
@@ -913,11 +926,13 @@ public class AppPreferences {
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_UP =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveUp",
-          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_DOWN =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveDown",
-          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK));
+          KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK,
+          true,true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_AUTO_LABEL_OPEN =
       create(new PrefMonitorKeyStroke("hotkeyAutoLabelOpen", KeyEvent.VK_L, 0));

@@ -273,7 +273,8 @@ class HotkeyOptions extends OptionsPanel {
       contentPanel.add(top);
       contentPanel.add(sub);
 
-      dl.addKeyListener(new KeyCaptureListener(waitingLabel, this));
+      dl.addKeyListener(new KeyCaptureListener(waitingLabel, this,
+          HotkeyOptions.hotkeys.get(index)));
       dl.setContentPane(contentPanel);
       dl.setLocationRelativeTo(null);
       dl.setSize(500, 100);
@@ -289,10 +290,13 @@ class HotkeyOptions extends OptionsPanel {
   private class KeyCaptureListener implements KeyListener {
     private final JLabel label;
     private final SettingsChangeListener scl;
+    private PrefMonitor<KeyStroke> keyStrokePrefMonitor;
 
-    public KeyCaptureListener(JLabel l, SettingsChangeListener se) {
+    public KeyCaptureListener(JLabel l, SettingsChangeListener se,
+                              PrefMonitor<KeyStroke> prefMonitor) {
       label = l;
       scl = se;
+      keyStrokePrefMonitor = prefMonitor;
     }
 
     @Override
@@ -305,6 +309,13 @@ class HotkeyOptions extends OptionsPanel {
       if (e.getKeyCode() >= 32) {
         int modifier = e.getModifiersEx();
         int code = e.getKeyCode();
+        if (!((PrefMonitorKeyStroke) keyStrokePrefMonitor).metaCheckPass(modifier)) {
+          label.setText(S.get("hotkeyErrMeta")
+              + InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask));
+          scl.code = 0;
+          scl.modifier = 0;
+          return;
+        }
         String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
         if (!checkPass.equals("")) {
           label.setText(checkPass);

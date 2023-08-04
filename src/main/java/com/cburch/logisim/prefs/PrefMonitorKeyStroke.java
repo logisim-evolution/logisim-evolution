@@ -22,25 +22,30 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private byte[] value;
   private String prefName;
   private boolean canModify = true;
+  private boolean metaRequired = false;
 
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
     super(name);
     prefName = name;
-    this.defaultData = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
+    this.defaultData = keystrokeToByteArray(
+        new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
     this.value = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
   }
 
-  public PrefMonitorKeyStroke(String name, int keycode, int modifier, boolean canModify) {
+  public PrefMonitorKeyStroke(String name, int keycode, int modifier,
+                              boolean metaRequired, boolean canModify) {
     super(name);
     prefName = name;
-    this.defaultData = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
+    this.defaultData = keystrokeToByteArray(new KeyStroke[]{
+        KeyStroke.getKeyStroke(keycode, modifier)});
     this.value = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
+    this.metaRequired = metaRequired;
     this.canModify = canModify;
   }
 
@@ -56,6 +61,14 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   public Boolean canModify() {
     return canModify;
+  }
+
+  public boolean metaCheckPass(int modifier) {
+    if (metaRequired) {
+      return (modifier & AppPreferences.hotkeyMenuMask) == AppPreferences.hotkeyMenuMask;
+    } else {
+      return true;
+    }
   }
 
   public String getName() {
@@ -150,9 +163,6 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
       if (cnt < list.size()) {
         res.append(" / ");
       }
-    }
-    if(cnt==3){
-      int a=0;
     }
     return res.toString();
   }
