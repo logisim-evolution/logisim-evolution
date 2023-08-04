@@ -47,7 +47,6 @@ import java.awt.Graphics;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -370,25 +369,23 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         } else {
           int code = event.getKeyCode();
           int modifier = event.getModifiersEx();
-          String compare = InputEvent.getModifiersExText(modifier)
-              + " + " + KeyEvent.getKeyText(code);
           if (code == KeyEvent.VK_X) {
             matrixPlace = !matrixPlace;
             canvas.repaint();
-          } else if (compare.equals(((PrefMonitorKeyStroke)
-              AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
+          } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH)
+              .compare(code, modifier)) {
             setFacing(canvas, Direction.NORTH);
-          } else if (compare.equals(((PrefMonitorKeyStroke)
-              AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
+          } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH)
+              .compare(code, modifier)) {
             setFacing(canvas, Direction.SOUTH);
-          } else if (compare.equals(((PrefMonitorKeyStroke)
-              AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
+          } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST)
+              .compare(code, modifier)) {
             setFacing(canvas, Direction.WEST);
-          } else if (compare.equals(((PrefMonitorKeyStroke)
-              AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
+          } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST)
+              .compare(code, modifier)) {
             setFacing(canvas, Direction.EAST);
-          } else if (compare.equals(((PrefMonitorKeyStroke)
-              AppPreferences.HOTKEY_ADD_TOOL_ROTATE).getCompareString())) {
+          } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_ADD_TOOL_ROTATE)
+              .compare(code, modifier)) {
             final var current = getFacing();
             if (current == Direction.NORTH) {
               setFacing(canvas, Direction.EAST);

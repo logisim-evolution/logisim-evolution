@@ -12,6 +12,8 @@ package com.cburch.logisim.prefs;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import javax.swing.KeyStroke;
 
@@ -24,8 +26,8 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
     super(name);
     prefName = name;
-    this.defaultData = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
-    this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    this.defaultData = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
+    this.value = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
@@ -34,12 +36,22 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   public PrefMonitorKeyStroke(String name, int keycode, int modifier, boolean canModify) {
     super(name);
     prefName = name;
-    this.defaultData = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
-    this.value = keystrokeToByteArray(KeyStroke.getKeyStroke(keycode, modifier));
+    this.defaultData = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
+    this.value = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
     this.canModify = canModify;
+  }
+
+  public PrefMonitorKeyStroke(String name, KeyStroke[] multipleValues) {
+    super(name);
+    prefName = name;
+    this.defaultData = keystrokeToByteArray(multipleValues);
+    this.value = keystrokeToByteArray(multipleValues);
+    final var prefs = AppPreferences.getPrefs();
+    set(prefs.getByteArray(name, defaultData));
+    prefs.addPreferenceChangeListener(this);
   }
 
   public Boolean canModify() {
@@ -50,60 +62,91 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return prefName;
   }
 
-  private byte[] keystrokeToByteArray(KeyStroke k) {
+  private byte[] keystrokeToByteArray(KeyStroke[] keyStrokes) {
     /* Little Endian */
-    byte[] res = new byte[8];
-    int code = k.getKeyCode();
-    res[0] = (byte) (code & 0xff);
-    res[1] = (byte) ((code >> 8) & 0xff);
-    res[2] = (byte) ((code >> 16) & 0xff);
-    res[3] = (byte) ((code >> 24) & 0xff);
-    int mod = k.getModifiers();
-    res[4] = (byte) (mod & 0xff);
-    res[5] = (byte) ((mod >> 8) & 0xff);
-    res[6] = (byte) ((mod >> 16) & 0xff);
-    res[7] = (byte) ((mod >> 24) & 0xff);
+    byte[] res=new byte[keyStrokes.length*8];
+    int cnt=0;
+    for(var k: keyStrokes){
+      int code = k.getKeyCode();
+      res[cnt+0] = (byte) (code & 0xff);
+      res[cnt+1] = (byte) ((code >> 8) & 0xff);
+      res[cnt+2] = (byte) ((code >> 16) & 0xff);
+      res[cnt+3] = (byte) ((code >> 24) & 0xff);
+      int mod = k.getModifiers();
+      res[cnt+4] = (byte) (mod & 0xff);
+      res[cnt+5] = (byte) ((mod >> 8) & 0xff);
+      res[cnt+6] = (byte) ((mod >> 16) & 0xff);
+      res[cnt+7] = (byte) ((mod >> 24) & 0xff);
+      cnt+=8;
+    }
     return res;
   }
 
-  private KeyStroke byteArrayToKeyStroke(byte[] b) {
+  private List<KeyStroke> byteArrayToKeyStroke(byte[] b) {
     /* Little Endian */
-    int code = 0;
-    code |= b[0] & 0xff;
-    code |= (b[1] << 8) & 0xff;
-    code |= (b[2] << 16) & 0xff;
-    code |= (b[3] << 24) & 0xff;
+    List<KeyStroke> list = new ArrayList<>();
+    for(int i=0;i<b.length;i+=2){
+      int code = 0;
+      code |= b[0] & 0xff;
+      code |= (b[1] << 8) & 0xff;
+      code |= (b[2] << 16) & 0xff;
+      code |= (b[3] << 24) & 0xff;
 
-    int mod = 0;
-    mod |= b[4] & 0xff;
-    mod |= (b[5] << 8) & 0xff;
-    mod |= (b[6] << 16) & 0xff;
-    mod |= (b[7] << 24) & 0xff;
-    return KeyStroke.getKeyStroke(code, mod);
+      int mod = 0;
+      mod |= b[4] & 0xff;
+      mod |= (b[5] << 8) & 0xff;
+      mod |= (b[6] << 16) & 0xff;
+      mod |= (b[7] << 24) & 0xff;
+      list.add(KeyStroke.getKeyStroke(code,mod));
+    }
+    return list;
   }
 
+  @Override
   public KeyStroke get() {
+    return byteArrayToKeyStroke(value).get(0);
+  }
+
+  public List<KeyStroke> getList() {
     return byteArrayToKeyStroke(value);
   }
 
   public KeyStroke getWithMask(int mask) {
-    KeyStroke tmp = byteArrayToKeyStroke(value);
+    KeyStroke tmp = byteArrayToKeyStroke(value).get(0);
     return KeyStroke.getKeyStroke(tmp.getKeyCode(), tmp.getModifiers() | mask);
   }
 
-  public String getCompareString() {
-    KeyStroke tmp = byteArrayToKeyStroke(this.value);
-    return InputEvent.getModifiersExText(tmp.getModifiers())
-        + " + " + KeyEvent.getKeyText(tmp.getKeyCode());
+  //  public String getCompareString() {
+  //    KeyStroke tmp = byteArrayToKeyStroke(this.value);
+  //    return InputEvent.getModifiersExText(tmp.getModifiers())
+  //        + " + " + KeyEvent.getKeyText(tmp.getKeyCode());
+  //  }
+
+  public boolean compare(int keyCode, int modifier) {
+    String userString = InputEvent.getModifiersExText(modifier)
+        + "+" + KeyEvent.getKeyText(keyCode);
+    for (KeyStroke tmp : getList()) {
+      String compareString = InputEvent.getModifiersExText(tmp.getModifiers())
+          + "+" + KeyEvent.getKeyText(tmp.getKeyCode());
+      if (compareString.equals(userString)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public String getDisplayString() {
-    KeyStroke tmp = byteArrayToKeyStroke(this.value);
-    String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
-    if (modifierString.equals("")) {
-      return KeyEvent.getKeyText(tmp.getKeyCode());
+    StringBuilder res = new StringBuilder();
+    for (KeyStroke tmp : getList()) {
+      String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
+      if (modifierString.equals("")) {
+        res.append(KeyEvent.getKeyText(tmp.getKeyCode()));
+      } else {
+        res.append(modifierString).append("+").append(KeyEvent.getKeyText(tmp.getKeyCode()));
+      }
+      res.append(" ");
     }
-    return modifierString + "+" + KeyEvent.getKeyText(tmp.getKeyCode());
+    return res.toString();
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {
@@ -127,7 +170,15 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     }
   }
 
+  @Override
   public void set(KeyStroke newValue) {
+    final byte[] newVal = keystrokeToByteArray(new KeyStroke[]{newValue});
+    if (value != newVal) {
+      AppPreferences.getPrefs().putByteArray(getIdentifier(), newVal);
+    }
+  }
+
+  public void set(KeyStroke[] newValue) {
     final byte[] newVal = keystrokeToByteArray(newValue);
     if (value != newVal) {
       AppPreferences.getPrefs().putByteArray(getIdentifier(), newVal);

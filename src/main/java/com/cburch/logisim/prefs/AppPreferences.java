@@ -938,7 +938,10 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyAddToolRotate", KeyEvent.VK_R, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_SMALL =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", KeyEvent.VK_S, 0));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", new KeyStroke[]{
+          KeyStroke.getKeyStroke(KeyEvent.VK_S, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
+      }));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_MEDIUM =
       create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeMedium", KeyEvent.VK_M, 0));
@@ -947,12 +950,17 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeWide", KeyEvent.VK_W, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_ADD =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd",
-          KeyEvent.VK_ADD, 0));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd", new KeyStroke[]{
+          KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0),
+      }));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_SUB =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub",
-          KeyEvent.VK_SUBTRACT, 0));
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub", new KeyStroke[]{
+          KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0),
+      }));
 
   public static void resetHotkeys() {
     try {
@@ -986,11 +994,21 @@ public class AppPreferences {
       HOTKEY_AUTO_LABEL_VIEW.set(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));
       HOTKEY_AUTO_LABEL_HIDE.set(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
       HOTKEY_ADD_TOOL_ROTATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
-      HOTKEY_GATE_MODIFIER_SIZE_SMALL.set(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
+      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_SIZE_SMALL).set(new KeyStroke[]{
+          KeyStroke.getKeyStroke(KeyEvent.VK_S, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
+      });
       HOTKEY_GATE_MODIFIER_SIZE_MEDIUM.set(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0));
       HOTKEY_GATE_MODIFIER_SIZE_WIDE.set(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0));
-      HOTKEY_GATE_MODIFIER_INPUT_ADD.set(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0));
-      HOTKEY_GATE_MODIFIER_INPUT_SUB.set(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0));
+      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_INPUT_ADD).set(new KeyStroke[]{
+          KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0),
+      });
+      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_INPUT_SUB).set(new KeyStroke[]{
+          KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
+          KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0),
+      });
       HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP.set(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0));
       AppPreferences.getPrefs().flush();
     } catch (BackingStoreException e) {
@@ -1025,9 +1043,7 @@ public class AppPreferences {
         if (name.contains("HOTKEY_")) {
           @SuppressWarnings("unchecked")
           PrefMonitor<KeyStroke> keyStroke = (PrefMonitor<KeyStroke>) f.get(AppPreferences.class);
-          if ((InputEvent.getModifiersExText(modifier) + " + "
-              + KeyEvent.getKeyText(keyCode)).equals(
-              ((PrefMonitorKeyStroke) keyStroke).getCompareString())) {
+          if (((PrefMonitorKeyStroke) keyStroke).compare(keyCode, modifier)) {
             return S.get("hotkeyErrConflict")
                 + S.get(((PrefMonitorKeyStroke) keyStroke).getName());
           }

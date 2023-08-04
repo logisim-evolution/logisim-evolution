@@ -23,7 +23,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.SetAttributeAction;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -259,9 +258,7 @@ public class AutoLabel {
     /* TODO: bind more hotkeys */
     int code = keyCode;
     int modifier = keyModifiers;
-    String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
-    if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_AUTO_LABEL_OPEN).getCompareString())) {
+    if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_OPEN).compare(code, modifier)) {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var oldLabel = attrs.getValue(StdAttr.LABEL);
         final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
@@ -275,8 +272,8 @@ public class AutoLabel {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_TOGGLE)
+        .compare(code, modifier)) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
         if (createAction) {
           act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
@@ -285,8 +282,8 @@ public class AutoLabel {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_AUTO_LABEL_VIEW).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_VIEW)
+        .compare(code, modifier)) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
           && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
         if (createAction) {
@@ -296,8 +293,8 @@ public class AutoLabel {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_AUTO_LABEL_HIDE).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_HIDE)
+        .compare(code, modifier)) {
       if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
           && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
         if (createAction) {
@@ -307,8 +304,8 @@ public class AutoLabel {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_AUTO_LABEL_SELF_NUMBERED_STOP)
+        .compare(code, modifier)) {
       stop(circ);
       return true;
     }

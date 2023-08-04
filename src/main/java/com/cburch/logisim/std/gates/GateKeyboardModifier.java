@@ -15,8 +15,6 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.tools.SetAttributeAction;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 public class GateKeyboardModifier {
   public static boolean tookKeyboardStrokes(
@@ -27,10 +25,8 @@ public class GateKeyboardModifier {
       Canvas canvas,
       SetAttributeAction act,
       boolean createAction) {
-    String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(keyCode);
-    /* Here originally have VK_N VK_EQUALS VK_PLUS VK_MINUS but not-used */
-    if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_SMALL).getCompareString())) {
+    if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_SMALL)
+        .compare(keyCode, modifier)) {
       if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
         if (createAction) {
           act.set(comp, GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
@@ -40,8 +36,8 @@ public class GateKeyboardModifier {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_MEDIUM).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_MEDIUM)
+        .compare(keyCode, modifier)) {
       if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
         if (createAction) {
           act.set(comp, GateAttributes.ATTR_SIZE, GateAttributes.SIZE_MEDIUM);
@@ -51,8 +47,8 @@ public class GateKeyboardModifier {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_WIDE).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_GATE_MODIFIER_SIZE_WIDE)
+        .compare(keyCode, modifier)) {
       if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
         if (createAction) {
           act.set(comp, GateAttributes.ATTR_SIZE, GateAttributes.SIZE_WIDE);
@@ -62,8 +58,8 @@ public class GateKeyboardModifier {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_ADD).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_ADD)
+        .compare(keyCode, modifier)) {
       if (attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) {
         int NrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
         if (NrOfInputs < GateAttributes.MAX_INPUTS) {
@@ -76,8 +72,8 @@ public class GateKeyboardModifier {
         }
       }
       return true;
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_SUB).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_GATE_MODIFIER_INPUT_SUB)
+        .compare(keyCode, modifier)) {
       if (attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) {
         int NrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
         if (NrOfInputs > 2) {

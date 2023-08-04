@@ -35,7 +35,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class EditTool extends Tool {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   * <p>
+   *
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Edit Tool";
@@ -287,7 +286,6 @@ public class EditTool extends Tool {
      * */
     int code = e.getKeyCode();
     int modifier = e.getModifiersEx();
-    String compare = InputEvent.getModifiersExText(modifier) + " + " + KeyEvent.getKeyText(code);
     if (code == KeyEvent.VK_BACK_SPACE) {
       /* Wait for more interesting codes */
     } else if (code == KeyEvent.VK_DELETE) {
@@ -298,34 +296,30 @@ public class EditTool extends Tool {
       } else {
         wiring.keyPressed(canvas, e);
       }
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE)
+        .compare(code, modifier)) {
       final var act = SelectionActions.duplicate(canvas.getSelection());
       canvas.getProject().doAction(act);
       e.consume();
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_DIR_NORTH).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).compare(code, modifier)) {
       if (e.getModifiersEx() == 0) {
         attemptReface(canvas, Direction.NORTH, e);
       } else {
         select.keyPressed(canvas, e);
       }
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_DIR_SOUTH).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).compare(code, modifier)) {
       if (e.getModifiersEx() == 0) {
         attemptReface(canvas, Direction.SOUTH, e);
       } else {
         select.keyPressed(canvas, e);
       }
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_DIR_EAST).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).compare(code, modifier)) {
       if (e.getModifiersEx() == 0) {
         attemptReface(canvas, Direction.EAST, e);
       } else {
         select.keyPressed(canvas, e);
       }
-    } else if (compare.equals(((PrefMonitorKeyStroke)
-        AppPreferences.HOTKEY_DIR_WEST).getCompareString())) {
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).compare(code, modifier)) {
       if (e.getModifiersEx() == 0) {
         attemptReface(canvas, Direction.WEST, e);
       } else {
