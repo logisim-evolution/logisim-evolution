@@ -87,16 +87,16 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     List<KeyStroke> list = new ArrayList<>();
     for (int i = 0; i < b.length; i += 8) {
       int code = 0;
-      code |= b[i + 0] & 0xffff;
-      code |= (b[i + 1] << 8) & 0xffff;
-      code |= (b[i + 2] << 16) & 0xffff;
-      code |= (b[i + 3] << 24) & 0xffff;
+      code |= b[i + 0] & 0x00ff;
+      code |= (b[i + 1] << 8) & 0xff00;
+      code |= (b[i + 2] << 16) & 0xff0000;
+      code |= (b[i + 3] << 24) & 0xff000000;
 
       int mod = 0;
-      mod |= b[i + 4] & 0xffff;
-      mod |= (b[i + 5] << 8) & 0xffff;
-      mod |= (b[i + 6] << 16) & 0xffff;
-      mod |= (b[i + 7] << 24) & 0xffff;
+      mod |= b[i + 4] & 0x00ff;
+      mod |= (b[i + 5] << 8) & 0xff00;
+      mod |= (b[i + 6] << 16) & 0xff0000;
+      mod |= (b[i + 7] << 24) & 0xff000000;
       list.add(KeyStroke.getKeyStroke(code, mod));
     }
     return list;
