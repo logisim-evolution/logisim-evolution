@@ -306,31 +306,34 @@ class HotkeyOptions extends OptionsPanel {
 
     @Override
     public void keyPressed(KeyEvent e) {
-      if (e.getKeyCode() >= 32) {
-        int modifier = e.getModifiersEx();
-        int code = e.getKeyCode();
-        if (!((PrefMonitorKeyStroke) keyStrokePrefMonitor).metaCheckPass(modifier)) {
-          label.setText(S.get("hotkeyErrMeta")
-              + InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask));
-          scl.code = 0;
-          scl.modifier = 0;
-          return;
-        }
-        String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
-        if (!checkPass.equals("")) {
-          label.setText(checkPass);
-          scl.code = 0;
-          scl.modifier = 0;
-          return;
-        }
-        scl.code = code;
-        scl.modifier = modifier;
-        String modifierString = InputEvent.getModifiersExText(modifier);
-        if (modifierString.equals("")) {
-          label.setText(KeyEvent.getKeyText(code));
-        } else {
-          label.setText(InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code));
-        }
+      int modifier = e.getModifiersEx();
+      int code = e.getKeyCode();
+      if (code == KeyEvent.VK_CONTROL
+          || code == KeyEvent.VK_ALT
+          || code == KeyEvent.VK_SHIFT) {
+        return;
+      }
+      if (!((PrefMonitorKeyStroke) keyStrokePrefMonitor).metaCheckPass(modifier)) {
+        label.setText(S.get("hotkeyErrMeta")
+            + InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask));
+        scl.code = 0;
+        scl.modifier = 0;
+        return;
+      }
+      String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
+      if (!checkPass.equals("")) {
+        label.setText(checkPass);
+        scl.code = 0;
+        scl.modifier = 0;
+        return;
+      }
+      scl.code = code;
+      scl.modifier = modifier;
+      String modifierString = InputEvent.getModifiersExText(modifier);
+      if (modifierString.equals("")) {
+        label.setText(KeyEvent.getKeyText(code));
+      } else {
+        label.setText(InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code));
       }
     }
 

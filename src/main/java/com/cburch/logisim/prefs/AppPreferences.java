@@ -888,12 +888,12 @@ public class AppPreferences {
 
   public static final PrefMonitor<KeyStroke> HOTKEY_WINDOW_CLOSE =
       create(new PrefMonitorKeyStroke("hotkeyWindowClose",
-          KeyEvent.VK_W, hotkeyMenuMask,
+          KeyEvent.VK_W, hotkeyMenuMask | InputEvent.SHIFT_DOWN_MASK,
           true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_WINDOW_MINIMIZE =
       create(new PrefMonitorKeyStroke("hotkeyWindowMinimize",
-          KeyEvent.VK_M, hotkeyMenuMask,
+          KeyEvent.VK_M, hotkeyMenuMask | InputEvent.SHIFT_DOWN_MASK,
           true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_EXPORT =
