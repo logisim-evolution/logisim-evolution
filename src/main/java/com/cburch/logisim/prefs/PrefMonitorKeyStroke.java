@@ -64,20 +64,20 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   private byte[] keystrokeToByteArray(KeyStroke[] keyStrokes) {
     /* Little Endian */
-    byte[] res=new byte[keyStrokes.length*8];
-    int cnt=0;
-    for(var k: keyStrokes){
+    byte[] res = new byte[keyStrokes.length * 8];
+    int cnt = 0;
+    for (var k : keyStrokes) {
       int code = k.getKeyCode();
-      res[cnt+0] = (byte) (code & 0xff);
-      res[cnt+1] = (byte) ((code >> 8) & 0xff);
-      res[cnt+2] = (byte) ((code >> 16) & 0xff);
-      res[cnt+3] = (byte) ((code >> 24) & 0xff);
+      res[cnt + 0] = (byte) (code & 0xff);
+      res[cnt + 1] = (byte) ((code >> 8) & 0xff);
+      res[cnt + 2] = (byte) ((code >> 16) & 0xff);
+      res[cnt + 3] = (byte) ((code >> 24) & 0xff);
       int mod = k.getModifiers();
-      res[cnt+4] = (byte) (mod & 0xff);
-      res[cnt+5] = (byte) ((mod >> 8) & 0xff);
-      res[cnt+6] = (byte) ((mod >> 16) & 0xff);
-      res[cnt+7] = (byte) ((mod >> 24) & 0xff);
-      cnt+=8;
+      res[cnt + 4] = (byte) (mod & 0xff);
+      res[cnt + 5] = (byte) ((mod >> 8) & 0xff);
+      res[cnt + 6] = (byte) ((mod >> 16) & 0xff);
+      res[cnt + 7] = (byte) ((mod >> 24) & 0xff);
+      cnt += 8;
     }
     return res;
   }
@@ -85,19 +85,19 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private List<KeyStroke> byteArrayToKeyStroke(byte[] b) {
     /* Little Endian */
     List<KeyStroke> list = new ArrayList<>();
-    for(int i=0;i<b.length;i+=2){
+    for (int i = 0; i < b.length; i += 8) {
       int code = 0;
-      code |= b[0] & 0xff;
-      code |= (b[1] << 8) & 0xff;
-      code |= (b[2] << 16) & 0xff;
-      code |= (b[3] << 24) & 0xff;
+      code |= b[i + 0] & 0xffff;
+      code |= (b[i + 1] << 8) & 0xffff;
+      code |= (b[i + 2] << 16) & 0xffff;
+      code |= (b[i + 3] << 24) & 0xffff;
 
       int mod = 0;
-      mod |= b[4] & 0xff;
-      mod |= (b[5] << 8) & 0xff;
-      mod |= (b[6] << 16) & 0xff;
-      mod |= (b[7] << 24) & 0xff;
-      list.add(KeyStroke.getKeyStroke(code,mod));
+      mod |= b[i + 4] & 0xffff;
+      mod |= (b[i + 5] << 8) & 0xffff;
+      mod |= (b[i + 6] << 16) & 0xffff;
+      mod |= (b[i + 7] << 24) & 0xffff;
+      list.add(KeyStroke.getKeyStroke(code, mod));
     }
     return list;
   }
@@ -137,14 +137,22 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   public String getDisplayString() {
     StringBuilder res = new StringBuilder();
-    for (KeyStroke tmp : getList()) {
+    var list = getList();
+    int cnt = 0;
+    for (KeyStroke tmp : list) {
       String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
       if (modifierString.equals("")) {
         res.append(KeyEvent.getKeyText(tmp.getKeyCode()));
       } else {
         res.append(modifierString).append("+").append(KeyEvent.getKeyText(tmp.getKeyCode()));
       }
-      res.append(" ");
+      cnt++;
+      if (cnt < list.size()) {
+        res.append(" / ");
+      }
+    }
+    if(cnt==3){
+      int a=0;
     }
     return res.toString();
   }
