@@ -754,7 +754,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     dataFlavor = f;
   }
 
-  public static final DataFlavor[] dataFlavors = new DataFlavor[]{dataFlavor};
+  public static final DataFlavor[] dataFlavors = new DataFlavor[] {dataFlavor};
 
   @Override
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {

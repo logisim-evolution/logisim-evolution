@@ -286,9 +286,7 @@ public class EditTool extends Tool {
      * */
     int code = e.getKeyCode();
     int modifier = e.getModifiersEx();
-    if (code == KeyEvent.VK_BACK_SPACE) {
-      /* Wait for more interesting codes */
-    } else if (code == KeyEvent.VK_DELETE) {
+    if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE) {
       if (!canvas.getSelection().isEmpty()) {
         final var act = SelectionActions.clear(canvas.getSelection());
         canvas.getProject().doAction(act);

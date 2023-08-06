@@ -49,10 +49,10 @@ class HotkeyOptions extends OptionsPanel {
    * This is the hotkey settings Tab in the preferences.
    * Allowing users to decide which hotkey to bind to the specific function.
    *
-   * To implement this into your code
+   * To add your own hotkey bindings from your code, you need some operations as follows.
    * Firstly add your hotkey configurations to AppPreferences and set up their strings in resources
-   * Fill the resetHotkeys in AppPreferences with your own code
-   * Setting up the hotkey in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
+   * Fill the resetHotkeys method in AppPreferences, adding the reset code for your hotkeys
+   * Set up the hotkey in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
    * Do not forget to sync with the user's settings.
    * You should go modifying hotkeySync in AppPreferences, adding your codes there.
    *

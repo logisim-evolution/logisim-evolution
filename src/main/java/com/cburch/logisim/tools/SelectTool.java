@@ -51,7 +51,7 @@ public class SelectTool extends Tool {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   * <p>
+   *
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Select Tool";

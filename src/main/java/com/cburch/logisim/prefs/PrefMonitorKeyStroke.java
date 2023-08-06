@@ -28,8 +28,8 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     super(name);
     prefName = name;
     this.defaultData = keystrokeToByteArray(
-        new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
-    this.value = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
+        new KeyStroke[] {KeyStroke.getKeyStroke(keycode, modifier)});
+    this.value = keystrokeToByteArray(new KeyStroke[] {KeyStroke.getKeyStroke(keycode, modifier)});
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
@@ -39,9 +39,9 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
                               boolean metaRequired, boolean canModify) {
     super(name);
     prefName = name;
-    this.defaultData = keystrokeToByteArray(new KeyStroke[]{
+    this.defaultData = keystrokeToByteArray(new KeyStroke[] {
         KeyStroke.getKeyStroke(keycode, modifier)});
-    this.value = keystrokeToByteArray(new KeyStroke[]{KeyStroke.getKeyStroke(keycode, modifier)});
+    this.value = keystrokeToByteArray(new KeyStroke[] {KeyStroke.getKeyStroke(keycode, modifier)});
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
@@ -129,12 +129,6 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return KeyStroke.getKeyStroke(tmp.getKeyCode(), tmp.getModifiers() | mask);
   }
 
-  //  public String getCompareString() {
-  //    KeyStroke tmp = byteArrayToKeyStroke(this.value);
-  //    return InputEvent.getModifiersExText(tmp.getModifiers())
-  //        + " + " + KeyEvent.getKeyText(tmp.getKeyCode());
-  //  }
-
   public boolean compare(int keyCode, int modifier) {
     String userString = InputEvent.getModifiersExText(modifier)
         + "+" + KeyEvent.getKeyText(keyCode);
@@ -190,7 +184,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
 
   @Override
   public void set(KeyStroke newValue) {
-    final byte[] newVal = keystrokeToByteArray(new KeyStroke[]{newValue});
+    final byte[] newVal = keystrokeToByteArray(new KeyStroke[] {newValue});
     if (value != newVal) {
       AppPreferences.getPrefs().putByteArray(getIdentifier(), newVal);
     }

@@ -59,7 +59,7 @@ public class AppPreferences {
       Locale[] check;
       for (int set = 0; set < 2; set++) {
         check = (set == 0)
-            ? new Locale[]{Locale.getDefault(), Locale.ENGLISH}
+            ? new Locale[] {Locale.getDefault(), Locale.ENGLISH}
             : Locale.getAvailableLocales();
         for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
@@ -469,7 +469,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> GATE_SHAPE =
       create(
           new PrefMonitorStringOpts(
-              "gateShape", new String[]{SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
+              "gateShape", new String[] {SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
   public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 
   // FPGA Commander Preferences
@@ -481,7 +481,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "afterAdd",
-              new String[]{HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
@@ -505,7 +505,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "toolbarPlacement",
-              new String[]{
+              new String[] {
                   Direction.NORTH.toString(),
                   Direction.SOUTH.toString(),
                   Direction.EAST.toString(),
@@ -518,7 +518,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "canvasPlacement",
-              new String[]{
+              new String[] {
                   Direction.EAST.toString(),
                   Direction.WEST.toString()},
               Direction.EAST.toString()));
@@ -581,7 +581,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "defaultAppearance",
-              new String[]{
+              new String[] {
                   StdAttr.APPEAR_CLASSIC.toString(),
                   StdAttr.APPEAR_FPGA.toString(),
                   StdAttr.APPEAR_EVOLUTION.toString()
@@ -626,7 +626,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> ADD_AFTER =
       create(
           new PrefMonitorStringOpts(
-              "afterAdd", new String[]{ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
+              "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
   public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
   public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
@@ -636,7 +636,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "pinAppearance",
-              new String[]{
+              new String[] {
                   PIN_APPEAR_DOT_SMALL,
                   PIN_APPEAR_DOT_MEDIUM,
                   PIN_APPEAR_DOT_BIG,
@@ -764,7 +764,7 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "graphicsAcceleration",
-              new String[]{ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D},
+              new String[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D},
               ACCEL_DEFAULT));
   public static final PrefMonitor<Boolean> AntiAliassing =
       create(new PrefMonitorBoolean("AntiAliassing", true));
@@ -953,7 +953,7 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyAddToolRotate", KeyEvent.VK_R, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_SIZE_SMALL =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", new KeyStroke[]{
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeSmall", new KeyStroke[] {
           KeyStroke.getKeyStroke(KeyEvent.VK_S, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
       }));
@@ -965,14 +965,14 @@ public class AppPreferences {
       create(new PrefMonitorKeyStroke("hotkeyGateModifierSizeWide", KeyEvent.VK_W, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_ADD =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd", new KeyStroke[]{
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputAdd", new KeyStroke[] {
           KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0),
       }));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_GATE_MODIFIER_INPUT_SUB =
-      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub", new KeyStroke[]{
+      create(new PrefMonitorKeyStroke("hotkeyGateModifierInputSub", new KeyStroke[] {
           KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0),
       }));
@@ -1009,18 +1009,18 @@ public class AppPreferences {
       HOTKEY_AUTO_LABEL_VIEW.set(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));
       HOTKEY_AUTO_LABEL_HIDE.set(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
       HOTKEY_ADD_TOOL_ROTATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
-      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_SIZE_SMALL).set(new KeyStroke[]{
+      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_SIZE_SMALL).set(new KeyStroke[] {
           KeyStroke.getKeyStroke(KeyEvent.VK_S, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_N, 0),
       });
       HOTKEY_GATE_MODIFIER_SIZE_MEDIUM.set(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0));
       HOTKEY_GATE_MODIFIER_SIZE_WIDE.set(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0));
-      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_INPUT_ADD).set(new KeyStroke[]{
+      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_INPUT_ADD).set(new KeyStroke[] {
           KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0),
       });
-      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_INPUT_SUB).set(new KeyStroke[]{
+      ((PrefMonitorKeyStroke) HOTKEY_GATE_MODIFIER_INPUT_SUB).set(new KeyStroke[] {
           KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
           KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0),
       });

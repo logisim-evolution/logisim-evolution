@@ -33,7 +33,7 @@ import java.util.TreeSet;
 
 public class AutoLabel {
 
-  public static final Integer[] USED_KEY_STROKES = new Integer[]{
+  public static final Integer[] USED_KEY_STROKES = new Integer[] {
       KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
   public static final Set<Integer> KEY_STROKES = new HashSet<>(Arrays.asList(USED_KEY_STROKES));
 

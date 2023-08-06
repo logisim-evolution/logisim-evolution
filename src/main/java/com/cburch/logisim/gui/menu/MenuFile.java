@@ -67,7 +67,6 @@ class MenuFile extends Menu implements ActionListener {
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);
 
-
     add(newi);
     add(merge);
     add(open);
