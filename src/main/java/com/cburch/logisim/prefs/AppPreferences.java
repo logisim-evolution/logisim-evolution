@@ -921,12 +921,12 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_WEST =
       create(new PrefMonitorKeyStroke("hotkeyDirWest", KeyEvent.VK_LEFT, 0));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_TOOL_DUPLICATE =
-      create(new PrefMonitorKeyStroke("hotkeyEditToolDuplicate", KeyEvent.VK_D, hotkeyMenuMask,
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_MENU_DUPLICATE =
+      create(new PrefMonitorKeyStroke("hotkeyEditMenuDuplicate", KeyEvent.VK_D, hotkeyMenuMask,
           true, true));
 
-  public static final PrefMonitor<KeyStroke> HOTKEY_SELECT_TOOL_DUPLICATE =
-      create(new PrefMonitorKeyStroke("hotkeySelectToolDuplicate", KeyEvent.VK_INSERT, 0));
+  public static final PrefMonitor<KeyStroke> HOTKEY_EDIT_TOOL_DUPLICATE =
+      create(new PrefMonitorKeyStroke("hotkeyEditToolDuplicate", KeyEvent.VK_INSERT, 0));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_PROJ_MOVE_UP =
       create(new PrefMonitorKeyStroke("hotkeyProjMoveUp",
@@ -1007,8 +1007,8 @@ public class AppPreferences {
       HOTKEY_DIR_SOUTH.set(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
       HOTKEY_DIR_EAST.set(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
       HOTKEY_DIR_WEST.set(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
-      HOTKEY_EDIT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_D, hotkeyMenuMask));
-      HOTKEY_SELECT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
+      HOTKEY_EDIT_MENU_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_D, hotkeyMenuMask));
+      HOTKEY_EDIT_TOOL_DUPLICATE.set(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
       HOTKEY_AUTO_LABEL_OPEN.set(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
       HOTKEY_AUTO_LABEL_TOGGLE.set(KeyStroke.getKeyStroke(KeyEvent.VK_T, 0));
       HOTKEY_AUTO_LABEL_VIEW.set(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));

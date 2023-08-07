@@ -294,7 +294,7 @@ public class EditTool extends Tool {
       } else {
         wiring.keyPressed(canvas, e);
       }
-    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SELECT_TOOL_DUPLICATE)
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE)
         .compare(code, modifier)) {
       final var act = SelectionActions.duplicate(canvas.getSelection());
       canvas.getProject().doAction(act);

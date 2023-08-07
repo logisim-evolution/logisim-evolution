@@ -52,7 +52,7 @@ class MenuEdit extends Menu {
     copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask));
     paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, menuMask));
     delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-    dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE)
+    dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_MENU_DUPLICATE)
         .getWithMask(0));
     selall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask));
     raise.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask));
@@ -111,7 +111,7 @@ class MenuEdit extends Menu {
   public void hotkeyUpdate() {
     undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
     redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
-    dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE)
+    dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_MENU_DUPLICATE)
         .getWithMask(0));
   }
 
