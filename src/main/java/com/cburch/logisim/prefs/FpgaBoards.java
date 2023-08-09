@@ -184,6 +184,7 @@ public class FpgaBoards implements ActionListener {
   private JScrollPane boardPane;
   private JList<String> boardNamesList;
   private JButton addButton;
+  private JLabel ExtBoardPanelTitl;
   private JButton removeButton;
   private JComboBox<String> boardSelector;
   private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
@@ -262,7 +263,8 @@ public class FpgaBoards implements ActionListener {
     gbc.gridy = 0;
     gbc.weightx = 1.0;
     gbc.fill = GridBagConstraints.CENTER;
-    panel.add(new JLabel(S.get("ExternalBoards")), gbc);
+    ExtBoardPanelTitl = new JLabel(S.get("ExternalBoards"));
+    panel.add(ExtBoardPanelTitl, gbc);
     gbc.gridy = 1;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     panel.add(new JSeparator(), gbc);
@@ -292,7 +294,13 @@ public class FpgaBoards implements ActionListener {
 
     return panel;
   }
-
+  
+  public void localeChanged() {
+    addButton.setText(S.get("AddBoard"));
+    ExtBoardPanelTitl.setText(S.get("ExternalBoards"));
+    removeButton.setText(S.get("RemoveBoard"));
+  }
+  
   private void updateButtons() {
     final var size = extBoardModel.nrOfExternalBoards();
     if (addButton != null) addButton.setEnabled(size < MaxBoards);

@@ -559,6 +559,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   @Override
   public void localeChanged() {
     selectionPanel.setBorder(BorderFactory.createTitledBorder(S.get("selectionLabel")));
+    selectionButton.setText(S.get("buttonAddRemoveSignals"));  
     modePanel.setBorder(BorderFactory.createTitledBorder(S.get("modeLabel")));
     historyPanel.setBorder(BorderFactory.createTitledBorder(S.get("historyLabel")));
     stepTime.setText(S.get("stepTime"));

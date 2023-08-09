@@ -38,6 +38,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -59,6 +60,8 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   private JScrollPane leftScroll;
   private JScrollPane rightScroll;
   private JSplitPane splitPane;
+  private JButton SelButton;
+  
   // listeners
 
   public ChronoPanel(LogFrame logFrame) {
@@ -90,13 +93,13 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     gbl.setConstraints(toolbar, gbc);
     toolpanel.add(toolbar);
 
-    final var b = logFrame.makeSelectionButton();
-    b.setFont(b.getFont().deriveFont(10.0f));
+    SelButton = logFrame.makeSelectionButton();
+    SelButton.setFont(SelButton.getFont().deriveFont(10.0f));
     Insets insets = gbc.insets;
     gbc.insets = new Insets(2, 0, 2, 0);
     gbc.gridx = 1;
-    gbl.setConstraints(b, gbc);
-    toolpanel.add(b);
+    gbl.setConstraints(SelButton, gbc);
+    toolpanel.add(SelButton);
     gbc.insets = insets;
 
     final var filler = Box.createHorizontalGlue();
@@ -181,7 +184,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
     leftPanel.getSelectionModel().addListSelectionListener(e -> editHandler.computeEnabled());
   }
-
+  @Override
+  public void localeChanged() {
+    SelButton.setText(S.get("addRemoveSignals"));
+  }
   public LeftPanel getLeftPanel() {
     return leftPanel;
   }
