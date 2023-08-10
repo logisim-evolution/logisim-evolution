@@ -187,11 +187,11 @@ class WindowOptions extends OptionsPanel {
     initThemePreviewer();
 
     setLayout(new TableLayout(1));
-    ResetWindowLayoutButton = new JButton();
-    ResetWindowLayoutButton.addActionListener(listener);
-    ResetWindowLayoutButton.setActionCommand(cmdResetWindowLayout);
-    ResetWindowLayoutButton.setText(S.get("windowToolbarReset"));
-    add(ResetWindowLayoutButton);
+    resetWindowLayoutButton = new JButton();
+    resetWindowLayoutButton.addActionListener(listener);
+    resetWindowLayoutButton.setActionCommand(cmdResetWindowLayout);
+    resetWindowLayoutButton.setText(S.get("windowToolbarReset"));
+    add(resetWindowLayoutButton);
     for (final var check : checks) {
       add(check);
     }
@@ -239,7 +239,7 @@ class WindowOptions extends OptionsPanel {
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     importantA.setText(S.get("windowToolbarPleaserestart"));
     importantB.setText(S.get("windowToolbarImportant"));
-    ResetWindowLayoutButton.setText(S.get("windowToolbarImportant"));
+    ResetWindowLayoutButton.setText(S.get("windowToolbarReset"));
     canvasBgColorTitle.setText(S.get("windowCanvasBgColor"));
     gridBgColorTitle.setText(S.get("windowGridBgColor"));
     gridDotColorTitle.setText(S.get("windowGridDotColor"));

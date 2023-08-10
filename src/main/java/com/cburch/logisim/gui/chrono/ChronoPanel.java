@@ -60,7 +60,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   private JScrollPane leftScroll;
   private JScrollPane rightScroll;
   private JSplitPane splitPane;
-  private JButton SelButton;
+  private JButton selButton;
   
   // listeners
 
@@ -93,13 +93,13 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     gbl.setConstraints(toolbar, gbc);
     toolpanel.add(toolbar);
 
-    SelButton = logFrame.makeSelectionButton();
-    SelButton.setFont(SelButton.getFont().deriveFont(10.0f));
+    selButton = logFrame.makeSelectionButton();
+    selButton.setFont(selButton.getFont().deriveFont(10.0f));
     Insets insets = gbc.insets;
     gbc.insets = new Insets(2, 0, 2, 0);
     gbc.gridx = 1;
-    gbl.setConstraints(SelButton, gbc);
-    toolpanel.add(SelButton);
+    gbl.setConstraints(selButton, gbc);
+    toolpanel.add(selButton);
     gbc.insets = insets;
 
     final var filler = Box.createHorizontalGlue();
@@ -186,7 +186,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   }
   @Override
   public void localeChanged() {
-    SelButton.setText(S.get("addRemoveSignals"));
+    selButton.setText(S.get("addRemoveSignals"));
   }
   public LeftPanel getLeftPanel() {
     return leftPanel;
