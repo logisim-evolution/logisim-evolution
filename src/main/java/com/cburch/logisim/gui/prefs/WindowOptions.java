@@ -39,7 +39,7 @@ class WindowOptions extends OptionsPanel {
   private final PrefOptionList canvasPlacement;
   private final PrefOptionList toolbarPlacement;
   
-  private final JButton ResetWindowLayoutButton;
+  private final JButton resetWindowLayoutButton;
   private final ColorChooserButton canvasBgColor;
   private final JLabel canvasBgColorTitle;
   private final ColorChooserButton gridBgColor;
@@ -239,7 +239,7 @@ class WindowOptions extends OptionsPanel {
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     importantA.setText(S.get("windowToolbarPleaserestart"));
     importantB.setText(S.get("windowToolbarImportant"));
-    ResetWindowLayoutButton.setText(S.get("windowToolbarReset"));
+    resetWindowLayoutButton.setText(S.get("windowToolbarReset"));
     canvasBgColorTitle.setText(S.get("windowCanvasBgColor"));
     gridBgColorTitle.setText(S.get("windowGridBgColor"));
     gridDotColorTitle.setText(S.get("windowGridDotColor"));

@@ -187,7 +187,7 @@ public class FpgaBoards implements ActionListener {
   private JLabel extBoardPanelTitl;
   private JButton removeButton;
   private JComboBox<String> boardSelector;
-  private final externalBoardModel extBoardModel = new ExternalBoardModel();
+  private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
 
   public FpgaBoards() {
     final var prefs = AppPreferences.getPrefs();
