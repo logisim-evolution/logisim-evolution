@@ -25,8 +25,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -65,7 +63,8 @@ class HotkeyOptions extends OptionsPanel {
   @SuppressWarnings("unchecked")
   protected static List<PrefMonitor<KeyStroke>> hotkeys = new ArrayList<>();
   private final List<JButton> keyButtons;
-  private final JLabel headerLabel;
+  private final JLabel menuKeyHeaderLabel;
+  private final JLabel normalKeyHeaderLabel;
   private JButton northBtn;
   private JButton southBtn;
   private JButton eastBtn;
@@ -77,8 +76,14 @@ class HotkeyOptions extends OptionsPanel {
     super(window);
     this.setLayout(new TableLayout(1));
     final var listener = new SettingsChangeListener(this);
-    headerLabel = new JLabel();
-    add(headerLabel);
+    menuKeyHeaderLabel = new JLabel();
+    add(menuKeyHeaderLabel);
+    add(new JLabel(" "));
+
+    /* insert the two parts here*/
+
+    normalKeyHeaderLabel = new JLabel();
+    add(normalKeyHeaderLabel);
     add(new JLabel(" "));
 
     Field[] fields = AppPreferences.class.getDeclaredFields();
@@ -173,31 +178,23 @@ class HotkeyOptions extends OptionsPanel {
     add(scrollPane);
     var that = this;
     /* this timer deals with the preferred width */
-    new Timer(200, new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int width = p.getWidth();
-        if (width > 0 && width < that.getWidth() * 0.8 && !preferredWidthSet) {
-          preferredWidth = width + 40;
-          p.setPreferredSize(p.getSize());
-          preferredWidthSet = true;
-        }
+    new Timer(200, e -> {
+      int width = p.getWidth();
+      if (width > 0 && width < that.getWidth() * 0.8 && !preferredWidthSet) {
+        preferredWidth = width + 40;
+        p.setPreferredSize(p.getSize());
+        preferredWidthSet = true;
       }
     }).start();
 
     JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
-    resetBtn.addActionListener(e -> {
-      AppPreferences.resetHotkeys();
-    });
+    resetBtn.addActionListener(e -> AppPreferences.resetHotkeys());
     add(new JLabel(" "));
     add(resetBtn);
-    AppPreferences.getPrefs().addPreferenceChangeListener(new PreferenceChangeListener() {
-      @Override
-      public void preferenceChange(PreferenceChangeEvent evt) {
-        AppPreferences.hotkeySync();
-        for (int i = 0; i < hotkeys.size(); i++) {
-          keyButtons.get(i).setText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
-        }
+    AppPreferences.getPrefs().addPreferenceChangeListener(evt -> {
+      AppPreferences.hotkeySync();
+      for (int i = 0; i < hotkeys.size(); i++) {
+        keyButtons.get(i).setText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
       }
     });
   }
@@ -215,7 +212,8 @@ class HotkeyOptions extends OptionsPanel {
   @Override
   public void localeChanged() {
     /* TODO: localize */
-    headerLabel.setText(S.get("hotkeyOptHeader"));
+    menuKeyHeaderLabel.setText(S.get("hotkeyOptMenuKeyHeader"));
+    normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader"));
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {
@@ -308,7 +306,8 @@ class HotkeyOptions extends OptionsPanel {
     public void keyPressed(KeyEvent e) {
       int modifier = e.getModifiersEx();
       int code = e.getKeyCode();
-      if (code == KeyEvent.VK_CONTROL
+      if (code == 0
+          || code == KeyEvent.VK_CONTROL
           || code == KeyEvent.VK_ALT
           || code == KeyEvent.VK_SHIFT
           || code == KeyEvent.VK_META) {
@@ -322,7 +321,7 @@ class HotkeyOptions extends OptionsPanel {
         return;
       }
       String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
-      if (!checkPass.equals("")) {
+      if (!checkPass.isEmpty()) {
         label.setText(checkPass);
         scl.code = 0;
         scl.modifier = 0;
@@ -331,7 +330,7 @@ class HotkeyOptions extends OptionsPanel {
       scl.code = code;
       scl.modifier = modifier;
       String modifierString = InputEvent.getModifiersExText(modifier);
-      if (modifierString.equals("")) {
+      if (modifierString.isEmpty()) {
         label.setText(KeyEvent.getKeyText(code));
       } else {
         label.setText(InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code));
