@@ -1065,8 +1065,8 @@ public class AppPreferences {
           @SuppressWarnings("unchecked")
           PrefMonitor<KeyStroke> keyStroke = (PrefMonitor<KeyStroke>) f.get(AppPreferences.class);
           if (((PrefMonitorKeyStroke) keyStroke).compare(keyCode, modifier)) {
-            return S.get("hotkeyErrConflict")
-                + S.get(((PrefMonitorKeyStroke) keyStroke).getName());
+            return S.get("hotkeyErrConflict",
+                S.get(((PrefMonitorKeyStroke) keyStroke).getName()));
           }
         }
       }
@@ -1095,8 +1095,7 @@ public class AppPreferences {
           String expectedKey = InputEvent.getModifiersExText(modifier) + "+"
               + KeyEvent.getKeyText(keyCode);
           if (expectedKey.equals(compareString)) {
-            return S.get("hotkeyErrConflict")
-                + text;
+            return S.get("hotkeyErrConflict", text);
           }
         }
       }

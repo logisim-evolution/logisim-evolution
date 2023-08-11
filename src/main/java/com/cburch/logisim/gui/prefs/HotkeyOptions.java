@@ -322,8 +322,8 @@ class HotkeyOptions extends OptionsPanel {
         return;
       }
       if (!((PrefMonitorKeyStroke) keyStrokePrefMonitor).metaCheckPass(modifier)) {
-        label.setText(S.get("hotkeyErrMeta")
-            + InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask));
+        label.setText(S.get("hotkeyErrMeta", InputEvent.getModifiersExText(
+            AppPreferences.hotkeyMenuMask)));
         scl.code = 0;
         scl.modifier = 0;
         return;
