@@ -48,6 +48,7 @@ import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 public class AppPreferences {
@@ -1075,20 +1076,27 @@ public class AppPreferences {
         Field[] menuFields = m.getClass().getDeclaredFields();
         for (var f : menuFields) {
           f.setAccessible(true);
+          KeyStroke itemStroke = null;
+          String text = "";
           if (f.getType().toString().contains("com.cburch.logisim.gui.menu.MenuItemImpl")) {
             MenuItemImpl item = (MenuItemImpl) f.get(m);
-            KeyStroke itemStroke = item.getAccelerator();
-            if (itemStroke == null) {
-              continue;
-            }
-            String compareString = InputEvent.getModifiersExText(itemStroke.getModifiers()) + "+"
-                + KeyEvent.getKeyText(itemStroke.getKeyCode());
-            String expectedKey = InputEvent.getModifiersExText(modifier) + "+"
-                + KeyEvent.getKeyText(keyCode);
-            if (expectedKey.equals(compareString)) {
-              return S.get("hotkeyErrConflict")
-                  + item.getText();
-            }
+            itemStroke = item.getAccelerator();
+            text = item.getText();
+          } else if (f.getType().toString().contains("javax.swing.JMenuItem")) {
+            JMenuItem item = (JMenuItem) f.get(m);
+            itemStroke = item.getAccelerator();
+            text = item.getText();
+          }
+          if (itemStroke == null) {
+            continue;
+          }
+          String compareString = InputEvent.getModifiersExText(itemStroke.getModifiers()) + "+"
+              + KeyEvent.getKeyText(itemStroke.getKeyCode());
+          String expectedKey = InputEvent.getModifiersExText(modifier) + "+"
+              + KeyEvent.getKeyText(keyCode);
+          if (expectedKey.equals(compareString)) {
+            return S.get("hotkeyErrConflict")
+                + text;
           }
         }
       }

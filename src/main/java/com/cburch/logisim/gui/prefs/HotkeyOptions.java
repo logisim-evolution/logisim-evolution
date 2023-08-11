@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
+import com.cburch.logisim.util.JAdjustableScroll;
 import com.cburch.logisim.util.TableLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -29,9 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -69,7 +68,6 @@ class HotkeyOptions extends OptionsPanel {
   private JButton southBtn;
   private JButton eastBtn;
   private JButton westBtn;
-  private int preferredWidth = 800;
   private boolean preferredWidthSet = false;
 
   public HotkeyOptions(PreferencesFrame window) {
@@ -79,12 +77,16 @@ class HotkeyOptions extends OptionsPanel {
     menuKeyHeaderLabel = new JLabel();
     add(menuKeyHeaderLabel);
     add(new JLabel(" "));
-
-    /* insert the two parts here*/
+    JPanel menuKeyPanel = new JPanel();
+    JAdjustableScroll menuKeyScrollPane = new JAdjustableScroll(menuKeyPanel);
+    add(menuKeyScrollPane);
 
     normalKeyHeaderLabel = new JLabel();
     add(normalKeyHeaderLabel);
     add(new JLabel(" "));
+    JPanel normalKeyPanel = new JPanel();
+    JAdjustableScroll normalKeyScrollPane = new JAdjustableScroll(normalKeyPanel);
+    add(normalKeyScrollPane);
 
     Field[] fields = AppPreferences.class.getDeclaredFields();
     try {
@@ -105,9 +107,12 @@ class HotkeyOptions extends OptionsPanel {
       keyButtons.add(new JButton());
     }
 
-    JPanel p = new JPanel();
-    p.setMaximumSize(new Dimension(400, 400));
-    p.setLayout(new TableLayout(2));
+
+    menuKeyPanel.setMaximumSize(new Dimension(400, 400));
+    menuKeyPanel.setLayout(new TableLayout(2));
+    normalKeyPanel.setMaximumSize(new Dimension(400, 400));
+    normalKeyPanel.setLayout(new TableLayout(2));
+
     final JLabel[] keyLabels = new JLabel[hotkeys.size()];
     for (int i = 0; i < hotkeys.size(); i++) {
       /* I do this chore because they have a different layout */
@@ -136,20 +141,26 @@ class HotkeyOptions extends OptionsPanel {
         keyButtons.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
         continue;
       }
-      keyLabels[i] = new JLabel(S.get(((PrefMonitorKeyStroke) hotkeys.get(i)).getName()) + "  ");
-      keyButtons.set(i, new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString()));
+      PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
+      keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
+      keyButtons.set(i, new JButton(prefKeyStroke.getDisplayString()));
       keyButtons.get(i).addActionListener(listener);
       keyButtons.get(i).setActionCommand(i + "");
-      keyButtons.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
-      p.add(keyLabels[i]);
-      p.add(keyButtons.get(i));
+      keyButtons.get(i).setEnabled(prefKeyStroke.canModify());
+      if (prefKeyStroke.needMetaKey()) {
+        menuKeyPanel.add(keyLabels[i]);
+        menuKeyPanel.add(keyButtons.get(i));
+      } else {
+        normalKeyPanel.add(keyLabels[i]);
+        normalKeyPanel.add(keyButtons.get(i));
+      }
     }
 
     /* Layout for arrow hotkeys */
-    p.add(new JLabel(" "));
-    p.add(new JLabel(" "));
-    p.add(new JLabel(S.get("hotkeyOptOrientDesc")));
-    p.add(new JLabel(" "));
+    normalKeyPanel.add(new JLabel(" "));
+    normalKeyPanel.add(new JLabel(" "));
+    normalKeyPanel.add(new JLabel(S.get("hotkeyOptOrientDesc")));
+    normalKeyPanel.add(new JLabel(" "));
     JPanel panelLeft = new JPanel();
     JPanel panelRight = new JPanel();
     panelLeft.setLayout(new TableLayout(3));
@@ -160,29 +171,24 @@ class HotkeyOptions extends OptionsPanel {
     panelLeft.add(new JLabel(" " + S.get("hotkeyDirWest") + " "));
     panelLeft.add(new JLabel(" " + S.get("hotkeyDirSouth") + " "));
     panelLeft.add(new JLabel(" " + S.get("hotkeyDirEast") + " "));
-    p.add(panelLeft);
+    normalKeyPanel.add(panelLeft);
     panelRight.add(new JLabel(" "));
     panelRight.add(northBtn);
     panelRight.add(new JLabel(" "));
     panelRight.add(westBtn);
     panelRight.add(southBtn);
     panelRight.add(eastBtn);
-    p.add(panelRight);
-    JScrollPane scrollPane = new JScrollPane(p, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
-      @Override
-      public Dimension getPreferredSize() {
-        return new Dimension(preferredWidth, 500);
-      }
-    };
-    add(scrollPane);
+    normalKeyPanel.add(panelRight);
+
     var that = this;
     /* this timer deals with the preferred width */
     new Timer(200, e -> {
-      int width = p.getWidth();
+      int width = menuKeyPanel.getWidth();
       if (width > 0 && width < that.getWidth() * 0.8 && !preferredWidthSet) {
-        preferredWidth = width + 40;
-        p.setPreferredSize(p.getSize());
+        menuKeyScrollPane.preferredWidth = width + 40;
+        menuKeyPanel.setPreferredSize(menuKeyPanel.getSize());
+        normalKeyScrollPane.preferredWidth = width + 40;
+        normalKeyPanel.setPreferredSize(normalKeyPanel.getSize());
         preferredWidthSet = true;
       }
     }).start();
@@ -212,8 +218,10 @@ class HotkeyOptions extends OptionsPanel {
   @Override
   public void localeChanged() {
     /* TODO: localize */
-    menuKeyHeaderLabel.setText(S.get("hotkeyOptMenuKeyHeader"));
-    normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader"));
+    menuKeyHeaderLabel.setText(S.get("hotkeyOptMenuKeyHeader",
+        InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
+    normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader",
+        InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {

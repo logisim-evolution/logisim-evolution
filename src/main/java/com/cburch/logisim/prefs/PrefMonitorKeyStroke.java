@@ -63,6 +63,10 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return canModify;
   }
 
+  public Boolean needMetaKey() {
+    return metaRequired;
+  }
+
   public boolean metaCheckPass(int modifier) {
     if (metaRequired) {
       return (modifier & AppPreferences.hotkeyMenuMask) == AppPreferences.hotkeyMenuMask;
@@ -148,7 +152,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     int cnt = 0;
     for (KeyStroke tmp : list) {
       String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
-      if (modifierString.equals("")) {
+      if (modifierString.isEmpty()) {
         res.append(KeyEvent.getKeyText(tmp.getKeyCode()));
       } else {
         res.append(modifierString).append("+").append(KeyEvent.getKeyText(tmp.getKeyCode()));
