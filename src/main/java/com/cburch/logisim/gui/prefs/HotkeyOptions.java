@@ -81,6 +81,7 @@ class HotkeyOptions extends OptionsPanel {
     JAdjustableScroll menuKeyScrollPane = new JAdjustableScroll(menuKeyPanel);
     add(menuKeyScrollPane);
 
+    add(new JLabel(" "));
     normalKeyHeaderLabel = new JLabel();
     add(normalKeyHeaderLabel);
     add(new JLabel(" "));
