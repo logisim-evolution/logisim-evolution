@@ -15,6 +15,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.JAdjustableScroll;
+import com.cburch.logisim.util.JHotkeyInput;
 import com.cburch.logisim.util.TableLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -61,13 +62,13 @@ class HotkeyOptions extends OptionsPanel {
    * */
   @SuppressWarnings("unchecked")
   protected static List<PrefMonitor<KeyStroke>> hotkeys = new ArrayList<>();
-  private final List<JButton> keyButtons;
+  private final List<JHotkeyInput> keyInputList;
   private final JLabel menuKeyHeaderLabel;
   private final JLabel normalKeyHeaderLabel;
-  private JButton northBtn;
-  private JButton southBtn;
-  private JButton eastBtn;
-  private JButton westBtn;
+  private JHotkeyInput northBtn;
+  private JHotkeyInput southBtn;
+  private JHotkeyInput eastBtn;
+  private JHotkeyInput westBtn;
   private boolean preferredWidthSet = false;
 
   public HotkeyOptions(PreferencesFrame window) {
@@ -103,9 +104,9 @@ class HotkeyOptions extends OptionsPanel {
       AppPreferences.hotkeyReflectError(e);
     }
 
-    keyButtons = new ArrayList<>();
+    keyInputList = new ArrayList<>();
     for (int i = 0; i < hotkeys.size(); i++) {
-      keyButtons.add(new JButton());
+      keyInputList.add(new JHotkeyInput(""));
     }
 
 
@@ -122,38 +123,38 @@ class HotkeyOptions extends OptionsPanel {
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH) {
-          northBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
-          keyButtons.set(i, northBtn);
+          northBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyInputList.set(i, northBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH) {
-          southBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
-          keyButtons.set(i, southBtn);
+          southBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyInputList.set(i, southBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST) {
-          eastBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
-          keyButtons.set(i, eastBtn);
+          eastBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyInputList.set(i, eastBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
-          westBtn = new JButton(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
-          keyButtons.set(i, westBtn);
+          westBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          keyInputList.set(i, westBtn);
         }
-        keyButtons.get(i).addActionListener(listener);
-        keyButtons.get(i).setActionCommand(i + "");
-        keyButtons.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
+//        keyInputList.get(i).addActionListener(listener);
+//        keyInputList.get(i).setActionCommand(i + "");
+//        keyInputList.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
         continue;
       }
       PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
-      keyButtons.set(i, new JButton(prefKeyStroke.getDisplayString()));
-      keyButtons.get(i).addActionListener(listener);
-      keyButtons.get(i).setActionCommand(i + "");
-      keyButtons.get(i).setEnabled(prefKeyStroke.canModify());
+      keyInputList.set(i, new JHotkeyInput(prefKeyStroke.getDisplayString()));
+//      keyInputList.get(i).addActionListener(listener);
+//      keyInputList.get(i).setActionCommand(i + "");
+//      keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
       if (prefKeyStroke.needMetaKey()) {
         menuKeyPanel.add(keyLabels[i]);
-        menuKeyPanel.add(keyButtons.get(i));
+        menuKeyPanel.add(keyInputList.get(i));
       } else {
         normalKeyPanel.add(keyLabels[i]);
-        normalKeyPanel.add(keyButtons.get(i));
+        normalKeyPanel.add(keyInputList.get(i));
       }
     }
 
@@ -202,7 +203,7 @@ class HotkeyOptions extends OptionsPanel {
     AppPreferences.getPrefs().addPreferenceChangeListener(evt -> {
       AppPreferences.hotkeySync();
       for (int i = 0; i < hotkeys.size(); i++) {
-        keyButtons.get(i).setText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+        keyInputList.get(i).setText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
       }
     });
   }
@@ -252,7 +253,7 @@ class HotkeyOptions extends OptionsPanel {
           HotkeyOptions.hotkeys.get(index).set(KeyStroke.getKeyStroke(code, modifier));
           try {
             AppPreferences.getPrefs().flush();
-            owner.keyButtons.get(index).setText(
+            owner.keyInputList.get(index).setText(
                 ((PrefMonitorKeyStroke) HotkeyOptions.hotkeys.get(index)).getDisplayString());
             AppPreferences.hotkeySync();
           } catch (BackingStoreException ex) {
