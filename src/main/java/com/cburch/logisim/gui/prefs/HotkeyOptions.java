@@ -184,11 +184,12 @@ class HotkeyOptions extends OptionsPanel {
     var that = this;
     /* this timer deals with the preferred width */
     new Timer(200, e -> {
-      int width = menuKeyPanel.getWidth();
-      if (width > 0 && width < that.getWidth() * 0.8 && !preferredWidthSet) {
-        menuKeyScrollPane.preferredWidth = width + 40;
+      int menuWidth = menuKeyPanel.getWidth();
+      int normalWidth = normalKeyPanel.getWidth();
+      if (normalWidth > 0 && normalWidth < that.getWidth() * 0.8 && !preferredWidthSet) {
+        menuKeyScrollPane.preferredWidth = menuWidth + 40;
         menuKeyPanel.setPreferredSize(menuKeyPanel.getSize());
-        normalKeyScrollPane.preferredWidth = width + 40;
+        normalKeyScrollPane.preferredWidth = normalWidth + 40;
         normalKeyPanel.setPreferredSize(normalKeyPanel.getSize());
         preferredWidthSet = true;
       }
