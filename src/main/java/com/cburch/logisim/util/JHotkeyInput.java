@@ -1,54 +1,62 @@
 package com.cburch.logisim.util;
 
-import java.awt.Color;
+import static com.cburch.logisim.gui.Strings.S;
+
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.concurrent.Flow;
+import java.util.prefs.BackingStoreException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-import javax.swing.Timer;
-import javax.swing.border.Border;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 public class JHotkeyInput extends JPanel {
   private final JButton resetButton = new JButton("❌");
   private final JButton applyButton = new JButton("✓");
-  private final JTextField hotkeyInputField;
-  private boolean preferredWidthSet = false;
+  public final JTextField hotkeyInputField;
   private String previousData = "";
+  private transient PrefMonitorKeyStroke boundKeyStroke = null;
 
   public JHotkeyInput(JFrame frame, String text) {
+
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     hotkeyInputField = new JTextField(text);
     setBorder(hotkeyInputField.getBorder());
+    ((AbstractDocument) hotkeyInputField.getDocument())
+        .setDocumentFilter(new KeyboardInputFilter());
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
     hotkeyInputField.setBackground(getBackground());
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
-    hotkeyInputField.addKeyListener(new HotkeyInputKeyListener(this));
+    var hotkeyListener = new HotkeyInputKeyListener(this);
+    hotkeyInputField.addKeyListener(hotkeyListener);
     hotkeyInputField.addFocusListener(new FocusListener() {
       @Override
       public void focusGained(FocusEvent e) {
+        /* TODO: disable all menu items */
         previousData = hotkeyInputField.getText();
         hotkeyInputField.setText("");
-        applyButton.setVisible(true);
         resetButton.setVisible(true);
+        applyButton.setVisible(true);
       }
 
       @Override
       public void focusLost(FocusEvent e) {
-        /* TODO: decide whether the data changes*/
         hotkeyInputField.setText(previousData);
         applyButton.setVisible(false);
         resetButton.setVisible(false);
@@ -58,77 +66,135 @@ public class JHotkeyInput extends JPanel {
     applyButton.setVisible(false);
     resetButton.setBorder(BorderFactory.createEmptyBorder());
     resetButton.setVisible(false);
-    resetButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        applyButton.setVisible(false);
-        resetButton.setVisible(false);
-        frame.requestFocus();
-      }
+    resetButton.addActionListener(e -> {
+      applyButton.setVisible(false);
+      resetButton.setVisible(false);
+      frame.requestFocus();
     });
-    new Timer(200, e -> {
-      if (!preferredWidthSet) {
-        Font font = resetButton.getFont();
-        applyButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
-        applyButton.setPreferredSize(new Dimension(20, 20));
-        resetButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
-        resetButton.setPreferredSize(new Dimension(20, 20));
-        hotkeyInputField.setPreferredSize(new Dimension(getWidth()+20, 30));
-        preferredWidthSet = true;
+    applyButton.addActionListener(e -> {
+      if (hotkeyListener.code != 0) {
+        boundKeyStroke.set(KeyStroke.getKeyStroke(hotkeyListener.code, hotkeyListener.modifier));
+        previousData= hotkeyListener.keyStr;
+        try {
+          AppPreferences.getPrefs().flush();
+          AppPreferences.hotkeySync();
+        } catch (BackingStoreException ex) {
+          throw new RuntimeException(ex);
+        }
       }
-    }).start();
+      applyButton.setVisible(false);
+      resetButton.setVisible(false);
+      frame.requestFocus();
+    });
+    Font font = resetButton.getFont();
+    applyButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
+    applyButton.setPreferredSize(new Dimension(18, 18));
+    resetButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
+    resetButton.setPreferredSize(new Dimension(18, 18));
+//    hotkeyInputField.setPreferredSize(new Dimension(90, 30));
+//    setPreferredSize(new Dimension(136, 36));
     add(hotkeyInputField);
     add(applyButton);
     add(resetButton);
   }
 
-  /* TODO: use when user inputs a valid key binding */
-  public void updateLayout() {
-    preferredWidthSet = false;
-  }
-
   public void setText(String s) {
     hotkeyInputField.setText(s);
   }
+
+  public void setBoundKeyStroke(PrefMonitorKeyStroke keyStroke) {
+    boundKeyStroke = keyStroke;
+  }
+
+  public PrefMonitorKeyStroke getBoundKeyStroke() {
+    return boundKeyStroke;
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    hotkeyInputField.setEnabled(enabled);
+  }
+
+  public void setApplyVisibility(boolean vis){
+    applyButton.setVisible(vis);
+  }
+
+  private class HotkeyInputKeyListener implements KeyListener {
+    private final JHotkeyInput hotkeyInput;
+    private int modifier = 0;
+    private int code = 0;
+    public String keyStr = "";
+
+    public HotkeyInputKeyListener(JHotkeyInput hotkeyInput) {
+      this.hotkeyInput = hotkeyInput;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+      /* not-used */
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+      modifier = e.getModifiersEx();
+      code = e.getKeyCode();
+      if (code == 0
+          || code == KeyEvent.VK_CONTROL
+          || code == KeyEvent.VK_ALT
+          || code == KeyEvent.VK_SHIFT
+          || code == KeyEvent.VK_META) {
+        return;
+      }
+      String modifierString = InputEvent.getModifiersExText(modifier);
+      if (modifierString.isEmpty()) {
+        keyStr = KeyEvent.getKeyText(code);
+      } else {
+        keyStr = InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code);
+      }
+      if (!(hotkeyInput.getBoundKeyStroke().metaCheckPass(modifier))) {
+        JOptionPane.showMessageDialog(null, S.get("hotkeyErrMeta",
+                InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)),
+            S.get("hotkeyOptTitle"),
+            JOptionPane.ERROR_MESSAGE);
+        code = 0;
+        modifier = 0;
+        return;
+      }
+      String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
+      if (!checkPass.isEmpty()) {
+        JOptionPane.showMessageDialog(null,
+            checkPass,
+            S.get("hotkeyOptTitle"),
+            JOptionPane.ERROR_MESSAGE);
+        code = 0;
+        modifier = 0;
+        return;
+      }
+      hotkeyInput.setText("");
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+      hotkeyInput.setText(keyStr);
+//      hotkeyInput.setApplyVisibility(code!=0);
+    }
+  }
+
+  private class KeyboardInputFilter extends DocumentFilter {
+    @Override
+    public void insertString(DocumentFilter.FilterBypass fb, int offset,
+                             String text, AttributeSet attr) throws BadLocationException {
+
+      fb.insertString(offset, text.toUpperCase(), attr);
+    }
+
+    @Override
+    public void replace(DocumentFilter.FilterBypass fb, int offset, int length,
+                        String text, AttributeSet attrs) throws BadLocationException {
+
+      fb.replace(offset, length, text.toUpperCase(), attrs);
+    }
+  }
 }
 
-class HotkeyInputKeyListener implements KeyListener {
-  private final JHotkeyInput hotkeyInput;
-  private int modifier = 0;
-  private int code = 0;
 
-  public HotkeyInputKeyListener(JHotkeyInput hotkeyInput) {
-    this.hotkeyInput = hotkeyInput;
-  }
-
-  @Override
-  public void keyTyped(KeyEvent e) {
-    /* GET KEYCHAR */
-  }
-
-  @Override
-  public void keyPressed(KeyEvent e) {
-    modifier = e.getModifiersEx();
-    code = e.getKeyCode();
-//    hotkeyInput.updateLayout();
-  }
-
-  @Override
-  public void keyReleased(KeyEvent e) {
-    if (code == 0
-        || code == KeyEvent.VK_CONTROL
-        || code == KeyEvent.VK_ALT
-        || code == KeyEvent.VK_SHIFT
-        || code == KeyEvent.VK_META) {
-      return;
-    }
-    String modifierString = InputEvent.getModifiersExText(modifier);
-    String keyStr="";
-    if (modifierString.isEmpty()) {
-      keyStr=KeyEvent.getKeyText(code);
-    } else {
-      keyStr=InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code);
-    }
-    hotkeyInput.setText(keyStr);
-  }
-}

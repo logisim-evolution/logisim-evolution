@@ -137,17 +137,15 @@ class HotkeyOptions extends OptionsPanel {
           westBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
           keyInputList.set(i, westBtn);
         }
-//        keyInputList.get(i).addActionListener(listener);
-//        keyInputList.get(i).setActionCommand(i + "");
-//        keyInputList.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
+        keyInputList.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
+        keyInputList.get(i).setBoundKeyStroke(((PrefMonitorKeyStroke) hotkeys.get(i)));
         continue;
       }
       PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
       keyInputList.set(i, new JHotkeyInput(window,prefKeyStroke.getDisplayString()));
-//      keyInputList.get(i).addActionListener(listener);
-//      keyInputList.get(i).setActionCommand(i + "");
-//      keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
+      keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
+      keyInputList.get(i).setBoundKeyStroke(((PrefMonitorKeyStroke) hotkeys.get(i)));
       if (prefKeyStroke.needMetaKey()) {
         menuKeyPanel.add(keyLabels[i]);
         menuKeyPanel.add(keyInputList.get(i));
