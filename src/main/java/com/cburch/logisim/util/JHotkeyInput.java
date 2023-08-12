@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -34,6 +35,7 @@ public class JHotkeyInput extends JPanel {
   public final JTextField hotkeyInputField;
   private String previousData = "";
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
+  private static boolean layoutOptimized = false;
 
   public JHotkeyInput(JFrame frame, String text) {
     Icon iconOK = IconsUtil.getIcon("ok.gif");
@@ -41,16 +43,16 @@ public class JHotkeyInput extends JPanel {
     applyButton.setIcon(iconOK);
     resetButton.setIcon(iconCancel);
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-    hotkeyInputField = new JTextField(text);
+    hotkeyInputField = new JTextField(text.toUpperCase());
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2,4,2,4)
     ));
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
-//    hotkeyInputField.setBackground(Color.yellow);
+    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-    hotkeyInputField.setBackground(getBackground());
+//    hotkeyInputField.setBackground(getBackground());
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     var hotkeyListener = new HotkeyInputKeyListener(this);
     var that=this;
@@ -73,6 +75,11 @@ public class JHotkeyInput extends JPanel {
         hotkeyInputField.setText(previousData);
         applyButton.setVisible(false);
         resetButton.setVisible(false);
+        int height=hotkeyInputField.getHeight();
+        int width=hotkeyInputField.getPreferredSize().width+18+18+8;
+        hotkeyInputField.setPreferredSize(new Dimension(width,height));
+        repaint();
+        updateUI();
       }
     });
     applyButton.setBorder(BorderFactory.createEmptyBorder());
@@ -108,10 +115,20 @@ public class JHotkeyInput extends JPanel {
     add(hotkeyInputField);
     add(applyButton);
     add(resetButton);
+    new Timer(200,e->{
+      int height=getHeight();
+      int width=getWidth();
+      if(!layoutOptimized&&width>0){
+        setPreferredSize(new Dimension(width+18+18,height));
+        layoutOptimized=true;
+        repaint();
+        updateUI();
+      }
+    }).start();
   }
 
   public void setText(String s) {
-    hotkeyInputField.setText(s);
+    hotkeyInputField.setText(s.toUpperCase());
   }
 
   public void setBoundKeyStroke(PrefMonitorKeyStroke keyStroke) {
