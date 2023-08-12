@@ -40,7 +40,7 @@ public class JHotkeyInput extends JPanel {
     Icon iconCancel = IconsUtil.getIcon("cancel.gif");
     applyButton.setIcon(iconOK);
     resetButton.setIcon(iconCancel);
-    setLayout(new FlowLayout(FlowLayout.CENTER, 1, 0));
+    setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     hotkeyInputField = new JTextField(text);
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
@@ -48,9 +48,9 @@ public class JHotkeyInput extends JPanel {
     ));
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
-    hotkeyInputField.setBackground(Color.yellow);
+//    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-//    hotkeyInputField.setBackground(getBackground());
+    hotkeyInputField.setBackground(getBackground());
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     var hotkeyListener = new HotkeyInputKeyListener(this);
     var that=this;
@@ -104,8 +104,7 @@ public class JHotkeyInput extends JPanel {
     applyButton.setPreferredSize(new Dimension(18, 18));
     resetButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
     resetButton.setPreferredSize(new Dimension(18, 18));
-//    hotkeyInputField.setPreferredSize(new Dimension(90, 30));
-//    setPreferredSize(new Dimension(136, 36));
+    setPreferredSize(new Dimension(120, 28));
     add(hotkeyInputField);
     add(applyButton);
     add(resetButton);
