@@ -24,6 +24,8 @@ public class JHotkeyInput extends JPanel {
   private final JButton resetButton = new JButton("❌");
   private final JTextField hotkeyInputField;
   private boolean preferredWidthSet=false;
+  private JPanel fatherPanel=null;
+
   public JHotkeyInput(String text) {
     setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
     hotkeyInputField = new JTextField(text);
@@ -49,6 +51,7 @@ public class JHotkeyInput extends JPanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         resetButton.setVisible(false);
+        fatherPanel.requestFocus();
       }
     });
     new Timer(200, e->{
@@ -65,6 +68,7 @@ public class JHotkeyInput extends JPanel {
     add(resetButton);
   }
 
+  /* TODO: use when user inputs a valid key binding */
   public void updateLayout(){
     preferredWidthSet=false;
   }
@@ -73,7 +77,9 @@ public class JHotkeyInput extends JPanel {
     hotkeyInputField.setText(s);
   }
 
-
+  public void setFatherPanel(JPanel f){
+    fatherPanel=f;
+  }
 }
 
 class HotkeyInputKeyListener implements KeyListener {
@@ -89,7 +95,7 @@ class HotkeyInputKeyListener implements KeyListener {
   @Override
   public void keyPressed(KeyEvent e) {
 
-    hotkeyInput.updateLayout();
+//    hotkeyInput.updateLayout();
   }
 
   @Override

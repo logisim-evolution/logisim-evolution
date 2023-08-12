@@ -74,7 +74,6 @@ class HotkeyOptions extends OptionsPanel {
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
     this.setLayout(new TableLayout(1));
-    final var listener = new SettingsChangeListener(this);
     menuKeyHeaderLabel = new JLabel();
     add(menuKeyHeaderLabel);
     add(new JLabel(" "));
@@ -141,6 +140,7 @@ class HotkeyOptions extends OptionsPanel {
 //        keyInputList.get(i).addActionListener(listener);
 //        keyInputList.get(i).setActionCommand(i + "");
 //        keyInputList.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
+        keyInputList.get(i).setFatherPanel(normalKeyPanel);
         continue;
       }
       PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
@@ -151,9 +151,11 @@ class HotkeyOptions extends OptionsPanel {
 //      keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
       if (prefKeyStroke.needMetaKey()) {
         menuKeyPanel.add(keyLabels[i]);
+        keyInputList.get(i).setFatherPanel(menuKeyPanel);
         menuKeyPanel.add(keyInputList.get(i));
       } else {
         normalKeyPanel.add(keyLabels[i]);
+        keyInputList.get(i).setFatherPanel(normalKeyPanel);
         normalKeyPanel.add(keyInputList.get(i));
       }
     }
