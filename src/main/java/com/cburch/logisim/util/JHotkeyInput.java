@@ -4,6 +4,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -39,14 +40,16 @@ public class JHotkeyInput extends JPanel {
     hotkeyInputField = new JTextField(text);
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
-        BorderFactory.createEmptyBorder(2,16,2,16)
+        BorderFactory.createEmptyBorder(2,4,2,4)
     ));
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
+    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-    hotkeyInputField.setBackground(getBackground());
+//    hotkeyInputField.setBackground(getBackground());
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     var hotkeyListener = new HotkeyInputKeyListener(this);
+    var that=this;
     hotkeyInputField.addKeyListener(hotkeyListener);
     hotkeyInputField.addFocusListener(new FocusListener() {
       @Override
@@ -55,7 +58,10 @@ public class JHotkeyInput extends JPanel {
         previousData = hotkeyInputField.getText();
         hotkeyInputField.setText("");
         resetButton.setVisible(true);
-        applyButton.setVisible(true);
+        int height=hotkeyInputField.getHeight();
+        int width=that.getWidth()-18-18-8;
+        hotkeyInputField.setPreferredSize(new Dimension(width,height));
+//        applyButton.setVisible(true);
       }
 
       @Override
@@ -146,6 +152,8 @@ public class JHotkeyInput extends JPanel {
           || code == KeyEvent.VK_ALT
           || code == KeyEvent.VK_SHIFT
           || code == KeyEvent.VK_META) {
+        code = 0;
+        modifier = 0;
         return;
       }
       String modifierString = InputEvent.getModifiersExText(modifier);
@@ -179,7 +187,7 @@ public class JHotkeyInput extends JPanel {
     @Override
     public void keyReleased(KeyEvent e) {
       hotkeyInput.setText(keyStr);
-//      hotkeyInput.setApplyVisibility(code!=0);
+      hotkeyInput.setApplyVisibility(!keyStr.isEmpty());
     }
   }
 
