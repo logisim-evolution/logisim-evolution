@@ -37,7 +37,10 @@ public class JHotkeyInput extends JPanel {
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     hotkeyInputField = new JTextField(text);
-    setBorder(hotkeyInputField.getBorder());
+    setBorder(BorderFactory.createCompoundBorder(
+        hotkeyInputField.getBorder(),
+        BorderFactory.createEmptyBorder(2,16,2,16)
+    ));
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
