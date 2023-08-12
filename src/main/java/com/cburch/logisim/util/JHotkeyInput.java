@@ -64,22 +64,16 @@ public class JHotkeyInput extends JPanel {
         previousData = hotkeyInputField.getText();
         hotkeyInputField.setText("");
         resetButton.setVisible(true);
+        applyButton.setVisible(true);
         int height=hotkeyInputField.getHeight();
         int width=that.getWidth()-18-18-8-8;
         hotkeyInputField.setPreferredSize(new Dimension(width,height));
-//        applyButton.setVisible(true);
+        applyButton.setEnabled(false);
       }
 
       @Override
       public void focusLost(FocusEvent e) {
-        hotkeyInputField.setText(previousData);
-        applyButton.setVisible(false);
-        resetButton.setVisible(false);
-        int height=hotkeyInputField.getHeight();
-        int width=hotkeyInputField.getPreferredSize().width+18+18+8;
-        hotkeyInputField.setPreferredSize(new Dimension(width,height));
-        repaint();
-        updateUI();
+        /* not-used */
       }
     });
     applyButton.setBorder(BorderFactory.createEmptyBorder());
@@ -87,9 +81,18 @@ public class JHotkeyInput extends JPanel {
     resetButton.setBorder(BorderFactory.createEmptyBorder());
     resetButton.setVisible(false);
     resetButton.addActionListener(e -> {
+      System.out.println("114");
       applyButton.setVisible(false);
       resetButton.setVisible(false);
       frame.requestFocus();
+      hotkeyInputField.setText(previousData);
+      applyButton.setVisible(false);
+      resetButton.setVisible(false);
+      int height=hotkeyInputField.getHeight();
+      int width=hotkeyInputField.getPreferredSize().width+18+18+8;
+      hotkeyInputField.setPreferredSize(new Dimension(width,height));
+      repaint();
+      updateUI();
     });
     applyButton.addActionListener(e -> {
       if (hotkeyListener.code != 0) {
@@ -144,8 +147,8 @@ public class JHotkeyInput extends JPanel {
     hotkeyInputField.setEnabled(enabled);
   }
 
-  public void setApplyVisibility(boolean vis){
-    applyButton.setVisible(vis);
+  public void setApplyEnabled(boolean enabled){
+    applyButton.setEnabled(enabled);
   }
 
   private class HotkeyInputKeyListener implements KeyListener {
@@ -207,7 +210,7 @@ public class JHotkeyInput extends JPanel {
     @Override
     public void keyReleased(KeyEvent e) {
       hotkeyInput.setText(keyStr);
-      hotkeyInput.setApplyVisibility(!keyStr.isEmpty());
+      hotkeyInput.setApplyEnabled(!keyStr.isEmpty());
     }
   }
 
