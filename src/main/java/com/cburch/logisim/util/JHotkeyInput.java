@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.util.concurrent.Flow;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -24,9 +25,8 @@ public class JHotkeyInput extends JPanel {
   private final JButton resetButton = new JButton("❌");
   private final JTextField hotkeyInputField;
   private boolean preferredWidthSet=false;
-  private JPanel fatherPanel=null;
 
-  public JHotkeyInput(String text) {
+  public JHotkeyInput(JFrame frame,String text) {
     setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
     hotkeyInputField = new JTextField(text);
     setBorder(hotkeyInputField.getBorder());
@@ -51,7 +51,7 @@ public class JHotkeyInput extends JPanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         resetButton.setVisible(false);
-        fatherPanel.requestFocus();
+        frame.requestFocus();
       }
     });
     new Timer(200, e->{
@@ -75,10 +75,6 @@ public class JHotkeyInput extends JPanel {
 
   public void setText(String s){
     hotkeyInputField.setText(s);
-  }
-
-  public void setFatherPanel(JPanel f){
-    fatherPanel=f;
   }
 }
 

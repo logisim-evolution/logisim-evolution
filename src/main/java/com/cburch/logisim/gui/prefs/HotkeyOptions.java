@@ -105,7 +105,7 @@ class HotkeyOptions extends OptionsPanel {
 
     keyInputList = new ArrayList<>();
     for (int i = 0; i < hotkeys.size(); i++) {
-      keyInputList.add(new JHotkeyInput(""));
+      keyInputList.add(new JHotkeyInput(window,""));
     }
 
 
@@ -122,40 +122,37 @@ class HotkeyOptions extends OptionsPanel {
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH) {
-          northBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          northBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
           keyInputList.set(i, northBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH) {
-          southBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          southBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
           keyInputList.set(i, southBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST) {
-          eastBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          eastBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
           keyInputList.set(i, eastBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
-          westBtn = new JHotkeyInput(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          westBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
           keyInputList.set(i, westBtn);
         }
 //        keyInputList.get(i).addActionListener(listener);
 //        keyInputList.get(i).setActionCommand(i + "");
 //        keyInputList.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
-        keyInputList.get(i).setFatherPanel(normalKeyPanel);
         continue;
       }
       PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
-      keyInputList.set(i, new JHotkeyInput(prefKeyStroke.getDisplayString()));
+      keyInputList.set(i, new JHotkeyInput(window,prefKeyStroke.getDisplayString()));
 //      keyInputList.get(i).addActionListener(listener);
 //      keyInputList.get(i).setActionCommand(i + "");
 //      keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
       if (prefKeyStroke.needMetaKey()) {
         menuKeyPanel.add(keyLabels[i]);
-        keyInputList.get(i).setFatherPanel(menuKeyPanel);
         menuKeyPanel.add(keyInputList.get(i));
       } else {
         normalKeyPanel.add(keyLabels[i]);
-        keyInputList.get(i).setFatherPanel(normalKeyPanel);
         normalKeyPanel.add(keyInputList.get(i));
       }
     }
