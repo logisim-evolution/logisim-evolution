@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.prefs.BackingStoreException;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,15 +29,18 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 public class JHotkeyInput extends JPanel {
-  private final JButton resetButton = new JButton("❌");
-  private final JButton applyButton = new JButton("✓");
+  private final JButton resetButton = new JButton();
+  private final JButton applyButton = new JButton();
   public final JTextField hotkeyInputField;
   private String previousData = "";
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
 
   public JHotkeyInput(JFrame frame, String text) {
-
-    setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    Icon iconOK = IconsUtil.getIcon("ok.gif");
+    Icon iconCancel = IconsUtil.getIcon("cancel.gif");
+    applyButton.setIcon(iconOK);
+    resetButton.setIcon(iconCancel);
+    setLayout(new FlowLayout(FlowLayout.CENTER, 1, 0));
     hotkeyInputField = new JTextField(text);
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
@@ -59,7 +63,7 @@ public class JHotkeyInput extends JPanel {
         hotkeyInputField.setText("");
         resetButton.setVisible(true);
         int height=hotkeyInputField.getHeight();
-        int width=that.getWidth()-18-18-8;
+        int width=that.getWidth()-18-18-8-8;
         hotkeyInputField.setPreferredSize(new Dimension(width,height));
 //        applyButton.setVisible(true);
       }
