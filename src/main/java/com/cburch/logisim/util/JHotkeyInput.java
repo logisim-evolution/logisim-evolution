@@ -110,7 +110,6 @@ public class JHotkeyInput extends JPanel {
   }
 
   private void enterEditMode() {
-    /* TODO: disable all menu items */
     activeHotkeyInputName = boundKeyStroke.getName();
     activeHotkeyInputUpdated = true;
     if (hotkeyListener.rewritable()) {
@@ -133,7 +132,7 @@ public class JHotkeyInput extends JPanel {
     hotkeyInputField.setText(previousData);
   }
 
-  private void exitEditMode() {
+  public void exitEditMode() {
     exitEditModeWithoutRefresh();
     int height = hotkeyInputField.getHeight();
     int width = hotkeyInputField.getPreferredSize().width + 18 + 18 + 8;
