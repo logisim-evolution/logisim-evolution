@@ -18,23 +18,15 @@ import com.cburch.logisim.util.JAdjustableScroll;
 import com.cburch.logisim.util.JHotkeyInput;
 import com.cburch.logisim.util.TableLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.BackingStoreException;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 class HotkeyOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
@@ -60,7 +52,6 @@ class HotkeyOptions extends OptionsPanel {
    * TODO: If you are available, you can bind them in order to make logisim feel better
    *
    * */
-  @SuppressWarnings("unchecked")
   protected static List<PrefMonitor<KeyStroke>> hotkeys = new ArrayList<>();
   private final List<JHotkeyInput> keyInputList;
   private final JLabel menuKeyHeaderLabel;
@@ -105,7 +96,7 @@ class HotkeyOptions extends OptionsPanel {
 
     keyInputList = new ArrayList<>();
     for (int i = 0; i < hotkeys.size(); i++) {
-      keyInputList.add(new JHotkeyInput(window,""));
+      keyInputList.add(new JHotkeyInput(window, ""));
     }
 
 
@@ -117,35 +108,35 @@ class HotkeyOptions extends OptionsPanel {
     final JLabel[] keyLabels = new JLabel[hotkeys.size()];
     for (int i = 0; i < hotkeys.size(); i++) {
       /* I do this chore because they have a different layout */
+      PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH) {
-          northBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          northBtn = new JHotkeyInput(window, prefKeyStroke.getDisplayString());
           keyInputList.set(i, northBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH) {
-          southBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          southBtn = new JHotkeyInput(window, prefKeyStroke.getDisplayString());
           keyInputList.set(i, southBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST) {
-          eastBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          eastBtn = new JHotkeyInput(window, prefKeyStroke.getDisplayString());
           keyInputList.set(i, eastBtn);
         }
         if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
-          westBtn = new JHotkeyInput(window,((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+          westBtn = new JHotkeyInput(window, prefKeyStroke.getDisplayString());
           keyInputList.set(i, westBtn);
         }
-        keyInputList.get(i).setEnabled(((PrefMonitorKeyStroke) hotkeys.get(i)).canModify());
-        keyInputList.get(i).setBoundKeyStroke(((PrefMonitorKeyStroke) hotkeys.get(i)));
+        keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
+        keyInputList.get(i).setBoundKeyStroke(prefKeyStroke);
         continue;
       }
-      PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
-      keyInputList.set(i, new JHotkeyInput(window,prefKeyStroke.getDisplayString()));
+      keyInputList.set(i, new JHotkeyInput(window, prefKeyStroke.getDisplayString()));
       keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
-      keyInputList.get(i).setBoundKeyStroke(((PrefMonitorKeyStroke) hotkeys.get(i)));
+      keyInputList.get(i).setBoundKeyStroke(prefKeyStroke);
       if (prefKeyStroke.needMetaKey()) {
         menuKeyPanel.add(keyLabels[i]);
         menuKeyPanel.add(keyInputList.get(i));
@@ -222,132 +213,5 @@ class HotkeyOptions extends OptionsPanel {
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
     normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader",
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
-  }
-
-  private class SettingsChangeListener implements ChangeListener, ActionListener {
-    HotkeyOptions owner;
-    private int code;
-    private int modifier;
-
-    public SettingsChangeListener(HotkeyOptions ht) {
-      owner = ht;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      int index = Integer.parseInt(e.getActionCommand());
-      JDialog dl = new JDialog(
-          owner.getPreferencesFrame(),
-          S.get(((PrefMonitorKeyStroke) hotkeys.get(index)).getName()),
-          true);
-
-      JButton ok = new JButton("OK");
-      JButton cancel = new JButton("Cancel");
-
-      ok.setFocusable(false);
-      ok.addActionListener(e1 -> {
-        if (code != 0) {
-          HotkeyOptions.hotkeys.get(index).set(KeyStroke.getKeyStroke(code, modifier));
-          try {
-            AppPreferences.getPrefs().flush();
-            owner.keyInputList.get(index).setText(
-                ((PrefMonitorKeyStroke) HotkeyOptions.hotkeys.get(index)).getDisplayString());
-            AppPreferences.hotkeySync();
-          } catch (BackingStoreException ex) {
-            throw new RuntimeException(ex);
-          }
-        }
-        dl.setVisible(false);
-      });
-      cancel.setFocusable(false);
-      cancel.addActionListener(ev -> dl.setVisible(false));
-
-      JPanel sub = new JPanel();
-      sub.setLayout(new TableLayout(2));
-      JPanel contentPanel = new JPanel();
-      contentPanel.setLayout(new TableLayout(1));
-
-      sub.add(ok);
-      sub.add(cancel);
-
-      JPanel top = new JPanel();
-      top.setLayout(new TableLayout(3));
-      JLabel waitingLabel = new JLabel("Receiving Your Input Key");
-      top.add(new JLabel("  "));
-      top.add(waitingLabel);
-      top.add(new JLabel("  "));
-      contentPanel.add(top);
-      contentPanel.add(sub);
-
-      dl.addKeyListener(new KeyCaptureListener(waitingLabel, this,
-          HotkeyOptions.hotkeys.get(index)));
-      dl.setContentPane(contentPanel);
-      dl.setLocationRelativeTo(null);
-      dl.setSize(500, 100);
-      dl.setVisible(true);
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-      /* not-used */
-    }
-  }
-
-  private class KeyCaptureListener implements KeyListener {
-    private final JLabel label;
-    private final SettingsChangeListener scl;
-    private PrefMonitor<KeyStroke> keyStrokePrefMonitor;
-
-    public KeyCaptureListener(JLabel l, SettingsChangeListener se,
-                              PrefMonitor<KeyStroke> prefMonitor) {
-      label = l;
-      scl = se;
-      keyStrokePrefMonitor = prefMonitor;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-      /* not-used */
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-      int modifier = e.getModifiersEx();
-      int code = e.getKeyCode();
-      if (code == 0
-          || code == KeyEvent.VK_CONTROL
-          || code == KeyEvent.VK_ALT
-          || code == KeyEvent.VK_SHIFT
-          || code == KeyEvent.VK_META) {
-        return;
-      }
-      if (!((PrefMonitorKeyStroke) keyStrokePrefMonitor).metaCheckPass(modifier)) {
-        label.setText(S.get("hotkeyErrMeta", InputEvent.getModifiersExText(
-            AppPreferences.hotkeyMenuMask)));
-        scl.code = 0;
-        scl.modifier = 0;
-        return;
-      }
-      String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
-      if (!checkPass.isEmpty()) {
-        label.setText(checkPass);
-        scl.code = 0;
-        scl.modifier = 0;
-        return;
-      }
-      scl.code = code;
-      scl.modifier = modifier;
-      String modifierString = InputEvent.getModifiersExText(modifier);
-      if (modifierString.isEmpty()) {
-        label.setText(KeyEvent.getKeyText(code));
-      } else {
-        label.setText(InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code));
-      }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-      /* not-used */
-    }
   }
 }
