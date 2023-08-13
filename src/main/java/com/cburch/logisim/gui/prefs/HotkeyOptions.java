@@ -208,7 +208,6 @@ class HotkeyOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    /* TODO: localize */
     menuKeyHeaderLabel.setText(S.get("hotkeyOptMenuKeyHeader",
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
     normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader",
