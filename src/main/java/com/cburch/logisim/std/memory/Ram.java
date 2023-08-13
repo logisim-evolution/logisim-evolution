@@ -30,6 +30,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 public class Ram extends Mem {
   /**
@@ -342,9 +343,12 @@ public class Ram extends Mem {
     // perform reads
     final var dataBits = state.getAttributeValue(DATA_ATTR);
     final var outputNotEnabled = state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
+
+    Consumer<Value> setValue = (Value value) -> state.setPort(RamAppearance.getDataOutIndex(0, attrs), value, DELAY);
+
     if (!separate && outputNotEnabled) {
       /* put the bus in tri-state in case of a combined bus and no output enable */
-      state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createUnknown(dataBits), DELAY);
+      setValue.accept( Value.createUnknown(dataBits));
       return;
     }
     /* if the OE is not activated return */
@@ -352,22 +356,22 @@ public class Ram extends Mem {
 
     /* if the address is bogus set error value */
     if (!goodAddr || errorValue) {
-      state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createError(dataBits), DELAY);
+      setValue.accept(Value.createError(dataBits));
       return;
     }
 
     final var asyncRead = async || attrs.getValue(Mem.ASYNC_READ);
 
     if (asyncRead) {
-      state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, newMemValue), DELAY);
+      setValue.accept(Value.createKnown(dataBits, newMemValue));
       return;
     }
 
     if (edge) {
       if (attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE))
-        state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, newMemValue), DELAY);
+        setValue.accept(Value.createKnown(dataBits, newMemValue));
       else
-        state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, oldMemValue), DELAY);
+        setValue.accept(Value.createKnown(dataBits, oldMemValue));
     }
   }
 
