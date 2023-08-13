@@ -4,7 +4,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -50,9 +49,9 @@ public class JHotkeyInput extends JPanel {
     ));
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
-    hotkeyInputField.setBackground(Color.yellow);
+//    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-//    hotkeyInputField.setBackground(getBackground());
+    hotkeyInputField.setBackground(getBackground());
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     var hotkeyListener = new HotkeyInputKeyListener(this);
     var that=this;
@@ -97,7 +96,7 @@ public class JHotkeyInput extends JPanel {
     applyButton.addActionListener(e -> {
       if (hotkeyListener.code != 0) {
         boundKeyStroke.set(KeyStroke.getKeyStroke(hotkeyListener.code, hotkeyListener.modifier));
-        previousData= hotkeyListener.keyStr;
+        previousData= hotkeyListener.hotkeyString;
         try {
           AppPreferences.getPrefs().flush();
           AppPreferences.hotkeySync();
@@ -155,7 +154,7 @@ public class JHotkeyInput extends JPanel {
     private final JHotkeyInput hotkeyInput;
     private int modifier = 0;
     private int code = 0;
-    public String keyStr = "";
+    public String hotkeyString = "";
 
     public HotkeyInputKeyListener(JHotkeyInput hotkeyInput) {
       this.hotkeyInput = hotkeyInput;
@@ -177,13 +176,14 @@ public class JHotkeyInput extends JPanel {
           || code == KeyEvent.VK_META) {
         code = 0;
         modifier = 0;
+        hotkeyString="";
         return;
       }
       String modifierString = InputEvent.getModifiersExText(modifier);
       if (modifierString.isEmpty()) {
-        keyStr = KeyEvent.getKeyText(code);
+        hotkeyString = KeyEvent.getKeyText(code);
       } else {
-        keyStr = InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code);
+        hotkeyString = InputEvent.getModifiersExText(modifier) + "+" + KeyEvent.getKeyText(code);
       }
       if (!(hotkeyInput.getBoundKeyStroke().metaCheckPass(modifier))) {
         JOptionPane.showMessageDialog(null, S.get("hotkeyErrMeta",
@@ -192,6 +192,7 @@ public class JHotkeyInput extends JPanel {
             JOptionPane.ERROR_MESSAGE);
         code = 0;
         modifier = 0;
+        hotkeyString="";
         return;
       }
       String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
@@ -202,6 +203,7 @@ public class JHotkeyInput extends JPanel {
             JOptionPane.ERROR_MESSAGE);
         code = 0;
         modifier = 0;
+        hotkeyString="";
         return;
       }
       hotkeyInput.setText("");
@@ -209,8 +211,8 @@ public class JHotkeyInput extends JPanel {
 
     @Override
     public void keyReleased(KeyEvent e) {
-      hotkeyInput.setText(keyStr);
-      hotkeyInput.setApplyEnabled(!keyStr.isEmpty());
+      hotkeyInput.setText(hotkeyString);
+      hotkeyInput.setApplyEnabled(!hotkeyString.isEmpty());
     }
   }
 
