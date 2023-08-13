@@ -36,6 +36,9 @@ public class JHotkeyInput extends JPanel {
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
   private static boolean layoutOptimized = false;
+  private boolean needUpdate = false;
+  private static boolean activeHotkeyInputUpdated = false;
+  private static String activeHotkeyInputName = "";
   private String previousData = "";
 
 
@@ -43,8 +46,6 @@ public class JHotkeyInput extends JPanel {
     topFrame = frame;
     hotkeyListener = new HotkeyInputKeyListener(this);
     hotkeyInputField = new JTextField(text.toUpperCase());
-    Icon iconOK = IconsUtil.getIcon("ok.gif");
-    Icon iconCancel = IconsUtil.getIcon("cancel.gif");
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     setBorder(BorderFactory.createCompoundBorder(
@@ -67,10 +68,12 @@ public class JHotkeyInput extends JPanel {
 
       @Override
       public void focusLost(FocusEvent e) {
-        /* not-used */
+        needUpdate = true;
       }
     });
 
+    Icon iconOK = IconsUtil.getIcon("ok.gif");
+    Icon iconCancel = IconsUtil.getIcon("cancel.gif");
     applyButton.setIcon(iconOK);
     resetButton.setIcon(iconCancel);
     applyButton.setBorder(BorderFactory.createEmptyBorder());
@@ -97,11 +100,19 @@ public class JHotkeyInput extends JPanel {
         repaint();
         updateUI();
       }
+      if (needUpdate && boundKeyStroke != null
+          && activeHotkeyInputUpdated
+          && !activeHotkeyInputName.equals(boundKeyStroke.getName())) {
+        needUpdate = false;
+        exitEditModeWithoutRefresh();
+      }
     }).start();
   }
 
   private void enterEditMode() {
     /* TODO: disable all menu items */
+    activeHotkeyInputName = boundKeyStroke.getName();
+    activeHotkeyInputUpdated = true;
     if (hotkeyListener.rewritable()) {
       previousData = hotkeyInputField.getText();
     }
@@ -115,16 +126,21 @@ public class JHotkeyInput extends JPanel {
     applyButton.setEnabled(false);
   }
 
-  private void exitEditMode() {
+  private void exitEditModeWithoutRefresh() {
+    activeHotkeyInputUpdated = false;
     applyButton.setVisible(false);
     resetButton.setVisible(false);
-    topFrame.requestFocus();
     hotkeyInputField.setText(previousData);
+  }
+
+  private void exitEditMode() {
+    exitEditModeWithoutRefresh();
     int height = hotkeyInputField.getHeight();
     int width = hotkeyInputField.getPreferredSize().width + 18 + 18 + 8;
     hotkeyInputField.setPreferredSize(new Dimension(width, height));
     repaint();
     updateUI();
+    topFrame.requestFocus();
   }
 
   private void applyChanges() {
