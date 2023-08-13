@@ -75,7 +75,16 @@ public class JHotkeyInput extends JPanel {
 
       @Override
       public void focusLost(FocusEvent e) {
-        /* not-used */
+        /* simply cancel the operation */
+        applyButton.setVisible(false);
+        resetButton.setVisible(false);
+        frame.requestFocus();
+        hotkeyInputField.setText(previousData);
+        int height=hotkeyInputField.getHeight();
+        int width=hotkeyInputField.getPreferredSize().width+18+18+8;
+        hotkeyInputField.setPreferredSize(new Dimension(width,height));
+        repaint();
+        updateUI();
       }
     });
     applyButton.setBorder(BorderFactory.createEmptyBorder());
@@ -83,13 +92,10 @@ public class JHotkeyInput extends JPanel {
     resetButton.setBorder(BorderFactory.createEmptyBorder());
     resetButton.setVisible(false);
     resetButton.addActionListener(e -> {
-      System.out.println("114");
       applyButton.setVisible(false);
       resetButton.setVisible(false);
       frame.requestFocus();
       hotkeyInputField.setText(previousData);
-      applyButton.setVisible(false);
-      resetButton.setVisible(false);
       int height=hotkeyInputField.getHeight();
       int width=hotkeyInputField.getPreferredSize().width+18+18+8;
       hotkeyInputField.setPreferredSize(new Dimension(width,height));
