@@ -60,7 +60,10 @@ public class JHotkeyInput extends JPanel {
       @Override
       public void focusGained(FocusEvent e) {
         /* TODO: disable all menu items */
-        previousData = hotkeyInputField.getText();
+        if(hotkeyListener.rewritable()) {
+          previousData = hotkeyInputField.getText();
+        }
+        hotkeyListener.clearStatus();
         hotkeyInputField.setText("");
         resetButton.setVisible(true);
         applyButton.setVisible(true);
@@ -154,10 +157,22 @@ public class JHotkeyInput extends JPanel {
     private final JHotkeyInput hotkeyInput;
     private int modifier = 0;
     private int code = 0;
+    private boolean rewriteFlag =true;
     public String hotkeyString = "";
 
     public HotkeyInputKeyListener(JHotkeyInput hotkeyInput) {
       this.hotkeyInput = hotkeyInput;
+    }
+
+    public void clearStatus(){
+      code = 0;
+      modifier = 0;
+      hotkeyString="";
+      rewriteFlag =false;
+    }
+
+    public boolean rewritable(){
+      return rewriteFlag;
     }
 
     @Override
@@ -174,9 +189,7 @@ public class JHotkeyInput extends JPanel {
           || code == KeyEvent.VK_ALT
           || code == KeyEvent.VK_SHIFT
           || code == KeyEvent.VK_META) {
-        code = 0;
-        modifier = 0;
-        hotkeyString="";
+        clearStatus();
         return;
       }
       String modifierString = InputEvent.getModifiersExText(modifier);
@@ -190,9 +203,7 @@ public class JHotkeyInput extends JPanel {
                 InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)),
             S.get("hotkeyOptTitle"),
             JOptionPane.ERROR_MESSAGE);
-        code = 0;
-        modifier = 0;
-        hotkeyString="";
+        clearStatus();
         return;
       }
       String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
@@ -201,9 +212,7 @@ public class JHotkeyInput extends JPanel {
             checkPass,
             S.get("hotkeyOptTitle"),
             JOptionPane.ERROR_MESSAGE);
-        code = 0;
-        modifier = 0;
-        hotkeyString="";
+        clearStatus();
         return;
       }
       hotkeyInput.setText("");
@@ -213,6 +222,9 @@ public class JHotkeyInput extends JPanel {
     public void keyReleased(KeyEvent e) {
       hotkeyInput.setText(hotkeyString);
       hotkeyInput.setApplyEnabled(!hotkeyString.isEmpty());
+      if(!hotkeyString.isEmpty()){
+        rewriteFlag =true;
+      }
     }
   }
 
