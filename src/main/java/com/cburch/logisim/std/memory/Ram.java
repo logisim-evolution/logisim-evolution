@@ -354,9 +354,15 @@ public class Ram extends Mem {
     /* if the OE is not activated return */
     if (outputNotEnabled) return;
 
-    /* if the address is bogus set error value */
-    if (!goodAddr || errorValue) {
+    /* if the address is bogus set error value accordingly */
+
+    if (errorValue) {
       setValue.accept(Value.createError(dataBits));
+      return;
+    }
+
+    if (!goodAddr) {
+      setValue.accept(Value.createUnknown(dataBits));
       return;
     }
 
