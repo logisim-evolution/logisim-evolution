@@ -29,113 +29,118 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 public class JHotkeyInput extends JPanel {
+  private final JFrame topFrame;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
   public final JTextField hotkeyInputField;
-  private String previousData = "";
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
+  private final transient HotkeyInputKeyListener hotkeyListener;
   private static boolean layoutOptimized = false;
+  private String previousData = "";
+
 
   public JHotkeyInput(JFrame frame, String text) {
+    topFrame = frame;
+    hotkeyListener = new HotkeyInputKeyListener(this);
+    hotkeyInputField = new JTextField(text.toUpperCase());
     Icon iconOK = IconsUtil.getIcon("ok.gif");
     Icon iconCancel = IconsUtil.getIcon("cancel.gif");
-    applyButton.setIcon(iconOK);
-    resetButton.setIcon(iconCancel);
+
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-    hotkeyInputField = new JTextField(text.toUpperCase());
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
-        BorderFactory.createEmptyBorder(2,4,2,4)
+        BorderFactory.createEmptyBorder(2, 4, 2, 4)
     ));
+    setPreferredSize(new Dimension(120, 28));
+
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
-//    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
     hotkeyInputField.setBackground(getBackground());
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
-    var hotkeyListener = new HotkeyInputKeyListener(this);
-    var that=this;
     hotkeyInputField.addKeyListener(hotkeyListener);
     hotkeyInputField.addFocusListener(new FocusListener() {
       @Override
       public void focusGained(FocusEvent e) {
-        /* TODO: disable all menu items */
-        if(hotkeyListener.rewritable()) {
-          previousData = hotkeyInputField.getText();
-        }
-        hotkeyListener.clearStatus();
-        hotkeyInputField.setText("");
-        resetButton.setVisible(true);
-        applyButton.setVisible(true);
-        int height=hotkeyInputField.getHeight();
-        int width=that.getWidth()-18-18-8-8;
-        hotkeyInputField.setPreferredSize(new Dimension(width,height));
-        applyButton.setEnabled(false);
+        enterEditMode();
       }
 
       @Override
       public void focusLost(FocusEvent e) {
-        /* simply cancel the operation */
-        applyButton.setVisible(false);
-        resetButton.setVisible(false);
-        frame.requestFocus();
-        hotkeyInputField.setText(previousData);
-        int height=hotkeyInputField.getHeight();
-        int width=hotkeyInputField.getPreferredSize().width+18+18+8;
-        hotkeyInputField.setPreferredSize(new Dimension(width,height));
-        repaint();
-        updateUI();
+        /* not-used */
       }
     });
+
+    applyButton.setIcon(iconOK);
+    resetButton.setIcon(iconCancel);
     applyButton.setBorder(BorderFactory.createEmptyBorder());
     applyButton.setVisible(false);
     resetButton.setBorder(BorderFactory.createEmptyBorder());
     resetButton.setVisible(false);
-    resetButton.addActionListener(e -> {
-      applyButton.setVisible(false);
-      resetButton.setVisible(false);
-      frame.requestFocus();
-      hotkeyInputField.setText(previousData);
-      int height=hotkeyInputField.getHeight();
-      int width=hotkeyInputField.getPreferredSize().width+18+18+8;
-      hotkeyInputField.setPreferredSize(new Dimension(width,height));
-      repaint();
-      updateUI();
-    });
-    applyButton.addActionListener(e -> {
-      if (hotkeyListener.code != 0) {
-        boundKeyStroke.set(KeyStroke.getKeyStroke(hotkeyListener.code, hotkeyListener.modifier));
-        previousData= hotkeyListener.hotkeyString;
-        try {
-          AppPreferences.getPrefs().flush();
-          AppPreferences.hotkeySync();
-        } catch (BackingStoreException ex) {
-          throw new RuntimeException(ex);
-        }
-      }
-      applyButton.setVisible(false);
-      resetButton.setVisible(false);
-      frame.requestFocus();
-    });
+    resetButton.addActionListener(e -> exitEditMode());
+    applyButton.addActionListener(e -> applyChanges());
     Font font = resetButton.getFont();
     applyButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
     applyButton.setPreferredSize(new Dimension(18, 18));
     resetButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
     resetButton.setPreferredSize(new Dimension(18, 18));
-    setPreferredSize(new Dimension(120, 28));
+
     add(hotkeyInputField);
     add(applyButton);
     add(resetButton);
-    new Timer(200,e->{
-      int height=getHeight();
-      int width=getWidth();
-      if(!layoutOptimized&&width>0){
-        setPreferredSize(new Dimension(width+18+18,height));
-        layoutOptimized=true;
+    new Timer(100, e -> {
+      int height = getHeight();
+      int width = getWidth();
+      if (!layoutOptimized && width > 0) {
+        setPreferredSize(new Dimension(width + 18 + 18, height));
+        layoutOptimized = true;
         repaint();
         updateUI();
       }
     }).start();
+  }
+
+  private void enterEditMode() {
+    /* TODO: disable all menu items */
+    if (hotkeyListener.rewritable()) {
+      previousData = hotkeyInputField.getText();
+    }
+    hotkeyListener.clearStatus();
+    hotkeyInputField.setText("");
+    resetButton.setVisible(true);
+    applyButton.setVisible(true);
+    int height = hotkeyInputField.getHeight();
+    int width = getWidth() - 18 - 18 - 8 - 8;
+    hotkeyInputField.setPreferredSize(new Dimension(width, height));
+    applyButton.setEnabled(false);
+  }
+
+  private void exitEditMode() {
+    applyButton.setVisible(false);
+    resetButton.setVisible(false);
+    topFrame.requestFocus();
+    hotkeyInputField.setText(previousData);
+    int height = hotkeyInputField.getHeight();
+    int width = hotkeyInputField.getPreferredSize().width + 18 + 18 + 8;
+    hotkeyInputField.setPreferredSize(new Dimension(width, height));
+    repaint();
+    updateUI();
+  }
+
+  private void applyChanges() {
+    if (hotkeyListener.code != 0) {
+      boundKeyStroke.set(KeyStroke.getKeyStroke(hotkeyListener.code, hotkeyListener.modifier));
+      previousData = hotkeyListener.getHotkeyString();
+      try {
+        AppPreferences.getPrefs().flush();
+        AppPreferences.hotkeySync();
+      } catch (BackingStoreException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
+    applyButton.setVisible(false);
+    resetButton.setVisible(false);
+    topFrame.requestFocus();
   }
 
   public void setText(String s) {
@@ -155,7 +160,7 @@ public class JHotkeyInput extends JPanel {
     hotkeyInputField.setEnabled(enabled);
   }
 
-  public void setApplyEnabled(boolean enabled){
+  public void setApplyEnabled(boolean enabled) {
     applyButton.setEnabled(enabled);
   }
 
@@ -163,22 +168,26 @@ public class JHotkeyInput extends JPanel {
     private final JHotkeyInput hotkeyInput;
     private int modifier = 0;
     private int code = 0;
-    private boolean rewriteFlag =true;
-    public String hotkeyString = "";
+    private boolean rewriteFlag = true;
+    private String hotkeyString = "";
 
     public HotkeyInputKeyListener(JHotkeyInput hotkeyInput) {
       this.hotkeyInput = hotkeyInput;
     }
 
-    public void clearStatus(){
+    public void clearStatus() {
       code = 0;
       modifier = 0;
-      hotkeyString="";
-      rewriteFlag =false;
+      hotkeyString = "";
+      rewriteFlag = false;
     }
 
-    public boolean rewritable(){
+    public boolean rewritable() {
       return rewriteFlag;
+    }
+
+    public String getHotkeyString() {
+      return hotkeyString;
     }
 
     @Override
@@ -228,8 +237,8 @@ public class JHotkeyInput extends JPanel {
     public void keyReleased(KeyEvent e) {
       hotkeyInput.setText(hotkeyString);
       hotkeyInput.setApplyEnabled(!hotkeyString.isEmpty());
-      if(!hotkeyString.isEmpty()){
-        rewriteFlag =true;
+      if (!hotkeyString.isEmpty()) {
+        rewriteFlag = true;
       }
     }
   }
@@ -238,14 +247,12 @@ public class JHotkeyInput extends JPanel {
     @Override
     public void insertString(DocumentFilter.FilterBypass fb, int offset,
                              String text, AttributeSet attr) throws BadLocationException {
-
       fb.insertString(offset, text.toUpperCase(), attr);
     }
 
     @Override
     public void replace(DocumentFilter.FilterBypass fb, int offset, int length,
                         String text, AttributeSet attrs) throws BadLocationException {
-
       fb.replace(offset, length, text.toUpperCase(), attrs);
     }
   }
