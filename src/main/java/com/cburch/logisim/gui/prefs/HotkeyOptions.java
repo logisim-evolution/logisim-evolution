@@ -187,7 +187,7 @@ class HotkeyOptions extends OptionsPanel {
     JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
     resetBtn.addActionListener(e -> {
       for (var h : keyInputList) {
-        h.exitEditMode();
+        h.exitEditModeWithoutRefresh();
       }
       AppPreferences.resetHotkeys();
     });

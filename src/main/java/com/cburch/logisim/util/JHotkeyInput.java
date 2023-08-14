@@ -125,7 +125,7 @@ public class JHotkeyInput extends JPanel {
     applyButton.setEnabled(false);
   }
 
-  private void exitEditModeWithoutRefresh() {
+  public void exitEditModeWithoutRefresh() {
     activeHotkeyInputUpdated = false;
     applyButton.setVisible(false);
     resetButton.setVisible(false);
