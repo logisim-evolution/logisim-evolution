@@ -162,6 +162,11 @@ public class JHotkeyInput extends JPanel {
     hotkeyInputField.setText(s.toUpperCase());
   }
 
+  public void resetText(String s) {
+    hotkeyInputField.setText(s.toUpperCase());
+    previousData = s.toUpperCase();
+  }
+
   public void setBoundKeyStroke(PrefMonitorKeyStroke keyStroke) {
     boundKeyStroke = keyStroke;
   }

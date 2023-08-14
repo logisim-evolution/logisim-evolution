@@ -196,7 +196,7 @@ class HotkeyOptions extends OptionsPanel {
     AppPreferences.getPrefs().addPreferenceChangeListener(evt -> {
       AppPreferences.hotkeySync();
       for (int i = 0; i < hotkeys.size(); i++) {
-        keyInputList.get(i).setText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+        keyInputList.get(i).resetText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
       }
     });
   }
