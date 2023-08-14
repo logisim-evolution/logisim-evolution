@@ -348,7 +348,7 @@ public class Ram extends Mem {
 
     if (!separate && outputNotEnabled) {
       /* put the bus in tri-state in case of a combined bus and no output enable */
-      setValue.accept( Value.createUnknown(dataBits));
+      setValue.accept(Value.createUnknown(dataBits));
       return;
     }
     /* if the OE is not activated return */
