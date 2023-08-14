@@ -40,13 +40,12 @@ class MenuFile extends Menu implements ActionListener {
   private final MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
   private final JMenuItem prefs = new JMenuItem();
   private final JMenuItem quit = new JMenuItem();
-  private final int menuMask;
 
   public MenuFile(LogisimMenuBar menubar) {
     this.menubar = menubar;
     openRecent = new OpenRecent(menubar);
 
-    menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
 
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));

@@ -17,6 +17,7 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
@@ -39,13 +40,12 @@ class MenuEdit extends Menu {
   private final MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
   private final MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
   private final MyListener myListener = new MyListener();
-  private int menuMask;
 
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
-    menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    //Rather than adding a default CTRL_DOWN_MASK, we allow user itself to set the mask
+    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+
     undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
     redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
     cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, menuMask));
@@ -58,9 +58,9 @@ class MenuEdit extends Menu {
     raise.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask));
     lower.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask));
     raiseTop.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+        KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | InputEvent.SHIFT_DOWN_MASK));
     lowerBottom.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+        KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | InputEvent.SHIFT_DOWN_MASK));
 
     /* add myself to hotkey sync */
     AppPreferences.gui_sync_objects.add(this);

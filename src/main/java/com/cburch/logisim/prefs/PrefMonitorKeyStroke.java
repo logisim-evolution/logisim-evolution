@@ -180,9 +180,8 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   }
 
   public void set(byte[] newValue) {
-    final var newVal = newValue;
-    if (value != newVal) {
-      AppPreferences.getPrefs().putByteArray(getIdentifier(), newVal);
+    if (value != newValue) {
+      AppPreferences.getPrefs().putByteArray(getIdentifier(), newValue);
     }
   }
 
