@@ -63,10 +63,7 @@ public class JHotkeyInput extends JPanel {
       }
       if (!com.focusableEnabled && globalLayoutOptimized) {
         /* run on every component's load */
-        com.exitEditModeWithoutRefresh();
-        com.repaint();
-        com.updateUI();
-        topFrame.requestFocus();
+        com.exitEditMode();
         com.hotkeyInputField.setFocusable(true);
         com.focusableEnabled = true;
       }
