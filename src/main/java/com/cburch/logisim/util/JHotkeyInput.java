@@ -61,7 +61,10 @@ public class JHotkeyInput extends JPanel {
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-    hotkeyInputField.setBackground(new Color(0, 0, 0, 0));
+    hotkeyInputField.setBackground(topFrame.getBackground());
+    //    Color srcColor = getBackground();
+    //    hotkeyInputField.setBackground(new Color(srcColor.getRed(),
+    //        srcColor.getGreen(), srcColor.getBlue(), 0));
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     hotkeyInputField.addKeyListener(hotkeyListener);
     hotkeyInputField.addFocusListener(new FocusListener() {
