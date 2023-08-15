@@ -4,6 +4,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -57,7 +58,7 @@ public class JHotkeyInput extends JPanel {
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-    hotkeyInputField.setBackground(getBackground());
+    hotkeyInputField.setBackground(new Color(0, 0, 0, 0));
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     hotkeyInputField.addKeyListener(hotkeyListener);
     hotkeyInputField.addFocusListener(new FocusListener() {
