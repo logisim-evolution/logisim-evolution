@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Changed RAM default output from error to undefined [#1747]
   * Added support for scanning 7-segment display on FPGA-boards
   * Added first support for the openFpga toolchain for the ecp5 famely
     Note that this is experimental for the moment, so use it at your own risk.
