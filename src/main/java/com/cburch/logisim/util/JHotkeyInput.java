@@ -13,6 +13,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -31,7 +33,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 public class JHotkeyInput extends JPanel {
-  private final JFrame topFrame;
+  private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
   public final JTextField hotkeyInputField;
@@ -39,15 +41,49 @@ public class JHotkeyInput extends JPanel {
   private final transient HotkeyInputKeyListener hotkeyListener;
   private boolean focusableEnabled = false;
   private static int layoutOptimizedDelay = 4;
-  private static boolean layoutOptimized = false;
+  private static boolean globalLayoutOptimized = false;
   private boolean needUpdate = false;
   private static boolean activeHotkeyInputUpdated = false;
   private static String activeHotkeyInputName = "";
   private String previousData = "";
+  private static final List<JHotkeyInput> JHotkeyInputList = new ArrayList<>();
+  private static final Timer optimizeTimer = new Timer(100, e -> {
+    if (topFrame == null) {
+      return;
+    }
+    for (var com : JHotkeyInputList) {
+      int height = com.getHeight();
+      int width = com.getWidth();
+      if (!globalLayoutOptimized && width > 0 && layoutOptimizedDelay-- > 0) {
+        /* run only once */
+        com.setPreferredSize(new Dimension(width + 18 + 18, height));
+        globalLayoutOptimized = true;
+        com.repaint();
+        com.updateUI();
+      }
+      if (!com.focusableEnabled && globalLayoutOptimized) {
+        /* run on every component's load */
+        com.exitEditModeWithoutRefresh();
+        com.repaint();
+        com.updateUI();
+        topFrame.requestFocus();
+        com.hotkeyInputField.setFocusable(true);
+        com.focusableEnabled = true;
+      }
+      if (com.needUpdate && com.boundKeyStroke != null
+          && activeHotkeyInputUpdated
+          && !activeHotkeyInputName.equals(com.boundKeyStroke.getName())) {
+        com.needUpdate = false;
+        com.exitEditModeWithoutRefresh();
+      }
+    }
+  });
 
 
   public JHotkeyInput(JFrame frame, String text) {
-    topFrame = frame;
+    if (topFrame == null) {
+      topFrame = frame;
+    }
     hotkeyListener = new HotkeyInputKeyListener(this);
     hotkeyInputField = new JTextField(text.toUpperCase());
     previousData = text;
@@ -107,32 +143,11 @@ public class JHotkeyInput extends JPanel {
     add(applyButton);
     add(resetButton);
 
-    new Timer(100, e -> {
-      int height = getHeight();
-      int width = getWidth();
-      if (!layoutOptimized && width > 0 && layoutOptimizedDelay-- > 0) {
-        /* run only once */
-        setPreferredSize(new Dimension(width + 18 + 18, height));
-        layoutOptimized = true;
-        repaint();
-        updateUI();
-      }
-      if (!focusableEnabled && layoutOptimized) {
-        /* run on every component's load */
-        exitEditModeWithoutRefresh();
-        repaint();
-        updateUI();
-        topFrame.requestFocus();
-        hotkeyInputField.setFocusable(true);
-        focusableEnabled = true;
-      }
-      if (needUpdate && boundKeyStroke != null
-          && activeHotkeyInputUpdated
-          && !activeHotkeyInputName.equals(boundKeyStroke.getName())) {
-        needUpdate = false;
-        exitEditModeWithoutRefresh();
-      }
-    }).start();
+    JHotkeyInputList.add(this);
+
+    if (!optimizeTimer.isRunning()) {
+      optimizeTimer.start();
+    }
   }
 
   private void enterEditMode() {
