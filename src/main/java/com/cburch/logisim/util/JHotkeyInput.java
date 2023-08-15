@@ -36,6 +36,8 @@ public class JHotkeyInput extends JPanel {
   public final JTextField hotkeyInputField;
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
+  private boolean focusableEnabled = false;
+  private static int layoutOptimizedDelay = 3;
   private static boolean layoutOptimized = false;
   private boolean needUpdate = false;
   private static boolean activeHotkeyInputUpdated = false;
@@ -47,6 +49,7 @@ public class JHotkeyInput extends JPanel {
     topFrame = frame;
     hotkeyListener = new HotkeyInputKeyListener(this);
     hotkeyInputField = new JTextField(text.toUpperCase());
+    previousData = text;
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     setBorder(BorderFactory.createCompoundBorder(
@@ -89,17 +92,25 @@ public class JHotkeyInput extends JPanel {
     resetButton.setFont(new Font(font.getFontName(), Font.PLAIN, 8));
     resetButton.setPreferredSize(new Dimension(18, 18));
 
+    hotkeyInputField.setFocusable(false);
     add(hotkeyInputField);
     add(applyButton);
     add(resetButton);
+
     new Timer(100, e -> {
       int height = getHeight();
       int width = getWidth();
-      if (!layoutOptimized && width > 0) {
+      if (!layoutOptimized && width > 0 && layoutOptimizedDelay-- > 0) {
         setPreferredSize(new Dimension(width + 18 + 18, height));
         layoutOptimized = true;
         repaint();
         updateUI();
+      }
+      if (!focusableEnabled && layoutOptimized) {
+        exitEditMode();
+        topFrame.requestFocus();
+        hotkeyInputField.setFocusable(true);
+        focusableEnabled = true;
       }
       if (needUpdate && boundKeyStroke != null
           && activeHotkeyInputUpdated
@@ -121,7 +132,7 @@ public class JHotkeyInput extends JPanel {
     resetButton.setVisible(true);
     applyButton.setVisible(true);
     int height = hotkeyInputField.getHeight();
-    int width = getWidth() - 18 - 18 - 8 - 8 - 4;
+    int width = getWidth() - 18 - 18 - 8 - 8 - 6;
     hotkeyInputField.setPreferredSize(new Dimension(width, height));
     applyButton.setEnabled(false);
   }
