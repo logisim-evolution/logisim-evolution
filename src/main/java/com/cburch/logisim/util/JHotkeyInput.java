@@ -38,7 +38,7 @@ public class JHotkeyInput extends JPanel {
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
   private boolean focusableEnabled = false;
-  private static int layoutOptimizedDelay = 3;
+  private static int layoutOptimizedDelay = 4;
   private static boolean layoutOptimized = false;
   private boolean needUpdate = false;
   private static boolean activeHotkeyInputUpdated = false;
@@ -57,7 +57,7 @@ public class JHotkeyInput extends JPanel {
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2, 4, 2, 4)
     ));
-    setPreferredSize(new Dimension(120, 28));
+    setPreferredSize(new Dimension(140, 28));
 
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
@@ -111,13 +111,17 @@ public class JHotkeyInput extends JPanel {
       int height = getHeight();
       int width = getWidth();
       if (!layoutOptimized && width > 0 && layoutOptimizedDelay-- > 0) {
+        /* run only once */
         setPreferredSize(new Dimension(width + 18 + 18, height));
         layoutOptimized = true;
         repaint();
         updateUI();
       }
       if (!focusableEnabled && layoutOptimized) {
-        exitEditMode();
+        /* run on every component's load */
+        exitEditModeWithoutRefresh();
+        repaint();
+        updateUI();
         topFrame.requestFocus();
         hotkeyInputField.setFocusable(true);
         focusableEnabled = true;
@@ -177,6 +181,11 @@ public class JHotkeyInput extends JPanel {
     }
     applyButton.setVisible(false);
     resetButton.setVisible(false);
+    int height = hotkeyInputField.getHeight();
+    int width = hotkeyInputField.getPreferredSize().width + 18 + 18 + 8;
+    hotkeyInputField.setPreferredSize(new Dimension(width, height));
+    repaint();
+    updateUI();
     topFrame.requestFocus();
   }
 
