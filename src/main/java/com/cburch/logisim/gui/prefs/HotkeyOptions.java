@@ -186,9 +186,6 @@ class HotkeyOptions extends OptionsPanel {
 
     JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
     resetBtn.addActionListener(e -> {
-      for (var h : keyInputList) {
-        h.exitEditModeWithoutRefresh();
-      }
       AppPreferences.resetHotkeys();
     });
     add(new JLabel(" "));
@@ -197,6 +194,9 @@ class HotkeyOptions extends OptionsPanel {
       AppPreferences.hotkeySync();
       for (int i = 0; i < hotkeys.size(); i++) {
         keyInputList.get(i).resetText(((PrefMonitorKeyStroke) hotkeys.get(i)).getDisplayString());
+      }
+      for (var h : keyInputList) {
+        h.exitEditMode();
       }
     });
   }
