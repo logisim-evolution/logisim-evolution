@@ -143,8 +143,6 @@ public class JHotkeyInput extends JPanel {
     add(applyButton);
     add(resetButton);
 
-    JHotkeyInputList.add(this);
-
     if (!optimizeTimer.isRunning()) {
       optimizeTimer.start();
     }
@@ -217,6 +215,7 @@ public class JHotkeyInput extends JPanel {
 
   public void setBoundKeyStroke(PrefMonitorKeyStroke keyStroke) {
     boundKeyStroke = keyStroke;
+    JHotkeyInputList.add(this);
   }
 
   public PrefMonitorKeyStroke getBoundKeyStroke() {
