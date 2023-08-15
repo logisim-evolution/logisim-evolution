@@ -1049,9 +1049,9 @@ public class AppPreferences {
     e.printStackTrace();
   }
 
-  public static String hotkeyCheckConflict(int keyCode, int modifier) {
+  public static String hotkeyCheckConflict(String keyName, int keyCode, int modifier) {
     try {
-      /* Check myself */
+      /* Check the supported hotkey bindings */
       Field[] fields = AppPreferences.class.getDeclaredFields();
 
       for (var f : fields) {
@@ -1060,6 +1060,9 @@ public class AppPreferences {
           @SuppressWarnings("unchecked")
           PrefMonitor<KeyStroke> keyStroke = (PrefMonitor<KeyStroke>) f.get(AppPreferences.class);
           if (((PrefMonitorKeyStroke) keyStroke).compare(keyCode, modifier)) {
+            if (((PrefMonitorKeyStroke) keyStroke).getName().equals(keyName)) {
+              return "";
+            }
             return S.get("hotkeyErrConflict",
                 S.get(((PrefMonitorKeyStroke) keyStroke).getName()));
           }

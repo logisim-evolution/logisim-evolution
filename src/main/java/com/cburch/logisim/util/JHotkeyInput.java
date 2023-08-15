@@ -272,7 +272,8 @@ public class JHotkeyInput extends JPanel {
         clearStatus();
         return;
       }
-      String checkPass = AppPreferences.hotkeyCheckConflict(code, modifier);
+      String checkPass = AppPreferences.hotkeyCheckConflict(hotkeyInput.boundKeyStroke.getName(),
+          code, modifier);
       if (!checkPass.isEmpty()) {
         JOptionPane.showMessageDialog(null,
             checkPass,
