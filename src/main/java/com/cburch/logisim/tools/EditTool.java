@@ -280,10 +280,6 @@ public class EditTool extends Tool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    /*
-     * My coding is silly, right? Doing so make sure
-     * that the hotkey can support both keycode and modifier
-     * */
     int code = e.getKeyCode();
     int modifier = e.getModifiersEx();
     if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE) {
@@ -300,29 +296,13 @@ public class EditTool extends Tool {
       canvas.getProject().doAction(act);
       e.consume();
     } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).compare(code, modifier)) {
-      if (e.getModifiersEx() == 0) {
-        attemptReface(canvas, Direction.NORTH, e);
-      } else {
-        select.keyPressed(canvas, e);
-      }
+      attemptReface(canvas, Direction.NORTH, e);
     } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).compare(code, modifier)) {
-      if (e.getModifiersEx() == 0) {
-        attemptReface(canvas, Direction.SOUTH, e);
-      } else {
-        select.keyPressed(canvas, e);
-      }
+      attemptReface(canvas, Direction.SOUTH, e);
     } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).compare(code, modifier)) {
-      if (e.getModifiersEx() == 0) {
-        attemptReface(canvas, Direction.EAST, e);
-      } else {
-        select.keyPressed(canvas, e);
-      }
+      attemptReface(canvas, Direction.EAST, e);
     } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).compare(code, modifier)) {
-      if (e.getModifiersEx() == 0) {
-        attemptReface(canvas, Direction.WEST, e);
-      } else {
-        select.keyPressed(canvas, e);
-      }
+      attemptReface(canvas, Direction.WEST, e);
     } else if (code == KeyEvent.VK_ALT) {
       updateLocation(canvas, e);
       e.consume();
