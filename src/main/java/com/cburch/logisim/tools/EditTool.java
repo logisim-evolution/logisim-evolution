@@ -128,23 +128,24 @@ public class EditTool extends Tool {
   }
 
   private void attemptReface(Canvas canvas, final Direction facing, KeyEvent e) {
-    if (e.getModifiersEx() == 0) {
-      final var circuit = canvas.getCircuit();
-      final var sel = canvas.getSelection();
-      final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
-      for (final var comp : sel.getComponents()) {
-        if (!(comp instanceof Wire)) {
-          final var attr = getFacingAttribute(comp);
-          if (attr != null) {
-            act.set(comp, attr, facing);
-          }
+    /* cancel the limit of no modifier*/
+    //  if (e.getModifiersEx() == 0) {
+    final var circuit = canvas.getCircuit();
+    final var sel = canvas.getSelection();
+    final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
+    for (final var comp : sel.getComponents()) {
+      if (!(comp instanceof Wire)) {
+        final var attr = getFacingAttribute(comp);
+        if (attr != null) {
+          act.set(comp, attr, facing);
         }
       }
-      if (!act.isEmpty()) {
-        canvas.getProject().doAction(act);
-        e.consume();
-      }
     }
+    if (!act.isEmpty()) {
+      canvas.getProject().doAction(act);
+      e.consume();
+    }
+    //  }
   }
 
   @Override
