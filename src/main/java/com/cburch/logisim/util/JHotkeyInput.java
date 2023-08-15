@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -61,10 +62,16 @@ public class JHotkeyInput extends JPanel {
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
     hotkeyInputField.setHorizontalAlignment(SwingConstants.CENTER);
-    hotkeyInputField.setBackground(topFrame.getBackground());
-    //    Color srcColor = getBackground();
-    //    hotkeyInputField.setBackground(new Color(srcColor.getRed(),
-    //        srcColor.getGreen(), srcColor.getBlue(), 0));
+    /* Sometimes the look and feel will override our settings
+     *  Then it will look strange
+     *  Especially for the theme Nimbus
+     *  So we have to do the belows to make Nimbus happy
+     *  */
+    if (UIManager.getLookAndFeel().getName().equals("Nimbus")) {
+      hotkeyInputField.setBackground(new Color(0, 0, 0, 0));
+    } else {
+      hotkeyInputField.setBackground(topFrame.getBackground());
+    }
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     hotkeyInputField.addKeyListener(hotkeyListener);
     hotkeyInputField.addFocusListener(new FocusListener() {
