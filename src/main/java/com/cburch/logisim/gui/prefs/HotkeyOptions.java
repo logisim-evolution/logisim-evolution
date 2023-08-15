@@ -65,6 +65,12 @@ class HotkeyOptions extends OptionsPanel {
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
     this.setLayout(new TableLayout(1));
+
+    JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
+    resetBtn.addActionListener(e -> AppPreferences.resetHotkeys());
+    add(resetBtn);
+    add(new JLabel(" "));
+
     menuKeyHeaderLabel = new JLabel();
     add(menuKeyHeaderLabel);
     add(new JLabel(" "));
@@ -184,12 +190,6 @@ class HotkeyOptions extends OptionsPanel {
       }
     }).start();
 
-    JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
-    resetBtn.addActionListener(e -> {
-      AppPreferences.resetHotkeys();
-    });
-    add(new JLabel(" "));
-    add(resetBtn);
     AppPreferences.getPrefs().addPreferenceChangeListener(evt -> {
       AppPreferences.hotkeySync();
       for (int i = 0; i < hotkeys.size(); i++) {
