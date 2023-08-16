@@ -129,7 +129,6 @@ public class EditTool extends Tool {
 
   private void attemptReface(Canvas canvas, final Direction facing, KeyEvent e) {
     /* cancel the limit of no modifier*/
-    //  if (e.getModifiersEx() == 0) {
     final var circuit = canvas.getCircuit();
     final var sel = canvas.getSelection();
     final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
@@ -145,7 +144,6 @@ public class EditTool extends Tool {
       canvas.getProject().doAction(act);
       e.consume();
     }
-    //  }
   }
 
   @Override

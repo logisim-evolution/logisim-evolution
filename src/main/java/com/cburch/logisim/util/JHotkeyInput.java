@@ -171,7 +171,6 @@ public class JHotkeyInput extends JPanel {
   public void exitEditMode() {
     exitEditModeWithoutRefresh();
     int height = hotkeyInputField.getHeight();
-    //int width = hotkeyInputField.getPreferredSize().width + 18 + 18 + 8;
     int width = getWidth() - 12;
     hotkeyInputField.setPreferredSize(new Dimension(width, height));
     repaint();
@@ -193,7 +192,6 @@ public class JHotkeyInput extends JPanel {
     applyButton.setVisible(false);
     resetButton.setVisible(false);
     int height = hotkeyInputField.getHeight();
-    //int width = hotkeyInputField.getPreferredSize().width + 18 + 18 + 8;
     int width = getWidth() - 12;
     hotkeyInputField.setPreferredSize(new Dimension(width, height));
     repaint();
