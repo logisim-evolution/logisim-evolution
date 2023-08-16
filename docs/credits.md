@@ -29,6 +29,8 @@ The following people and institutions actively contributed to further developmen
 * [Haute École Spécialisée Bernoise](http://www.bfh.ch/), Switzerland
 * [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch/), Switzerland
 * [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch/), Switzerland
+* [Zhao Hanyuan](https://github.com/gtxzsxxk),
+  [Tsinghua University](https://www.tsinghua.edu.cn/), P.R.C
 
 If you feel that your name should be in this list, please feel free
 to [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues).

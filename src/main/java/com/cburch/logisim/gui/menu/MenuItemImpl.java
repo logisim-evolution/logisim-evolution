@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
-class MenuItemImpl extends JMenuItem implements MenuItem {
+public class MenuItemImpl extends JMenuItem implements MenuItem {
 
   private static final long serialVersionUID = 1L;
   private final MenuItemHelper helper;
