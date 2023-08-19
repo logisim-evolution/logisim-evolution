@@ -97,7 +97,7 @@ public class JHotkeyInput extends JPanel {
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2, 4, 2, 4)
     ));
-    setPreferredSize(new Dimension(140, 28));
+    setPreferredSize(new Dimension(170, 28));
 
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
