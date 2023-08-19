@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
@@ -27,6 +28,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -36,6 +38,7 @@ public class JHotkeyInput extends JPanel {
   private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
+  public int fieldTopBottomBias;
   public final JTextField hotkeyInputField;
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
@@ -63,6 +66,8 @@ public class JHotkeyInput extends JPanel {
       }
       if (!com.focusableEnabled && globalLayoutOptimized) {
         /* run on every component's load */
+        Dimension preferredSize = com.hotkeyInputField.getPreferredSize();
+        com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldTopBottomBias));
         com.exitEditMode();
         com.hotkeyInputField.setFocusable(true);
         com.focusableEnabled = true;
@@ -86,6 +91,8 @@ public class JHotkeyInput extends JPanel {
     previousData = text;
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    Insets insets = hotkeyInputField.getBorder().getBorderInsets(hotkeyInputField);
+    fieldTopBottomBias = insets.top + insets.bottom;
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2, 4, 2, 4)
@@ -107,6 +114,7 @@ public class JHotkeyInput extends JPanel {
     }
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     hotkeyInputField.addKeyListener(hotkeyListener);
+    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.addFocusListener(new FocusListener() {
       @Override
       public void focusGained(FocusEvent e) {
