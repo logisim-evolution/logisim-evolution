@@ -48,7 +48,7 @@ public class JHotkeyInput extends JPanel {
   private boolean needUpdate = false;
   private static boolean activeHotkeyInputUpdated = false;
   private static String activeHotkeyInputName = "";
-  private String previousData = "";
+  private String previousData;
   private static final List<JHotkeyInput> JHotkeyInputList = new ArrayList<>();
   private static final Timer optimizeTimer = new Timer(80, e -> {
     if (topFrame == null) {
@@ -117,7 +117,6 @@ public class JHotkeyInput extends JPanel {
     }
     hotkeyInputField.setBorder(BorderFactory.createEmptyBorder());
     hotkeyInputField.addKeyListener(hotkeyListener);
-    hotkeyInputField.setBackground(Color.yellow);
     hotkeyInputField.addFocusListener(new FocusListener() {
       @Override
       public void focusGained(FocusEvent e) {
