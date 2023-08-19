@@ -28,7 +28,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -38,7 +37,8 @@ public class JHotkeyInput extends JPanel {
   private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
-  public int fieldTopBottomBias;
+  private final int fieldVerticalBias;
+  private final int fieldHorizonalBias;
   public final JTextField hotkeyInputField;
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
@@ -67,8 +67,8 @@ public class JHotkeyInput extends JPanel {
       if (!com.focusableEnabled && globalLayoutOptimized) {
         /* run on every component's load */
         Dimension preferredSize = com.hotkeyInputField.getPreferredSize();
-        if (preferredSize.height + com.fieldTopBottomBias > com.getHeight()) {
-          com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldTopBottomBias));
+        if (preferredSize.height + com.fieldVerticalBias > com.getHeight()) {
+          com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldVerticalBias));
         }
         com.exitEditMode();
         com.hotkeyInputField.setFocusable(true);
@@ -94,7 +94,8 @@ public class JHotkeyInput extends JPanel {
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     Insets insets = hotkeyInputField.getBorder().getBorderInsets(hotkeyInputField);
-    fieldTopBottomBias = insets.top + insets.bottom;
+    fieldVerticalBias = insets.top + insets.bottom;
+    fieldHorizonalBias = insets.left + insets.right;
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2, 4, 2, 4)
@@ -166,7 +167,7 @@ public class JHotkeyInput extends JPanel {
     resetButton.setVisible(true);
     applyButton.setVisible(true);
     int height = hotkeyInputField.getHeight();
-    int width = getWidth() - 18 - 18 - 8 - 8 - 6;
+    int width = getWidth() - 18 - 18 - 8 - 8 - 6 - fieldHorizonalBias;
     hotkeyInputField.setPreferredSize(new Dimension(width, height));
     applyButton.setEnabled(false);
   }
