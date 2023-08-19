@@ -50,7 +50,7 @@ public class JHotkeyInput extends JPanel {
   private static String activeHotkeyInputName = "";
   private String previousData = "";
   private static final List<JHotkeyInput> JHotkeyInputList = new ArrayList<>();
-  private static final Timer optimizeTimer = new Timer(100, e -> {
+  private static final Timer optimizeTimer = new Timer(80, e -> {
     if (topFrame == null) {
       return;
     }
@@ -67,7 +67,9 @@ public class JHotkeyInput extends JPanel {
       if (!com.focusableEnabled && globalLayoutOptimized) {
         /* run on every component's load */
         Dimension preferredSize = com.hotkeyInputField.getPreferredSize();
-        com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldTopBottomBias));
+        if (preferredSize.height + com.fieldTopBottomBias > com.getHeight()) {
+          com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldTopBottomBias));
+        }
         com.exitEditMode();
         com.hotkeyInputField.setFocusable(true);
         com.focusableEnabled = true;
