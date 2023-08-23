@@ -170,18 +170,18 @@
 		</tocitem>
 		<tocitem target="io" text="Input/Output library">
 			<tocitem target="io_button" image="icon_button" text="Bouton" />
-			<tocitem target="io_DIP" text="DIP Switch" image="icon_DIP" />
-			<tocitem target="io_joystick" image="icon_joystick" text="Joystick"/>
+			<tocitem target="io_DIP"  image="icon_DIP" text="Interrupteur Dip"/>
+			<tocitem target="io_joystick" image="icon_joystick" text="Manette"/>
 			<tocitem target="io_keyboard" image="icon_keyboard" text="Clavier"/>
 			<tocitem target="io_led" image="icon_led" text="LED"/>
 			<tocitem target="io_ledRVB" text="LED rVB" image="icon_led RVB" />			
-			<tocitem target="io_7seg" image="icon_7seg" text="7-Segment Display"/>
-			<tocitem target="io_hexdig" image="icon_hexdig" text="Hex Digit Display"/>
-			<tocitem target="io_dotmat" image="icon_dotmat" text="LED Matrix"/>
+			<tocitem target="io_7seg" image="icon_7seg" text="Afficheur 7-Segments"/>
+			<tocitem target="io_hexdig" image="icon_hexdig" text="Afficheur Hexadecimal"/>
+			<tocitem target="io_dotmat" image="icon_dotmat" text="Matrice de LED"/>
 			<tocitem target="io_tty" image="icon_tty" text="TTY"/>
-			<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
-			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
-			<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
+			<tocitem target="io_Port_IO" image="icon_Port_IO" text="Port I/O"  />
+			<tocitem target="io_Repetar"  image="icon_repetar" text="Reptar Local Bus"/>
+			<tocitem target="io_videorvb"  image="icon_videorvb" text="Afficheur Video RVB"/>
 		</tocitem>
 		<tocitem target="hdl" text="HDL-IP">
 			<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
