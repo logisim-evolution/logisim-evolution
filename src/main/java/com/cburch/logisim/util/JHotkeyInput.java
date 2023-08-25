@@ -37,6 +37,8 @@ public class JHotkeyInput extends JPanel {
   private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
+  private static final String os = System.getProperty("os.name").toLowerCase();
+  private static final String lookAndFeel = UIManager.getLookAndFeel().getName();
   private int fieldVerticalBias;
   private int fieldHorizonalBias;
   public final JTextField hotkeyInputField;
@@ -98,7 +100,7 @@ public class JHotkeyInput extends JPanel {
     fieldHorizonalBias = insets.left + insets.right;
 
     /* adaption for different look and feels in different platforms by tests */
-    if (System.getProperty("os.name").toLowerCase().contains("linux") && !UIManager.getLookAndFeel().getName().contains("Flat")) {
+    if (os.contains("linux") && !lookAndFeel.contains("Flat")) {
       fieldVerticalBias += 2;
     }
 
@@ -116,7 +118,7 @@ public class JHotkeyInput extends JPanel {
      *  Especially for the theme Nimbus
      *  So we have to do the belows to make Nimbus happy
      *  */
-    if (UIManager.getLookAndFeel().getName().equals("Nimbus")) {
+    if (lookAndFeel.contains("Nimbus")) {
       hotkeyInputField.setBackground(new Color(0, 0, 0, 0));
     } else {
       hotkeyInputField.setBackground(topFrame.getBackground());
