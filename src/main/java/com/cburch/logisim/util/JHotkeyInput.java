@@ -37,8 +37,8 @@ public class JHotkeyInput extends JPanel {
   private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
-  private final int fieldVerticalBias;
-  private final int fieldHorizonalBias;
+  private int fieldVerticalBias;
+  private int fieldHorizonalBias;
   public final JTextField hotkeyInputField;
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
@@ -67,7 +67,7 @@ public class JHotkeyInput extends JPanel {
       if (!com.focusableEnabled && globalLayoutOptimized) {
         /* run on every component's load */
         Dimension preferredSize = com.hotkeyInputField.getPreferredSize();
-        if (preferredSize.height + com.fieldVerticalBias > com.getHeight()) {
+        if (preferredSize.height + com.fieldVerticalBias >= com.getHeight()) {
           com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldVerticalBias));
         }
         com.exitEditMode();
@@ -96,6 +96,12 @@ public class JHotkeyInput extends JPanel {
     Insets insets = hotkeyInputField.getBorder().getBorderInsets(hotkeyInputField);
     fieldVerticalBias = insets.top + insets.bottom;
     fieldHorizonalBias = insets.left + insets.right;
+
+    /* adaption for different look and feels in different platforms by tests */
+    if (System.getProperty("os.name").toLowerCase().contains("linux") && !UIManager.getLookAndFeel().getName().contains("Flat")) {
+      fieldVerticalBias += 2;
+    }
+
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2, 4, 2, 4)

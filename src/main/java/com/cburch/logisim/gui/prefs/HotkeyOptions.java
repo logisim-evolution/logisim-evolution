@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 
 class HotkeyOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
@@ -175,6 +176,16 @@ class HotkeyOptions extends OptionsPanel {
     panelRight.add(southBtn);
     panelRight.add(eastBtn);
     normalKeyPanel.add(panelRight);
+
+    /* adaption for different look and feels in different platforms by tests */
+    if (System.getProperty("os.name").toLowerCase().contains("linux") && UIManager.getLookAndFeel().getName().contains("CDE")) {
+      for (int i = 0; i < 4; i++) {
+        menuKeyPanel.add(new JLabel(" "));
+        menuKeyPanel.add(new JLabel(" "));
+        normalKeyPanel.add(new JLabel(" "));
+        normalKeyPanel.add(new JLabel(" "));
+      }
+    }
 
     var that = this;
     /* this timer deals with the preferred width */
