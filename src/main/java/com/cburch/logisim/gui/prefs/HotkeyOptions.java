@@ -183,9 +183,11 @@ class HotkeyOptions extends OptionsPanel {
       int normalWidth = normalKeyPanel.getWidth();
       if (normalWidth > 0 && normalWidth < that.getWidth() * 0.8 && !preferredWidthSet) {
         menuKeyScrollPane.preferredWidth = menuWidth + 40;
-        menuKeyPanel.setPreferredSize(new Dimension(menuKeyPanel.getSize().width, menuKeyPanel.getPreferredSize().height));
+        menuKeyPanel.setPreferredSize(new Dimension(menuKeyPanel.getSize().width,
+            menuKeyPanel.getPreferredSize().height));
         normalKeyScrollPane.preferredWidth = normalWidth + 40;
-        normalKeyPanel.setPreferredSize(new Dimension(normalKeyPanel.getSize().width, normalKeyPanel.getPreferredSize().height));
+        normalKeyPanel.setPreferredSize(new Dimension(normalKeyPanel.getSize().width,
+            normalKeyPanel.getPreferredSize().height));
         preferredWidthSet = true;
       }
     }).start();
