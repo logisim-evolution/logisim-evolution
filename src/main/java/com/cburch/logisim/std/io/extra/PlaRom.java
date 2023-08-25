@@ -192,13 +192,13 @@ public class PlaRom extends InstanceFactory {
   }
 
   private static final Attribute<Integer> ATTR_INPUTS =
-      Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 32);
+      Attributes.forIntegerRange("inputs", S.getter("plaBitWidthIn"), 1, 32);
 
   private static final Attribute<Integer> ATTR_AND =
       Attributes.forIntegerRange("and", S.getter("PlaANDAttr"), 1, 32);
 
   private static final Attribute<Integer> ATTR_OUTPUTS =
-      Attributes.forIntegerRange("outputs", S.getter("PlaOutputsAttr"), 1, 32);
+      Attributes.forIntegerRange("outputs", S.getter("plaBitWidthOut"), 1, 32);
 
   private static final ContentsAttribute CONTENTS_ATTR = new ContentsAttribute();
 
