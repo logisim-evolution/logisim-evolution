@@ -188,15 +188,15 @@ class HotkeyOptions extends OptionsPanel {
     }
 
     var that = this;
-    /* this timer deals with the preferred width */
+    /* this timer deals with the preferred width and the theme changing problem */
     new Timer(200, e -> {
       int menuWidth = menuKeyPanel.getWidth();
       int normalWidth = normalKeyPanel.getWidth();
       if (normalWidth > 0 && normalWidth < that.getWidth() * 0.8 && !preferredWidthSet) {
         menuKeyScrollPane.preferredWidth = menuWidth + 40;
-        menuKeyPanel.setPreferredSize(menuKeyPanel.getSize());
+        menuKeyPanel.setPreferredSize(new Dimension(menuKeyPanel.getSize().width, menuKeyPanel.getPreferredSize().height));
         normalKeyScrollPane.preferredWidth = normalWidth + 40;
-        normalKeyPanel.setPreferredSize(normalKeyPanel.getSize());
+        normalKeyPanel.setPreferredSize(new Dimension(normalKeyPanel.getSize().width, normalKeyPanel.getPreferredSize().height));
         preferredWidthSet = true;
       }
     }).start();
