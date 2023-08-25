@@ -176,16 +176,6 @@ class HotkeyOptions extends OptionsPanel {
     panelRight.add(eastBtn);
     normalKeyPanel.add(panelRight);
 
-    /* add blank lines for linux GTK+ to avoid some hotkey bindings invisible */
-    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-      for (int i = 0; i < 5; i++) {
-        menuKeyPanel.add(new JLabel(" "));
-        menuKeyPanel.add(new JLabel(" "));
-        normalKeyPanel.add(new JLabel(" "));
-        normalKeyPanel.add(new JLabel(" "));
-      }
-    }
-
     var that = this;
     /* this timer deals with the preferred width */
     new Timer(200, e -> {

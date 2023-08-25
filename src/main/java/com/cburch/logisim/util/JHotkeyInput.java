@@ -78,7 +78,7 @@ public class JHotkeyInput extends JPanel {
           && activeHotkeyInputUpdated
           && !activeHotkeyInputName.equals(com.boundKeyStroke.getName())) {
         com.needUpdate = false;
-        com.exitEditModeWithoutRefresh();
+        com.exitEditMode();
       }
     }
   });
