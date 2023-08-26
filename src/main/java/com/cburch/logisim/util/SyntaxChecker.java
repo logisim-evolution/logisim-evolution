@@ -66,10 +66,14 @@ public final class SyntaxChecker {
 
       int firstIllegalCharacterIndex = variableMatcher.find() ? variableMatcher.end() : 0;
 
-      char firstIllegalCharacter = messageBuilder.charAt(firstIllegalCharacterIndex);
+      if (firstIllegalCharacterIndex != val.length()) {
 
-      messageBuilder.append(S.get("variableIllegalCharacter",
-          String.valueOf(firstIllegalCharacter)));
+        char firstIllegalCharacter = val.charAt(firstIllegalCharacterIndex);
+
+        messageBuilder.append(S.get("variableIllegalCharacter",
+            String.valueOf(firstIllegalCharacter)));
+
+      }
     }
 
     if (forbiddenMatcher.find()) {

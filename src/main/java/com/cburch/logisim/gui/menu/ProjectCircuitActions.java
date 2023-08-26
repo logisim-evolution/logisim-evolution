@@ -101,7 +101,7 @@ public class ProjectCircuitActions {
       else {
         String nameMessage = SyntaxChecker.getErrorMessage(name);
         if (nameMessage != null) {
-          error = "\"" + name + "\": " + nameMessage;
+          error = "\"" + name + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
         }
       }
       if (error != null) {
