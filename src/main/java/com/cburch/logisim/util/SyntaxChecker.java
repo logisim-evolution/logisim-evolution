@@ -35,7 +35,7 @@ public final class SyntaxChecker {
     final var hdl = CorrectLabel.hdlCorrectLabel(val);
 
     if (hdl != null) {
-      messageBuilder.append(              hdl.equals(HdlGeneratorFactory.VHDL)
+      messageBuilder.append(hdl.equals(HdlGeneratorFactory.VHDL)
           ? S.get("variableVHDLKeyword")
           : S.get("variableVerilogKeyword"));
     }
@@ -57,8 +57,7 @@ public final class SyntaxChecker {
 
     if (Character.isDigit(val.charAt(0))) {
       messageBuilder.append(S.get("variableStartsWithDigit"));
-    }
-    else {
+    } else {
       // we don't check this case when the variable starts with a digit
       // because this would match the initial digit, we don't want that.
 

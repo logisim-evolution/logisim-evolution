@@ -97,8 +97,7 @@ public class ProjectCircuitActions {
         error = "\"" + name + "\": " + S.get("circuitNameKeyword");
       } else if (nameIsInUse(proj, name)) {
         error = "\"" + name + "\": " + S.get("circuitNameExists");
-      }
-      else {
+      } else {
         String nameMessage = SyntaxChecker.getErrorMessage(name);
         if (nameMessage != null) {
           error = "\"" + name + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
