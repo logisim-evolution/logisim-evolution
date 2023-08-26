@@ -28,20 +28,12 @@ public final class SyntaxChecker {
   public static String getErrorMessage(String val) {
     if (StringUtil.isNullOrEmpty(val)) return null;
 
-    final var variableMatcher = variablePattern.matcher(val);
+    var messageBuilder = new StringBuilder();
 
-    final var forbiddenMatcher = forbiddenPattern.matcher(val);
+    buildVariableErrorMessage(val, messageBuilder);
 
     final var hdl = CorrectLabel.hdlCorrectLabel(val);
 
-    var messageBuilder = new StringBuilder();
-
-    if (!variableMatcher.matches()) {
-      messageBuilder.append(S.get("variableInvalidCharacters"));
-    }
-    if (forbiddenMatcher.find()) {
-      messageBuilder.append(S.get("variableDoubleUnderscore"));
-    }
     if (hdl != null) {
       messageBuilder.append(              hdl.equals(HdlGeneratorFactory.VHDL)
           ? S.get("variableVHDLKeyword")
@@ -52,6 +44,37 @@ public final class SyntaxChecker {
     }
     var message = messageBuilder.toString();
     return (message.length() == 0) ? null : message;
+  }
+
+  private static void buildVariableErrorMessage(String val, StringBuilder messageBuilder) {
+    final var variableMatcher = variablePattern.matcher(val);
+
+    final var forbiddenMatcher = forbiddenPattern.matcher(val);
+
+    if (!variableMatcher.matches()) {
+      messageBuilder.append(S.get("variableInvalidCharacters"));
+    }
+
+    if (Character.isDigit(val.charAt(0))) {
+      messageBuilder.append(S.get("variableStartsWithDigit"));
+    }
+    else {
+      // we don't check this case when the variable starts with a digit
+      // because this would match the initial digit, we don't want that.
+
+      variableMatcher.reset();
+
+      int firstIllegalCharacterIndex = variableMatcher.find() ? variableMatcher.end() : 0;
+
+      char firstIllegalCharacter = messageBuilder.charAt(firstIllegalCharacterIndex);
+
+      messageBuilder.append(S.get("variableIllegalCharacter",
+          String.valueOf(firstIllegalCharacter)));
+    }
+
+    if (forbiddenMatcher.find()) {
+      messageBuilder.append(S.get("variableDoubleUnderscore"));
+    }
   }
 
   public static boolean isVariableNameAcceptable(String val, Boolean showDialog) {
