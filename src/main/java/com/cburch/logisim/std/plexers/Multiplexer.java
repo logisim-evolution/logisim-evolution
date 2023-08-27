@@ -31,8 +31,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class Multiplexer extends InstanceFactory {
   /**
@@ -72,18 +74,20 @@ public class Multiplexer extends InstanceFactory {
     super(_ID, S.getter("multiplexerComponent"), new MultiplexerHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
-          StdAttr.FACING,
-          PlexersLibrary.ATTR_SIZE,
-          StdAttr.SELECT_LOC,
-          PlexersLibrary.ATTR_SELECT,
-          StdAttr.WIDTH,
-          PlexersLibrary.ATTR_DISABLED,
-          PlexersLibrary.ATTR_ENABLE
+            StdAttr.FACING,
+            PlexersLibrary.ATTR_SIZE,
+            StdAttr.SELECT_LOC,
+            PlexersLibrary.ATTR_SELECT,
+            StdAttr.WIDTH,
+            PlexersLibrary.ATTR_DISABLED,
+            PlexersLibrary.ATTR_ENABLE,
+            PlexersLibrary.ATTR_INVERT_ENABLE
         },
         new Object[] {
           Direction.EAST, PlexersLibrary.SIZE_WIDE, StdAttr.SELECT_BOTTOM_LEFT,
           PlexersLibrary.DEFAULT_SELECT, BitWidth.ONE, PlexersLibrary.DISABLED_ZERO,
-          PlexersLibrary.DEFAULT_ENABLE
+          PlexersLibrary.DEFAULT_ENABLE,
+            PlexersLibrary.DEFAULT_INVERT_ENABLE
         });
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -150,10 +154,9 @@ public class Multiplexer extends InstanceFactory {
     if (attr == StdAttr.FACING
         || attr == StdAttr.SELECT_LOC
         || attr == PlexersLibrary.ATTR_SELECT
-        || attr == PlexersLibrary.ATTR_SIZE) {
-      instance.recomputeBounds();
-      updatePorts(instance);
-    } else if (attr == StdAttr.WIDTH || attr == PlexersLibrary.ATTR_ENABLE) {
+        || attr == PlexersLibrary.ATTR_SIZE || attr == StdAttr.WIDTH
+        || attr == PlexersLibrary.ATTR_ENABLE
+        || attr == PlexersLibrary.ATTR_INVERT_ENABLE) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == PlexersLibrary.ATTR_DISABLED) {
@@ -183,6 +186,7 @@ public class Multiplexer extends InstanceFactory {
     final var facing = painter.getAttributeValue(StdAttr.FACING);
     final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var enable = painter.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
+    final var invertEnable = painter.getAttributeValue(PlexersLibrary.ATTR_INVERT_ENABLE);
     int inputs = 1 << select.getWidth();
 
     // draw stubs for select/enable inputs that aren't on instance boundary
@@ -217,6 +221,23 @@ public class Multiplexer extends InstanceFactory {
       }
       final var len = (inputs == 2) ? 3 : wide ? 2 : oddside ? 4 : 2;
       g.drawLine(en.getX() - len * dx, en.getY() - len * dy, en.getX(), en.getY());
+
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+
+      if (invertEnable) {
+        int ovalX, ovalY;
+        if (vertical) {
+          ovalX = en.getX() - len * dx - 4;
+          ovalY = en.getY() - 2 * len * dy - 4;
+        }
+        else {
+          ovalX = en.getX() - 2 * len * dx - 4;
+          ovalY = en.getY() - len * dy - 4;
+        }
+
+        GraphicsUtil.switchToWidth(g, 2);
+        g.drawOval(ovalX, ovalY, 8, 8);
+      }
     }
     GraphicsUtil.switchToWidth(g, 1);
 
@@ -265,8 +286,10 @@ public class Multiplexer extends InstanceFactory {
     final var data = state.getAttributeValue(StdAttr.WIDTH);
     final var select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var enable = state.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
+    final var invertEnable = state.getAttributeValue(PlexersLibrary.ATTR_INVERT_ENABLE);
     final var inputs = 1 << select.getWidth();
-    final var en = enable ? state.getPortValue(inputs + 1) : Value.TRUE;
+    final var enablePort = state.getPortValue(inputs + 1);
+    final var en = enable ? (invertEnable ? enablePort.not() : enablePort) : Value.TRUE;
     Value out;
     if (en == Value.FALSE) {
       Object opt = state.getAttributeValue(PlexersLibrary.ATTR_DISABLED);
@@ -298,6 +321,7 @@ public class Multiplexer extends InstanceFactory {
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
     final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var enable = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
+    final var invertEnable = instance.getAttributeValue(PlexersLibrary.ATTR_INVERT_ENABLE);
 
     final var inputs = 1 << select.getWidth();
     final var ps = new Port[inputs + (enable ? 3 : 2)];
@@ -361,9 +385,12 @@ public class Multiplexer extends InstanceFactory {
       sel = sel.translate(-10, 0); // left side, adjust selector left
     else if (!wide && vertical && !botLeft && inputs > 2)
       sel = sel.translate(0, -10); // top side, adjust selector up
-    final var en = sel.translate(dir, 10);
+    var en = sel.translate(dir, 10);
     ps[inputs] = new Port(sel.getX(), sel.getY(), Port.INPUT, select.getWidth());
     if (enable) {
+      if (invertEnable) {
+        en = vertical ? en.translate(0, 10) : en.translate(-10, 0);
+      }
       ps[inputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);
     }
     ps[ps.length - 1] = new Port(0, 0, Port.OUTPUT, data.getWidth());

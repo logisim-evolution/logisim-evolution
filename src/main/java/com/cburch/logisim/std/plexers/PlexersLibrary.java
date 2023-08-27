@@ -125,6 +125,11 @@ public class PlexersLibrary extends Library {
 
   public static final int DELAY = 3;
 
+  public static final Attribute<Boolean> ATTR_INVERT_ENABLE =
+      Attributes.forBoolean("invertSelect", S.getter("plexerInvertSelectAttr"));
+
+  public static final Object DEFAULT_INVERT_ENABLE = Boolean.FALSE;
+
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Multiplexer.class, S.getter("multiplexerComponent"), "multiplexer.gif"),
     new FactoryDescription(
