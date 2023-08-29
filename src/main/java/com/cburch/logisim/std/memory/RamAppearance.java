@@ -180,7 +180,7 @@ public class RamAppearance {
     for (var i = 0; i < getNrDataInPorts(attrs); i++)
       ps[getDataInIndex(i, attrs)] = getDataInPort(i, attrs);
     for (var i = 0; i < getNrDataOutPorts(attrs); i++)
-      ps[getDataOutIndex(i, attrs)] = getDataOutPort(i, attrs,instance.getBounds().getWidth());
+      ps[getDataOutIndex(i, attrs)] = getDataOutPort(i, attrs, instance.getBounds().getWidth());
     for (var i = 0; i < getNrOEPorts(attrs); i++)
       ps[getOEIndex(i, attrs)] = getOEPort(i, attrs);
     for (var i = 0; i < getNrWEPorts(attrs); i++)
