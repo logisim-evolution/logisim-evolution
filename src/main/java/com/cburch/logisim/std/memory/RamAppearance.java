@@ -180,7 +180,7 @@ public class RamAppearance {
     for (var i = 0; i < getNrDataInPorts(attrs); i++)
       ps[getDataInIndex(i, attrs)] = getDataInPort(i, attrs);
     for (var i = 0; i < getNrDataOutPorts(attrs); i++)
-      ps[getDataOutIndex(i, attrs)] = getDataOutPort(i, attrs);
+      ps[getDataOutIndex(i, attrs)] = getDataOutPort(i, attrs, instance.getBounds().getWidth());
     for (var i = 0; i < getNrOEPorts(attrs); i++)
       ps[getOEIndex(i, attrs)] = getOEPort(i, attrs);
     for (var i = 0; i < getNrWEPorts(attrs); i++)
@@ -198,12 +198,15 @@ public class RamAppearance {
 
   public static Bounds getBounds(AttributeSet attrs) {
     int xoffset = (seperatedBus(attrs)) ? 40 : 50;
+  
     if (classicAppearance(attrs)) {
-      return Bounds.create(0, 0, Mem.SymbolWidth + xoffset, 140);
+      int len = Math.max(64, (getNrLEPorts(attrs) + 1) * 10);
+      return Bounds.create(0, 0, Mem.SymbolWidth + 40, getControlHeight(attrs) + len);
     } else {
       int len = Math.max(attrs.getValue(Mem.DATA_ATTR).getWidth() * 20, (getNrLEPorts(attrs) + 1) * 10);
       return Bounds.create(0, 0, Mem.SymbolWidth + xoffset, getControlHeight(attrs) + len);
     }
+    
   }
 
   public static boolean classicAppearance(AttributeSet attrs) {
@@ -381,15 +384,13 @@ public class RamAppearance {
     return result;
   }
 
-  private static Port getDataOutPort(int portIndex, AttributeSet attrs) {
+  private static Port getDataOutPort(int portIndex, AttributeSet attrs, int xpos) {
     final var nrDouts = getNrDataOutPorts(attrs);
     if (nrDouts == 0 || portIndex < 0) return null;
     if (portIndex >= nrDouts) return null;
     var ypos = getControlHeight(attrs);
-    var xpos = Mem.SymbolWidth + 40;
     var portType = Port.OUTPUT;
     if (!seperatedBus(attrs) && attrs.containsAttribute(Mem.ENABLES_ATTR)) {
-      xpos += 10;
       portType = Port.INOUT;
     }
     final var classic = classicAppearance(attrs);
@@ -521,7 +522,7 @@ public class RamAppearance {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var nrOfDataPorts = Math.max(getNrDataInPorts(attrs), getNrDataOutPorts(attrs));
 
-    /* Draw data input conections */
+    /* Draw data input connections */
     for (var i = 0; i < getNrDataInPorts(attrs); i++) {
       label = !classic ? "" : getNrDataInPorts(attrs) == 1 ? "D" : "D" + i;
       final var idx = getDataInIndex(i, attrs);
@@ -582,7 +583,7 @@ public class RamAppearance {
       painter.drawPort(idx, label, Direction.EAST);
     }
 
-    /* Draw data output conections (& in/out)*/
+    /* Draw data output connections (& in/out)*/
     for (var i = 0; i < getNrDataOutPorts(attrs); i++) {
       label = !classic ? "" : getNrDataOutPorts(attrs) == 1 ? "D" : "D" + i;
       int idx = getDataOutIndex(i, attrs);
@@ -682,7 +683,7 @@ public class RamAppearance {
     }
 
 
-    /* draw controllblock conections */
+    /* draw controllblock connections */
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     g.setStroke(new BasicStroke(2));
