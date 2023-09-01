@@ -27,13 +27,9 @@ public final class SyntaxChecker {
 
   public static String getErrorMessage(String val) {
     if (StringUtil.isNullOrEmpty(val)) return null;
-
     var messageBuilder = new StringBuilder();
-
     buildVariableErrorMessage(val, messageBuilder);
-
     final var hdl = CorrectLabel.hdlCorrectLabel(val);
-
     if (hdl != null) {
       messageBuilder.append(hdl.equals(HdlGeneratorFactory.VHDL)
           ? S.get("variableVHDLKeyword")
@@ -48,33 +44,24 @@ public final class SyntaxChecker {
 
   private static void buildVariableErrorMessage(String val, StringBuilder messageBuilder) {
     final var variableMatcher = variablePattern.matcher(val);
-
     final var forbiddenMatcher = forbiddenPattern.matcher(val);
-
     if (!variableMatcher.matches()) {
       messageBuilder.append(S.get("variableInvalidCharacters"));
     }
-
     if (Character.isDigit(val.charAt(0))) {
       messageBuilder.append(S.get("variableStartsWithDigit"));
     } else {
+
       // we don't check this case when the variable starts with a digit
       // because this would match the initial digit, we don't want that.
-
       variableMatcher.reset();
-
       int firstIllegalCharacterIndex = variableMatcher.find() ? variableMatcher.end() : 0;
-
       if (firstIllegalCharacterIndex != val.length()) {
-
         char firstIllegalCharacter = val.charAt(firstIllegalCharacterIndex);
-
         messageBuilder.append(S.get("variableIllegalCharacter",
             String.valueOf(firstIllegalCharacter)));
-
       }
     }
-
     if (forbiddenMatcher.find()) {
       messageBuilder.append(S.get("variableDoubleUnderscore"));
     }
