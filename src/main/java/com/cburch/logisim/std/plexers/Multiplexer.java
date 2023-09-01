@@ -226,17 +226,19 @@ public class Multiplexer extends InstanceFactory {
 
       if (invertEnable) {
         int ovalX, ovalY;
+        int radius = 8;
+        int halfRadius = radius / 2;
         if (vertical) {
-          ovalX = en.getX() - len * dx - 4;
-          ovalY = en.getY() - 2 * len * dy - 4;
+          ovalX = en.getX() - halfRadius;
+          ovalY = en.getY() - len - radius - halfRadius;
         }
         else {
-          ovalX = en.getX() - 2 * len * dx - 4;
-          ovalY = en.getY() - len * dy - 4;
+          ovalX = en.getX() + len + radius - halfRadius;
+          ovalY = en.getY() - halfRadius;
         }
 
         GraphicsUtil.switchToWidth(g, 2);
-        g.drawOval(ovalX, ovalY, 8, 8);
+        g.drawOval(ovalX, ovalY, radius, radius);
       }
     }
     GraphicsUtil.switchToWidth(g, 1);
