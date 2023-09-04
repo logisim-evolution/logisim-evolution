@@ -134,7 +134,7 @@ public class PlexersLibrary extends Library {
           com.cburch.logisim.data.Strings.S.getter("booleanTrueOption"));
 
   public static final AttributeOption WITH_INVERT_ENABLE =
-      new AttributeOption("inverted", S.getter("invertEnable"));
+      new AttributeOption("inverted", S.getter("plexerInvertEnable"));
 
   // this attribute clashes in ID with the enable attribute for backwards compatibility
   public static final Attribute<AttributeOption> ATTR_ENABLE_TYPE =
