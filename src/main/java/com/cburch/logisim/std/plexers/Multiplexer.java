@@ -220,8 +220,8 @@ public class Multiplexer extends InstanceFactory {
       final var len = (inputs == 2) ? 3 : wide ? 2 : oddside ? 4 : 2;
       g.drawLine(en.getX() - len * dx, en.getY() - len * dy, en.getX(), en.getY());
 
+      // draw the invert enable circle
       g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-
       if (invertEnable) {
         int ovalX, ovalY;
         int radius = 8;
@@ -229,12 +229,10 @@ public class Multiplexer extends InstanceFactory {
         if (vertical) {
           ovalX = en.getX() - halfRadius;
           ovalY = en.getY() - len - radius - halfRadius;
-        }
-        else {
+        } else {
           ovalX = en.getX() + len + radius - halfRadius;
           ovalY = en.getY() - halfRadius;
         }
-
         GraphicsUtil.switchToWidth(g, 2);
         g.drawOval(ovalX, ovalY, radius, radius);
       }
