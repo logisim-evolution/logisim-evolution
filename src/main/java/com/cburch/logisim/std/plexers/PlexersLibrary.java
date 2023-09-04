@@ -126,7 +126,7 @@ public class PlexersLibrary extends Library {
   public static final int DELAY = 3;
 
   public static final Attribute<Boolean> ATTR_INVERT_ENABLE =
-      Attributes.forBoolean("invertSelect", S.getter("plexerInvertSelectAttr"));
+      Attributes.forBoolean("invertEnable", S.getter("plexerInvertEnableAttr"));
 
   public static final Object DEFAULT_INVERT_ENABLE = Boolean.FALSE;
 
