@@ -125,10 +125,24 @@ public class PlexersLibrary extends Library {
 
   public static final int DELAY = 3;
 
-  public static final Attribute<Boolean> ATTR_INVERT_ENABLE =
-      Attributes.forBoolean("invertEnable", S.getter("plexerInvertEnableAttr"));
+  public static final AttributeOption WITHOUT_ENABLE =
+      new AttributeOption("false",
+          com.cburch.logisim.data.Strings.S.getter("booleanFalseOption"));
 
-  public static final Object DEFAULT_INVERT_ENABLE = Boolean.FALSE;
+  public static final AttributeOption WITH_ENABLE =
+      new AttributeOption("true",
+          com.cburch.logisim.data.Strings.S.getter("booleanTrueOption"));
+
+  public static final AttributeOption WITH_INVERT_ENABLE =
+      new AttributeOption("inverted", S.getter("invertEnable"));
+
+  // this attribute clashes in ID with the enable attribute for backwards compatibility
+  public static final Attribute<AttributeOption> ATTR_ENABLE_TYPE =
+      Attributes.forOption("enable", S.getter("plexerEnableAttr"),
+          new AttributeOption[]{WITHOUT_ENABLE, WITH_ENABLE, WITH_INVERT_ENABLE}
+          );
+
+  public static final AttributeOption DEFAULT_ENABLE_TYPE = WITHOUT_ENABLE;
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Multiplexer.class, S.getter("multiplexerComponent"), "multiplexer.gif"),

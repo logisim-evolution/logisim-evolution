@@ -80,14 +80,12 @@ public class Multiplexer extends InstanceFactory {
             PlexersLibrary.ATTR_SELECT,
             StdAttr.WIDTH,
             PlexersLibrary.ATTR_DISABLED,
-            PlexersLibrary.ATTR_ENABLE,
-            PlexersLibrary.ATTR_INVERT_ENABLE
+            PlexersLibrary.ATTR_ENABLE_TYPE,
         },
         new Object[] {
           Direction.EAST, PlexersLibrary.SIZE_WIDE, StdAttr.SELECT_BOTTOM_LEFT,
           PlexersLibrary.DEFAULT_SELECT, BitWidth.ONE, PlexersLibrary.DISABLED_ZERO,
-          PlexersLibrary.DEFAULT_ENABLE,
-            PlexersLibrary.DEFAULT_INVERT_ENABLE
+          PlexersLibrary.DEFAULT_ENABLE_TYPE,
         });
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -101,8 +99,10 @@ public class Multiplexer extends InstanceFactory {
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and
     // until 3.6.1
-    if (attr == PlexersLibrary.ATTR_ENABLE) {
-      return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
+    if (attr == PlexersLibrary.ATTR_ENABLE_TYPE) {
+      return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0
+          ? PlexersLibrary.WITH_ENABLE
+          : PlexersLibrary.WITHOUT_ENABLE;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }
@@ -155,8 +155,7 @@ public class Multiplexer extends InstanceFactory {
         || attr == StdAttr.SELECT_LOC
         || attr == PlexersLibrary.ATTR_SELECT
         || attr == PlexersLibrary.ATTR_SIZE || attr == StdAttr.WIDTH
-        || attr == PlexersLibrary.ATTR_ENABLE
-        || attr == PlexersLibrary.ATTR_INVERT_ENABLE) {
+        || attr == PlexersLibrary.ATTR_ENABLE_TYPE) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == PlexersLibrary.ATTR_DISABLED) {
@@ -185,8 +184,9 @@ public class Multiplexer extends InstanceFactory {
     final var wide = size == PlexersLibrary.SIZE_WIDE;
     final var facing = painter.getAttributeValue(StdAttr.FACING);
     final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
-    final var enable = painter.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
-    final var invertEnable = painter.getAttributeValue(PlexersLibrary.ATTR_INVERT_ENABLE);
+    final var enableType = painter.getAttributeValue(PlexersLibrary.ATTR_ENABLE_TYPE);
+    final var enable = enableType != PlexersLibrary.WITHOUT_ENABLE;
+    final var invertEnable = enableType == PlexersLibrary.WITH_INVERT_ENABLE;
     int inputs = 1 << select.getWidth();
 
     // draw stubs for select/enable inputs that aren't on instance boundary
@@ -287,8 +287,9 @@ public class Multiplexer extends InstanceFactory {
   public void propagate(InstanceState state) {
     final var data = state.getAttributeValue(StdAttr.WIDTH);
     final var select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
-    final var enable = state.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
-    final var invertEnable = state.getAttributeValue(PlexersLibrary.ATTR_INVERT_ENABLE);
+    final var enableType = state.getAttributeValue(PlexersLibrary.ATTR_ENABLE_TYPE);
+    final var enable = enableType != PlexersLibrary.WITHOUT_ENABLE;
+    final var invertEnable = enableType == PlexersLibrary.WITH_INVERT_ENABLE;
     final var inputs = 1 << select.getWidth();
     final var enablePort = state.getPortValue(inputs + 1);
     final var en = enable ? (invertEnable ? enablePort.not() : enablePort) : Value.TRUE;
@@ -322,8 +323,9 @@ public class Multiplexer extends InstanceFactory {
     final var selMult = botLeft ? 1 : -1;
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
     final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
-    final var enable = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
-    final var invertEnable = instance.getAttributeValue(PlexersLibrary.ATTR_INVERT_ENABLE);
+    final var enableType = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE_TYPE);
+    final var enable = enableType != PlexersLibrary.WITHOUT_ENABLE;
+    final var invertEnable = enableType == PlexersLibrary.WITH_INVERT_ENABLE;
 
     final var inputs = 1 << select.getWidth();
     final var ps = new Port[inputs + (enable ? 3 : 2)];
