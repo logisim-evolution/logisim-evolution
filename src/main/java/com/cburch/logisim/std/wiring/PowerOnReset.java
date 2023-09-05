@@ -48,20 +48,20 @@ public class PowerOnReset extends InstanceFactory {
    */
   public static final String _ID = "POR";
 
-  private static final AttributeOption OLD_FORM =
-      new AttributeOption(3, S.getter("porOldSize"));
-  private static final AttributeOption MEDIUM =
-      new AttributeOption(1, S.getter("porMediumSize"));
-  private static final AttributeOption NARROW =
-      new AttributeOption(2, S.getter("porNarrowSize"));
+  private static final AttributeOption SIZE_WIDE =
+      new AttributeOption(3, S.getter("porSizeWide"));
+  private static final AttributeOption SIZE_MEDIUM =
+      new AttributeOption(1, S.getter("porSizeMedium"));
+  private static final AttributeOption SIZE_NARROW =
+      new AttributeOption(2, S.getter("porSizeNarrow"));
   private static final Attribute<AttributeOption> PORSIZE =
       Attributes.forOption(
-          "porsize", S.getter("PorSize"), new AttributeOption[] {OLD_FORM, MEDIUM, NARROW});
+          "porsize", S.getter("PorSize"), new AttributeOption[] {SIZE_WIDE, SIZE_MEDIUM, SIZE_NARROW});
   
   private static final AttributeOption HTOL =
-      new AttributeOption(1, S.getter("porHightToLow"));
+      new AttributeOption(1, S.getter("porHighToLow"));
   private static final AttributeOption LTOH =
-      new AttributeOption(2, S.getter("porLowToHight"));
+      new AttributeOption(2, S.getter("porLowToHigh"));
   private static final Attribute<AttributeOption> PORTRANS =
       Attributes.forOption(
           "porTransition", S.getter("porTransition"), new AttributeOption[] {HTOL, LTOH});
@@ -87,7 +87,7 @@ public class PowerOnReset extends InstanceFactory {
         },
         new Object[] {
           Direction.EAST,
-          MEDIUM,
+          SIZE_WIDE,
           HTOL,
           2,
         });
@@ -194,9 +194,9 @@ public class PowerOnReset extends InstanceFactory {
     Direction facing = attrs.getValue(StdAttr.FACING);
 
     final var psize = attrs.getValue(PORSIZE); 
-    if (psize == MEDIUM) {
+    if (psize == SIZE_MEDIUM) {
       return Bounds.create(0, -20, 40, 40).rotate(Direction.WEST, facing, 0, 0);
-    } else if (psize == NARROW) {
+    } else if (psize == SIZE_NARROW) {
       return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0, 0);
     } else {
       return Bounds.create(0, -20, 200, 40).rotate(Direction.WEST, facing, 0, 0);
@@ -228,7 +228,7 @@ public class PowerOnReset extends InstanceFactory {
 
     final var psize = painter.getAttributeValue(PORSIZE); 
 
-    if (psize == OLD_FORM) {
+    if (psize == SIZE_WIDE) {
       Font old = g.getFont();
       g.setFont(old.deriveFont(16.0f).deriveFont(Font.BOLD));
       String txt = S.get("porLongName"); 
@@ -259,7 +259,7 @@ public class PowerOnReset extends InstanceFactory {
       int offset;
       
       Font old = g.getFont();
-      if  (psize == NARROW) {
+      if  (psize == SIZE_NARROW) {
         g.setFont(old.deriveFont(6.0f).deriveFont(Font.BOLD));
         offset = 7;
       } else {
@@ -290,7 +290,9 @@ public class PowerOnReset extends InstanceFactory {
 
       final var pstat = painter.getAttributeValue(PORTRANS); 
       if (pstat == LTOH) {
-        y1 = y1 ^ y2 ^ (y2 = y1);  // swap y1 <-> y2
+        var tmp = y1;
+        y1 = y2;
+        y2 = tmp;
       }
       
       g.setColor(Color.RED);
