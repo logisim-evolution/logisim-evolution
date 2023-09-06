@@ -16,7 +16,7 @@ jobs:
     steps:
     # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changed doc related files..."

@@ -27,7 +27,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes in monitored locations"
@@ -61,7 +61,7 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
       uses: actions/setup-java@v3
       with:
