@@ -209,7 +209,9 @@ public class Ram extends Mem {
         || (attr == StdAttr.APPEARANCE)
         || (attr == Mem.LINE_ATTR)
         || (attr == RamAttributes.CLEAR_PIN)
-        || (attr == Mem.ENABLES_ATTR)) {
+        || (attr == Mem.ENABLES_ATTR
+        || (attr == RamAttributes.INVERT_OUTPUT_ENABLE)
+        || (attr == RamAttributes.INVERT_WRITE_ENABLE))) {
       instance.recomputeBounds();
       configurePorts(instance);
     }

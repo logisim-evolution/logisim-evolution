@@ -50,6 +50,12 @@ public class RamAttributes extends AbstractAttributeSet {
           new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTE_ENABLES});
   static final Attribute<Boolean> CLEAR_PIN =
       Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
+
+  static final Attribute<Boolean> INVERT_OUTPUT_ENABLE =
+      Attributes.forBoolean("invertOE", S.getter("memInvertOutputEnable"));
+
+  static final Attribute<Boolean> INVERT_WRITE_ENABLE =
+      Attributes.forBoolean("invertWE", S.getter("memInvertWriteEnable"));
   private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
   private BitWidth addrBits = BitWidth.create(8);
@@ -69,6 +75,10 @@ public class RamAttributes extends AbstractAttributeSet {
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
 
+  private Boolean invertOutputEnable = false;
+
+  private Boolean invertWriteEnable = false;
+
   RamAttributes() {
     updateAttributes();
   }
@@ -81,6 +91,8 @@ public class RamAttributes extends AbstractAttributeSet {
     newList.add(Mem.ENABLES_ATTR);
     newList.add(ATTR_TYPE);
     newList.add(CLEAR_PIN);
+    newList.add(INVERT_OUTPUT_ENABLE);
+    newList.add(INVERT_WRITE_ENABLE);
     if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
       newList.add(StdAttr.TRIGGER);
       if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {
@@ -134,6 +146,8 @@ public class RamAttributes extends AbstractAttributeSet {
     d.allowMisaligned = allowMisaligned;
     d.typeOfEnables = typeOfEnables;
     d.ramType = ramType;
+    d.invertWriteEnable = invertWriteEnable;
+    d.invertOutputEnable = invertOutputEnable;
   }
 
   @Override
@@ -191,6 +205,12 @@ public class RamAttributes extends AbstractAttributeSet {
     }
     if (attr == Mem.ENABLES_ATTR) {
       return (V) typeOfEnables;
+    }
+    if (attr == INVERT_OUTPUT_ENABLE) {
+      return (V) invertOutputEnable;
+    }
+    if (attr == INVERT_WRITE_ENABLE) {
+      return (V) invertWriteEnable;
     }
     return null;
   }
@@ -295,6 +315,20 @@ public class RamAttributes extends AbstractAttributeSet {
       if (appearance.equals(option)) return;
       appearance = option;
       fireAttributeValueChanged(attr, value, null);
+    }
+    else if (attr == INVERT_OUTPUT_ENABLE) {
+      final var val = (Boolean) value;
+      if (invertOutputEnable != val) {
+        invertOutputEnable = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
+    }
+    else if (attr == INVERT_WRITE_ENABLE) {
+      final var val = (Boolean) value;
+      if (invertWriteEnable != val) {
+        invertWriteEnable = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
     }
   }
 }
