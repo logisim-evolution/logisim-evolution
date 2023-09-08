@@ -16,11 +16,11 @@ import com.cburch.logisim.instance.InstanceState;
 /*
  * Class simulates a TTL7487 IC
  * It takes a 4 bit input (A1-A4) and performs one of the following oppertations based on inputs B and c to produce outputs Y1-Y4
- *   B=0, C=0 output compliment of A
+ *   B=0, C=0 output complement of A
  *   B=0, C=1 output A unchanged
  *   B=1, C=0 output all High
  *   B=1, C=1 output all Low
- * Likely use is before an adder to give control for addition/subtraction along with ++,--,transparent in conjunction with the adder's carry in bit
+ * Likely use is before an adder to give control for addition/subtraction along with increment/decrement/transparent in conjunction with the adder's carry in bit
  * Datasheet: https://archive.org/details/bitsavers_tidataBookVol2_45945352/page/n404/mode/1up?view=theater
  * Alternative source (page 3-354, pdf page 405): http://bitsavers.org/components/ti/_dataBooks/1985_TI_The_TTL_Data_Book_Vol_2.pdf
  */
