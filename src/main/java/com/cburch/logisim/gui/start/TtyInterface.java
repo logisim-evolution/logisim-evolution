@@ -318,9 +318,9 @@ public class TtyInterface {
     }
 
     CircuitState circState = new CircuitState(proj, circuit);
-    // we have to do our initial propagation before the simulation starts -
-    // it's necessary to populate the circuit with substates.
-    circState.getPropagator().propagate();
+
+    // we load the ram before first propagation
+    // so the first propagation emits correct values
     if (args.getLoadFile() != null) {
       try {
         final var loaded = loadRam(circState, args.getLoadFile());
@@ -333,6 +333,11 @@ public class TtyInterface {
         System.exit(-1);
       }
     }
+
+    // we have to do our initial propagation before the simulation starts -
+    // it's necessary to populate the circuit with substates.
+    circState.getPropagator().propagate();
+
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
 

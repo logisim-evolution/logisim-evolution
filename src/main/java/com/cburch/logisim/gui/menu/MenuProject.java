@@ -11,6 +11,8 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
@@ -45,6 +47,12 @@ class MenuProject extends Menu {
   MenuProject(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
+    /* Hotkey Bindings */
+    moveUp.setAccelerator(
+        ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_PROJ_MOVE_UP).getWithMask(0));
+    moveDown.setAccelerator(
+        ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_PROJ_MOVE_DOWN).getWithMask(0));
+
     menubar.registerItem(LogisimMenuBar.ADD_CIRCUIT, addCircuit);
     menubar.registerItem(LogisimMenuBar.ADD_VHDL, addVhdl);
     menubar.registerItem(LogisimMenuBar.IMPORT_VHDL, importVhdl);
@@ -67,6 +75,9 @@ class MenuProject extends Menu {
     loadLibrary.add(loadBuiltin);
     loadLibrary.add(loadLogisim);
     loadLibrary.add(loadJar);
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
 
     add(addCircuit);
     add(addVhdl);
@@ -98,8 +109,15 @@ class MenuProject extends Menu {
     computeEnabled();
   }
 
+  public void hotkeyUpdate() {
+    moveUp.setAccelerator(
+        ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_PROJ_MOVE_UP).getWithMask(0));
+    moveDown.setAccelerator(
+        ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_PROJ_MOVE_DOWN).getWithMask(0));
+  }
+
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     setEnabled(
         menubar.getSaveProject() != null
             || addCircuit.hasListeners()
@@ -145,7 +163,9 @@ class MenuProject extends Menu {
     public void actionPerformed(ActionEvent event) {
       final var src = event.getSource();
       final var proj = menubar.getSaveProject();
-      if (proj == null) return;
+      if (proj == null) {
+        return;
+      }
       if (src == loadBuiltin) {
         ProjectLibraryActions.doLoadBuiltinLibrary(proj);
       } else if (src == loadLogisim) {

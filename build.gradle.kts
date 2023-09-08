@@ -17,7 +17,7 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("org.sonarqube") version "4.3.0.3225"
+  id("org.sonarqube") version "4.3.1.3277"
 }
 
 repositories {
@@ -31,14 +31,14 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.3.3")
+  implementation("com.fifesoft:rsyntaxtextarea:3.3.4")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:1.4.5")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:2.0.7")
-  implementation("org.slf4j:slf4j-simple:2.0.7")
-  implementation("com.formdev:flatlaf:3.1.1")
+  implementation("org.slf4j:slf4j-api:2.0.9")
+  implementation("org.slf4j:slf4j-simple:2.0.9")
+  implementation("com.formdev:flatlaf:3.2.1")
   implementation("commons-cli:commons-cli:1.5.0")
   implementation("org.apache.commons:commons-text:1.10.0")
 
@@ -51,7 +51,8 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:5.10.0"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 /**

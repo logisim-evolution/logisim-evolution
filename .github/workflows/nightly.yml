@@ -44,7 +44,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -104,7 +104,7 @@ jobs:
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: 'main'
 
@@ -226,7 +226,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
@@ -263,7 +263,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v3
         with:

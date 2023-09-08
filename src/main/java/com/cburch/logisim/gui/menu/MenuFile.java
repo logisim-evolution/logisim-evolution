@@ -13,6 +13,8 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.MacCompatibility;
@@ -53,10 +55,15 @@ class MenuFile extends Menu implements ActionListener {
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
     saveAs.setAccelerator(
         KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    exportProj.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
+
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
+    print.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
 
     add(newi);
     add(merge);
@@ -99,6 +106,13 @@ class MenuFile extends Menu implements ActionListener {
     menubar.registerItem(LogisimMenuBar.PRINT, print);
     prefs.addActionListener(this);
     quit.addActionListener(this);
+  }
+
+  public void hotkeyUpdate() {
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
+    print.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
   }
 
   @Override
@@ -174,7 +188,7 @@ class MenuFile extends Menu implements ActionListener {
   }
 
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     setEnabled(true);
     menubar.fireEnableChanged();
   }

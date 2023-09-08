@@ -11,19 +11,19 @@ package com.cburch.logisim.util;
 
 import static com.cburch.logisim.util.Strings.S;
 
+import com.cburch.logisim.gui.menu.Menu;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.KeyStroke;
 
-public class WindowMenu extends JMenu {
+public class WindowMenu extends Menu {
   private class MyListener implements LocaleListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -47,10 +47,14 @@ public class WindowMenu extends JMenu {
 
     private WindowMenuItem findOwnerItem() {
       for (WindowMenuItem i : persistentItems) {
-        if (i.getJFrame() == owner) return i;
+        if (i.getJFrame() == owner) {
+          return i;
+        }
       }
       for (WindowMenuItem i : transientItems) {
-        if (i.getJFrame() == owner) return i;
+        if (i.getJFrame() == owner) {
+          return i;
+        }
       }
       return null;
     }
@@ -88,8 +92,13 @@ public class WindowMenu extends JMenu {
     WindowMenuManager.addMenu(this);
 
     final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    minimize.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
-    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask));
+    minimize.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
+    close.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
 
     if (owner == null) {
       minimize.setEnabled(false);
@@ -108,9 +117,20 @@ public class WindowMenu extends JMenu {
     myListener.localeChanged();
   }
 
+  @Override
+  public void hotkeyUpdate() {
+    minimize.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
+    close.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
+  }
+
   void addMenuItem(Object source, WindowMenuItem item, boolean isPersistent) {
-    if (isPersistent) persistentItems.add(item);
-    else transientItems.add(item);
+    if (isPersistent) {
+      persistentItems.add(item);
+    } else {
+      transientItems.add(item);
+    }
     item.addActionListener(myListener);
     computeContents();
   }
@@ -149,7 +169,8 @@ public class WindowMenu extends JMenu {
     }
   }
 
-  void computeEnabled() {
+  @Override
+  protected void computeEnabled() {
     WindowMenuItemManager currentManager = WindowMenuManager.getCurrentManager();
     minimize.setEnabled(currentManager != null);
     zoom.setEnabled(currentManager != null);
@@ -178,7 +199,9 @@ public class WindowMenu extends JMenu {
   }
 
   void doZoom() {
-    if (owner == null) return;
+    if (owner == null) {
+      return;
+    }
 
     owner.pack();
     final var screenSize = owner.getToolkit().getScreenSize();
@@ -204,8 +227,12 @@ public class WindowMenu extends JMenu {
       }
     }
 
-    if (locChanged) owner.setLocation(windowLoc);
-    if (sizeChanged) owner.setSize(windowSize);
+    if (locChanged) {
+      owner.setLocation(windowLoc);
+    }
+    if (sizeChanged) {
+      owner.setSize(windowSize);
+    }
   }
 
   void removeMenuItem(Object source, JRadioButtonMenuItem item) {
