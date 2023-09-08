@@ -21,7 +21,7 @@
   * Fixed Karnaugh map color index bug.
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
-  * Added TTL 7487: 7487: 4-bit True/complement, zero/one
+  * Added TTL 7487: 4-bit True/complement, zero/one elements
   * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
   * Added TTL 74151: 8-line to 1 line data selector
   * Added TTL 74153: dual 4-line to 1 line data selector
