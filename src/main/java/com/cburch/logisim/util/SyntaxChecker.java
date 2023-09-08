@@ -52,7 +52,7 @@ public final class SyntaxChecker {
       messageBuilder.append(S.get("variableStartsWithDigit"));
     } else {
 
-      // we don't check this case when the variable starts with a digit
+      // We don't check this case when the variable starts with a digit
       // because this would match the initial digit, we don't want that.
       variableMatcher.reset();
       int firstIllegalCharacterIndex = variableMatcher.find() ? variableMatcher.end() : 0;
