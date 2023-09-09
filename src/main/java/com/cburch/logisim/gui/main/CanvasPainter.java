@@ -70,10 +70,10 @@ class CanvasPainter implements PropertyChangeListener {
         if (drawn) continue;
 
         // compute the caption combining all similar points
-        var caption = "" + w.getWidth();
+        final var caption = new StringBuilder("" + w.getWidth());
         for (var j = i + 1; j < ex.size(); j++) {
           if (ex.getPoint(j).equals(p)) {
-            caption += "/" + ex.getBitWidth(j);
+            caption.append("/" + ex.getBitWidth(j));
             break;
           }
         }
@@ -87,7 +87,7 @@ class CanvasPainter implements PropertyChangeListener {
         GraphicsUtil.switchToWidth(g, 3);
         GraphicsUtil.outlineText(
             g,
-            caption,
+            caption.toString(),
             p.getX() + 4,
             p.getY() + 1 + fm.getAscent(),
             Value.widthErrorCaptionColor,
