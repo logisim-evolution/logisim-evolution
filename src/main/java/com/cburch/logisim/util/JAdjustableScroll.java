@@ -6,7 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 public class JAdjustableScroll extends JScrollPane {
-  public int preferredWidth = 700;
+  public int preferredWidth = 800;
   public int preferredHeight = 200;
 
   public JAdjustableScroll(Component view) {

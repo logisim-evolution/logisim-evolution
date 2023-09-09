@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
@@ -36,6 +37,10 @@ public class JHotkeyInput extends JPanel {
   private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
+  private static final String os = System.getProperty("os.name").toLowerCase();
+  private static final String lookAndFeel = UIManager.getLookAndFeel().getName();
+  private int fieldVerticalBias;
+  private int fieldHorizonalBias;
   public final JTextField hotkeyInputField;
   private transient PrefMonitorKeyStroke boundKeyStroke = null;
   private final transient HotkeyInputKeyListener hotkeyListener;
@@ -45,9 +50,9 @@ public class JHotkeyInput extends JPanel {
   private boolean needUpdate = false;
   private static boolean activeHotkeyInputUpdated = false;
   private static String activeHotkeyInputName = "";
-  private String previousData = "";
+  private String previousData;
   private static final List<JHotkeyInput> JHotkeyInputList = new ArrayList<>();
-  private static final Timer optimizeTimer = new Timer(100, e -> {
+  private static final Timer optimizeTimer = new Timer(80, e -> {
     if (topFrame == null) {
       return;
     }
@@ -63,6 +68,10 @@ public class JHotkeyInput extends JPanel {
       }
       if (!com.focusableEnabled && globalLayoutOptimized) {
         /* run on every component's load */
+        Dimension preferredSize = com.hotkeyInputField.getPreferredSize();
+        if (preferredSize.height + com.fieldVerticalBias >= com.getHeight()) {
+          com.setPreferredSize(new Dimension(width, preferredSize.height + com.fieldVerticalBias));
+        }
         com.exitEditMode();
         com.hotkeyInputField.setFocusable(true);
         com.focusableEnabled = true;
@@ -71,7 +80,7 @@ public class JHotkeyInput extends JPanel {
           && activeHotkeyInputUpdated
           && !activeHotkeyInputName.equals(com.boundKeyStroke.getName())) {
         com.needUpdate = false;
-        com.exitEditModeWithoutRefresh();
+        com.exitEditMode();
       }
     }
   });
@@ -86,11 +95,20 @@ public class JHotkeyInput extends JPanel {
     previousData = text;
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    Insets insets = hotkeyInputField.getBorder().getBorderInsets(hotkeyInputField);
+    fieldVerticalBias = insets.top + insets.bottom;
+    fieldHorizonalBias = insets.left + insets.right;
+
+    /* adaption for different look and feels in different platforms by tests */
+    if (os.contains("linux") && !lookAndFeel.contains("Flat")) {
+      fieldVerticalBias += 2;
+    }
+
     setBorder(BorderFactory.createCompoundBorder(
         hotkeyInputField.getBorder(),
         BorderFactory.createEmptyBorder(2, 4, 2, 4)
     ));
-    setPreferredSize(new Dimension(140, 28));
+    setPreferredSize(new Dimension(170, 28));
 
     ((AbstractDocument) hotkeyInputField.getDocument())
         .setDocumentFilter(new KeyboardInputFilter());
@@ -100,7 +118,7 @@ public class JHotkeyInput extends JPanel {
      *  Especially for the theme Nimbus
      *  So we have to do the belows to make Nimbus happy
      *  */
-    if (UIManager.getLookAndFeel().getName().equals("Nimbus")) {
+    if (lookAndFeel.contains("Nimbus")) {
       hotkeyInputField.setBackground(new Color(0, 0, 0, 0));
     } else {
       hotkeyInputField.setBackground(topFrame.getBackground());
@@ -156,7 +174,7 @@ public class JHotkeyInput extends JPanel {
     resetButton.setVisible(true);
     applyButton.setVisible(true);
     int height = hotkeyInputField.getHeight();
-    int width = getWidth() - 18 - 18 - 8 - 8 - 6;
+    int width = getWidth() - 18 - 18 - 8 - 8 - 6 - fieldHorizonalBias;
     hotkeyInputField.setPreferredSize(new Dimension(width, height));
     applyButton.setEnabled(false);
   }
