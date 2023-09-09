@@ -71,8 +71,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
       ProjectLibraryActions.doUnloadLibrary(proj, libNode.getValue());
     } else if (request instanceof ProjectExplorerToolNode toolNode) {
       final var tool = toolNode.getValue();
-      if (tool instanceof AddTool) {
-        final var factory = ((AddTool) tool).getFactory();
+      if (tool instanceof AddTool addTool) {
+        final var factory = addTool.getFactory();
         if (factory instanceof SubcircuitFactory circFact) {
           ProjectCircuitActions.doRemoveCircuit(proj, circFact.getSubcircuit());
         }
@@ -83,8 +83,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
   @Override
   public void doubleClicked(ProjectExplorer.Event event) {
     final var clicked = event.getTarget();
-    if (clicked instanceof ProjectExplorerToolNode) {
-      ((ProjectExplorerToolNode) clicked).fireNodeChanged();
+    if (clicked instanceof ProjectExplorerToolNode clickedNode) {
+      clickedNode.fireNodeChanged();
       final var baseTool = ((ProjectExplorerToolNode) clicked).getValue();
       if (baseTool instanceof AddTool tool) {
         final var source = tool.getFactory();
