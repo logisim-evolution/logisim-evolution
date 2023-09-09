@@ -14,7 +14,6 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 
@@ -23,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -43,8 +41,8 @@ public class Print {
   private Print() {}
 
   public static void doPrint(Project proj) {
-    CircuitJList list = new CircuitJList(proj, true);
-    Frame frame = proj.getFrame();
+    final var list = new CircuitJList(proj, true);
+    final var frame = proj.getFrame();
     if (list.getModel().getSize() == 0) {
       OptionPane.showMessageDialog(
           proj.getFrame(),
@@ -53,7 +51,7 @@ public class Print {
           OptionPane.YES_NO_OPTION);
       return;
     }
-    ParmsPanel parmsPanel = new ParmsPanel(list);
+    var parmsPanel = new ParmsPanel(list);
     int action =
         OptionPane.showConfirmDialog(
             frame,
@@ -65,16 +63,15 @@ public class Print {
     List<Circuit> circuits = list.getSelectedCircuits();
     if (circuits.isEmpty()) return;
 
-    PageFormat format = new PageFormat();
-    Printable print =
-        new MyPrintable(
+    final var format = new PageFormat();
+    final var print = new MyPrintable(
             proj,
             circuits,
             parmsPanel.getHeader(),
             parmsPanel.getRotateToFit(),
             parmsPanel.getPrinterView());
 
-    PrinterJob job = PrinterJob.getPrinterJob();
+    final var job = PrinterJob.getPrinterJob();
     job.setPrintable(print, format);
     if (!job.printDialog()) return;
     try {
@@ -91,7 +88,7 @@ public class Print {
   private static String format(String header, int index, int max, String circName) {
     int mark = header.indexOf('%');
     if (mark < 0) return header;
-    StringBuilder ret = new StringBuilder();
+    final var ret = new StringBuilder();
     int start = 0;
     for (;
         mark >= 0 && mark + 1 < header.length();
@@ -136,23 +133,23 @@ public class Print {
 
       var circ = circuits.get(pageIndex);
       final var circState = proj.getCircuitState(circ);
-      var g = base.create();
-      var g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
-      var fm = g.getFontMetrics();
-      var head =
+      final var g = base.create();
+      final var g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
+      final var fm = g.getFontMetrics();
+      final var head =
           (header != null && !header.equals(""))
               ? format(header, pageIndex + 1, circuits.size(), circ.getName())
               : null;
-      int headHeight = (head == null ? 0 : fm.getHeight());
+      final var headHeight = (head == null ? 0 : fm.getHeight());
 
       // Compute image size
-      double imWidth = format.getImageableWidth();
-      double imHeight = format.getImageableHeight();
+      var imWidth = format.getImageableWidth();
+      var imHeight = format.getImageableHeight();
 
       // Correct coordinate system for page, including
       // translation and possible rotation.
-      Bounds bds = circ.getBounds(g).expand(4);
-      double scale = Math.min(imWidth / bds.getWidth(), (imHeight - headHeight) / bds.getHeight());
+      final var bds = circ.getBounds(g).expand(4);
+      var scale = Math.min(imWidth / bds.getWidth(), (imHeight - headHeight) / bds.getHeight());
       if (g2 != null) {
         g2.translate(format.getImageableX(), format.getImageableY());
         if (rotateToFit && scale < 1.0 / 1.1) {
@@ -167,7 +164,7 @@ public class Print {
               g2.translate(imWidth, 0);
               g2.rotate(Math.PI / 2);
             }
-            double t = imHeight;
+            var t = imHeight;
             imHeight = imWidth;
             imWidth = t;
           }
@@ -196,13 +193,13 @@ public class Print {
       }
 
       // Ensure that the circuit is eligible to be drawn
-      Rectangle clip = g.getClipBounds();
+      final var clip = g.getClipBounds();
       clip.add(bds.getX(), bds.getY());
       clip.add(bds.getX() + bds.getWidth(), bds.getY() + bds.getHeight());
       g.setClip(clip);
 
       // And finally draw the circuit onto the page
-      ComponentDrawContext context =
+      final var context =
           new ComponentDrawContext(
               proj.getFrame().getCanvas(), circ, circState, base, g, printerView);
       Collection<Component> noComps = Collections.emptySet();
