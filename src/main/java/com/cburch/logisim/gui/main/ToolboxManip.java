@@ -12,7 +12,6 @@ package com.cburch.logisim.gui.main;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryEventSource;
 import com.cburch.logisim.file.LibraryListener;
@@ -53,9 +52,9 @@ class ToolboxManip implements ProjectExplorer.Listener {
     if (lastSelected != null) {
       proj.setTool(lastSelected);
     } else {
-      for (Library sub : proj.getLogisimFile().getLibraries()) {
+      for (final var sub : proj.getLogisimFile().getLibraries()) {
         if (sub instanceof BaseLibrary) {
-          Tool tool = sub.getTool(EditTool._ID);
+          final var tool = sub.getTool(EditTool._ID);
           if (tool != null) {
             proj.setTool(tool);
             break;
@@ -67,7 +66,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
 
   @Override
   public void deleteRequested(ProjectExplorer.Event event) {
-    Object request = event.getTarget();
+    final var request = event.getTarget();
     if (request instanceof ProjectExplorerLibraryNode libNode) {
       ProjectLibraryActions.doUnloadLibrary(proj, libNode.getValue());
     } else if (request instanceof ProjectExplorerToolNode toolNode) {
@@ -83,10 +82,10 @@ class ToolboxManip implements ProjectExplorer.Listener {
 
   @Override
   public void doubleClicked(ProjectExplorer.Event event) {
-    Object clicked = event.getTarget();
+    final var clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
       ((ProjectExplorerToolNode) clicked).fireNodeChanged();
-      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
+      final var baseTool = ((ProjectExplorerToolNode) clicked).getValue();
       if (baseTool instanceof AddTool tool) {
         final var source = tool.getFactory();
         if (source instanceof SubcircuitFactory circFact) {
@@ -102,7 +101,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
 
   @Override
   public JPopupMenu menuRequested(ProjectExplorer.Event event) {
-    Object clicked = event.getTarget();
+    final var clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode toolNode) {
       final var baseTool = toolNode.getValue();
       if (baseTool instanceof AddTool tool) {
@@ -132,9 +131,9 @@ class ToolboxManip implements ProjectExplorer.Listener {
 
   @Override
   public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {
-    LogisimFile file = proj.getLogisimFile();
-    int draggedIndex = file.getTools().indexOf(dragged);
-    int targetIndex = file.getTools().indexOf(target);
+    final var file = proj.getLogisimFile();
+    final var draggedIndex = file.getTools().indexOf(dragged);
+    var targetIndex = file.getTools().indexOf(target);
     if (targetIndex > draggedIndex) targetIndex++;
     proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
   }
@@ -144,7 +143,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
       lastSelected = proj.getTool();
     }
-    Object selected = event.getTarget();
+    final var selected = event.getTarget();
     if (selected instanceof ProjectExplorerToolNode toolNode) {
       toolNode.fireNodeChanged();
       final var tool = toolNode.getValue();
@@ -194,12 +193,12 @@ class ToolboxManip implements ProjectExplorer.Listener {
           removeLibrary((Library) event.getData());
         }
       } else if (action == LibraryEvent.ADD_TOOL) {
-        Tool tool = (Tool) event.getData();
-        AttributeSet attrs = tool.getAttributeSet();
+        final var tool = (Tool) event.getData();
+        final var attrs = tool.getAttributeSet();
         if (attrs != null) attrs.addAttributeListener(this);
       } else if (action == LibraryEvent.REMOVE_TOOL) {
-        Tool tool = (Tool) event.getData();
-        AttributeSet attrs = tool.getAttributeSet();
+        final var tool = (Tool) event.getData();
+        final var attrs = tool.getAttributeSet();
         if (attrs != null) attrs.removeAttributeListener(this);
       }
       explorer.repaint();
@@ -207,7 +206,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
 
     @Override
     public void projectChanged(ProjectEvent event) {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_FILE) {
         setFile((LogisimFile) event.getOldData(), (LogisimFile) event.getData());
         explorer.repaint();
@@ -227,14 +226,14 @@ class ToolboxManip implements ProjectExplorer.Listener {
     private void setFile(LogisimFile oldFile, LogisimFile newFile) {
       if (oldFile != null) {
         removeLibrary(oldFile);
-        for (Library lib : oldFile.getLibraries()) {
+        for (final var lib : oldFile.getLibraries()) {
           removeLibrary(lib);
         }
       }
       curFile = newFile;
       if (newFile != null) {
         addLibrary(newFile);
-        for (Library lib : newFile.getLibraries()) {
+        for (final var lib : newFile.getLibraries()) {
           addLibrary(lib);
         }
       }
