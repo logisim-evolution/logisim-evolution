@@ -10,12 +10,8 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.draw.toolbar.Toolbar;
-import com.cburch.draw.toolbar.ToolbarItem;
-import com.cburch.draw.toolbar.ToolbarModel;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -30,14 +26,14 @@ public class KeyboardToolSelection extends AbstractAction {
   }
 
   public static void register(Toolbar toolbar) {
-    ActionMap amap = toolbar.getActionMap();
-    InputMap imap = toolbar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-    int mask = toolbar.getToolkit().getMenuShortcutKeyMaskEx();
-    for (int i = 0; i < 10; i++) {
-      KeyStroke keyStroke = KeyStroke.getKeyStroke((char) ('0' + i), mask);
-      int j = (i == 0 ? 10 - 1 : i - 1);
-      KeyboardToolSelection action = new KeyboardToolSelection(toolbar, j);
-      String key = "ToolSelect" + i;
+    final var amap = toolbar.getActionMap();
+    final var imap = toolbar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    final var mask = toolbar.getToolkit().getMenuShortcutKeyMaskEx();
+    for (var i = 0; i < 10; i++) {
+      final var keyStroke = KeyStroke.getKeyStroke((char) ('0' + i), mask);
+      final var j = (i == 0 ? 10 - 1 : i - 1);
+      final var action = new KeyboardToolSelection(toolbar, j);
+      final var key = "ToolSelect" + i;
       amap.put(key, action);
       imap.put(keyStroke, key);
     }
@@ -45,9 +41,9 @@ public class KeyboardToolSelection extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    ToolbarModel model = toolbar.getToolbarModel();
-    int i = -1;
-    for (ToolbarItem item : model.getItems()) {
+    final var model = toolbar.getToolbarModel();
+    var i = -1;
+    for (final var item : model.getItems()) {
       if (item.isSelectable()) {
         i++;
         if (i == index) {

@@ -11,7 +11,6 @@ package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.proj.Project;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,11 +24,11 @@ class CircuitJList extends JList {
 
   @SuppressWarnings("unchecked")
   public CircuitJList(Project proj, boolean includeEmpty) {
-    LogisimFile file = proj.getLogisimFile();
-    Circuit current = proj.getCurrentCircuit();
-    Vector<Circuit> options = new Vector<>();
-    boolean currentFound = false;
-    for (Circuit circ : file.getCircuits()) {
+    final var file = proj.getLogisimFile();
+    final var current = proj.getCurrentCircuit();
+    final var options = new Vector<Circuit>();
+    var currentFound = false;
+    for (final var circ : file.getCircuits()) {
       if (!includeEmpty || circ.getBounds() != Bounds.EMPTY_BOUNDS) {
         if (circ == current) currentFound = true;
         options.add(circ);
@@ -42,10 +41,10 @@ class CircuitJList extends JList {
   }
 
   public List<Circuit> getSelectedCircuits() {
-    Object[] selected = getSelectedValuesList().toArray();
+    final var selected = getSelectedValuesList().toArray();
     if (selected.length > 0) {
-      ArrayList<Circuit> ret = new ArrayList<>(selected.length);
-      for (Object sel : selected) {
+      final var ret = new ArrayList<Circuit>(selected.length);
+      for (final var sel : selected) {
         if (sel instanceof Circuit circ) ret.add(circ);
       }
       return ret;

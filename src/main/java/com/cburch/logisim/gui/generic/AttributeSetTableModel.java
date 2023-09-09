@@ -186,7 +186,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  protected abstract void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException;
+  protected abstract void setValueRequested(final Attribute<Object> attr, final Object value) throws AttrTableSetException;
 
   private class AttrRow implements AttrTableModelRow {
     private final Attribute<Object> attr;
