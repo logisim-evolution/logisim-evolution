@@ -89,16 +89,19 @@ public class ProjectCircuitActions {
   public static void doAddCircuit(Project proj) {
     final var name = promptForCircuitName(proj.getFrame(), proj.getLogisimFile(), "");
     if (name != null) {
-      JLabel error = null;
+      String error = null;
       /* Checking for valid names */
       if (name.isEmpty()) {
-        error = new JLabel(S.get("circuitNameMissingError"));
+        error = S.get("circuitNameMissingError");
       } else if (CorrectLabel.isKeyword(name, false)) {
-        error = new JLabel("\"" + name + "\": " + S.get("circuitNameKeyword"));
-      } else if (!SyntaxChecker.isVariableNameAcceptable(name, false)) {
-        error = new JLabel("\"" + name + "\": " + S.get("circuitNameInvalidName"));
+        error = "\"" + name + "\": " + S.get("circuitNameKeyword");
       } else if (nameIsInUse(proj, name)) {
-        error = new JLabel("\"" + name + "\": " + S.get("circuitNameExists"));
+        error = "\"" + name + "\": " + S.get("circuitNameExists");
+      } else {
+        String nameMessage = SyntaxChecker.getErrorMessage(name);
+        if (nameMessage != null) {
+          error = "\"" + name + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
+        }
       }
       if (error != null) {
         OptionPane.showMessageDialog(
