@@ -138,7 +138,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   public String toString() {
     if (subcircComp != null) {
       final var label = subcircComp.getAttributeSet().getValue(StdAttr.LABEL);
-      if (label != null && !label.equals("")) {
+      if (label != null && !label.isEmpty()) {
         return label;
       }
     }

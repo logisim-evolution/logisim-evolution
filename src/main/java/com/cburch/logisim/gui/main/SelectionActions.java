@@ -511,7 +511,7 @@ public class SelectionActions {
         }
       }
 
-      if (toAdd.size() > 0) {
+      if (!toAdd.isEmpty()) {
         sel.pasteHelper(xn, toAdd);
         final var result = xn.execute();
         xnReverse = result.getReverseTransaction();
