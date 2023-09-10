@@ -60,13 +60,19 @@ class HotkeyOptions extends OptionsPanel {
   private JHotkeyInput southBtn;
   private JHotkeyInput eastBtn;
   private JHotkeyInput westBtn;
+  private final JButton resetBtn;
+  private final JLabel orientDescLabel;
+  private final JLabel orientNorthLabel;
+  private final JLabel orientEastLabel;
+  private final JLabel orientSouthLabel;
+  private final JLabel orientWestLabel;
   private boolean preferredWidthSet = false;
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
     this.setLayout(new TableLayout(1));
 
-    JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
+    resetBtn = new JButton();
     resetBtn.addActionListener(e -> AppPreferences.resetHotkeys());
     add(resetBtn);
     add(new JLabel(" "));
@@ -155,18 +161,25 @@ class HotkeyOptions extends OptionsPanel {
     /* Layout for arrow hotkeys */
     normalKeyPanel.add(new JLabel(" "));
     normalKeyPanel.add(new JLabel(" "));
-    normalKeyPanel.add(new JLabel(S.get("hotkeyOptOrientDesc")));
+
+    orientDescLabel = new JLabel();
+    normalKeyPanel.add(orientDescLabel);
     normalKeyPanel.add(new JLabel(" "));
     JPanel panelLeft = new JPanel();
     JPanel panelRight = new JPanel();
     panelLeft.setLayout(new TableLayout(3));
     panelRight.setLayout(new TableLayout(3));
+
+    orientEastLabel = new JLabel();
+    orientNorthLabel = new JLabel();
+    orientSouthLabel = new JLabel();
+    orientWestLabel = new JLabel();
     panelLeft.add(new JLabel(" "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirNorth") + " "));
+    panelLeft.add(orientNorthLabel);
     panelLeft.add(new JLabel(" "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirWest") + " "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirSouth") + " "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirEast") + " "));
+    panelLeft.add(orientWestLabel);
+    panelLeft.add(orientSouthLabel);
+    panelLeft.add(orientEastLabel);
     normalKeyPanel.add(panelLeft);
     panelRight.add(new JLabel(" "));
     panelRight.add(northBtn);
@@ -219,5 +232,11 @@ class HotkeyOptions extends OptionsPanel {
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
     normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader",
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
+    resetBtn.setText(S.get("hotkeyOptResetBtn"));
+    orientDescLabel.setText(S.get("hotkeyOptOrientDesc"));
+    orientEastLabel.setText(" " + S.get("hotkeyDirEast") + " ");
+    orientWestLabel.setText(" " + S.get("hotkeyDirWest") + " ");
+    orientSouthLabel.setText(" " + S.get("hotkeyDirSouth") + " ");
+    orientNorthLabel.setText(" " + S.get("hotkeyDirNorth") + " ");
   }
 }
