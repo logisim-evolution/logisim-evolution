@@ -61,6 +61,12 @@ class RecentProjects implements PreferenceChangeListener {
     }
   }
 
+  /**
+   * Decodes the preference data to retrieve recent project details.
+   *
+   * @param prefs The Preferences object to retrieve stored data.
+   * @param index The index of the recent project to be decoded.
+   */
   private void getAndDecode(Preferences prefs, int index) {
     final var encoding = prefs.get(BASE_PROPERTY + index, null);
     if (encoding == null) return;
@@ -74,6 +80,11 @@ class RecentProjects implements PreferenceChangeListener {
     }
   }
 
+  /**
+   * Retrieves a list of recent files based on their age (last accessed time).
+   *
+   * @return A List of recent File objects, sorted by their access times.
+   */
   public List<File> getRecentFiles() {
     final var now = System.currentTimeMillis();
     final var ages = new long[NUM_RECENT];
@@ -107,6 +118,15 @@ class RecentProjects implements PreferenceChangeListener {
     return ret;
   }
 
+  /**
+   * Retrieves the index of the file to replace in the recent projects list.
+   * It will choose a null spot if available, otherwise the oldest file.
+   *
+   * @param now The current time in milliseconds.
+   * @param f   The File object that we want to place into the list.
+   *
+   * @return The index where the new file should replace or be added.
+   */
   private int getReplacementIndex(long now, File f) {
     long oldestAge = -1;
     var oldestIndex = 0;
@@ -159,6 +179,13 @@ class RecentProjects implements PreferenceChangeListener {
     }
   }
 
+  /**
+   * Updates the recent project list with given details.
+   *
+   * @param index The index at which the project details should be updated.
+   * @param time  The last accessed time of the project.
+   * @param file  The File object representing the project.
+   */
   private void updateInto(int index, long time, File file) {
     final var oldFile = recentFiles[index];
     final var oldTime = recentTimes[index];
@@ -179,6 +206,14 @@ class RecentProjects implements PreferenceChangeListener {
     }
   }
 
+  /**
+   * Updates the list of recent projects with a given file.
+   * The file is added to the recent projects list and the
+   * oldest one may be evicted if the limit is reached.
+   *
+   * @param file The File object representing the project to
+   *             be added to the recent projects list.
+   */
   public void updateRecent(File file) {
     var fileToSave = file;
     try {

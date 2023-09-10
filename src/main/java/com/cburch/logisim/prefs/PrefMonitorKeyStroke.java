@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import javax.swing.KeyStroke;
 
+/**
+ * Class responsible for monitoring and managing keystroke preferences.
+ */
 public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private final byte[] defaultData;
   private byte[] value;
@@ -24,6 +27,13 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   private boolean canModify = true;
   private boolean metaRequired = false;
 
+  /**
+   * Constructor initializes a preference monitor with a given keystroke.
+   *
+   * @param name     The preference's name.
+   * @param keycode  Key code of the keystroke.
+   * @param modifier Modifiers applied to the keystroke.
+   */
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
     super(name);
     prefName = name;
@@ -35,6 +45,16 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     prefs.addPreferenceChangeListener(this);
   }
 
+  /**
+   * Constructor initializes a preference monitor with a given keystroke,
+   * meta-key requirement and modifiability status.
+   *
+   * @param name         The preference's name.
+   * @param keycode      Key code of the keystroke.
+   * @param modifier     Modifiers applied to the keystroke.
+   * @param metaRequired Determines whether a meta key is required.
+   * @param canModify    Determines whether the keystroke can be modified.
+   */
   public PrefMonitorKeyStroke(String name, int keycode, int modifier,
                               boolean metaRequired, boolean canModify) {
     super(name);
@@ -49,6 +69,12 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     this.canModify = canModify;
   }
 
+  /**
+   * Constructor initializes a preference monitor with multiple keystrokes.
+   *
+   * @param name          The preference's name.
+   * @param multipleValues Array of KeyStrokes.
+   */
   public PrefMonitorKeyStroke(String name, KeyStroke[] multipleValues) {
     super(name);
     prefName = name;
@@ -59,14 +85,31 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     prefs.addPreferenceChangeListener(this);
   }
 
+  /**
+   * Checks if the keystroke can be modified.
+   *
+   * @return True if modifiable, else false.
+   */
   public Boolean canModify() {
     return canModify;
   }
 
+  /**
+   * Checks if a meta-key is required.
+   *
+   * @return True if meta-key is required, else false.
+   */
   public Boolean needMetaKey() {
     return metaRequired;
   }
 
+  /**
+   * Validates if the given modifier passes the meta check.
+   *
+   * @param modifier Modifiers applied.
+   *
+   * @return True if check is passed, else false.
+   */
   public boolean metaCheckPass(int modifier) {
     if (metaRequired) {
       return (modifier & AppPreferences.hotkeyMenuMask) == AppPreferences.hotkeyMenuMask;
@@ -75,10 +118,21 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     }
   }
 
+  /**
+   * Gets the preference's name.
+   */
   public String getName() {
     return prefName;
   }
 
+  /**
+   * Converts an array of KeyStroke objects to a byte array representation.
+   * The conversion uses a Little Endian format.
+   *
+   * @param keyStrokes An array of KeyStroke objects to be converted.
+   *
+   * @return A byte array representing the provided KeyStrokes.
+   */
   private byte[] keystrokeToByteArray(KeyStroke[] keyStrokes) {
     /* Little Endian */
     byte[] res = new byte[keyStrokes.length * 8];
@@ -99,6 +153,14 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return res;
   }
 
+  /**
+   * Converts a byte array representation of KeyStrokes to a list of KeyStroke objects.
+   * The conversion assumes a Little Endian format.
+   *
+   * @param b A byte array representing the KeyStrokes.
+   *
+   * @return A list of KeyStroke objects derived from the byte array.
+   */
   private List<KeyStroke> byteArrayToKeyStroke(byte[] b) {
     /* Little Endian */
     List<KeyStroke> list = new ArrayList<>();
@@ -119,20 +181,46 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return list;
   }
 
+  /**
+   * Gets the current keystroke value.
+   *
+   * @return Current KeyStroke value.
+   */
   @Override
   public KeyStroke get() {
     return byteArrayToKeyStroke(value).get(0);
   }
 
+  /**
+   * Retrieves the list of KeyStrokes.
+   *
+   * @return List of KeyStrokes.
+   */
   public List<KeyStroke> getList() {
     return byteArrayToKeyStroke(value);
   }
 
+  /**
+   * Retrieves the KeyStroke with the provided mask.
+   *
+   * @param mask Modifier mask.
+   *
+   * @return KeyStroke with given mask.
+   */
   public KeyStroke getWithMask(int mask) {
-    KeyStroke tmp = byteArrayToKeyStroke(value).get(0);
+    final var tmp = byteArrayToKeyStroke(value).get(0);
     return KeyStroke.getKeyStroke(tmp.getKeyCode(), tmp.getModifiers() | mask);
   }
 
+
+  /**
+   * Compares the provided key code and modifier with the stored keystrokes.
+   *
+   * @param keyCode   Key code to compare.
+   * @param modifier  Modifier to compare.
+   *
+   * @return True if a match is found, else false.
+   */
   public boolean compare(int keyCode, int modifier) {
     final var userString = InputEvent.getModifiersExText(modifier)
         + "+" + KeyEvent.getKeyText(keyCode);
@@ -146,6 +234,11 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return false;
   }
 
+  /**
+   * Provides a display-friendly string representation of the stored keystrokes.
+   *
+   * @return Display string.
+   */
   public String getDisplayString() {
     final var res = new StringBuilder();
     var list = getList();
@@ -165,6 +258,13 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     return res.toString();
   }
 
+  /**
+   * Handles the preference change events.
+   * Does nothing if newValue is the same as the current value.
+   *
+   *
+   * @param event PreferenceChangeEvent object.
+   */
   public void preferenceChange(PreferenceChangeEvent event) {
     final var prefs = event.getNode();
     final var prop = event.getKey();
@@ -179,12 +279,24 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     }
   }
 
+  /**
+   * Sets the value of the preference using a byte array.
+   * Does nothing if newValue is the same as the current value.
+   *
+   * @param newValue New value in byte array format.
+   */
   public void set(byte[] newValue) {
     if (value != newValue) {
       AppPreferences.getPrefs().putByteArray(getIdentifier(), newValue);
     }
   }
 
+  /**
+   * Sets the value of the preference using a single KeyStroke.
+   * Does nothing if newValue is the same as the current value.
+   *
+   * @param newValue New KeyStroke value.
+   */
   @Override
   public void set(KeyStroke newValue) {
     final byte[] newVal = keystrokeToByteArray(new KeyStroke[] {newValue});
@@ -193,6 +305,12 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     }
   }
 
+  /**
+   * Sets the value of the preference using an array of KeyStrokes.
+   * Does nothing if newValue is the same as the current value.
+   *
+   * @param newValue Array of new KeyStroke values.
+   */
   public void set(KeyStroke[] newValue) {
     final byte[] newVal = keystrokeToByteArray(newValue);
     if (value != newVal) {

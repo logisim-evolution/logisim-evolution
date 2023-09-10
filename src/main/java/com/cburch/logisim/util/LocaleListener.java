@@ -10,5 +10,8 @@
 package com.cburch.logisim.util;
 
 public interface LocaleListener {
+  /**
+   * Reacts to locale changes by setting the corresponding preference value.
+   */
   void localeChanged();
 }

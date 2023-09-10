@@ -56,6 +56,12 @@ public class AppPreferences {
   // LocalePreference
   //
   private static class LocalePreference extends PrefMonitorString {
+    /**
+     * Finds the Locale corresponding to the given language string.
+     *
+     * @param lang Language string to search for.
+     * @return The corresponding Locale or null if not found.
+     */
     private static Locale findLocale(String lang) {
       Locale[] check;
       for (int set = 0; set < 2; set++) {
