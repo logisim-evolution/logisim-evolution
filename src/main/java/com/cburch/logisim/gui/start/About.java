@@ -9,19 +9,28 @@
 
 package com.cburch.logisim.gui.start;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.generated.BuildInfo;
-import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.UniquelyNamedThread;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import java.awt.datatransfer.StringSelection;
+
+import static com.cburch.logisim.gui.Strings.S;
 
 public class About {
   static final int PADDING = 20;
@@ -38,12 +47,47 @@ public class About {
   }
 
   public static void showAboutDialog(JFrame owner) {
-    final var imgPanel = new AboutPanel(true);
-    final var panel = new JPanel(new BorderLayout());
-    panel.add(imgPanel);
-    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    if (!Main.hasGui()) {
+      return;
+    }
 
-    OptionPane.showMessageDialog(owner, panel, BuildInfo.displayName, OptionPane.PLAIN_MESSAGE);
+    final var content = new JPanel(new BorderLayout());
+    content.add(new AboutPanel(true));
+    content.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+    final var dialog = new JDialog(owner, S.get("aboutDialogTitle"), true);
+    final var optionPane = new JOptionPane(content, JOptionPane.PLAIN_MESSAGE);
+    final var copyDetailsButton = new JButton(S.get("aboutDialogCopyDetails"));
+    copyDetailsButton.addActionListener(event -> {
+      final var info = new StringBuilder();
+      info.append("Product: " + BuildInfo.displayName)
+              .append("\n")
+              .append(LineBuffer.format(
+                      "Runs on: {{1}} v{{2}}\n",
+                      System.getProperty("java.vm.name"),
+                      System.getProperty("java.version")))
+              .append("\n")
+              .append(LineBuffer.format("Compiled: {{1}}\n", BuildInfo.dateIso8601))
+              .append(LineBuffer.format("Build ID: {{1}}\n", BuildInfo.buildId))
+              .append(LineBuffer.format("Built on: {{1}}\n", BuildInfo.jvm_version))
+              ;
+
+      final var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+      final var stringSelection = new StringSelection(info.toString());
+      clipboard.setContents(stringSelection, null);
+    });
+
+    final var closeButton = new JButton(S.get("aboutDialogClose"));
+    closeButton.addActionListener(e -> {
+      dialog.dispose();
+    });
+
+    optionPane.setOptions(new JButton[]{copyDetailsButton, closeButton});
+
+    dialog.setContentPane(optionPane);
+    dialog.pack();
+    dialog.setLocationRelativeTo(owner);
+    dialog.setVisible(true);
   }
 
   private static class AboutPanel extends JPanel implements AncestorListener {
