@@ -72,7 +72,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   /**
    * Constructor initializes a preference monitor with multiple keystrokes.
    *
-   * @param name          The preference's name.
+   * @param name           The preference's name.
    * @param multipleValues Array of KeyStrokes.
    */
   public PrefMonitorKeyStroke(String name, KeyStroke[] multipleValues) {
@@ -261,7 +261,6 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   /**
    * Handles the preference change events.
    * Does nothing if newValue is the same as the current value.
-   *
    *
    * @param event PreferenceChangeEvent object.
    */
