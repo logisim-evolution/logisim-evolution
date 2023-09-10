@@ -91,8 +91,8 @@ public class RamAttributes extends AbstractAttributeSet {
     newList.add(Mem.ENABLES_ATTR);
     newList.add(ATTR_TYPE);
     newList.add(CLEAR_PIN);
-    newList.add(INVERT_OUTPUT_ENABLE);
     newList.add(INVERT_WRITE_ENABLE);
+    newList.add(INVERT_OUTPUT_ENABLE);
     if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
       newList.add(StdAttr.TRIGGER);
       if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {

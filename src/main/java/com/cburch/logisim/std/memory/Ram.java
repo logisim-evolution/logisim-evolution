@@ -278,7 +278,8 @@ public class Ram extends Mem {
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     final var triggered = myState.setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
-    final var writeEnabled = triggered && (state.getPortValue(RamAppearance.getWEIndex(0, attrs)) == Value.TRUE);
+    final var writeOnValue = attrs.getValue(RamAttributes.INVERT_WRITE_ENABLE) ? Value.FALSE : Value.TRUE;
+    final var writeEnabled = triggered && (state.getPortValue(RamAppearance.getWEIndex(0, attrs)) == writeOnValue);
     if (writeEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
         if (dataLines > 1) {
@@ -293,7 +294,9 @@ public class Ram extends Mem {
 
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
+    final var readOffValue = attrs.getValue(RamAttributes.INVERT_OUTPUT_ENABLE) ? Value.TRUE : Value.FALSE;
+    final var outputEnabled = separate ||
+        !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(readOffValue);
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr + i);
@@ -316,7 +319,9 @@ public class Ram extends Mem {
     long newMemValue = oldMemValue;
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-    final var weValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
+    final var rawWeValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
+    final var weValue = state.getAttributeValue(RamAttributes.INVERT_WRITE_ENABLE)
+        ? invertValue(rawWeValue) : rawWeValue;
     final var async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     final var edge =
         !async && myState
@@ -344,7 +349,8 @@ public class Ram extends Mem {
 
     // perform reads
     final var dataBits = state.getAttributeValue(DATA_ATTR);
-    final var outputNotEnabled = state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
+    final var outputOffValue = state.getAttributeValue(RamAttributes.INVERT_OUTPUT_ENABLE) ? Value.TRUE : Value.FALSE;
+    final var outputNotEnabled = state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(outputOffValue);
 
     Consumer<Value> setValue = (Value value) -> state.setPort(RamAppearance.getDataOutIndex(0, attrs), value, DELAY);
 
@@ -381,6 +387,17 @@ public class Ram extends Mem {
       else
         setValue.accept(Value.createKnown(dataBits, oldMemValue));
     }
+  }
+
+  private Value invertValue(Value input) {
+    if (input == Value.TRUE) {
+      return Value.FALSE;
+    }
+    else if (input == Value.FALSE) {
+      return Value.TRUE;
+    }
+
+    return input;
   }
 
   @Override
