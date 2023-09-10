@@ -156,7 +156,7 @@ public class AppPreferences {
   }
 
   private static File convertFile(String fileName) {
-    if (fileName == null || fileName.equals("")) {
+    if (fileName == null || fileName.isEmpty()) {
       return null;
     } else {
       final var file = new File(fileName);
