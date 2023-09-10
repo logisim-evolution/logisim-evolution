@@ -68,6 +68,6 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
   }
 
   private void fireConvertAction(ConvertEvent e) {
-    for (ConvertEventListener l : myListeners) l.attributeValueChanged(e);
+    for (final var l : myListeners) l.attributeValueChanged(e);
   }
 }

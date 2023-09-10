@@ -344,7 +344,9 @@ public class FpgaBoards implements ActionListener {
     final var qualifier = buildInBoards.getBoardFilePath(name);
     if (extBoardModel.contains(qualifier)) {
       extBoardModel.remove(qualifier);
-    } else return false;
+    } else {
+      return false;
+    }
     if (!buildInBoards.removeExternalBoard(qualifier)) return false;
     removeFromPrefs(qualifier);
     return true;
