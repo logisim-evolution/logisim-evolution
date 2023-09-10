@@ -50,10 +50,8 @@ public class RamAttributes extends AbstractAttributeSet {
           new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTE_ENABLES});
   static final Attribute<Boolean> CLEAR_PIN =
       Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
-
   static final Attribute<Boolean> INVERT_OUTPUT_ENABLE =
       Attributes.forBoolean("invertOE", S.getter("ramInvertOutputEnable"));
-
   static final Attribute<Boolean> INVERT_WRITE_ENABLE =
       Attributes.forBoolean("invertWE", S.getter("ramInvertWriteEnable"));
   private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();

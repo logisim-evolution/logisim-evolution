@@ -321,7 +321,7 @@ public class Ram extends Mem {
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     final var rawWeValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
     final var weValue = state.getAttributeValue(RamAttributes.INVERT_WRITE_ENABLE)
-        ? invertValue(rawWeValue) : rawWeValue;
+        ? rawWeValue.not() : rawWeValue;
     final var async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     final var edge =
         !async && myState
@@ -387,16 +387,6 @@ public class Ram extends Mem {
       else
         setValue.accept(Value.createKnown(dataBits, oldMemValue));
     }
-  }
-
-  private Value invertValue(Value input) {
-    if (input == Value.TRUE) {
-      return Value.FALSE;
-    } else if (input == Value.FALSE) {
-      return Value.TRUE;
-    }
-
-    return input;
   }
 
   @Override
