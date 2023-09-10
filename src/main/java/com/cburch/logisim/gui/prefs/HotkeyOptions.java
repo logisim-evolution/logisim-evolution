@@ -72,6 +72,7 @@ class HotkeyOptions extends OptionsPanel {
     super(window);
     this.setLayout(new TableLayout(1));
 
+    /* settings the layout up */
     resetBtn = new JButton();
     resetBtn.addActionListener(e -> AppPreferences.resetHotkeys());
     add(resetBtn);
@@ -92,6 +93,12 @@ class HotkeyOptions extends OptionsPanel {
     JAdjustableScroll normalKeyScrollPane = new JAdjustableScroll(normalKeyPanel);
     add(normalKeyScrollPane);
 
+    menuKeyPanel.setMaximumSize(new Dimension(400, 400));
+    menuKeyPanel.setLayout(new TableLayout(2));
+    normalKeyPanel.setMaximumSize(new Dimension(400, 400));
+    normalKeyPanel.setLayout(new TableLayout(2));
+
+    /* bind up the hotkeys */
     Field[] fields = AppPreferences.class.getDeclaredFields();
     try {
       for (var f : fields) {
@@ -105,18 +112,11 @@ class HotkeyOptions extends OptionsPanel {
     } catch (Exception e) {
       AppPreferences.hotkeyReflectError(e);
     }
-
     keyInputList = new ArrayList<>();
     for (int i = 0; i < hotkeys.size(); i++) {
       keyInputList.add(new JHotkeyInput(window, ""));
     }
-
-
-    menuKeyPanel.setMaximumSize(new Dimension(400, 400));
-    menuKeyPanel.setLayout(new TableLayout(2));
-    normalKeyPanel.setMaximumSize(new Dimension(400, 400));
-    normalKeyPanel.setLayout(new TableLayout(2));
-
+    /* initialize the hotkey labels and hotkey-inputs */
     final JLabel[] keyLabels = new JLabel[hotkeys.size()];
     for (int i = 0; i < hotkeys.size(); i++) {
       /* I do this chore because they have a different layout */
@@ -158,7 +158,7 @@ class HotkeyOptions extends OptionsPanel {
       }
     }
 
-    /* Layout for arrow hotkeys */
+    /* adding layout for arrow hotkeys */
     normalKeyPanel.add(new JLabel(" "));
     normalKeyPanel.add(new JLabel(" "));
 
