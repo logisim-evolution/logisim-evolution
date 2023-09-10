@@ -20,7 +20,7 @@ class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
   private final double dflt;
 
   /** Current double value of this preference monitor. */
-   private double value;
+  private double value;
 
   /**
    * Constructs a new preference monitor for double values.
