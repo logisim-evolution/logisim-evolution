@@ -52,10 +52,10 @@ public class RamAttributes extends AbstractAttributeSet {
       Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
 
   static final Attribute<Boolean> INVERT_OUTPUT_ENABLE =
-      Attributes.forBoolean("invertOE", S.getter("memInvertOutputEnable"));
+      Attributes.forBoolean("invertOE", S.getter("ramInvertOutputEnable"));
 
   static final Attribute<Boolean> INVERT_WRITE_ENABLE =
-      Attributes.forBoolean("invertWE", S.getter("memInvertWriteEnable"));
+      Attributes.forBoolean("invertWE", S.getter("ramInvertWriteEnable"));
   private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
   private BitWidth addrBits = BitWidth.create(8);
