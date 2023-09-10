@@ -74,7 +74,7 @@ public class AppPreferences {
     public LocalePreference() {
       super("locale", "");
 
-      String localeStr = this.get();
+      final var localeStr = this.get();
       if (!("".equals(localeStr))) {
         LocaleManager.setLocale(Locale.forLanguageTag(localeStr));
       }
@@ -171,7 +171,7 @@ public class AppPreferences {
   }
 
   private static Template getCustomTemplate() {
-    File toRead = templateFile;
+    final var toRead = templateFile;
     if (customTemplateFile == null || !(customTemplateFile.equals(toRead))) {
       if (toRead == null) {
         customTemplate = null;
@@ -408,7 +408,7 @@ public class AppPreferences {
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon) {
-    Image iconImage = icon.getImage();
+    final var iconImage = icon.getImage();
     return new ImageIcon(
         iconImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
   }

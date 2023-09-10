@@ -24,7 +24,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
     super(name);
     this.dflt = dflt;
     this.value = dflt;
-    Preferences prefs = AppPreferences.getPrefs();
+    final var prefs = AppPreferences.getPrefs();
     set(prefs.getBoolean(name, dflt));
     prefs.addPreferenceChangeListener(this);
   }

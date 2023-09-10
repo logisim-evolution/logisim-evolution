@@ -108,7 +108,7 @@ public class FpgaBoards implements ActionListener {
 
     @Override
     public String getElementAt(int index) {
-      int size = nrOfExternalBoards();
+      final var size = nrOfExternalBoards();
       return (index < size) ? BoardList.getBoardName(externalBoards.get(index)) : null;
     }
 
@@ -138,7 +138,7 @@ public class FpgaBoards implements ActionListener {
 
     public void insertSorted(String value) {
       add(value);
-      Comparable<String> cmp = BoardList.getBoardName(value);
+      final var cmp = BoardList.getBoardName(value);
       for (var i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
         Collections.swap(this, i, i - 1);
     }

@@ -33,8 +33,8 @@ class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
     final var prop = event.getKey();
     final var name = getIdentifier();
     if (prop.equals(name)) {
-      double oldValue = value;
-      double newValue = prefs.getDouble(name, dflt);
+      final var oldValue = value;
+      final var newValue = prefs.getDouble(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
@@ -43,7 +43,7 @@ class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
   }
 
   public void set(Double newValue) {
-    double newVal = newValue;
+    final var newVal = newValue;
     if (value != newVal) {
       AppPreferences.getPrefs().putDouble(getIdentifier(), newVal);
     }

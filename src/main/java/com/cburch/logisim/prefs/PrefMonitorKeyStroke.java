@@ -134,10 +134,10 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   }
 
   public boolean compare(int keyCode, int modifier) {
-    String userString = InputEvent.getModifiersExText(modifier)
+    final var userString = InputEvent.getModifiersExText(modifier)
         + "+" + KeyEvent.getKeyText(keyCode);
     for (KeyStroke tmp : getList()) {
-      String compareString = InputEvent.getModifiersExText(tmp.getModifiers())
+      final var compareString = InputEvent.getModifiersExText(tmp.getModifiers())
           + "+" + KeyEvent.getKeyText(tmp.getKeyCode());
       if (compareString.equals(userString)) {
         return true;
@@ -147,11 +147,11 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   }
 
   public String getDisplayString() {
-    StringBuilder res = new StringBuilder();
+    final var res = new StringBuilder();
     var list = getList();
     int cnt = 0;
     for (KeyStroke tmp : list) {
-      String modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
+      final var modifierString = InputEvent.getModifiersExText(tmp.getModifiers());
       if (modifierString.isEmpty()) {
         res.append(KeyEvent.getKeyText(tmp.getKeyCode()));
       } else {
