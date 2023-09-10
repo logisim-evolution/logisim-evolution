@@ -295,8 +295,8 @@ public class Ram extends Mem {
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
     final var readOffValue = attrs.getValue(RamAttributes.INVERT_OUTPUT_ENABLE) ? Value.TRUE : Value.FALSE;
-    final var outputEnabled = separate ||
-        !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(readOffValue);
+    final var outputEnabled = separate
+        || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(readOffValue);
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr + i);
@@ -392,8 +392,7 @@ public class Ram extends Mem {
   private Value invertValue(Value input) {
     if (input == Value.TRUE) {
       return Value.FALSE;
-    }
-    else if (input == Value.FALSE) {
+    } else if (input == Value.FALSE) {
       return Value.TRUE;
     }
 

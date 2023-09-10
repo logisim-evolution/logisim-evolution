@@ -315,15 +315,13 @@ public class RamAttributes extends AbstractAttributeSet {
       if (appearance.equals(option)) return;
       appearance = option;
       fireAttributeValueChanged(attr, value, null);
-    }
-    else if (attr == INVERT_OUTPUT_ENABLE) {
+    } else if (attr == INVERT_OUTPUT_ENABLE) {
       final var val = (Boolean) value;
       if (invertOutputEnable != val) {
         invertOutputEnable = val;
         fireAttributeValueChanged(attr, value, null);
       }
-    }
-    else if (attr == INVERT_WRITE_ENABLE) {
+    } else if (attr == INVERT_WRITE_ENABLE) {
       final var val = (Boolean) value;
       if (invertWriteEnable != val) {
         invertWriteEnable = val;
