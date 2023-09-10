@@ -54,6 +54,7 @@ class HotkeyOptions extends OptionsPanel {
    * */
   protected static List<PrefMonitor<KeyStroke>> hotkeys = new ArrayList<>();
   private final List<JHotkeyInput> keyInputList;
+  private final List<JLabel> keyLabels;
   private final JLabel menuKeyHeaderLabel;
   private final JLabel normalKeyHeaderLabel;
   private JHotkeyInput northBtn;
@@ -112,15 +113,17 @@ class HotkeyOptions extends OptionsPanel {
     } catch (Exception e) {
       AppPreferences.hotkeyReflectError(e);
     }
+
+    /* initialize the hotkey labels and hotkey-inputs */
     keyInputList = new ArrayList<>();
+    keyLabels = new ArrayList<>();
     for (int i = 0; i < hotkeys.size(); i++) {
       keyInputList.add(new JHotkeyInput(window, ""));
+      keyLabels.add(new JLabel());
     }
-    /* initialize the hotkey labels and hotkey-inputs */
-    final JLabel[] keyLabels = new JLabel[hotkeys.size()];
     for (int i = 0; i < hotkeys.size(); i++) {
       /* I do this chore because they have a different layout */
-      PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
+      var prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
@@ -145,15 +148,15 @@ class HotkeyOptions extends OptionsPanel {
         keyInputList.get(i).setBoundKeyStroke(prefKeyStroke);
         continue;
       }
-      keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
+      keyLabels.get(i).setText(S.get(prefKeyStroke.getName()) + "  ");
       keyInputList.set(i, new JHotkeyInput(window, prefKeyStroke.getDisplayString()));
       keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
       keyInputList.get(i).setBoundKeyStroke(prefKeyStroke);
       if (prefKeyStroke.needMetaKey()) {
-        menuKeyPanel.add(keyLabels[i]);
+        menuKeyPanel.add(keyLabels.get(i));
         menuKeyPanel.add(keyInputList.get(i));
       } else {
-        normalKeyPanel.add(keyLabels[i]);
+        normalKeyPanel.add(keyLabels.get(i));
         normalKeyPanel.add(keyInputList.get(i));
       }
     }
@@ -238,5 +241,15 @@ class HotkeyOptions extends OptionsPanel {
     orientWestLabel.setText(" " + S.get("hotkeyDirWest") + " ");
     orientSouthLabel.setText(" " + S.get("hotkeyDirSouth") + " ");
     orientNorthLabel.setText(" " + S.get("hotkeyDirNorth") + " ");
+    for (int i = 0; i < hotkeys.size(); i++) {
+      var prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
+      if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
+        continue;
+      }
+      keyLabels.get(i).setText(S.get(prefKeyStroke.getName()) + "  ");
+    }
   }
 }
