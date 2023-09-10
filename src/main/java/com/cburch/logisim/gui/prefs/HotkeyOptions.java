@@ -54,19 +54,27 @@ class HotkeyOptions extends OptionsPanel {
    * */
   protected static List<PrefMonitor<KeyStroke>> hotkeys = new ArrayList<>();
   private final List<JHotkeyInput> keyInputList;
+  private final List<JLabel> keyLabels;
   private final JLabel menuKeyHeaderLabel;
   private final JLabel normalKeyHeaderLabel;
   private JHotkeyInput northBtn;
   private JHotkeyInput southBtn;
   private JHotkeyInput eastBtn;
   private JHotkeyInput westBtn;
+  private final JButton resetBtn;
+  private final JLabel orientDescLabel;
+  private final JLabel orientNorthLabel;
+  private final JLabel orientEastLabel;
+  private final JLabel orientSouthLabel;
+  private final JLabel orientWestLabel;
   private boolean preferredWidthSet = false;
 
   public HotkeyOptions(PreferencesFrame window) {
     super(window);
     this.setLayout(new TableLayout(1));
 
-    JButton resetBtn = new JButton(S.get("hotkeyOptResetBtn"));
+    /* settings the layout up */
+    resetBtn = new JButton();
     resetBtn.addActionListener(e -> AppPreferences.resetHotkeys());
     add(resetBtn);
     add(new JLabel(" "));
@@ -86,6 +94,12 @@ class HotkeyOptions extends OptionsPanel {
     JAdjustableScroll normalKeyScrollPane = new JAdjustableScroll(normalKeyPanel);
     add(normalKeyScrollPane);
 
+    menuKeyPanel.setMaximumSize(new Dimension(400, 400));
+    menuKeyPanel.setLayout(new TableLayout(2));
+    normalKeyPanel.setMaximumSize(new Dimension(400, 400));
+    normalKeyPanel.setLayout(new TableLayout(2));
+
+    /* bind up the hotkeys */
     Field[] fields = AppPreferences.class.getDeclaredFields();
     try {
       for (var f : fields) {
@@ -100,21 +114,16 @@ class HotkeyOptions extends OptionsPanel {
       AppPreferences.hotkeyReflectError(e);
     }
 
+    /* initialize the hotkey labels and hotkey-inputs */
     keyInputList = new ArrayList<>();
+    keyLabels = new ArrayList<>();
     for (int i = 0; i < hotkeys.size(); i++) {
       keyInputList.add(new JHotkeyInput(window, ""));
+      keyLabels.add(new JLabel());
     }
-
-
-    menuKeyPanel.setMaximumSize(new Dimension(400, 400));
-    menuKeyPanel.setLayout(new TableLayout(2));
-    normalKeyPanel.setMaximumSize(new Dimension(400, 400));
-    normalKeyPanel.setLayout(new TableLayout(2));
-
-    final JLabel[] keyLabels = new JLabel[hotkeys.size()];
     for (int i = 0; i < hotkeys.size(); i++) {
       /* I do this chore because they have a different layout */
-      PrefMonitorKeyStroke prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
+      var prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
       if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH
           || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
@@ -139,34 +148,41 @@ class HotkeyOptions extends OptionsPanel {
         keyInputList.get(i).setBoundKeyStroke(prefKeyStroke);
         continue;
       }
-      keyLabels[i] = new JLabel(S.get(prefKeyStroke.getName()) + "  ");
+      keyLabels.get(i).setText(S.get(prefKeyStroke.getName()) + "  ");
       keyInputList.set(i, new JHotkeyInput(window, prefKeyStroke.getDisplayString()));
       keyInputList.get(i).setEnabled(prefKeyStroke.canModify());
       keyInputList.get(i).setBoundKeyStroke(prefKeyStroke);
       if (prefKeyStroke.needMetaKey()) {
-        menuKeyPanel.add(keyLabels[i]);
+        menuKeyPanel.add(keyLabels.get(i));
         menuKeyPanel.add(keyInputList.get(i));
       } else {
-        normalKeyPanel.add(keyLabels[i]);
+        normalKeyPanel.add(keyLabels.get(i));
         normalKeyPanel.add(keyInputList.get(i));
       }
     }
 
-    /* Layout for arrow hotkeys */
+    /* adding layout for arrow hotkeys */
     normalKeyPanel.add(new JLabel(" "));
     normalKeyPanel.add(new JLabel(" "));
-    normalKeyPanel.add(new JLabel(S.get("hotkeyOptOrientDesc")));
+
+    orientDescLabel = new JLabel();
+    normalKeyPanel.add(orientDescLabel);
     normalKeyPanel.add(new JLabel(" "));
     JPanel panelLeft = new JPanel();
     JPanel panelRight = new JPanel();
     panelLeft.setLayout(new TableLayout(3));
     panelRight.setLayout(new TableLayout(3));
+
+    orientEastLabel = new JLabel();
+    orientNorthLabel = new JLabel();
+    orientSouthLabel = new JLabel();
+    orientWestLabel = new JLabel();
     panelLeft.add(new JLabel(" "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirNorth") + " "));
+    panelLeft.add(orientNorthLabel);
     panelLeft.add(new JLabel(" "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirWest") + " "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirSouth") + " "));
-    panelLeft.add(new JLabel(" " + S.get("hotkeyDirEast") + " "));
+    panelLeft.add(orientWestLabel);
+    panelLeft.add(orientSouthLabel);
+    panelLeft.add(orientEastLabel);
     normalKeyPanel.add(panelLeft);
     panelRight.add(new JLabel(" "));
     panelRight.add(northBtn);
@@ -219,5 +235,21 @@ class HotkeyOptions extends OptionsPanel {
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
     normalKeyHeaderLabel.setText(S.get("hotkeyOptNormalKeyHeader",
         InputEvent.getModifiersExText(AppPreferences.hotkeyMenuMask)));
+    resetBtn.setText(S.get("hotkeyOptResetBtn"));
+    orientDescLabel.setText(S.get("hotkeyOptOrientDesc"));
+    orientEastLabel.setText(" " + S.get("hotkeyDirEast") + " ");
+    orientWestLabel.setText(" " + S.get("hotkeyDirWest") + " ");
+    orientSouthLabel.setText(" " + S.get("hotkeyDirSouth") + " ");
+    orientNorthLabel.setText(" " + S.get("hotkeyDirNorth") + " ");
+    for (int i = 0; i < hotkeys.size(); i++) {
+      var prefKeyStroke = ((PrefMonitorKeyStroke) hotkeys.get(i));
+      if (hotkeys.get(i) == AppPreferences.HOTKEY_DIR_NORTH
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_SOUTH
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_EAST
+          || hotkeys.get(i) == AppPreferences.HOTKEY_DIR_WEST) {
+        continue;
+      }
+      keyLabels.get(i).setText(S.get(prefKeyStroke.getName()) + "  ");
+    }
   }
 }
