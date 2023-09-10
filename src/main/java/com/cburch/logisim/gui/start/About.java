@@ -38,8 +38,8 @@ public class About {
   }
 
   public static void showAboutDialog(JFrame owner) {
-    AboutPanel imgPanel = new AboutPanel(true);
-    JPanel panel = new JPanel(new BorderLayout());
+    final var imgPanel = new AboutPanel(true);
+    final var panel = new JPanel(new BorderLayout());
     panel.add(imgPanel);
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
