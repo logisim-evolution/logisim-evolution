@@ -72,9 +72,7 @@ public class RamAttributes extends AbstractAttributeSet {
   private Boolean allowMisaligned = false;
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
-
   private Boolean invertOutputEnable = false;
-
   private Boolean invertWriteEnable = false;
 
   RamAttributes() {
