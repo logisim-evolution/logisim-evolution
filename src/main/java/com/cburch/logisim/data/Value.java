@@ -20,10 +20,15 @@ public class Value {
     if (width == 0) {
       return Value.NIL;
     } else if (width == 1) {
-      if ((error & 1) != 0) return Value.ERROR;
-      else if ((unknown & 1) != 0) return Value.UNKNOWN;
-      else if ((value & 1) != 0) return Value.TRUE;
-      else return Value.FALSE;
+      if ((error & 1) != 0) {
+        return Value.ERROR;
+      } else if ((unknown & 1) != 0) {
+        return Value.UNKNOWN;
+      } else if ((value & 1) != 0) {
+        return Value.TRUE;
+      } else {
+        return Value.FALSE;
+      }
     } else {
       final var mask = (width == 64 ? -1L : ~(-1L << width));
       error = error & mask;
@@ -40,7 +45,9 @@ public class Value {
         if (val.value == value
             && val.width == width
             && val.error == error
-            && val.unknown == unknown) return val;
+            && val.unknown == unknown) {
+          return val;
+        }
       }
       final var ret = new Value(width, error, unknown, value);
       cache.put(hashCode, ret);
@@ -49,8 +56,12 @@ public class Value {
   }
 
   public static Value create(Value[] values) {
-    if (values.length == 0) return NIL;
-    if (values.length == 1) return values[0];
+    if (values.length == 0) {
+      return NIL;
+    }
+    if (values.length == 1) {
+      return values[0];
+    }
     if (values.length > MAX_WIDTH) {
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
     }
@@ -61,11 +72,13 @@ public class Value {
     long error = 0;
     for (var i = 0; i < values.length; i++) {
       long mask = 1L << i;
-      if (values[i] == TRUE) value |= mask;
-      else if (values[i] == FALSE) /* do nothing */ ;
-      else if (values[i] == UNKNOWN) unknown |= mask;
-      else if (values[i] == ERROR) error |= mask;
-      else {
+      if (values[i] == TRUE) {
+        value |= mask;
+      } else if (values[i] == UNKNOWN) {
+        unknown |= mask;
+      } else if (values[i] == ERROR) {
+        error |= mask;
+      } else if (values[i] != FALSE) {
         throw new RuntimeException("unrecognized value " + values[i]);
       }
     }
@@ -104,13 +117,19 @@ public class Value {
     final var radix = radixOfLogString(width, t);
     int offset;
 
-    if (radix == 16 || radix == 8) offset = 2;
-    else if (radix == 10 && t.startsWith("-")) offset = 1;
-    else offset = 0;
+    if (radix == 16 || radix == 8) {
+      offset = 2;
+    } else if (radix == 10 && t.startsWith("-")) {
+      offset = 1;
+    } else {
+      offset = 0;
+    }
 
     int n = t.length();
 
-    if (n <= offset) throw new Exception("expected digits");
+    if (n <= offset) {
+      throw new Exception("expected digits");
+    }
 
     int w = width.getWidth();
     long value = 0;
@@ -120,35 +139,52 @@ public class Value {
       final var c = t.charAt(i);
       int d;
 
-      if (c == 'x' && radix != 10) d = -1;
-      else if ('0' <= c && c <= '9') d = c - '0';
-      else if ('a' <= c && c <= 'f') d = 0xa + (c - 'a');
-      else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
-      else
+      if (c == 'x' && radix != 10) {
+        d = -1;
+      } else if ('0' <= c && c <= '9') {
+        d = c - '0';
+      } else if ('a' <= c && c <= 'f') {
+        d = 0xa + (c - 'a');
+      } else if ('A' <= c && c <= 'F') {
+        d = 0xA + (c - 'A');
+      } else {
         throw new Exception(
             "Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+      }
 
-      if (d >= radix)
+      if (d >= radix) {
         throw new Exception("Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+      }
 
       value *= radix;
       unknown *= radix;
 
       if (radix != 10) {
-        if (d == -1) unknown |= (radix - 1);
-        else value |= d;
+        if (d == -1) {
+          unknown |= (radix - 1);
+        } else {
+          value |= d;
+        }
       } else {
-        if (d == -1) unknown += (radix - 1);
-        else value += d;
+        if (d == -1) {
+          unknown += (radix - 1);
+        } else {
+          value += d;
+        }
       }
     }
-    if (radix == 10 && t.charAt(0) == '-') value = -value;
+    if (radix == 10 && t.charAt(0) == '-') {
+      value = -value;
+    }
 
     if (w == 64) {
-      if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0)
+      if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0) {
         throw new Exception("Too many bits in \"" + t + "\"");
+      }
     } else {
-      if ((value >> w) != 0) throw new Exception("Too many bits in \"" + t + "\"");
+      if ((value >> w) != 0) {
+        throw new Exception("Too many bits in \"" + t + "\"");
+      }
     }
 
     unknown &= ((1L << w) - 1);
@@ -156,9 +192,15 @@ public class Value {
   }
 
   public static int radixOfLogString(BitWidth width, String t) {
-    if (t.startsWith("0x")) return 16;
-    if (t.startsWith("0o")) return 8;
-    if (t.length() == width.getWidth()) return 2;
+    if (t.startsWith("0x")) {
+      return 16;
+    }
+    if (t.startsWith("0o")) {
+      return 8;
+    }
+    if (t.length() == width.getWidth()) {
+      return 2;
+    }
 
     return 10;
   }
@@ -196,9 +238,12 @@ public class Value {
   public static Color strokeColor = new Color(AppPreferences.STROKE_COLOR.get());
   public static Color multiColor = new Color(AppPreferences.BUS_COLOR.get());
   public static Color widthErrorColor = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
-  public static Color widthErrorCaptionColor = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
-  public static Color widthErrorHighlightColor = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
-  public static Color widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+  public static Color widthErrorCaptionColor = new Color(
+      AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
+  public static Color widthErrorHighlightColor = new Color(
+      AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+  public static Color widthErrorCaptionBgcolor = new Color(
+      AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
   public static Color clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
 
   private static final Cache cache = new Cache();
@@ -220,10 +265,16 @@ public class Value {
   }
 
   public Value and(Value other) {
-    if (other == null) return this;
+    if (other == null) {
+      return this;
+    }
     if (this.width == 1 && other.width == 1) {
-      if (this == FALSE || other == FALSE) return FALSE;
-      if (this == TRUE && other == TRUE) return TRUE;
+      if (this == FALSE || other == FALSE) {
+        return FALSE;
+      }
+      if (this == TRUE && other == TRUE) {
+        return TRUE;
+      }
       return ERROR;
     } else {
       long false0 = ~this.value & ~this.error & ~this.unknown;
@@ -238,13 +289,16 @@ public class Value {
   }
 
   public Value controls(Value other) { // e.g. tristate buffer
-    if (other == null)
+    if (other == null) {
       return null;
+    }
     if (this.width == 1) {
-      if (this == FALSE)
+      if (this == FALSE) {
         return Value.create(other.width, 0, -1, 0);
-      if (this == TRUE || this == UNKNOWN)
+      }
+      if (this == TRUE || this == UNKNOWN) {
         return other;
+      }
       return Value.create(other.width, -1, 0, 0);
     } else if (this.width != other.width) {
       return Value.create(other.width, -1, 0, 0);
@@ -259,13 +313,25 @@ public class Value {
   }
 
   public Value combine(Value other) {
-    if (other == null) return this;
-    if (this == NIL) return other;
-    if (other == NIL) return this;
+    if (other == null) {
+      return this;
+    }
+    if (this == NIL) {
+      return other;
+    }
+    if (other == NIL) {
+      return this;
+    }
     if (this.width == 1 && other.width == 1) {
-      if (this == other) return this;
-      if (this == UNKNOWN) return other;
-      if (other == UNKNOWN) return this;
+      if (this == other) {
+        return this;
+      }
+      if (this == UNKNOWN) {
+        return other;
+      }
+      if (other == UNKNOWN) {
+        return this;
+      }
       return ERROR;
     } else {
       long disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
@@ -293,15 +359,17 @@ public class Value {
   @Override
   public boolean equals(Object otherObj) {
     return (otherObj instanceof Value other)
-           ? this.width == other.width
-              && this.error == other.error
-              && this.unknown == other.unknown
-              && this.value == other.value
-           : false;
+        ? this.width == other.width
+        && this.error == other.error
+        && this.unknown == other.unknown
+        && this.value == other.value
+        : false;
   }
 
   public Value extendWidth(int newWidth, Value others) {
-    if (width == newWidth) return this;
+    if (width == newWidth) {
+      return this;
+    }
     long maskInverse = (width == 64 ? 0 : (-1L << width));
     if (others == Value.ERROR) {
       return Value.create(newWidth, error | maskInverse, unknown, value);
@@ -315,12 +383,19 @@ public class Value {
   }
 
   public Value get(int which) {
-    if (which < 0 || which >= width) return ERROR;
+    if (which < 0 || which >= width) {
+      return ERROR;
+    }
     long mask = 1L << which;
-    if ((error & mask) != 0) return ERROR;
-    else if ((unknown & mask) != 0) return UNKNOWN;
-    else if ((value & mask) != 0) return TRUE;
-    else return FALSE;
+    if ((error & mask) != 0) {
+      return ERROR;
+    } else if ((unknown & mask) != 0) {
+      return UNKNOWN;
+    } else if ((value & mask) != 0) {
+      return TRUE;
+    } else {
+      return FALSE;
+    }
   }
 
   public Value[] getAll() {
@@ -341,9 +416,13 @@ public class Value {
     } else if (width == 0) {
       return nilColor;
     } else if (width == 1) {
-      if (this == UNKNOWN) return unknownColor;
-      else if (this == TRUE) return trueColor;
-      else return falseColor;
+      if (this == UNKNOWN) {
+        return unknownColor;
+      } else if (this == TRUE) {
+        return trueColor;
+      } else {
+        return falseColor;
+      }
     } else {
       return multiColor;
     }
@@ -380,8 +459,12 @@ public class Value {
 
   public Value not() {
     if (width <= 1) {
-      if (this == TRUE) return FALSE;
-      if (this == FALSE) return TRUE;
+      if (this == TRUE) {
+        return FALSE;
+      }
+      if (this == FALSE) {
+        return TRUE;
+      }
       return ERROR;
     } else {
       return Value.create(this.width, this.error | this.unknown, 0, ~this.value);
@@ -389,10 +472,16 @@ public class Value {
   }
 
   public Value or(Value other) {
-    if (other == null) return this;
+    if (other == null) {
+      return this;
+    }
     if (this.width == 1 && other.width == 1) {
-      if (this == TRUE || other == TRUE) return TRUE;
-      if (this == FALSE && other == FALSE) return FALSE;
+      if (this == TRUE || other == TRUE) {
+        return TRUE;
+      }
+      if (this == FALSE && other == FALSE) {
+        return FALSE;
+      }
       return ERROR;
     } else {
       long true0 = this.value & ~this.error & ~this.unknown;
@@ -428,10 +517,15 @@ public class Value {
       case 0:
         return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return Character.toString(ERRORCHAR);
-        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
-        else if (value != 0) return Character.toString(TRUECHAR);
-        else return Character.toString(FALSECHAR);
+        if (error != 0) {
+          return Character.toString(ERRORCHAR);
+        } else if (unknown != 0) {
+          return Character.toString(UNKNOWNCHAR);
+        } else if (value != 0) {
+          return Character.toString(TRUECHAR);
+        } else {
+          return Character.toString(FALSECHAR);
+        }
       default:
         final var ret = new StringBuilder();
         for (int i = width - 1; i >= 0; i--) {
@@ -442,9 +536,15 @@ public class Value {
   }
 
   public String toDecimalString(boolean signed) {
-    if (width == 0) return Character.toString(DONTCARECHAR);
-    if (isErrorValue()) return Character.toString(ERRORCHAR);
-    if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
+    if (width == 0) {
+      return Character.toString(DONTCARECHAR);
+    }
+    if (isErrorValue()) {
+      return Character.toString(ERRORCHAR);
+    }
+    if (!isFullyDefined()) {
+      return Character.toString(UNKNOWNCHAR);
+    }
 
     // Keep only valid bits, zeroing bits above value width.
     long mask = (-1L) >>> (Long.SIZE - width);
@@ -467,15 +567,22 @@ public class Value {
       case 0:
         return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return Character.toString(ERRORCHAR);
-        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
-        else if (value != 0) return Character.toString(TRUECHAR);
-        else return Character.toString(FALSECHAR);
+        if (error != 0) {
+          return Character.toString(ERRORCHAR);
+        } else if (unknown != 0) {
+          return Character.toString(UNKNOWNCHAR);
+        } else if (value != 0) {
+          return Character.toString(TRUECHAR);
+        } else {
+          return Character.toString(FALSECHAR);
+        }
       default:
         final var ret = new StringBuilder();
         for (var i = width - 1; i >= 0; i--) {
           ret.append(get(i).toString());
-          if (i % 4 == 0 && i != 0) ret.append(" ");
+          if (i % 4 == 0 && i != 0) {
+            ret.append(" ");
+          }
         }
         return ret.toString();
     }
@@ -490,9 +597,15 @@ public class Value {
       case 16:
         return toHexString();
       default:
-        if (width == 0) return Character.toString(DONTCARECHAR);
-        if (isErrorValue()) return Character.toString(ERRORCHAR);
-        if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
+        if (width == 0) {
+          return Character.toString(DONTCARECHAR);
+        }
+        if (isErrorValue()) {
+          return Character.toString(ERRORCHAR);
+        }
+        if (!isFullyDefined()) {
+          return Character.toString(UNKNOWNCHAR);
+        }
         return Long.toString(toLongValue(), radix);
     }
   }
@@ -519,27 +632,39 @@ public class Value {
             break;
           }
           v = 2 * v;
-          if (vals[j] == Value.TRUE) v++;
+          if (vals[j] == Value.TRUE) {
+            v++;
+          }
         }
-        if (c[i] == ' ') c[i] = Character.forDigit(v, 16);
+        if (c[i] == ' ') {
+          c[i] = Character.forDigit(v, 16);
+        }
       }
       return new String(c);
     }
   }
 
   public long toLongValue() {
-    if (error != 0) return -1L;
-    if (unknown != 0) return -1L;
+    if (error != 0) {
+      return -1L;
+    }
+    if (unknown != 0) {
+      return -1L;
+    }
     return value;
   }
 
   public float toFloatValue() {
-    if (error != 0 || unknown != 0 || width != 32) return Float.NaN;
+    if (error != 0 || unknown != 0 || width != 32) {
+      return Float.NaN;
+    }
     return Float.intBitsToFloat((int) value);
   }
 
   public double toDoubleValue() {
-    if (error != 0 || unknown != 0 || width != 64) return Double.NaN;
+    if (error != 0 || unknown != 0 || width != 64) {
+      return Double.NaN;
+    }
     return Double.longBitsToDouble(value);
   }
 
@@ -565,9 +690,13 @@ public class Value {
             break;
           }
           v = 2 * v;
-          if (vals[j] == Value.TRUE) v++;
+          if (vals[j] == Value.TRUE) {
+            v++;
+          }
         }
-        if (c[i] == ' ') c[i] = Character.forDigit(v, 8);
+        if (c[i] == ' ') {
+          c[i] = Character.forDigit(v, 8);
+        }
       }
       return new String(c);
     }
@@ -579,27 +708,44 @@ public class Value {
       case 0:
         return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return Character.toString(ERRORCHAR);
-        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
-        else if (value != 0) return Character.toString(TRUECHAR);
-        else return Character.toString(FALSECHAR);
+        if (error != 0) {
+          return Character.toString(ERRORCHAR);
+        } else if (unknown != 0) {
+          return Character.toString(UNKNOWNCHAR);
+        } else if (value != 0) {
+          return Character.toString(TRUECHAR);
+        } else {
+          return Character.toString(FALSECHAR);
+        }
       default:
         final var ret = new StringBuilder();
         for (var i = width - 1; i >= 0; i--) {
           ret.append(get(i).toString());
-          if (i % 4 == 0 && i != 0) ret.append(" ");
+          if (i % 4 == 0 && i != 0) {
+            ret.append(" ");
+          }
         }
         return ret.toString();
     }
   }
 
   public Value xor(Value other) {
-    if (other == null) return this;
+    if (other == null) {
+      return this;
+    }
     if (this.width <= 1 && other.width <= 1) {
-      if (this == ERROR || other == ERROR) return ERROR;
-      if (this == UNKNOWN || other == UNKNOWN) return ERROR;
-      if (this == NIL || other == NIL) return ERROR;
-      if ((this == TRUE) == (other == TRUE)) return FALSE;
+      if (this == ERROR || other == ERROR) {
+        return ERROR;
+      }
+      if (this == UNKNOWN || other == UNKNOWN) {
+        return ERROR;
+      }
+      if (this == NIL || other == NIL) {
+        return ERROR;
+      }
+      if ((this == TRUE) == (other == TRUE)) {
+        return FALSE;
+      }
       return TRUE;
     } else {
       return Value.create(
