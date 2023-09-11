@@ -412,7 +412,8 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
+  public boolean drawImage(
+      Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
     System.out.println(
         "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer)");
     return false;
@@ -462,7 +463,8 @@ public class TikZWriter extends Graphics2D {
     MyInfo.writeFile(outfile);
   }
 
-  public void writeSvg(int width, int height, File outfile) throws ParserConfigurationException, TransformerException {
+  public void writeSvg(int width, int height, File outfile)
+      throws ParserConfigurationException, TransformerException {
     MyInfo.writeSvg(width, height, outfile);
   }
 }

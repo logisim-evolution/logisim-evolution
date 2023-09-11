@@ -16,8 +16,10 @@ import com.cburch.logisim.fpga.gui.PartialMapDialog;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.DotMatrix;
+import com.cburch.logisim.std.io.HexDigit;
 import com.cburch.logisim.std.io.LedBar;
 import com.cburch.logisim.std.io.RgbLed;
+import com.cburch.logisim.std.io.SevenSegment;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -88,7 +90,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   private Integer myArrayId = -1;
   private char myPullBehavior;
   private char myActivityLevel;
-  private char nyIoStandard;
+  private char myIoStandard;
   private char myDriveStrength;
   private String myLabel;
   private boolean toBeDeleted = false;
@@ -110,7 +112,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
   }
@@ -123,7 +125,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
     if (rect != null) rect.setLabel(null);
@@ -157,7 +159,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
     ArrayList<String> InputLocs = new ArrayList<>();
@@ -214,6 +216,20 @@ public class FpgaIoInformationContainer implements Cloneable {
           }
         }
       }
+      if (thisAttr.getNodeName().equals(BoardWriterClass.SCANNING_SEVEN_SEGMENT_INFO_STRING)) {
+        final var vals = thisAttr.getNodeValue().split(",");
+        if (vals.length == 3) {
+          try {
+            nrOfRows = Integer.parseUnsignedInt(vals[0]);
+            nrOfColumns = Integer.parseInt(vals[1]);  
+            driving = SevenSegmentScanningDriving.getId(vals[2]);
+          } catch (NumberFormatException e) {
+            nrOfRows = 4;
+            nrOfColumns = 2;
+            driving = SevenSegmentScanningDriving.SEVEN_SEG_DECODED;
+          }
+        }
+      }
       if (thisAttr.getNodeName().equals(BoardWriterClass.PIN_LOCATION_STRING)) {
         setNrOfPins(1);
         myPinLocations.put(0, thisAttr.getNodeValue());
@@ -236,7 +252,7 @@ public class FpgaIoInformationContainer implements Cloneable {
         myPullBehavior = PullBehaviors.getId(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(IoStandards.IO_ATTRIBUTE_STRING)) {
-        nyIoStandard = IoStandards.getId(thisAttr.getNodeValue());
+        myIoStandard = IoStandards.getId(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(PinActivity.ACTIVITY_ATTRIBUTE_STRING)) {
         myActivityLevel = PinActivity.getId(thisAttr.getNodeValue());
@@ -312,6 +328,15 @@ public class FpgaIoInformationContainer implements Cloneable {
       myOutputPins.clear();
       for (var i = 0; i < nrOfPins; i++)
         myOutputPins.add(i);
+    }
+    if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
+      nrOfExternalPins = nrOfPins;
+      nrOfPins = nrOfRows * 8;
+      setNrOfPins(nrOfPins);
+      myOutputPins.clear();
+      for (var pinNr = 0; pinNr < nrOfPins; pinNr++) {
+        myOutputPins.add(pinNr);
+      }
     }
   }
 
@@ -406,11 +431,33 @@ public class FpgaIoInformationContainer implements Cloneable {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return super.clone();
+    var clone = new FpgaIoInformationContainer();
+    clone.myType = myType;
+    clone.myRectangle = myRectangle;
+    clone.myRotation = myRotation;
+    clone.myPinLocations = myPinLocations;
+    clone.myInputPins = myInputPins;
+    clone.myOutputPins = myOutputPins;
+    clone.myIoPins = myIoPins;
+    clone.nrOfPins = nrOfPins;
+    clone.nrOfExternalPins = nrOfExternalPins;
+    clone.myArrayId = myArrayId;
+    clone.myPullBehavior = myPullBehavior;
+    clone.myActivityLevel = myActivityLevel;
+    clone.myIoStandard = myIoStandard;
+    clone.myDriveStrength = myDriveStrength;
+    clone.myLabel = myLabel;
+    clone.driving = driving;
+    clone.nrOfRows = nrOfRows;
+    clone.nrOfColumns = nrOfColumns;
+    for (var pinId = 0; pinId < nrOfPins; pinId++) {
+      clone.pinIsMapped.add(null);
+    }
+    return clone;
   }
 
   public String getPinLocation(int index) {
-    return myPinLocations.containsKey(index) ? myPinLocations.get(index) : "";
+    return myPinLocations.getOrDefault(index, "");
   }
 
   public void setInputPinLocation(int index, String value) {
@@ -464,15 +511,18 @@ public class FpgaIoInformationContainer implements Cloneable {
             + ","
             + LedArrayDriving.getStrings().get(driving));
       }
+      if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
+        result.setAttribute(
+            BoardWriterClass.SCANNING_SEVEN_SEGMENT_INFO_STRING, 
+            String.format("%d,%d,%s", nrOfRows, nrOfColumns, SevenSegmentScanningDriving.getStrings().get(driving)));
+      }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
-          case IoComponentTypes.ROTATION_CW_90:
-          case IoComponentTypes.ROTATION_CCW_90:
-            result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
-            break;
-          default:
+          case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90 ->
+              result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
+          default -> {
             // no rotation
-            break;
+          }
         }
       }
       if (CollectionUtil.isNotEmpty(myInputPins)) {
@@ -524,9 +574,9 @@ public class FpgaIoInformationContainer implements Cloneable {
         pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[myPullBehavior]);
         result.setAttributeNode(pull);
       }
-      if (nyIoStandard != IoStandards.UNKNOWN && nyIoStandard != IoStandards.DEFAULT_STANDARD) {
+      if (myIoStandard != IoStandards.UNKNOWN && myIoStandard != IoStandards.DEFAULT_STANDARD) {
         final var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
-        stand.setValue(IoStandards.BEHAVIOR_STRINGS[nyIoStandard]);
+        stand.setValue(IoStandards.BEHAVIOR_STRINGS[myIoStandard]);
         result.setAttributeNode(stand);
       }
       if (myActivityLevel != PinActivity.Unknown && myActivityLevel != PinActivity.ACTIVE_HIGH) {
@@ -565,11 +615,11 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public char getIoStandard() {
-    return nyIoStandard;
+    return myIoStandard;
   }
 
   public void setIOStandard(char IoStandard) {
-    nyIoStandard = IoStandard;
+    myIoStandard = IoStandard;
   }
 
   public int getNrOfPins() {
@@ -643,7 +693,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     myPinLocations.put(0, loc);
     myPullBehavior = PullBehaviors.getId(pull);
     myActivityLevel = PinActivity.getId(active);
-    nyIoStandard = IoStandards.getId(standard);
+    myIoStandard = IoStandards.getId(standard);
     myDriveStrength = DriveStrength.getId(drive);
     myLabel = label;
     if (rect != null) rect.setLabel(label);
@@ -926,6 +976,32 @@ public class FpgaIoInformationContainer implements Cloneable {
     }
     return false;
   }
+  
+  public boolean tryScanningMap(JPanel parent) {
+    var map = selComp.getMap();
+    if (selComp.getPin() >= 0 && selectedPin >= 0) {
+      /* single pin on a selected Pin */
+      map.unmap(selComp.getPin());
+      return map.tryMap(selComp.getPin(), this, selectedPin);
+    }
+    /* okay, the map component has more than one pin, we see if it is a seven segment
+     * display, or a hex display, otherwise we use the partialmapdialog
+     */
+    final var fact = map.getComponentFactory(); 
+    if (fact instanceof SevenSegment || fact instanceof HexDigit) {
+      final var hasDp = map.getAttributeSet().getValue(SevenSegment.ATTR_DP);
+      final var nrOfSegments = (hasDp) ? 8 : 7;
+      final var selectedSegment = selectedPin / 8;
+      var canMap = true;
+      map.unmap();
+      for (var segment = 0; segment < nrOfSegments; segment++) {
+        canMap &= map.tryMap(segment, this, segment + selectedSegment * 8);
+      }
+      return canMap;
+    }
+    var diag = new PartialMapDialog(selComp, this, parent);
+    return diag.doit();
+  }
 
   public boolean tryLedArrayMap(JPanel parent) {
     var map = selComp.getMap();
@@ -937,7 +1013,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     /* okay, the map component has more than one pin, then we treat first the RGB-LED,
      * DotMatrix, and LedBar, all others will be handled by a partialmapdialog
      */
-    var fact = map.getComponentFactory();
+    final var fact = map.getComponentFactory();
     if (fact instanceof DotMatrix) {
       var nrOfMatrixRows = map.getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_ROWS).getWidth();
       var nrOfMatrixColumns = map.getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_COLS).getWidth();
@@ -988,8 +1064,12 @@ public class FpgaIoInformationContainer implements Cloneable {
   public boolean tryMap(JPanel parent) {
     if (!selectable) return false;
     if (selComp == null) return false;
-    if (myType.equals(IoComponentTypes.LedArray))
+    if (myType.equals(IoComponentTypes.LedArray)) {
       return tryLedArrayMap(parent);
+    }
+    if (myType.equals(IoComponentTypes.SevenSegmentScanning)) {
+      return tryScanningMap(parent);
+    }
     var map = selComp.getMap();
     if (selComp.getPin() >= 0 && nrOfPins == 1) {
       /* single pin only */

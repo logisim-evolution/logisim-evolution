@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
@@ -29,15 +30,17 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
 public class SocVga extends SocInstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "SocVga";
 
@@ -61,17 +64,18 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
     instance.recomputeBounds();
     Bounds bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() / 2,
-            bds.getY() - 3,
-            GraphicsUtil.H_CENTER,
-            GraphicsUtil.V_BASELINE);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() / 2,
+        bds.getY() - 3,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_BASELINE);
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
-    return VgaState.getSize(VgaAttributes.getModeIndex(attrsBase.getValue(VgaAttributes.VGA_STATE).getCurrentMode()));
+    return VgaState.getSize(
+        VgaAttributes.getModeIndex(attrsBase.getValue(VgaAttributes.VGA_STATE).getCurrentMode()));
   }
 
   @Override
@@ -92,25 +96,31 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
   public void paintInstance(InstancePainter painter) {
     Bounds bds1 = painter.getBounds();
     Bounds bds2 = getOffsetBounds(painter.getAttributeSet());
+    Graphics gfx = painter.getGraphics().create();
     if (bds1.getWidth() != bds2.getWidth() || bds1.getHeight() != bds2.getHeight())
       setTextField(painter.getInstance());
+    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawLabel();
-    Graphics g = painter.getGraphics().create();
     Location loc = painter.getLocation();
     Bounds bds = painter.getBounds();
-    g.translate(loc.getX(), loc.getY());
-    Font f = g.getFont();
-    g.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g, "SOC VGA", bds.getWidth() / 2, 10);
-    g.setFont(f);
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
-        .paint(g, Bounds.create(VgaState.LEFT_MARGIN, bds.getHeight() - VgaState.BOTTOM_MARGIN + 1,
-                bds.getWidth() - VgaState.LEFT_MARGIN - VgaState.RIGHT_MARGIN, VgaState.BOTTOM_MARGIN - 2));
+    gfx.translate(loc.getX(), loc.getY());
+    Font f = gfx.getFont();
+    gfx.setFont(StdAttr.DEFAULT_LABEL_FONT);
+    GraphicsUtil.drawCenteredText(gfx, "SOC VGA", bds.getWidth() / 2, 10);
+    gfx.setFont(f);
+    painter
+        .getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
+        .paint(
+            gfx,
+            Bounds.create(
+                VgaState.LEFT_MARGIN,
+                bds.getHeight() - VgaState.BOTTOM_MARGIN + 1,
+                bds.getWidth() - VgaState.LEFT_MARGIN - VgaState.RIGHT_MARGIN,
+                VgaState.BOTTOM_MARGIN - 2));
     VgaState.VgaDisplayState data = (VgaState.VgaDisplayState) painter.getData();
-    if (data != null)
-      data.paint(g, painter.getCircuitState());
-    g.dispose();
+    if (data != null) data.paint(gfx, painter.getCircuitState());
+    gfx.dispose();
   }
 
   @Override

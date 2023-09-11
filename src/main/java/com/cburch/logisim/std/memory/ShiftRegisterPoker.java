@@ -31,13 +31,10 @@ public class ShiftRegisterPoker extends InstancePoker {
 
       var y = bds.getY();
       final var label = state.getAttributeValue(StdAttr.LABEL);
-      if (label == null || label.equals(""))
-        y += bds.getHeight() / 2;
-      else
-        y += 3 * bds.getHeight() / 4;
+      if (label == null || label.equals("")) y += bds.getHeight() / 2;
+      else y += 3 * bds.getHeight() / 4;
       y = e.getY() - y;
-      if (y <= -6 || y >= 8)
-        return -1;
+      if (y <= -6 || y >= 8) return -1;
       final var x = e.getX() - (bds.getX() + 15);
       if (!loadObj || widObj.getWidth() > 4) return -1;
       if (x < 0 || x >= lenObj * 10) return -1;
@@ -151,10 +148,8 @@ public class ShiftRegisterPoker extends InstancePoker {
       final var x = bds.getX() + 15 + loc * 10;
       var y = bds.getY();
       final var label = painter.getAttributeValue(StdAttr.LABEL);
-      if (label == null || label.equals(""))
-        y += bds.getHeight() / 2;
-      else
-        y += 3 * bds.getHeight() / 4;
+      if (label == null || label.equals("")) y += bds.getHeight() / 2;
+      else y += 3 * bds.getHeight() / 4;
       final var g = painter.getGraphics();
       g.setColor(Color.RED);
       g.drawRect(x, y - 6, 10, 13);

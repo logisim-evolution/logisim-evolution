@@ -135,22 +135,22 @@ public class ElfHeader {
     }
 
     public Object getValue(int identifier) {
-      switch (identifier) {
-        case E_TYPE : return e_type;
-        case E_MACHINE : return e_machine;
-        case E_VERSION : return e_version;
-        case E_ENTRY:  return returnCorrectValue(e_entry, is32Bit);
-        case E_PHOFF : return returnCorrectValue(e_phoff, is32Bit);
-        case E_SHOFF : return returnCorrectValue(e_shoff, is32Bit);
-        case E_FLAGS : return e_flags;
-        case E_EHSIZE : return e_ehsize;
-        case E_PHENTSIZE : return e_phentsize;
-        case E_PHNUM : return e_phnum;
-        case E_SHENTSIZE : return e_shentsize;
-        case E_SHNUM : return e_shnum;
-        case E_SHSTRNDX : return e_shstrndx;
-      }
-      return null;
+      return switch (identifier) {
+        case E_TYPE -> e_type;
+        case E_MACHINE -> e_machine;
+        case E_VERSION -> e_version;
+        case E_ENTRY -> returnCorrectValue(e_entry, is32Bit);
+        case E_PHOFF -> returnCorrectValue(e_phoff, is32Bit);
+        case E_SHOFF -> returnCorrectValue(e_shoff, is32Bit);
+        case E_FLAGS -> e_flags;
+        case E_EHSIZE -> e_ehsize;
+        case E_PHENTSIZE -> e_phentsize;
+        case E_PHNUM -> e_phnum;
+        case E_SHENTSIZE -> e_shentsize;
+        case E_SHNUM -> e_shnum;
+        case E_SHSTRNDX -> e_shstrndx;
+        default -> null;
+      };
     }
 
   }

@@ -68,5 +68,4 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
   }
 
   public abstract void performClickAction(InstanceState state, MouseEvent e);
-
 }

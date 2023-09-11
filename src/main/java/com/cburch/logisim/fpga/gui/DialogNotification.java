@@ -33,29 +33,27 @@ public class DialogNotification {
     }
     GridBagLayout dialogLayout = new GridBagLayout();
     dialog.setLayout(dialogLayout);
-    GridBagConstraints c = new GridBagConstraints();
+    GridBagConstraints gbc = new GridBagConstraints();
     JLabel message = new JLabel(string);
     JButton close = new JButton(S.get("FpgaBoardClose"));
-    ActionListener actionListener =
-        e -> dialog.dispose();
+    ActionListener actionListener = e -> dialog.dispose();
     close.addActionListener(actionListener);
 
-    c.gridx = 0;
-    c.gridy = 0;
-    c.ipadx = 20;
-    dialog.add(pic, c);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.ipadx = 20;
+    dialog.add(pic, gbc);
 
-    c.gridx = 1;
-    c.gridy = 0;
-    dialog.add(message, c);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    dialog.add(message, gbc);
 
-    c.gridx = 1;
-    c.gridy = 1;
-    dialog.add(close, c);
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    dialog.add(close, gbc);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
     dialog.setAlwaysOnTop(true);
     dialog.setVisible(true);
   }
-
 }

@@ -32,8 +32,8 @@ public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     super();
     myParametersList
         .add(SELECT_BITS_STRING, SELECT_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, BitSelector.SELECT_ATTR)
-        .add(INPUT_BITS_STRING, INPUT_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, BitSelector.EXTENDED_ATTR)
-        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
+        .add(INPUT_BITS_STRING, INPUT_BITS_ID)
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, BitSelector.EXTENDED_ATTR)
         .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
     myWires
         .addWire("s_extendedVector", EXTENDED_BITS_ID);

@@ -51,7 +51,7 @@ class WireIterator implements Iterator<Location> {
 
   @Override
   public Location next() {
-    final var ret = Location.create(curX, curY);
+    final var ret = Location.create(curX, curY, true);
     destReturned |= curX == destX && curY == destY;
     curX += deltaX;
     curY += deltaY;

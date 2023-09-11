@@ -37,7 +37,6 @@ class ExpressionView extends JPanel {
         repaint();
       }
     }
-
   }
 
   public static class NamedExpression {
@@ -56,7 +55,6 @@ class ExpressionView extends JPanel {
       exprString = s;
     }
   }
-
 
   private static final long serialVersionUID = 1L;
 

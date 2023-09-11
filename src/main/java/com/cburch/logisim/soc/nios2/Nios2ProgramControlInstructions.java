@@ -252,7 +252,7 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
         } else {
           sourceA = sourceB = 0;
           long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
-          long imml = pc - target - 4L;
+          long imml = target - pc - 4L;
           if (imml >= (1L << 15) || imml < -(1L << 15)) {
             valid = false;
             instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
@@ -276,7 +276,7 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
           instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
         }
         long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
-        long imml = pc - target - 4L;
+        long imml = target - pc - 4L;
         if (imml >= (1L << 15) || imml < -(1L << 15)) {
           valid = false;
           instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
@@ -287,22 +287,22 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
     /* transform the pseudo instructions */
     boolean switchab = false;
     switch (operation) {
-      case INSTR_BGT:
+      case INSTR_BGT -> {
         operation = INSTR_BLT;
         switchab = true;
-        break;
-      case INSTR_BGTU:
+      }
+      case INSTR_BGTU -> {
         operation = INSTR_BLTU;
         switchab = true;
-        break;
-      case INSTR_BLE:
+      }
+      case INSTR_BLE -> {
         operation = INSTR_BGE;
         switchab = true;
-        break;
-      case INSTR_BLEU:
+      }
+      case INSTR_BLEU -> {
         operation = INSTR_BGEU;
         switchab = true;
-        break;
+      }
     }
     if (switchab) {
       int tmp = sourceA;
@@ -311,24 +311,15 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
     }
     if (valid) {
       switch (operation) {
-        case INSTR_CALLR:
-          instruction = Nios2Support.getRTypeInstructionCode(sourceA, 0, 0x1f, 0x1d);
-          break;
-        case INSTR_RET:
-          instruction = Nios2Support.getRTypeInstructionCode(0x1f, 0, 0, 0x05);
-          break;
-        case INSTR_JMP:
-          instruction = Nios2Support.getRTypeInstructionCode(sourceA, 0, 0, 0x0d);
-          break;
-        case INSTR_CALL:
-        case INSTR_JMPI:
-          instruction = Nios2Support.getJTypeInstructionCode(immediate, OpcCodes.get(operation));
-          break;
-        default:
-          instruction =
-              Nios2Support.getITypeInstructionCode(
-                  sourceA, sourceB, immediate, OpcCodes.get(operation));
-          break;
+        case INSTR_CALLR ->
+            instruction = Nios2Support.getRTypeInstructionCode(sourceA, 0, 0x1f, 0x1d);
+        case INSTR_RET -> instruction = Nios2Support.getRTypeInstructionCode(0x1f, 0, 0, 0x05);
+        case INSTR_JMP -> instruction = Nios2Support.getRTypeInstructionCode(sourceA, 0, 0, 0x0d);
+        case INSTR_CALL, INSTR_JMPI ->
+            instruction = Nios2Support.getJTypeInstructionCode(immediate, OpcCodes.get(operation));
+        default -> instruction =
+            Nios2Support.getITypeInstructionCode(
+                sourceA, sourceB, immediate, OpcCodes.get(operation));
       }
       instr.setInstructionByteCode(instruction, 4);
     }
@@ -369,21 +360,20 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
       valid = true;
       operation = OpcCodes.indexOf(opcode);
       switch (operation) {
-        case INSTR_JMPI:
-        case INSTR_CALL:
-          immediate = Nios2Support.getImmediate(instr, Nios2Support.J_TYPE);
-          break;
-        case INSTR_BR:
+        case INSTR_JMPI, INSTR_CALL ->
+            immediate = Nios2Support.getImmediate(instr, Nios2Support.J_TYPE);
+        case INSTR_BR -> {
           immediate = Nios2Support.getImmediate(instr, Nios2Support.I_TYPE);
           if (Nios2Support.getRegAIndex(instr, Nios2Support.I_TYPE) != 0
               || Nios2Support.getRegBIndex(instr, Nios2Support.I_TYPE) != 0) {
             valid = false;
           }
-          break;
-        default:
+        }
+        default -> {
           immediate = Nios2Support.getImmediate(instr, Nios2Support.I_TYPE);
           sourceA = Nios2Support.getRegAIndex(instr, Nios2Support.I_TYPE);
           sourceB = Nios2Support.getRegBIndex(instr, Nios2Support.I_TYPE);
+        }
       }
     }
     return valid;

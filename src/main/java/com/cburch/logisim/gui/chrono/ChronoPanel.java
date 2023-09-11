@@ -38,6 +38,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -59,6 +60,8 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   private JScrollPane leftScroll;
   private JScrollPane rightScroll;
   private JSplitPane splitPane;
+  private JButton selButton;
+  
   // listeners
 
   public ChronoPanel(LogFrame logFrame) {
@@ -81,29 +84,29 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     final var simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
     final var toolbar = new Toolbar(simTools);
     final var toolpanel = new JPanel();
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    toolpanel.setLayout(gb);
-    gc.fill = GridBagConstraints.NONE;
-    gc.weightx = gc.weighty = 0.0;
-    gc.gridx = gc.gridy = 0;
-    gb.setConstraints(toolbar, gc);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    toolpanel.setLayout(gbl);
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.gridx = gbc.gridy = 0;
+    gbl.setConstraints(toolbar, gbc);
     toolpanel.add(toolbar);
 
-    final var b = logFrame.makeSelectionButton();
-    b.setFont(b.getFont().deriveFont(10.0f));
-    Insets insets = gc.insets;
-    gc.insets = new Insets(2, 0, 2, 0);
-    gc.gridx = 1;
-    gb.setConstraints(b, gc);
-    toolpanel.add(b);
-    gc.insets = insets;
+    selButton = logFrame.makeSelectionButton();
+    selButton.setFont(selButton.getFont().deriveFont(10.0f));
+    Insets insets = gbc.insets;
+    gbc.insets = new Insets(2, 0, 2, 0);
+    gbc.gridx = 1;
+    gbl.setConstraints(selButton, gbc);
+    toolpanel.add(selButton);
+    gbc.insets = insets;
 
     final var filler = Box.createHorizontalGlue();
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.weightx = 1.0;
-    gc.gridx = 2;
-    gb.setConstraints(filler, gc);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = 1.0;
+    gbc.gridx = 2;
+    gbl.setConstraints(filler, gbc);
     toolpanel.add(filler);
     add(toolpanel, BorderLayout.NORTH);
 
@@ -181,7 +184,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
     leftPanel.getSelectionModel().addListSelectionListener(e -> editHandler.computeEnabled());
   }
-
+  @Override
+  public void localeChanged() {
+    selButton.setText(S.get("addRemoveSignals"));
+  }
   public LeftPanel getLeftPanel() {
     return leftPanel;
   }
@@ -334,7 +340,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
           setEnabled(LogisimMenuBar.DELETE, sel);
           setEnabled(LogisimMenuBar.DUPLICATE, false);
           setEnabled(LogisimMenuBar.SELECT_ALL, !empty);
-          // todo: raise/lower handlers
+          // TODO: raise/lower handlers
           setEnabled(LogisimMenuBar.RAISE, sel);
           setEnabled(LogisimMenuBar.LOWER, sel);
           setEnabled(LogisimMenuBar.RAISE_TOP, sel);
@@ -404,7 +410,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
           GraphicsUtil.drawText(
               g,
-              S.get("ChronoPrintTitle", model.getCircuit().getName(), getProject().getLogisimFile().getDisplayName()),
+              S.get(
+                  "ChronoPrintTitle",
+                  model.getCircuit().getName(),
+                  getProject().getLogisimFile().getDisplayName()),
               (int) (w / 2),
               0,
               GraphicsUtil.H_CENTER,

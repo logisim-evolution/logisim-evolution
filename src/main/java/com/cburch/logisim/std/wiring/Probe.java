@@ -39,10 +39,10 @@ import java.util.Objects;
 
 public class Probe extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Probe";
 
@@ -257,7 +257,12 @@ public class Probe extends InstanceFactory {
       int cx = bds.getX() + bds.getWidth() - LabelValueXOffset - 2;
       for (int k = text.length() - 1; k >= 0; k--) {
         GraphicsUtil.drawText(
-            g, text.substring(k, k + 1), cx, bds.getY() + bds.getHeight() / 2 - 1, GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+            g,
+            text.substring(k, k + 1),
+            cx,
+            bds.getY() + bds.getHeight() / 2 - 1,
+            GraphicsUtil.H_RIGHT,
+            GraphicsUtil.H_CENTER);
         cx -= Pin.DIGIT_WIDTH;
       }
     }

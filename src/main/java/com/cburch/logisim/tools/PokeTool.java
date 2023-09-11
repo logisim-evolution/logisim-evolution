@@ -224,7 +224,7 @@ public class PokeTool extends Tool {
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     int x = e.getX();
     int y = e.getY();
-    final var loc = Location.create(x, y);
+    final var loc = Location.create(x, y, false);
     var dirty = false;
     canvas.setHighlightedWires(WireSet.EMPTY);
     if (pokeCaret != null && !pokeCaret.getBounds(g).contains(loc)) {

@@ -88,7 +88,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   final JRadioButton realTime = new JRadioButton();
   final JRadioButton clockTime = new JRadioButton();
 
-  // todo: save defaults with project and/or compute from circuit clocks
+  // TODO: save defaults with project and/or compute from circuit clocks
   final JCheckBox stepFine = new JCheckBox();
   final JCheckBox realFine = new JCheckBox();
   final JCheckBox clockFine = new JCheckBox();
@@ -132,7 +132,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
   final JScrollPane pane;
 
-  // todo: tooltips?
+  // TODO: tooltips?
   OptionsPanel(LogFrame frame) {
     super(frame);
 
@@ -212,43 +212,43 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
     JPanel inner = new ScrollablePanel();
 
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
-    inner.setLayout(gb);
+    GridBagLayout gbl = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    inner.setLayout(gbl);
 
-    gc.fill = GridBagConstraints.BOTH;
-    gc.insets = new Insets(5, 5, 5, 5);
-    gc.weightx = gc.weighty = 0.0f;
-    gc.gridx = gc.gridy = 0;
-    gb.setConstraints(selectionPanel, gc);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.insets = new Insets(5, 5, 5, 5);
+    gbc.weightx = gbc.weighty = 0.0f;
+    gbc.gridx = gbc.gridy = 0;
+    gbl.setConstraints(selectionPanel, gbc);
     inner.add(selectionPanel);
 
-    gc.gridy = 1;
+    gbc.gridy = 1;
 
-    gb.setConstraints(modePanel, gc);
+    gbl.setConstraints(modePanel, gbc);
     inner.add(modePanel);
 
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gc.gridheight = 2;
-    gb.setConstraints(optionsPanel, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.gridheight = 2;
+    gbl.setConstraints(optionsPanel, gbc);
     inner.add(optionsPanel);
 
-    gc.gridx = 2;
-    gb.setConstraints(historyPanel, gc);
+    gbc.gridx = 2;
+    gbl.setConstraints(historyPanel, gbc);
     inner.add(historyPanel);
 
     java.awt.Component fill = Box.createGlue();
-    gc.gridx = 3;
-    gb.setConstraints(fill, gc);
+    gbc.gridx = 3;
+    gbl.setConstraints(fill, gbc);
     inner.add(fill);
 
-    gc.weightx = gc.weighty = 1.0f;
-    gc.gridx = 0;
-    gc.gridy = 2;
-    gc.gridheight = 1;
-    gc.gridwidth = 4;
-    gb.setConstraints(description, gc);
+    gbc.weightx = gbc.weighty = 1.0f;
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbc.gridheight = 1;
+    gbc.gridwidth = 4;
+    gbl.setConstraints(description, gbc);
     inner.add(description);
     description.setFont(description.getFont().deriveFont(Font.PLAIN));
 
@@ -361,7 +361,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       } else {
         final var d = clockDiscipline.getValue();
         final var discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(d)];
-        m.setClockMode(clockFine.isSelected(), discipline, clockScale.getValue(), clockGate.getValue());
+        m.setClockMode(
+            clockFine.isSelected(), discipline, clockScale.getValue(), clockGate.getValue());
       }
       updateDescription();
     }
@@ -438,7 +439,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     }
   }
 
-  // todo: listen to locale here, but need to make LocaleManager hold weak ref
+  // TODO: listen to locale here, but need to make LocaleManager hold weak ref
   static class JLabeledComboBox<E> extends JComboBox<E> {
     private static final long serialVersionUID = 1L;
     final String labelKey;
@@ -483,7 +484,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       private static final long serialVersionUID = 1L;
 
       @Override
-      public java.awt.Component getListCellRendererComponent(JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
+      public java.awt.Component getListCellRendererComponent(
+          JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
         @SuppressWarnings("unchecked")
         final String s = renderAsText((E) w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -557,6 +559,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   @Override
   public void localeChanged() {
     selectionPanel.setBorder(BorderFactory.createTitledBorder(S.get("selectionLabel")));
+    selectionButton.setText(S.get("buttonAddRemoveSignals"));  
     modePanel.setBorder(BorderFactory.createTitledBorder(S.get("modeLabel")));
     historyPanel.setBorder(BorderFactory.createTitledBorder(S.get("historyLabel")));
     stepTime.setText(S.get("stepTime"));
@@ -611,7 +614,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       mode = "clockTime";
       boolean fine = clockFine.isSelected();
       final var disciplineName = clockDiscipline.getValue();
-      final var discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
+      final var discipline =
+          clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
       boolean levelSensitive = (discipline == Model.CLOCK_HIGH || discipline == Model.CLOCK_LOW);
       clockGate.setEnabled(fine || levelSensitive);
       int ticks = 2;
@@ -649,7 +653,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       stepGate.setSelectedItem(clockGate.getValue());
     }
     ((CardLayout) optionsPanel.getLayout()).show(optionsPanel, mode);
-    optionsPanel.setBorder(BorderFactory.createTitledBorder(S.get("timingLabel") + ": " + S.get(mode)));
+    optionsPanel.setBorder(
+        BorderFactory.createTitledBorder(S.get("timingLabel") + ": " + S.get(mode)));
     description.setText("<html>" + d + "</html>"); // html to enable line wrapping
   }
 

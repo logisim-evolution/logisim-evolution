@@ -111,7 +111,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   public void addComponentListener(ComponentListener l) {
     var ls = listeners;
     if (ls == null) {
-      ls = new EventSourceWeakSupport<ComponentListener>();
+      ls = new EventSourceWeakSupport<>();
       ls.add(l);
       listeners = ls;
     } else {
@@ -239,7 +239,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
       final var current = g.getColor();
       g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);
       GraphicsUtil.switchToWidth(g, 2);
-      g.drawRoundRect(bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
+      g.drawRoundRect(
+          bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
       GraphicsUtil.switchToWidth(g, 1);
       g.setColor(current);
     }
@@ -258,7 +259,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
         final var current = g.getColor();
         g.setColor(Netlist.DRC_LABEL_MARK_COLOR);
         GraphicsUtil.switchToWidth(g, 2);
-        g.drawRoundRect(bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
+        g.drawRoundRect(
+            bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
         GraphicsUtil.switchToWidth(g, 1);
         g.setColor(current);
       }
@@ -276,7 +278,9 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public void expose(ComponentDrawContext context) {
-    context.getDestination().repaint(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+    context
+        .getDestination()
+        .repaint(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
   }
 
   private void fireLabelChanged(AttributeEvent attre) {
@@ -433,7 +437,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
     computeEnds();
   }
 
-  void setTextField(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+  void setTextField(
+      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
     var field = textField;
     if (field == null) {
       field = new InstanceTextField(this);

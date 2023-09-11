@@ -22,13 +22,11 @@ public class HdlFile {
 
   public static String load(File file) throws IOException {
 
-    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-
-      StringBuilder content = new StringBuilder();
-      String l;
-
-      while ((l = in.readLine()) != null) {
-        content.append(l);
+    try (final var in = new BufferedReader(new FileReader(file))) {
+      final var content = new StringBuilder();
+      var line = "";
+      while ((line = in.readLine()) != null) {
+        content.append(line);
         content.append(System.getProperty("line.separator"));
       }
       return content.toString();
@@ -38,11 +36,11 @@ public class HdlFile {
   }
 
   public static void save(File file, String text) throws IOException {
-
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+    try (final var out = new BufferedWriter(new FileWriter(file))) {
       out.write(text, 0, text.length());
     } catch (IOException ex) {
       throw new IOException(S.get("hdlFileWriterError"));
     }
   }
+
 }

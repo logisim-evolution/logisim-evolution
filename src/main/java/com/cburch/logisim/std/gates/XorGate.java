@@ -29,7 +29,10 @@ class XorGate extends AbstractGate {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer()
-          .add(isOneHot ? getOneHot(false, nrOfInputs, bitwidth > 1) : getParity(false, nrOfInputs, bitwidth > 1));
+          .add(
+              isOneHot
+                  ? getOneHot(false, nrOfInputs, bitwidth > 1)
+                  : getParity(false, nrOfInputs, bitwidth > 1));
     }
   }
 
@@ -96,7 +99,8 @@ class XorGate extends AbstractGate {
     paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
 
-  protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
+  protected static void paintIconANSI(
+      Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
     int xoff = negateSize >> 1;
     int ystart = negateSize >> 1;
     int yend = iconSize - ystart;

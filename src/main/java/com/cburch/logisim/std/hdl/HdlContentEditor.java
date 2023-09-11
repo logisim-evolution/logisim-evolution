@@ -38,7 +38,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -202,13 +201,11 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
             options[0]);
 
     switch (n) {
-      case OptionPane.YES_OPTION:
-        dispose();
-        break;
-      case OptionPane.CANCEL_OPTION:
+      case OptionPane.YES_OPTION -> dispose();
+      case OptionPane.CANCEL_OPTION -> {
         save.doClick();
         dispose();
-        break;
+      }
     }
   }
 

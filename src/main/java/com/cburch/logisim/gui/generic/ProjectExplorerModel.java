@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-/**
+/*
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 
@@ -18,12 +18,11 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.Tool;
-import java.util.Enumeration;
+
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 
 class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 
@@ -84,7 +83,8 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private void setLogisimFile(LogisimFile file) {
     final var oldRoot = (Node<?>) getRoot();
     oldRoot.decommission();
-    setRoot((file == null)
+    setRoot(
+        (file == null)
             ? null
             : new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
     fireStructureChanged();

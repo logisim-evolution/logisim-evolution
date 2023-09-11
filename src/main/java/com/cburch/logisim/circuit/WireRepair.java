@@ -39,7 +39,7 @@ class WireRepair extends CircuitTransaction {
       var set0 = map.get(a);
       var set1 = map.get(b);
       if (set0 == null && set1 == null) {
-        set0 = new ArrayList<Wire>(2);
+        set0 = new ArrayList<>(2);
         set0.add(a);
         set0.add(b);
         map.put(a, set0);
@@ -167,7 +167,7 @@ class WireRepair extends CircuitTransaction {
     final var wirePoints = new HashMap<Location, ArrayList<Wire>>();
     for (final var w : circuit.getWires()) {
       for (final var loc : w) {
-        final var locWires = wirePoints.computeIfAbsent(loc, k -> new ArrayList<Wire>(3));
+        final var locWires = wirePoints.computeIfAbsent(loc, k -> new ArrayList<>(3));
         locWires.add(w);
       }
     }

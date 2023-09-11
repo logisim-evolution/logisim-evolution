@@ -36,110 +36,113 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     compName = name;
     matrixInfo = value;
 
-    final var thisLayout = new GridBagLayout();
-    final var c = new GridBagConstraints();
-    setLayout(thisLayout);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    setLayout(gbl);
 
-    c.fill = GridBagConstraints.BOTH;
-    c.anchor = GridBagConstraints.CENTER;
-    c.weightx = 1;
-    c.weighty = 1;
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.weightx = 1;
+    gbc.weighty = 1;
     if ((matrixInfo.getLabel() != null) && isAutoLabelerActive) {
-      c.gridx = 0;
-      c.gridy = 0;
-      c.gridwidth = 4;
-      add(new JLabel("Base Label:"), c);
-      c.gridx = 4;
-      c.gridwidth = 7;
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.gridwidth = 4;
+      add(new JLabel("Base Label:"), gbc);
+      gbc.gridx = 4;
+      gbc.gridwidth = 7;
       labelField.setText(matrixInfo.getLabel());
       labelField.setEditable(true);
-      add(labelField, c);
-      c.gridwidth = 1;
+      add(labelField, gbc);
+      gbc.gridwidth = 1;
     }
     for (var x = 4; x < 11; x++)
       for (var y = 5; y < 12; y++) {
-        c.gridx = x;
-        c.gridy = y;
-        final var symbol = (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11))) ? "O" : ".";
+        gbc.gridx = x;
+        gbc.gridy = y;
+        final var symbol =
+            (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11)))
+                ? "O"
+                : ".";
         final var spacer = " ".repeat(3);
         final var compText = new JLabel(spacer + symbol + spacer);
-        this.add(compText, c);
+        this.add(compText, gbc);
       }
-    c.gridy = 1;
-    c.gridx = 4;
-    add(new JLabel("    <--"), c);
-    c.gridx = 10;
-    add(new JLabel("-->    "), c);
-    c.gridx = 5;
-    c.gridwidth = 3;
-    add(new JLabel("NrOfColums:"), c);
-    c.gridx = 8;
-    c.gridy = 1;
-    c.gridwidth = 2;
+    gbc.gridy = 1;
+    gbc.gridx = 4;
+    add(new JLabel("    <--"), gbc);
+    gbc.gridx = 10;
+    add(new JLabel("-->    "), gbc);
+    gbc.gridx = 5;
+    gbc.gridwidth = 3;
+    add(new JLabel("NrOfColums:"), gbc);
+    gbc.gridx = 8;
+    gbc.gridy = 1;
+    gbc.gridwidth = 2;
     for (var i = 1; i < 50; i++) {
       copiesX.addItem(i);
     }
     copiesX.setSelectedItem(1);
     copiesX.addActionListener(this);
-    add(copiesX, c);
-    c.gridy = 2;
-    c.gridwidth = 1;
-    c.gridx = 4;
-    add(new JLabel("    <--"), c);
-    c.gridx = 7;
-    add(new JLabel("-->    "), c);
-    c.gridx = 5;
-    add(new JLabel("dx:"), c);
-    c.gridx = 6;
+    add(copiesX, gbc);
+    gbc.gridy = 2;
+    gbc.gridwidth = 1;
+    gbc.gridx = 4;
+    add(new JLabel("    <--"), gbc);
+    gbc.gridx = 7;
+    add(new JLabel("-->    "), gbc);
+    gbc.gridx = 5;
+    add(new JLabel("dx:"), gbc);
+    gbc.gridx = 6;
     for (var i = matrixInfo.getMinimalDisplacementX(); i < 100; i++) {
       distanceX.addItem(i);
     }
     distanceX.setSelectedIndex(0);
     distanceX.addActionListener(this);
-    add(distanceX, c);
+    add(distanceX, gbc);
 
     for (var y = 5; y < 12; y++) {
-      c.gridy = y;
+      gbc.gridy = y;
       if (y == 5) {
-        c.gridx = 3;
-        add(new JLabel("   ^   "), c);
-        c.gridx = 2;
-        add(new JLabel("   ^   "), c);
+        gbc.gridx = 3;
+        add(new JLabel("   ^   "), gbc);
+        gbc.gridx = 2;
+        add(new JLabel("   ^   "), gbc);
       } else if (y == 11) {
-        c.gridx = 3;
-        add(new JLabel("   _   "), c);
-        c.gridx = 2;
-        c.gridy = 8;
-        add(new JLabel("   _   "), c);
+        gbc.gridx = 3;
+        add(new JLabel("   _   "), gbc);
+        gbc.gridx = 2;
+        gbc.gridy = 8;
+        add(new JLabel("   _   "), gbc);
       } else {
-        c.gridx = 3;
-        add(new JLabel("   |   "), c);
+        gbc.gridx = 3;
+        add(new JLabel("   |   "), gbc);
         if (y < 8) {
-          c.gridx = 2;
-          add(new JLabel("   |   "), c);
+          gbc.gridx = 2;
+          add(new JLabel("   |   "), gbc);
         }
       }
     }
-    c.gridx = 2;
-    c.gridy = 10;
+    gbc.gridx = 2;
+    gbc.gridy = 10;
     for (var i = 1; i < 50; i++) copiesY.addItem(i);
     copiesY.setSelectedIndex(0);
     copiesY.addActionListener(this);
-    add(copiesY, c);
-    c.gridx = 0;
-    c.gridwidth = 2;
-    add(new JLabel("NrOfRows:"), c);
-    c.gridwidth = 1;
-    c.gridx = 0;
-    c.gridy = 6;
-    add(new JLabel("dy:"), c);
-    c.gridx = 1;
+    add(copiesY, gbc);
+    gbc.gridx = 0;
+    gbc.gridwidth = 2;
+    add(new JLabel("NrOfRows:"), gbc);
+    gbc.gridwidth = 1;
+    gbc.gridx = 0;
+    gbc.gridy = 6;
+    add(new JLabel("dy:"), gbc);
+    gbc.gridx = 1;
     for (var i = matrixInfo.getMinimalDisplacementY(); i < 100; i++) {
       distanceY.addItem(i);
     }
     distanceY.setSelectedIndex(0);
     distanceY.addActionListener(this);
-    add(distanceY, c);
+    add(distanceY, gbc);
   }
 
   @Override

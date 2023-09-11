@@ -13,6 +13,8 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.MacCompatibility;
@@ -48,12 +50,20 @@ class MenuFile extends Menu implements ActionListener {
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
     open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
-    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    close.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
-    saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    exportProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
+    saveAs.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
+
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
+    print.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
 
     add(newi);
     add(merge);
@@ -98,6 +108,13 @@ class MenuFile extends Menu implements ActionListener {
     quit.addActionListener(this);
   }
 
+  public void hotkeyUpdate() {
+    exportProj.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_EXPORT).getWithMask(0));
+    print.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_FILE_PRINT).getWithMask(0));
+  }
+
   @Override
   public void actionPerformed(ActionEvent e) {
     final var src = e.getSource();
@@ -108,7 +125,9 @@ class MenuFile extends Menu implements ActionListener {
     } else if (src == merge) {
       ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
     } else if (src == open) {
-      final var newProj = ProjectActions.doOpen(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      final var newProj =
+          ProjectActions.doOpen(
+              baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
       if (newProj != null
           && proj != null
           && !proj.isFileDirty()
@@ -120,7 +139,8 @@ class MenuFile extends Menu implements ActionListener {
       final var frame = proj.getFrame();
       if (proj.isFileDirty()) {
         /* Must use hardcoded strings here, because the string management is rotten */
-        final var message = "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
+        final var message =
+            "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
         String[] options = {"Save", "Discard", "Cancel"};
         result =
             OptionPane.showOptionDialog(
@@ -168,7 +188,7 @@ class MenuFile extends Menu implements ActionListener {
   }
 
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     setEnabled(true);
     menubar.fireEnableChanged();
   }

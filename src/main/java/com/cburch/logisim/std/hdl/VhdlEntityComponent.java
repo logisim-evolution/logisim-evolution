@@ -24,6 +24,7 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
@@ -183,6 +184,7 @@ public class VhdlEntityComponent extends InstanceFactory {
     final var bds = painter.getBounds();
     final var x0 = bds.getX() + (bds.getWidth() / 2);
     final var y0 = bds.getY() + metric.getHeight() + 12;
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.drawText(
         g,
         StringUtil.resizeString(content.getName(), metric, WIDTH),
@@ -200,7 +202,7 @@ public class VhdlEntityComponent extends InstanceFactory {
       g.setFont(font);
     }
 
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 
@@ -224,6 +226,7 @@ public class VhdlEntityComponent extends InstanceFactory {
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_CENTER);
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawPorts();
   }
@@ -283,15 +286,9 @@ public class VhdlEntityComponent extends InstanceFactory {
         for (final var bit : busValue.toCharArray()) {
           try {
             switch (Character.getNumericValue(bit)) {
-              case 0:
-                vector_values[k] = Value.FALSE;
-                break;
-              case 1:
-                vector_values[k] = Value.TRUE;
-                break;
-              default:
-                vector_values[k] = Value.UNKNOWN;
-                break;
+              case 0 -> vector_values[k] = Value.FALSE;
+              case 1 -> vector_values[k] = Value.TRUE;
+              default -> vector_values[k] = Value.UNKNOWN;
             }
           } catch (NumberFormatException e) {
             vector_values[k] = Value.UNKNOWN;

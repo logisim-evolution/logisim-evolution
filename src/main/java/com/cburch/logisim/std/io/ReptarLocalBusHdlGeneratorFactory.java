@@ -132,49 +132,48 @@ public class ReptarLocalBusHdlGeneratorFactory extends AbstractHdlGeneratorFacto
   @Override
   public Map<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof netlistComponent)) return map;
-    final var ComponentInfo = (netlistComponent) mapInfo;
+    if (!(mapInfo instanceof final netlistComponent componentInfo)) return map;
     map.putAll(super.getPortMap(nets, mapInfo));
     map.put(
         "Addr_Data_LB_io",
         String.format(
             "%s(%d DOWNTO %d)",
             LOCAL_INOUT_BUBBLE_BUS_NAME,
-            ComponentInfo.getLocalBubbleInOutEndId(),
-            ComponentInfo.getLocalBubbleInOutStartId()));
+            componentInfo.getLocalBubbleInOutEndId(),
+            componentInfo.getLocalBubbleInOutStartId()));
     map.put(
         "FPGA_in",
         String.format(
             "%s(%d DOWNTO %d)",
             LOCAL_INPUT_BUBBLE_BUS_NAME,
-            ComponentInfo.getLocalBubbleInputEndId(),
-            ComponentInfo.getLocalBubbleInputStartId()));
+            componentInfo.getLocalBubbleInputEndId(),
+            componentInfo.getLocalBubbleInputStartId()));
     map.put(
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
             LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-            ComponentInfo.getLocalBubbleOutputEndId(),
-            ComponentInfo.getLocalBubbleOutputStartId()));
+            componentInfo.getLocalBubbleOutputEndId(),
+            componentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
         Hdl.getNetMap(
             "Addr_Data_LB_o",
             true,
-            ComponentInfo,
+            componentInfo,
             ReptarLocalBus.ADDR_DATA_LB_O,
             nets));
     map.putAll(
         Hdl.getNetMap(
             "Addr_Data_LB_i",
             true,
-            ComponentInfo,
+            componentInfo,
             ReptarLocalBus.ADDR_DATA_LB_I,
             nets));
     map.putAll(
         Hdl.getNetMap(
             "Addr_Data_LB_tris_i",
             true,
-            ComponentInfo,
+            componentInfo,
             ReptarLocalBus.ADDR_DATA_LB_TRIS_I,
             nets));
     return map;

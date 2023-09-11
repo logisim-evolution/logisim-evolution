@@ -23,8 +23,7 @@ import java.util.Objects;
 
 class TunnelAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(
-          StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT);
+      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
   private Direction facing;
   private BitWidth width;

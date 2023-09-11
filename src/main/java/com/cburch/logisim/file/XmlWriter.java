@@ -162,7 +162,8 @@ final class XmlWriter {
       for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) top.insertBefore(nodeSet[portIndex], null);
       return;
     }
-    if (childrenCount > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+    if (childrenCount > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")
+          && !name.equals("appear")) {
       final var nodeSet = new Node[childrenCount];
       for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) nodeSet[nodeIndex] = children.item(nodeIndex);
       Arrays.sort(nodeSet, nodeComparator);

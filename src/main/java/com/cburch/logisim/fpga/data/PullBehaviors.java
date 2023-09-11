@@ -9,20 +9,25 @@
 
 package com.cburch.logisim.fpga.data;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PullBehaviors {
   public static String getConstrainedPullString(char id) {
-    switch (id) {
-      case PULL_UP:
-        return "PULLUP";
-      case PULL_DOWN:
-        return "PULLDOWN";
-      default:
-        return "";
-    }
+    return switch (id) {
+      case PULL_UP -> "PULLUP";
+      case PULL_DOWN -> "PULLDOWN";
+      default -> "";
+    };
+  }
+  
+  public static String getPullString(char id) {
+    if (id == FLOAT || id > PULL_DOWN) return null;
+    return switch (id) {
+      case PULL_UP -> "UP";
+      case PULL_DOWN -> "DOWN";
+      default -> "NONE";
+    };
   }
 
   public static char getId(String identifier) {

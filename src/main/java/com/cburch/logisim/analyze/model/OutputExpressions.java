@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JTextArea;
+
 public class OutputExpressions {
   private class MyListener implements VariableListListener, TruthTableListener {
 
@@ -55,13 +57,13 @@ public class OutputExpressions {
           }
           if (v.width < newVar.width) {
             final var data = getOutputData(output, false);
-            if (data != null) data.invalidate(false, false);
+            if (data != null) data.invalidate(false, false, null);
           }
         }
       } else if (type == VariableListEvent.MOVE || type == VariableListEvent.ADD) {
         for (final var output : outputData.keySet()) {
           final var data = getOutputData(output, false);
-          if (data != null) data.invalidate(false, false);
+          if (data != null) data.invalidate(false, false, null);
         }
       }
     }
@@ -115,7 +117,7 @@ public class OutputExpressions {
 
     OutputData(String output) {
       this.output = output;
-      invalidate(true, false);
+      invalidate(true, false, null);
     }
 
     Expression getExpression() {
@@ -124,14 +126,14 @@ public class OutputExpressions {
 
     String getExpressionString() {
       if (exprString == null) {
-        if (expr == null) invalidate(false, false);
+        if (expr == null) invalidate(false, false, null);
         exprString = expr == null ? "" : expr.toString();
       }
       return exprString;
     }
 
     Expression getMinimalExpression() {
-      if (minimalExpr == null) invalidate(false, false);
+      if (minimalExpr == null) invalidate(false, false, null);
       return minimalExpr;
     }
 
@@ -143,13 +145,13 @@ public class OutputExpressions {
       return format;
     }
 
-    private void invalidate(boolean initializing, boolean formatChanged) {
+    private void invalidate(boolean initializing, boolean formatChanged, JTextArea outputArea) {
       if (invalidating) return;
       invalidating = true;
       try {
         final var oldImplicants = minimalImplicants;
         final var oldMinExpr = minimalExpr;
-        minimalImplicants = Implicant.computeMinimal(format, model, output);
+        minimalImplicants = Implicant.computeMinimal(format, model, output, outputArea);
         minimalExpr = Implicant.toExpression(format, model, minimalImplicants);
         final var minChanged = !implicantsSame(oldImplicants, minimalImplicants);
 
@@ -252,7 +254,7 @@ public class OutputExpressions {
     void setMinimizedFormat(int value) {
       if (format != value) {
         format = value;
-        this.invalidate(false, true);
+        this.invalidate(false, true, null);
       }
     }
   }
@@ -302,8 +304,7 @@ public class OutputExpressions {
 
   private static boolean isAllUndefined(Entry[] a) {
     for (final var entry : a) {
-      if (entry == Entry.ZERO || entry == Entry.ONE)
-        return false;
+      if (entry == Entry.ZERO || entry == Entry.ONE) return false;
     }
     return true;
   }
@@ -323,6 +324,14 @@ public class OutputExpressions {
     model.getInputs().addVariableListListener(myListener);
     model.getOutputs().addVariableListListener(myListener);
     model.getTruthTable().addTruthTableListener(myListener);
+  }
+
+  public void forcedOptimize(JTextArea outtextArea, int format) {
+    for (final var output : outputData.keySet()) {
+      final var data = outputData.get(output);
+      data.setMinimizedFormat(format);
+      data.invalidate(false, false, outtextArea);
+    }
   }
 
   //
@@ -414,9 +423,18 @@ public class OutputExpressions {
       if (!allowUpdates) {
         outputData.remove(output);
       } else {
-        data.invalidate(false, false);
+        data.invalidate(false, false, null);
       }
     }
+  }
+
+  public boolean hasExpressions() {
+    var returnValue = false;
+    for (final var output : outputData.keySet()) {
+      final var data = outputData.get(output);
+      returnValue |= data.getMinimalImplicants().size() != 0;
+    }
+    return returnValue;
   }
 
   public boolean isExpressionMinimal(String output) {

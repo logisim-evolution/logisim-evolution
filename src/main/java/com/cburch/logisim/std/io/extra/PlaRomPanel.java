@@ -27,7 +27,8 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 
-public class PlaRomPanel extends JPanel implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
+public class PlaRomPanel extends JPanel
+    implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
 
   /** */
   private static final long serialVersionUID = 7182231893518001053L;
@@ -188,7 +189,7 @@ public class PlaRomPanel extends JPanel implements BaseMouseListenerContract, Ba
       Color notColor = data.getInputValue((byte) (i - 1)).not().getColor();
       g.setColor(Color.BLACK);
       GraphicsUtil.drawCenteredText(
-          g, Integer.toString(i - 1), 40 * i - (20 - IMAGE_BORDER), IMAGE_BORDER - 12);
+          g, Integer.toString(inputs - i), 40 * i - (20 - IMAGE_BORDER), IMAGE_BORDER - 12);
       g.setColor(inputColor);
       // draw input value
       GraphicsUtil.drawCenteredText(
@@ -251,7 +252,7 @@ public class PlaRomPanel extends JPanel implements BaseMouseListenerContract, Ba
       g.setColor(Color.BLACK);
       GraphicsUtil.drawCenteredText(
           g,
-          Integer.toString(i - 1),
+          Integer.toString(outputs - i),
           IMAGE_BORDER + 20 + 40 * (inputs + i),
           IMAGE_BORDER + 100 + 40 * and + 12);
       g.setColor(data.getOutputValue((byte) (i - 1)).getColor());

@@ -35,24 +35,29 @@ public final class ZOrder {
   }
 
   // returns first object above query in the z-order that overlaps query
-  public static CanvasObject getObjectAbove(CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
+  public static CanvasObject getObjectAbove(
+      CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
     return getPrevious(query, model.getObjectsFromTop(), model, ignore);
   }
 
   // returns first object below query in the z-order that overlaps query
-  public static CanvasObject getObjectBelow(CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
+  public static CanvasObject getObjectBelow(
+      CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
     return getPrevious(query, model.getObjectsFromBottom(), model, ignore);
   }
 
-  private static CanvasObject getPrevious(CanvasObject query, List<CanvasObject> objs, CanvasModel model, Collection<? extends CanvasObject> ignore) {
+  private static CanvasObject getPrevious(
+      CanvasObject query,
+      List<CanvasObject> objs,
+      CanvasModel model,
+      Collection<? extends CanvasObject> ignore) {
     var index = getIndex(query, objs);
     if (index > 0) {
       final var set = toSet(model.getObjectsOverlapping(query));
       final var it = objs.listIterator(index);
       while (it.hasPrevious()) {
         final var o = it.previous();
-        if (set.contains(o) && !ignore.contains(o))
-          return o;
+        if (set.contains(o) && !ignore.contains(o)) return o;
       }
     }
     return null;
@@ -63,7 +68,8 @@ public final class ZOrder {
     return getIndex(query, model.getObjectsFromBottom());
   }
 
-  public static Map<CanvasObject, Integer> getZIndex(Collection<? extends CanvasObject> query, CanvasModel model) {
+  public static Map<CanvasObject, Integer> getZIndex(
+      Collection<? extends CanvasObject> query, CanvasModel model) {
     // returns 0 for bottommost element, large number for topmost, ordered
     // from the bottom up.
     if (query == null) return Collections.emptyMap();
@@ -80,15 +86,18 @@ public final class ZOrder {
     return ret;
   }
 
-  public static <E extends CanvasObject> List<E> sortBottomFirst(Collection<E> objects, CanvasModel model) {
+  public static <E extends CanvasObject> List<E> sortBottomFirst(
+      Collection<E> objects, CanvasModel model) {
     return sortXFirst(objects, model, model.getObjectsFromTop());
   }
 
-  public static <E extends CanvasObject> List<E> sortTopFirst(Collection<E> objects, CanvasModel model) {
+  public static <E extends CanvasObject> List<E> sortTopFirst(
+      Collection<E> objects, CanvasModel model) {
     return sortXFirst(objects, model, model.getObjectsFromBottom());
   }
 
-  private static <E extends CanvasObject> List<E> sortXFirst(Collection<E> objects, CanvasModel model, Collection<CanvasObject> objs) {
+  private static <E extends CanvasObject> List<E> sortXFirst(
+      Collection<E> objects, CanvasModel model, Collection<CanvasObject> objs) {
     Set<E> set = toSet(objects);
     List<E> ret = new ArrayList<>(objects.size());
     for (final var o : objs) {
@@ -102,8 +111,6 @@ public final class ZOrder {
   }
 
   private static <E> Set<E> toSet(Collection<E> objects) {
-    return (objects instanceof Set)
-            ? (Set<E>) objects
-            : new HashSet<>(objects);
+    return (objects instanceof Set) ? (Set<E>) objects : new HashSet<>(objects);
   }
 }

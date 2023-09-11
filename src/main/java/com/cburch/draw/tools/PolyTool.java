@@ -150,7 +150,7 @@ public class PolyTool extends AbstractTool {
       return;
     }
 
-    final var loc = Location.create(mx, my);
+    final var loc = Location.create(mx, my, false);
     final var locs = locations;
     if (!active) {
       locs.clear();
@@ -203,14 +203,14 @@ public class PolyTool extends AbstractTool {
         final var nextLast = locations.get(index - 1);
         newLast = LineUtil.snapTo8Cardinals(nextLast, mx, my);
       } else {
-        newLast = Location.create(mx, my);
+        newLast = Location.create(mx, my, false);
       }
       if ((mods & MouseEvent.CTRL_DOWN_MASK) != 0) {
         var lastX = newLast.getX();
         var lastY = newLast.getY();
         lastX = canvas.snapX(lastX);
         lastY = canvas.snapY(lastY);
-        newLast = Location.create(lastX, lastY);
+        newLast = Location.create(lastX, lastY, false);
       }
 
       if (!newLast.equals(last)) {

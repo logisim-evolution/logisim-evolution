@@ -32,9 +32,12 @@ public class CompileIcon extends BaseIcon {
     final var f = g2.getFont();
     g2.setFont(f.deriveFont(AppPreferences.getScaled(4F)));
     g2.setColor(Color.BLUE);
-    GraphicsUtil.drawCenteredText(g2, "j r9", AppPreferences.getScaled(7), AppPreferences.getScaled(3));
-    GraphicsUtil.drawCenteredText(g2, "nop", AppPreferences.getScaled(7), AppPreferences.getScaled(7));
+    GraphicsUtil.drawCenteredText(
+        g2, "j r9", AppPreferences.getScaled(7), AppPreferences.getScaled(3));
+    GraphicsUtil.drawCenteredText(
+        g2, "nop", AppPreferences.getScaled(7), AppPreferences.getScaled(7));
     g2.setColor(Color.MAGENTA);
-    GraphicsUtil.drawCenteredText(g2, "101..", AppPreferences.getScaled(7), AppPreferences.getScaled(11));
+    GraphicsUtil.drawCenteredText(
+        g2, "101..", AppPreferences.getScaled(7), AppPreferences.getScaled(11));
   }
 }

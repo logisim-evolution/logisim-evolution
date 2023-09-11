@@ -62,6 +62,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         myPorts
             .add(Port.INPUT, String.format("byteEnable%d", idx), 1, byteEnableOffset + nrBePorts - idx - 1);
       }
+      myPorts.add(Port.INPUT, "oe", 1, RamAppearance.getOEIndex(0, attrs));
       var nrOfMems = nrBePorts;
       if (truncated) {
         myTypedWires
@@ -75,6 +76,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         myTypedWires
             .addWire(String.format("s_byteMem%dContents", mem), ByteArrayId);
     } else {
+      myPorts.add(Port.INPUT, "oe", 1, Hdl.oneBit());
       myTypedWires
           .addArray(MemArrayId, MemArrayStr, nrOfBits, ramEntries)
           .addWire("s_memContents", MemArrayId);
@@ -86,9 +88,8 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(Port.INPUT, "address", nrOfaddressLines, RamAppearance.getAddrIndex(0, attrs))
         .add(Port.INPUT, "dataIn", nrOfBits, RamAppearance.getDataInIndex(0, attrs))
         .add(Port.INPUT, "we", 1, RamAppearance.getWEIndex(0, attrs))
-        .add(Port.INPUT, "oe", 1, RamAppearance.getOEIndex(0, attrs))
         .add(Port.OUTPUT, "dataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
-    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, ByteArrayId);
+    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, RamAppearance.getClkIndex(0, attrs));
   }
 
   @Override

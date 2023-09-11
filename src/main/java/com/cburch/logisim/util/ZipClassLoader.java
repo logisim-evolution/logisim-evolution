@@ -12,6 +12,7 @@ package com.cburch.logisim.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -109,7 +110,7 @@ public class ZipClassLoader extends ClassLoader {
           final var zipEntry = zipFile.getEntry(res);
           if (zipEntry != null) {
             final var url = "jar:" + zipPath.toURI() + "!/" + res;
-            ret = new URL(url);
+            ret = URI.create(url).toURL();
             if (DEBUG >= 3) logger.debug("  found: " + url);
           }
         }
@@ -168,12 +169,8 @@ public class ZipClassLoader extends ClassLoader {
           if (DEBUG >= 2) logger.debug("processing " + request);
           try {
             switch (request.action) {
-              case REQUEST_LOAD:
-                performLoad(request);
-                break;
-              case REQUEST_FIND:
-                performFind(request);
-                break;
+              case REQUEST_LOAD -> performLoad(request);
+              case REQUEST_FIND -> performFind(request);
             }
           } finally {
             request.ensureDone();

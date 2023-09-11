@@ -38,6 +38,7 @@ public class BoardWriterClass {
   public static final String IO_SET_STRING = "BiDirPinSet";
   public static final String RECT_SET_STRING = "Rect_x_y_w_h";
   public static final String LED_ARRAY_INFO_STRING = "LedArrayInfo";
+  public static final String SCANNING_SEVEN_SEGMENT_INFO_STRING = "ScanningSevenSegInfo";
   public static final String MAP_ROTATION = "rotation";
   public static final String[] CLOCK_SECTION_STRINGS = {
     "Frequency", "FPGApin", "PullBehavior", "IOStandard"
@@ -85,7 +86,8 @@ public class BoardWriterClass {
       final var comment = boardInfo.createComment("This section decribes the FPGA and its clock");
       fpgaInfo.appendChild(comment);
       final var clkInfo = boardInfo.createElement(CLOCK_INFORMATION_SECTION_STRING);
-      clkInfo.setAttribute(CLOCK_SECTION_STRINGS[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
+      clkInfo.setAttribute(
+          CLOCK_SECTION_STRINGS[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
       final var pin = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[1]);
       pin.setValue(BoardInfo.fpga.getClockPinLocation().toUpperCase());
       clkInfo.setAttributeNode(pin);
@@ -97,7 +99,9 @@ public class BoardWriterClass {
       clkInfo.setAttributeNode(ios);
       fpgaInfo.appendChild(clkInfo);
       final var fpga = boardInfo.createElement(FPGA_INFORMATION_SECTION_STRING);
-      fpga.setAttribute(FPGA_SECTION_STRINGS[0], VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase());
+      fpga.setAttribute(
+          FPGA_SECTION_STRINGS[0],
+          VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase());
       final var part = boardInfo.createAttribute(FPGA_SECTION_STRINGS[1]);
       part.setValue(BoardInfo.fpga.getPart());
       fpga.setAttributeNode(part);
@@ -124,11 +128,13 @@ public class BoardWriterClass {
       fpga.setAttributeNode(flashJtagPos);
       final var unusedPins = boardInfo.createElement(UNUSED_PINS_STRING);
       fpgaInfo.appendChild(fpga);
-      unusedPins.setAttribute("PullBehavior", PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getUnusedPinsBehavior()]);
+      unusedPins.setAttribute(
+          "PullBehavior", PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getUnusedPinsBehavior()]);
       fpgaInfo.appendChild(unusedPins);
       final var components = boardInfo.createElement(COMPONENTS_SECTION_STRING);
       root.appendChild(components);
-      final var compCmd = boardInfo.createComment("This section describes all Components present on the boards");
+      final var compCmd =
+          boardInfo.createComment("This section describes all Components present on the boards");
       components.appendChild(compCmd);
       for (final var comp : BoardInfo.getAllComponents()) {
         components.appendChild(comp.getDocumentElement(boardInfo));
@@ -153,7 +159,9 @@ public class BoardWriterClass {
       pixelData.setAttribute("PixelRGB", writer.getCompressedString());
     } catch (Exception e) {
       /* TODO: handle exceptions */
-      logger.error("Exceptions not handled yet in BoardWriterClass(), but got an exception: {}", e.getMessage());
+      logger.error(
+          "Exceptions not handled yet in BoardWriterClass(), but got an exception: {}",
+          e.getMessage());
     }
   }
 
@@ -184,7 +192,8 @@ public class BoardWriterClass {
       final var dest = new StreamResult(file);
       aTransformer.transform(src, dest);
     } catch (Exception e) {
-      logger.error("Exceptions not handled yet in PrintXml(), but got an exception: {}", e.getMessage());
+      logger.error(
+          "Exceptions not handled yet in PrintXml(), but got an exception: {}", e.getMessage());
     }
   }
 }

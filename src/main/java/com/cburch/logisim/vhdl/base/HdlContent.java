@@ -45,10 +45,10 @@ public abstract class HdlContent implements HdlModel, Cloneable {
       return;
     }
 
-    boolean found = false;
-    for (HdlModelListener l : listeners) {
+    var found = false;
+    for (final var listener : listeners) {
       found = true;
-      l.contentSet(this);
+      listener.contentSet(this);
     }
 
     if (!found) {
@@ -57,14 +57,12 @@ public abstract class HdlContent implements HdlModel, Cloneable {
   }
 
   protected void fireAboutToSave() {
-    if (listeners == null) {
-      return;
-    }
+    if (listeners == null) return;
 
-    boolean found = false;
-    for (HdlModelListener l : listeners) {
+    var found = false;
+    for (final var listener : listeners) {
       found = true;
-      l.aboutToSave(this);
+      listener.aboutToSave(this);
     }
 
     if (!found) {
@@ -73,14 +71,12 @@ public abstract class HdlContent implements HdlModel, Cloneable {
   }
 
   protected void fireAppearanceChanged() {
-    if (listeners == null) {
-      return;
-    }
+    if (listeners == null) return;
 
-    boolean found = false;
-    for (HdlModelListener l : listeners) {
+    var found = false;
+    for (final var listener : listeners) {
       found = true;
-      l.appearanceChanged(this);
+      listener.appearanceChanged(this);
     }
 
     if (!found) {
@@ -90,14 +86,12 @@ public abstract class HdlContent implements HdlModel, Cloneable {
 
   @Override
   public void displayChanged() {
-    if (listeners == null) {
-      return;
-    }
+    if (listeners == null) return;
 
-    boolean found = false;
-    for (HdlModelListener l : listeners) {
+    var found = false;
+    for (final var listener : listeners) {
       found = true;
-      l.displayChanged(this);
+      listener.displayChanged(this);
     }
 
     if (!found) {
@@ -107,13 +101,11 @@ public abstract class HdlContent implements HdlModel, Cloneable {
 
   @Override
   public void removeHdlModelListener(HdlModelListener l) {
-    if (listeners == null) {
-      return;
-    }
+    if (listeners == null) return;
+
     listeners.remove(l);
     if (listeners.isEmpty()) {
       listeners = null;
     }
   }
-
 }

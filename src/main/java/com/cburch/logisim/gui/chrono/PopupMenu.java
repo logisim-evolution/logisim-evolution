@@ -47,27 +47,27 @@ public class PopupMenu extends MouseAdapter {
         m.setEnabled(signals.size() > 0);
         g.add(m);
         if (r == radix) m.setSelected(true);
-        m.addActionListener(e -> {
-          for (final var s : signals)
-            s.info.setRadix(r);
-        });
+        m.addActionListener(
+            e -> {
+              for (final var s : signals) s.info.setRadix(r);
+            });
       }
       addSeparator();
       var m = new JMenuItem(S.get("editClearItem"));
       add(m);
       m.setEnabled(signals.size() > 0);
-      m.addActionListener(e -> {
-        final var items = new SignalInfo.List();
-        for (final var s : signals) {
-          items.add(s.info);
-        }
-        chronoPanel.getModel().remove(items);
-      });
+      m.addActionListener(
+          e -> {
+            final var items = new SignalInfo.List();
+            for (final var s : signals) {
+              items.add(s.info);
+            }
+            chronoPanel.getModel().remove(items);
+          });
       addSeparator();
       m = new JMenuItem(S.get("addRemoveSignals"));
       add(m);
       m.addActionListener(e -> SelectionPanel.doDialog(chronoPanel.getLogFrame()));
-
     }
   }
 
@@ -88,5 +88,4 @@ public class PopupMenu extends MouseAdapter {
   public void mousePressed(MouseEvent e) {
     if (e.isPopupTrigger()) doPop(e);
   }
-
 }

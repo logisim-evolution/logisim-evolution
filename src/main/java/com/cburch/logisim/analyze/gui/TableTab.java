@@ -153,7 +153,10 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       leftPadding = Math.max(defaultCellPadding / 2, (w / 2) - (cellWidth * v.width / 2));
       v = vars.get(vars.size() - 1);
       w = fm.stringWidth(v.toString());
-      rightPadding = Math.max(defaultCellPadding / 2, (w - w / 2) - (cellWidth * v.width - cellWidth * v.width / 2));
+      rightPadding =
+          Math.max(
+              defaultCellPadding / 2,
+              (w - w / 2) - (cellWidth * v.width - cellWidth * v.width / 2));
       calculateWidth();
     }
 
@@ -221,9 +224,10 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       var col = 0;
       for (final var var : vars) {
         for (var b = var.width - 1; b >= 0; b--) {
-          final var entry = isInput
-                                    ? table.getVisibleInputEntry(row, col++)
-                                    : table.getVisibleOutputEntry(row, col++);
+          final var entry =
+              isInput
+                  ? table.getVisibleInputEntry(row, col++)
+                  : table.getVisibleOutputEntry(row, col++);
           if (entry.isError()) {
             g.setColor(Value.errorColor);
             g.fillRect(x, y, cellWidth, cellHeight);
@@ -298,7 +302,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             body,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    bodyPane.addComponentListener(new ComponentAdapter() {
+    bodyPane.addComponentListener(
+        new ComponentAdapter() {
           @Override
           public void componentResized(ComponentEvent event) {
             int width = bodyPane.getViewport().getWidth();
@@ -347,25 +352,25 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     expand.setEnabled(getRowCount() < table.getRowCount());
     count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
 
-    final var layout = new GridBagLayout();
-    setLayout(layout);
-    final var gc = new GridBagConstraints();
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.gridx = 0;
-    gc.gridy = 0;
-    gc.weightx = 1;
-    layout.setConstraints(toolbar, gc);
+    final var gbl = new GridBagLayout();
+    setLayout(gbl);
+    final var gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.weightx = 1;
+    gbl.setConstraints(toolbar, gbc);
     add(toolbar);
-    gc.gridy++;
-    layout.setConstraints(count, gc);
+    gbc.gridy++;
+    gbl.setConstraints(count, gbc);
     add(count);
-    gc.gridy++;
-    layout.setConstraints(headerPane, gc);
+    gbc.gridy++;
+    gbl.setConstraints(headerPane, gbc);
     add(headerPane);
-    gc.fill = GridBagConstraints.BOTH;
-    gc.gridy++;
-    gc.weighty = 1;
-    layout.setConstraints(bodyPane, gc);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.gridy++;
+    gbc.weighty = 1;
+    gbl.setConstraints(bodyPane, gbc);
     add(bodyPane);
     inDim = new ColumnGroupDimensions(table.getInputVariables());
     outDim = new ColumnGroupDimensions(table.getOutputVariables());
@@ -390,10 +395,10 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             done = true;
             // account for missing scrollbar on header portion
             final var pad = bodyPane.getVerticalScrollBar().getWidth();
-            GridBagConstraints gc = layout.getConstraints(headerPane);
-            Insets i = gc.insets;
-            gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
-            layout.setConstraints(headerPane, gc);
+            GridBagConstraints gbc = gbl.getConstraints(headerPane);
+            Insets i = gbc.insets;
+            gbc.insets.set(i.top, i.left, i.bottom, i.right + pad);
+            gbl.setConstraints(headerPane, gbc);
             invalidate();
             repaint();
           }
@@ -627,7 +632,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     public void paintComponent(Graphics g, boolean printView, int canvasWidth, int canvasHeight) {
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
       final var g2 = (Graphics2D) g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       if (!printView) {
         super.paintComponent(g);
@@ -671,7 +677,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     public void paintComponent(Graphics g, boolean printView, int canvasWidth, int canvasHeight) {
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
       final var g2 = (Graphics2D) g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
       if (!printView) super.paintComponent(g);
@@ -697,54 +704,55 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return editHandler;
   }
 
-  final EditHandler editHandler = new EditHandler() {
-    @Override
-    public void computeEnabled() {
-      final var sel = caret.hasSelection();
-      setEnabled(LogisimMenuBar.CUT, sel);
-      setEnabled(LogisimMenuBar.COPY, sel);
-      setEnabled(LogisimMenuBar.PASTE, sel);
-      setEnabled(LogisimMenuBar.DELETE, sel);
-      setEnabled(LogisimMenuBar.DUPLICATE, false);
-      setEnabled(LogisimMenuBar.SELECT_ALL, table.getRowCount() > 0);
-      setEnabled(LogisimMenuBar.RAISE, false);
-      setEnabled(LogisimMenuBar.LOWER, false);
-      setEnabled(LogisimMenuBar.RAISE_TOP, false);
-      setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
-      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
-      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
-    }
-
-    @Override
-    public void copy() {
-      requestFocus();
-      clip.copy();
-    }
-
-    @Override
-    public void paste() {
-      requestFocus();
-      clip.paste();
-    }
-
-    @Override
-    public void selectAll() {
-      caret.selectAll();
-    }
-
-    @Override
-    public void delete() {
-      requestFocus();
-      final var s = caret.getSelection();
-      final var inputs = table.getInputColumnCount();
-      for (var c = s.x; c < s.x + s.width; c++) {
-        if (c < inputs) continue; // todo: allow input row delete?
-        for (var r = s.y; r < s.y + s.height; r++) {
-          table.setVisibleOutputEntry(r, c - inputs, Entry.DONT_CARE);
+  final EditHandler editHandler =
+      new EditHandler() {
+        @Override
+        public void computeEnabled() {
+          final var sel = caret.hasSelection();
+          setEnabled(LogisimMenuBar.CUT, sel);
+          setEnabled(LogisimMenuBar.COPY, sel);
+          setEnabled(LogisimMenuBar.PASTE, sel);
+          setEnabled(LogisimMenuBar.DELETE, sel);
+          setEnabled(LogisimMenuBar.DUPLICATE, false);
+          setEnabled(LogisimMenuBar.SELECT_ALL, table.getRowCount() > 0);
+          setEnabled(LogisimMenuBar.RAISE, false);
+          setEnabled(LogisimMenuBar.LOWER, false);
+          setEnabled(LogisimMenuBar.RAISE_TOP, false);
+          setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
+          setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+          setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
         }
-      }
-    }
-  };
+
+        @Override
+        public void copy() {
+          requestFocus();
+          clip.copy();
+        }
+
+        @Override
+        public void paste() {
+          requestFocus();
+          clip.paste();
+        }
+
+        @Override
+        public void selectAll() {
+          caret.selectAll();
+        }
+
+        @Override
+        public void delete() {
+          requestFocus();
+          final var s = caret.getSelection();
+          final var inputs = table.getInputColumnCount();
+          for (var c = s.x; c < s.x + s.width; c++) {
+            if (c < inputs) continue; // TODO: allow input row delete?
+            for (var r = s.y; r < s.y + s.height; r++) {
+              table.setVisibleOutputEntry(r, c - inputs, Entry.DONT_CARE);
+            }
+          }
+        }
+      };
 
   @Override
   PrintHandler getPrintHandler() {

@@ -25,15 +25,15 @@ import com.cburch.logisim.instance.InstanceState;
 import java.util.ArrayList;
 
 /**
- * TTL 74x139 Dual 2-line to 4-line decoders/multiplexers
- * Model based on https://www.ti.com/product/SN74LS139A datasheet.
+ * TTL 74x139 Dual 2-line to 4-line decoders/multiplexers Model based on
+ * https://www.ti.com/product/SN74LS139A datasheet.
  */
 public class Ttl74139 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74139";
 
@@ -41,16 +41,16 @@ public class Ttl74139 extends AbstractTtlGate {
   public static final byte L1_nEN = 1;
   public static final byte L1_A = 2;
   public static final byte L1_B = 3;
-  public static final byte L1_Y0 = 4;
-  public static final byte L1_Y1 = 5;
-  public static final byte L1_Y2 = 6;
-  public static final byte L1_Y3 = 7;
+  public static final byte L1_nY0 = 4;
+  public static final byte L1_nY1 = 5;
+  public static final byte L1_nY2 = 6;
+  public static final byte L1_nY3 = 7;
   public static final byte GND = 8;
 
-  public static final byte L2_Y3 = 9;
-  public static final byte L2_Y2 = 10;
-  public static final byte L2_Y1 = 11;
-  public static final byte L2_Y0 = 12;
+  public static final byte L2_nY3 = 9;
+  public static final byte L2_nY2 = 10;
+  public static final byte L2_nY1 = 11;
+  public static final byte L2_nY0 = 12;
   public static final byte L2_B = 13;
   public static final byte L2_A = 14;
   public static final byte L2_nEN = 15;
@@ -63,12 +63,12 @@ public class Ttl74139 extends AbstractTtlGate {
         _ID,
         (byte) 16,
         new byte[] {
-          L1_Y0, L1_Y1, L1_Y2, L1_Y3,
-          L2_Y0, L2_Y1, L2_Y2, L2_Y3
+          L1_nY0, L1_nY1, L1_nY2, L1_nY3,
+          L2_nY0, L2_nY1, L2_nY2, L2_nY3
         },
         new String[] {
-          "1nG Enable (active LOW)", "1A", "1B", "1Y0", "1Y1", "1Y2", "1Y3",
-          "2Y3", "2Y2", "2Y1", "2Y0", "2B", "2A", "1nG Enable (active LOW)"
+          "1nG Enable (active LOW)", "1A", "1B", "1nY0", "1nY1", "1nY2", "1nY3",
+          "2nY3", "2nY2", "2nY1", "2nY0", "2B", "2A", "2nG Enable (active LOW)"
         },
         null);
   }
@@ -105,18 +105,18 @@ public class Ttl74139 extends AbstractTtlGate {
       {0, 0, 0, 1},
     };
 
-    for (var i = 0; i < 4; i++) {
-      final var val = enabled ? (outputPortStates[A + B][i] == 1 ? Value.TRUE : Value.FALSE) : Value.TRUE;
+    for (var i = 0; i < 4; i++) { // Active LOW
+      final var val =
+          enabled ? (outputPortStates[A + B][i] == 0 ? Value.TRUE : Value.FALSE) : Value.TRUE;
       state.setPort(mapPort(outPorts[i]), val, DELAY);
     }
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    byte[] out1 = {L1_Y0, L1_Y1, L1_Y2, L1_Y3};
+    byte[] out1 = {L1_nY0, L1_nY1, L1_nY2, L1_nY3};
     computeState(state, L1_nEN, L1_A, L1_B, out1);
-    byte[] out2 = {L2_Y0, L2_Y1, L2_Y2, L2_Y3};
+    byte[] out2 = {L2_nY0, L2_nY1, L2_nY2, L2_nY3};
     computeState(state, L2_nEN, L2_A, L2_B, out2);
   }
-
 }

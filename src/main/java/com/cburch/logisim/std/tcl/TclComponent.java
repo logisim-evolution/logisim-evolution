@@ -20,6 +20,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
@@ -124,6 +125,7 @@ public abstract class TclComponent extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     var metric = g.getFontMetrics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     final var bds = painter.getBounds();
     final var x0 = bds.getX() + (bds.getWidth() / 2);
@@ -145,7 +147,6 @@ public abstract class TclComponent extends InstanceFactory {
       g.setFont(font);
     }
 
-    g.setColor(Color.GRAY);
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 

@@ -47,10 +47,8 @@ public class Nios2Assembler extends AbstractAssembler {
   public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {
     for (AssemblerToken token : tokens) {
       if (token.getType() == AssemblerToken.REGISTER) {
-        if (token.getValue().toLowerCase().startsWith("ctl"))
-          token.setType(CONTROL_REGISTER);
-        else if (token.getValue().toLowerCase().startsWith("c"))
-            token.setType(CUSTOM_REGISTER);
+        if (token.getValue().toLowerCase().startsWith("ctl")) token.setType(CONTROL_REGISTER);
+        else if (token.getValue().toLowerCase().startsWith("c")) token.setType(CUSTOM_REGISTER);
       }
     }
   }

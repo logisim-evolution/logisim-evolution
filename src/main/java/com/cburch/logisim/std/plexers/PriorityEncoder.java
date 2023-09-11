@@ -24,16 +24,17 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 
 public class PriorityEncoder extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Priority Encoder";
 
@@ -96,6 +97,7 @@ public class PriorityEncoder extends InstanceFactory {
     final var g = painter.getGraphics();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     final var bds = painter.getBounds();
     g.setColor(Color.GRAY);
@@ -120,8 +122,9 @@ public class PriorityEncoder extends InstanceFactory {
       halign = GraphicsUtil.H_LEFT;
     }
     GraphicsUtil.drawText(g, "0", x0, y0, halign, GraphicsUtil.V_BASELINE);
-    g.setColor(Color.BLACK);
-    GraphicsUtil.drawCenteredText(g, "Pri", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    GraphicsUtil.drawCenteredText(
+        g, "Pri", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
     painter.drawPorts();
   }
 

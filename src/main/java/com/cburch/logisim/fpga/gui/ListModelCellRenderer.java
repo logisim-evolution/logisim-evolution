@@ -51,15 +51,12 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     setIcon((msg != null && msg.isDrcInfoPresent()) ? DRCError : NoDRC);
     if (msg != null) {
       switch (msg.getSeverity()) {
-        case SimpleDrcContainer.LEVEL_SEVERE:
-          setForeground(SEVERE);
-          break;
-        case SimpleDrcContainer.LEVEL_FATAL:
+        case SimpleDrcContainer.LEVEL_SEVERE -> setForeground(SEVERE);
+        case SimpleDrcContainer.LEVEL_FATAL -> {
           setBackground(FATAL);
           setForeground(list.getBackground());
-          break;
-        default:
-          setForeground(NORMAL);
+        }
+        default -> setForeground(NORMAL);
       }
     }
     if (value.toString().contains("BUG")) {
@@ -99,12 +96,8 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     }
     if (msg != null) {
       switch (msg.getSeverity()) {
-        case SimpleDrcContainer.LEVEL_SEVERE:
-          Line.append(S.get("SEVERE_MSG")).append(" ");
-          break;
-        case SimpleDrcContainer.LEVEL_FATAL:
-          Line.append(S.get("FATAL_MSG")).append(" ");
-          break;
+        case SimpleDrcContainer.LEVEL_SEVERE -> Line.append(S.get("SEVERE_MSG")).append(" ");
+        case SimpleDrcContainer.LEVEL_FATAL -> Line.append(S.get("FATAL_MSG")).append(" ");
       }
       if (msg.hasCircuit()) {
         Line.append(msg.getCircuit().getName()).append(": ");

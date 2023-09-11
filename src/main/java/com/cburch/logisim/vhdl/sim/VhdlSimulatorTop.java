@@ -290,20 +290,15 @@ public class VhdlSimulatorTop implements CircuitListener {
   /** Stop and restart. If not running, just start */
   public void restart() {
     switch (state) {
-      case DISABLED:
-      case STARTING:
-      case ENABLED:
+      case DISABLED, STARTING, ENABLED -> {
         start();
         return;
-
-      case RUNNING:
+      }
+      case RUNNING -> {
         stop();
         start();
-        break;
-
-      default:
-        throw new UnsupportedOperationException(
-            "Cannot restart VHDL simulator from " + state + " state");
+      }
+      default -> throw new UnsupportedOperationException("Cannot restart VHDL simulator from " + state + " state");
     }
   }
 
@@ -318,7 +313,7 @@ public class VhdlSimulatorTop implements CircuitListener {
     socketClient.send(message);
   }
 
-  public void setEnabled(Boolean enable) {
+  public void setEnabled(boolean enable) {
     if (enable) enable();
     else disable();
   }

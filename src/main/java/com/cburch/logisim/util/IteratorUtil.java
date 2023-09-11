@@ -18,7 +18,6 @@ public final class IteratorUtil {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
   }
 
-
   private static final class EmptyIterator<E> implements Iterator<E> {
     private EmptyIterator() {}
 
@@ -86,5 +85,4 @@ public final class IteratorUtil {
   public static <E> Iterator<E> emptyIterator() {
     return new EmptyIterator<>();
   }
-
 }

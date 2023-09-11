@@ -13,6 +13,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
+import com.cburch.logisim.analyze.model.Implicant;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
@@ -81,6 +82,8 @@ public class Analyzer extends LFrame.SubWindow {
       buildCircuit.setText(S.get("buildCircuitButton"));
       exportTable.setText(S.get("exportTableButton"));
       exportTex.setText(S.get("exportLatexButton"));
+      minimizeMinterms.setText(S.get("minimizeMintermsButton"));
+      minimizeMaxterms.setText(S.get("minimizeMaxtermsButton"));
       ioPanel.localeChanged();
       truthTablePanel.localeChanged();
       expressionPanel.localeChanged();
@@ -110,10 +113,22 @@ public class Analyzer extends LFrame.SubWindow {
 
     private void update() {
       final var tt = model.getTruthTable();
-      buildCircuit.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
-      exportTable.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
-      exportTex.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0
+      final var nrOfInputs = tt.getInputColumnCount();
+      final var nrOfOutputs = tt.getOutputColumnCount();
+      final var hasInputsAndOutputs = (nrOfInputs > 0) && (nrOfOutputs > 0);
+      buildCircuit.setEnabled(hasInputsAndOutputs);
+      minimizeMinterms.setEnabled(hasInputsAndOutputs
+              && (nrOfInputs > Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
+      minimizeMaxterms.setEnabled(hasInputsAndOutputs
+              && (nrOfInputs > Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
+      exportTable.setEnabled(hasInputsAndOutputs);
+      exportTex.setEnabled(hasInputsAndOutputs
               && tt.getRowCount() <= AnalyzerTexWriter.MAX_TRUTH_TABLE_ROWS);
+      tabbedPane.setEnabledAt(TABLE_TAB, hasInputsAndOutputs);
+      tabbedPane.setEnabledAt(EXPRESSION_TAB, hasInputsAndOutputs
+              && (nrOfInputs <= Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
+      tabbedPane.setEnabledAt(MINIMIZED_TAB, hasInputsAndOutputs
+              && (nrOfInputs <= Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
       ioPanel.updateTab();
     }
   }
@@ -165,6 +180,8 @@ public class Analyzer extends LFrame.SubWindow {
   private final ImportTableButton importTable;
   private final ExportTableButton exportTable;
   private final ExportLatexButton exportTex;
+  private final MinimizeButton minimizeMinterms;
+  private final MinimizeButton minimizeMaxterms;
 
   Analyzer() {
     super(null);
@@ -182,12 +199,19 @@ public class Analyzer extends LFrame.SubWindow {
     exportTable.setEnabled(false);
     exportTex = new ExportLatexButton(this, model);
     exportTex.setEnabled(false);
+    minimizeMinterms = new MinimizeButton(this, model, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS);
+    minimizeMinterms.setEnabled(false);
+    minimizeMaxterms = new MinimizeButton(this, model, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS);
+    minimizeMaxterms.setEnabled(false);
 
     tabbedPane = new JTabbedPane();
     addTab(IO_TAB, ioPanel);
     addTab(TABLE_TAB, truthTablePanel);
     addTab(EXPRESSION_TAB, expressionPanel);
     addTab(MINIMIZED_TAB, minimizedPanel);
+    tabbedPane.setEnabledAt(MINIMIZED_TAB, false);
+    tabbedPane.setEnabledAt(EXPRESSION_TAB, false);
+    tabbedPane.setEnabledAt(TABLE_TAB, false);
 
     final var contents = getContentPane();
     final var vertStrut = new JPanel(null);
@@ -197,6 +221,8 @@ public class Analyzer extends LFrame.SubWindow {
     final var buttonPanel = new JPanel();
     buttonPanel.add(importTable);
     buttonPanel.add(buildCircuit);
+    buttonPanel.add(minimizeMinterms);
+    buttonPanel.add(minimizeMaxterms);
     buttonPanel.add(exportTable);
     buttonPanel.add(exportTex);
     contents.add(vertStrut, BorderLayout.WEST);

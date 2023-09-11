@@ -54,7 +54,7 @@ public class Ttl74165HdlGenerator extends AbstractHdlGeneratorFactory {
           Q7n <= {{not}}(curState(0));
 
           enable  <= {{not}}(CKIh) {{and}} {{Tick}};
-          parData <= P7&P6&P5&P4&P3&P2&P1&P0;
+          parData <= P0&P1&P2&P3&P4&P5&P6&P7;
 
           nextState <= curState {{when}} enable = '0' {{else}}
                        parData {{when}} SHnLD = '0' {{else}}
@@ -71,9 +71,9 @@ public class Ttl74165HdlGenerator extends AbstractHdlGeneratorFactory {
           assign Q7        = curState[0];
           assign Q7n       = ~curState[0];
           assign enable    = ~CKIh & {{tick}};
-          assign parData   = {P7, P6, P5, P4, P3, P2, P1, P0};
-          assign nextState = enable == 0 ? curState :
-                             SHnLD == 0 ? parData : {SER, curState[7:1]};
+          assign parData   = {P0, P1, P2, P3, P4, P5, P6, P7};
+          assign nextState = SHnLD == 0 ? parData :
+                             enable == 0 ? curState : {SER, curState[7:1]};
           always @(posedge {{CLK}})
           begin
              curState = nextState;

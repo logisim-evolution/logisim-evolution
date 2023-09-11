@@ -125,24 +125,16 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
         if (transactionHasError(trans)) return false;
         int toBeLoaded = trans.getReadData();
         switch (operation) {
-          case INSTR_LDBU:
-          case INSTR_LDBUIO:
-            toBeLoaded &= 0xFF;
-            break;
-          case INSTR_LDB:
-          case INSTR_LDBIO:
+          case INSTR_LDBU, INSTR_LDBUIO -> toBeLoaded &= 0xFF;
+          case INSTR_LDB, INSTR_LDBIO -> {
             toBeLoaded <<= 24;
             toBeLoaded >>= 24;
-            break;
-          case INSTR_LDHU:
-          case INSTR_LDHUIO:
-            toBeLoaded &= 0xFFFF;
-            break;
-          case INSTR_LDH:
-          case INSTR_LDHIO:
+          }
+          case INSTR_LDHU, INSTR_LDHUIO -> toBeLoaded &= 0xFFFF;
+          case INSTR_LDH, INSTR_LDHIO -> {
             toBeLoaded <<= 16;
             toBeLoaded >>= 16;
-            break;
+          }
         }
         cpuState.writeRegister(destination, toBeLoaded);
         return true;

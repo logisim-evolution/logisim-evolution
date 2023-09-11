@@ -244,7 +244,11 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
           if (highLight((addr + j), nrItemsToHighlight)) {
             final var dataBounds = getDataBound(leftX, topY, i, j);
             g.setColor(Color.DARK_GRAY);
-            g.fillRect(dataBounds.getX(), dataBounds.getY(), dataBounds.getWidth(), dataBounds.getHeight());
+            g.fillRect(
+                dataBounds.getX(),
+                dataBounds.getY(),
+                dataBounds.getWidth(),
+                dataBounds.getHeight());
             g.setColor(Color.WHITE);
             GraphicsUtil.drawText(
                 g,
@@ -284,12 +288,15 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   private int getFirstXoffset() {
     return xOffset + addrBlockSize + (spaceSize / 2) + ((dataSize - spaceSize) / 2);
   }
+
   private int getFirstYoffset() {
     return yOffset + (CharHeight / 2) + 1;
   }
+
   private int getDataBlockWidth() {
     return dataSize + 2;
   }
+
   private int getDataBlockHeight() {
     return CharHeight + 2;
   }
@@ -314,7 +321,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   private void setBits(int addrBits, int dataBits) {
     recalculateParameters = true;
     if (contents == null) {
-      contents = MemContents.create(addrBits, dataBits);
+      contents = MemContents.create(addrBits, dataBits, false);
     } else {
       contents.setDimensions(addrBits, dataBits);
     }

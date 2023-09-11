@@ -28,15 +28,15 @@ public class Dependencies {
     public void circuitChanged(CircuitEvent e) {
       Component comp;
       switch (e.getAction()) {
-        case CircuitEvent.ACTION_ADD:
+        case CircuitEvent.ACTION_ADD -> {
           comp = (Component) e.getData();
           if (comp.getFactory() instanceof SubcircuitFactory factory) {
             depends.addEdge(e.getCircuit(), factory.getSubcircuit());
           } else if (comp.getFactory() instanceof VhdlEntity factory) {
             depends.addEdge(e.getCircuit(), factory.getContent());
           }
-          break;
-        case CircuitEvent.ACTION_REMOVE:
+        }
+        case CircuitEvent.ACTION_REMOVE -> {
           comp = (Component) e.getData();
           if (comp.getFactory() instanceof SubcircuitFactory factory) {
             var found = false;
@@ -46,7 +46,8 @@ public class Dependencies {
                 break;
               }
             }
-            if (!found) depends.removeEdge(e.getCircuit(), factory.getSubcircuit());
+            if (!found)
+              depends.removeEdge(e.getCircuit(), factory.getSubcircuit());
           } else if (comp.getFactory() instanceof VhdlEntity factory) {
             var found = false;
             for (final var o : e.getCircuit().getNonWires()) {
@@ -55,12 +56,11 @@ public class Dependencies {
                 break;
               }
             }
-            if (!found) depends.removeEdge(e.getCircuit(), factory.getContent());
+            if (!found)
+              depends.removeEdge(e.getCircuit(), factory.getContent());
           }
-          break;
-        case CircuitEvent.ACTION_CLEAR:
-          depends.removeNode(e.getCircuit());
-          break;
+        }
+        case CircuitEvent.ACTION_CLEAR -> depends.removeNode(e.getCircuit());
       }
     }
 
@@ -68,16 +68,16 @@ public class Dependencies {
     public void libraryChanged(LibraryEvent e) {
       switch (e.getAction()) {
         case LibraryEvent.ADD_TOOL:
-          if (e.getData() instanceof AddTool) {
-            final var factory = ((AddTool) e.getData()).getFactory();
+          if (e.getData() instanceof AddTool tool) {
+            final var factory = tool.getFactory();
             if (factory instanceof SubcircuitFactory circFact) {
               processCircuit(circFact.getSubcircuit());
             }
           }
           break;
         case LibraryEvent.REMOVE_TOOL:
-          if (e.getData() instanceof AddTool) {
-            final var factory = ((AddTool) e.getData()).getFactory();
+          if (e.getData() instanceof AddTool tool) {
+            final var factory = tool.getFactory();
             if (factory instanceof SubcircuitFactory circFact) {
               final var circ = circFact.getSubcircuit();
               depends.removeNode(circ);

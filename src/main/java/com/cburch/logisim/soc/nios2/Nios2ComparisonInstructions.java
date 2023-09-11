@@ -45,20 +45,54 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
   private static final int PSEUDO_INSTR = 0x200;
 
   private static final String[] AsmOpcodes = {
-      "CMPEQ", "CMPNE", "CMPGE", "CMPGEU", "CMPLT", "CMPLTU",
-      "CMPGT", "CMPGTU", "CMPLE", "CMPLEU",
-      "CMPEQI", "CMPNEI", "CMPGEI", "CMPGEUI", "CMPLTI", "CMPLTUI",
-      "CMPGTI", "CMPGTUI", "CMPLEI", "CMPLEUI"};
+    "CMPEQ", "CMPNE", "CMPGE", "CMPGEU", "CMPLT", "CMPLTU", "CMPGT", "CMPGTU", "CMPLE", "CMPLEU",
+    "CMPEQI", "CMPNEI", "CMPGEI", "CMPGEUI", "CMPLTI", "CMPLTUI", "CMPGTI", "CMPGTUI", "CMPLEI",
+    "CMPLEUI"
+  };
   private static final Integer[] AsmOpcs = {
-      0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A,
-      PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR,
-      0x20, 0x18, 0x08, 0x28, 0x10, 0x30,
-      PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR};
+    0x3A,
+    0x3A,
+    0x3A,
+    0x3A,
+    0x3A,
+    0x3A,
+    PSEUDO_INSTR,
+    PSEUDO_INSTR,
+    PSEUDO_INSTR,
+    PSEUDO_INSTR,
+    0x20,
+    0x18,
+    0x08,
+    0x28,
+    0x10,
+    0x30,
+    PSEUDO_INSTR,
+    PSEUDO_INSTR,
+    PSEUDO_INSTR,
+    PSEUDO_INSTR
+  };
   private static final Integer[] AsmOpxs = {
-      0x20, 0x18, 0x08, 0x28, 0x10, 0x30,
-      SIGN_EXTEND, -1, SIGN_EXTEND, -1,
-      SIGN_EXTEND, SIGN_EXTEND, SIGN_EXTEND, -1, SIGN_EXTEND, -1,
-      SIGN_EXTEND, -1, SIGN_EXTEND, -1};
+    0x20,
+    0x18,
+    0x08,
+    0x28,
+    0x10,
+    0x30,
+    SIGN_EXTEND,
+    -1,
+    SIGN_EXTEND,
+    -1,
+    SIGN_EXTEND,
+    SIGN_EXTEND,
+    SIGN_EXTEND,
+    -1,
+    SIGN_EXTEND,
+    -1,
+    SIGN_EXTEND,
+    -1,
+    SIGN_EXTEND,
+    -1
+  };
 
   /* pseudo instructions
    * cmpgt rC, rA, rB      => cmplt rC, rB, rA
@@ -314,5 +348,4 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     if (Opcodes.contains(instruction.toLowerCase())) return 4;
     return -1;
   }
-
 }

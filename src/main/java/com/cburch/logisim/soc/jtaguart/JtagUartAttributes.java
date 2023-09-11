@@ -22,7 +22,7 @@ import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
-public class JtagUartAttributes  extends AbstractAttributeSet {
+public class JtagUartAttributes extends AbstractAttributeSet {
 
   private static class JtagUartStateAttribute extends Attribute<JtagUartState> {
     @Override
@@ -47,8 +47,10 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
   public static final AttributeOption OPT_2048 = new AttributeOption("2048", S.fixedString("2KB"));
   public static final AttributeOption OPT_4096 = new AttributeOption("4096", S.fixedString("4KB"));
   public static final AttributeOption OPT_8192 = new AttributeOption("8192", S.fixedString("8KB"));
-  public static final AttributeOption OPT_16384 = new AttributeOption("16384", S.fixedString("16KB"));
-  public static final AttributeOption OPT_32768 = new AttributeOption("32768", S.fixedString("32KB"));
+  public static final AttributeOption OPT_16384 =
+      new AttributeOption("16384", S.fixedString("16KB"));
+  public static final AttributeOption OPT_32768 =
+      new AttributeOption("32768", S.fixedString("32KB"));
   public static final AttributeOption[] SIZE_ARRAY =
       new AttributeOption[] {
         OPT_8, OPT_16, OPT_32, OPT_64, OPT_128, OPT_256, OPT_512, OPT_1024, OPT_2048, OPT_4096,
@@ -68,17 +70,17 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
       Attributes.forInteger("ReadThreshold", S.getter("JtagUartReadIrqThreshold"));
 
   private static final List<Attribute<?>> ATTRIBUTES =
-        Arrays.asList(
-            START_ADDRESS,
-            WRITE_FIFO_SIZE,
-            WRITE_IRQ_THRESHOLD,
-            READ_FIFO_SIZE,
-            READ_IRQ_THRESHOLD,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            SocSimulationManager.SOC_BUS_SELECT,
-            JTAG_STATE);
+      Arrays.asList(
+          START_ADDRESS,
+          WRITE_FIFO_SIZE,
+          WRITE_IRQ_THRESHOLD,
+          READ_FIFO_SIZE,
+          READ_IRQ_THRESHOLD,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          SocSimulationManager.SOC_BUS_SELECT,
+          JTAG_STATE);
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;
@@ -128,8 +130,7 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
   public <V> void setValue(Attribute<V> attr, V value) {
     V oldValue = getValue(attr);
     if (attr == START_ADDRESS) {
-      if (state.setStartAddress((int) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (state.setStartAddress((int) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == WRITE_FIFO_SIZE) {
@@ -153,8 +154,7 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
       return;
     }
     if (attr == StdAttr.LABEL) {
-      if (state.setLabel((String) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (state.setLabel((String) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL_FONT) {
@@ -179,5 +179,4 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
       return;
     }
   }
-
 }

@@ -22,14 +22,14 @@ package com.cburch.logisim.std.ttl;
 /**
  * TTL 74x158: Quadruple 2-line to 1-line data selector, inverted output
  *
- * Model based on https://www.ti.com/product/SN74LS157 datasheet.
+ * <p>Model based on https://www.ti.com/product/SN74LS157 datasheet.
  */
 public class Ttl74158 extends Ttl74157 {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74158";
 
@@ -37,5 +37,4 @@ public class Ttl74158 extends Ttl74157 {
   public Ttl74158() {
     super(_ID, true);
   }
-
 }

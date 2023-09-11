@@ -112,7 +112,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     final var w = bds.getWidth();
     final var h = bds.getHeight();
     for (var i = 0; i < GENERATE_RANDOM_TRIES; i++) {
-      final var loc = Location.create(x + rand.nextInt(w), y + rand.nextInt(h));
+      final var loc = Location.create(x + rand.nextInt(w), y + rand.nextInt(h), false);
       if (contains(loc, false)) return loc;
     }
     return null;

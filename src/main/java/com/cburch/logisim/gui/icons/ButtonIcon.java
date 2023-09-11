@@ -46,6 +46,9 @@ public class ButtonIcon extends BaseIcon {
     final var t = new TextLayout(s, f, g2.getFontRenderContext());
     g2.setColor(Color.BLUE);
     final var center = scale(state) + wh / 2;
-    t.draw(g2, center - (float) t.getBounds().getCenterX(), center - (float) t.getBounds().getCenterY());
+    t.draw(
+        g2,
+        center - (float) t.getBounds().getCenterX(),
+        center - (float) t.getBounds().getCenterY());
   }
 }

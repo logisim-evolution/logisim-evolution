@@ -23,6 +23,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -65,26 +66,16 @@ public class Tunnel extends InstanceFactory {
     int bh = Math.max(minDim, textHeight);
     int bx;
     int by;
-    switch (halign) {
-      case TextField.H_LEFT:
-        bx = x;
-        break;
-      case TextField.H_RIGHT:
-        bx = x - bw;
-        break;
-      default:
-        bx = x - (bw / 2);
-    }
-    switch (valign) {
-      case TextField.V_TOP:
-        by = y;
-        break;
-      case TextField.V_BOTTOM:
-        by = y - bh;
-        break;
-      default:
-        by = y - (bh / 2);
-    }
+    bx = switch (halign) {
+      case TextField.H_LEFT -> x;
+      case TextField.H_RIGHT -> x - bw;
+      default -> x - (bw / 2);
+    };
+    by = switch (valign) {
+      case TextField.V_TOP -> y;
+      case TextField.V_BOTTOM -> y - bh;
+      default -> y - (bh / 2);
+    };
 
     if (g != null) {
       GraphicsUtil.drawText(
@@ -226,7 +217,7 @@ public class Tunnel extends InstanceFactory {
     int y = loc.getY();
     Graphics g = painter.getGraphics();
     g.translate(x, y);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintGhost(painter);
     g.translate(-x, -y);
     painter.drawPorts();

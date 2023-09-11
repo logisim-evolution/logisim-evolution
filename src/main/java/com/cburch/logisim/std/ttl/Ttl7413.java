@@ -14,10 +14,10 @@ import com.cburch.logisim.instance.InstanceState;
 
 public class Ttl7413 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7413";
 
@@ -26,7 +26,9 @@ public class Ttl7413 extends AbstractTtlGate {
   private static final byte pinCount = 14;
   private static final byte[] outPorts = {6, 8};
   private static final byte[] unusedPorts = {3, 11};
-  private static final String[] portNames = {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"};
+  private static final String[] portNames = {
+    "A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"
+  };
 
   public Ttl7413(String name, boolean inv) {
     super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(inv));
@@ -60,7 +62,8 @@ public class Ttl7413 extends AbstractTtlGate {
             x + 10 + i * 20,
             y + 36 + i * 2);
         g.drawLine(x + 10 + i * 20, y + 36 + i * 2, x + 95, y + 36 + i * 2);
-        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.PIN_HEIGHT, x + 30 + i * 20, y + 24 - i * 2);
+        g.drawLine(
+            x + 30 + i * 20, y + AbstractTtlGate.PIN_HEIGHT, x + 30 + i * 20, y + 24 - i * 2);
         g.drawLine(x + 30 + i * 20, y + 24 - i * 2, x + 115, y + 24 - i * 2);
       }
     }

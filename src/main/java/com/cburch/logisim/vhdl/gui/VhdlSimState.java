@@ -54,18 +54,10 @@ public class VhdlSimState extends JPanel implements VhdlSimulatorListener {
   @Override
   public void stateChanged() {
     switch (proj.getVhdlSimulator().getState()) {
-      case DISABLED:
-        color = Color.GRAY;
-        break;
-      case ENABLED:
-        color = Color.RED;
-        break;
-      case STARTING:
-        color = Color.ORANGE;
-        break;
-      case RUNNING:
-        color = new Color(40, 180, 40);
-        break;
+      case DISABLED -> color = Color.GRAY;
+      case ENABLED -> color = Color.RED;
+      case STARTING -> color = Color.ORANGE;
+      case RUNNING -> color = new Color(40, 180, 40);
     }
     this.repaint();
   }

@@ -23,15 +23,13 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
 
-/**
- * TTL 74x34: hex buffer gate
- */
+/** TTL 74x34: hex buffer gate */
 public class Ttl7434 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7434";
 
@@ -59,7 +57,8 @@ public class Ttl7434 extends AbstractTtlGate {
   }
 
   @Override
-  public void paintInternal(InstancePainter painter, int x, int y, int height, boolean isUpOriented) {
+  public void paintInternal(
+      InstancePainter painter, int x, int y, int height, boolean isUpOriented) {
     final var g = painter.getGraphics();
     final var portWidth = 16;
     final var portHeight = 6;
@@ -71,10 +70,10 @@ public class Ttl7434 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    for (byte i = 1; i < 6; i += 2) {
+    for (var i = 1; i < 6; i += 2) {
       state.setPort(i, state.getPortValue(i - 1), 1);
     }
-    for (byte i = 6; i < 12; i += 2) {
+    for (var i = 6; i < 12; i += 2) {
       state.setPort(i, state.getPortValue(i + 1), 1);
     }
   }

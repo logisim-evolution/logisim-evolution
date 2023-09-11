@@ -38,8 +38,10 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   }
 
   public static final Attribute<SocMemoryState> SOCMEM_STATE = new SocMemoryStateAttribute();
-  public static final Attribute<Integer> START_ADDRESS = Attributes.forHexInteger("StartAddress", S.getter("SocMemStartAddress"));
-  public static final Attribute<BitWidth> MEM_SIZE = Attributes.forBitWidth("MemSize", S.getter("SocMemSize"), 10, 26);
+  public static final Attribute<Integer> START_ADDRESS =
+      Attributes.forHexInteger("StartAddress", S.getter("SocMemStartAddress"));
+  public static final Attribute<BitWidth> MEM_SIZE =
+      Attributes.forBitWidth("MemSize", S.getter("SocMemSize"), 10, 26);
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;

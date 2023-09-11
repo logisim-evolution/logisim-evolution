@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -34,10 +35,10 @@ import java.awt.Color;
 
 public class BitSelector extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "BitSelector";
 
@@ -49,8 +50,12 @@ public class BitSelector extends InstanceFactory {
   public BitSelector() {
     super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHdlGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR, SELECT_ATTR, EXTENDED_ATTR},
-        new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE, 3, 9});
+        new Attribute[] {
+          StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR, SELECT_ATTR, EXTENDED_ATTR
+        },
+        new Object[] {
+          Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE, 3, 9
+        });
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
@@ -101,10 +106,10 @@ public class BitSelector extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-
+    
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     PlexersLibrary.drawTrapezoid(g, painter.getBounds(), facing, 9);
     final var bds = painter.getBounds();
-    g.setColor(Color.BLACK);
     GraphicsUtil.drawCenteredText(
         g, "Sel", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
     painter.drawPorts();
@@ -160,29 +165,21 @@ public class BitSelector extends InstanceFactory {
     Location inPt;
     Location selPt;
     if (facing == Direction.WEST) {
-      inPt = Location.create(30, 0);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
-        selPt = Location.create(10, -10);
-      else
-        selPt = Location.create(10, 10);
+      inPt = Location.create(30, 0, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(10, -10, true);
+      else selPt = Location.create(10, 10, true);
     } else if (facing == Direction.NORTH) {
-      inPt = Location.create(0, 30);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
-        selPt = Location.create(-10, 10);
-      else
-        selPt = Location.create(10, 10);
+      inPt = Location.create(0, 30, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, 10, true);
+      else selPt = Location.create(10, 10, true);
     } else if (facing == Direction.SOUTH) {
-      inPt = Location.create(0, -30);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
-        selPt = Location.create(-10, -10);
-      else
-        selPt = Location.create(10, -10);
+      inPt = Location.create(0, -30, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, -10, true);
+      else selPt = Location.create(10, -10, true);
     } else {
-      inPt = Location.create(-30, 0);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
-        selPt = Location.create(-10, 10);
-      else
-        selPt = Location.create(-10, -10);
+      inPt = Location.create(-30, 0, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, 10, true);
+      else selPt = Location.create(-10, -10, true);
     }
 
     final var ps = new Port[3];

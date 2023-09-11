@@ -141,20 +141,14 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 
     @Override
     public String getColumnName(int column) {
-      switch (column) {
-        case 0:
-          return S.get("statsComponentColumn");
-        case 1:
-          return S.get("statsLibraryColumn");
-        case 2:
-          return S.get("statsSimpleCountColumn");
-        case 3:
-          return S.get("statsUniqueCountColumn");
-        case 4:
-          return S.get("statsRecursiveCountColumn");
-        default:
-          return "??"; // should never happen
-      }
+      return switch (column) {
+        case 0 -> S.get("statsComponentColumn");
+        case 1 -> S.get("statsLibraryColumn");
+        case 2 -> S.get("statsSimpleCountColumn");
+        case 3 -> S.get("statsUniqueCountColumn");
+        case 4 -> S.get("statsRecursiveCountColumn");
+        default -> "??"; // should never happen
+      };
     }
 
     @Override

@@ -24,7 +24,7 @@ import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class JtagUartState  implements SocBusSlaveInterface {
+public class JtagUartState implements SocBusSlaveInterface {
 
   public class JtagUartFifoState implements InstanceData, Cloneable {
 
@@ -353,7 +353,10 @@ public class JtagUartState  implements SocBusSlaveInterface {
       name = label;
       if (StringUtil.isNullOrEmpty(name)) {
         final var loc = attachedBus.getComponent().getLocation();
-        name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
+        name =
+            String.format(
+                "%s@%d,%d",
+                attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
       }
     }
     return name;
@@ -361,8 +364,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   @Override
   public void registerListener(SocBusSlaveListener l) {
-    if (!listeners.contains(l))
-      listeners.add(l);
+    if (!listeners.contains(l)) listeners.add(l);
   }
 
   @Override
@@ -372,19 +374,15 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   @Override
   public InstanceComponent getComponent() {
-    if (attachedBus == null || attachedBus.getComponent() == null)
-      return null;
+    if (attachedBus == null || attachedBus.getComponent() == null) return null;
     return (InstanceComponent) attachedBus.getComponent();
   }
 
   private void fireNameChanged() {
-    for (SocBusSlaveListener l : listeners)
-      l.labelChanged();
+    for (SocBusSlaveListener l : listeners) l.labelChanged();
   }
 
   private void firememMapChanged() {
-    for (SocBusSlaveListener l : listeners)
-      l.memoryMapChanged();
+    for (SocBusSlaveListener l : listeners) l.memoryMapChanged();
   }
-
 }

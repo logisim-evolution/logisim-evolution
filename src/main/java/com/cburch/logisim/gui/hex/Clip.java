@@ -11,11 +11,10 @@ package com.cburch.logisim.gui.hex;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.hex.Caret;
 import com.cburch.hex.HexEditor;
-import com.cburch.hex.HexModel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.memory.MemContents;
+
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
@@ -73,7 +72,7 @@ class Clip implements ClipboardOwner {
         final var data = (long[]) xfer.getTransferData(binaryFlavor);
         numWords = data.length;
         var addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
-        pasted = MemContents.create(addrBits, model.getValueWidth());
+        pasted = MemContents.create(addrBits, model.getValueWidth(), false);
         pasted.set(0, data);
       } catch (UnsupportedFlavorException | IOException e) {
         return;

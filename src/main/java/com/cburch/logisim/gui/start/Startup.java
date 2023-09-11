@@ -96,6 +96,7 @@ public class Startup implements AWTEventListener {
   private boolean exitAfterStartup = false;
   private boolean showSplash;
   private File loadFile;
+  private File saveFile;
   private int ttyFormat = 0;
   // from other sources
   private boolean initialized = false;
@@ -111,7 +112,7 @@ public class Startup implements AWTEventListener {
   /* Name of the board to run on i.e Reptar, MAXV ...*/
   private String testCircuitImpBoard = null;
   /* Path folder containing Map file */
-  private String testCircuitImpMapFile = null;
+  private final String testCircuitImpMapFile = null;
   /* Indicate if only the HDL should be generated */
   private Boolean testCircuitHdlOnly = false;
   /* Testing Xml (circ file) Variable */
@@ -145,6 +146,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_HELP_LONG = "help";
   private static final String ARG_LOAD_SHORT = "l";
   private static final String ARG_LOAD_LONG = "load";
+  private static final String ARG_SAVE_LONG = "save";
   private static final String ARG_GEOMETRY_SHORT = "m";
   private static final String ARG_GEOMETRY_LONG = "geometry";
   private static final String ARG_TEST_CIRC_GEN_SHORT = "n";
@@ -276,7 +278,6 @@ public class Startup implements AWTEventListener {
    * @param stringBaseKey String localization base key.
    * @param shortKey Argument short key (i.e. "c" for "-c").
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
-   * @param expectedArgsCount Number of required option arguments.
    */
   protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
     addOption(opts, stringBaseKey, shortKey, longKey, 0);
@@ -315,6 +316,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
+    addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
     addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
@@ -380,6 +382,7 @@ public class Startup implements AWTEventListener {
         case ARG_TTY_LONG -> handleArgTty(startup, opt);
         case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
         case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+        case ARG_SAVE_LONG -> handleArgSave(startup, opt);
         case ARG_GATES_LONG -> handleArgGates(startup, opt);
         case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
         case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
@@ -418,6 +421,10 @@ public class Startup implements AWTEventListener {
       logger.error(S.get("loadNeedsTtyError"));
       return null;
     }
+    if (startup.saveFile != null && !startup.isTty) {
+      logger.error(S.get("saveNeedsTtyError"));
+      return null;
+    }
 
     return startup;
   }
@@ -427,7 +434,7 @@ public class Startup implements AWTEventListener {
   /**
    * Supported return codes from command handlers;
    */
-  public static enum RC {
+  public enum RC {
     /**
      * Handler completed succesfuly. We can proceed with another argument.
      */
@@ -464,16 +471,14 @@ public class Startup implements AWTEventListener {
 
         if (val == 0) {
           logger.error(S.get("ttyFormatError"));
-          // FIXME: Shouldn't we exit here -> RC.QUIT;
-          continue;
+          return RC.QUIT;
         }
         startup.ttyFormat |= val;
         return RC.OK;
       }
     }
     logger.error(S.get("ttyFormatError"));
-    // FIXME: Shouldn't we exit here; -> RC.QUIT
-    return RC.WARN;
+    return RC.QUIT;
   }
 
   private static RC handleArgSubstitute(Startup startup, Option opt) {
@@ -497,6 +502,16 @@ public class Startup implements AWTEventListener {
     }
     final var fileName = opt.getValue();
     startup.loadFile = new File(fileName);
+    return RC.OK;
+  }
+
+  private static RC handleArgSave(Startup startup, Option opt) {
+    if (startup.saveFile != null) {
+      logger.error(S.get("saveMultipleError"));
+      return RC.WARN;
+    }
+    final var fileName = opt.getValue();
+    startup.saveFile = new File(fileName);
     return RC.OK;
   }
 
@@ -768,6 +783,10 @@ public class Startup implements AWTEventListener {
     return loadFile;
   }
 
+  File getSaveFile() {
+    return saveFile;
+  }
+
   String getCircuitToTest() {
     return circuitToTest;
   }
@@ -802,7 +821,9 @@ public class Startup implements AWTEventListener {
             testCircuitImpMapFile,
             false,
             false,
-            testCircuitHdlOnly);
+            testCircuitHdlOnly,
+            1.0,
+            1.0);
     return downloader.runTty();
   }
 
@@ -1002,22 +1023,13 @@ public class Startup implements AWTEventListener {
           } catch (Exception ignored) {
           }
         }
-        if (container instanceof JOptionPane) {
-          final var pane = (JOptionPane) container;
+        if (container instanceof final JOptionPane pane) {
           if (hasIcon(pane)) {
             switch (pane.getMessageType()) {
-              case OptionPane.ERROR_MESSAGE:
-                pane.setIcon(new ErrorIcon());
-                break;
-              case OptionPane.QUESTION_MESSAGE:
-                pane.setIcon(new QuestionIcon());
-                break;
-              case OptionPane.INFORMATION_MESSAGE:
-                pane.setIcon(new InfoIcon());
-                break;
-              case OptionPane.WARNING_MESSAGE:
-                pane.setIcon(new WarningIcon());
-                break;
+              case OptionPane.ERROR_MESSAGE -> pane.setIcon(new ErrorIcon());
+              case OptionPane.QUESTION_MESSAGE -> pane.setIcon(new QuestionIcon());
+              case OptionPane.INFORMATION_MESSAGE -> pane.setIcon(new InfoIcon());
+              case OptionPane.WARNING_MESSAGE -> pane.setIcon(new WarningIcon());
             }
           }
         }

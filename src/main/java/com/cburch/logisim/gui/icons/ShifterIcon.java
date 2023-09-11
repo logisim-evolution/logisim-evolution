@@ -16,7 +16,7 @@ import java.awt.font.TextLayout;
 
 public class ShifterIcon extends BaseIcon {
 
-  private int state = 2;
+  private final int state = 2;
 
   @Override
   protected void paintIcon(Graphics2D g2) {
@@ -31,7 +31,6 @@ public class ShifterIcon extends BaseIcon {
       }
     }
     final var f = g2.getFont().deriveFont(scale((float) 6)).deriveFont(Font.BOLD);
-    g2.setColor(Color.BLACK);
     g2.drawRect(0, scale(4), scale(16), scale(8));
     final var t = new TextLayout(s.toString(), f, g2.getFontRenderContext());
     final var x = scale((float) 8) - (float) t.getBounds().getCenterX();

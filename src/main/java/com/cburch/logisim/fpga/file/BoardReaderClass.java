@@ -152,8 +152,7 @@ public class BoardReaderClass {
   }
 
   private FpgaClass getFpgaInfo() {
-    var fpgaList =
-        BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
+    var fpgaList = BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
     var frequency = -1L;
     String clockPin = null;
     String clockPull = null;
@@ -172,7 +171,8 @@ public class BoardReaderClass {
     final var thisFpga = fpgaList.item(0);
     final var fpgaParams = thisFpga.getChildNodes();
     for (int i = 0; i < fpgaParams.getLength(); i++) {
-      if (fpgaParams.item(i)
+      if (fpgaParams
+          .item(i)
           .getNodeName()
           .equals(BoardWriterClass.CLOCK_INFORMATION_SECTION_STRING)) {
         final var clockAttrs = fpgaParams.item(i).getAttributes();
@@ -193,7 +193,8 @@ public class BoardReaderClass {
           if (unusedAttrs.item(j).getNodeName().equals("PullBehavior"))
             unusedPull = unusedAttrs.item(j).getNodeValue();
       }
-      if (fpgaParams.item(i)
+      if (fpgaParams
+          .item(i)
           .getNodeName()
           .equals(BoardWriterClass.FPGA_INFORMATION_SECTION_STRING)) {
         final var fpgaAttrs = fpgaParams.item(i).getAttributes();
@@ -230,7 +231,8 @@ public class BoardReaderClass {
         || (Package == null)
         || (speed == null)) {
       // FIXME: hardcoded string
-      DialogNotification.showDialogNotification(null, "Error", "The selected xml file does not contain the required FPGA parameters");
+      DialogNotification.showDialogNotification(
+          null, "Error", "The selected xml file does not contain the required FPGA parameters");
       return null;
     }
     if (usbTmc == null) usbTmc = Boolean.toString(false);

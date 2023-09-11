@@ -28,6 +28,9 @@ public class TtyIcon extends BaseIcon {
     final var f = Tty.DEFAULT_FONT.deriveFont(scale((float) 5)).deriveFont(Font.BOLD);
     final var t = new TextLayout(display.substring(0, 3), f, g2.getFontRenderContext());
     g2.setColor(Color.yellow);
-    t.draw(g2, (float) (getIconWidth() / 2 - t.getBounds().getCenterX()), (float) (getIconHeight() / 2 - t.getBounds().getCenterY()));
+    t.draw(
+        g2,
+        (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
+        (float) (getIconHeight() / 2 - t.getBounds().getCenterY()));
   }
 }

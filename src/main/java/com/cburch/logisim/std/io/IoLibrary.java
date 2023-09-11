@@ -33,7 +33,7 @@ public class IoLibrary extends Library {
   public static final Attribute<Color> ATTR_COLOR =
       Attributes.forColor("color", S.getter("ioColorAttr"));
   public static final Attribute<Color> ATTR_ON_COLOR =
-          Attributes.forColor("color", S.getter("ioOnColor"));
+      Attributes.forColor("color", S.getter("ioOnColor"));
   public static final Attribute<Color> ATTR_OFF_COLOR =
       Attributes.forColor("offcolor", S.getter("ioOffColor"));
   static final Attribute<Color> ATTR_BACKGROUND =

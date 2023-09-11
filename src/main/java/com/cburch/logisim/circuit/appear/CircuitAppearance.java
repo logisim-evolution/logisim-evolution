@@ -70,15 +70,15 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     suppressRecompute = false;
     addCanvasModelListener(myListener);
     if (circuit != null) circuit.getStaticAttributes().addAttributeListener(this);
-    defaultCanvasObjects = new ArrayList<CanvasObject>();
+    defaultCanvasObjects = new ArrayList<>();
     recomputeDefaultAppearance();
     defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
     setObjectsForce(defaultCustomAppearance, false);
   }
 
   public boolean hasCustomAppearance() {
-    final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
-    final var defaultCustom = new ArrayList<CanvasObject>(defaultCustomAppearance);
+    final var currentCustom = new ArrayList<>(getCustomObjectsFromBottom());
+    final var defaultCustom = new ArrayList<>(defaultCustomAppearance);
     var shapeIterator = currentCustom.iterator();
     while (shapeIterator.hasNext()) {
       final var shape = shapeIterator.next(); 
@@ -193,7 +193,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   private Location findAnchorLocation() {
     final var anchor = findAnchor();
-    return (anchor == null) ? Location.create(100, 100) : anchor.getLocation();
+    return (anchor == null) ? Location.create(100, 100, true) : anchor.getLocation();
   }
 
   void fireCircuitAppearanceChanged(int affected) {
@@ -289,7 +289,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   @Override
   public List<CanvasObject> getObjectsFromTop() {
-    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    final var ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }
@@ -466,28 +466,36 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
 
   public void setObjectsForce(List<? extends CanvasObject> shapesBase, boolean isDefault) {
-    // This shouldn't ever be an issue, but just to make doubly sure, we'll
-    // check that the anchor and all ports are in their proper places.
-    final var shapes = new ArrayList<CanvasObject>(shapesBase);
-    final var n = shapes.size();
-    var ports = 0;
-    for (var i = n - 1; i >= 0; i--) { // count ports, move anchor to end
-      final var obj = shapes.get(i);
+    // Outside the appearance editor, the anchor is not drawn at all, and ports
+    // are always drawn last (as the top layer) by the simulation rendering
+    // code. So, the layer-order of ports and anchor within the shape lists does
+    // not really matter much. However, we force the anchor to be in the last
+    // position (top  layer), so it is easier to move, and we force the ports to
+    // be next to last (near top layer), so it matches the simulation rendering.
+      
+    // Must manually deep-copy arrays in Java...
+    // final var shapes = new ArrayList<CanvasObject>(shapesBase);
+    final var nrOfShapes = shapesBase.size();
+    final var shapes = new ArrayList<CanvasObject>(nrOfShapes);
+    final var end = nrOfShapes - 1;
+    for (var shapeCount = 0; shapeCount < nrOfShapes; shapeCount++) {
+      shapes.add(shapesBase.get(shapeCount).clone());
+    }
+    var reserved = 0;
+    for (var shapeIndex = end; shapeIndex >= 0; shapeIndex--) { // count ports, move anchor to end
+      final var obj = shapes.get(shapeIndex);
       if (obj instanceof AppearanceAnchor) {
-        if (i != n - 1) {
-          shapes.remove(i);
+        if (shapeIndex != end) {
+          shapes.remove(shapeIndex);
           shapes.add(obj);
         }
+        reserved++;
       } else if (obj instanceof AppearancePort) {
-        ports++;
-      }
-    }
-    for (var i = (n - ports - 1) - 1; i >= 0; i--) { // move ports to top
-      final var obj = shapes.get(i);
-      if (obj instanceof AppearancePort) {
-        shapes.remove(i);
-        shapes.add(n - ports - 1, obj);
-        i--;
+        if (shapeIndex != end - reserved) {
+          shapes.remove(shapeIndex);
+          shapes.add(end - reserved, obj);
+        }
+        reserved++;
       }
     }
 

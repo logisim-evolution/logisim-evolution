@@ -29,7 +29,7 @@ public class TruthTable {
   private static final CompareInputs sortByInputs = new CompareInputs();
 
   private static class Row implements Iterable<Integer> {
-    // todo: probably more efficient to store this in baseIdx/dcMask format.
+    // TODO: probably more efficient to store this in baseIdx/dcMask format.
     final Entry[] inputs;
 
     Row(int idx, int numInputs, int mask) {
@@ -60,8 +60,7 @@ public class TruthTable {
 
     public int duplicity() {
       int count = 1;
-      for (Entry input : inputs)
-        count *= (input == Entry.DONT_CARE ? 2 : 1);
+      for (Entry input : inputs) count *= (input == Entry.DONT_CARE ? 2 : 1);
       return count;
     }
 
@@ -430,16 +429,26 @@ public class TruthTable {
       final var r = newRows.get(i);
       for (final var idx : r) {
         if (taken[idx] != 0 && !force) {
-          throw new IllegalArgumentException(
-              String.format(
-                  "Some inputs are repeated."
-                      + " For example, rows %d and %d have overlapping input values %s and %s.",
-                  taken[idx],
-                  i + 1,
-                  newRows.get(taken[idx] - 1).toBitString(ivars),
-                  r.toBitString(ivars)));
+          final var existingValues = newEntries.get(taken[idx] - 1);
+          final var currentValues = newEntries.get(i);
+          for (int col = 0; col < no; col++) {
+            final var existingValue = existingValues[ni + col];
+            final var currentValue = currentValues[ni + col];
+            if (existingValue != Entry.DONT_CARE && currentValue != Entry.DONT_CARE) {
+              if (!currentValue.equals(existingValue)) {
+                throw new IllegalArgumentException(
+                  String.format(
+                      "Some inputs are repeated."
+                          + " For example, rows %d and %d have overlapping input values %s and %s.",
+                      taken[idx],
+                      i + 1,
+                      newRows.get(taken[idx] - 1).toBitString(ivars),
+                      r.toBitString(ivars)));
+              }
+            }
+          }
         } else if (taken[idx] != 0) {
-          // todo: split row
+          // TODO: split row
           throw new IllegalArgumentException(
               "Sorry, this error can't yet be fixed. Eliminate duplicate rows then try again.");
         } else {
@@ -451,7 +460,8 @@ public class TruthTable {
     for (var i = 0; i < getRowCount(); i++) {
       if (taken[i] == 0 && !force) {
         throw new IllegalArgumentException(
-            String.format("Some inputs are missing." + " For example, there is no row for input %s.",
+            String.format(
+                "Some inputs are missing." + " For example, there is no row for input %s.",
                 new Row(i, ni, 0).toBitString(ivars)));
       } else if (taken[i] == 0) {
         newRows.add(new Row(i, ni, 0));

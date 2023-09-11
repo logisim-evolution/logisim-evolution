@@ -33,5 +33,4 @@ public class DrawLineIcon extends BaseIcon {
 
     gfx.drawRect(0, scale(13), wh, wh);
   }
-
 }

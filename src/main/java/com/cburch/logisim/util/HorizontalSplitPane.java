@@ -25,7 +25,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 public class HorizontalSplitPane extends JPanel {
-  abstract static class Dragbar extends JComponent implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
+  abstract static class Dragbar extends JComponent
+      implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
     private static final long serialVersionUID = 1L;
     private boolean dragging = false;
     private int curValue;
@@ -68,7 +69,8 @@ public class HorizontalSplitPane extends JPanel {
     public void paintComponent(Graphics g) {
       if (AppPreferences.AntiAliassing.getBoolean()) {
         final var g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       }
       if (dragging) {

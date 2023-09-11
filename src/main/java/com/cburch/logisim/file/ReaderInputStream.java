@@ -94,7 +94,8 @@ public class ReaderInputStream extends InputStream {
   }
 
   /**
-   *  @return false - mark is not supported */
+   * @return false - mark is not supported
+   */
   @Override
   public boolean markSupported() {
     return false; // would be imprecise
@@ -110,19 +111,15 @@ public class ReaderInputStream extends InputStream {
   public synchronized int read() throws IOException {
     if (in == null) throw new IOException("Stream Closed");
 
-    byte result;
+    int result;
     if (slack != null && begin < slack.length) {
-      result = slack[begin];
+      result = slack[begin] & 0xff;
       if (++begin == slack.length) {
         slack = null;
       }
     } else {
       final var buf = new byte[1];
-      result = (read(buf, 0, 1) <= 0) ? -1 : buf[0];
-    }
-
-    if (result < -1) {
-      result += 256;
+      result = (read(buf, 0, 1) <= 0) ? -1 : (buf[0] & 0xff);
     }
 
     return result;

@@ -35,7 +35,7 @@ public class PriorityEncoderHdlGeneratorFactory extends AbstractHdlGeneratorFact
     myWires
         .addWire("s_inIsZero", 1)
         .addWire("s_address", 6)
-        .addWire("s_selectVector0", 65)
+        .addWire("s_selectVector0", 64)
         .addWire("s_selectVector1", 32)
         .addWire("s_selectVector2", 16)
         .addWire("s_selectVector3", 8)
@@ -51,8 +51,7 @@ public class PriorityEncoderHdlGeneratorFactory extends AbstractHdlGeneratorFact
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof netlistComponent)) return map;
-    final var comp = (netlistComponent) mapInfo;
+    if (!(mapInfo instanceof final netlistComponent comp)) return map;
     final var nrOfBits = comp.nrOfEnds() - 4;
     map.putAll(Hdl.getNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
@@ -88,9 +87,9 @@ public class PriorityEncoderHdlGeneratorFactory extends AbstractHdlGeneratorFact
           s_inIsZero  <= '1' {{when}} inputVector = std_logic_vector(to_unsigned(0,{{inBits}})) {{else}} '0';
 
           -- Processes
-          makeAddr : {{process}}(inputVector, s_selectVector1, s_selectVector2, s_selectVector3, s_selectVector4) {{is}}
+          makeAddr : {{process}}(inputVector, s_selectVector0, s_selectVector1, s_selectVector2, s_selectVector3, s_selectVector4) {{is}}
           {{begin}}
-             s_selectVector0(64 {{downto}} {{inBits}})  <= ({{others}} => '0');
+             s_selectVector0(63 {{downto}} {{inBits}})  <= ({{others}} => '0');
              s_selectVector0({{inBits}}-1 {{downto}} 0) <= inputVector;
              {{if}} (s_selectVector0(63 {{downto}} 32) = X"00000000") {{then}} s_address(5)      <= '0';
                                                                    s_selectVector1 <= s_selectVector0(31 {{downto}} 0);
@@ -126,7 +125,7 @@ public class PriorityEncoderHdlGeneratorFactory extends AbstractHdlGeneratorFact
           assign address = (~enable) ? 0 : s_address[{{selBits}}-1:0];
           assign s_inIsZero = (inputVector == 0) ? 1'b1 : 1'b0;
 
-          assign s_selectVector0[64:{{selBits}}] = 0;
+          assign s_selectVector0[63:{{selBits}}] = 0;
           assign s_selectVector0[{{selBits}}-1:0] = inputVector;
           assign s_address[5] = (s_selectVector0[63:32] == 0) ? 1'b0 : 1'b1;
           assign s_selectVector1 = (s_selectVector0[63:32] == 0) ? s_selectVector0[31:0] : s_selectVector0[63:32];

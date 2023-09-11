@@ -38,10 +38,10 @@ import java.awt.Graphics2D;
 
 class NotGate extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "NOT Gate";
 
@@ -124,7 +124,7 @@ class NotGate extends InstanceFactory {
 
     final var ports = new Port[2];
     ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-    Location out = Location.create(0, 0).translate(facing, dx);
+    Location out = Location.create(0, 0, true).translate(facing, dx);
     ports[1] = new Port(out.getX(), out.getY(), Port.INPUT, StdAttr.WIDTH);
     instance.setPorts(ports);
   }
@@ -141,15 +141,16 @@ class NotGate extends InstanceFactory {
   @Override
   protected Object getInstanceFeature(final Instance instance, Object key) {
     if (key == ExpressionComputer.class) {
-      return (ExpressionComputer) expressionMap -> {
-        int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
-        for (var b = 0; b < width; b++) {
-          final var e = expressionMap.get(instance.getPortLocation(1), b);
-          if (e != null) {
-            expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
-          }
-        }
-      };
+      return (ExpressionComputer)
+          expressionMap -> {
+            int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
+            for (var b = 0; b < width; b++) {
+              final var e = expressionMap.get(instance.getPortLocation(1), b);
+              if (e != null) {
+                expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
+              }
+            }
+          };
     }
     return super.getInstanceFeature(instance, key);
   }
@@ -206,9 +207,9 @@ class NotGate extends InstanceFactory {
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {
       paintRectangularBase(g, painter);
 
-    //    } else if (shape == AppPreferences.SHAPE_DIN40700) {
-    //      int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20 : 30;
-    //      PainterDin.paintAnd(painter, width, 18, true);
+      //    } else if (shape == AppPreferences.SHAPE_DIN40700) {
+      //      int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20 : 30;
+      //      PainterDin.paintAnd(painter, width, 18, true);
 
     } else {
       PainterShaped.paintNot(painter);
@@ -233,13 +234,12 @@ class NotGate extends InstanceFactory {
     final var g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, RECT_LABEL, true, true);
-    else
-      AbstractGate.paintIconBufferAnsi(g, true, false);
+    else AbstractGate.paintIconBufferAnsi(g, true, false);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    painter.getGraphics().setColor(Color.BLACK);
+    painter.getGraphics().setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintBase(painter);
     painter.drawPorts();
     painter.drawLabel();

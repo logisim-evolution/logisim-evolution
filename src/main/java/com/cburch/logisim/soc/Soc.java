@@ -23,13 +23,13 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Soc  extends Library {
+public class Soc extends Library {
 
   /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the library, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * <p>Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "Soc";
 

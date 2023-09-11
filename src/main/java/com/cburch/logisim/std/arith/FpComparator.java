@@ -23,16 +23,18 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpComparator extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "FPComparator";
 
@@ -83,9 +85,8 @@ public class FpComparator extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(GT, ">", Direction.WEST);
@@ -97,7 +98,6 @@ public class FpComparator extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -121,6 +121,7 @@ public class FpComparator extends InstanceFactory {
     state.setPort(GT, Value.createKnown(1, a_val > b_val ? 1 : 0), delay);
     state.setPort(EQ, Value.createKnown(1, a_val == b_val ? 1 : 0), delay);
     state.setPort(LT, Value.createKnown(1, a_val < b_val ? 1 : 0), delay);
-    state.setPort(ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
+    state.setPort(
+        ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
   }
 }

@@ -37,10 +37,10 @@ import javax.swing.Icon;
 
 public class Transistor extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Transistor";
 
@@ -109,7 +109,7 @@ public class Transistor extends InstanceFactory {
   public boolean contains(Location loc, AttributeSet attrs) {
     if (super.contains(loc, attrs)) {
       Direction facing = attrs.getValue(StdAttr.FACING);
-      Location center = Location.create(0, 0).translate(facing, -20);
+      Location center = Location.create(0, 0, true).translate(facing, -20);
       return center.manhattanDistanceTo(loc) < 24;
     } else {
       return false;

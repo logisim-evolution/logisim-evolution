@@ -20,22 +20,26 @@ import java.util.Set;
 public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
-  public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory, List<String> hierarchy) {
+  public boolean generateAllHDLDescriptions(
+      Set<String> handledComponents, String workingDirectory, List<String> hierarchy) {
     throw new IllegalAccessError("BUG: generateAllHDLDescriptions not supported");
   }
 
   @Override
-  public List<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getArchitecture(
+      Netlist theNetlist, AttributeSet attrs, String componentName) {
     throw new IllegalAccessError("BUG: getArchitecture not supported");
   }
 
   @Override
-  public LineBuffer getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public LineBuffer getComponentInstantiation(
+      Netlist theNetlist, AttributeSet attrs, String componentName) {
     throw new IllegalAccessError("BUG: getComponentInstantiation not supported");
   }
 
   @Override
-  public LineBuffer getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
+  public LineBuffer getComponentMap(
+      Netlist nets, Long componentId, Object componentInfo, String name) {
     throw new IllegalAccessError("BUG: getComponentMap not supported");
   }
 
@@ -45,7 +49,8 @@ public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(
+      Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     return LineBuffer.getHdlBuffer();
   }
 
@@ -63,5 +68,4 @@ public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
   public boolean isOnlyInlined() {
     return true;
   }
-
 }

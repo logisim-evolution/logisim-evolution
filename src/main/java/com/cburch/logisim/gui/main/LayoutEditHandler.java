@@ -9,12 +9,10 @@
 
 package com.cburch.logisim.gui.main;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -30,7 +28,7 @@ public class LayoutEditHandler extends EditHandler
   LayoutEditHandler(Frame frame) {
     this.frame = frame;
 
-    Project proj = frame.getProject();
+    final var proj = frame.getProject();
     Clipboard.addPropertyChangeListener(Clipboard.CONTENTS_PROPERTY, this);
     proj.addProjectListener(this);
     proj.addLibraryListener(this);
@@ -72,35 +70,35 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void copy() {
-    Project proj = frame.getProject();
-    Selection sel = frame.getCanvas().getSelection();
+    final var proj = frame.getProject();
+    final var sel = frame.getCanvas().getSelection();
     proj.doAction(SelectionActions.copy(sel));
   }
 
   @Override
   public void cut() {
-    Project proj = frame.getProject();
-    Selection sel = frame.getCanvas().getSelection();
+    final var proj = frame.getProject();
+    final var sel = frame.getCanvas().getSelection();
     proj.doAction(SelectionActions.cut(sel));
   }
 
   @Override
   public void delete() {
-    Project proj = frame.getProject();
-    Selection sel = frame.getCanvas().getSelection();
+    final var proj = frame.getProject();
+    final var sel = frame.getCanvas().getSelection();
     proj.doAction(SelectionActions.clear(sel));
   }
 
   @Override
   public void duplicate() {
-    Project proj = frame.getProject();
-    Selection sel = frame.getCanvas().getSelection();
+    final var proj = frame.getProject();
+    final var sel = frame.getCanvas().getSelection();
     proj.doAction(SelectionActions.duplicate(sel));
   }
 
   @Override
   public void libraryChanged(LibraryEvent e) {
-    int action = e.getAction();
+    final var action = e.getAction();
     if (action == LibraryEvent.ADD_LIBRARY) {
       computeEnabled();
     } else if (action == LibraryEvent.REMOVE_LIBRARY) {
@@ -120,10 +118,10 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void paste() {
-    Project proj = frame.getProject();
-    Selection sel = frame.getCanvas().getSelection();
+    final var proj = frame.getProject();
+    final var sel = frame.getCanvas().getSelection();
     selectSelectTool(proj);
-    Action action = SelectionActions.pasteMaybe(proj, sel);
+    final var action = SelectionActions.pasteMaybe(proj, sel);
     if (action != null) {
       proj.doAction(action);
     }
@@ -131,7 +129,7 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void projectChanged(ProjectEvent e) {
-    int action = e.getAction();
+    final var action = e.getAction();
     if (action == ProjectEvent.ACTION_SET_FILE) {
       computeEnabled();
     } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
@@ -165,10 +163,10 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void selectAll() {
-    Project proj = frame.getProject();
-    Selection sel = frame.getCanvas().getSelection();
+    final var proj = frame.getProject();
+    final var sel = frame.getCanvas().getSelection();
     selectSelectTool(proj);
-    Circuit circ = proj.getCurrentCircuit();
+    final var circ = proj.getCurrentCircuit();
     sel.addAll(circ.getWires());
     sel.addAll(circ.getNonWires());
     proj.repaintCanvas();

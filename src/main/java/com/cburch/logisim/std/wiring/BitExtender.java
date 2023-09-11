@@ -25,9 +25,11 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
@@ -113,27 +115,18 @@ public class BitExtender extends InstanceFactory {
     FontMetrics fm = g.getFontMetrics();
     int asc = fm.getAscent();
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
 
     String s0;
     String type = getType(painter.getAttributeSet());
-    switch (type) {
-      case "zero":
-        s0 = S.get("extenderZeroLabel");
-        break;
-      case "one":
-        s0 = S.get("extenderOneLabel");
-        break;
-      case "sign":
-        s0 = S.get("extenderSignLabel");
-        break;
-      case "input":
-        s0 = S.get("extenderInputLabel");
-        break;
-      default:
-        s0 = "???"; // should never happen
-        break;
-    }
+    s0 = switch (type) {
+      case "zero" -> S.get("extenderZeroLabel");
+      case "one" -> S.get("extenderOneLabel");
+      case "sign" -> S.get("extenderSignLabel");
+      case "input" -> S.get("extenderInputLabel");
+      default -> "???"; // should never happen
+    };
     String s1 = S.get("extenderMainLabel");
     Bounds bds = painter.getBounds();
     int x = bds.getX() + bds.getWidth() / 2;
@@ -156,20 +149,17 @@ public class BitExtender extends InstanceFactory {
     String type = getType(state.getAttributeSet());
     Value extend;
     switch (type) {
-      case "one":
-        extend = Value.TRUE;
-        break;
-      case "sign":
+      case "one" -> extend = Value.TRUE;
+      case "sign" -> {
         int win = in.getWidth();
         extend = win > 0 ? in.get(win - 1) : Value.ERROR;
-        break;
-      case "input":
+      }
+      case "input" -> {
         extend = state.getPortValue(2);
-        if (extend.getWidth() != 1) extend = Value.ERROR;
-        break;
-      default:
-        extend = Value.FALSE;
-        break;
+        if (extend.getWidth() != 1)
+          extend = Value.ERROR;
+      }
+      default -> extend = Value.FALSE;
     }
 
     Value out = in.extendWidth(wout.getWidth(), extend);

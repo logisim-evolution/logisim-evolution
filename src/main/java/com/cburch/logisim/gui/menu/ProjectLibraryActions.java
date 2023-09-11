@@ -143,7 +143,8 @@ public class ProjectLibraryActions {
   public static void doUnloadLibrary(Project proj, Library lib) {
     final var message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
     if (message != null) {
-      OptionPane.showMessageDialog(proj.getFrame(), message, S.get("unloadErrorTitle"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          proj.getFrame(), message, S.get("unloadErrorTitle"), OptionPane.ERROR_MESSAGE);
     } else {
       proj.doAction(LogisimFileActions.unloadLibrary(lib));
     }

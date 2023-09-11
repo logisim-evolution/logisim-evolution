@@ -77,7 +77,8 @@ public class Canvas extends JComponent {
     }
   }
 
-  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into
+  // abstract class.
   public double getZoomFactor() {
     return 1.0; // subclass will have to override this
   }
@@ -85,7 +86,8 @@ public class Canvas extends JComponent {
   protected void paintBackground(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
       final var g2 = (Graphics2D) g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     g.clearRect(0, 0, getWidth(), getHeight());
@@ -97,22 +99,26 @@ public class Canvas extends JComponent {
     paintForeground(g);
     paintTooltip(g);
   }
-  
+
   public void setTooltip(Location loc, String name) {
     tooltipLocation = loc;
     tooltipName = name;
   }
-  
+
   private void paintTooltip(Graphics g) {
     if (tooltipLocation == null || tooltipName == null) return;
     g.setColor(Color.YELLOW);
     final var x = (int) (tooltipLocation.getX() * getZoomFactor());
     final var y = (int) (tooltipLocation.getY() * getZoomFactor());
-    final var width = (int) ((tooltipName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH) * getZoomFactor());
-    final var height = (int) ((DrawAttr.FIXED_FONT_HEIGHT + DrawAttr.FIXED_FONT_HEIGHT >> 1) * getZoomFactor());
+    final var width =
+        (int) ((tooltipName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH) * getZoomFactor());
+    final var height =
+        (int) ((DrawAttr.FIXED_FONT_HEIGHT + DrawAttr.FIXED_FONT_HEIGHT >> 1) * getZoomFactor());
     g.fillRect(x, y, width, height);
     g.setColor(Color.BLUE);
-    g.setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT.deriveFont((float) (getZoomFactor() * DrawAttr.FIXED_FONT_HEIGHT)));
+    g.setFont(
+        DrawAttr.DEFAULT_FIXED_PICH_FONT.deriveFont(
+            (float) (getZoomFactor() * DrawAttr.FIXED_FONT_HEIGHT)));
     GraphicsUtil.drawText(g, tooltipName, x + 2, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_TOP);
   }
 
@@ -157,12 +163,14 @@ public class Canvas extends JComponent {
     return null; // subclass will override if it supports popup menus
   }
 
-  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into
+  // abstract class.
   public int snapX(int x) {
     return x; // subclass will have to override this
   }
 
-  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into
+  // abstract class.
   public int snapY(int y) {
     return y; // subclass will have to override this
   }

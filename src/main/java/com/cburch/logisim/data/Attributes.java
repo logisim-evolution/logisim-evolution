@@ -35,7 +35,7 @@ public class Attributes {
 
     @Override
     public Boolean parse(String value) {
-      return vals[Boolean.valueOf(value) ? 0 : 1];
+      return vals[Boolean.parseBoolean(value) ? 0 : 1];
     }
 
     @Override

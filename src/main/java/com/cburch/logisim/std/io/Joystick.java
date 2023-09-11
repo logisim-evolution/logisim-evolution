@@ -16,7 +16,6 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.JoystickIcon;
 import com.cburch.logisim.instance.Instance;
@@ -27,18 +26,20 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
 public class Joystick extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Joystick";
 
@@ -72,6 +73,7 @@ public class Joystick extends InstanceFactory {
       final var x = loc.getX();
       final var y = loc.getY();
       final var g = painter.getGraphics();
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       g.fillOval(x - 19, y + 1, 8, 8);
       GraphicsUtil.switchToWidth(g, 3);
       final var dx = state.xPos;
@@ -130,7 +132,7 @@ public class Joystick extends InstanceFactory {
     }
     GraphicsUtil.switchToWidth(g, 1);
     g.fillOval(x - 4, y - 4, 8, 8);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawOval(x - 4, y - 4, 8, 8);
   }
 
@@ -141,17 +143,9 @@ public class Joystick extends InstanceFactory {
     super(_ID, S.getter("joystickComponent"));
     setAttributes(
         new Attribute[] {
-          StdAttr.FACING,
-          ATTR_WIDTH,
-          IoLibrary.ATTR_COLOR,
-          IoLibrary.ATTR_BACKGROUND
+          StdAttr.FACING, ATTR_WIDTH, IoLibrary.ATTR_COLOR, IoLibrary.ATTR_BACKGROUND
         },
-        new Object[] {
-          Direction.EAST,
-          BitWidth.create(4),
-          Color.RED,
-          IoLibrary.DEFAULT_BACKGROUND
-        });
+        new Object[] {Direction.EAST, BitWidth.create(4), Color.RED, IoLibrary.DEFAULT_BACKGROUND});
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));
     setOffsetBounds(Bounds.create(-30, -10, 30, 30));
@@ -162,13 +156,13 @@ public class Joystick extends InstanceFactory {
         });
     setInstancePoker(Poker.class);
   }
-  
+
   @Override
   protected void configureNewInstance(Instance instance) {
     updatePorts(instance);
     instance.addAttributeListener();
   }
-  
+
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     int x0, y0;
@@ -218,10 +212,15 @@ public class Joystick extends InstanceFactory {
     final var g = painter.getGraphics();
     g.setColor(painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND));
     g.fillRoundRect(x - 30, y - 10, 30, 30, 8, 8);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
     g.drawRoundRect(x - 28, y - 8, 26, 26, 4, 4);
-    drawBall(g, x - 15, y + 5, painter.getAttributeValue(IoLibrary.ATTR_COLOR), painter.shouldDrawColor());
+    drawBall(
+        g,
+        x - 15,
+        y + 5,
+        painter.getAttributeValue(IoLibrary.ATTR_COLOR),
+        painter.shouldDrawColor());
     painter.drawPorts();
   }
 

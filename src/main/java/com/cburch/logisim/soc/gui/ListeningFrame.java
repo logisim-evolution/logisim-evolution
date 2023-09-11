@@ -12,7 +12,8 @@ import com.cburch.logisim.util.StringGetter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
-public class ListeningFrame extends JFrame implements BaseWindowListenerContract, LocaleListener, CircuitListener, ComponentListener {
+public class ListeningFrame extends JFrame
+    implements BaseWindowListenerContract, LocaleListener, CircuitListener, ComponentListener {
 
   private static final long serialVersionUID = 1L;
   private final StringGetter title;

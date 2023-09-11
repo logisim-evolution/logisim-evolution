@@ -13,11 +13,11 @@ import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -64,7 +64,7 @@ class Connector {
     final var stopTime = System.currentTimeMillis() + MAX_SECONDS * 1000;
     for (var tryNum = 0; tryNum < tries && stopTime - System.currentTimeMillis() > 0; tryNum++) {
       if (ConnectorThread.isOverrideRequested()) return null;
-      final var connects = new ArrayList<ConnectionData>(baseConnects);
+      final var connects = new ArrayList<>(baseConnects);
       if (tryNum < 2) {
         sortConnects(connects, dx, dy);
         if (tryNum == 1) Collections.reverse(connects);
@@ -117,7 +117,7 @@ class Connector {
   }
 
   private static SearchNode findShortestPath(List<SearchNode> nodes, Set<Location> pathLocs, AvoidanceMap avoid) {
-    final var q = new PriorityQueue<SearchNode>(nodes);
+    final var q = new PriorityQueue<>(nodes);
     final var visited = new HashSet<SearchNode>();
     var iters = 0;
     while (!q.isEmpty() && iters < MAX_SEARCH_ITERATIONS) {

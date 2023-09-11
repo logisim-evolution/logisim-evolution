@@ -237,59 +237,48 @@ class TextFieldCaret implements Caret, TextFieldListener {
 
   protected void arrowKeyMaybePressed(KeyEvent e, boolean shift, boolean ctrl) {
     switch (e.getKeyCode()) {
-      case KeyEvent.VK_LEFT:
-      case KeyEvent.VK_KP_LEFT:
+      case KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT -> {
         moveCaret(-1, 0, shift, ctrl);
         e.consume();
-        break;
-      case KeyEvent.VK_RIGHT:
-      case KeyEvent.VK_KP_RIGHT:
+      }
+      case KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT -> {
         moveCaret(1, 0, shift, ctrl);
         e.consume();
-        break;
-      case KeyEvent.VK_UP:
-      case KeyEvent.VK_KP_UP:
+      }
+      case KeyEvent.VK_UP, KeyEvent.VK_KP_UP -> {
         moveCaret(0, -1, shift, ctrl);
         e.consume();
-        break;
-      case KeyEvent.VK_DOWN:
-      case KeyEvent.VK_KP_DOWN:
+      }
+      case KeyEvent.VK_DOWN, KeyEvent.VK_KP_DOWN -> {
         moveCaret(0, 1, shift, ctrl);
         e.consume();
-        break;
-      case KeyEvent.VK_HOME:
+      }
+      case KeyEvent.VK_HOME -> {
         pos = 0;
         if (!shift) {
           end = pos;
         }
         e.consume();
-        break;
-      case KeyEvent.VK_END:
+      }
+      case KeyEvent.VK_END -> {
         pos = curText.length();
         if (!shift) {
           end = pos;
         }
         e.consume();
-        break;
-      default:
-        break;
+      }
     }
   }
 
   protected void normalKeyPressed(KeyEvent e, boolean shift) {
     switch (e.getKeyCode()) {
-      case KeyEvent.VK_ESCAPE:
-      case KeyEvent.VK_CANCEL:
-        cancelEditing();
-        break;
-      case KeyEvent.VK_CLEAR:
+      case KeyEvent.VK_ESCAPE, KeyEvent.VK_CANCEL -> cancelEditing();
+      case KeyEvent.VK_CLEAR -> {
         curText = "";
         end = pos = 0;
-        break;
-      case KeyEvent.VK_ENTER:
-        stopEditing();
-        break;
-      case KeyEvent.VK_BACK_SPACE:
+      }
+      case KeyEvent.VK_ENTER -> stopEditing();
+      case KeyEvent.VK_BACK_SPACE -> {
         normalizeSelection();
         if (pos != end) {
           curText = curText.substring(0, pos) + curText.substring(end);
@@ -299,8 +288,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
           --pos;
           end = pos;
         }
-        break;
-      case KeyEvent.VK_DELETE:
+      }
+      case KeyEvent.VK_DELETE -> {
         normalizeSelection();
         if (pos != end) {
           curText =
@@ -309,8 +298,10 @@ class TextFieldCaret implements Caret, TextFieldListener {
         } else if (pos < curText.length()) {
           curText = curText.substring(0, pos) + curText.substring(pos + 1);
         }
-        break;
-      default:// ignore
+      }
+      default -> {
+        // ignore
+      }
     }
   }
 

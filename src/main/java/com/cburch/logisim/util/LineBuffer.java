@@ -36,15 +36,13 @@ public class LineBuffer implements RandomAccess {
   public static final int DEFAULT_INDENT = 1;
   public static final int MAX_ALLOWED_INDENT = MAX_LINE_LENGTH - (2 * Hdl.REMARK_MARKER_LENGTH);
 
-
   // Internal buffer holding separate lines.
-  private ArrayList<String> contents = new java.util.ArrayList<String>();
+  private final ArrayList<String> contents = new java.util.ArrayList<>();
 
   // Paired placeholders.
-  private Pairs pairs = new Pairs();
+  private final Pairs pairs = new Pairs();
 
   private final String SPACE = " ";
-
 
   /* ********************************************************************************************* */
 
@@ -154,9 +152,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   protected LineBuffer addDefaultPairs() {
-    return pair("1u", getDefaultIndent())
-        .pair("2u", getIndent(2))
-        .pair("3u", getIndent(3));
+    return pair("1u", getDefaultIndent()).pair("2u", getIndent(2)).pair("3u", getIndent(3));
   }
 
   /**
@@ -187,8 +183,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addVhdlKeywords() {
-    for (final var keyword : Vhdl.getVhdlKeywords())
-      pair(keyword.toLowerCase(), keyword);
+    for (final var keyword : Vhdl.getVhdlKeywords()) pair(keyword.toLowerCase(), keyword);
     return this;
   }
 
@@ -241,9 +236,9 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Adds line to the buffer only if line is not present already. Please note this implementation
-   * of `addUnique()` does not resolve positional arguments. If you use them, you musts pass final
-   * form of the string (pass thru `format()` if needed) or use other implementations.
+   * Adds line to the buffer only if line is not present already. Please note this implementation of
+   * `addUnique()` does not resolve positional arguments. If you use them, you musts pass final form
+   * of the string (pass thru `format()` if needed) or use other implementations.
    *
    * @param line Line to add if not present in buffer.
    * @return Instance of self for easy chaining.
@@ -271,8 +266,8 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Adds single line to the content buffer. Will resolve paried placeholders first, if applyMap is `true`,
-   * but won't resolve positionals).
+   * Adds single line to the content buffer. Will resolve paried placeholders first, if applyMap is
+   * `true`, but won't resolve positionals).
    *
    * @param line line to be added
    * @param applyMap `true` if line shall be processed for placeholders (default), `false` if you
@@ -357,7 +352,6 @@ public class LineBuffer implements RandomAccess {
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
   }
-
 
   /**
    * Appends content of another buffer
@@ -499,19 +493,17 @@ public class LineBuffer implements RandomAccess {
    */
   public List<String> getWithIndent(String indent) {
     final var result = new ArrayList<String>();
-    for (final var line : contents) {
-      final var lines = line.split("\n");
-      for (var idx = 0; idx < lines.length; idx++) {
+    for (final var content : contents) {
+      final var lines = content.split("\n");
+      for (final var line : lines) {
         // We do not indent empty lines, just ones with content.
-        result.add((lines[idx].length() == 0) ? lines[idx] : indent + lines[idx]);
+        result.add((line.length() == 0) ? line : indent + line);
       }
     }
     return result;
   }
 
-  /**
-   * Returns **copy** of internal pair buffer.
-   */
+  /** Returns **copy** of internal pair buffer. */
   public Pairs getPairCopy() {
     final var clone = (Pairs) pairs.clone();
     return clone;
@@ -519,9 +511,7 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  /**
-   * Returns default unit of indentation string.
-   */
+  /** Returns default unit of indentation string. */
   public static String getDefaultIndent() {
     return getIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
   }
@@ -603,10 +593,7 @@ public class LineBuffer implements RandomAccess {
     oneLine.setLength(0);
 
     for (final var remarkLine : remarkLines) {
-      oneLine
-          .append(indent)
-          .append(Hdl.getRemarkBlockLineStart())
-          .append(remarkLine);
+      oneLine.append(indent).append(Hdl.getRemarkBlockLineStart()).append(remarkLine);
       if (remarkLine.length() < maxRemarkLineLength) {
         oneLine.append(SPACE.repeat(maxRemarkLineLength - remarkLine.length()));
       }
@@ -617,9 +604,11 @@ public class LineBuffer implements RandomAccess {
 
     // We end with generating the last remark line.
     oneLine
-            .append(indent)
-            .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - oneLine.length() - Hdl.REMARK_MARKER_LENGTH))
-            .append(Hdl.getRemarkBlockEnd());
+        .append(indent)
+        .append(
+            Hdl.getRemarkChar()
+                .repeat(MAX_LINE_LENGTH - oneLine.length() - Hdl.REMARK_MARKER_LENGTH))
+        .append(Hdl.getRemarkBlockEnd());
 
     contents.add(oneLine.toString());
 
@@ -709,8 +698,8 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   private List<String> placeholders = new ArrayList<>();
-  private List<String> positionalPlaceholders = new ArrayList<>();
-  private List<String> pairedPlaceholders = new ArrayList<>();
+  private final List<String> positionalPlaceholders = new ArrayList<>();
+  private final List<String> pairedPlaceholders = new ArrayList<>();
 
   // check if we have positional args and/or paired
   // if positional: check if we have args given, then check all the rest
@@ -743,8 +732,8 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Ensures all positional placeholders match provided arguments,
-   * there's no "too much" positional arguments etc.
+   * Ensures all positional placeholders match provided arguments, there's no "too much" positional
+   * arguments etc.
    *
    * @param fmt Formatting string to analize.
    * @param args Positional placeholders.
@@ -778,7 +767,7 @@ public class LineBuffer implements RandomAccess {
 
       // count matches, let's see if contents too.
       for (final var posKey : positionalPlaceholders) {
-        if (Integer.valueOf(posKey) > posArgsCnt) {
+        if (Integer.parseInt(posKey) > posArgsCnt) {
           // Reference to non-existing position found. Warn about all detected issues. We fail
           // later.
           warn(
@@ -806,8 +795,8 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Ensures profided formatting strings can be succesfuly handled as all placeholders,
-   * positional or not are present.
+   * Ensures profided formatting strings can be succesfuly handled as all placeholders, positional
+   * or not are present.
    *
    * @param fmt Formatting string to analize.
    * @param argPairs Positional placeholders.
@@ -826,7 +815,8 @@ public class LineBuffer implements RandomAccess {
 
     // Check if paired placeholders used in formatting string are known at this point.
     for (final var key : pairedPlaceholders) {
-      if (!(pairs.getContainer().containsKey(key) || (argPairs != null && argPairs.getContainer().containsKey(key)))) {
+      if (!(pairs.getContainer().containsKey(key)
+          || (argPairs != null && argPairs.getContainer().containsKey(key)))) {
         abort("#E006: No mapping for '{{1}}' placeholder in '{{2}}'.", key, fmt);
       }
     }
@@ -878,9 +868,7 @@ public class LineBuffer implements RandomAccess {
     return true;
   }
 
-  /**
-   * Returns string representation of the internal container.
-   */
+  /** Returns string representation of the internal container. */
   @Override
   public String toString() {
     return contents.toString();
@@ -893,7 +881,6 @@ public class LineBuffer implements RandomAccess {
    *
    * @param key Pair's key.
    * @param value Pair's value.
-   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer pair(String key, Object value) {
@@ -903,18 +890,12 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  /**
-   * Container holding all the key-value pairs used by LineBuffer.
-   */
+  /** Container holding all the key-value pairs used by LineBuffer. */
   public static class Pairs implements Cloneable {
-    /**
-     * Internal pair container.
-     */
-    private HashMap<String, Object> pairContainer = new HashMap<String, Object>();
+    /** Internal pair container. */
+    private final HashMap<String, Object> pairContainer = new HashMap<>();
 
-    /**
-     * Default constructor.
-     */
+    /** Default constructor. */
     public Pairs() {
       // default constructor does nothing special.
     }
@@ -949,7 +930,6 @@ public class LineBuffer implements RandomAccess {
      *
      * @param key Pair's key.
      * @param value Pair's value.
-     *
      * @return Returns instance of container for easy chaining.
      */
     public Pairs pair(String key, Object value) {
@@ -961,16 +941,14 @@ public class LineBuffer implements RandomAccess {
      *
      * @param key Pair's key.
      * @param value Pair's value.
-     *
      * @return Returns instance of container for easy chaining.
-     *
      * @throws RuntimeException for invalid keys.
      */
     public Pairs addNonPositionalPair(String key, Object value) {
       // Numeric only keys are not allowed because these are reserved for positional placeholders.
       if (key.matches("^\\d+$")) {
         throw new RuntimeException(
-                format("Invalid pair key '{{1}}'. You cannot add positional arguments as pairs.", key));
+            format("Invalid pair key '{{1}}'. You cannot add positional arguments as pairs.", key));
       }
       pairContainer.put(key, value);
       return this;
@@ -980,7 +958,6 @@ public class LineBuffer implements RandomAccess {
      * Adds pairs form another container.
      *
      * @param pairs Pair container to copy pairs from.
-     *
      * @return Returns instance of container for easy chaining.
      */
     public Pairs addPairs(Pairs pairs) {
@@ -995,7 +972,6 @@ public class LineBuffer implements RandomAccess {
      *
      * @param key Pair's key.
      * @param value Pair's value.
-     *
      * @return Returns instance of container for easy chaining.
      */
     public Pairs addPositionalPair(String key, Object value) {
@@ -1017,23 +993,17 @@ public class LineBuffer implements RandomAccess {
       return this;
     }
 
-    /**
-     * Returns instance of internal HashMap holding all the pairs.
-     */
+    /** Returns instance of internal HashMap holding all the pairs. */
     protected HashMap<String, Object> getContainer() {
       return pairContainer;
     }
 
-    /**
-     * Returns entrySet for internal pair container for easier iteration over it.
-     */
+    /** Returns entrySet for internal pair container for easier iteration over it. */
     public Set<Map.Entry<String, Object>> entrySet() {
       return pairContainer.entrySet();
     }
 
-    /**
-     * Clones current instance of Pairs.
-     */
+    /** Clones current instance of Pairs. */
     @Override
     protected Pairs clone() {
       final var clone = new Pairs();
@@ -1043,14 +1013,10 @@ public class LineBuffer implements RandomAccess {
       return clone;
     }
 
-    /**
-     * Returns string representation of the internal container.
-     */
+    /** Returns string representation of the internal container. */
     @Override
     public String toString() {
       return pairContainer.toString();
     }
-
   } // end of Pairs
-
 } // end of LineBuffer

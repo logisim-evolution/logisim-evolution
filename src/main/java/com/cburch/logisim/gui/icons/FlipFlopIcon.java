@@ -43,24 +43,14 @@ public class FlipFlopIcon extends BaseIcon {
     g2.drawRect(scale(2), scale(2), scale(12), scale(12));
     var str = "";
     switch (type) {
-      case D_FLIPFLOP:
-        str = "D";
-        break;
-      case T_FLIPFLOP:
-        str = "T";
-        break;
-      case JK_FLIPFLOP:
-        str = "JK";
-        break;
-      case SR_FLIPFLOP:
-        str = "SR";
-        break;
-      case REGISTER:
-        str = "00";
-        break;
-      default:
+      case D_FLIPFLOP -> str = "D";
+      case T_FLIPFLOP -> str = "T";
+      case JK_FLIPFLOP -> str = "JK";
+      case SR_FLIPFLOP -> str = "SR";
+      case REGISTER -> str = "00";
+      default -> {
         // do nothing. Should not really happen.
-        break;
+      }
     }
     final var f = g2.getFont().deriveFont((float) ((double) AppPreferences.getIconSize() / 2.1));
     final var l = new TextLayout(str, f, g2.getFontRenderContext());
@@ -85,20 +75,20 @@ public class FlipFlopIcon extends BaseIcon {
     g2.drawOval(scale(12), scale(10), scale(4), scale(4));
     final var p = new GeneralPath();
     switch (type) {
-      case D_FLIPFLOP:
+      case D_FLIPFLOP -> {
         p.moveTo(scale(7), scale(5));
         p.lineTo(scale(6), scale(5));
         p.lineTo(scale(6), scale(2));
         p.lineTo(scale(7), scale(2));
         p.quadTo(scale(10), scale(4), scale(7), scale(5));
-        break;
-      case T_FLIPFLOP:
+      }
+      case T_FLIPFLOP -> {
         p.moveTo(scale(6), scale(2));
         p.lineTo(scale(8), scale(2));
         p.moveTo(scale(7), scale(2));
         p.lineTo(scale(7), scale(4));
-        break;
-      case JK_FLIPFLOP:
+      }
+      case JK_FLIPFLOP -> {
         p.moveTo(scale(6), scale(2));
         p.lineTo(scale(8), scale(2));
         p.lineTo(scale(8), scale(4));
@@ -108,18 +98,18 @@ public class FlipFlopIcon extends BaseIcon {
         p.moveTo(scale(8), scale(6));
         p.lineTo(scale(7), scale(7));
         p.lineTo(scale(8), scale(8));
-        break;
-      case SR_FLIPFLOP:
+      }
+      case SR_FLIPFLOP -> {
         p.moveTo(scale(7), scale(1));
         p.curveTo(scale(4), scale(2), scale(9), scale(4), scale(6), scale(5));
         p.moveTo(scale(6), scale(9));
         p.lineTo(scale(6), scale(6));
         p.quadTo(scale(9), scale(7), scale(7), scale(8));
         p.lineTo(scale(8), scale(9));
-        break;
-      default:
+      }
+      default -> {
         // do nothing. Should not really happen.
-        break;
+      }
     }
     g2.draw(p);
   }

@@ -223,7 +223,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
     scaleY = val;
   }
 
-  public DotMatrixBase(String name, StringGetter displayName, int cols, int rows, HdlGeneratorFactory generator) {
+  public DotMatrixBase(
+      String name, StringGetter displayName, int cols, int rows, HdlGeneratorFactory generator) {
     super(name, displayName, generator, true);
     setAttributes(
         new Attribute<?>[] {
@@ -461,16 +462,24 @@ public abstract class DotMatrixBase extends InstanceFactory {
     if (input == getAttributeItemColumn()) {
       ps = new Port[cols];
       for (var i = 0; i < cols; i++) {
-        ps[i] = new Port(10 * i, selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : rows * -10 * scaleY, Port.INPUT, rows);
+        ps[i] =
+            new Port(
+                10 * i,
+                selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : rows * -10 * scaleY,
+                Port.INPUT,
+                rows);
       }
     } else if (input == getAttributeItemRow()) {
       ps = new Port[rows];
       for (var i = 0; i < rows; i++) {
-        ps[i] = new Port(selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10, 10 * i, Port.INPUT, cols);
+        ps[i] =
+            new Port(
+                selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10, 10 * i, Port.INPUT, cols);
       }
     } else {
       if (rows <= 1) {
-        ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
+        ps =
+            new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
       } else {
         final var dx = selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10;
         ps = new Port[] {new Port(dx, 0, Port.INPUT, cols), new Port(dx, 10, Port.INPUT, rows)};

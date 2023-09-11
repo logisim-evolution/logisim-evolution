@@ -19,10 +19,10 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,6 @@ import org.fife.ui.rsyntaxtextarea.parser.DefaultParseResult;
 import org.fife.ui.rsyntaxtextarea.parser.DefaultParserNotice;
 import org.fife.ui.rsyntaxtextarea.parser.ParseResult;
 import org.fife.ui.rtextarea.GutterIconInfo;
-import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class Assembler extends AbstractParser implements LocaleListener {
@@ -145,59 +144,67 @@ public class Assembler extends AbstractParser implements LocaleListener {
         if (after.getType() == AssemblerToken.PROGRAM_COUNTER
             || (before != null && before.getType() == AssemblerToken.PROGRAM_COUNTER)) {
           i++;
-        } else switch (asm.getType()) {
-            case AssemblerToken.MATH_ADD:
+        } else
+          switch (asm.getType()) {
+            case AssemblerToken.MATH_ADD -> {
               after.setValue(beforeValue + after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
-            case AssemblerToken.MATH_SHIFT_LEFT:
+            }
+            case AssemblerToken.MATH_SHIFT_LEFT -> {
               after.setValue(beforeValue << after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
-            case AssemblerToken.MATH_SHIFT_RIGHT:
+            }
+            case AssemblerToken.MATH_SHIFT_RIGHT -> {
               after.setValue(beforeValue >> after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
-            case AssemblerToken.MATH_SUBTRACT:
+            }
+            case AssemblerToken.MATH_SUBTRACT -> {
               after.setValue(beforeValue - after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
-            case AssemblerToken.MATH_MUL:
+            }
+            case AssemblerToken.MATH_MUL -> {
               after.setValue(beforeValue * after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
-            case AssemblerToken.MATH_DIV:
+            }
+            case AssemblerToken.MATH_DIV -> {
               if (after.getNumberValue() == 0) {
                 addError(after.getoffset(), S.getter("AssemblerDivZero"), errorMarkers.keySet());
                 i++;
                 break;
               }
               after.setValue(beforeValue / after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
-            case AssemblerToken.MATH_REM:
+            }
+            case AssemblerToken.MATH_REM -> {
               if (after.getNumberValue() == 0) {
                 addError(after.getoffset(), S.getter("AssemblerDivZero"), errorMarkers.keySet());
                 i++;
                 break;
               }
               after.setValue(beforeValue % after.getNumberValue());
-              if (before != null) toBeRemoved.add(before);
+              if (before != null)
+                toBeRemoved.add(before);
               toBeRemoved.add(asm);
               i++;
-              break;
+            }
           }
       } else if (asm.getType() == AssemblerToken.STRING && (i + 1) < assemblerTokens.size()) {
         AssemblerToken next;
@@ -444,34 +451,25 @@ public class Assembler extends AbstractParser implements LocaleListener {
           }
         } else
           switch (type) {
-            case Token.LITERAL_NUMBER_DECIMAL_INT:
-              lineTokens.add(new AssemblerToken(AssemblerToken.DEC_NUMBER, name, offset));
-              break;
-            case Token.LITERAL_NUMBER_HEXADECIMAL:
-              lineTokens.add(new AssemblerToken(AssemblerToken.HEX_NUMBER, name, offset));
-              break;
-            case Token.FUNCTION:
-              lineTokens.add(new AssemblerToken(AssemblerToken.ASM_INSTRUCTION, name, offset));
-              break;
-            case Token.OPERATOR:
-              lineTokens.add(
-                  new AssemblerToken(
-                      name.equals("pc") ? AssemblerToken.PROGRAM_COUNTER : AssemblerToken.REGISTER,
-                      name,
-                      offset));
-              break;
-            case Token.RESERVED_WORD:
-              lineTokens.add(new AssemblerToken(AssemblerToken.INSTRUCTION, name, offset));
-              break;
-            case Token.LITERAL_STRING_DOUBLE_QUOTE:
-              lineTokens.add(new AssemblerToken(AssemblerToken.STRING, name, offset));
-              break;
-            case Token.IDENTIFIER:
-              lineTokens.add(new AssemblerToken(AssemblerToken.MAYBE_LABEL, name, offset));
-              break;
-            case Token.PREPROCESSOR:
-              lineTokens.add(new AssemblerToken(AssemblerToken.MACRO_PARAMETER, name, offset));
-              break;
+            case Token.LITERAL_NUMBER_DECIMAL_INT ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.DEC_NUMBER, name, offset));
+            case Token.LITERAL_NUMBER_HEXADECIMAL ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.HEX_NUMBER, name, offset));
+            case Token.FUNCTION ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.ASM_INSTRUCTION, name, offset));
+            case Token.OPERATOR -> lineTokens.add(
+                new AssemblerToken(
+                    name.equals("pc") ? AssemblerToken.PROGRAM_COUNTER : AssemblerToken.REGISTER,
+                    name,
+                    offset));
+            case Token.RESERVED_WORD ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.INSTRUCTION, name, offset));
+            case Token.LITERAL_STRING_DOUBLE_QUOTE ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.STRING, name, offset));
+            case Token.IDENTIFIER ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.MAYBE_LABEL, name, offset));
+            case Token.PREPROCESSOR ->
+                lineTokens.add(new AssemblerToken(AssemblerToken.MACRO_PARAMETER, name, offset));
           }
       }
       first = first.getNextToken();
@@ -534,7 +532,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   @Override
   public void localeChanged() {
-    final var oldSet = new HashMap<GutterIconInfo, StringGetter>(errorMarkers);
+    final var oldSet = new HashMap<>(errorMarkers);
     errorMarkers.clear();
     for (final var error : oldSet.keySet()) {
       pane.getGutter().removeTrackingIcon(error);

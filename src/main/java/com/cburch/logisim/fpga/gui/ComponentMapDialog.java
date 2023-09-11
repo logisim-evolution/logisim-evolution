@@ -38,7 +38,11 @@ import javax.swing.JScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComponentMapDialog implements ActionListener, BaseWindowListenerContract, LocaleListener, BaseComponentListenerContract {
+public class ComponentMapDialog
+    implements ActionListener,
+        BaseWindowListenerContract,
+        LocaleListener,
+        BaseComponentListenerContract {
 
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
@@ -63,7 +67,11 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
   private final Object lock = new Object();
   private boolean canceled = true;
 
-  public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation board, MappableResourcesContainer mappable) {
+  public ComponentMapDialog(
+      JFrame parentFrame,
+      String projectPath,
+      BoardInformation board,
+      MappableResourcesContainer mappable) {
     oldDirectory = new File(projectPath).getParent();
     if (oldDirectory == null) oldDirectory = "";
     else if (oldDirectory.length() != 0 && !oldDirectory.endsWith(File.separator))
@@ -81,91 +89,93 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     panel.setAlwaysOnTop(true);
     panel.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
-    GridBagLayout thisLayout = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    panel.setLayout(thisLayout);
+    GridBagLayout gbl = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    panel.setLayout(gbl);
 
     /* Add the board Picture */
     boardPicture = new BoardManipulator(panel, parentFrame, mappable);
     boardPicture.addComponentListener(this);
-    c.gridx = 0;
+    gbc.gridx = 0;
 
     /* Add some text */
     unmappedText.setHorizontalAlignment(JLabel.CENTER);
-    unmappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridwidth = 1;
-    panel.add(unmappedText, c);
+    unmappedText.setPreferredSize(
+        new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.gridwidth = 1;
+    panel.add(unmappedText, gbc);
     mappedText.setHorizontalAlignment(JLabel.CENTER);
-    mappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    c.gridx = 1;
-    panel.add(mappedText, c);
+    mappedText.setPreferredSize(
+        new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    gbc.gridx = 1;
+    panel.add(mappedText, gbc);
     commandText.setHorizontalAlignment(JLabel.CENTER);
-    commandText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    c.gridx = 2;
-    panel.add(commandText, c);
+    commandText.setPreferredSize(
+        new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    gbc.gridx = 2;
+    panel.add(commandText, gbc);
 
-    c.gridy = 1;
-    panel.add(boardPicture.getUnmapOneButton(), c);
+    gbc.gridy = 1;
+    panel.add(boardPicture.getUnmapOneButton(), gbc);
 
     /* Add the UnMapAll button */
-    c.gridy = 2;
-    panel.add(boardPicture.getUnmapAllButton(), c);
+    gbc.gridy = 2;
+    panel.add(boardPicture.getUnmapAllButton(), gbc);
 
     /* Add the Load button */
     loadButton.setActionCommand("Load");
     loadButton.addActionListener(this);
     loadButton.setEnabled(true);
-    c.gridy = 3;
-    panel.add(loadButton, c);
+    gbc.gridy = 3;
+    panel.add(loadButton, gbc);
 
     /* Add the Save button */
     saveButton.setActionCommand("Save");
     saveButton.addActionListener(this);
     saveButton.setEnabled(true);
-    c.gridy = 4;
-    panel.add(saveButton, c);
+    gbc.gridy = 4;
+    panel.add(saveButton, gbc);
 
     /* Add the Cancel button */
     cancelButton.setActionCommand("Cancel");
     cancelButton.addActionListener(this);
     cancelButton.setEnabled(true);
-    c.gridy = 5;
-    panel.add(cancelButton, c);
+    gbc.gridy = 5;
+    panel.add(cancelButton, gbc);
 
     /* Add the Done button */
     doneButton.setActionCommand("Done");
     doneButton.addActionListener(this);
-    c.gridy = 6;
-    panel.add(doneButton, c);
+    gbc.gridy = 6;
+    panel.add(doneButton, gbc);
 
     /* Add the Zoom button */
-    c.gridy = 7;
-    panel.add(boardPicture.getZoomSlider(), c);
-
+    gbc.gridy = 7;
+    panel.add(boardPicture.getZoomSlider(), gbc);
 
     /* Add the unmapped list */
     unmappedPane = new JScrollPane(boardPicture.getUnmappedList());
-    c.fill = GridBagConstraints.BOTH;
-    c.gridx = 0;
-    c.gridy = 1;
-    c.gridheight = 7;
-    panel.add(unmappedPane, c);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.gridheight = 7;
+    panel.add(unmappedPane, gbc);
 
     /* Add the mapped list */
     mappedPane = new JScrollPane(boardPicture.getMappedList());
-    c.gridx = 1;
-    c.gridheight = 7;
-    panel.add(mappedPane, c);
+    gbc.gridx = 1;
+    gbc.gridheight = 7;
+    panel.add(mappedPane, gbc);
 
-    c.gridx = 0;
-    c.gridheight = 1;
-    c.gridy = 8;
-    c.gridwidth = 3;
-    c.fill = GridBagConstraints.BOTH;
-    panel.add(boardPicture, c);
+    gbc.gridx = 0;
+    gbc.gridheight = 1;
+    gbc.gridy = 8;
+    gbc.gridwidth = 3;
+    gbc.fill = GridBagConstraints.BOTH;
+    panel.add(boardPicture, gbc);
     panel.setLocationRelativeTo(null);
     panel.setVisible(true);
     localeChanged();
@@ -184,15 +194,16 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
 
   public boolean run() {
     Thread t =
-        new Thread(() -> {
-          synchronized (lock) {
-            try {
-              lock.wait();
-            } catch (InterruptedException e) {
-              logger.error("Bug: unable to wait for lock");
-            }
-          }
-        });
+        new Thread(
+            () -> {
+              synchronized (lock) {
+                try {
+                  lock.wait();
+                } catch (InterruptedException e) {
+                  logger.error("Bug: unable to wait for lock");
+                }
+              }
+            });
     t.start();
     cancelButton.setEnabled(true);
     try {
@@ -251,7 +262,8 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
         boardPicture.update();
       } else {
         // FIXME: hardcoded string
-        OptionPane.showMessageDialog(null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
         panel.setVisible(true);
       }
     }
@@ -288,10 +300,12 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
 
   @Override
   public void componentResized(ComponentEvent e) {
-    unmappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    mappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    commandText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    unmappedText.setPreferredSize(
+        new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    mappedText.setPreferredSize(
+        new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    commandText.setPreferredSize(
+        new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
     panel.pack();
   }
-
 }

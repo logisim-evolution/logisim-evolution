@@ -354,7 +354,7 @@ public class CircuitState implements InstanceData {
   }
 
   void processDirtyPoints() {
-    final var dirty = new HashSet<Location>(dirtyPoints);
+    final var dirty = new HashSet<>(dirtyPoints);
     dirtyPoints.clear();
     if (circuit.wires.isMapVoided()) {
       for (var i = 3; i >= 0; i--) {

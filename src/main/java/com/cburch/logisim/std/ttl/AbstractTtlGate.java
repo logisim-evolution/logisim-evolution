@@ -50,24 +50,30 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param outputPorts = an array with the indexes of the output ports (indexes are the same you
    *     can find on Google searching the TTL you want to add)
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(
+      String name, byte pins, byte[] outputPorts, HdlGeneratorFactory generator) {
     super(name, generator);
     setIconName("ttl.gif");
     setAttributes(
-        new Attribute[] {StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
+        new Attribute[] {
+          StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL
+        },
         new Object[] {Direction.EAST, false, false, ""});
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
     this.pinNumber = pins;
-    for (byte outputport : outputPorts)
-      this.outputPorts.add(outputport);
+    for (byte outputport : outputPorts) this.outputPorts.add(outputport);
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      byte[] notUsedPins,
+      HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
     if (notUsedPins == null) return;
-    for (byte notUsedPin : notUsedPins)
-      unusedPins.add(notUsedPin);
+    for (byte notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
   }
 
   /**
@@ -78,7 +84,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param drawgates = if true, it calls the paintInternal method many times as the number of
    *     output ports passing the coordinates
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, boolean drawgates, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      boolean drawgates,
+      HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
     this.numberOfGatesToDraw = (byte) (drawgates ? outputPorts.length : 0);
   }
@@ -91,7 +102,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param ttlPortNames = an array of strings which will be tooltips of the corresponding port in
    *     the order you pass
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      String[] ttlPortNames,
+      HdlGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
@@ -99,15 +115,26 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     this.portNames = ttlPortNames;
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins,
-                            String[] ttlPortNames, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      byte[] notUsedPins,
+      String[] ttlPortNames,
+      HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
     portNames = ttlPortNames;
     if (notUsedPins == null) return;
     for (final var notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, int height, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      String[] ttlPortNames,
+      int height,
+      HdlGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
@@ -194,6 +221,9 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     var yp = y;
     var width = bds.getWidth();
     var height = bds.getHeight();
+    if (!ghost) {
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    }
     for (byte i = 0; i < this.pinNumber; i++) {
       if (i < this.pinNumber / 2) {
         if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
@@ -301,7 +331,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
             g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
         }
         if (i < this.pinNumber / 2) {
-          if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
+          if (dir == Direction.WEST || dir == Direction.EAST)
+            xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
           else yp = i * 20 + (10 - PIN_WIDTH / 2) + y;
         } else {
           if (dir == Direction.WEST || dir == Direction.EAST) {
@@ -381,8 +412,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       height = bds.getWidth();
     }
 
-    if (this.numberOfGatesToDraw == 0)
-      paintInternal(painter, x, y, height, false);
+    if (this.numberOfGatesToDraw == 0) paintInternal(painter, x, y, height, false);
     else {
       paintBase(painter, false, false);
       for (byte i = 0; i < this.numberOfGatesToDraw; i++) {
@@ -434,7 +464,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
      * array port is composed in this order: lower ports less GND, upper ports less
      * Vcc, GND, Vcc
      */
-    final var ps = new Port[hasvccgnd ? this.pinNumber - NrOfUnusedPins : this.pinNumber - 2 - NrOfUnusedPins];
+    final var ps =
+        new Port[hasvccgnd ? this.pinNumber - NrOfUnusedPins : this.pinNumber - 2 - NrOfUnusedPins];
 
     for (byte i = 0; i < this.pinNumber; i++) {
       isoutput = outputPorts.contains((byte) (i + 1));
@@ -477,7 +508,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         if (this.portNames == null || this.portNames.length <= portindex)
           ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + (i + 1)));
         else
-          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portNames[portindex]));
+          ps[portindex].setToolTip(
+              S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portNames[portindex]));
       } else { // input port
         if (hasvccgnd && i == this.pinNumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
@@ -493,7 +525,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           if (this.portNames == null || this.portNames.length <= portindex)
             ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + (i + 1)));
           else
-            ps[portindex].setToolTip(S.getter("multiplexerInTip", (i + 1) + ": " + this.portNames[portindex]));
+            ps[portindex].setToolTip(
+                S.getter("multiplexerInTip", (i + 1) + ": " + this.portNames[portindex]));
         }
       }
       portindex++;
@@ -506,11 +539,21 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     final var g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.DARK_GRAY.brighter());
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    g.fillRoundRect(AppPreferences.getScaled(4), 0, AppPreferences.getScaled(8), AppPreferences.getScaled(16),
-            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.fillRoundRect(
+        AppPreferences.getScaled(4),
+        0,
+        AppPreferences.getScaled(8),
+        AppPreferences.getScaled(16),
+        AppPreferences.getScaled(3),
+        AppPreferences.getScaled(3));
     g.setColor(Color.black);
-    g.drawRoundRect(AppPreferences.getScaled(4), 0, AppPreferences.getScaled(8), AppPreferences.getScaled(16),
-            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.drawRoundRect(
+        AppPreferences.getScaled(4),
+        0,
+        AppPreferences.getScaled(8),
+        AppPreferences.getScaled(16),
+        AppPreferences.getScaled(3),
+        AppPreferences.getScaled(3));
     final var wh1 = AppPreferences.getScaled(3);
     final var wh2 = AppPreferences.getScaled(2);
     for (int y = 0; y < 3; y++) {
@@ -521,8 +564,13 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       g.drawRect(wh2, AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
       g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
     }
-    g.drawRoundRect(AppPreferences.getScaled(6), 0, AppPreferences.getScaled(6), AppPreferences.getScaled(16),
-            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.drawRoundRect(
+        AppPreferences.getScaled(6),
+        0,
+        AppPreferences.getScaled(6),
+        AppPreferences.getScaled(16),
+        AppPreferences.getScaled(3),
+        AppPreferences.getScaled(3));
     g.dispose();
   }
 
@@ -530,5 +578,4 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   public String getHDLName(AttributeSet attrs) {
     return CorrectLabel.getCorrectLabel("TTL" + getName()).toUpperCase();
   }
-
 }

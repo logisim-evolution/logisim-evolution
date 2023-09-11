@@ -7,7 +7,6 @@
  * This is free software released under GNU GPLv3 license
  */
 
-
 /* This file is adopted from the MIPS.jar library by
  * Martin Dybdal <dybber@dybber.dk> and
  * Anders Boesen Lindbo Larsen <abll@diku.dk>.
@@ -144,7 +143,8 @@ public class PlaTable {
       try {
         tt = parseOneLine(tt, line);
       } catch (IOException e) {
-        OptionPane.showMessageDialog(null, e.getMessage(), "Error in PLA Table", OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            null, e.getMessage(), S.get("plaTableError"), OptionPane.ERROR_MESSAGE);
       }
     }
     if (tt == null) tt = new PlaTable(2, 2, "PLA");
@@ -161,27 +161,25 @@ public class PlaTable {
     }
     if (line.equals("")) return tt;
     final var ii = line.indexOf(" ");
-    if (ii <= 0) throw new IOException("PLA row '" + line + "' is missing outputs.");
+    if (ii <= 0) throw new IOException(S.get("plaRowMissingOutputError", "" + line));
     andBits = line.substring(0, ii).trim();
     orBits = line.substring(ii + 1).trim();
     if (tt == null) tt = new PlaTable(andBits.length(), orBits.length(), "PLA");
     else if (andBits.length() != tt.inSize)
-      throw new IOException(
-          "PLA row '" + line + "' must have exactly " + tt.inSize + " input bits.");
+      throw new IOException(S.get("plaRowExactInBitError", "" + line, "" +  tt.inSize));
     else if (orBits.length() != tt.outSize)
-      throw new IOException(
-          "PLA row '" + line + "' must have exactly " + tt.outSize + " output bits.");
+      throw new IOException(S.get("plaRowExactOutBitError", "" + line, "" + tt.outSize));
     final var r = tt.addTableRow();
     for (var i = 0; i < andBits.length(); i++) {
       final var s = andBits.charAt(i);
       if (s != ONE && s != ZERO && s != DONTCARE)
-        throw new IOException("PLA row '" + line + "' contains invalid input bit '" + s + "'.");
+        throw new IOException(S.get("plaInvalideInputBitError", "" + line, "" + s));
       r.inBits[andBits.length() - i - 1] = s;
     }
     for (var i = 0; i < orBits.length(); i++) {
       final var s = orBits.charAt(i);
-      if (s != ONE && s != ZERO)
-        throw new IOException("PLA row '" + line + "' contains invalid output bit '" + s + "'.");
+      if (s != ONE && s != ZERO)        
+        throw new IOException(S.get("plaInvalideOutputBitError", "" + line, "" + s));
       r.outBits[orBits.length() - i - 1] = s;
     }
     r.comment = comment;
@@ -208,7 +206,7 @@ public class PlaTable {
       } catch (IOException ignored) {
       }
     }
-    if (tt == null) throw new IOException("PLA file contained no data.");
+    if (tt == null) throw new IOException(S.get("plaFileIoException"));
     return tt;
   }
 
@@ -489,20 +487,20 @@ public class PlaTable {
       private static final long serialVersionUID = 1L;
 
       public ButtonPanel(JDialog parent) {
-        final var write = new JButton("Export");
+        final var write = new JButton(S.get("plaExportButton"));
         write.addActionListener(e -> write());
         add(write);
 
-        final var read = new JButton("Import");
+        final var read = new JButton(S.get("plaImportButton"));
         read.addActionListener(e -> read());
         add(read);
 
-        final var ok = new JButton("OK");
+        final var ok = new JButton(S.get("plaOKButton"));
         ok.addActionListener(e -> close(true));
         parent.getRootPane().setDefaultButton(ok);
         add(ok);
 
-        final var cancel = new JButton("Cancel");
+        final var cancel = new JButton(S.get("plaCancelButton"));
         cancel.addActionListener(e -> close(false));
         add(cancel);
 
@@ -565,11 +563,12 @@ public class PlaTable {
           super(new FlowLayout(FlowLayout.CENTER, 0, 0));
           this.row = r;
 
-          final var rm = new JButton("Remove");
+          final var rm = new JButton(S.get("plaRemoveButton"));
           rm.setFont(AppPreferences.getScaledFont(rm.getFont().deriveFont(smallFont)));
           rm.addActionListener(e -> deleteRow(RowPanel.this));
           rm.setMargin(new Insets(0, 0, 0, 0));
-          rm.setPreferredSize(new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
+          rm.setPreferredSize(
+              new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
           add(rm);
 
           int inSz = row.inBits.length;
@@ -641,7 +640,7 @@ public class PlaTable {
 
         public InsertRowPanel() {
           super(new FlowLayout(FlowLayout.CENTER));
-          final var more = new JButton("Add Row");
+          final var more = new JButton(S.get("plaAddRowButton"));
           more.setFont(AppPreferences.getScaledFont(more.getFont().deriveFont(smallFont)));
           more.addActionListener(e -> addRow());
           more.setMargin(new Insets(1, 20, 1, 20));
@@ -681,7 +680,7 @@ public class PlaTable {
 
         add(Box.createRigidArea(dim));
 
-        final var c = new JLabel("comments");
+        final var c = new JLabel(S.get("plaCommentsLabel"));
         c.setFont(AppPreferences.getScaledFont(c.getFont().deriveFont(smallFont)));
         c.setPreferredSize(
             new Dimension(
@@ -705,14 +704,14 @@ public class PlaTable {
                     AppPreferences.getScaled(75 + BS - Math.max(3 - inSz, 0) * BS),
                     AppPreferences.getScaled(15)))); // space for remove button
 
-        final var i = new JLabel("input", SwingConstants.RIGHT);
+        final var i = new JLabel(S.get("plaInputLabel"), SwingConstants.RIGHT);
         i.setFont(AppPreferences.getScaledFont(i.getFont().deriveFont(smallFont)));
         i.setPreferredSize(
             new Dimension(
-                    AppPreferences.getScaled(Math.max(inSz, 3) * BS), AppPreferences.getScaled(15)));
+                AppPreferences.getScaled(Math.max(inSz, 3) * BS), AppPreferences.getScaled(15)));
         add(i);
 
-        final var o = new JLabel("output", SwingConstants.RIGHT);
+        final var o = new JLabel(S.get("plaOutputLabel"), SwingConstants.RIGHT);
         o.setFont(AppPreferences.getScaledFont(o.getFont().deriveFont(smallFont)));
         o.setPreferredSize(
             new Dimension(
@@ -736,7 +735,8 @@ public class PlaTable {
     private static final int BUTTON_HGAP = 2;
     private static final int EDGE_THICKNESS = 2;
     private static final Border STD_BORDER = BorderFactory.createEtchedBorder();
-    private static final Border CLICK_BORDER = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+    private static final Border CLICK_BORDER =
+        BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
     private static final Dimension BUTTON_SIZE =
         new Dimension(
             AppPreferences.getScaled(BS - 2 * EDGE_THICKNESS - BUTTON_HGAP),

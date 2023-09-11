@@ -22,16 +22,18 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+
 import java.awt.Color;
 import java.math.BigInteger;
 
 public class IntToFp extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "IntToFP";
 
@@ -71,9 +73,8 @@ public class IntToFp extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN);
     painter.drawPort(OUT, "I\u2192F", Direction.WEST);
     painter.drawPort(ERR);
@@ -84,14 +85,18 @@ public class IntToFp extends InstanceFactory {
     // get attributes
     final var dataWidthIn = state.getAttributeValue(StdAttr.WIDTH);
     final var dataWidthOut = state.getAttributeValue(StdAttr.FP_WIDTH);
-    final var unsigned = state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
+    final var unsigned =
+        state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
 
     // compute outputs
     final var a = state.getPortValue(IN);
     final var a_val = extend(dataWidthIn.getWidth(), a.toLongValue(), unsigned);
 
     final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
-    final var out = dataWidthOut.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
+    final var out =
+        dataWidthOut.getWidth() == 64
+            ? Value.createKnown(out_val)
+            : Value.createKnown((float) out_val);
 
     // propagate them
     final var delay = (dataWidthIn.getWidth() + 2) * PER_DELAY;

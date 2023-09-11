@@ -25,10 +25,13 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.IntegerConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class BitAdder extends InstanceFactory {
@@ -76,18 +79,13 @@ public class BitAdder extends InstanceFactory {
     int y;
     int dy = 10;
     switch (inputs) {
-      case 1:
-        y = 0;
-        break;
-      case 2:
+      case 1 -> y = 0;
+      case 2 -> {
         y = -10;
         dy = 20;
-        break;
-      case 3:
-        y = -10;
-        break;
-      default:
-        y = ((inputs - 1) / 2) * -10;
+      }
+      case 3 -> y = -10;
+      default -> y = ((inputs - 1) / 2) * -10;
     }
 
     Port[] ps = new Port[inputs + 1];
@@ -121,6 +119,7 @@ public class BitAdder extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawPorts();
 

@@ -13,11 +13,11 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 /**
- * Dummy implementation of java.awt.event.WindowListener interface. The main purpose of this interface is to provide
- * default (empty) implementation of interface methods as, unfortunately JDKs interfaces do not come
- * with default implementation even they easily could. Implementing this interface instead of the
- * parent one allows skipping the need of implementing all, even unneeded, methods. That's saves
- * some efforts and reduces overall LOC.
+ * Dummy implementation of java.awt.event.WindowListener interface. The main purpose of this
+ * interface is to provide default (empty) implementation of interface methods as, unfortunately
+ * JDKs interfaces do not come with default implementation even they easily could. Implementing this
+ * interface instead of the parent one allows skipping the need of implementing all, even unneeded,
+ * methods. That's saves some efforts and reduces overall LOC.
  */
 public interface BaseWindowListenerContract extends WindowListener {
 

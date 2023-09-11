@@ -46,10 +46,10 @@ public class LineTool extends AbstractTool {
     final var py = from.getY();
     if (mx != px && my != py) {
       return (Math.abs(my - py) < Math.abs(mx - px))
-          ? Location.create(mx, py)
-          : Location.create(px, my);
+          ? Location.create(mx, py, false)
+          : Location.create(px, my, false);
     }
-    return Location.create(mx, my); // should never happen
+    return Location.create(mx, my, false); // should never happen
   }
 
   @Override
@@ -104,7 +104,7 @@ public class LineTool extends AbstractTool {
       x = canvas.snapX(x);
       y = canvas.snapY(y);
     }
-    final var loc = Location.create(x, y);
+    final var loc = Location.create(x, y, false);
     mouseStart = loc;
     mouseEnd = loc;
     lastMouseX = loc.getX();
@@ -148,14 +148,14 @@ public class LineTool extends AbstractTool {
     if (active) {
       final var shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
       var newEnd =
-          (shift) ? LineUtil.snapTo8Cardinals(mouseStart, mx, my) : Location.create(mx, my);
+          (shift) ? LineUtil.snapTo8Cardinals(mouseStart, mx, my) : Location.create(mx, my, false);
 
       if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
         var x = newEnd.getX();
         var y = newEnd.getY();
         x = canvas.snapX(x);
         y = canvas.snapY(y);
-        newEnd = Location.create(x, y);
+        newEnd = Location.create(x, y, false);
       }
 
       if (!newEnd.equals(mouseEnd)) {

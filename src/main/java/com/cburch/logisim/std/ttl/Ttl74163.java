@@ -37,15 +37,19 @@ public class Ttl74163 extends Ttl74161 {
       if (nClear == 0) {
         counter = 0;
       } else if (nLoad == 0) {
-        counter = state.getPortValue(PORT_INDEX_A).toLongValue()
-            + (state.getPortValue(PORT_INDEX_B).toLongValue() << 1)
-            + (state.getPortValue(PORT_INDEX_C).toLongValue() << 2)
-            + (state.getPortValue(PORT_INDEX_D).toLongValue() << 3);
-      } else  if (state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue() == 1) {
+        counter =
+            state.getPortValue(PORT_INDEX_A).toLongValue()
+                + (state.getPortValue(PORT_INDEX_B).toLongValue() << 1)
+                + (state.getPortValue(PORT_INDEX_C).toLongValue() << 2)
+                + (state.getPortValue(PORT_INDEX_D).toLongValue() << 3);
+      } else if (state
+              .getPortValue(PORT_INDEX_EnP)
+              .and(state.getPortValue(PORT_INDEX_EnT))
+              .toLongValue()
+          == 1) {
         counter = (counter + 1) & 15;
       }
     }
     updateState(state, counter);
   }
-
 }

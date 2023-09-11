@@ -41,8 +41,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   void removeComponent(Circuit circ, Component c, CircuitState state);
 
-  void drawGhost(
-      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs);
+  void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs);
 
   @Override
   Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver);

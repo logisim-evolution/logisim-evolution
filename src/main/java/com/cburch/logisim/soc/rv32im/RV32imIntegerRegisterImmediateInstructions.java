@@ -187,22 +187,23 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   private void decodeBin() {
     int opcode = RV32imSupport.getOpcode(instruction);
     switch (opcode) {
-      case LUI:
-      case AUIPC:
+      case LUI, AUIPC -> {
         valid = true;
         destination = RV32imSupport.getDestinationRegisterIndex(instruction);
         immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.U_TYPE);
         operation = (opcode == LUI) ? INSTR_LUI : INSTR_AUIPC;
         return;
-      case OP_IMM:
+      }
+      case OP_IMM -> {
         valid = true;
         source = RV32imSupport.getSourceRegister1Index(instruction);
         destination = RV32imSupport.getDestinationRegisterIndex(instruction);
         immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.I_TYPE);
-        break;
-      default:
+      }
+      default -> {
         valid = false;
         return;
+      }
     }
     /* we land up here only in case of a OP_IMM opcode */
     int op3 = RV32imSupport.getFunct3(instruction);
@@ -268,7 +269,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
     boolean errors = false;
     AssemblerToken[] param1, param2, param3;
     switch (operation) {
-      case INSTR_NOP:
+      case INSTR_NOP -> {
         if (instr.getNrOfParameters() != 0) {
           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
           errors = true;
@@ -276,10 +277,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
         }
         operation = INSTR_ADDI;
         destination = source = immediate = 0;
-        break;
-      case INSTR_LUI:
-      case INSTR_AUIPC:
-      case INSTR_LI: /* format opcode rd,#imm */
+      }
+      case INSTR_LUI, INSTR_AUIPC, INSTR_LI -> { /* format opcode rd,#imm */
         if (instr.getNrOfParameters() != 2) {
           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedTwoArguments"));
           errors = true;
@@ -299,7 +298,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           errors = true;
           break;
         }
-        if (operation == INSTR_LI) operation = INSTR_ADDI;
+        if (operation == INSTR_LI)
+          operation = INSTR_ADDI;
         source = 0;
         destination = RV32imState.getRegisterIndex(param1[0].getValue());
         if (destination < 0 || destination > 31) {
@@ -307,17 +307,16 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
         }
         immediate = param2[0].getNumberValue();
-        if (operation == INSTR_LUI && param2[0].isLabel()) immediate = (immediate >> 12) & 0xFFFFF;
+        if (operation == INSTR_LUI && param2[0].isLabel())
+          immediate = (immediate >> 12) & 0xFFFFF;
         if (operation == INSTR_AUIPC && param2[0].isLabel()) {
           long imm = immediate;
           imm -= instr.getProgramCounter();
           immediate = (int) imm;
           immediate = (immediate >> 12) & 0xFFFFF;
         }
-        break;
-      case INSTR_MV:
-      case INSTR_NOT:
-      case INSTR_SEQZ: /* format opcode rd,rs */
+      }
+      case INSTR_MV, INSTR_NOT, INSTR_SEQZ -> { /* format opcode rd,rs */
         if (instr.getNrOfParameters() != 2) {
           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedTwoArguments"));
           errors = true;
@@ -349,20 +348,18 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
         }
         switch (operation) {
-          case INSTR_MV:
+          case INSTR_MV -> {
             immediate = 0;
             operation = INSTR_ADDI;
-            break;
-          case INSTR_NOT:
-            operation = INSTR_XORI;
-            break;
-          default:
+          }
+          case INSTR_NOT -> operation = INSTR_XORI;
+          default -> {
             operation = INSTR_SLTIU;
             immediate = 1;
-            break;
+          }
         }
-        break;
-      default: /* format: opcode rd,rs,#imm */
+      }
+      default -> { /* format: opcode rd,rs,#imm */
         if (instr.getNrOfParameters() != 3) {
           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
           errors = true;
@@ -400,17 +397,12 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           errors = true;
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
         }
-        break;
+      }
     }
 
     if (!errors) {
       switch (operation) {
-        case INSTR_ADDI:
-        case INSTR_SLTI:
-        case INSTR_SLTIU:
-        case INSTR_ANDI:
-        case INSTR_ORI:
-        case INSTR_XORI:
+        case INSTR_ADDI, INSTR_SLTI, INSTR_SLTIU, INSTR_ANDI, INSTR_ORI, INSTR_XORI -> {
           if (immediate > 2047 || immediate < -2048) {
             errors = true;
             instr.setError(
@@ -420,10 +412,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           }
           instruction =
               RV32imSupport.getITypeInstruction(OP_IMM, destination, operation, source, immediate);
-          break;
-        case INSTR_SLLI:
-        case INSTR_SRLI:
-        case INSTR_SRAI:
+        }
+        case INSTR_SLLI, INSTR_SRLI, INSTR_SRAI -> {
           if (immediate > 31 || immediate < 0) {
             errors = true;
             instr.setError(
@@ -437,9 +427,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           }
           instruction =
               RV32imSupport.getITypeInstruction(OP_IMM, destination, operation, source, immediate);
-          break;
-        case INSTR_LUI:
-        case INSTR_AUIPC:
+        }
+        case INSTR_LUI, INSTR_AUIPC -> {
           if (immediate < 0 || immediate >= (1 << 20)) {
             errors = true;
             instr.setError(
@@ -449,11 +438,11 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           }
           int opcode = operation == INSTR_LUI ? LUI : AUIPC;
           instruction = RV32imSupport.getUTypeInstruction(opcode, destination, immediate);
-          break;
-        default:
+        }
+        default -> {
           errors = true;
           instr.setError(instr.getInstruction(), S.getter("RV32imAssemblerBUG"));
-          break;
+        }
       }
     }
     valid = !errors;

@@ -16,12 +16,10 @@ import java.util.Random;
 class MemContentsSub {
   private static class BytePage extends MemContents.Page {
     private byte[] data;
-    private final long mask;
 
-    public BytePage(int size, long mask) {
-      this.mask = mask;
+    public BytePage(int size, long mask, boolean randomize) {
       data = new byte[size];
-      if (AppPreferences.Memory_Startup_Unknown.get()) {
+      if (AppPreferences.Memory_Startup_Unknown.get() && randomize) {
         final var generator = new Random();
         for (var i = 0; i < size; i++) {
           data[i] = (byte) (generator.nextInt(256) & mask);
@@ -71,12 +69,10 @@ class MemContentsSub {
 
   private static class IntPage extends MemContents.Page {
     private int[] data;
-    private final long mask;
 
-    public IntPage(int size, long mask) {
-      this.mask = mask;
+    public IntPage(int size, long mask, boolean randomize) {
       data = new int[size];
-      if (AppPreferences.Memory_Startup_Unknown.get()) {
+      if (AppPreferences.Memory_Startup_Unknown.get() && randomize) {
         final var generator = new Random();
         for (var i = 0; i < size; i++) data[i] = (int) (generator.nextInt() & mask);
       }
@@ -124,12 +120,10 @@ class MemContentsSub {
 
   private static class ShortPage extends MemContents.Page {
     private short[] data;
-    private final long mask;
-
-    public ShortPage(int size, long mask) {
+  
+    public ShortPage(int size, long mask, boolean randomize) {
       data = new short[size];
-      this.mask = mask;
-      if (AppPreferences.Memory_Startup_Unknown.get()) {
+      if (AppPreferences.Memory_Startup_Unknown.get() && randomize) {
         final var generator = new Random();
         for (var i = 0; i < size; i++) data[i] = (short) (generator.nextInt(1 << 16) & mask);
       }
@@ -181,12 +175,10 @@ class MemContentsSub {
 
   private static class LongPage extends MemContents.Page {
     private long[] data;
-    private final long mask;
 
-    public LongPage(int size, long mask) {
-      this.mask = mask;
+    public LongPage(int size, long mask, boolean randomize) {
       data = new long[size];
-      if (AppPreferences.Memory_Startup_Unknown.get()) {
+      if (AppPreferences.Memory_Startup_Unknown.get() && randomize) {
         final var generator = new Random();
         for (var i = 0; i < size; i++) data[i] = (int) generator.nextLong() & mask;
       }
@@ -232,12 +224,12 @@ class MemContentsSub {
     }
   }
 
-  static MemContents.Page createPage(int size, int bits) {
+  static MemContents.Page createPage(int size, int bits, boolean randomize) {
     long mask = (bits == 64) ? 0xffffffffffffffffL : (1L << bits) - 1;
-    if (bits <= 8) return new BytePage(size, mask);
-    else if (bits <= 16) return new ShortPage(size, mask);
-    else if (bits <= 32) return new IntPage(size, mask);
-    else return new LongPage(size, mask);
+    if (bits <= 8) return new BytePage(size, mask, randomize);
+    else if (bits <= 16) return new ShortPage(size, mask, randomize);
+    else if (bits <= 32) return new IntPage(size, mask, randomize);
+    else return new LongPage(size, mask, randomize);
   }
 
   private MemContentsSub() {}

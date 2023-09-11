@@ -27,7 +27,6 @@ public final class LibraryUtil {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
   }
 
-
   /**
    * Tries to read unique identifier from object (mainly Library or Tool) stored in object's class
    * static field named as set in idFieldName.
@@ -48,7 +47,8 @@ public final class LibraryUtil {
         if (field.getName().equals(ID_FIELD_NAME)) {
           final var id = (String) field.get(null);
           if (id != null) return id;
-          throw new NullPointerException("The " + ID_FIELD_NAME + " for " + cls + " cannot be NULL");
+          throw new NullPointerException(
+              "The " + ID_FIELD_NAME + " for " + cls + " cannot be NULL");
         }
       }
     } catch (Exception ex) {

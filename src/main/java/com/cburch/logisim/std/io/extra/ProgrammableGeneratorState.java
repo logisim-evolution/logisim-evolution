@@ -97,7 +97,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
           new LocaleManager("resources/logisim", "gui").get("saveOption"), S.get("ramClearMenuItem")
         };
     JPanel panel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbs = new GridBagConstraints();
+    GridBagConstraints gbc = new GridBagConstraints();
     // insets between states
     Insets inset = new Insets(5, 0, 5, 0);
     // state number font
@@ -110,12 +110,12 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
                 + "<br>("
                 + S.get("clockDurationValue", "")
                 + ")</div></html>");
-    gbs.ipadx = 10;
-    gbs.ipady = 5;
-    gbs.gridx = 1;
-    gbs.anchor = GridBagConstraints.CENTER;
-    gbs.insets = inset;
-    panel.add(up, gbs);
+    gbc.ipadx = 10;
+    gbc.ipady = 5;
+    gbc.gridx = 1;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.insets = inset;
+    panel.add(up, gbc);
     JLabel down =
         new JLabel(
             "<html><div style='text-align:center'>"
@@ -123,28 +123,28 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
                 + "<br>("
                 + S.get("clockDurationValue", "")
                 + ")</div></html>");
-    gbs.gridx = 2;
-    panel.add(down, gbs);
+    gbc.gridx = 2;
+    panel.add(down, gbc);
     // 2 inputs a row
-    for (byte i = 0; i < inputs.length; i += 2) {
+    for (var i = 0; i < inputs.length; i += 2) {
       // number of state to edit
       statenumber = new JLabel(String.valueOf(i / 2 + 1));
       statenumber.setFont(state);
       statenumber.setForeground(Color.DARK_GRAY);
-      gbs.gridx = 0;
-      gbs.gridy = i + 1;
+      gbc.gridx = 0;
+      gbc.gridy = i + 1;
       // x padding
-      panel.add(statenumber, gbs);
+      panel.add(statenumber, gbc);
       // high duration edit box
       inputs[i] = new JTextField(String.valueOf(getdurationHigh(i / 2)), 3);
       inputs[i].setHorizontalAlignment(SwingConstants.CENTER);
-      gbs.gridx = 1;
-      panel.add(inputs[i], gbs);
+      gbc.gridx = 1;
+      panel.add(inputs[i], gbc);
       // low duration edit box
       inputs[i + 1] = new JTextField(String.valueOf(getdurationLow(i / 2)), 3);
       inputs[i + 1].setHorizontalAlignment(SwingConstants.CENTER);
-      gbs.gridx = 2;
-      panel.add(inputs[i + 1], gbs);
+      gbc.gridx = 2;
+      panel.add(inputs[i + 1], gbc);
     }
     JScrollPane scrollable = new JScrollPane(panel);
     scrollable.setPreferredSize(new Dimension(250, 250));

@@ -70,15 +70,12 @@ public class ComponentDrawContext {
   //
   public void drawBounds(Component comp) {
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
     final var bds = comp.getBounds();
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     GraphicsUtil.switchToWidth(g, 1);
   }
 
   public void drawClock(Component comp, int i, Direction dir) {
-    final var curColor = g.getColor();
-    g.setColor(Color.BLACK);
     GraphicsUtil.switchToWidth(g, 2);
 
     final var e = comp.getEnd(i);
@@ -100,8 +97,7 @@ public class ComponentDrawContext {
       g.drawLine(x - 1, y - CLK_SZD, x - CLK_SZ, y);
       g.drawLine(x - 1, y + CLK_SZD, x - CLK_SZ, y);
     }
-
-    g.setColor(curColor);
+    
     GraphicsUtil.switchToWidth(g, 1);
   }
 
@@ -147,18 +143,18 @@ public class ComponentDrawContext {
     int radius = 4;
     int offset = 2;
     switch (appearance) {
-      case AppPreferences.PIN_APPEAR_DOT_MEDIUM:
+      case AppPreferences.PIN_APPEAR_DOT_MEDIUM -> {
         radius = 6;
         offset = 3;
-        break;
-      case AppPreferences.PIN_APPEAR_DOT_BIG:
+      }
+      case AppPreferences.PIN_APPEAR_DOT_BIG -> {
         radius = 8;
         offset = 4;
-        break;
-      case AppPreferences.PIN_APPEAR_DOT_BIGGER:
+      }
+      case AppPreferences.PIN_APPEAR_DOT_BIGGER -> {
         radius = 10;
         offset = 5;
-        break;
+      }
     }
     g.fillOval(x - offset, y - offset, radius, radius);
   }
@@ -169,7 +165,7 @@ public class ComponentDrawContext {
     final var curColor = g.getColor();
     g.setColor(getShowState()
             ? getCircuitState().getValue(pt).getColor()
-            : Color.BLACK);
+            : new Color(AppPreferences.COMPONENT_COLOR.get()));
     drawPinMarker(pt.getX(), pt.getY());
     g.setColor(curColor);
   }
@@ -317,7 +313,7 @@ public class ComponentDrawContext {
       g.setColor(color);
       g.fillRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     }
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     GraphicsUtil.switchToWidth(g, 1);
   }

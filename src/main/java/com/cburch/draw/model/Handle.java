@@ -34,7 +34,7 @@ public class Handle {
   }
 
   public Location getLocation() {
-    return Location.create(x, y);
+    return Location.create(x, y, false);
   }
 
   public CanvasObject getObject() {

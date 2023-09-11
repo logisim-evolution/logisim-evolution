@@ -22,10 +22,10 @@ import java.awt.event.MouseEvent;
 
 public class Ttl7474 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7474";
 
@@ -76,10 +76,8 @@ public class Ttl7474 extends AbstractTtlGate {
         final var myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
         final var values = myState.getValue().getAll();
-        if (values[index].isFullyDefined())
-          values[index] = values[index].not();
-        else
-          values[index] = Value.createKnown(1, 0);
+        if (values[index].isFullyDefined()) values[index] = values[index].not();
+        else values[index] = Value.createKnown(1, 0);
         myState.setValue(Value.create(values));
         state.fireInvalidated();
       }
@@ -137,13 +135,12 @@ public class Ttl7474 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics g, int x, int y, int ID, TtlRegisterData state) {
-    if (state != null) {
-      g.setColor(state.getValue().get(ID).getColor());
-      g.fillOval(x + 33, y + 30, 8, 8);
-      g.setColor(Color.WHITE);
-      GraphicsUtil.drawCenteredText(g, state.getValue().get(ID).toDisplayString(), x + 36, y + 33);
-      g.setColor(Color.BLACK);
-    }
+    if (state == null) return;
+    g.setColor(state.getValue().get(ID).getColor());
+    g.fillOval(x + 33, y + 30, 8, 8);
+    g.setColor(Color.WHITE);
+    GraphicsUtil.drawCenteredText(g, state.getValue().get(ID).toDisplayString(), x + 36, y + 33);
+    g.setColor(Color.BLACK);
   }
 
   private void drawflop(Graphics g, int x, int y) {

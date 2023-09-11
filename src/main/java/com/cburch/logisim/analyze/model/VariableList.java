@@ -58,7 +58,7 @@ public class VariableList {
   }
 
   public void add(Var variable) {
-    if (data.size() + variable.width >= maxSize) {
+    if (data.size() + variable.width > maxSize) {
       throw new IllegalArgumentException("maximum size is " + maxSize);
     }
     final var index = data.size();
@@ -98,7 +98,8 @@ public class VariableList {
       throw new IllegalArgumentException("cannot move index " + index + " by " + delta);
     }
     if (newIndex > data.size() - 1) {
-      throw new IllegalArgumentException("Cannot move index " + index + " by " + delta + ": size " + data.size());
+      throw new IllegalArgumentException(
+          "Cannot move index " + index + " by " + delta + ": size " + data.size());
     }
     if (index == newIndex) return;
     data.remove(index);

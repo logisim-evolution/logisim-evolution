@@ -70,7 +70,7 @@ public class LedArrayRowScanningHdlGeneratorFactory extends AbstractHdlGenerator
     final var nrRowAddrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
     final var scanningReload = (int) (FpgaClockFrequency / 1000);
     final var nrOfScanningBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(scanningReload);
-    final var maxNrLeds = ((int) Math.pow(2.0, (double) nrRowAddrBits)) * nrOfRows;
+    final var maxNrLeds = ((int) Math.pow(2.0, nrRowAddrBits)) * nrOfRows;
     final var generics = new HashMap<String, String>();
     generics.put(NR_OF_LEDS_STRING, Integer.toString(nrOfRows * nrOfColumns));
     generics.put(NR_OF_ROWS_STRING, Integer.toString(nrOfRows));

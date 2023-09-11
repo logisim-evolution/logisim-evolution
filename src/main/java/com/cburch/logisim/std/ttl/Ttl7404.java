@@ -13,15 +13,13 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
 
-/**
- * TTL 74x04: hex inverter gate
- */
+/** TTL 74x04: hex inverter gate */
 public class Ttl7404 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7404";
 
@@ -33,7 +31,8 @@ public class Ttl7404 extends AbstractTtlGate {
 
     @Override
     public LineBuffer getLogicFunction(int index) {
-      return LineBuffer.getHdlBuffer().add("{{assign}}gateO{{1}}{{assign}}{{not}}(gateA{{1}});", index);
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}gateO{{1}}{{assign}}{{not}}(gateA{{1}});", index);
     }
   }
 
@@ -61,10 +60,10 @@ public class Ttl7404 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    for (byte i = 1; i < 6; i += 2) {
+    for (var i = 1; i < 6; i += 2) {
       state.setPort(i, state.getPortValue(i - 1).not(), 1);
     }
-    for (byte i = 6; i < 12; i += 2) {
+    for (var i = 6; i < 12; i += 2) {
       state.setPort(i, state.getPortValue(i + 1).not(), 1);
     }
   }

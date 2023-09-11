@@ -280,13 +280,10 @@ public class AssemblerPanel extends JPanel
     if (after) {
       if (findex < 0 || findex == (errorPositions.size() - 1))
         asmWindow.setCaretPosition(errorPositions.get(0));
-      else
-        asmWindow.setCaretPosition(errorPositions.get(findex + 1));
+      else asmWindow.setCaretPosition(errorPositions.get(findex + 1));
     } else {
-      if (findex <= 0)
-        asmWindow.setCaretPosition(errorPositions.get(errorPositions.size() - 1));
-      else
-        asmWindow.setCaretPosition(errorPositions.get(findex - 1));
+      if (findex <= 0) asmWindow.setCaretPosition(errorPositions.get(errorPositions.size() - 1));
+      else asmWindow.setCaretPosition(errorPositions.get(findex - 1));
     }
   }
 

@@ -15,7 +15,7 @@ import java.awt.Graphics2D;
 
 public class JoystickIcon extends BaseIcon {
 
-  private int state = 1;
+  private final int state = 1;
 
   @Override
   protected void paintIcon(Graphics2D g2) {

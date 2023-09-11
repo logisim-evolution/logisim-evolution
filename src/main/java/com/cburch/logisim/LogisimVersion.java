@@ -14,18 +14,14 @@ import java.util.regex.Pattern;
 /**
  * Version string handling class. Supported version formats:
  *
- * - X.Y.Z
- * - X.Y.Zsuffix
- * - X.Y.Z-suffix
+ * <p>- X.Y.Z - X.Y.Zsuffix - X.Y.Z-suffix
  *
- * where X, Y, Z must be positive integer, while suffix is optional
- * string starting with a letter. Suffix can be separated from X.Y.Z part
- * with (optional) dash ("-") character.
+ * <p>where X, Y, Z must be positive integer, while suffix is optional string starting with a
+ * letter. Suffix can be separated from X.Y.Z part with (optional) dash ("-") character.
  *
- * NOTE: toString() form uses no dash separator form by default, however
- * if object is obtained via `fromString()` call, and version string contains
- * the "-" separator, output returned by `toString()` will also include
- * separator character.
+ * <p>NOTE: toString() form uses no dash separator form by default, however if object is obtained
+ * via `fromString()` call, and version string contains the "-" separator, output returned by
+ * `toString()` will also include separator character.
  */
 public class LogisimVersion {
   private int major = 0;
@@ -61,7 +57,8 @@ public class LogisimVersion {
     return new LogisimVersion().initFromVersionString(versionString);
   }
 
-  private LogisimVersion initFromVersionString(String versionString) throws IllegalArgumentException {
+  private LogisimVersion initFromVersionString(String versionString)
+      throws IllegalArgumentException {
     var major = 0;
     var minor = 0;
     var patch = 0;
@@ -80,7 +77,8 @@ public class LogisimVersion {
         if (parts.length >= 2) minor = Integer.parseInt(parts[1]);
         if (parts.length >= 3) patch = Integer.parseInt(parts[2]);
       } catch (NumberFormatException ex) {
-        throw new IllegalArgumentException(String.format("Version segments must be non-negative integers, '%s' found.", verStr));
+        throw new IllegalArgumentException(
+            String.format("Version segments must be non-negative integers, '%s' found.", verStr));
       }
 
       // suffix part
@@ -168,7 +166,7 @@ public class LogisimVersion {
   @Override
   public String toString() {
     var sfx = "";
-    if (suffix != "") {
+    if (!suffix.equals("")) {
       sfx = separator + suffix;
     }
     return format(major, minor, patch, sfx);
@@ -177,10 +175,10 @@ public class LogisimVersion {
   public static String format(int major, int minor, int patch) {
     return format(major, minor, patch, "");
   }
+
   public static String format(int major, int minor, int patch, String suffix) {
     var result = String.format("%d.%d.%d", major, minor, patch);
     if (!suffix.equals("")) result += suffix;
     return result;
   }
-
 }

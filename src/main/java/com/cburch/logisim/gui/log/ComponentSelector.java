@@ -225,7 +225,7 @@ public class ComponentSelector extends JTable {
       final var newChildren = new ArrayList<TreeNode<?>>();
       final var subcircs = new ArrayList<Component>();
       var changed = false;
-      // todo: hide from display any unselectable things that also have no children
+      // TODO: hide from display any unselectable things that also have no children
       for (final var c : circ.getNonWires()) {
         // For DRIVEABLE_CLOCKS do not recurse into subcircuits
         if (c.getFactory() instanceof SubcircuitFactory && mode != DRIVEABLE_CLOCKS) {

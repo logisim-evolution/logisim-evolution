@@ -474,7 +474,6 @@ public class SubcircuitFactory extends InstanceFactory {
 
   public static void paintEvolutionIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
-    g2.setColor(Color.BLACK);
     g2.drawRect(
         AppPreferences.getScaled(2), 0, AppPreferences.getScaled(12), AppPreferences.getScaled(16));
     g2.fillRect(

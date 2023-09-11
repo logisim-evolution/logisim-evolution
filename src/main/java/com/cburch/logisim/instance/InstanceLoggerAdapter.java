@@ -24,7 +24,8 @@ class InstanceLoggerAdapter implements LoggableContract {
   private InstanceLogger logger;
   private InstanceStateImpl state;
 
-  public InstanceLoggerAdapter(InstanceComponent comp, Class<? extends InstanceLogger> loggerClass) {
+  public InstanceLoggerAdapter(
+      InstanceComponent comp, Class<? extends InstanceLogger> loggerClass) {
     try {
       this.comp = comp;
       this.logger = loggerClass.getDeclaredConstructor().newInstance();

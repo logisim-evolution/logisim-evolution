@@ -547,7 +547,7 @@ public class Hdl {
     var maxNameLength = 0;
     for (var wire : wires.keySet())
       maxNameLength = Math.max(maxNameLength, wire.length());
-    final var sortedWires = new TreeSet<String>(wires.keySet());
+    final var sortedWires = new TreeSet<>(wires.keySet());
     for (var wire : sortedWires)
       contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();

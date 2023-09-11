@@ -41,7 +41,9 @@ public class Main {
         FlatIntelliJLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        UIManager.put(
+            "ToolTip.font",
+            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
       }
     } catch (ClassNotFoundException
         | UnsupportedLookAndFeelException

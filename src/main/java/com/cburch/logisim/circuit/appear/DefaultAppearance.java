@@ -20,7 +20,8 @@ import java.util.List;
 
 class DefaultAppearance {
 
-  public static List<CanvasObject> build(Collection<Instance> pins, AttributeOption style, boolean isFixed, String circuitName) {
+  public static List<CanvasObject> build(
+      Collection<Instance> pins, AttributeOption style, boolean isFixed, String circuitName) {
     if (style == CircuitAttributes.APPEAR_CLASSIC) {
       return DefaultClassicAppearance.build(pins);
     } else if (style == CircuitAttributes.APPEAR_FPGA) {

@@ -161,7 +161,7 @@ public class MoveGesture {
   AvoidanceMap getFixedAvoidanceMap() {
     var ret = initAvoid;
     if (ret == null) {
-      final var comps = new HashSet<Component>(circuit.getNonWires());
+      final var comps = new HashSet<>(circuit.getNonWires());
       comps.addAll(circuit.getWires());
       comps.removeAll(selected);
       ret = AvoidanceMap.create(comps, 0, 0);

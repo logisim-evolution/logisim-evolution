@@ -21,16 +21,18 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpMultiplier extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "FPMultiplier";
 
@@ -62,9 +64,9 @@ public class FpMultiplier extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(OUT);
@@ -74,7 +76,7 @@ public class FpMultiplier extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(x - 15, y - 5, x - 5, y + 5);
     g.drawLine(x - 15, y + 5, x - 5, y - 5);
 
@@ -97,7 +99,10 @@ public class FpMultiplier extends InstanceFactory {
     final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
 
     final var out_val = a_val * b_val;
-    final var out = dataWidth.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
+    final var out =
+        dataWidth.getWidth() == 64
+            ? Value.createKnown(out_val)
+            : Value.createKnown((float) out_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

@@ -88,7 +88,9 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
     final var isAccepted = poker.init(state, e);
     if (isAccepted) {
       this.state = state;
-      this.context = new ComponentDrawContext(event.getCanvas(), event.getCanvas().getCircuit(), circState, null, null);
+      this.context =
+          new ComponentDrawContext(
+              event.getCanvas(), event.getCanvas().getCircuit(), circState, null, null);
       mousePressed(e);
       return this;
     }

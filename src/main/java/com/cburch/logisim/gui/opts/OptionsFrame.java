@@ -42,12 +42,13 @@ public class OptionsFrame extends LFrame.Dialog {
   public OptionsFrame(Project project) {
     super(project);
     project.addLibraryListener(myListener);
-    project.addProjectListener(event -> {
-      final var action = event.getAction();
-      if (action == ProjectEvent.ACTION_SET_STATE) {
-        computeTitle();
-      }
-    });
+    project.addProjectListener(
+        event -> {
+          final var action = event.getAction();
+          if (action == ProjectEvent.ACTION_SET_STATE) {
+            computeTitle();
+          }
+        });
     panels =
         new OptionsPanel[] {
           new SimulateOptions(this),
@@ -61,7 +62,8 @@ public class OptionsFrame extends LFrame.Dialog {
     }
 
     final var contents = getContentPane();
-    tabbedPane.setPreferredSize(new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(300)));
+    tabbedPane.setPreferredSize(
+        new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(300)));
     contents.add(tabbedPane, BorderLayout.CENTER);
 
     LocaleManager.addLocaleListener(myListener);

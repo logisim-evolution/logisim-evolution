@@ -151,10 +151,8 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   @Override
   public void actionPerformed(ActionEvent e) {
     switch (e.getActionCommand()) {
-      case cancelStr:
-        this.clear();
-        break;
-      case "save":
+      case cancelStr -> this.clear();
+      case "save" -> {
         panel.setVisible(false);
         theBoard.setBoardName(boardNameInput.getText());
         String filename = getDirName("", S.get("FpgaBoardSaveDir"));
@@ -163,8 +161,8 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         BoardWriterClass xmlwriter = new BoardWriterClass(theBoard, picturepanel.getImage());
         xmlwriter.printXml(filename);
         this.clear();
-        break;
-      case "load":
+      }
+      case "load" -> {
         JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setFileFilter(XmlFileFilter.XML_FILTER);
@@ -176,20 +174,20 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
           BoardReaderClass reader = new BoardReaderClass(FileName);
           updateInfo(reader);
         }
-        break;
-      case fpgaStr:
+      }
+      case fpgaStr -> {
         FpgaIoInformationSettingsDialog.getFpgaInformation(panel, theBoard);
         if (picturepanel.hasIOComponents() && theBoard.fpga.isFpgaInfoPresent())
           saveButton.setEnabled(true);
-        break;
-      case "internal":
+      }
+      case "internal" -> {
         String Board = getInternalBoardName();
         if (Board != null) {
           BoardReaderClass reader = new BoardReaderClass(
               AppPreferences.Boards.getBoardFilePath(Board));
           updateInfo(reader);
         }
-        break;
+      }
     }
   }
 

@@ -36,16 +36,17 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 public class Register extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Register";
 
@@ -86,10 +87,9 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
         for (int i = 0; i < len; i++) str = str.concat("?");
       }
       GraphicsUtil.drawCenteredText(g, str, x + 30, y + 8);
-      g.setColor(Color.black);
     }
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
-    g.drawRect(x + 10, y + 20, 40, 60);
     if (nrOfBits > 1) {
       g.drawLine(x + 15, y + 80, x + 15, y + 85);
       g.drawLine(x + 15, y + 85, x + 55, y + 85);
@@ -101,20 +101,23 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
         g.drawLine(x + 60, y + 30, x + 60, y + 90);
         g.drawLine(x + 55, y + 30, x + 60, y + 30);
       }
+      g.setColor(Value.multiColor);
     }
-    GraphicsUtil.switchToWidth(g, 1);
     GraphicsUtil.switchToWidth(g, dq_widtdqWidth);
     g.drawLine(x, y + 30, x + 8, y + 30);
     g.drawLine(x + 52, y + 30, x + 60, y + 30);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    GraphicsUtil.switchToWidth(g, 2);
+    g.drawRect(x + 10, y + 20, 40, 60);
     GraphicsUtil.switchToWidth(g, 1);
     GraphicsUtil.drawCenteredText(g, "D", x + 18, y + 28);
     GraphicsUtil.drawCenteredText(g, "Q", x + 41, y + 28);
     GraphicsUtil.switchToWidth(g, 2);
     g.drawLine(x + 30, y + 81, x + 30, y + 90);
     GraphicsUtil.switchToWidth(g, 1);
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     GraphicsUtil.drawCenteredText(g, "R", x + 30, y + 68);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (hasWE) {
       GraphicsUtil.drawCenteredText(g, "WE", x + 22, y + 48);
       GraphicsUtil.switchToWidth(g, 2);
@@ -162,6 +165,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     }
 
     // draw boundary, label
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
     painter.drawLabel();
@@ -174,10 +178,10 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       painter.drawPort(IN);
       painter.drawPort(OUT);
     }
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(CLR, "0", Direction.SOUTH);
     painter.drawPort(EN, S.get("memEnableLabel"), Direction.EAST);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.NORTH);
 
     // draw contents
@@ -301,7 +305,8 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       // determine text to draw in label
       Object Trigger = painter.getAttributeValue(StdAttr.TRIGGER);
       final var IsLatch = Trigger.equals(StdAttr.TRIG_HIGH) || Trigger.equals(StdAttr.TRIG_LOW);
-      final var NegActive = Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
+      final var NegActive =
+          Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
 
       drawRegisterEvolution(
           painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);

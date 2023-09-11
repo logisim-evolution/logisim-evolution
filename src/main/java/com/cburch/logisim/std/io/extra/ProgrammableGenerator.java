@@ -49,10 +49,10 @@ import javax.swing.JPopupMenu;
 
 public class ProgrammableGenerator extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "ProgrammableGenerator";
 
@@ -316,9 +316,7 @@ public class ProgrammableGenerator extends InstanceFactory {
           StdAttr.LABEL_FONT,
           CONTENTS_ATTR
         },
-        new Object[] {
-          Direction.EAST, 4, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ""
-        });
+        new Object[] {Direction.EAST, 4, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ""});
     setFacingAttribute(StdAttr.FACING);
     setInstanceLogger(ClockLogger.class);
     setInstancePoker(Poker.class);

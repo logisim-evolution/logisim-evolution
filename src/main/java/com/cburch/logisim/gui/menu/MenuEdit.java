@@ -11,10 +11,13 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
@@ -41,19 +44,26 @@ class MenuEdit extends Menu {
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
-    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
-    redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+
+    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
+    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
     cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, menuMask));
     copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask));
     paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, menuMask));
     delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-    dup.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, menuMask));
+    dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_MENU_DUPLICATE)
+        .getWithMask(0));
     selall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask));
     raise.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask));
     lower.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask));
-    raiseTop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
-    lowerBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    raiseTop.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    lowerBottom.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | InputEvent.SHIFT_DOWN_MASK));
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
 
     add(undo);
     add(redo);
@@ -98,8 +108,15 @@ class MenuEdit extends Menu {
     computeEnabled();
   }
 
+  public void hotkeyUpdate() {
+    undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
+    redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
+    dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_MENU_DUPLICATE)
+        .getWithMask(0));
+  }
+
   @Override
-  void computeEnabled() {
+  protected void computeEnabled() {
     setEnabled(
         menubar.getSaveProject() != null
             || cut.hasListeners()
@@ -139,10 +156,11 @@ class MenuEdit extends Menu {
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
       final var proj = menubar.getSaveProject();
-      if (src == undo && proj != null)
+      if (src == undo && proj != null) {
         proj.undoAction();
-      else if (src == redo && proj != null)
+      } else if (src == redo && proj != null) {
         proj.redoAction();
+      }
     }
 
     @Override

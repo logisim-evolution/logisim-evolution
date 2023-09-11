@@ -24,6 +24,8 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -78,23 +80,12 @@ public class Keyboard extends InstanceFactory {
 
       synchronized (data) {
         switch (e.getKeyCode()) {
-          case KeyEvent.VK_DELETE:
-            changed = data.delete();
-            break;
-          case KeyEvent.VK_LEFT:
-            data.moveCursorBy(-1);
-            break;
-          case KeyEvent.VK_RIGHT:
-            data.moveCursorBy(1);
-            break;
-          case KeyEvent.VK_HOME:
-            data.setCursor(0);
-            break;
-          case KeyEvent.VK_END:
-            data.setCursor(Integer.MAX_VALUE);
-            break;
-          default:
-            used = false;
+          case KeyEvent.VK_DELETE -> changed = data.delete();
+          case KeyEvent.VK_LEFT -> data.moveCursorBy(-1);
+          case KeyEvent.VK_RIGHT -> data.moveCursorBy(1);
+          case KeyEvent.VK_HOME -> data.setCursor(0);
+          case KeyEvent.VK_END -> data.setCursor(Integer.MAX_VALUE);
+          default -> used = false;
         }
       }
       if (used) e.consume();
@@ -297,6 +288,7 @@ public class Keyboard extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var showState = painter.getShowState();
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.EAST);
     painter.drawBounds();
     painter.drawPort(CLR);

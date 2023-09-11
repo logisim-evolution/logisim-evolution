@@ -56,13 +56,13 @@ public class SelectTool extends AbstractTool {
 
   public SelectTool() {
     curAction = IDLE;
-    dragStart = Location.create(0, 0);
+    dragStart = Location.create(0, 0, false);
     dragEnd = dragStart;
     dragEffective = false;
   }
 
   private static CanvasObject getObjectAt(CanvasModel model, int x, int y, boolean assumeFilled) {
-    final var loc = Location.create(x, y);
+    final var loc = Location.create(x, y, false);
     for (final var o : model.getObjectsFromTop()) {
       if (o.contains(loc, assumeFilled)) return o;
     }
@@ -97,15 +97,13 @@ public class SelectTool extends AbstractTool {
     HandleGesture gesture = null;
     boolean drawHandles;
     switch (action) {
-      case MOVE_ALL:
+      case MOVE_ALL -> drawHandles = !dragEffective;
+      case MOVE_HANDLE -> {
         drawHandles = !dragEffective;
-        break;
-      case MOVE_HANDLE:
-        drawHandles = !dragEffective;
-        if (dragEffective) gesture = curGesture;
-        break;
-      default:
-        drawHandles = true;
+        if (dragEffective)
+          gesture = curGesture;
+      }
+      default -> drawHandles = true;
     }
 
     CanvasObject moveHandleObj = null;
@@ -274,7 +272,7 @@ public class SelectTool extends AbstractTool {
     beforePressHandle = canvas.getSelection().getSelectedHandle();
     final var mx = e.getX();
     final var my = e.getY();
-    dragStart = Location.create(mx, my);
+    dragStart = Location.create(mx, my, false);
     dragEffective = false;
     dragEnd = dragStart;
     lastMouseX = mx;
@@ -380,7 +378,7 @@ public class SelectTool extends AbstractTool {
     switch (action) {
       case MOVE_ALL:
         final var moveDelta = selection.getMovingDelta();
-        if (dragEffective && !moveDelta.equals(Location.create(0, 0))) {
+        if (dragEffective && !moveDelta.equals(Location.create(0, 0, false))) {
           canvas.doAction(
               new ModelTranslateAction(model, selected, moveDelta.getX(), moveDelta.getY()));
         }
@@ -432,7 +430,7 @@ public class SelectTool extends AbstractTool {
   private void setMouse(Canvas canvas, int mx, int my, int mods) {
     lastMouseX = mx;
     lastMouseY = my;
-    final var newEnd = Location.create(mx, my);
+    final var newEnd = Location.create(mx, my, false);
     dragEnd = newEnd;
 
     final var start = dragStart;
@@ -450,7 +448,7 @@ public class SelectTool extends AbstractTool {
     final var ctrlPressed = (mods & InputEvent.CTRL_DOWN_MASK) != 0;
 
     switch (curAction) {
-      case MOVE_HANDLE:
+      case MOVE_HANDLE -> {
         final var gesture = curGesture;
         if (ctrlPressed) {
           final var h = gesture.getHandle();
@@ -459,8 +457,8 @@ public class SelectTool extends AbstractTool {
         }
         curGesture = new HandleGesture(gesture.getHandle(), dx, dy, mods);
         canvas.getSelection().setHandleGesture(curGesture);
-        break;
-      case MOVE_ALL:
+      }
+      case MOVE_ALL -> {
         if (ctrlPressed) {
           var minX = Integer.MAX_VALUE;
           var minY = Integer.MAX_VALUE;
@@ -468,8 +466,10 @@ public class SelectTool extends AbstractTool {
             for (final var handle : o.getHandles(null)) {
               final var x = handle.getX();
               final var y = handle.getY();
-              if (x < minX) minX = x;
-              if (y < minY) minY = y;
+              if (x < minX)
+                minX = x;
+              if (y < minY)
+                minY = y;
             }
           }
           dx = canvas.snapX(minX + dx) - minX;
@@ -483,9 +483,9 @@ public class SelectTool extends AbstractTool {
           }
         }
         canvas.getSelection().setMovingDelta(dx, dy);
-        break;
-      default:
-        break;
+      }
+      default -> {
+      }
     }
     repaintArea(canvas);
   }

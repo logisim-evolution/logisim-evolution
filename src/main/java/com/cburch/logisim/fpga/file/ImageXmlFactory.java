@@ -97,16 +97,15 @@ public class ImageXmlFactory {
       logger.error("PixelGrabber exception: {}", e.getMessage());
     }
     ColorModel color_model = pixelGrabber.getColorModel();
-    if (pixelGrabber.getPixels() instanceof byte[]) {
-      byte[] the_pixels = (byte[]) pixelGrabber.getPixels();
+    if (pixelGrabber.getPixels() instanceof byte[] thePixels) {
       int index = 0;
       for (int y = 0; y < hight; y++) {
         for (int x = 0; x < width; x++) {
           Color PixCol =
               new Color(
-                  color_model.getRed(the_pixels[index]),
-                  color_model.getGreen(the_pixels[index]),
-                  color_model.getBlue(the_pixels[index++]));
+                  color_model.getRed(thePixels[index]),
+                  color_model.getGreen(thePixels[index]),
+                  color_model.getBlue(thePixels[index++]));
           g2.setColor(PixCol);
           g2.fillRect(x, y, 1, 1);
         }

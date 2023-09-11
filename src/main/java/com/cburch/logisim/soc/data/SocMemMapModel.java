@@ -68,17 +68,18 @@ public class SocMemMapModel extends AbstractTableModel
       setBackground(s.getColor());
       setForeground(s.getTextColor());
       switch (column) {
-        case 0:
+        case 0 -> {
           setText(String.format("0x%08X", s.getStartAddress()));
           setHorizontalAlignment(JLabel.CENTER);
-          break;
-        case 1:
+        }
+        case 1 -> {
           setText(String.format("0x%08X", s.getEndAddress()));
           setHorizontalAlignment(JLabel.CENTER);
-          break;
-        default:
+        }
+        default -> {
           setText(s.getName());
           setHorizontalAlignment(JLabel.LEFT);
+        }
       }
       return this;
     }

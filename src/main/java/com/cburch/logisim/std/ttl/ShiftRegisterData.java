@@ -12,6 +12,8 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.prefs.AppPreferences;
+
 import java.util.Arrays;
 
 public class ShiftRegisterData extends ClockState implements InstanceData {
@@ -20,9 +22,11 @@ public class ShiftRegisterData extends ClockState implements InstanceData {
   private int vsPos;
 
   public ShiftRegisterData(BitWidth width, int len) {
+    final var initialValue = AppPreferences.Memory_Startup_Unknown.get() ? Value.createUnknown(width) : Value.createKnown(width, 0);
+
     this.width = width;
     this.vs = new Value[len];
-    Arrays.fill(this.vs, Value.createKnown(width, 0));
+    Arrays.fill(this.vs, initialValue);
     this.vsPos = 0;
   }
 
@@ -38,28 +42,51 @@ public class ShiftRegisterData extends ClockState implements InstanceData {
     return ret;
   }
 
+  /**
+   * Convert an external index i.e. from an argument to a public method to an index
+   * in the vs array
+   *
+   * @param index the external index
+   * @return the internal index
+   */
+  private int toInternalIndex(int index) {
+    return (vsPos + index) % vs.length;
+  }
+
   public Value get(int index) {
-    int i = vsPos + index;
-    Value[] v = vs;
-    if (i >= v.length) i -= v.length;
-    return v[i];
+    return vs[toInternalIndex(index)];
   }
 
   public int getLength() {
     return vs.length;
   }
 
-  public void push(Value v) {
-    int pos = vsPos;
-    vs[pos] = v;
-    vsPos = pos >= vs.length - 1 ? 0 : pos + 1;
+  /**
+   * Push the contents of the shift register towards the zero index
+   * and insert the new value at the top index
+   *
+   * @param v the value to be pushed into the shift register
+   */
+  public void pushDown(Value v) {
+    vs[vsPos] = v;
+
+    vsPos = toInternalIndex(1);
+  }
+
+  /**
+   * Push the contents of the shift register towards the top index
+   * and insert the new value at the zero index
+   *
+   * @param v the value to be pushed into the shift register
+   */
+  public void pushUp(Value v) {
+    vsPos = toInternalIndex(-1);
+
+    vs[vsPos] = v;
   }
 
   public void set(int index, Value val) {
-    int i = vsPos + index;
-    Value[] v = vs;
-    if (i >= v.length) i -= v.length;
-    v[i] = val;
+    vs[toInternalIndex(index)] = val;
   }
 
   public void setDimensions(BitWidth newWidth, int newLength) {

@@ -28,6 +28,8 @@ import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -71,7 +73,7 @@ public class EditTool extends Tool {
   private static final int CACHE_MAX_SIZE = 32;
 
   private static final Location NULL_LOCATION =
-      Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE);
+      Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE, false);
 
   private final Listener listener;
   private final SelectTool select;
@@ -126,22 +128,21 @@ public class EditTool extends Tool {
   }
 
   private void attemptReface(Canvas canvas, final Direction facing, KeyEvent e) {
-    if (e.getModifiersEx() == 0) {
-      final var circuit = canvas.getCircuit();
-      final var sel = canvas.getSelection();
-      final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
-      for (final var comp : sel.getComponents()) {
-        if (!(comp instanceof Wire)) {
-          final var attr = getFacingAttribute(comp);
-          if (attr != null) {
-            act.set(comp, attr, facing);
-          }
+    /* cancel the limit of no modifier*/
+    final var circuit = canvas.getCircuit();
+    final var sel = canvas.getSelection();
+    final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
+    for (final var comp : sel.getComponents()) {
+      if (!(comp instanceof Wire)) {
+        final var attr = getFacingAttribute(comp);
+        if (attr != null) {
+          act.set(comp, attr, facing);
         }
       }
-      if (!act.isEmpty()) {
-        canvas.getProject().doAction(act);
-        e.consume();
-      }
+    }
+    if (!act.isEmpty()) {
+      canvas.getProject().doAction(act);
+      e.consume();
     }
   }
 
@@ -151,7 +152,9 @@ public class EditTool extends Tool {
     canvas.getSelection().setSuppressHandles(null);
     cache.clear();
     final var circ = canvas.getCircuit();
-    if (circ != null) circ.removeCircuitListener(listener);
+    if (circ != null) {
+      circ.removeCircuitListener(listener);
+    }
     canvas.getSelection().removeListener(listener);
   }
 
@@ -249,75 +252,68 @@ public class EditTool extends Tool {
       Collection<Component> sel = canvas.getSelection().getComponents();
       if (sel != null) {
         for (final var c : sel) {
-          if (c instanceof Wire) {
-            final var w = (Wire) c;
-            if (w.contains(loc) && !w.endsAt(loc)) return select;
+          if (c instanceof final Wire w) {
+            if (w.contains(loc) && !w.endsAt(loc)) {
+              return select;
+            }
           }
         }
       }
     }
 
     final var circ = canvas.getCircuit();
-    if (circ == null) return false;
+    if (circ == null) {
+      return false;
+    }
     final var at = circ.getComponents(loc);
-    if (CollectionUtil.isNotEmpty(at)) return wiring;
+    if (CollectionUtil.isNotEmpty(at)) {
+      return wiring;
+    }
     for (final var w : circ.getWires()) {
-      if (w.contains(loc)) return wiring;
+      if (w.contains(loc)) {
+        return wiring;
+      }
     }
     return select;
   }
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    /* Rotate if ctrl is pressed and space also*/
-
-    // ctrlPressLast = false;
-    switch (e.getKeyCode()) {
-      case KeyEvent.VK_BACK_SPACE:
-      case KeyEvent.VK_DELETE:
-        if (!canvas.getSelection().isEmpty()) {
-          final var act = SelectionActions.clear(canvas.getSelection());
-          canvas.getProject().doAction(act);
-          e.consume();
-        } else {
-          wiring.keyPressed(canvas, e);
-        }
-        break;
-      case KeyEvent.VK_INSERT:
-        final var act = SelectionActions.duplicate(canvas.getSelection());
+    int code = e.getKeyCode();
+    int modifier = e.getModifiersEx();
+    if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE) {
+      if (!canvas.getSelection().isEmpty()) {
+        final var act = SelectionActions.clear(canvas.getSelection());
         canvas.getProject().doAction(act);
         e.consume();
-        break;
-      case KeyEvent.VK_UP:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.NORTH, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_DOWN:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.SOUTH, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_LEFT:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.WEST, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_RIGHT:
-        if (e.getModifiersEx() == 0) attemptReface(canvas, Direction.EAST, e);
-        else select.keyPressed(canvas, e);
-        break;
-      case KeyEvent.VK_ALT:
-        updateLocation(canvas, e);
-        e.consume();
-        break;
-      case KeyEvent.VK_SPACE:
-        /* Check if ctrl was pressed or not */
-        if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-          attemptRotate(canvas, e);
-        } else {
-          select.keyPressed(canvas, e);
-        }
-        break;
-      default:
+      } else {
+        wiring.keyPressed(canvas, e);
+      }
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_TOOL_DUPLICATE)
+        .compare(code, modifier)) {
+      final var act = SelectionActions.duplicate(canvas.getSelection());
+      canvas.getProject().doAction(act);
+      e.consume();
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH).compare(code, modifier)) {
+      attemptReface(canvas, Direction.NORTH, e);
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH).compare(code, modifier)) {
+      attemptReface(canvas, Direction.SOUTH, e);
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST).compare(code, modifier)) {
+      attemptReface(canvas, Direction.EAST, e);
+    } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST).compare(code, modifier)) {
+      attemptReface(canvas, Direction.WEST, e);
+    } else if (code == KeyEvent.VK_ALT) {
+      updateLocation(canvas, e);
+      e.consume();
+    } else if (code == KeyEvent.VK_SPACE) {
+      /* Check if ctrl was pressed or not */
+      if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+        attemptRotate(canvas, e);
+      } else {
         select.keyPressed(canvas, e);
+      }
+    } else {
+      select.keyPressed(canvas, e);
     }
   }
 
@@ -376,7 +372,9 @@ public class EditTool extends Tool {
       for (final var w : circ.getWires()) {
         if (selected.contains(w)) {
           if (w.contains(oldWireLoc)) {
-            if (suppress == null) suppress = new ArrayList<>();
+            if (suppress == null) {
+              suppress = new ArrayList<>();
+            }
             suppress.add(w);
           }
         }
@@ -416,7 +414,9 @@ public class EditTool extends Tool {
     lastCanvas = canvas;
     cache.clear();
     final var circ = canvas.getCircuit();
-    if (circ != null) circ.addCircuitListener(listener);
+    if (circ != null) {
+      circ.addCircuitListener(listener);
+    }
     canvas.getSelection().addListener(listener);
     select.select(canvas);
   }
@@ -432,7 +432,9 @@ public class EditTool extends Tool {
     final var dx = mx - snapx;
     final var dy = my - snapy;
     var isEligible = dx * dx + dy * dy < 36;
-    if ((mods & MouseEvent.ALT_DOWN_MASK) != 0) isEligible = true;
+    if ((mods & MouseEvent.ALT_DOWN_MASK) != 0) {
+      isEligible = true;
+    }
     if (!isEligible) {
       snapx = -1;
       snapy = -1;
@@ -445,7 +447,7 @@ public class EditTool extends Tool {
     if (lastX == snapx && lastY == snapy && modsSame) { // already computed
       return wireLoc != NULL_LOCATION;
     } else {
-      final var snap = Location.create(snapx, snapy);
+      final var snap = Location.create(snapx, snapy, false);
       if (modsSame) {
         Object o = cache.get(snap);
         if (o != null) {
@@ -480,19 +482,28 @@ public class EditTool extends Tool {
     }
   }
 
-  private void repaintIndicators(Canvas canvas, Location a, Location b) {
-    if (a.equals(b)) return;
-    if (a != NULL_LOCATION) canvas.repaint(a.getX() - 6, a.getY() - 6, 12, 12);
-    if (b != NULL_LOCATION) canvas.repaint(b.getX() - 6, b.getY() - 6, 12, 12);
-  }
-
   private boolean updateLocation(Canvas canvas, KeyEvent e) {
     int x = lastRawX;
-    if (x >= 0) return updateLocation(canvas, x, lastRawY, e.getModifiersEx());
-    else return false;
+    if (x >= 0) {
+      return updateLocation(canvas, x, lastRawY, e.getModifiersEx());
+    } else {
+      return false;
+    }
   }
 
   private boolean updateLocation(Canvas canvas, MouseEvent e) {
     return updateLocation(canvas, e.getX(), e.getY(), e.getModifiersEx());
+  }
+
+  private void repaintIndicators(Canvas canvas, Location a, Location b) {
+    if (a.equals(b)) {
+      return;
+    }
+    if (a != NULL_LOCATION) {
+      canvas.repaint(a.getX() - 6, a.getY() - 6, 12, 12);
+    }
+    if (b != NULL_LOCATION) {
+      canvas.repaint(b.getX() - 6, b.getY() - 6, 12, 12);
+    }
   }
 }

@@ -47,8 +47,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
 
   @Override
   public boolean execute(Object state, CircuitState cState) {
-    if (!valid)
-      return false;
+    if (!valid) return false;
     OptionPane.showMessageDialog(null, S.get("Rv32imMOINotImplmented"));
     return true;
   }
@@ -59,8 +58,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
     final var s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     if (operation != INSTR_FENCE_TSO) {
-      while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
-        s.append(" ");
+      while (s.length() < RV32imSupport.ASM_FIELD_SIZE) s.append(" ");
       addMasks(s, succ);
       s.append(",");
       addMasks(s, pred);
@@ -92,16 +90,13 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
 
   private boolean decodeBin() {
     if (RV32imSupport.getOpcode(instruction) == FENCE) {
-      if (RV32imSupport.getFunct3(instruction) != 0)
-        return false;
+      if (RV32imSupport.getFunct3(instruction) != 0) return false;
       succ = (instruction >> 20) & 0xF;
       pred = (instruction >> 24) & 0xF;
       fm = (instruction >> 28) & 0xF;
       int rwmask = R_FLAG | W_FLAG;
-      if (fm == 8 && succ == rwmask && pred == rwmask)
-        operation = INSTR_FENCE_TSO;
-      else
-        operation = INSTR_FENCE;
+      if (fm == 8 && succ == rwmask && pred == rwmask) operation = INSTR_FENCE_TSO;
+      else operation = INSTR_FENCE;
       return true;
     }
     return false;

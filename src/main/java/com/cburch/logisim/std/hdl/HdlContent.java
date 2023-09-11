@@ -69,5 +69,4 @@ public abstract class HdlContent implements HdlModel, Cloneable {
       listeners = null;
     }
   }
-
 }

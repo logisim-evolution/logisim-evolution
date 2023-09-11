@@ -25,7 +25,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
   final Project proj;
   final Tool tool;
 
-  public AttrTableToolModel(Project proj, Tool tool) {
+  public AttrTableToolModel(final Project proj, final Tool tool) {
     super(tool.getAttributeSet());
     if (tool instanceof AddTool addTool) {
       setInstance(addTool.getFactory());
@@ -45,15 +45,15 @@ public class AttrTableToolModel extends AttributeSetTableModel {
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) {
+  public void setValueRequested(final Attribute<Object> attr, final Object value) {
     if (tool instanceof AddTool addTool) {
       if (addTool.getFactory() instanceof SubcircuitFactory fac) {
         if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
             || attr.equals(CircuitAttributes.NAME_ATTR)) {
           try {
-            CircuitMutation mutation = new CircuitMutation(fac.getSubcircuit());
+            final var mutation = new CircuitMutation(fac.getSubcircuit());
             mutation.setForCircuit(attr, value);
-            Action action = mutation.toAction(null);
+            final var action = mutation.toAction(null);
             proj.doAction(action);
           } catch (CircuitException ex) {
             OptionPane.showMessageDialog(proj.getFrame(), ex.getMessage());

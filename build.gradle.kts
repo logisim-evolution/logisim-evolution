@@ -13,10 +13,11 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.41.0"
+  id("com.github.ben-manes.versions") version "0.47.0"
   java
   application
-  id("com.github.johnrengelman.shadow") version "7.1.2"
+  id("com.github.johnrengelman.shadow") version "8.1.1"
+  id("org.sonarqube") version "4.3.1.3277"
 }
 
 repositories {
@@ -30,16 +31,16 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.1.5")
+  implementation("com.fifesoft:rsyntaxtextarea:3.3.4")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
-  implementation("org.drjekyll:colorpicker:1.3")
+  implementation("org.drjekyll:colorpicker:1.4.5")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:1.7.32")
-  implementation("org.slf4j:slf4j-simple:1.7.32")
-  implementation("com.formdev:flatlaf:1.6.4")
+  implementation("org.slf4j:slf4j-api:2.0.9")
+  implementation("org.slf4j:slf4j-simple:2.0.9")
+  implementation("com.formdev:flatlaf:3.2.1")
   implementation("commons-cli:commons-cli:1.5.0")
-  implementation("org.apache.commons:commons-text:1.9")
+  implementation("org.apache.commons:commons-text:1.10.0")
 
   // NOTE: Do not upgrade the jflex version. Later versions do not work.
   compileOnly("de.jflex:jflex:1.4.1")
@@ -48,10 +49,10 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.8.2"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-  testImplementation("org.mockito:mockito-inline:4.2.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:4.2.0")
+  testImplementation(platform("org.junit:junit-bom:5.10.0"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 /**
@@ -64,6 +65,8 @@ val APP_URL = "appUrl"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
+val OS_ARCH = "osArch"
+val PACKAGE_INPUT_DIR = "packageInputDir"
 val SHADOW_JAR_FILE_NAME = "shadowJarFilename"
 val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
@@ -99,6 +102,10 @@ extra.apply {
   set(APP_VERSION_SHORT, appVersionShort)
   logger.info("appVersionShort: ${appVersionShort}")
 
+  // Architecture used for build
+  val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
+  set(OS_ARCH, osArch)
+
   // Destination folder where packages are stored.
   val targetDir="${buildDir}/dist"
   set(TARGET_DIR, targetDir)
@@ -106,6 +113,10 @@ extra.apply {
   // JAR folder.
   val libsDir="${buildDir}/libs"
   set(LIBS_DIR, libsDir)
+
+  // PackageInput folder that hold the shadowJar
+  val packageInputDir="${buildDir}/packageInput"
+  set(PACKAGE_INPUT_DIR, packageInputDir)
 
   // The root dir for jpackage extra files.
   val supportDir="${projectDir}/support/jpackage"
@@ -139,11 +150,10 @@ extra.apply {
       // NOTE: we cannot use --app-version as part of platform agnostic set as i.e. both macOS and
       // Windows packages do not allow use of any suffixes like "-dev" etc, so --app-version is set
       // in these builders separately.
-      "--input", libsDir,
+      "--input", packageInputDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
       "--copyright", copyrights,
-      "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
   )
@@ -155,6 +165,7 @@ extra.apply {
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
       "--name", project.name,
+      "--dest", targetDir,
       "--app-version", appVersion,
       "--file-associations", "${supportDir}/linux/file.jpackage",
       "--icon", "${supportDir}/linux/logisim-icon-128.png",
@@ -164,9 +175,9 @@ extra.apply {
   set(LINUX_PARAMS, linuxParams)
 
   // All the macOS specific stuff.
-  val uppercaseProjectName = project.name.capitalize().trim()
+  val uppercaseProjectName = project.name.replaceFirstChar { it.uppercase() }.trim()
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
-  set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
+  set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
 java {
@@ -180,66 +191,13 @@ task<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a JAR archive with project sources."
   dependsOn.add("classes")
-  classifier = "src"
+  archiveClassifier.set("src")
 
   from(sourceSets.main.get().allSource)
   archiveVersion.set(ext.get(APP_VERSION) as String)
 }
 
 
-
-/**
- * Creates the distribution directory and removes any extra files from the libs directory
- * beyond the expected shadowJar file because jpackage puts everything from libs into the package.
- */
-tasks.register("createDistDir") {
-  val libsDir = ext.get(LIBS_DIR) as String
-
-  group = "build"
-  description = "Creates the directory for distribution."
-  dependsOn("shadowJar")
-
-  val shadowJarFilename = ext.get(SHADOW_JAR_FILE_NAME) as String
-
-  inputs.dir(libsDir)
-  outputs.dir(ext.get(TARGET_DIR) as String)
-
-  doFirst {
-    var jarFiles = File(libsDir).list()
-    var jarCount = jarFiles.count()
-
-    if ( jarCount > 1) {
-      logger.warn("Expected 1 shadowJar file, found ${jarCount} in: ${libsDir}")
-
-      val expectedShadowJar = File("${libsDir}/${shadowJarFilename}")
-      if (expectedShadowJar.exists()) {
-        logger.warn("Found needed: ${shadowJarFilename}")
-      }
-
-      for (file in jarFiles.filter { file -> file != shadowJarFilename }) {
-        logger.warn("Will remove: ${file}")
-      }
-    }
-  }
-
-  doLast {
-    val folder = File(libsDir)
-    if (!folder.exists() && !folder.mkdirs()) {
-      throw GradleException("Unable to create directory: ${folder.absolutePath}")
-    }
-
-    var jarFiles = File(libsDir).list()
-    var jarCount = jarFiles.count()
-    if ( jarCount > 1) {
-      // Value of shadowJarFileName is our needed JAR file. Remove the rest.
-      for (file in jarFiles.filter { file -> file != shadowJarFilename }) {
-        if (!delete("${libsDir}/${file}")) {
-          throw GradleException("Failed to remove orphaned file: ${file}")
-        }
-      }
-    }
-  }
-}
 
 /**
  * Helper method that simplifies runining external commands using ProcessBuilder().
@@ -272,11 +230,50 @@ fun runCommand(params: List<String>, exceptionMsg: String): String {
   if (rc != 0) {
     logger.error(proc.errorStream.bufferedReader().readText().trim())
     logger.error("Command \"${params[0]}\" failed with RC ${rc}.")
-    var exMsg = exceptionMsg ?: ""
-    throw GradleException(exMsg)
+    throw GradleException(exceptionMsg)
   }
 
   return proc.inputStream.bufferedReader().readText().trim()
+}
+
+/**
+ * Helper function to remove all contents from the given directory
+*/
+fun deleteDirectoryContents(directory: String) {
+  for (file in File(directory).list()) {
+    if (!delete("${directory}/${file}")) {
+      throw GradleException("Failed to remove old file: ${directory}${file}")
+    }
+  }
+}
+
+/**
+ * Task createPackageInput
+ *
+ * Creates a packageInput directory containing only the current shadowJar file
+ * because jpackage includes everything in its input directory in the package.
+*/
+tasks.register("createPackageInput") {
+  group = "build"
+  description = "Creates a packageInput directory that only contains the current shadowJar file"
+  dependsOn("shadowJar")
+  val libsDir = ext.get(LIBS_DIR) as String
+  val shadowJarFilename = ext.get(SHADOW_JAR_FILE_NAME) as String
+  val packageInputDir = ext.get(PACKAGE_INPUT_DIR) as String
+  inputs.file("${libsDir}/${shadowJarFilename}")
+  outputs.dir(packageInputDir)
+
+  doLast {
+    deleteDirectoryContents(packageInputDir)
+    val copyReturn = copy {
+      from(libsDir)
+      into(packageInputDir)
+      include(shadowJarFilename)
+    }
+    if (!copyReturn.didWork) {
+      throw GradleException("createPackageInput failed to copy: ${shadowJarFilename}")
+    }
+  }
 }
 
 /**
@@ -287,8 +284,8 @@ fun runCommand(params: List<String>, exceptionMsg: String): String {
 tasks.register("createDeb") {
   group = "build"
   description = "Makes DEB Linux installation package."
-  dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get(LIBS_DIR) as String)
+  dependsOn("createPackageInput")
+  inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
 
   // Debian uses `_` to separate name from version string.
@@ -305,7 +302,7 @@ tasks.register("createDeb") {
   }
 
   doLast {
-    val params = ext.get(LINUX_PARAMS) as List<String> + listOf("--type", "deb")
+    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
   }
 }
@@ -318,8 +315,8 @@ tasks.register("createDeb") {
 tasks.register("createRpm") {
   group = "build"
   description = "Makes RPM Linux installation package."
-  dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get(LIBS_DIR) as String)
+  dependsOn("createPackageInput")
+  inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
   outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm")
 
@@ -330,7 +327,7 @@ tasks.register("createRpm") {
   }
 
   doLast {
-    val params = ext.get(LINUX_PARAMS) as List<String> + listOf("--type", "rpm")
+    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
   }
 }
@@ -338,18 +335,19 @@ tasks.register("createRpm") {
 /**
  * Task: createMsi
  *
- * Creates MSI installater file for Microsoft Windows.
+ * Creates MSI installer file for Microsoft Windows.
  */
 tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
-  dependsOn("shadowJar", "createDistDir")
+  dependsOn("createPackageInput")
 
-  val supportDir = ext.get(SUPPORT_DIR) as String;
+  val supportDir = ext.get(SUPPORT_DIR) as String
+  val osArch = ext.get(OS_ARCH) as String
 
-  inputs.dir(ext.get(LIBS_DIR) as String)
+  inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}.msi")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -358,8 +356,11 @@ tasks.register("createMsi") {
   }
 
   doLast {
-    val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
+    val targetDir = ext.get(TARGET_DIR) as String
+    val version = ext.get(APP_VERSION_SHORT) as String
+    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
         "--name", project.name,
+        "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
         "--win-menu-group", project.name as String,
@@ -370,9 +371,20 @@ tasks.register("createMsi") {
         // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
         // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
         // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
-        "--app-version", ext.get(APP_VERSION_SHORT) as String,
+        "--app-version", version,
     )
     runCommand(params, "Error while creating the MSI package.")
+    val fromFile = "${project.name}-${version}.msi"
+    val copyReturn = copy {
+      from(targetDir)
+      into(targetDir)
+      include(fromFile)
+      rename(fromFile, "${project.name}-${version}-${osArch}.msi")
+    }
+    if (!copyReturn.didWork) {
+      throw GradleException("createMsi failed to rename .msi file to include architecture ${osArch}")
+    }
+    delete("${targetDir}/${fromFile}")
   }
 }
 
@@ -383,14 +395,14 @@ tasks.register("createMsi") {
  */
 tasks.register("createApp") {
   val supportDir = ext.get(SUPPORT_DIR) as String
-  val appDirName = ext.get(APP_DIR_NAME) as String
+  val dest = "${buildDir}/macOS-${ext.get(OS_ARCH) as String}"
 
   group = "build"
   description = "Makes the macOS application."
-  dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get(LIBS_DIR) as String)
+  dependsOn("createPackageInput")
+  inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/macos")
-  outputs.dir(appDirName)
+  outputs.dir(dest)
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -399,35 +411,36 @@ tasks.register("createApp") {
   }
 
   doLast {
-    delete(appDirName)
-
-    var params = ext.get(SHARED_PARAMS) as List<String>
-    params += listOf(
+    deleteDirectoryContents(dest)
+    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
+        "--dest", dest,
         "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
         "--file-associations", "${supportDir}/macos/file.jpackage",
         "--icon", "${supportDir}/macos/Logisim-evolution.icns",
         // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
         "--app-version", ext.get(APP_VERSION_SHORT) as String,
         "--type", "app-image",
+        // Can't use until Java 17 // "--mac-app-category", "education"
     )
     runCommand(params, "Error while creating the .app directory.")
 
-    val targetDir = ext.get(TARGET_DIR) as String
+    val appDirName = ext.get(APP_DIR_NAME) as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
+    val tempPList = "${dest}/Info.plist"
     runCommand(listOf(
         "awk",
         "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
             + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
-            + "{print >\"${targetDir}/Info.plist\"};"
+            + "{print >\"${tempPList}\"};"
             + "/NSHighResolutionCapable/{"
-            + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
-            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
+            + "print \"  <string>true</string>\" >\"${tempPList}\";"
+            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
             + "}",
         pListFilename,
     ), "Error while patching Info.plist file.")
 
     runCommand(listOf(
-        "mv", "${targetDir}/Info.plist", pListFilename
+        "mv", tempPList, pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
     runCommand(listOf(
@@ -447,9 +460,10 @@ tasks.register("createDmg") {
   dependsOn("createApp")
 
   val appDirName = ext.get(APP_DIR_NAME) as String
+  val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(appDirName)
-  outputs.file(ext.get(TARGET_FILE_PATH_BASE) as String + ".dmg")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg")
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -463,7 +477,8 @@ tasks.register("createDmg") {
         "--app-image", appDirName,
         "--name", project.name,
         // We can pass full version here, even if contains suffix part too.
-        "--app-version", ext.get(APP_VERSION) as String,
+        // We also append the architecture to add it to the package name.
+        "--app-version", "${ext.get(APP_VERSION) as String}-${osArch}",
         "--dest", ext.get(TARGET_DIR) as String,
         "--type", "dmg",
       )
@@ -492,7 +507,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
   val appVersion = ext.get(APP_VERSION) as String
-  val projectName = project.name.capitalize().trim()
+  val projectName = project.name.replaceFirstChar { it.uppercase() }.trim()
   val displayName = "${projectName} v${appVersion}"
   val url = ext.get(APP_URL) as String
 
@@ -711,13 +726,13 @@ tasks {
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
     val archive = configurations.checkstyle.get().resolve().filter {
-      name.startsWith("checkstyle")
+      it.name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
 
     // FIXME: There should be cleaner way of using custom suppression config with built-in style.
     // https://stackoverflow.com/a/64703619/1235698
-    System.setProperty( "org.checkstyle.google.suppressionfilter.config", "${projectDir}/config/checkstyle/suppressions.xml")
+    System.setProperty( "org.checkstyle.google.suppressionfilter.config", "${projectDir}/checkstyle-suppressions.xml")
   }
   checkstyleMain {
     source = fileTree("src/main/java")

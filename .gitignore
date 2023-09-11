@@ -286,3 +286,6 @@ gradle-app.setting
 
 # default pre-commit config
 /.pre-commit-config.yaml
+
+# VSCode settins
+.vscode

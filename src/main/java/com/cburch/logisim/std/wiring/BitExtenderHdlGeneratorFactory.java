@@ -19,21 +19,31 @@ import com.cburch.logisim.util.LineBuffer;
 public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
-  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(
+      Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     int nrOfPins = componentInfo.nrOfEnds();
     for (int i = 1; i < nrOfPins; i++) {
       if (!componentInfo.isEndConnected(i)) {
         // FIXME: hardcoded string
-        Reporter.report.addError(String.format(
-            "Bit Extender component has floating input connection in circuit: %s", circuitName));
+        Reporter.report.addError(
+            String.format(
+                "Bit Extender component has floating input connection in circuit: %s",
+                circuitName));
         // return empty buffer.
         return contents;
       }
     }
     if (componentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
       /* Special case: Single bit output */
-      contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getNetName(componentInfo, 0, true, nets), Hdl.getNetName(componentInfo, 1, true, nets));
+      final var connectedNet = componentInfo.getComponent().getEnd(1).getWidth().getWidth() == 1 
+          ?  Hdl.getNetName(componentInfo, 1, true, nets) 
+          :  Hdl.getBusEntryName(componentInfo, 1, true, 0, nets);
+      contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getNetName(componentInfo, 0, true, nets), connectedNet);
+      contents.add(
+          "{{assign}} {{1}} {{=}} {{2}};",
+          Hdl.getNetName(componentInfo, 0, true, nets),
+          connectedNet);
       contents.add("");
     } else {
       /*
@@ -41,29 +51,46 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
        * bits
        */
       final var replacement = new StringBuilder();
-      final var type = (String) componentInfo.getComponent().getAttributeSet().getValue(BitExtender.ATTR_TYPE)
+      final var type =
+          (String)
+              componentInfo
+                  .getComponent()
+                  .getAttributeSet()
+                  .getValue(BitExtender.ATTR_TYPE)
                   .getValue();
       if (type.equals("zero")) replacement.append(Hdl.zeroBit());
       if (type.equals("one")) replacement.append(Hdl.oneBit());
       if (type.equals("sign")) {
         if (componentInfo.getEnd(1).getNrOfBits() > 1) {
-          replacement.append(Hdl.getBusEntryName(componentInfo, 1, true,
-                  componentInfo.getComponent().getEnd(1).getWidth().getWidth() - 1, nets));
+          replacement.append(
+              Hdl.getBusEntryName(
+                  componentInfo,
+                  1,
+                  true,
+                  componentInfo.getComponent().getEnd(1).getWidth().getWidth() - 1,
+                  nets));
         } else {
           replacement.append(Hdl.getNetName(componentInfo, 1, true, nets));
         }
       }
-      if (type.equals("input"))
-        replacement.append(Hdl.getNetName(componentInfo, 2, true, nets));
+      if (type.equals("input")) replacement.append(Hdl.getNetName(componentInfo, 2, true, nets));
       for (int bit = 0; bit < componentInfo.getComponent().getEnd(0).getWidth().getWidth(); bit++) {
         if (bit < componentInfo.getComponent().getEnd(1).getWidth().getWidth()) {
           if (componentInfo.getEnd(1).getNrOfBits() > 1) {
-            contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), Hdl.getBusEntryName(componentInfo, 1, true, bit, nets));
+            contents.add(
+                "{{assign}} {{1}} {{=}} {{2}};",
+                Hdl.getBusEntryName(componentInfo, 0, true, bit, nets),
+                Hdl.getBusEntryName(componentInfo, 1, true, bit, nets));
           } else {
-            contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), Hdl.getNetName(componentInfo, 1, true, nets));
+            contents.add(
+                "{{assign}} {{1}} {{=}} {{2}};",
+                Hdl.getBusEntryName(componentInfo, 0, true, bit, nets),
+                Hdl.getNetName(componentInfo, 1, true, nets));
           }
         } else {
-          contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), replacement);
+          contents.add(
+              "{{assign}} {{1}} {{=}} {{2}};",
+              Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), replacement);
         }
       }
       contents.empty();

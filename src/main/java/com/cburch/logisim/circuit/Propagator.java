@@ -64,6 +64,8 @@ public class Propagator {
         e.getSource().removeAttributeListener(this);
       } else if (e.getAttribute().equals(Options.ATTR_SIM_RAND)) {
         p.updateRandomness();
+      } else if (e.getAttribute().equals(Options.ATTR_SIM_LIMIT)) {
+        p.updateOscillationLimit();
       }
     }
   }
@@ -127,7 +129,7 @@ public class Propagator {
   private final CircuitState root; // root of state tree
 
   /** The number of clock cycles to let pass before deciding that the circuit is oscillating. */
-  private static final int simLimit = 1000;
+  private volatile int simLimit;
 
   /**
    * On average, one out of every 2**simRandomShift propagations through a component is delayed one
@@ -155,6 +157,7 @@ public class Propagator {
     final var l = new Listener(this);
     root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
     updateRandomness();
+    updateOscillationLimit();
   }
 
   private SetData addCause(CircuitState state, SetData head, SetData data) {
@@ -266,7 +269,7 @@ public class Propagator {
     return propagate(null, null);
   }
 
-  public boolean propagate(Simulator.Listener propListener, Simulator.Event propEvent) {
+  public boolean propagate(Simulator.ProgressListener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
     root.processDirtyPoints();
     root.processDirtyComponents();
@@ -438,4 +441,12 @@ public class Propagator {
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;
   }
+
+  private void updateOscillationLimit() {
+    final var opts = root.getProject().getOptions();
+    final var lim = opts.getAttributeSet().getValue(Options.ATTR_SIM_LIMIT);
+    simLimit = lim;
+  }
+
+
 }

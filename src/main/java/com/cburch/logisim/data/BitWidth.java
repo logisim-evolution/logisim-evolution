@@ -16,62 +16,74 @@ import java.awt.Component;
 public class BitWidth implements Comparable<BitWidth> {
   static class Attribute extends com.cburch.logisim.data.Attribute<BitWidth> {
     private final BitWidth[] choices;
-
+    private final int min;
+    private final int max;
+  
     public Attribute(String name, StringGetter disp) {
       super(name, disp);
-      ensurePrefab();
-      choices = prefab;
+      this.min = MINWIDTH;
+      this.max = MAXWIDTH;
+      int[] defaults = { 1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 64 };
+      choices = new BitWidth[defaults.length];
+      for (int i = 0; i < defaults.length; i++) {
+        choices[i] = BitWidth.create(defaults[i]);
+      }
     }
 
     public Attribute(String name, StringGetter disp, int min, int max) {
       super(name, disp);
-      choices = new BitWidth[max - min + 1];
-      for (int i = 0; i < choices.length; i++) {
-        choices[i] = BitWidth.create(min + i);
+      this.min = min;
+      this.max = max;
+      int length = max - min + 1;
+      if (length > 12) {
+        // there are too many dropdown options, so use the default editor
+        choices = null;
+      } else {
+        choices = new BitWidth[length];
+        for (int i = 0; i < length; i++) {
+          choices[i] = BitWidth.create(min + i);
+        }
       }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Component getCellEditor(BitWidth value) {
+      // there are too many dropdown options, so use the default editor
+      if (choices == null) return super.getCellEditor(value);
+
       final var combo = new ComboBox<>(choices);
-      if (value != null) {
-        int wid = value.getWidth();
-        if (wid <= 0 || wid > prefab.length) {
-          combo.addItem(value);
-        }
-        combo.setSelectedItem(value);
-      }
+      if (value != null) combo.setSelectedItem(value);
+      combo.setEditable(true);
       return combo;
     }
 
     @Override
     public BitWidth parse(String value) {
-      return BitWidth.parse(value);
+      int v = (int) Long.parseLong(value);
+      if (v < min) throw new NumberFormatException("integer too small");
+      if (v > max) throw new NumberFormatException("integer too large");
+      return BitWidth.create(v);
     }
   }
 
   public static BitWidth create(int width) {
     ensurePrefab();
-    if (width <= 0) {
-      if (width == 0) {
-        return UNKNOWN;
-      } else {
-        throw new IllegalArgumentException("width " + width + " must be positive");
-      }
-    } else if (width - 1 < prefab.length) {
-      return prefab[width - 1];
-    } else {
-      return new BitWidth(width);
+    if (width < 0) {
+      throw new IllegalArgumentException("width " + width + " must be positive");
+    } else if (width >= prefab.length) {
+      throw new IllegalArgumentException("width " + width + " must be at most " + MAXWIDTH);
     }
+    return prefab[width];
   }
 
   private static void ensurePrefab() {
     if (prefab == null) {
-      prefab = new BitWidth[Math.min(64, Value.MAX_WIDTH)];
-      prefab[0] = ONE;
-      for (int i = 1; i < prefab.length; i++) {
-        prefab[i] = new BitWidth(i + 1);
+      prefab = new BitWidth[MAXWIDTH + 1];
+      prefab[0] = UNKNOWN;
+      prefab[1] = ONE;
+      for (int i = 2; i < prefab.length; i++) {
+        prefab[i] = new BitWidth(i);
       }
     }
   }
@@ -88,7 +100,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
   public static final BitWidth ONE = new BitWidth(1);
 
-  public static final int MAXWIDTH = 64;
+  public static final int MAXWIDTH = Value.MAX_WIDTH;
   public static final int MINWIDTH = 1;
 
   private static BitWidth[] prefab = null;

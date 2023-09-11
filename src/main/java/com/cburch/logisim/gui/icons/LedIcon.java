@@ -27,6 +27,7 @@ public class LedIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2) {
     int xy = AppPreferences.getScaled(2);
     int wh = AppPreferences.getScaled(12);
+    var currColor = g2.getColor();
     if (isRgb) {
       g2.setColor(Color.GREEN);
       g2.fillArc(xy, xy, wh, wh, 0, 120);
@@ -38,7 +39,7 @@ public class LedIcon extends BaseIcon {
       g2.setColor(Color.RED);
       g2.fillOval(xy, xy, wh, wh);
     }
-    g2.setColor(Color.BLACK);
+    g2.setColor(currColor);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.drawOval(xy, xy, wh, wh);
   }

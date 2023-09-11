@@ -33,9 +33,7 @@ class AndGate extends AbstractGate {
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = LineBuffer.getHdlBuffer();
       var oneLine = new StringBuilder();
-      oneLine.append(Hdl.assignPreamble())
-          .append("result")
-          .append(Hdl.assignOperator());
+      oneLine.append(Hdl.assignPreamble()).append("result").append(Hdl.assignOperator());
       final var tabWidth = oneLine.length();
       var first = true;
       for (int i = 0; i < nrOfInputs; i++) {
@@ -91,7 +89,8 @@ class AndGate extends AbstractGate {
     paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
 
-  protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
+  protected static void paintIconANSI(
+      Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
     final var ystart = negateSize >> 1;
     final var yend = iconSize - ystart;
     final var rad = (yend - ystart) >> 1;

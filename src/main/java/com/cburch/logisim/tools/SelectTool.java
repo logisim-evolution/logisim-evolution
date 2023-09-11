@@ -57,7 +57,8 @@ public class SelectTool extends Tool {
   public static final String _ID = "Select Tool";
 
   private static final Cursor selectCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-  private static final Cursor rectSelectCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor rectSelectCursor =
+      Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
   private static final Cursor moveCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
   private static final int IDLE = 0;
@@ -137,7 +138,6 @@ public class SelectTool extends Tool {
       }
     }
   }
-
 
 
   private void computeDxDy(Project proj, MouseEvent e, Graphics g) {
@@ -234,8 +234,12 @@ public class SelectTool extends Tool {
 
       gBase.setColor(COLOR_RECT_SELECT);
       GraphicsUtil.switchToWidth(gBase, 2);
-      if (w < 0) w = 0;
-      if (h < 0) h = 0;
+      if (w < 0) {
+        w = 0;
+      }
+      if (h < 0) {
+        h = 0;
+      }
       gBase.drawRect(left, top, w, h);
     }
   }
@@ -253,10 +257,10 @@ public class SelectTool extends Tool {
   @Override
   public Cursor getCursor() {
     return state == IDLE
-           ? selectCursor
-           : (state == RECT_SELECT
-              ? rectSelectCursor
-              : moveCursor);
+        ? selectCursor
+        : (state == RECT_SELECT
+        ? rectSelectCursor
+        : moveCursor);
   }
 
   @Override
@@ -283,7 +287,7 @@ public class SelectTool extends Tool {
       if (gesture != null && drawConnections) {
         final var result = gesture.findResult(dx, dy);
         if (result != null) {
-          final var ret = new HashSet<Component>(sel);
+          final var ret = new HashSet<>(sel);
           ret.addAll(result.getReplacementMap().getRemovals());
           return ret;
         }
@@ -342,16 +346,23 @@ public class SelectTool extends Tool {
       final var keybEvent = e.getKeyCode();
       var keyTaken = false;
       for (final var comp : comps) {
-        final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-        keyTaken |= GateKeyboardModifier.tookKeyboardStrokes(keybEvent, comp, comp.getAttributeSet(), canvas, act, true);
-        if (!act.isEmpty()) canvas.getProject().doAction(act);
+        final var act = new SetAttributeAction(canvas.getCircuit(),
+            S.getter("changeComponentAttributesAction"));
+        keyTaken |= GateKeyboardModifier.tookKeyboardStrokes(keybEvent,
+            e.getModifiersEx(), comp, comp.getAttributeSet(), canvas,
+            act, true);
+        if (!act.isEmpty()) {
+          canvas.getProject().doAction(act);
+        }
       }
       if (!keyTaken) {
         for (Component comp : comps) {
-          final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
+          final var act = new SetAttributeAction(canvas.getCircuit(),
+              S.getter("changeComponentAttributesAction"));
           keyTaken |=
               autoLabeler.labelKeyboardHandler(
                   keybEvent,
+                  e.getModifiersEx(),
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
                   comp,
@@ -359,7 +370,9 @@ public class SelectTool extends Tool {
                   canvas.getCircuit(),
                   act,
                   true);
-          if (!act.isEmpty()) canvas.getProject().doAction(act);
+          if (!act.isEmpty()) {
+            canvas.getProject().doAction(act);
+          }
         }
       }
       if (!keyTaken) {
@@ -414,7 +427,7 @@ public class SelectTool extends Tool {
     canvas.requestFocusInWindow();
     final var proj = canvas.getProject();
     final var sel = proj.getSelection();
-    start = Location.create(e.getX(), e.getY());
+    start = Location.create(e.getX(), e.getY(), false);
     curDx = 0;
     curDy = 0;
     moveGesture = null;
@@ -514,7 +527,9 @@ public class SelectTool extends Tool {
       final var sel = proj.getSelection();
       final var inSel = sel.getComponentsWithin(bds, g);
       for (final var comp : circuit.getAllWithin(bds, g)) {
-        if (!inSel.contains(comp)) sel.add(comp);
+        if (!inSel.contains(comp)) {
+          sel.add(comp);
+        }
       }
       final var act = SelectionActions.drop(sel, inSel);
       if (act != null) {
@@ -541,7 +556,9 @@ public class SelectTool extends Tool {
                 comp.getAttributeSet(),
                 act,
                 true);
-            if (!act.isEmpty()) canvas.getProject().doAction(act);
+            if (!act.isEmpty()) {
+              canvas.getProject().doAction(act);
+            }
           }
         }
       }
@@ -588,7 +605,8 @@ public class SelectTool extends Tool {
         e.consume();
       }
       if (!results.isEmpty()) {
-        final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
+        final var act = new SetAttributeAction(canvas.getCircuit(),
+            S.getter("changeComponentAttributesAction"));
         for (final var result : results) {
           final var comp = (Component) result.getEvent().getData();
           final var newValues = result.getAttributeValues();

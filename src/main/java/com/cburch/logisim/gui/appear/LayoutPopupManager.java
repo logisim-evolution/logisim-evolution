@@ -109,7 +109,7 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
   public void mousePressed(MouseEvent e) {
     final var sincePopup = System.currentTimeMillis() - curPopupTime;
     if (sincePopup > 50) hideCurrentPopup();
-    dragStart = Location.create(e.getX(), e.getY());
+    dragStart = Location.create(e.getX(), e.getY(), false);
   }
 
   @Override

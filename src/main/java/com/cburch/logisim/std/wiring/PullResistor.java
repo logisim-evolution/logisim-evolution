@@ -36,10 +36,10 @@ import javax.swing.Icon;
 
 public class PullResistor extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Pull Resistor";
 
@@ -111,7 +111,7 @@ public class PullResistor extends InstanceFactory {
     boolean color = painter.shouldDrawColor();
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     Graphics g = painter.getGraphics();
-    Color baseColor = g.getColor();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     GraphicsUtil.switchToWidth(g, 3);
     if (color && inColor != null) g.setColor(inColor);
     if (facing == Direction.EAST) {

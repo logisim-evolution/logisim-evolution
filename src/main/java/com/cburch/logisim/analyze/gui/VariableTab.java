@@ -63,8 +63,6 @@ import org.jdesktop.swingx.prompt.BuddySupport;
 
 public class VariableTab extends AnalyzerTab {
   private static final long serialVersionUID = 1L;
-  private final VariableList inputs;
-  private final VariableList outputs;
   private final JTable inputsTable;
   private final JTable outputsTable;
   private final JLabel error = new JLabel(" ");
@@ -212,8 +210,6 @@ public class VariableTab extends AnalyzerTab {
   }
 
   VariableTab(VariableList inputs, VariableList outputs, LogisimMenuBar menubar) {
-    this.inputs = inputs;
-    this.outputs = outputs;
     inputs.addCompanion(outputs);
     outputs.addCompanion(inputs);
 
@@ -222,48 +218,48 @@ public class VariableTab extends AnalyzerTab {
     final var inputsTablePane = wrap(inputsTable);
     final var outputsTablePane = wrap(outputsTable);
 
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    setLayout(gb);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    setLayout(gbl);
 
-    gc.insets = new Insets(10, 10, 2, 10);
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.weightx = gc.weighty = 0.0;
+    gbc.insets = new Insets(10, 10, 2, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = gbc.weighty = 0.0;
 
     inputsLabel = new JLabel("Input Variables");
 
-    gc.gridx = 0;
-    gc.gridy = 0;
-    gb.setConstraints(inputsLabel, gc);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbl.setConstraints(inputsLabel, gbc);
     add(inputsLabel);
 
     outputsLabel = new JLabel("Output Variables");
 
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gb.setConstraints(outputsLabel, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbl.setConstraints(outputsLabel, gbc);
     add(outputsLabel);
 
-    gc.insets = new Insets(2, 10, 3, 10);
-    gc.fill = GridBagConstraints.BOTH;
-    gc.weightx = gc.weighty = 1.0;
-    gc.gridx = 0;
-    gc.gridy = 1;
-    gb.setConstraints(inputsTablePane, gc);
+    gbc.insets = new Insets(2, 10, 3, 10);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = gbc.weighty = 1.0;
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbl.setConstraints(inputsTablePane, gbc);
     add(inputsTablePane);
 
-    gc.gridx = 1;
-    gc.gridy = 1;
-    gb.setConstraints(outputsTablePane, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    gbl.setConstraints(outputsTablePane, gbc);
     add(outputsTablePane);
 
-    gc.insets = new Insets(3, 10, 10, 10);
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.weightx = gc.weighty = 0.0;
-    gc.gridwidth = 2;
-    gc.gridx = 0;
-    gc.gridy = 2;
-    gb.setConstraints(error, gc);
+    gbc.insets = new Insets(3, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.gridwidth = 2;
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbl.setConstraints(error, gbc);
     add(error);
     error.setForeground(Color.RED);
 
@@ -490,24 +486,14 @@ public class VariableTab extends AnalyzerTab {
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
-        case VariableListEvent.ALL_REPLACED:
-          fireTableRowsUpdated(0, oldSize);
-          break;
-        case VariableListEvent.ADD:
-          fireTableRowsInserted(idx, idx);
-          break;
-        case VariableListEvent.REMOVE:
-          fireTableRowsDeleted(idx, idx);
-          break;
-        case VariableListEvent.MOVE:
-          fireTableRowsUpdated(0, listCopy.length - 1);
-          break;
-        case VariableListEvent.REPLACE:
-          fireTableRowsUpdated(idx, idx);
-          break;
-        default:
+        case VariableListEvent.ALL_REPLACED -> fireTableRowsUpdated(0, oldSize);
+        case VariableListEvent.ADD -> fireTableRowsInserted(idx, idx);
+        case VariableListEvent.REMOVE -> fireTableRowsDeleted(idx, idx);
+        case VariableListEvent.MOVE -> fireTableRowsUpdated(0, listCopy.length - 1);
+        case VariableListEvent.REPLACE -> fireTableRowsUpdated(idx, idx);
+        default -> {
           // do nothing
-          break;
+        }
       }
     }
 

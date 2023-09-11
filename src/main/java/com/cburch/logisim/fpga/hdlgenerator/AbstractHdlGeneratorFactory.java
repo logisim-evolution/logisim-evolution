@@ -101,7 +101,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
       // now we add them
       if (maxNameLength > 0) contents.addRemarkBlock("All used signals are defined here");
-      final var sortedSignals = new TreeSet<String>(mySignals.keySet());
+      final var sortedSignals = new TreeSet<>(mySignals.keySet());
       for (final var signal : sortedSignals)
         contents.add("   {{signal}} {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
             mySignals.get(signal));
@@ -116,7 +116,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       if (myPorts.isEmpty()) {
         contents.add(preamble + " );");
       } else {
-        final var ports = new TreeSet<String>(myPorts.keySet());
+        final var ports = new TreeSet<>(myPorts.keySet());
         for (final var port : myPorts.keySet())
           if (myPorts.isClock(port)) ports.add(myPorts.getTickName(port));
         var first = true;
@@ -177,7 +177,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       final var typedWires = myTypedWires.getTypedWires();
       if (!typedWires.isEmpty()) {
         body.empty().addRemarkBlock("The type defined signals are defined here");
-        final var sortedWires = new TreeSet<String>(typedWires.keySet());
+        final var sortedWires = new TreeSet<>(typedWires.keySet());
         var maxNameLength = 0;
         for (final var wire : sortedWires)
           maxNameLength = Math.max(maxNameLength, typedWires.get(wire).length());
@@ -237,7 +237,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         for (final var generic : parameterMap.keySet())
           maxNameLength = Math.max(maxNameLength, generic.length());
         var currentGeneric = 0;
-        final var genericNames = new TreeSet<String>(parameterMap.keySet());
+        final var genericNames = new TreeSet<>(parameterMap.keySet());
         final var nrOfGenerics = genericNames.size();
         // now we add them
         for (final var generic : genericNames) {
@@ -255,7 +255,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         for (final var port : portMap.keySet())
           maxNameLength = Math.max(maxNameLength, port.length());
         var currentPort = 0;
-        final var portNames = new TreeSet<String>(portMap.keySet());
+        final var portNames = new TreeSet<>(portMap.keySet());
         final var nrOfPorts = portNames.size();
         for (final var port : portNames) {
           final var preamble = currentPort == 0 ? "{{port}} {{map}} (" : " ".repeat(10);
@@ -446,7 +446,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return directoryName.toString();
   }
 
-  private List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
+  protected List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
     final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
     var maxNameLength = 0;
@@ -466,7 +466,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         myParameters.put(parameterName, myParametersList.isPresentedByInteger(generic, attrs));
       }
       maxNameLength += 1; // add one space after the longest one
-      final var myGenerics = new TreeSet<String>(myParameters.keySet());
+      final var myGenerics = new TreeSet<>(myParameters.keySet());
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
@@ -503,7 +503,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var currentEntry = 0;
       // now we process in order
       var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("IN   ") : Vhdl.getVhdlKeyword("IN ");
-      final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
+      final var myInputs = new TreeSet<>(myPorts.keySet(Port.INPUT));
       myInputs.addAll(tickers);
       for (final var input : myInputs) {
         nrOfPortBits = myPorts.contains(input) ? myPorts.get(input, attrs) : 1;
@@ -512,7 +512,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         currentEntry++;
       }
       direction = Vhdl.getVhdlKeyword("INOUT");
-      final var myInOuts = new TreeSet<String>(myPorts.keySet(Port.INOUT));
+      final var myInOuts = new TreeSet<>(myPorts.keySet(Port.INOUT));
       for (final var inout : myInOuts) {
         nrOfPortBits = myPorts.get(inout, attrs);
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
@@ -520,7 +520,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         currentEntry++;
       }
       direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("OUT  ") : Vhdl.getVhdlKeyword("OUT");
-      final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
+      final var myOutputs = new TreeSet<>(myPorts.keySet(Port.OUTPUT));
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
@@ -586,7 +586,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         signalSet.put(input, preamble);
       }
     }
-    final var sortedSignals = new TreeSet<String>(signalSet.keySet());
+    final var sortedSignals = new TreeSet<>(signalSet.keySet());
     var maxNameLength = 0;
     for (final var signal : sortedSignals)
       maxNameLength = Math.max(maxNameLength, signalSet.get(signal).length());

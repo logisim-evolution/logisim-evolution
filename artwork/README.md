@@ -1,4 +1,4 @@
-[![Logisim-evolution](logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
+[![Logisim-evolution](../docs/img/logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 ---
 
@@ -12,11 +12,11 @@ Designed by Marcin Orlowski <http://MarcinOrlowski.com>
 * `logisim-evolution-logo.png` - bitmap rendition of the the project logo to be used mainly in documentation files,
 * `logisim-evolution-icon.svg` - project icon.
 
-"NOTE: To properly render the `logisim-evolution-logo.svg` (be it in-app, on the web page, or elsewhere)
-one must have all the used fonts installed on the build machine. Otherwise, your renderer/browser will substitute
-the fonts using available ones, which yields an incorrect image. Alternatively, you can either render
-your image to a bitmap (PNG image format is recommended, due to its lossless compression and transparency support)
-or convert all texts to paths (in [Inkscape](https://inkscape.org/): "Object" menu -> "Object to Path").
+> **NOTE:** To properly render the `logisim-evolution-logo.svg` (be it in-app, on the web page, or elsewhere)
+> one must have all the used fonts installed on the build machine. Otherwise, your renderer/browser will substitute
+> the fonts using available ones, which yields an incorrect image. Alternatively, you can either render
+> your image to a bitmap (PNG image format is recommended, due to its lossless compression and transparency support)
+> or convert all texts to paths (in [Inkscape](https://inkscape.org/): `Object` menu -> `Object to Path`).
 
 ## In-app logo ##
 

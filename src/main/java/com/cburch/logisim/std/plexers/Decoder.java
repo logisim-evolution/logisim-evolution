@@ -27,16 +27,17 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 
 public class Decoder extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Decoder";
 
@@ -89,7 +90,8 @@ public class Decoder extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     return CorrectLabel.getCorrectLabel(this.getName())
-        + "_" + (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
+        + "_"
+        + (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
   }
 
   @Override
@@ -120,7 +122,9 @@ public class Decoder extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
+    if (attr == StdAttr.FACING
+        || attr == StdAttr.SELECT_LOC
+        || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == PlexersLibrary.ATTR_ENABLE) {
@@ -217,7 +221,7 @@ public class Decoder extends InstanceFactory {
         g, "0", bds.getX() + x0, bds.getY() + y0, halign, GraphicsUtil.V_BASELINE);
 
     // draw trapezoid, "Decd", and ports
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (outputs == 2) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
         PlexersLibrary.drawTrapezoid(
@@ -298,20 +302,20 @@ public class Decoder extends InstanceFactory {
       if (facing == Direction.NORTH || facing == Direction.SOUTH) {
         int y = facing == Direction.NORTH ? -10 : 10;
         if (selectLoc == StdAttr.SELECT_TOP_RIGHT) {
-          end0 = Location.create(-30, y);
-          end1 = Location.create(-10, y);
+          end0 = Location.create(-30, y, true);
+          end1 = Location.create(-10, y, true);
         } else {
-          end0 = Location.create(10, y);
-          end1 = Location.create(30, y);
+          end0 = Location.create(10, y, true);
+          end1 = Location.create(30, y, true);
         }
       } else {
         int x = facing == Direction.WEST ? -10 : 10;
         if (selectLoc == StdAttr.SELECT_TOP_RIGHT) {
-          end0 = Location.create(x, 10);
-          end1 = Location.create(x, 30);
+          end0 = Location.create(x, 10, true);
+          end1 = Location.create(x, 30, true);
         } else {
-          end0 = Location.create(x, -30);
-          end1 = Location.create(x, -10);
+          end0 = Location.create(x, -30, true);
+          end1 = Location.create(x, -10, true);
         }
       }
       ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, 1);
@@ -338,7 +342,7 @@ public class Decoder extends InstanceFactory {
         dy += ddy;
       }
     }
-    final var en = Location.create(0, 0).translate(facing, -10);
+    final var en = Location.create(0, 0, true).translate(facing, -10);
     ps[outputs] = new Port(0, 0, Port.INPUT, select.getWidth());
     if (enable) {
       ps[outputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);

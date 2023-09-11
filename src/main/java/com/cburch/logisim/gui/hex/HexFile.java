@@ -12,8 +12,6 @@ package com.cburch.logisim.gui.hex;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
-import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -22,7 +20,6 @@ import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.OutputStreamBinarySanitizer;
 import com.cburch.logisim.util.OutputStreamEscaper;
 import com.cburch.logisim.util.TextLineNumber;
@@ -45,10 +42,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Random;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -217,7 +214,7 @@ public class HexFile {
   static final int MAX_PREVIEW_SIZE = 10 * 1024; // 10KB max size for displaying files
   private static final Logger logger = LoggerFactory.getLogger(HexFile.class);
   private static final String autoFormat = "Any data file (auto-detects format)";
-  private static final String[] formatDescriptions = {
+  protected static final String[] formatDescriptions = {
     "v3.0 hex words addressed", // header = desc
     "v3.0 hex words plain", // header = desc
     "v3.0 hex bytes addressed big-endian", // header = desc
@@ -259,7 +256,7 @@ public class HexFile {
     return open(dst, src, null);
   }
 
-  private static boolean open(MemContents dst, File src, String desc) throws IOException {
+  protected static boolean open(MemContents dst, File src, String desc) throws IOException {
     final var in = BufferedLineReader.forFile(src);
     try {
       final var r = new HexReader(in, dst.getLogLength(), dst.getValueWidth());
@@ -339,7 +336,7 @@ public class HexFile {
     }
   }
 
-  private static void save(File f, MemContents src, String desc) throws IOException {
+  public static void save(File f, MemContents src, String desc) throws IOException {
     OutputStream out;
     try {
       out = new FileOutputStream(f);
@@ -427,142 +424,6 @@ public class HexFile {
     }
     chooser.setAcceptAllFileFilterUsed(false);
     return chooser;
-  }
-
-  private static MemContents compare(
-      boolean autodetect,
-      String desc,
-      File tmp,
-      int addrSize,
-      int wordSize,
-      HashMap<Long, Long> vals)
-      throws Exception {
-    final var dst = MemContents.create(addrSize, wordSize);
-    if (desc.startsWith("Binary") || desc.startsWith("ASCII") || !autodetect) {
-      // these can't be auto-detected
-      if (!open(dst, tmp, desc)) {
-        System.out.printf("Failed to load: %s\n", tmp);
-        System.exit(0);
-        return null;
-      }
-    } else {
-      // auto-detect should figure out the correct format
-      if (!open(dst, tmp)) {
-        System.out.printf("Failed to load: %s\n", tmp);
-        System.exit(1);
-        return null;
-      }
-    }
-
-    var errs = 0;
-    var memEnd = dst.getLastOffset();
-    for (long a = 0; a < memEnd; a++) {
-      var v = vals.getOrDefault(a, 0L);
-      var v2 = dst.get(a);
-      if (v2 != v) {
-        if (errs == 0) System.out.printf("  Decoding: %s\n", tmp);
-        errs++;
-        if (errs < 10) System.out.printf("  mem[0x%x] = 0x%x (but should be 0x%x)\n", a, v2, v);
-      }
-    }
-    if (errs > 0) {
-      System.out.printf("-- Found %d errors in: %s (%s)\n", errs, tmp, desc);
-      System.exit(1);
-      return null;
-    }
-    return dst;
-  }
-
-  private static void randomTests(Random rng) throws Exception {
-    Main.headless = true;
-    var addrSize = rng.nextInt(14) + 1;
-    var wordSize = rng.nextInt(64) + 1;
-    System.out.printf("Testing addrSize = %d, wordSize = %d\n", addrSize, wordSize);
-
-    var m = MemContents.create(addrSize, wordSize);
-
-    final var vals = new HashMap<Long, Long>();
-    final var count = rng.nextInt(1 << addrSize);
-    final var mask = (1L << wordSize) - 1;
-    for (var i = 0; i < count; i++) {
-      final long a = rng.nextInt(1 << addrSize);
-      final var v = (rng.nextLong() & mask);
-      vals.put(a, v);
-      m.set(a, v);
-    }
-    final var orig = File.createTempFile("hexfile-orig-", ".dat");
-    save(orig, m, formatDescriptions[0]);
-    for (var i = 0; i < 30; i++) {
-      final var desc = formatDescriptions[rng.nextInt(formatDescriptions.length)];
-      final var tmp = File.createTempFile("hexfile-" + i + "-", ".dat");
-      save(tmp, m, desc);
-
-      final var dst = compare(true, desc, tmp, addrSize, wordSize, vals);
-
-      if (desc.startsWith("Binary")) {
-        final var endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
-
-        final var other = new File(tmp + ".xxd");
-        Runtime.getRuntime().exec(String.format("xxd %s %s", tmp, other)).waitFor();
-        compare(false, "v3.0 hex bytes addressed " + endian, other, addrSize, wordSize, vals);
-
-        final var plain = new File(tmp + ".xxd-plain");
-        Runtime.getRuntime().exec(String.format("xxd -p %s %s", tmp, plain)).waitFor();
-        compare(false, "v3.0 hex bytes plain " + endian, plain, addrSize, wordSize, vals);
-      }
-
-      if (i % 3 == 0 && dst != null) m = dst;
-    }
-  }
-
-  public static void main(String[] args) {
-    try {
-      Random rng = new Random(1234L);
-      if (args.length == 0) {
-        randomTests(rng);
-      } else if (args.length == 1) {
-        final var n = Integer.parseInt(args[0]);
-        for (var i = 0; i < n; i++) randomTests(rng);
-      } else {
-        final var addrSize = Integer.parseInt(args[0]);
-        final var wordSize = Integer.parseInt(args[1]);
-
-        final var m = MemContents.create(addrSize, wordSize);
-
-        // open file
-        File f;
-        if (args.length >= 3) {
-          f = new File(args[2]);
-        } else {
-          final var chooser = createFileOpenChooser(null);
-          chooser.setDialogTitle("Open Data File");
-          final var choice = chooser.showSaveDialog(null);
-          if (choice != JFileChooser.APPROVE_OPTION) {
-            System.out.println("cancelled");
-            return;
-          }
-          f = chooser.getSelectedFile();
-        }
-        final var b = open(m, f);
-        if (!b) {
-          System.out.println("cancelled");
-          return;
-        }
-
-        // save file
-        final var chooser = createFileSaveChooser(null, m);
-        chooser.setDialogTitle("Save Data File");
-        final var choice = chooser.showOpenDialog(null);
-        if (choice != JFileChooser.APPROVE_OPTION) {
-          System.out.println("cancelled");
-          return;
-        }
-        f = chooser.getSelectedFile();
-        save(f, m, chooser.getFileFilter().getDescription());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   private static int scaled(int i) {
@@ -1110,7 +971,7 @@ public class HexFile {
 
     protected HexReader(BufferedLineReader in, int addrBits, int width) {
       this.in = in;
-      this.dst = MemContents.create(addrBits, width);
+      this.dst = MemContents.create(addrBits, width, false);
     }
 
     ////////////////////////////////////////////////////////
@@ -1348,8 +1209,17 @@ public class HexFile {
       return subarray(data, pos);
     }
 
-    long get(long addr) {
-      return addr > memEnd ? 0L : (dst.get(memAddr) & 0xffffffffL);
+    private long get(long addr) {
+      return addr > memEnd ? 0L : dst.get(addr);
+    }
+
+    /**
+     * Returns the contents of the memory at address addr as a non-negative BigInteger
+     * or zero if addr is beyond the maximum address.
+     */
+    private BigInteger getBigInteger(long addr) {
+      final var value = get(addr);
+      return BigInteger.valueOf(value >>> 1).shiftLeft(1).or(BigInteger.valueOf(value & 1L));
     }
 
     void set(long addr, long val) {
@@ -1362,41 +1232,41 @@ public class HexFile {
 
     boolean deliver() {
       if (bigEndian) {
-        long val = get(memAddr) >>> (memWidth - memAddrFrac);
-        long nbits = memAddrFrac;
+        BigInteger val = getBigInteger(memAddr).shiftRight((int) (memWidth - memAddrFrac));
+        int nbits = (int) memAddrFrac;
         for (int i = 0; i < bLen; i++) {
-          val = (val << 8) | (0xffL & bytes[i]);
+          val = val.shiftLeft(8).or(BigInteger.valueOf(0xffL & bytes[i]));
           nbits += 8;
           while (nbits >= memWidth) {
             // dst.set() will mask off all but the desired lower bits
-            set(memAddr++, (val >>> (nbits - memWidth)));
+            set(memAddr++, (val.shiftRight(nbits - memWidth)).longValue());
             nbits -= memWidth;
           }
         }
         // there may be a few (nbits) bits of a partial word leftover
         if (nbits > 0) {
-          set(memAddr, dst.get(memAddr) | (val << (memWidth - nbits)));
+          set(memAddr, dst.get(memAddr) | (val.shiftLeft(memWidth - nbits)).longValue());
           memAddrFrac = nbits;
           decodedWordCount--;
         } else {
           memAddrFrac = 0;
         }
       } else {
-        long val = get(memAddr);
-        long nbits = memAddrFrac;
+        BigInteger val = getBigInteger(memAddr);
+        int nbits = (int) memAddrFrac;
         for (int i = 0; i < bLen; i++) {
-          val = val | ((0xffL & bytes[i]) << nbits);
+          val = val.or(BigInteger.valueOf(0xffL & bytes[i]).shiftLeft(nbits));
           nbits += 8;
           while (nbits >= memWidth) {
             // dst.set() will mask off all but the desired lower bits
-            set(memAddr++, val);
+            set(memAddr++, val.longValue());
             nbits -= memWidth;
-            val = val >>> memWidth;
+            val = val.shiftRight(memWidth);
           }
         }
         // there may be a few (nbits) bits of a partial word leftover
         if (nbits > 0) {
-          set(memAddr, get(memAddr) | val);
+          set(memAddr, get(memAddr) | val.longValue());
           memAddrFrac = nbits;
           decodedWordCount--;
         } else {
@@ -1524,7 +1394,7 @@ public class HexFile {
           for (; j < m; j++) {
             int d;
             try {
-              d = hex2int(word.charAt(i));
+              d = hex2int(word.charAt(j));
             } catch (NumberFormatException e) {
               warn("Character '%s' is not a hex digit.", OutputStreamEscaper.escape(word.charAt(i)));
               continue;
@@ -1684,22 +1554,31 @@ public class HexFile {
       bigEndian = bigEndian();
     }
 
-    long get(long addr) {
-      return addr > memEnd ? 0L : (src.get(addr) & 0xffffffffL);
+    private long get(long addr) {
+      return addr > memEnd ? 0L : src.get(addr);
+    }
+
+    /**
+     * Returns the contents of the memory at address addr as a non-negative BigInteger
+     * or zero if addr is beyond the maximum address.
+     */
+    private BigInteger getBigInteger(long addr) {
+      final var value = get(addr);
+      return BigInteger.valueOf(value >>> 1).shiftLeft(1).or(BigInteger.valueOf(value & 1L));
     }
 
     void buffer() {
       bLen = 0;
       if (bigEndian) {
-        long val = 0;
+        var val = BigInteger.ZERO;
         int nbits = -mAddrFrac;
         while (memAddr <= memEnd) {
           while (nbits < 8) {
-            val = (val << memWidth) | get(memAddr++); // get() can go past end
+            val = val.shiftLeft(memWidth).or(getBigInteger(memAddr++)); // getBigInteger() can go past end
             nbits += memWidth;
           }
           while (nbits >= 8) {
-            bytes[bLen++] = (byte) ((val >>> (nbits - 8)) & 0xffL);
+            bytes[bLen++] = (byte) ((val.shiftRight(nbits - 8)).longValue() & 0xffL);
             nbits -= 8;
             if (bLen >= 4096) {
               memAddr -= ((nbits + memWidth - 1) / memWidth);
@@ -1707,26 +1586,27 @@ public class HexFile {
               return;
             }
           }
+          val = nbits == 0 ? BigInteger.ZERO : val.and(BigInteger.valueOf((1L << nbits) - 1));
         }
         // there may be 0 to 7 bits of a partial byte leftover
-        if (memAddr <= memEnd && nbits > 0) bytes[bLen++] = (byte) ((val << (8 - nbits)) & 0xffL);
+        if (memAddr <= memEnd && nbits > 0) bytes[bLen++] = (byte) ((val.longValue() << 8 - nbits) & 0xffL);
       } else {
-        long val = 0;
+        var val = BigInteger.ZERO;
         int nbits = -mAddrFrac;
         while (memAddr <= memEnd) {
           while (nbits < 8) {
             if (nbits < 0) {
               // can only happen on first loop
-              val = get(memAddr++) >>> (-nbits);
+              val = getBigInteger(memAddr++).shiftRight(-nbits);
             } else {
-              // get() can go past end
-              val = val | (get(memAddr++) << nbits);
+              // getBigInteger() can go past end
+              val = val.or(getBigInteger(memAddr++).shiftLeft(nbits));
             }
             nbits += memWidth;
           }
           while (nbits >= 8) {
-            bytes[bLen++] = (byte) (val & 0xffL);
-            val = val >>> 8;
+            bytes[bLen++] = (byte) (val.longValue() & 0xffL);
+            val = val.shiftRight(8);
             nbits -= 8;
             if (bLen >= 4096) {
               memAddr -= ((nbits + memWidth - 1) / memWidth);
@@ -1736,7 +1616,7 @@ public class HexFile {
           }
         }
         // there may be 0 to 7 bits of a partial byte leftover
-        if (memAddr <= memEnd && nbits > 0) bytes[bLen++] = (byte) (val & ((1 << nbits) - 1));
+        if (memAddr <= memEnd && nbits > 0) bytes[bLen++] = (byte) (val.longValue() & ((1L << nbits) - 1));
       }
     }
 

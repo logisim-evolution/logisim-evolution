@@ -41,12 +41,16 @@ public class SelectionPanel extends LogPanel {
     list = new SelectionList();
     list.setLogModel(getModel());
 
-    final var explorerPane = new JScrollPane(selector,
-        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    final var listPane = new JScrollPane(list,
-        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    final var explorerPane =
+        new JScrollPane(
+            selector,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    final var listPane =
+        new JScrollPane(
+            list,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     final var gridbag = new GridBagLayout();
     final var gbc = new GridBagConstraints();
@@ -93,8 +97,13 @@ public class SelectionPanel extends LogPanel {
     delArrow.setContentAreaFilled(false);
     addArrow.setEnabled(false);
     delArrow.setEnabled(false);
-    selector.getSelectionModel().addListSelectionListener(e -> addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty()));
-    list.getSelectionModel().addListSelectionListener(e -> delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty()));
+    selector
+        .getSelectionModel()
+        .addListSelectionListener(
+            e -> addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty()));
+    list.getSelectionModel()
+        .addListSelectionListener(
+            e -> delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty()));
     addArrow.addActionListener(e -> list.add(selector.getSelectedItems()));
     delArrow.addActionListener(e -> list.removeSelected());
 
@@ -116,7 +125,8 @@ public class SelectionPanel extends LogPanel {
     gbc.gridy = 2;
     gridbag.setConstraints(listPane, gbc);
     add(listPane);
-    listPane.setPreferredSize(new Dimension(AppPreferences.getScaled(180), AppPreferences.getScaled(200)));
+    listPane.setPreferredSize(
+        new Dimension(AppPreferences.getScaled(180), AppPreferences.getScaled(200)));
   }
 
   @Override

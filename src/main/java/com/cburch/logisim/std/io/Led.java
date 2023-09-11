@@ -29,6 +29,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -36,10 +37,10 @@ import java.awt.event.KeyEvent;
 
 public class Led extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "LED";
 
@@ -146,7 +147,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
     g.drawOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     GraphicsUtil.switchToWidth(g, 1);

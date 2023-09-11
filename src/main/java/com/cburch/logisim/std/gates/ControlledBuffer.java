@@ -111,7 +111,7 @@ class ControlledBuffer extends InstanceFactory {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     final var bds = getOffsetBounds(instance.getAttributeSet());
     int d = Math.max(bds.getWidth(), bds.getHeight()) - 20;
-    final var loc0 = Location.create(0, 0);
+    final var loc0 = Location.create(0, 0, true);
     final var loc1 = loc0.translate(facing.reverse(), 20 + d);
     Location loc2;
     if (instance.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED) {
@@ -130,10 +130,11 @@ class ControlledBuffer extends InstanceFactory {
   @Override
   public Object getInstanceFeature(final Instance instance, Object key) {
     if (key == WireRepair.class) {
-      return (WireRepair) data -> {
-        final var port2 = instance.getPortLocation(2);
-        return data.getPoint().equals(port2);
-      };
+      return (WireRepair)
+          data -> {
+            final var port2 = instance.getPortLocation(2);
+            return data.getPoint().equals(port2);
+          };
     }
     return super.getInstanceFeature(instance, key);
   }
@@ -176,8 +177,7 @@ class ControlledBuffer extends InstanceFactory {
     final var g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, "EN1", isInverter, false);
-    else
-      AbstractGate.paintIconBufferAnsi(g, isInverter, true);
+    else AbstractGate.paintIconBufferAnsi(g, isInverter, true);
   }
 
   @Override
@@ -201,7 +201,7 @@ class ControlledBuffer extends InstanceFactory {
     g.drawLine(pt0.getX(), pt0.getY(), pt1.getX(), pt1.getY());
 
     // draw triangle
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintShape(painter);
 
     // draw input and output pins
@@ -247,11 +247,8 @@ class ControlledBuffer extends InstanceFactory {
     final var width = state.getAttributeValue(StdAttr.WIDTH);
     if (control == Value.TRUE) {
       final var in = state.getPortValue(1);
-      /* in cannot passed directly, as the simulator would pass an u at the input to an u at the output.
-       * Doing double inversion is the correct way to resolve this problem.
-       */
-      state.setPort(0, isInverter ? in.not() : in.not().not(), GateAttributes.DELAY);
-    } else if (control == Value.ERROR || control == Value.UNKNOWN) {
+      state.setPort(0, isInverter ? in.not() : in, GateAttributes.DELAY);
+    } else if (control == Value.ERROR) {
       state.setPort(0, Value.createError(width), GateAttributes.DELAY);
     } else {
       Value out;
@@ -268,5 +265,4 @@ class ControlledBuffer extends InstanceFactory {
       state.setPort(0, out, GateAttributes.DELAY);
     }
   }
-
 }

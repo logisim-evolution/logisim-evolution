@@ -17,11 +17,11 @@ import java.util.prefs.PreferenceChangeListener;
 public interface PrefMonitor<E> extends PreferenceChangeListener {
   void addPropertyChangeListener(PropertyChangeListener listener);
 
-  public E get();
+  E get();
 
-  public boolean getBoolean();
+  boolean getBoolean();
 
-  public String getIdentifier();
+  String getIdentifier();
 
   boolean isSource(PropertyChangeEvent event);
 

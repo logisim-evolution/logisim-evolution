@@ -41,7 +41,6 @@ class CanvasPainter implements PropertyChangeListener {
     this.canvas = canvas;
     this.grid = new GridPainter(canvas);
 
-    AppPreferences.PRINTER_VIEW.addPropertyChangeListener(this);
     AppPreferences.ATTRIBUTE_HALO.addPropertyChangeListener(this);
     AppPreferences.CANVAS_BG_COLOR.addPropertyChangeListener(this);
     AppPreferences.GRID_BG_COLOR.addPropertyChangeListener(this);
@@ -104,14 +103,11 @@ class CanvasPainter implements PropertyChangeListener {
   private void drawWithUserState(Graphics base, Graphics g, Project proj) {
     final var circ = proj.getCurrentCircuit();
     final var sel = proj.getSelection();
-    var dragTool = canvas.getDragTool();
-    Set<Component> hidden;
-    if (dragTool == null) {
-      hidden = NO_COMPONENTS;
-    } else {
-      hidden = dragTool.getHiddenComponents(canvas);
-      if (hidden == null) hidden = NO_COMPONENTS;
-    }
+    final var dragTool = canvas.getDragTool();
+    var hidden = (dragTool == null)
+            ? NO_COMPONENTS
+            : dragTool.getHiddenComponents(canvas);
+    if (hidden == null) hidden = NO_COMPONENTS;
 
     // draw halo around component whose attributes we are viewing
     final var showHalo = AppPreferences.ATTRIBUTE_HALO.getBoolean();
@@ -137,8 +133,7 @@ class CanvasPainter implements PropertyChangeListener {
 
     // draw circuit and selection
     final var circState = proj.getCircuitState();
-    final var printerView = AppPreferences.PRINTER_VIEW.getBoolean();
-    final var context = new ComponentDrawContext(canvas, circ, circState, base, g, printerView);
+    final var context = new ComponentDrawContext(canvas, circ, circState, base, g, false);
     context.setHighlightedWires(highlightedWires);
     circ.draw(context, hidden);
     sel.draw(context, hidden);
@@ -184,7 +179,7 @@ class CanvasPainter implements PropertyChangeListener {
   //
   void paintContents(Graphics g, Project proj) {
     var clip = g.getClipBounds();
-    var size = canvas.getSize();
+    final var size = canvas.getSize();
     final double zoomFactor = canvas.getZoomFactor();
     if (canvas.ifPaintDirtyReset() || clip == null) {
       clip = new Rectangle(0, 0, size.width, size.height);
@@ -193,16 +188,16 @@ class CanvasPainter implements PropertyChangeListener {
     grid.paintGrid(g);
     g.setColor(Color.black);
 
-    var gfxScaled = g.create();
+    final var gfxScaled = g.create();
     if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
       g2d.scale(zoomFactor, zoomFactor);
     }
     drawWithUserState(g, gfxScaled, proj);
     drawWidthIncompatibilityData(g, gfxScaled, proj);
-    var circ = proj.getCurrentCircuit();
+    final var circ = proj.getCurrentCircuit();
 
-    var circState = proj.getCircuitState();
-    var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);
+    final var circState = proj.getCircuitState();
+    final var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);
     ptContext.setHighlightedWires(highlightedWires);
     gfxScaled.setColor(Color.RED);
     circState.drawOscillatingPoints(ptContext);

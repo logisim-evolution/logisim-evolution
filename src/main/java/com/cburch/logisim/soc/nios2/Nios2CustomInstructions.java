@@ -72,8 +72,7 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
       if (!writerc) {
         int result = 0;
         Value rValue = istate.getPortValue(Nios2.RESULT);
-        if (rValue.isFullyDefined())
-            result = Integer.parseUnsignedInt(rValue.toHexString(), 16);
+        if (rValue.isFullyDefined()) result = Integer.parseUnsignedInt(rValue.toHexString(), 16);
         state.writeRegister(regC, result);
       }
       return false;
@@ -85,8 +84,7 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
     s.append("custom");
-    while (s.length() < Nios2Support.ASM_FIELD_SIZE)
-        s.append(" ");
+    while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     s.append(n).append(",");
     s.append(writerc ? "c" : "r").append(regC).append(",");
     s.append(readra ? "c" : "r").append(regA).append(",");
@@ -208,9 +206,7 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-    if (instruction.equalsIgnoreCase("custom"))
-      return 4;
+    if (instruction.equalsIgnoreCase("custom")) return 4;
     return -1;
   }
-
 }

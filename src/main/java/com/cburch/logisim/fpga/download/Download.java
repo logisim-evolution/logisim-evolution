@@ -64,7 +64,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       String mapFileName,
       boolean writeToFlash,
       boolean downloadOnly,
-      boolean gegerateHdlOnly,
+      boolean generateHdlOnly,
+      double preMultiplier,
+      double preDivider,
       JProgressBar progressBar,
       JFrame myParent) {
     this.progressBar = progressBar;
@@ -77,7 +79,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         mapFileName,
         writeToFlash,
         downloadOnly,
-        gegerateHdlOnly);
+        generateHdlOnly,
+        preMultiplier,
+        preDivider);
   }
 
   public Download(
@@ -88,7 +92,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       String mapFileName,
       boolean writeToFlash,
       boolean downloadOnly,
-      boolean generateHdlOnly) {
+      boolean generateHdlOnly,
+      double preMultiplier,
+      double preDivider) {
     setUpDownload(
         myProject,
         topLevelSheet,
@@ -97,7 +103,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         mapFileName,
         writeToFlash,
         downloadOnly,
-        generateHdlOnly);
+        generateHdlOnly,
+        preMultiplier,
+        preDivider);
   }
 
   private void setUpDownload(
@@ -108,11 +116,15 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       String mapFileName,
       boolean writeToFlash,
       boolean downloadOnly,
-      boolean generateHdlOnly) {
+      boolean generateHdlOnly,
+      double preMultiplier,
+      double preDivider) {
     this.myProject = myProject;
     this.myBoardInformation = myBoardInformation;
     this.downloadOnly = downloadOnly;
     this.generateHdlOnly = generateHdlOnly;
+    this.preDivider = preDivider;
+    this.preMultiplier = preMultiplier;
     if (myBoardInformation == null) {
       this.generateHdlOnly = true;
       this.vendor = ' ';
@@ -128,40 +140,44 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     var steps = basicSteps;
     if (!this.generateHdlOnly && useGui) rootSheet.setDownloadBoard(myBoardInformation.getBoardName());
     switch (vendor) {
-      case VendorSoftware.VENDOR_ALTERA:
-        downloader =
-            new AlteraDownload(
-                getProjDir(topLevelSheet),
-                rootSheet.getNetList(),
-                myBoardInformation,
-                    entities,
-                    architectures,
-                AppPreferences.HdlType.get(),
-                writeToFlash);
-        break;
-      case VendorSoftware.VENDOR_XILINX:
-        downloader =
-            new XilinxDownload(
-                getProjDir(topLevelSheet),
-                rootSheet.getNetList(),
-                myBoardInformation,
-                    entities,
-                    architectures,
-                AppPreferences.HdlType.get(),
-                writeToFlash);
-        break;
-      case VendorSoftware.VENDOR_VIVADO:
-        downloader =
-            new VivadoDownload(
-                getProjDir(topLevelSheet),
-                rootSheet.getNetList(),
-                myBoardInformation,
-                    entities,
-                    architectures);
-        break;
-      default:
+      case VendorSoftware.VENDOR_ALTERA -> downloader =
+          new AlteraDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures,
+              AppPreferences.HdlType.get(),
+              writeToFlash);
+      case VendorSoftware.VENDOR_XILINX -> downloader =
+          new XilinxDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures,
+              AppPreferences.HdlType.get(),
+              writeToFlash);
+      case VendorSoftware.VENDOR_VIVADO -> downloader =
+          new VivadoDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures);
+      case VendorSoftware.VENDOR_OPENFPGA -> downloader =
+          new OpenFpgaDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures,
+              AppPreferences.HdlType.get(),
+              writeToFlash);
+      default -> {
         Reporter.report.addFatalError("BUG: Tried to Download to an unknown target");
         return;
+      }
     }
     if (progressBar == null) useGui = false;
     if (useGui) {
@@ -375,8 +391,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       progressBar.setString(S.get("FPGAState1"));
     }
     if (tickFrequency <= 0) tickFrequency = 1;
-    if (tickFrequency > (myBoardInformation.fpga.getClockFrequency() / 4))
-      tickFrequency = myBoardInformation.fpga.getClockFrequency() / 4;
+    if (tickFrequency > (getSynthesizedFrequency() / 4))
+      tickFrequency = getSynthesizedFrequency() / 4;
     if (!writeHDL(topLevelSheet, tickFrequency)) {
       return false;
     }

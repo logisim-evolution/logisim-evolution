@@ -235,10 +235,12 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       var boxHeight = Math.max(linedKMapInfo.getHeight(), numberedKMapInfo.getHeight());
       linedKMapInfo.calculateOffsets(boxWidth, boxHeight);
       numberedKMapInfo.calculateOffsets(boxWidth, boxHeight);
-      final var ctx = g.getFontRenderContext();
-      int selectedHeight;
-      final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
-      selectedHeight = 3 * (int) t1.getBounds().getHeight();
+      int selectedHeight = 0;
+      if (g != null) {
+        final var ctx = g.getFontRenderContext();
+        final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
+        selectedHeight = 3 * (int) t1.getBounds().getHeight();
+      }
       selInfo = Bounds.create(0, boxHeight, boxWidth, selectedHeight);
       setPreferredSize(new Dimension(boxWidth, boxHeight + selectedHeight));
       kMapDim = new Dimension(boxWidth, boxHeight);
@@ -381,14 +383,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     if (cols > 4) {
       return bigColPlace[ret];
     }
-    switch (ret) {
-      case 2:
-        return 3;
-      case 3:
-        return 2;
-      default:
-        return ret;
-    }
+    return switch (ret) {
+      case 2 -> 3;
+      case 3 -> 2;
+      default -> ret;
+    };
   }
 
   public void setStyleLined() {
@@ -412,14 +411,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     if (rows > 4) {
       return bigColPlace[ret];
     }
-    switch (ret) {
-      case 2:
-        return 3;
-      case 3:
-        return 2;
-      default:
-        return ret;
-    }
+    return switch (ret) {
+      case 2 -> 3;
+      case 3 -> 2;
+      default -> ret;
+    };
   }
 
   public int getRow(MouseEvent event) {
@@ -813,17 +809,16 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     y += headHeight + 11;
     /* Here the lines are placed */
     switch (cols) {
-      case 2:
+      case 2 ->
         drawKmapLine(gfx, new Point(x + cellWidth, y - 8), new Point(x + 2 * cellWidth, y - 8));
-        break;
-      case 4:
+      case 4 -> {
         drawKmapLine(gfx, new Point(x + 2 * cellWidth, y - 8), new Point(x + 4 * cellWidth, y - 8));
         drawKmapLine(
             gfx,
             new Point(x + cellWidth, y + 9 + rows * cellHeight),
             new Point(x + 3 * cellWidth, y + 9 + rows * cellHeight));
-        break;
-      case 8:
+      }
+      case 8 -> {
         drawKmapLine(
             gfx,
             new Point(x + cellWidth, y + 8 + rows * cellHeight + headHeight + (headHeight >> 2)),
@@ -840,24 +835,25 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
             gfx,
             new Point(x + 4 * cellWidth, y + 8 + rows * cellHeight),
             new Point(x + 8 * cellWidth, y + 8 + rows * cellHeight));
-        break;
-      default:
+      }
+      default -> {
         // none
-        break;
+      }
     }
     switch (rows) {
-      case 2:
-        drawKmapLine(gfx, new Point(x - 8, y + cellHeight), new Point(x - 8, y + 2 * cellHeight));
-        break;
-      case 4:
-        drawKmapLine(gfx, new Point(x - 8, y + 2 * cellHeight), new Point(x - 8, y + 4 * cellHeight));
+      case 2 ->
+          drawKmapLine(gfx, new Point(x - 8, y + cellHeight), new Point(x - 8, y + 2 * cellHeight));
+      case 4 -> {
+        drawKmapLine(gfx, new Point(x - 8, y + 2 * cellHeight),
+            new Point(x - 8, y + 4 * cellHeight));
         drawKmapLine(
             gfx,
             new Point(x + cols * cellWidth + 8, y + cellHeight),
             new Point(x + cols * cellWidth + 8, y + 3 * cellHeight));
-        break;
-      case 8:
-        drawKmapLine(gfx, new Point(x - 8, y + 4 * cellHeight), new Point(x - 8, y + 8 * cellHeight));
+      }
+      case 8 -> {
+        drawKmapLine(gfx, new Point(x - 8, y + 4 * cellHeight),
+            new Point(x - 8, y + 8 * cellHeight));
         drawKmapLine(
             gfx,
             new Point(x + cols * cellWidth + 8, y + 2 * cellHeight),
@@ -874,10 +870,10 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
                 x + cols * cellWidth + 8 + headHeight + (headHeight >> 2), y + 5 * cellHeight),
             new Point(
                 x + cols * cellWidth + 8 + headHeight + (headHeight >> 2), y + 7 * cellHeight));
-        break;
-      default:
+      }
+      default -> {
         // none
-        break;
+      }
     }
   }
 
@@ -971,14 +967,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       return bigColIndex[row];
     }
     if (rows == 4) {
-      switch (row) {
-        case 2:
-          return 3;
-        case 3:
-          return 2;
-        default:
-          return row;
-      }
+      return switch (row) {
+        case 2 -> 3;
+        case 3 -> 2;
+        default -> row;
+      };
     } else {
       return row;
     }
@@ -989,14 +982,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       return bigColIndex[col];
     }
     if (cols == 4) {
-      switch (col) {
-        case 2:
-          return 3;
-        case 3:
-          return 2;
-        default:
-          return col;
-      }
+      return switch (col) {
+        case 2 -> 3;
+        case 3 -> 2;
+        default -> col;
+      };
     } else {
       return col;
     }

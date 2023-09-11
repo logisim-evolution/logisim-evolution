@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -38,10 +39,10 @@ import java.awt.event.MouseEvent;
 
 public class Switch extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Switch";
 
@@ -191,7 +192,7 @@ public class Switch extends InstanceFactory {
         g.fillPolygon(xp, yp, xp.length);
         g.setColor(color);
         g.fillPolygon(xr, yr, xr.length);
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       }
       g.drawPolygon(xp, yp, xp.length);
       g.drawPolygon(xr, yr, xr.length);
@@ -247,7 +248,7 @@ public class Switch extends InstanceFactory {
         g.fillPolygon(xp, yp, xp.length);
         g.setColor(color);
         g.fillPolygon(xr, yr, xr.length);
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       }
       g.drawPolygon(xp, yp, xp.length);
       g.drawPolygon(xr, yr, xr.length);

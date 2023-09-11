@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleManager;
@@ -39,13 +40,13 @@ import java.awt.event.MouseEvent;
 
 public class Slider extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Slider";
-  
+
   private static final int MAXIMUM_NUMBER_OF_BITS = 8;
   private static final int MAXIMUM_SLIDER_POSITION = (1 << MAXIMUM_NUMBER_OF_BITS) - 1;
 
@@ -70,11 +71,14 @@ public class Slider extends InstanceFactory {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
       final var data = (SliderValue) state.getData();
-      final var sliderPosition = (data != null) ? data.getSliderPosition() : 
-          state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT ? MAXIMUM_SLIDER_POSITION : 0;
+      final var sliderPosition =
+          (data != null)
+              ? data.getSliderPosition()
+              : state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT ? MAXIMUM_SLIDER_POSITION : 0;
       final var bounds = state.getInstance().getBounds();
-      final var slider = new Rectangle(bounds.getX() + sliderPosition + 5, 
-          bounds.getY() + bounds.getHeight() - 16, 12, 12);
+      final var slider =
+          new Rectangle(
+              bounds.getX() + sliderPosition + 5, bounds.getY() + bounds.getHeight() - 16, 12, 12);
       // check if clicking slider rectangle
       dragging = slider.contains(e.getX(), e.getY());
     }
@@ -100,7 +104,8 @@ public class Slider extends InstanceFactory {
     }
 
     public int getCurrentValue() {
-      final var completeValue = rightToLeft ? (MAXIMUM_SLIDER_POSITION - sliderPosition) : sliderPosition; 
+      final var completeValue =
+          rightToLeft ? (MAXIMUM_SLIDER_POSITION - sliderPosition) : sliderPosition;
       return completeValue >> (MAXIMUM_NUMBER_OF_BITS - nrOfBits);
     }
 
@@ -109,7 +114,7 @@ public class Slider extends InstanceFactory {
     }
 
     public void setSliderPosition(int value) {
-      sliderPosition = Math.max(0, Math.min(value, MAXIMUM_SLIDER_POSITION)); 
+      sliderPosition = Math.max(0, Math.min(value, MAXIMUM_SLIDER_POSITION));
     }
 
     public void setCurrentBitWidth(int width) {
@@ -134,9 +139,8 @@ public class Slider extends InstanceFactory {
           "Direction",
           new LocaleManager("resources/logisim", "circuit").getter("wireDirectionAttr"),
           new AttributeOption[] {RIGHT_TO_LEFT, LEFT_TO_RIGHT});
-  private static final   Attribute<BitWidth> WIDTH =
+  private static final Attribute<BitWidth> WIDTH =
       Attributes.forBitWidth("width", S.getter("stdDataWidthAttr"), 1, MAXIMUM_NUMBER_OF_BITS);
-
 
   public Slider() {
     super(_ID, S.getter("Slider"));
@@ -170,10 +174,12 @@ public class Slider extends InstanceFactory {
   private void computeTextField(Instance instance) {
     final var isWestOrientated = instance.getAttributeValue(StdAttr.FACING) == Direction.WEST;
     final var bounds = instance.getBounds();
-    instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, 
-        bounds.getX() - 3, 
-        (isWestOrientated) ? bounds.getY() : bounds.getY() + bounds.getHeight() / 2 - 1, 
-        GraphicsUtil.H_RIGHT, 
+    instance.setTextField(
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bounds.getX() - 3,
+        (isWestOrientated) ? bounds.getY() : bounds.getY() + bounds.getHeight() / 2 - 1,
+        GraphicsUtil.H_RIGHT,
         (isWestOrientated) ? GraphicsUtil.V_BASELINE : GraphicsUtil.V_CENTER_OVERALL);
   }
 
@@ -216,25 +222,36 @@ public class Slider extends InstanceFactory {
     final var data = (SliderValue) painter.getData();
     final var posX = bounds.getX();
     final var posY = bounds.getY();
-    final var sliderPosition = (data != null) ? data.getSliderPosition() :
-        (painter.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT) ? MAXIMUM_SLIDER_POSITION : 0;
+    final var sliderPosition =
+        (data != null)
+            ? data.getSliderPosition()
+            : (painter.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT) ? MAXIMUM_SLIDER_POSITION : 0;
     painter.drawRoundBounds(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
     GraphicsUtil.switchToWidth(gfx, 2);
     // slider line
-    gfx.drawLine(posX + 10, posY + bounds.getHeight() - 10, posX + bounds.getWidth() - 10, posY + bounds.getHeight() - 10);
+    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    gfx.drawLine(
+        posX + 10,
+        posY + bounds.getHeight() - 10,
+        posX + bounds.getWidth() - 10,
+        posY + bounds.getHeight() - 10);
     gfx.setColor(Color.DARK_GRAY);
     // slider
     gfx.fillRoundRect(posX + sliderPosition + 5, posY + bounds.getHeight() - 15, 10, 10, 4, 4);
-    gfx.setColor(Color.BLACK);
+    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     gfx.drawRoundRect(posX + sliderPosition + 5, posY + bounds.getHeight() - 15, 10, 10, 4, 4);
     painter.drawPorts();
     painter.drawLabel();
     // paint current value
     gfx.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
-    GraphicsUtil.drawCenteredValue(gfx, painter.getPortValue(0), 
-        painter.getAttributeValue(RadixOption.ATTRIBUTE), posX + bounds.getWidth() / 2, posY + 6);
+    GraphicsUtil.drawCenteredValue(
+        gfx,
+        painter.getPortValue(0),
+        painter.getAttributeValue(RadixOption.ATTRIBUTE),
+        posX + bounds.getWidth() / 2,
+        posY + 6);
   }
-  
+
   @Override
   public void propagate(InstanceState state) {
     final var data = (SliderValue) state.getData();

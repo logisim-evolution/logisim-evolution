@@ -15,10 +15,8 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -40,7 +38,6 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +71,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   public void setSimName(AttributeSet attrs, String sName) {
     if (attrs == null) return;
     final var atrs = (VhdlEntityAttributes) attrs;
-    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : sName;
+    final var label = ("".equals(attrs.getValue(StdAttr.LABEL))) ? sName : getHDLTopName(attrs);
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, label);
   }
@@ -123,8 +120,9 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   @Override
   public String getHDLTopName(AttributeSet attrs) {
     var label = "";
-    if (!attrs.getValue(StdAttr.LABEL).equals(""))
-      label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
+    final var l = attrs.getValue(StdAttr.LABEL);
+    if (!("".equals(l)))
+      label = "_" + l.toLowerCase();
     return getHDLName(attrs) + label;
   }
 
@@ -212,8 +210,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
       /* Get response from tcl server */
       String serverResponse;
       while ((serverResponse = vhdlSimulator.receive()) != null
-          && serverResponse.length() > 0
-          && !serverResponse.equals("sync")) {
+          && (serverResponse.length() > 0 && !"sync".equals(serverResponse))) {
 
         final var parameters = serverResponse.split(":");
         final var busValue = parameters[1];
@@ -221,7 +218,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
         var idx = busValue.length() - 1;
         for (final var bit : busValue.toCharArray()) {
-
           try {
             vectorValues[idx] = switch (Character.getNumericValue(bit)) {
               case 0 -> Value.FALSE;
@@ -239,7 +235,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
       /* VhdlSimulation stopped/disabled */
     } else {
-
       for (final var port : state.getInstance().getPorts()) {
         final var index = state.getPortIndex(port);
 
@@ -295,7 +290,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
       attr.setValue(Pin.ATTR_TYPE, !port.getType().equals(Port.INPUT));
       attr.setValue(StdAttr.FACING, !port.getType().equals(Port.INPUT) ? Direction.WEST : Direction.EAST);
       attr.setValue(StdAttr.WIDTH, port.getWidth());
-      final var component = (InstanceComponent) Pin.FACTORY.createComponent(Location.create(100, yPos), attr);
+      final var component = (InstanceComponent) Pin.FACTORY.createComponent(Location.create(100, yPos, true), attr);
       pins.add(component.getInstance());
       yPos += 10;
     }
@@ -303,26 +298,27 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   }
 
   void updatePorts(Instance instance) {
-    AttributeOption style = instance.getAttributeValue(StdAttr.APPEARANCE);
+    final var style = instance.getAttributeValue(StdAttr.APPEARANCE);
     appearance = VhdlAppearance.create(getPins(), getName(), style);
 
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
-    Map<Location, Instance> portLocs = appearance.getPortOffsets(facing);
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var portLocs = appearance.getPortOffsets(facing);
 
-    Port[] ports = new Port[portLocs.size()];
-    int i = -1;
-    for (Map.Entry<Location, Instance> portLoc : portLocs.entrySet()) {
-      i++;
-      Location loc = portLoc.getKey();
-      Instance pin = portLoc.getValue();
-      String type = Pin.FACTORY.isInputPin(pin) ? Port.INPUT : Port.OUTPUT;
-      BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
-      ports[i] = new Port(loc.getX(), loc.getY(), type, width);
+    final var ports = new Port[portLocs.size()];
+    var idx = 0;
+    for (final var portLoc : portLocs.entrySet()) {
+      final var loc = portLoc.getKey();
+      final var pin = portLoc.getValue();
+      final var type = Pin.FACTORY.isInputPin(pin) ? Port.INPUT : Port.OUTPUT;
+      final var width = pin.getAttributeValue(StdAttr.WIDTH);
+      ports[idx] = new Port(loc.getX(), loc.getY(), type, width);
 
-      String label = pin.getAttributeValue(StdAttr.LABEL);
+      final var label = pin.getAttributeValue(StdAttr.LABEL);
       if (label != null && label.length() > 0) {
-        ports[i].setToolTip(StringUtil.constantGetter(label));
+        ports[idx].setToolTip(StringUtil.constantGetter(label));
       }
+
+      idx++;
     }
     instance.setPorts(ports);
     instance.recomputeBounds();

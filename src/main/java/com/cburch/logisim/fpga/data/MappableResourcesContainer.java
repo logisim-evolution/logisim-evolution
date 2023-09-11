@@ -36,8 +36,7 @@ public class MappableResourcesContainer {
    *
    * The MappedList keeps track of the display names.
    */
-  public MappableResourcesContainer(BoardInformation CurrentBoard,
-                                    Circuit circ) {
+  public MappableResourcesContainer(BoardInformation CurrentBoard, Circuit circ) {
     currentUsedBoard = CurrentBoard;
     myCircuit = circ;
     var BoardId = new ArrayList<String>();
@@ -93,10 +92,8 @@ public class MappableResourcesContainer {
 
   public void updateMapableComponents() {
     var cur = new HashSet<ArrayList<String>>();
-    if (myMappableResources == null)
-      myMappableResources = new HashMap<>();
-    else
-      cur.addAll(myMappableResources.keySet());
+    if (myMappableResources == null) myMappableResources = new HashMap<>();
+    else cur.addAll(myMappableResources.keySet());
     var BoardId = new ArrayList<String>();
     BoardId.add(currentUsedBoard.getBoardName());
     var newMappableResources = myCircuit.getNetList().getMappableResources(BoardId, true);
@@ -143,8 +140,7 @@ public class MappableResourcesContainer {
   }
 
   public void unMapAll() {
-    for (var key : myMappableResources.keySet())
-      myMappableResources.get(key).unmap();
+    for (var key : myMappableResources.keySet()) myMappableResources.get(key).unmap();
   }
 
   private ArrayList<String> getHierarchyName(String mapKey) {
@@ -153,8 +149,7 @@ public class MappableResourcesContainer {
     final var split2 = hier.split("#");
     var result = new ArrayList<String>();
     result.add(currentUsedBoard.getBoardName());
-    for (var key : split2[0].split("/"))
-      if (!key.isEmpty()) result.add(key);
+    for (var key : split2[0].split("/")) if (!key.isEmpty()) result.add(key);
     return result;
   }
 
@@ -166,8 +161,7 @@ public class MappableResourcesContainer {
     var result = true;
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);
-      for (var i = 0; i < map.getNrOfPins(); i++)
-        result &= map.isMapped(i);
+      for (var i = 0; i < map.getNrOfPins(); i++) result &= map.isMapped(i);
     }
     return result;
   }

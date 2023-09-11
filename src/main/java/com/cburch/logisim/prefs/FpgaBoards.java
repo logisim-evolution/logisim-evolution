@@ -125,14 +125,9 @@ public class FpgaBoards implements ActionListener {
     private void fireChange(ListDataEvent e) {
       for (final var listener : myListeners) {
         switch (e.getType()) {
-          case ListDataEvent.CONTENTS_CHANGED:
-            listener.contentsChanged(e);
-            break;
-          case ListDataEvent.INTERVAL_ADDED:
-            listener.intervalAdded(e);
-            break;
-          default:
-            listener.intervalRemoved(e);
+          case ListDataEvent.CONTENTS_CHANGED -> listener.contentsChanged(e);
+          case ListDataEvent.INTERVAL_ADDED -> listener.intervalAdded(e);
+          default -> listener.intervalRemoved(e);
         }
       }
     }
@@ -189,6 +184,7 @@ public class FpgaBoards implements ActionListener {
   private JScrollPane boardPane;
   private JList<String> boardNamesList;
   private JButton addButton;
+  private JLabel extBoardPanelTitl;
   private JButton removeButton;
   private JComboBox<String> boardSelector;
   private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
@@ -259,46 +255,52 @@ public class FpgaBoards implements ActionListener {
   public JPanel addRemovePanel() {
     final var panel = new JPanel();
     final int nrBoards = extBoardModel.nrOfExternalBoards();
-    final var thisLayout = new GridBagLayout();
-    final var c = new GridBagConstraints();
-    panel.setLayout(thisLayout);
+    final var gbc = new GridBagConstraints();
+    panel.setLayout(new GridBagLayout());
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-    c.gridwidth = 2;
-    c.gridx = 0;
-    c.gridy = 0;
-    c.weightx = 1.0;
-    c.fill = GridBagConstraints.CENTER;
-    panel.add(new JLabel(S.get("ExternalBoards")), c);
-    c.gridy = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    panel.add(new JSeparator(), c);
-    c.gridheight = 10;
-    c.gridwidth = 1;
-    c.gridy = 2;
+    gbc.gridwidth = 2;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.CENTER;
+    extBoardPanelTitl = new JLabel(S.get("ExternalBoards"));
+    panel.add(extBoardPanelTitl, gbc);
+    gbc.gridy = 1;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    panel.add(new JSeparator(), gbc);
+    gbc.gridheight = 10;
+    gbc.gridwidth = 1;
+    gbc.gridy = 2;
     boardNamesList = new JList<>(extBoardModel);
     boardNamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     if (boardNamesList.getModel().getSize() != 0) boardNamesList.setSelectedIndex(0);
     boardPane = new JScrollPane(boardNamesList);
-    panel.add(boardPane, c);
-    c.gridheight = 1;
-    c.gridwidth = 1;
-    c.gridy = 2;
-    c.gridx = 1;
+    panel.add(boardPane, gbc);
+    gbc.gridheight = 1;
+    gbc.gridwidth = 1;
+    gbc.gridy = 2;
+    gbc.gridx = 1;
     addButton = new JButton();
     addButton.setText(S.get("AddBoard"));
     addButton.setEnabled(nrBoards < MaxBoards);
     addButton.addActionListener(this);
-    panel.add(addButton, c);
-    c.gridy = 3;
+    panel.add(addButton, gbc);
+    gbc.gridy = 3;
     removeButton = new JButton();
     removeButton.setText(S.get("RemoveBoard"));
     removeButton.setEnabled(nrBoards > 0);
     removeButton.addActionListener(this);
-    panel.add(removeButton, c);
+    panel.add(removeButton, gbc);
 
     return panel;
   }
-
+  
+  public void localeChanged() {
+    addButton.setText(S.get("AddBoard"));
+    extBoardPanelTitl.setText(S.get("ExternalBoards"));
+    removeButton.setText(S.get("RemoveBoard"));
+  }
+  
   private void updateButtons() {
     final var size = extBoardModel.nrOfExternalBoards();
     if (addButton != null) addButton.setEnabled(size < MaxBoards);

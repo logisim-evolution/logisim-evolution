@@ -260,13 +260,13 @@ abstract class AbstractGate extends InstanceFactory {
     }
 
     if (facing == Direction.NORTH) {
-      return Location.create(dy, dx);
+      return Location.create(dy, dx, true);
     } else if (facing == Direction.SOUTH) {
-      return Location.create(dy, -dx);
+      return Location.create(dy, -dx, true);
     } else if (facing == Direction.WEST) {
-      return Location.create(dx, dy);
+      return Location.create(dx, dy, true);
     } else {
-      return Location.create(-dx, dy);
+      return Location.create(-dx, dy, true);
     }
   }
 
@@ -380,7 +380,7 @@ abstract class AbstractGate extends InstanceFactory {
     }
 
     final var g = painter.getGraphics();
-    final var baseColor = g.getColor();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     if (shape == AppPreferences.SHAPE_SHAPED && paintInputLines) {
       PainterShaped.paintInputLines(painter, this);
     } else if (negated != 0) {
@@ -438,7 +438,6 @@ abstract class AbstractGate extends InstanceFactory {
   @Override
   public final void paintIcon(InstancePainter painter) {
     final var g = (Graphics2D) painter.getGraphics().create();
-    g.setColor(Color.black);
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     final var border = AppPreferences.getIconBorder();
     if (painter.getGateShape().equals(AppPreferences.SHAPE_RECTANGULAR))

@@ -42,7 +42,7 @@ class CircuitMutatorImpl implements CircuitMutator {
 
   @Override
   public void clear(Circuit circuit) {
-    final var comps = new HashSet<Component>(circuit.getNonWires());
+    final var comps = new HashSet<>(circuit.getNonWires());
     comps.addAll(circuit.getWires());
     if (!comps.isEmpty()) modified.add(circuit);
     log.add(CircuitChange.clear(circuit, comps));
@@ -142,7 +142,8 @@ class CircuitMutatorImpl implements CircuitMutator {
     final var oldValue = attrs.getValue(a);
     log.add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
     attrs.setValue(a, newValue);
-    if (attr == CircuitAttributes.NAME_ATTR || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
+    if (attr == CircuitAttributes.NAME_ATTR
+        || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
       circuit.getAppearance().recomputeDefaultAppearance();
     }
   }

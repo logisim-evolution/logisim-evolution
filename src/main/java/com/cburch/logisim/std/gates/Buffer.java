@@ -107,7 +107,7 @@ class Buffer extends InstanceFactory {
 
     final var ports = new Port[2];
     ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-    final var out = Location.create(0, 0).translate(facing, -20);
+    final var out = Location.create(0, 0, true).translate(facing, -20);
     ports[1] = new Port(out.getX(), out.getY(), Port.INPUT, StdAttr.WIDTH);
     instance.setPorts(ports);
   }
@@ -211,7 +211,7 @@ class Buffer extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintBase(painter);
     painter.drawPorts();
     painter.drawLabel();

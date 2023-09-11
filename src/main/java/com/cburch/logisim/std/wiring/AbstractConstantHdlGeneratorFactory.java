@@ -23,19 +23,27 @@ public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFact
   }
 
   @Override
-  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(
+      Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     int nrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
     if (componentInfo.isEndConnected(0)) {
       final var constantValue = getConstant(componentInfo.getComponent().getAttributeSet());
       if (componentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
-        contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getNetName(componentInfo, 0, true, nets), Hdl.getConstantVector(constantValue, 1))
+        contents
+            .add(
+                "{{assign}} {{1}} {{=}} {{2}};",
+                Hdl.getNetName(componentInfo, 0, true, nets),
+                Hdl.getConstantVector(constantValue, 1))
             .add("");
       } else {
         if (nets.isContinuesBus(componentInfo, 0)) {
           /* easy case */
-          contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusNameContinues(componentInfo, 0, nets), Hdl.getConstantVector(constantValue, nrOfBits));
+          contents.add(
+              "{{assign}} {{1}} {{=}} {{2}};",
+              Hdl.getBusNameContinues(componentInfo, 0, nets),
+              Hdl.getConstantVector(constantValue, nrOfBits));
           contents.add("");
         } else {
           /* we have to enumerate all bits */
@@ -45,7 +53,9 @@ public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFact
             if ((mask & constantValue) != 0) constValue = Hdl.oneBit();
             else constValue = Hdl.zeroBit();
             mask <<= 1;
-            contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), constValue);
+            contents.add(
+                "{{assign}} {{1}} {{=}} {{2}};",
+                Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), constValue);
           }
           contents.add("");
         }
@@ -53,5 +63,4 @@ public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFact
     }
     return contents;
   }
-
 }

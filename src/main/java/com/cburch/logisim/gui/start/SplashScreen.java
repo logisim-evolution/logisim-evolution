@@ -54,6 +54,7 @@ public class SplashScreen extends JWindow {
   boolean inClose = false; // for avoiding mutual recursion
   final JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
   final long startTime = System.currentTimeMillis();
+
   public SplashScreen() {
     setName(BuildInfo.displayName);
     JPanel imagePanel = About.getImagePanel();

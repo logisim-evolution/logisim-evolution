@@ -25,11 +25,13 @@ public class DipSwitchIcon extends BaseIcon {
     g2.setColor(Color.WHITE);
     Font f = g2.getFont().deriveFont((float) (getIconWidth() / 2.5));
     TextLayout t = new TextLayout("1", f, g2.getFontRenderContext());
-    t.draw(g2,
+    t.draw(
+        g2,
         (float) ((3 * getIconWidth()) / 4 - t.getBounds().getCenterX()),
         (float) (getIconHeight() / 4 - t.getBounds().getCenterY()));
     t = new TextLayout("2", f, g2.getFontRenderContext());
-    t.draw(g2,
+    t.draw(
+        g2,
         (float) ((3 * getIconWidth()) / 4 - t.getBounds().getCenterX()),
         (float) ((3 * getIconHeight()) / 4 - t.getBounds().getCenterY()));
     g2.fillRect(scale(2), scale(2), w, h);

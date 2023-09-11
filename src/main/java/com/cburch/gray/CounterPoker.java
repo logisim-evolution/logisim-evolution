@@ -71,7 +71,11 @@ public class CounterPoker extends InstancePoker {
     gfx.setColor(Color.RED);
     final var width = 7 * len + 2; // width of caret rectangle
     final var height = 16; // height of caret rectangle
-    gfx.drawRect(bds.getX() + (bds.getWidth() - width) / 2, bds.getY() + (bds.getHeight() - height) / 2, width, height);
+    gfx.drawRect(
+        bds.getX() + (bds.getWidth() - width) / 2,
+        bds.getY() + (bds.getHeight() - height) / 2,
+        width,
+        height);
     gfx.setColor(Color.BLACK);
   }
 }

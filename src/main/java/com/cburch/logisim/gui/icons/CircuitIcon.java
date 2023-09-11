@@ -10,5 +10,4 @@ public class CircuitIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2d) {
     SubcircuitFactory.paintEvolutionIcon(g2d);
   }
-
 }

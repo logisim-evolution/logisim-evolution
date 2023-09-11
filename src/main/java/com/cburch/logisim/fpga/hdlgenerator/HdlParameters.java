@@ -34,7 +34,7 @@ public class HdlParameters {
   public static final int MAP_GATE_INPUT_BUBLE = 7;
   public static final int MAP_POW2 = 8;
 
-  private class ParameterInfo {
+  private static class ParameterInfo {
     private final boolean isOnlyUsedForBusses;
     private boolean isIntParameter = true;
     private final String parameterName;
@@ -43,7 +43,7 @@ public class HdlParameters {
     private long parameterValue = -1;
     private long multiplyValue = 1;
     private long offsetValue = 0;
-    private List<Attribute<?>> attributesList = new ArrayList<>();
+    private final List<Attribute<?>> attributesList = new ArrayList<>();
     private Map<AttributeOption, Integer> attributeOptionMap = new HashMap<>();
     private final Attribute<BitWidth> attributeToCheckForBus;
 
@@ -173,7 +173,7 @@ public class HdlParameters {
               totalValue += bitWidth.getWidth();
             } else throw new UnsupportedOperationException(notAnIntExMsg);
           }
-          selectedValue = (long) Math.pow(totalValue, 2D);
+          selectedValue = (long) Math.pow(2D, totalValue);
           break;
 
         case MAP_LN2:

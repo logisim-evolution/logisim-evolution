@@ -24,12 +24,12 @@ import com.cburch.logisim.std.memory.Register;
 import com.cburch.logisim.util.AlphanumComparator;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LocaleListener;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
-import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,7 +38,7 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   private static final long serialVersionUID = 1L;
   private static final HashMap<String, Component> registers = new HashMap<>();
   private final JPanel panel = new JPanel(new GridBagLayout());
-  private final GridBagConstraints constraints = new GridBagConstraints();
+  private final GridBagConstraints gbc = new GridBagConstraints();
   private final Project proj;
 
   public RegTabContent(Frame frame) {
@@ -80,37 +80,38 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     col2.setColor(Color.LIGHT_GRAY);
     col3.setColor(Color.LIGHT_GRAY);
 
-    constraints.fill = GridBagConstraints.HORIZONTAL;
-    constraints.anchor = GridBagConstraints.FIRST_LINE_START;
-    constraints.ipady = 2;
-    constraints.weighty = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+    gbc.ipady = 2;
+    gbc.weighty = 0;
 
     var y = 0;
-    constraints.gridy = y;
-    constraints.gridx = 0;
-    constraints.weightx = 0.3;
-    panel.add(col1, constraints);
-    constraints.gridx++;
-    constraints.weightx = 0.5;
-    panel.add(col2, constraints);
-    constraints.gridx++;
-    constraints.weightx = 0.2;
-    panel.add(col3, constraints);
+    gbc.gridy = y;
+    gbc.gridx = 0;
+    gbc.weightx = 0.3;
+    panel.add(col1, gbc);
+    gbc.gridx++;
+    gbc.weightx = 0.5;
+    panel.add(col2, gbc);
+    gbc.gridx++;
+    gbc.weightx = 0.2;
+    panel.add(col3, gbc);
     y++;
 
     if (!registers.isEmpty()) {
-      final var keys = registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
+      final var keys = registers.keySet().stream().sorted(new AlphanumComparator()).toList();
       for (final var key : keys) {
-        constraints.gridy = y;
-        constraints.gridx = 0;
+        gbc.gridy = y;
+        gbc.gridx = 0;
         final var circuitName = key.split("/")[0];
-        panel.add(new MyLabel(circuitName, Font.ITALIC, true), constraints);
-        constraints.gridx++;
+        panel.add(new MyLabel(circuitName, Font.ITALIC, true), gbc);
+        gbc.gridx++;
         final var registerName = key.split("/")[1];
-        panel.add(new MyLabel(registerName), constraints);
-        constraints.gridx++;
+        panel.add(new MyLabel(registerName), gbc);
+        gbc.gridx++;
         final var selReg = registers.get(key);
         var mainCircState = proj.getCircuitState();
+        if (mainCircState == null) continue;
         while (mainCircState.getParentState() != null) { // Get the main circuit
           mainCircState = mainCircState.getParentState();
         }
@@ -119,18 +120,18 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
         if (val != null) {
           final var hexLabel = new MyLabel(val.toHexString());
           hexLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, hexLabel.getFont().getSize()));
-          panel.add(hexLabel, constraints);
+          panel.add(hexLabel, gbc);
         } else {
-          panel.add(new MyLabel("-"), constraints);
+          panel.add(new MyLabel("-"), gbc);
         }
         y++;
       }
     }
-    constraints.weighty = 1;
-    constraints.gridy++;
-    constraints.gridx = 0;
-    constraints.weightx = 1;
-    panel.add(new MyLabel(""), constraints);
+    gbc.weighty = 1;
+    gbc.gridy++;
+    gbc.gridx = 0;
+    gbc.weightx = 1;
+    panel.add(new MyLabel(""), gbc);
     panel.validate();
   }
 

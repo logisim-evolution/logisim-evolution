@@ -31,7 +31,9 @@ public class MessageBox {
 
     if (description.contains("\n") || description.length() > 60) {
       var lines = 1;
-      for (var pos = description.indexOf('\n'); pos >= 0; pos = description.indexOf('\n', pos + 1)) {
+      for (var pos = description.indexOf('\n');
+          pos >= 0;
+          pos = description.indexOf('\n', pos + 1)) {
         lines++;
       }
       lines = Math.max(4, Math.min(lines, 7));

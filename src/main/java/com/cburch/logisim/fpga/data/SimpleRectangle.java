@@ -112,5 +112,4 @@ public class SimpleRectangle {
     }
     g1.dispose();
   }
-
 }

@@ -308,9 +308,7 @@ public class TableSorter extends AbstractTableModel {
             try {
               // make the comparison
               retVal = m.invoke(o1, o2);
-            } catch (IllegalAccessException e) {
-              throw new ClassCastException();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
               throw new ClassCastException();
             }
 
@@ -325,7 +323,8 @@ public class TableSorter extends AbstractTableModel {
 
             return i.getClass().cast(retVal).intValue();
           };
-  public static final Comparator<Object> LEXICAL_COMPARATOR = (o1, o2) -> o1.toString().compareTo(o2.toString());
+  public static final Comparator<Object> LEXICAL_COMPARATOR =
+      Comparator.comparing(Object::toString);
 
   protected TableModel tableModel;
 

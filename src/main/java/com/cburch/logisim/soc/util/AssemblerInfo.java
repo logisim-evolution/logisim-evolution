@@ -21,10 +21,9 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
 import com.cburch.logisim.util.StringGetter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -101,27 +100,14 @@ public class AssemblerInfo {
           i++;
           if (i < str.length()) {
             char kar = str.charAt(i);
-            byte val = 0;
-            switch (kar) {
-              case 'b':
-                val = 8;
-                break;
-              case 't':
-                val = 9;
-                break;
-              case 'n':
-                val = 10;
-                break;
-              case 'f':
-                val = 12;
-                break;
-              case 'r':
-                val = 13;
-                break;
-              default:
-                val = (byte) kar;
-                break;
-            }
+            byte val = switch (kar) {
+              case 'b' -> 8;
+              case 't' -> 9;
+              case 'n' -> 10;
+              case 'f' -> 12;
+              case 'r' -> 13;
+              default -> (byte) kar;
+            };
             data.put(sectionEnd, val);
             sectionEnd++;
           }
@@ -258,21 +244,11 @@ public class AssemblerInfo {
     for (var i = 0; i < tokens.size(); i++) {
       final var asm = tokens.get(i);
       switch (asm.getType()) {
-        case AssemblerToken.ASM_INSTRUCTION:
-          i += handleAsmInstructions(tokens, i, asm, defines);
-          break;
-        case AssemblerToken.LABEL:
-          handleLabels(labels, asm);
-          break;
-        case AssemblerToken.INSTRUCTION:
-          i += handleInstruction(tokens, i, asm);
-          break;
-        case AssemblerToken.MACRO:
-          i += handleMacros(tokens, i, asm, macros);
-          break;
-        default:
-          errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
-          break;
+        case AssemblerToken.ASM_INSTRUCTION -> i += handleAsmInstructions(tokens, i, asm, defines);
+        case AssemblerToken.LABEL -> handleLabels(labels, asm);
+        case AssemblerToken.INSTRUCTION -> i += handleInstruction(tokens, i, asm);
+        case AssemblerToken.MACRO -> i += handleMacros(tokens, i, asm, macros);
+        default -> errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
       }
     }
     if (!errors.isEmpty()) return;
@@ -379,15 +355,9 @@ public class AssemblerInfo {
     for (int i = 0; i < macroTokens.size(); i++) {
       final var asm = macroTokens.get(i);
       switch (asm.getType()) {
-        case AssemblerToken.INSTRUCTION:
-          i += handleInstruction(macroTokens, i, asm);
-          break;
-        case AssemblerToken.MACRO:
-          i += handleMacros(macroTokens, i, asm, macros);
-          break;
-        default:
-          errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
-          break;
+        case AssemblerToken.INSTRUCTION -> i += handleInstruction(macroTokens, i, asm);
+        case AssemblerToken.MACRO -> i += handleMacros(macroTokens, i, asm, macros);
+        default -> errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
       }
     }
     return skip;

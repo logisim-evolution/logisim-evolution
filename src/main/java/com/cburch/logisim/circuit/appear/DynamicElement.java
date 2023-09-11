@@ -106,7 +106,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
           throw new IllegalArgumentException("Bad path element: " + ss);
         final var x = Integer.parseInt(ss.substring(p + 1, c).trim());
         final var y = Integer.parseInt(ss.substring(c + 1, e).trim());
-        final var loc = Location.create(x, y);
+        final var loc = Location.create(x, y, false);
         final var name = unescape(ss.substring(0, p));
         var circ = circuit;
         if (i > 0) circ = ((SubcircuitFactory) elt[i - 1].getFactory()).getSubcircuit();
@@ -174,7 +174,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   }
 
   public Location getLocation() {
-    return Location.create(bounds.getX(), bounds.getY());
+    return Location.create(bounds.getX(), bounds.getY(), false);
   }
 
   @Override

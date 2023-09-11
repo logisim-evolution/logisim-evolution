@@ -355,24 +355,25 @@ public class PlaRomData implements InstanceData {
       row = node / getInputs();
       column = node - row * getInputs();
       switch (value) {
-        case 0:
+        case 0 -> {
           // none selected
           inputAnd[row][column * 2] = false;
           inputAnd[row][column * 2 + 1] = false;
-          break;
-        case 1:
+        }
+        case 1 -> {
           // not selected
           inputAnd[row][column * 2] = true;
           inputAnd[row][column * 2 + 1] = false;
-          break;
-        case 2:
+        }
+        case 2 -> {
           // normal input selected
           inputAnd[row][column * 2] = false;
           inputAnd[row][column * 2 + 1] = true;
-          break;
-        default:
+        }
+        default -> {
           System.err.println("PlaRom: Error in saved data ");
           return;
+        }
       }
     } else if (node < getInputs() * getAnd() + getOutputs() * getAnd()) {
       // second matrix
@@ -380,16 +381,14 @@ public class PlaRomData implements InstanceData {
       row = node / getOutputs();
       column = node - row * getOutputs();
       switch (value) {
-        case 0:
-          // not selected
-          andOutput[row][column] = false;
-          break;
-        case 1:
-          andOutput[row][column] = true;
-          break;
-        default:
+        case 0 ->
+            // not selected
+            andOutput[row][column] = false;
+        case 1 -> andOutput[row][column] = true;
+        default -> {
           System.err.println("PlaRom: Error in saved data 2");
           return;
+        }
       }
     }
   }

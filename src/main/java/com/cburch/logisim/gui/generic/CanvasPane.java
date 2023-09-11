@@ -77,7 +77,8 @@ public class CanvasPane extends JScrollPane {
     return new Dimension(width, height);
   }
 
-  public int supportScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+  public int supportScrollableBlockIncrement(
+      Rectangle visibleRect, int orientation, int direction) {
     final var unit = supportScrollableUnitIncrement(visibleRect, orientation, direction);
     return (direction == SwingConstants.VERTICAL)
         ? visibleRect.height / unit * unit
@@ -146,9 +147,11 @@ public class CanvasPane extends JScrollPane {
           zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
       } else if (mwe.isShiftDown()) {
-        getHorizontalScrollBar().setValue(scrollValue(getHorizontalScrollBar(), mwe.getWheelRotation()));
+        getHorizontalScrollBar()
+            .setValue(scrollValue(getHorizontalScrollBar(), mwe.getWheelRotation()));
       } else {
-        getVerticalScrollBar().setValue(scrollValue(getVerticalScrollBar(), mwe.getWheelRotation()));
+        getVerticalScrollBar()
+            .setValue(scrollValue(getVerticalScrollBar(), mwe.getWheelRotation()));
       }
     }
 

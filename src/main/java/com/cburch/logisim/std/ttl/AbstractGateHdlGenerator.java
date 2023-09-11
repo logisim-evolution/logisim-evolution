@@ -38,8 +38,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       myPorts
           .add(Port.INPUT, String.format("gateA%d", gate), 1, inindex1)
           .add(Port.OUTPUT, String.format("gateO%d", gate), 1, outindex);
-      if (!isInverter)
-        myPorts.add(Port.INPUT, String.format("gateB%d", gate), 1, inindex2);
+      if (!isInverter) myPorts.add(Port.INPUT, String.format("gateB%d", gate), 1, inindex2);
     }
   }
 

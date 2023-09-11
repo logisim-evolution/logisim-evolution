@@ -7,7 +7,6 @@
  * This is free software released under GNU GPLv3 license
  */
 
-
 /* This file is adopted from the MIPS.jar library by
  * Martin Dybdal <dybber@dybber.dk> and
  * Anders Boesen Lindbo Larsen <abll@diku.dk>.
@@ -35,6 +34,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -50,10 +50,10 @@ import javax.swing.JPopupMenu;
 
 class Pla extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "PLA";
 
@@ -67,8 +67,6 @@ class Pla extends InstanceFactory {
   static final Attribute<PlaTable> ATTR_TABLE = new TruthTableAttribute();
 
   public static final InstanceFactory FACTORY = new Pla();
-
-  private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
@@ -262,12 +260,7 @@ class Pla extends InstanceFactory {
     int w = bds.getWidth();
     int h = bds.getHeight();
 
-    if (!ghost && painter.shouldDrawColor()) {
-      g.setColor(BACKGROUND_COLOR);
-      g.fillRect(x, y, w, h);
-    }
-
-    if (!ghost) g.setColor(Color.BLACK);
+    if (!ghost) g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x, y, bds.getWidth(), bds.getHeight());
 

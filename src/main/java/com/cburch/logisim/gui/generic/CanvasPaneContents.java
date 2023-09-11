@@ -17,20 +17,20 @@ import javax.swing.Scrollable;
 public interface CanvasPaneContents extends Scrollable {
   Dimension getPreferredScrollableViewportSize();
 
-  int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction);
+  int getScrollableBlockIncrement(final Rectangle visibleRect, final int orientation, final int direction);
 
   boolean getScrollableTracksViewportHeight();
 
   boolean getScrollableTracksViewportWidth();
 
   @Override
-  int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction);
+  int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction);
 
   void recomputeSize();
 
-  void setCanvasPane(CanvasPane pane);
+  void setCanvasPane(final CanvasPane pane);
 
-  void addMouseWheelListener(MouseWheelListener listener);
+  void addMouseWheelListener(final MouseWheelListener listener);
 
   void center();
 }

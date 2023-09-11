@@ -13,172 +13,107 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Simulator;
 
-class TickCounter implements Simulator.Listener {
-  private static final int QUEUE_LENGTH = 1000;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
-  private final long[] queueTimes;
-  private final double[] queueRates;
-  private int queueStart;
-  private int queueSize;
-  private double tickFrequency;
+public class TickCounter implements Simulator.Listener {
+  private final DecimalFormat formatter;
+  private Simulator simulator;
+  private long tickCount = 0;
+  private long startTime;
+  private boolean useKiloHertz = false;
+  private double previousFrequency = 0.0;
+  private long elapsedTimeSinceLastUnitUpdate = 0;
+  static final int NANOSECONDS_PER_SECONDS = 1_000_000_000;
+  static final int UNIT_UPDATE_THRESHOLD_NANOSECONDS = NANOSECONDS_PER_SECONDS / 2;
+  static final int TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION = 1000;
+  static final int WEIGHT_REDUCTION_TICKS_COUNT = TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION / 2;
 
   public TickCounter() {
-    queueTimes = new long[QUEUE_LENGTH];
-    queueRates = new double[QUEUE_LENGTH];
-    queueSize = 0;
+    clear();
+    formatter = new DecimalFormat("0.00");
+    formatter.setRoundingMode(RoundingMode.HALF_UP);
   }
 
   public void clear() {
-    queueSize = 0;
+    // If we know the requested frequency, let's initialize the counts to this frequency.
+    // It provides a nicer effect at low frequencies, and doesn't hurt at high frequencies.
+    if (simulator != null) {
+      final var tickPeriodNanoseconds = NANOSECONDS_PER_SECONDS / simulator.getTickFrequency();
+      tickCount = 12; // We'll set the frequency as if it happened during 12 ticks already.
+      startTime = System.nanoTime() - (long) (tickCount * tickPeriodNanoseconds);
+    } else {
+      tickCount = 0;
+      startTime = System.nanoTime();
+    }
   }
 
   public String getTickRate() {
-    int size = queueSize;
-    if (size <= 1) {
+    // Don't compute the clock frequency if simulation is manual.
+    if (simulator == null || !simulator.isAutoTicking()) {
       return "";
+    }
+
+    final var currentFrequency = simulator.getTickFrequency();
+
+    // Reset history when the user changes the desired simulation frequency.
+    if (previousFrequency != currentFrequency) {
+      previousFrequency = currentFrequency;
+      clear();
+    }
+
+    final var elapsedTime = System.nanoTime() - startTime;
+
+    // If we didn't have any elapsed time we can't compute a frequency.
+    if (elapsedTime == 0) {
+      return "";
+    }
+
+    // If we didn't have any ticks we can't compute a frequency.
+    if (tickCount < 1) {
+      return "";
+    }
+
+    final var ticksPerNanoseconds = (double) tickCount / elapsedTime;
+    final var fullCyclesPerSeconds = NANOSECONDS_PER_SECONDS / 2.0 * ticksPerNanoseconds; // 2 ticks per cycles
+    elapsedTimeSinceLastUnitUpdate += elapsedTime;
+
+    // If time has come, update the frequency unit.
+    if (elapsedTimeSinceLastUnitUpdate > UNIT_UPDATE_THRESHOLD_NANOSECONDS) {
+      useKiloHertz = (fullCyclesPerSeconds > 1000.0);
+      elapsedTimeSinceLastUnitUpdate = 0;
+    }
+
+    // If we accumulated a lot of ticks then lets reduce the weight of the past.
+    if (tickCount > TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION) {
+      tickCount -= WEIGHT_REDUCTION_TICKS_COUNT;
+      final var nanoseconds = WEIGHT_REDUCTION_TICKS_COUNT / ticksPerNanoseconds;
+      startTime += (long) nanoseconds;
+    }
+
+    if (useKiloHertz) {
+      return S.get("tickRateKHz", formatter.format(fullCyclesPerSeconds / 1000.0));
     } else {
-      int maxSize = queueTimes.length;
-      int start = queueStart;
-      int end = start + size - 1;
-      if (end >= maxSize) {
-        end -= maxSize;
-      }
-      double rate = queueRates[end];
-      if (rate <= 0 || rate == Double.MAX_VALUE) {
-        return "";
-      } else {
-        // Figure out the minimum over the previous 100 readings, and
-        // base our rounding off of that. This is meant to provide some
-        // stability in the rounding - we don't want the result to
-        // oscillate rapidly between 990 Hz and 1 KHz - it's better for
-        // it to oscillate between 990 Hz and 1005 Hz.
-        int baseLen = size;
-        if (baseLen > 100) baseLen = 100;
-        int baseStart = end - baseLen + 1;
-        double min = rate;
-        if (baseStart < 0) {
-          baseStart += maxSize;
-          for (int i = baseStart + maxSize; i < maxSize; i++) {
-            double x = queueRates[i];
-            if (x < min) min = x;
-          }
-          for (int i = 0; i < end; i++) {
-            double x = queueRates[i];
-            if (x < min) min = x;
-          }
-        } else {
-          for (int i = baseStart; i < end; i++) {
-            double x = queueRates[i];
-            if (x < min) min = x;
-          }
-        }
-        if (min < 0.9 * rate) min = rate;
-
-        // report the full-cycle frequency, not the half-cycle tick rate
-        min /= 2;
-        rate /= 2;
-
-        if (min >= 1000.0) {
-          return S.get("tickRateKHz", roundString(rate / 1000.0, min / 1000.0));
-        } else {
-          return S.get("tickRateHz", roundString(rate, min));
-        }
-      }
-    }
-  }
-
-  public void updateSimulator(Simulator.Event e) {
-    Simulator sim = e.getSource();
-    if (!sim.isAutoTicking()) {
-      queueSize = 0;
-    }
-  }
-
-  private String roundString(double val, double min) {
-    // round so we have only three significant digits
-    int i = 0; // invariant: a = 10^i
-    double a = 1.0; // invariant: a * bm == min, a is power of 10
-    double bm = min;
-    double bv = val;
-    if (bm >= 1000) {
-      while (bm >= 1000) {
-        i++;
-        a *= 10;
-        bm /= 10;
-        bv /= 10;
-      }
-    } else {
-      while (bm < 100) {
-        i--;
-        a /= 10;
-        bm *= 10;
-        bv *= 10;
-      }
-    }
-
-    // Examples:
-    // 2.34: i = -2, a = .2, b = 234
-    // 20.1: i = -1, a = .1, b = 201
-
-    if (i >= 0) { // nothing after decimal point
-      return "" + (int) Math.round(a * Math.round(bv));
-    } else { // keep some after decimal point
-      return String.format("%." + (-i) + "f", a * bv);
+      return S.get("tickRateHz", formatter.format(fullCyclesPerSeconds));
     }
   }
 
   public void simulatorStateChanged(Simulator.Event e) {
-    updateSimulator(e);
+    simulator = e.getSource();
+    clear();
   }
 
   @Override
   public void simulatorReset(Simulator.Event e) {
-    updateSimulator(e);
+    simulator = e.getSource();
+    clear();
   }
 
   @Override
   public void propagationCompleted(Simulator.Event e) {
     if (e.didTick()) {
-      Simulator sim = e.getSource();
-      if (!sim.isAutoTicking()) {
-        queueSize = 0;
-      } else {
-        double freq = sim.getTickFrequency();
-        if (freq != tickFrequency) {
-          queueSize = 0;
-          tickFrequency = freq;
-        }
-
-        int curSize = queueSize;
-        int maxSize = queueTimes.length;
-        int start = queueStart;
-        int end;
-        if (curSize < maxSize) { // new sample is added into queue
-          end = start + curSize;
-          if (end >= maxSize) {
-            end -= maxSize;
-          }
-          curSize++;
-          queueSize = curSize;
-        } else { // new sample replaces oldest value in queue
-          end = queueStart;
-          if (end + 1 >= maxSize) {
-            queueStart = 0;
-          } else {
-            queueStart = end + 1;
-          }
-        }
-        long startTime = queueTimes[start];
-        long endTime = System.currentTimeMillis();
-        double rate;
-        if (startTime == endTime || curSize <= 1) {
-          rate = Double.MAX_VALUE;
-        } else {
-          rate = 1000.0 * (curSize - 1) / (endTime - startTime);
-        }
-        queueTimes[end] = endTime;
-        queueRates[end] = rate;
-      }
+      simulator = e.getSource();
+      tickCount++;
     }
   }
 }

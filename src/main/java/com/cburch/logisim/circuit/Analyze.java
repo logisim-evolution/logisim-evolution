@@ -271,7 +271,7 @@ public class Analyze {
     }
 
     // Process first the pins that the user has given labels.
-    final var pinList = new ArrayList<Instance>(ret.keySet());
+    final var pinList = new ArrayList<>(ret.keySet());
     final var labelsTaken = new HashSet<String>();
     for (final var pin : pinList) {
       var label = pin.getAttributeSet().getValue(StdAttr.LABEL);

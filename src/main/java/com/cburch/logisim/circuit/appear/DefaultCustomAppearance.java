@@ -85,19 +85,14 @@ public class DefaultCustomAppearance {
     final var rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     ret.add(rect);
-    ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
+    ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay, true)));
     return ret;
   }
 
   private static void placePins(
-      List<CanvasObject> dest,
-      List<Instance> pins,
-      int x,
-      int y,
-      int dX,
-      int dY) {
+      List<CanvasObject> dest, List<Instance> pins, int x, int y, int dX, int dY) {
     for (final var pin : pins) {
-      dest.add(new AppearancePort(Location.create(x, y), pin));
+      dest.add(new AppearancePort(Location.create(x, y, true), pin));
       x += dX;
       y += dY;
     }

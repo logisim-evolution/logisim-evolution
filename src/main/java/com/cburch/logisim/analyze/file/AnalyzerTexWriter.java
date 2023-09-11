@@ -189,14 +189,11 @@ public class AnalyzerTexWriter {
   }
 
   private static String getGrayCode(int nrVars) {
-    switch (nrVars) {
-      case 2:
-        return "{0/00,1/01,2/11,3/10}";
-      case 3:
-        return "{0/000,1/001,2/011,3/010,4/110,5/111,6/101,7/100}";
-      default:
-        return "{0/0,1/1}";
-    }
+    return switch (nrVars) {
+      case 2 -> "{0/00,1/01,2/11,3/10}";
+      case 3 -> "{0/000,1/001,2/011,3/010,4/110,5/111,6/101,7/100}";
+      default -> "{0/0,1/1}";
+    };
   }
 
   private static String getNumberedHeader(String name, AnalyzerModel model) {

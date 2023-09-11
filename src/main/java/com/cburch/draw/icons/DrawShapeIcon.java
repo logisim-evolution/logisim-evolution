@@ -39,20 +39,19 @@ public class DrawShapeIcon extends BaseIcon {
     final var height = scale(points[(state - 1) * 2 + 1]);
 
     switch (shapeType) {
-      case RECTANGLE:
+      case RECTANGLE -> {
         gfx.setColor(Color.BLUE.darker());
         gfx.drawRect(x, y, width, height);
-        break;
-      case ROUNDED_RECTANGLE:
+      }
+      case ROUNDED_RECTANGLE -> {
         gfx.setColor(Color.RED.darker());
         // FIXME: rounded rect shape looks almost as regular rectangle on smaller zoom factor
         gfx.drawRoundRect(x, y, width, height, y, y);
-        break;
-      case ELIPSE:
-      default:
+      }
+      default -> {
         gfx.setColor(Color.BLUE);
         gfx.drawOval(x, y, width, height);
-        break;
+      }
     }
 
     gfx.setColor(Color.GRAY);

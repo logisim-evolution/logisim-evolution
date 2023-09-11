@@ -47,10 +47,8 @@ public class RegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   @Override
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
-    final var map = new TreeMap<String, String>();
-    map.putAll(super.getPortMap(Nets, MapInfo));
-    if (MapInfo instanceof netlistComponent && Hdl.isVhdl()) {
-      final var comp = (netlistComponent) MapInfo;
+    final var map = new TreeMap<String, String>(super.getPortMap(Nets, MapInfo));
+    if (MapInfo instanceof final netlistComponent comp && Hdl.isVhdl()) {
       final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
         final var inMap = map.get("d");

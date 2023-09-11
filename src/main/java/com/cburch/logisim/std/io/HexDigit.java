@@ -195,21 +195,14 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
         segs = 0x1111000;
         break;
       case -1:
-        switch (NO_DATA_DISPLAY) {
-          case H:
-            segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_G_MASK; // a "H" for static icon
-            break;
-          case U:
-            segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_D_MASK;  // a "U" for static icon
-            break;
-          case u:
-            segs = SEG_C_MASK | SEG_E_MASK | SEG_D_MASK;  // a "u" for static icon
-            break;
-          case BLANK:
-          default:
-            segs = 0;
-            break;
-        }
+        segs = switch (NO_DATA_DISPLAY) {
+          case H -> SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK
+              | SEG_G_MASK; // a "H" for static icon
+          case U -> SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK
+              | SEG_D_MASK;  // a "U" for static icon
+          case u -> SEG_C_MASK | SEG_E_MASK | SEG_D_MASK;  // a "u" for static icon
+          default -> 0;
+        };
 
         break;
       default:

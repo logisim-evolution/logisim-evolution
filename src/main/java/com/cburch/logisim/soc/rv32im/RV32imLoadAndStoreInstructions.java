@@ -106,20 +106,16 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
         if (transactionHasError(trans)) return false;
         int toBeLoaded = trans.getReadData();
         switch (operation) {
-          case INSTR_LBU:
-            toBeLoaded &= 0xFF;
-            break;
-          case INSTR_LB:
+          case INSTR_LBU -> toBeLoaded &= 0xFF;
+          case INSTR_LB -> {
             toBeLoaded <<= 24;
             toBeLoaded >>= 24;
-            break;
-          case INSTR_LHU:
-            toBeLoaded &= 0xFFFF;
-            break;
-          case INSTR_LH:
+          }
+          case INSTR_LHU -> toBeLoaded &= 0xFFFF;
+          case INSTR_LH -> {
             toBeLoaded <<= 16;
             toBeLoaded >>= 16;
-            break;
+          }
         }
         cpuState.writeRegister(destination, toBeLoaded);
         return true;

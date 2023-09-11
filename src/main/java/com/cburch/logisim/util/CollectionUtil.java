@@ -73,16 +73,12 @@ public final class CollectionUtil {
     return new UnionSet<>(a, b);
   }
 
-  /**
-   * Checks if given collection is either null or empty.
-   */
+  /** Checks if given collection is either null or empty. */
   public static boolean isNullOrEmpty(Collection collection) {
     return collection == null || collection.isEmpty();
   }
 
-  /**
-   * Checks if given collection is not empty and not null.
-   */
+  /** Checks if given collection is not empty and not null. */
   public static boolean isNotEmpty(Collection collection) {
     return collection != null && !collection.isEmpty();
   }

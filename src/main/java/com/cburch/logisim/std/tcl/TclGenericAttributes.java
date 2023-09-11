@@ -36,7 +36,8 @@ public class TclGenericAttributes extends TclComponentAttributes {
     synchronized (windowRegistry) {
       var ret = windowRegistry.get(value);
       if (ret == null) {
-        ret = (source instanceof Frame)
+        ret =
+            (source instanceof Frame)
                 ? new HdlContentEditor((Frame) source, proj, value)
                 : new HdlContentEditor((Dialog) source, proj, value);
         windowRegistry.put(value, ret);
@@ -48,7 +49,8 @@ public class TclGenericAttributes extends TclComponentAttributes {
   private static final List<Attribute<?>> attributes =
       Arrays.asList(CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
-  private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<>();
+  private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
+      new WeakHashMap<>();
 
   private VhdlContentComponent vhdlEntitiy;
 

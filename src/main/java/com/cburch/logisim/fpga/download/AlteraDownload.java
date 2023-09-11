@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -256,7 +255,7 @@ public class AlteraDownload implements VendorDownload {
         }
       }
     }
-    final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, rootNetList, boardInfo);
+    final var ledArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
     for (final var key : ledArrayMap.keySet())
       contents.add("set_location_assignment {{1}} -to {{2}}", ledArrayMap.get(key), key);
     return contents.getWithIndent(4);

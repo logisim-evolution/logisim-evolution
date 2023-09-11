@@ -30,6 +30,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -42,10 +43,10 @@ import javax.sound.sampled.Clip;
 
 public class Buzzer extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Buzzer";
 
@@ -59,31 +60,32 @@ public class Buzzer extends InstanceFactory {
   private static final AttributeOption dHz = new AttributeOption("dHz", S.getter("buzzerUnitDhz"));
   private static final Attribute<AttributeOption> FREQUENCY_MEASURE =
       Attributes.forOption(
-          "freq_measure", S.getter("buzzerFrequecy"), new AttributeOption[]{Hz, dHz});
+          "freq_measure", S.getter("buzzerFrequecy"), new AttributeOption[] {Hz, dHz});
 
-  private static final AttributeOption Sine = new AttributeOption(BuzzerWaveform.Sine,
-      S.getter("buzzerSine"));
-  private static final AttributeOption Square = new AttributeOption(BuzzerWaveform.Square,
-      S.getter("buzzerSquare"));
-  private static final AttributeOption Triangle = new AttributeOption(BuzzerWaveform.Triangle,
-      S.getter("buzzerTriangle"));
-  private static final AttributeOption Sawtooth = new AttributeOption(BuzzerWaveform.Sawtooth,
-      S.getter("buzzerSawtooth"));
-  private static final AttributeOption Noise = new AttributeOption(BuzzerWaveform.Noise,
-      S.getter("buzzerNoise"));
+  private static final AttributeOption Sine =
+      new AttributeOption(BuzzerWaveform.Sine, S.getter("buzzerSine"));
+  private static final AttributeOption Square =
+      new AttributeOption(BuzzerWaveform.Square, S.getter("buzzerSquare"));
+  private static final AttributeOption Triangle =
+      new AttributeOption(BuzzerWaveform.Triangle, S.getter("buzzerTriangle"));
+  private static final AttributeOption Sawtooth =
+      new AttributeOption(BuzzerWaveform.Sawtooth, S.getter("buzzerSawtooth"));
+  private static final AttributeOption Noise =
+      new AttributeOption(BuzzerWaveform.Noise, S.getter("buzzerNoise"));
   private static final Attribute<AttributeOption> WAVEFORM =
       Attributes.forOption(
-          "waveform", S.getter("buzzerWaveform"),
-          new AttributeOption[]{Sine, Square, Triangle, Sawtooth, Noise});
-  private static final AttributeOption C_BOTH = new AttributeOption(3,
-      S.getter("buzzerChannelBoth"));
-  private static final AttributeOption C_LEFT = new AttributeOption(1,
-      S.getter("buzzerChannelLeft"));
-  private static final AttributeOption C_RIGHT = new AttributeOption(2,
-      S.getter("buzzerChannelRight"));
+          "waveform",
+          S.getter("buzzerWaveform"),
+          new AttributeOption[] {Sine, Square, Triangle, Sawtooth, Noise});
+  private static final AttributeOption C_BOTH =
+      new AttributeOption(3, S.getter("buzzerChannelBoth"));
+  private static final AttributeOption C_LEFT =
+      new AttributeOption(1, S.getter("buzzerChannelLeft"));
+  private static final AttributeOption C_RIGHT =
+      new AttributeOption(2, S.getter("buzzerChannelRight"));
   private static final Attribute<AttributeOption> CHANNEL =
       Attributes.forOption(
-          "channel", S.getter("buzzerChannel"), new AttributeOption[]{C_BOTH, C_LEFT, C_RIGHT});
+          "channel", S.getter("buzzerChannel"), new AttributeOption[] {C_BOTH, C_LEFT, C_RIGHT});
   private static final Attribute<Integer> SMOOTH_LEVEL =
       Attributes.forIntegerRange("smooth_level", S.getter("buzzerSmoothLevel"), 0, 10);
   private static final Attribute<Integer> SMOOTH_WIDTH =
@@ -92,27 +94,30 @@ public class Buzzer extends InstanceFactory {
   public Buzzer() {
     super(_ID, S.getter("buzzerComponent"));
     setAttributes(
-        new Attribute[]{
-            StdAttr.FACING,
-            StdAttr.SELECT_LOC,
-            FREQUENCY_MEASURE,
-            VOLUME_WIDTH,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            WAVEFORM,
-            CHANNEL,
-            SMOOTH_LEVEL,
-            SMOOTH_WIDTH
+        new Attribute[] {
+          StdAttr.FACING,
+          StdAttr.SELECT_LOC,
+          FREQUENCY_MEASURE,
+          VOLUME_WIDTH,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          WAVEFORM,
+          CHANNEL,
+          SMOOTH_LEVEL,
+          SMOOTH_WIDTH
         },
-        new Object[]{
-            Direction.WEST,
-            StdAttr.SELECT_BOTTOM_LEFT,
-            Hz,
-            BitWidth.create(7),
-            "",
-            StdAttr.DEFAULT_LABEL_FONT,
-            Sine,
-            C_BOTH, 2, 2});
+        new Object[] {
+          Direction.WEST,
+          StdAttr.SELECT_BOTTOM_LEFT,
+          Hz,
+          BitWidth.create(7),
+          "",
+          StdAttr.DEFAULT_LABEL_FONT,
+          Sine,
+          C_BOTH,
+          2,
+          2
+        });
     setFacingAttribute(StdAttr.FACING);
     setIconName("buzzer.gif");
   }
@@ -165,7 +170,10 @@ public class Buzzer extends InstanceFactory {
       updateports(instance);
     } else if (attr == VOLUME_WIDTH || attr == StdAttr.SELECT_LOC) {
       updateports(instance);
-    } else if (attr == WAVEFORM || attr == CHANNEL || attr == SMOOTH_LEVEL || attr == SMOOTH_WIDTH) {
+    } else if (attr == WAVEFORM
+        || attr == CHANNEL
+        || attr == SMOOTH_LEVEL
+        || attr == SMOOTH_WIDTH) {
       instance.fireInvalidated();
     }
   }
@@ -190,7 +198,7 @@ public class Buzzer extends InstanceFactory {
     g.fillOval(x, y, 40, 40);
     g.setColor(Color.GRAY);
     GraphicsUtil.switchToWidth(g, 2);
-    for (byte k = 8; k <= 16; k += 4) {
+    for (var k = 8; k <= 16; k += 4) {
       g.drawOval(x + 20 - k, y + 20 - k, k * 2, k * 2);
     }
     GraphicsUtil.switchToWidth(g, 2);
@@ -199,6 +207,7 @@ public class Buzzer extends InstanceFactory {
     g.drawLine(x + width / 2, y + 4, x + width / 2, y + 36);
     g.setColor(Color.BLACK);
     g.fillOval(x + 15, y + 15, 10, 10);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawOval(x, y, 40, 40);
     painter.drawPorts();
     painter.drawLabel();
@@ -329,7 +338,6 @@ public class Buzzer extends InstanceFactory {
       Clip clip = null;
       AudioInputStream ais = null;
       var oldfreq = -1;
-      var oldpw = -1;
       try {
         while (isOn.get()) {
           if (updateRequired) {
@@ -345,7 +353,8 @@ public class Buzzer extends InstanceFactory {
               oldfreq = hz;
             }
 
-            // TODO: Computing all those values takes time; it may be interesting to replace this by a LUT
+            // TODO: Computing all those values takes time; it may be interesting to replace this by
+            // a LUT
             var cycle = Math.max(1, sampleRate / hz);
             var values = new double[4 * cycle];
             for (var i = 0; i < values.length; i++) {
@@ -355,15 +364,17 @@ public class Buzzer extends InstanceFactory {
             if (wf != BuzzerWaveform.Sine && smoothLevel > 0 && smoothWidth > 0) {
               var nsig = new double[values.length];
               for (var k = 0; k < smoothLevel; k++) {
-                var sum = 0;
+                double sum = 0.0;
                 for (var i = 0; i < values.length; i++) {
                   if (i > 2 * smoothWidth) {
-                    nsig[i - smoothWidth - 1] = (sum - values[i - smoothWidth - 1]) / (2 * smoothWidth);
+                    nsig[i - smoothWidth - 1] =
+                        (sum - values[i - smoothWidth - 1]) / (2 * smoothWidth);
                     sum -= values[i - 2 * smoothWidth - 1];
                   }
                   sum += values[i];
                 }
-                System.arraycopy(nsig, smoothWidth, values, smoothWidth, values.length - 2 * smoothWidth);
+                System.arraycopy(
+                    nsig, smoothWidth, values, smoothWidth, values.length - 2 * smoothWidth);
               }
             }
 
@@ -385,10 +396,7 @@ public class Buzzer extends InstanceFactory {
               }
             }
 
-            var newAis = new AudioInputStream(
-                new ByteArrayInputStream(buf),
-                af,
-                buf.length);
+            var newAis = new AudioInputStream(new ByteArrayInputStream(buf), af, buf.length);
 
             Clip newClip = AudioSystem.getClip();
             newClip.open(newAis);
@@ -428,5 +436,4 @@ public class Buzzer extends InstanceFactory {
       thread.setName("Sound Thread");
     }
   }
-
 }

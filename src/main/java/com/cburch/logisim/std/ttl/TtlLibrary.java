@@ -20,10 +20,10 @@ import java.util.List;
 
 public class TtlLibrary extends Library {
   /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the library, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * <p>Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "TTL";
 
@@ -57,18 +57,37 @@ public class TtlLibrary extends Library {
       new FactoryDescription(Ttl7474.class, S.getter("TTL7474"), "ttl.gif"),
       new FactoryDescription(Ttl7485.class, S.getter("TTL7485"), "ttl.gif"),
       new FactoryDescription(Ttl7486.class, S.getter("TTL7486"), "ttl.gif"),
+      new FactoryDescription(Ttl7487.class, S.getter("TTL7487"), "ttl.gif"),
       new FactoryDescription(Ttl74125.class, S.getter("TTL74125"), "ttl.gif"),
+      new FactoryDescription(Ttl74138.class, S.getter("TTL74138"), "ttl.gif"),
       new FactoryDescription(Ttl74139.class, S.getter("TTL74139"), "ttl.gif"),
+      new FactoryDescription(Ttl74151.class, S.getter("TTL74151"), "ttl.gif"),
+      new FactoryDescription(Ttl74153.class, S.getter("TTL74153"), "ttl.gif"),
       new FactoryDescription(Ttl74157.class, S.getter("TTL74157"), "ttl.gif"),
       new FactoryDescription(Ttl74158.class, S.getter("TTL74158"), "ttl.gif"),
       new FactoryDescription(Ttl74161.class, S.getter("TTL74161"), "ttl.gif"),
       new FactoryDescription(Ttl74163.class, S.getter("TTL74163"), "ttl.gif"),
+      new FactoryDescription(Ttl74164.class, S.getter("TTL74164"), "ttl.gif"),
       new FactoryDescription(Ttl74165.class, S.getter("TTL74165"), "ttl.gif"),
+      new FactoryDescription(Ttl74166.class, S.getter("TTL74166"), "ttl.gif"),
       new FactoryDescription(Ttl74175.class, S.getter("TTL74175"), "ttl.gif"),
+      new FactoryDescription(Ttl74181.class, S.getter("TTL74181"), "ttl.gif"),
+      new FactoryDescription(Ttl74182.class, S.getter("TTL74182"), "ttl.gif"),
+      new FactoryDescription(Ttl74192.class, S.getter("TTL74192"), "ttl.gif"),
+      new FactoryDescription(Ttl74193.class, S.getter("TTL74193"), "ttl.gif"),
+      new FactoryDescription(Ttl74240.class, S.getter("TTL74240"), "ttl.gif"),
+      new FactoryDescription(Ttl74241.class, S.getter("TTL74241"), "ttl.gif"),
+      new FactoryDescription(Ttl74244.class, S.getter("TTL74244"), "ttl.gif"),
+      new FactoryDescription(Ttl74245.class, S.getter("TTL74245"), "ttl.gif"),
       new FactoryDescription(Ttl74266.class, S.getter("TTL74266"), "ttl.gif"),
       new FactoryDescription(Ttl74273.class, S.getter("TTL74273"), "ttl.gif"),
       new FactoryDescription(Ttl74283.class, S.getter("TTL74283"), "ttl.gif"),
+      new FactoryDescription(Ttl74299.class, S.getter("TTL74299"), "ttl.gif"),
       new FactoryDescription(Ttl74377.class, S.getter("TTL74377"), "ttl.gif"),
+      new FactoryDescription(Ttl74381.class, S.getter("TTL74381"), "ttl.gif"),
+      new FactoryDescription(Ttl74541.class, S.getter("TTL74541"), "ttl.gif"),
+      new FactoryDescription(Ttl74670.class, S.getter("TTL74670"), "ttl.gif"),
+      new FactoryDescription(Ttl747266.class, S.getter("TTL747266"), "ttl.gif"),
   };
 
   static final Attribute<Boolean> VCC_GND =

@@ -50,7 +50,8 @@ public class LayoutThumbnail extends JComponent {
   protected void paintComponent(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
       final var g2 = (Graphics2D) g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     if (circuitState != null) {
@@ -121,7 +122,8 @@ public class LayoutThumbnail extends JComponent {
     }
   }
 
-  public void setCircuit(CircuitState circuitState, Collection<Instance> ports, Collection<Instance> elts) {
+  public void setCircuit(
+      CircuitState circuitState, Collection<Instance> ports, Collection<Instance> elts) {
     this.circuitState = circuitState;
     this.ports = ports;
     this.elts = elts;

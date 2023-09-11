@@ -34,7 +34,8 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.DefaultCaret;
 
-public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListenerContract, BaseWindowListenerContract {
+public class FpgaReportTabbedPane extends JTabbedPane
+    implements BaseMouseListenerContract, BaseWindowListenerContract {
 
   /** */
   private static final long serialVersionUID = 1L;
@@ -113,7 +114,8 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
     panelWarnings.add(textWarnings);
     panelWarnings.setName("Warnings (0)");
     add(panelWarnings, warningsTabIndex);
-    warningsWindow = new FpgaCommanderListWindow("FPGACommander: Warnings", Color.ORANGE, true, warningsList);
+    warningsWindow =
+        new FpgaCommanderListWindow("FPGACommander: Warnings", Color.ORANGE, true, warningsList);
     warningsWindow.setSize(new Dimension(740, 400));
     warningsWindow.addWindowListener(this);
     warningsWindow.getListObject().addMouseListener(this);
@@ -138,7 +140,8 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
     panelErrors.add(textErrors);
     panelErrors.setName("Errors (0)");
     add(panelErrors, errorsTabIndex);
-    errorsWindow = new FpgaCommanderListWindow("FPGACommander: Errors", Color.RED, true, errorsList);
+    errorsWindow =
+        new FpgaCommanderListWindow("FPGACommander: Errors", Color.RED, true, errorsList);
     errorsWindow.addWindowListener(this);
     errorsWindow.setSize(new Dimension(740, 400));
     errorsWindow.getListObject().addMouseListener(this);
@@ -370,7 +373,8 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
               consoleWindow.setVisible(true);
               updateConsoleWindow();
             } else {
-              consoleWindow = new FpgaCommanderTextWindow("FPGACommander: Console", Color.LIGHT_GRAY, false);
+              consoleWindow =
+                  new FpgaCommanderTextWindow("FPGACommander: Console", Color.LIGHT_GRAY, false);
               consoleWindow.setVisible(true);
               updateConsoleWindow();
               consoleWindow.addWindowListener(this);
@@ -394,8 +398,10 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    final var sourceIsWarningsWindow = warningsWindow != null && e.getSource().equals(warningsWindow.getListObject());
-    final var sourceIsErrorsWindow = errorsWindow != null && e.getSource().equals(errorsWindow.getListObject());
+    final var sourceIsWarningsWindow =
+        warningsWindow != null && e.getSource().equals(warningsWindow.getListObject());
+    final var sourceIsErrorsWindow =
+        errorsWindow != null && e.getSource().equals(errorsWindow.getListObject());
     if (e.getSource().equals(errors) || sourceIsErrorsWindow) {
       clearDrcTrace();
       var idx = -1;

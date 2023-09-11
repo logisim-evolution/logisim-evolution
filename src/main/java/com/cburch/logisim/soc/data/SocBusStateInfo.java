@@ -129,8 +129,7 @@ public class SocBusStateInfo extends JDialog
     }
 
     public void clear() {
-      if (trace.size() == 0)
-        return;
+      if (trace.size() == 0) return;
       trace.clear();
       startTraceIndex = 0;
       for (SocBusStateListener l : listeners) l.fireCanged(this);
@@ -142,8 +141,7 @@ public class SocBusStateInfo extends JDialog
         return;
       }
       long nrOfTraces = b.getHeight() / TRACE_HEIGHT;
-      if (nrOfTraces > trace.size())
-        nrOfTraces = trace.size();
+      if (nrOfTraces > trace.size()) nrOfTraces = trace.size();
       int startIndex = trace.size() - 1;
       for (int i = 0; i < nrOfTraces; i++) {
         SocBusTransaction t = trace.get(startIndex - i);
@@ -165,8 +163,7 @@ public class SocBusStateInfo extends JDialog
 
     public SocBusStateTrace getEntry(int index, TraceWindowTableModel model) {
       if (index < 0 || index >= trace.size()) {
-        if (index == 0)
-          return new SocBusStateTrace(null, 0, model);
+        if (index == 0) return new SocBusStateTrace(null, 0, model);
         return null;
       }
       long indx = startTraceIndex + trace.size() - index - 1;
@@ -175,8 +172,7 @@ public class SocBusStateInfo extends JDialog
 
     @Override
     public void destroy() {
-      if (parent != null && parent.isVisible())
-        parent.setVisible(false);
+      if (parent != null && parent.isVisible()) parent.setVisible(false);
       SocBus.MENU_PROVIDER.deregisterBusState(this, instance);
     }
   }
@@ -232,8 +228,7 @@ public class SocBusStateInfo extends JDialog
   }
 
   public void registerSocBusSniffer(SocBusSnifferInterface sniffer) {
-    if (!sniffers.contains(sniffer))
-      sniffers.add(sniffer);
+    if (!sniffers.contains(sniffer)) sniffers.add(sniffer);
   }
 
   public void removeSocBusSniffer(SocBusSnifferInterface sniffer) {
@@ -273,24 +268,21 @@ public class SocBusStateInfo extends JDialog
     if (slaves.isEmpty()) trans.setError(SocBusTransaction.NO_SLAVES_ERROR);
     else if (trans.isReadTransaction()
         && trans.isWriteTransaction()
-        && !trans.isAtomicTransaction()) trans.setError(SocBusTransaction.NONE_ATOMIC_READ_WRITE_ERROR);
-    else {
+        && !trans.isAtomicTransaction()) {
+      trans.setError(SocBusTransaction.NONE_ATOMIC_READ_WRITE_ERROR);
+    } else {
       for (int i = 0; i < slaves.size(); i++) {
         if (slaves.get(i).canHandleTransaction(trans)) {
           nrOfReponders++;
           reponder = i;
         }
       }
-      if (nrOfReponders == 0)
-        trans.setError(SocBusTransaction.NO_RESPONS_ERROR);
-      else if (nrOfReponders != 1)
-        trans.setError(SocBusTransaction.MULTIPLE_SLAVES_ERROR);
-      else
-        slaves.get(reponder).handleTransaction(trans);
+      if (nrOfReponders == 0) trans.setError(SocBusTransaction.NO_RESPONS_ERROR);
+      else if (nrOfReponders != 1) trans.setError(SocBusTransaction.MULTIPLE_SLAVES_ERROR);
+      else slaves.get(reponder).handleTransaction(trans);
     }
     if (!trans.hasError() && !trans.isHidden()) {
-      for (SocBusSnifferInterface sniffer : sniffers)
-        sniffer.sniffTransaction(trans);
+      for (SocBusSnifferInterface sniffer : sniffers) sniffer.sniffTransaction(trans);
     }
     if (!trans.isHidden()) {
       final var data = getRegPropagateState();
@@ -315,8 +307,7 @@ public class SocBusStateInfo extends JDialog
     if (!visible)
       GraphicsUtil.drawCenteredText(g, S.get("SocHiddenForFasterSimulation"), 320, height / 2);
     else {
-      if (info != null)
-        ((SocBusState) info).paint(g, Bounds.create(0, 0, 640, height));
+      if (info != null) ((SocBusState) info).paint(g, Bounds.create(0, 0, 640, height));
     }
     g.dispose();
   }
@@ -332,8 +323,7 @@ public class SocBusStateInfo extends JDialog
   @Override
   public void actionPerformed(ActionEvent e) {
     Object source = e.getSource();
-    if (source == okButton)
-      setVisible(false);
+    if (source == okButton) setVisible(false);
   }
 
   @Override

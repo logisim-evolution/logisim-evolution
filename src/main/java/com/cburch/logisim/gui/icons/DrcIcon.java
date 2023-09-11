@@ -58,13 +58,22 @@ public class DrcIcon extends BaseIcon {
     final var f = g2.getFont().deriveFont(scale((float) getIconWidth() / 3)).deriveFont(Font.BOLD);
     final var t = new TextLayout("DRC", f, g2.getFontRenderContext());
     g2.setColor(Color.BLUE.darker().darker());
-    t.draw(g2, getIconWidth() / 2 - (float) t.getBounds().getCenterX(), getIconHeight() / 2 - (float) t.getBounds().getCenterY());
+    t.draw(
+        g2,
+        getIconWidth() / 2 - (float) t.getBounds().getCenterX(),
+        getIconHeight() / 2 - (float) t.getBounds().getCenterY());
   }
 
   private void paintText(Graphics2D g2, String s) {
-    final var f = g2.getFont().deriveFont(scale((float) getIconWidth() / (float) s.length())).deriveFont(Font.BOLD);
+    final var f =
+        g2.getFont()
+            .deriveFont(scale((float) getIconWidth() / (float) s.length()))
+            .deriveFont(Font.BOLD);
     final var t = new TextLayout(s, f, g2.getFontRenderContext());
     g2.setColor(Color.RED.darker().darker());
-    t.draw(g2, getIconWidth() / 2 - (float) t.getBounds().getCenterX(), getIconHeight() / 2 - (float) t.getBounds().getCenterY());
+    t.draw(
+        g2,
+        getIconWidth() / 2 - (float) t.getBounds().getCenterX(),
+        getIconHeight() / 2 - (float) t.getBounds().getCenterY());
   }
 }

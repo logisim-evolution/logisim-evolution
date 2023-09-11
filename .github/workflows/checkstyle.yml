@@ -8,11 +8,10 @@
 name: "Code style"
 on:
   push:
-    # No need to run on push to "develop" as there should not be any direct pushes.
-    # master is left just for emergency cases.
-    branches: [ master ]
+    # main is left just for emergency cases.
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   analyze_sources:
@@ -31,7 +30,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes that matters for us..."
@@ -47,7 +46,7 @@ jobs:
       run: |
         found="NO"
         [[ ${{ steps.filter.outputs.src }} == 'true' ]] && found="YES"
-        echo "::set-output name=run_checkstyle::${found}"
+        echo "run_checkstyle=${found}" >> $GITHUB_OUTPUT
         echo -e "\n****************************************\n"
         banner "${found}"
         echo -e "****************************************"
@@ -67,13 +66,13 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: "Lint changed files"
       run: |
         # Run CheckStyle
         # https://github.com/checkstyle/checkstyle/releases/
-        CHECKSTYLE_VERSION="9.0"
+        CHECKSTYLE_VERSION="10.3.4"
         JAR="checkstyle-${CHECKSTYLE_VERSION}-all.jar"
         URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/${JAR}"
 
@@ -99,8 +98,8 @@ jobs:
           echo "*********************************************************"
           echo "* FIXME! Code style guide violations detected: ${cnt}"
           echo "*"
-          echo "* For more information about used code style guile see:"
-          echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
+          echo "* For more information about used code style guide see:"
+          echo "* https://github.com/logisim-evolution/logisim-evolution/blob/main/docs/style.md"
           echo "*********************************************************"
           cat "${REPORT_FILE}"
           exit 1

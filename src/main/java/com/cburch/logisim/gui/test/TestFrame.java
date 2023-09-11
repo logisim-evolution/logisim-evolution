@@ -278,7 +278,6 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     public void simulatorStateChanged(Simulator.Event e) {
       // do nothing
     }
-
   }
 
   private class WindowMenuManager extends WindowMenuItemManager

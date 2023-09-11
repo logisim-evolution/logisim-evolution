@@ -128,12 +128,10 @@ public class AppearancePort extends AppearanceElement {
     final var loc = getLocation();
     final var pinLoc = pin.getLocation();
     final var ret = doc.createElement("circ-port");
-    final var r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
-    ret.setAttribute("x", "" + (loc.getX() - r));
-    ret.setAttribute("y", "" + (loc.getY() - r));
-    ret.setAttribute("width", "" + 2 * r);
-    ret.setAttribute("height", "" + 2 * r);
-    ret.setAttribute("pin", "" + pinLoc.getX() + "," + pinLoc.getY());
+    ret.setAttribute("x", Integer.toString(loc.getX()));
+    ret.setAttribute("y", Integer.toString(loc.getY()));
+    ret.setAttribute("dir", isInput() ? "in" : "out");
+    ret.setAttribute("pin", String.format("%d,%d", pinLoc.getX(), pinLoc.getY()));
     return ret;
   }
 }

@@ -38,16 +38,14 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
 
   @Override
   public boolean execute(Object state, CircuitState cState) {
-    if (!valid)
-      return false;
+    if (!valid) return false;
     OptionPane.showMessageDialog(null, S.get("Rv32imECABNotImplmented"));
     return true;
   }
 
   @Override
   public String getAsmInstruction() {
-    if (!valid)
-      return null;
+    if (!valid) return null;
     return AsmOpcodes[operation].toLowerCase();
   }
 
@@ -76,8 +74,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   private boolean decodeBin() {
     if (RV32imSupport.getOpcode(instruction) == SYSTEM) {
       int funct12 = (instruction >> 20) & 0xFFF;
-      if (funct12 > 1)
-        return false;
+      if (funct12 > 1) return false;
       operation = funct12;
       return true;
     }

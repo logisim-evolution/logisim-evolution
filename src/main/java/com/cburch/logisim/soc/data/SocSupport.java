@@ -31,7 +31,8 @@ public class SocSupport {
     return (int) (value & LONG_MASK);
   }
 
-  public static void addAllFunctions(PrintWriter h, PrintWriter c, String compName, String functName, int base, int index) {
+  public static void addAllFunctions(
+      PrintWriter h, PrintWriter c, String compName, String functName, int base, int index) {
     addSetterFunction(h, compName, functName, base, index, true);
     addGetterFunction(h, compName, functName, base, index, true);
     h.println();
@@ -39,7 +40,8 @@ public class SocSupport {
     addGetterFunction(c, compName, functName, base, index, false);
   }
 
-  public static void addGetterFunction(PrintWriter w, String compName, String functName, int base, int index, boolean header) {
+  public static void addGetterFunction(
+      PrintWriter w, String compName, String functName, int base, int index, boolean header) {
     w.print("unsigned int get" + compName + functName + "()");
     if (header) {
       w.println(";");
@@ -51,7 +53,8 @@ public class SocSupport {
     w.println("}\n");
   }
 
-  public static void addSetterFunction(PrintWriter w, String compName, String functName, int base, int index, boolean header) {
+  public static void addSetterFunction(
+      PrintWriter w, String compName, String functName, int base, int index, boolean header) {
     w.print("void set" + compName + functName + "(unsigned int value)");
     if (header) {
       w.println(";");
@@ -92,8 +95,7 @@ public class SocSupport {
       for (Component c : s.getCircuit().getNonWires()) {
         if (c.getFactory() instanceof SubcircuitFactory) {
           CircuitState tmp = (CircuitState) s.getData(c);
-          if (tmp.equals(states.get(i)))
-            name.append(getComponentName(c)).append(":");
+          if (tmp.equals(states.get(i))) name.append(getComponentName(c)).append(":");
         }
       }
       s = states.get(i);
@@ -102,15 +104,12 @@ public class SocSupport {
   }
 
   public static String getMasterName(CircuitState state, Component comp) {
-    if (!state.isSubstate())
-      return getComponentName(comp);
+    if (!state.isSubstate()) return getComponentName(comp);
     return getMasterHierName(state) + getComponentName(comp);
   }
 
   public static String getMasterName(CircuitState state, String compName) {
-    if (!state.isSubstate())
-      return compName;
+    if (!state.isSubstate()) return compName;
     return getMasterHierName(state) + compName;
   }
-
 }

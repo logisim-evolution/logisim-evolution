@@ -3,7 +3,7 @@
 # https://github.com/logisim-evolution/logisim-evolution
 #
 # Cron driven Github Action builder, intended to create nightly builds
-# from Logisim-evolution's "develop" branch. It assumes to be invoked
+# from Logisim-evolution's "main" branch. It assumes to be invoked
 # daily (once per 24 hrs) and skips building if there was no repo activity
 # during last 24 hours.
 #
@@ -12,14 +12,10 @@
 
 name: "Nightly"
 on:
-  # The "pull_request" trigger is here for debugging purposes and
-  # as work-around for having this worker not yet in main branch.
-  # Keep it disabled once it's merged into main branch as we only
-  # want "schedule" to be the trigger.
-  # NOTE: remove `if` condition marked with `HACK` once merged.
-  pull_request:
-    branches: [ develop ]
-    types: [ closed ]
+  # To enable "nightly" on closing pull requests uncomment the following:
+  #pull_request:
+  #  branches: [ main ]
+  #  types: [ closed ]
   schedule:
     # every day at midnight
     - cron: "0 0 * * *"
@@ -32,9 +28,6 @@ jobs:
   git_check:
     name: "Any changes since last run?"
     runs-on: ubuntu-latest
-    # HACK: Temporary workaround for `schedule` not working outside main
-    # branch and lack of `type: merged` for `pull_request` trigger.
-    # if: github.event.pull_request.merged == true
 
     # Export build vars so other steps can use it.
     outputs:
@@ -51,7 +44,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -64,18 +57,19 @@ jobs:
 
           # Short name for branch in which action was triggered.
           declare -r branch_name="${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}"
+          echo "Triggered for branch: ${branch_name}"
 
           # Get SHA of last commit in that branch.
           declare -r last_commit_sha="$(git rev-parse HEAD)"
 
           # Let's see if we have any commits in last 24 hours.
           if [[ -n "$(git rev-list --after="24 hours" ${last_commit_sha})" ]]; then
-            echo "::set-output name=run_build::true"
+            echo "run_build=true" >> $GITHUB_OUTPUT
           else
             echo "*** No code changes since yesterday. Skipping."
           fi
 
-          # I need to export current version, even if is incorrect for develop branch as it
+          # I need to export current version, even if is incorrect for main branch as it
           # is part of produced artifacts. We will strip it prior uploading anyway.
 
           # LSe version string can have additional "unstable" indicator (i.e. "-dev") but
@@ -84,20 +78,19 @@ jobs:
           # consider that whlie looking for artifacts (i.e. for upload).
           declare -r version_prop=$(grep '^version\s*=.*' gradle.properties | awk '{print $3}')
 
-
           # Remove "-" (if present) from version string.
           declare -r lse_version=$(echo "${version_prop}" | awk '{gsub("-","", $0); print}')
-          echo "::set-output name=lse_version::${lse_version}"
+          echo "lse_version=${lse_version}" >> $GITHUB_OUTPUT
 
           # Version string with suffix stripped. Required for some packages/platforms.
           declare -r lse_version_short=$(echo "${version_prop}" | awk '{ split($0, v, "-")} {print v[1]}')
-          echo "::set-output name=lse_version_short::${lse_version_short}"
+          echo "lse_version_short=${lse_version_short}" >> $GITHUB_OUTPUT
 
           declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
-          echo "::set-output name=lse_name::${lse_name}"
+          echo "lse_name=${lse_name}" >> $GITHUB_OUTPUT
 
           # Base name for uploaded artifacts.
-          echo "::set-output name=base_name::${lse_name}_${branch_name}_$(date +%Y%m%d)"
+          echo "base_name=${lse_name}_${branch_name}_$(date +%Y%m%d)" >> $GITHUB_OUTPUT
 
   # ###############################################################################################
 
@@ -109,14 +102,41 @@ jobs:
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
     steps:
-      # https://github.com/marketplace/actions/checkout
-      - name: "Checkout sources"
-        uses: actions/checkout@v2
+      # https://github.com/z0al/dependent-issues
+      - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
+        uses: actions/checkout@v4
         with:
-          # We want develop branch only.
-          ref: 'develop'
+          ref: 'main'
+
+      - name: 'Build Snap package'
+        # https://github.com/snapcore/action-build
+        uses: snapcore/action-build@v1
+        id: snapcraft
+
+      - name: 'Upload *.snap artifact.'
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+           path: ${{ steps.snapcraft.outputs.snap }}
+           name: ${{ needs.git_check.outputs.base_name }}_amd64.snap
+
+#      - name: 'Pushing *.snap to snapcraft.io'
+#        # https://github.com/snapcore/action-publish
+#        uses: snapcore/action-publish@v1
+#        if: success()
+#        env:
+#          # Obtain Snapcraft.io store token:
+#          # $ snapcraft export-login --snaps=logisim-evolution --acls package_access,package_push,package_update,package_release token.txt
+#          # then open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
+#          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_TOKEN }}
+#        with:
+#          snap: ${{ steps.snapcraft.outputs.snap }}
+#          release: edge
+
+        # ###########################################################################################
+
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -133,7 +153,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -150,7 +170,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
@@ -168,7 +188,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -187,13 +207,13 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
           name: ${{ needs.git_check.outputs.base_name }}-src.jar
 
-  # ##################################
+  # ###############################################################################################
 
   # Building for macOS.
   build_macos:
@@ -206,12 +226,11 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          # We want develop branch only.
-          ref: 'develop'
+          ref: ${{ github.ref_name }}
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -225,11 +244,11 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload DMG'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
-          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
-          name: ${{ needs.git_check.outputs.base_name }}.dmg
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
+          name: ${{ needs.git_check.outputs.base_name }}-x86_64.dmg
 
   # ###############################################################################################
 
@@ -244,9 +263,9 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -255,9 +274,9 @@ jobs:
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload MSI'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
-          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}.msi
-          name: ${{ needs.git_check.outputs.base_name }}.msi
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-amd64.msi
+          name: ${{ needs.git_check.outputs.base_name }}-amd64.msi

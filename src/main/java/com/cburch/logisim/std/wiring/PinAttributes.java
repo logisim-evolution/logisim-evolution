@@ -15,7 +15,8 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
-import java.util.Arrays;
+
+import java.util.ArrayList;
 import java.util.List;
 
 class PinAttributes extends ProbeAttributes {
@@ -41,27 +42,38 @@ class PinAttributes extends ProbeAttributes {
   public static final Attribute<String> ATTR_DUMMY = new DummyAttr("type");
   public static PinAttributes instance = new PinAttributes();
 
-  private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(
-          StdAttr.FACING,
-          Pin.ATTR_TYPE,
-          StdAttr.WIDTH,
-          Pin.ATTR_TRISTATE,
-          Pin.ATTR_PULL,
-          StdAttr.LABEL,
-          StdAttr.LABEL_FONT,
-          RadixOption.ATTRIBUTE,
-          PROBEAPPEARANCE,
-          ATTR_DUMMY);
+  private List<Attribute<?>> myAttributes;
 
   BitWidth width = BitWidth.ONE;
   boolean threeState = false; // true;
   int type = EndData.INPUT_ONLY;
   Object pull = Pin.PULL_NONE;
+  Long initialValue = 0L;
+
+  public PinAttributes() {
+    updateAttributes();
+  }
+
+  private void updateAttributes() {
+    myAttributes = new ArrayList<Attribute<?>>();
+    myAttributes.add(StdAttr.FACING);
+    myAttributes.add(Pin.ATTR_TYPE);
+    myAttributes.add(StdAttr.WIDTH);
+    myAttributes.add(Pin.ATTR_TRISTATE);
+    myAttributes.add(Pin.ATTR_PULL);
+    myAttributes.add(StdAttr.LABEL);
+    myAttributes.add(StdAttr.LABEL_FONT);
+    myAttributes.add(RadixOption.ATTRIBUTE);
+    if ((type == EndData.INPUT_ONLY) && !threeState) {
+      myAttributes.add(Pin.ATTR_INITIAL);
+    }
+    myAttributes.add(PROBEAPPEARANCE);
+    myAttributes.add(ATTR_DUMMY);
+  }
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return ATTRIBUTES;
+    return myAttributes;
   }
 
   @Override
@@ -78,9 +90,10 @@ class PinAttributes extends ProbeAttributes {
     if (attr == Pin.ATTR_PULL) return (V) pull;
     if (attr == PROBEAPPEARANCE) return (V) appearance;
     if (attr == ATTR_DUMMY) return (V) "nochange";
+    if (attr == Pin.ATTR_INITIAL) return (V) initialValue;
     return super.getValue(attr);
   }
-  
+
   boolean isInput() {
     return type != EndData.OUTPUT_ONLY;
   }
@@ -96,7 +109,8 @@ class PinAttributes extends ProbeAttributes {
       if (value.equals("output")) {
         if (type != EndData.OUTPUT_ONLY) {
           type = EndData.OUTPUT_ONLY;
-          fireAttributeValueChanged((Attribute<V>) Pin.ATTR_TYPE, (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY), null);
+          fireAttributeValueChanged(
+              (Attribute<V>) Pin.ATTR_TYPE, (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY), null);
           return;
         }
       }
@@ -110,10 +124,14 @@ class PinAttributes extends ProbeAttributes {
       boolean NewThree = (Boolean) value;
       if (threeState == NewThree) return;
       threeState = NewThree;
+      updateAttributes();
+      fireAttributeListChanged();
     } else if (attr == Pin.ATTR_TYPE) {
       int Newtype = (Boolean) value ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
       if (type == Newtype) return;
       type = Newtype;
+      updateAttributes();
+      fireAttributeListChanged();
     } else if (attr == Pin.ATTR_PULL) {
       if (pull.equals(value)) return;
       pull = value;
@@ -126,6 +144,10 @@ class PinAttributes extends ProbeAttributes {
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_2);
       } else super.setValue(attr, value);
       return;
+    } else if (attr == Pin.ATTR_INITIAL) {
+      final var newInitial = (Long) value;
+      if (newInitial == initialValue) return;
+      initialValue = newInitial;
     } else {
       super.setValue(attr, value);
       return;

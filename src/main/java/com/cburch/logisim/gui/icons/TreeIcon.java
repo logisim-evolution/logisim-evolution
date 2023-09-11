@@ -26,7 +26,8 @@ public class TreeIcon extends BaseIcon {
   private final int[] backsheet = new int[] {0, 0, 4, 0, 7, 3, 13, 3, 13, 15, 0, 15};
   private final int[] frontsheetClosed = new int[] {0, 3, 13, 3, 13, 15, 0, 15};
   private final int[] frontsheetOpen = new int[] {2, 11, 15, 11, 13, 15, 0, 15};
-  private final int[] shape = new int[] {7, 3, 4, 3, 4, 4, 2, 4, 4, 4, 4, 8, 2, 8, 4, 8, 4, 9, 7, 9};
+  private final int[] shape =
+      new int[] {7, 3, 4, 3, 4, 4, 2, 4, 4, 4, 4, 8, 2, 8, 4, 8, 4, 9, 7, 9};
   private boolean closed = true;
 
   public TreeIcon(boolean closed) {
@@ -39,7 +40,8 @@ public class TreeIcon extends BaseIcon {
     var path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(backsheet[0]), AppPreferences.getScaled(backsheet[1]));
     for (var i = 2; i < backsheet.length; i += 2)
-      path.lineTo(AppPreferences.getScaled(backsheet[i]), AppPreferences.getScaled(backsheet[i + 1]));
+      path.lineTo(
+          AppPreferences.getScaled(backsheet[i]), AppPreferences.getScaled(backsheet[i + 1]));
     path.closePath();
     g2.fill(path);
     g2.setColor(Color.LIGHT_GRAY.brighter());
@@ -71,7 +73,8 @@ public class TreeIcon extends BaseIcon {
     final var frontSheet = closed ? frontsheetClosed : frontsheetOpen;
     path.moveTo(AppPreferences.getScaled(frontSheet[0]), AppPreferences.getScaled(frontSheet[1]));
     for (var i = 2; i < frontSheet.length; i += 2)
-      path.lineTo(AppPreferences.getScaled(frontSheet[i]), AppPreferences.getScaled(frontSheet[i + 1]));
+      path.lineTo(
+          AppPreferences.getScaled(frontSheet[i]), AppPreferences.getScaled(frontSheet[i + 1]));
     path.closePath();
     g2.setColor(Color.yellow.darker());
     g2.fill(path);

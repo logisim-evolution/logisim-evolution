@@ -266,7 +266,7 @@ class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private final JComboBox formatStyle = new JComboBox<>(new StyleModel());
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
 
   private final ExpressionView minimizedExpr = new ExpressionView();
@@ -292,28 +292,28 @@ class MinimizedTab extends AnalyzerTab {
     final var buttons = new JPanel(new GridLayout(1, 1));
     buttons.add(setAsExpr);
 
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    setLayout(gb);
-    gc.weightx = 1.0;
-    gc.gridwidth = 1;
-    gc.gridy = GridBagConstraints.RELATIVE;
-    gc.gridx = 0;
-    gc.fill = GridBagConstraints.NONE;
-    gc.anchor = GridBagConstraints.CENTER;
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    setLayout(gbl);
+    gbc.weightx = 1.0;
+    gbc.gridwidth = 1;
+    gbc.gridy = GridBagConstraints.RELATIVE;
+    gbc.gridx = 0;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.anchor = GridBagConstraints.CENTER;
     final var cntrl = control();
-    gb.setConstraints(cntrl, gc);
+    gbl.setConstraints(cntrl, gbc);
     add(cntrl);
-    gb.setConstraints(karnaughMap, gc);
+    gbl.setConstraints(karnaughMap, gbc);
     add(karnaughMap);
-    final var oldInsets = gc.insets;
-    gc.insets = new Insets(20, 0, 20, 0);
-    gc.fill = GridBagConstraints.BOTH;
-    gb.setConstraints(minimizedExpr, gc);
+    final var oldInsets = gbc.insets;
+    gbc.insets = new Insets(20, 0, 20, 0);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbl.setConstraints(minimizedExpr, gbc);
     add(minimizedExpr);
-    gc.insets = oldInsets;
-    gc.fill = GridBagConstraints.NONE;
-    gb.setConstraints(buttons, gc);
+    gbc.insets = oldInsets;
+    gbc.fill = GridBagConstraints.NONE;
+    gbl.setConstraints(buttons, gbc);
     add(buttons);
 
     final var selected = selector.getSelectedOutput();
@@ -348,12 +348,13 @@ class MinimizedTab extends AnalyzerTab {
     karnaughMap.addMouseMotionListener(m);
     minimizedExpr.addMouseMotionListener(m);
 
-    addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        requestFocusInWindow();
-      }
-    });
+    addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            requestFocusInWindow();
+          }
+        });
 
     final var f =
         new FocusListener() {
@@ -376,40 +377,40 @@ class MinimizedTab extends AnalyzerTab {
 
   private JPanel control() {
     final var control = new JPanel();
-    final var gb = new GridBagLayout();
-    final var gc = new GridBagConstraints();
-    control.setLayout(gb);
-    gc.weightx = 1.0;
-    gc.gridwidth = 1;
-    gc.gridy = 0;
-    gc.gridx = 0;
-    gc.fill = GridBagConstraints.VERTICAL;
-    gc.anchor = GridBagConstraints.EAST;
-    gc.insets = new Insets(3, 10, 3, 10);
-    gb.setConstraints(selector.getLabel(), gc);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    control.setLayout(gbl);
+    gbc.weightx = 1.0;
+    gbc.gridwidth = 1;
+    gbc.gridy = 0;
+    gbc.gridx = 0;
+    gbc.fill = GridBagConstraints.VERTICAL;
+    gbc.anchor = GridBagConstraints.EAST;
+    gbc.insets = new Insets(3, 10, 3, 10);
+    gbl.setConstraints(selector.getLabel(), gbc);
     control.add(selector.getLabel());
-    gc.gridy++;
-    gb.setConstraints(formatLabel, gc);
+    gbc.gridy++;
+    gbl.setConstraints(formatLabel, gbc);
     control.add(formatLabel);
-    gc.gridy++;
-    gb.setConstraints(styleLabel, gc);
+    gbc.gridy++;
+    gbl.setConstraints(styleLabel, gbc);
     control.add(styleLabel);
-    gc.gridy++;
-    gb.setConstraints(notationLabel, gc);
+    gbc.gridy++;
+    gbl.setConstraints(notationLabel, gbc);
     control.add(notationLabel);
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gc.anchor = GridBagConstraints.WEST;
-    gb.setConstraints(selector.getComboBox(), gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbl.setConstraints(selector.getComboBox(), gbc);
     control.add(selector.getComboBox());
-    gc.gridy++;
-    gb.setConstraints(formatChoice, gc);
+    gbc.gridy++;
+    gbl.setConstraints(formatChoice, gbc);
     control.add(formatChoice);
-    gc.gridy++;
-    gb.setConstraints(formatStyle, gc);
+    gbc.gridy++;
+    gbl.setConstraints(formatStyle, gbc);
     control.add(formatStyle);
-    gc.gridy++;
-    gb.setConstraints(notationChoice, gc);
+    gbc.gridy++;
+    gbl.setConstraints(notationChoice, gbc);
     control.add(notationChoice);
     return control;
   }
@@ -552,7 +553,7 @@ class MinimizedTab extends AnalyzerTab {
 
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-      return new DataFlavor[] { DataFlavor.imageFlavor };
+      return new DataFlavor[] {DataFlavor.imageFlavor};
     }
 
     @Override
@@ -600,7 +601,6 @@ class MinimizedTab extends AnalyzerTab {
       setImage(img);
     }
   }
-
 
   @Override
   PrintHandler getPrintHandler() {

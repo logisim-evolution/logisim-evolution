@@ -24,15 +24,17 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+
 import java.awt.Color;
 
 public class FpToInt extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "FPToInt";
 
@@ -77,9 +79,8 @@ public class FpToInt extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN);
     painter.drawPort(OUT, "F\u2192I", Direction.WEST);
     painter.drawPort(ERR);
@@ -100,7 +101,7 @@ public class FpToInt extends InstanceFactory {
 
     if (roundMode.getValue().equals("ceil")) out_val = (long) Math.ceil(a_val);
     else if (roundMode.getValue().equals("floor")) out_val = (long) Math.floor(a_val);
-    else if (roundMode.getValue().equals("round")) out_val = (long) Math.round(a_val);
+    else if (roundMode.getValue().equals("round")) out_val = Math.round(a_val);
     else out_val = (long) a_val;
 
     final var out = Value.createKnown(dataWidthOut, out_val);

@@ -88,8 +88,10 @@ public class TruthtableTextFile {
       VariableList outputs = model.getOutputs();
       final var colwidth = new int[inputs.vars.size() + outputs.vars.size()];
       var i = 0;
-      for (final var variable : inputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
-      for (final var variable : outputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
+      for (final var variable : inputs.vars)
+        colwidth[i++] = Math.max(variable.toString().length(), variable.width);
+      for (final var variable : outputs.vars)
+        colwidth[i++] = Math.max(variable.toString().length(), variable.width);
       i = 0;
       for (final var variable : inputs.vars) {
         center(out, variable.toString(), colwidth[i++]);
@@ -135,20 +137,25 @@ public class TruthtableTextFile {
     }
   }
 
-  static final Pattern NAME_FORMAT = Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
+  static final Pattern NAME_FORMAT = Pattern.compile("([a-zA-Z]\\w*)\\[(-?\\d+)\\.\\.(-?\\d+)]");
 
-  static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno) throws IOException {
+  static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
+      throws IOException {
     final var s = line.split("\\s+");
     var cur = inputs;
     for (final var value : s) {
       if (value.equals("|")) {
-        if (cur != inputs) throw new IOException(String.format("Line %d: Separator '|' must appear only once.", lineno));
+        if (cur != inputs)
+          throw new IOException(
+              String.format("Line %d: Separator '|' must appear only once.", lineno));
         cur = outputs;
-      } else if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
+      } else if (value.matches("[a-zA-Z]\\w*")) {
         cur.add(new Var(value, 1));
       } else {
         var m = NAME_FORMAT.matcher(value);
-        if (!m.matches()) throw new IOException(String.format("Line %d: Invalid variable name '%s'.", lineno, value));
+        if (!m.matches())
+          throw new IOException(
+              String.format("Line %d: Invalid variable name '%s'.", lineno, value));
         var n = m.group(1);
         int a;
         int b;
@@ -156,9 +163,12 @@ public class TruthtableTextFile {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));
         } catch (NumberFormatException e) {
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+          throw new IOException(
+              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         }
-        if (a < 1 || b != 0) throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+        if (a < 1 || b != 0)
+          throw new IOException(
+              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         try {
           cur.add(new Var(n, a - b + 1));
         } catch (IllegalArgumentException e) {
@@ -171,8 +181,10 @@ public class TruthtableTextFile {
         }
       }
     }
-    if (inputs.vars.isEmpty()) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
-    if (outputs.vars.isEmpty()) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
+    if (inputs.vars.isEmpty())
+      throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
+    if (outputs.vars.isEmpty())
+      throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
   }
 
   static Entry parseBit(char c, String val, int lineNumber) throws IOException {
@@ -184,10 +196,14 @@ public class TruthtableTextFile {
       return Entry.ONE;
     }
 
-    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineNumber, c, val));
+    throw new IOException(
+        String.format(
+            "Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.",
+            lineNumber, c, val));
   }
 
-  static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno) throws IOException {
+  static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno)
+      throws IOException {
     if (c == 'x' || c == 'X' || c == '-') return Entry.DONT_CARE;
     var d = 0;
     if ('0' <= c && c <= '9') {
@@ -198,11 +214,15 @@ public class TruthtableTextFile {
       d = 0xA + (c - 'A');
     } else {
       throw new IOException(
-          String.format("Line %d: Hex digit '%c' in \"%s\" must be one of '0'-'9', 'a'-'f' or 'x'.", lineno, c, sval));
+          String.format(
+              "Line %d: Hex digit '%c' in \"%s\" must be one of '0'-'9', 'a'-'f' or 'x'.",
+              lineno, c, sval));
     }
 
     if (nbits < 4 && (d >= (1 << nbits))) {
-      throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
+      throw new IOException(
+          String.format(
+              "Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
     }
 
     return ((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE;
@@ -233,7 +253,9 @@ public class TruthtableTextFile {
     return col;
   }
 
-  static void validateRow(String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows, int lineno) throws IOException {
+  static void validateRow(
+      String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows, int lineno)
+      throws IOException {
     final var row = new Entry[inputs.bits.size() + outputs.bits.size()];
     var col = 0;
     final var s = line.split("\\s+");
@@ -273,7 +295,7 @@ public class TruthtableTextFile {
         int ix = line.indexOf('#');
         if (ix >= 0) line = line.substring(0, ix);
         line = line.trim();
-        if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
+        if (line.equals("") || (line.matches("\\s*[-~_=][- ~_=|]*"))) {
           continue;
         } else if (inputs.vars.isEmpty()) {
           validateHeader(line, inputs, outputs, lineno);
@@ -293,8 +315,10 @@ public class TruthtableTextFile {
       } catch (IllegalArgumentException e) {
         int confirm =
             OptionPane.showConfirmDialog(
-                parent, new String[]{e.getMessage(), S.get("tableParseErrorMessage")},
-                S.get("tableParseErrorTitle"), OptionPane.YES_NO_OPTION);
+                parent,
+                new String[] {e.getMessage(), S.get("tableParseErrorMessage")},
+                S.get("tableParseErrorTitle"),
+                OptionPane.YES_NO_OPTION);
         if (confirm != OptionPane.YES_OPTION) return;
         try {
           table.setVisibleRows(rows, true);

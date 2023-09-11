@@ -48,20 +48,20 @@ public class Ttl74161 extends AbstractTtlGate {
   public static final int PORT_INDEX_QA = 12;
   public static final int PORT_INDEX_RC0 = 13;
   private static final String[] PORT_NAMES = {
-      "MR/CLR (Reset, active LOW)",
-      "CP/CLK (Clock)",
-      "D0/A",
-      "D1/B",
-      "D2/C",
-      "D3/D",
-      "CE/ENP (Count Enable)",
-      "PE/LOAD (Parallel Enable, active LOW)",
-      "CET/ENT (Count Enable Carry)",
-      "Q3/QD",
-      "Q2/QC",
-      "A1/QB",
-      "A0/QA",
-      "TC/RC0 (Terminal Count)"
+    "MR/CLR (Reset, active LOW)",
+    "CP/CLK (Clock)",
+    "D0/A",
+    "D1/B",
+    "D2/C",
+    "D3/D",
+    "CE/ENP (Count Enable)",
+    "PE/LOAD (Parallel Enable, active LOW)",
+    "CET/ENT (Count Enable Carry)",
+    "Q3/QD",
+    "Q2/QC",
+    "A1/QB",
+    "A0/QA",
+    "TC/RC0 (Terminal Count)"
   };
   private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15};
 
@@ -108,13 +108,13 @@ public class Ttl74161 extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         var index = getIndex(state, e);
         final var data = (TtlRegisterData) state.getData();
         if (data == null) return;
         var current = data.getValue().toLongValue();
-        final long bitValue = 1 << index;
+        final var bitValue = 1L << index;
         current ^= bitValue;
         updateState(state, current);
       }
@@ -139,17 +139,16 @@ public class Ttl74161 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D gfx, int x, int y, int height, TtlRegisterData state) {
-    if (state != null) {
-      long value = state.getValue().toLongValue();
-      for (var i = 0; i < 4; i++) {
-        final var isSetBitValue = (value & (1 << (3 - i))) != 0;
-        gfx.setColor(isSetBitValue ? trueColor : falseColor);
-        gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
-        gfx.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
-      }
-      gfx.setColor(Color.BLACK);
+    if (state == null) return;
+    final var value = state.getValue().toLongValue();
+    for (var i = 0; i < 4; i++) {
+      final var isSetBitValue = (value & (1 << (3 - i))) != 0;
+      gfx.setColor(isSetBitValue ? trueColor : falseColor);
+      gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
+      gfx.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
     }
+    gfx.setColor(Color.BLACK);
   }
 
   public static void updateState(InstanceState state, Long value) {
@@ -167,7 +166,8 @@ public class Ttl74161 extends AbstractTtlGate {
     state.setPort(PORT_INDEX_QD, vD, 1);
 
     // RC0 = QA AND QB AND QC AND QD AND ENT
-    state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
+    state.setPort(
+        PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
   }
 
   public static TtlRegisterData getStateData(InstanceState state) {
@@ -196,7 +196,11 @@ public class Ttl74161 extends AbstractTtlGate {
         counter += state.getPortValue(PORT_INDEX_C).toLongValue() << 2;
         counter += state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
       } else {
-        final var enpAndEnt = state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue();
+        final var enpAndEnt =
+            state
+                .getPortValue(PORT_INDEX_EnP)
+                .and(state.getPortValue(PORT_INDEX_EnT))
+                .toLongValue();
         if (enpAndEnt == 1) {
           counter++;
           if (counter > 15) {

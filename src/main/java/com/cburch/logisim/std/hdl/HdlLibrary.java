@@ -20,15 +20,16 @@ import java.util.List;
 public class HdlLibrary extends Library {
 
   /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the library, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * <p>Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "HDL-IP";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
+    new FactoryDescription(
+        VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
   };
 
   private List<Tool> tools = null;

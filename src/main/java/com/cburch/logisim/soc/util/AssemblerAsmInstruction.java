@@ -115,7 +115,8 @@ public class AssemblerAsmInstruction {
     return true;
   }
 
-  public boolean replaceDefines(Map<String, Integer> defines, Map<AssemblerToken, StringGetter> errors) {
+  public boolean replaceDefines(
+      Map<String, Integer> defines, Map<AssemblerToken, StringGetter> errors) {
     for (final var parameter : parameters) {
       for (final var assemblerToken : parameter) {
         if (assemblerToken.getType() == AssemblerToken.MAYBE_LABEL) {

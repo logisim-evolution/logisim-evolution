@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.util.XmlUtil;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -29,7 +30,6 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -297,11 +297,9 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getCharRepresentation(int i) {
-    final var chars = new StringBuilder();
     final var repeat = i / 26;
     final var charId = i % 26;
-    chars.append(String.valueOf((char) (charId + 'A')).repeat(repeat + 1));
-    return chars.toString();
+    return String.valueOf((char) (charId + 'A')).repeat(repeat + 1);
   }
 
   private String getFontDefinition(int i) {

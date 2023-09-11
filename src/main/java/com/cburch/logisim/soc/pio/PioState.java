@@ -390,28 +390,18 @@ public class PioState implements SocBusSlaveInterface {
       return;
     }
     switch (index) {
-      case DATA_REG_INDEX:
-        if (trans.isWriteTransaction()) handleOutputWriteTransaction(trans);
-        if (trans.isReadTransaction()) handleInputReadTransaction(trans);
-        break;
-      case DIR_REG_INDEX:
-        handleDirectionRegister(trans);
-        break;
-      case IRQ_MASK_INDEX:
-        handleIrqMaskRegister(trans);
-        break;
-      case EDGE_CAPT_INDEX:
-        handleCaptureRegister(trans);
-        break;
-      case OUT_SET_INDEX:
-        handleOutputBitOperation(trans, false);
-        break;
-      case OUT_CLEAR_INDEX:
-        handleOutputBitOperation(trans, true);
-        break;
-      default:
-        trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
-        break;
+      case DATA_REG_INDEX -> {
+        if (trans.isWriteTransaction())
+          handleOutputWriteTransaction(trans);
+        if (trans.isReadTransaction())
+          handleInputReadTransaction(trans);
+      }
+      case DIR_REG_INDEX -> handleDirectionRegister(trans);
+      case IRQ_MASK_INDEX -> handleIrqMaskRegister(trans);
+      case EDGE_CAPT_INDEX -> handleCaptureRegister(trans);
+      case OUT_SET_INDEX -> handleOutputBitOperation(trans, false);
+      case OUT_CLEAR_INDEX -> handleOutputBitOperation(trans, true);
+      default -> trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
     }
   }
 

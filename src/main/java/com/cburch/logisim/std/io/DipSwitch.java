@@ -41,10 +41,10 @@ import java.util.ArrayList;
 
 public class DipSwitch extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "DipSwitch";
 
@@ -164,7 +164,11 @@ public class DipSwitch extends InstanceFactory {
     updatePorts(instance);
     instance.computeLabelTextField(Instance.AVOID_LEFT);
     int dipSize = instance.getAttributeValue(ATTR_SIZE).getWidth();
-    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null));
+    instance
+        .getAttributeSet()
+        .setValue(
+            StdAttr.MAPINFO,
+            new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null));
   }
 
   private void updatePorts(Instance instance) {
@@ -208,7 +212,8 @@ public class DipSwitch extends InstanceFactory {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
       ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
       if (map != null) {
-        map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(),
+        map.setNrOfInports(
+            instance.getAttributeValue(ATTR_SIZE).getWidth(),
             getLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
       }
     } else if (attr == StdAttr.FACING) {

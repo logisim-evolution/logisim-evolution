@@ -7,7 +7,6 @@
  * This is free software released under GNU GPLv3 license
  */
 
-
 /*
  * This file was originally written by Kevin Walsh <kwalsh@cs.cornell.edu> for
  * Cornell's CS 314 computer organization course. It was subsequently modified
@@ -51,10 +50,10 @@ import java.awt.image.IndexColorModel;
 // 128 x 128 pixel LCD display with 8bpp color (byte addressed)
 class Video extends ManagedComponent implements ToolTipMaker, AttributeListener {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "RGB Video";
 
@@ -122,14 +121,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     public AttributeSet createAttributeSet() {
       return AttributeSets.fixedSet(
           ATTRIBUTES,
-          new Object[] {
-            BLINK_OPTIONS[0],
-            RESET_OPTIONS[0],
-            COLOR_OPTIONS[0],
-            128,
-            128,
-            2
-          });
+          new Object[] {BLINK_OPTIONS[0], RESET_OPTIONS[0], COLOR_OPTIONS[0], 128, 128, 2});
     }
 
     @Override
@@ -379,6 +371,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
     x += (-30);
     y += (-bh);
+
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     g.drawRoundRect(x, y, bw, bh, 6, 6);
     for (var i = 0; i < 6; i++) {

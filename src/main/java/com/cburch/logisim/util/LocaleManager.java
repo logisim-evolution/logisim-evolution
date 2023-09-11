@@ -40,10 +40,9 @@ public class LocaleManager {
   }
 
   /**
-   * Always returns "fixed" value. Implements StringGetter interface
-   * to let this class be used for i.e. settings for which there's no
-   * point of providing localizable strings (i.e. screen resolutsions,
-   * or plain numeric values), thus using LocaleGetter is an overkill.
+   * Always returns "fixed" value. Implements StringGetter interface to let this class be used for
+   * i.e. settings for which there's no point of providing localizable strings (i.e. screen
+   * resolutsions, or plain numeric values), thus using LocaleGetter is an overkill.
    */
   private static class FixedString implements StringGetter {
     final String value;
@@ -90,7 +89,7 @@ public class LocaleManager {
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
   public static final SimpleDateFormat PARSER_SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
   private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
-  private static HashMap<Character, String> repl = null;
+  private static final HashMap<Character, String> repl = null;
   private static Locale curLocale = null;
 
   private final String dirName;
@@ -165,7 +164,8 @@ public class LocaleManager {
     UIManager.put("FileChooser.homeFolderToolTipText", S.get("LMhomeFolderToolTipText"));
     UIManager.put("FileChooser.newFolderToolTipText", S.get("LMnewFolderToolTipText"));
     UIManager.put("FileChooser.listViewButtonToolTipText", S.get("LMlistViewButtonToolTipText"));
-    UIManager.put("FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
+    UIManager.put(
+        "FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
     UIManager.put("FileChooser.fileNameHeaderText", S.get("LMfileNameHeaderText"));
     UIManager.put("FileChooser.fileSizeHeaderText", S.get("LMfileSizeHeaderText"));
     UIManager.put("FileChooser.fileTypeHeaderText", S.get("LMfileTypeHeaderText"));
@@ -178,7 +178,8 @@ public class LocaleManager {
     UIManager.put("FileChooser.saveButtonText", S.get("LMsaveButtonText"));
     UIManager.put("FileChooser.saveButtonToolTipText", S.get("LMsaveButtonToolTipText"));
     UIManager.put("FileChooser.directoryOpenButtonText", S.get("LMdirectoryOpenButtonText"));
-    UIManager.put("FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
+    UIManager.put(
+        "FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
     UIManager.put("FileChooser.cancelButtonText", S.get("LMcancelButtonText"));
     UIManager.put("FileChooser.cancelButtonToolTipText", S.get("LMcancelButtonToolTipText"));
     UIManager.put("FileChooser.newFolderErrorText", S.get("LMnewFolderErrorText"));
@@ -206,7 +207,7 @@ public class LocaleManager {
         }
       }
       if (select == null) {
-        select = Objects.requireNonNullElseGet(backup, () -> new Locale("en"));
+        select = Objects.requireNonNullElseGet(backup, () -> Locale.ENGLISH);
       }
 
       curLocale = select;
@@ -223,7 +224,7 @@ public class LocaleManager {
     var locales = getLocaleOptions();
     if (locales == null || locales.length == 0) {
       var cur = getLocale();
-      if (cur == null) cur = new Locale("en");
+      if (cur == null) cur = Locale.ENGLISH;
       locales = new Locale[] {cur};
     }
     return new JScrollPane(new LocaleSelector(locales));
@@ -247,7 +248,6 @@ public class LocaleManager {
 
   /**
    * @Deprecated Use get(key, ...)
-   *
    */
   public String fmt(String key, Object... args) {
     return String.format(get(key), args);
@@ -277,7 +277,7 @@ public class LocaleManager {
         country = null;
       }
       if (language != null) {
-        final var loc = country == null ? new Locale(language) : new Locale(language, country);
+        final var loc = new Locale.Builder().setLanguage(language).setRegion(country).build();
         retl.add(loc);
       }
     }

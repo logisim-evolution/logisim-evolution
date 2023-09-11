@@ -91,8 +91,7 @@ public class BoardPainter {
     g.setFont(AppPreferences.getScaledFont(g.getFont().deriveFont(Font.BOLD), scale));
     g.setColor(Color.BLUE);
     g.drawString(txt, xpos + height + (height >> 2), ypos + ydif2);
-    g.setColor(
-            value == 0 ? Value.falseColor : value == 1 ? Value.trueColor : Value.unknownColor);
+    g.setColor(value == 0 ? Value.falseColor : value == 1 ? Value.trueColor : Value.unknownColor);
     g.fillOval(
         xpos + (height >> 3), ypos + (height >> 3), height - (height >> 2), height - (height >> 2));
     g.setColor(Color.WHITE);
@@ -125,6 +124,4 @@ public class BoardPainter {
         xpos + (height >> 2),
         ypos + height - (height >> 2));
   }
-
-
 }

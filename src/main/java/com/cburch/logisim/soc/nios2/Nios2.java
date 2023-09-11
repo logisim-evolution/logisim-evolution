@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
@@ -37,15 +38,17 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.gui.SocCpuShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class Nios2 extends SocInstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Nios2";
 
@@ -139,12 +142,12 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
     updatePorts(instance);
     Bounds bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() / 2,
-            bds.getY() + bds.getHeight() + 3,
-            GraphicsUtil.H_CENTER,
-            GraphicsUtil.V_TOP);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() / 2,
+        bds.getY() + bds.getHeight() + 3,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_TOP);
   }
 
   @Override
@@ -164,6 +167,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   public void paintInstance(InstancePainter painter) {
     Location loc = painter.getLocation();
     Graphics2D g2 = (Graphics2D) painter.getGraphics();
+    g2.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawLabel();
     painter.drawClock(CLOCK, Direction.EAST);
@@ -203,15 +207,12 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
       data = state.getAttributeValue(Nios2Attributes.NIOS2_STATE).getNewState(state.getInstance());
       state.setData(data);
     }
-    if (state.getPortValue(RESET) == Value.TRUE)
-      data.reset();
-    else
-      data.setClock(state.getPortValue(CLOCK), ((InstanceStateImpl) state).getCircuitState());
+    if (state.getPortValue(RESET) == Value.TRUE) data.reset();
+    else data.setClock(state.getPortValue(CLOCK), ((InstanceStateImpl) state).getCircuitState());
     /* update Irqs */
     int irqs = 0;
     for (int i = 0; i < state.getAttributeValue(Nios2Attributes.NR_OF_IRQS).getWidth(); i++) {
-      if (state.getPortValue(i + IRQSTART) == Value.TRUE)
-        irqs |= 1 << i;
+      if (state.getPortValue(i + IRQSTART) == Value.TRUE) irqs |= 1 << i;
     }
     data.setIpending(irqs);
   }

@@ -100,7 +100,7 @@ class PortManager {
     }
     x = (x + 9) / 10 * 10; // round coordinates up to ensure they're on grid
     y = (y + 9) / 10 * 10;
-    var loc = Location.create(x, y);
+    var loc = Location.create(x, y, true);
     while (usedLocs.contains(loc)) {
       loc = loc.translate(dX, dY);
     }
@@ -140,7 +140,7 @@ class PortManager {
         }
       }
       if (anchor == null) {
-        anchor = new AppearanceAnchor(Location.create(100, 100));
+        anchor = new AppearanceAnchor(Location.create(100, 100, true));
       }
       final var dest = appearance.getCustomObjectsFromBottom().size();
       appearance.addObjects(dest, Collections.singleton(anchor));
@@ -158,7 +158,7 @@ class PortManager {
       }
     }
     // handle replacements
-    final var addsCopy = new ArrayList<Instance>(adds);
+    final var addsCopy = new ArrayList<>(adds);
     for (final var entry : replaces.entrySet()) {
       final var port = oldObjects.remove(entry.getKey());
       if (port != null) {

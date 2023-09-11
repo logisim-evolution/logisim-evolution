@@ -11,13 +11,11 @@ package com.cburch.logisim.gui.main;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitException;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
@@ -61,9 +59,9 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     int totalCount = 0;
     boolean variousFound = false;
 
-    Selection selection = frame.getCanvas().getSelection();
-    for (Component comp : selection.getComponents()) {
-      ComponentFactory fact = comp.getFactory();
+    final var selection = frame.getCanvas().getSelection();
+    for (final var comp : selection.getComponents()) {
+      final var fact = comp.getFactory();
       if (fact.equals(factory)) {
         factoryCount++;
       } else if (comp instanceof Wire) {
@@ -92,14 +90,14 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       setInstance(factory);
       return S.get("selectionVarious", "" + totalCount);
     } else if (factoryCount == 0) {
-      Circuit circ = frame.getCanvas().getCircuit();
+      final var circ = frame.getCanvas().getCircuit();
       if (circ != null) {
-        String circName = circ.getName();
+        final var circName = circ.getName();
         setInstance(circ.getSubcircuitFactory());
         return S.get("circuitAttrTitle", circName);
       } else {
-        VhdlContent hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
-        String circName = hdl.getName();
+        final var hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
+        final var circName = hdl.getName();
         setInstance(null);
         return S.get("hdlAttrTitle", circName);
       }
@@ -121,7 +119,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   //
   // Selection.Listener methods
   @Override
-  public void selectionChanged(Event event) {
+  public void selectionChanged(final Event event) {
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {
       frame.setAttrTableModel(this);
@@ -129,7 +127,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+  public void setValueRequested(final Attribute<Object> attr, final Object value) throws AttrTableSetException {
     final var selection = frame.getCanvas().getSelection();
     final var circuit = frame.getCanvas().getCircuit();
     if (circuit != null && selection.isEmpty()) {

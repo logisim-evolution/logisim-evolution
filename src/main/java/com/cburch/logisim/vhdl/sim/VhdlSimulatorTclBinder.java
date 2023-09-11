@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import org.slf4j.Logger;
@@ -58,7 +57,8 @@ public class VhdlSimulatorTclBinder {
   private void init(int serverPort) {
     final var command = new ArrayList<String>();
 
-    command.add(FileUtil.correctPath(Softwares.getQuestaPath()) + Softwares.QUESTA_BIN[Softwares.VSIM]);
+    command.add(
+        FileUtil.correctPath(Softwares.getQuestaPath()) + Softwares.QUESTA_BIN[Softwares.VSIM]);
 
     command.add("-c");
     command.add("-do");
@@ -69,7 +69,6 @@ public class VhdlSimulatorTclBinder {
     builder = new ProcessBuilder(command);
 
     Map<String, String> env = builder.environment();
-    env.put("LM_LICENSE_FILE", "1650@eilic01");
 
     builder.directory(new File(VhdlSimConstants.SIM_PATH + "comp/"));
 
@@ -96,85 +95,85 @@ public class VhdlSimulatorTclBinder {
 
     /* This thread checks the binder started well, it's run from now */
     new Thread(
-        () -> {
-          /* Through this we can get the process output */
-          BufferedReader reader =
-              new BufferedReader(new InputStreamReader(process.getInputStream()));
-          String line;
-          try {
-            // FIXME: hardcoded string
-            final var errorMessage = new StringBuilder(
-                    "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
-            
-            final var msgCheckOnError = String.format("\"%s%s",
-                    VhdlSimConstants.VHDL_COMPILE_COMMAND, VhdlSimConstants.VHDL_COMPONENT_SIM_NAME);
+            () -> {
+              /* Through this we can get the process output */
+              final var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+              var line = "";
+              try {
+                // FIXME: hardcoded string
+                final var errorMessage =
+                    new StringBuilder(
+                        "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
 
-            /* Here we check that the binder has correctly started */
-            while ((line = reader.readLine()) != null) {
+                final var msgCheckOnError =
+                    String.format(
+                        "\"%s%s",
+                        VhdlSimConstants.VHDL_COMPILE_COMMAND,
+                        VhdlSimConstants.VHDL_COMPONENT_SIM_NAME);
 
-              /* Here we make sure it is possible to print something */
-              if (vsim.getProject().getFrame() != null) {
-                vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
+                /* Here we check that the binder has correctly started */
+                while ((line = reader.readLine()) != null) {
+
+                  /* Here we make sure it is possible to print something */
+                  if (vsim.getProject().getFrame() != null) {
+                    vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
+                  }
+
+                  /* Only add logs that contains "error" to the message box */
+                  if (line.toLowerCase().contains("error")) errorMessage.append("\n").append(line);
+
+                  if (line.contains("TCL_BINDER_RUNNING")) {
+                    running = true;
+
+                    new Thread(
+                            () -> {
+                              final var sc = new Scanner(new InputStreamReader(process.getInputStream()));
+                              var nextLine = "";
+                              while (sc.hasNextLine()) {
+                                nextLine = sc.nextLine();
+                                if (nextLine.length() > 0)
+                                  if (vsim.getProject().getFrame() != null) {
+                                    vsim.getProject()
+                                        .getFrame()
+                                        .getVhdlSimulatorConsole()
+                                        .append(nextLine + "\n");
+                                  }
+                              }
+                              sc.close();
+                            })
+                        .start();
+
+                    vsim.tclStartCallback();
+                    return;
+                  } else if (line.contains(msgCheckOnError)) {
+                    // Last line of error log. Do not read next line or it will be stuck
+                    break;
+                  }
+                }
+
+                final var userInfoBox = new MessageBox(
+                        "Error starting VHDL simulator",
+                        errorMessage.toString(),
+                        OptionPane.ERROR_MESSAGE);
+                userInfoBox.show();
+                vsim.setState(State.ENABLED);
+
+              } catch (IOException e) {
+                e.printStackTrace();
               }
-
-              /* Only add logs that contains "error" to the message box */
-              if (line.toLowerCase().contains("error"))
-                errorMessage.append("\n").append(line);
-
-              if (line.contains("TCL_BINDER_RUNNING")) {
-                running = true;
-
-                new Thread(
-                    () -> {
-                      Scanner sc =
-                          new Scanner(new InputStreamReader(process.getInputStream()));
-                      String nextLine;
-                      while (sc.hasNextLine()) {
-                        nextLine = sc.nextLine();
-                        if (nextLine.length() > 0)
-                          if (vsim.getProject().getFrame() != null) {
-                            vsim.getProject()
-                                .getFrame()
-                                .getVhdlSimulatorConsole()
-                                .append(nextLine + "\n");
-                          }
-                      }
-                      sc.close();
-                    })
-                    .start();
-
-                vsim.tclStartCallback();
-                return;
-
-              } else if (line.contains(msgCheckOnError)) {
-                // Last line of error log. Do not read next line or it will be stuck
-                break;
-              }
-            }
-
-            MessageBox userInfoBox =
-                new MessageBox(
-                    "Error starting VHDL simulator", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
-            userInfoBox.show();
-            vsim.setState(State.ENABLED);
-
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        })
+            })
         .start();
   }
 
   public void stop() {
-    if (!running) return;
+    if (running.equals(Boolean.FALSE)) return;
 
     /* We ask the binder to end itself */
     if (vsim.getSocketClient() != null) vsim.getSocketClient().send("end");
 
-    /* Wait for the process to end */
     /*
-     * FIXME: this can be a bad idea, it will crash logisim if the binder
-     * doesn't end
+     * Wait for the process to end
+     * * FIXME: this can be a bad idea, it will crash logisim if the binder doesn't end
      */
     // try {
     // process.waitFor();

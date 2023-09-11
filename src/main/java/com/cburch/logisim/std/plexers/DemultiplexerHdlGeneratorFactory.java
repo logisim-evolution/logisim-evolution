@@ -39,9 +39,13 @@ public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     }
     myPorts
         .add(Port.INPUT, "sel", nrOfSelectBits, selectInputIndex)
-        .add(Port.INPUT, "demuxIn", nrOfBits, hasenable ? selectInputIndex + 2 : selectInputIndex + 1);
-    if (hasenable)
-      myPorts.add(Port.INPUT, "enable", 1, selectInputIndex + 1, false);
+        .add(
+            Port.INPUT,
+            "demuxIn",
+            nrOfBits,
+            hasenable ? selectInputIndex + 2 : selectInputIndex + 1);
+    if (hasenable) myPorts.add(Port.INPUT, "enable", 1, selectInputIndex + 1, false);
+    else myPorts.add(Port.INPUT, "enable", 1, Hdl.oneBit());
   }
 
   @Override
@@ -54,7 +58,9 @@ public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       if (i == 10) space = " ";
       final var binValue = Hdl.getConstantVector(i, nrOfSelectBits);
       if (Hdl.isVhdl()) {
-        contents.empty().addVhdlKeywords()
+        contents
+            .empty()
+            .addVhdlKeywords()
             .add("demuxOut_{{1}}{{2}}<= demuxIn {{when}} sel = {{3}} {{and}}", i, space, binValue);
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
           contents.add("                            enable = '1' {{else}} ({{others}} => '0');");
@@ -62,7 +68,9 @@ public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           contents.add("                            enable = '1' {{else}} '0';");
         }
       } else {
-        contents.add("assign demuxOut_{{1}}{{2}} = (enable&(sel == {{3}} )) ? demuxIn : 0;", i, space, binValue);
+        contents.add(
+            "assign demuxOut_{{1}}{{2}} = (enable&(sel == {{3}} )) ? demuxIn : 0;",
+            i, space, binValue);
       }
     }
     return contents;

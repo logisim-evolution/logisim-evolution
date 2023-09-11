@@ -54,6 +54,7 @@ public class SocBusInfo {
     g.setColor(color);
     g.fillRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
     g.setColor(Color.BLACK);
-    GraphicsUtil.drawCenteredText(g, ident == null ? S.get("SocBusNotConnected") : ident, b.getCenterX(), b.getCenterY());
+    GraphicsUtil.drawCenteredText(
+        g, ident == null ? S.get("SocBusNotConnected") : ident, b.getCenterX(), b.getCenterY());
   }
 }

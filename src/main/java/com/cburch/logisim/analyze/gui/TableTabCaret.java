@@ -64,39 +64,33 @@ class TableTabCaret {
     public void actionPerformed(ActionEvent event) {
       final var action = event.getActionCommand();
       switch (action) {
-        case "1":
-          doKey('1');
-          break;
-        case "0":
-          doKey('0');
-          break;
-        case "x":
-          doKey('-');
-          break;
-        case "compact":
+        case "1" -> doKey('1');
+        case "0" -> doKey('0');
+        case "x" -> doKey('-');
+        case "compact" -> {
           final var tt = table.getTruthTable();
           if (tt.getRowCount() > 4096) {
             (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
-                  private static final long serialVersionUID = 1L;
+              private static final long serialVersionUID = 1L;
 
-                  @Override
-                  public Void doInBackground() {
-                    tt.compactVisibleRows();
-                    return null;
-                  }
-                })
+              @Override
+              public Void doInBackground() {
+                tt.compactVisibleRows();
+                return null;
+              }
+            })
                 .get();
           } else {
             tt.compactVisibleRows();
           }
-          break;
-        case "expand":
+        }
+        case "expand" -> {
           TruthTable model = table.getTruthTable();
           model.expandVisibleRows();
-          break;
-        default:
+        }
+        default -> {
           // do nothing
-          break;
+        }
       }
     }
 

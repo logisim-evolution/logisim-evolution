@@ -14,7 +14,6 @@ import static com.cburch.logisim.util.Strings.S;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class SyntaxChecker {
@@ -22,36 +21,50 @@ public final class SyntaxChecker {
   private static final Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
   private static final Pattern forbiddenPattern = Pattern.compile("__");
 
-  private static Matcher forbiddenMatcher;
-  private static Matcher variableMatcher;
-
   private SyntaxChecker() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
   }
 
   public static String getErrorMessage(String val) {
     if (StringUtil.isNullOrEmpty(val)) return null;
-    variableMatcher = variablePattern.matcher(val);
-    forbiddenMatcher = forbiddenPattern.matcher(val);
+    var messageBuilder = new StringBuilder();
+    buildVariableErrorMessage(val, messageBuilder);
     final var hdl = CorrectLabel.hdlCorrectLabel(val);
-    var message = "";
-    if (!variableMatcher.matches()) {
-      message = message.concat(S.get("variableInvalidCharacters"));
-    }
-    if (forbiddenMatcher.find()) {
-      message = message.concat(S.get("variableDoubleUnderscore"));
-    }
     if (hdl != null) {
-      message =
-          message.concat(
-              hdl.equals(HdlGeneratorFactory.VHDL)
-                  ? S.get("variableVHDLKeyword")
-                  : S.get("variableVerilogKeyword"));
+      messageBuilder.append(hdl.equals(HdlGeneratorFactory.VHDL)
+          ? S.get("variableVHDLKeyword")
+          : S.get("variableVerilogKeyword"));
     }
     if (val.endsWith("_")) {
-      message = message.concat(S.get("variableEndsWithUndescore"));
+      messageBuilder.append(S.get("variableEndsWithUndescore"));
     }
+    var message = messageBuilder.toString();
     return (message.length() == 0) ? null : message;
+  }
+
+  private static void buildVariableErrorMessage(String val, StringBuilder messageBuilder) {
+    final var variableMatcher = variablePattern.matcher(val);
+    final var forbiddenMatcher = forbiddenPattern.matcher(val);
+    if (!variableMatcher.matches()) {
+      messageBuilder.append(S.get("variableInvalidCharacters"));
+    }
+    if (Character.isDigit(val.charAt(0))) {
+      messageBuilder.append(S.get("variableStartsWithDigit"));
+    } else {
+
+      // We don't check this case when the variable starts with a digit
+      // because this would match the initial digit, we don't want that.
+      variableMatcher.reset();
+      int firstIllegalCharacterIndex = variableMatcher.find() ? variableMatcher.end() : 0;
+      if (firstIllegalCharacterIndex != val.length()) {
+        char firstIllegalCharacter = val.charAt(firstIllegalCharacterIndex);
+        messageBuilder.append(S.get("variableIllegalCharacter",
+            String.valueOf(firstIllegalCharacter)));
+      }
+    }
+    if (forbiddenMatcher.find()) {
+      messageBuilder.append(S.get("variableDoubleUnderscore"));
+    }
   }
 
   public static boolean isVariableNameAcceptable(String val, Boolean showDialog) {
@@ -61,5 +74,4 @@ public final class SyntaxChecker {
     }
     return message == null;
   }
-
 }

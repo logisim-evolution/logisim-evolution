@@ -34,17 +34,44 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
   private Circuit rootSheet;
   private final JLabel freqLabel = new JLabel();
   private final JLabel divLabel = new JLabel();
+  private final JLabel preDivLabel = new JLabel();
+  private final JLabel preMultLabel = new JLabel();
   private final JComboBox<String> frequenciesList = new JComboBox<>();
   private final JTextField divider = new JTextField();
+  private final JTextField preDivider = new JTextField(10);
+  private final JTextField preMultiplier = new JTextField(10);
+  private final JPanel clockScalingPane = new JPanel();
   private double FPGAClockFrequency;
+  private boolean clockScaling;
 
   public FpgaClockPanel(Project proj) {
     super();
     myProject = proj;
+    clockScaling = false;
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaFreqTitle")));
+    clockScalingPane.setLayout(new BorderLayout());
     JPanel pan1 = new JPanel();
+    pan1.setLayout(new BorderLayout());
+    pan1.add(preMultLabel, BorderLayout.NORTH);
+    pan1.add(preMultiplier, BorderLayout.SOUTH);
+    preMultiplier.addActionListener(this);
+    preMultiplier.setActionCommand("divider");
+    clockScalingPane.add(pan1, BorderLayout.WEST);
+    pan1 = new JPanel();
+    pan1.setLayout(new BorderLayout());
+    pan1.add(preDivLabel, BorderLayout.NORTH);
+    pan1.add(preDivider, BorderLayout.SOUTH);
+    preDivider.addActionListener(this);
+    preDivider.setActionCommand("divider");
+    clockScalingPane.add(pan1, BorderLayout.CENTER);
+    add(clockScalingPane, BorderLayout.NORTH);
+
+    JPanel pane = new JPanel();
+    pane = new JPanel();
+    pane.setLayout(new BorderLayout());
+    pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(freqLabel, BorderLayout.NORTH);
     pan1.add(frequenciesList, BorderLayout.SOUTH);
@@ -54,15 +81,25 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
     for (var freq : MenuSimulate.getTickFrequencyStrings())
       frequenciesList.addItem(freq);
     frequenciesList.setSelectedIndex(0);
-    add(pan1, BorderLayout.WEST);
+    pane.add(pan1, BorderLayout.WEST);
     pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(divLabel, BorderLayout.NORTH);
     divider.addActionListener(this);
     divider.setActionCommand("divider");
     pan1.add(divider, BorderLayout.SOUTH);
-    add(pan1, BorderLayout.CENTER);
+    pane.add(pan1, BorderLayout.CENTER);
+    add(pane, BorderLayout.CENTER);
     localeChanged();
+  }
+
+  public void setClockScaling(boolean scaling) {
+    clockScaling = scaling;
+    clockScalingPane.setVisible(scaling);
+  }
+
+  public boolean getClockScaling() {
+    return clockScaling;
   }
 
   @Override
@@ -71,6 +108,10 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
     divLabel.setEnabled(enabled);
     frequenciesList.setEnabled(enabled);
     divider.setEnabled(enabled);
+    preDivLabel.setEnabled(enabled);
+    preMultLabel.setEnabled(enabled);
+    preDivider.setEnabled(enabled);
+    preMultiplier.setEnabled(enabled);
   }
 
   public void updateFrequencyList(String circuitName) {
@@ -150,13 +191,44 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
     };
   }
 
+  public double getPreMultiplierValue() {
+    double preMultiplierVal = 1.0;
+    try {
+      preMultiplierVal = Double.parseDouble(this.preMultiplier.getText());
+    } catch (NumberFormatException e) {
+      this.preMultiplier.setText("1.0");
+    }
+    return preMultiplierVal;
+  }
+
+  public double getPreDividerValue() {
+    double preDividerVal = 1.0;
+    try {
+      preDividerVal = Double.parseDouble(this.preDivider.getText());
+    } catch (NumberFormatException e) {
+      this.preDivider.setText("1.0");
+    }
+    return preDividerVal;
+  }
+
+  public double getSynthesizedFrequency() {
+    double preDividerVal = getPreDividerValue();
+    double preMultiplierVal = getPreMultiplierValue();
+    if (clockScaling) {
+      return FPGAClockFrequency * preMultiplierVal / preDividerVal;
+    } else {
+      return FPGAClockFrequency;
+    }
+  }
+
   private void recalculateFrequency() {
+    double synthesizedFrequency = getSynthesizedFrequency();
     double freq = getTickFrequency();
-    double divider = FPGAClockFrequency / freq;
+    double divider = synthesizedFrequency / freq;
     long longDivider = (long) divider;
     if (longDivider <= 1) longDivider = 2;
     if ((longDivider & 1) != 0) longDivider++;
-    double corfreq = FPGAClockFrequency / longDivider;
+    double corfreq = synthesizedFrequency / longDivider;
     this.divider.setText(Long.toString((longDivider) >> 1));
     setSelectedFrequency(corfreq);
   }
@@ -171,7 +243,7 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
     }
     divider <<= 1;
     if (divider <= 1) divider = 2;
-    double corfreq = FPGAClockFrequency / divider;
+    double corfreq = getSynthesizedFrequency() / divider;
     if (corfreq < 0.00001) {
       recalculateFrequency();
       return;
@@ -192,5 +264,7 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
   public void localeChanged() {
     freqLabel.setText(S.get("FpgaFreqFrequency"));
     divLabel.setText(S.get("FpgaFreqDivider"));
+    preDivLabel.setText(S.get("FpgaFreqPreDivider"));
+    preMultLabel.setText(S.get("FpgaFreqPreMultiplier"));
   }
 }

@@ -46,7 +46,11 @@ public class XmlCircuitReader extends CircuitTransaction {
   private boolean isHolyCross = false;
   private boolean isEvolution = false;
 
-  public XmlCircuitReader(XmlReader.ReadContext reader, List<XmlReader.CircuitData> circDatas, boolean isThisHolyCrossFile, boolean isThisEvolutionFile) {
+  public XmlCircuitReader(
+      XmlReader.ReadContext reader,
+      List<XmlReader.CircuitData> circDatas,
+      boolean isThisHolyCrossFile,
+      boolean isThisEvolutionFile) {
     this.reader = reader;
     this.circuitsData = circDatas;
     this.isHolyCross = isThisHolyCrossFile;
@@ -59,7 +63,8 @@ public class XmlCircuitReader extends CircuitTransaction {
    * @return the component built from its XML description
    * @throws XmlReaderException
    */
-  static Component getComponent(Element elt, XmlReader.ReadContext reader, boolean isHolyCross, boolean isEvolution)
+  static Component getComponent(
+      Element elt, XmlReader.ReadContext reader, boolean isHolyCross, boolean isEvolution)
       throws XmlReaderException {
 
     // Determine the factory that creates this element
@@ -155,12 +160,15 @@ public class XmlCircuitReader extends CircuitTransaction {
           hasNamedBoxFixedSize |= "circuitnamedboxfixedsize".equals(name);
         }
       }
-      reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, isHolyCross, isEvolution);
+      reader.initAttributeSet(
+          circData.circuitElement, dest.getStaticAttributes(), null, isHolyCross, isEvolution);
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
           // This situation is clear, it is an older logisim-evolution file
-          final var appear = CollectionUtil.isNotEmpty(circData.appearance)
-                             ? CircuitAttributes.APPEAR_CUSTOM : CircuitAttributes.APPEAR_EVOLUTION;
+          final var appear =
+              CollectionUtil.isNotEmpty(circData.appearance)
+                  ? CircuitAttributes.APPEAR_CUSTOM
+                  : CircuitAttributes.APPEAR_EVOLUTION;
           dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, appear);
         } else {
           if (!hasAppearAttr) {
@@ -176,7 +184,8 @@ public class XmlCircuitReader extends CircuitTransaction {
           }
         }
         if (!hasNamedBoxFixedSize) {
-          dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
+          dest.getStaticAttributes()
+              .setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
         }
       }
     } catch (XmlReaderException e) {
@@ -201,9 +210,11 @@ public class XmlCircuitReader extends CircuitTransaction {
             final var bds = comp.getBounds();
             final var conflict = componentsAt.get(bds);
             if (conflict != null) {
-              final var msg = S.get("fileComponentOverlapError",
-                  conflict.getFactory().getName() + conflict.getLocation(),
-                  comp.getFactory().getName() + conflict.getLocation());
+              final var msg =
+                  S.get(
+                      "fileComponentOverlapError",
+                      conflict.getFactory().getName() + conflict.getLocation(),
+                      comp.getFactory().getName() + conflict.getLocation());
               reader.addError(msg, circData.circuit.getName());
               overlapComponents.add(comp);
             } else {
@@ -212,14 +223,16 @@ public class XmlCircuitReader extends CircuitTransaction {
             }
           }
         } catch (XmlReaderException e) {
-          final var context = String.format(contextFmt, circData.circuit.getName(), toComponentString(subElement));
+          final var context =
+              String.format(contextFmt, circData.circuit.getName(), toComponentString(subElement));
           reader.addErrors(e, context);
         }
       } else if ("wire".equals(subEltName)) {
         try {
           addWire(dest, mutator, subElement);
         } catch (XmlReaderException e) {
-          final var context = String.format(contextFmt, circData.circuit.getName(), toWireString(subElement));
+          final var context =
+              String.format(contextFmt, circData.circuit.getName(), toWireString(subElement));
           reader.addErrors(e, context);
         }
       }
@@ -245,20 +258,26 @@ public class XmlCircuitReader extends CircuitTransaction {
   private void buildDynamicAppearance(XmlReader.CircuitData circData) {
     final var dest = circData.circuit;
     final var shapes = new ArrayList<AbstractCanvasObject>();
+    final var layers = new ArrayList<Integer>();
+    var layer = -1;
     for (final var appearElt : XmlIterator.forChildElements(circData.circuitElement, "appear")) {
       for (final var sub : XmlIterator.forChildElements(appearElt)) {
+        layer++;
         // Dynamic shapes are handled here. Static shapes are already done.
         if (!sub.getTagName().startsWith("visible-")) continue;
         try {
           final var m = AppearanceSvgReader.createShape(sub, null, dest);
           if (m == null) {
-            final var context = String.format(contextFmt, circData.circuit.getName(), sub.getTagName());
+            final var context =
+                String.format(contextFmt, circData.circuit.getName(), sub.getTagName());
             reader.addError(S.get("fileAppearanceNotFound", sub.getTagName()), context);
           } else {
             shapes.add(m);
+            layers.add(layer);
           }
         } catch (RuntimeException e) {
-          final var context = String.format(contextFmt, circData.circuit.getName(), sub.getTagName());
+          final var context =
+              String.format(contextFmt, circData.circuit.getName(), sub.getTagName());
           reader.addError(S.get("fileAppearanceError", sub.getTagName()), context);
         }
       }
@@ -267,7 +286,9 @@ public class XmlCircuitReader extends CircuitTransaction {
       if (circData.appearance == null) {
         circData.appearance = shapes;
       } else {
-        circData.appearance.addAll(shapes);
+        for (var shapeId = 0; shapeId < shapes.size(); shapeId++) {
+          circData.appearance.add(layers.get(shapeId), shapes.get(shapeId));
+        }
       }
     }
     if (CollectionUtil.isNotEmpty(circData.appearance)) {

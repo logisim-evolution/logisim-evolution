@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.proj.Project;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -166,7 +167,7 @@ public class InstancePainter implements InstanceState {
   }
 
   public Location getLocation() {
-    return comp == null ? Location.create(0, 0) : comp.getLocation();
+    return comp == null ? Location.create(0, 0, false) : comp.getLocation();
   }
 
   public Bounds getOffsetBounds() {

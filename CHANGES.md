@@ -3,9 +3,57 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added a new preference to allow the user to choose the action keys for many functions.
+  * Changed RAM default output from error to undefined [#1747]
+  * Added support for scanning 7-segment display on FPGA-boards
+  * Added first support for the openFpga toolchain for the ecp5 famely
+    Note that this is experimental for the moment, so use it at your own risk.
+  * Improved Chinese localization
+    * Changed language code from `cn` to `zh`.
+    * Chinese users (also including those who use other forks of Logisim
+      that are using `cn` language code) will be required to manually modify language settings.
+  * Fixed select port positioning on Multiplexer to be more consistent in some cases [#1734]
+  * Fixed appearance of LSe desktop icon [#1662]
+  * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
+  * Introduced user-defined color for components.
+  * Made component icons more uniform.
+  * Added architecture designation to macOS build.
+  * Fixed Karnaugh map color index bug.
+  * Attribute sheet now honors application color theme.
+  * Attribute sheet now displays HEX value of color properties.
+  * Added TTL 7487: 4-bit True/complement, zero/one elements
+  * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
+  * Added TTL 74151: 8-line to 1 line data selector
+  * Added TTL 74153: dual 4-line to 1 line data selector
+  * Added TTL 74181: arithmetic logic unit
+  * Added TTL 74182: look-ahead carry generator
+  * Added TTL 74299: 8-bit universal shift register with three-state outputs
+  * Added TTL 74381: arithmetic logic unit
+  * Added TTL 74541: Octal buffers with three-state outputs
+  * Added TTL 74670: 4-by-4 register file with three-state outputs
+
+* v3.8.0 (2022-10-02)
+  * Added reset value attribute to input pins
+  * Fixed boolean algebra minimal form bug
+  * Fixed random fill Rom bug
+  * Added TTL 74164, 74192 and 74193.
+  * Fixed off grid components bug that could lead to OutOfMemory error.
+  * Removed autolabler for tunnels, such that all get the same label in case of renaming.
   * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
   * Sub-circuit can now be deleted with `DELETE` key, along with `BACKSPACE` used so far.
   * Fixed `Simulate` -> `Timing Diagram` not opening when using "Nimbus" look and feel.
+  * Fixed pressing `CTRL`+`0` selecting the wrong element in the toolbar.
+  * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
+  * Fixed TTL 74139, 7447 outputting inverted logic
+  * Fixed TTL 74175, CLR inverted
+  * Fixed TTL 7436 pin arrangement
+  * Added TTL 74138: 3-line to 8-line decoder
+  * Added TTL 74240, 74241, 74244: octal buffers with three-state outputs.
+  * Added TTL 74245: octal bus transceivers with three-state outputs.
+  * Moved TTL 74266 to 747266, correctly reimplemented 74266 with open-collector outputs.
+  * Fixed TTL 74165, correct order of inputs, load asynchronously
+  * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
+  * Removed fixed LM_Licence setting
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.

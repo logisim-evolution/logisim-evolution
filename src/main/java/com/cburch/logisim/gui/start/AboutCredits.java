@@ -13,7 +13,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.util.LineBuffer;
-import com.cburch.logisim.util.StringUtil;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -41,7 +41,12 @@ class AboutCredits extends JComponent {
   private final Lines lines;
 
   public AboutCredits(int width, int height) {
-    final var jvm = LineBuffer.format("{{1}} v{{2}} ({{3}})", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("java.vendor"));
+    final var jvm =
+        LineBuffer.format(
+            "{{1}} v{{2}} ({{3}})",
+            System.getProperty("java.vm.name"),
+            System.getProperty("java.version"),
+            System.getProperty("java.vendor"));
     System.out.println(S.get("appVersionJvm", jvm));
 
     lines = new Lines();
@@ -58,6 +63,7 @@ class AboutCredits extends JComponent {
         .text("Theo Kluter")
         .text("Marcin Orłowski")
         .text("Tom Niget")
+        .text("Liu Yuchen")
         .tiny(S.get("creditsDevelopedByAndOthers"))
         .space()
         .h1(S.get("creditsRoleFork"))
@@ -99,7 +105,8 @@ class AboutCredits extends JComponent {
 
     final var height = getHeight();
     final var maxOffsetY = lines.totalScrollLinesHeight + height;
-    final var offsetY = ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
+    final var offsetY =
+        ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
     final var yPos = offsetY - height;
 
     for (final var line : lines) {

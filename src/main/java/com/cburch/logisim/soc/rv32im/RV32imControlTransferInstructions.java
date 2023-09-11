@@ -80,59 +80,62 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
     int reg1 = cpuState.getRegisterValue(source1);
     int reg2 = cpuState.getRegisterValue(source2);
     switch (operation) {
-      case INSTR_JAL:
-      case INSTR_J:
+      case INSTR_JAL, INSTR_J -> {
         cpuState.setProgramCounter(target);
         jumped = true;
         cpuState.writeRegister(destination, nextPc);
         return true;
-      case INSTR_RET:
-      case INSTR_JR:
-      case INSTR_JALR:
+      }
+      case INSTR_RET, INSTR_JR, INSTR_JALR -> {
         target = cpuState.getRegisterValue(source1) + immediate;
         target = (target >> 1) << 1;
         cpuState.setProgramCounter(target);
         jumped = true;
         cpuState.writeRegister(destination, nextPc);
         return true;
-      case INSTR_BEQZ:
-      case INSTR_BEQ:
+      }
+      case INSTR_BEQZ, INSTR_BEQ -> {
         if (reg1 == reg2) {
           jumped = true;
           cpuState.setProgramCounter(target);
         }
         return true;
-      case INSTR_BNEZ:
-      case INSTR_BNE:
+      }
+      case INSTR_BNEZ, INSTR_BNE -> {
         if (reg1 != reg2) {
           jumped = true;
           cpuState.setProgramCounter(target);
         }
         return true;
-      case INSTR_BLT:
+      }
+      case INSTR_BLT -> {
         if (reg1 < reg2) {
           jumped = true;
           cpuState.setProgramCounter(target);
         }
         return true;
-      case INSTR_BGE:
+      }
+      case INSTR_BGE -> {
         if (reg1 >= reg2) {
           jumped = true;
           cpuState.setProgramCounter(target);
         }
         return true;
-      case INSTR_BLTU:
+      }
+      case INSTR_BLTU -> {
         if (ElfHeader.getLongValue(reg1) < ElfHeader.getLongValue(reg2)) {
           jumped = true;
           cpuState.setProgramCounter(target);
         }
         return true;
-      case INSTR_BGEU:
+      }
+      case INSTR_BGEU -> {
         if (ElfHeader.getLongValue(reg1) >= ElfHeader.getLongValue(reg2)) {
           jumped = true;
           cpuState.setProgramCounter(target);
         }
         return true;
+      }
     }
     return false;
   }
@@ -245,29 +248,37 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
     int opcode = RV32imSupport.getOpcode(instruction);
     isPcRelative = true;
     switch (opcode) {
-      case JAL:
+      case JAL -> {
         destination = RV32imSupport.getDestinationRegisterIndex(instruction);
         operation = (destination == 0) ? INSTR_J : INSTR_JAL;
         immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.J_TYPE);
         return true;
-      case JALR:
-        if (RV32imSupport.getFunct3(instruction) != 0) return false;
+      }
+      case JALR -> {
+        if (RV32imSupport.getFunct3(instruction) != 0)
+          return false;
         isPcRelative = false;
         destination = RV32imSupport.getDestinationRegisterIndex(instruction);
         operation = (destination == 0) ? INSTR_JR : INSTR_JALR;
         source1 = RV32imSupport.getSourceRegister1Index(instruction);
         immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.I_TYPE);
-        if ((operation == INSTR_JR) && (source1 == 1) && (immediate == 0)) operation = INSTR_RET;
+        if ((operation == INSTR_JR) && (source1 == 1) && (immediate == 0))
+          operation = INSTR_RET;
         return true;
-      case BRANCH:
+      }
+      case BRANCH -> {
         operation = RV32imSupport.getFunct3(instruction);
-        if ((operation == 2) || (operation == 3)) return false;
+        if ((operation == 2) || (operation == 3))
+          return false;
         immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.B_TYPE);
         source1 = RV32imSupport.getSourceRegister1Index(instruction);
         source2 = RV32imSupport.getSourceRegister2Index(instruction);
-        if (operation == INSTR_BNE && source2 == 0) operation = INSTR_BNEZ;
-        if (operation == INSTR_BEQ && source2 == 0) operation = INSTR_BEQZ;
+        if (operation == INSTR_BNE && source2 == 0)
+          operation = INSTR_BNEZ;
+        if (operation == INSTR_BEQ && source2 == 0)
+          operation = INSTR_BEQZ;
         return true;
+      }
     }
     return false;
   }
@@ -295,7 +306,7 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
     boolean errors = false;
     AssemblerToken[] param1, param2, param3;
     switch (operation) {
-      case INSTR_RET:
+      case INSTR_RET -> {
         if (instr.getNrOfParameters() != 0) {
           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
           errors = true;
@@ -305,11 +316,8 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
         operation = INSTR_JALR;
         immediate = 0;
         source1 = source2 = 1;
-        break;
-      case INSTR_BEQZ:
-      case INSTR_BNEZ:
-      case INSTR_JR:
-      case INSTR_JAL:
+      }
+      case INSTR_BEQZ, INSTR_BNEZ, INSTR_JR, INSTR_JAL -> {
         if (instr.getNrOfParameters() == 0 || instr.getNrOfParameters() > 2) {
           instr.setError(
               instr.getInstruction(), S.getter("Rv32imAssemblerExpectedOneOrTwoArguments"));
@@ -349,8 +357,8 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
           source2 = destination = 0;
           operation = (operation == INSTR_BEQZ) ? INSTR_BEQ : INSTR_BNE;
         }
-        break;
-      case INSTR_J:
+      }
+      case INSTR_J -> {
         if (instr.getNrOfParameters() != 1) {
           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
           errors = true;
@@ -363,10 +371,11 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
         immediate = param1[0].getNumberValue();
         destination = source1 = source2 = 0;
         operation = INSTR_JAL;
-        break;
-      default:
+      }
+      default -> {
         if (instr.getNrOfParameters() < 2 || instr.getNrOfParameters() > 3) {
-          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
+          instr.setError(instr.getInstruction(),
+              S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
           errors = true;
           break;
         }
@@ -408,7 +417,7 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
           source1 = destination;
           destination = 0;
         }
-        break;
+      }
     }
 
     if (!errors) {

@@ -30,10 +30,10 @@ import javax.swing.JPopupMenu;
 
 public class MenuTool extends Tool {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Menu Tool";
 
@@ -161,7 +161,7 @@ public class MenuTool extends Tool {
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     int x = e.getX();
     int y = e.getY();
-    final var pt = Location.create(x, y);
+    final var pt = Location.create(x, y, false);
 
     JPopupMenu menu;
     final var proj = canvas.getProject();

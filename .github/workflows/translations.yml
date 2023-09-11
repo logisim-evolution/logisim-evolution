@@ -13,9 +13,9 @@ name: "Translations"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   translations_lint:
@@ -25,7 +25,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # https://github.com/marketplace/actions/paths-changes-filter
       - name: "Looking for modified files..."
@@ -44,7 +44,7 @@ jobs:
 
           sudo pip install trans-tool
           trans-tool --version
-          
+
           # Declare constants
           declare -r resources_path="src/main/resources/resources/logisim/"
           declare -r base_language="en"

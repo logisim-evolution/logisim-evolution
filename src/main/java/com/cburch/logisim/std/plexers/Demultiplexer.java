@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -34,10 +35,10 @@ import java.awt.Color;
 
 public class Demultiplexer extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Demultiplexer";
 
@@ -72,7 +73,8 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and until 3.6.1
+    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and
+    // until 3.6.1
     if (attr == PlexersLibrary.ATTR_ENABLE) {
       return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
     } else {
@@ -106,7 +108,8 @@ public class Demultiplexer extends InstanceFactory {
     final var facing = attrs.getValue(StdAttr.FACING);
     final var select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
     final var outputs = 1 << select.getWidth();
-    final var bds = (outputs == 2)
+    final var bds =
+        (outputs == 2)
             ? Bounds.create(0, -25, 30, 50)
             : Bounds.create(0, -(outputs / 2) * 10 - 10, 40, outputs * 10 + 20);
     return bds.rotate(Direction.EAST, facing, 0, 0);
@@ -120,7 +123,9 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
+    if (attr == StdAttr.FACING
+        || attr == StdAttr.SELECT_LOC
+        || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == StdAttr.WIDTH || attr == PlexersLibrary.ATTR_ENABLE) {
@@ -217,7 +222,7 @@ public class Demultiplexer extends InstanceFactory {
         g, "0", bds.getX() + x0, bds.getY() + y0, halign, GraphicsUtil.V_BASELINE);
 
     // draw trapezoid, "DMX" label, and ports
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (outputs == 2) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
         PlexersLibrary.drawTrapezoid(
@@ -297,21 +302,21 @@ public class Demultiplexer extends InstanceFactory {
       Location end0;
       Location end1;
       if (facing == Direction.WEST) {
-        end0 = Location.create(-30, -10);
-        end1 = Location.create(-30, 10);
-        sel = Location.create(-20, selMult * 20);
+        end0 = Location.create(-30, -10, true);
+        end1 = Location.create(-30, 10, true);
+        sel = Location.create(-20, selMult * 20, true);
       } else if (facing == Direction.NORTH) {
-        end0 = Location.create(-10, -30);
-        end1 = Location.create(10, -30);
-        sel = Location.create(selMult * -20, -20);
+        end0 = Location.create(-10, -30, true);
+        end1 = Location.create(10, -30, true);
+        sel = Location.create(selMult * -20, -20, true);
       } else if (facing == Direction.SOUTH) {
-        end0 = Location.create(-10, 30);
-        end1 = Location.create(10, 30);
-        sel = Location.create(selMult * -20, 20);
+        end0 = Location.create(-10, 30, true);
+        end1 = Location.create(10, 30, true);
+        sel = Location.create(selMult * -20, 20, true);
       } else {
-        end0 = Location.create(30, -10);
-        end1 = Location.create(30, 10);
-        sel = Location.create(20, selMult * 20);
+        end0 = Location.create(30, -10, true);
+        end1 = Location.create(30, 10, true);
+        sel = Location.create(20, selMult * 20, true);
       }
       ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, data.getWidth());
       ps[1] = new Port(end1.getX(), end1.getY(), Port.OUTPUT, data.getWidth());
@@ -323,19 +328,19 @@ public class Demultiplexer extends InstanceFactory {
       if (facing == Direction.WEST) {
         dx = -40;
         ddx = 0;
-        sel = Location.create(-20, selMult * (dy + 10 * outputs));
+        sel = Location.create(-20, selMult * (dy + 10 * outputs), true);
       } else if (facing == Direction.NORTH) {
         dy = -40;
         ddy = 0;
-        sel = Location.create(selMult * dx, -20);
+        sel = Location.create(selMult * dx, -20, true);
       } else if (facing == Direction.SOUTH) {
         dy = 40;
         ddy = 0;
-        sel = Location.create(selMult * dx, 20);
+        sel = Location.create(selMult * dx, 20, true);
       } else {
         dx = 40;
         ddx = 0;
-        sel = Location.create(20, selMult * (dy + 10 * outputs));
+        sel = Location.create(20, selMult * (dy + 10 * outputs), true);
       }
       for (var i = 0; i < outputs; i++) {
         ps[i] = new Port(dx, dy, Port.OUTPUT, data.getWidth());

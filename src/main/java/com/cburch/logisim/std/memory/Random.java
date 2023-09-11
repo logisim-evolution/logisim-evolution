@@ -36,10 +36,10 @@ import java.awt.Color;
 
 public class Random extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Random";
 
@@ -239,6 +239,7 @@ public class Random extends InstanceFactory {
   private void drawControl(InstancePainter painter, int xpos, int ypos, int nrOfBits) {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(xpos + 10, ypos, xpos + 70, ypos);
     g.drawLine(xpos + 10, ypos, xpos + 10, ypos + 60);
     g.drawLine(xpos + 70, ypos, xpos + 70, ypos + 60);
@@ -247,12 +248,14 @@ public class Random extends InstanceFactory {
     g.drawLine(xpos + 20, ypos + 60, xpos + 20, ypos + 70);
     g.drawLine(xpos + 60, ypos + 60, xpos + 60, ypos + 70);
     final var Name = "RNG" + nrOfBits;
-    GraphicsUtil.drawText(g, Name, xpos + 40, ypos + 8, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, Name, xpos + 40, ypos + 8, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
     g.drawLine(xpos, ypos + 30, xpos + 10, ypos + 30);
     GraphicsUtil.drawText(g, "R", xpos + 20, ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(RST);
     g.drawLine(xpos, ypos + 40, xpos + 10, ypos + 40);
-    GraphicsUtil.drawText(g, "EN", xpos + 20, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "EN", xpos + 20, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(NXT);
     painter.drawClockSymbol(xpos + 10, ypos + 50);
     GraphicsUtil.switchToWidth(g, 2);
@@ -303,27 +306,29 @@ public class Random extends InstanceFactory {
     }
 
     // draw boundary, label
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
     painter.drawLabel();
 
     // draw input and output ports
-    if (b == null)
-      painter.drawPort(OUT, "Q", Direction.WEST);
-    else
-      painter.drawPort(OUT);
-    g.setColor(Color.GRAY);
+    if (b == null) painter.drawPort(OUT, "Q", Direction.WEST);
+    else painter.drawPort(OUT);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(RST, "0", Direction.SOUTH);
     painter.drawPort(NXT, S.get("memEnableLabel"), Direction.EAST);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.NORTH);
 
     // draw contents
     if (b == null) {
-      GraphicsUtil.drawText(g, a, bds.getX() + 20, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(
+          g, a, bds.getX() + 20, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
     } else {
-      GraphicsUtil.drawText(g, a, bds.getX() + 20, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-      GraphicsUtil.drawText(g, b, bds.getX() + 20, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(
+          g, a, bds.getX() + 20, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(
+          g, b, bds.getX() + 20, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
     }
   }
 

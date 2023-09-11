@@ -52,22 +52,19 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
   private final ArrayList<JLabel> MapTo;
   private final JButton OkButton;
   private final JButton CancelButton;
+  private final String actionOk = "Ok";
+  private final String actionCancel = "Cancel";
 
   public PartialMapDialog(MapListModel.MapInfo map, FpgaIoInformationContainer io, JPanel parent) {
     super();
     mapInfo = map;
     ioComp = io;
-    setLayout(new GridBagLayout());
+    setLayout(new BorderLayout());
     setModal(true);
     setResizable(true);
     setLocationRelativeTo(parent);
     setAlwaysOnTop(true);
     MapTo = new ArrayList<>();
-    GridBagConstraints cs = new GridBagConstraints();
-    cs.gridx = 0;
-    cs.gridy = 0;
-    cs.gridwidth = 2;
-    cs.fill = GridBagConstraints.HORIZONTAL;
     final var content = new JPanel();
     content.setLayout(new BorderLayout());
     var pane = createInputPane();
@@ -84,18 +81,18 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     }
     final var scroll = new JScrollPane(content);
     scroll.setPreferredSize(new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(250)));
-    add(scroll, cs);
-    cs.gridwidth = 1;
-    cs.gridy++;
+    add(scroll, BorderLayout.CENTER);
+    final var buttonBar = new JPanel();
+    buttonBar.setLayout(new BorderLayout());
     OkButton = new JButton();
-    OkButton.setActionCommand("Ok");  // FIXME: hardcoded string
+    OkButton.setActionCommand(actionOk);
     OkButton.addActionListener(this);
-    add(OkButton, cs);
-    cs.gridx++;
+    buttonBar.add(OkButton, BorderLayout.CENTER);
     CancelButton = new JButton();
-    CancelButton.setActionCommand("Cancel");  // FIXME: hardcoded string
+    CancelButton.setActionCommand(actionCancel);
     CancelButton.addActionListener(this);
-    add(CancelButton, cs);
+    buttonBar.add(CancelButton, BorderLayout.WEST);
+    add(buttonBar, BorderLayout.SOUTH);
   }
 
   public boolean doit() {
@@ -420,7 +417,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       update(box);
       return;
     }
-    if (e.getActionCommand().equals("Ok")) {
+    if (e.getActionCommand().equals(actionOk)) {
       MapComponent map = mapInfo.getMap();
       if (InputSingleMultiple != null && InputSingleMultiple.getSelectedIndex() != 0) {
         final var pin = Math.max(mapInfo.getPin(), 0);

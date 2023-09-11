@@ -83,31 +83,31 @@ class BuildCircuitButton extends JButton {
       }
       nands.setEnabled(enableNands);
 
-      final var gb = new GridBagLayout();
-      final var gc = new GridBagConstraints();
-      setLayout(gb);
-      gc.anchor = GridBagConstraints.LINE_START;
-      gc.fill = GridBagConstraints.NONE;
+      final var gbl = new GridBagLayout();
+      final var gbc = new GridBagConstraints();
+      setLayout(gbl);
+      gbc.anchor = GridBagConstraints.LINE_START;
+      gbc.fill = GridBagConstraints.NONE;
 
-      gc.gridx = 0;
-      gc.gridy = 0;
-      gb.setConstraints(projectLabel, gc);
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbl.setConstraints(projectLabel, gbc);
       add(projectLabel);
-      gc.gridx = 1;
-      gb.setConstraints(project, gc);
+      gbc.gridx = 1;
+      gbl.setConstraints(project, gbc);
       add(project);
-      gc.gridy++;
-      gc.gridx = 0;
-      gb.setConstraints(nameLabel, gc);
+      gbc.gridy++;
+      gbc.gridx = 0;
+      gbl.setConstraints(nameLabel, gbc);
       add(nameLabel);
-      gc.gridx = 1;
-      gb.setConstraints(name, gc);
+      gbc.gridx = 1;
+      gbl.setConstraints(name, gbc);
       add(name);
-      gc.gridy++;
-      gb.setConstraints(twoInputs, gc);
+      gbc.gridy++;
+      gbl.setConstraints(twoInputs, gbc);
       add(twoInputs);
-      gc.gridy++;
-      gb.setConstraints(nands, gc);
+      gbc.gridy++;
+      gbl.setConstraints(nands, gbc);
       add(nands);
 
       projectLabel.setText(S.get("buildProjectLabel"));
@@ -125,6 +125,15 @@ class BuildCircuitButton extends JButton {
       var twoInputs = false;
       var useNands = false;
       var replace = false;
+
+      if (!model.getOutputExpressions().hasExpressions()) {
+        OptionPane.showMessageDialog(
+                parent,
+                S.get("zeroOrNotOptimizedMessage"),
+                S.get("buildDialogTitle"),
+                OptionPane.ERROR_MESSAGE);
+        return;
+      }
 
       var ok = false;
       while (!ok) {
@@ -167,10 +176,10 @@ class BuildCircuitButton extends JButton {
         for (final var label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
         if (labels.contains(name.toUpperCase())) {
           OptionPane.showMessageDialog(
-                parent,
-                S.get("buildDuplicatedNameError"),
-                S.get("buildDialogErrorTitle"),
-                OptionPane.ERROR_MESSAGE);
+              parent,
+              S.get("buildDuplicatedNameError"),
+              S.get("buildDialogErrorTitle"),
+              OptionPane.ERROR_MESSAGE);
           continue;
         }
 
@@ -234,7 +243,8 @@ class BuildCircuitButton extends JButton {
     setText(S.get("buildCircuitButton"));
   }
 
-  private void performAction(Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
+  private void performAction(
+      Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
     if (replace) {
       final var circuit = dest.getLogisimFile().getCircuit(name);
       if (circuit == null) {
