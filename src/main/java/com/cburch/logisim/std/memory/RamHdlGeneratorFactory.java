@@ -234,7 +234,8 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
     final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
-    final var invertEnable = attrs.getValue(RamAttributes.INVERT_OUTPUT_ENABLE) || attrs.getValue(RamAttributes.INVERT_WRITE_ENABLE);
+    final var invertEnable = attrs.getValue(RamAttributes.OUTPUT_ENABLE_MODE) != RamAttributes.ENABLE_ACTIVE_HIGH ||
+        attrs.getValue(RamAttributes.WRITE_ENABLE_MODE) != RamAttributes.ENABLE_ACTIVE_HIGH;
     return Hdl.isVhdl() && separate && !asynch && byteEnabled && syncRead && !clearPin
         && readAfterWrite && !invertEnable;
   }

@@ -25,8 +25,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 
 public class RamAppearance {
@@ -694,7 +692,8 @@ public class RamAppearance {
       label = !classic ? "" : getNrOEPorts(attrs) == 1 ? "OE" : "OE" + i;
       final var idx = getOEIndex(i, attrs);
       if (!classic) {
-        drawCable(g, inst.getPortLocation(idx), attrs.getValue(RamAttributes.INVERT_OUTPUT_ENABLE));
+        drawCable(g, inst.getPortLocation(idx),
+            attrs.getValue(RamAttributes.OUTPUT_ENABLE_MODE) != RamAttributes.ENABLE_ACTIVE_HIGH);
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
@@ -703,7 +702,8 @@ public class RamAppearance {
       label = !classic ? "" : getNrWEPorts(attrs) == 1 ? "WE" : "WE" + i;
       final var idx = getWEIndex(i, attrs);
       if (!classic) {
-        drawCable(g, inst.getPortLocation(idx), attrs.getValue(RamAttributes.INVERT_WRITE_ENABLE));
+        drawCable(g, inst.getPortLocation(idx),
+            attrs.getValue(RamAttributes.WRITE_ENABLE_MODE) != RamAttributes.ENABLE_ACTIVE_HIGH);
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
