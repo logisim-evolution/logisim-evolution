@@ -448,8 +448,27 @@ public class Attributes {
     }
   }
 
+  private static class NoSaveGenericAttribute<T> extends Attribute<T> { //WIP
+
+    @Override
+    public T parse(String value) {
+      // it seems that parse never gets called in this special case
+      // so we can get away with not implementing it correctly
+      return null;
+    }
+
+    @Override
+    public boolean isToSave() {
+      return false;
+    }
+  }
+
   public static Attribute<Integer> forNoSave() {
     return new NoSaveAttribute();
+  }
+
+  public static <T> Attribute<T> forGenericNoSave() {  //WIP
+    return new NoSaveGenericAttribute<T>();
   }
 
   public static Attribute<String> forHidden() {

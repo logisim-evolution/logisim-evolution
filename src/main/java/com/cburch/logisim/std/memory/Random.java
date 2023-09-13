@@ -97,15 +97,15 @@ public class Random extends InstanceFactory {
     }
 
     private long[] getRandomSeeds(Object seed) {
-      long retValue = seed instanceof Integer ? (Integer) seed : 0;
-      if (retValue == 0) {
+      var firstSeedValue = seed instanceof Long ? (Long) seed : 0L;
+      if (firstSeedValue == 0) {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what
         // would be intended was starting a new sequence entirely...
-        retValue = System.currentTimeMillis(); // TODO
+        firstSeedValue = System.currentTimeMillis(); // TODO
       }
-      long[] seeds = INIT_SEEDS.clone();
-      seeds[0] = retValue;
+      var seeds = INIT_SEEDS.clone();
+      seeds[0] = firstSeedValue;
       return seeds;
     }
 
@@ -119,14 +119,14 @@ public class Random extends InstanceFactory {
      * Information about it can be found here: https://prng.di.unimi.it
      */
     public void step() {
-      long t = curSeeds[1] << 17;
+      final var temp = curSeeds[1] << 17;
 
       curSeeds[2] ^= curSeeds[0];
       curSeeds[3] ^= curSeeds[1];
       curSeeds[1] ^= curSeeds[2];
       curSeeds[0] ^= curSeeds[3];
 
-      curSeeds[2] ^= t;
+      curSeeds[2] ^= temp;
 
       curSeeds[3] = Long.rotateLeft(curSeeds[3], 45);
 
@@ -134,11 +134,11 @@ public class Random extends InstanceFactory {
     }
   }
 
-  public static final Attribute<Integer> ATTR_SEED0 =
-      Attributes.forInteger("seed", S.getter("randomSeedAttr"));
-  public static final Attribute<Integer> ATTR_SEED1 = Attributes.forNoSave();
-  public static final Attribute<Integer> ATTR_SEED2 = Attributes.forNoSave();
-  public static final Attribute<Integer> ATTR_SEED3 = Attributes.forNoSave();
+  public static final Attribute<Long> ATTR_SEED0 =
+      Attributes.forHexLong("seed", S.getter("randomSeedAttr"));
+  public static final Attribute<Long> ATTR_SEED1 = Attributes.forGenericNoSave();
+  public static final Attribute<Long> ATTR_SEED2 = Attributes.forGenericNoSave();
+  public static final Attribute<Long> ATTR_SEED3 = Attributes.forGenericNoSave();
 
   public static final int OUT = 0;
   public static final int CK = 1;
@@ -291,8 +291,7 @@ public class Random extends InstanceFactory {
     String a;
     String b = null;
     if (painter.getShowState()) {
-      long val = state == null ? 0 : state.value;
-      final var str = StringUtil.toHexString(width, val);
+      final var str = StringUtil.toHexString(width, state == null ? 0 : state.value);
       if (str.length() <= 4) {
         a = str;
       } else {
@@ -367,7 +366,7 @@ public class Random extends InstanceFactory {
     }
 
     final var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
+    final var triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
     final var triggered = data.updateClock(state.getPortValue(CK), triggerType);
 
     data.propagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED0));
