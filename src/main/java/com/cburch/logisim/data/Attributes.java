@@ -448,7 +448,7 @@ public class Attributes {
     }
   }
 
-  private static class NoSaveGenericAttribute<T> extends Attribute<T> { //WIP
+  private static class NoSaveGenericAttribute<T> extends Attribute<T> {
 
     @Override
     public T parse(String value) {
@@ -467,7 +467,7 @@ public class Attributes {
     return new NoSaveAttribute();
   }
 
-  public static <T> Attribute<T> forGenericNoSave() {  //WIP
+  public static <T> Attribute<T> forGenericNoSave() {
     return new NoSaveGenericAttribute<T>();
   }
 
