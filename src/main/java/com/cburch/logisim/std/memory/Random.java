@@ -102,7 +102,7 @@ public class Random extends InstanceFactory {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what
         // would be intended was starting a new sequence entirely...
-        firstSeedValue = System.currentTimeMillis(); // TODO
+        firstSeedValue = System.currentTimeMillis(); // TODO has to be modified so that the upper bits change to
       }
       var seeds = INIT_SEEDS.clone();
       seeds[0] = firstSeedValue;
@@ -145,6 +145,7 @@ public class Random extends InstanceFactory {
   public static final int NXT = 2;
   public static final int RST = 3;
 
+  // TODO change 1-3 to something truly random
   private static final long[] INIT_SEEDS = { // initial seeds
       0x0L,                // will be overwritten by attribute
       0x0123456789ABCDEFL, // fixed
