@@ -17,11 +17,9 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.TableSorter;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -29,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
 public class StatisticsDialog extends JDialog implements ActionListener {
   private static final long serialVersionUID = 1L;
@@ -40,7 +37,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
     setTitle(S.get("statsDialogTitle", circuitName));
 
     var table = new StatisticsTable();
-    TableSorter mySorter = new TableSorter(model, table.getTableHeader());
+    final var mySorter = new TableSorter(model, table.getTableHeader());
     Comparator<String> comp =
         new CompareString("", S.get("statsTotalWithout"), S.get("statsTotalWith"));
     mySorter.setColumnComparator(String.class, comp);
@@ -67,8 +64,8 @@ public class StatisticsDialog extends JDialog implements ActionListener {
   }
 
   public static void show(JFrame parent, LogisimFile file, Circuit circuit) {
-    FileStatistics stats = FileStatistics.compute(file, circuit);
-    StatisticsDialog dlog =
+    final var stats = FileStatistics.compute(file, circuit);
+    final var dlog =
         new StatisticsDialog(parent, circuit.getName(), new StatisticsTableModel(stats));
     dlog.setVisible(true);
   }
@@ -88,7 +85,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
     @Override
     public int compare(String a, String b) {
       for (int i = fixedAtBottom.length - 1; i >= 0; i--) {
-        String s = fixedAtBottom[i];
+        final var s = fixedAtBottom[i];
         if (a.equals(s)) return b.equals(s) ? 0 : 1;
         if (b.equals(s)) return -1;
       }
@@ -106,7 +103,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
     }
 
     protected void setPreferredColumnWidths(double[] percentages) {
-      Dimension tableDim = getPreferredSize();
+      final var tableDim = getPreferredSize();
 
       double total = 0;
       for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
@@ -114,8 +111,8 @@ public class StatisticsDialog extends JDialog implements ActionListener {
       }
 
       for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
-        TableColumn column = getColumnModel().getColumn(i);
-        double width = tableDim.width * (percentages[i] / total);
+        final var column = getColumnModel().getColumn(i);
+        final var width = tableDim.width * (percentages[i] / total);
         column.setPreferredWidth((int) width);
       }
     }
@@ -158,8 +155,8 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 
     @Override
     public Object getValueAt(int row, int column) {
-      List<FileStatistics.Count> counts = stats.getCounts();
-      int countsLen = counts.size();
+      final var counts = stats.getCounts();
+      final var countsLen = counts.size();
       if (row < 0 || row >= countsLen + 2) return "";
       FileStatistics.Count count;
       if (row < countsLen) count = counts.get(row);

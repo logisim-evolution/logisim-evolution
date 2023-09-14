@@ -18,24 +18,24 @@ class SimulationTreeTopNode extends SimulationTreeNode {
 
   public SimulationTreeTopNode(SimulationTreeModel model, List<CircuitState> allRootStates) {
     super(model, null);
-    for (CircuitState state : allRootStates)
+    for (final var state : allRootStates)
       children.add(new SimulationTreeCircuitNode(model, null, state, null));
   }
 
   public void updateSimulationList(List<CircuitState> allRootStates) {
-    boolean changed = false;
-    HashMap<CircuitState, TreeNode> old = new HashMap<>();
-    HashMap<CircuitState, Integer> oldPos = new HashMap<>();
+    var changed = false;
+    final var old = new HashMap<CircuitState, TreeNode>();
+    final var oldPos = new HashMap<CircuitState, Integer>();
     int i = 0;
-    for (TreeNode node : children) {
-      CircuitState state = ((SimulationTreeCircuitNode) node).getCircuitState();
+    for (final var node : children) {
+      final var state = ((SimulationTreeCircuitNode) node).getCircuitState();
       old.put(state, node);
       oldPos.put(state, i++);
     }
     children.clear();
     i = 0;
-    for (CircuitState state : allRootStates) {
-      TreeNode node = old.get(state);
+    for (final var state : allRootStates) {
+      var node = old.get(state);
       if (node == null) {
         changed = true;
         node = new SimulationTreeCircuitNode(model, null, state, null);

@@ -9,20 +9,17 @@
 
 package com.cburch.logisim.gui.main;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
