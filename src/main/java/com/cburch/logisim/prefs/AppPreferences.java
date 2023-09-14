@@ -56,6 +56,12 @@ public class AppPreferences {
   // LocalePreference
   //
   private static class LocalePreference extends PrefMonitorString {
+    /**
+     * Finds the Locale corresponding to the given language string.
+     *
+     * @param lang Language string to search for.
+     * @return The corresponding Locale or null if not found.
+     */
     private static Locale findLocale(String lang) {
       Locale[] check;
       for (int set = 0; set < 2; set++) {
@@ -74,7 +80,7 @@ public class AppPreferences {
     public LocalePreference() {
       super("locale", "");
 
-      String localeStr = this.get();
+      final var localeStr = this.get();
       if (!("".equals(localeStr))) {
         LocaleManager.setLocale(Locale.forLanguageTag(localeStr));
       }
@@ -150,7 +156,7 @@ public class AppPreferences {
   }
 
   private static File convertFile(String fileName) {
-    if (fileName == null || fileName.equals("")) {
+    if (fileName == null || fileName.isEmpty()) {
       return null;
     } else {
       final var file = new File(fileName);
@@ -171,7 +177,7 @@ public class AppPreferences {
   }
 
   private static Template getCustomTemplate() {
-    File toRead = templateFile;
+    final var toRead = templateFile;
     if (customTemplateFile == null || !(customTemplateFile.equals(toRead))) {
       if (toRead == null) {
         customTemplate = null;
@@ -408,7 +414,7 @@ public class AppPreferences {
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon) {
-    Image iconImage = icon.getImage();
+    final var iconImage = icon.getImage();
     return new ImageIcon(
         iconImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
   }
