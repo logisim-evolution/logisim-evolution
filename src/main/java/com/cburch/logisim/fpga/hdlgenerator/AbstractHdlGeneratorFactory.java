@@ -22,6 +22,7 @@ import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -250,10 +251,22 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         }
       }
       if (!portMap.isEmpty()) {
+        List<String> openPorts = new ArrayList<>();
+        /* Sanitze the portMap. Remove array maps to OPEN, as these are invalid */
+        for (final String port : portMap.keySet()) {
+          if (port.contains("(") && (portMap.get(port).equals(Hdl.unconnected(true)))) {
+            openPorts.add(port);
+          }
+        }
+        if (!openPorts.isEmpty()) {
+          for (final String port : openPorts)
+            portMap.remove(port);
+        }
         // first we gather information on the port string lengths
         var maxNameLength = 0;
-        for (final var port : portMap.keySet())
+        for (final var port : portMap.keySet()) {
           maxNameLength = Math.max(maxNameLength, port.length());
+        }
         var currentPort = 0;
         final var portNames = new TreeSet<>(portMap.keySet());
         final var nrOfPorts = portNames.size();
