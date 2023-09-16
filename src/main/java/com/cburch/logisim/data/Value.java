@@ -332,9 +332,6 @@ public class Value {
     }
   }
 
-  // TODO: to reviewer: i'm not particularly sure of what this method does
-  //  and there's no usage of this method in this project as well
-  //  should i remove it?
   public Value controls(Value other) { // e.g. tristate buffer
     if (other == null) {
       return null;
