@@ -14,6 +14,13 @@ import com.cburch.logisim.util.Cache;
 import java.awt.Color;
 import java.util.Arrays;
 
+/**
+ * The main data class for representing wiring values.
+ * Value objects are immutable and represent binary data, each having a specific
+ * of bits, its width, limited by MAX_WIDTH.
+ * Each bit may store not only TRUE and FALSE values, but also UNKNOWN an ERROR.
+ * A special zero-width value known as NIL is also a valid Value object.
+ */
 public class Value {
 
   private static Value create(int width, long error, long unknown, long value) {
@@ -55,6 +62,9 @@ public class Value {
     }
   }
 
+  /**
+   * Merges an array of Value objects into one single Value.
+   */
   public static Value create(Value[] values) {
     if (values.length == 0) {
       return NIL;
@@ -85,32 +95,52 @@ public class Value {
     return Value.create(width, error, unknown, value);
   }
 
+  /**
+   * Creates a Value object consisting of <code>bits</code> error bits.
+   */
   public static Value createError(BitWidth bits) {
     return Value.create(bits.getWidth(), -1, 0, 0);
   }
 
+  /**
+   * Creates a Value object consisting of <code>bits</code> unknown bits.
+   */
   public static Value createUnknown(BitWidth bits) {
     return Value.create(bits.getWidth(), 0, -1, 0);
   }
 
+  /**
+   * Creates a Value object with the given bit width and bit pattern.
+   */
   public static Value createKnown(BitWidth bits, long value) {
     return Value.create(bits.getWidth(), 0, 0, value);
   }
 
+  /**
+   * Creates a 32-bit Valu object with bit pattern of the given 32-bit IEEE754 floating point number.
+   */
   public static Value createKnown(float value) {
     return Value.create(32, 0, 0, Float.floatToIntBits(value));
   }
 
+  /**
+   * Creates a 64-bit Valu object with bit pattern of the given 64-bit IEEE754 floating point number.
+   */
   public static Value createKnown(double value) {
     return Value.create(64, 0, 0, Double.doubleToLongBits(value));
   }
 
   /* Added to test */
+
+  /**
+   * Creates a Value object with the given bit width and bit pattern.
+   */
   public static Value createKnown(int bits, long value) {
     return Value.create(bits, 0, 0, value);
   }
 
   /**
+   * Converts a test vector value string into a Value object, with the given bit width.
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   public static Value fromLogString(BitWidth width, String t) throws Exception {
@@ -191,6 +221,10 @@ public class Value {
     return create(w, 0, unknown, value);
   }
 
+  /**
+   * Given a test vector Value string and its expected bit width, finds out
+   * the numerical radix of the Value represented by the string.
+   */
   public static int radixOfLogString(BitWidth width, String t) {
     if (t.startsWith("0x")) {
       return 16;
@@ -205,6 +239,9 @@ public class Value {
     return 10;
   }
 
+  /**
+   * Creates a Value object consisting of the 1-bit base value, repeated <code>bits</code> times.
+   */
   public static Value repeat(Value base, int bits) {
     if (base.getWidth() != 1) {
       throw new IllegalArgumentException("first parameter must be one bit");
@@ -264,6 +301,13 @@ public class Value {
     this.value = value;
   }
 
+  /**
+   * Computes the bitwise AND of two wiring values.
+   *
+   * <p>The resulting value's width is the maximum of the two values' widths,</p>
+   *
+   * <p>The AND of unknown, nil or error bits is always an error bit.</p>
+   */
   public Value and(Value other) {
     if (other == null) {
       return this;
@@ -288,6 +332,9 @@ public class Value {
     }
   }
 
+  // TODO: to reviewer: i'm not particularly sure of what this method does
+  //  and there's no usage of this method in this project as well
+  //  should i remove it?
   public Value controls(Value other) { // e.g. tristate buffer
     if (other == null) {
       return null;
@@ -312,6 +359,14 @@ public class Value {
     }
   }
 
+  /**
+   * This method combines/clashes two values.
+   *
+   * <p>Two true|false values always combine into an error, whereas combining a true|false value
+   * with nil or unknown results the original value itself.</p>
+   *
+   * <p>This method is used to combine the values of two wires once they meet in a circuit.</p>
+   */
   public Value combine(Value other) {
     if (other == null) {
       return this;
@@ -406,10 +461,16 @@ public class Value {
     return ret;
   }
 
+  /**
+   * Returns the width of this Value as a BitWidth object.
+   */
   public BitWidth getBitWidth() {
     return BitWidth.create(width);
   }
 
+  /**
+   * Returns the configured color that represents this Value object.
+   */
   public Color getColor() {
     if (error != 0) {
       return errorColor;
@@ -428,6 +489,9 @@ public class Value {
     }
   }
 
+  /**
+   * Returns the width of this Value as an integer.
+   */
   public int getWidth() {
     return width;
   }
@@ -441,14 +505,23 @@ public class Value {
     return ret;
   }
 
+  /**
+   * Checks whether this Value has at least one error bit.
+   */
   public boolean isErrorValue() {
     return error != 0;
   }
 
+  /**
+   * Checks whether this Value is non NIL and has no error or unknown bits.
+   */
   public boolean isFullyDefined() {
     return width > 0 && error == 0 && unknown == 0;
   }
 
+  /**
+   * Checks whether this Value is composed entirely of unknown bits.
+   */
   public boolean isUnknown() {
     if (width == 64) {
       return error == 0 && unknown == -1L;
@@ -457,6 +530,9 @@ public class Value {
     }
   }
 
+  /**
+   * Computes  the bitwise NOT of this Value. The NOT of non true|false bits is always an error.
+   */
   public Value not() {
     if (width <= 1) {
       if (this == TRUE) {
@@ -471,6 +547,13 @@ public class Value {
     }
   }
 
+  /**
+   * Computes the bitwise OR of two wiring values.
+   *
+   * <p>The resulting value's width is the maximum of the two values' widths,</p>
+   *
+   * <p>The OR of unknown, nil or error bits is always an error bit.</p>
+   */
   public Value or(Value other) {
     if (other == null) {
       return this;
@@ -495,6 +578,10 @@ public class Value {
     }
   }
 
+  /**
+   * Returns a copy of this value object, but with the bit at the provided
+   * zero-based index set to the given one-bit Value.
+   */
   public Value set(int which, Value val) {
     if (val.width != 1) {
       throw new RuntimeException("Cannot set multiple values");
@@ -512,6 +599,9 @@ public class Value {
     }
   }
 
+  /**
+   * Returns a string containing the binary representation of this Value object.
+   */
   public String toBinaryString() {
     switch (width) {
       case 0:
@@ -535,6 +625,9 @@ public class Value {
     }
   }
 
+  /**
+   * Returns a string containing the decimal representation of this Value object.
+   */
   public String toDecimalString(boolean signed) {
     if (width == 0) {
       return Character.toString(DONTCARECHAR);
@@ -562,6 +655,9 @@ public class Value {
     }
   }
 
+  /**
+   * Returns the width-aware display string representation for this Value.
+   */
   public String toDisplayString() {
     switch (width) {
       case 0:
@@ -588,6 +684,10 @@ public class Value {
     }
   }
 
+  /**
+   * Returns the width-aware display string representation for this Value
+   * with the given numerical radix.
+   */
   public String toDisplayString(int radix) {
     switch (radix) {
       case 2:
@@ -610,6 +710,9 @@ public class Value {
     }
   }
 
+  /**
+   * Returns the hexadecimal represenation for this object
+   */
   public String toHexString() {
     if (width <= 1) {
       return toString();
@@ -644,6 +747,10 @@ public class Value {
     }
   }
 
+  /**
+   * Returns the binary value represented by this Value as a long, or
+   * -1 if there is any error or unknown bit.
+   */
   public long toLongValue() {
     if (error != 0) {
       return -1L;
@@ -654,6 +761,10 @@ public class Value {
     return value;
   }
 
+  /**
+   * Returns the binary value represented by this Value as a 32-bit floating point value, or
+   * NaN if there is any error or unknown bit.
+   */
   public float toFloatValue() {
     if (error != 0 || unknown != 0 || width != 32) {
       return Float.NaN;
@@ -661,6 +772,10 @@ public class Value {
     return Float.intBitsToFloat((int) value);
   }
 
+  /**
+   * Returns the binary value represented by this Value as a 64-bit floating point value, or
+   * NaN if there is any error or unknown bit.
+   */
   public double toDoubleValue() {
     if (error != 0 || unknown != 0 || width != 64) {
       return Double.NaN;
@@ -668,6 +783,9 @@ public class Value {
     return Double.longBitsToDouble(value);
   }
 
+  /**
+   * Returns the string octal representation of this Value object.
+   */
   public String toOctalString() {
     if (width <= 1) {
       return toString();
@@ -729,6 +847,13 @@ public class Value {
     }
   }
 
+  /**
+   * Computes the bitwise XOR of two wiring values.
+   *
+   * <p>The resulting value's width is the maximum of the two values' widths,</p>
+   *
+   * <p>The XOR of unknown, nil or error bits is always an error bit.</p>
+   */
   public Value xor(Value other) {
     if (other == null) {
       return this;
