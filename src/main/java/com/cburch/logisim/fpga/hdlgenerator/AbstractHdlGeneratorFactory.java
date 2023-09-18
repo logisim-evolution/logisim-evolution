@@ -86,15 +86,13 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
       final var typedWires = myTypedWires.getTypedWires();
       final var mySignals = new HashMap<String, String>();
+      final var myRegisters = new HashMap<String, String>();
+      final var myRegisterInitializers = new HashMap<String, String>();
       // first we gather some info on the wire names
       var maxNameLength = 0;
       for (final var wire : myWires.wireKeySet()) {
         maxNameLength = Math.max(maxNameLength, wire.length());
         mySignals.put(wire, getTypeIdentifier(myWires.get(wire), attrs));
-      }
-      for (final var reg : myWires.registerKeySet()) {
-        maxNameLength = Math.max(maxNameLength, reg.length());
-        mySignals.put(reg, getTypeIdentifier(myWires.get(reg), attrs));
       }
       for (final var wire : typedWires.keySet()) {
         maxNameLength = Math.max(maxNameLength, wire.length());
@@ -107,9 +105,23 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         contents.add("   {{signal}} {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
             mySignals.get(signal));
       if (maxNameLength > 0) contents.empty();
+      // gather some info on the register names
+      maxNameLength = 0;
+      for (final var reg : myWires.registerKeySet()) {
+        maxNameLength = Math.max(maxNameLength, reg.length());
+        myRegisters.put(reg, getTypeIdentifier(myWires.get(reg), attrs));
+        myRegisterInitializers.put(reg, myWires.get(reg) == 1 ? "'0'" : "({{others}} => '0')");
+      }
+      // now we add them
+      if (maxNameLength > 0) contents.addRemarkBlock("All used registers are defined here");
+      final var sortedRegisters = new TreeSet<>(myRegisters.keySet());
+      for (final var signal : sortedRegisters)
+        contents.add("   {{signal}} {{1}}{{2}} : {{3}} := {{4}};", signal, " ".repeat(maxNameLength - signal.length()),
+            myRegisters.get(signal), myRegisterInitializers.get(signal));
+      if (maxNameLength > 0) contents.empty();
       contents.add("{{begin}}")
           .add(getModuleFunctionality(theNetlist, attrs).getWithIndent())
-          .add("{{end}} platformIndependent;");
+          .add("{{end}} platformIndependent;");      
     } else {
       final var preamble = String.format("module %s( ", componentName);
       final var indenting = " ".repeat(preamble.length());
