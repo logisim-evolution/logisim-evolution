@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a new preference to allow the user to choose the action keys for many functions.
 - Added support for scanning 7-segment display on FPGA-boards.
 - Added first support for the openFpga toolchain for the ecp5 famely.
-  Note that this is experimental for the moment, so use it at your own risk. 
+  Note that this is experimental for the moment, so use it at your own risk.
 - Introduced user-defined color for components.
 - Added architecture designation to macOS build.
 - Added TTL 7487: 4-bit True/complement, zero/one elements.
@@ -105,8 +105,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Several bug fixes.
 
 ## [3.7.0] - 2021-10-12
-  * Reworked the slider component in the I/O extra library.
-  * Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
+
+### Changed
+
+- Reworked the slider component in the I/O extra library.
+- Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
 
 ### Added
 
@@ -183,7 +186,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed missing port on DotMatrix.
 - Fixed pin duplication on load in case a custom apearance is used for a circuit.
 - Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
-- - Fixed several small bugs.
+- Fixed several small bugs.
 
 ### Removed
 
@@ -191,4 +194,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `AnimatedIcon` has been completely removed.
 
 ## [3.5.0] - 2021-05-25
+
 - Many code-cleanups, bug fixes and again the chronogram.
