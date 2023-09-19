@@ -19,7 +19,12 @@ import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ * The TestVector class represents the data contents of a Logisim Evolution test vector file,
+ * This class also provides functionality for parsing test vector files from disk.
+ *
+ * <p> Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
+ * </p>
+ *
  */
 public class TestVector {
 
@@ -128,6 +133,9 @@ public class TestVector {
     }
   }
 
+  /**
+   * A java file filter that accepts Logisim Evoltion test vector files.
+   */
   public static final FileFilter FILE_FILTER = new TestVectorFilter();
   public String[] columnName;
   public BitWidth[] columnWidth;
@@ -135,6 +143,9 @@ public class TestVector {
 
   public List<Value[]> data;
 
+  /**
+   * Constructs a TestVector object by parsing the contents of the given File.
+   */
   public TestVector(File src) throws IOException {
     try (final var in = new BufferedReader(new FileReader(src))) {
       final var r = new TestVectorReader(in);
@@ -142,6 +153,9 @@ public class TestVector {
     }
   }
 
+  /**
+   * Constructs a TestVector object by parsing the contents of the file with the given filename.
+   */
   public TestVector(String filename) throws IOException {
     this(new File(filename));
   }
