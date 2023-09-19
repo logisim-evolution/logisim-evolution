@@ -141,7 +141,7 @@ public class Value {
 
   /**
    * Converts a test vector value string into a Value object, with the given bit width.
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
    */
   public static Value fromLogString(BitWidth width, String t) throws Exception {
     final var radix = radixOfLogString(width, t);
@@ -396,7 +396,7 @@ public class Value {
   }
 
   /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
    */
   public boolean compatible(Value other) {
     // where this has a value, other must have same value
