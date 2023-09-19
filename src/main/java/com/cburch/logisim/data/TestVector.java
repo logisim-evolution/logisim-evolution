@@ -34,8 +34,8 @@ public class TestVector {
     public boolean accept(File f) {
       if (!f.isFile()) return true;
 
-      String name = f.getName();
-      int i = name.lastIndexOf('.');
+      final var name = f.getName();
+      final var i = name.lastIndexOf('.');
       return (i > 0 && name.substring(i).equalsIgnoreCase(".txt"));
     }
 
