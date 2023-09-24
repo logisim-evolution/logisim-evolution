@@ -16,10 +16,13 @@ import java.util.Arrays;
 
 /**
  * The main data class for representing wiring values.
+ * <p>
  * Value objects are immutable and represent binary data, each having a specific
- * of bits, its width, limited by MAX_WIDTH.
- * Each bit may store not only TRUE and FALSE values, but also UNKNOWN an ERROR.
- * A special zero-width value known as NIL is also a valid Value object.
+ * quantity of bits, its width, limited by <code>MAX_WIDTH</code>.
+ * Each bit may store not only <code>TRUE</code> and <code>FALSE</code> values,
+ * but also <code>UNKNOWN</code> and <code>ERROR</code>.
+ * There also exists a special zero-width Value known as <code>NIL</code> which is
+ * always returned by the API when a returned Value object has a width of zero.
  */
 public class Value {
 
@@ -64,6 +67,14 @@ public class Value {
 
   /**
    * Merges an array of Value objects into one single Value.
+   * The returned Value's width is the sum of the width of the given values, therefore
+   * care should be taken to avoid exceeding <code>MAX_WIDTH</code>.
+   * <code>NIL</code> is returned if such sum is zero or if the array length is zero.
+   *
+   * @param values the array of values to be merged.
+   * @return A Value object with the bits of the given values, in order.
+   * @throws RuntimeException if the total bit width exceeds <code>MAX_WIDTH</code>.
+   * @throws RuntimeException if any of the values is not zero-width.
    */
   public static Value create(Value[] values) {
     if (values.length == 0) {
@@ -97,6 +108,9 @@ public class Value {
 
   /**
    * Creates a Value object consisting of <code>bits</code> error bits.
+   *
+   * @param bits the width of the returned Value.
+   * @return an error value with the supplied bit width.
    */
   public static Value createError(BitWidth bits) {
     return Value.create(bits.getWidth(), -1, 0, 0);
@@ -104,6 +118,9 @@ public class Value {
 
   /**
    * Creates a Value object consisting of <code>bits</code> unknown bits.
+   *
+   * @param bits the width of the returned Value.
+   * @return an unknown value with <code>width</code> bits.
    */
   public static Value createUnknown(BitWidth bits) {
     return Value.create(bits.getWidth(), 0, -1, 0);
@@ -111,20 +128,33 @@ public class Value {
 
   /**
    * Creates a Value object with the given bit width and bit pattern.
+   *
+   * @param bits the width of the returned Value.
+   * @param value the long object containing the bit pattern.
+   * @return a value object with the provided bit width, consisting of
+   *         the least significant bits of the provided <code>long</code> value.
    */
   public static Value createKnown(BitWidth bits, long value) {
     return Value.create(bits.getWidth(), 0, 0, value);
   }
 
   /**
-   * Creates a 32-bit Valu object with bit pattern of the given 32-bit IEEE754 floating point number.
+   * Creates a 32-bit Value object with the bit pattern of the given 32-bit IEEE754
+   * floating point number.
+   *
+   * @param value the floating point number to get the pattern from.
+   * @return a value object with the given floating point content.
    */
   public static Value createKnown(float value) {
     return Value.create(32, 0, 0, Float.floatToIntBits(value));
   }
 
   /**
-   * Creates a 64-bit Valu object with bit pattern of the given 64-bit IEEE754 floating point number.
+   * Creates a 64-bit Value object with the bit pattern of the given 32-bit IEEE754
+   * floating point number.
+   *
+   * @param value the floating point number to get the pattern from.
+   * @return a value object with the given floating point content.
    */
   public static Value createKnown(double value) {
     return Value.create(64, 0, 0, Double.doubleToLongBits(value));
@@ -134,14 +164,26 @@ public class Value {
 
   /**
    * Creates a Value object with the given bit width and bit pattern.
+   *
+   * @param bits the width of the returned Value.
+   * @param value the long object containing the bit pattern.
+   * @return a value object with the provided bit width, consisting of
+   *         the least significant bits of the provided <code>long</code> value.
    */
   public static Value createKnown(int bits, long value) {
     return Value.create(bits, 0, 0, value);
   }
 
   /**
-   * Converts a test vector value string into a Value object, with the given bit width.
+   * Converts a test vector value string into a Value object with the given bit width.
+   * The radix of the string representation is infererred from the provided input.
+   * <p>
    * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
+   *
+   * @param width the bit with of the valu represented by the string.
+   * @param t the string with the representation of the value object.
+   * @return the Value object parsed from the given source string.
+   * @throws Exception if the provided representation string could not be parsed.
    */
   public static Value fromLogString(BitWidth width, String t) throws Exception {
     final var radix = radixOfLogString(width, t);
@@ -224,6 +266,10 @@ public class Value {
   /**
    * Given a test vector Value string and its expected bit width, finds out
    * the numerical radix of the Value represented by the string.
+   *
+   * @param width the bit width of the value represented by the string
+   * @param t the string to get the radix from
+   * @return the numerical radix of the value represented by the string
    */
   public static int radixOfLogString(BitWidth width, String t) {
     if (t.startsWith("0x")) {
@@ -241,6 +287,11 @@ public class Value {
 
   /**
    * Creates a Value object consisting of the 1-bit base value, repeated <code>bits</code> times.
+   *
+   * @param base the 1-bit value to repeat.
+   * @param bits the bit width of returned object.
+   * @return the repetition of <code>base</code>, <code>bits</code> times.
+   * @throws IllegalArgumentException if <code>base</code> is not a one bit value.
    */
   public static Value repeat(Value base, int bits) {
     if (base.getWidth() != 1) {
@@ -302,11 +353,14 @@ public class Value {
   }
 
   /**
-   * Computes the bitwise AND of two wiring values.
+   * Computes the bitwise AND of <code>this</code> and another Value.
+   * <p>
+   * The resulting value's width is the maximum of the two values' widths,
+   * with the shortest value being padded with zeros on the most significant bits.
+   * The AND of unknown,<code>NIL</code> or error bits is always an error bit.
    *
-   * <p>The resulting value's width is the maximum of the two values' widths,</p>
-   *
-   * <p>The AND of unknown, nil or error bits is always an error bit.</p>
+   * @param other the other value to AND with <code>this</code>.
+   * @return the bitwise AND of <code>this</code> and <code>other</code>.
    */
   public Value and(Value other) {
     if (other == null) {
@@ -357,12 +411,15 @@ public class Value {
   }
 
   /**
-   * This method combines/clashes two values.
-   *
-   * <p>Two true|false values always combine into an error, whereas combining a true|false value
-   * with nil or unknown results the original value itself.</p>
-   *
-   * <p>This method is used to combine the values of two wires once they meet in a circuit.</p>
+   * Combines two values, yielding error bits on conflicting entries.
+   * <p>
+   * Combining can be interpreted as "clashing".
+   * Two true|false bits always combine into an error bit, whereas combining a true|false value
+   * with nil or unknown results on the original value itself.
+   * <p>
+   * It is useful for combining the values of two wires once they meet in a circuit.
+   * @param other the value to combine with this.
+   * @return the combined value.
    */
   public Value combine(Value other) {
     if (other == null) {
@@ -396,7 +453,17 @@ public class Value {
   }
 
   /**
+   * Determines wether a given value's bits match with <code>this</code>'s bits.
+   * <p>
+   * Given two value bits A and B, A is considered to be compatible with B if and only if
+   * A equals B, or (A is unknown, and B is true|false|unknown).
+   * This operation is not commutative. <code>UNKNOWN</code> is compatible with
+   * <code>TRUE</code> but <code>TRUE</code> is not compatible with <code>UNKNOWN</code>.
+   * <p>
    * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
+   * @param other the value to match against <code>this</code>.
+   * @return true if and only if the two values are compatible.
+   *
    */
   public boolean compatible(Value other) {
     // where this has a value, other must have same value
@@ -418,6 +485,20 @@ public class Value {
         : false;
   }
 
+  /**
+   * Resizes this value to a new width using the provided bit if extending.
+   * Returns a new value object consisting of this object's content, but resized to the
+   * provided width, truncating or extending on the most significant bits as necessary.
+   * <p>
+   * If the provided bit width is greater than this value's width, <code>others</code>
+   * is expected to be a one-bit value, to be copied over the extended most significant bits.
+   * If the provided value has more than one bit, then the resulting object is extended with
+   * <code>UNKNOWN</code>.
+   *
+   * @param newWidth the width of the returned value object.
+   * @param others the bit to extend <code>this</code> with.
+   * @return the resized value object.
+   */
   public Value extendWidth(int newWidth, Value others) {
     if (width == newWidth) {
       return this;
@@ -434,6 +515,13 @@ public class Value {
     }
   }
 
+  /**
+   * Returns this value's bit at the provided index.
+   * The index starts on zero, and least significant based.
+   * For example index 0 is the least significant bit.
+   * @param which the index to retrieve.
+   * @return the value bit at the provided index.
+   */
   public Value get(int which) {
     if (which < 0 || which >= width) {
       return ERROR;
@@ -450,6 +538,14 @@ public class Value {
     }
   }
 
+  /**
+   * Constructs an array containing this value's bits.
+   *
+   * @return An array with this value's width as its length,
+   *         and this value's bits as its contents, with the
+   *         least significant bit being the first element and the most significant bit
+   *         the last element.
+   */
   public Value[] getAll() {
     final var ret = new Value[width];
     for (var i = 0; i < ret.length; i++) {
@@ -460,6 +556,8 @@ public class Value {
 
   /**
    * Returns the width of this Value as a BitWidth object.
+   *
+   * @return the bit width of this object.
    */
   public BitWidth getBitWidth() {
     return BitWidth.create(width);
@@ -467,6 +565,8 @@ public class Value {
 
   /**
    * Returns the configured color that represents this Value object.
+   *
+   * @return the color representing this value.
    */
   public Color getColor() {
     if (error != 0) {
@@ -488,6 +588,8 @@ public class Value {
 
   /**
    * Returns the width of this Value as an integer.
+   *
+   * @return the bit width of this object.
    */
   public int getWidth() {
     return width;
@@ -504,6 +606,8 @@ public class Value {
 
   /**
    * Checks whether this Value has at least one error bit.
+   *
+   * @return true if and only if this object has an error bit.
    */
   public boolean isErrorValue() {
     return error != 0;
@@ -511,6 +615,8 @@ public class Value {
 
   /**
    * Checks whether this Value is non NIL and has no error or unknown bits.
+   *
+   * @return true if and only if this non-NIL object has only known bits.
    */
   public boolean isFullyDefined() {
     return width > 0 && error == 0 && unknown == 0;
@@ -518,6 +624,8 @@ public class Value {
 
   /**
    * Checks whether this Value is composed entirely of unknown bits.
+   *
+   * @return true if and only if this value has no known or error bits.
    */
   public boolean isUnknown() {
     if (width == 64) {
@@ -528,7 +636,13 @@ public class Value {
   }
 
   /**
-   * Computes  the bitwise NOT of this Value. The NOT of non true|false bits is always an error.
+   * Computes the bitwise NOT of this Value.
+   * The returnd object has the same width of this, and
+   * each bit is negated.
+   * The NOT of a bit that isn't true or false
+   * is always an error bit.
+   *
+   * @return the bitwise NOT of this.
    */
   public Value not() {
     if (width <= 1) {
@@ -546,10 +660,10 @@ public class Value {
 
   /**
    * Computes the bitwise OR of two wiring values.
+   * The resulting value's width is the maximum of the two values' widths,
+   * The OR of unknown, nil or error bits is always an error bit.
    *
-   * <p>The resulting value's width is the maximum of the two values' widths,</p>
-   *
-   * <p>The OR of unknown, nil or error bits is always an error bit.</p>
+   * @return the bitwise OR of <code>this</code> and <code>other</code>.
    */
   public Value or(Value other) {
     if (other == null) {
@@ -576,8 +690,16 @@ public class Value {
   }
 
   /**
-   * Returns a copy of this value object, but with the bit at the provided
-   * zero-based index set to the given one-bit Value.
+   * Sets a bit of this to the provided one-bit value.
+   * Returns a copy of this value, with possibly one modified bit, at the given
+   * zero based least significant based index. The content of such bit
+   * is replaced with the provided one-bit value.
+   *
+   * @param which the index of the bit to modify.
+   * @param val the value to set at such bit.
+   * @return the modified value.
+   * @throws RuntimeException if <code>val</code> is not a one bit value.
+   * @throws RuntimeException if the index is outside this value's width.
    */
   public Value set(int which, Value val) {
     if (val.width != 1) {
@@ -598,6 +720,8 @@ public class Value {
 
   /**
    * Returns a string containing the binary representation of this Value object.
+   *
+   * @return the binary representation of this value as a string.
    */
   public String toBinaryString() {
     switch (width) {
@@ -624,6 +748,8 @@ public class Value {
 
   /**
    * Returns a string containing the decimal representation of this Value object.
+   *
+   * @return the decimal representation of this value as a string.
    */
   public String toDecimalString(boolean signed) {
     if (width == 0) {
@@ -653,7 +779,10 @@ public class Value {
   }
 
   /**
-   * Returns the width-aware display string representation for this Value.
+   * Returns a string containing the binary representation of this Value object.
+   * Identical to toBinaryString.
+   *
+   * @return the binary representation of this value as a string.
    */
   public String toDisplayString() {
     switch (width) {
@@ -682,8 +811,11 @@ public class Value {
   }
 
   /**
-   * Returns the width-aware display string representation for this Value
+   * Returns the string representation for this Value
    * with the given numerical radix.
+   *
+   * @param radix the numerical radix of the representation.
+   * @return the string represenation of this value.
    */
   public String toDisplayString(int radix) {
     switch (radix) {
@@ -708,7 +840,9 @@ public class Value {
   }
 
   /**
-   * Returns the hexadecimal represenation for this object
+   * Returns a string with the hexadecimal representation of this Value object.
+   *
+   * @return the hexadecimal representation of this value as a string.
    */
   public String toHexString() {
     if (width <= 1) {
@@ -747,6 +881,8 @@ public class Value {
   /**
    * Returns the binary value represented by this Value as a long, or
    * -1 if there is any error or unknown bit.
+   *
+   * @return the binary representation of this value as a long.
    */
   public long toLongValue() {
     if (error != 0) {
@@ -761,6 +897,8 @@ public class Value {
   /**
    * Returns the binary value represented by this Value as a 32-bit floating point value, or
    * NaN if there is any error or unknown bit.
+   *
+   * @return the binary representation of this value as a float.
    */
   public float toFloatValue() {
     if (error != 0 || unknown != 0 || width != 32) {
@@ -772,6 +910,8 @@ public class Value {
   /**
    * Returns the binary value represented by this Value as a 64-bit floating point value, or
    * NaN if there is any error or unknown bit.
+   *
+   * @return the binary representation of this value as a double.
    */
   public double toDoubleValue() {
     if (error != 0 || unknown != 0 || width != 64) {
@@ -781,7 +921,9 @@ public class Value {
   }
 
   /**
-   * Returns the string octal representation of this Value object.
+   * Returns a string with the octal representation of this Value object.
+   *
+   * @return the octal representation of this value as a string.
    */
   public String toOctalString() {
     if (width <= 1) {
@@ -845,11 +987,14 @@ public class Value {
   }
 
   /**
-   * Computes the bitwise XOR of two wiring values.
+   * Computes the bitwise XOR of <code>this</code> and another Value.
+   * <p>
+   * The resulting value's width is the maximum of the two values' widths,
+   * with the shortest value being padded with zeros on the most significant bits.
+   * The XOR of unknown,<code>NIL</code> or error bits is always an error bit.
    *
-   * <p>The resulting value's width is the maximum of the two values' widths,</p>
-   *
-   * <p>The XOR of unknown, nil or error bits is always an error bit.</p>
+   * @param other the other value to XOR with <code>this</code>.
+   * @return the bitwise XOR of <code>this</code> and <code>other</code>.
    */
   public Value xor(Value other) {
     if (other == null) {
