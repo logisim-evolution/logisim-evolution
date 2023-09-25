@@ -180,7 +180,7 @@ public class Value {
    * <p>
    * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
    *
-   * @param width the bit with of the valu represented by the string.
+   * @param width the bit with of the value represented by the string.
    * @param t the string with the representation of the value object.
    * @return the Value object parsed from the given source string.
    * @throws Exception if the provided representation string could not be parsed.
