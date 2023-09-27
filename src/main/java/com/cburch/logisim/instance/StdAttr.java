@@ -71,7 +71,7 @@ public interface StdAttr {
       Attributes.forOption(
           "fpwidth",
           S.getter("stdFPDataWidthAttr"),
-          new BitWidth[] {BitWidth.create(32), BitWidth.create(64)});
+          new BitWidth[] {BitWidth.create(16), BitWidth.create(32), BitWidth.create(64)});
 
   AttributeOption SELECT_BOTTOM_LEFT =
       new AttributeOption("bl", S.getter("stdSelectBottomLeftOption"));

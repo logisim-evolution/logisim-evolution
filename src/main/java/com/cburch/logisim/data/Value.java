@@ -543,6 +543,96 @@ public class Value {
     return Double.longBitsToDouble(value);
   }
 
+  public float toFloatValueFromFP16() {
+    if (error != 0 || unknown != 0 || width != 16) return Float.NaN;
+    return Float.intBitsToFloat(fp16Tofp32_raw((int) value));
+  }
+
+  public static int fp16Tofp32_raw(int val) {
+    int oldExp = ((val >> 10) & 0b011111);
+    int oldFraction = (val & 0b0000001111111111);
+    boolean isEven = (val & 0b1000000000000000) == 0;
+    //check for zeros
+    if (oldFraction == 0 && oldExp == 0) return isEven ? 0x00000000 : 0x80000000;
+    //figure out how much the exponent needs adjusted
+    int expAdjustment = 0;
+    //calculate adjustment if subnormal number
+    if (oldExp == 0 && oldFraction != 0)expAdjustment = Integer.numberOfLeadingZeros(oldFraction) - 21;
+    //get the new exponent while checking to see if is inf or NaN
+    int newExp = (oldExp == 0b11111) ? 0b11111111 : (oldExp - 15 + 127 - ((expAdjustment == 0) ? 0 : (expAdjustment - 1)));
+    //start putting together the float
+    //add the sign first
+    int out = isEven ? 0 : 0x80000000;
+    //add the exponent
+    out |= newExp << 23;
+    //add the fractional part accounting for any subnormal corrections
+    out |= (oldFraction << (13 + expAdjustment)) & 0x007FFFFF;
+    //correct for NaNs
+    if (oldExp == 0b11111 && oldFraction != 0)out |= 0x0400000;
+    return out;
+  }
+
+  public static int fp32Tofp16_raw(int val) {
+    //get the sign
+    boolean isEven = (val & 0x80000000) == 0;
+    //look at the exponent
+    int oldExp = ((val >> 23) & 0x0FF) - 127;
+    //get the fractional component
+    int oldFraction = (val & 0x007FFFFF);
+    //check for numbers that are too large or NaN
+    if (oldExp > 15) {
+      if (oldExp == 128 && oldFraction != 0) return (isEven ? 0x7E00 : 0xFE00) | (oldFraction >> 13); //NaN
+      else return isEven ? 0x7C00 : 0xFC00; //Inf
+    }
+    //check for numbers that are too small and will be zero
+    if (oldExp < -25) return isEven ? 0x0000 : 0x8000;
+    //figure out wht the 16bit exponent will be
+    boolean isSubnormalNumber = oldExp <= -15;
+    int newExp;
+    if (isSubnormalNumber) newExp = -15;
+    else if (oldExp == 127) newExp = 15; //NaN
+    else newExp = oldExp;
+    //get the fraction with the hidden bit
+    int fraction = oldFraction | 0x00800000;
+    //handle numbers that will be subnormal at 16 bits
+    if (isSubnormalNumber) {
+      int fractionShift = -(oldExp + 14); //right shift amount fo fraction
+      //checking for rounding (round to nearest, ties to even)
+      int GRS = fraction & (0x1FFFFFFF >> (16 - fractionShift));
+      if ((GRS > (0x1000 << fractionShift)) | (GRS == (0x1000 << fractionShift) & (fraction & (0x2000 << fractionShift)) != 0)) {
+        //need to round up
+        fraction = (fraction >> (13 + fractionShift)) + 1;
+        if (fraction >= 0x0400) {
+          //need to adjust exponent, but there is only one possibility
+          return isEven ? 0x0400 : 0x8400;
+        }
+      } else {
+        fraction = fraction >> (13 + fractionShift);
+      }
+    } else { //handle numbers that will be normal at 16 bits
+      //check for rounding (round to nearest, ties to even)
+      int GRS = fraction & 0x1FFF;
+      if ((GRS > 0x1000) | (GRS == 0x1000 & (fraction & 0x2000) != 0)) {
+        //need to round up
+        fraction = (fraction >> 13) + 1;
+        if (fraction >= 0x0800) {
+          //need to adjust exponent
+          if (newExp == 15) return isEven ? 0x7C00 : 0xFC00; //rounded to infinity
+          else if (newExp <= 14) newExp++;
+          //fix the fractional component
+          fraction = fraction >> 1;
+        }
+      } else {
+        fraction = fraction >> 13;
+      }
+    }
+    //assemble
+    int out = isEven ? 0x0000 : 0x8000;
+    out |= (newExp + 15) << 10;
+    out |= fraction & 0x03FF;
+    return out & 0xFFFF;
+  }
+
   public String toOctalString() {
     if (width <= 1) {
       return toString();
