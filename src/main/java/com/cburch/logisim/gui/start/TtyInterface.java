@@ -30,7 +30,6 @@ import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
 import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
-import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -324,7 +322,6 @@ public class TtyInterface {
     }
 
     CircuitState circState = new CircuitState(proj, circuit);
-
 
     // we load the ram before first propagation
     // so the first propagation emits correct values
