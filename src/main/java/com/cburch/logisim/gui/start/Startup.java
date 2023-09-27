@@ -98,7 +98,9 @@ public class Startup implements AWTEventListener {
   private boolean exitAfterStartup = false;
   private boolean showSplash;
 
-  private List<Pair<File, String>> loadMems = new ArrayList<>();
+  /* File contains the data that should be loaded into a RAM/ROM with a label matching the String
+     (if no label is provided, File is loaded into every RAM/ROM) */
+  private List<Pair<File, String>> memoriesToLoad = new ArrayList<>();
 
   private File saveFile;
   private int ttyFormat = 0;
@@ -421,7 +423,7 @@ public class Startup implements AWTEventListener {
       logger.error(S.get("ttyNeedsFileError"));
       return null;
     }
-    if (!startup.loadMems.isEmpty() && !startup.isTty) {
+    if (!startup.memoriesToLoad.isEmpty() && !startup.isTty) {
       logger.error(S.get("loadNeedsTtyError"));
       return null;
     }
@@ -514,12 +516,12 @@ public class Startup implements AWTEventListener {
       return RC.QUIT;
     }
 
-    final MutablePair<File, String> pair = new MutablePair<File, String>();
+    final var pair = new MutablePair<File, String>();
     pair.left = new File(optArgs[0]);
     if (argsCnt == 2)
       pair.right = optArgs[1];
 
-    startup.loadMems.add(pair);
+    startup.memoriesToLoad.add(pair);
     return RC.OK;
   }
 
@@ -799,8 +801,8 @@ public class Startup implements AWTEventListener {
 
 
 
-  List<Pair<File, String>> getLoadMems() {
-    return loadMems;
+  List<Pair<File, String>> getMemoriesToLoad() {
+    return memoriesToLoad;
   }
 
 

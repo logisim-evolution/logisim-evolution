@@ -323,9 +323,9 @@ public class TtyInterface {
 
     CircuitState circState = new CircuitState(proj, circuit);
 
-    // we load the ram before first propagation
+    // we load the memories before first propagation
     // so the first propagation emits correct values
-    for (Pair<File, String> p : args.getLoadMems()) {
+    for (final Pair<File, String> p : args.getMemoriesToLoad()) {
       try {
         final var loaded = loadMem(circState, p.getLeft(), p.getRight());
         if (!loaded) {
