@@ -325,7 +325,7 @@ public class TtyInterface {
 
     // we load the ram before first propagation
     // so the first propagation emits correct values
-    for (Pair<File,String> p : args.getLoadMems()) {
+    for (Pair<File, String> p : args.getLoadMems()) {
       try {
         final var loaded = loadMem(circState, p.getLeft(), p.getRight());
         if (!loaded) {

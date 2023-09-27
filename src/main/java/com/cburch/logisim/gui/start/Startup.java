@@ -98,7 +98,7 @@ public class Startup implements AWTEventListener {
   private boolean exitAfterStartup = false;
   private boolean showSplash;
 
-  private List<Pair<File,String>> loadMems = new ArrayList<>();
+  private List<Pair<File, String>> loadMems = new ArrayList<>();
 
   private File saveFile;
   private int ttyFormat = 0;
@@ -319,7 +319,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
-    addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
+    addOption(opts, " ", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
     addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
@@ -514,9 +514,9 @@ public class Startup implements AWTEventListener {
       return RC.QUIT;
     }
 
-    final MutablePair<File,String> pair = new MutablePair<File,String>();
+    final MutablePair<File, String> pair = new MutablePair<File, String>();
     pair.left = new File(optArgs[0]);
-    if (argsCnt ==2)
+    if (argsCnt == 2)
       pair.right = optArgs[1];
 
     startup.loadMems.add(pair);
@@ -799,7 +799,7 @@ public class Startup implements AWTEventListener {
 
 
 
-  List<Pair<File,String>> getLoadMems() {
+  List<Pair<File, String>> getLoadMems() {
     return loadMems;
   }
 
