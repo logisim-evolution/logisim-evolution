@@ -500,9 +500,7 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
-
   private static RC handleArgLoad(Startup startup, Option opt) {
-
     final var optArgs = opt.getValues();
 
     if (optArgs == null) {
@@ -799,12 +797,9 @@ public class Startup implements AWTEventListener {
     return filesToOpen;
   }
 
-
-
   List<Pair<File, String>> getMemoriesToLoad() {
     return memoriesToLoad;
   }
-
 
   File getSaveFile() {
     return saveFile;
