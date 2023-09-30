@@ -31,6 +31,7 @@
   * Added TTL 74381: arithmetic logic unit
   * Added TTL 74541: Octal buffers with three-state outputs
   * Added TTL 74670: 4-by-4 register file with three-state outputs
+  * Fixed the Random component only supporting up to 32 bit [#522]
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
