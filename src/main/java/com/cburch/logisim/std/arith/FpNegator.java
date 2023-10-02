@@ -94,6 +94,7 @@ public class FpNegator extends InstanceFactory {
 
     final var out_val = a_val * -1;
     final var out = switch (dataWidth.getWidth()) {
+      // TODO: can replace Value.fp32Tofp16_raw(Float.floatToRawIntBits((float) out_val)) with Float.floatToFloat16((float) out_val) in Java 20 or later
       case 16 -> Value.createKnown(16, Value.fp32Tofp16_raw(Float.floatToRawIntBits((float) out_val)));
       case 32 -> Value.createKnown((float) out_val);
       case 64 -> Value.createKnown(out_val);
