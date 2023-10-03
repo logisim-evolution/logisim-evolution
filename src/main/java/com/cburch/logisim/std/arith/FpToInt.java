@@ -95,7 +95,12 @@ public class FpToInt extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN);
-    final var a_val = dataWidthIn.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
+    final var a_val = switch (dataWidthIn.getWidth()) {
+      case 16 -> a.toFloatValueFromFP16();
+      case 32 -> a.toFloatValue();
+      case 64 -> a.toDoubleValue();
+      default -> Double.NaN;
+    };
 
     long out_val;
 
