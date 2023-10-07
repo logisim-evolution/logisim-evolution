@@ -25,6 +25,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+/**
+ * Utilities for instantiating <code>Attribute</code> objects.
+ */
 public class Attributes {
   private static class BooleanAttribute extends OptionAttribute<Boolean> {
     private static final Boolean[] vals = {Boolean.TRUE, Boolean.FALSE};
@@ -456,111 +459,318 @@ public class Attributes {
     return new HiddenAttribute();
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>BitWidth</code>.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   *         The returned attribute may represent any valid BitWidth value.
+   */
   public static Attribute<BitWidth> forBitWidth(String name) {
     return forBitWidth(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>BitWidth</code>.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param min The least bit width value that may be accepted by this Attribute.
+   * @param max The greatest bit width value that may be accepted by this Attribute.
+   * @return The newly created <code>Attribute</code> object.
+   *         The returned attribute may represent any valid BitWidth value within the provided range.
+   */
   public static Attribute<BitWidth> forBitWidth(String name, int min, int max) {
     return forBitWidth(name, getter(name), min, max);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>BitWidth</code>.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   *         The returned attribute may represent any valid BitWidth value.
+   */
   public static Attribute<BitWidth> forBitWidth(String name, StringGetter disp) {
     return new BitWidth.Attribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>BitWidth</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @param min The least bit width value that may be accepted by this Attribute.
+   * @param max The greatest bit width value that may be accepted by this Attribute.
+   * @return The newly created <code>Attribute</code> object.
+   *         The returned attribute may represent any valid BitWidth value within the provided range.
+   */
   public static Attribute<BitWidth> forBitWidth(String name, StringGetter disp, int min, int max) {
     return new BitWidth.Attribute(name, disp, min, max);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Boolean</code> value.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Boolean> forBoolean(String name) {
     return forBoolean(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Boolean</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Boolean> forBoolean(String name, StringGetter disp) {
     return new BooleanAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Color</code> value.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Color> forColor(String name) {
     return forColor(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Color</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Color> forColor(String name, StringGetter disp) {
     return new ColorAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a fgpa
+   * <code>CompontentMapInformationContainer</code>.
+   *
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<ComponentMapInformationContainer> forMap() {
     return new IOMapAttribute();
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Direction</code> value.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Direction> forDirection(String name) {
     return forDirection(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Direction</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Direction> forDirection(String name, StringGetter disp) {
     return new DirectionAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Double</code> value.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Double> forDouble(String name) {
     return forDouble(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Double</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Double> forDouble(String name, StringGetter disp) {
     return new DoubleAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Font</code> value.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Font> forFont(String name) {
     return forFont(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>Font</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Font> forFont(String name, StringGetter disp) {
     return new FontAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a hexadecimal bit pattern,
+   * up to 32 bits in width.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Integer> forHexInteger(String name) {
     return forHexInteger(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a hexadecimal bit pattern,
+   * up to 32 bits in width.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Integer> forHexInteger(String name, StringGetter disp) {
     return new HexIntegerAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a hexadecimal bit pattern,
+   * up to 64 bits in width.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Long> forHexLong(String name) {
     return forHexLong(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a hexadecimal bit pattern,
+   * up to 64 bits in width.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Long> forHexLong(String name, StringGetter disp) {
     return new HexLongAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a 32-bit integer.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Integer> forInteger(String name) {
     return forInteger(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a 32-bit integer.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Integer> forInteger(String name, StringGetter disp) {
     return new IntegerAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a 32-bit integer.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param start The least integer value that may be accepted by this Attribute.
+   * @param end The greatest integer value that may be accepted by this Attribute.
+   * @return The newly created <code>Attribute</code> object.
+   *         The returned attribute may represent any integer value within the provided range.
+   */
   public static Attribute<Integer> forIntegerRange(String name, int start, int end) {
     return forIntegerRange(name, getter(name), start, end);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a 32-bit integer.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @param start The least integer value that may be accepted by this Attribute.
+   * @param end The greatest integer value that may be accepted by this Attribute.
+   * @return The newly created <code>Attribute</code> object.
+   *         The returned attribute may represent any integer value within the provided range.
+   */
   public static Attribute<Integer> forIntegerRange(
       String name, StringGetter disp, int start, int end) {
     return new IntegerRangeAttribute(name, disp, start, end);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a circuit <code>Location</code> value.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Location> forLocation(String name) {
     return forLocation(name, getter(name));
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents a circuit <code>Location</code> value.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<Location> forLocation(String name, StringGetter disp) {
     return new LocationAttribute(name, disp);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents one of the supplied <code>Options</code>.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<?> forOption(String name, Object[] vals) {
     return forOption(name, getter(name), vals);
   }
 
+  /**
+   * Creates an <code>Attribute</code> object that represents one of the supplied <code>Options</code>.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static <V> Attribute<V> forOption(String name, StringGetter disp, V[] vals) {
     return new OptionAttribute<>(name, disp, vals);
   }
@@ -568,6 +778,13 @@ public class Attributes {
   //
   // methods with display name == standard name
   //
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>String</code>.
+   * The display name of the returned attribute is derived from the supplied identifier.
+   *
+   * @param name The identifier/name of the attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<String> forString(String name) {
     return forString(name, getter(name));
   }
@@ -575,6 +792,13 @@ public class Attributes {
   //
   // methods with internationalization support
   //
+  /**
+   * Creates an <code>Attribute</code> object that represents a <code>String</code>.
+   *
+   * @param name The identifier/name of the attribute.
+   * @param disp The display name of this attribute.
+   * @return The newly created <code>Attribute</code> object.
+   */
   public static Attribute<String> forString(String name, StringGetter disp) {
     return new StringAttribute(name, disp);
   }
