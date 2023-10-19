@@ -18,6 +18,15 @@ import java.util.List;
  * </code> class, except that objects of this type are immutable.
  */
 public class Location implements Comparable<Location> {
+
+  /**
+   * Creates a location object with the provided attributes.
+   * @param x The <code>x</code> coordinate of the returned Location
+   * @param y The <code>y</code> coordinate of the returned Location
+   * @param hasToSnap Whether the x and y coordinates should be snapped to
+   *                  the nearest multiple of 5.
+   * @return The newly created Location object.
+   */
   public static Location create(int x, int y, boolean hasToSnap) {
     // we round to half-grid base
     final var xRounded = hasToSnap ? Math.round(x / 5) * 5 : x;
@@ -33,6 +42,27 @@ public class Location implements Comparable<Location> {
     return loc;
   }
 
+  /**
+   * Constructs a Location from the provided coordinate string.
+   * The string is expected to be of the form "(x,y)", where <code>x</code>
+   * and <code>y</code> represent the parsing rules implemented by Integer.parseInt.
+   * The string is expected to satisfy the following grammar:
+   * <p>
+   *
+   * Location:
+   * integer ' ' integer
+   * ws '(' ws integer ',' ws integer ws ')' ws
+   *
+   * <blockquote>
+   *
+   *   <dl>
+   *     <dt><i></i></dt>
+   *   </dl>
+   * </blockquote>
+   *
+   * @param value
+   * @return
+   */
   public static Location parse(String value) {
     final var base = value;
 
