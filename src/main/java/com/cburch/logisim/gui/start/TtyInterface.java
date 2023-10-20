@@ -34,10 +34,8 @@ import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +50,7 @@ public class TtyInterface {
   public static final int FORMAT_TABLE_CSV = 64;
   public static final int FORMAT_TABLE_BIN = 128;
   public static final int FORMAT_TABLE_HEX = 256;
+  public static final int FORMAT_INTERACTIVE = 512;
   static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
   private static boolean lastIsNewline = true;
 
@@ -314,7 +313,7 @@ public class TtyInterface {
     }
     if (haltPin == null && (format & FORMAT_TABLE) != 0) {
       doTableAnalysis(proj, circuit, pinNames, format);
-      return;
+//      return;
     }
 
     CircuitState circState = new CircuitState(proj, circuit);
@@ -453,13 +452,26 @@ public class TtyInterface {
   }
 
   private static int runSimulation(CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
+    logger.info("Running the simulation now...");
     final var showTable = (format & FORMAT_TABLE) != 0;
     final var showSpeed = (format & FORMAT_SPEED) != 0;
     final var showTty = (format & FORMAT_TTY) != 0;
     final var showHalt = (format & FORMAT_HALT) != 0;
+    final var showInteractive = (format & FORMAT_INTERACTIVE) != 0;
 
     ArrayList<InstanceState> keyboardStates = null;
+    Scanner scanner = null;
     StdinThread stdinThread = null;
+
+    if (showInteractive && showTty) {
+      logger.error("Cannot use both interactive and tty modes. You have only one stdin.");
+      System.exit(-1);
+    }
+
+    if (showInteractive) {
+      scanner = new Scanner(System.in);
+    }
+
     if (showTty) {
       keyboardStates = new ArrayList<>();
       final var ttyFound = prepareForTty(circState, keyboardStates);
@@ -493,7 +505,8 @@ public class TtyInterface {
         }
       }
       if (showTable) {
-        displayTableRow(prevOutputs, curOutputs);
+        System.out.printf("[%d] == TABLE == %n", tickCount);
+        displayTableRow(null, curOutputs);
       }
 
       if (halted) {
@@ -515,7 +528,18 @@ public class TtyInterface {
       prevOutputs = curOutputs;
       tickCount++;
       prop.toggleClocks();
-      prop.propagate();
+      while (prop.propagate()) {
+//        System.out.println("propagating...");
+      }
+      if (showInteractive) {
+        boolean shouldContinue = interact(circState, scanner, tickCount);
+        if (!shouldContinue) {
+          break;
+        }
+        while (prop.propagate()) {
+//          System.out.println("propagating...");
+        }
+      }
     }
     final var elapse = System.currentTimeMillis() - start;
     if (showTty) ensureLineTerminated();
@@ -530,6 +554,75 @@ public class TtyInterface {
       displaySpeed(tickCount, elapse);
     }
     return retCode;
+  }
+
+  private static Instance findComponentByName(CircuitState circState, String componentName) {
+    final var pinNames = Analyze.getPinLabels(circState.getCircuit());
+    for (final var entry : pinNames.entrySet()) {
+      final var pin = entry.getKey();
+      final var pinName = entry.getValue();
+      if (pinName.equals(componentName)) {
+        return pin;
+      }
+    }
+    return null;
+  }
+
+  private static boolean interact(CircuitState circState, Scanner scanner, long tickCount) {
+    while (true) {
+      System.out.print("[" + tickCount + "] > ");
+      if (!scanner.hasNext()) {
+        return false;
+      }
+      String command = scanner.next();
+      switch (command) {
+        case "step" -> {
+          return true;
+        }
+        case "stop" -> {
+          return false;
+        }
+        case "probe" -> {
+          String pinName = scanner.next();
+          Instance pin = findComponentByName(circState, pinName);
+          if (pin == null) {
+            System.out.printf("No pin named %s%n", pinName);
+          } else {
+            InstanceState componentState = circState.getInstanceState(pin);
+            Value value = Pin.FACTORY.getValue(componentState);
+            System.out.printf("%s%n", value);
+          }
+        }
+        case "set" -> {
+          String pinName = scanner.next();
+          Instance pin = findComponentByName(circState, pinName);
+          if (pin == null) {
+            System.out.printf("No pin named %s%n", pinName);
+          } else {
+            int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
+            Value[] values = new Value[width];
+            for (int i = 0; i < width; i++) {
+//              System.out.printf("Value for bit %d: ", i);
+              String valueStr = scanner.next();
+              if (valueStr.equals("0")) {
+                values[i] = Value.FALSE;
+              } else if (valueStr.equals("1")) {
+                values[i] = Value.TRUE;
+              } else {
+                System.out.printf("Invalid value %s%n", valueStr);
+                return true;
+              }
+            }
+            InstanceState componentState = circState.getInstanceState(pin);
+            Pin.FACTORY.setValue(componentState, Value.create(values));
+            circState.markComponentAsDirty(pin.getComponent());
+          }
+        }
+        default -> {
+          System.out.printf("Unknown command: %s%n", command);
+        }
+      }
+    }
   }
 
   public static void sendFromTty(char c) {

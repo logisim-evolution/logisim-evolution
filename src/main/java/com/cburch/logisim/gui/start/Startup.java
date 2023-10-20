@@ -453,32 +453,35 @@ public class Startup implements AWTEventListener {
     // TTY format parsing
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
-    if (fmts.length > 0) {
-      // FIXME: why we support multiple TTY types in one invocation? fallback?
-      for (final var singleFmt : fmts) {
-        final var val = switch (singleFmt.trim()) {
-          case "table" -> TtyInterface.FORMAT_TABLE;
-          case "speed" -> TtyInterface.FORMAT_SPEED;
-          case "tty" -> TtyInterface.FORMAT_TTY;
-          case "halt" -> TtyInterface.FORMAT_HALT;
-          case "stats" -> TtyInterface.FORMAT_STATISTICS;
-          case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
-          case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
-          case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
-          case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
-          default -> 0;
-        };
+    // FIXME: why we support multiple TTY types in one invocation? fallback?
+    // Because you can as the TtyInterface for multiple functionality
+    for (final var singleFmt : fmts) {
+      final var val = switch (singleFmt.trim()) {
+        case "table" -> TtyInterface.FORMAT_TABLE;
+        case "speed" -> TtyInterface.FORMAT_SPEED;
+        case "tty" -> TtyInterface.FORMAT_TTY;
+        case "halt" -> TtyInterface.FORMAT_HALT;
+        case "stats" -> TtyInterface.FORMAT_STATISTICS;
+        case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
+        case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
+        case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
+        case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
+        case "interactive" -> TtyInterface.FORMAT_INTERACTIVE;
+        default -> 0;
+      };
 
-        if (val == 0) {
-          logger.error(S.get("ttyFormatError"));
-          return RC.QUIT;
-        }
-        startup.ttyFormat |= val;
-        return RC.OK;
+      if (val == 0) {
+        logger.error(S.get("ttyFormatError"));
+        return RC.QUIT;
       }
+      startup.ttyFormat |= val;
     }
-    logger.error(S.get("ttyFormatError"));
-    return RC.QUIT;
+    if(startup.ttyFormat == 0) {
+      logger.error(S.get("ttyFormatError"));
+      return RC.QUIT;
+    } else {
+      return RC.OK;
+    }
   }
 
   private static RC handleArgSubstitute(Startup startup, Option opt) {
