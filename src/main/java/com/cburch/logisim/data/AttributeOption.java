@@ -61,7 +61,6 @@ public class AttributeOption implements AttributeOptionInterface {
   }
 
   /**
-   * The {@link StringGetter} associated with the description of this attribute option.
    * @return The {@link StringGetter} associated with the description of this attribute option.
    */
   public StringGetter getDisplayGetter() {
