@@ -13,6 +13,10 @@ import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Component;
 
+/**
+ * Represents an immutable integer bit width within
+ * the {@link Value#MAX_WIDTH} limit.
+ */
 public class BitWidth implements Comparable<BitWidth> {
   static class Attribute extends com.cburch.logisim.data.Attribute<BitWidth> {
     private final BitWidth[] choices;
@@ -67,6 +71,13 @@ public class BitWidth implements Comparable<BitWidth> {
     }
   }
 
+  /**
+   * The main entry point for accessing bit width values.
+   * @param width The width of the returned object
+   * @return A bit width object with the provided width
+   * @throws IllegalArgumentException if <code>width</code> is negative or
+   * exceeds <code>Value.MAX_WIDTH</code>.
+   */
   public static BitWidth create(int width) {
     ensurePrefab();
     if (width < 0) {
@@ -88,6 +99,13 @@ public class BitWidth implements Comparable<BitWidth> {
     }
   }
 
+  /**
+   * Parses a string into a bit width value from its decimal representation.
+   * The string must have the decimal representation of the width to be returned,
+   * but may optionally start with a '/' character.
+   * @param str The string to parse
+   * @return The resulting bit width object
+   */
   public static BitWidth parse(String str) {
     if (str == null || str.length() == 0) {
       throw new NumberFormatException("Width string cannot be null");
@@ -96,11 +114,24 @@ public class BitWidth implements Comparable<BitWidth> {
     return create(Integer.parseInt(str));
   }
 
+  /**
+   * A bit width value of width zero.
+   */
   public static final BitWidth UNKNOWN = new BitWidth(0);
 
+  /**
+   * A bit width value of width one.
+   */
   public static final BitWidth ONE = new BitWidth(1);
 
+  /**
+   * The maximum width for a bit-width object, an alias for {@link Value#MAX_WIDTH}.
+   */
   public static final int MAXWIDTH = Value.MAX_WIDTH;
+
+  /**
+   * The minimum width for a known bit width object.
+   */
   public static final int MINWIDTH = 1;
 
   private static BitWidth[] prefab = null;
@@ -123,12 +154,21 @@ public class BitWidth implements Comparable<BitWidth> {
            : false;
   }
 
+  /**
+   * Determines the bit mask for this bit width object.
+   * The returned <code>long</code> has exactly <code>width</code> 1-bits at its least
+   * significant positions.
+   * @return the bitmask for this <code>BitWidth</code>.
+   */
   public long getMask() {
     if (width == 0) return 0;
     else if (width == MAXWIDTH) return -1L;
     else return (1L << width) - 1;
   }
 
+  /**
+   * @return the bit width represented by this object, as an integer.
+   */
   public int getWidth() {
     return width;
   }

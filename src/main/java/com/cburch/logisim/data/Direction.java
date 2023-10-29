@@ -13,6 +13,12 @@ import static com.cburch.logisim.data.Strings.S;
 
 import com.cburch.logisim.util.StringGetter;
 
+/**
+ * A class for representing 4-directional cardinal direction immutable objects.
+ * <p>
+ * Its only instances are <code>NORTH</code>, <code>SOUTH</code>, <code>EAST</code> and
+ * <code>WEST</code>.
+ */
 public class Direction implements AttributeOptionInterface {
   public static Direction parse(String str) {
     if (str.equals(EAST.name)) return EAST;
@@ -33,6 +39,9 @@ public class Direction implements AttributeOptionInterface {
       new Direction(
           "south", S.getter("directionSouthOption"), S.getter("directionSouthVertical"), 3);
 
+  /**
+   * An array containing all 4 cardinal directions.
+   */
   public static final Direction[] cardinals = {EAST, NORTH, WEST, SOUTH};
 
   private final String name;
@@ -47,23 +56,42 @@ public class Direction implements AttributeOptionInterface {
     this.id = id;
   }
 
+  /**
+   * Determines whether this direction object equals another one.
+   * @param other The direction to compare to
+   * @return true iff these are the same direction objects.
+   */
   public boolean equals(Direction other) {
     return this.id == other.id;
   }
 
+  /**
+   * @return a {@link StringGetter} with the description of this direction.
+   */
   public StringGetter getDisplayGetter() {
     return disp;
   }
 
+  /**
+   * @return the cardinal direction resulting from a 90° counterclockwise rotation from this one.
+   */
   public Direction getLeft() {
     return cardinals[(id + 1) % 4];
   }
 
+  /**
+   * @return the cardinal direction resulting from a 90° clockwise rotation from this one.
+   */
   public Direction getRight() {
     return cardinals[(id + 3) % 4];
   }
 
   // for AttributeOptionInterface
+
+  /**
+   * The implementation for the equivalent method in {@link AttributeOptionInterface}
+   * @return This direction itself
+   */
   public Object getValue() {
     return this;
   }
@@ -73,18 +101,35 @@ public class Direction implements AttributeOptionInterface {
     return id;
   }
 
+  /**
+   * @return the direction resulting from a 180º counterclockwise rotation.
+   */
   public Direction reverse() {
     return cardinals[(id + 2) % 4];
   }
 
+  /**
+   * @return The angle associated with this direction, in degrees.
+   *         The angle follows the mathematical convention of starting at EAST and
+   *         increasing counterclockwise.
+   */
   public int toDegrees() {
     return id * 90;
   }
 
+  /**
+   * @return The display string representing the cardinal direction name of this object,
+   *         e.g. East.
+   */
   public String toDisplayString() {
     return disp.toString();
   }
 
+  /**
+   * @return The angle associated with this direction, in radians.
+   *         The angle follows the mathematical convention of starting at EAST and
+   *         increasing counterclockwise.
+   */
   public double toRadians() {
     return id * Math.PI / 2.0;
   }
@@ -94,6 +139,10 @@ public class Direction implements AttributeOptionInterface {
     return name;
   }
 
+  /**
+   * @return The display string representing the ordinary direction name of this object,
+   *         e.g. Right.
+   */
   public String toVerticalDisplayString() {
     return vert.toString();
   }
