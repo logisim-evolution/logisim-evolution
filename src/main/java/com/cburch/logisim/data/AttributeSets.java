@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * General Utilities for {@link AttributeSet}s
+ */
 public class AttributeSets {
   static class FixedSet extends AbstractAttributeSet {
     private List<Attribute<?>> attrs;
@@ -143,6 +146,11 @@ public class AttributeSets {
     }
   }
 
+  /**
+   * An immutable empty AttributeSet implementation,
+   * All attributes are defined as read only, and
+   * trying to <code>setReadOnly</code> throws an {@link UnsupportedOperationException}.
+   */
   public static final AttributeSet EMPTY =
       new AttributeSet() {
         @Override
@@ -195,6 +203,12 @@ public class AttributeSets {
     // dummy, private
   }
 
+  /**
+   * Copies all entries from an attribute set to another through {@link AttributeSet#setValue}
+   * and {@link AttributeSet#getValue}. Does nothing if any of its arguments is <code>null</code>.
+   * @param src The source attribute set to copy from.
+   * @param dst The destination attribute set to copy from.
+   */
   public static void copy(AttributeSet src, AttributeSet dst) {
     if (src == null || src.getAttributes() == null) return;
     for (Attribute<?> attr : src.getAttributes()) {
@@ -205,6 +219,16 @@ public class AttributeSets {
     }
   }
 
+  /**
+   * Returns an attribute set that maps the provided attribute keys to the provided default values.
+   * The arguments must equal in length, and <code>attr[i]</code> is mapped to <code>initValues[i]</code>
+   * for all <code>0 <= i < length</code>.
+   * The resulting attribute set supports modification though <code>setValue</code> and
+   * <code>setReadOnly</code>.
+   * @param attrs The keys of the attribute set
+   * @param initValues The values associated with the keys of the attribute set
+   * @return The newly created attribute set.
+   */
   public static AttributeSet fixedSet(Attribute<?>[] attrs, Object[] initValues) {
     if (attrs.length > 1) {
       return new FixedSet(attrs, initValues);

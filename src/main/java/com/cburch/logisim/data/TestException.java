@@ -10,7 +10,9 @@
 package com.cburch.logisim.data;
 
 /**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ * A checked exception for representing failed test vector tests.
+ * Code taken from
+ * <a href=" http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
  */
 public class TestException extends Exception {
 
