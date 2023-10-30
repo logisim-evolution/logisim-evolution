@@ -51,14 +51,6 @@ public class Bounds {
     this.y = y;
     this.wid = wid;
     this.ht = ht;
-    if (wid < 0) {
-      x += wid / 2;
-      wid = 0;
-    }
-    if (ht < 0) {
-      y += ht / 2;
-      ht = 0;
-    }
   }
 
   public Bounds add(Bounds bd) {
