@@ -169,14 +169,19 @@ public class Location implements Comparable<Location> {
   // from direction and the returned bounds should face in the to direction.
 
   /**
+   *
    * Performs the
    * <a href="https://en.wikipedia.org/wiki/Rotation_(mathematics)">
    * mathematical rotation
    * </a>
    * of this point with (xc,yc) as the rotation center.
+   * <p>
    * <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Rotation_illustration2.svg/672px-Rotation_illustration2.svg.png"
    * alt="Image of a Rotation of P (this) centered around O (xc, yc) with an angle of alpha"
+   * width="200"
+   * height="200"
    * />
+   * <p>
    * The angle of the rotation is determined by the two directions <code>from</code> and
    * <code>to</code>, with it being the angle necessary to turn from the <code>from</code>
    * direction to the <code>to</code> direction.
@@ -187,13 +192,16 @@ public class Location implements Comparable<Location> {
    * <p>
    * The following is an example of the behaviour expressed by
    * <code>A2 = A1.rotate(EAST, SOUTH, B)</code>
+   * <pre>
    * <code>
+   *
    *                _ .~¯ A1
    *           B  `
    *            \
    *             \
    *              A2
    * </code>
+   * </pre>
    * @param from The base direction to draw the angle from
    * @param to The target direction to draw the angle from
    * @param xc The X coordinate of the center of the rotation
