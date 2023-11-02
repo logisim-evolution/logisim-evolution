@@ -11,6 +11,17 @@ package com.cburch.logisim.data;
 
 import java.util.ArrayList;
 
+/**
+ * A utility base implementation for <code>AttributeSet</code>.
+ * This class provides default implementations for all methods but
+ * <code>copyInto</code>, <code>getAttributes</code>, <code>getValue</code> and
+ * <code>setValue</code> which must be implemented by subclasses.
+ * The provided implementations for all other methods may use
+ * those four to implement their features.
+ * <p>
+ * Unless overridden by subclasses, all attributes are considered not to be read only,
+ * and <code>setReadOnly</code> always raises an <code>UnsupportedOperationException</code>.
+ */
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   private ArrayList<AttributeListener> listeners = null;
 
@@ -41,8 +52,18 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     return getAttributes().contains(attr);
   }
 
+  /**
+   * Copies all attributes and their respective values from this attribute set
+   * to the provided <code>AbstractAttributeSet</code> through {@link AttributeSet#setValue}.
+   * @param dest The attribute set to copy to, this object is assumed to be an instance
+   *             of the implementor's class.
+   */
   protected abstract void copyInto(AbstractAttributeSet dest);
 
+  /**
+   * Sends an {@link AttributeListener#attributeListChanged} event to all
+   * attribute listeners associated with this attribute set.
+   */
   protected void fireAttributeListChanged() {
     if (listeners != null) {
       final var event = new AttributeEvent(this);
@@ -52,6 +73,14 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     }
   }
 
+  /**
+   * Sends an {@link AttributeListener#attributeValueChanged} event to all
+   * attribute listeners associated with this attribute set.
+   * @param attr The attribute of the event to be sent.
+   * @param value The current/new value of the event.
+   * @param oldvalue The previous value of event.
+   * @param <V> The type represented by the given attribute.
+   */
   protected <V> void fireAttributeValueChanged(Attribute<? super V> attr, V value, V oldvalue) {
     if (listeners != null) {
       final var event = new AttributeEvent(this, attr, value, oldvalue);

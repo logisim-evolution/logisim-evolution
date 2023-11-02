@@ -390,8 +390,36 @@ public class Bounds {
     return (x1 < x0 || y1 < y0) ? EMPTY_BOUNDS : create(x0, y0, x1 - x0, y1 - y0);
   }
 
-  // rotates this around (xc,yc) assuming that this is facing in the
-  // from direction and the returned bounds should face in the to direction.
+  /**
+   *
+   * Performs the
+   * <a href="https://en.wikipedia.org/wiki/Rotation_(mathematics)">
+   * mathematical rotation
+   * </a>
+   * of the points of this rectangle with (xc,yc) as the rotation center.
+   * <p>
+   * <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Rotation_illustration2.svg/672px-Rotation_illustration2.svg.png"
+   * alt="Image of a Rotation of P (this) centered around O (xc, yc) with an angle of alpha"
+   * width="200"
+   * height="200"
+   * />
+   * <p>
+   * The angle of the rotation is determined by the two directions <code>from</code> and
+   * <code>to</code>, with it being the angle necessary to turn from the <code>from</code>
+   * direction to the <code>to</code> direction.
+   * For example, if one does a rotation with <code>from = Direction.EAST</code> and
+   * <code>to = Direction.SOUTH</code>, then the rotation will be a clockwise 90º around (xc,yc).
+   * Angle combinations are not unique, this could also be achieved with
+   * <code>from = Direction.NORTH</code> and <code>to = Direction.EAST</code>.
+   * All points from this rectangle are rotated according to this angle, around (xc,yc).
+   * @param from The base direction to draw the angle from
+   * @param to The target direction to draw the angle from
+   * @param xc The X coordinate of the center of the rotation
+   * @param yc the Y coordinate of the center of the rotation.
+   * @see Location#rotate
+   * @return A rectangle whose 4 edge points result from the rotation of this' edge points around
+   *         the point (xc,yc)
+   */
   public Bounds rotate(Direction from, Direction to, int xc, int yc) {
     var degrees = to.toDegrees() - from.toDegrees();
     while (degrees >= 360) degrees -= 360;
@@ -410,6 +438,10 @@ public class Bounds {
     }
   }
 
+  /**
+   * Converts this <code>Bounds</code> object to a {@link java.awt.Rectangle} object.
+   * @return A <code>Rectangle</code> object with this object's x, y, width and height.
+   */
   public Rectangle toRectangle() {
     return new Rectangle(x, y, wid, ht);
   }
@@ -419,6 +451,18 @@ public class Bounds {
     return "(" + x + "," + y + "): " + wid + "x" + ht;
   }
 
+  /**
+   * Performs the
+   * <a href="https://en.wikipedia.org/wiki/Translation_(geometry)">
+   * mathematical translation
+   * </a>
+   * of this rectangle's points according to the given x and y displacement.
+   *
+   * @param dx The x displacement to move this rectangle.
+   * @param dy The y displacement to move this rectangle.
+   * @return A rectangle that equals this one in width and height, but with its x and y positions
+   *         changed by the <code>dx</code> and <code>dy</code> displacements.
+   */
   public Bounds translate(int dx, int dy) {
     if (this == EMPTY_BOUNDS) return this;
     if (dx == 0 && dy == 0) return this;

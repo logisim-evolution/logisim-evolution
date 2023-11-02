@@ -206,6 +206,7 @@ public class Location implements Comparable<Location> {
    * @param to The target direction to draw the angle from
    * @param xc The X coordinate of the center of the rotation
    * @param yc the Y coordinate of the center of the rotation.
+   * @return The result of the rotation.
    */
   public Location rotate(Direction from, Direction to, int xc, int yc) {
     var degrees = to.toDegrees() - from.toDegrees();
