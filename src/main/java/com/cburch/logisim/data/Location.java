@@ -203,6 +203,7 @@ public class Location implements Comparable<Location> {
    *              A2
    * </code>
    * </pre>
+   *
    * @param from The base direction to draw the angle from
    * @param to The target direction to draw the angle from
    * @param xc The X coordinate of the center of the rotation
@@ -304,6 +305,7 @@ public class Location implements Comparable<Location> {
      * The current location of <code>this</code> object.
      * The result of this operation is not final; an object may return different
      * locations upon separate calls of <code>getLocation</code>.
+     *
      * @return The current location of <code>this</code> object.
      */
     Location getLocation();

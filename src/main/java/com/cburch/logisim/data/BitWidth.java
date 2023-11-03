@@ -160,6 +160,7 @@ public class BitWidth implements Comparable<BitWidth> {
    * Determines the bit mask for this bit width object.
    * The returned <code>long</code> has exactly <code>width</code> 1-bits at its least
    * significant positions.
+   *
    * @return the bitmask for this <code>BitWidth</code>.
    */
   public long getMask() {

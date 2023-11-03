@@ -41,6 +41,7 @@ public class Bounds {
 
   /**
    * Returns a bounds object from a <code>Rectangle</code> object.
+   *
    * @return A <code>Bounds</code> object with x, y, width and height of the provided rectangle.
    */
   public static Bounds create(java.awt.Rectangle rect) {
@@ -452,6 +453,7 @@ public class Bounds {
 
   /**
    * Converts this <code>Bounds</code> object to a {@link java.awt.Rectangle} object.
+   *
    * @return A <code>Rectangle</code> object with this object's x, y, width and height.
    */
   public Rectangle toRectangle() {

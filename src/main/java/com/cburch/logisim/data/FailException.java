@@ -33,6 +33,7 @@ public class FailException extends TestException {
 
   /**
    * Initializes a <code>FailException</code> with the provided
+   *
    * @param column The index of the test vector column where the comparison test failed
    * @param columnName The name of said column
    * @param expected The expected test value
@@ -55,6 +56,7 @@ public class FailException extends TestException {
    * Adds a <code>FailException</code> to the children of this <code>FailException</code>.
    * The children of <code>another</code> are also added to <code>this</code>, and removed
    * from <code>another</code>.
+   *
    * @param another The exception child to be added
    */
   public void add(FailException another) {

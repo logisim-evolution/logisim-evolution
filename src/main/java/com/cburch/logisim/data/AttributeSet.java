@@ -24,7 +24,7 @@ import java.util.List;
  * Note that some operations may not be honored by all implementations. Methods that satisfy these
  * criteria are documented as such.
  *
- * <h3>
+ * <p>
  * Implementations may not support safe multithread access.
  */
 public interface AttributeSet {
@@ -127,6 +127,7 @@ public interface AttributeSet {
    * Modifies the read only state of an attribute.
    * If this operation is supported, the read only state of the provided attribute
    * will equal the provided boolean value.
+   *
    * @param attr The attribute to set
    * @param value The boolean value to set as the read only state of the attr.
    * @throws UnsupportedOperationException if this attribute set does not support this operation.
@@ -135,6 +136,7 @@ public interface AttributeSet {
 
   /**
    * Modifies the value associated with the given attribute.
+   *
    * @param attr the attribute to associate the value with
    * @param value the value to be assigned to <code>attr</code>.
    * @param <V> the type represented by the provided attribute.

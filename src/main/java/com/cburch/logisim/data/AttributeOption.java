@@ -15,7 +15,7 @@ import com.cburch.logisim.util.StringGetter;
  * An attribute option is an immutable value that may be represented by an
  * <code>Attribute&lt;AttributeOption&gt;</code>.
  * When a component attribute has some named options that it may represent,
- * one may represent is as an <code>Attribute&lt;AttributeOption&gt;/code>, and define
+ * one may represent is as an <code>Attribute&lt;AttributeOption&gt;</code>, and define
  * its possible variants as an array of attribute options, with {@link Attributes#forOption }.
  *
  * @see AttributeOptionInterface
