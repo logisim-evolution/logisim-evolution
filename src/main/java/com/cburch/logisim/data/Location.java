@@ -54,10 +54,6 @@ public class Location implements Comparable<Location> {
     return loc;
   }
 
-  // TODO: The math.round in this method is unnecessary/incorrect
-  //  as x / 5 is an integer, Math.round(x / 5) is also an integer.
-  //  should I remove it? or replace it with Math.round((double) x / 5)
-
   /**
    * Constructs a Location from the provided coordinate string.
    * The string is expected to be of the form "(x,y)", "(x y)", "x, y" or "x y"
@@ -326,10 +322,6 @@ public class Location implements Comparable<Location> {
         return a.hashCode() - b.hashCode();
     }
   }
-
-  // TODO: ^ it doesn't make a lot of sense to me to return the difference of their hashCodes,
-  //  as it is guaranteed that they will have the same x and y components, thus the .equal and
-  //  and their hashCodes have to be the same.
 
   /**
    * A {@link java.util.Comparator} that compares <code>At</code> objects with regard to the
