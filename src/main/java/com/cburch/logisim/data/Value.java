@@ -17,12 +17,12 @@ import java.util.Arrays;
 /**
  * The main data class for representing wiring values.
  * <p>
- * Value objects are immutable and represent binary data, each having a specific
+ * <code>Value</code> objects are immutable and represent binary data, each having a specific
  * quantity of bits, its width, limited by <code>MAX_WIDTH</code>.
  * Each bit may store not only <code>TRUE</code> and <code>FALSE</code> values,
  * but also <code>UNKNOWN</code> and <code>ERROR</code>.
- * There also exists a special zero-width Value known as <code>NIL</code> which is
- * always returned by the API when a returned Value object has a width of zero.
+ * There also exists a special zero-width <code>Value</code> known as <code>NIL</code> which is
+ * always returned by the API when a returned <code>Value</code> object has a width of zero.
  */
 public class Value {
 
@@ -66,13 +66,13 @@ public class Value {
   }
 
   /**
-   * Merges an array of Value objects into one single Value.
-   * The returned Value's width is the sum of the width of the given values, therefore
+   * Merges an array of <code>Value</code> objects into one single <code>Value</code>.
+   * The returned <code>Value</code>'s width is the sum of the width of the given values, therefore
    * care should be taken to avoid exceeding <code>MAX_WIDTH</code>.
    * <code>NIL</code> is returned if such sum is zero or if the array length is zero.
    *
    * @param values the array of values to be merged.
-   * @return A Value object with the bits of the given values, in order.
+   * @return A <code>Value</code> object with the bits of the given values, in order.
    * @throws RuntimeException if the total bit width exceeds <code>MAX_WIDTH</code>.
    * @throws RuntimeException if any of the values is not zero-width.
    */
@@ -107,9 +107,9 @@ public class Value {
   }
 
   /**
-   * Creates a Value object consisting of <code>bits</code> error bits.
+   * Creates a <code>Value</code> object consisting of <code>bits</code> error bits.
    *
-   * @param bits the width of the returned Value.
+   * @param bits the width of the returned <code>Value</code>.
    * @return an error value with the supplied bit width.
    */
   public static Value createError(BitWidth bits) {
@@ -117,9 +117,9 @@ public class Value {
   }
 
   /**
-   * Creates a Value object consisting of <code>bits</code> unknown bits.
+   * Creates a <code>Value</code> object consisting of <code>bits</code> unknown bits.
    *
-   * @param bits the width of the returned Value.
+   * @param bits the width of the returned <code>Value</code>.
    * @return an unknown value with <code>width</code> bits.
    */
   public static Value createUnknown(BitWidth bits) {
@@ -127,9 +127,9 @@ public class Value {
   }
 
   /**
-   * Creates a Value object with the given bit width and bit pattern.
+   * Creates a <code>Value</code> object with the given bit width and bit pattern.
    *
-   * @param bits the width of the returned Value.
+   * @param bits the width of the returned <code>Value</code>.
    * @param value the long object containing the bit pattern.
    * @return a value object with the provided bit width, consisting of
    *         the least significant bits of the provided <code>long</code> value.
@@ -139,7 +139,7 @@ public class Value {
   }
 
   /**
-   * Creates a 32-bit Value object with the bit pattern of the given 32-bit IEEE754
+   * Creates a 32-bit <code>Value</code> object with the bit pattern of the given 32-bit IEEE754
    * floating point number.
    *
    * @param value the floating point number to get the pattern from.
@@ -150,7 +150,7 @@ public class Value {
   }
 
   /**
-   * Creates a 64-bit Value object with the bit pattern of the given 32-bit IEEE754
+   * Creates a 64-bit <code>Value</code> object with the bit pattern of the given 32-bit IEEE754
    * floating point number.
    *
    * @param value the floating point number to get the pattern from.
@@ -163,9 +163,9 @@ public class Value {
   /* Added to test */
 
   /**
-   * Creates a Value object with the given bit width and bit pattern.
+   * Creates a <code>Value</code> object with the given bit width and bit pattern.
    *
-   * @param bits the width of the returned Value.
+   * @param bits the width of the returned <code>Value</code>.
    * @param value the long object containing the bit pattern.
    * @return a value object with the provided bit width, consisting of
    *         the least significant bits of the provided <code>long</code> value.
@@ -175,14 +175,14 @@ public class Value {
   }
 
   /**
-   * Converts a test vector value string into a Value object with the given bit width.
+   * Converts a test vector value string into a <code>Value</code> object with the given bit width.
    * The radix of the string representation is infererred from the provided input.
    * <p>
    * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
    *
    * @param width the bit with of the value represented by the string.
    * @param t the string with the representation of the value object.
-   * @return the Value object parsed from the given source string.
+   * @return the <code>Value</code> object parsed from the given source string.
    * @throws Exception if the provided representation string could not be parsed.
    */
   public static Value fromLogString(BitWidth width, String t) throws Exception {
@@ -264,7 +264,7 @@ public class Value {
   }
 
   /**
-   * Given a test vector Value string and its expected bit width, finds out
+   * Given a test vector <code>Value</code> string and its expected bit width, finds out
    * the numerical radix of the Value represented by the string.
    *
    * @param width the bit width of the value represented by the string
@@ -286,7 +286,7 @@ public class Value {
   }
 
   /**
-   * Creates a Value object consisting of the 1-bit base value, repeated <code>bits</code> times.
+   * Creates a <code>Value</code> object consisting of the 1-bit base value, repeated <code>bits</code> times.
    *
    * @param base the 1-bit value to repeat.
    * @param bits the bit width of returned object.
@@ -353,7 +353,7 @@ public class Value {
   }
 
   /**
-   * Computes the bitwise AND of <code>this</code> and another Value.
+   * Computes the bitwise AND of <code>this</code> and another <code>Value</code>.
    * <p>
    * The resulting value's width is the maximum of the two values' widths,
    * with the shortest value being padded with zeros on the most significant bits.
@@ -555,7 +555,7 @@ public class Value {
   }
 
   /**
-   * Returns the width of this Value as a BitWidth object.
+   * Returns the width of this <code>Value</code> as a BitWidth object.
    *
    * @return the bit width of this object.
    */
@@ -564,7 +564,7 @@ public class Value {
   }
 
   /**
-   * Returns the configured color that represents this Value object.
+   * Returns the configured color that represents this <code>Value</code> object.
    *
    * @return the color representing this value.
    */
@@ -587,7 +587,7 @@ public class Value {
   }
 
   /**
-   * Returns the width of this Value as an integer.
+   * Returns the width of this <code>Value</code> as an integer.
    *
    * @return the bit width of this object.
    */
@@ -605,7 +605,7 @@ public class Value {
   }
 
   /**
-   * Checks whether this Value has at least one error bit.
+   * Checks whether this <code>Value</code> has at least one error bit.
    *
    * @return true if and only if this object has an error bit.
    */
@@ -614,7 +614,7 @@ public class Value {
   }
 
   /**
-   * Checks whether this Value is non NIL and has no error or unknown bits.
+   * Checks whether this <code>Value</code> is non NIL and has no error or unknown bits.
    *
    * @return true if and only if this non-NIL object has only known bits.
    */
@@ -623,7 +623,7 @@ public class Value {
   }
 
   /**
-   * Checks whether this Value is composed entirely of unknown bits.
+   * Checks whether this <code>Value</code> is composed entirely of unknown bits.
    *
    * @return true if and only if this value has no known or error bits.
    */
@@ -636,7 +636,7 @@ public class Value {
   }
 
   /**
-   * Computes the bitwise NOT of this Value.
+   * Computes the bitwise NOT of this <code>Value</code>.
    * The returnd object has the same width of this, and
    * each bit is negated.
    * The NOT of a bit that isn't true or false
@@ -719,7 +719,7 @@ public class Value {
   }
 
   /**
-   * Returns a string containing the binary representation of this Value object.
+   * Returns a string containing the binary representation of this <code>Value</code> object.
    *
    * @return the binary representation of this value as a string.
    */
@@ -747,7 +747,7 @@ public class Value {
   }
 
   /**
-   * Returns a string containing the decimal representation of this Value object.
+   * Returns a string containing the decimal representation of this <code>Value</code> object.
    *
    * @return the decimal representation of this value as a string.
    */
@@ -779,7 +779,7 @@ public class Value {
   }
 
   /**
-   * Returns a string containing the binary representation of this Value object.
+   * Returns a string containing the binary representation of this <code>Value</code> object.
    * Identical to toBinaryString.
    *
    * @return the binary representation of this value as a string.
@@ -811,7 +811,7 @@ public class Value {
   }
 
   /**
-   * Returns the string representation for this Value
+   * Returns the string representation for this <code>Value</code>
    * with the given numerical radix.
    *
    * @param radix the numerical radix of the representation.
@@ -840,7 +840,7 @@ public class Value {
   }
 
   /**
-   * Returns a string with the hexadecimal representation of this Value object.
+   * Returns a string with the hexadecimal representation of this <code>Value</code> object.
    *
    * @return the hexadecimal representation of this value as a string.
    */
@@ -879,7 +879,7 @@ public class Value {
   }
 
   /**
-   * Returns the binary value represented by this Value as a long, or
+   * Returns the binary value represented by this <code>Value</code> as a long, or
    * -1 if there is any error or unknown bit.
    *
    * @return the binary representation of this value as a long.
@@ -895,7 +895,7 @@ public class Value {
   }
 
   /**
-   * Returns the binary value represented by this Value as a 32-bit floating point value, or
+   * Returns the binary value represented by this <code>Value</code> as a 32-bit floating point value, or
    * NaN if there is any error or unknown bit.
    *
    * @return the binary representation of this value as a float.
@@ -908,7 +908,7 @@ public class Value {
   }
 
   /**
-   * Returns the binary value represented by this Value as a 64-bit floating point value, or
+   * Returns the binary value represented by this <code>Value</code> as a 64-bit floating point value, or
    * NaN if there is any error or unknown bit.
    *
    * @return the binary representation of this value as a double.
@@ -921,7 +921,7 @@ public class Value {
   }
 
   /**
-   * Returns a string with the octal representation of this Value object.
+   * Returns a string with the octal representation of this value.
    *
    * @return the octal representation of this value as a string.
    */
@@ -987,7 +987,7 @@ public class Value {
   }
 
   /**
-   * Computes the bitwise XOR of <code>this</code> and another Value.
+   * Computes the bitwise XOR of <code>this</code> and another <code>Value</code>.
    * <p>
    * The resulting value's width is the maximum of the two values' widths,
    * with the shortest value being padded with zeros on the most significant bits.
