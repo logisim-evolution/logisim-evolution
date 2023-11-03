@@ -58,8 +58,8 @@ public class Direction implements AttributeOptionInterface {
 
   /**
    * Determines whether this direction object equals another one.
-   * @param other The direction to compare to
    *
+   * @param other The direction to compare to
    * @return true iff these are the same direction objects.
    */
   public boolean equals(Direction other) {
