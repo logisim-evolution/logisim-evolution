@@ -49,6 +49,7 @@ public class Bounds {
 
   /**
    * Returns a 1x1 bounds object with the given location.
+   *
    * @return A 1x1 <code>Bounds</code> object with the X and Y from the provided location.
    */
   public static Bounds create(Location pt) {

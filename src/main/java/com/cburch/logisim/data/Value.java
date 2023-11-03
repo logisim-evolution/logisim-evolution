@@ -521,6 +521,7 @@ public class Value {
    * Returns this value's bit at the provided index.
    * The index starts on zero, and least significant based.
    * For example index 0 is the least significant bit.
+   *
    * @param which the index to retrieve.
    * @return the value bit at the provided index.
    */
