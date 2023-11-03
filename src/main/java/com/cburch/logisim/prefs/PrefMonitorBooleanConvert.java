@@ -17,22 +17,51 @@ import com.cburch.logisim.std.wiring.ProbeAttributes;
 import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
 
+/**
+ * Represents a preference monitor for boolean values with additional
+ * functionality to handle conversion events. This class extends the
+ * behavior of the basic boolean preference monitor to facilitate
+ * listeners which are notified of conversion events.
+ */
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
+  /** List of listeners interested in conversion events. */
   private final ArrayList<ConvertEventListener> myListeners = new ArrayList<>();
 
+  /**
+   * Constructs a new preference monitor for boolean values with conversion capabilities.
+   *
+   * @param name The name of the preference.
+   * @param dflt The default boolean value.
+   */
   public PrefMonitorBooleanConvert(String name, boolean dflt) {
     super(name, dflt);
   }
 
+  /**
+   * Adds a listener to monitor conversion events.
+   *
+   * @param l The listener to add.
+   */
   public void addConvertListener(ConvertEventListener l) {
     if (!myListeners.contains(l)) myListeners.add(l);
   }
 
+  /**
+   * Removes a listener from monitoring conversion events.
+   *
+   * @param l The listener to remove.
+   */
   public void removeConvertListener(ConvertEventListener l) {
     myListeners.remove(l);
   }
 
+  /**
+   * Handles preference changes, updates the internal value if needed,
+   * and fires conversion events to registered listeners.
+   *
+   * @param event The event indicating a preference change.
+   */
   @Override
   public void preferenceChange(PreferenceChangeEvent event) {
     final var prefs = event.getNode();
@@ -67,7 +96,12 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
     }
   }
 
+  /**
+   * Notifies all registered listeners of a conversion event.
+   *
+   * @param e The conversion event to broadcast.
+   */
   private void fireConvertAction(ConvertEvent e) {
-    for (ConvertEventListener l : myListeners) l.attributeValueChanged(e);
+    for (final var l : myListeners) l.attributeValueChanged(e);
   }
 }

@@ -22,6 +22,14 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 
   private final String dflt;
 
+  /**
+   * Constructor for the PrefMonitorStringOpts class.
+   * Initializes and sets preferences for string options.
+   *
+   * @param name The preference's name.
+   * @param opts The available options for the preference.
+   * @param dflt The default value for the preference.
+   */
   public PrefMonitorStringOpts(String name, String[] opts, String dflt) {
     super(name);
     this.opts = opts;
@@ -32,10 +40,19 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
     prefs.addPreferenceChangeListener(this);
   }
 
+  /**
+   * Retrieves the current value of the preference.
+   */
   public String get() {
     return value;
   }
 
+  /**
+   * Reacts to a preference change event.
+   * Updates the value of the preference if there's a change in its corresponding key.
+   *
+   * @param event The preference change event.
+   */
   public void preferenceChange(PreferenceChangeEvent event) {
     final var prefs = event.getNode();
     final var prop = event.getKey();
@@ -58,6 +75,13 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
     }
   }
 
+  /**
+   * Sets the value for the preference.
+   * Updates the preference with the new value if it's different from the current one.
+   * Does nothing if newValue is the same as the current value.
+   *
+   * @param newValue The new value for the preference.
+   */
   public void set(String newValue) {
     final var oldValue = value;
     if (!isSame(oldValue, newValue)) {

@@ -13,11 +13,11 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.47.0"
+  id("com.github.ben-manes.versions") version "0.49.0"
   java
   application
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("org.sonarqube") version "4.3.1.3277"
+  id("org.sonarqube") version "4.4.1.3373"
 }
 
 repositories {
@@ -38,7 +38,7 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.9")
   implementation("org.slf4j:slf4j-simple:2.0.9")
-  implementation("com.formdev:flatlaf:3.2.1")
+  implementation("com.formdev:flatlaf:3.2.5")
   implementation("commons-cli:commons-cli:1.5.0")
   implementation("org.apache.commons:commons-text:1.10.0")
 
@@ -51,7 +51,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:5.10.0"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.6.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

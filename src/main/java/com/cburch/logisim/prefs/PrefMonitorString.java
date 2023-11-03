@@ -21,6 +21,12 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
 
   private String value;
 
+  /**
+   * Constructor for the PrefMonitorString.
+   *
+   * @param name The name or identifier for the preference.
+   * @param dflt The default value for the preference.
+   */
   public PrefMonitorString(String name, String dflt) {
     super(name);
     this.dflt = dflt;
@@ -29,10 +35,21 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
     prefs.addPreferenceChangeListener(this);
   }
 
+  /**
+   * Retrieves the value of the preference.
+   *
+   * @return The current value of the preference.
+   */
   public String get() {
     return value;
   }
 
+  /**
+   * Handles the change in preference value.
+   * Does nothing if newValue is the same as the current value.
+   *
+   * @param event The preference change event.
+   */
   public void preferenceChange(PreferenceChangeEvent event) {
     final var prefs = event.getNode();
     final var prop = event.getKey();
@@ -47,6 +64,12 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
     }
   }
 
+  /**
+   * Updates the value of the preference.
+   * Does nothing if newValue is the same as the current value.
+   *
+   * @param newValue The new value for the preference.
+   */
   public void set(String newValue) {
     final var oldValue = value;
     if (!isSame(oldValue, newValue)) {

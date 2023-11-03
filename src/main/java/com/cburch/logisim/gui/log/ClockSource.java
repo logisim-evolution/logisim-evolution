@@ -42,7 +42,7 @@ public class ClockSource extends JDialogOk {
                 ? ComponentSelector.DRIVEABLE_CLOCKS
                 : ComponentSelector.OBSERVEABLE_CLOCKS);
 
-    JScrollPane explorerPane =
+    final var explorerPane =
         new JScrollPane(
             selector,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
