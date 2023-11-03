@@ -77,16 +77,19 @@ public class BoardList {
       final var fileName = ze.getName();
       final var accept = pattern.matcher(fileName).matches() && fileName.contains(match);
       if (accept) {
-        // Check that fileName doesn't stray outside target directory: Zip Slip security test.
-        if (!(new File(dir, fileName)).toPath().normalize().startsWith(dir.toPath())) {
-          try {
-            zf.close();
-          } catch (IOException e1) {
-            // Do nothing since we are about to throw an Error anyway.
+        try {
+          // Check that fileName doesn't stray outside target directory: Zip Slip security test.
+          // if getCanonicalFile throws IOException, then assume the worst.
+          if ((new File(dir, fileName)).getCanonicalFile().toPath().startsWith(dir.getCanonicalFile().toPath())) {
+            ret.add("url:" + fileName);
+            continue;
           }
-          throw new Error("Bad entry: " + fileName + " in " + dir);
+
+          zf.close();
+        } catch (IOException e1) {
+          // Do nothing since we are about to throw an Error anyway.
         }
-        ret.add("url:" + fileName);
+        throw new Error("Bad entry: " + fileName + " in " + dir);
       }
     }
     try {

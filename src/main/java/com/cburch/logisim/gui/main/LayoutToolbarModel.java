@@ -59,8 +59,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   private static ToolbarItem findItem(List<ToolbarItem> items, Tool tool) {
     for (final var item : items) {
-      if (item instanceof ToolItem) {
-        if (tool == ((ToolItem) item).tool) {
+      if (item instanceof ToolItem toolItem) {
+        if (tool == toolItem.tool) {
           return item;
         }
       }

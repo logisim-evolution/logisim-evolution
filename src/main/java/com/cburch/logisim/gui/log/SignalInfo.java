@@ -86,7 +86,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
     circ[0] = root;
     for (int i = 1; i < n; i++) {
-      SubcircuitFactory f = (SubcircuitFactory) path[i - 1].getFactory();
+      final var f = (SubcircuitFactory) path[i - 1].getFactory();
       circ[i] = f.getSubcircuit();
     }
     computeName();
@@ -328,8 +328,8 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
       g.setColor(Color.MAGENTA);
       g.fillRect(x + 3, x + 3, 15, 15);
     } else {
-      Graphics g2 = g.create();
-      ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, g2);
+      final var g2 = g.create();
+      final var context = new ComponentDrawContext(c, null, null, g, g2);
       comp.getFactory().paintIcon(context, x, y, comp.getAttributeSet());
       g2.dispose();
     }

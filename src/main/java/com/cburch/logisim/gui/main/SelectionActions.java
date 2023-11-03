@@ -105,9 +105,7 @@ public class SelectionActions {
         if (tool instanceof AddTool addTool) {
           if (name.equals(addTool.getName())) {
             final var fact = addTool.getFactory(true);
-            if (acceptNameMatch) {
-              return fact;
-            } else if (fact == factory) {
+            if (acceptNameMatch || (fact == factory)) {
               return fact;
             } else if (fact.getClass() == factory.getClass()
                 && !(fact instanceof SubcircuitFactory)
@@ -511,7 +509,7 @@ public class SelectionActions {
         }
       }
 
-      if (toAdd.size() > 0) {
+      if (!toAdd.isEmpty()) {
         sel.pasteHelper(xn, toAdd);
         final var result = xn.execute();
         xnReverse = result.getReverseTransaction();

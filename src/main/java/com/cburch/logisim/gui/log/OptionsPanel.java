@@ -139,7 +139,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     selectionButton = frame.makeSelectionButton();
     selectionPanel.add(selectionButton);
 
-    ButtonGroup g = new ButtonGroup();
+    final var g = new ButtonGroup();
     g.add(stepTime);
     g.add(realTime);
     g.add(clockTime);
@@ -175,7 +175,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     clockOptionsPanel.add(clockGate.getPanel());
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-    Box clockSrcBox = new Box(BoxLayout.X_AXIS);
+    final var clockSrcBox = new Box(BoxLayout.X_AXIS);
     clockSrcBox.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     clockSrcBox.setAlignmentX(0.0f);
     clockSrcBox.add(clockSrcLabel);
@@ -199,7 +199,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     limit.setEditor(new JSpinner.NumberEditor(limit, "####"));
     limit.setMaximumSize(limit.getPreferredSize());
     unlimited.setAlignmentX(0.0f);
-    Box limitBox = new Box(BoxLayout.X_AXIS);
+    final var limitBox = new Box(BoxLayout.X_AXIS);
     limitBox.add(limitLabel);
     limitBox.add(Box.createRigidArea(new Dimension(6, 0)));
     limitBox.add(limit);
@@ -210,10 +210,10 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     historyPanel.add(limitBox);
     historyPanel.add(Box.createVerticalGlue());
 
-    JPanel inner = new ScrollablePanel();
+    final var inner = new ScrollablePanel();
 
-    GridBagLayout gbl = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
     inner.setLayout(gbl);
 
     gbc.fill = GridBagConstraints.BOTH;
@@ -413,7 +413,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     @Override
     public boolean verify(JComponent input) {
       text = ((JTextField) input).getText().trim();
-      String s = S.get(suffix);
+      final var s = S.get(suffix);
       if (text.endsWith(s)) text = text.substring(0, text.length() - s.length()).trim();
       scale = 1;
       matched = false;
@@ -559,7 +559,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   @Override
   public void localeChanged() {
     selectionPanel.setBorder(BorderFactory.createTitledBorder(S.get("selectionLabel")));
-    selectionButton.setText(S.get("buttonAddRemoveSignals"));  
+    selectionButton.setText(S.get("buttonAddRemoveSignals"));
     modePanel.setBorder(BorderFactory.createTitledBorder(S.get("modeLabel")));
     historyPanel.setBorder(BorderFactory.createTitledBorder(S.get("historyLabel")));
     stepTime.setText(S.get("stepTime"));
