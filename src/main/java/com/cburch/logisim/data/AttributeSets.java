@@ -206,6 +206,7 @@ public class AttributeSets {
   /**
    * Copies all entries from an attribute set to another through {@link AttributeSet#setValue}
    * and {@link AttributeSet#getValue}. Does nothing if any of its arguments is <code>null</code>.
+   *
    * @param src The source attribute set to copy from.
    * @param dst The destination attribute set to copy from.
    */
@@ -225,6 +226,7 @@ public class AttributeSets {
    * for all <code>0 <= i < length</code>.
    * The resulting attribute set supports modification though <code>setValue</code> and
    * <code>setReadOnly</code>.
+   *
    * @param attrs The keys of the attribute set
    * @param initValues The values associated with the keys of the attribute set
    * @return The newly created attribute set.

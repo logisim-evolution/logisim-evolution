@@ -32,6 +32,7 @@ public class Location implements Comparable<Location> {
 
   /**
    * Creates a location object with the provided attributes.
+   *
    * @param x The <code>x</code> coordinate of the returned Location
    * @param y The <code>y</code> coordinate of the returned Location
    * @param hasToSnap Whether the x and y coordinates should be snapped to
@@ -338,6 +339,7 @@ public class Location implements Comparable<Location> {
   /**
    * Sorts a list of <code>At</code> object by the X component of their locations,
    * with <code>CompareHorizontal</code>.
+   *
    * @param list The list of locations to sort.
    * @param <T> The type of the objects stored in <code>list</code>.
    */
@@ -370,6 +372,7 @@ public class Location implements Comparable<Location> {
   /**
    * Sorts a list of <code>At</code> object by the Y component of their locations,
    * with <code>CompareVertical</code>.
+   *
    * @param list The list of locations to sort.
    * @param <T> The type of the objects stored in <code>list</code>.
    */

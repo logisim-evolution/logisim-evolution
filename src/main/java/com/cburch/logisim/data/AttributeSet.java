@@ -63,6 +63,7 @@ public interface AttributeSet {
 
   /**
    * Retrieves an attribute in this set matching the provided name.
+   *
    * @param name the name of the attribute to check.
    * @return an attribute with the provided name, or null if no such attribute was found.
    */
@@ -83,6 +84,7 @@ public interface AttributeSet {
 
   /**
    * Retrieves the value associated with the provided attribute.
+   *
    * @param attr The attribute to lookup.
    * @return The value associated by <code>attr</code> or null
    *         if such attribute does not exist in this attribute set.
@@ -101,9 +103,10 @@ public interface AttributeSet {
 
   /**
    * Determines whether an attribute attirbute should be serialized
+   *
    * @param attr the attribute to check.
    * @return true as an indication that the provided attribute should be serialized or saved
-   *  upon the serialization of a component.
+   *         upon the serialization of a component.
    */
   boolean isToSave(Attribute<?> attr);
 

@@ -17,6 +17,7 @@ package com.cburch.logisim.data;
  * A record that represents an event involving a specific attribute. Typically
  * passed as an argument to {@link AttributeListener#attributeListChanged} and
  * {@link AttributeListener#attributeValueChanged} by an {@link AttributeSet}
+ *
  * @param getSource The attribute source from which this event originated from.
  * @param getAttribute The attribute that was targeted by this event.
  *                     This may be null, such in the case of an

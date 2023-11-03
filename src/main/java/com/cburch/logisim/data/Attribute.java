@@ -41,7 +41,7 @@ public abstract class Attribute<V> {
   /**
    * Instantiates an <code>Attribute</code> object.
    *
-   * @param name The identifer/name of this attribute.
+   * @param name The identifier/name of this attribute.
    * @param disp The display name of this attribute.
    */
   public Attribute(String name, StringGetter disp) {
@@ -51,7 +51,7 @@ public abstract class Attribute<V> {
   /**
    * Instantiates an <code>Attribute</code> object.
    *
-   * @param name The identifer/name of this attribute.
+   * @param name The identifier/name of this attribute.
    * @param disp The display name of this attribute.
    * @param hidden Whether this attribute should be displayed or not.
    */
@@ -76,7 +76,7 @@ public abstract class Attribute<V> {
    * Constructs a java.awt component for editing a value represented by
    * this <code>Attribute</code>.
    *
-   * @param source The souce window for the returned component.
+   * @param source The source window for the returned component.
    * @param value The default value for the field.
    * @return a suitable editor field for this <code>Attribute</code>.
    */
@@ -108,9 +108,9 @@ public abstract class Attribute<V> {
   /**
    * Parses an input string into a value to be represented by this attribute.
    *
-   * @param source A java.awt window for which the string was derivated from.
+   * @param source A java.awt window for which the string was derived from.
    * @param value The string to parse.
-   * @return A value taht is representable by this attribute.
+   * @return A value that is representable by this attribute.
    */
   public V parse(Window source, String value) {
     return parse(value);
@@ -120,10 +120,9 @@ public abstract class Attribute<V> {
    * Parses an input string into a value to be represented by this attribute.
    *
    * @param value The string to parse.
+   * @return The value parsed from the provided string.
    * @throws NumberFormatException if the string may not be converted into a value
    *                               representable by this attribute.
-   *
-   * @return The value parsed from the provided string.
    */
   public abstract V parse(String value);
 
@@ -177,7 +176,7 @@ public abstract class Attribute<V> {
    * <p>
    *
    * @return true as an indication that this attribute should be serialized or saved
-   *  upon the serialization of a component.
+   *         upon the serialization of a component.
    */
   public boolean isToSave() {
     return true;

@@ -55,6 +55,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   /**
    * Copies all attributes and their respective values from this attribute set
    * to the provided <code>AbstractAttributeSet</code> through {@link AttributeSet#setValue}.
+   *
    * @param dest The attribute set to copy to, this object is assumed to be an instance
    *             of the implementor's class.
    */
@@ -76,6 +77,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   /**
    * Sends an {@link AttributeListener#attributeValueChanged} event to all
    * attribute listeners associated with this attribute set.
+   *
    * @param attr The attribute of the event to be sent.
    * @param value The current/new value of the event.
    * @param oldvalue The previous value of event.

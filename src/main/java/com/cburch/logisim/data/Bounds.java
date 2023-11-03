@@ -20,6 +20,7 @@ public class Bounds {
 
   /**
    * Returns a bounds object with the provided location and height.
+   *
    * @param x The X coordinate of the object
    * @param y The Y coordinate of the object
    * @param wid The width of the object
@@ -156,6 +157,7 @@ public class Bounds {
 
   /**
    * Determines the smallest rectangle that contains this rectangle and a given one.
+   *
    * @param x The x coordinate of the given rectangle
    * @param y The y coordinate of the given rectangle
    * @param wid The width of the given rectangle
@@ -196,6 +198,7 @@ public class Bounds {
    * a border of this rectangle.
    * This method considers the right and bottom borders of this rectangle to be reduced by one
    * in x and y respectively.
+   *
    * @param px The X coordinate of the point
    * @param py The Y coordinate of the point
    * @param fudge The maximum distance from the border the given point might be.
@@ -220,6 +223,7 @@ public class Bounds {
    * a border of this rectangle.
    * This method considers the right and bottom borders of this rectangle to be reduced by one
    * in x and y respectively.
+   *
    * @param p The point to check
    * @param fudge The maximum distance from the border the given point might be.
    * @return Whether the provided point is within <code>fudge</code> units from a border.
@@ -230,6 +234,7 @@ public class Bounds {
 
   /**
    * Determines whether this rectangle contains the given one.
+   *
    * @param bd The other rectangle to check
    * @return Whether the provided rectangle is contained by this one.
    */
@@ -239,6 +244,7 @@ public class Bounds {
 
   /**
    * Determines whether this rectangle contains a given point.
+   *
    * @param px The X coordinate of the point
    * @param py The Y coordinate of the point
    * @return Whether this rectangle contains the given point.
@@ -251,6 +257,7 @@ public class Bounds {
    * Determines whether this rectangle contains a given point, within a certain margin of error.
    * If the least distance between the point and this rectangle is smaller or equal
    * than the allowed error, returns true.
+   *
    * @param px The X coordinate of the point
    * @param py The Y coordinate of the point
    * @param allowedError The maximum margin of error.
@@ -265,6 +272,7 @@ public class Bounds {
 
   /**
    * Determines whether this rectangle contains a given one.
+   *
    * @param x The x coordinate of the given rectangle
    * @param y The y coordinate of the given rectangle
    * @param wid The width of the given rectangle
@@ -279,6 +287,7 @@ public class Bounds {
 
   /**
    * Determines whether this rectangle contains a given point.
+   *
    * @param p The point to check
    * @return Whether this rectangle contains the given point.
    */
@@ -290,6 +299,7 @@ public class Bounds {
    * Determines whether this rectangle contains a given point, within a certain margin of error.
    * If the least distance between the point and this rectangle is smaller or equal
    * than the allowed error, returns true.
+   *
    * @param p The point to check
    * @param allowedError The maximum margin of error.
    * @return Whether this rectangle contains the given point.
@@ -412,6 +422,7 @@ public class Bounds {
    * Angle combinations are not unique, this could also be achieved with
    * <code>from = Direction.NORTH</code> and <code>to = Direction.EAST</code>.
    * All points from this rectangle are rotated according to this angle, around (xc,yc).
+   *
    * @param from The base direction to draw the angle from
    * @param to The target direction to draw the angle from
    * @param xc The X coordinate of the center of the rotation

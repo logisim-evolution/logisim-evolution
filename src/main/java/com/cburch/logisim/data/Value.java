@@ -418,6 +418,7 @@ public class Value {
    * with nil or unknown results on the original value itself.
    * <p>
    * It is useful for combining the values of two wires once they meet in a circuit.
+   *
    * @param other the value to combine with this.
    * @return the combined value.
    */
@@ -461,6 +462,7 @@ public class Value {
    * <code>TRUE</code> but <code>TRUE</code> is not compatible with <code>UNKNOWN</code>.
    * <p>
    * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
+   *
    * @param other the value to match against <code>this</code>.
    * @return true if and only if the two values are compatible.
    *

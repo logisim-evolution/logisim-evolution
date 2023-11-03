@@ -18,6 +18,7 @@ public interface AttributeListener {
 
   /**
    * Notifies this listener that the list of keys of an attribute set has been modified.
+   *
    * @param e The event object that represents the notified event.
    *          Because this event doesn't target a particular attribute, the
    *          <code>attribute</code>, <code>value</code> and  <code>oldValue</code>
@@ -29,6 +30,7 @@ public interface AttributeListener {
 
   /**
    * Notifies this listener that the value associated with a particular attribute has changed.
+   *
    * @param e The event object that represents the notified event.
    *          The <code>attribute</code> field of the event must be the attribute whose value has
    *          changed, and <code>value</code> and <code>oldValue</code> must refer

@@ -73,10 +73,11 @@ public class BitWidth implements Comparable<BitWidth> {
 
   /**
    * The main entry point for accessing bit width values.
+   *
    * @param width The width of the returned object
    * @return A bit width object with the provided width
    * @throws IllegalArgumentException if <code>width</code> is negative or
-   * exceeds <code>Value.MAX_WIDTH</code>.
+   *                                  exceeds <code>Value.MAX_WIDTH</code>.
    */
   public static BitWidth create(int width) {
     ensurePrefab();
@@ -103,6 +104,7 @@ public class BitWidth implements Comparable<BitWidth> {
    * Parses a string into a bit width value from its decimal representation.
    * The string must have the decimal representation of the width to be returned,
    * but may optionally start with a '/' character.
+   *
    * @param str The string to parse
    * @return The resulting bit width object
    */

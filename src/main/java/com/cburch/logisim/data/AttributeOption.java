@@ -13,7 +13,7 @@ import com.cburch.logisim.util.StringGetter;
 
 /**
  * An attribute option is an immutable value that may be represented by an
- * <code>Attribute&lt;AttributeOption&gt;/code>.
+ * <code>Attribute&lt;AttributeOption&gt;</code>.
  * When a component attribute has some named options that it may represent,
  * one may represent is as an <code>Attribute&lt;AttributeOption&gt;/code>, and define
  * its possible variants as an array of attribute options, with {@link Attributes#forOption }.
@@ -27,6 +27,7 @@ public class AttributeOption implements AttributeOptionInterface {
 
   /**
    * Constructs an attribute option with the provided information.
+   *
    * @param value The value associated with this attribute option.
    * @param name The name/identifier of this attribute option,
    *             This is used to distinguish distinct options within the same attribute,
@@ -43,6 +44,7 @@ public class AttributeOption implements AttributeOptionInterface {
    * Constructs an attribute option with the provided information.
    * The name of the returned attribute is assigned to the string representation of
    * <code>value</code>, through {@link Object#toString()}.
+   *
    * @param value The value associated with this attribute option.
    * @param desc The textual description (getter) of this attribute option.
    */
