@@ -782,10 +782,7 @@ public class Value {
   }
 
   /**
-   * Returns a string containing the binary representation of this <code>Value</code> object.
-   * Identical to toBinaryString.
-   *
-   * @return the binary representation of this value as a string.
+   * @return a user-friendly binary representation of this value as a string.
    */
   public String toDisplayString() {
     switch (width) {
