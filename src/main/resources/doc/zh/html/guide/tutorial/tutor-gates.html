@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      <!-- Tutorial: Adding gates -->
+      教程：添加门
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <!-- <b>Next:</b> <a href="tutor-wires.html">Step 0: Orienting yourself</a> -->
+        <b>上一步:</b> <a href="tutor-orient.html">第0步：整体概览</a>
+
+      </p>
+      <h2>
+        <!-- Step 1: Adding gates -->
+        第1步：添加门
+
+      </h2>
+      <p>
+        <!-- Recall that we're trying to build the following circuit in Logisim. -->
+        回想一下，我们正在尝试在 Logisim-evolution 中构建以下电路。
+      </p>
+      <p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-xor-circ.png" alt="#########">
+      </p>
+      </p>
+      <p>
+        <!-- I suggest building a circuit by inserting the gates first as a sort of skeleton and then connecting them with wires later. The first thing we'll do is to add the two AND gates. Click on the <b class=propertie>"AND"</b> tool in the toolbar (<img class=intxt src="../../../../img-guide/tutorial-toolsbar-and.png" alt="#########">, the next-to-last tool listed). Then click in the editing area where you want the first AND gate to go. Be sure to leave plenty of room for stuff on the left. Then click the AND tool again and place the second AND gate below it. -->
+        首先通过放置逻辑门来始构建电路，然后用导线将它们连接起来。第一件事是我们需要添加两个与门。在工具栏(<img class=intxt src="../../../../img-guide/tutorial-toolsbar-and.png" alt="#########">, 列出的倒数第二个工具)上点击 <b class=propertie>"AND"</b> . 然后在画布区域中单击您想要第一个与门所在的位置。 一定要为左边的东西留出足够的空间。 然后再次单击AND门并将第二个AND门放置在其下方。
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-1-ands.png" alt="#########">
+      </p>
+      <p>
+        <!-- Notice the five dots on the left side of the AND gate. These are spots where wires can be attached. It happens that we'll just use two of them for our XOR circuit; but for other circuits, you may find that having more than two wires going to an AND gate is useful. The number of inputs can be modified in the properties <b class=propertie>"Number of inputs"</b> -->
+        注意与门左侧的四个点。 这些是可以连接导线的地方. 碰巧我们只使用其中两个用于我们的异或电路； 但对于其他电路，您可能会发现将两根以上的电线连接到与门是有用的。 输入的数量可以通过选中该门，然后在属性表窗口中修改 <b class=propertie>"输入数量"</b>
+
+      </p>
+      <p>
+        <!-- Now add the other gates. First click on the <b class=propertie>"OR"</b> tool (<img class=intxt src="../../../../img-guide/tutorial-toolsbar-or.png" alt="#########">); then click where you want it. And place the two NOT gates into the canvas using the <b class=propertie>"NOT"</b> tool (<img class=intxt src="../../../../img-guide/tutorial-toolsbar-not.png" alt="#########">). -->
+        现在添加其它的门. 首先点击 <b class=propertie>"OR"</b> 门 (<img class=intxt src="../../../../img-guide/tutorial-toolsbar-or.png" alt="#########">); 然后在画布上点击一个你想放置的位置. 然后再放置两个 <b class=propertie>"NOT"</b> 门 (<img class=intxt src="../../../../img-guide/tutorial-toolsbar-not.png" alt="#########">).
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-2-gates.png" alt="#########">
+      </p>
+      <p>
+        <!-- I left a little space between the NOT gates and the AND gates; if you want to, though, you can put them up against each other and save yourself the effort of connecting them with a wire later. -->
+        在非门和与门之间我们留了一点空间； 不过，如果您愿意，可以将它们相互靠在一起放置，这样就可以省去稍后用导线连接它们的麻烦。
+      </p>
+      <p>
+        <!-- Now we want to add the two inputs <var>x</var> and <var>y</var> into the diagram. Select the <b class=propertie>"Input"</b> tool (<img class="icontxt" src="../../../../icons/1616/toolpininput.png" alt="#########">), and place the pins down. You should also place an output pin next to the OR gate's output using the <b class=propertie>"Output"</b> tool (<img class="icontxt" src="../../../../icons/1616/toolpinoutput.png" alt="#########">). (Again, I'm leaving a bit of space between the OR gate and the output pin, but you might choose to place them right next to each other.) -->
+        现在我们要将两个输入 <var>x</var> 和 <var>y</var> 添加到图中。选择 <b class=propertie>"Input"</b> 工具 (<img class="icontxt" src="../../../../icons/1616/toolpininput.png" alt="#########">), 并把他放在再画布上. 你应该使用<b class=propertie>"Output"</b> 工具放在或门右侧作为输出 (<img class="icontxt" src="../../../../icons/1616/toolpinoutput.png" alt="#########">). (同样，我在“或”门和输出引脚之间留了一些空间，但您可以选择将它们放置在一起。)
+
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-3-comps.png" alt="#########">
+      </p>
+      <p>
+        <!-- If you decide you don't like where you placed something, then you can select it using the <b class=propertie>"Edit"</b> tool (<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">) and drag it to the desired spot. Or you can delete it altogether by selecting <b class=menu>|&nbsp;Edit&nbsp;|</b> → <b class=menu>|&nbsp;Delete&nbsp;|</b> or pressing the <b class="tkeybd">Delete</b> key or <b class="tkeybd">Ctrl-X</b> keys. -->
+        如果您不喜欢一些元件放置的位置，你可以通过使用 <b class=propertie>"Edit"</b> 工具 (<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">) 并将其拖放到你想要的位置. 或者你可以直接将其进行删除，通过 <b class=menu>|&nbsp;Edit&nbsp;|</b> → <b class=menu>|&nbsp;Delete&nbsp;|</b> 或者通过 电脑键盘上的 <b class="tkeybd">Delete</b> 键 或者是通过 <b class="tkeybd">Ctrl-X</b> 键.
+
+      </p>
+      <p>
+        <!-- As you place each component of the circuit, you'll notice that as soon as the component is placed, Logisim reverts to the <b class=propertie>"Edit"</b> tool (<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">) so that you can move the recently-placed component or (as we'll see soon) connect the component to others by creating wires. If you want to add a copy of the recently placed component, a shortcut is to press <b class="tkeybd">Ctrl-D</b> to duplicate the selection. (Some computers use another keys for menus, such as the Command key on Macintoshes. You would press that key with the D key.) -->
+    
+
+        当您放置电路的每个元件时，您会注意到，一旦放置了元件，Logisim-evolution就会自动恢复到<b class=propertie>"Edit"</b> 工具(<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">) 以便您可以移动最近放置的组件或（正如我们 很快就会看到）通过创建导线将组件连接到其他组件。 如果您想添加最近放置的组件的副本，快捷方式是按 <b class="tkeybd">Ctrl-D</b> 复制所选内容。 （有些计算机使用其他键控制，例如在苹果电脑上要通过<b class="tkeybd">Command-D</b>键来实现快捷复制。）
+
+      </p>
+      <p>
+        <!-- <b>Next:</b> <a href="tutor-wires.html">Step 2: Adding wires</a> -->
+        <b>下一步:</b> <a href="tutor-wires.html">第2步：添加导线</a>
+      </p>
+    </div>
+  </body>
+</html>

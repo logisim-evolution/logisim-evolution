@@ -1,0 +1,523 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-08-04T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      AND/OR/NAND/NOR Gate
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/ansandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansorgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansnandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansnorgate.png" alt="#########" width="32" height="32"><br>
+              <img class="iconlibs" src="../../../../icons/6464/iecandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecorgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecnandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecnorgate.png" alt="#########" width="32" height="32">
+            </td>
+            <td valign="center">
+              <h1>
+                <em>AND/OR/NAND/NOR Gate</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Gates</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th width="50">
+                      AND
+                    </th>
+                    <th width="50">
+                      OR
+                    </th>
+                    <th width="50">
+                      NAND
+                    </th>
+                    <th width="50">
+                      NOR
+                    </th>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      ANSI:
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansnandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansnorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      IEC:
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecnandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecnorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The AND, OR, NAND, and NOT gates each compute the respective function of the inputs, and emit the result on the output.
+      </p>
+      <p>
+        By default, any inputs that are left unconnected are ignored — that's if the input truly has nothing attached to it, not even a wire. In this way, you can insert a 5-input gate but only attach two inputs, and it will work as a 2-input gate; this relieves you from having to worry about configuring the number of inputs every time you create a gate.<br>
+        If all inputs are unconnected, the output is the error value (<b class="evalue">E</b>). Some users, though, prefer that Logisim insist that all inputs be connected, since this is what corresponds to real-world gates. You can enable this behavior by going to the <b class="menu">|&nbsp;Project&nbsp;|</b> &gt; <b class="menu">|&nbsp;Options…&nbsp;|</b> menu item and selecting the <b class="menu">|&nbsp;Simulation&nbsp;|</b> tab, and selecting <q>Error for undefined inputs</q> for <q>Gate Output When Undefined</q>.
+      </p>
+      <p>
+        The two-input truth table for the gates is the following. The letter <b class="evalue">E</b> represents the error value, and the letter <b class="uvalue">U</b> represents the floating value.
+      </p>
+      <center>
+        <table class="encapsul" border="0">
+          <tbody>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        AND
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        OR
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &nbsp;
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        NAND
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td></td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        NOR
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        In short, these components work as expected as long as all inputs are either 0 or 1. If an input is neither 0 nor 1. it is floating (<b class="uvalue">U</b>) or it is the error (<b class="evalue">E</b>) value then the component treats it as both 0 <em>and</em> 1: If the output would be the same both ways as when an AND gate has one input that is definitely 0 and a questionable second input, that will be the output value; but if the output changes depending on whether it is 0 or 1, the output is the error value (<b class="evalue">E</b>).
+      </p>
+      <p>
+        The multi-bit versions of each gate will perform its one-bit transformation bitwise on its inputs.
+      </p>
+      <h2>
+        Pins (assuming component faces east)
+      </h2>
+      <dl>
+        <dt>
+          West edge :
+        </dt>
+        <dd>
+            The inputs into the component. There will be as many of these as specified in the Number of Inputs attribute. Bit width according to Data <b class="propertie">Bits attribute</b>.
+          <p>
+            Note that if you are using shaped gates the west side of OR and NOR gates will be curved. Nonetheless, the input pins are in a line. Logisim will draw short stubs illustrating this; and if you overshoot a stub, it will silently assume that you did not mean to overshoot it. In "printer view", these stubs will not be drawn unless they are connected to wires.
+          </p>
+        </dd>
+        <dt>
+          East edge :
+        </dt>
+        <dd>
+            The gate's output, whose value is computed based on the current inputs as described above. Bit width according to Data <b class="propertie">Bits attribute</b>.
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        When the component is selected or being added the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter its <b class="propertie">Number of Inputs</b> attribute, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute, and the arrow keys alter its <b class="propertie">Facing</b> attribute.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Facing</b>
+          </dt>
+          <dd>
+            The direction of the component (its output relative to its inputs).
+          </dd>
+          <dt>
+            <b class="propertie">Data Bits</b>
+          </dt>
+          <dd>
+            The bit width of the component's inputs and outputs.
+          </dd>
+          <dt>
+            <b class="propertie">Gate Size</b>
+          </dt>
+          <dd>
+            Determines whether to draw a wider or narrower version of the component. This does not affect the number of inputs, which is specified by the Number of Inputs attribute. However, if shaped gates are selected, then the gate will be drawn with <q>wings</q> to accommodate additional inputs beyond what the shape naturally accommodates.
+          </dd>
+          <dt>
+            <b class="propertie">Number of Inputs</b>
+          </dt>
+          <dd>
+            Determines how many pins to have for the component on its west side.
+          </dd>
+          <dt>
+            <b class="propertie">Output Value</b>
+          </dt>
+          <dd>
+            Indicates how false and true results should be translated into output values. By default, false is indicated by a low voltage (0) and true by a high voltage (1), but one or the other can be replaced by a high-impedance (<q>floating</q>) value instead. This allows wired-or and wired-and connections, as illustrated below: At left, the buffers' Output Value attribute is floating/1 and the resistor pulls to 0, giving wired-or behavior; at right, the buffers' Output Value attribute is 0/floating and the resistor pulls to 1, giving wired-and behavior.
+            <center>
+              <img src="../../../../img-libs/wand-wor.png" alt="#########" width="220" height="91">
+            </center>
+          </dd>
+          <dt>
+            <b class="propertie">Label</b>
+          </dt>
+          <dd>
+            The text within the label associated with the gate.
+          </dd>
+          <dt>
+            <b class="propertie">Label Font</b>
+          </dt>
+          <dd>
+            The font with which to render the label.
+          </dd>
+          <dt>
+            <b class="propertie">Negate <var>x</var></b>
+          </dt>
+          <dd>
+            If <q>yes</q>, the input is negated before it is fed into the gate. The inputs are counted top-down if the facing is east or west, and they are counted left-to-right if the facing is north or south.
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        Allows the label associated with the gate to be edited.
+      </p>
+      <p>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-05-21T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Hex Digit Display
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/hexdig.png" alt="#########"> <em>Hex Digit Display</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Input/Output</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.2.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs"  src="../../../../img-libs/hexdig.png" alt="Working" width="64" height="64">
+			  <img class="appearancelibs"  src="../../../../img-libs/hexdigoff.png" alt="No valid input" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        Using a seven-segment display, shows the hexadecimal digit corresponding to the four-bit input. If any of the inputs are not 0/1 (either floating or error), then the display stays blank (all segments off). A separate one-bit input controls the display of the decimal point. 
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          South edge, first from left (input, bit width 4)
+        </dt>
+        <dd>
+          This input is interpreted as an unsigned four-bit number, and the corresponding hexadecimal digit is displayed.
+        </dd>
+        <dt>
+          South edge, second from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the decimal point. If this is left unconnected, the decimal point remains off.
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+	  	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">On Color.</b>
+        </dt>
+        <dd>
+          The color with which to draw the display segments and decimal point when they are on. (red by default).
+        </dd>
+        <dt>
+          <b class="propertie">Off Color.</b>
+        </dt>
+        <dd>
+          The color with which to draw the display segments and decimal point when they are off. (grey By default).
+        </dd>
+        <dt>
+          <b class="propertie">Background</b> 
+        </dt>
+        <dd>
+          The color with which to draw the display's background (transparent by default).
+        </dd>
+		<dt>
+          <b class="propertie">Has deciaml point:</b>
+        </dt>
+        <dd>
+          If <q>yes</q> the decimal point is available, if <q>no</q> the decimal point is hidden.
+        </dd>
+		<dt>
+          <b class="propertie">Label </b>
+        </dt>
+        <dd>
+          The text within the label associated with the component.
+        </dd>
+        <dt>
+          <b class="propertie">Label Location </b>
+        </dt>
+        <dd>
+          The location of the label relative to the component.
+        </dd>
+        <dt>
+          <b class="propertie">Label Font </b>
+        </dt>
+        <dd>
+          The font with which to render the label.
+        </dd>
+		 <dt>
+          <b class="propertie">Label visible </b>
+        </dt>
+        <dd>
+          Display or not the label.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <p>
+        <a href="../index.html">Back to <em>Library Reference</em></a>
+      </p>
+    </div>
+  </body>
+</html>

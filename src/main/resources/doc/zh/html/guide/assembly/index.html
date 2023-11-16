@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2019-03-16T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Window Text Vector
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Assembly viewer
+      </h1>
+      <p>
+        The Assembly viewer window displays an address value stored in a register in the current circuit, together with the assembly language instruction at that address.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/assembly-viewer.png" alt="#########">
+      </p>
+      <p>
+        Whenever the value stored in the register changes, the new address is highlighted in the Assembly viewer.
+      </p>
+      <p>
+        Select the register for display and load a text file containing the assembly language instructions.
+      </p>
+      <p>
+        The filename must have a .lss suffix. An example text file is<br>
+      </p>
+      <blockquote>
+        <pre>    0: LOD A,[1005h]
+    3: ADD A,[1001h]
+    6: STO [1005h],A
+
+    9: LOD A,[1004h]
+    C: ADC A,[1000h]
+    F: STO [1004h],A
+
+   12: LOD A,[1003h]
+   15: ADD A,[001Eh]
+   18: STO [1003h],A
+
+   1B: JNZ 0000h
+
+   1E: FFh
+
+ 1000: 00h, A7h
+ 1002: 00h, 1Ch
+ 1004: 00h, 00h
+</pre>
+      </blockquote>
+      <p>
+        Instruction addresses in the text file are in hexadecimal without leading zeroes and with at least one leading space at the start of the line, followed by a colon and the assembly language instruction.
+      </p>
+      <p>
+        Pressing <b class="tkeybd">F2</b> in the Assembly window advances the clock by two ticks.
+      </p>
+    </div>
+  </body>
+</html>

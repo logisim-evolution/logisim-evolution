@@ -1,0 +1,314 @@
+/* 
+This CSS document is suitable for use in java help v2.0
+There is a compromise between css rules and html properties for it to work
+java-help supports version 1 of CSS
+*/
+
+
+/* For page  */
+div.maindiv {
+	max-width:560px;
+	border:solid 0px;
+	background-color:#FFFFFF;
+}
+
+/* div  for the tiny code in the pages */
+div.codediv {
+	max-width:660px;
+	border:solid 0px;
+}
+/* div for the code in the pages */
+div.forcode{
+	text-indent:-20px;
+}
+
+div.attliste{
+	padding-left:10px;
+}
+
+/* For img in the text */
+img.intxt {
+	height:16;
+	width:16;
+	vertical-align:middle;
+	margin:2px;
+}
+/* For img in bullet */
+img.inbullet {
+	height:32;
+	width:32;
+	vertical-align:middle;
+	margin:2px;
+}
+
+/* For Img not scal */
+img.notscal {
+	height:auto;
+	width:auto;
+	vertical-align:middle;
+}
+
+/* For icon in the text */
+img.icontxt{
+	height:16px;
+	width:16px;
+	vertical-align:middle;
+}
+
+/* For img icon of the library cards  */
+img.iconlibs{
+	height:32px;
+	width:32px;
+	vertical-align:middle;
+}
+/* For img apparence of the library cards  */
+img.appearancelibs{
+	height:64px;
+	width:64px;
+	vertical-align:middle;
+}
+/* For img apparence large of the library cards  */
+img.appearancelibslarge{
+	height:64px;
+	width:128;
+	vertical-align:middle;
+
+}
+/* For img apparence upper of the library cards  */
+img.appearancelibshaut{
+	height:128;
+	width:64;
+	vertical-align:middle;
+
+}
+
+div.twodiv{
+	display:inline-block;
+}
+
+a {
+	color:#00137f;
+}
+a:hover{
+	color:#ff137f;
+}
+
+/* for titles */
+h1 {
+	color:#00137f;
+}
+h2 {
+	color:#00137f;
+}
+h3{
+	color:#00137f;
+}
+
+var {
+	color:#0025ff;
+	font-weight:bold;
+}
+
+tt {
+	font-size:110%;
+}
+
+/* for reference to menu */
+b.menu {
+	color:black;
+	background-color :#b0b0b0;
+	font-family:arial;
+	font-weight:bold;
+	font-size:12px;
+}
+
+/* for reference to button, tabs */
+b.button {
+	color: black;
+	background-color:#e0e0e0;
+	font-family:arial;
+	font-weight:bold;
+    font-size:12px;	
+}
+
+/* for reference to properties /library */
+b.propertie {
+	color:#00008B;
+	font-weight:bold;
+}
+
+/* for reference to keyboard/mouse keys */
+b.tkeybd {
+	color:#007F0E;
+}
+
+/* for reference to note: */
+b.note {
+	color:#007F0E;
+}
+
+/* for reference to the elements of the figures */
+b.reffig {
+	color:#00137f;
+}
+
+/* for reference to the part of guide */
+b.refguide {
+	color:#00137f;
+}
+
+/* For reference to question or answer of the pgm */
+b.refquest {
+	color:#00137f;
+}
+
+/* For tables tools list */
+table.toolslist {
+	border-spacing :2px 8px;
+}
+
+td.toolslist {
+	width:40px;
+	text-align:center;
+	vertical-align:top;
+}
+
+/* To mark the areas to translate */ 
+span.totranslate {
+	color:#DA81F5;
+}
+
+/* For list items */
+dt {
+	margin-top:5px;
+}
+li  {
+	margin-top:5px; 
+}
+
+dt.lib {
+	color:#00137f;
+	font-weight:bold;
+}
+
+p.blue {
+  color:#008000;
+}
+
+/* For for the truth tables */
+table.encapsul{
+  text-align:center;
+  border:1;
+}
+
+table.truthtable {
+  border:0;
+ /* border-collapse : collapse;  */
+  text-align:center;
+}
+
+/* cell truth tables */
+td.space {
+	background-color:#ffffff;
+	padding:3;
+	text-align:center;
+}
+td.zerov {
+	color:#008000;
+	padding:3;
+	text-align:center;
+}
+td.unov {
+	color:#00FF00;
+	padding:3;
+	text-align:center;
+}
+td.uvalue {
+	color:#0000FF;
+	padding:3;
+	text-align:center;
+}
+
+td.evalue {
+	color:#FF0000;
+	padding:3;
+	text-align:center;
+}
+
+td.space {
+	padding:3;
+	text-align:center;
+}
+
+/* cell in title truth tables*/
+th.tspace {
+	background-color:#e0e0e0;
+	padding:3;
+	width:20px;
+	text-align:center;
+}
+
+
+td.tzerov {
+	color:#008000;
+	padding:3;
+	background-color:#e0e0e0;
+	width:28px;
+	text-align:center;
+}
+td.tunov {
+	color:#00FF00;
+	padding:3;
+	background-color:#e0e0e0;
+	width:28px;
+	text-align:center;
+}
+td.tuvalue {
+	color:#0000FF;
+	padding:3;
+	background-color:#e0e0e0;
+	width:28px;
+	text-align:center;
+}
+td.tevalue {
+	color:#FF0000;
+	padding:3;
+	background-color:#e0e0e0;
+	width:28px;
+	text-align:center;
+}
+td.tspace {
+	padding:3;
+	background-color:#e0e0e0;
+	width:28px;
+	text-align:center;
+}
+
+/* cell  tables */
+td.left {
+	 text-align:left;
+}
+td.center {
+	 text-align:center;
+}
+td.right {
+	 text-align:right;
+}
+
+/* Color for logic value */
+b.uvalue {
+	 color:#0000FF;
+}
+b.evalue {
+	 color:#FF0000;
+}
+b.unov {
+	 color:#00FF00;
+}
+b.zerov {
+	 color:#008000;
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
+}

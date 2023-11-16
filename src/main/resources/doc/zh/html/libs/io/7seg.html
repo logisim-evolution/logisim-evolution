@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-05-21T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      7-Segment Display
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/7seg.png" alt="#########" width="32" height="32" align="middle"> <em>7-Segment Display</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Input/Output</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.1.3
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/7seg.png" alt="#########" width="64" height="64"> 
+			  <img class="appearancelibs" src="../../../../img-libs/7segoff.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        Displays the values of its eight one-bit inputs. <q>Segments</q> are either colored or light gray depending on the inputs. The correspondence is as follows.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-libs/io-segs.png" alt="#########">
+      </center>(Manufacturers vary as to how they map inputs to segments; the correspondence used here is based on Texas Instruments' TIL321.)
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          North edge, first from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the middle horizontal segment.
+        </dd>
+        <dt>
+          North edge, second from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the upper vertical segment on the left side.
+        </dd>
+        <dt>
+          North edge, third from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the upper horizontal segment.
+        </dd>
+        <dt>
+          North edge, fourth from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the upper vertical segment on the right side.
+        </dd>
+        <dt>
+          South edge, first from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the lower vertical segment on the left side.
+        </dd>
+        <dt>
+          South edge, second from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the bottom horizontal segment.
+        </dd>
+        <dt>
+          South edge, third from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the lower vertical segment on the right side.
+        </dd>
+        <dt>
+          South edge, fourth from left (input, bit width 1)
+        </dt>
+        <dd>
+          Controls the decimal point.
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">On Color</b>
+        </dt>
+        <dd>
+          The color with which to draw the display segments and decimal point when they are on. (red by default).
+        </dd>
+        <dt>
+          <b class="propertie">Off Color</b>
+        </dt>
+        <dd>
+          The color with which to draw the display segments and decimal point when they are off. (grey By default).
+        </dd>
+        <dt>
+          <b class="propertie">Background</b>
+        </dt>
+        <dd>
+          The color with which to draw the display's background (transparent by default).
+        </dd>
+        <dt>
+          <b class="propertie">Active On High?</b>
+        </dt>
+        <dd>
+          If <q>yes</q>, then the segments light when the corresponding input is 1. If <q>no</q>, they light when the corresponding input is 0.
+        </dd>
+		<dt>
+          <b class="propertie">Has deciaml point:</b>
+        </dt>
+        <dd>
+          If <q>yes</q> the decimal point is available, if <q>no</q> the decimal point is hidden.
+        </dd>
+		<dt>
+          <b class="propertie">Label</b>
+        </dt>
+        <dd>
+          The text within the label associated with the component.
+        </dd>
+        <dt>
+          <b class="propertie">Label Location </b>
+        </dt>
+        <dd>
+          The location of the label relative to the component.
+        </dd>
+        <dt>
+          <b class="propertie">Label Font </b>
+        </dt>
+        <dd>
+          The font with which to render the label.
+        </dd>
+		 <dt>
+          <b class="propertie">Label visible</b>
+        </dt>
+        <dd>
+          Display or not the label.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <p>
+        <a href="../index.html">Back to <em>Library Reference</em></a>
+      </p>
+    </div>
+  </body>
+</html>
