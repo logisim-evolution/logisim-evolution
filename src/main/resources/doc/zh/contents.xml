@@ -20,7 +20,7 @@
 <!--			<tocitem target="tutorial_text" text="Step 3: Adding text" />-->
 				<tocitem target="tutorial_text" text="第3步：添加文本" />
 <!--			<tocitem target="tutorial_test" text="Step 4: Testing your circuit" />-->
-				<tocitem target="tutorial_test" text="第4步：测试电路" />
+				<tocitem target="tutorial_test" text="第4步：测试你的电路" />
 <!--			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>-->
 				<tocitem target="tutorial_step" text="第5步：单步模式"/>
 			</tocitem>
