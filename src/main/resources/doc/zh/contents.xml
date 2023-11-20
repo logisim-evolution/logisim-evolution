@@ -48,7 +48,7 @@
 <!--			<tocitem target="subcirc_using" text="Using subcircuits" />-->
 				<tocitem target="subcirc_using" text="使用子电路" />
 <!--			<tocitem target="subcirc_appear" text="Selecting the appearance of a subcircuit " />-->
-				<tocitem target="subcirc_appear" text="选择子电路的外观 " />
+				<tocitem target="subcirc_appear" text="编辑子电路的外观 " />
 
 <!--			<tocitem target="subcirc_personalise" text="Customize the appearance"/>-->
 				<tocitem target="subcirc_personalise" text="自定义外观"/>
@@ -56,7 +56,8 @@
 <!--			<tocitem target="subcirc_debug" text="Debugging subcircuits" />-->
 				<tocitem target="subcirc_debug" text="调试子电路" />
 <!--				<tocitem target="subcirc_library" text="Logisim libraries" />-->
-				<tocitem target="subcirc_library" text="Logisim库" />
+				<tocitem target="subcirc_library" text="Logisim-evolution库" />
+				<!-- <tocitem target="dynamic_components" text="动态组件" /> -->
 			</tocitem>
 <!--		<tocitem target="features" text="Additional features">-->
 			<tocitem target="features" text="附加功能">
