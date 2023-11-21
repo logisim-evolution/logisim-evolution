@@ -31,6 +31,8 @@
     <mapID target="subcirc_personalise" url="zh/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug"       url="zh/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library"     url="zh/html/guide/subcirc/sub-library.html" />
+	<mapID target="dynamic_components"     url="zh/html/guide/subcirc/dynamic_components.html" />
+
 	<mapID target="features"            url="zh/html/guide/feature/index.html" />
 	<mapID target="features_creating"   url="zh/html/guide/feature/fet-creating.html" />
 	<mapID target="features_splitting"  url="zh/html/guide/feature/fet-splitting.html" />

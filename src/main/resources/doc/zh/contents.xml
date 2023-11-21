@@ -57,7 +57,7 @@
 				<tocitem target="subcirc_debug" text="调试子电路" />
 <!--				<tocitem target="subcirc_library" text="Logisim libraries" />-->
 				<tocitem target="subcirc_library" text="Logisim-evolution库" />
-				<!-- <tocitem target="dynamic_components" text="动态组件" /> -->
+				<tocitem target="dynamic_components" text="动态组件" />
 			</tocitem>
 <!--		<tocitem target="features" text="Additional features">-->
 			<tocitem target="features" text="附加功能">
@@ -65,10 +65,19 @@
 <!--			<tocitem target="features_creating" text="Creating bundles" />-->
 				<tocitem target="features_creating" text="创建捆绑包" />
 
-				<tocitem target="features_splitting" text="Splitters" />
-			<tocitem target="features_colors" text="Wire colors" />
-			<tocitem target="features_autolabel" text="Self-numbered labels " />
-			<tocitem target="features_matrix" text="Placing components in a matrix" />
+				<!-- <tocitem target="features_splitting" text="Splitters" /> -->
+				<tocitem target="features_splitting" text="分线器" />
+
+
+			<!-- <tocitem target="features_colors" text="Wire colors" /> -->
+			<tocitem target="features_colors" text="导线颜色" />
+
+			<!-- <tocitem target="features_autolabel" text="Self-numbered labels " /> -->
+			<tocitem target="features_autolabel" text="自编号标签" />
+
+			<!-- <tocitem target="features_matrix" text="Placing components in a matrix" /> -->
+			<tocitem target="features_matrix" text="将组件放置在矩阵中" />
+
 		</tocitem>
 		<tocitem target="mem_guide" text="Memory components">
             <tocitem target="mem_poke" text="Memory poke" />
