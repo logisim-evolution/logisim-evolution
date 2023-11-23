@@ -1,78 +1,124 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2020-01-10T06:18:10.521000000">
-    <meta name="changed" content="2020-01-21T07:26:01.212000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      v3.0 hex words plain
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <h1>
-      v3.0 hex words plain
-    </h1>
-    <div class="maindiv">
-      <p>
-        This format looks a lot like <a href="mem-v2raw.html">v2.0 raw</a>
-      </p>
-	  <p>
-	     Data words are presented in hexadecimal and separated by a space character. This one is important for the correct alignment of the data.
-	  </p>
-	    <blockquote>
-        <pre>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2020-01-10T06:18:10.521000000" name="created"/>
+  <meta content="2023-07-23T09:07:09" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- v3.0 hex words plain -->
+   v3.0 十六进制字普通
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <p>
+   <b>
+    上一节:
+   </b>
+   <a href="mem-v2raw.html">
+    文件v2
+   </a>
+  </p>
+  <h1>
+   <!-- v3.0 hex words plain -->
+   v3.0 十六进制字普通
+  </h1>
+  <div class="maindiv">
+   <p>
+    <!-- This format looks a lot like <a href="mem-v2raw.html">v2.0 raw</a> -->
+    这种格式看起来很像
+    <a href="mem-v2raw.html">
+     v2.0 raw
+    </a>
+   </p>
+   <p>
+    <!-- Data words are presented in hexadecimal and separated by a space character. This one is important for the correct alignment of the data. -->
+    数据字以十六进制表示并用空格字符分隔。 这对于数据的正确对齐很重要。
+   </p>
+   <blockquote>
+    <pre>
 v3.0 hex words addressed
 000 00a 00a 00a fdd 077 fc0 008
 070 05a fe4 fcd 076 ff0 fec 067
 002 f85 f8b ffe 021 016 f9e fc6</pre>
-		Memory of 24 words of 12 bits
-        </blockquote>
-	  <p>
-	    The line returns of his not interpreted. With the exception of spaces and the first line, there are no layout rules.
-	  </p>
-	  <p>
-	    You can place comments in the file using the '#' symbol. All characters in the line starting from the '#' symbol will be ignored by Logisim. A double space will have the same effect. 
-	  </p>
-      <p>
-        There is no need to specify the 0x prefix before the data, however if they exist they will simply be ignored. 
-      </p>
-      <p>
-        If the words in the file are larger than the words in memory, the most significant bits will be ignored.
-      </p>
-      <p>
-       If the length of the file data set is shorter than the memory space the remaining cells will be initialized to 0 and for RAM according to the parameters in <a href="../opts/index.html">Project options</a>, to 0 or randomly. 
-      </p>
-	  
-	  <h1 id='addr'>
-        v3.0 hex words addressed
-      </h1>
-      <p>
-        This format is identical to the previous one with the same characteristics. In addition, an indication of the address at the beginning of the lines. The address is given in hexadecimal followed by the character <b>:</b>
-      </p>
-	  <p>
-	    <blockquote>
-        <pre>
+    Memory of 24 words of 12 bits
+   </blockquote>
+   <p>
+    <!-- The line returns of his not interpreted. With the exception of spaces and the first line, there are no layout rules. -->
+    他的行返回未解释。 除了空格和第一行之外，没有布局规则。
+   </p>
+   <p>
+    <!-- You can place comments in the file using the '#' symbol. All characters in the line starting from the '#' symbol will be ignored by Logisim. A double space will have the same effect.  -->
+    您可以使用“#”符号在文件中添加注释。 Logisim-evolution 将忽略该行中以“#”符号开始的所有字符。 双空格将具有相同的效果。
+   </p>
+   <p>
+    <!-- There is no need to specify the 0x prefix before the data, however if they exist they will simply be ignored.  -->
+    无需在数据前指定 0x 前缀，但如果存在，它们将被忽略。
+   </p>
+   <p>
+    <!-- If the words in the file are larger than the words in memory, the most significant bits will be ignored. -->
+    如果文件中的字大于内存中的字，则最高有效位将被忽略。
+   </p>
+   <p>
+    <!-- If the length of the file data set is shorter than the memory space the remaining cells will be initialized to 0 and for RAM according to the parameters in <a href="../opts/index.html">Project options</a>, to 0 or randomly.  -->
+    如果文件数据集的长度小于内存空间，则剩余单元将根据
+    <a href="../opts/index.html">
+     项目选项
+     , 到 0 或随机。
+    </a>
+   </p>
+   <h1 id="addr">
+    <!-- v3.0 hex words addressed -->
+    v3.0 十六进制字寻址
+   </h1>
+   <p>
+    <!-- This format is identical to the previous one with the same characteristics. In addition, an indication of the address at the beginning of the lines. The address is given in hexadecimal followed by the character <b>:</b> -->
+    此格式与前一种格式相同，具有相同的特征。 此外，在行的开头还指示了地址。 地址以十六进制给出，后跟字符
+    <b>
+     :
+    </b>
+   </p>
+   <p>
+    <blockquote>
+     <pre>
 v3.0 hex words addressed
 00: 000 00a 00a 00a fdd 077 fc0 008 
 08: 070 05a fe4 fcd 076 ff0 fec 067
 18: fc1 010 035 049 030 07a fd6 f9f</pre>
-		Memory of 32 words of 12 bits
-        </blockquote>
-      </p>
-	  <p>
-	 In this example the 8 words at address 0x10 are not specified. These cells will be initialized to 0 and for RAM according to the parameters in <a href="../opts/index.html">Project options</a>, to 0 or randomly. 
-	  </p>
-	  <p>
-	    <p align="center">
-        <img class="notscal" src="../../../../img-guide/memwordaddr.png" alt="#########">
-        </p>
-	  </p>
-	  <p>
-        <strong>Next:</strong> <a href="mem-menu.html">Pop-up menus and files</a>.
-      </p>
-    </div>
-  </body>
+     Memory of 32 words of 12 bits
+    </blockquote>
+   </p>
+   <p>
+    <!-- In this example the 8 words at address 0x10 are not specified. These cells will be initialized to 0 and for RAM according to the parameters in <a href="../opts/index.html">Project options</a>, to 0 or randomly.  -->
+    在此示例中，未指定地址 0x10 处的 8 个字。 这些单元格将根据
+    <a href="../opts/index.html">
+     项目选项
+    </a>
+    中的参数将 RAM 初始化为 0，或者随机初始化为 0。
+   </p>
+   <p>
+    <p align="center">
+     <img alt="#########" class="notscal" src="../../../../img-guide/memwordaddr.png"/>
+    </p>
+   </p>
+   <p>
+    <!-- <strong>Next:</strong> <a href="mem-menu.html">Pop-up menus and files</a>. -->
+    <strong>
+     下一节:
+    </strong>
+    <a href="mem-v3byte.html">
+     文件v3字节
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
 </html>

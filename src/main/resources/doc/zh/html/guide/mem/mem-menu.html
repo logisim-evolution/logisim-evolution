@@ -1,89 +1,208 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2020-02-11T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      Pop-up menus and files
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Pop-up menus and files
-      </h1>
-      <h2>
-        Pop-up menu
-      </h2>
-      <p>
-        The pop-up menu for memory includes four options in addition to the options common to all components:
-      </p>
-      <dl>
-        <dt>
-          <b>Edit Contents:</b>
-        </dt>
-        <dd>
-           Bring up a <a href="mem-hex.html">hex editor</a> for editing the contents of memory.
-        </dd>
-        <dt>
-          <b>Clear Contents:</b>
-        </dt>
-        <dd>
-            Resets all values in memory to 0 and for RAM to 0 or randomly depending on the parameters in <a href="../opts/index.html">Project options </a>. 
-        </dd>
-        <dt>
-          <b>Load Image...:</b>
-        </dt>
-        <dd>
-            Resets all values in memory to the values found in a file. The file format is recognized automatically and if it is not the case a <a href="mem-filepanel.html">window Memory file panel</a> opens for an appropriate selection.
-        </dd>
-        <dt>
-          <b>Save Image...:</b>
-        </dt>
-        <dd>
-             Stores all values in memory in a file using one of the formats described below.
-        </dd>
-      </dl>
-      <h2>
-        File format
-      </h2>
-       <ul>
-        <li>
-          <b><a href="mem-v2raw.html">v2.0 raw</a></b> Historical version of logisim allows "run.length" coding.
-        </li>
-        <li>
-          <b><a href="mem-v3word.html">v3.0 hex words plain</a></b> Close to v2.0 word structured.
-        </li>
-        <li>
-          <b><a href="mem-v3word.html#addr">v3.0 hex words addressed</a></b> As before with the possibility to define a start address for each line of the file.
-        </li>
-        <li>
-          <b><a href="mem-v3byte.html">v3.0 hex bytes plain big-endian</a></b><br>
-          <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> Organized in byte streams.
-        </li>
-        <li>
-          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a></b><br>
-          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a></b> Organized in byte flow as before with the possibility to define an address.
-        </li>
-        <li>
-          <b><a href="mem-vbinary.html#">Binary data big-endian</a></b><br>
-          <b><a href="mem-vbinary.html#">Binary data little-endian</a></b> Image of the memory uncoded in hexadecimal.
-        </li>
-        <li>
-          <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br>
-          <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> ASCII encoded file with escape code, as in C for non-printable characters.
-        </li>
-        </ul>
-		<p>
-		  
-		</p>
-      <p>
-        <b>Next:</b> <a href="mem-filepanel.html">Memory file panel</a>.
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-07-23T09:07:09" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Pop-up menus and files -->
+   弹出菜单和文件
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <b>
+     上一节:
+    </b>
+    <a href="mem-hex.html">
+     十六进制编辑器
+    </a>
+   </p>
+   <h1>
+    <!-- Pop-up menus and files -->
+    弹出菜单和文件
+   </h1>
+   <h2>
+    <!-- Pop-up menu -->
+    弹出菜单
+   </h2>
+   <p>
+    <!-- The pop-up menu for memory includes four options in addition to the options common to all components: -->
+    除了所有组件共有的选项之外，内存弹出菜单还包括四个选项：
+   </p>
+   <dl>
+    <dt>
+     <!-- <b>Edit Contents:</b> -->
+     <b>
+      编辑内容：
+     </b>
+    </dt>
+    <dd>
+     <!-- Bring up a <a href="mem-hex.html">hex editor</a> for editing the contents of memory. -->
+     打开
+     <a href="mem-hex.html">
+      十六进制编辑器
+     </a>
+     来编辑内存内容。
+    </dd>
+    <dt>
+     <!-- <b>Clear Contents:</b> -->
+     <b>
+      清除内容：
+     </b>
+    </dt>
+    <dd>
+     <!-- Resets all values in memory to 0 and for RAM to 0 or randomly depending on the parameters in <a href="../opts/index.html">Project options </a>.  -->
+     将内存中的所有值重置为 0，将 RAM 重置为 0，或者根据
+     <a href="../opts/index.html">
+      项目选项
+     </a>
+     中的参数随机重置。
+    </dd>
+    <dt>
+     <!-- <b>Load Image...:</b> -->
+     <b>
+      加载图像...：
+     </b>
+    </dt>
+    <dd>
+     <!-- Resets all values in memory to the values found in a file. The file format is recognized automatically and if it is not the case a <a href="mem-filepanel.html">window Memory file panel</a> opens for an appropriate selection. -->
+     将内存中的所有值重置为文件中找到的值。 文件格式会自动识别，如果不是这种情况，则会打开
+     <a href="mem-filepanel.html">
+      窗口内存文件面板
+     </a>
+     以进行适当的选择。
+    </dd>
+    <dt>
+     <!-- <b>Save Image...:</b> -->
+     <b>
+      保存图像...：
+     </b>
+    </dt>
+    <dd>
+     <!-- Stores all values in memory in a file using one of the formats described below. -->
+     使用下述格式之一将内存中的所有值存储在文件中。
+    </dd>
+   </dl>
+   <h2>
+    <!-- File format -->
+    文件格式
+   </h2>
+   <ul>
+    <li>
+     <!-- <b><a href="mem-v2raw.html">v2.0 raw</a></b> Historical version of logisim allows "run.length" coding. -->
+     <b>
+      <a href="mem-v2raw.html">
+       v2.0 raw
+      </a>
+     </b>
+     logisim-evolution 的历史版本允许“run.length”编码。
+    </li>
+    <li>
+     <!-- <b><a href="mem-v3word.html">v3.0 hex words plain</a></b> Close to v2.0 word structured. -->
+     <b>
+      <a href="mem-v3word.html">
+       v3.0 十六进制单词纯文本
+      </a>
+     </b>
+     接近 v2.0 单词结构。
+    </li>
+    <li>
+     <!-- <b><a href="mem-v3word.html#addr">v3.0 hex words addressed</a></b> As before with the possibility to define a start address for each line of the file. -->
+     <b>
+      <a href="mem-v3word.html#addr">
+       v3.0 十六进制字地址
+      </a>
+     </b>
+     与以前一样，可以为文件的每一行定义起始地址。
+    </li>
+    <li>
+     <!-- <b><a href="mem-v3byte.html">v3.0 hex bytes plain big-endian</a></b><br> -->
+     <b>
+      <a href="mem-v3byte.html">
+       v3.0 十六进制字节纯大端
+      </a>
+     </b>
+     <br/>
+     <!-- <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> Organized in byte streams. -->
+     <b>
+      <a href="mem-v3byte.html#addr">
+       v3.0 十六进制字节纯小端
+      </a>
+     </b>
+     以字节流形式组织。
+    </li>
+    <li>
+     <!-- <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a></b><br> -->
+     <b>
+      <a href="mem-v3byte.html#little">
+       v3.0 十六进制字节寻址大端
+      </a>
+     </b>
+     <br/>
+     <!-- <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a></b> Organized in byte flow as before with the possibility to define an address. -->
+     <b>
+      <a href="mem-v3byte.html#little">
+       v3.0 十六进制字节寻址小端
+      </a>
+     </b>
+     像以前一样以字节流组织，可以定义地址。
+    </li>
+    <li>
+     <!-- <b><a href="mem-vbinary.html#">Binary data big-endian</a></b><br> -->
+     <b>
+      <a href="mem-vbinary.html#">
+       二进制数据大尾数
+      </a>
+     </b>
+     <br/>
+     <!-- <b><a href="mem-vbinary.html#">Binary data little-endian</a></b> Image of the memory uncoded in hexadecimal. -->
+     <b>
+      <a href="mem-vbinary.html#">
+       二进制数据小尾数
+      </a>
+     </b>
+     未编码的十六进制内存图像。
+    </li>
+    <li>
+     <!-- <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br> -->
+     <b>
+      <a href="mem-vascii.html">
+       Ascii 字节转义大端
+      </a>
+     </b>
+     <br/>
+     <!-- <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> ASCII encoded file with escape code, as in C for non-printable characters. -->
+     <b>
+      <a href="mem-vascii.html">
+       Ascii 字节转义小端
+      </a>
+     </b>
+     带有转义代码的 ASCII 编码文件，如 C 中的不可打印字符。
+    </li>
+   </ul>
+   <p>
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="mem-filepanel.html">Memory file panel</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="mem-filepanel.html">
+     内存文件面板
+    </a>
+    。
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
 </html>

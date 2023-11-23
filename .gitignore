@@ -289,3 +289,6 @@ gradle-app.setting
 
 # VSCode settins
 .vscode
+
+# python代码
+.py

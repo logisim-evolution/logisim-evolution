@@ -79,16 +79,26 @@
 			<tocitem target="features_matrix" text="将组件放置在矩阵中" />
 
 		</tocitem>
-		<tocitem target="mem_guide" text="Memory components">
-            <tocitem target="mem_poke" text="Memory poke" />
-			<tocitem target="mem_hex" text="Editeur hexadécimal" />			
-			<tocitem target="mem_menu" text="Pop-up menus and files" />
-			<tocitem target="mem_filetabel" text="Memory file panel"/>
-			<tocitem target="mem_v2raw" text="File v2raw" />
-			<tocitem target="mem_v3word" text="File v3word"/>
-			<tocitem target="mem_v3byte" text="File v3byte"/>
-			<tocitem target="mem_binary" text="File binary"/>
-			<tocitem target="mem_ascii" text="File ASCII"/>
+		<!-- <tocitem target="mem_guide" text="Memory components"> -->
+		<tocitem target="mem_guide" text="内存组件">
+			<!-- <tocitem target="mem_hex" text="Editeur hexadécimal" />			 -->
+			<tocitem target="mem_hex" text="十六进制编辑器" />	
+			<!-- <tocitem target="mem_menu" text="Pop-up menus and files" /> -->
+			<tocitem target="mem_menu" text="弹出菜单和文件" />
+			<!-- <tocitem target="mem_filetabel" text="Memory file panel"/> -->
+			<tocitem target="mem_filetabel" text="内存文件面板"/>
+			<!-- <tocitem target="mem_poke" text="Memory poke" /> -->
+			<tocitem target="mem_poke" text="记忆戳" />
+			<!-- <tocitem target="mem_v2raw" text="File v2raw" /> -->
+			<tocitem target="mem_v2raw" text="文件 v2raw" />
+			<!-- <tocitem target="mem_v3word" text="File v3word"/> -->
+			<tocitem target="mem_v3word" text="文件 v3word"/>
+			<!-- <tocitem target="mem_v3byte" text="File v3byte"/> -->
+			<tocitem target="mem_v3byte" text="文件v3字节"/>
+			<!-- <tocitem target="mem_binary" text="File binary"/> -->
+			<tocitem target="mem_binary" text="文件二进制"/>
+			<!-- <tocitem target="mem_ascii" text="File ASCII"/> -->
+			<tocitem target="mem_ascii" text="文件 ASCII"/>
 		</tocitem>
 		<tocitem target="analyze" text="Combinational analysis">
 			<tocitem target="analyze_open" text="Opening Combinational Analysis" />

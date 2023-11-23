@@ -1,40 +1,74 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2020-01-24T06:18:10.521000000">
-    <meta name="changed" content="2020-01-26T07:26:01.212000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      Ascii byte escape
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <h1>
-      Ascii byte escape big-endian
-    </h1>
-    <div class="maindiv">
-      <p>
-        ASCII encoding with escape code, data will be recorded byte by byte except for non-printable and non-standard characters. Characters outside the range 0x20 - 0x7E will be ignored. For characters of this type you must use the hexadecimal escape code \x... or one of the common codes \0 \a \b \t \n \v \f \r.
-      </p>
-      <blockquote>
-        <pre>\0\0hello world\r\nGood morning!\r\n
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2020-01-24T06:18:10.521000000" name="created"/>
+  <meta content="2023-07-23T09:07:09" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Ascii byte escape -->
+   Ascii 字节转义
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <p>
+   <b>
+    上一节:
+   </b>
+   <a href="mem-vbinary.html">
+    文件二进制
+   </a>
+  </p>
+  <h1>
+   <!-- Ascii byte escape big-endian -->
+   Ascii 字节转义大尾数
+  </h1>
+  <div class="maindiv">
+   <p>
+    <!-- ASCII encoding with escape code, data will be recorded byte by byte except for non-printable and non-standard characters. Characters outside the range 0x20 - 0x7E will be ignored. For characters of this type you must use the hexadecimal escape code \x... or one of the common codes \0 \a \b \t \n \v \f \r. -->
+    带转义码的 ASCII 编码，除不可打印和非标准字符外，数据将逐字节记录。 0x20 - 0x7E 范围之外的字符将被忽略。 对于这种类型的字符，必须使用十六进制转义代码 \x... 或常用代码之一 \0 \a \b \t \n \v \f \r。
+   </p>
+   <blockquote>
+    <pre>\0\0hello world\r\nGood morning!\r\n
 \xCD\xCD\xCD\xCD\xCD\0\0\0\0</pre>
-      </blockquote>
-      <p>
-        In the big-endian mode the memory is considered as a sequence of bytes regardless of the size of its words, with left to right the high bytes and then the low bytes. You can find illustrations in <a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a>
-      </p>
-      <h1 id="addr">
-        Ascii byte escape little-endian
-      </h1>
-      <p>
-        This format is identical to the previous one with the same characteristics. In the little-endian mode, the memory is considered as a sequence of bytes with from right to left the least significant bits and then the most significant bits. You can find illustrations in <a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a>
-      </p>
-      <p>
-        <b>Suite:</b> <a href="mem-menu.html">Le menu contextuel et les fichiers</a>.
-      </p>
-    </div>
-  </body>
+   </blockquote>
+   <p>
+    <!-- In the big-endian mode the memory is considered as a sequence of bytes regardless of the size of its words, with left to right the high bytes and then the low bytes. You can find illustrations in <a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a> -->
+    在大端模式下，内存被视为字节序列，无论其字的大小如何，从左到右先是高字节，然后是低字节。 您可以在
+    <a href="mem-v3byte.html#little">
+     v3.0 十六进制字节寻址大端
+    </a>
+    中找到插图
+   </p>
+   <h1 id="addr">
+    <!-- Ascii byte escape little-endian -->
+    Ascii 字节转义小尾数
+   </h1>
+   <p>
+    <!-- This format is identical to the previous one with the same characteristics. In the little-endian mode, the memory is considered as a sequence of bytes with from right to left the least significant bits and then the most significant bits. You can find illustrations in <a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a> -->
+    此格式与前一种格式相同，具有相同的特征。 在小端模式下，内存被视为字节序列，从右到左依次为最低有效位和最高有效位。 您可以在
+    <a href="mem-v3byte.html#little">
+     v3.0 十六进制字节寻址小端
+    </a>
+    中找到插图
+   </p>
+   <p>
+    <b>
+     返回:
+    </b>
+    <a href="index.html">
+     内存组件
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
 </html>
