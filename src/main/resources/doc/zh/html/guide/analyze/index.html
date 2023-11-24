@@ -1,53 +1,110 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-01-31T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      Combinational analysis
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Combinational analysis
-      </h1>
-      <p>
-        All circuits fall into one of two well-known categories: In a <b>combinational circuit</b>, all circuit outputs are a strict <i>combination</i> of the current circuit inputs, whereas in a <b>sequential circuit</b>, some outputs may depend on past inputs (the <i>sequence</i> of inputs over time).
-      </p>
-      <p>
-        The category of combinational circuits is the simpler of the two. Practitioners use three major techniques for summarizing the behavior of such circuits.
-      </p>
-	  <p align="center">
-        <img src="../../../../img-guide/analyze-type.png" alt="#########">
-      </p>
-      <ul>
-        <li>logic circuits
-        </li>
-        <li>Boolean expressions, which allow an algebraic representation of how the circuit works
-        </li>
-        <li>truth tables, which list all possible input combinations and the corresponding outputs
-        </li>
-      </ul>
-      <p>
-        The <b class=refguide>Combinational Analysis</b> module of Logisim allows you to convert between these three representations in all directions. It is a particularly handy way of creating and understanding circuits with a handful of one-bit inputs and outputs.
-      </p>
-      <p>
-        <b class=note>Note</b>: the combinatorial analysis is deactivated in Logisim-evolution. It is possible to reactivate with a command-line option.
-      </p>
-      <blockquote>
-        <a href="ana-open.html">Opening Combinational Analysis</a><br>
-        <a href="ana-table.html">Editing the truth table</a><br>
-        <a href="ana-expr.html">Creating expressions</a><br>
-        <a href="ana-gen.html">Generating a circuit</a>
-      </blockquote>
-      <p>
-        <b>Next:</b> <a href="ana-open.html">Opening Combinational Analysis</a>.
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-35-24T10:35:34" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Combinational analysis -->
+   组合分析
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Combinational analysis -->
+    组合分析
+   </h1>
+   <p>
+    <!-- All circuits fall into one of two well-known categories: In a <b>combinational circuit</b>, all circuit outputs are a strict <i>combination</i> of the current circuit inputs, whereas in a <b>sequential circuit</b>, some outputs may depend on past inputs (the <i>sequence</i> of inputs over time). -->
+    所有电路都属于两个众所周知的类别之一：在
+    <b>
+     组合电路
+    </b>
+    中，所有电路输出都是当前电路输入的严格
+    <i>
+     组合
+    </i>
+    ，而在
+    <b>
+     时序电路
+    </b>
+    ，一些输出可能取决于过去的输入（随着时间的推移输入的
+    <i>
+     序列
+    </i>
+    ）。
+   </p>
+   <p>
+    <!-- The category of combinational circuits is the simpler of the two. Practitioners use three major techniques for summarizing the behavior of such circuits. -->
+    组合电路的类别是两者中较简单的。 从业者使用三种主要技术来总结此类电路的行为。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../../img-guide/analyze-type.png"/>
+   </p>
+   <ul>
+    <!-- <li>logic circuits -->
+    <li>
+     逻辑电路
+    </li>
+    <!-- <li>Boolean expressions, which allow an algebraic representation of how the circuit works -->
+    <li>
+     布尔表达式，允许用代数表示电路的工作原理
+    </li>
+    <!-- <li>truth tables, which list all possible input combinations and the corresponding outputs -->
+    <li>
+     真值表，列出所有可能的输入组合和相应的输出
+    </li>
+   </ul>
+   <p>
+    <!-- The <b class=refguide>Combinational Analysis</b> module of Logisim allows you to convert between these three representations in all directions. It is a particularly handy way of creating and understanding circuits with a handful of one-bit inputs and outputs. -->
+    Logisim-evolution 的
+    <b class="refguide">
+     组合分析
+    </b>
+    模块允许您在这三种表示形式之间进行全方位的转换。 这是一种创建和理解具有少量一位输入和输出的电路的特别方便的方法。
+   </p>
+   <p>
+    <!-- <b class=note>Note</b>: the combinatorial analysis is deactivated in Logisim-evolution. It is possible to reactivate with a command-line option. -->
+    <b class="note">
+     注意
+    </b>
+    ：组合分析在 Logisim-evolution 中已停用。 可以使用命令行选项重新激活。
+   </p>
+   <blockquote>
+    <!-- <a href="ana-open.html">Opening Combinational Analysis</a><br> -->
+    <a href="ana-open.html">
+     开放组合分析
+    </a>
+    <br/>
+    <!-- <a href="ana-table.html">Editing the truth table</a><br> -->
+    <a href="ana-table.html">
+     编辑真值表
+    </a>
+    <br/>
+    <!-- <a href="ana-expr.html">Creating expressions</a><br> -->
+    <a href="ana-expr.html">
+     创建表达式
+    </a>
+    <br/>
+    <!-- <a href="ana-gen.html">Generating a circuit</a> -->
+    <a href="ana-gen.html">
+     生成电路
+    </a>
+   </blockquote>
+   <p>
+    <!-- <b>Next:</b> <a href="ana-open.html">Opening Combinational Analysis</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="ana-open.html">
+     开放组合分析
+    </a>
+    .
+   </p>
+  </div>
+ </body>
 </html>

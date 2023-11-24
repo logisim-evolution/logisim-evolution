@@ -1,51 +1,85 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      Generating a circuit
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Generating a circuit
-      </h1>
-      <p>
-        The <b class="button">Build Circuit</b> button will construct a circuit whose gates correspond to the currently chosen expressions for each output. The circuit's inputs and outputs will be displayed in top-down order corresponding to how they appear under the Inputs and Outputs tabs. Generally speaking, the constructed circuit will be attractive; and, indeed, one application of Logisim's Combinational Analysis module is to beautify poorly drawn circuits. Still, as with any automatic formatting, it will not express the structural details that a human-drawn circuit would.
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/analyze-circuit.png" alt="#########">
-      </p>
-      <p>
-        When you click the <b class="button">Build Circuit</b> button, a dialog box will appear prompting you to choose which project where you want the circuit and the name you wish to give it.
-      </p>
-      <p align="center">
-        <img class="notscal"  src="../../../img-guide/analyze-build.png" alt="#########">
-      </p>
-      <p>
-        If you type the name of an existing circuit, then that circuit will be replaced (after Logisim prompts you to confirm that you really want to do this).
-      </p>
-      <p>
-        The <b class=propertie>Build Circuit</b> dialog includes two options.
-      </p>
-      <ul>
-        <li>The <b class="button">Use Two-Input Gates Only</b> option specifies that you want all gates constructed to have two inputs. (NOT gates, of course, constitute an exception to this rule.)
-        </li>
-        <li>The<b class="button">Use NAND Gates Only</b> option specifies that you would like it to translate the circuit into one using only NAND gates. You can select both options if you want to use only two-input NAND gates.
-        </li>
-      </ul>
-      <p>
-        Logisim cannot construct a NAND-only circuit for an expression containing any XOR operators. This option will therefore be disabled if any outputs' expressions contain XORs.
-      </p>
-      <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-35-24T10:35:34" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Generating a circuit -->
+   生成电路
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Generating a circuit -->
+    生成电路
+   </h1>
+   <p>
+    <!-- The <b class="button">Build Circuit</b> button will construct a circuit whose gates correspond to the currently chosen expressions for each output. The circuit's inputs and outputs will be displayed in top-down order corresponding to how they appear under the Inputs and Outputs tabs. Generally speaking, the constructed circuit will be attractive; and, indeed, one application of Logisim's Combinational Analysis module is to beautify poorly drawn circuits. Still, as with any automatic formatting, it will not express the structural details that a human-drawn circuit would. -->
+    <b class="button">
+     构建电路
+    </b>
+    按钮将构建一个电路，其门对应于当前为每个输出选择的表达式。 电路的输入和输出将以自上而下的顺序显示，对应于它们在“输入”和“输出”选项卡下的显示方式。 一般来说，构建的电路会很有吸引力； 事实上，Logisim 组合分析模块的应用之一就是美化绘制不佳的电路。 尽管如此，与任何自动格式化一样，它不会表达人工绘制电路所表达的结构细节。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/analyze-circuit.png"/>
+   </p>
+   <p>
+    <!-- When you click the <b class="button">Build Circuit</b> button, a dialog box will appear prompting you to choose which project where you want the circuit and the name you wish to give it. -->
+    当您单击
+    <b class="button">
+     构建电路
+    </b>
+    按钮时，将出现一个对话框，提示您选择要在其中放置电路的项目以及要为其指定的名称。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../img-guide/analyze-build.png"/>
+   </p>
+   <p>
+    <!-- If you type the name of an existing circuit, then that circuit will be replaced (after Logisim prompts you to confirm that you really want to do this). -->
+    如果您键入现有电路的名称，则该电路将被替换（在 Logisim-evolution 提示您确认确实要执行此操作之后）。
+   </p>
+   <p>
+    <!-- The <b class=propertie>Build Circuit</b> dialog includes two options. -->
+    <b class="propertie">
+     构建电路
+    </b>
+    对话框包含两个选项。
+   </p>
+   <ul>
+    <!-- <li>The <b class="button">Use Two-Input Gates Only</b> option specifies that you want all gates constructed to have two inputs. (NOT gates, of course, constitute an exception to this rule.) -->
+    <li>
+     <b class="button">
+      仅使用两个输入门
+     </b>
+     选项指定您希望所有构建的门都具有两个输入。 （当然，“非”门构成了该规则的一个例外。）
+    </li>
+    <!-- <li>The<b class="button">Use NAND Gates Only</b> option specifies that you would like it to translate the circuit into one using only NAND gates. You can select both options if you want to use only two-input NAND gates. -->
+    <li>
+     <b class="button">
+      仅使用 NAND 门
+     </b>
+     选项指定您希望将电路转换为仅使用 NAND 门的电路。 如果您只想使用双输入 NAND 门，则可以选择这两个选项。
+    </li>
+   </ul>
+   <p>
+    <!-- Logisim cannot construct a NAND-only circuit for an expression containing any XOR operators. This option will therefore be disabled if any outputs' expressions contain XORs. -->
+    Logisim-evolution 无法为包含任何 XOR 运算符的表达式构造仅 NAND 电路。 因此，如果任何输出的表达式包含 XOR，则该选项将被禁用。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="../index.html">User's Guide</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="../index.html">
+     用户指南
+    </a>
+    。
+   </p>
+  </div>
+ </body>
 </html>

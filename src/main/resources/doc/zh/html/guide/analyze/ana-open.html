@@ -1,63 +1,112 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-01-31T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      Opening Combinational Analysis
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Opening Combinational Analysis
-      </h1>
-      <p>
-        The bulk of the <b class=refguide>Combinational Analysis</b> module is accessed through a single window of that name allowing you to view truth tables and Boolean expressions. This window can be opened in two ways.
-      </p>
-      <h2>
-        Via the Window menu
-      </h2>
-      <p>
-        Select <b class=menu>|&nbsp;Window&nbsp;|</b>→<b class=menu>|&nbsp;Combinational Analysis&nbsp;|</b>, and the current Combinational Analysis window will appear. If you haven't viewed the window before,the opened window will represent no circuit at all.
-      </p>
-      <p>
-        Only one Combinational Analysis window exists within Logisim, no matter how many projects are open. There is no way to have two different analysis windows open at once.
-      </p>
-      <h2>
-        Via the Project menu
-      </h2>
-      <p>
-        From a window for editing circuits, you can also request that Logisim analyze the current circuit by selecting the Analyze Circuit option from the menu <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>|&nbsp;Analyze Circuit&nbsp;|</b>. Before Logisim opens the window, it will compute Boolean expressions and a truth table corresponding to the circuit and place them there for you to view.
-      </p>
-      <p>
-        For the analysis to be successful, each input must be attached to an input pin, and each output must be attached to an output pin. Logisim will only analyze circuits with at most <b>eight</b> of each type, and all should be single-bit pins. Otherwise, you will see an error message and the window will not open.
-      </p>
-      <p>
-        In constructing Boolean expressions corresponding to a circuit, Logisim will first attempt to construct a Boolean expressions corresponding exactly to the gates in the circuit. But if the circuit uses some non-gate components (such as a multiplexer), or if the circuit is more than 100 levels deep (unlikely), then it will pop up a dialog box telling you that deriving Boolean expressions was impossible, and Logisim will instead derive the expressions based on the truth table, which will be derived by quietly trying each combination of inputs and reading the resulting outputs.
-      </p>
-      <p>
-        After analyzing a circuit, there is no continuing relationship between the circuit and the Combinational Analysis window. That is, changes to the circuit will not be reflected in the window, nor will changes to the Boolean expressions and/or truth table in the window be reflected in the circuit. Of course, you are always free to analyze a circuit again; and, as we will see later, you can replace the circuit with a circuit corresponding to what appears in the Combinational Analysis window.
-      </p>
-      <h2>
-        Limitations
-      </h2>
-      <p>
-        Logisim will not attempt to detect sequential circuits: If you tell it to analyze a sequential circuit, it will still create a truth table and corresponding Boolean expressions, although these will not accurately summarize the circuit behavior. (In fact, detecting sequential circuits is <i>provably impossible</i>, as it would amount to solving the Halting Problem. Of course, you might hope that Logisim would make at least some attempt - perhaps look for flip-flops or cycles in the wires - but it does not.) As a result, the Combinational Analysis system should not be used indiscriminately: Only use it when you are indeed sure that the circuit you are analyzing is indeed combinational!
-      </p>
-      <p>
-        Logisim will make a change to the original circuit that is perhaps unexpected: The Combinational Analysis system requires that each input and output have a unique name that conforming to the rules for Java identifiers. (Roughly, each character must either a letter or a digit, and the first character must be a letter. No spaces allowed!) It attempts to use the pins' existing labels, and to use a list of defaults if no label exists. If an existing label doesn't follow the Java-identifier rule, then Logisim will attempt to extract a valid name from the label if at all possible.
-      </p>
-      <p>
-        Incidentally, the ordering of the inputs in the truth table will match their top-down ordering in the original circuit, with ties being broken in left-right order. (The same applies to the ordering of outputs.)
-      </p>
-      <p>
-        <b>Next:</b> <a href="ana-table.html">Editing the truth table</a>.
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-35-24T10:35:34" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Opening Combinational Analysis -->
+   开放组合分析
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Opening Combinational Analysis -->
+    开放组合分析
+   </h1>
+   <p>
+    <!-- The bulk of the <b class=refguide>Combinational Analysis</b> module is accessed through a single window of that name allowing you to view truth tables and Boolean expressions. This window can be opened in two ways. -->
+    <b class="refguide">
+     组合分析
+    </b>
+    模块的大部分内容是通过同名的单个窗口访问的，允许您查看真值表和布尔表达式。 该窗口可以通过两种方式打开。
+   </p>
+   <h2>
+    <!-- Via the Window menu -->
+    通过窗口菜单
+   </h2>
+   <p>
+    <!-- Select <b class=menu>|&nbsp;Window&nbsp;|</b>→<b class=menu>|&nbsp;Combinational Analysis&nbsp;|</b>, and the current Combinational Analysis window will appear. If you haven't viewed the window before,the opened window will represent no circuit at all. -->
+    选择
+    <b class="menu">
+     | Window |
+    </b>
+    →
+    <b class="menu">
+     | Combinational Analysis |
+    </b>
+    ，将出现当前组合分析窗口。 如果您之前没有查看过该窗口，则打开的窗口将根本不代表任何电路。
+   </p>
+   <p>
+    <!-- Only one Combinational Analysis window exists within Logisim, no matter how many projects are open. There is no way to have two different analysis windows open at once. -->
+    无论打开多少个项目，Logisim-evolution 中都只存在一个组合分析窗口。 无法同时打开两个不同的分析窗口。
+   </p>
+   <h2>
+    <!-- Via the Project menu -->
+    通过项目菜单
+   </h2>
+   <p>
+    <!-- From a window for editing circuits, you can also request that Logisim analyze the current circuit by selecting the Analyze Circuit option from the menu <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>|&nbsp;Analyze Circuit&nbsp;|</b>. Before Logisim opens the window, it will compute Boolean expressions and a truth table corresponding to the circuit and place them there for you to view. -->
+    在编辑电路的窗口中，您还可以通过从菜单
+    <b class="menu">
+     | Project |
+    </b>
+    →
+    <b class="menu">
+     | 中选择分析电路选项来请求 Logisim-evolution 分析当前电路。 分析电路||
+    </b>
+    。 Logisim-evolution 打开窗口之前，它会计算布尔表达式和与电路对应的真值表，并将它们放在那里供您查看。
+   </p>
+   <p>
+    <!-- For the analysis to be successful, each input must be attached to an input pin, and each output must be attached to an output pin. Logisim will only analyze circuits with at most <b>eight</b> of each type, and all should be single-bit pins. Otherwise, you will see an error message and the window will not open. -->
+    为了使分析成功，每个输入必须连接到输入引脚，每个输出必须连接到输出引脚。 Logisim-evolution 将仅分析每种类型最多
+    <b>
+     八个
+    </b>
+    的电路，并且所有引脚都应为单位引脚。 否则，您将看到一条错误消息，并且窗口将无法打开。
+   </p>
+   <p>
+    <!-- In constructing Boolean expressions corresponding to a circuit, Logisim will first attempt to construct a Boolean expressions corresponding exactly to the gates in the circuit. But if the circuit uses some non-gate components (such as a multiplexer), or if the circuit is more than 100 levels deep (unlikely), then it will pop up a dialog box telling you that deriving Boolean expressions was impossible, and Logisim will instead derive the expressions based on the truth table, which will be derived by quietly trying each combination of inputs and reading the resulting outputs. -->
+    在构造与电路对应的布尔表达式时，Logisim-evolution 将首先尝试构造与电路中的门精确对应的布尔表达式。 但如果电路使用了一些非门元件（比如多路复用器），或者电路深度超过100级（不太可能），那么它会弹出一个对话框告诉你不可能导出布尔表达式，而Logisim-evolution 相反，将根据真值表导出表达式，而真值表将通过悄悄尝试每种输入组合并读取结果输出来导出。
+   </p>
+   <p>
+    <!-- After analyzing a circuit, there is no continuing relationship between the circuit and the Combinational Analysis window. That is, changes to the circuit will not be reflected in the window, nor will changes to the Boolean expressions and/or truth table in the window be reflected in the circuit. Of course, you are always free to analyze a circuit again; and, as we will see later, you can replace the circuit with a circuit corresponding to what appears in the Combinational Analysis window. -->
+    分析电路后，电路和组合分析窗口之间不存在连续关系。 也就是说，对电路的改变不会反映在窗口中，对窗口中的布尔表达式和/或真值表的改变也不会反映在电路中。 当然，您随时可以再次分析电路； 并且，正如我们稍后将看到的，您可以将电路替换为与组合分析窗口中显示的电路相对应的电路。
+   </p>
+   <h2>
+    <!-- Limitations -->
+    局限性
+   </h2>
+   <p>
+    <!-- Logisim will not attempt to detect sequential circuits: If you tell it to analyze a sequential circuit, it will still create a truth table and corresponding Boolean expressions, although these will not accurately summarize the circuit behavior. (In fact, detecting sequential circuits is <i>provably impossible</i>, as it would amount to solving the Halting Problem. Of course, you might hope that Logisim would make at least some attempt - perhaps look for flip-flops or cycles in the wires - but it does not.) As a result, the Combinational Analysis system should not be used indiscriminately: Only use it when you are indeed sure that the circuit you are analyzing is indeed combinational! -->
+    Logisim-evolution 不会尝试检测时序电路：如果您告诉它分析时序电路，它仍然会创建真值表和相应的布尔表达式，尽管这些不会准确地总结电路行为。 （事实上，检测时序电路
+    <i>
+     被证明是不可能的
+    </i>
+    ，因为这相当于解决停止问题。当然，您可能希望 Logisim-evolution 至少做出一些尝试 - 也许寻找触发器或 因此，组合分析系统不应随意使用：只有当您确实确定您正在分析的电路确实是组合电路时才使用它！
+   </p>
+   <p>
+    <!-- Logisim will make a change to the original circuit that is perhaps unexpected: The Combinational Analysis system requires that each input and output have a unique name that conforming to the rules for Java identifiers. (Roughly, each character must either a letter or a digit, and the first character must be a letter. No spaces allowed!) It attempts to use the pins' existing labels, and to use a list of defaults if no label exists. If an existing label doesn't follow the Java-identifier rule, then Logisim will attempt to extract a valid name from the label if at all possible. -->
+    Logisim-evolution 将对原始电路进行可能意想不到的更改：组合分析系统要求每个输入和输出都有一个符合 Java 标识符规则的唯一名称。 （粗略地说，每个字符必须是字母或数字，第一个字符必须是字母。不允许有空格！）它尝试使用引脚的现有标签，如果不存在标签，则使用默认值列表。 如果现有标签不遵循 Java 标识符规则，则 Logisim-evolution 将尽可能尝试从标签中提取有效名称。
+   </p>
+   <p>
+    <!-- Incidentally, the ordering of the inputs in the truth table will match their top-down ordering in the original circuit, with ties being broken in left-right order. (The same applies to the ordering of outputs.) -->
+    顺便说一句，真值表中输入的顺序将与原始电路中自上而下的顺序相匹配，并按左右顺序断开关系。 （这同样适用于输出的排序。）
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="ana-table.html">Editing the truth table</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="ana-table.html">
+     编辑真值表
+    </a>
+    .
+   </p>
+  </div>
+ </body>
 </html>

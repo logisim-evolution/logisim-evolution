@@ -100,16 +100,29 @@
 			<!-- <tocitem target="mem_ascii" text="File ASCII"/> -->
 			<tocitem target="mem_ascii" text="文件 ASCII"/>
 		</tocitem>
-		<tocitem target="analyze" text="Combinational analysis">
-			<tocitem target="analyze_open" text="Opening Combinational Analysis" />
-			<tocitem target="analyze_table" text="Editing the truth table" />
-			<tocitem target="analyze_expr" text="Creating expressions" />
-			<tocitem target="analyze_gen" text="Generating a circuit" />
-			<tocitem target="analyze_expimp" text="Buttons Export / Import Table "/>
+		<!-- <tocitem target="analyze" text="Combinational analysis"> -->
+		<tocitem target="analyze" text="组合分析">
+
+			<!-- <tocitem target="analyze_open" text="Opening Combinational Analysis" /> -->
+			<tocitem target="analyze_open" text="开放组合分析" />
+			<!-- <tocitem target="analyze_table" text="Editing the truth table" /> -->
+			<tocitem target="analyze_table" text="编辑真值表" />
+			<!-- <tocitem target="analyze_expr" text="Creating expressions" /> -->
+			<tocitem target="analyze_expr" text="创建表达式" />
+			<!-- <tocitem target="analyze_gen" text="Generating a circuit" /> -->
+			<tocitem target="analyze_gen" text="生成电路" />
+			<!-- <tocitem target="analyze_expimp" text="Buttons Export / Import Table "/> -->
+			<tocitem target="analyze_expimp" text="按钮导出/导入表"/>
 		</tocitem>
-		<tocitem target="log" text="Logging">
-			<tocitem target="log_selection" text="The Selection tab" />
-			<tocitem target="log_timetable" text="Timetable window" />
+		<!-- <tocitem target="log" text="Logging"> -->
+		<tocitem target="log" text="日志">
+
+			<!-- <tocitem target="log_selection" text="The Selection tab" /> -->
+			<tocitem target="log_selection" text="选择选项卡" />
+
+			<!-- <tocitem target="log_timetable" text="Timetable window" /> -->
+			<tocitem target="log_timetable" text="时刻表窗口" />
+
 		</tocitem>
 		<tocitem target="verify" text="Command-line verification">
 			<tocitem target="verify_sub" text="Substituting libraries" />

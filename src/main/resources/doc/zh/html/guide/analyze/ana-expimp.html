@@ -1,29 +1,41 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2021-06-12T10:36:10.000000000">
-    <meta name="changed" content="2021-01-12T10:36:10.000000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      buttons Export / Import Table
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Buttons Export / Import Table
-      </h1>
-      <p>
-	   The two buttons <b class="button">Import table</b> and <b class="button">Export table</b> allow to save and respectively reload a truth table definition. 
-      </p>
-      <p>
-        The information is stored in a TEXT file of this format: 
-      </p>
-      <blockquote>
-        <pre>a b c_in | s c_out
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2021-06-12T10:36:10.000000000" name="created"/>
+  <meta content="2023-35-24T10:35:34" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- buttons Export / Import Table -->
+   按钮 导出/导入表
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Buttons Export / Import Table -->
+    按钮导出/导入表
+   </h1>
+   <p>
+    <!-- The two buttons <b class="button">Import table</b> and <b class="button">Export table</b> allow to save and respectively reload a truth table definition.  -->
+    两个按钮
+    <b class="button">
+     导入表
+    </b>
+    和
+    <b class="button">
+     导出表
+    </b>
+    允许分别保存和重新加载真值表定义。
+   </p>
+   <p>
+    <!-- The information is stored in a TEXT file of this format:  -->
+    该信息存储在以下格式的文本文件中：
+   </p>
+   <blockquote>
+    <pre>a b c_in | s c_out
 ~~~~~~~~~~~~~~~~~~
 0 0  0   | 0   0  
 0 0  1   | 1   0  
@@ -33,27 +45,49 @@
 1 0  1   | 0   1  
 1 1  0   | 0   1  
 1 1  1   | 1   1</pre>
-      </blockquote>Les règles suivantes s'appliquent :
-      <ul>
-        <li>Everything after a '#' is a comment and will be ignored.
-        </li>
-        <li> Blank lines and separator lines (e.g., ~~~~~~) are ignored.
-        </li>
-        <li> Keep column names simple (no spaces, punctuation, etc.).
-        </li>
-        <li>Name[N..0]' indicates an N+1 bit variable, while 'Name' by itself indicates a 1 bit variable.
-        </li>
-        <li>You can use 'x' or '-' to indicate which input and output bits to ignore.
-        </li>
-        <li>You can use binary notation (for example, '10100011xxxx') or hexadecimal notation (for example, 'C3x'). Logisim will determine which is which.
-        </li>
-      </ul>
-      <p>
-        You can export the table to a file, modify it and re-import it. This can be a useful aid for complex tables. 
-      </p>
-      <p>
-        <b>Next:</b> <a href="ana-table.html#impexp">Editing the truth table</a>.
-      </p>
-    </div>
-  </body>
+    <!-- </blockquote>Les règles suivantes s'appliquent : -->
+   </blockquote>
+   附加规则
+   <ul>
+    <!-- <li>Everything after a '#' is a comment and will be ignored. -->
+    <li>
+     “#”之后的所有内容都是注释，将被忽略。
+    </li>
+    <!-- <li> Blank lines and separator lines (e.g., ~~~~~~) are ignored. -->
+    <li>
+     空白行和分隔行（例如，~~~~~~）将被忽略。
+    </li>
+    <!-- <li> Keep column names simple (no spaces, punctuation, etc.). -->
+    <li>
+     保持列名简单（没有空格、标点符号等）。
+    </li>
+    <!-- <li>Name[N..0]' indicates an N+1 bit variable, while 'Name' by itself indicates a 1 bit variable. -->
+    <li>
+     Name[N..0]'表示N+1位变量，而'Name'本身表示1位变量。
+    </li>
+    <!-- <li>You can use 'x' or '-' to indicate which input and output bits to ignore. -->
+    <li>
+     您可以使用“x”或“-”来指示要忽略哪些输入和输出位。
+    </li>
+    <!-- <li>You can use binary notation (for example, '10100011xxxx') or hexadecimal notation (for example, 'C3x'). Logisim will determine which is which. -->
+    <li>
+     您可以使用二进制表示法（例如“10100011xxxx”）或十六进制表示法（例如“C3x”）。 Logisim 将确定哪个是哪个。
+    </li>
+   </ul>
+   <p>
+    <!-- You can export the table to a file, modify it and re-import it. This can be a useful aid for complex tables.  -->
+    您可以将表导出到文件，修改它并重新导入。 这对于复杂的表格来说是一个有用的帮助。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="ana-table.html#impexp">Editing the truth table</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="ana-table.html#impexp">
+     编辑真值表
+    </a>
+    。
+   </p>
+  </div>
+ </body>
 </html>
