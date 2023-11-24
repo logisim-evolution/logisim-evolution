@@ -291,4 +291,4 @@ gradle-app.setting
 .vscode
 
 # python代码
-.py
+*.py
