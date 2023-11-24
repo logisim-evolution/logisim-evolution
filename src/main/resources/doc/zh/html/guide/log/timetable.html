@@ -1,115 +1,216 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Timetable window -->
-      时刻表窗口
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- Timetable window -->
-        时刻表窗口
-      </h1>
-      <p>
-        This window allows the display of the chronograms of the previously selected signals. You will notice the menu, the toolbar, two display areas and the buttons.
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/log-graph1.png" alt="#########">
-      </p>
-      <p>
-        The <b class=menu>|&nbsp;windows&nbsp;|</b> menu contains only one option to specify whether the window remains displayed above the others or whether it can go in the background. By default it stays above.
-      </p>
-      <p>
-        <b>The toolbar</b> has five buttons<br>
-      </p>
-      <blockquote>
-        <table>
-          <tbody>
-            <tr>
-              <td align="right">
-                <img class=intxt src="../../../../icons/simstop.png" alt="#########">
-              </td>
-              <td>
-                &nbsp;
-              </td>
-              <td>
-                Allows to activate the simulation or stop. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b></a> menu.
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <img  class=intxt src="../../../../icons/simstep.png" alt="#########">
-              </td>
-              <td>
-                &nbsp;
-              </td>
-              <td>
-                Advance a tick in the simulation. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tick Once&nbsp;|</b></a> menu.
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <img  class=intxt src="../../../../icons/simtplay.png" alt="#########">
-              </td>
-              <td>
-                &nbsp;
-              </td>
-              <td>
-                Enable or disable the <var>sysclk</var> clock. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Ticks Enabled&nbsp;|</b></a> menu.
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <img  class=intxt src="../../../../icons/simtstep.png" alt="#########">
-              </td>
-              <td>
-                &nbsp;
-              </td>
-              <td>
-                half a period advance the clock <var>sysclk</var>. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tick Once&nbsp;|</b></a> menu.
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <img  class=intxt src="../../../../icons/clock.gif" alt="#########">
-              </td>
-              <td></td>
-              <td>
-                Advancing a period or half-period the clock <var>clk</var>. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;'Clk' Tick Once&nbsp;|</b></a> menu.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </blockquote>
-      <p>
-        <b>The display area</b>On the right three columns: the first presents an icon of the type of signal (bus or singlle) then we have the name and finally the signal value under the cursor (the red line in the graph). It is possible to move the cursor with the mouse, just click and move. <b class="tkeybd">Right-clicking</b> on the row of a bus-type signal displays a pop-up menu with two options:
-      </p>
-      <ul>
-        <li>
-          <b class=menu>|&nbsp;Format&nbsp;|</b> This menu opens a selection of the signal display base (binary, hexadecimal, octal, signed, unsigned)
-        </li>
-        <li>
-          <b class=menu>|&nbsp;Expand&nbsp;|</b> Display, below, the chronogram of each signal.
-        </li>
-      </ul>
-      <p>
-        <b>Buttons:</b> There are three buttons at the bottom of our window.
-      </p>
-      <ul>
-        <li>
-          <b class="button">Load file</b> Loads and displays the result from a previously saved file. This does not allow to set the simulation.
-        </li>
-        <li>
-          <b class="button">Export...</b> Exports the data into a text file. You will need to specify the file name in the select window. The file format is easy. The first line contains the names of the columns separated by a tab. The second line shows the signal and time scale if selected. The following lines show the value of its signals separated by a tab. The third line is the initialization and then each line represents a half-period of the clock <var>sysclk</var>.
-          <pre>sysclk     X       a       b       c       
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-03-24T14:03:30" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Timetable window -->
+   时刻表窗口
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Timetable window -->
+    时刻表窗口
+   </h1>
+   <p>
+    <!-- This window allows the display of the chronograms of the previously selected signals. You will notice the menu, the toolbar, two display areas and the buttons. -->
+    该窗口可以显示先前选择的信号的计时图。 您会注意到菜单、工具栏、两个显示区域和按钮。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/log-graph1.png"/>
+   </p>
+   <p>
+    <!-- The <b class=menu>|&nbsp;windows&nbsp;|</b> menu contains only one option to specify whether the window remains displayed above the others or whether it can go in the background. By default it stays above. -->
+    <b class="menu">
+     | windows |
+    </b>
+    菜单仅包含一个选项，用于指定窗口是否保持显示在其他窗口之上，或者是否可以进入后台。 默认情况下它保持在上面。
+   </p>
+   <p>
+    <!-- <b>The toolbar</b> has five buttons<br> -->
+    <b>
+     工具栏
+    </b>
+    有五个按钮
+    <br/>
+   </p>
+   <blockquote>
+    <table>
+     <tbody>
+      <tr>
+       <td align="right">
+        <img alt="#########" class="intxt" src="../../../../icons/todelete/simstop.png"/>
+       </td>
+       <td>
+       </td>
+       <td>
+        <!-- Allows to activate the simulation or stop. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b></a> menu. -->
+        允许激活模拟或停止。 相当于
+        <b class="menu">
+         | Simulate |
+        </b>
+        <a href="../menu/simulate.html">
+         <b class="menu">
+          | Simulation Enabled |
+         </b>
+        </a>
+        菜单。
+       </td>
+      </tr>
+      <tr>
+       <td align="right">
+        <img alt="#########" class="intxt" src="../../../../icons/todelete/simstep.png"/>
+       </td>
+       <td>
+       </td>
+       <td>
+        <!-- Advance a tick in the simulation. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tick Once&nbsp;|</b></a> menu. -->
+        在模拟中前进一个刻度。 相当于
+        <b class="menu">
+         | Simulate |
+        </b>
+        <a href="../menu/simulate.html">
+         <b class="menu">
+          | Tick Once |
+         </b>
+        </a>
+        菜单。
+       </td>
+      </tr>
+      <tr>
+       <td align="right">
+        <img alt="#########" class="intxt" src="../../../../icons/todelete/simtplay.png"/>
+       </td>
+       <td>
+       </td>
+       <td>
+        <!-- Enable or disable the <var>sysclk</var> clock. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Ticks Enabled&nbsp;|</b></a> menu. -->
+        启用或禁用
+        <var>
+         sysclk
+        </var>
+        clock. Equivalent of the
+        <b class="menu">
+         | Simulate |
+        </b>
+        <a href="../menu/simulate.html">
+         <b class="menu">
+          | Ticks Enabled |
+         </b>
+        </a>
+        菜单。
+       </td>
+      </tr>
+      <tr>
+       <td align="right">
+        <img alt="#########" class="intxt" src="../../../../icons/todelete/simtstep.png"/>
+       </td>
+       <td>
+       </td>
+       <td>
+        <!-- half a period advance the clock <var>sysclk</var>. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tick Once&nbsp;|</b></a> menu. -->
+        时钟
+        <var>
+         sysclk
+        </var>
+        . Equivalent of the
+        <b class="menu">
+         | Simulate |
+        </b>
+        <a href="../menu/simulate.html">
+         <b class="menu">
+          | Tick Once |
+         </b>
+        </a>
+        菜单。
+       </td>
+      </tr>
+      <tr>
+       <td align="right">
+        <img alt="#########" class="intxt" src="../../../../icons/todelete/clock.gif"/>
+       </td>
+       <td>
+       </td>
+       <td>
+        <!-- Advancing a period or half-period the clock <var>clk</var>. Equivalent of the <b class=menu>|&nbsp;Simulate&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;'Clk' Tick Once&nbsp;|</b></a> menu. -->
+        将时钟
+        <var>
+         clk
+        </var>
+        . Equivalent of the
+        <b class="menu">
+         | Simulate |
+        </b>
+        <a href="../menu/simulate.html">
+         <b class="menu">
+          | 'Clk' Tick Once |
+         </b>
+        </a>
+        菜单。
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </blockquote>
+   <p>
+    <!-- <b>The display area</b>On the right three columns: the first presents an icon of the type of signal (bus or singlle) then we have the name and finally the signal value under the cursor (the red line in the graph). It is possible to move the cursor with the mouse, just click and move. <b class="tkeybd">Right-clicking</b> on the row of a bus-type signal displays a pop-up menu with two options: -->
+    <b>
+     显示区域
+    </b>
+    在右侧三列：第一列显示信号类型的图标（总线或单一），然后是名称，最后是光标下的信号值（图中的红线） 图形）。 可以用鼠标移动光标，只需单击并移动即可。
+    <b class="tkeybd">
+     右键单击
+    </b>
+    总线类型信号的行会显示一个弹出菜单，其中包含两个选项：
+   </p>
+   <ul>
+    <li>
+     <!-- <b class=menu>|&nbsp;Format&nbsp;|</b> This menu opens a selection of the signal display base (binary, hexadecimal, octal, signed, unsigned) -->
+     <b class="menu">
+      | Format |
+     </b>
+     此菜单打开信号显示基数的选择（二进制、十六进制、八进制、有符号、无符号）
+    </li>
+    <li>
+     <!-- <b class=menu>|&nbsp;Expand&nbsp;|</b> Display, below, the chronogram of each signal. -->
+     <b class="menu">
+      | Expand |
+     </b>
+     在下面显示每个信号的计时图。
+    </li>
+   </ul>
+   <p>
+    <!-- <b>Buttons:</b> There are three buttons at the bottom of our window. -->
+    <b>
+     按钮：
+    </b>
+    窗口底部有三个按钮。
+   </p>
+   <ul>
+    <li>
+     <!-- <b class="button">Load file</b> Loads and displays the result from a previously saved file. This does not allow to set the simulation. -->
+     <b class="button">
+      加载文件
+     </b>
+     加载并显示以前保存的文件的结果。 这不允许设置模拟。
+    </li>
+    <li>
+     <!-- <b class="button">Export...</b> Exports the data into a text file. You will need to specify the file name in the select window. The file format is easy. The first line contains the names of the columns separated by a tab. The second line shows the signal and time scale if selected. The following lines show the value of its signals separated by a tab. The third line is the initialization and then each line represents a half-period of the clock <var>sysclk</var>. -->
+     <b class="button">
+      Export...
+     </b>
+     将数据导出到文本文件中。 您需要在选择窗口中指定文件名。 文件格式很简单。 第一行包含由制表符分隔的列的名称。 第二行显示信号和时间刻度（如果选择）。 以下几行显示了由制表符分隔的信号值。 第三行是初始化，然后每行代表时钟
+     <var>
+      sysclk
+     </var>
+     的半个周期。
+     <pre>sysclk     X       a       b       c       
 clk:X:1:Hz
 0       11      0       0       0       
 0       11      0       0       0       
@@ -120,14 +221,25 @@ clk:X:1:Hz
 1       00      1       1       1       
 0       00      0       1       1       
 </pre>
-        </li>
-        <li>
-          <b class="button">Export as image</b> Exports chronograms in a png image. You will need to specify the file name in the select window.
-        </li>
-      </ul>
-      <p>
-        <b>Next:</b> <a href="../index.html">Users Guide</a>.
-      </p>
-    </div>
-  </body>
+    </li>
+    <li>
+     <!-- <b class="button">Export as image</b> Exports chronograms in a png image. You will need to specify the file name in the select window. -->
+     <b class="button">
+      导出为图像
+     </b>
+     以 png 图像导出计时图。 您需要在选择窗口中指定文件名。
+    </li>
+   </ul>
+   <p>
+    <!-- <b>Next:</b> <a href="../index.html">Users Guide</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="../index.html">
+     用户指南
+    </a>
+    。
+   </p>
+  </div>
+ </body>
 </html>

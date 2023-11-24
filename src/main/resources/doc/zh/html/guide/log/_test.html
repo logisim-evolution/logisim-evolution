@@ -1,71 +1,79 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="en">
-<head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
-	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
-	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
-	<META http-equiv="content-type" content="text/html; charset=UTF-8">
-	<META http-equiv="Content-Language" content="en">
-	<title>The Test Vector window</title>
-</head>
-<body bgcolor="FFFFFF">
-
-<h1>The Test Vector window</h1>
-
-<p>The Test Vector window is similar to the Table tab of the Logging
-window. You can load a test vector from a file, and Logisim will start
-running tests on the current circuit. Like the logging window, there
-is only one test vector window for the project, and the table will
-change to reflect whichever circuit is being simulated in the project
-window. Note, however, that the Test Vector module runs a separate
-copy of the circuit simulator, and so does not interfere with, and is
-not influenced by, the simulation in the project window.</p>
-
-<p>Any incorrect outputs will be flagged in red. Hover the mouse over
-the red box to see what the output should have been, according to the
-test vector. Rows with incorrect outputs are sorted to the top of the
-window.</p>
-
-<p>The file format is simple. You can use the Logging module (with
-"Include Header Line" selected in the file output tab) to get started,
-since in most cases the Logging module outputs the same format as used
-by the Test Vector module.</p>
-
-<p>Here is an example test vector file:.
-<pre>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created">
+   <meta content="2023-03-24T14:03:30" name="changed" translator="gocpicnic"/>
+   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+   <meta content="zh" http-equiv="Content-Language"/>
+   <!-- <title>The Test Vector window</title> -->
+   <title>
+    测试向量窗口
+   </title>
+  </meta>
+ </head>
+ <body bgcolor="FFFFFF">
+  <!-- <h1>The Test Vector window</h1> -->
+  <!-- <p>The Test Vector window is similar to the Table tab of the Logging window. You can load a test vector from a file, and Logisim will start running tests on the current circuit. Like the logging window, there is only one test vector window for the project, and the table will change to reflect whichever circuit is being simulated in the project window. Note, however, that the Test Vector module runs a separate copy of the circuit simulator, and so does not interfere with, and is not influenced by, the simulation in the project window.</p> -->
+  <p>
+   “测试向量”窗口与“记录”窗口的“表”选项卡类似。 您可以从文件加载测试向量，Logisim 将开始在当前电路上运行测试。 与记录窗口一样，该项目只有一个测试向量窗口，并且该表将发生变化以反映项目窗口中正在模拟的电路。 但请注意，测试矢量模块运行电路模拟器的单独副本，因此不会干扰项目窗口中的模拟，也不受其影响。
+  </p>
+  <!-- <p>Any incorrect outputs will be flagged in red. Hover the mouse over the red box to see what the output should have been, according to the test vector. Rows with incorrect outputs are sorted to  the top of the window.</p> -->
+  <p>
+   任何不正确的输出都会被标记为红色。 将鼠标悬停在红色框上，根据测试向量查看输出应该是什么。 输出不正确的行将排序到窗口顶部。
+  </p>
+  <!-- <p>The file format is simple. You can use the Logging module (with "Include Header Line" selected in the file output tab) to get started, since in most cases the Logging module outputs the same format as used by the Test Vector module.</p> -->
+  <p>
+   文件格式很简单。 您可以使用日志记录模块（在文件输出选项卡中选择“包含标题行”）开始，因为在大多数情况下，日志记录模块输出的格式与测试向量模块使用的格式相同。
+  </p>
+  <!-- <p>Here is an example test vector file:. -->
+  <p>
+   这是一个测试矢量文件示例：
+   <pre>
 # my test vector for add32
 A[32] B[32] C[32] Cin Cout
 00000000000000000000000000000000        00000000000000000000000000000000        00000000000000000000000000000000        0       0
 -2       0x00000005    3       0       0
 0        0o0003        3       0       0
 </pre>
-</p>
-
-<p>Blank lines are ignored.  Anything following a '#' character is a
-comment.  The first non-blank, non-comment line lists the name of each
-circuit input pin and its width (if &gt; 1), separated by whitespace.
-</p>
-
-<p>The remaining lines list each value separated by whitespace. The
-values can be in hex, octal, binary, or signed decimal. Hex values
-must have a '0x' prefix. Octal values must have a '0o' prefix.
-Binary and decimal are be
-distinguished by the number of digits: binary values must always have
-exactly as many digits as the width of the column; decimal values must
-always have fewer, should not have leading zeros, and may have a
-negative sign.</p>
-
-<p>For hex, octal, and binary values, a digit of 'x' specifies four,
-three, or one "don't care" bits. So the value 101xx is a five bit
-binary value, with the last two bits unspecified, and 0x1ax5 is a hex
-value with four unspecified bits.  Such "don't cares" can not be used
-in decimal notation.</p> 
-
-<p><strong>Command line:</strong> To facilitate automated testing, the
-test vector feature can be run from the command line, as follows:<br>
-logisim -test &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</p>
-
-<p><b>Next:</b> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p>
-
-</body>
+  </p>
+  <!-- <p>Blank lines are ignored.  Anything following a '#' character is a comment.  The first non-blank, non-comment line lists the name of each circuit input pin and its width (if &gt; 1), separated by whitespace. -->
+  <p>
+   空白行将被忽略。 “#”字符后面的任何内容都是注释。 第一个非空白、非注释行列出了每个电路输入引脚的名称及其宽度（如果&gt; 1），以空格分隔。
+  </p>
+  <!-- <p>The remaining lines list each value separated by whitespace. The values can be in hex, octal, binary, or signed decimal. Hex values must have a '0x' prefix. Octal values must have a '0o' prefix.Binary and decimal are be distinguished by the number of digits: binary values must always have exactly as many digits as the width of the column; decimal values must always have fewer, should not have leading zeros, and may have a negative sign.</p> -->
+  <p>
+   其余行列出由空格分隔的每个值。 这些值可以是十六进制、八进制、二进制或有符号十进制。 十六进制值必须有“0x”前缀。 八进制值必须有“0o”前缀。二进制和十进制通过位数来区分：二进制值的位数必须始终与列的宽度一样多； 小数值必须始终较少，不应有前导零，并且可以有负号。
+  </p>
+  <!-- <p>For hex, octal, and binary values, a digit of 'x' specifies four, three, or one "don't care" bits. So the value 101xx is a five bit binary value, with the last two bits unspecified, and 0x1ax5 is a hex value with four unspecified bits.  Such "don't cares" can not be used in decimal notation.</p>  -->
+  <p>
+   对于十六进制、八进制和二进制值，一位“x”指定四个、三个或一个“无关”位。 因此，值 101xx 是一个五位二进制值，最后两位未指定，而 0x1ax5 是一个十六进制值，有四个未指定位。 这种“不关心”不能用十进制表示法。
+  </p>
+  <!-- <p><strong>Command line:</strong> To facilitate automated testing, the test vector feature can be run from the command line, as follows:<br> logisim -test &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</p> -->
+  <p>
+   <strong>
+    命令行：
+   </strong>
+   为了便于自动化测试，可以从命令行运行测试向量功能，如下所示：
+   <br/>
+   logisim -test &lt;电路名称&gt;; &lt;矢量.txt&gt;
+   <project.circ>
+   </project.circ>
+  </p>
+  <!-- <p><b>Next:</b> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p> -->
+  <!-- <p><b>Next:</b> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p> -->
+  <p>
+   <b>
+    下一步：
+   </b>
+   <em>
+    <a href="../index.html">
+     <em>
+      用户指南
+     </em>
+    </a>
+   </em>
+   。
+  </p>
+ </body>
 </html>

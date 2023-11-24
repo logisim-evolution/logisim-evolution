@@ -1,63 +1,99 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2019-03-16T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Chronogram -->
-      计时码表
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- Chronogram -->
-        计时码表
-      </h1>
-      <blockquote>
-        <!-- <em>Subsections:</em><br> -->
-        <em>小节：</em><br>
-        <!-- <a href="selection.html">Signal selection</a><br> -->
-        <a href="selection.html">信号选择</a><br>
-        <!-- <a href="selection.html">Signal selection</a><br> -->
-        <!-- <a href="timetable.html">Chronogram window</a> -->
-        <a href="timetable.html">计时器窗口</a>
-      </blockquote>
-      <p>
-        <!-- To understand or debug a circuit it is often very useful to be able to observe the different signals in a visual way. This is the purpose of the timeline. This module allows the recording of signals in graphical form or in a table of value in a text file. -->
-        为了理解或调试电路，能够以视觉方式观察不同的信号通常非常有用。 这就是时间线的目的。 该模块允许以图形形式或文本文件中的值表记录信号。
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/log-graph1.png" alt="#########">
-      </p>
-      <p>
-        <!-- You can enter the logging module via the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Chronogram&nbsp;|</b>. It brings up the signal selection window. -->
-        您可以通过菜单<b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Chronogram&nbsp;|</b>进入日志记录模块。 它会弹出信号选择窗口。
-      </p>
-      <p>
-        <!-- The circuit below is an illustrative example for the timing module.<br> -->
-        下面的电路是定时模块的说明性示例。<br>
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/log-counter.png" alt="#########">
-      </p>
-      <p>
-        <!-- These are the clocks that serve as a driver for displaying signals. The simulation knows two particular clocks. One is imperative and named <var>sysclk</var> and another optional and secondary named <var>clk</var> -->
-        这些时钟用作显示信号的驱动器。 模拟知道两个特定的时钟。 一个是命令式的，名为<var>sysclk</var>，另一个是可选的，名为<var>clk</var>，是辅助的。
-      </p>
-      <p>
-        <!-- <b class=note>Note:</b> it is imperative that a clock named <var>sysclk</var> appears in your circuit. It will be used as a time base by the chronogram module. It does not have to be connected to your circuit. It is in principle the fastest and is set to a duty cycle 1/1 tic. -->
-        <b class=note>注意：</b>电路中必须有一个名为<var>sysclk</var>的时钟。 它将被计时模块用作时基。 它不必连接到您的电路。 原则上它是最快的，占空比设置为 1/1 tic。
-      </p>
-      <p>
-        <!-- <b>Next:</b> <a href="selection.html">The Selection tab</a>. -->
-        <b>下一步：</b> <a href="selection.html">选择选项卡</a>
-        
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-03-24T14:03:30" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Chronogram -->
+   计时码表
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Chronogram -->
+    计时码表
+   </h1>
+   <blockquote>
+    <!-- <em>Subsections:</em><br> -->
+    <em>
+     小节：
+    </em>
+    <br/>
+    <!-- <a href="selection.html">Signal selection</a><br> -->
+    <a href="selection.html">
+     信号选择
+    </a>
+    <br/>
+    <!-- <a href="selection.html">Signal selection</a><br> -->
+    <!-- <a href="timetable.html">Chronogram window</a> -->
+    <a href="timetable.html">
+     计时器窗口
+    </a>
+   </blockquote>
+   <p>
+    <!-- To understand or debug a circuit it is often very useful to be able to observe the different signals in a visual way. This is the purpose of the timeline. This module allows the recording of signals in graphical form or in a table of value in a text file. -->
+    为了理解或调试电路，能够以视觉方式观察不同的信号通常非常有用。 这就是时间线的目的。 该模块允许以图形形式或文本文件中的值表记录信号。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/log-graph1.png"/>
+   </p>
+   <p>
+    <!-- You can enter the logging module via the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Chronogram&nbsp;|</b>. It brings up the signal selection window. -->
+    您可以通过菜单
+    <b class="menu">
+     | Simulate |
+    </b>
+    →
+    <b class="menu">
+     | Chronogram |
+    </b>
+    进入日志记录模块。 它会弹出信号选择窗口。
+   </p>
+   <p>
+    <!-- The circuit below is an illustrative example `for the timing module.<br> -->
+    下面的电路是定时模块的说明性示例。
+    <br/>
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/log-counter.png"/>
+   </p>
+   <p>
+    <!-- These are the clocks that serve as a driver for displaying signals. The simulation knows two particular clocks. One is imperative and named <var>sysclk</var> and another optional and secondary named <var>clk</var> -->
+    这些时钟用作显示信号的驱动器。 模拟知道两个特定的时钟。 一个是命令式的，名为
+    <var>
+     sysclk
+    </var>
+    ，另一个是可选的，名为
+    <var>
+     clk
+    </var>
+    ，是辅助的。
+   </p>
+   <p>
+    <!-- <b class=note>Note:</b> it is imperative that a clock named <var>sysclk</var> appears in your circuit. It will be used as a time base by the chronogram module. It does not have to be connected to your circuit. It is in principle the fastest and is set to a duty cycle 1/1 tic. -->
+    <b class="note">
+     注意：
+    </b>
+    电路中必须有一个名为
+    <var>
+     sysclk
+    </var>
+    的时钟。 它将被计时模块用作时基。 它不必连接到您的电路。 原则上它是最快的，占空比设置为 1/1 tic。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="selection.html">The Selection tab</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="selection.html">
+     选择选项卡
+    </a>
+   </p>
+  </div>
+ </body>
 </html>
