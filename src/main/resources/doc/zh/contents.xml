@@ -137,15 +137,32 @@
 			<tocitem target="verify_test" text="测试载体" />
 
 		</tocitem>
-		<tocitem target="menu" text="Menu reference">
-			<tocitem target="menu_file" text="The File menu" />
-			<tocitem target="menu_edit" text="The Edit menu" />
-			<tocitem target="menu_project" text="The Project menu" />
-			<tocitem target="menu_simulate" text="The Simulate menu" />
-			<tocitem target="menu_winhelp" text="The Window and Help menus" />
-			<tocitem target="menu_exportab" text="Export Image"/>
-			<tocitem target="menu_printertab" text="Printing "/>
-			<tocitem target="menu_assembly" text="Assembly viewer"/>
+		<!-- <tocitem target="menu" text="Menu reference"> -->
+		<tocitem target="menu" text="菜单参考">
+
+			<!-- <tocitem target="menu_file" text="The File menu" /> -->
+			<tocitem target="menu_file" text="文件菜单" />
+
+			<!-- <tocitem target="menu_edit" text="The Edit menu" /> -->
+			<tocitem target="menu_edit" text="编辑菜单" />
+
+			<!-- <tocitem target="menu_project" text="The Project menu" /> -->
+			<tocitem target="menu_project" text="项目菜单" />
+
+			<!-- <tocitem target="menu_simulate" text="The Simulate menu" /> -->
+			<tocitem target="menu_simulate" text="模拟菜单" />
+			<!-- <tocitem target="menu_winhelp" text="The Window and Help menus" /> -->
+			<tocitem target="menu_winhelp" text="窗口和帮助菜单" />
+
+			<!-- <tocitem target="menu_exportab" text="Export Image"/> -->
+			<tocitem target="menu_exportab" text="导出图片"/>
+
+			<!-- <tocitem target="menu_printertab" text="Printing "/> -->
+			<tocitem target="menu_printertab" text="印刷 "/>
+
+			<!-- <tocitem target="menu_assembly" text="Assembly viewer"/> -->
+			<tocitem target="menu_assembly" text="装配查看器"/>
+
 		</tocitem>
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />

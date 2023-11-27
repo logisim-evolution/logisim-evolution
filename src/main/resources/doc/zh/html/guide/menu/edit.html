@@ -7,111 +7,149 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      The Edit menu
+      <!-- The Edit menu -->
+      编辑菜单
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        The Edit menu
+        <!-- The Edit menu -->
+        编辑菜单
       </h1>
       <dl>
         <dt>
-          <strong>Undo <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Z</b>
+          <!-- <strong>Undo <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Z</b> -->
+          <strong>撤消 <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Z</b>
+
         </dt>
         <dd>
           <p>
-            Undoes the most recently completed action affecting how the circuit would be saved in a file. Note that this does not include changes to the circuit state (as with manipulations performed by the Poke Tool).
+            <!-- Undoes the most recently completed action affecting how the circuit would be saved in a file. Note that this does not include changes to the circuit state (as with manipulations performed by the Poke Tool). -->
+            撤消最近完成的操作，该操作会影响电路在文件中的保存方式。 请注意，这不包括对电路状态的更改（与 Poke 工具执行的操作一样）。
           </p>
         </dd>
         <dt>
-          <strong>Redo <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b>
+          <!-- <strong>Redo <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b> -->
+          <strong>重做 <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b>
+
         </dt>
-        <dd><p>Redo the previous command.</p>
+        <!-- <dd><p>Redo the previous command.</p> -->
+          <dd><p>重做之前的命令.</p>
+
 		</dd>
         <dt>
           <strong>Cut</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-X</b>
         </dt>
         <dd>
           <p>
-            Removes the currently selected components from the circuit onto Logisim's clipboard.
+            <!-- Removes the currently selected components from the circuit onto Logisim's clipboard. -->
+            将当前选定的组件从电路中删除到 Logisim-evolution 的剪贴板上。
           </p>
           <p>
-            <b class=note>Note:</b> Logisim's clipboard is maintained separately from the clipboard for the overall system; as a result, cut/copy/paste will not work across different applications, even including other running copies of Logisim. If, however, you have multiple projects open under the same Logisim process, then you should be able to cut/copy/paste between them.
-          </p>
-        </dd>
-        <dt>
-          <strong>Copy</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-C</b>
-        </dt>
-        <dd>
-          <p>
-            Copies the currently selected components in the circuit onto Logisim's clipboard. (See the note under the Cut menu item.)
+            <!-- <b class=note>Note:</b> Logisim's clipboard is maintained separately from the clipboard for the overall system; as a result, cut/copy/paste will not work across different applications, even including other running copies of Logisim. If, however, you have multiple projects open under the same Logisim process, then you should be able to cut/copy/paste between them. -->
+            <b class=note>注意：</b> Logisim-evolution 的剪贴板与整个系统的剪贴板是分开维护的； 因此，剪切/复制/粘贴将无法在不同的应用程序中工作，甚至包括 Logisim-evolution 的其他正在运行的副本。 但是，如果您在同一个 Logisim-evolution 流程下打开了多个项目，那么您应该能够在它们之间进行剪切/复制/粘贴。
           </p>
         </dd>
         <dt>
-          <strong>Paste</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-V</b>
+          <!-- <strong>Copy</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-C</b> -->
+          <strong>拷贝</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-C</b>
+
         </dt>
         <dd>
           <p>
-            Pastes the components on Logisim's clipboard into the current selection. (See the note under the Cut menu item.)
-          </p>
-          <p>
-            When you paste components, they will not immediately be dropped; instead, they will be drawn in light gray. They will not actually be ``dropped'' into the circuit until you either move the selection or change the selection so that the components are no longer in it.
-          </p>
-          <p>
-            The reason for this odd behavior is this: To be consistent with its other behavior, Logisim must immediately merge any wires as soon as they are dropped into a circuit; this merging process changes existing wires in the circuit. When you paste wires from the clipboard, however, you may want them to appear in a different location, and the changing inherent in the merging process would be against your wishes.
+            <!-- Copies the currently selected components in the circuit onto Logisim's clipboard. (See the note under the Cut menu item.) -->
+            将电路中当前选定的组件复制到 Logisim-evolution 剪贴板上。 （请参阅“剪切”菜单项下的注释。）
           </p>
         </dd>
         <dt>
-          <strong>Delete</strong>&nbsp;&nbsp;<b class="tkeybd">Del / Delete</b>
+          <!-- <strong>Paste</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-V</b> -->
+          <strong>粘贴</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-V</b>
+
         </dt>
         <dd>
           <p>
-            Removes all components in the current selection from the circuit, without modifying the clipboard.
+            <!-- Pastes the components on Logisim's clipboard into the current selection. (See the note under the Cut menu item.) -->
+            将 Logisim-evolution 剪贴板上的组件粘贴到当前选择中。 （请参阅“剪切”菜单项下的注释。）
+          </p>
+          <p>
+            <!-- When you paste components, they will not immediately be dropped; instead, they will be drawn in light gray. They will not actually be ``dropped'' into the circuit until you either move the selection or change the selection so that the components are no longer in it. -->
+            当您粘贴组件时，它们不会立即被删除； 相反，它们将以浅灰色绘制。 它们实际上不会被“放入”电路中，直到您移动选择或更改选择以使组件不再位于其中。
+          </p>
+          <p>
+            <!-- The reason for this odd behavior is this: To be consistent with its other behavior, Logisim must immediately merge any wires as soon as they are dropped into a circuit; this merging process changes existing wires in the circuit. When you paste wires from the clipboard, however, you may want them to appear in a different location, and the changing inherent in the merging process would be against your wishes. -->
+            出现这种奇怪行为的原因是：为了与其其他行为保持一致，Logisim-evolution 必须在将任何电线放入电路后立即将其合并； 这个合并过程改变了电路中现有的电线。 然而，当您从剪贴板粘贴电线时，您可能希望它们出现在不同的位置，并且合并过程中固有的变化将违背您的意愿。
           </p>
         </dd>
         <dt>
-          <strong>Duplicate</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-D</b>
+          <!-- <strong>Delete</strong>&nbsp;&nbsp;<b class="tkeybd">Del / Delete</b> -->
+          <strong>删除</strong>&nbsp;&nbsp;<b class="tkeybd">Del / Delete</b>
+
         </dt>
         <dd>
           <p>
-            Creates a copy of all components in the current selection. This is like selecting Copy, then Paste, except that Duplicate doesn't modify or use the clipboard.
+            <!-- Removes all components in the current selection from the circuit, without modifying the clipboard. -->
+            从电路中删除当前选择中的所有组件，而不修改剪贴板。
           </p>
         </dd>
         <dt>
-          <strong>Select All</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-A</b>
+          <!-- <strong>Duplicate</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-D</b> -->
+          <strong>复制</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-D</b>
+
         </dt>
         <dd>
           <p>
-            Selects all components in the current circuit.
+            <!-- Creates a copy of all components in the current selection. This is like selecting Copy, then Paste, except that Duplicate doesn't modify or use the clipboard. -->
+            创建当前选择中所有组件的副本。 这类似于选择“复制”，然后选择“粘贴”，只不过“复制”不会修改或使用剪贴板。
           </p>
         </dd>
         <dt>
-          <strong>Raise Selection</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl+Up</b>
+          <!-- <strong>Select All</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-A</b> -->
+          <strong>全选</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-A</b>
+
         </dt>
         <dd>
           <p>
-            This menu item is available only when editing a circuit's appearance. It raises the currently selected object(s) so that it is drawn (or they are drawn) on top of an object that currently overlaps the selection. If the selection is overlapped by several objects, it is raised only to be above the lowest one; select the menu item repeatedly until it is in the order it should be.
-          </p>
-          <p>
-            (Determining whether two arbitrary objects overlap is difficult. Logisim uses an algorithm of selecting several random points in each of the two objects and seeing if any point is also in the other object. Sometimes it will fail to detect an overlap if the overlap is small — say, less than 5% of either of the objects.)
-          </p>
-        </dd>
-        <dt>
-          <strong>Lower Selection</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl+Down</b>
-        </dt>
-        <dd>
-          <p>
-            This menu item is available only when editing a circuit's appearance. It lowers the currently selected object(s) so that it is drawn (or they are drawn) below an object that the selection currently overlaps. If the selection overlaps several objects, it is lowered only to be below the highest one; select the menu item repeatedly until it is in the order it should be.
+            <!-- Selects all components in the current circuit. -->
+            选择当前电路中的所有元件。
           </p>
         </dd>
         <dt>
-          <strong>Raise To Top</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Shift-Up</b>
+          <!-- <strong>Raise Selection</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl+Up</b> -->
+          <strong>提高选择</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl+Up</b>
+
         </dt>
         <dd>
           <p>
-            Available only when editing a circuit's appearance, this menu item raises the currently selected object(s) to be drawn on top of all other objects. (The anchor and the ports are exceptions — they are always on top.)
+            <!-- This menu item is available only when editing a circuit's appearance. It raises the currently selected object(s) so that it is drawn (or they are drawn) on top of an object that currently overlaps the selection. If the selection is overlapped by several objects, it is raised only to be above the lowest one; select the menu item repeatedly until it is in the order it should be. -->
+            此菜单项仅在编辑电路外观时可用。 它会提升当前选定的对象，以便将其绘制（或将它们绘制）在当前与所选内容重叠的对象之上。 如果所选内容与多个对象重叠，则仅将其提升到最低的对象之上； 重复选择菜单项，直到其按应有的顺序排列。
+          </p>
+          <p>
+            <!-- (Determining whether two arbitrary objects overlap is difficult. Logisim uses an algorithm of selecting several random points in each of the two objects and seeing if any point is also in the other object. Sometimes it will fail to detect an overlap if the overlap is small — say, less than 5% of either of the objects.) -->
+            （确定两个任意对象是否重叠是很困难的。Logisim-evolution 使用一种算法，在两个对象中的每一个中选择几个随机点，然后查看任何点是否也在另一个对象中。有时，如果重叠很小，它会无法检测到重叠 — 例如，少于任一物体的 5%。）
+          </p>
+        </dd>
+        <dt>
+          <!-- <strong>Lower Selection</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl+Down</b> -->
+          <strong>较低的选择</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl+Down</b>
+
+        </dt>
+        <dd>
+          <p>
+            <!-- This menu item is available only when editing a circuit's appearance. It lowers the currently selected object(s) so that it is drawn (or they are drawn) below an object that the selection currently overlaps. If the selection overlaps several objects, it is lowered only to be below the highest one; select the menu item repeatedly until it is in the order it should be. -->
+            此菜单项仅在编辑电路外观时可用。 它会降低当前选定的对象，以便将其绘制（或将它们绘制）在当前选择重叠的对象下方。 如果选择的对象与多个对象重叠，则只会将其降低到最高的对象以下； 重复选择菜单项，直到其按应有的顺序排列。
+          </p>
+        </dd>
+        <dt>
+          <!-- <strong>Raise To Top</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Shift-Up</b> -->
+          <strong>提升至顶部</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Shift-Up</b>
+
+        </dt>
+        <dd>
+          <p>
+            <!-- Available only when editing a circuit's appearance, this menu item raises the currently selected object(s) to be drawn on top of all other objects. (The anchor and the ports are exceptions — they are always on top.) -->
+            仅在编辑电路外观时可用，此菜单项会将当前选定的对象提升到所有其他对象之上。 （锚点和端口是例外 - 它们始终位于顶部。）
           </p>
         </dd>
         <dt>
@@ -119,28 +157,35 @@
         </dt>
         <dd>
           <p>
-            Available only when editing a circuit's appearance, this menu item lowers the currently selected object(s) so that all other objects are drawn on top of them.
+            <!-- Available only when editing a circuit's appearance, this menu item lowers the currently selected object(s) so that all other objects are drawn on top of them. -->
+            仅在编辑电路外观时可用，此菜单项会降低当前选定的对象，以便在它们之上绘制所有其他对象。
           </p>
         </dd>
         <dt>
-          <strong>Add Vertex</strong>
+          <!-- <strong>Add Vertex</strong> -->
+          <strong>添加顶点</strong>
         </dt>
         <dd>
           <p>
-            Available only when editing a circuit's appearance and a point has been selected on a line, polyline, or polygon, this menu item inserts a new vertex onto the shape. Previous to insertion, the selected point is drawn as a diamond.
+            <!-- Available only when editing a circuit's appearance and a point has been selected on a line, polyline, or polygon, this menu item inserts a new vertex onto the shape. Previous to insertion, the selected point is drawn as a diamond. -->
+            仅当编辑电路外观并且在线、折线或多边形上选择了点时才可用，此菜单项会将新顶点插入到形状上。 在插入之前，所选点被绘制为菱形。
           </p>
         </dd>
         <dt>
-          <strong>Remove Vertex</strong>
+          <!-- <strong>Remove Vertex</strong> -->
+          <strong>删除顶点</strong>
         </dt>
         <dd>
           <p>
-            Available only when editing a circuit's appearance and an existing vertex has been selected on a polyline or polygon, this menu item removes the selected vertex. Previous to deletion, the selected vertex is drawn as a diamond within the square representing the vertex. Logisim will not permit removing a vertex on a polygon with only three vertices or on a polyline with only two vertices.
+            <!-- Available only when editing a circuit's appearance and an existing vertex has been selected on a polyline or polygon, this menu item removes the selected vertex. Previous to deletion, the selected vertex is drawn as a diamond within the square representing the vertex. Logisim will not permit removing a vertex on a polygon with only three vertices or on a polyline with only two vertices. -->
+            仅当编辑电路的外观并且已在折线或多边形上选择现有顶点时才可用，此菜单项将删除选定的顶点。 在删除之前，所选顶点在代表该顶点的正方形内绘制为菱形。 Logisim-evolution 不允许删除仅具有三个顶点的多边形或仅具有两个顶点的折线上的顶点。
           </p>
         </dd>
       </dl>
       <p>
-        <b>Next:</b> <a href="project.html">The Project menu</a>.
+        <!-- <b>Next:</b> <a href="project.html">The Project menu</a>. -->
+        <b>下一节:</b> <a href="project.html">项目菜单</a>.
+
       </p>
     </div>
   </body>
