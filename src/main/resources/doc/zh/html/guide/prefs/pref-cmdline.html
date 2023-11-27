@@ -7,37 +7,44 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Command-line options
+      <!-- Command-line options -->
+      命令行选项
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        Command-line options
+        <!-- Command-line options -->
+        命令行选项
       </h1>
       <p>
-        You can configure many of Logisim's application preferences via command line options. This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program.
+        <!-- You can configure many of Logisim's application preferences via command line options. This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program. -->
+        您可以通过命令行选项配置 Logisim-evolution 的许多应用程序首选项。 这在单学生计算机实验室中特别有用，您希望 Logisim 每次都为学生启动相同的计算机，无论以前的学生如何配置程序。
       </p>
       <p>
-        The overall command-line syntax is as follows.
+        <!-- The overall command-line syntax is as follows. -->
+        整体命令行语法如下。
       </p>
       <blockquote>
         <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
 </pre>
       </blockquote>
       <p>
-        The optional additional files named on the command line will be opened as separate windows within Logisim.
+        <!-- The optional additional files named on the command line will be opened as separate windows within Logisim. -->
+        命令行上命名的可选附加文件将在 Logisim-evolution 中作为单独的窗口打开。
       </p>
       <p>
-        The following example starts Logisim in its basic configuration.
+        <!-- The following example starts Logisim in its basic configuration. -->
+        以下示例以基本配置启动 Logisim-evolution。
       </p>
       <blockquote>
         <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
 </pre>
       </blockquote>
       <p>
-        Supported options include the following.
+        <!-- Supported options include the following. -->
+        支持的选项包括以下内容。
       </p>
       <dl>
         <dt>
@@ -47,11 +54,13 @@
           <tt>-empty</tt>
         </dt>
         <dt>
-          <tt>-template <b><i>templateFile</i></b></tt>
+          <!-- <tt>-template <b><i>templateFile</i></b></tt> -->
+          <tt>-模板<b><i>templateFile</i></b></tt>
         </dt>
         <dd>
           <p>
-            Configures the template for Logisim to use.
+            <!-- Configures the template for Logisim to use. -->
+            配置 Logisim-evolution 使用的模板。
           </p>
         </dd>
         <dt>
@@ -59,7 +68,8 @@
         </dt>
         <dd>
           <p>
-            Configures which type of gate to use.
+            <!-- Configures which type of gate to use. -->
+            配置要使用的门类型。
           </p>
         </dd>
         <dt>
@@ -67,7 +77,8 @@
         </dt>
         <dd>
           <p>
-            Configures which translation to use. As of this writing, the supported locales include:
+            <!-- Configures which translation to use. As of this writing, the supported locales include: -->
+            配置要使用的翻译。 截至撰写本文时，支持的区域设置包括：
           </p>
           <table>
             <tbody>
@@ -129,7 +140,9 @@
         </dt>
         <dd>
           <p>
-            This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <i>no</i>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.
+            <!-- This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <i>no</i>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well. -->
+            这仅与使用 7 位 ASCII 字符集之外的字符的语言相关； 这将包括使用重音字符的语言，但不包括英语。 如果<i>否</i>，则 7 位 ASCII 字符集之外的字符将替换为适合该语言的等效字符； 这对于不能很好支持此类字符的 Java/OS 组合非常有用。
+
           </p>
         </dd>
         <dt>
@@ -137,7 +150,8 @@
         </dt>
         <dd>
           <p>
-            Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time.
+            <!-- Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time. -->
+            在启动时清除所有应用程序首选项，因此 Logisim-evolution 的行为就像第一次在主机系统上执行一样。
           </p>
         </dd>
         <dt>
@@ -145,7 +159,8 @@
         </dt>
         <dd>
           <p>
-            Hides the initial Logisim splash screen.
+            <!-- Hides the initial Logisim splash screen. -->
+            隐藏初始 Logisim-evolution 启动屏幕。
           </p>
         </dd>
         <dt>
@@ -153,7 +168,8 @@
         </dt>
         <dd>
           <p>
-            Displays a summary of the command line options.
+            <!-- Displays a summary of the command line options. -->
+            显示命令行选项的摘要。
           </p>
         </dd>
         <dt>
@@ -161,7 +177,8 @@
         </dt>
         <dd>
           <p>
-            Displays the Logisim version number.
+            <!-- Displays the Logisim version number. -->
+            显示 Logisim-evolution 版本号。
           </p>
         </dd>
         <dt>
@@ -169,7 +186,8 @@
         </dt>
         <dd>
           <p>
-            Displays the combinatorial analysis menus.
+            <!-- Displays the combinatorial analysis menus. -->
+            显示组合分析菜单。
           </p>
         </dd>
         <dt>
@@ -177,7 +195,8 @@
         </dt>
         <dd>
           <p>
-            Load an image in RAM (works only with -tty)
+            <!-- Load an image in RAM (works only with -tty) -->
+            将图像加载到 RAM 中（仅适用于 -tty）
           </p>
         </dd>
         <dt>
@@ -185,7 +204,8 @@
         </dt>
         <dd>
           <p>
-            load the file by replacing the library file (file1) with the library file (file2). More information in <a href="../verify/sub.html">Substituting libraries</a>
+            <!-- load the file by replacing the library file (file1) with the library file (file2). More information in <a href="../verify/sub.html">Substituting libraries</a> -->
+            通过将库文件 (file1) 替换为库文件 (file2) 来加载文件。 更多信息请参见<a href="../verify/sub.html">替换库</a>
           </p>
         </dd>
         <dt>
@@ -193,7 +213,8 @@
         </dt>
         <dd>
           <p>
-            Run without GUI. More information in <a href="../verify/other.html">Other verification</a>
+            <!-- Run without GUI. More information in <a href="../verify/other.html">Other verification</a> -->
+            无需 GUI 即可运行。 更多信息请参阅<a href="../verify/other.html">其他验证</a>
           </p>
         </dd>
         <dt>
@@ -201,7 +222,8 @@
         </dt>
         <dd>
           <p>
-            Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More information in <a href="../verify/test.html">Window Text Vector</a>
+            <!-- Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More information in <a href="../verify/test.html">Window Text Vector</a> -->
+            根据<b>向量文件</b>中的向量运行<b>项目文件</b>中的<b>电路名称</b>测试。 更多信息请参见<a href="../verify/test.html">窗口文本向量</a>
           </p>
         </dd>
         <dt>
@@ -209,17 +231,20 @@
         </dt>
         <dd>
           <p>
-            Opens Logisim with a window dimensioned according to the parameters W (width) and H (height) or with the upper left corner positioned according to the parameters X,Y.<br>
+            <!-- Opens Logisim with a window dimensioned according to the parameters W (width) and H (height) or with the upper left corner positioned according to the parameters X,Y.<br> -->
+            打开 Logisim-evolution，其中窗口尺寸根据参数 W（宽度）和 H（高度）确定，或者左上角根据参数 X、Y 定位。<br>
             Example: -geom 600x400+100+100
           </p>
         </dd>
       </dl>
       <h2>
-        Undocumented Options
+        <!-- Undocumented Options -->
+        未记录的选项
       </h2>
       <dl>
         <dt>
-          <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+          <!-- <tt>-test-circuit <b>testCircuitPathInput</b></tt> -->
+          <tt>-测试电路<b>testCircuitPathInput</b></tt>
         </dt>
         <dd></dd>
         <dt>
@@ -236,7 +261,8 @@
         <dd></dd>
       </dl>
       <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+        <!-- <b>Next:</b> <a href="../index.html">User's Guide</a>. -->
+        <b>下一步：</b><a href="../index.html">用户指南</a>。
       </p>
     </div>
   </body>

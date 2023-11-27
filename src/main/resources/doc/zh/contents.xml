@@ -164,16 +164,29 @@
 			<tocitem target="menu_assembly" text="装配查看器"/>
 
 		</tocitem>
-		<tocitem target="prefs" text="Application preferences">
-			<tocitem target="prefs_template" text="The Template tab" />
-			<tocitem target="prefs_intl" text="The International tab" />
-			<tocitem target="prefs_window" text="The Window tab" />
-			<tocitem target="prefs_layout" text="The Layout tab" />
+		<!-- <tocitem target="prefs" text="Application preferences"> -->
+		<tocitem target="prefs" text="应用偏好">
+			<!-- <tocitem target="prefs_template" text="The Template tab" /> -->
+			<tocitem target="prefs_template" text="模板选项卡" />
+
+			<!-- <tocitem target="prefs_intl" text="The International tab" /> -->
+			<tocitem target="prefs_intl" text="国际选项卡" />
+
+			<!-- <tocitem target="prefs_window" text="The Window tab" /> -->
+			<tocitem target="prefs_window" text="窗口选项卡" />
+
+			<!-- <tocitem target="prefs_layout" text="The Layout tab" /> -->
+			<tocitem target="prefs_layout" text="布局选项卡" />
+
 <!--	<tocitem target="prefs_simulation" text="The  simulation tab"/> -->
-			<tocitem target="prefs_exp" text="The Experimental tab" />
+			<!-- <tocitem target="prefs_exp" text="The Experimental tab" /> -->
+			<tocitem target="prefs_exp" text="实验选项卡" />
+
 <!--	<tocitem target="prefs_sofware" text="The Sofware tab"/> -->
 <!--	<tocitem target="prefs_fpga" text="The FPGA Commander settings tab"/> -->
-			<tocitem target="prefs_cmdline" text="The command line" />
+			<!-- <tocitem target="prefs_cmdline" text="The command line" /> -->
+			<tocitem target="prefs_cmdline" text="命令行" />
+
 		</tocitem>
 		<tocitem target="opts" text="Project options">
 			<tocitem target="opts_simulate" text="The Simulation tab" />
