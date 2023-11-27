@@ -115,6 +115,10 @@ public class HexFileTest {
 
     compare(true, desc, tempFile, addressSize, wordSize, values);
 
+    //check whether the OS is XXD compatible(MacOs or linux).
+    String os = System.getProperty("os.name");
+    if(os.toLowerCase().contains("windows")) return;
+
     if (desc.startsWith("Binary")) {
       final var endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
 
