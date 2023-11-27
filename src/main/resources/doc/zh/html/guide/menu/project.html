@@ -1,123 +1,161 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2020-01-07T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- The Project menu -->
-      项目菜单
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- The Project menu -->
-        项目菜单
-      </h1>
-      <dl>
-        <dt>
-          <!-- <strong>Add Circuit...</strong> -->
-          <strong>添加电路...</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Adds a new circuit into the current project. Logisim will insist that you name the new circuit. The name must not match any existing circuits in the project. -->
-            将新电路添加到当前项目中。 Logisim-evolution 将坚持要求您为新电路命名。 该名称不得与项目中的任何现有电路相匹配。
-          </p>
-        </dd>
-		<dt>
-          <!-- <strong>Add VHDL Entity...</strong> -->
-          <strong>添加 VHDL 实体...</strong>
-        </dt>
-        <dd>
-          <p>
-            --
-          </p>
-        </dd>
-		<dt>
-          <!-- <strong>Import VHDL Entity...</strong> -->
-          <strong>导入 VHDL 实体...</strong>
-        </dt>
-        <dd>
-          <p>
-            --
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Load Library</strong> -->
-          <strong>加载库</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Loads <a href="../gui/gui-explore.html">a library</a> into the project. You can load three types of libraries, as explained elsewhere in the <a href="../gui/gui-explore.html#lib"><em>User's Guide</em></a>. -->
-            Loads <a href="../gui/gui-explore.html">a library</a> into the project. 您可以加载三种类型的库，如其他地方所述 <a href="../gui/gui-explore.html#lib"><em>用户手册</em></a>.
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Unload Libraries...</strong> -->
-          <strong>卸载库...</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Unloads current libraries from the project. Logisim will not permit you to unload any libraries currently being used, including libraries containing components appearing in any project circuits, as well as those with tools that appear in the toolbar or that are mapped to the mouse. -->
-            从项目中卸载当前库。 Logisim-evolution 不允许您卸载当前正在使用的任何库，包括包含出现在任何项目电路中的组件的库，以及带有出现在工具栏中或映射到鼠标的工具的库。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Move Circuit Up</strong> -->
-          <strong>向上移动电路</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Moves the currently displayed circuit one step up the list of circuits within the project, as displayed in the explorer pane. -->
-            将当前显示的电路在项目内的电路列表中向上移动一级，如资源管理器窗格中所示。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Move Circuit Down</strong> -->
-          <strong>向下移动电路</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Moves the currently displayed circuit one step down the list of circuits within the project, as displayed in the explorer pane. -->
-            将当前显示的电路在项目内的电路列表中向下移动一级，如资源管理器窗格中所示。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Set As Main Circuit</strong> -->
-          <strong>设为主电路</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Sets the currently displayed circuit to be the project's <b>main circuit.</b> This menu item will be grayed out if the current circuit is already the project's main circuit. The only significance of the main circuit is that it is the circuit that first appears when a project file is opened. -->
-            将当前显示的电路设置为项目的<b>主电路。</b>如果当前电路已经是项目的主电路，则此菜单项将变灰。 主电路的唯一意义在于它是打开项目文件时首先出现的电路。
-          </p>
-        </dd>
-		<dt>
-          <!-- <strong>Remove Circuit</strong> -->
-          <strong>删除电路</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Removes the currently displayed circuit from the project. Logisim will prevent you from removing circuits that are used as subcircuits, and it will prevent you from removing the final circuit in a project. -->
-            从项目中删除当前显示的电路。 Logisim-evolution 将阻止您删除用作子电路的电路，并且将阻止您删除项目中的最终电路。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Revert To Default Appearance</strong> -->
-          <strong>恢复默认外观</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- If you've edited the circuit's appearance, this menu item reverts the appearance back to the default. The menu item is enabled only when editing the circuit's appearance. The appearance of the default appearance can be changed by the <b class=propertie>Use new box layout</b> property of the library. -->
-            如果您编辑了电路的外观，此菜单项会将外观恢复为默认值。 仅当编辑电路外观时才启用该菜单项。 可以通过库的<b class=propertie>使用新框布局</b>属性更改默认外观。
-          </p>
-        </dd>
-        <!--
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-11-27T16:57:23" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- The Project menu -->
+   项目菜单
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- The Project menu -->
+    项目菜单
+   </h1>
+   <dl>
+    <dt>
+     <!-- <strong>Add Circuit...</strong> -->
+     <strong>
+      添加电路...
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Adds a new circuit into the current project. Logisim will insist that you name the new circuit. The name must not match any existing circuits in the project. -->
+      将新电路添加到当前项目中。 Logisim-evolution 将坚持要求您为新电路命名。 该名称不得与项目中的任何现有电路相匹配。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Add VHDL Entity...</strong> -->
+     <strong>
+      添加 VHDL 实体...
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      --
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Import VHDL Entity...</strong> -->
+     <strong>
+      导入 VHDL 实体...
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      --
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Load Library</strong> -->
+     <strong>
+      加载库
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Loads <a href="../gui/gui-explore.html">a library</a> into the project. You can load three types of libraries, as explained elsewhere in the <a href="../gui/gui-explore.html#lib"><em>User's Guide</em></a>. -->
+      Loads
+      <a href="../gui/gui-explore.html">
+       a library
+      </a>
+      into the project. 您可以加载三种类型的库，如其他地方所述
+      <a href="../gui/gui-explore.html#lib">
+       <em>
+        用户手册
+       </em>
+      </a>
+      .
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Unload Libraries...</strong> -->
+     <strong>
+      卸载库...
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Unloads current libraries from the project. Logisim will not permit you to unload any libraries currently being used, including libraries containing components appearing in any project circuits, as well as those with tools that appear in the toolbar or that are mapped to the mouse. -->
+      从项目中卸载当前库。 Logisim-evolution 不允许您卸载当前正在使用的任何库，包括包含出现在任何项目电路中的组件的库，以及带有出现在工具栏中或映射到鼠标的工具的库。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Move Circuit Up</strong> -->
+     <strong>
+      向上移动电路
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Moves the currently displayed circuit one step up the list of circuits within the project, as displayed in the explorer pane. -->
+      将当前显示的电路在项目内的电路列表中向上移动一级，如资源管理器窗格中所示。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Move Circuit Down</strong> -->
+     <strong>
+      向下移动电路
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Moves the currently displayed circuit one step down the list of circuits within the project, as displayed in the explorer pane. -->
+      将当前显示的电路在项目内的电路列表中向下移动一级，如资源管理器窗格中所示。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Set As Main Circuit</strong> -->
+     <strong>
+      设为主电路
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Sets the currently displayed circuit to be the project's <b>main circuit.</b> This menu item will be grayed out if the current circuit is already the project's main circuit. The only significance of the main circuit is that it is the circuit that first appears when a project file is opened. -->
+      将当前显示的电路设置为项目的
+      <b>
+       主电路。
+      </b>
+      如果当前电路已经是项目的主电路，则此菜单项将变灰。 主电路的唯一意义在于它是打开项目文件时首先出现的电路。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Remove Circuit</strong> -->
+     <strong>
+      删除电路
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Removes the currently displayed circuit from the project. Logisim will prevent you from removing circuits that are used as subcircuits, and it will prevent you from removing the final circuit in a project. -->
+      从项目中删除当前显示的电路。 Logisim-evolution 将阻止您删除用作子电路的电路，并且将阻止您删除项目中的最终电路。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Revert To Default Appearance</strong> -->
+     <strong>
+      恢复默认外观
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- If you've edited the circuit's appearance, this menu item reverts the appearance back to the default. The menu item is enabled only when editing the circuit's appearance. The appearance of the default appearance can be changed by the <b class=propertie>Use new box layout</b> property of the library. -->
+      如果您编辑了电路的外观，此菜单项会将外观恢复为默认值。 仅当编辑电路外观时才启用该菜单项。 可以通过库的
+      <b class="propertie">
+       使用新框布局
+      </b>
+      属性更改默认外观。
+     </p>
+    </dd>
+    <!--
 		<dt>
           <strong>View Toolbox</strong>
         </dt>
@@ -127,7 +165,7 @@
           </p>
         </dd>
 		-->
-		<!--
+    <!--
         <dt>
           <strong>View Simulation Tree</strong>
         </dt>
@@ -137,92 +175,137 @@
           </p>
         </dd>
 		-->
-        <dt>
-          <!-- <strong>Edit Circuit Layout</strong> -->
-          <strong>编辑电路布局</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Switches to allow you to edit the layout of components, which determines how the circuit works. This menu item is usually disabled since you will usually be editing the layout anyway. -->
-            允许您编辑组件布局的开关，这决定了电路的工作方式。 该菜单项通常被禁用，因为您通常会编辑布局。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Edit Circuit Appearance</strong> -->
-          <strong>编辑电路外观</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Switches to allow you to edit how the circuit will be represented when it is used as a subcircuit within another circuit. But this menu option allows you to draw a different appearance for the subcircuit. -->
-            允许您编辑电路在另一个电路中用作子电路时的表示方式的开关。 但此菜单选项允许您为子电路绘制不同的外观。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Analyze Circuit</strong> -->
-          <strong>分析电路</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- <b class=note>Note:</b> This menu is disabled by default in the current version of logisim-evolution. It can be reactivated by command line options.<br> -->
-            <b class=note>注意：</b> 在当前版本的 logisim-evolution 中默认禁用此菜单。 它可以通过命令行选项重新激活。<br>
-            <br>
-            <!-- Computes a truth table and Boolean expressions corresponding to the current circuit, displaying them in <a href="../analyze/index.html">the Combinational Analysis window</a>. The analysis process will only be valid for combinational circuits. A full description of the analysis process is described <a href="../analyze/ana-open.html">in the Combinational Analysis section</a>. -->
-            计算与当前电路相对应的真值表和布尔表达式，并将其显示在<a href="../analyze/index.html">组合分析窗口</a>中。 分析过程仅对组合电路有效。 <a href="../analyze/ana-open.html">组合分析部分</a>描述了分析过程的完整描述。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Get Circuit Statistics</strong> -->
-          <strong>获取电路统计数据</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Shows a dialog containing statistics about components used by the currently viewed circuit. The dialog includes a table with five columns: -->
-            显示一个对话框，其中包含有关当前查看的电路所使用的组件的统计信息。 该对话框包括一个包含五列的表格：
-          </p>
-          <p align="center">
-            <img src="../../../img-guide/project-stat.png" alt="#########">
-          </p>
-          <ul>
-            <!-- <li>Component: The name of the component. -->
-              <li>组件：组件的名称。
-            </li>
-            <!-- <li>Library: The name of the library from which the component came. -->
-              <li>库：组件所在库的名称。
-            </li>
-            <!-- <li>Simple: The number of times that component appears directly within the viewed circuit. -->
-              <li>简单：该组件直接出现在所查看电路中的次数。
-            </li>
-            <!-- <li>Unique: The number of times that component appears in the circuit's hierarchy, where each subcircuit within the hierarchy is counted only once. -->
-              <li>唯一：该组件出现在电路层次结构中的次数，其中层次结构中的每个子电路仅计算一次。
-            </li>
-            <!-- <li>Recursive: The number of times that component appears in the circuit's hierarchy, where we count each subcircuit as many times as it appears in the hierarchy. -->
-              <li>递归：组件出现在电路层次结构中的次数，其中我们计算每个子电路在层次结构中出现的次数。
-            </li>
-          </ul>
-          <p>
-            <!-- The distinction between "Unique" and "Recursive" is easiest to explain by considering the 4:1 multiplexer built using three 2:1 multiplexers as in the <a href="../subcirc/sub-using.html">Using subcircuits</a> section. The 2:1 multiplexer contains two AND gates (and the 4:1 circuit includes none), so the "Unique" count of AND gates would be 2; but if you were to build the 4:1 multiplexer using this diagram, you would actually need 2 AND gates for each of the three 2:1 multiplexers, so the "Recursive" count is 6. -->
-            “唯一”和“递归”之间的区别最容易解释，通过考虑使用三个 2:1 多路复用器构建的 4:1 多路复用器，如<a href="../subcirc/sub-using.html">使用子电路 </a> 部分。 2:1 多路复用器包含两个 AND 门（4:1 电路不包含任何 AND 门），因此 AND 门的“唯一”计数将为 2； 但如果您要使用此图构建 4:1 多路复用器，则实际上三个 2:1 多路复用器中的每一个都需要 2 个与门，因此“递归”计数为 6。
-          </p>
-          <p>
-            <!-- If you are using circuits from a loaded Logisim library, those components are considered to be <q>black boxes</q>: The contents of the library's circuits are not included in the unique and recursive counts. -->
-            如果您使用加载的 Logisim-evolution 库中的电路，这些组件将被视为<q>黑匣子</q>：库电路的内容不包含在唯一和递归计数中。
-          </p>
-        </dd>
-        <dt>
-          <!-- <strong>Options...</strong> -->
-          <strong>选项...</strong>
-        </dt>
-        <dd>
-          <p>
-            <!-- Opens the <a href="../opts/index.html">Project Options window</a>. -->
-            打开<a href="../opts/index.html">项目选项窗口</a>。
-          </p>
-        </dd>
-      </dl>
-      <p>
-        <!-- <b>Next:</b> <a href="simulate.html">The Simulate menu</a>. -->
-        <b>下一步：</b> <a href="simulate.html">模拟菜单</a>。
-      </p>
-    </div>
-  </body>
+    <dt>
+     <!-- <strong>Edit Circuit Layout</strong> -->
+     <strong>
+      编辑电路布局
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Switches to allow you to edit the layout of components, which determines how the circuit works. This menu item is usually disabled since you will usually be editing the layout anyway. -->
+      允许您编辑组件布局的开关，这决定了电路的工作方式。 该菜单项通常被禁用，因为您通常会编辑布局。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Edit Circuit Appearance</strong> -->
+     <strong>
+      编辑电路外观
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Switches to allow you to edit how the circuit will be represented when it is used as a subcircuit within another circuit. But this menu option allows you to draw a different appearance for the subcircuit. -->
+      允许您编辑电路在另一个电路中用作子电路时的表示方式的开关。 但此菜单选项允许您为子电路绘制不同的外观。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Analyze Circuit</strong> -->
+     <strong>
+      分析电路
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- <b class=note>Note:</b> This menu is disabled by default in the current version of logisim-evolution. It can be reactivated by command line options.<br> -->
+      <b class="note">
+       注意：
+      </b>
+      在当前版本的 logisim-evolution 中默认禁用此菜单。 它可以通过命令行选项重新激活。
+      <br/>
+      <br/>
+      <!-- Computes a truth table and Boolean expressions corresponding to the current circuit, displaying them in <a href="../analyze/index.html">the Combinational Analysis window</a>. The analysis process will only be valid for combinational circuits. A full description of the analysis process is described <a href="../analyze/ana-open.html">in the Combinational Analysis section</a>. -->
+      计算与当前电路相对应的真值表和布尔表达式，并将其显示在
+      <a href="../analyze/index.html">
+       组合分析窗口
+      </a>
+      中。 分析过程仅对组合电路有效。
+      <a href="../analyze/ana-open.html">
+       组合分析部分
+      </a>
+      描述了分析过程的完整描述。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Get Circuit Statistics</strong> -->
+     <strong>
+      获取电路统计数据
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Shows a dialog containing statistics about components used by the currently viewed circuit. The dialog includes a table with five columns: -->
+      显示一个对话框，其中包含有关当前查看的电路所使用的组件的统计信息。 该对话框包括一个包含五列的表格：
+     </p>
+     <p align="center">
+      <img alt="#########" src="../../../img-guide/project-stat.png"/>
+     </p>
+     <ul>
+      <!-- <li>Component: The name of the component. -->
+      <li>
+       组件：组件的名称。
+      </li>
+      <!-- <li>Library: The name of the library from which the component came. -->
+      <li>
+       库：组件所在库的名称。
+      </li>
+      <!-- <li>Simple: The number of times that component appears directly within the viewed circuit. -->
+      <li>
+       简单：该组件直接出现在所查看电路中的次数。
+      </li>
+      <!-- <li>Unique: The number of times that component appears in the circuit's hierarchy, where each subcircuit within the hierarchy is counted only once. -->
+      <li>
+       唯一：该组件出现在电路层次结构中的次数，其中层次结构中的每个子电路仅计算一次。
+      </li>
+      <!-- <li>Recursive: The number of times that component appears in the circuit's hierarchy, where we count each subcircuit as many times as it appears in the hierarchy. -->
+      <li>
+       递归：组件出现在电路层次结构中的次数，其中我们计算每个子电路在层次结构中出现的次数。
+      </li>
+     </ul>
+     <p>
+      <!-- The distinction between "Unique" and "Recursive" is easiest to explain by considering the 4:1 multiplexer built using three 2:1 multiplexers as in the <a href="../subcirc/sub-using.html">Using subcircuits</a> section. The 2:1 multiplexer contains two AND gates (and the 4:1 circuit includes none), so the "Unique" count of AND gates would be 2; but if you were to build the 4:1 multiplexer using this diagram, you would actually need 2 AND gates for each of the three 2:1 multiplexers, so the "Recursive" count is 6. -->
+      “唯一”和“递归”之间的区别最容易解释，通过考虑使用三个 2:1 多路复用器构建的 4:1 多路复用器，如
+      <a href="../subcirc/sub-using.html">
+       使用子电路
+      </a>
+      部分。 2:1 多路复用器包含两个 AND 门（4:1 电路不包含任何 AND 门），因此 AND 门的“唯一”计数将为 2； 但如果您要使用此图构建 4:1 多路复用器，则实际上三个 2:1 多路复用器中的每一个都需要 2 个与门，因此“递归”计数为 6。
+     </p>
+     <p>
+      <!-- If you are using circuits from a loaded Logisim library, those components are considered to be <q>black boxes</q>: The contents of the library's circuits are not included in the unique and recursive counts. -->
+      如果您使用加载的 Logisim-evolution 库中的电路，这些组件将被视为
+      <q>
+       黑匣子
+      </q>
+      ：库电路的内容不包含在唯一和递归计数中。
+     </p>
+    </dd>
+    <dt>
+     <!-- <strong>Options...</strong> -->
+     <strong>
+      选项...
+     </strong>
+    </dt>
+    <dd>
+     <p>
+      <!-- Opens the <a href="../opts/index.html">Project Options window</a>. -->
+      打开
+      <a href="../opts/index.html">
+       项目选项窗口
+      </a>
+      。
+     </p>
+    </dd>
+   </dl>
+   <p>
+    <!-- <b>Next:</b> <a href="simulate.html">The Simulate menu</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="simulate.html">
+     模拟菜单
+    </a>
+    。
+   </p>
+  </div>
+ </body>
 </html>

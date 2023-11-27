@@ -188,15 +188,31 @@
 			<tocitem target="prefs_cmdline" text="命令行" />
 
 		</tocitem>
-		<tocitem target="opts" text="Project options">
-			<tocitem target="opts_simulate" text="The Simulation tab" />
-			<tocitem target="opts_toolbar" text="The Toolbar tab" />
-			<tocitem target="opts_mouse" text="The Mouse tab" />
+		<!-- <tocitem target="opts" text="Project options"> -->
+		<tocitem target="opts" text="项目选项">
+
+			<!-- <tocitem target="opts_simulate" text="The Simulation tab" /> -->
+			<tocitem target="opts_simulate" text="模拟选项卡" />
+
+			<!-- <tocitem target="opts_toolbar" text="The Toolbar tab" /> -->
+			<tocitem target="opts_toolbar" text="工具栏选项卡" />
+
+			<!-- <tocitem target="opts_mouse" text="The Mouse tab" /> -->
+			<tocitem target="opts_mouse" text="鼠标选项卡" />
+
 		</tocitem>
-		<tocitem target="prop" text="Value propagation">
-			<tocitem target="prop_delays" text="Gate delays" />
-			<tocitem target="prop_oscillate" text="Oscillation errors" />
-			<tocitem target="prop_shortcome" text="Shortcomings" />
+		<!-- <tocitem target="prop" text="Value propagation"> -->
+		<tocitem target="prop" text="价值传播">
+
+			<!-- <tocitem target="prop_delays" text="Gate delays" /> -->
+			<tocitem target="prop_delays" text="登机门延迟" />
+
+			<!-- <tocitem target="prop_oscillate" text="Oscillation errors" /> -->
+			<tocitem target="prop_oscillate" text="振荡误差" />
+
+			<!-- <tocitem target="prop_shortcome" text="Shortcomings" /> -->
+			<tocitem target="prop_shortcome" text="缺点" />
+
 		</tocitem>
 <!--		<tocitem target="hdl-ip" text="HDL IP">
 			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />

@@ -1,110 +1,171 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2021-05-15T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- The Layout tab -->
-      布局选项卡
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- The Layout tab -->
-        布局选项卡
-      </h1>
-      <p align="center">
-        <img src="../../../img-guide/prefs-layout.png" alt="#########">
-      </p>
-      <p>
-        <!-- This tab includes preferences affecting the behavior of the circuit layout editor. -->
-        此选项卡包括影响电路布局编辑器行为的首选项。
-      </p>
-      <ul>
-	    <li>
-		<!-- <p><b>Use anti-aliasing:</b> Activates the anti-aliasing effect of the graphics card. Tracks will appear smoother on the screen or print. -->
-      <p><b>使用抗锯齿：</b>激活显卡的抗锯齿效果。 曲目在屏幕或打印上将显得更加平滑。
-		</p>
-		</li>
-		<li>
-		  <!-- <b>Uses a colorblind color scheme</b> Thread colours will be changed to accommodate people with colour perception difficulties. -->
-      <b>使用色盲配色方案</b> 线程颜色将发生变化，以适应色觉困难的人。
-		</li>
-        <li>
-          <p>
-            <!-- <b>Show attribute halo:</b> Specifies whether to draw the pale teal oval around the component or tool whose attributes are currently displayed in the attribute table. -->
-            <b>显示属性光环：</b>指定是否在属性当前显示在属性表中的组件或工具周围绘制浅青色椭圆形。
-          </p>
-          <p align="center">
-            <img class="notscal" src="../../../../img-guide/layouttab0.png" alt="#########">
-          </p>
-        </li>
-		<li>
-		  <!-- <b>Uses animated icons</b> -->
-      <b>使用动画图标</b>
-		</li>
-        <li>
-          <p>
-            <!-- <b>Show component tips:</b> Specifies whether to display the "tool tips" that will temporarily appear when the mouse hovers over components supporting them. For example, if you hover over a subcircuit component's pin, it will display the label of the corresponding pin within the subcircuit. Hovering over one of the ends of a splitter will tell you the bits to which that end corresponds. In addition, all components in the Plexers, Arithmetic, and Memory libraries will provide information about their inputs and outputs via tips. -->
-            <b>显示组件提示：</b>指定是否显示当鼠标悬停在支持它们的组件上时临时出现的“工具提示”。 例如，如果将鼠标悬停在子电路组件的引脚上，它将显示子电路内相应引脚的标签。 将鼠标悬停在分离器的一端会告诉您该端对应的位。 此外，Plexers、Arithmetic 和 Memory 库中的所有组件都将通过提示提供有关其输入和输出的信息。
-          </p>
-        </li>
-        <li>
-          <p>
-            <!-- <b>Keep connections while moving:</b> Indicates whether Logisim should add new wires when components are moved to preserve their connections. By default this is on — though it can be turned off temporarily by pressing the <b class="tkeybd">shift</b> key while moving the components. If this box is unchecked, then the default will be not to add wires during a move — though you can turn it on temporarily by pressing the <b class="tkeybd">shift</b> key during the move. -->
-            <b>移动时保持连接：</b>指示 Logisim 是否应在移动组件以保留其连接时添加新电线。 默认情况下，此功能处于打开状态 - 尽管可以通过在移动组件时按 <b class="tkeybd">shift</b> 键来暂时关闭它。 如果未选中此框，则默认情况下不会在移动过程中添加连线 - 尽管您可以在移动过程中按 <b class="tkeybd">shift</b> 键暂时打开它。
-          </p>
-        </li>
-        <li>
-          <p>
-            <!-- <b>Show Ghosts while adding:</b> When checked, and when a tool for adding a new component is selected, a light-gray outline of a component to be added is drawn as the mouse moves across the canvas. For example, if you select the AND gate tool and move the mouse into the window (without pressing the mouse's button), a gray outline of an AND gate will display where the AND gate will appear when the mouse is clicked. -->
-            <b>添加时显示重影：</b>选中后，当选择添加新组件的工具时，当鼠标在画布上移动时，会绘制要添加的组件的浅灰色轮廓。 例如，如果选择“与”门工具并将鼠标移动到窗口中（不按鼠标按钮），则单击鼠标时“与”门将出现的位置将显示“与”门的灰色轮廓。
-          </p>
-        </li>
-		<li>
-		  <!-- <b>Use fixed size circuit boxes:</b> The default appearance of the sub-circuits in new logisim-evolution projects will be proposed with a standard size and if not adapted according to the circuit. It is also possible to do this on a case-by-case basis with the property of the sub-circuits.  <b class=propertie>Use fixed boxe size</b>		  -->
-      <b>使用固定尺寸的电路盒：</b>新的 logisim-evolution 项目中子电路的默认外观将采用标准尺寸，如果不根据电路进行调整。 也可以根据子电路的特性根据具体情况来完成此操作。 <b class=propertie>使用固定盒子大小</b>
-
-		</li>
-		<li>
-		  <!-- <b>Use the new input and output symbols:</b> the new input and output symbols will be used <img class="icontxt" src="../../../../icons/1616/toolpinoutput.png"> <img class="icontxt" src="../../../../icons/1616/toolpinoutput.png" alt="#########" > if the box is checked, otherwise the Logisim- Classique input and output symbols will be used <img class="icontxt" src="../../../../img-guide/pininput.png" alt="#########"> <img class="icontxt"  src="../../../../img-guide/pinoutput.png" alt="#########">. A pop-up window will ask you whether you should convert them to the current circuit diagram. -->
-      <b>使用新的输入和输出符号：</b>将使用新的输入和输出符号<img class="icontxt" src="../../../../icons/1616/toolpinoutput.png"> <img class="icontxt" src="../../../../icons/1616/toolpinoutput.png" alt="#########" >  if 该框被选中，否则将使用 Logisim-Classique 输入和输出符号 <img class="icontxt" src="../../../../img-guide/pininput.png" alt="#########"> <img class="icontxt"  src="../../../../img-guide/pinoutput.png" alt="#########">。 弹出窗口会询问您是否应该将它们转换为当前电路图。
-		</li>
-		<li>
-		  <!-- <b>Use the default appearance provided by:</b> The appearance of certain circuits, for example memories, will be proposed according to the versions of logisism :Logisim- Classique, Logisim-HolyCross ,Logisim-Evolution  -->
-      <b>使用以下提供的默认外观：</b>某些电路的外观，例如存储器，将根据logisism的版本提出：Logisim-Classique、Logisim-HolyCross、Logisim-Evolution
-		</li>
-        <li>
-          <p>
-            <!-- <b>After adding component:</b> By default, after adding each individual component, Logisim switches back to the Edit Tool to allow you to move components around and to add wires. The drop-down box allows you to change this behavior so that Logisim stays at the same tool for adding more of the same component, until you yourself opt to choose the Edit Tool. (This was Logisim's default behavior prior to Logisim 2.3.0. While more intuitive, this behavior requires more mouse movement to switch between tools.) -->
-            <b>添加组件后：</b>默认情况下，添加每个单独的组件后，Logisim 会切换回编辑工具，以允许您移动组件并添加连线。 下拉框允许您更改此行为，以便 Logisim 保持使用相同的工具来添加更多相同的组件，直到您自己选择选择编辑工具。 （这是 Logisim 2.3.0 之前的 Logisim 的默认行为。虽然更直观，但此行为需要更多的鼠标移动才能在工具之间切换。）
-          </p>
-        </li>
-        <li>
-          <p>
-            <!-- <b>First radix when wire poked:</b> Configures how values are displayed when a wire is clicked using the Poke Tool. Clicking a wire displays temporarily the value, staying until the user clicks elsewhere in the circuit. -->
-            <b>戳线时的第一个基数：</b>配置使用戳工具单击线时如何显示值。 单击电线会暂时显示该值，直到用户单击电路中的其他位置为止。
-          </p>
-         <p align="center">
-            <img class="notscal" src="../../../../img-guide/layouttab1.png" alt="#########">
-          </p>
-        </li>
-        <li>
-          <p>
-            <!-- <b>Second radix when wire poked:</b> Configures the second part of how wire values are displayed. -->
-            <b>线戳时的第二个基数：</b> 配置线值显示方式的第二部分。
-          </p>
-        </li>
-      </ul>
-    </div>
-    <p>
-      <!-- <b>Next:</b> <a href="pref-exp.html">The Experimental tab</a>. -->
-      <b>下一步：</b> <a href="pref-exp.html">实验选项卡</a>。
-    </p>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-11-27T17:01:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- The Layout tab -->
+   布局选项卡
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- The Layout tab -->
+    布局选项卡
+   </h1>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/prefs-layout.png"/>
+   </p>
+   <p>
+    <!-- This tab includes preferences affecting the behavior of the circuit layout editor. -->
+    此选项卡包括影响电路布局编辑器行为的首选项。
+   </p>
+   <ul>
+    <li>
+     <!-- <p><b>Use anti-aliasing:</b> Activates the anti-aliasing effect of the graphics card. Tracks will appear smoother on the screen or print. -->
+     <p>
+      <b>
+       使用抗锯齿：
+      </b>
+      激活显卡的抗锯齿效果。 曲目在屏幕或打印上将显得更加平滑。
+     </p>
+    </li>
+    <li>
+     <!-- <b>Uses a colorblind color scheme</b> Thread colours will be changed to accommodate people with colour perception difficulties. -->
+     <b>
+      使用色盲配色方案
+     </b>
+     线程颜色将发生变化，以适应色觉困难的人。
+    </li>
+    <li>
+     <p>
+      <!-- <b>Show attribute halo:</b> Specifies whether to draw the pale teal oval around the component or tool whose attributes are currently displayed in the attribute table. -->
+      <b>
+       显示属性光环：
+      </b>
+      指定是否在属性当前显示在属性表中的组件或工具周围绘制浅青色椭圆形。
+     </p>
+     <p align="center">
+      <img alt="#########" class="notscal" src="../../../../img-guide/layouttab0.png"/>
+     </p>
+    </li>
+    <li>
+     <!-- <b>Uses animated icons</b> -->
+     <b>
+      使用动画图标
+     </b>
+    </li>
+    <li>
+     <p>
+      <!-- <b>Show component tips:</b> Specifies whether to display the "tool tips" that will temporarily appear when the mouse hovers over components supporting them. For example, if you hover over a subcircuit component's pin, it will display the label of the corresponding pin within the subcircuit. Hovering over one of the ends of a splitter will tell you the bits to which that end corresponds. In addition, all components in the Plexers, Arithmetic, and Memory libraries will provide information about their inputs and outputs via tips. -->
+      <b>
+       显示组件提示：
+      </b>
+      指定是否显示当鼠标悬停在支持它们的组件上时临时出现的“工具提示”。 例如，如果将鼠标悬停在子电路组件的引脚上，它将显示子电路内相应引脚的标签。 将鼠标悬停在分离器的一端会告诉您该端对应的位。 此外，Plexers、Arithmetic 和 Memory 库中的所有组件都将通过提示提供有关其输入和输出的信息。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <b>Keep connections while moving:</b> Indicates whether Logisim should add new wires when components are moved to preserve their connections. By default this is on — though it can be turned off temporarily by pressing the <b class="tkeybd">shift</b> key while moving the components. If this box is unchecked, then the default will be not to add wires during a move — though you can turn it on temporarily by pressing the <b class="tkeybd">shift</b> key during the move. -->
+      <b>
+       移动时保持连接：
+      </b>
+      指示 Logisim 是否应在移动组件以保留其连接时添加新电线。 默认情况下，此功能处于打开状态 - 尽管可以通过在移动组件时按
+      <b class="tkeybd">
+       shift
+      </b>
+      键来暂时关闭它。 如果未选中此框，则默认情况下不会在移动过程中添加连线 - 尽管您可以在移动过程中按
+      <b class="tkeybd">
+       shift
+      </b>
+      键暂时打开它。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <b>Show Ghosts while adding:</b> When checked, and when a tool for adding a new component is selected, a light-gray outline of a component to be added is drawn as the mouse moves across the canvas. For example, if you select the AND gate tool and move the mouse into the window (without pressing the mouse's button), a gray outline of an AND gate will display where the AND gate will appear when the mouse is clicked. -->
+      <b>
+       添加时显示重影：
+      </b>
+      选中后，当选择添加新组件的工具时，当鼠标在画布上移动时，会绘制要添加的组件的浅灰色轮廓。 例如，如果选择“与”门工具并将鼠标移动到窗口中（不按鼠标按钮），则单击鼠标时“与”门将出现的位置将显示“与”门的灰色轮廓。
+     </p>
+    </li>
+    <li>
+     <!-- <b>Use fixed size circuit boxes:</b> The default appearance of the sub-circuits in new logisim-evolution projects will be proposed with a standard size and if not adapted according to the circuit. It is also possible to do this on a case-by-case basis with the property of the sub-circuits.  <b class=propertie>Use fixed boxe size</b>		  -->
+     <b>
+      使用固定尺寸的电路盒：
+     </b>
+     新的 logisim-evolution 项目中子电路的默认外观将采用标准尺寸，如果不根据电路进行调整。 也可以根据子电路的特性根据具体情况来完成此操作。
+     <b class="propertie">
+      使用固定盒子大小
+     </b>
+    </li>
+    <li>
+     <!-- <b>Use the new input and output symbols:</b> the new input and output symbols will be used <img class="icontxt" src="../../../../icons/1616/toolpinoutput.png"> <img class="icontxt" src="../../../../icons/1616/toolpinoutput.png" alt="#########" > if the box is checked, otherwise the Logisim- Classique input and output symbols will be used <img class="icontxt" src="../../../../img-guide/pininput.png" alt="#########"> <img class="icontxt"  src="../../../../img-guide/pinoutput.png" alt="#########">. A pop-up window will ask you whether you should convert them to the current circuit diagram. -->
+     <b>
+      使用新的输入和输出符号：
+     </b>
+     将使用新的输入和输出符号
+     <img class="icontxt" src="../../../../icons/1616/toolpinoutput.png"/>
+     <img alt="#########" class="icontxt" src="../../../../icons/1616/toolpinoutput.png"/>
+     if 该框被选中，否则将使用 Logisim-Classique 输入和输出符号
+     <img alt="#########" class="icontxt" src="../../../../img-guide/pininput.png"/>
+     <img alt="#########" class="icontxt" src="../../../../img-guide/pinoutput.png"/>
+     。 弹出窗口会询问您是否应该将它们转换为当前电路图。
+    </li>
+    <li>
+     <!-- <b>Use the default appearance provided by:</b> The appearance of certain circuits, for example memories, will be proposed according to the versions of logisism :Logisim- Classique, Logisim-HolyCross ,Logisim-Evolution  -->
+     <b>
+      使用以下提供的默认外观：
+     </b>
+     某些电路的外观，例如存储器，将根据logisism的版本提出：Logisim-Classique、Logisim-HolyCross、Logisim-Evolution
+    </li>
+    <li>
+     <p>
+      <!-- <b>After adding component:</b> By default, after adding each individual component, Logisim switches back to the Edit Tool to allow you to move components around and to add wires. The drop-down box allows you to change this behavior so that Logisim stays at the same tool for adding more of the same component, until you yourself opt to choose the Edit Tool. (This was Logisim's default behavior prior to Logisim 2.3.0. While more intuitive, this behavior requires more mouse movement to switch between tools.) -->
+      <b>
+       添加组件后：
+      </b>
+      默认情况下，添加每个单独的组件后，Logisim 会切换回编辑工具，以允许您移动组件并添加连线。 下拉框允许您更改此行为，以便 Logisim 保持使用相同的工具来添加更多相同的组件，直到您自己选择选择编辑工具。 （这是 Logisim 2.3.0 之前的 Logisim 的默认行为。虽然更直观，但此行为需要更多的鼠标移动才能在工具之间切换。）
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <b>First radix when wire poked:</b> Configures how values are displayed when a wire is clicked using the Poke Tool. Clicking a wire displays temporarily the value, staying until the user clicks elsewhere in the circuit. -->
+      <b>
+       戳线时的第一个基数：
+      </b>
+      配置使用戳工具单击线时如何显示值。 单击电线会暂时显示该值，直到用户单击电路中的其他位置为止。
+     </p>
+     <p align="center">
+      <img alt="#########" class="notscal" src="../../../../img-guide/layouttab1.png"/>
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <b>Second radix when wire poked:</b> Configures the second part of how wire values are displayed. -->
+      <b>
+       线戳时的第二个基数：
+      </b>
+      配置线值显示方式的第二部分。
+     </p>
+    </li>
+   </ul>
+  </div>
+  <p>
+   <!-- <b>Next:</b> <a href="pref-exp.html">The Experimental tab</a>. -->
+   <b>
+    下一步：
+   </b>
+   <a href="pref-exp.html">
+    实验选项卡
+   </a>
+   。
+  </p>
+ </body>
 </html>
