@@ -65,7 +65,7 @@ public class SubtractorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     } else {
       contents.add("""
           assign n_bIn = ~borrowIn;
-	  assign {s_carry,result} = dataA + ~(dataB) + n_bIn;
+          assign {s_carry,result} = dataA + ~(dataB) + n_bIn;
           assign borrowOut        = ~s_carry;
           """);
     }
