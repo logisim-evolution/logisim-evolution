@@ -1,83 +1,133 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="fr">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-07-21T17:28:04.263000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="fr">
-    <title>
-      Fenêtre Vecteur de test
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Fenêtre Vecteur de test
-      </h1>
-      <p>
-        Depuis la fenêtre Vecteur de test vous pouvez charger un vecteur de test à partir d'un fichier et Logisim lancera des tests sur le circuit actuel. Il n'y a qu'une seule fenêtre de vecteur de test pour le projet et la table changera pour refléter le circuit simulé dans la fenêtre du projet. Notez cependant que le module vecteur de test exécute une copie séparée du simulateur de circuit et n'interfère donc pas avec la simulation dans la fenêtre du projet et n'est pas influencé par cette simulation.
-      </p>
-      <p>
-        Pour l'exemple, nous allons tester le circuit ci-dessous. Ce circuit donne les résultats de cinq fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une porte AND.
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/vector-test.png" alt="#########">
-      </p>
-      <p>
-        Le fichier de test ressemble à ceci.
-      </p>
-      <blockquote>
-        <pre>A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-18-24T16:18:05" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Fenêtre Vecteur de test -->
+   测试向量窗口
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Fenêtre Vecteur de test -->
+    测试向量窗口
+   </h1>
+   <p>
+    <!-- Depuis la fenêtre Vecteur de test vous pouvez charger un vecteur de test à partir d'un fichier et Logisim lancera des tests sur le circuit actuel. Il n'y a qu'une seule fenêtre de vecteur de test pour le projet et la table changera pour refléter le circuit simulé dans la fenêtre du projet. Notez cependant que le module vecteur de test exécute une copie séparée du simulateur de circuit et n'interfère donc pas avec la simulation dans la fenêtre du projet et n'est pas influencé par cette simulation. -->
+    在“测试向量”窗口中，您可以从文件加载测试向量，Logisim 将在当前电路上启动测试。 该项目只有一个测试矢量窗口，表格将发生变化以反映项目窗口中的模拟电路。 但请注意，测试矢量模块运行电路模拟器的单独副本，因此不会干扰项目窗口中的模拟，也不受其影响。
+   </p>
+   <p>
+    <!-- Pour l'exemple, nous allons tester le circuit ci-dessous. Ce circuit donne les résultats de cinq fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une porte AND. -->
+    例如，我们将测试下面的电路。 该电路从两个输入给出五个逻辑函数的结果。 它有一个错误，底部与非门应该是与门。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/vector-test.png"/>
+   </p>
+   <p>
+    <!-- Le fichier de test ressemble à ceci. -->
+    测试文件如下所示。
+   </p>
+   <blockquote>
+    <pre>A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
 0 0 1 1 0 0 0 00
 0 1 0 1 1 1 0 01
 1 0 0 1 1 1 0 10
 1 1 0 0 0 1 1 11
 </pre>
-      </blockquote>
-      <p>
-        Pour lancer le test, sélectionnez le menu <b class="menu">|&nbsp; Simulation &nbsp;|</b>→<b class="menu">|&nbsp; Vecteur de test &nbsp;|</b> puis utilisez le bouton <b class="button">"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat.
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/vector-result.png" alt="#########">
-      </p>
-      <p>
-        Toute sortie incorrecte sera signalée en rouge. Les lignes avec des sorties incorrectes sont triées en haut de la fenêtre.
-      </p>
-      <p>
-        Le format de fichier des vecteurs est simple. La première ligne contient les entêtes de colonnes qui correspondent au nom des signaux. Si la largeur de bit est plus grande que 1 alors il est nécessaire de le spécifier entre des crochets. Exemple <tt>C[8]</tt>. Les données de chaque situation de test sont dans les lignes suivantes. Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire.
-      </p>
-      <p>
-        Les lignes restantes répertorient chaque valeur séparée par un espace ou une tabulation. Les valeurs peuvent être en hexadécimales, octal, binaire ou décimal signé. Les valeurs hexadécimal doivent avoir le préfixe <b><tt>"0x"</tt></b>. Les valeurs octales doivent avoir le préfixe <b><tt>"0o"</tt></b>. Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales ne doivent pas avoir de zéro en tête et peuvent avoir un signe négatif.
-      </p>
-      <p>
-        Voici un exemple de fichier vectoriel de test:
-      </p>
-      <blockquote>
-        <pre>#test vector for adder 4bit 
+   </blockquote>
+   <p>
+    <!-- Pour lancer le test, sélectionnez le menu <b class="menu">|&nbsp; Simulation &nbsp;|</b>→<b class="menu">|&nbsp; Vecteur de test &nbsp;|</b> puis utilisez le bouton <b class="button">"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat. -->
+    要开始测试，请选择
+    <b class="menu">
+     |  模拟  |
+    </b>
+    →
+    <b class="menu">
+     |  测试矢量  |
+    </b>
+    ，然后使用
+    <b class="button">
+     “加载矢量”
+    </b>
+    按钮。 选择您构建的向量文件。 模拟立即运行并显示结果表格。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/vector-result.png"/>
+   </p>
+   <p>
+    <!-- Toute sortie incorrecte sera signalée en rouge. Les lignes avec des sorties incorrectes sont triées en haut de la fenêtre. -->
+    任何不正确的输出都会被标记为红色。 输出不正确的行将排序到窗口顶部。
+   </p>
+   <p>
+    <!-- Le format de fichier des vecteurs est simple. La première ligne contient les entêtes de colonnes qui correspondent au nom des signaux. Si la largeur de bit est plus grande que 1 alors il est nécessaire de le spécifier entre des crochets. Exemple <tt>C[8]</tt>. Les données de chaque situation de test sont dans les lignes suivantes. Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire. -->
+    矢量的文件格式很简单。 第一行包含与信号名称相对应的列标题。 如果位宽大于1，则需要在方括号中指定。 示例
+    <tt>
+     C[8]
+    </tt>
+    。 每种测试情况的​​数据在以下几行中。 空行将被忽略。 “#”字符之后的任何内容都是注释。
+   </p>
+   <p>
+    <!-- Les lignes restantes répertorient chaque valeur séparée par un espace ou une tabulation. Les valeurs peuvent être en hexadécimales, octal, binaire ou décimal signé. Les valeurs hexadécimal doivent avoir le préfixe <b><tt>"0x"</tt></b>. Les valeurs octales doivent avoir le préfixe <b><tt>"0o"</tt></b>. Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales ne doivent pas avoir de zéro en tête et peuvent avoir un signe négatif. -->
+    其余行列出由空格或制表符分隔的每个值。 值可以是十六进制、八进制、二进制或有符号十进制。 十六进制值必须具有前缀
+    <b>
+     <tt>
+      “0x”
+     </tt>
+    </b>
+    。 八进制值必须具有前缀
+    <b>
+     <tt>
+      “0o”
+     </tt>
+    </b>
+    。 二进制和十进制数通过位数来区分：二进制值的位数必须始终与列的宽度完全相同； 小数值不得有前导零，并且可以有负号。
+   </p>
+   <p>
+    <!-- Voici un exemple de fichier vectoriel de test: -->
+    以下是测试向量文件的示例：
+   </p>
+   <blockquote>
+    <pre>#test vector for adder 4bit 
 A[4] B[4] O[4] C_in C_out 
 0000 0000 0000 0 0 
 0000 0000 0001 1 0 
 0xf 0xf 0000 1 0 
 </pre>
-      </blockquote>
-      <p>
-        Selon la représentation des valeurs hexadécimales, octales ou binaires, la lettre minuscule <tt>"x"</tt> permet de spécifier quatre, trois ou un bits «sans importance». Par exemple a valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec deux fois quatre bits non spécifiés. De tels jokers ne peuvent pas être utilisés en notation décimale.
-      </p>
-      <p>
-        <strong>Ligne de commande:</strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit:
-      </p>
-      <blockquote>
-        <div class="forcode">
-          <tt>java -jar logisim-evolution.jar -testvector &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</tt>
-        </div>
-      </blockquote>
-      <p>
-        Le résultat d'un test réussi sera dans la sortie standard (stdout) celui-ci par exemple
-      </p>
-      <blockquote>
-        <pre>Loading test vector "testv1b.txt" ...
+   </blockquote>
+   <p>
+    <!-- Selon la représentation des valeurs hexadécimales, octales ou binaires, la lettre minuscule <tt>"x"</tt> permet de spécifier quatre, trois ou un bits «sans importance». Par exemple a valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec deux fois quatre bits non spécifiés. De tels jokers ne peuvent pas être utilisés en notation décimale. -->
+    根据十六进制、八进制或二进制值的表示形式，小写字母
+    <tt>
+     “x”
+    </tt>
+    允许指定四个、三个或一个“不重要”位。 例如，值 101xx 是一个五位二进制值，最后两位未指定，而 0x1ax5 是一个十六进制值，其中四位未指定位的两倍。 此类通配符不能用于十进制表示法。
+   </p>
+   <p>
+    <!-- <strong>Ligne de commande:</strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit: -->
+    <strong>
+     命令行：
+    </strong>
+    为了便于自动化测试，可以从命令行运行测试向量功能，如下所示：
+   </p>
+   <blockquote>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-evolution.jar -testvector &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;
+     </tt>
+    </div>
+   </blockquote>
+   <p>
+    <!-- Le résultat d'un test réussi sera dans la sortie standard (stdout) celui-ci par exemple -->
+    成功测试的结果将在标准输出 (stdout) 中，例如
+   </p>
+   <blockquote>
+    <pre>Loading test vector "testv1b.txt" ...
 Execution 4 vecteurs ...
 1 
 2 
@@ -86,9 +136,10 @@ Execution 4 vecteurs ...
 
 Réussit: 4, Erreur: 0
           </pre>
-      </blockquote>et en cas d'échec
-      <blockquote>
-        <pre>Loading test vector "testv1a.txt" ...
+   </blockquote>
+   et en cas d'échec
+   <blockquote>
+    <pre>Loading test vector "testv1a.txt" ...
 Exécution 4 vecteurs ...
 1 
 2 
@@ -101,15 +152,23 @@ Exécution 4 vecteurs ...
 
 Réussit: 2, Erreur: 2
           </pre>
-      </blockquote>Note: Dans la sortie erreur (stderr) on lira ceci :
-      <blockquote>
-        <pre>Error on test vector 3:
+   </blockquote>
+   Note: Dans la sortie erreur (stderr) on lira ceci :
+   <blockquote>
+    <pre>Error on test vector 3:
 Error on test vector 4:
        </pre>
-      </blockquote>
-      <p>
-        <b>Suite:</b> <a href="../index.html">User's Guide</a>.
-      </p>
-    </div>
-  </body>
+   </blockquote>
+   <p>
+    <!-- <b>Suite:</b> <a href="../index.html">User's Guide</a>. -->
+    <b>
+     继续：
+    </b>
+    <a href="../index.html">
+     用户指南
+    </a>
+    。
+   </p>
+  </div>
+ </body>
 </html>

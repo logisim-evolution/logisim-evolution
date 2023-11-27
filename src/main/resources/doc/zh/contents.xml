@@ -124,11 +124,18 @@
 			<tocitem target="log_timetable" text="时刻表窗口" />
 
 		</tocitem>
-		<tocitem target="verify" text="Command-line verification">
-			<tocitem target="verify_sub" text="Substituting libraries" />
-			<tocitem target="verify_other" text="Other verification options" />
-			<tocitem target="verify_multi" text="Testing multiple files" />
-			<tocitem target="verify_test" text="Test Vectors" />
+		<!-- <tocitem target="verify" text="Command-line verification"> -->
+		<tocitem target="verify" text="命令行验证">
+
+			<!-- <tocitem target="verify_sub" text="Substituting libraries" /> -->
+			<tocitem target="verify_sub" text="替换库" />
+			<!-- <tocitem target="verify_other" text="Other verification options" /> -->
+			<tocitem target="verify_other" text="其他验证选项" />
+			<!-- <tocitem target="verify_multi" text="Testing multiple files" /> -->
+			<tocitem target="verify_multi" text="测试多个文件" />
+			<!-- <tocitem target="verify_test" text="Test Vectors" /> -->
+			<tocitem target="verify_test" text="测试载体" />
+
 		</tocitem>
 		<tocitem target="menu" text="Menu reference">
 			<tocitem target="menu_file" text="The File menu" />
