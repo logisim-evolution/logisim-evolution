@@ -7,52 +7,62 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Shortcomings
+      <!-- Shortcomings -->
+      缺点
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        Shortcomings
+        <!-- Shortcomings -->
+        缺点
       </h1>
       <p>
-        Logisim's propagation algorithm is more than sophisticated enough for almost all educational purposes; but it is not sophisticated enough for industrial circuit design. In order from most damning to least damning, the shortcomings of Logisim's propagation technique include:
+        <!-- Logisim's propagation algorithm is more than sophisticated enough for almost all educational purposes; but it is not sophisticated enough for industrial circuit design. In order from most damning to least damning, the shortcomings of Logisim's propagation technique include: -->
+        Logisim-evolution 的传播算法对于几乎所有教育目的来说都足够复杂； 但对于工业电路设计来说还不够复杂。 按照从最严重到最不严重的顺序，Logisim-evolution 传播技术的缺点包括：
       </p>
       <ul>
         <li>
           <p>
-            Except for the issue of gate delays, Logisim does not particularly concern itself with timing issues. It is very idealized, so that a pair of NOR gates in an S-R latch configuration will toggle in lockstep infinitely, rather than the circuit eventually settle into a stable state.
+            <!-- Except for the issue of gate delays, Logisim does not particularly concern itself with timing issues. It is very idealized, so that a pair of NOR gates in an S-R latch configuration will toggle in lockstep infinitely, rather than the circuit eventually settle into a stable state. -->
+            除了门延迟问题外，Logisim-evolution 并不特别关心时序问题。 这是非常理想化的，因此 S-R 锁存器配置中的一对 NOR 门将无限地锁步切换，而不是电路最终进入稳定状态。
           </p>
         </li>
         <li>
           <p>
-            Logisim cannot simulate subcircuits whose pins sometimes behave as inputs and sometimes behave as outputs. Components built using Java can have such pins, though: Within the built-in libraries, the Memory library's RAM circuit contains a D pin that can act both as an input and as an output.
+            <!-- Logisim cannot simulate subcircuits whose pins sometimes behave as inputs and sometimes behave as outputs. Components built using Java can have such pins, though: Within the built-in libraries, the Memory library's RAM circuit contains a D pin that can act both as an input and as an output. -->
+            Logisim-evolution 无法模拟其引脚有时充当输入、有时充当输出的子电路。 不过，使用 Java 构建的组件可以具有这样的引脚： 在内置库中，内存库的 RAM 电路包含一个 D 引脚，可以充当输入和输出。
           </p>
         </li>
         <li>
           <p>
-            Logisim cuts off its simulation after a fixed number of iterations assuming that there is an oscillation error. Conceivably, a large circuit that does not oscillate could lead to trouble.
+            <!-- Logisim cuts off its simulation after a fixed number of iterations assuming that there is an oscillation error. Conceivably, a large circuit that does not oscillate could lead to trouble. -->
+            Logisim-evolution 假设存在振荡误差，在固定次数的迭代后停止模拟。 可以想象，不振荡的大电路可能会导致麻烦。
           </p>
         </li>
         <li>
           <p>
-            Logisim does nothing with respect to discriminating between voltage levels: A bit can be only on, off, unspecified, or error.
+            <!-- Logisim does nothing with respect to discriminating between voltage levels: A bit can be only on, off, unspecified, or error. -->
+            Logisim-evolution 在区分电压电平方面不做任何事情：一个位只能是开、关、未指定或错误。
           </p>
         </li>
         <li>
           <p>
-            There are additional shortcomings, too, that I have omitted because they are so obscure that if you were aware of them, it would be obvious that Logisim comes nowhere close to that level. As an extreme example, I have a friend who works for a major chip manufacturer, and his job is to worry about "bubbles" in chips' nanometer-wide wires growing and leading to random disconnection.
+            <!-- There are additional shortcomings, too, that I have omitted because they are so obscure that if you were aware of them, it would be obvious that Logisim comes nowhere close to that level. As an extreme example, I have a friend who works for a major chip manufacturer, and his job is to worry about "bubbles" in chips' nanometer-wide wires growing and leading to random disconnection. -->
+            还有其他缺点，我已经省略了，因为它们太晦涩难懂，如果您意识到它们，很明显 Logisim-evolution 远未达到这个水平。 举一个极端的例子，我有一个朋友在一家大型芯片制造商工作，他的工作就是担心芯片纳米宽的电线中的“气泡”生长并导致随机断开。
           </p>
         </li>
         <li>
           <p>
-            Even beyond this, I am not a circuit design specialist; thus, there may well be errors in the propagation technique of which I am not aware. I welcome corrections from experts.
+            <!-- Even beyond this, I am not a circuit design specialist; thus, there may well be errors in the propagation technique of which I am not aware. I welcome corrections from experts. -->
+            除此之外，我也不是电路设计专家； 因此，传播技术中很可能存在我不知道的错误。 欢迎专家指正。
           </p>
         </li>
       </ul>
       <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+        <!-- <b>Next:</b> <a href="../index.html">User's Guide</a>. -->
+        <b>下一步：</b><a href="../index.html">用户指南</a>。
       </p>
     </div>
   </body>

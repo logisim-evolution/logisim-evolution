@@ -7,93 +7,121 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      JAR Libraries
+      <!-- JAR Libraries -->
+      JAR 库
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        JAR Libraries
+        <!-- JAR Libraries -->
+        JAR 库
       </h1>
       <h2>
-        Using JAR libraries
+        <!-- Using JAR libraries -->
+        使用 JAR 库
       </h2>
       <p>
-        Logisim has two types of circuit components: those that are designed within Logisim as combinations of components, and those primitive components that are written in Java. Logisim circuits are easier to design, but they cannot support sophisticated user interaction, and they are relatively inefficient.
+        <!-- Logisim has two types of circuit components: those that are designed within Logisim as combinations of components, and those primitive components that are written in Java. Logisim circuits are easier to design, but they cannot support sophisticated user interaction, and they are relatively inefficient. -->
+        Logisim-evolution 有两种类型的电路组件：在 Logisim-evolution 中设计为组件组合的电路组件，以及用 Java 编写的原始组件。 Logisim-evolution电路更容易设计，但无法支持复杂的用户交互，而且效率相对较低。
       </p>
       <p>
-        Logisim contains a fairly thorough collection of built-in libraries of Java components, but it can also load additional libraries written by you or others. Once you have downloaded a library, you can import it into your project by right-clicking the project in the explorer pane (the top line) and choosing Load Library &gt; JAR Library.... Then, Logisim will prompt you to select the JAR file. (In some circumstances, you may have to type the starting class name when prompted, which would be provided by the library developer. However, a developer typically configures the JAR library to avoid this (by including a <q>manifest</q> file in the JAR with a Library-Class attribute specifying the main class name).)
+        <!-- Logisim contains a fairly thorough collection of built-in libraries of Java components, but it can also load additional libraries written by you or others. Once you have downloaded a library, you can import it into your project by right-clicking the project in the explorer pane (the top line) and choosing Load Library &gt; JAR Library.... Then, Logisim will prompt you to select the JAR file. (In some circumstances, you may have to type the starting class name when prompted, which would be provided by the library developer. However, a developer typically configures the JAR library to avoid this (by including a <q>manifest</q> file in the JAR with a Library-Class attribute specifying the main class name).) -->
+        Logisim-evolution 包含相当全面的 Java 组件内置库集合，但它也可以加载您或其他人编写的其他库。 下载库后，您可以通过右键单击资源管理器窗格（顶行）中的项目并选择“加载库”>“将其导入到您的项目中”。 JAR 库....然后，Logisim-evolution 将提示您选择 JAR 文件。 （在某些情况下，您可能必须在提示时输入起始类名，该名称将由库开发人员提供。但是，开发人员通常会配置 JAR 库以避免这种情况（通过包含 <q>manifest</q> JAR 中的文件，带有指定主类名称的 Library-Class 属性）。）
       </p>
       <h2>
-        Creating JAR libraries
+        <!-- Creating JAR libraries -->
+        创建 JAR 库
       </h2>
       <p>
-        The remainder of this section is dedicated to a series of thoroughly commented examples illustrating how to develop Logisim libraries yourself. You should only attempt this if you're an experienced Java programmer. You will find the documentation beyond these examples fairly meager.
+        <!-- The remainder of this section is dedicated to a series of thoroughly commented examples illustrating how to develop Logisim libraries yourself. You should only attempt this if you're an experienced Java programmer. You will find the documentation beyond these examples fairly meager. -->
+        本节的其余部分专门介绍一系列经过彻底注释的示例，说明如何自行开发 Logisim-evolution 库。 仅当您是一位经验丰富的 Java 程序员时才应该尝试此操作。 您会发现这些示例之外的文档相当少。
       </p>
       <p>
-        You can download a JAR file that allows these examples to be imported into Logisim via the Logisim Web site's Links section. That JAR file also contains the source code contained in these examples.
+        <!-- You can download a JAR file that allows these examples to be imported into Logisim via the Logisim Web site's Links section. That JAR file also contains the source code contained in these examples. -->
+        您可以下载一个 JAR 文件，通过 Logisim-evolution 网站的链接部分将这些示例导入到 Logisim-evolution 中。 该 JAR 文件还包含这些示例中包含的源代码。
       </p>
       <dl>
         <dt>
-          <a href="incr.html">Gray Code Incrementer</a>
+          <!-- <a href="incr.html">Gray Code Incrementer</a> -->
+          <a href="incr.html">格雷码增量器</a>
+
         </dt>
         <dd>
           <p>
-            Illustrates the essential components of any component type using a simple example of a component that takes a multibit input and computes the next Gray code value following it.
+            <!-- Illustrates the essential components of any component type using a simple example of a component that takes a multibit input and computes the next Gray code value following it. -->
+            使用一个简单的组件示例说明任何组件类型的基本组件，该组件采用多位输入并计算其后的下一个格雷码值。
           </p>
         </dd>
         <dt>
-          <a href="library.html">Library Class</a>
+          <!-- <a href="library.html">Library Class</a> -->
+          <a href="library.html">图书馆课</a>
+
         </dt>
         <dd>
           <p>
-            Illustrates how to define a library. This is the entry point for any JAR file - the class whose name the user enters when loading the JAR library.
+            <!-- Illustrates how to define a library. This is the entry point for any JAR file - the class whose name the user enters when loading the JAR library. -->
+            说明如何定义库。 这是任何 JAR 文件的入口点 - 用户在加载 JAR 库时输入其名称的类。
           </p>
         </dd>
         <dt>
-          <a href="simpctr.html">Simple Gray Code Counter</a>
+          <!-- <a href="simpctr.html">Simple Gray Code Counter</a> -->
+          <a href="simpctr.html">简单格雷码计数器</a>
+
         </dt>
         <dd>
           <p>
-            Illustrates how to make a component that has internal state, in particular an 8-bit counter that iterates through Gray codes.
+            <!-- Illustrates how to make a component that has internal state, in particular an 8-bit counter that iterates through Gray codes. -->
+            说明如何制作具有内部状态的组件，特别是通过格雷码迭代的 8 位计数器。
           </p>
         </dd>
         <dt>
-          <a href="counter.html">Gray Code Counter</a>
+          <!-- <a href="counter.html">Gray Code Counter</a> -->
+          <a href="counter.html">格雷码计数器</a>
         </dt>
         <dd>
           <p>
-            Demonstrates a complete, fairly sophisticated component with which the user can interact. It implements a Gray code counter where the number of bits remembered is customizable, and where the user can edit the current value by clicking on it with the Poke Tool and typing a value.
+            <!-- Demonstrates a complete, fairly sophisticated component with which the user can interact. It implements a Gray code counter where the number of bits remembered is customizable, and where the user can edit the current value by clicking on it with the Poke Tool and typing a value. -->
+            演示一个完整的、相当复杂的组件，用户可以与之交互。 它实现了一个格雷码计数器，其中记住的位数是可定制的，用户可以通过使用 Poke 工具单击它并键入一个值来编辑当前值。
           </p>
         </dd>
         <dt>
-          <a href="guide.html">Guidelines</a>
+          <!-- <a href="guide.html">Guidelines</a> -->
+          <a href="guide.html">指南</a>
         </dt>
         <dd>
-          General information for those developing third-party libraries.
+          <!-- General information for those developing third-party libraries. -->
+          为开发第三方库的人员提供的一般信息。
         </dd>
       </dl>
       <h2>
         License
       </h2>
       <p>
-        The code in this example JAR library is released under the MIT license, a more permissive license than the GPL, under which the rest of Logisim is released.
+        <!-- The code in this example JAR library is released under the MIT license, a more permissive license than the GPL, under which the rest of Logisim is released. -->
+        此示例 JAR 库中的代码是在 MIT 许可证下发布的，该许可证比 GPL 更宽松，Logisim 的其余部分也是在 GPL 下发布的。
       </p>
+
       <p>
         Copyright (c) 2009, Carl Burch.
       </p>
       <p>
-        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+        <!-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: -->
+        特此免费授予获得本软件和相关文档文件（“软件”）副本的任何人不受限制地使用本软件，包括但不限于使用、复制、修改、合并的权利 、发布、分发、再许可和/或销售软件的副本，并允许向其提供软件的人员这样做，但须满足以下条件：
       </p>
       <p>
-        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+        <!-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+        上述版权声明和本许可声明应包含在本软件的所有副本或主要部分中。
       </p>
       <p>
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        <!-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+        本软件按“原样”提供，不提供任何明示或暗示的保证，包括但不限于适销性、特定用途的适用性和不侵权的保证。 在任何情况下，作者或版权持有者均不对因本软件或本软件中的使用或其他交易而产生或与之相关的任何索赔、损害或其他责任负责，无论是合同、侵权行为还是其他行为。 软件。
       </p>
       <p>
-        <b>Next:</b> <a href="incr.html">Gray Code Incrementer</a>.
+        <!-- <b>Next:</b> <a href="incr.html">Gray Code Incrementer</a>. -->
+        <b>下一节:</b> <a href="incr.html">格雷码增量器</a>.
+
       </p>
     </div>
   </body>

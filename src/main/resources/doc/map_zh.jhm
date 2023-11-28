@@ -99,7 +99,7 @@
 	<mapID target="menu_printertab"     url="zh/html/guide/menu/printertab.html" />
 	<mapID target="menu_assembly"       url="zh/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="zh/html/guide/about/index.html" />
-	<mapID target="about_gpl"           url="gpl.html" />
+	<mapID target="about_gpl"           url="zh/html/guide/about/gpl.html" />
 	
 <!-- for testing and validation -->	
 	<mapID target="test_hmlcss"         url="zh/testhtml/index.html" />

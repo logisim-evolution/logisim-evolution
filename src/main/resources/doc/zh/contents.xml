@@ -220,15 +220,31 @@
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
 		</tocitem>-->
-		<tocitem target="jar" text="JAR libraries">
-			<tocitem target="jar_incr" text="Gray Code Incrementer" />
-			<tocitem target="jar_library" text="Library Class" />
-			<tocitem target="jar_simpctr" text="Simple Gray Code Counter" />
-			<tocitem target="jar_counter" text="Gray Code Counter" />
-			<tocitem target="jar_guide" text="Guidelines" />
+		<!-- <tocitem target="jar" text="JAR libraries"> -->
+		<tocitem target="jar" text="JAR 库">
+
+			<!-- <tocitem target="jar_incr" text="Gray Code Incrementer" /> -->
+			<tocitem target="jar_incr" text="格雷码增量器" />
+
+			<!-- <tocitem target="jar_library" text="Library Class" /> -->
+			<tocitem target="jar_library" text="图书馆课" />
+
+			<!-- <tocitem target="jar_simpctr" text="Simple Gray Code Counter" /> -->
+			<tocitem target="jar_simpctr" text="简单格雷码计数器" />
+
+			<!-- <tocitem target="jar_counter" text="Gray Code Counter" /> -->
+			<tocitem target="jar_counter" text="格雷码计数器" />
+
+			<!-- <tocitem target="jar_guide" text="Guidelines" /> -->
+			<tocitem target="jar_guide" text="指南" />
+
 		</tocitem>
-		<tocitem target="about" text="About the program">
-			<tocitem target="about_gpl" text="GNU General Public License" />
+		<!-- <tocitem target="about" text="About the program"> -->
+		<tocitem target="about" text="关于该计划">
+
+			<!-- <tocitem target="about_gpl" text="GNU General Public License" /> -->
+			<tocitem target="about_gpl" text="GNU 通用公共许可证" />
+
 			<!-- <tocitem target="about_gpl_en" text="GNU General Public License (en)"/> -->
 		</tocitem>
 	</tocitem>

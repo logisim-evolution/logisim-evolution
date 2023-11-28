@@ -7,17 +7,20 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      The Simulation tab
+      <!-- The Simulation tab -->
+      模拟选项卡
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        The Simulation tab
+        <!-- The Simulation tab -->
+        模拟选项卡
       </h1>
       <p>
-        The Simulation tab allows configuration of the algorithm used for simulating circuits. These parameters apply to all circuits being simulated in the same window, even for circuits that exist in other libraries loaded within the project.
+        <!-- The Simulation tab allows configuration of the algorithm used for simulating circuits. These parameters apply to all circuits being simulated in the same window, even for circuits that exist in other libraries loaded within the project. -->
+        “模拟”选项卡允许配置用于模拟电路的算法。 这些参数适用于在同一窗口中仿真的所有电路，甚至适用于项目中加载的其他库中存在的电路。
       </p>
       <p align="center">
         <img src="../../../img-guide/opts-simulate.png" alt="#########">
@@ -25,27 +28,30 @@
       <ul>
         <li>
           <p>
-            The <strong>The memories are initialized in a random state</strong> check box allows to determine how RAMs, registers (D, T, J-K) and counters are initialized. If the box is unchecked, all components will be initialized with a 0.<br>
-            In the other case, when you open the project, drop a component or reset the simulation; register-type components will be initialized with an undefined value and RAMs will be initialized with a random series.
+            <!-- The <strong>The memories are initialized in a random state</strong> check box allows to determine how RAMs, registers (D, T, J-K) and counters are initialized. If the box is unchecked, all components will be initialized with a 0.<br>            In the other case, when you open the project, drop a component or reset the simulation; register-type components will be initialized with an undefined value and RAMs will be initialized with a random series. -->
+            <strong>存储器在随机状态下初始化</strong>复选框允许确定 RAM、寄存器（D、T、J-K）和计数器的初始化方式。 如果未选中该框，则所有组件都将初始化为 0。<br> 在另一种情况下，当您打开项目、删除组件或重置模拟时； 寄存器类型组件将使用未定义的值进行初始化，RAM 将使用随机序列进行初始化。
           </p>
         </li>
         <li>
           <p>
-            The <strong>Iterations Until Oscillation</strong> drop-down menu specifies how long to simulate a circuit before deciding that it is oscillating. The number represents the number of clicks of the internal hidden clock (a simple gate takes just one click). The default of 1,000 is good enough for almost all purposes, even for large circuits.<br>
-            But you may want to increase the number of iterations if you are working with a circuit where Logisim reports false oscillations. This is unlikely to be a problem in practice, but one such a circumstance is a circuit that incorporates many of the below latch circuits with random noise enabled. You may want to decrease the number of iterations if you are working with a circuit that is prone to oscillating and you are using an unusually slow processor.
+            <!-- The <strong>Iterations Until Oscillation</strong> drop-down menu specifies how long to simulate a circuit before deciding that it is oscillating. The number represents the number of clicks of the internal hidden clock (a simple gate takes just one click). The default of 1,000 is good enough for almost all purposes, even for large circuits.<br>  But you may want to increase the number of iterations if you are working with a circuit where Logisim reports false oscillations. This is unlikely to be a problem in practice, but one such a circumstance is a circuit that incorporates many of the below latch circuits with random noise enabled. You may want to decrease the number of iterations if you are working with a circuit that is prone to oscillating and you are using an unusually slow processor. -->
+            <strong>振荡前的迭代次数</strong>下拉菜单指定在确定电路振荡之前模拟电路的时间。 该数字代表内部隐藏时钟的点击次数（简单的门只需点击一下）。 默认值 1,000 足以满足几乎所有目的，即使对于大型电路也是如此。<br>但是，如果您正在使用 Logisim-evolution 报告错误振荡的电路，您可能需要增加迭代次数。 这在实践中不太可能成为问题，但这种情况之一是包含许多以下启用随机噪声的锁存器电路的电路。 如果您使用的电路容易振荡并且使用的处理器速度异常慢，您可能需要减少迭代次数。
           </p>
         </li>
         <li>
           <p>
-            The <strong>Gate Output When Undefined</strong> drop-down menu configures how the built-in logic gates behave when some inputs are unconnected or are floating. By default, Logisim ignores such inputs, allowing a gate to work over fewer inputs than it was designed for. However, in real life, a gate will behave unpredictably in such a situation, and so this drop-down menu allows one to change the gates so that they treat such disconnected inputs as errors.
+            <!-- The <strong>Gate Output When Undefined</strong> drop-down menu configures how the built-in logic gates behave when some inputs are unconnected or are floating. By default, Logisim ignores such inputs, allowing a gate to work over fewer inputs than it was designed for. However, in real life, a gate will behave unpredictably in such a situation, and so this drop-down menu allows one to change the gates so that they treat such disconnected inputs as errors. -->
+            <strong>未定义时的门输出</strong>下拉菜单配置当某些输入未连接或浮动时内置逻辑门的行为方式。 默认情况下，Logisim-evolution 会忽略此类输入，从而允许门处理比设计数量更少的输入。 然而，在现实生活中，门在这种情况下会表现得不可预测，因此这个下拉菜单允许人们更改门，以便它们将这种断开连接的输入视为错误。
           </p>
         </li>
         <li>
           <p>
-            The <strong>Add Noise To Component Delays</strong> checkbox allows you to enable or disable the random noise that is added to the delays of components. The internal simulation uses a hidden clock for its simulation, and to provide a somewhat realistic simulation, each component (excluding wires and splitters) has a delay between when it receives an input and when it emits an output. If this option is enabled, Logisim will occassionally (about once every 16 component reactions) make a component take one click longer than normal.
+            <!-- The <strong>Add Noise To Component Delays</strong> checkbox allows you to enable or disable the random noise that is added to the delays of components. The internal simulation uses a hidden clock for its simulation, and to provide a somewhat realistic simulation, each component (excluding wires and splitters) has a delay between when it receives an input and when it emits an output. If this option is enabled, Logisim will occassionally (about once every 16 component reactions) make a component take one click longer than normal. -->
+            <strong>向组件延迟添加噪声</strong>复选框允许您启用或禁用添加到组件延迟的随机噪声。 内部模拟使用隐藏时钟进行模拟，并且为了提供某种程度的真实模拟，每个组件（不包括电线和分离器）在接收输入和发出输出之间都有一个延迟。 如果启用此选项，Logisim-evolution 偶尔会（大约每 16 个组件反应一次）使某个组件花费的单击时间比正常情况长。
           </p>
           <p>
-            I recommend keeping this option off, as this technique does introduce rare errors with normal circuits.
+            <!-- I recommend keeping this option off, as this technique does introduce rare errors with normal circuits. -->
+            我建议关闭此选项，因为此技术确实会在正常电路中引入罕见的错误。
           </p>
         </li>
 		<!--
@@ -57,7 +63,8 @@
 		-->
       </ul>
       <p>
-        <b>Next:</b> <a href="opts-toolbar.html">The Toolbar tab</a>.
+        <!-- <b>Next:</b> <a href="opts-toolbar.html">The Toolbar tab</a>. -->
+        <b>下一步：</b> <a href="opts-toolbar.html">工具栏选项卡</a>。
       </p>
     </div>
   </body>
