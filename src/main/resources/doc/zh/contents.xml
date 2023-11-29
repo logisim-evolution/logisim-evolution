@@ -202,10 +202,10 @@
 
 		</tocitem>
 		<!-- <tocitem target="prop" text="Value propagation"> -->
-		<tocitem target="prop" text="价值传播">
+		<tocitem target="prop" text="值传播">
 
 			<!-- <tocitem target="prop_delays" text="Gate delays" /> -->
-			<tocitem target="prop_delays" text="登机门延迟" />
+			<tocitem target="prop_delays" text="门延迟" />
 
 			<!-- <tocitem target="prop_oscillate" text="Oscillation errors" /> -->
 			<tocitem target="prop_oscillate" text="振荡误差" />
@@ -214,14 +214,22 @@
 			<tocitem target="prop_shortcome" text="缺点" />
 
 		</tocitem>
-<!--		<tocitem target="hdl-ip" text="HDL IP">
-			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
-			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
-			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
-			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
-		</tocitem>-->
+		<tocitem target="hdl-ip" text="HDL IP">
+			<!-- <tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" /> -->
+			<tocitem target="hdl-ip_vhdlcomp" text="VHDL实体" />
+
+			<!-- <tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" /> -->
+			<tocitem target="hdl-ip_questa" text="配置Questa高级模拟器" />
+
+			<!-- <tocitem target="hdl-ip_simulation" text="VHDL simulator" /> -->
+			<tocitem target="hdl-ip_simulation" text="VHDL模拟器" />
+
+			<!-- <tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" /> -->
+			<tocitem target="hdl-ip_testbenchs" text="模拟测试台" />
+
+		</tocitem>
 		<!-- <tocitem target="jar" text="JAR libraries"> -->
-		<tocitem target="jar" text="JAR 库">
+		<tocitem target="jar" text="JAR库">
 
 			<!-- <tocitem target="jar_incr" text="Gray Code Incrementer" /> -->
 			<tocitem target="jar_incr" text="格雷码增量器" />
