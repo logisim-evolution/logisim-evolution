@@ -257,73 +257,185 @@
 		</tocitem>
 	</tocitem>
 	
-	<tocitem target="libs" text="Library Reference">
-		<tocitem target="wiring" text="Wiring library">
-			<tocitem target="wiring_splitter" text="Splitter" image="icon_splitter" />
-			<tocitem target="wiring_pin" text="Pin" image="icon_pin" />
-			<tocitem target="wiring_probe" text="Probe" image="icon_probe" />
-			<tocitem target="wiring_tunnel" text="Tunnel" image="icon_tunnel" />
-			<tocitem target="wiring_pull" text="Pull Resistor" image="icon_pull" />
-			<tocitem target="wiring_clock" text="Clock" image="icon_clock" />
-			<tocitem target="wiring_por" text="Power On Reset" image="icon_por" />
-			<tocitem target="wiring_constant" text="Constant" image="icon_constant" />
-			<tocitem target="wiring_const01" text="Power/Ground" image="icon_const01" />
-			<tocitem target="wiring_notconnect" text="Do not connect" image="icon_notconnect" />
-			<tocitem target="wiring_transist" text="Transistor" image="icon_transist" />
-			<tocitem target="wiring_transmis" text="Transmission Gate" image="icon_transmis" />
-			<tocitem target="wiring_extender" text="Bit Extender" image="icon_extender" />
+	<!-- <tocitem target="libs" text="Library Reference"> -->
+	<tocitem target="libs" text="电路元件库参考手册">
+
+		<!-- <tocitem target="wiring" text="Wiring library"> -->
+		<tocitem target="wiring" text="线路">
+
+			<!-- <tocitem target="wiring_splitter" text="Splitter" image="icon_splitter" /> -->
+			<tocitem target="wiring_splitter" text="分线器" image="icon_splitter" />
+
+			<!-- <tocitem target="wiring_pin" text="Pin" image="icon_pin" /> -->
+			<tocitem target="wiring_pin" text="引脚" image="icon_pin" />
+
+			<!-- <tocitem target="wiring_probe" text="Probe" image="icon_probe" /> -->
+			<tocitem target="wiring_probe" text="探针" image="icon_probe" />
+
+			<!-- <tocitem target="wiring_tunnel" text="Tunnel" image="icon_tunnel" /> -->
+			<tocitem target="wiring_tunnel" text="隧道" image="icon_tunnel" />
+
+			<!-- <tocitem target="wiring_pull" text="Pull Resistor" image="icon_pull" /> -->
+			<tocitem target="wiring_pull" text="上/下拉电阻" image="icon_pull" />
+			<!-- <tocitem target="wiring_clock" text="Clock" image="icon_clock" /> -->
+			<tocitem target="wiring_clock" text="时钟" image="icon_clock" />
+			<!-- <tocitem target="wiring_por" text="Power On Reset" image="icon_por" /> -->
+
+			<tocitem target="wiring_por" text="开启复位" image="icon_por" />
+			<!-- <tocitem target="wiring_constant" text="Constant" image="icon_constant" /> -->
+			<tocitem target="wiring_constant" text="常量" image="icon_constant" />
+
+			<!-- <tocitem target="wiring_const01" text="Power/Ground" image="icon_const01" /> -->
+			<tocitem target="wiring_const01" text="电源/接地" image="icon_const01" />
+
+			<!-- <tocitem target="wiring_notconnect" text="Do not connect" image="icon_notconnect" /> -->
+			<tocitem target="wiring_notconnect" text="请勿连接" image="icon_notconnect" />
+
+			<!-- <tocitem target="wiring_transist" text="Transistor" image="icon_transist" /> -->
+			<tocitem target="wiring_transist" text="晶体管" image="icon_transist" />
+
+			<!-- <tocitem target="wiring_transmis" text="Transmission Gate" image="icon_transmis" /> -->
+			<tocitem target="wiring_transmis" text="传输门" image="icon_transmis" />
+
+			<!-- <tocitem target="wiring_extender" text="Bit Extender" image="icon_extender" /> -->
+			<tocitem target="wiring_extender" text="位扩展器" image="icon_extender" />
+
 		</tocitem>
-		<tocitem target="gates" text="Gates library">
-			<tocitem target="gates_not" text="NOT Gate" image="icon_not" />
-			<tocitem target="gates_buffer" text="Buffer" image="icon_buffer" />
-			<tocitem target="gates_basic" text="AND/OR/NAND/NOR Gate" image="icon_basic" />
-			<tocitem target="gates_xor" text="XOR/XNOR/Even/Odd Gate" image="icon_xor" />
-			<tocitem target="gates_controlled" text="Controlled Buffer/Inverter" image="icon_controlled" />
-			<tocitem target="gates_PLA" text="Programmable logic array" image="icon_pla" />
+		<!-- <tocitem target="gates" text="Gates library"> -->
+		<tocitem target="gates" text="逻辑门">
+
+			<!-- <tocitem target="gates_not" text="NOT Gate" image="icon_not" /> -->
+			<tocitem target="gates_not" text="非门" image="icon_not" />
+
+			<!-- <tocitem target="gates_buffer" text="Buffer" image="icon_buffer" /> -->
+			<tocitem target="gates_buffer" text="缓冲器" image="icon_buffer" />
+
+			<!-- <tocitem target="gates_basic" text="AND/OR/NAND/NOR Gate" image="icon_basic" /> -->
+			<tocitem target="gates_basic" text="与门、或门、与非门、或非门" image="icon_basic" />
+
+			<!-- <tocitem target="gates_xor" text="XOR/XNOR/Even/Odd Gate" image="icon_xor" /> -->
+			<tocitem target="gates_xor" text="异或门、同或门、奇校验、偶校验" image="icon_xor" />
+
+			<!-- <tocitem target="gates_controlled" text="Controlled Buffer/Inverter" image="icon_controlled" /> -->
+			<tocitem target="gates_controlled" text="受控缓冲器、受控逆变器" image="icon_controlled" />
+
+			<!-- <tocitem target="gates_PLA" text="Programmable logic array" image="icon_pla" /> -->
+			<tocitem target="gates_PLA" text="PLA(可编程逻辑阵列)" image="icon_pla" />
 		</tocitem>
-		<tocitem target="plexers" text="Plexers library">
-			<tocitem target="plexers_mux" text="Multiplexer" image="icon_mux" />
-			<tocitem target="plexers_demux" text="Demultiplexer" image="icon_demux" />
-			<tocitem target="plexers_decoder" text="Decoder" image="icon_decoder" />
-			<tocitem target="plexers_priencod" text="Priority Encoder" image="icon_priencod" />
-			<tocitem target="plexers_selector" text="Bit Selector" image="icon_selector" />
+		<!-- <tocitem target="plexers" text="Plexers library"> -->
+		<tocitem target="plexers" text="复用器">
+
+			<!-- <tocitem target="plexers_mux" text="Multiplexer" image="icon_mux" /> -->
+			<tocitem target="plexers_mux" text="多路复用器" image="icon_mux" />
+
+			<!-- <tocitem target="plexers_demux" text="Demultiplexer" image="icon_demux" /> -->
+			<tocitem target="plexers_demux" text="多路分离器" image="icon_demux" />
+
+			<!-- <tocitem target="plexers_decoder" text="Decoder" image="icon_decoder" /> -->
+			<tocitem target="plexers_decoder" text="译码器" image="icon_decoder" />
+
+			<!-- <tocitem target="plexers_priencod" text="Priority Encoder" image="icon_priencod" /> -->
+			<tocitem target="plexers_priencod" text="优先级编码器" image="icon_priencod" />
+
+			<!-- <tocitem target="plexers_selector" text="Bit Selector" image="icon_selector" /> -->
+			<tocitem target="plexers_selector" text="位选择器" image="icon_selector" />
+
 		</tocitem>
-		<tocitem target="arith" text="Arithmetic library">
-			<tocitem target="arith_adder" text="Adder" image="icon_adder" />
-			<tocitem target="arith_subtractor" text="Subtractor" image="icon_subtractor" />
-			<tocitem target="arith_multiplier" text="Multiplier" image="icon_multiplier" />
-			<tocitem target="arith_divider" text="Divider" image="icon_divider" />
-			<tocitem target="arith_negator" text="Negator" image="icon_negator" />
-			<tocitem target="arith_comparator" text="Comparator" image="icon_comparator" />
-			<tocitem target="arith_shifter" text="Shifter" image="icon_shifter" />
-			<tocitem target="arith_bitadder" text="Bit Adder" image="icon_bitadder" />
-			<tocitem target="arith_bitfinder" text="Bit Finder" image="icon_bitfinder" />
+		<!-- <tocitem target="arith" text="Arithmetic library"> -->
+		<tocitem target="arith" text="运算器">
+
+			<!-- <tocitem target="arith_adder" text="Adder" image="icon_adder" /> -->
+			<tocitem target="arith_adder" text="加法器" image="icon_adder" />
+
+			<!-- <tocitem target="arith_subtractor" text="Subtractor" image="icon_subtractor" /> -->
+			<tocitem target="arith_subtractor" text="减法器" image="icon_subtractor" />
+
+			<!-- <tocitem target="arith_multiplier" text="Multiplier" image="icon_multiplier" /> -->
+			<tocitem target="arith_multiplier" text="乘法器" image="icon_multiplier" />
+
+			<!-- <tocitem target="arith_divider" text="Divider" image="icon_divider" /> -->
+			<tocitem target="arith_divider" text="除法器" image="icon_divider" />
+			<!-- <tocitem target="arith_negator" text="Negator" image="icon_negator" /> -->
+			<tocitem target="arith_negator" text="求补器" image="icon_negator" />
+
+			<!-- <tocitem target="arith_comparator" text="Comparator" image="icon_comparator" /> -->
+			<tocitem target="arith_comparator" text="比较器" image="icon_comparator" />
+
+			<!-- <tocitem target="arith_shifter" text="Shifter" image="icon_shifter" /> -->
+			<tocitem target="arith_shifter" text="移位器" image="icon_shifter" />
+
+			<!-- <tocitem target="arith_bitadder" text="Bit Adder" image="icon_bitadder" /> -->
+			<tocitem target="arith_bitadder" text="位加法器" image="icon_bitadder" />
+
+			<!-- <tocitem target="arith_bitfinder" text="Bit Finder" image="icon_bitfinder" /> -->
+			<tocitem target="arith_bitfinder" text="位查询器" image="icon_bitfinder" />
+
 		</tocitem>
-		<tocitem target="mem" text="Memory library">
-			<tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" />
-			<tocitem target="mem_register" text="Register" image="icon_register" />
-			<tocitem target="mem_counter" text="Counter" image="icon_counter" />
-			<tocitem target="mem_shiftreg" text="Shift Register" image="icon_shiftreg" />
-			<tocitem target="mem_random" text="Random" image="icon_random" />
+		<!-- <tocitem target="mem" text="Memory library"> -->
+		<tocitem target="mem" text="存储库">
+
+			<!-- <tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" /> -->
+			<tocitem target="mem_flipflops" text="D/T/J-K/S-R 触发器" image="icon_flipflops" />
+
+			<!-- <tocitem target="mem_register" text="Register" image="icon_register" /> -->
+			<tocitem target="mem_register" text="寄存器" image="icon_register" />
+
+			<!-- <tocitem target="mem_counter" text="Counter" image="icon_counter" /> -->
+			<tocitem target="mem_counter" text="计数器" image="icon_counter" />
+
+			<!-- <tocitem target="mem_shiftreg" text="Shift Register" image="icon_shiftreg" /> -->
+			<tocitem target="mem_shiftreg" text="移位寄存器" image="icon_shiftreg" />
+
+			<!-- <tocitem target="mem_random" text="Random" image="icon_random" /> -->
+			<tocitem target="mem_random" text="随机生成器" image="icon_random" />
+
+			<!-- <tocitem target="mem_ram" text="RAM" image="icon_ram" /> -->
 			<tocitem target="mem_ram" text="RAM" image="icon_ram" />
+
 			<tocitem target="mem_rom" text="ROM" image="icon_rom" />
 		</tocitem>
-		<tocitem target="io" text="Input/Output library">
-			<tocitem target="io_button" text="Button" image="icon_button" />
-			<tocitem target="io_DIP" text="DIP Switch" image="icon_dipswitch" />
-			<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
-			<tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" />
+		<!-- <tocitem target="io" text="Input/Output library"> -->
+		<tocitem target="io" text="输入/输出">
+
+			<!-- <tocitem target="io_button" text="Button" image="icon_button" /> -->
+			<tocitem target="io_button" text="按钮" image="icon_button" />
+
+			<!-- <tocitem target="io_DIP" text="DIP Switch" image="icon_dipswitch" /> -->
+			<tocitem target="io_DIP" text="拨码开关" image="icon_dipswitch" />
+
+			<!-- <tocitem target="io_joystick" text="Joystick" image="icon_joystick" /> -->
+			<tocitem target="io_joystick" text="操纵杆" image="icon_joystick" />
+
+			<!-- <tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" /> -->
+			<tocitem target="io_keyboard" text="键盘" image="icon_keyboard" />
+
+			<!-- <tocitem target="io_led" text="LED" image="icon_led" /> -->
 			<tocitem target="io_led" text="LED" image="icon_led" />
-			<tocitem target="io_ledRVB" text="LED RVB" image="icon_rvbled" />
-			<tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" />
-			<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
-			<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
+
+			<!-- <tocitem target="io_ledRVB" text="LED RVB" image="icon_rvbled" /> -->
+			<tocitem target="io_ledRVB" text="LED条" image="icon_rvbled" />
+
+			<!-- <tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" /> -->
+			<tocitem target="io_7seg" text="7段数码管" image="icon_7seg" />
+
+			<!-- <tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" /> -->
+			<tocitem target="io_hexdig" text="十六进制数码显示" image="icon_hexdig" />
+
+			<!-- <tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" /> -->
+			<tocitem target="io_dotmat" text="LED矩阵" image="icon_dotmat" />
+
 			<tocitem target="io_tty" text="TTY" image="icon_tty" />
-<!-- not documented 
-     		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
-			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
-			<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
--->	
+
+     		<!-- <tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" /> -->
+			<!-- <tocitem target="io_Port_IO" text="端口IO" image="icon_Port_IO" /> -->
+
+			<!-- <tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" /> -->
+			<!-- <tocitem target="io_Repetar" text="Reptar本地总线" image="icon_repetar" /> -->
+
+			<!-- <tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" /> -->
+			<!-- <tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" /> -->
+
+	
 		</tocitem>
 <!-- not documented 
 		<tocitem target="ttl" text="TTL">
@@ -363,9 +475,15 @@
 			<tocitem target="base_label" text="Text" image="icon_label" />
 		</tocitem>
 -->
-	<tocitem target="Tests_for_doc" text="Tests for documentation">
-		<tocitem target="test_hmlcss" text="test_hml_css" />
-		<tocitem target="Translation_status" text="Translation status" />
+	<!-- <tocitem target="Tests_for_doc" text="Tests for documentation"> -->
+	<tocitem target="Tests_for_doc" text="文档测试">
+
+		<!-- <tocitem target="test_hmlcss" text="test_hml_css" /> -->
+		<tocitem target="test_hmlcss" text="测试_hml_css" />
+
+		<!-- <tocitem target="Translation_status" text="Translation status" /> -->
+		<tocitem target="Translation_status" text="翻译状态" />
+
 	</tocitem>
   </tocitem>
 </tocitem>
