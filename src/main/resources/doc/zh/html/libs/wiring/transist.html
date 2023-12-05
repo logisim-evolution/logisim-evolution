@@ -7,7 +7,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Transistor
+      <!-- Transistor -->
+      晶体管
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
@@ -16,21 +17,28 @@
       <h1>
         <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" width="32" height="32"> 
 		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" width="32" height="32"> 
-		<em>Transistor</em>
+		<!-- <em>Transistor</em> -->
+    <em>晶体管</em>
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Wiring</a>
+              <!-- <a href="index.html">Wiring</a> -->
+              <a href="index.html">线路</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.7.0
@@ -38,7 +46,8 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
             </td>
             <td valign="top">
               <table>
@@ -68,10 +77,12 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        A transistor has two inputs, called <b>gate</b> and <b>source</b>, and one output, called <b>drain</b>. When diagrammed, the <b>source</b> input and <b>drain</b> output are drawn connected by a plate; Logisim draws an arrowhead to indicate the direction of flow from input to output. The <b>gate</b> input is drawn connected to a plate that is parallel to the plate connecting <b>source</b> to <b>drain</b>.</p>
+        <!-- A transistor has two inputs, called <b>gate</b> and <b>source</b>, and one output, called <b>drain</b>. When diagrammed, the <b>source</b> input and <b>drain</b> output are drawn connected by a plate; Logisim draws an arrowhead to indicate the direction of flow from input to output. The <b>gate</b> input is drawn connected to a plate that is parallel to the plate connecting <b>source</b> to <b>drain</b>.</p> -->
+        晶体管有两个输入，称为<b>栅极</b>和<b>源极</b>，以及一个输出，称为<b>漏极</b>。 绘制图表时，<b>源极</b>输入和<b>漏极</b>输出通过极板连接； Logisim-evolution 绘制箭头来指示从输入到输出的流向。 <b>栅极</b>输入被绘制为连接到一个板，该板与连接<b>源极</b>到<b>漏极</b>的板平行。</p>
 		     <center>
         <table>
           <tbody>
@@ -128,10 +139,12 @@
         </table>
 		</center>
 
-<p>	Logisim supports two types of transistors, with slightly different behaviors described below; the P-type transistor is indicated by a circle connecting the <b>gate</b> input to its plate, while the N-type transistor has no such circle.
+<!-- <p>	Logisim supports two types of transistors, with slightly different behaviors described below; the P-type transistor is indicated by a circle connecting the <b>gate</b> input to its plate, while the N-type transistor has no such circle. -->
+  <p> Logisim-evolution 支持两种类型的晶体管，其行为略有不同，如下所述； P 型晶体管由连接<b>栅极</b>输入与其极板的圆圈表示，而 N 型晶体管则没有这样的圆圈。
       </p>
       <p>
-        Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle) transmits when <b>gate</b> is 1. The behavior is summarized by the following tables.
+        <!-- Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle) transmits when <b>gate</b> is 1. The behavior is summarized by the following tables. -->
+        根据<b>gate</b>处找到的值，<b>source</b>处的值可能会传输到<b>drain</b>； 或者可能没有来自<b>源</b>的连接，因此<b>漏极</b>保持浮动。 发送或断开的决定取决于晶体管的类型： P 型晶体管（用 <b>gate</b> 线上的圆圈表示）在 <b>gate</b> 为 0 时发送，而 N 型晶体管（没有这样的圆圈）在 <b>gate</b> 为 1 时传输。下表总结了该行为。
       </p>
 	  <center>
       <table class="encapsul">
@@ -404,7 +417,8 @@
       </table>
 	  </center>
       <p>
-        Or in summarized form:
+        <!-- Or in summarized form: -->
+        或者总结形式：
       </p>
       <center>
         <table class="encapsul">
@@ -521,88 +535,118 @@
           </tbody>
         </table>
         <p>
-          * If source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>.
+          <!-- * If source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>. -->
+          * 如果源为<b class="uvalue">U</b>，则漏为<b class="uvalue">U</b>； 否则流失是<b class="evalue">E</b>。
         </p>
       </center>
 	 <p>
-        <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p>
+        <!-- <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p> -->
+        <b class=note>注意：</b>由于 Logisim-evolution 使用标记 <b class="uvalue">U</b>（高阻抗/未定义）和 <b class="evalue">E</b> （错误）我在插图中使用了相同的内容，而不是其他文档中更常见的 Z（高阻抗）和 X（错误）</p>
       <p>
-        If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits.
+        <!-- If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits. -->
+        如果<b class="property">数据位</b>属性大于1，则<b>门</b>输入仍然是单个位，但其值同时应用于每个<b >源</b>输入的位。
       </p>
       <p>
-        An N-type transistor behaves very similarly to a <a href="../gates/controlled.html">Controlled Buffer</a>. The primary difference is that a transistor is meant for more basic circuit designs.
+        <!-- An N-type transistor behaves very similarly to a <a href="../gates/controlled.html">Controlled Buffer</a>. The primary difference is that a transistor is meant for more basic circuit designs. -->
+        N 型晶体管的行为与<a href="../gates/controlled.html">受控缓冲器</a>非常相似。 主要区别在于晶体管适用于更基本的电路设计。
       </p>
       <h2>
-        Pins (assuming component faces east, gate line top/left)
+        <!-- Pins (assuming component faces east, gate line top/left) -->
+        引脚（假设元件朝东，栅极线顶部/左侧）
       </h2>
       <dl>
         <dt>
-          West edge (input, bit width matches Data Bits attribute)
+          <!-- West edge (input, bit width matches Data Bits attribute) -->
+          西边（输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The component's <b>source</b> input that will transmit to the output if triggered by the <b>gate</b> input.
+          <!-- The component's <b>source</b> input that will transmit to the output if triggered by the <b>gate</b> input. -->
+          如果由<b>门</b>输入触发，元件的<b>源</b>输入将传输到输出。
         </dd>
         <dt>
-          North edge (input, bit width 1)
+          <!-- North edge (input, bit width 1) -->
+          北边（输入，位宽1）
         </dt>
         <dd>
-          The component's <b>gate</b> input. For P-type transistors, the transistor will transmit if the <b>gate</b> value is <b class="zerov">0</b>; for N-type transistors, this will trigger the transistor if the <b>gate</b> value is <b class="unov">1</b>.
+          <!-- The component's <b>gate</b> input. For P-type transistors, the transistor will transmit if the <b>gate</b> value is <b class="zerov">0</b>; for N-type transistors, this will trigger the transistor if the <b>gate</b> value is <b class="unov">1</b>. -->
+          元件的<b>门</b>输入。 对于P型晶体管，如果<b>gate</b>值为<b class="zerov">0</b>，则晶体管将传输； 对于 N 型晶体管，如果 <b>gate</b> 值为 <b class="unov">1</b>，这将触发晶体管。
         </dd>
         <dt>
-          East edge (output, bit width matches Data Bits attribute)
+          <!-- East edge (output, bit width matches Data Bits attribute) -->
+          东边（输出，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output will be an error value (<b class="evalue">E</b>).
+          <!-- The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output will be an error value (<b class="evalue">E</b>). -->
+          元件的输出，如果由 <b>gate</b> 输入指示，则将与 <b>source</b> 输入匹配，或者如果 <b>gate</b> 输入为负，则将浮动 什么表示否定。 如果 <b>gate</b> 是浮动值 (<b class="uvalue">U</b>) 或错误错误值 (<b class="evalue">E</b>) 值，则 输出将是一个错误值 (<b class="evalue">E</b>)。
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-       When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
+       <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
+       选择或添加元件时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b> 属性和箭头键更改其<b class="propertie">方向</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">Type</b>
+          <!-- <b class="propertie">Type</b> -->
+          <b class="propertie">类型</b>
+
         </dt>
         <dd>
-          Determines whether the transistor is P-type or N-type.
+          <!-- Determines whether the transistor is P-type or N-type. -->
+          确定晶体管是 P 型还是 N 型。
         </dd>
         <dt>
-          <b class="propertie">Facing</b>
+          <!-- <b class="propertie">Facing</b> -->
+          <b class="propertie">方向</b>
+
         </dt>
         <dd>
-          The direction of the component (its output relative to its input).
+          <!-- The direction of the component (its output relative to its input). -->
+          元件的方向（其输出相对于其输入）。
         </dd>
         <dt>
-          <b class="propertie">Gate Location</b>
+          <!-- <b class="propertie">Gate Location</b> -->
+          <b class="propertie">门位置</b>
         </dt>
         <dd>
-          The location of the gate input.
+          <!-- The location of the gate input. -->
+          门输入的位置。
         </dd>
         <dt>
-          <b class="propertie">Data Bits</b>
+          <!-- <b class="propertie">Data Bits</b> -->
+          <b class="propertie">数据位</b>
+
         </dt>
         <dd>
-          The bit width of the component's inputs and outputs.
+          <!-- The bit width of the component's inputs and outputs. -->
+          元件输入和输出的位宽度。
         </dd>
       </dl>
 	  </div>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+        <b>返回</b> <a href="../index.html">电路元件库手册</a>
+
       </p>
     </div>
   </body>

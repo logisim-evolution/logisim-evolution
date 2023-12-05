@@ -7,7 +7,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Pull Resistor
+      <!-- Pull Resistor -->
+      上/下拉电阻
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
@@ -16,21 +17,29 @@
       <h1>
         <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
 		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
-		<em> Pull Resistor</em>
+		<!-- <em> Pull Resistor</em> -->
+    <em> 上/下拉电阻</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Wiring</a>
+              <!-- <a href="index.html">Wiring</a> -->
+              <a href="index.html">线路</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.5.0 (in Base library, moved to Wiring in 2.7.0)
@@ -38,7 +47,8 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
             </td>
             <td valign="top">
               <table>
@@ -72,59 +82,75 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        When connected to a point, this component has an effect only when the value at that point is the floating value (<b class="uvalue">U</b>). In this case, the resistor pulls the wire to which it is connected toward the value indicated in its <b class="propertie">Pull Direction</b> attribute.
+        <!-- When connected to a point, this component has an effect only when the value at that point is the floating value (<b class="uvalue">U</b>). In this case, the resistor pulls the wire to which it is connected toward the value indicated in its <b class="propertie">Pull Direction</b> attribute. -->
+        当连接到一个点时，仅当该点的值为动态值（<b class="uvalue">U</b>）时，该元件才起作用。 在这种情况下，电阻器会将与其连接的电线拉向其<b class="propertie">拉力方向</b>属性中指示的值。
       </p>
       <p>
-        If it is connected to a multiple-bit value, then each bit in the value that is floating is pulled in the direction specified, while the bits that are not floating are left unchanged.
+        <!-- If it is connected to a multiple-bit value, then each bit in the value that is floating is pulled in the direction specified, while the bits that are not floating are left unchanged. -->
+        如果它连接到多位值，则动态值中的每个位都会按指定的方向拉动，而不浮动的位则保持不变。
       </p>
       <h2>
-        Pins
+        <!-- Pins -->
+        引脚
       </h2>
       <p>
-        The resistor has just one pin, which is an output and has a bit width that is derived from whichever component it is connected.
+        <!-- The resistor has just one pin, which is an output and has a bit width that is derived from whichever component it is connected. -->
+        该电阻器只有一个引脚，该引脚是输出端，其位宽源自其所连接的任何组件。
       </p>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
 
       <p>
-        When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute.
+        <!-- When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
+        当选择或添加元件时，箭头键会更改其 <b class="propertie">方向</b> 属性。
       </p>
       <dl>
 	  <div class="attliste">
         <dt>
-           <b class="propertie">Facing</b>
+           <!-- <b class="propertie">Facing</b> -->
+           <b class="propertie">方向</b>
+
         </dt>
         <dd>
-          The direction in which the component's pin lies from component's center.
+          <!-- The direction in which the component's pin lies from component's center. -->
+          元件引脚距元件中心的方向。
         </dd>
         <dt>
-           <b class="propertie">Pull Direction</b>
+           <!-- <b class="propertie">Pull Direction</b> -->
+           <b class="propertie">拉动方向</b>
         </dt>
         <dd>
-          Specifies the value to which a floating value should be pulled. This could be <b class="zerov">0</b>, <b class="unov">1</b>, or the error value (<b class="evalue">E</b>).
+          <!-- Specifies the value to which a floating value should be pulled. This could be <b class="zerov">0</b>, <b class="unov">1</b>, or the error value (<b class="evalue">E</b>). -->
+          指定应将动态值拉至的值。 这可能是 <b class="zerov">0</b>、<b class="unov">1</b> 或错误值 (<b class="evalue">E</b>) 。
         </dd>
       </dl>
 	  </div>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
       </p>
-
     </div>
   </body>
 </html>

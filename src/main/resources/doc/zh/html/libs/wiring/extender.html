@@ -7,28 +7,37 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Bit Extender
+      <!-- Bit Extender -->
+      位扩展器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/extender.png" alt="#########" width="32" height="32"> <em>Bit Extender</em>
+        <!-- <img class="iconlibs" src="../../../../icons/6464/extender.png" alt="#########" width="32" height="32"> <em>Bit Extender</em> -->
+        <img class="iconlibs" src="../../../../icons/6464/extender.png" alt="#########" width="32" height="32"> <em>位扩展器</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Wiring</a>
+              <!-- <a href="index.html">Wiring</a> -->
+              <a href="index.html">线路</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.5.0 (in Base library, moved to Wiring in 2.7.0)
@@ -36,7 +45,9 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
+
             </td>
             <td valign="top">
 			 <table>
@@ -56,82 +67,108 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        The bit extender transforms a value into a value of another bit width. If it's being transformed into a smaller bit width, it is simply truncated to keep the lowest-order bits. If it's being transformed into a large bit width, the lowest-order bits are the same, and you have a choice about what the additional high-order bits will be: They can all be 0, all be 1, all match the input's <q>sign bit</q> (its highest-order bit), or the component can have an additional one-bit input that determines the identity of these other bits.
+        <!-- The bit extender transforms a value into a value of another bit width. If it's being transformed into a smaller bit width, it is simply truncated to keep the lowest-order bits. If it's being transformed into a large bit width, the lowest-order bits are the same, and you have a choice about what the additional high-order bits will be: They can all be 0, all be 1, all match the input's <q>sign bit</q> (its highest-order bit), or the component can have an additional one-bit input that determines the identity of these other bits. -->
+        位扩展器将一个值转换为另一个位宽度的值。 如果将其转换为较小的位宽度，则只需将其截断以保留最低位。 如果它被转换为大位宽，则最低位是相同的，并且您可以选择附加的高位位：它们可以全部为 0，全部为 1，全部与输入的 < q>符号位</q>（其最高位），或者元件可以有一个额外的一位输入来确定这些其他位的身份。
       </p>
       <h2>
-        Pins
+        <!-- Pins -->
+        引脚
       </h2>
       <dl>
         <dt>
-          West edge (input, bit width from Bit Width In attribute)
+          <!-- West edge (input, bit width from Bit Width In attribute) -->
+          西边（输入，来自位宽度输入属性的位宽度）
         </dt>
         <dd>
           <p>
-            The multi-bit input whose value is to be transformed.
+            <!-- The multi-bit input whose value is to be transformed. -->
+            要转换其值的多位输入。
           </p>
         </dd>
         <dt>
-          East edge (output, bit width from Bit Width Out attribute)
+          <!-- East edge (output, bit width from Bit Width Out attribute) -->
+          东边（输出，来自位宽度输出属性的位宽度）
         </dt>
         <dd>
           <p>
-            The computed output.
+            <!-- The computed output. -->
+            计算的输出。
           </p>
         </dd>
         <dt>
-          North edge (input, bit width 1)
+          <!-- North edge (input, bit width 1) -->
+          北边（输入，位宽1）
         </dt>
         <dd>
           <p>
-            Specifies what the additional bits in the output should be. This pin is available only when the Extension Type attribute is <q>Input.</q>
+            <!-- Specifies what the additional bits in the output should be. This pin is available only when the Extension Type attribute is <q>Input.</q> -->
+            指定输出中的附加位应该是什么。 仅当扩展类型属性为<q>输入时，此引脚才可用。</q>
           </p>
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-        When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter the <b class="propertie">Bit Width In</b> attribute and <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Bit Width Out</b> attribute.
+        <!-- When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter the <b class="propertie">Bit Width In</b> attribute and <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Bit Width Out</b> attribute. -->
+        选择或添加元件时，数字 <b class="tkeybd">0</b> 到 <b class="tkeybd">9</b> 会更改<b class="propertie">位宽输入</b>属性中，<b class="tkeybd">Alt-0</b>到<b class="tkeybd">Alt-9</b>改变其<b class="propertie">位宽输出</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">Bit Width In</b>
+          <!-- <b class="propertie">Bit Width In</b> -->
+          <b class="propertie">位宽输入</b>
+
         </dt>
         <dd>
-          The input's bit width.
+          <!-- The input's bit width. -->
+          输入的位宽。
         </dd>
         <dt>
-          <b class="propertie">Bit Width Out</b>
+          <!-- <b class="propertie">Bit Width Out</b> -->
+          <b class="propertie">位宽输出</b>
+
         </dt>
         <dd>
-          The output's bit width.
+          <!-- The output's bit width. -->
+          输出的位宽。
         </dd>
         <dt>
-          <b class="propertie">Extension Type</b>
+          <!-- <b class="propertie">Extension Type</b> -->
+          <b class="propertie">扩展类型</b>
+
         </dt>
         <dd>
-          Assuming the output bit width exceeds the input bit width, this attribute configures what the additional output bits should be. If <q>Zero</q> or <q>One,</q> the additional bits are 0 or 1 accordingly. If <q>Sign,</q> the additional bits are taken to match the highest-order bit in the input. And if <q>Input,</q> the component has a second input on its north side whose one-bit value is used for the additional bits.
+          <!-- Assuming the output bit width exceeds the input bit width, this attribute configures what the additional output bits should be. If <q>Zero</q> or <q>One,</q> the additional bits are 0 or 1 accordingly. If <q>Sign,</q> the additional bits are taken to match the highest-order bit in the input. And if <q>Input,</q> the component has a second input on its north side whose one-bit value is used for the additional bits. -->
+          假设输出位宽度超过输入位宽度，该属性配置附加输出位应该是什么。 如果<q>零</q>或<q>一，则附加位相应地为0或1。 如果<q>Sign，</q>则采用附加位来匹配输入中的最高位。 如果<q>输入，</q>该元件在其北侧有第二个输入，其一位值用于附加位。
         </dd>
       </dl>
 	  </div>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
+
       </p>
     </div>
   </body>
