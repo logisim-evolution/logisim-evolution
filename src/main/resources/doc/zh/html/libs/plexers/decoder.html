@@ -7,28 +7,37 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Decoder
+      <!-- Decoder -->
+      解码器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/decoder.png" alt="#########" height="32" width="32"> <em>Decoder</em>
+        <!-- <img class="iconlibs" src="../../../../icons/6464/decoder.png" alt="#########" height="32" width="32"> <em>Decoder</em> -->
+        <img class="iconlibs" src="../../../../icons/6464/decoder.png" alt="#########" height="32" width="32"> <em>解码器</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Plexers</a>
+              <!-- <a href="index.html">Plexers</a> -->
+              <a href="index.html">复合器</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.0 Beta 11
@@ -36,7 +45,9 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
+
             </td>
             <td valign="top">
               <img  class="appearancelibs" src="../../../../img-libs/decoder.png"  alt="#########" height="64" width="64">
@@ -45,92 +56,122 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        Emits 1 on exactly one output; which output is 1 depends on the current value received through the input on the south edge.
+        <!-- Emits 1 on exactly one output; which output is 1 depends on the current value received through the input on the south edge. -->
+        仅在一个输出上发出 1； 哪个输出为 1 取决于通过南边缘输入接收到的当前值。
       </p>
       <h2>
-        Pins (assuming component faces east, select is bottom/left)
+        <!-- Pins (assuming component faces east, select is bottom/left) -->
+        引脚（假设元件朝东，选择底部/左侧）
       </h2>
       <dl>
         <dt>
-          East edge, variable number (outputs, bit width 1)
+          <!-- East edge, variable number (outputs, bit width 1) -->
+          东边，可变数量（输出，位宽 1）
         </dt>
         <dd>
-          The outputs are numbered starting with 0 on the north. Each output will be 1 if its number matches the value currently received through the select input on the south; otherwise, its value will be either zero or floating, depending on the value of the Three-State? attribute. If the select input contains any unspecified bits, then all outputs are floating.
+          <!-- The outputs are numbered starting with 0 on the north. Each output will be 1 if its number matches the value currently received through the select input on the south; otherwise, its value will be either zero or floating, depending on the value of the Three-State? attribute. If the select input contains any unspecified bits, then all outputs are floating. -->
+          输出的编号从北边的 0 开始。 如果每个输出的数字与当前通过南边的选择输入接收到的值匹配，则每个输出将为 1； 否则，其值将为零或浮动，具体取决于三态的值？ 属性。 如果选择输入包含任何未指定的位，则所有输出都是浮动的。
         </dd>
         <dt>
-          South edge, left side (input, bit width 1)
+          <!-- South edge, left side (input, bit width 1) -->
+          南边缘，左侧（输入，位宽1）
         </dt>
         <dd>
-          Enable: When 0, all outputs consist of all floating bits (or zeros), regardless of the select input.
+          <!-- Enable: When 0, all outputs consist of all floating bits (or zeros), regardless of the select input. -->
+          启用：为 0 时，所有输出均包含所有浮动位（或零），无论选择输入如何。
         </dd>
         <dt>
-          South edge, right side indicated by gray circle (input, bit width matches Select Bits attribute)
+          <!-- South edge, right side indicated by gray circle (input, bit width matches Select Bits attribute) -->
+          南边，灰色圆圈表示的右侧（输入，位宽与 Select Bits 属性匹配）
+
         </dt>
         <dd>
-          Select input: The value of this input determines which of the outputs is 1.
+          <!-- Select input: The value of this input determines which of the outputs is 1. -->
+          选择输入：该输入的值决定哪个输出为 1。
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-        When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute.
+        <!-- When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute. -->
+        当选择或添加元件时，数字“1”到“4”会更改其<q>Select Bits</q>属性，并且箭头键会更改其<q>方向</q>属性。
       </p>
       <dl>
         <dt>
-          Facing
+          <!-- Facing -->
+          方向
         </dt>
         <dd>
-          The direction of the component (specifying which side has the outputs).
+          <!-- The direction of the component (specifying which side has the outputs). -->
+          元件的方向（指定哪一侧有输出）。
         </dd>
         <dt>
-          Select Location
+          <!-- Select Location -->
+          选择位置
         </dt>
         <dd>
-          The location of the select and enable lines relative to the component.
+          <!-- The location of the select and enable lines relative to the component. -->
+          选择线和启用线相对于元件的位置。
         </dd>
         <dt>
-          Select Bits
+          <!-- Select Bits -->
+          选择位
         </dt>
         <dd>
-          The bit width of the component's select input on its south edge. The number of outputs for the decoder will be 2<sup><var>selectBits</var></sup>.
+          <!-- The bit width of the component's select input on its south edge. The number of outputs for the decoder will be 2<sup><var>selectBits</var></sup>. -->
+          元件南边缘的选择输入的位宽度。 解码器的输出数量将为 2<sup><var>selectBits</var></sup>。
         </dd>
         <dt>
-          Three-state?
+          <!-- Three-state? -->
+          三态？
         </dt>
         <dd>
-          Specifies whether the unselected outputs should be floating (Yes) or zero (No).
+          <!-- Specifies whether the unselected outputs should be floating (Yes) or zero (No). -->
+          指定未选择的输出应该浮动（是）还是零（否）。
         </dd>
         <dt>
-          Disabled Output
+          <!-- Disabled Output -->
+          禁用输出
         </dt>
         <dd>
-          Specifies what each bit of the outputs should be when the component is disabled (i.e., when the enable pin is 0). Options include zero and floating; in the latter case, the outputs are effectively disconnected from any other ports.
+          <!-- Specifies what each bit of the outputs should be when the component is disabled (i.e., when the enable pin is 0). Options include zero and floating; in the latter case, the outputs are effectively disconnected from any other ports. -->
+          指定当元件被禁用时（即，当启用引脚为 0 时）输出的每一位应该是什么。 选项包括零和浮动； 在后一种情况下，输出实际上与任何其他端口断开。
         </dd>
         <dt>
-          Include Enable?
+          <!-- Include Enable? -->
+          包括启用吗？
         </dt>
         <dd>
-          The component has an enable input when this attribute is <q>yes.</q> The attribute is primarily for supporting circuits built using older versions of Logisim that did not provide an enable input.
+          <!-- The component has an enable input when this attribute is <q>yes.</q> The attribute is primarily for supporting circuits built using older versions of Logisim that did not provide an enable input. -->
+          当该属性为 <q>yes</q> 时，该组件具有启用输入。该属性主要用于支持使用不提供启用输入的旧版本 Logisim 构建的电路。
         </dd>
       </dl>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
+
       </p>
     </div>
   </body>
