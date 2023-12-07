@@ -7,28 +7,37 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Adder
+      <!-- Adder -->
+      加法器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/adder.png" alt="#########" width="32" height="32" align="middle"> <em>Adder</em>
+        <!-- <img class="iconlibs" src="../../../../icons/6464/adder.png" alt="#########" width="32" height="32" align="middle"> <em>Adder</em> -->
+        <img class="iconlibs" src="../../../../icons/6464/adder.png" alt="#########" width="32" height="32" align="middle"> <em>加法器</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <!-- <a href="index.html">Arithmetic</a> -->
+              <a href="index.html">算术</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.0 Beta 11
@@ -36,7 +45,9 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
+
             </td>
             <td valign="top">
               <img class="appearancelibs" src="../../../../img-libs/adder.png" alt="#########" width="64" height="64">
@@ -45,79 +56,105 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        This component adds two values coming in via the west inputs and outputs the sum on the east output. The component is designed so that it can be cascaded with other adders to provide add more bits than is possible with a single adder: The carry-in input provides a one-bit value to be added into the sum also (if it is specified), and a carry-out output provides a one-bit overflow value that can be fed to another adder.
+        <!-- This component adds two values coming in via the west inputs and outputs the sum on the east output. The component is designed so that it can be cascaded with other adders to provide add more bits than is possible with a single adder: The carry-in input provides a one-bit value to be added into the sum also (if it is specified), and a carry-out output provides a one-bit overflow value that can be fed to another adder. -->
+        该元件将通过西边输入传入的两个值相加，并在东边输出上输出总和。 该元件的设计使其可以与其他加法器级联，以提供比单个加法器可能添加的更多位：进位输入也提供一个要添加到总和中的一位值（如果已指定） ，进位输出提供一位溢出值，可以将其馈送到另一个加法器。
       </p>
       <p>
-        If either of the addends contains some floating bits or some error bits, then the component will perform a partial addition. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits.
+        <!-- If either of the addends contains some floating bits or some error bits, then the component will perform a partial addition. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits. -->
+        如果任一加数包含一些浮动位或一些错误位，则该元件将执行部分加法。 也就是说，它将计算尽可能多的低位。 但在浮动或错误位之上，结果将具有浮动或错误位。
       </p>
       <h2>
-        Pins
+        <!-- Pins -->
+        引脚
       </h2>
       <dl>
         <dt>
-          West edge, north end (input, bit width matches Data Bits attribute)
+          <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
+          西边，北端（输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          One of the two values to add.
+          <!-- One of the two values to add. -->
+          要添加的两个值之一。
         </dd>
         <dt>
-          West edge, south end (input, bit width matches Data Bits attribute)
+          <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
+          西边，南端（输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The other of the two values to add.
+          <!-- The other of the two values to add. -->
+          要添加的两个值中的另一个。
         </dd>
         <dt>
-          North edge, labeled <var>c in</var> (input, bit width 1)
+          <!-- North edge, labeled <var>c in</var> (input, bit width 1) -->
+          北边缘，标记为 <var>c in</var> （输入，位宽 1）
         </dt>
         <dd>
-          A carry value to add into the sum. If the value is unknown (i.e., floating), then it is assumed to be 0.
+          <!-- A carry value to add into the sum. If the value is unknown (i.e., floating), then it is assumed to be 0. -->
+          要添加到总和中的进位值。 如果该值未知（即浮动），则假定为 0。
         </dd>
         <dt>
-          East edge (output, bit width matches Data Bits attribute)
+          <!-- East edge (output, bit width matches Data Bits attribute) -->
+          东边（输出，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The lower <var>dataBits</var> bits of the sum of the two values coming in the west edge, plus the <var>c</var><sub><var>in</var></sub> bit.
+          <!-- The lower <var>dataBits</var> bits of the sum of the two values coming in the west edge, plus the <var>c</var><sub><var>in</var></sub> bit. -->
+          来自西边缘的两个值之和的较低 <var>dataBits</var> 位，加上 <var>c</var><sub><var>in</var></sub> 位 。
         </dd>
         <dt>
-          South edge, labeled <var>c out</var> (output, bit width 1)
+          <!-- South edge, labeled <var>c out</var> (output, bit width 1) -->
+          南边缘，标记为<var>c out</var>（输出，位宽1）
         </dt>
         <dd>
-          The carry bit computed for the sum. If the values added together as unsigned values yield a result that fits into <var>dataBits</var> bits, then this bit will be 0; otherwise, it will be 1.
+          <!-- The carry bit computed for the sum. If the values added together as unsigned values yield a result that fits into <var>dataBits</var> bits, then this bit will be 0; otherwise, it will be 1. -->
+          为总和计算的进位位。 如果作为无符号值加在一起的值产生适合 <var>dataBits</var> 位的结果，则该位将为 0； 否则，将为 1。
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-        When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute.
+        <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+        选择或添加元件时，<b class="keybind">Alt-0</b> 到 <b class="keybind">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b>属性。
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">Data Bits</b>
+          <!-- <b class="propertie">Data Bits</b> -->
+          <b class="propertie">数据位</b>
+
         </dt>
         <dd>
-          The bit width of the values to be added and of the result.
+          <!-- The bit width of the values to be added and of the result. -->
+          要相加的值和结果的位宽。
         </dd>
       </dl>
 	  </div>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
+
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-        <b>Back to</b> <a href="../index.html">Library Reference</a>
+        <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
+
       </p>
     </div>
   </body>

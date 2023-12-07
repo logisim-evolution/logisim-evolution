@@ -7,28 +7,36 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Comparator
+      <!-- Comparator -->
+      比较器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> <em>Comparator</em>
+        <!-- <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> <em>Comparator</em> -->
+        <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> <em>比较器</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <!-- <a href="index.html">Arithmetic</a> -->
+              <a href="index.html">算术</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.0 Beta 22
@@ -36,7 +44,8 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
             </td>
             <td valign="top">
               <img class="appearancelibs" src="../../../../img-libs/comparator.png" alt="#########" width="64" height="64">
@@ -45,79 +54,104 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        Compares two values, either as unsigned values or as two's-complement values, depending on the Numeric Type attribute. Normally, one of the outputs will be 1, and the other two outputs will be 0.
+        <!-- Compares two values, either as unsigned values or as two's-complement values, depending on the Numeric Type attribute. Normally, one of the outputs will be 1, and the other two outputs will be 0. -->
+        比较两个值，无论是无符号值还是补码值，具体取决于数字类型属性。 通常，其中一个输出为 1，另外两个输出为 0。
       </p>
       <p>
-        The comparison is performed starting at the most significant bits in each number and descending downward in parallel until a location is found where the two values disagree. If, however, an error value or a floating value is encountered during this descent, then all outputs will match that error or floating value.
+        <!-- The comparison is performed starting at the most significant bits in each number and descending downward in parallel until a location is found where the two values disagree. If, however, an error value or a floating value is encountered during this descent, then all outputs will match that error or floating value. -->
+        从每个数字中的最高有效位开始并并行向下执行比较，直到找到两个值不一致的位置。 然而，如果在下降过程中遇到错误值或浮动值，则所有输出都将与该错误或浮动值匹配。
       </p>
       <h2>
-        Pins
+        <!-- Pins -->
+        引脚
       </h2>
       <dl>
         <dt>
-          West edge, north end (input, bit width matches Data Bits attribute)
+          <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
+          西边，北端（输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The first of the two values to be compared.
+          <!-- The first of the two values to be compared. -->
+          要比较的两个值中的第一个值。
         </dd>
         <dt>
-          West edge, south end (input, bit width matches Data Bits attribute)
+          <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
+          西边，南端（输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The second of the two values to be compared.
+          <!-- The second of the two values to be compared. -->
+          要比较的两个值中的第二个值。
         </dd>
         <dt>
-          East edge, labeled <tt>&gt;</tt> (output, bit width 1)
+          <!-- East edge, labeled <tt>&gt;</tt> (output, bit width 1) -->
+          东边，标记为<tt>></tt>（输出，位宽1）
         </dt>
         <dd>
-          1 if the first input is greater than the second input, 0 if the first input is less than or equal the second input.
+          <!-- 1 if the first input is greater than the second input, 0 if the first input is less than or equal the second input. -->
+          如果第一个输入大于第二个输入，则为 1；如果第一个输入小于或等于第二个输入，则为 0。
         </dd>
         <dt>
-          East edge, labeled <tt>=</tt> (output, bit width 1)
+          <!-- East edge, labeled <tt>=</tt> (output, bit width 1) -->
+          东边，标记为<tt>=</tt>（输出，位宽1）
         </dt>
         <dd>
-          1 if the first input equals the second input, 0 if the first input is not equal the second input.
+          <!-- 1 if the first input equals the second input, 0 if the first input is not equal the second input. -->
+          如果第一个输入等于第二个输入，则为 1；如果第一个输入不等于第二个输入，则为 0。
         </dd>
         <dt>
-          East edge, labeled <tt>&lt;</tt> (output, bit width 1)
+          <!-- East edge, labeled <tt>&lt;</tt> (output, bit width 1) -->
+          东边，标记为 <tt><</tt>（输出，位宽 1）
         </dt>
         <dd>
-          1 if the first input is less than the second input, 0 if the first input is greater than or equal the second input.
+          <!-- 1 if the first input is less than the second input, 0 if the first input is greater than or equal the second input. -->
+          如果第一个输入小于第二个输入，则为 1；如果第一个输入大于或等于第二个输入，则为 0。
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-        When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute.
+        <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+        选择或添加元件时，<b class="keybind">Alt-0</b> 到 <b class="keybind">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b>属性。
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">Data Bits</b>
+          <!-- <b class="propertie">Data Bits</b> -->
+          <b class="propertie">数据位</b>
+
         </dt>
         <dd>
-          The bit width of the component's inputs.
+          <!-- The bit width of the component's inputs. -->
+          元件输入的位宽度。
         </dd>
       </dl>
 	  </div>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-         <b>Back to</b> <a href="../index.html">Library Reference</a>
+         <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+         <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
+
       </p>
     </div>
   </body>

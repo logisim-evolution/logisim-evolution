@@ -7,28 +7,37 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Negator
+      <!-- Negator -->
+      求补器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> <em>Negator</em>
+        <!-- <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> <em>Negator</em> -->
+        <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> <em>求补器</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <!-- <a href="index.html">Arithmetic</a> -->
+              <a href="index.html">算术</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.0 Beta 22
@@ -36,7 +45,8 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
             </td>
             <td valign="top">
               <img class="appearancelibs" src="../../../../img-libs/negator.png" alt="#########" width="64" height="64">
@@ -45,61 +55,79 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        Computes the two's-complement negation of the input. This negation is performed by maintaining all the lower-order bits up to the lowest-order 1, and complementing all bits above that.
+        <!-- Computes the two's-complement negation of the input. This negation is performed by maintaining all the lower-order bits up to the lowest-order 1, and complementing all bits above that. -->
+        计算输入的补码否定。 通过将所有低位保持为最低位 1，并对高于该位的所有位求补来执行此求反操作。
       </p>
       <p>
-        If the value to be negated happens to be the least negative value, then its negation (which cannot be represented in two's-complement form), is still the least negative value.
+        <!-- If the value to be negated happens to be the least negative value, then its negation (which cannot be represented in two's-complement form), is still the least negative value. -->
+        如果要求反的值恰好是最小负值，则其求反（不能以补码形式表示）仍然是最小负值。
       </p>
       <h2>
-        Pins
+        <!-- Pins -->
+        引脚
       </h2>
       <dl>
         <dt>
-          West edge (input, bit width matches Data Bits attribute)
+          <!-- West edge (input, bit width matches Data Bits attribute) -->
+          西边（输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The value to negate.
+          <!-- The value to negate. -->
+          要否定的值。
         </dd>
         <dt>
-          East edge, labeled -<var>x</var> (output, bit width matches Data Bits attribute)
+          <!-- East edge, labeled -<var>x</var> (output, bit width matches Data Bits attribute) -->
+          东边，标记为 -<var>x</var>（输出，位宽与数据位属性匹配）
         </dt>
         <dd>
-          The negation of the input. If the input happens to be the least negative value representable in <var>dataBits</var> bits, however, then the output matches the input.
+          <!-- The negation of the input. If the input happens to be the least negative value representable in <var>dataBits</var> bits, however, then the output matches the input. -->
+          输入的否定。 但是，如果输入恰好是 <var>dataBits</var> 位中可表示的最小负值，则输出与输入匹配。
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-        When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute.
+        <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+        选择或添加元件时，<b class="keybind">Alt-0</b> 到 <b class="keybind">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b>属性。
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">Data Bits</b>
+          <!-- <b class="propertie">Data Bits</b> -->
+          <b class="propertie">数据位</b>
+
         </dt>
         <dd>
-          The bit width of the component's input and output.
+          <!-- The bit width of the component's input and output. -->
+          元件输入和输出的位宽。
         </dd>
       </dl>
 	  </div>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        None.
+        <!-- None. -->
+        无
       </p>
       <p>
-         <b>Back to</b> <a href="../index.html">Library Reference</a>
+         <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+         <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
       </p>
     </div>
   </body>
