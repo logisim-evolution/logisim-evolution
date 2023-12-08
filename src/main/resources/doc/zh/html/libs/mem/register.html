@@ -7,28 +7,37 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      Register
+      <!-- Register -->
+      寄存器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/register.png" alt="#########" width="32" height="32"> <em>Register</em>
+        <!-- <img class="iconlibs" src="../../../../icons/6464/register.png" alt="#########" width="32" height="32"> <em>Register</em> -->
+        <img class="iconlibs" src="../../../../icons/6464/register.png" alt="#########" width="32" height="32"> <em>寄存器</em>
+
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Memory</a>
+              <!-- <a href="index.html">Memory</a> -->
+              <a href="index.html">存储</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.0 Beta 1
@@ -36,21 +45,28 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
             </td>
 			    <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <!-- <strong>Library:</strong> -->
+              <strong>库:</strong>
+
             </td>
             <td>
-              <a href="index.html">Memory</a>
+              <!-- <a href="index.html">Memory</a> -->
+              <a href="index.html">存储</a>
+
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <!-- <strong>Introduced:</strong> -->
+              <strong>介绍:</strong>
+
             </td>
             <td>
               2.0 Beta 1
@@ -58,7 +74,8 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <!-- <strong>Appearance:</strong> -->
+              <strong>外观符号:</strong>
             </td>
 		    <td valign="top">
             <table>
@@ -87,95 +104,125 @@
         </tbody>
       </table>
       <h2>
-        Behavior
+        <!-- Behavior -->
+        行为
       </h2>
       <p>
-        A register stores a single multi-bit value, which is displayed in hexadecimal within its rectangle, and is emitted on its <var>Q</var> output. When the clock input (indicated by a triangle on the south edge) indicates so, the value stored in the register changes to the value of the <var>D</var> input at that instant. Exactly when the clock input indicates for this to happen is configured via the Trigger attribute.
+        <!-- A register stores a single multi-bit value, which is displayed in hexadecimal within its rectangle, and is emitted on its <var>Q</var> output. When the clock input (indicated by a triangle on the south edge) indicates so, the value stored in the register changes to the value of the <var>D</var> input at that instant. Exactly when the clock input indicates for this to happen is configured via the Trigger attribute. -->
+        寄存器存储单个多位值，该值在其矩形内以十六进制显示，并在其 <var>Q</var> 输出上发出。 当时钟输入（由南边的三角形表示）指示如此时，存储在寄存器中的值将更改为当时 <var>D</var> 输入的值。 时钟输入指示何时发生这种情况是通过触发属性配置的。
       </p>
       <p>
-        The <var>reset</var> input resets the register's value to 0 (all zeroes) asynchronously; that is, as long as <var>reset</var> is 1, the value is pinned to 0, regardless of the clock input.
+        <!-- The <var>reset</var> input resets the register's value to 0 (all zeroes) asynchronously; that is, as long as <var>reset</var> is 1, the value is pinned to 0, regardless of the clock input. -->
+        <var>reset</var> 输入将寄存器的值异步重置为 0（全零）； 也就是说，只要 <var>reset</var> 为 1，无论时钟输入如何，该值都固定为 0。
       </p>
       <h2>
-        Pins
+        <!-- Pins -->
+        引脚
       </h2>
       <dl>
         <dt>
-          East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute)
+          <!-- East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute) -->
+          东边，标记为<var>Q</var>（输出，位宽与数据位属性匹配）
         </dt>
         <dd>
-          Outputs the value currently stored by the register.
+          <!-- Outputs the value currently stored by the register. -->
+          输出寄存器当前存储的值。
         </dd>
         <dt>
-          West edge, labeled <var>D</var> (input, bit width matches Data Bits attribute)
+          <!-- West edge, labeled <var>D</var> (input, bit width matches Data Bits attribute) -->
+          西边，标记为 <var>D</var> （输入，位宽与数据位属性匹配）
         </dt>
         <dd>
-          Data input: At the instant that the clock value rises from 0 to 1, the register's value changes to the value of the <var>D</var> input at that instant.
+          <!-- Data input: At the instant that the clock value rises from 0 to 1, the register's value changes to the value of the <var>D</var> input at that instant. -->
+          数据输入：在时钟值从0上升到1的瞬间，寄存器的值改变为该时刻<var>D</var>输入的值。
         </dd>
         <dt>
-          West edge, labeled <var>en</var> (input, bit width 1)
+          <!-- West edge, labeled <var>en</var> (input, bit width 1) -->
+          西边，标记为 <var>en</var> （输入，位宽 1）
         </dt>
         <dd>
-          Enable: When this is 0, clock triggers are ignored. The current value continues to appear on the output. The clock triggers are enabled when this input is 1 or undefined.
+          <!-- Enable: When this is 0, clock triggers are ignored. The current value continues to appear on the output. The clock triggers are enabled when this input is 1 or undefined. -->
+          启用：当该值为 0 时，时钟触发被忽略。 当前值继续出现在输出上。 当该输入为 1 或未定义时，时钟触发器被启用。
         </dd>
         <dt>
-          South edge, indicated with a triangle (input, bit width 1)
+          <!-- South edge, indicated with a triangle (input, bit width 1) -->
+          南边，用三角形表示（输入，位宽1）
         </dt>
         <dd>
-          Clock input: At the instant that this input value rises from 0 to 1 (the rising edge), the register's value will be updated to the value of the <var>D</var> input.
+          <!-- Clock input: At the instant that this input value rises from 0 to 1 (the rising edge), the register's value will be updated to the value of the <var>D</var> input. -->
+          时钟输入：在该输入值从0上升到1（上升沿）的瞬间，寄存器的值将被更新为<var>D</var>输入的值。
         </dd>
         <dt>
-          South edge, labeled <var>0</var> (input, bit width 1)
+          <!-- South edge, labeled <var>0</var> (input, bit width 1) -->
+          南边缘，标记为 <var>0</var>（输入，位宽 1）
         </dt>
         <dd>
-          Asynchronous reset: When 0 or undefined, this input has no effect. As long as it is 1, the register's value is pinned to 0. This occurs asynchronously - that is, without regard to the current clock input value. As long as this is 1, the other inputs have no effect.
+          <!-- Asynchronous reset: When 0 or undefined, this input has no effect. As long as it is 1, the register's value is pinned to 0. This occurs asynchronously - that is, without regard to the current clock input value. As long as this is 1, the other inputs have no effect. -->
+          异步复位：当为0或未定义时，该输入无效。 只要它为 1，寄存器的值就固定为 0。这是异步发生的，即不考虑当前时钟输入值。 只要该值为 1，其他输入就没有影响。
         </dd>
       </dl>
       <h2>
-        Attributes
+        <!-- Attributes -->
+        属性
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+        <!-- When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute. -->
+        当选择或添加组件时，Alt-0 到 Alt-9 会更改其<q>数据位</q>属性。
       </p>
       <dl>
         <dt>
-          Data Bits
+          <!-- Data Bits -->
+          数据位
         </dt>
         <dd>
-          The bit width of the value stored in the register.
+          <!-- The bit width of the value stored in the register. -->
+          寄存器中存储的值的位宽。
         </dd>
         <dt>
-          Trigger
+          <!-- Trigger -->
+          扳机
         </dt>
         <dd>
-          Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the register should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should update at the instant the clock falls from 1 to 0. The <q>high level</q> value indicates that the register should update continuously whenever the clock input is 1. And the <q>low level</q> value indicates that it should update continuously when the clock input is 0.
+          <!-- Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the register should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should update at the instant the clock falls from 1 to 0. The <q>high level</q> value indicates that the register should update continuously whenever the clock input is 1. And the <q>low level</q> value indicates that it should update continuously when the clock input is 0. -->
+          配置如何解释时钟输入。 <q>上升沿</q>值表示寄存器应在时钟从0上升到1的瞬间更新其值。<q>下降沿</q>值表示应在时钟从0上升到1的瞬间更新其值 时钟从1下降到0。<q>高电平</q>值表示每当时钟输入为1时寄存器应不断更新。<q>低电平</q>值表示应更新 当时钟输入为0时连续。
         </dd>
         <dt>
-          Label
+          <!-- Label -->
+          标签
         </dt>
         <dd>
-          The text within the label associated with the register.
-        </dd>
+          <!-- The text within the label associated with the register. -->
+          与寄存器关联的标签内的文本。
+                </dd>
         <dt>
-          Label Font
+          <!-- Label Font -->
+          标签字体
         </dt>
         <dd>
-          The font with which to render the label.
+          <!-- The font with which to render the label. -->
+          用于呈现标签的字体。
         </dd>
       </dl>
       <h2>
-        Poke Tool Behavior
+        <!-- Poke Tool Behavior -->
+        Poke 工具行为
       </h2>
       <p>
-        Clicking the register brings keyboard focus to the register (indicated by a red rectangle), and typing hexadecimal digits will change the value stored in the register.
+        <!-- Clicking the register brings keyboard focus to the register (indicated by a red rectangle), and typing hexadecimal digits will change the value stored in the register. -->
+        单击寄存器会将键盘焦点带到寄存器（由红色矩形表示），并且键入十六进制数字将更改存储在寄存器中的值。
       </p>
       <h2>
-        Text Tool Behavior
+        <!-- Text Tool Behavior -->
+        文本工具行为
       </h2>
       <p>
-        Allows the label associated with the component to be edited.
+        <!-- Allows the label associated with the component to be edited. -->
+        允许编辑与组件关联的标签。
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
+
       </p>
     </div>
   </body>
