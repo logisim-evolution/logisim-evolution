@@ -126,6 +126,14 @@ public final class SvgReader {
     }
   }
 
+  private static AbstractCanvasObject createImage(Element elt) {
+    final var x = Integer.parseInt(elt.getAttribute("x"));
+    final var y = Integer.parseInt(elt.getAttribute("y"));
+    final var w = Integer.parseInt(elt.getAttribute("width"));
+    final var h = Integer.parseInt(elt.getAttribute("height"));
+    return new Image(elt.getAttribute("url"), x, y, w, h);
+  }
+
   public static AbstractCanvasObject createShape(Element elt) {
     final var name = elt.getTagName();
     final var ret = createShapeObject(elt, name);
@@ -136,7 +144,7 @@ public final class SvgReader {
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
       final var stroke = elt.getAttribute("stroke");
       final var fill = elt.getAttribute("fill");
-      if ("".equals(stroke) || "none".equals(stroke)) {
+      if (stroke.isEmpty() || "none".equals(stroke)) {
         ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
       } else if ("none".equals(fill)) {
         ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
@@ -159,7 +167,7 @@ public final class SvgReader {
     if (attrs.contains(DrawAttr.FILL_COLOR)) {
       var color = elt.getAttribute("fill");
       // FIXME: hardcoded color value
-      if ("".equals(color)) color = "#000000";
+      if (color.isEmpty()) color = "#000000";
       final var opacity = elt.getAttribute("fill-opacity");
       if (!"none".equals(color)) {
         ret.setValue(DrawAttr.FILL_COLOR, getColor(color, opacity));
@@ -177,6 +185,7 @@ public final class SvgReader {
       case "polygon" -> createPolygon(elt);
       case "rect" -> createRectangle(elt);
       case "text" -> createText(elt);
+      case "image" -> createImage(elt);
       default -> null;
     };
   }

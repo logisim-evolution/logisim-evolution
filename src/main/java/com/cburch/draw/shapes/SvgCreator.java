@@ -84,6 +84,16 @@ public final class SvgCreator {
     return createRectangular(doc, rect);
   }
 
+  public static Element createImage(Document doc, Image img) {
+    final var elt = doc.createElement("image");
+    elt.setAttribute("x", "" + img.getX());
+    elt.setAttribute("y", "" + img.getY());
+    elt.setAttribute("width", "" + img.getWidth());
+    elt.setAttribute("height", "" + img.getHeight());
+    elt.setAttribute("url", img.getUrl());
+    return elt;
+  }
+
   private static Element createRectangular(Document doc, Rectangular rect) {
     final var elt = doc.createElement("rect");
     elt.setAttribute("x", "" + rect.getX());

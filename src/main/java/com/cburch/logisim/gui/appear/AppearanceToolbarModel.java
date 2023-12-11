@@ -12,16 +12,8 @@ package com.cburch.logisim.gui.appear;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.toolbar.AbstractToolbarModel;
 import com.cburch.draw.toolbar.ToolbarItem;
-import com.cburch.draw.tools.AbstractTool;
-import com.cburch.draw.tools.CurveTool;
-import com.cburch.draw.tools.DrawingAttributeSet;
-import com.cburch.draw.tools.LineTool;
-import com.cburch.draw.tools.OvalTool;
-import com.cburch.draw.tools.PolyTool;
-import com.cburch.draw.tools.RectangleTool;
-import com.cburch.draw.tools.RoundRectangleTool;
-import com.cburch.draw.tools.TextTool;
-import com.cburch.draw.tools.ToolbarToolItem;
+import com.cburch.draw.tools.*;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -45,6 +37,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
       new RoundRectangleTool(attrs),
       new OvalTool(attrs),
       new PolyTool(true, attrs),
+      new ImageTool(attrs),
     };
 
     final var rawItems = new ArrayList<ToolbarItem>();
