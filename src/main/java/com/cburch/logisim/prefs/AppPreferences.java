@@ -584,6 +584,8 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("namedBoxesFixed", true));
   public static final PrefMonitor<Boolean> KMAP_LINED_STYLE =
       create(new PrefMonitorBoolean("KmapLinedStyle", false));
+  public static final PrefMonitor<Boolean> DOWNLOAD_IMAGES =
+      create(new PrefMonitorBoolean("dlimages", true));
   public static final PrefMonitor<String> DefaultAppearance =
       create(
           new PrefMonitorStringOpts(

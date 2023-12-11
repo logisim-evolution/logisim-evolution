@@ -2,6 +2,7 @@ package com.cburch.draw.shapes;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.prefs.AppPreferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -79,7 +80,9 @@ public class Image extends Rectangular {
 
     private void loadImage() {
         try {
-            img = ImageIO.read(new URL(url));
+            if(AppPreferences.DOWNLOAD_IMAGES.get()) {
+                img = ImageIO.read(new URL(url));
+            }
         } catch (IOException e) {
             System.err.println("Failed to open image at " + url);
         }
