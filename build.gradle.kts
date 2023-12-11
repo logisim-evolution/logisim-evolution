@@ -51,7 +51,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:5.10.1"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.8.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -62,6 +62,7 @@ val APP_DIR_NAME = "appDirName"
 val APP_VERSION = "appVersion"
 val APP_VERSION_SHORT = "appVersionShort"
 val APP_URL = "appUrl"
+val BUILD_DIR = "buildDir"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
@@ -105,6 +106,10 @@ extra.apply {
   // Architecture used for build
   val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
   set(OS_ARCH, osArch)
+
+  // Build Directory
+  val buildDir = getLayout().getBuildDirectory().get().asFile.toString()
+  set(BUILD_DIR, buildDir)
 
   // Destination folder where packages are stored.
   val targetDir="${buildDir}/dist"
@@ -182,6 +187,7 @@ extra.apply {
 
 java {
   sourceSets["main"].java {
+    val buildDir = getLayout().getBuildDirectory().get().asFile
     srcDir("${buildDir}/generated/logisim/java")
     srcDir("${buildDir}/generated/sources/srcgen")
   }
@@ -395,6 +401,7 @@ tasks.register("createMsi") {
  */
 tasks.register("createApp") {
   val supportDir = ext.get(SUPPORT_DIR) as String
+  val buildDir = ext.get(BUILD_DIR) as String
   val dest = "${buildDir}/macOS-${ext.get(OS_ARCH) as String}"
 
   group = "build"
@@ -564,6 +571,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
  */
 tasks.register("genBuildInfo") {
   // Target location for generated files.
+  val buildDir = ext.get(BUILD_DIR) as String
   val buildInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
 
   group = "build"
@@ -589,6 +597,7 @@ tasks.register("genBuildInfo") {
 tasks.register("genVhdlSyntax") {
   val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
   val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
+  val buildDir = ext.get(BUILD_DIR) as String
   val targetDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/vhdl/syntax/"
 
   group = "build"

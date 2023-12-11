@@ -136,7 +136,7 @@ jobs:
         # ###########################################################################################
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -230,7 +230,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -265,7 +265,7 @@ jobs:
       - name: "Checkout sources"
         uses: actions/checkout@v4
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
