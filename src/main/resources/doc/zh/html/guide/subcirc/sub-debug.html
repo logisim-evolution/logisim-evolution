@@ -1,83 +1,148 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-12-26T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="zh">
-    <title>
-      <!-- Debugging subcircuits -->
-      调试子电路
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <p>
-        <b>上一节:</b> <a href="subcirc_personalise.html">自定义外观</a>
-
-      </p>
-      <h1>
-        <!-- Debugging subcircuits -->
-        调试子电路
-      </h1>
-      <p>
-        <!-- As you test larger circuits, you will likely find bugs. To nail down what's going wrong, exploring what's going on in the subcircuits while running the overall circuit can help. To enter the subcircuit's state, you can use any of three different techniques.  -->
-        当您测试更大的电路时，您可能会发现错误。 为了确定问题所在，在运行整个电路的同时探索子电路中发生的情况会有所帮助。 要进入子电路的状态，您可以使用三种不同技术中的任何一种。
-	  <p>
-	  </p>
-		<!-- The most straightforward is probably to view the simulation hierarchy by by clicking on the <b class="button">&nbsp;Simulate&nbsp;</b> tab, or by selecting menu <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>| View Simulation Tree&nbsp;|</b>. This switches the explorer pane so that it shows the hierarchy of subcircuits being simulated. -->
-    最直接的方法可能是通过单击 <b class="button">&nbsp;Simulate&nbsp;</b> 选项卡或选择菜单 <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>| View Simulation Tree&nbsp;|</b>。 这会切换资源管理器窗格，以便显示正在仿真的子电路的层次结构。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/subcirc-hierarchy.png" alt="#########">
-      </p>
-      <p>
-        <!-- <b class="tkeybd">Double-clicking</b> an element in this hierarchy will display what is happening inside that subcircuit. -->
-        <b class="tkeybd">Double-clicking</b>此层次结构中的元素将显示该子电路内发生的情况。
-      </p>
-      <p>
-        <!-- The second way you can enter a subcircuit is to bring up its popup menu by <b class="tkeybd">right-clic</b> or <b class="tkeybd">Ctrl+Click</b> it, and then choosing the option <b class=menu>|&nbsp;View&nbsp;<i>"circuit_name"</i>&nbsp;|</b>. -->
-        进入子电路的第二种方法是通过<b class="tkeybd">right-clic</b> or <b class="tkeybd">Ctrl+Click</b>调出其弹出菜单，然后 然后选择选项<b class=menu>|&nbsp;View&nbsp;<i>“电路名称”</i>&nbsp;|</b>。
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/subcirc-8-delve.png" alt="#########">
-      </p>
-      <p>
-        <!-- And the third way is to first ensure the Poke Tool (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">) is selected and then <b class="tkeybd">click</b> the subcircuit you want to enter; a magnifying glass will appear over the subcircuit's center, and <b class="tkeybd">double-clicking</b> the magnifying glass will enter the subcircuit's state. -->
-        第三种方法是首先确保 Poke Tool (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="##### ####">) 被选中，然后<b class="tkeybd">click</b>您要输入的子电路； 子电路中心上方会出现一个放大镜， <b class="tkeybd">double-clicking</b>放大镜将进入子电路状态。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/subcirc-delve.png" alt="#########">
-      </p>
-      <p>
-        <!-- In any case, once you enter the subcircuit, you'll see that the pins' values in the subcircuit match the values being sent through them from the containing circuit. -->
-        无论如何，一旦进入子电路，您将看到子电路中的引脚值与从包含电路通过它们发送的值相匹配。
-      </p>
-      <p align="center">
-        <img src="../../../../img-guide/subcirc-delve2.png" alt="#########">
-      </p>
-      <p>
-        <!-- While in the subcircuit, you are allowed to alter the circuit. If the changes affect any of the subcircuit's outputs, they are propagated into the containing circuit. One exception: The subcircuit inputs are determined based on the values coming into the circuit from the supercircuit, so it doesn't make sense to toggle those values. If you attempt to poke a subcircuit's input, a dialog will pop up asking, <b class=refquest>The pin is tied to the supercircuit state. Create a new circuit state?</b> Clicking No will cancel the toggle request, while clicking Yes will create a copy of the viewed state, divorced from the outer circuit, with the input pin toggled. -->
-        在子电路中时，您可以更改电路。 如果更改影响子电路的任何输出，它们将传播到包含电路中。 一个例外：子电路输入是根据从超级电路进入电路的值确定的，因此切换这些值没有意义。 如果您尝试刺入子电路的输入，则会弹出一个对话框，询问：<b class=refquest>该引脚与超级电路状态相关联。 创建新的电路状态？</b> 单击“否”将取消切换请求，而单击“是”将创建所查看状态的副本，与外部电路分离，并切换输入引脚。
-      </p>
-      <p>
-        <!-- Once you have completed viewing and/or editing, you can return to the parent circuit either by double-clicking the parent circuit in the explorer pane, or via the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→ <b class=menu>|&nbsp;Go Out To State&nbsp;<i>"circuit_name"</i>&nbsp;|</b>. -->
-        完成查看和/或编辑后，您可以通过双击资源管理器窗格中的父电路或通过菜单 <b class=menu>|&nbsp;Simulate&nbsp;|</b>→ <b class=menu>|&nbsp;转到状态&nbsp;<i>"circuit_name"</i>&nbsp;|</b>。
-      </p>
-      <p>
-        <!-- <b>Next:</b> <a href="sub-library.html">Logisim libraries</a>. -->
-        <b>下一节:</b> <a href="sub-library.html">Logisim-evolution 库</a>.
-
-      </p>
-    </p>
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Debugging subcircuits -->
+   调试子电路
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <b>
+     上一节:
+    </b>
+    <a href="subcirc_personalise.html">
+     自定义外观
+    </a>
+   </p>
+   <h1>
+    <!-- Debugging subcircuits -->
+    调试子电路
+   </h1>
+   <p>
+    <!-- As you test larger circuits, you will likely find bugs. To nail down what's going wrong, exploring what's going on in the subcircuits while running the overall circuit can help. To enter the subcircuit's state, you can use any of three different techniques.  -->
+    当您测试更大的电路时，您可能会发现错误。 为了确定问题所在，在运行整个电路的同时探索子电路中发生的情况会有所帮助。 要进入子电路的状态，您可以使用三种不同技术中的任何一种。
     <p>
     </p>
-    <p>
-    </p>
-    <p>
-    </p>
-    </div>
-  </body>
+    <!-- The most straightforward is probably to view the simulation hierarchy by by clicking on the <b class="button">&nbsp;Simulate&nbsp;</b> tab, or by selecting menu <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>| View Simulation Tree&nbsp;|</b>. This switches the explorer pane so that it shows the hierarchy of subcircuits being simulated. -->
+    最直接的方法可能是通过单击
+    <b class="button">
+     Simulate
+    </b>
+    选项卡或选择菜单
+    <b class="menu">
+     | Project |
+    </b>
+    →
+    <b class="menu">
+     | View Simulation Tree |
+    </b>
+    。 这会切换资源管理器窗格，以便显示正在仿真的子电路的层次结构。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/subcirc-hierarchy.png"/>
+   </p>
+   <p>
+    <!-- <b class="tkeybd">Double-clicking</b> an element in this hierarchy will display what is happening inside that subcircuit. -->
+    <b class="tkeybd">
+     Double-clicking
+    </b>
+    此层次结构中的元素将显示该子电路内发生的情况。
+   </p>
+   <p>
+    <!-- The second way you can enter a subcircuit is to bring up its popup menu by <b class="tkeybd">right-clic</b> or <b class="tkeybd">Ctrl+Click</b> it, and then choosing the option <b class=menu>|&nbsp;View&nbsp;<i>"circuit_name"</i>&nbsp;|</b>. -->
+    进入子电路的第二种方法是通过
+    <b class="tkeybd">
+     right-clic
+    </b>
+    or
+    <b class="tkeybd">
+     Ctrl+Click
+    </b>
+    调出其弹出菜单，然后 然后选择选项
+    <b class="menu">
+     | View
+     <i>
+      “电路名称”
+     </i>
+     |
+    </b>
+    。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/subcirc-8-delve.png"/>
+   </p>
+   <p>
+    <!-- And the third way is to first ensure the Poke Tool (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">) is selected and then <b class="tkeybd">click</b> the subcircuit you want to enter; a magnifying glass will appear over the subcircuit's center, and <b class="tkeybd">double-clicking</b> the magnifying glass will enter the subcircuit's state. -->
+    第三种方法是首先确保 Poke Tool (
+    <img alt="##### ####" class="icontxt" src="../../../../icons/1616/toolpoke.png"/>
+    ) 被选中，然后
+    <b class="tkeybd">
+     click
+    </b>
+    您要输入的子电路； 子电路中心上方会出现一个放大镜，
+    <b class="tkeybd">
+     double-clicking
+    </b>
+    放大镜将进入子电路状态。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/subcirc-delve.png"/>
+   </p>
+   <p>
+    <!-- In any case, once you enter the subcircuit, you'll see that the pins' values in the subcircuit match the values being sent through them from the containing circuit. -->
+    无论如何，一旦进入子电路，您将看到子电路中的引脚值与从包含电路通过它们发送的值相匹配。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../../img-guide/subcirc-delve2.png"/>
+   </p>
+   <p>
+    <!-- While in the subcircuit, you are allowed to alter the circuit. If the changes affect any of the subcircuit's outputs, they are propagated into the containing circuit. One exception: The subcircuit inputs are determined based on the values coming into the circuit from the supercircuit, so it doesn't make sense to toggle those values. If you attempt to poke a subcircuit's input, a dialog will pop up asking, <b class=refquest>The pin is tied to the supercircuit state. Create a new circuit state?</b> Clicking No will cancel the toggle request, while clicking Yes will create a copy of the viewed state, divorced from the outer circuit, with the input pin toggled. -->
+    在子电路中时，您可以更改电路。 如果更改影响子电路的任何输出，它们将传播到包含电路中。 一个例外：子电路输入是根据从超级电路进入电路的值确定的，因此切换这些值没有意义。 如果您尝试刺入子电路的输入，则会弹出一个对话框，询问：
+    <b class="refquest">
+     该引脚与超级电路状态相关联。 创建新的电路状态？
+    </b>
+    单击“否”将取消切换请求，而单击“是”将创建所查看状态的副本，与外部电路分离，并切换输入引脚。
+   </p>
+   <p>
+    <!-- Once you have completed viewing and/or editing, you can return to the parent circuit either by double-clicking the parent circuit in the explorer pane, or via the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→ <b class=menu>|&nbsp;Go Out To State&nbsp;<i>"circuit_name"</i>&nbsp;|</b>. -->
+    完成查看和/或编辑后，您可以通过双击资源管理器窗格中的父电路或通过菜单
+    <b class="menu">
+     | Simulate |
+    </b>
+    →
+    <b class="menu">
+     | 转到状态
+     <i>
+      "circuit_name"
+     </i>
+     |
+    </b>
+    。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="sub-library.html">Logisim libraries</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="sub-library.html">
+     Logisim-evolution 库
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
 </html>

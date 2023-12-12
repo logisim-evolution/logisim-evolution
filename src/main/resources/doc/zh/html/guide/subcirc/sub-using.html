@@ -1,90 +1,139 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="zh">
-    <title>
-      <!-- Using subcircuits -->
-      使用子电路
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <p>
-        <b>上一节:</b> <a href="sub-creating.html">创建电路</a>
-
-      </p>
-      <h1>
-        <!-- Using subcircuits -->
-        使用子电路
-      </h1>
-      <p>
-        <!-- Now suppose we want to build a 4-to-1 multiplexer using instances of our 2-to-1 multiplexer. Of course, we would first create a new circuit, which we'll call <b class=reffig>Mux_4to1</b> To add 2-to-1 multiplexers into our circuit, we click the <b class=reffig>Mux_2to1</b> circuit <b>once</b> in the explorer pane to select it as a tool, and then we can add copies of it, represented as boxes, by clicking within the canvas. -->
-        现在假设我们想要使用 2 对 1 多路复用器的实例构建一个 4 对 1 多路复用器。 当然，我们首先要创建一个新电路，我们将其命名为 <b class=refig>Mux_4to1</b> 要将 2 对 1 多路复用器添加到我们的电路中，我们单击 <b class=reffig>Mux_2to1</b> circuit <b>once</b> 在资源管理器窗格中<b>一次</b>选择它作为工具，然后我们可以通过在画布中单击来添加它的副本（以框表示）。
-
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/subcirc-3-add.png" alt="#########">
-      </p>
-      <p>
-        <!-- If you were to double-click the <b class=reffig>Mux_2to1</b> circuit in the explorer pane, then the window would switch to editing the <b class=reffig>Mux_2to1</b> circuit instead. -->
-        如果您在资源管理器窗格中双击 <b class=refig>Mux_2to1</b> 电路，则窗口将切换为编辑 <b class=refig>Mux_2to1</b> 电路。
-
-      </p>
-      <p>
-        <!-- After building up the circuit, we end up with the following. -->
-        建立电路后，我们最终得到以下结果。
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/subcirc-4-done.png" alt="#########">
-      </p>
-      <p>
-        <!-- Our circuit for a 4-to-1 multiplexer uses three copies of the 2-to-1 multiplexer,each is drawn in a box with pins on the left and right sides. The pins on this box correspond to the input and output pins in the <b class=reffig>Mux_2to1</b> circuit. The two pins on the east face of the box correspond to the inputs of the circuit and on the west face they correspond to the output. They are read from the diagram of the sub-circuit from right to left and from top to bottom and they will be placed on the sub-circuit symbol from top to bottom. -->
-        我们的 4 选 1 多路复用器电路使用了 2 选 1 多路复用器的三个副本，每个副本都画在一个盒子中，左右两侧都有引脚。 该盒子上的引脚对应于 <b class=refig>Mux_2to1</b> 电路中的输入和输出引脚。 盒子东面的两个引脚对应于电路的输入，西面的两个引脚对应于输出。 它们从右到左、从上到下从子电路图中读取，并将它们从上到下放置在子电路符号上。
-      </p>
-      <p>
-        <!-- If labels have been associated with these pins in the diagram they will be included in the symbol. In addition, they are also displayed as a <b>tooltip</b> when you fly over the pin with the mouse. You can disable this feature through the <a href="../prefs/pref-layout.html">preferences panel</a> .) -->
-        如果标签已与图中的这些引脚相关联，它们将包含在符号中。 此外，当您用鼠标飞过图钉时，它们还会显示为<b>工具提示</b>。 您可以通过<a href="../prefs/pref-layout.html">首选项面板</a>禁用此功能。）
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../img-guide/subcirc-4-tip.png" alt="#########">
-      </p>
-      <p>
-        <!-- Several other components will display these tips, too: For some of the pins of a built-in <a href="../../libs/mem/flipflops.html">flip-flop</a>, for example, hovering over it explains what that pin does. -->
-        其他几个组件也会显示这些提示：例如，对于内置 <a href="../../libs/mem/flipflops.html">触发器</a> 的某些引脚 ，将鼠标悬停在其上会解释该引脚的用途。
-      </p>
-      <p>
-        <!-- Incidentally, every pin to a circuit must be either an input or an output. Many manufactured chips have pins that behave as an input in some situations and as an output in others; you cannot construct such chips within Logisim (at least, in the current version. -->
-        顺便说一句，电路的每个引脚都必须是输入或输出。 许多制造的芯片都具有在某些情况下充当输入而在其他情况下充当输出的引脚。 您无法在 Logisim-evolution 中构建此类芯片（至少在当前版本中）。
-      </p>
-      <p>
-        <!-- Logisim will maintain different state information for all subcircuits appearing in a circuit. For example, if a circuit contains a flip-flop, and that circuit is used as a subcircuit several times, then each subcircuit's flip-flop will have its own value when simulating the larger circuit. -->
-        Logisim-evolution 将为电路中出现的所有子电路维护不同的状态信息。 例如，如果一个电路包含一个触发器，并且该电路多次用作子电路，则在模拟较大电路时，每个子电路的触发器将具有其自己的值。
-      </p>
-      <p>
-        <!-- Now that we have the 4-to-1 multiplexer defined, we can now use it in other circuits. Logisim has no limits on how deeply circuits can be nested - though it will object to nesting circuits within themselves! -->
-        现在我们已经定义了 4 选 1 多路复用器，我们现在可以在其他电路中使用它。 Logisim-evolution 对电路的嵌套深度没有限制 - 尽管它会反对电路自我嵌套！
-      </p>
-      <p>
-        <!-- <b class=note>Note:</b> There's nothing wrong with editing a circuit that is being used as a subcircuit; in fact, this is quite common. Be aware, though, that any changes to a circuit's pins (adding, deleting, or moving them) will rearrange them also in the containing circuit. Thus, if you change any pins in a circuit, you will also need to edit any circuits using it as a subcircuit. -->
-        <b class=note>注意：</b> 编辑用作子电路的电路没有任何问题； 事实上，这种情况很常见。 但请注意，对电路引脚的任何更改（添加、删除或移动它们）也会在包含电路中重新排列它们。 因此，如果更改电路中的任何引脚，您还需要编辑将其用作子电路的任何电路。
-      </p>
-      <p>
-        <!-- <b>Next:</b> <a href="sub-appear.html">Editing subcircuit appearance</a>. -->
-        <b>下一节:</b> <a href="sub-appear.html">编辑子电路的外观</a>.
-
-      </p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
-    </div>
-  </body>
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Using subcircuits -->
+   使用子电路
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <b>
+     上一节:
+    </b>
+    <a href="sub-creating.html">
+     创建电路
+    </a>
+   </p>
+   <h1>
+    <!-- Using subcircuits -->
+    使用子电路
+   </h1>
+   <p>
+    <!-- Now suppose we want to build a 4-to-1 multiplexer using instances of our 2-to-1 multiplexer. Of course, we would first create a new circuit, which we'll call <b class=reffig>Mux_4to1</b> To add 2-to-1 multiplexers into our circuit, we click the <b class=reffig>Mux_2to1</b> circuit <b>once</b> in the explorer pane to select it as a tool, and then we can add copies of it, represented as boxes, by clicking within the canvas. -->
+    现在假设我们想要使用 2 对 1 多路复用器的实例构建一个 4 对 1 多路复用器。 当然，我们首先要创建一个新电路，我们将其命名为
+    <b class="refig">
+     Mux_4to1
+    </b>
+    要将 2 对 1 多路复用器添加到我们的电路中，我们单击
+    <b class="reffig">
+     Mux_2to1
+    </b>
+    circuit
+    <b>
+     once
+    </b>
+    在资源管理器窗格中
+    <b>
+     一次
+    </b>
+    选择它作为工具，然后我们可以通过在画布中单击来添加它的副本（以框表示）。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/subcirc-3-add.png"/>
+   </p>
+   <p>
+    <!-- If you were to double-click the <b class=reffig>Mux_2to1</b> circuit in the explorer pane, then the window would switch to editing the <b class=reffig>Mux_2to1</b> circuit instead. -->
+    如果您在资源管理器窗格中双击
+    <b class="refig">
+     Mux_2to1
+    </b>
+    电路，则窗口将切换为编辑
+    <b class="refig">
+     Mux_2to1
+    </b>
+    电路。
+   </p>
+   <p>
+    <!-- After building up the circuit, we end up with the following. -->
+    建立电路后，我们最终得到以下结果。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/subcirc-4-done.png"/>
+   </p>
+   <p>
+    <!-- Our circuit for a 4-to-1 multiplexer uses three copies of the 2-to-1 multiplexer,each is drawn in a box with pins on the left and right sides. The pins on this box correspond to the input and output pins in the <b class=reffig>Mux_2to1</b> circuit. The two pins on the east face of the box correspond to the inputs of the circuit and on the west face they correspond to the output. They are read from the diagram of the sub-circuit from right to left and from top to bottom and they will be placed on the sub-circuit symbol from top to bottom. -->
+    我们的 4 选 1 多路复用器电路使用了 2 选 1 多路复用器的三个副本，每个副本都画在一个盒子中，左右两侧都有引脚。 该盒子上的引脚对应于
+    <b class="refig">
+     Mux_2to1
+    </b>
+    电路中的输入和输出引脚。 盒子东面的两个引脚对应于电路的输入，西面的两个引脚对应于输出。 它们从右到左、从上到下从子电路图中读取，并将它们从上到下放置在子电路符号上。
+   </p>
+   <p>
+    <!-- If labels have been associated with these pins in the diagram they will be included in the symbol. In addition, they are also displayed as a <b>tooltip</b> when you fly over the pin with the mouse. You can disable this feature through the <a href="../prefs/pref-layout.html">preferences panel</a> .) -->
+    如果标签已与图中的这些引脚相关联，它们将包含在符号中。 此外，当您用鼠标飞过图钉时，它们还会显示为
+    <b>
+     工具提示
+    </b>
+    。 您可以通过
+    <a href="../prefs/pref-layout.html">
+     首选项面板
+    </a>
+    禁用此功能。）
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../img-guide/subcirc-4-tip.png"/>
+   </p>
+   <p>
+    <!-- Several other components will display these tips, too: For some of the pins of a built-in <a href="../../libs/mem/flipflops.html">flip-flop</a>, for example, hovering over it explains what that pin does. -->
+    其他几个组件也会显示这些提示：例如，对于内置
+    <a href="../../libs/mem/flipflops.html">
+     触发器
+    </a>
+    的某些引脚 ，将鼠标悬停在其上会解释该引脚的用途。
+   </p>
+   <p>
+    <!-- Incidentally, every pin to a circuit must be either an input or an output. Many manufactured chips have pins that behave as an input in some situations and as an output in others; you cannot construct such chips within Logisim (at least, in the current version. -->
+    顺便说一句，电路的每个引脚都必须是输入或输出。 许多制造的芯片都具有在某些情况下充当输入而在其他情况下充当输出的引脚。 您无法在 Logisim-evolution 中构建此类芯片（至少在当前版本中）。
+   </p>
+   <p>
+    <!-- Logisim will maintain different state information for all subcircuits appearing in a circuit. For example, if a circuit contains a flip-flop, and that circuit is used as a subcircuit several times, then each subcircuit's flip-flop will have its own value when simulating the larger circuit. -->
+    Logisim-evolution 将为电路中出现的所有子电路维护不同的状态信息。 例如，如果一个电路包含一个触发器，并且该电路多次用作子电路，则在模拟较大电路时，每个子电路的触发器将具有其自己的值。
+   </p>
+   <p>
+    <!-- Now that we have the 4-to-1 multiplexer defined, we can now use it in other circuits. Logisim has no limits on how deeply circuits can be nested - though it will object to nesting circuits within themselves! -->
+    现在我们已经定义了 4 选 1 多路复用器，我们现在可以在其他电路中使用它。 Logisim-evolution 对电路的嵌套深度没有限制 - 尽管它会反对电路自我嵌套！
+   </p>
+   <p>
+    <!-- <b class=note>Note:</b> There's nothing wrong with editing a circuit that is being used as a subcircuit; in fact, this is quite common. Be aware, though, that any changes to a circuit's pins (adding, deleting, or moving them) will rearrange them also in the containing circuit. Thus, if you change any pins in a circuit, you will also need to edit any circuits using it as a subcircuit. -->
+    <b class="note">
+     注意：
+    </b>
+    编辑用作子电路的电路没有任何问题； 事实上，这种情况很常见。 但请注意，对电路引脚的任何更改（添加、删除或移动它们）也会在包含电路中重新排列它们。 因此，如果更改电路中的任何引脚，您还需要编辑将其用作子电路的任何电路。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="sub-appear.html">Editing subcircuit appearance</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="sub-appear.html">
+     编辑子电路的外观
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
 </html>

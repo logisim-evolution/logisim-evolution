@@ -1,77 +1,108 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="zh">
-    <title>
-      <!-- Tutorial: step by step mode -->
-      教程：单步模式
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <p>
-        <!-- <b>Previous:</b> <a href="tutor-test.html">Step 4: Testing your circuit</a> -->
-        <b>上一步:</b> <a href="tutor-test.html">第4步：测试你的电路</a>
-
-      </p>
-      <h2>
-        <!-- Step 5: The step by step mode -->
-        第5步：单步模式
-      </h2>
-      <p>
-        <!-- In certain circumstances of study or in case of subtle problem related to the propagation of the signals, it is very useful to be able to observe these phenomena. Logisim simulates in a slightly naive way the propagation in gates. (the gates all have the same propagation delay), but it still allows to observe the main problems related to these parameters. -->
-        在某些研究环境中或在与信号传播延迟相关的问题的情况下，能够观察这些现象非常有用。 Logisim-evolution 以一种稍微简单的方式模拟门中的传播。 （所有门都具有相同的传播延迟），但它仍然允许观察与这些参数相关的主要问题。
-      </p>
-      <p>
-        <!-- For the example, I only give you the key combinations needed for this exercise; you should know that for each key combination there is an equivalent submenu in the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>. -->
-        例如，我只为您提供本练习所需的组合键； 您应该知道，对于每个组合键，菜单 <b class=menu>|&nbsp;Simulate&nbsp;|</b> 中都有一个等效的子菜单。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/tutorial-step1.png" alt="#########">
-      </p>
-      <p>
-        <!-- If you build the circuit above you will find that each change from 0 to 1 of the input <var>e</var> disturbs the flip-flop D. -->
-        如果您构建上面的电路，您会发现输入 <var>e</var> 从 0 到 1 的每次变化都会干扰触发器 D。
-      </p>
-      <p>
-        <!-- To observe the phenomenon proceed as follows : Bring the circuit to the state where <var>e</var> is 0. Then do <b class="tkeybd">Ctrl-E</b> to disable automatic simulation. Push on the input <var>e</var> to switch it to 1. Nothing happens, it's normal. Then use the combination <b class="tkeybd">Ctr-I</b> and observe. Do it as many times as necessary. -->
-        要观察该现象，请按以下步骤进行：将电路置于<var>e</var>为 0 的状态。然后执行 <b class="tkeybd">Ctrl-E</b> 禁用自动模拟。 按输入 <var>e</var> 将其切换为 1。没有任何反应，这是正常的。 然后使用组合<b class="tkeybd">Ctr-I</b>并观察。 根据需要多次执行。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/tutorial-step2.png" alt="#########">
-      </p>
-      <p>
-        <!-- You will notice blue circles on some ends of thread, these indicate that there is a change in the state of this thread at this step of the simulation. You can observe the brief passage through 1 of the output of the AND gate. -->
-        您会注意到线程某些末端有蓝色圆圈，这表明在模拟的这一步中该线程的状态发生了变化。 您可以观察与门输出 1 的短暂通道。
-      </p>
-      <p>
-        <!-- This method also makes it possible to observe asynchronous counter operation or propagation of the carry in an adder. -->
-        该方法还可以观察异步计数器操作或加法器中进位的传播。
-      </p>
-      <p align="center">
-        <img src="../../../../img-guide/tutorial-step3.gif" alt="#########">
-      </p>
-      <p>
-        <!-- Now that you are finished with tutorial, you can experiment with Logisim by building your own circuits. If you want to build circuits with more sophisticated features, then you should navigate through the rest of the help system to see what else you can do. Logisim is a powerful program, allowing you to build up and test huge circuits; this step-by-step learning process just scratches the surface. -->
-        现在您已经完成了教程，您可以通过构建自己的电路来试验 Logisim-evolution。 如果您想构建具有更复杂功能的电路，那么您应该浏览帮助系统的其余部分，看看您还能做什么。 Logisim-evolution 是一个功能强大的程序，可让您构建和测试大型电路； 这个循序渐进的学习过程只是触及了表面。
-      </p>
-      <p>
-        <!-- <b>Return to</b> <a href="../index.html">User guide</a> -->
-        <b>返回</b> <a href="./index.html">初学者教程</a>
-
-      </p>
-      <p>
-      </p>
-      <p>
-      </p>
-      <p>
-      </p>
-
-    </div>
-  </body>
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Tutorial: step by step mode -->
+   教程：单步模式
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <!-- <b>Previous:</b> <a href="tutor-test.html">Step 4: Testing your circuit</a> -->
+    <b>
+     上一步:
+    </b>
+    <a href="tutor-test.html">
+     第4步：测试你的电路
+    </a>
+   </p>
+   <h2>
+    <!-- Step 5: The step by step mode -->
+    第5步：单步模式
+   </h2>
+   <p>
+    <!-- In certain circumstances of study or in case of subtle problem related to the propagation of the signals, it is very useful to be able to observe these phenomena. Logisim simulates in a slightly naive way the propagation in gates. (the gates all have the same propagation delay), but it still allows to observe the main problems related to these parameters. -->
+    在某些研究与信号传播延迟相关的问题的情况下，通过单步模式能够观察这些现象是非常有用。 Logisim-evolution 以一种稍微简单的方式模拟门中的传播。（所有门都具有相同的传播延迟），但它仍然允许观察与这些参数相关的主要问题。
+   </p>
+   <p>
+    <!-- For the example, I only give you the key combinations needed for this exercise; you should know that for each key combination there is an equivalent submenu in the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>. -->
+    例如，我只为您提供本练习所需的组合键； 您应该知道，对于每个组合键，菜单
+    <b class="menu">
+     | Simulate |
+    </b>
+    中都有一个等效的子菜单。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/tutorial-step1.png"/>
+   </p>
+   <p>
+    <!-- If you build the circuit above you will find that each change from 0 to 1 of the input <var>e</var> disturbs the flip-flop D. -->
+    如果您构建上面的电路，您会发现输入
+    <var>
+     e
+    </var>
+    从 0 到 1 的每次变化都会干扰触发器 D。
+   </p>
+   <p>
+    <!-- To observe the phenomenon proceed as follows : Bring the circuit to the state where <var>e</var> is 0. Then do <b class="tkeybd">Ctrl-E</b> to disable automatic simulation. Push on the input <var>e</var> to switch it to 1. Nothing happens, it's normal. Then use the combination <b class="tkeybd">Ctr-I</b> and observe. Do it as many times as necessary. -->
+    要观察该现象，请按以下步骤进行：将电路置于
+    <var>
+     e
+    </var>
+    为 0 的状态。然后执行
+    <b class="tkeybd">
+     Ctrl-E
+    </b>
+    禁用自动模拟。 按输入
+    <var>
+     e
+    </var>
+    将其切换为 1。没有任何反应，这是正常的。 然后使用组合
+    <b class="tkeybd">
+     Ctr-I
+    </b>
+    并观察。 根据需要多次执行。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/tutorial-step2.png"/>
+   </p>
+   <p>
+    <!-- You will notice blue circles on some ends of thread, these indicate that there is a change in the state of this thread at this step of the simulation. You can observe the brief passage through 1 of the output of the AND gate. -->
+    您会注意到某些元件的末端有蓝色圆圈，这表明在模拟的这一步中该元件的状态发生了变化。 您可以观察与门输出 1 的短暂通道。
+   </p>
+   <p>
+    <!-- This method also makes it possible to observe asynchronous counter operation or propagation of the carry in an adder. -->
+    该方法还可以观察异步计数器操作或加法器中进位的传播。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../../img-guide/tutorial-step3.gif"/>
+   </p>
+   <p>
+    <!-- Now that you are finished with tutorial, you can experiment with Logisim by building your own circuits. If you want to build circuits with more sophisticated features, then you should navigate through the rest of the help system to see what else you can do. Logisim is a powerful program, allowing you to build up and test huge circuits; this step-by-step learning process just scratches the surface. -->
+    现在您已经完成了教程，您可以通过构建自己的电路来试验 Logisim-evolution。 如果您想构建具有更复杂功能的电路，那么您应该浏览帮助系统的其余部分，看看您还能做什么。 Logisim-evolution 是一个功能强大的程序，可让您构建和测试大型电路； 这个循序渐进的学习过程只是触及了表面。
+   </p>
+   <p>
+    <!-- <b>Return to</b> <a href="../index.html">User guide</a> -->
+    <b>
+     返回
+    </b>
+    <a href="./index.html">
+     初学者教程
+    </a>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
 </html>

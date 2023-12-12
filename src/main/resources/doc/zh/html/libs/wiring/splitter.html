@@ -1,269 +1,368 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-07-18T10:59:00.000000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Splitter -->
-      分线器
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> <em>Splitter</em> -->
-        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> <em>分线器</em>
-
-      </h1>
-      <table>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Splitter -->
+   分线器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> <em>Splitter</em> -->
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/splitter.png" width="32"/>
+    <em>
+     分线器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Wiring</a> -->
+       <a href="index.html">
+        线路
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:&nbsp;</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="notscal" height="44" src="../../../../img-libs/splitter.png" width="24"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits. Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in the <a class=refguide href="../../guide/feature/fet-splitting.html">Splitters</a> section of the <a href="../index.html">User guide</a> -->
+    分线器在多位值和这些位的几个单独子集之间创建对应关系。 尽管它的名字如此，它既可以将多位值拆分为组成部分，也可以将组成部分组合成多位值 - 或者实际上它可以同时执行这两个操作。 有关分线器的更完整说明，请参见
+    <a class="refguide" href="../../guide/feature/fet-splitting.html">
+     Splitters
+    </a>
+    部分。 /index.html"&gt;用户指南
+   </p>
+   <p>
+    <!-- Logisim treats splitters specially when propagating values within a circuit: Whereas all other components have a computed delay for purposes of simulating their behavior, values propagate through splitters (as well as wires) instantaneously. -->
+    Logisim-evolution 在电路内传播值时会特别对待分线器：虽然所有其他组件都具有计算延迟以模拟其行为，但值会立即通过分线器（以及电线）传播。
+   </p>
+   <p>
+    <!-- <b classe=note>Note:</b> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus ripper</em>, but this term is unnecessarily violent for my tastes. -->
+    <b classe="note">
+     注意：
+    </b>
+    术语
+    <em>
+     splitter
+    </em>
+    是一个非标准术语，据我所知，这是Logisim-evolution独有的。 我不知道这个概念有任何标准术语； 我听说过的唯一术语是“巴士开膛手”，但这个术语对我来说过于暴力。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <p>
+    <!-- To distinguish the several connecting points for a splitter, we refer to the single connecting point one side as its <em>combined end</em>, and we refer to the multiple connecting points on the other side as its <em>split ends</em>. (see figure below) -->
+    为了区分分线器的多个连接点，我们将一侧的单个连接点称为
+    <em>
+     合并端
+    </em>
+    ，而将另一侧的多个连接点称为
+    <em>
+     分流端
+    </em>
+    。 （见下图）
+   </p>
+   <center>
+    <table>
+     <tbody>
+      <tr>
+       <td>
+       </td>
+       <td valign="top">
+        <!-- Bus -->
+        合并端
+       </td>
+       <td>
+        <img alt="#########" src="../../../../img-libs/splitter-right.png"/>
+       </td>
+       <td>
+        <!-- Split ends -->
+        分流端
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </center>
+   <dl>
+    <dd>
+    </dd>
+    <dt>
+     <!-- <b class="propertie">Bus :</b> -->
+     <b class="propertie">
+      合并端:
+     </b>
+    </dt>
+    <dd>
+     <!-- the bit width of the bus corresponds to the <b class="propertie">Bit width</b> attribute and it is the value counting all the conductors transiting the bus. -->
+     合并端的位宽对应于
+     <b class="propertie">
+      位宽
+     </b>
+     属性，它是对经过合并端的所有导体进行计数的值。
+    </dd>
+    <dt>
+     <!-- <b class="propertie">Split ends :</b> -->
+     <b class="propertie">
+      分流端 :
+     </b>
+    </dt>
+    <dd>
+     <!-- The bit width of the terminations is determined by the bit width of the bus divided (integer division) by the number of terminations. In other cases, the widths will be distributed in a balanced fractional way. -->
+     分流端的位宽度由合并端的位宽度除以分流端数量（整数除法）决定。 在其他情况下，宽度将以平衡分数方式分布。
+     <!-- For example, a 10-bit bus with 4 terminations will have two 3-bit terminations and two 2-bit terminations. -->
+     例如，具有 4 个终端的 10 位总线将具有两个 3 位终端和两个 2 位终端。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter its <b class="propertie">Fan Out</b> attribute, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter both the <<b class="propertie">Fan Out</b> and <b class="propertie">Bit Width In</b> attributes, and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
+    选择或添加组件时，数字
+    <b class="tkeybd">
+     0
+    </b>
+    到
+    <b class="tkeybd">
+     9
+    </b>
+    会改变其
+    <b class="propertie">
+     支路数量
+    </b>
+    属性，
+    <b class="tkeybd">
+     Alt-0
+    </b>
+    到
+    <b class="tkeybd">
+     Alt-9
+    </b>
+    改变 &lt;
+    <b class="propertie">
+     支路数量
+    </b>
+    ，方向键更改元件
+    <b class="propertie">
+     方向
+    </b>
+    属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Facing</b> -->
+      <b class="propertie">
+       朝向
+      </b>
+     </dt>
+     <dd>
+      <p>
+       <!-- The location of the split ends relative to the combined end. -->
+       分流端相对于合并端的位置。
+      </p>
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Fan Out</b> -->
+      <b class="propertie">
+       支路
+      </b>
+     </dt>
+     <dd>
+      <p>
+       <!-- The number of split ends. -->
+       分流端的分支数量。
+      </p>
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Bit Width In</b> -->
+      <b class="propertie">
+       输入位宽
+      </b>
+     </dt>
+     <dd>
+      <p>
+       <!-- The bit width of the bus. -->
+       合并端的位宽。
+      </p>
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Appearance</b> -->
+      <b class="propertie">
+       外观
+      </b>
+     </dt>
+     <dd>
+      <p>
+       <!-- Supports different ways of depicting the splitter in the circuit. The <q>Left-handed</q> option (the default) draws a spine going left from the combined end, with a labeled line coming from the spine for each split end. The <q>Right-handed</q> option is the same except the spine goes -->
+       支持描述电路中分路器的不同方式。
+       <q>
+        左手
+       </q>
+       选项（默认）从组合端向左绘制一条书脊，并为每个分叉端绘制一条来自书脊的标记线。
+       <q>
+        右手
+       </q>
+       选项是相同的，除了脊柱
+       <!-- right (if you're facing according to the Facing attribute). The <q>Centered</q> option centers the spine so it goes in roughly equal directions left and right. And the <q>Legacy</q> option draws diagonal lines to each split end, without labels; this option is primarily for compatibility  with versions older than 2.7.0, when this was the only option for splitter appearance. -->
+       右侧（如果您根据“面向”属性面向）。
+       <q>
+        居中
+       </q>
+       选项使书脊居中，使其左右方向大致相同。
+       <q>
+        传统
+       </q>
+       选项为每个分叉端绘制对角线，不带标签； 此选项主要是为了与 2.7.0 之前的版本兼容，当时这是分离器外观的唯一选项。
+      </p>
+      <center>
+       <table>
         <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库:</strong>
-
-            </td>
-            <td>
-              <!-- <a href="index.html">Wiring</a> -->
-              <a href="index.html">线路</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:&nbsp;</strong> -->
-              <strong>介绍:&nbsp;</strong>
-
-            </td>
-            <td>
-              2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-
-            </td>
-            <td valign="top">
-              <img class="notscal" src="../../../../img-libs/splitter.png" alt="#########" width="24" height="44">
-            </td>
-          </tr>
+         <tr>
+          <td>
+           <img align="middle" alt="#########" class="notscal" src="../../../../img-libs/splitter-left.png"/>
+          </td>
+          <td>
+           <img align="middle" alt="#########" class="notscal" src="../../../../img-libs/splitter-right.png"/>
+          </td>
+          <td>
+           <img align="middle" alt="#########" class="notscal" src="../../../../img-libs/splitter-center.png"/>
+          </td>
+          <td>
+           <img align="middle" alt="#########" class="notscal" src="../../../../img-libs/splitter-legacy.png"/>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <!-- Left-handed -->
+           向左
+          </td>
+          <td>
+           <!-- Right-handed -->
+           向右
+          </td>
+          <td>
+           <!-- Centered -->
+           居中
+          </td>
+          <td>
+           <!-- Legacy -->
+           传统
+          </td>
+         </tr>
         </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits. Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in the <a class=refguide href="../../guide/feature/fet-splitting.html">Splitters</a> section of the <a href="../index.html">User guide</a> -->
-        分线器在多位值和这些位的几个单独子集之间创建对应关系。 尽管它的名字如此，它既可以将多位值拆分为组成部分，也可以将组成部分组合成多位值 - 或者实际上它可以同时执行这两个操作。 有关分线器的更完整说明，请参见 <a class=refguide href="../../guide/feature/fet-splitting.html">Splitters</a> 部分。 /index.html">用户指南</a>
-      </p>
-      <p>
-        <!-- Logisim treats splitters specially when propagating values within a circuit: Whereas all other components have a computed delay for purposes of simulating their behavior, values propagate through splitters (as well as wires) instantaneously. -->
-        Logisim-evolution 在电路内传播值时会特别对待分线器：虽然所有其他组件都具有计算延迟以模拟其行为，但值会立即通过分线器（以及电线）传播。
-      </p>
-      <p>
-        <!-- <b classe=note>Note:</b> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus ripper</em>, but this term is unnecessarily violent for my tastes. -->
-        <b classe=note>注意：</b>术语<em>splitter</em>是一个非标准术语，据我所知，这是Logisim-evolution独有的。 我不知道这个概念有任何标准术语； 我听说过的唯一术语是“巴士开膛手”，但这个术语对我来说过于暴力。
-      </p>
-      <h2>
-        <!-- Pins -->
-        引脚
-      </h2>
-      <p>
-        <!-- To distinguish the several connecting points for a splitter, we refer to the single connecting point one side as its <em>combined end</em>, and we refer to the multiple connecting points on the other side as its <em>split ends</em>. (see figure below) -->
-        为了区分分线器的多个连接点，我们将一侧的单个连接点称为<em>合并端</em>，而将另一侧的多个连接点称为<em>分流端 </em>。 （见下图）
-      </p>
-	   <center>
-        <table>
-          <tbody>
-            <tr>
-              <td></td>
-              <td valign="top">
-                <!-- Bus -->
-                合并端
-              </td>
-              <td>
-                <img src="../../../../img-libs/splitter-right.png" alt="#########">
-              </td>
-              <td>
-                <!-- Split ends -->
-                分流端
-              </td>
-            </tr>
-          </tbody>
-        </table>
+       </table>
       </center>
-      <dl>
-	  <dd></dd>
-        <dt>
-          <!-- <b class="propertie">Bus :</b> -->
-          <b class="propertie">合并端:</b>
-
-        </dt>
-		<dd>
-		  <!-- the bit width of the bus corresponds to the <b class="propertie">Bit width</b> attribute and it is the value counting all the conductors transiting the bus. -->
-      合并端的位宽对应于<b class="propertie">位宽</b>属性，它是对经过合并端的所有导体进行计数的值。
-		</dd>
-		<dt>
-		  <!-- <b class="propertie">Split ends :</b> -->
-      <b class="propertie">分流端 :</b>
-
-		</dt>
-         <dd>
-          <!-- The bit width of the terminations is determined by the bit width of the bus divided (integer division) by the number of terminations. In other cases, the widths will be distributed in a balanced fractional way. -->
-          分流端的位宽度由合并端的位宽度除以分流端数量（整数除法）决定。 在其他情况下，宽度将以平衡分数方式分布。
-          <!-- For example, a 10-bit bus with 4 terminations will have two 3-bit terminations and two 2-bit terminations. -->
-          例如，具有 4 个终端的 10 位总线将具有两个 3 位终端和两个 2 位终端。
-        </dd>
-      </dl>
-    
-	<h2>
-        <!-- Attributes -->
-        属性
-      </h2>
-      <p>
-        <!-- When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter its <b class="propertie">Fan Out</b> attribute, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter both the <<b class="propertie">Fan Out</b> and <b class="propertie">Bit Width In</b> attributes, and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-        选择或添加组件时，数字 <b class="tkeybd">0</b> 到 <b class="tkeybd">9</b> 会改变其<b class="propertie">支路数量 </b> 属性，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 改变 <<b class="propertie">支路数量</b> ，方向键更改元件 <b class="propertie">方向</b> 属性。
-      </p>
-	  <div class="attliste">
-      <dl>
-        <dt>
-          <!-- <b class="propertie">Facing</b> -->
-          <b class="propertie">朝向</b>
-
-        </dt>
-        <dd>
-          <p>
-            <!-- The location of the split ends relative to the combined end. -->
-            分流端相对于合并端的位置。
-          </p>
-        </dd>
-        <dt>
-          <!-- <b class="propertie">Fan Out</b> -->
-          <b class="propertie">支路</b>
-
-        </dt>
-        <dd>
-          <p>
-            <!-- The number of split ends. -->
-            分流端的分支数量。
-          </p>
-        </dd>
-        <dt>
-          <!-- <b class="propertie">Bit Width In</b> -->
-          <b class="propertie">输入位宽</b>
-
-        </dt>
-        <dd>
-          <p>
-            <!-- The bit width of the bus. -->
-            合并端的位宽。
-          </p>
-        </dd>
-        <dt>
-          <!-- <b class="propertie">Appearance</b> -->
-          <b class="propertie">外观</b>
-
-        </dt>
-        <dd>
-          <p>
-            <!-- Supports different ways of depicting the splitter in the circuit. The <q>Left-handed</q> option (the default) draws a spine going left from the combined end, with a labeled line coming from the spine for each split end. The <q>Right-handed</q> option is the same except the spine goes -->
-            支持描述电路中分路器的不同方式。 <q>左手</q>选项（默认）从组合端向左绘制一条书脊，并为每个分叉端绘制一条来自书脊的标记线。 <q>右手</q>选项是相同的，除了脊柱
-            <!-- right (if you're facing according to the Facing attribute). The <q>Centered</q> option centers the spine so it goes in roughly equal directions left and right. And the <q>Legacy</q> option draws diagonal lines to each split end, without labels; this option is primarily for compatibility  with versions older than 2.7.0, when this was the only option for splitter appearance. -->
-            右侧（如果您根据“面向”属性面向）。 <q>居中</q>选项使书脊居中，使其左右方向大致相同。 <q>传统</q> 选项为每个分叉端绘制对角线，不带标签； 此选项主要是为了与 2.7.0 之前的版本兼容，当时这是分离器外观的唯一选项。
-          </p>
-		  <center>
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <img class="notscal" src="../../../../img-libs/splitter-left.png" alt="#########" align="middle">
-                  </td>
-                  <td>
-                    <img class="notscal"  src="../../../../img-libs/splitter-right.png" alt="#########" align="middle">
-                  </td>
-                  <td>
-                    <img class="notscal"  src="../../../../img-libs/splitter-center.png" alt="#########" align="middle">
-                  </td>
-                  <td>
-                    <img class="notscal"  src="../../../../img-libs/splitter-legacy.png" alt="#########" align="middle">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <!-- Left-handed -->
-                    向左
-
-                  </td>
-                  <td>
-                    <!-- Right-handed -->
-                    向右
-                  </td>
-                  <td>
-                    <!-- Centered -->
-                    居中
-                  </td>
-                  <td>
-                    <!-- Legacy -->
-                    传统
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </center>
-        </dd>
-		<dt>
-          <!-- <b class="propertie">Spacing</b> -->
-          <b class="propertie">间距</b>
-
-      </dt>
-      <dd>
-	    <!-- Determines the spacing between terminations. -->
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Spacing</b> -->
+      <b class="propertie">
+       间距
+      </b>
+     </dt>
+     <dd>
+      <!-- Determines the spacing between terminations. -->
       确定分流端分支之间的间距。
       <dt>
-        <dt>
-          <!-- <b class="propertie">Bit <var>x</var></b> -->
-          <b class="propertie">位 <var>x</var></b>
-
-        </dt>
-        <dd>
-          <p>
-            <!-- The index of the split end to which bit <var>x</var> of the combined end corresponds. The split ends are indexed starting from 0 at the top (for a splitter facing east or west) or from 0 at the left/west (for a splitter facing north or south). A bit can be specified to correspond to none of the split ends. There is no way for a bit to correspond to multiple split ends. -->
-            合并端的 <var>x</var> 位对应的分流端的索引。 分流端的索引从顶部的 0 开始（对于面向东或向西的分线器）或从左/西的 0 开始（对于面向北或南的分线器）。 可以指定合并端一个位来对应任何分流端的某一支。 合并端的一个位无法对应分流端多个分支。
-          </p>
-          <p>
-            <!-- Sometimes you can avoid twiddling each individual Bit <var>x</var> attribute by bringing up the pop-up menu for a splitter (usually by right-clicking or control-clicking it). The pop-up menu includes options labeled Distribute Ascending and Distribute Descending. The Distribute  Ascending option distributes the bits so that each split end receives the same number of bits, starting from end 0. (If the number of split ends doesn't divide exactly into the number of bits, then the bits are distributed as evenly as possible.) Distribute Descending does the same but starts from the highest-numbered end. -->
-            有时，您可以通过打开分线器的弹出菜单（通常通过右键单击或按住 Control 单击它）来避免设置每个单独的位 <var>x</var> 属性。 弹出菜单包括标有“按升序分布”和“按降序分布”的选项。 “分配升序”选项分配位，以便每个分流端从末端 0 开始接收相同数量的位。（如果分流端的数量不能精确地除以位数，则位将均匀分布为 可能。）“降序分布”执行相同的操作，但从编号最高的一端开始。
-          </p>
-        </dd>
-      </dl>
-	  </div>
-      <h2>
-        <!-- Poke Tool Behavior -->
-        Poke 工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <h2>
-        <!-- Text Tool Behavior -->
-        文本工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <p>
-        <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-        <b>返回</b> <a href="../index.html">电路元件库手册</a>
-      </p>
-    </div>
-  </body>
+       <dt>
+        <!-- <b class="propertie">Bit <var>x</var></b> -->
+        <b class="propertie">
+         位
+         <var>
+          x
+         </var>
+        </b>
+       </dt>
+       <dd>
+        <p>
+         <!-- The index of the split end to which bit <var>x</var> of the combined end corresponds. The split ends are indexed starting from 0 at the top (for a splitter facing east or west) or from 0 at the left/west (for a splitter facing north or south). A bit can be specified to correspond to none of the split ends. There is no way for a bit to correspond to multiple split ends. -->
+         合并端的
+         <var>
+          x
+         </var>
+         位对应的分流端的索引。 分流端的索引从顶部的 0 开始（对于面向东或向西的分线器）或从左/西的 0 开始（对于面向北或南的分线器）。 可以指定合并端一个位来对应任何分流端的某一支。 合并端的一个位无法对应分流端多个分支。
+        </p>
+        <p>
+         <!-- Sometimes you can avoid twiddling each individual Bit <var>x</var> attribute by bringing up the pop-up menu for a splitter (usually by right-clicking or control-clicking it). The pop-up menu includes options labeled Distribute Ascending and Distribute Descending. The Distribute  Ascending option distributes the bits so that each split end receives the same number of bits, starting from end 0. (If the number of split ends doesn't divide exactly into the number of bits, then the bits are distributed as evenly as possible.) Distribute Descending does the same but starts from the highest-numbered end. -->
+         有时，您可以通过打开分线器的弹出菜单（通常通过右键单击或按住 Control 单击它）来避免设置每个单独的位
+         <var>
+          x
+         </var>
+         属性。 弹出菜单包括标有“按升序分布”和“按降序分布”的选项。 “分配升序”选项分配位，以便每个分流端从末端 0 开始接收相同数量的位。（如果分流端的数量不能精确地除以位数，则位将均匀分布为 可能。）“降序分布”执行相同的操作，但从编号最高的一端开始。
+        </p>
+       </dd>
+      </dt>
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库手册
+    </a>
+   </p>
+  </div>
+ </body>
 </html>

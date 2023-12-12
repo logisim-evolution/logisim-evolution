@@ -1,44 +1,45 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2019-03-16T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Window Text Vector -->
-      窗口文本矢量
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- Assembly viewer -->
-        装配查看器
-      </h1>
-      <p>
-        <!-- The Assembly viewer window displays an address value stored in a register in the current circuit, together with the assembly language instruction at that address. -->
-        汇编查看器窗口显示当前电路中寄存器中存储的地址值以及该地址处的汇编语言指令。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/assembly-viewer.png" alt="#########">
-      </p>
-      <p>
-        <!-- Whenever the value stored in the register changes, the new address is highlighted in the Assembly viewer. -->
-        每当寄存器中存储的值发生更改时，新地址就会在程序集查看器中突出显示。
-      </p>
-      <p>
-        <!-- Select the register for display and load a text file containing the assembly language instructions. -->
-        选择要显示的寄存器并加载包含汇编语言指令的文本文件。
-      </p>
-      <p>
-        <!-- The filename must have a .lss suffix. An example text file is<br> -->
-        文件名必须具有 .lss 后缀。 示例文本文件是<br>
-      </p>
-      <blockquote>
-        <pre>    0: LOD A,[1005h]
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Window Text Vector -->
+   窗口文本矢量
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Assembly viewer -->
+    装配查看器
+   </h1>
+   <p>
+    <!-- The Assembly viewer window displays an address value stored in a register in the current circuit, together with the assembly language instruction at that address. -->
+    汇编查看器窗口显示当前电路中寄存器中存储的地址值以及该地址处的汇编语言指令。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/assembly-viewer.png"/>
+   </p>
+   <p>
+    <!-- Whenever the value stored in the register changes, the new address is highlighted in the Assembly viewer. -->
+    每当寄存器中存储的值发生更改时，新地址就会在程序集查看器中突出显示。
+   </p>
+   <p>
+    <!-- Select the register for display and load a text file containing the assembly language instructions. -->
+    选择要显示的寄存器并加载包含汇编语言指令的文本文件。
+   </p>
+   <p>
+    <!-- The filename must have a .lss suffix. An example text file is<br> -->
+    文件名必须具有 .lss 后缀。 示例文本文件是
+    <br/>
+   </p>
+   <blockquote>
+    <pre>    0: LOD A,[1005h]
     3: ADD A,[1001h]
     6: STO [1005h],A
 
@@ -58,16 +59,19 @@
  1002: 00h, 1Ch
  1004: 00h, 00h
 </pre>
-      </blockquote>
-      <p>
-        <!-- Instruction addresses in the text file are in hexadecimal without leading zeroes and with at least one leading space at the start of the line, followed by a colon and the assembly language instruction. -->
-        文本文件中的指令地址为十六进制，没有前导零，并且在行开头至少有一个前导空格，后跟冒号和汇编语言指令。
-      </p>
-      <p>
-        <!-- Pressing <b class="tkeybd">F2</b> in the Assembly window advances the clock by two ticks. -->
-        在装配窗口中按 <b class="tkeybd">F2</b> 可使时钟前进两格。
-      </p>
-
-    </div>
-  </body>
+   </blockquote>
+   <p>
+    <!-- Instruction addresses in the text file are in hexadecimal without leading zeroes and with at least one leading space at the start of the line, followed by a colon and the assembly language instruction. -->
+    文本文件中的指令地址为十六进制，没有前导零，并且在行开头至少有一个前导空格，后跟冒号和汇编语言指令。
+   </p>
+   <p>
+    <!-- Pressing <b class="tkeybd">F2</b> in the Assembly window advances the clock by two ticks. -->
+    在装配窗口中按
+    <b class="tkeybd">
+     F2
+    </b>
+    可使时钟前进两格。
+   </p>
+  </div>
+ </body>
 </html>

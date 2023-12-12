@@ -1,168 +1,189 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-21T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      TTY
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <img class="iconlibs" src="../../../../icons/6464/tty.png" align="middle" alt="#########" height="32" width="32"> <em>TTY</em>
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库：</strong>
-            </td>
-            <td>
-              <!-- <a href="index.html">Input/Output</a> -->
-              <a href="index.html">输入/输出</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:</strong> -->
-              <strong>介绍:</strong>
-
-            </td>
-            <td>
-              2.2.0
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-            </td>
-            <td valign="top">
-              <img class="appearancelibslarge" src="../../../../img-libs/tty.png" alt="#########" width="128" height="64">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- This component implements a very simple dumb terminal. It receives a sequence of ASCII codes and displays each printable character. When the current row becomes full, the cursor moves to the following line, possibly scrolling all current rows up if the cursor was already in the bottom row. The only supported control sequences are: backspace (ASCII 8), which deletes the last character in the final row, unless the final row is already empty; newline (ASCII 10), which moves the cursor to the beginning of the following line, scrolling if necessary; and form-feed (ASCII 12, typed as control-L), which clears the screen. -->
-        该组件实现了一个非常简单的哑终端。 它接收一系列 ASCII 代码并显示每个可打印字符。 当当前行变满时，光标移动到下一行，如果光标已经位于底行，则可能会向上滚动所有当前行。 唯一支持的控制序列是： 退格键 (ASCII 8)，它删除最后一行中的最后一个字符，除非最后一行已经为空； 换行符 (ASCII 10)，将光标移动到下一行的开头，必要时滚动； 和换页（ASCII 12，键入为 control-L），它清除屏幕。
-      </p>
-      <h2>
-        <!-- Pins -->
-        引脚
-      </h2>
-      <dl>
-        <dt>
-          <!-- West edge, upper pin (input, bit width 7) -->
-          西边，上引脚（输入，位宽 7）
-        </dt>
-        <dd>
-          <!-- Data - this is the ASCII value of the next character to be entered into the terminal. -->
-          数据 - 这是要输入终端的下一个字符的 ASCII 值。
-        </dd>
-        <dt>
-          <!-- West edge, lower pin marked by triangle (input, bit width 1) -->
-          西边，用三角形标记的下部引脚（输入，位宽 1）
-        </dt>
-        <dd>
-          <!-- Clock - when triggered while the write-enable pin isn't 0, the current ASCII value on the Data input is processed by the terminal. -->
-          时钟 - 当写入使能引脚不为 0 时被触发，数据输入上的当前 ASCII 值将由终端处理。
-        </dd>
-        <dt>
-          <!-- South edge, leftmost pin (input, bit width 1) -->
-          南边缘，最左边的引脚（输入，位宽 1）
-        </dt>
-        <dd>
-          <!-- Write Enable - when 1 (or floating or error), a clock edge will result in processing a new character from the data input. The clock and data inputs are ignored when Write Enable is 0. -->
-          写使能 - 当为 1（或浮动或错误）时，时钟沿将导致处理来自数据输入的新字符。 当写使能为 0 时，时钟和数据输入被忽略。
-        </dd>
-        <dt>
-          <!-- South edge, second pin from left (input, bit width 1) -->
-          南边缘，左起第二个引脚（输入，位宽 1）
-        </dt>
-        <dd>
-          <!-- Clear - when 1, the terminal is cleared of all data, and all other inputs are ignored. -->
-          清除 - 为 1 时，清除终端上的所有数据，并忽略所有其他输入。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Attributes -->
-        属性
-      </h2>
-      <dl>
-        <dt>
-          <!-- Rows -->
-          行数
-        </dt>
-        <dd>
-          <!-- The number of rows displayed in the terminal. -->
-          终端中显示的行数。
-        </dd>
-        <dt>
-          <!-- Columns -->
-          列数
-        </dt>
-        <dd>
-          <!-- The maximum number of characters displayed in each row of terminal. -->
-          终端每行显示的最大字符数。
-        </dd>
-        <dt>
-          <!-- Trigger -->
-          扳机
-        </dt>
-        <dd>
-          <!-- If the value is <q>Rising Edge,</q> then when the clock input changes from 0 to 1, the data input is processed (when enabled by the write-enable and clear inputs). If it is <q>Falling Edge,</q>, then this happens when the clock input changes from 1 to 0. -->
-          如果该值为<q>上升沿</q>，则当时钟输入从0变为1时，数据输入被处理（当通过写使能和清除输入使能时）。 如果是<q>下降沿</q>，则当时钟输入从1变为0时会发生这种情况。
-        </dd>
-        <dt>
-          <!-- Color -->
-          颜色
-        </dt>
-        <dd>
-          <!-- The color with which to draw the text appearing in the terminal. -->
-          用于绘制终端中出现的文本的颜色。
-        </dd>
-        <dt>
-          <!-- Background -->
-          背景
-        </dt>
-        <dd>
-          <!-- The color with which to draw the terminal's background. -->
-          绘制终端背景的颜色。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Poke Tool Behavior -->
-        Poke 工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <h2>
-        <!-- Text Tool Behavior -->
-        文本工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <p>
-        <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
-
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   TTY
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/tty.png" width="32"/>
+    <em>
+     TTY
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库：
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Input/Output</a> -->
+       <a href="index.html">
+        输入/输出
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.2.0
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibslarge" height="64" src="../../../../img-libs/tty.png" width="128"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- This component implements a very simple dumb terminal. It receives a sequence of ASCII codes and displays each printable character. When the current row becomes full, the cursor moves to the following line, possibly scrolling all current rows up if the cursor was already in the bottom row. The only supported control sequences are: backspace (ASCII 8), which deletes the last character in the final row, unless the final row is already empty; newline (ASCII 10), which moves the cursor to the beginning of the following line, scrolling if necessary; and form-feed (ASCII 12, typed as control-L), which clears the screen. -->
+    该组件实现了一个非常简单的哑终端。 它接收一系列 ASCII 代码并显示每个可打印字符。 当当前行变满时，光标移动到下一行，如果光标已经位于底行，则可能会向上滚动所有当前行。 唯一支持的控制序列是： 退格键 (ASCII 8)，它删除最后一行中的最后一个字符，除非最后一行已经为空； 换行符 (ASCII 10)，将光标移动到下一行的开头，必要时滚动； 和换页（ASCII 12，键入为 control-L），它清除屏幕。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge, upper pin (input, bit width 7) -->
+     西边，上引脚（输入，位宽 7）
+    </dt>
+    <dd>
+     <!-- Data - this is the ASCII value of the next character to be entered into the terminal. -->
+     数据 - 这是要输入终端的下一个字符的 ASCII 值。
+    </dd>
+    <dt>
+     <!-- West edge, lower pin marked by triangle (input, bit width 1) -->
+     西边，用三角形标记的下部引脚（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Clock - when triggered while the write-enable pin isn't 0, the current ASCII value on the Data input is processed by the terminal. -->
+     时钟 - 当写入使能引脚不为 0 时被触发，数据输入上的当前 ASCII 值将由终端处理。
+    </dd>
+    <dt>
+     <!-- South edge, leftmost pin (input, bit width 1) -->
+     南边缘，最左边的引脚（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Write Enable - when 1 (or floating or error), a clock edge will result in processing a new character from the data input. The clock and data inputs are ignored when Write Enable is 0. -->
+     写使能 - 当为 1（或浮动或错误）时，时钟沿将导致处理来自数据输入的新字符。 当写使能为 0 时，时钟和数据输入被忽略。
+    </dd>
+    <dt>
+     <!-- South edge, second pin from left (input, bit width 1) -->
+     南边缘，左起第二个引脚（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Clear - when 1, the terminal is cleared of all data, and all other inputs are ignored. -->
+     清除 - 为 1 时，清除终端上的所有数据，并忽略所有其他输入。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <dl>
+    <dt>
+     <!-- Rows -->
+     行数
+    </dt>
+    <dd>
+     <!-- The number of rows displayed in the terminal. -->
+     终端中显示的行数。
+    </dd>
+    <dt>
+     <!-- Columns -->
+     列数
+    </dt>
+    <dd>
+     <!-- The maximum number of characters displayed in each row of terminal. -->
+     终端每行显示的最大字符数。
+    </dd>
+    <dt>
+     <!-- Trigger -->
+     触发器
+    </dt>
+    <dd>
+     <!-- If the value is <q>Rising Edge,</q> then when the clock input changes from 0 to 1, the data input is processed (when enabled by the write-enable and clear inputs). If it is <q>Falling Edge,</q>, then this happens when the clock input changes from 1 to 0. -->
+     如果该值为
+     <q>
+      上升沿
+     </q>
+     ，则当时钟输入从0变为1时，数据输入被处理（当通过写使能和清除输入使能时）。 如果是
+     <q>
+      下降沿
+     </q>
+     ，则当时钟输入从1变为0时会发生这种情况。
+    </dd>
+    <dt>
+     <!-- Color -->
+     颜色
+    </dt>
+    <dd>
+     <!-- The color with which to draw the text appearing in the terminal. -->
+     用于绘制终端中出现的文本的颜色。
+    </dd>
+    <dt>
+     <!-- Background -->
+     背景
+    </dt>
+    <dd>
+     <!-- The color with which to draw the terminal's background. -->
+     绘制终端背景的颜色。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
 </html>

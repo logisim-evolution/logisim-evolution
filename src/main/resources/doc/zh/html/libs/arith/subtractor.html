@@ -1,162 +1,216 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Subtractor -->
-      减法器
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- <img class="iconlibs" src="../../../../icons/6464/subtractor.png" alt="#########" width="32" height="32" align="middle"> <em>Subtractor</em> -->
-        <img class="iconlibs" src="../../../../icons/6464/subtractor.png" alt="#########" width="32" height="32" align="middle"> <em>减法器</em>
-
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库:</strong>
-
-            </td>
-            <td>
-              <!-- <a href="index.html">Arithmetic</a> -->
-              <a href="index.html">算术</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:</strong> -->
-              <strong>介绍:</strong>
-
-            </td>
-            <td>
-              2.0 Beta 11
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-            </td>
-            <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/subtractor.png" alt="#########" width="64" height="64">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- This component subtracts values coming in via the west inputs (the upper minus the lower) and outputs the difference on the east output. The component is designed so that it can be cascaded with other subtractors to provide subtract more bits than is possible with a single subtractor: The borrow-in input provides a one-bit value to be borrowed out of the difference (if the borrow-in input is specified), and a borrow-out output indicates whether the component needs to borrow an upper-order bit to complete the subtraction without underflow (assuming unsigned subtraction). -->
-        该组件减去通过西边输入传入的值（上部减去下部），并在东边输出上输出差值。 该组件的设计使其可以与其他减法器级联，以提供比单个减法器可能减去的更多位：借入输入提供要从差值中借出的一位值（如果借入输入 指定输入），借出输出指示组件是否需要借用高位来完成减法而不发生下溢（假设无符号减法）。
-      </p>
-      <p>
-        <!-- Internally, the subtractor simply performs a bitwise NOT on the subtrahend, and add this to the minuend along with the NOT of the borrow-in input. (The <em>minuend</em> is the first operand (upper input) to the subtraction, and the <em>subtrahend</em> is the second (lower input). I happen to like the antiquated terms.) -->
-        在内部，减法器只是对减数执行按位 NOT，并将其与借入输入的 NOT 一起添加到被减数。 （<em>被减数</em>是减法的第一个操作数（上输入），<em>减数</em>是第二个操作数（下输入）。我碰巧喜欢这些过时的术语。）
-      </p>
-      <p>
-        <!-- If either of the operands contains some floating bits or some error bits, then the component will perform a partial subtraction. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits. -->
-        如果任一操作数包含一些浮动位或一些错误位，则该组件将执行部分减法。 也就是说，它将计算尽可能多的低位。 但在浮动或错误位之上，结果将具有浮动或错误位。
-      </p>
-      <h2>
-        <!-- Pins -->
-        引脚
-      </h2>
-      <dl>
-        <dt>
-          <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
-          西边，北端（输入，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The minuend of the subtraction; that is, the number from which to subtract. -->
-          减法的被减数； 即要从中减去的数字。
-        </dd>
-        <dt>
-          <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
-          西边，南端（输入，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The subtrahend of the subtraction; that is, the number to subtract from the minuend. -->
-          减法的减数； 即要从被减数中减去的数字。
-        </dd>
-        <dt>
-          <!-- North edge, labeled <var>b in</var> (input, bit width 1) -->
-          北边缘，标记为 <var>b in</var> （输入，位宽 1）
-        </dt>
-        <dd>
-          <!-- If 1, then 1 is borrowed out of the difference. If the value is unknown (i.e., floating), then it is assumed to be 0. -->
-          如果为 1，则从差额中借用 1。 如果该值未知（即浮动），则假定为 0。
-        </dd>
-        <dt>
-          <!-- East edge (output, bit width matches Data Bits attribute) -->
-          东边（输出，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The lower <var>dataBits</var> bits of the difference of the two values coming in the west edge, minus the <var>b</var><sub><var>in</var></sub> bit. -->
-          西边缘传入的两个值之差的较低 <var>dataBits</var> 位减去 <var>b</var><sub><var>in</var></sub> 位 。
-
-        </dd>
-        <dt>
-          <!-- South edge, labeled <var>b out</var> (output, bit width 1) -->
-          南边缘，标记为<var>b out</var>（输出，位宽1）
-        </dt>
-        <dd>
-          <!-- The borrow bit computed for the difference. If the values subtracted as unsigned values yield a negative value, then this bit will be 1; otherwise, it will be 0. -->
-          为差异计算的借位。 如果作为无符号值减去的值产生负值，则该位将为 1； 否则，将为 0。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Attributes -->
-        属性
-      </h2>
-      <p>
-        <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
-        选择或添加元件时，<b class="keybind">Alt-0</b> 到 <b class="keybind">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b>属性。
-      </p>
-	  <div class="attliste">
-      <dl>
-        <dt>
-          <!-- <b class="propertie">Data Bits</b> -->
-          <b class="property">数据位</b>
-        </dt>
-        <dd>
-          <!-- The bit width of the values to be subtracted and of the result. -->
-          要相减的值和结果的位宽。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Poke Tool Behavior -->
-        Poke 工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-   </p>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Subtractor -->
+   减法器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/subtractor.png" alt="#########" width="32" height="32" align="middle"> <em>Subtractor</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/subtractor.png" width="32"/>
+    <em>
+     减法器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Arithmetic</a> -->
+       <a href="index.html">
+        算术
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 11
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/subtractor.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
    <h2>
-         <!-- Text Tool Behavior -->
-         文本工具行为
+    <!-- Behavior -->
+    行为
    </h2>
    <p>
-             <!-- None. -->
-             无
+    <!-- This component subtracts values coming in via the west inputs (the upper minus the lower) and outputs the difference on the east output. The component is designed so that it can be cascaded with other subtractors to provide subtract more bits than is possible with a single subtractor: The borrow-in input provides a one-bit value to be borrowed out of the difference (if the borrow-in input is specified), and a borrow-out output indicates whether the component needs to borrow an upper-order bit to complete the subtraction without underflow (assuming unsigned subtraction). -->
+    该组件减去通过西边输入传入的值（上部减去下部），并在东边输出上输出差值。 该组件的设计使其可以与其他减法器级联，以提供比单个减法器可能减去的更多位：借入输入提供要从差值中借出的一位值（如果借入输入 指定输入），借出输出指示组件是否需要借用高位来完成减法而不发生下溢（假设无符号减法）。
    </p>
    <p>
-      <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-      <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
-
+    <!-- Internally, the subtractor simply performs a bitwise NOT on the subtrahend, and add this to the minuend along with the NOT of the borrow-in input. (The <em>minuend</em> is the first operand (upper input) to the subtraction, and the <em>subtrahend</em> is the second (lower input). I happen to like the antiquated terms.) -->
+    在内部，减法器只是对减数执行按位 NOT，并将其与借入输入的 NOT 一起添加到被减数。 （
+    <em>
+     被减数
+    </em>
+    是减法的第一个操作数（上输入），
+    <em>
+     减数
+    </em>
+    是第二个操作数（下输入）。我碰巧喜欢这些过时的术语。）
    </p>
-    </div>
-  </body>
+   <p>
+    <!-- If either of the operands contains some floating bits or some error bits, then the component will perform a partial subtraction. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits. -->
+    如果任一操作数包含一些浮动位或一些错误位，则该组件将执行部分减法。 也就是说，它将计算尽可能多的低位。 但在浮动或错误位之上，结果将具有浮动或错误位。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
+     西边，北端（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The minuend of the subtraction; that is, the number from which to subtract. -->
+     减法的被减数； 即要从中减去的数字。
+    </dd>
+    <dt>
+     <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
+     西边，南端（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The subtrahend of the subtraction; that is, the number to subtract from the minuend. -->
+     减法的减数； 即要从被减数中减去的数字。
+    </dd>
+    <dt>
+     <!-- North edge, labeled <var>b in</var> (input, bit width 1) -->
+     北边缘，标记为
+     <var>
+      b in
+     </var>
+     （输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- If 1, then 1 is borrowed out of the difference. If the value is unknown (i.e., floating), then it is assumed to be 0. -->
+     如果为 1，则从差额中借用 1。 如果该值未知（即浮动），则假定为 0。
+    </dd>
+    <dt>
+     <!-- East edge (output, bit width matches Data Bits attribute) -->
+     东边（输出，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The lower <var>dataBits</var> bits of the difference of the two values coming in the west edge, minus the <var>b</var><sub><var>in</var></sub> bit. -->
+     西边缘传入的两个值之差的较低
+     <var>
+      dataBits
+     </var>
+     位减去
+     <var>
+      b
+     </var>
+     <sub>
+      <var>
+       in
+      </var>
+     </sub>
+     位 。
+    </dd>
+    <dt>
+     <!-- South edge, labeled <var>b out</var> (output, bit width 1) -->
+     南边缘，标记为
+     <var>
+      b out
+     </var>
+     （输出，位宽1）
+    </dt>
+    <dd>
+     <!-- The borrow bit computed for the difference. If the values subtracted as unsigned values yield a negative value, then this bit will be 1; otherwise, it will be 0. -->
+     为差异计算的借位。 如果作为无符号值减去的值产生负值，则该位将为 1； 否则，将为 0。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+    选择或添加元件时，
+    <b class="keybind">
+     Alt-0
+    </b>
+    到
+    <b class="keybind">
+     Alt-9
+    </b>
+    会更改其
+    <b class="propertie">
+     数据位
+    </b>
+    属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Data Bits</b> -->
+      <b class="property">
+       数据位
+      </b>
+     </dt>
+     <dd>
+      <!-- The bit width of the values to be subtracted and of the result. -->
+      要相减的值和结果的位宽。
+     </dd>
+    </dl>
+    <h2>
+     <!-- Poke Tool Behavior -->
+     Poke 工具行为
+    </h2>
+    <p>
+     <!-- None. -->
+     无
+    </p>
+    <h2>
+     <!-- Text Tool Behavior -->
+     文本工具行为
+    </h2>
+    <p>
+     <!-- None. -->
+     无
+    </p>
+    <p>
+     <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+     <b>
+      返回
+     </b>
+     <a href="../index.html">
+      电路元件库参考手册
+     </a>
+    </p>
+   </div>
+  </div>
+ </body>
 </html>

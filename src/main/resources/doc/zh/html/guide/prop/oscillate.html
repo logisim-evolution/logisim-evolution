@@ -1,57 +1,79 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-01-08T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Oscillation errors -->
-      振荡误差
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- Oscillation errors -->
-        振荡误差
-      </h1>
-      <p>
-        <!-- The propagation algorithm, which normally works silently without any problems, will become very visible when you create a circuit that oscillates. -->
-        传播算法通常默默地工作，不会出现任何问题，但当您创建振荡电路时，传播算法将变得非常明显。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/prop-oscillate-before.png" alt="#########">
-      </p>
-      <p>
-        <!-- This circuit is currently in a stable condition. But if you change the input to 1, the circuit will effectively enter an infinite loop. After a while, Logisim will simply give up and show an "Oscillation apparent" message telling you that it believes that the circuit is oscillating. -->
-        该电路目前处于稳定状态。 但如果将输入更改为 1，电路将有效地进入无限循环。 一段时间后，Logisim-evolution 将放弃并显示“振荡明显”消息，告诉您它认为电路正在振荡。
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../img-guide/prop-oscillate-error.png" alt="#########">
-      </p>
-      <p>
-        <!-- It will display the values it has at the time it gives up. These values will look wrong - in this screen shot, the AND gate is emitting 1 although one of its inputs is 0, but it could be that the NOT gate has a 1 input and a 1 output. -->
-        它将显示放弃时的值。 这些值看起来是错误的 - 在此屏幕截图中，AND 门虽然其输入之一为 0，但仍发出 1，但 NOT 门可能有 1 个输入和 1 个输出。
-      </p>
-      <p>
-        <!-- Logisim helpfully circles in red each location that seems to be involved in the oscillation. If an involved point lies within a subcircuit, Logisim will draw that subcircuit's outline in red. -->
-        Logisim-evolution 会用红色圈出似乎与振荡有关的每个位置。 如果涉及的点位于子电路内，Logisim-evolution 将以红色绘制该子电路的轮廓。
-      </p>
-      <p>
-        <!-- When Logisim detects oscillation, it shuts down all further simulation. You can re-enable simulation using the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b>. -->
-        当 Logisim-evolution 检测到振荡时，它会关闭所有进一步的仿真。 您可以使用菜单<b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b>.
-      </p>
-      <p>
-        <!-- Logisim detects oscillation using a fairly simple technique: If the circuit simulation seems to many iterations, then it will simply give up and report oscillation. (The points it identifies as being involved are those that were touched in the last 25% of the iterations.) Thus, it could erroneously report oscillation, particularly if you are working with an exceptionally large circuit; but it would be one that is larger than any I have built using Logisim. In any case, if you are confident that the reporting is in error, you can configure the number of iterations completed before oscillation occurs via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation tab</a>. -->
-        Logisim-evolution 使用相当简单的技术来检测振荡：如果电路仿真似乎进行了多次迭代，那么它将简单地放弃并报告振荡。 （它识别为涉及的点是那些在最后 25% 的迭代中触及的点。）因此，它可能会错误地报告振荡，特别是在您使用异常大的电路时； 但它会比我使用 Logisim-evolution 构建的任何一个都要大。 无论如何，如果您确信报告有错误，您可以通过<a href="../opts/index.html">项目选项</a>窗口配置振荡发生之前完成的迭代次数。 <a href="../opts/opts-simulate.html">模拟选项卡</a>。
-      </p>
-      <p>
-        <!-- <b>Next:</b> <a href="shortcome.html">Shortcomings</a>. -->
-        <b>下一步：</b> <a href="shortcome.html">缺点</a>。
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Oscillation errors -->
+   振荡误差
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Oscillation errors -->
+    振荡误差
+   </h1>
+   <p>
+    <!-- The propagation algorithm, which normally works silently without any problems, will become very visible when you create a circuit that oscillates. -->
+    传播算法通常默默地工作，不会出现任何问题，但当您创建振荡电路时，传播算法将变得非常明显。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/prop-oscillate-before.png"/>
+   </p>
+   <p>
+    <!-- This circuit is currently in a stable condition. But if you change the input to 1, the circuit will effectively enter an infinite loop. After a while, Logisim will simply give up and show an "Oscillation apparent" message telling you that it believes that the circuit is oscillating. -->
+    该电路目前处于稳定状态。 但如果将输入更改为 1，电路将有效地进入无限循环。 一段时间后，Logisim-evolution 将放弃并显示“振荡明显”消息，告诉您它认为电路正在振荡。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../img-guide/prop-oscillate-error.png"/>
+   </p>
+   <p>
+    <!-- It will display the values it has at the time it gives up. These values will look wrong - in this screen shot, the AND gate is emitting 1 although one of its inputs is 0, but it could be that the NOT gate has a 1 input and a 1 output. -->
+    它将显示放弃时的值。 这些值看起来是错误的 - 在此屏幕截图中，AND 门虽然其输入之一为 0，但仍发出 1，但 NOT 门可能有 1 个输入和 1 个输出。
+   </p>
+   <p>
+    <!-- Logisim helpfully circles in red each location that seems to be involved in the oscillation. If an involved point lies within a subcircuit, Logisim will draw that subcircuit's outline in red. -->
+    Logisim-evolution 会用红色圈出似乎与振荡有关的每个位置。 如果涉及的点位于子电路内，Logisim-evolution 将以红色绘制该子电路的轮廓。
+   </p>
+   <p>
+    <!-- When Logisim detects oscillation, it shuts down all further simulation. You can re-enable simulation using the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b>. -->
+    当 Logisim-evolution 检测到振荡时，它会关闭所有进一步的仿真。 您可以使用菜单
+    <b class="menu">
+     | Simulate |
+    </b>
+    →
+    <b class="menu">
+     | Simulation Enabled |
+    </b>
+    .
+   </p>
+   <p>
+    <!-- Logisim detects oscillation using a fairly simple technique: If the circuit simulation seems to many iterations, then it will simply give up and report oscillation. (The points it identifies as being involved are those that were touched in the last 25% of the iterations.) Thus, it could erroneously report oscillation, particularly if you are working with an exceptionally large circuit; but it would be one that is larger than any I have built using Logisim. In any case, if you are confident that the reporting is in error, you can configure the number of iterations completed before oscillation occurs via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation tab</a>. -->
+    Logisim-evolution 使用相当简单的技术来检测振荡：如果电路仿真似乎进行了多次迭代，那么它将简单地放弃并报告振荡。 （它识别为涉及的点是那些在最后 25% 的迭代中触及的点。）因此，它可能会错误地报告振荡，特别是在您使用异常大的电路时； 但它会比我使用 Logisim-evolution 构建的任何一个都要大。 无论如何，如果您确信报告有错误，您可以通过
+    <a href="../opts/index.html">
+     项目选项
+    </a>
+    窗口配置振荡发生之前完成的迭代次数。
+    <a href="../opts/opts-simulate.html">
+     模拟选项卡
+    </a>
+    。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="shortcome.html">Shortcomings</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="shortcome.html">
+     缺点
+    </a>
+    。
+   </p>
+  </div>
+ </body>
 </html>

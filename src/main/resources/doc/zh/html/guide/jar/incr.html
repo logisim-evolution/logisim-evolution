@@ -1,132 +1,233 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Gray Code Incrementer -->
-      格雷码增量器
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class=codediv>
-      <h1>
-        <!-- Gray Code Incrementer -->
-        格雷码增量器
-      </h1>
-      <p>
-        <!-- Each component included in a library is defined by creating a subclass of <code>InstanceFactory</code> found in the <code>com.cburch.logisim.instance</code> package. This subclass has all the code involved -->
-        库中包含的每个组件都是通过创建 <code>com.cburch.logisim.instance</code> 包中的 <code>InstanceFactory</code> 子类来定义的。 该子类包含所有涉及的代码
-      </p>
-      <p>
-        <!-- (Here we're describing the API for the current version of Logisim. You may find some libraries developed for older versions of Logisim, in which components were developed by defining two classes, one extending <code>Component</code> and another extending <code>ComponentFactory</code>. Version 2.3.0 introduced the much simpler <code>InstanceFactory</code> API; the older technique is deprecated.) -->
-        （这里我们描述当前版本 Logisim-evolution 的 API。您可能会发现一些为旧版本 Logisim-evolution 开发的库，其中通过定义两个类来开发组件，一个扩展 <code>Component</code> ，另一个扩展 <code>ComponentFactory</code>。版本 2.3.0 引入了更简单的 <code>InstanceFactory</code> API；旧的技术已被弃用。）
-      </p>
-      <p>
-        <!-- Three Logisim packages define most of the classes relevant to defining component libraries. -->
-        三个 Logisim-evolution 包定义了与定义组件库相关的大多数类。
-      </p>
-      <dl>
-        <dt>
-          <code>com.cburch.logisim.instance</code>
-        </dt>
-        <dd>
-          <p>
-            <!-- Contains classes specifically related to defining components, including the <code>InstanceFactory</code>, <code>InstanceState</code>, <code>InstancePainter</code>, and <code>Instance</code> classes. -->
-            包含与定义组件具体相关的类，包括 InstanceFactory、InstanceState、InstancePainter 和 Instance 类。
-          </p>
-        </dd>
-        <dt>
-          <code>com.cburch.logisim.data</code>
-        </dt>
-        <dd>
-          <p>
-            <!-- Contains classes related to data elements associated with components, such as the <code>Bounds</code> class for representing bounding rectangles or the <code>Value</code> class for representing values that can exist on a wire. -->
-            包含与组件关联的数据元素相关的类，例如用于表示边界矩形的 <code>Bounds</code> 类或用于表示导线上可能存在的值的 <code>Value</code> 类。
-          </p>
-        </dd>
-        <dt>
-          <code>com.cburch.logisim.tools</code>
-        </dt>
-        <dd>
-          <p>
-            <!-- Contains classes related to the library definition. -->
-            包含与库定义相关的类。
-          </p>
-        </dd>
-      </dl>
-      <h2>
-        About Gray codes
-      </h2>
-      <p>
-        <!-- Before we go on, let me briefly describe the Gray code on which these examples are based. It's not really important to understanding how these examples work, so you can safely skip to the code below if you wish - particularly if you already know Gray codes. -->
-        在继续之前，让我简要描述一下这些示例所基于的格雷码。 了解这些示例的工作原理并不重要，因此如果您愿意，您可以安全地跳到下面的代码 - 特别是如果您已经了解格雷码。
-      </p>
-      <p>
-        <!-- Gray code is a technique (named after Frank Gray) for iterating through <var>n</var>-bit sequences with only one bit changed for each step. As an example, consider the 4-bit Gray code listed below. -->
-        格雷码是一种迭代<var>n</var>位序列的技术（以 Frank Gray 命名），每一步仅更改一位。 作为示例，请考虑下面列出的 4 位格雷码。
-      </p>
-      <blockquote>
-        <table>
-          <tbody>
-            <tr>
-              <td valign="top">
-                000<u>0</u><br>
-                00<u>0</u>1<br>
-                001<u>1</u><br>
-                0<u>0</u>10
-              </td>
-              <td>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </td>
-              <td valign="top">
-                011<u>0</u><br>
-                01<u>1</u>1<br>
-                010<u>1</u><br>
-                <u>0</u>100
-              </td>
-              <td>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </td>
-              <td valign="top">
-                110<u>0</u><br>
-                11<u>0</u>1<br>
-                111<u>1</u><br>
-                1<u>1</u>10
-              </td>
-              <td>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </td>
-              <td valign="top">
-                101<u>0</u><br>
-                10<u>1</u>1<br>
-                100<u>1</u><br>
-                <u>1</u>000
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </blockquote>
-      <p>
-        <!-- Each value has the bit underlined that will change for the next value in the sequence. For example, after 0000 comes 0001, in which the final bit has been toggled, so the final bit is underlined. -->
-        每个值都有一个带下划线的位，该位将针对序列中的下一个值而更改。 例如，0000之后是0001，其中最后一位已被切换，因此最后一位带有下划线。
-      </p>
-      <p>
-        <!-- Logisim's built-in components don't include anything working with Gray codes. But electronics designers find Gray codes useful sometimes. One particularly notable instance of Gray codes is along the axes in Karnaugh maps. -->
-        Logisim 的内置组件不包含任何使用格雷码的内容。 但电子设计师发现格雷码有时很有用。 格雷码的一个特别值得注意的例子是沿着卡诺图中的轴。
-      </p>
-      <h2>
-        GrayIncrementer
-      </h2>
-      <p>
-        <!-- This is a minimal example illustrating the essential elements to defining a component. This particular component is an incrementer, which takes an multibit input and produces the next Gray code following it in sequence. -->
-        这是一个最小的示例，说明了定义组件的基本元素。 这个特定的组件是一个增量器，它接受多位输入并按顺序生成下一个格雷码。
-      </p>
-      <pre>package com.cburch.gray;
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Gray Code Incrementer -->
+   格雷码增量器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="codediv">
+   <h1>
+    <!-- Gray Code Incrementer -->
+    格雷码增量器
+   </h1>
+   <p>
+    <!-- Each component included in a library is defined by creating a subclass of <code>InstanceFactory</code> found in the <code>com.cburch.logisim.instance</code> package. This subclass has all the code involved -->
+    库中包含的每个组件都是通过创建
+    <code>
+     com.cburch.logisim.instance
+    </code>
+    包中的
+    <code>
+     InstanceFactory
+    </code>
+    子类来定义的。 该子类包含所有涉及的代码
+   </p>
+   <p>
+    <!-- (Here we're describing the API for the current version of Logisim. You may find some libraries developed for older versions of Logisim, in which components were developed by defining two classes, one extending <code>Component</code> and another extending <code>ComponentFactory</code>. Version 2.3.0 introduced the much simpler <code>InstanceFactory</code> API; the older technique is deprecated.) -->
+    （这里我们描述当前版本 Logisim-evolution 的 API。您可能会发现一些为旧版本 Logisim-evolution 开发的库，其中通过定义两个类来开发组件，一个扩展
+    <code>
+     Component
+    </code>
+    ，另一个扩展
+    <code>
+     ComponentFactory
+    </code>
+    。版本 2.3.0 引入了更简单的
+    <code>
+     InstanceFactory
+    </code>
+    API；旧的技术已被弃用。）
+   </p>
+   <p>
+    <!-- Three Logisim packages define most of the classes relevant to defining component libraries. -->
+    三个 Logisim-evolution 包定义了与定义组件库相关的大多数类。
+   </p>
+   <dl>
+    <dt>
+     <code>
+      com.cburch.logisim.instance
+     </code>
+    </dt>
+    <dd>
+     <p>
+      <!-- Contains classes specifically related to defining components, including the <code>InstanceFactory</code>, <code>InstanceState</code>, <code>InstancePainter</code>, and <code>Instance</code> classes. -->
+      包含与定义组件具体相关的类，包括 InstanceFactory、InstanceState、InstancePainter 和 Instance 类。
+     </p>
+    </dd>
+    <dt>
+     <code>
+      com.cburch.logisim.data
+     </code>
+    </dt>
+    <dd>
+     <p>
+      <!-- Contains classes related to data elements associated with components, such as the <code>Bounds</code> class for representing bounding rectangles or the <code>Value</code> class for representing values that can exist on a wire. -->
+      包含与组件关联的数据元素相关的类，例如用于表示边界矩形的
+      <code>
+       Bounds
+      </code>
+      类或用于表示导线上可能存在的值的
+      <code>
+       Value
+      </code>
+      类。
+     </p>
+    </dd>
+    <dt>
+     <code>
+      com.cburch.logisim.tools
+     </code>
+    </dt>
+    <dd>
+     <p>
+      <!-- Contains classes related to the library definition. -->
+      包含与库定义相关的类。
+     </p>
+    </dd>
+   </dl>
+   <h2>
+    About Gray codes
+   </h2>
+   <p>
+    <!-- Before we go on, let me briefly describe the Gray code on which these examples are based. It's not really important to understanding how these examples work, so you can safely skip to the code below if you wish - particularly if you already know Gray codes. -->
+    在继续之前，让我简要描述一下这些示例所基于的格雷码。 了解这些示例的工作原理并不重要，因此如果您愿意，您可以安全地跳到下面的代码 - 特别是如果您已经了解格雷码。
+   </p>
+   <p>
+    <!-- Gray code is a technique (named after Frank Gray) for iterating through <var>n</var>-bit sequences with only one bit changed for each step. As an example, consider the 4-bit Gray code listed below. -->
+    格雷码是一种迭代
+    <var>
+     n
+    </var>
+    位序列的技术（以 Frank Gray 命名），每一步仅更改一位。 作为示例，请考虑下面列出的 4 位格雷码。
+   </p>
+   <blockquote>
+    <table>
+     <tbody>
+      <tr>
+       <td valign="top">
+        000
+        <u>
+         0
+        </u>
+        <br/>
+        00
+        <u>
+         0
+        </u>
+        1
+        <br/>
+        001
+        <u>
+         1
+        </u>
+        <br/>
+        0
+        <u>
+         0
+        </u>
+        10
+       </td>
+       <td>
+       </td>
+       <td valign="top">
+        011
+        <u>
+         0
+        </u>
+        <br/>
+        01
+        <u>
+         1
+        </u>
+        1
+        <br/>
+        010
+        <u>
+         1
+        </u>
+        <br/>
+        <u>
+         0
+        </u>
+        100
+       </td>
+       <td>
+       </td>
+       <td valign="top">
+        110
+        <u>
+         0
+        </u>
+        <br/>
+        11
+        <u>
+         0
+        </u>
+        1
+        <br/>
+        111
+        <u>
+         1
+        </u>
+        <br/>
+        1
+        <u>
+         1
+        </u>
+        10
+       </td>
+       <td>
+       </td>
+       <td valign="top">
+        101
+        <u>
+         0
+        </u>
+        <br/>
+        10
+        <u>
+         1
+        </u>
+        1
+        <br/>
+        100
+        <u>
+         1
+        </u>
+        <br/>
+        <u>
+         1
+        </u>
+        000
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </blockquote>
+   <p>
+    <!-- Each value has the bit underlined that will change for the next value in the sequence. For example, after 0000 comes 0001, in which the final bit has been toggled, so the final bit is underlined. -->
+    每个值都有一个带下划线的位，该位将针对序列中的下一个值而更改。 例如，0000之后是0001，其中最后一位已被切换，因此最后一位带有下划线。
+   </p>
+   <p>
+    <!-- Logisim's built-in components don't include anything working with Gray codes. But electronics designers find Gray codes useful sometimes. One particularly notable instance of Gray codes is along the axes in Karnaugh maps. -->
+    Logisim 的内置组件不包含任何使用格雷码的内容。 但电子设计师发现格雷码有时很有用。 格雷码的一个特别值得注意的例子是沿着卡诺图中的轴。
+   </p>
+   <h2>
+    GrayIncrementer
+   </h2>
+   <p>
+    <!-- This is a minimal example illustrating the essential elements to defining a component. This particular component is an incrementer, which takes an multibit input and produces the next Gray code following it in sequence. -->
+    这是一个最小的示例，说明了定义组件的基本元素。 这个特定的组件是一个增量器，它接受多位输入并按顺序生成下一个格雷码。
+   </p>
+   <pre>package com.cburch.gray;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
@@ -237,12 +338,18 @@ class GrayIncrementer extends InstanceFactory {
     }
 }
 </pre>
-      <p>
-        This example by itself is not enough to create a working JAR file; you must also provide a Library class, as illustrated on the next page.
-      </p>
-      <p>
-        <b>Next:</b> <a href="library.html">Library Class</a>.
-      </p>
-    </div>
-  </body>
+   <p>
+    This example by itself is not enough to create a working JAR file; you must also provide a Library class, as illustrated on the next page.
+   </p>
+   <p>
+    <b>
+     Next:
+    </b>
+    <a href="library.html">
+     Library Class
+    </a>
+    .
+   </p>
+  </div>
+ </body>
 </html>

@@ -1,169 +1,267 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Divider -->
-      除法器
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- <img  class="iconlibs" src="../../../../icons/6464/divider.png" alt="#########" width="32" height="32" align="middle"> <em>Divider</em> -->
-        <img  class="iconlibs" src="../../../../icons/6464/divider.png" alt="#########" width="32" height="32" align="middle"> <em>除法器</em>
-
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库:</strong>
-
-            </td>
-            <td>
-              <!-- <a href="index.html">Arithmetic</a> -->
-              <a href="index.html">算术</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:</strong> -->
-              <strong>介绍:</strong>
-
-            </td>
-            <td>
-              2.0 Beta 22
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-            </td>
-            <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/divider.png" alt="#########" width="64" height="64">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- This component divides two values coming in via the west inputs and outputs the quotient on the east output. The component is designed so that it can be cascaded with other dividers to provide support a dividend with more bits than is possible with a single divider: The upper input provides the upper <var>dataBits</var> bits of the dividend (if it is specified at all), and the <var>rem</var> bits provide the remainder, which can be fed as the <var>upper</var> input into another divider. -->
-        该元件将通过西边输入传入的两个值相除，并在东边输出上输出商。 该元件的设计使其可以与其他除法器级联，以提供比单个除法器更多位数的被除数支持：上部输入提供被除数的较高 <var>dataBits</var> 位（如果 完全指定），并且 <var>rem</var> 位提供余数，可以将其作为 <var>upper</var> 输入馈送到另一个除法器中。
-      </p>
-      <p>
-        <!-- If the divisor is 0, then no division is performed (i.e., the divisor is assumed to be 1). -->
-        如果除数为 0，则不执行除法（即假定除数为 1）。
-      </p>
-      <p>
-        <!-- The divider essentially performs unsigned division. That is, the remainder will always be between 0 and <var>divisor</var>-1. The quotient will always be an integer so that -->
-        除法器本质上执行无符号除法。 也就是说，余数始终在 0 和<var>divisor</var>-1 之间。 商将始终是整数，因此
-      </p>
-      <center>
-        <!-- <var>quotient</var> * <var>divisor</var> + <var>remainder</var> = <var>dividend</var> .    </center>If, however, the <var>quotient</var> does not fit into <var>dataBits</var> bits, then only the lower <var>dataBits</var> bits will be reported. The component does not provide any method for accessing the upper <var>dataBits</var> bits. -->
-        <var>商</var> * <var>除数</var> + <var>余数</var> = <var>被除数</var> 。 </center>但是，如果<var>商</var>不适合<var>dataBits</var>位，则仅报告较低的<var>dataBits</var>位。 该组件不提供任何访问高 <var>dataBits</var> 位的方法。
-      <p>
-        <!-- If either of the operands contains some floating bits or some error bits, then the component's outputs will be either entirely floating or entirely error values. -->
-        如果任一操作数包含一些浮动位或一些错误位，则元件的输出将是完全浮动值或完全错误值。
-      </p>
-      <h2>
-        <!-- Pins -->
-        引脚
-      </h2>
-      <dl>
-        <dt>
-          <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
-          西边，北端（输入，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The lower <var>dataBits</var> bits of the dividend (that is, the first operand for the division). -->
-          被除数的低 <var>数据位</var> 位（即除法的第一个操作数）。
-        </dd>
-        <dt>
-          <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
-          西边，南端（输入，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The divisor (that is, the second operand for the division) -->
-          除数（即除法的第二个操作数）
-        </dd>
-        <dt>
-          <!-- North edge, labeled <var>upper</var> (input, bit width matches Data Bits attribute) -->
-          北边，标记为<var>上</var>（输入，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The upper <var>dataBits</var> bits of the dividend (that is, the first operand for the division). -->
-          被除数的高 <var>dataBits</var> 位（即除法的第一个操作数）。
-        </dd>
-        <dt>
-          <!-- East edge (output, bit width matches Data Bits attribute) -->
-          东边（输出，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The lower <var>dataBits</var> bits of the quotient, as specified above. -->
-          商的低 <var>dataBits</var> 位，如上面指定的。
-        </dd>
-        <dt>
-          <!-- South edge, labeled <var>rem</var> (output, bit width matches Data Bits attribute) -->
-          南边缘，标记为 <var>rem</var> （输出，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The remainder of the division. This value will always be between 0 and <var>divisor</var>-1. -->
-          分部的剩余部分。 该值始终介于 0 和<var>除数</var>-1 之间。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Attributes -->
-        属性
-      </h2>
-      <p>
-        <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
-        选择或添加元件时，<b class="keybind">Alt-0</b> 到 <b class="keybind">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b>属性。
-      </p>
-	  <div class="attliste">
-      <dl>
-        <dt>
-          <!-- <b class="propertie">Data Bits</b> -->
-          <b class="property">数据位</b>
-        </dt>
-        <dd>
-          <!-- The bit width of the values to be divided and of the result. -->
-          要除的值和结果的位宽。
-        </dd>
-      </dl>
-	  </div>
-      <h2>
-        <!-- Poke Tool Behavior -->
-        Poke 工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <h2>
-        <!-- Text Tool Behavior -->
-        文本工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <p>
-         <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-         <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
-
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Divider -->
+   除法器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img  class="iconlibs" src="../../../../icons/6464/divider.png" alt="#########" width="32" height="32" align="middle"> <em>Divider</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/divider.png" width="32"/>
+    <em>
+     除法器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Arithmetic</a> -->
+       <a href="index.html">
+        算术
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 22
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/divider.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- This component divides two values coming in via the west inputs and outputs the quotient on the east output. The component is designed so that it can be cascaded with other dividers to provide support a dividend with more bits than is possible with a single divider: The upper input provides the upper <var>dataBits</var> bits of the dividend (if it is specified at all), and the <var>rem</var> bits provide the remainder, which can be fed as the <var>upper</var> input into another divider. -->
+    该元件将通过西边输入传入的两个值相除，并在东边输出上输出商。 该元件的设计使其可以与其他除法器级联，以提供比单个除法器更多位数的被除数支持：上部输入提供被除数的较高
+    <var>
+     dataBits
+    </var>
+    位（如果 完全指定），并且
+    <var>
+     rem
+    </var>
+    位提供余数，可以将其作为
+    <var>
+     upper
+    </var>
+    输入馈送到另一个除法器中。
+   </p>
+   <p>
+    <!-- If the divisor is 0, then no division is performed (i.e., the divisor is assumed to be 1). -->
+    如果除数为 0，则不执行除法（即假定除数为 1）。
+   </p>
+   <p>
+    <!-- The divider essentially performs unsigned division. That is, the remainder will always be between 0 and <var>divisor</var>-1. The quotient will always be an integer so that -->
+    除法器本质上执行无符号除法。 也就是说，余数始终在 0 和
+    <var>
+     divisor
+    </var>
+    -1 之间。 商将始终是整数，因此
+   </p>
+   <center>
+    <!-- <var>quotient</var> * <var>divisor</var> + <var>remainder</var> = <var>dividend</var> .    </center>If, however, the <var>quotient</var> does not fit into <var>dataBits</var> bits, then only the lower <var>dataBits</var> bits will be reported. The component does not provide any method for accessing the upper <var>dataBits</var> bits. -->
+    <var>
+     商
+    </var>
+    *
+    <var>
+     除数
+    </var>
+    +
+    <var>
+     余数
+    </var>
+    =
+    <var>
+     被除数
+    </var>
+    。
+   </center>
+   但是，如果
+   <var>
+    商
+   </var>
+   不适合
+   <var>
+    dataBits
+   </var>
+   位，则仅报告较低的
+   <var>
+    dataBits
+   </var>
+   位。 该组件不提供任何访问高
+   <var>
+    dataBits
+   </var>
+   位的方法。
+   <p>
+    <!-- If either of the operands contains some floating bits or some error bits, then the component's outputs will be either entirely floating or entirely error values. -->
+    如果任一操作数包含一些浮动位或一些错误位，则元件的输出将是完全浮动值或完全错误值。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
+     西边，北端（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The lower <var>dataBits</var> bits of the dividend (that is, the first operand for the division). -->
+     被除数的低
+     <var>
+      数据位
+     </var>
+     位（即除法的第一个操作数）。
+    </dd>
+    <dt>
+     <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
+     西边，南端（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The divisor (that is, the second operand for the division) -->
+     除数（即除法的第二个操作数）
+    </dd>
+    <dt>
+     <!-- North edge, labeled <var>upper</var> (input, bit width matches Data Bits attribute) -->
+     北边，标记为
+     <var>
+      上
+     </var>
+     （输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The upper <var>dataBits</var> bits of the dividend (that is, the first operand for the division). -->
+     被除数的高
+     <var>
+      dataBits
+     </var>
+     位（即除法的第一个操作数）。
+    </dd>
+    <dt>
+     <!-- East edge (output, bit width matches Data Bits attribute) -->
+     东边（输出，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The lower <var>dataBits</var> bits of the quotient, as specified above. -->
+     商的低
+     <var>
+      dataBits
+     </var>
+     位，如上面指定的。
+    </dd>
+    <dt>
+     <!-- South edge, labeled <var>rem</var> (output, bit width matches Data Bits attribute) -->
+     南边缘，标记为
+     <var>
+      rem
+     </var>
+     （输出，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The remainder of the division. This value will always be between 0 and <var>divisor</var>-1. -->
+     分部的剩余部分。 该值始终介于 0 和
+     <var>
+      除数
+     </var>
+     -1 之间。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+    选择或添加元件时，
+    <b class="keybind">
+     Alt-0
+    </b>
+    到
+    <b class="keybind">
+     Alt-9
+    </b>
+    会更改其
+    <b class="propertie">
+     数据位
+    </b>
+    属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Data Bits</b> -->
+      <b class="property">
+       数据位
+      </b>
+     </dt>
+     <dd>
+      <!-- The bit width of the values to be divided and of the result. -->
+      要除的值和结果的位宽。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
 </html>

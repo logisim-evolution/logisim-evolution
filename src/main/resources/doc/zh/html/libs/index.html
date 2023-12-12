@@ -1,1061 +1,1221 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-04-10T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Library Reference -->
-      电路元件库手册
-    </title>
-    <link rel="stylesheet" type="text/css" href="../style.css">
-  </head>
-  <body>
-      <div class="maindiv">
-    <h1>
-      <!-- Library Reference -->
-      电路元件库手册
-    </h1>
-    <p>
-      <!-- A Logisim library holds a set of <em>tools</em> that allow you to interact with a circuit via clicking and dragging the mouse in the canvas area. Most often, a tool is intended for adding components of a particular type into a circuit; but some of the most important tools, such as the Poke Tool (<img class="icontxt" src="../../../icons/1616/toolpoke.png" alt="#########">) and the Select Tool (<img class="icontxt" src="../../../icons/1616/toolselect.png" alt="#########">), allow you to interact with components in other ways. -->
-      Logisim-evolution 电路元件库包含一组<em>工具</em>，允许您通过在画布区域中单击并拖动鼠标来与电路进行交互。 大多数情况下，工具旨在将特定类型的组件添加到电路中； 但一些最重要的工具，例如 Poke 工具 (<img class="icontxt" src="../../../icons/1616/toolpoke.png" alt="#########">) 和选择工具 (<img class="icontxt" src="../../../icons/1616/toolselect.png" alt="#########">），允许您以其他方式与组件交互。
-    </p>
-	<p>
-	<!-- Frequently, when the component is selected or added, <b class="tkeybd">Alt-0</b> to <b class="tkeybd">Alt-9</b> is used to change its <b class="propertie">Data Width</b> attribute. Quick use of the keys allows the entry of larger values, for example: <b class="tkeybd">ALT-1 ALT-2</b> donne 12.  -->
-  通常，当选择或添加组件时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 用于更改其 <b class= “propertie">数据宽度</b>属性。 快速使用按键可以输入更大的值，例如：<b class="tkeybd">ALT-1 ALT-2</b> 代表12。
-	</p>
-    <p>
-      <!-- All of the tools included in Logisim's built-in libraries are documented in this reference material. -->
-      Logisim-evolution 内置库中包含的所有工具均记录在本参考材料中。
-    </p>
-    <h2>
-      <!-- <b><a href="wiring/index.html">Wiring library</a></b> -->
-      <b><a href="wiring/index.html">线路</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-             <a href="wiring/splitter.html"><img class="iconlibs" src="../../../icons/6464/splitter.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-		  <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/splitter.html">Splitter</a> -->
-            <a href="wiring/splitter.html">分线器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/pin.html">
-			<img class="iconlibs" src="../../../icons/6464/pininput.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/pinoutput.png" alt="#########"  border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/pin.html">Pin</a> -->
-            <a href="wiring/pin.html">引脚</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-           <a href="wiring/probe.html">
-			<img class="iconlibs" src="../../../icons/6464/probe.png" alt="#########"  border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/probe.html">Probe</a> -->
-            <a href="wiring/probe.html">探针</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/tunnel.html">
-			<img class="iconlibs" src="../../../icons/6464/tunnel.png" alt="#########"  border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/tunnel.html">Tunnel</a> -->
-            <a href="wiring/tunnel.html">隧道</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/pull.html">
-			<img class="iconlibs" src="../../../icons/6464/iecpull.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/anspull.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/pull.html">Pull Resistor</a> -->
-            <a href="wiring/pull.html">上/下拉电阻</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-           <a href="wiring/clock.html">
-			<img class="iconlibs" src="../../../icons/6464/clock.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/clock.html">Clock</a> -->
-            <a href="wiring/clock.html">时钟</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/poweronreset.html">
-			<img class="iconlibs" src="../../../icons/6464/por.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/poweronreset.html">Power on Reset</a> -->
-            <a href="wiring/poweronreset.html">开启复位</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/constant.html">
-			<img class="iconlibs" src="../../../icons/6464/constant.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/constant.html">Constant</a> -->
-            <a href="wiring/constant.html">常量</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/const01.html" >
-			<img class="iconlibs" src="../../../icons/6464/power.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ground.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/const01.html">Power/Ground</a> -->
-            <a href="wiring/const01.html">电源/接地</a>
-
-          </td>
-        </tr>
-		<tr>
-          <td align="right">
-            <a href="wiring/notconnect.html" >
-			<img class="iconlibs" src="../../../icons/6464/notconnect.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/notconnect.html">Do not connect</a> -->
-            <a href="wiring/notconnect.html">请勿连接</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="wiring/transist.html" >
-			<img class="iconlibs" src="../../../icons/6464/trans0.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/trans1.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/transist.html">Transistor</a> -->
-            <a href="wiring/transist.html">晶体管</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-           <a href="wiring/transmis.html">
-			<img class="iconlibs" src="../../../icons/6464/transmis.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/transmis.html">Transmission Gate</a> -->
-            <a href="wiring/transmis.html">传输门</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-           <a href="wiring/extender.html">
-			<img class="iconlibs" src="../../../icons/6464/extender.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="wiring/extender.html">Bit Extender</a> -->
-            <a href="wiring/extender.html">位扩展器</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>		
-		
-    <h2>
-      <!-- <b><a href="gates/index.html">Gates library</a></b> -->
-      <b><a href="gates/index.html">逻辑门</a></b>
-
-    </h2>		
-    <table>
-      <tbody>
-        <tr>
-          <td align="center">
-            IEC(欧洲)
-            <img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32"> 
-			ANSI(美国)
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td align="right">
-             <a href="gates/not.html">
-			<img class="iconlibs" src="../../../icons/6464/iecnotgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32">
-			<img class="iconlibs" src="../../../icons/6464/ansnotgate.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="gates/not.html">NOT Gate</a> -->
-            <a href="gates/not.html">非门</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-           <a href="gates/buffer.html">
-			<img class="iconlibs" src="../../../icons/6464/iecbuffergate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/empty.png" alt="#########" border=0 height="32" width="32">
-			<img class="iconlibs" src="../../../icons/6464/ansbuffergate.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="gates/buffer.html">Buffer</a> -->
-            <a href="gates/buffer.html">缓冲器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="gates/basic.html" >
-			<img class="iconlibs" src="../../../icons/6464/iecandgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/iecorgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansandgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansorgate.png" alt="#########" border=0 height="32" width="32">
-			<br>
-            <img class="iconlibs" src="../../../icons/6464/iecnandgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/iecnorgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansnandgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansnorgate.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="gates/basic.html">AND/OR/NAND/NOR Gate</a> -->
-            <a href="gates/basic.html">与门、或门、与非门、或非门</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="gates/xor.html" >
-			<img class="iconlibs" src="../../../icons/6464/iecxorgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/iecxnorgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansxorgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansxnorgate.png" alt="#########" border=0 height="32" width="32">
-			<br>
-            <img class="iconlibs" src="../../../icons/6464/iecparityoddgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/iecparityevengate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansparityoddgate.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ansparityevengate.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="gates/xor.html">XOR/XNOR/Odd Parity/Even Parity Gate</a> -->
-            <a href="gates/xor.html">异或门、同或门、奇校验、偶校验</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="gates/controlled.html" >
-			<img class="iconlibs" src="../../../icons/6464/ieccontrolledbuffer.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/ieccontrolledinverter.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/anscontrolledbuffer.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/anscontrolledinverter.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="gates/controlled.html">Controlled Buffer/Inverter</a> -->
-            <a href="gates/controlled.html">受控缓冲器、受控逆变器</a>
-
-          </td>
-        </tr>
-        		<tr>
-          <td align="right">
-            <a href="gates/pla.html">
-			<img class="iconlibs" src="../../../icons/6464/pla0.png" alt="#########" border=0 height="32" width="32"><a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="gates/pla.html">Programmable logic array</a> -->
-            <a href="gates/pla.html">PLA(可编程逻辑阵列)</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-	
-	
-    <h2>
-      <!-- <b><a href="plexers/index.html">Plexers library</a></b> -->
-      <b><a href="plexers/index.html">复用器</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-           <a href="plexers/mux.html"><img class="iconlibs" src="../../../icons/6464/multiplexer.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="plexers/mux.html">Multiplexer</a> -->
-            <a href="plexers/mux.html">多路复用器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="plexers/demux.html"><img class="iconlibs" src="../../../icons/6464/demultiplexer.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="plexers/demux.html">Demultiplexer</a> -->
-            <a href="plexers/demux.html">多路分离器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="plexers/decoder.html"><img class="iconlibs" src="../../../icons/6464/decoder.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="plexers/decoder.html">Decoder</a> -->
-            <a href="plexers/decoder.html">译码器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="plexers/priencod.html"><img class="iconlibs" src="../../../icons/6464/priencod.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="plexers/priencod.html">Priority Encoder</a> -->
-            <a href="plexers/priencod.html">优先级编码器r</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="plexers/selector.html"><img class="iconlibs" src="../../../icons/6464/bitselector.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="plexers/selector.html">Bit Selector</a> -->
-            <a href="plexers/selector.html">位选择器</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <h2>
-      <!-- <b><a href="arith/index.html">Arithmetic library</a></b> -->
-      <b><a href="arith/index.html">运算器</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-            <a href="arith/adder.html"><img class="iconlibs" src="../../../icons/6464/adder.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/adder.html">Adder</a> -->
-            <a href="arith/adder.html">加法器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/subtractor.html"><img class="iconlibs" src="../../../icons/6464/subtractor.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/subtractor.html">Subtractor</a> -->
-            <a href="arith/subtractor.html">减法器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/multiplier.html"><img class="iconlibs" src="../../../icons/6464/multiplier.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/multiplier.html">Multiplier</a> -->
-            <a href="arith/multiplier.html">乘法器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/divider.html"><img class="iconlibs" src="../../../icons/6464/divider.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/divider.html">Divider</a> -->
-            <a href="arith/divider.html">除法器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/negator.html"><img class="iconlibs" src="../../../icons/6464/negator.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/negator.html">Negator</a> -->
-
-            <a href="arith/negator.html">求补器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/comparator.html"><img class="iconlibs" src="../../../icons/6464/comparator.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/comparator.html">Comparator</a> -->
-            <a href="arith/comparator.html">比较器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/shifter.html"><img class="iconlibs" src="../../../icons/6464/shifter.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/shifter.html">Shifter</a> -->
-            <a href="arith/shifter.html">移位器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/bitadder.html"><img class="iconlibs" src="../../../icons/6464/bitadder.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/bitadder.html">Bit Adder</a> -->
-            <a href="arith/bitadder.html">位加法器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="arith/bitfinder.html"><img class="iconlibs" src="../../../icons/6464/bitfindr.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="arith/bitfinder.html">Bit Finder</a> -->
-            <a href="arith/bitfinder.html">位查询器</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-	    <h2>
-      <!-- <b><a href="mem/index.html">Memory library</a></b> -->
-      <b><a href="mem/index.html">存储库</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-            <a href="mem/flipflops.html" >
-			<img class="iconlibs" src="../../../icons/6464/dflipflop.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/tflipflop.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/jkflipflop.png" alt="#########" border=0 height="32" width="32"> 
-			<img class="iconlibs" src="../../../icons/6464/srflipflop.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/flipflops.html">D/T/J-K/S-R Flip-Flop</a> -->
-            <a href="mem/flipflops.html">D/T/J-K/S-R 触发器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="mem/register.html"><img class="iconlibs" src="../../../icons/6464/register.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/register.html">Register</a> -->
-            <a href="mem/register.html">寄存器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="mem/counter.html"><img class="iconlibs" src="../../../icons/6464/counter.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/counter.html">Counter</a> -->
-            <a href="mem/counter.html">计数器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="mem/shiftreg.html"><img class="iconlibs" src="../../../icons/6464/shiftreg.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/shiftreg.html">Shift Register</a> -->
-            <a href="mem/shiftreg.html">移位寄存器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="mem/random.html"><img class="iconlibs" src="../../../icons/6464/random.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/random.html">Random</a> -->
-            <a href="mem/random.html">随机生成器</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="mem/ram.html"><img class="iconlibs" src="../../../icons/6464/ram.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/ram.html">RAM</a> -->
-            <a href="mem/ram.html">RAM</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="mem/rom.html"><img class="iconlibs" src="../../../icons/6464/rom.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="mem/rom.html">ROM</a> -->
-            <a href="mem/rom.html">ROM</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-	
-    <h2>
-      <!-- <b><a href="io/index.html">Input/Output library</a></b> -->
-      <b><a href="io/index.html">输入/输出</a></b>
-
-    </h2>	
-     <table>
-      <tbody>
-        <tr>
-          <td align="right">
-            <a href="io/button.html"><img class="iconlibs" src="../../../icons/6464/button.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/button.html">Button</a> -->
-            <a href="io/button.html">按钮</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/DipSwitch.html"><img class="iconlibs" src="../../../icons/6464/dipswitch.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/DipSwitch.html">Dip Switch</a> -->
-            <a href="io/DipSwitch.html">拨码开关</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td></td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/joystick.html"><img class="iconlibs" src="../../../icons/6464/joystick.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/joystick.html">Joystick</a> -->
-            <a href="io/joystick.html">操纵杆</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/keyboard.html"><img class="iconlibs" src="../../../icons/6464/keyboard.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/keyboard.html">Keyboard</a> -->
-            <a href="io/keyboard.html">键盘</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/led.html"><img class="iconlibs" src="../../../icons/6464/led.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/led.html">LED</a> -->
-            <a href="io/led.html">LED</a>
-
-          </td>
-        </tr>
-		<tr>
-          <td align="right">
-            <a href="io/rgbled.html"><img class="iconlibs" src="../../../icons/6464/rgbled.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/rgbled.html">RGB LED</a> -->
-            <a href="io/rgbled.html">RGB LED</a>
-
-          </td>
-        </tr>
-		<tr>
-          <td align="right">
-            <a href="io/7seg.html"><img class="iconlibs" src="../../../icons/6464/7seg.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/7seg.html">7-Segment Display</a> -->
-            <a href="io/7seg.html">7段数码管</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-           <a href="io/hexdig.html"><img class="iconlibs" src="../../../icons/6464/hexdig.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/hexdig.html">Hex Digit Display</a> -->
-            <a href="io/hexdig.html">十六进制数码显示</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/dotmat.html"><img class="iconlibs" src="../../../icons/6464/dotmat.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/dotmat.html">LED Matrix</a> -->
-            <a href="io/dotmat.html">LED矩阵</a>
-
-          </td>
-        </tr>
-		<tr>
-          <td align="right">
-            <a href="io/tty.html"><img class="iconlibs" src="../../../icons/6464/tty.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/tty.html">TTY</a> -->
-            <a href="io/tty.html">TTY</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/portio.html"><img class="iconlibs" src="../../../icons/6464/portio.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/portio.html">Port I/O</a> -->
-            <a href="io/portio.html">Port I/O</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="io/repetar.html"><img class="iconlibs" src="../../../icons/6464/repetar.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/repetar.html">Repetar Local Bus</a> -->
-            <a href="io/repetar.html">Repetar Local Bus</a>
-
-          </td>
-        </tr>
-        </tr>
-		  <tr>
-          <td align="right">
-            <a href="io/rgbvideo.html"><img class="iconlibs" src="../../../icons/6464/rgbvideo.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="io/rgbvideo.html">RVB Video</a> -->
-            <a href="io/rgbvideo.html">RVB Video</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>		
-	 <h2>
-      <!-- <b><a href="ioextra/index.html">Input/Output Extra library</a></b> -->
-      <b><a href="ioextra/index.html">Input/Output Extra library</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-            <a href="ioextra/switch.html"><img class="iconlibs" src="../../../icons/6464/switch.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="ioextra/switch.html">Swicth</a> -->
-            <a href="ioextra/switch.html">Swicth</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="ioextra/buzzer.html"><img class="iconlibs" src="../../../icons/6464/buzzer.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="ioextra/buzzer.html">Buzzer</a> -->
-            <a href="ioextra/buzzer.html">Buzzer</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="ioextra/slider.html"><img class="iconlibs" src="../../../icons/6464/slider.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="ioextra/slider.html">Slider</a> -->
-            <a href="ioextra/slider.html">Slider</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="ioextra/digitalscope.html"><img class="iconlibs" src="../../../icons/6464/digitalscope.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="ioextra/digitalscope.html">Digital oscilloscope</a> -->
-            <a href="ioextra/digitalscope.html">Digital oscilloscope</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="ioextra/pla.html"><img class="iconlibs" src="../../../icons/6464/pla.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="ioextra/pla.html">pla</a> -->
-            <a href="ioextra/pla.html">pla</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>	
-    <h2>
-      <!-- <b><a href="soc/index.html">System On Chip components library</a></b> -->
-      <b><a href="soc/index.html">System On Chip components library</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-            <a href="soc/socriscv.html"><img class="iconlibs" src="../../../icons/6464/up.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socriscv.html">Risc V IM simulator</a> -->
-            <a href="soc/socriscv.html">Risc V IM simulator</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="soc/socnios2s.html"><img class="iconlibs" src="../../../icons/6464/up.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socnios2s.html">Nios2s simulator</a> -->
-            <a href="soc/socnios2s.html">Nios2s simulator</a>
-
-          </td>
-        </tr>
-		 <tr>
-          <td align="right">
-            <a href="soc/socbus.html">
-			<img class="iconlibs" src="../../../icons/6464/socbus.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socbus.html">SOC bus simulator</a> -->
-            <a href="soc/socbus.html">SOC bus simulator</a>
-
-          </td>
-        </tr>
-		<tr>
-          <td align="right">
-            <a href="soc/socmemsimulator.html"><img class="iconlibs" src="../../../icons/6464/socmem.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socmemsimulator.html">Memory simulator</a> -->
-            <a href="soc/socmemsimulator.html">Memory simulator</a>
-
-          </td>
-        </tr>
-		 <tr>
-          <td align="right">
-            <a href="soc/socpio.html">
-			<img class="iconlibs" src="../../../icons/6464/socpio.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socpio.html">Parallel inpout/output expander</a> -->
-            <a href="soc/socpio.html">Parallel inpout/output expander</a>
-
-          </td>
-        </tr>
-		<tr>
-          <td align="right">
-            <a href="soc/socvga.html">
-			<img class="iconlibs" src="../../../icons/6464/socvga.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socvga.html">VGA screen</a> -->
-            <a href="soc/socvga.html">VGA screen</a>
-
-          </td>
-        </tr>
-		 <tr>
-          <td align="right">
-            <a href="soc/socjtag.html">
-			<img class="iconlibs" src="../../../icons/6464/socjtag.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="soc/socjtag.html">Jtag Uart component</a> -->
-            <a href="soc/socjtag.html">Jtag Uart component</a>
-
-          </td>
-        </tr>
-	  </tbody>
-    </table>	
-    <h2>	
-	  <!-- <b><a href="tcl/index.html">Other library TTL,TCL,HDL-IP,BFH</a></b> -->
-    <b><a href="tcl/index.html">Other library TTL,TCL,HDL-IP,BFH</a></b>
-
-    </h2>
-    <table>
-      <tbody>
-        <tr>
-          <td align="right">
-            <a href="tcl/reds_console.html"><img class="iconlibs" src="../../../icons/6464/tcl.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="tcl/reds_console.html">TCL REDS console</a> -->
-            <a href="tcl/reds_console.html">TCL REDS console</a>
-
-          </td>
-        </tr>
-        <tr>
-          <td align="right">
-            <a href="tcl/generic.html"><img class="iconlibs" src="../../../icons/6464/tcl.png" alt="#########" border=0 height="32" width="32"></a>
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            <!-- <a href="tcl/generic.html">TCL generic</a> -->
-            <a href="tcl/generic.html">TCL generic</a>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Library Reference -->
+   电路元件库手册
+  </title>
+  <link href="../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Library Reference -->
+    电路元件库手册
+   </h1>
+   <p>
+    <!-- A Logisim library holds a set of <em>tools</em> that allow you to interact with a circuit via clicking and dragging the mouse in the canvas area. Most often, a tool is intended for adding components of a particular type into a circuit; but some of the most important tools, such as the Poke Tool (<img class="icontxt" src="../../../icons/1616/toolpoke.png" alt="#########">) and the Select Tool (<img class="icontxt" src="../../../icons/1616/toolselect.png" alt="#########">), allow you to interact with components in other ways. -->
+    Logisim-evolution 电路元件库包含一组
+    <em>
+     工具
+    </em>
+    ，允许您通过在画布区域中单击并拖动鼠标来与电路进行交互。 大多数情况下，工具旨在将特定类型的组件添加到电路中； 但一些最重要的工具，例如 Poke 工具 (
+    <img alt="#########" class="icontxt" src="../../../icons/1616/toolpoke.png"/>
+    ) 和选择工具 (
+    <img alt="#########" class="icontxt" src="../../../icons/1616/toolselect.png"/>
+    ），允许您以其他方式与组件交互。
+   </p>
+   <p>
+    <!-- Frequently, when the component is selected or added, <b class="tkeybd">Alt-0</b> to <b class="tkeybd">Alt-9</b> is used to change its <b class="propertie">Data Width</b> attribute. Quick use of the keys allows the entry of larger values, for example: <b class="tkeybd">ALT-1 ALT-2</b> donne 12.  -->
+    通常，当选择或添加组件时，
+    <b class="tkeybd">
+     Alt-0
+    </b>
+    到
+    <b class="tkeybd">
+     Alt-9
+    </b>
+    用于更改其
+    <b class='“propertie"'>
+     数据宽度
+    </b>
+    属性。 快速使用按键可以输入更大的值，例如：
+    <b class="tkeybd">
+     ALT-1 ALT-2
+    </b>
+    代表12。
+   </p>
+   <p>
+    <!-- All of the tools included in Logisim's built-in libraries are documented in this reference material. -->
+    Logisim-evolution 内置库中包含的所有工具均记录在本参考材料中。
+   </p>
+   <h2>
+    <!-- <b><a href="wiring/index.html">Wiring library</a></b> -->
+    <b>
+     <a href="wiring/index.html">
+      线路
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="wiring/splitter.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/splitter.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/splitter.html">Splitter</a> -->
+       <a href="wiring/splitter.html">
+        分线器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/pin.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/pininput.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/pinoutput.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/pin.html">Pin</a> -->
+       <a href="wiring/pin.html">
+        引脚
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/probe.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/probe.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/probe.html">Probe</a> -->
+       <a href="wiring/probe.html">
+        探针
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/tunnel.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/tunnel.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/tunnel.html">Tunnel</a> -->
+       <a href="wiring/tunnel.html">
+        隧道
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/pull.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecpull.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/anspull.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/pull.html">Pull Resistor</a> -->
+       <a href="wiring/pull.html">
+        上/下拉电阻
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/clock.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/clock.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/clock.html">Clock</a> -->
+       <a href="wiring/clock.html">
+        时钟
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/poweronreset.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/por.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/poweronreset.html">Power on Reset</a> -->
+       <a href="wiring/poweronreset.html">
+        开启复位
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/constant.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/constant.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/constant.html">Constant</a> -->
+       <a href="wiring/constant.html">
+        常量
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/const01.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/power.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ground.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/const01.html">Power/Ground</a> -->
+       <a href="wiring/const01.html">
+        电源/接地
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/notconnect.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/notconnect.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/notconnect.html">Do not connect</a> -->
+       <a href="wiring/notconnect.html">
+        请勿连接
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/transist.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/trans0.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/trans1.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/transist.html">Transistor</a> -->
+       <a href="wiring/transist.html">
+        晶体管
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/transmis.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/transmis.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/transmis.html">Transmission Gate</a> -->
+       <a href="wiring/transmis.html">
+        传输门
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="wiring/extender.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/extender.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="wiring/extender.html">Bit Extender</a> -->
+       <a href="wiring/extender.html">
+        位扩展器
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="gates/index.html">Gates library</a></b> -->
+    <b>
+     <a href="gates/index.html">
+      逻辑门
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="center">
+       IEC(欧洲)
+       <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+       ANSI(美国)
+      </td>
+      <td>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="gates/not.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecnotgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansnotgate.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="gates/not.html">NOT Gate</a> -->
+       <a href="gates/not.html">
+        非门
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="gates/buffer.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecbuffergate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/empty.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansbuffergate.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="gates/buffer.html">Buffer</a> -->
+       <a href="gates/buffer.html">
+        缓冲器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="gates/basic.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecandgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecorgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansandgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansorgate.png" width="32"/>
+        <br/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecnandgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecnorgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansnandgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansnorgate.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="gates/basic.html">AND/OR/NAND/NOR Gate</a> -->
+       <a href="gates/basic.html">
+        与门、或门、与非门、或非门
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="gates/xor.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecxorgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecxnorgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansxorgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansxnorgate.png" width="32"/>
+        <br/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecparityoddgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/iecparityevengate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansparityoddgate.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ansparityevengate.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="gates/xor.html">XOR/XNOR/Odd Parity/Even Parity Gate</a> -->
+       <a href="gates/xor.html">
+        异或门、同或门、奇校验、偶校验
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="gates/controlled.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ieccontrolledbuffer.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ieccontrolledinverter.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/anscontrolledbuffer.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/anscontrolledinverter.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="gates/controlled.html">Controlled Buffer/Inverter</a> -->
+       <a href="gates/controlled.html">
+        受控缓冲器、受控逆变器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="gates/pla.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/pla0.png" width="32"/>
+        <a>
+        </a>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="gates/pla.html">Programmable logic array</a> -->
+       <a href="gates/pla.html">
+        PLA(可编程逻辑阵列)
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="plexers/index.html">Plexers library</a></b> -->
+    <b>
+     <a href="plexers/index.html">
+      复用器
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="plexers/mux.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/multiplexer.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="plexers/mux.html">Multiplexer</a> -->
+       <a href="plexers/mux.html">
+        多路复用器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="plexers/demux.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/demultiplexer.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="plexers/demux.html">Demultiplexer</a> -->
+       <a href="plexers/demux.html">
+        多路分离器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="plexers/decoder.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/decoder.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="plexers/decoder.html">Decoder</a> -->
+       <a href="plexers/decoder.html">
+        译码器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="plexers/priencod.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/priencod.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="plexers/priencod.html">Priority Encoder</a> -->
+       <a href="plexers/priencod.html">
+        优先级编码器r
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="plexers/selector.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/bitselector.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="plexers/selector.html">Bit Selector</a> -->
+       <a href="plexers/selector.html">
+        位选择器
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="arith/index.html">Arithmetic library</a></b> -->
+    <b>
+     <a href="arith/index.html">
+      运算器
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="arith/adder.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/adder.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/adder.html">Adder</a> -->
+       <a href="arith/adder.html">
+        加法器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/subtractor.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/subtractor.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/subtractor.html">Subtractor</a> -->
+       <a href="arith/subtractor.html">
+        减法器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/multiplier.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/multiplier.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/multiplier.html">Multiplier</a> -->
+       <a href="arith/multiplier.html">
+        乘法器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/divider.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/divider.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/divider.html">Divider</a> -->
+       <a href="arith/divider.html">
+        除法器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/negator.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/negator.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/negator.html">Negator</a> -->
+       <a href="arith/negator.html">
+        求补器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/comparator.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/comparator.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/comparator.html">Comparator</a> -->
+       <a href="arith/comparator.html">
+        比较器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/shifter.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/shifter.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/shifter.html">Shifter</a> -->
+       <a href="arith/shifter.html">
+        移位器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/bitadder.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/bitadder.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/bitadder.html">Bit Adder</a> -->
+       <a href="arith/bitadder.html">
+        位加法器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="arith/bitfinder.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/bitfindr.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="arith/bitfinder.html">Bit Finder</a> -->
+       <a href="arith/bitfinder.html">
+        位查询器
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="mem/index.html">Memory library</a></b> -->
+    <b>
+     <a href="mem/index.html">
+      存储库
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="mem/flipflops.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/dflipflop.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/tflipflop.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/jkflipflop.png" width="32"/>
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/srflipflop.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/flipflops.html">D/T/J-K/S-R Flip-Flop</a> -->
+       <a href="mem/flipflops.html">
+        D/T/J-K/S-R 触发器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="mem/register.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/register.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/register.html">Register</a> -->
+       <a href="mem/register.html">
+        寄存器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="mem/counter.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/counter.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/counter.html">Counter</a> -->
+       <a href="mem/counter.html">
+        计数器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="mem/shiftreg.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/shiftreg.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/shiftreg.html">Shift Register</a> -->
+       <a href="mem/shiftreg.html">
+        移位寄存器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="mem/random.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/random.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/random.html">Random</a> -->
+       <a href="mem/random.html">
+        随机生成器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="mem/ram.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/ram.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/ram.html">RAM</a> -->
+       <a href="mem/ram.html">
+        RAM
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="mem/rom.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/rom.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="mem/rom.html">ROM</a> -->
+       <a href="mem/rom.html">
+        ROM
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="io/index.html">Input/Output library</a></b> -->
+    <b>
+     <a href="io/index.html">
+      输入/输出
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="io/button.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/button.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/button.html">Button</a> -->
+       <a href="io/button.html">
+        按钮
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/DipSwitch.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/dipswitch.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/DipSwitch.html">Dip Switch</a> -->
+       <a href="io/DipSwitch.html">
+        拨码开关
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/joystick.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/joystick.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/joystick.html">Joystick</a> -->
+       <a href="io/joystick.html">
+        操纵杆
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/keyboard.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/keyboard.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/keyboard.html">Keyboard</a> -->
+       <a href="io/keyboard.html">
+        键盘
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/led.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/led.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/led.html">LED</a> -->
+       <a href="io/led.html">
+        LED
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/rgbled.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/rgbled.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/rgbled.html">RGB LED</a> -->
+       <a href="io/rgbled.html">
+        RGB LED
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/7seg.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/7seg.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/7seg.html">7-Segment Display</a> -->
+       <a href="io/7seg.html">
+        7段数码管
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/hexdig.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/hexdig.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/hexdig.html">Hex Digit Display</a> -->
+       <a href="io/hexdig.html">
+        十六进制数码显示
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/dotmat.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/dotmat.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/dotmat.html">LED Matrix</a> -->
+       <a href="io/dotmat.html">
+        LED矩阵
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/tty.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/tty.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/tty.html">TTY</a> -->
+       <a href="io/tty.html">
+        TTY
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/portio.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/portio.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/portio.html">Port I/O</a> -->
+       <a href="io/portio.html">
+        Port I/O
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/repetar.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/repetar.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/repetar.html">Repetar Local Bus</a> -->
+       <a href="io/repetar.html">
+        Repetar Local Bus
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="io/rgbvideo.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/rgbvideo.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="io/rgbvideo.html">RVB Video</a> -->
+       <a href="io/rgbvideo.html">
+        RVB Video
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="ioextra/index.html">Input/Output Extra library</a></b> -->
+    <b>
+     <a href="ioextra/index.html">
+      Input/Output Extra library
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="ioextra/switch.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/switch.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="ioextra/switch.html">Swicth</a> -->
+       <a href="ioextra/switch.html">
+        Swicth
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="ioextra/buzzer.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/buzzer.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="ioextra/buzzer.html">Buzzer</a> -->
+       <a href="ioextra/buzzer.html">
+        Buzzer
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="ioextra/slider.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/slider.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="ioextra/slider.html">Slider</a> -->
+       <a href="ioextra/slider.html">
+        Slider
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="ioextra/digitalscope.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/digitalscope.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="ioextra/digitalscope.html">Digital oscilloscope</a> -->
+       <a href="ioextra/digitalscope.html">
+        Digital oscilloscope
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="ioextra/pla.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/pla.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="ioextra/pla.html">pla</a> -->
+       <a href="ioextra/pla.html">
+        pla
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="soc/index.html">System On Chip components library</a></b> -->
+    <b>
+     <a href="soc/index.html">
+      System On Chip components library
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="soc/socriscv.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/up.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socriscv.html">Risc V IM simulator</a> -->
+       <a href="soc/socriscv.html">
+        Risc V IM simulator
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="soc/socnios2s.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/up.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socnios2s.html">Nios2s simulator</a> -->
+       <a href="soc/socnios2s.html">
+        Nios2s simulator
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="soc/socbus.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/socbus.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socbus.html">SOC bus simulator</a> -->
+       <a href="soc/socbus.html">
+        SOC bus simulator
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="soc/socmemsimulator.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/socmem.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socmemsimulator.html">Memory simulator</a> -->
+       <a href="soc/socmemsimulator.html">
+        Memory simulator
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="soc/socpio.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/socpio.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socpio.html">Parallel inpout/output expander</a> -->
+       <a href="soc/socpio.html">
+        Parallel inpout/output expander
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="soc/socvga.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/socvga.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socvga.html">VGA screen</a> -->
+       <a href="soc/socvga.html">
+        VGA screen
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="soc/socjtag.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/socjtag.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="soc/socjtag.html">Jtag Uart component</a> -->
+       <a href="soc/socjtag.html">
+        Jtag Uart component
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- <b><a href="tcl/index.html">Other library TTL,TCL,HDL-IP,BFH</a></b> -->
+    <b>
+     <a href="tcl/index.html">
+      Other library TTL,TCL,HDL-IP,BFH
+     </a>
+    </b>
+   </h2>
+   <table>
+    <tbody>
+     <tr>
+      <td align="right">
+       <a href="tcl/reds_console.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/tcl.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="tcl/reds_console.html">TCL REDS console</a> -->
+       <a href="tcl/reds_console.html">
+        TCL REDS console
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td align="right">
+       <a href="tcl/generic.html">
+        <img alt="#########" border="0" class="iconlibs" height="32" src="../../../icons/6464/tcl.png" width="32"/>
+       </a>
+      </td>
+      <td>
+      </td>
+      <td>
+       <!-- <a href="tcl/generic.html">TCL generic</a> -->
+       <a href="tcl/generic.html">
+        TCL generic
+       </a>
+      </td>
+     </tr>
+    </tbody>
+   </table>
   </div>
+ </body>
 </html>

@@ -1,50 +1,119 @@
 <!DOCTYPE html>
 <html lang="zh">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <!-- <title>dynamic_components</title> -->
-    <title>动态组件</title>
-
-  </head>
-  <body>
-    <p>
-      <!-- <b>Next:</b> <a href="tutor-wires.html">Step 0: Orienting yourself</a> -->
-      <b>上一步:</b> <a href="subcirc_library.html">Logisim-evolution 库</a>
-
-    </p>
-    <!-- <h1>Dynamic components</h1> -->
-    <h1>动态组件</h1>
-    <!-- <p>The dynamic components provides the means of observing/manipulating components that are hidden in a sub-circuit on a higher level. Example: You have placed a led in a circuit named <strong>MyNiceCircuit</strong>.  Now you use <strong>MyNiceCircuit</strong> as sub-circuit in the circuit named <strong>MyToplevel</strong>. Simulating in <strong>MyToplevel</strong>    will hide your led, hence you have no means to see if the led in <strong>MyNiceCircuit</strong> is lighting up or not. The dynamic components help here by providing the  possibility of putting an image of the led on the sub-circuit symbol of <strong>MyNiceCircuit</strong>. To add dynamic components to the sub-circuit symbol of <strong>MyNiceCircuit</strong>, you have first to open the&nbsp;<a href="../subcirc/sub-appear.html">appearance editor</a> of the circuit <strong>MyNiceCircuit</strong>. Than you click on the <img src="../../../../icons/dynamic_component.png" alt="dyncomp" title="dyncomp">-tool icon. A window will open listing all the available dynamic components, and you can select which one to show in the appearance of your sub-circuit symbol. Note that the dynamic components feature is a recursive property. This means that if you have a hierarchical structure, it will show all possible dynamic components available down from the current sub-circuit.</p>  <p>Currently following tools support dynamic components:</p> -->
-    <p>动态组件提供了观察/操作隐藏在更高级别的子电路中的组件的方法。 示例：您已在名为 <strong>MyNiceCircuit</strong> 的电路中放置了一个 LED。 现在，您使用 <strong>MyNiceCircuit</strong> 作为名为 <strong>MyToplevel</strong> 的电路中的子电路。 在<strong>MyToplevel</strong>中进行模拟会隐藏您的LED，因此您无法查看<strong>MyNiceCircuit</strong>中的LED是否点亮。 动态组件可以在 <strong>MyNiceCircuit</strong> 的子电路符号上放置 LED 图像，从而提供帮助。 要将动态组件添加到<strong>MyNiceCircuit</strong>的子电路符号中，您必须首先打开<a href="../subcirc/sub-appear.html">外观编辑器</a> 电路<strong>MyNiceCircuit</strong>。 然后单击 <img src="../../../../icons/6464/dynamic_component.png" alt="dyncomp" title="dyncomp">-tool icon。 将打开一个窗口，列出所有可用的动态组件，您可以选择要在子电路符号的外观中显示的组件。 请注意，动态组件功能是递归属性。 这意味着，如果您有分层结构，它将显示当前子电路下所有可用的动态组件。</p> <p>当前以下工具支持动态组件：</p>
-    <table style="width: 232px; height: 72px;" border="0">
-      <tbody>
-        <tr>
-          <td style="text-align: center;"><img src="../../../../icons/todelete/led.gif" alt="led"
-              title="led"><br>
-          </td>
-          <td><a href="../../libs/io/led.html">LED-tool</a></td>
-        </tr>
-        <tr>
-          <td style="width: 37.1333px; text-align: center;"><img src="../../../../icons/todelete/rgbled.gif"
-              alt="rgb" title="rgb"><br>
-          </td>
-          <td style="width: 184.867px;"><a href="../../libs/io/led.html">RGB-LED-tool</a></td>
-        </tr>
-        <tr>
-          <td><br>
-          </td>
-          <td>to be completed</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      <!-- <b>Next:</b> <a href="../index.html">User's Guide</a>. -->
-      <b>返回:</b> <a href="index.html">子电路</a>.
-
-    </p>
-    <p><br>
-    </p>
-    <p><br>
-    </p>
-  </body>
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <!-- <title>dynamic_components</title> -->
+  <title>
+   动态组件
+  </title>
+ </head>
+ <body>
+  <p>
+   <!-- <b>Next:</b> <a href="tutor-wires.html">Step 0: Orienting yourself</a> -->
+   <b>
+    上一步:
+   </b>
+   <a href="subcirc_library.html">
+    Logisim-evolution 库
+   </a>
+  </p>
+  <!-- <h1>Dynamic components</h1> -->
+  <h1>
+   动态组件
+  </h1>
+  <!-- <p>The dynamic components provides the means of observing/manipulating components that are hidden in a sub-circuit on a higher level. Example: You have placed a led in a circuit named <strong>MyNiceCircuit</strong>.  Now you use <strong>MyNiceCircuit</strong> as sub-circuit in the circuit named <strong>MyToplevel</strong>. Simulating in <strong>MyToplevel</strong>    will hide your led, hence you have no means to see if the led in <strong>MyNiceCircuit</strong> is lighting up or not. The dynamic components help here by providing the  possibility of putting an image of the led on the sub-circuit symbol of <strong>MyNiceCircuit</strong>. To add dynamic components to the sub-circuit symbol of <strong>MyNiceCircuit</strong>, you have first to open the&nbsp;<a href="../subcirc/sub-appear.html">appearance editor</a> of the circuit <strong>MyNiceCircuit</strong>. Than you click on the <img src="../../../../icons/dynamic_component.png" alt="dyncomp" title="dyncomp">-tool icon. A window will open listing all the available dynamic components, and you can select which one to show in the appearance of your sub-circuit symbol. Note that the dynamic components feature is a recursive property. This means that if you have a hierarchical structure, it will show all possible dynamic components available down from the current sub-circuit.</p>  <p>Currently following tools support dynamic components:</p> -->
+  <p>
+   动态组件提供了观察/操作隐藏在更高级别的子电路中的组件的方法。 示例：您已在名为
+   <strong>
+    MyNiceCircuit
+   </strong>
+   的电路中放置了一个 LED。 现在，您使用
+   <strong>
+    MyNiceCircuit
+   </strong>
+   作为名为
+   <strong>
+    MyToplevel
+   </strong>
+   的电路中的子电路。 在
+   <strong>
+    MyToplevel
+   </strong>
+   中进行模拟会隐藏您的LED，因此您无法查看
+   <strong>
+    MyNiceCircuit
+   </strong>
+   中的LED是否点亮。 动态组件可以在
+   <strong>
+    MyNiceCircuit
+   </strong>
+   的子电路符号上放置 LED 图像，从而提供帮助。 要将动态组件添加到
+   <strong>
+    MyNiceCircuit
+   </strong>
+   的子电路符号中，您必须首先打开
+   <a href="../subcirc/sub-appear.html">
+    外观编辑器
+   </a>
+   电路
+   <strong>
+    MyNiceCircuit
+   </strong>
+   。 然后单击
+   <img alt="dyncomp" src="../../../../icons/6464/dynamic_component.png" title="dyncomp"/>
+   -tool icon。 将打开一个窗口，列出所有可用的动态组件，您可以选择要在子电路符号的外观中显示的组件。 请注意，动态组件功能是递归属性。 这意味着，如果您有分层结构，它将显示当前子电路下所有可用的动态组件。
+  </p>
+  <p>
+   当前以下工具支持动态组件：
+  </p>
+  <table border="0" style="width: 232px; height: 72px;">
+   <tbody>
+    <tr>
+     <td style="text-align: center;">
+      <img alt="led" src="../../../../icons/todelete/led.gif" title="led"/>
+      <br/>
+     </td>
+     <td>
+      <a href="../../libs/io/led.html">
+       LED-tool
+      </a>
+     </td>
+    </tr>
+    <tr>
+     <td style="width: 37.1333px; text-align: center;">
+      <img alt="rgb" src="../../../../icons/todelete/rgbled.gif" title="rgb"/>
+      <br/>
+     </td>
+     <td style="width: 184.867px;">
+      <a href="../../libs/io/led.html">
+       RGB-LED-tool
+      </a>
+     </td>
+    </tr>
+    <tr>
+     <td>
+      <br/>
+     </td>
+     <!-- <td>to be completed</td> -->
+    </tr>
+   </tbody>
+  </table>
+  <p>
+   <!-- <b>Next:</b> <a href="../index.html">User's Guide</a>. -->
+   <b>
+    返回:
+   </b>
+   <a href="index.html">
+    子电路
+   </a>
+   .
+  </p>
+  <p>
+   <br/>
+  </p>
+  <p>
+   <br/>
+  </p>
+ </body>
 </html>

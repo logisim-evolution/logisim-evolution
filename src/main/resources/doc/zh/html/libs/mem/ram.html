@@ -1,242 +1,376 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-21T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      RAM&lt;
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <img class="iconlibs" src="../../../../icons/6464/ram.png" alt="#########" width="32" height="32"> <em>RAM</em>
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库:</strong>
-
-            </td>
-            <td>
-              <!-- <a href="index.html">Memory</a> -->
-              <a href="index.html">存储</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:</strong> -->
-              <strong>介绍:</strong>
-
-            </td>
-            <td>
-              2.0 Beta 1
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-            </td>
-            <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/ram.png" alt="#########"  width="64" height="64">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- The RAM component, easily the most complex component in Logisim's built-in libraries, stores up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to to 32 bits (specified in the Data Bit Width attribute). The circuit can load and store values in RAM. Also, the user can modify individual values interactively via the Poke Tool, or the user can modify the entire contents via the Menu Tool. -->
-        RAM 组件无疑是 Logisim-evolution 内置库中最复杂的组件，最多可存储 16,777,216 个值（在“地址位宽”属性中指定），每个值最多可包含 32 位（在“数据位宽”属性中指定） 。 该电路可以在 RAM 中加载和存储值。 此外，用户可以通过 Poke 工具交互地修改单个值，或者用户可以通过菜单工具修改整个内容。
-      </p>
-      <p>
-        <!-- Current values are displayed in the component. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in inverse text (white on black). -->
-        当前值显示在元件中。 显示的地址以灰色列出在显示区域的左侧。 在内部，每个值都使用十六进制列出。 当前所选地址处的值将以反色文本（黑底白字）显示。
-      </p>
-      <p>
-        <!-- The RAM component supports three different interfaces, depending on the Data Interface attribute. -->
-        RAM 组件支持三种不同的接口，具体取决于数据接口属性。
-      </p>
-      <dl>
-        <dt>
-          <!-- One synchronous load/store port (default) -->
-          1个同步加载/存储端口（默认）
-        </dt>
-        <dd>
-          <p>
-            <!-- The component includes a single port on its east side that serves for both loading and storing data. Which it performs depends on the input labeled <em>ld</em>: 1 (or floating) indicates to load the data at the address designated on the component's west side, and 0 indicates to store the data given on the port. To transmit data into and out of the component, you will need to use a Controlled Buffer component, as illustrated below. -->
-            该组件在其东侧有一个端口，用于加载和存储数据。 它执行的操作取决于标记为<em>ld</em>的输入：1（或浮动）表示将数据加载到组件西侧指定的地址，0表示存储端口上给定的数据。 要将数据传入和传出组件，您将需要使用受控缓冲区组件，如下所示。
-          </p>
-          <center>
-            <img src="../../../../img-libs/ramdemo.png" alt="#########">
-          </center>
-        </dd>
-        <dt>
-          <!-- One asynchronous load/store port -->
-          1个异步加载/存储端口
-        </dt>
-        <dd>
-          <p>
-            <!-- This is the same as above, except that there is no clock. The value found on the data bus is stored into memory whenever the <em>ld</em> input is 0. If, while the <em>ld</em> input is 0, the address or data changes, then an additional store occurs. This option is meant to more closely approximate the interface of many available random-access memories. -->
-            这与上面相同，只是没有时钟。 只要 <em>ld</em> 输入为 0，数据总线上找到的值就会存储到内存中。如果在 <em>ld</em> 输入为 0 时，地址或数据发生变化，则附加一个 发生存储。 此选项旨在更接近许多可用随机存取存储器的接口。
-          </p>
-        </dd>
-        <dt>
-          <!-- Separate load and store ports -->
-          独立的装载和存储端口
-        </dt>
-        <dd>
-          <p>
-            <!-- Two data ports are provided - one on the west side for storing data, and another on the east side for loading data. This option removes the necessity of dealing with the Controlled Buffer and so it is easier to use. -->
-            提供两个数据端口，一个在西侧用于存储数据，另一个在东侧用于加载数据。 此选项消除了处理受控缓冲区的必要性，因此更易于使用。
-          </p>
-        </dd>
-        <dd>
-          <h2>
-            <!-- Pins -->
-            引脚
-          </h2>
-          <dl>
-            <dt>
-              <!-- <var>A</var> on west edge (input, bit width matches Address Bit Width attribute) -->
-              <var>A</var> 在西边（输入，位宽与地址位宽属性匹配）
-            </dt>
-            <dd>
-              <!-- Selects which of the values in memory is currently being accessed by the circuit. -->
-              选择电路当前正在访问存储器中的哪个值。
-            </dd>
-            <dt>
-              <!-- <var>D</var> on west edge (input, bit width matches Data Bit Width attribute) -->
-              <var>D</var> 在西边（输入，位宽与数据位宽属性匹配）
-            </dt>
-            <dd>
-              <!-- This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When a store is requested (via the clock changing from 0 to 1 while <em>sel</em> and <em>str</em> are both 1 or floating), the value found at this port is stored into memory at the currently selected address. -->
-              仅当为数据接口属性选择“单独的加载和存储端口”时，才会出现此输入。 当请求存储时（通过时钟从 0 变为 1，而 <em>sel</em> 和 <em>str</em> 均为 1 或浮动），在此端口找到的值将存储到内存中 当前选择的地址。
-            </dd>
-            <dt>
-              <var>D</var> on east edge (input/output or output, bit width matches Data Bit Width attribute)
-            </dt>
-            <dd>
-              <!-- If <var>sel</var> and <var>ld</var> are 1 or floating, then the RAM component emits the value found at the currently selected address on this port. If there is a single load/store port, the value read from this port is stored whenever a store is requested. -->
-              如果<var>sel</var>和<var>ld</var>为1或浮动，则RAM组件发出在此端口上当前选定地址处找到的值。 如果只有一个加载/存储端口，则每当请求存储时，都会存储从此端口读取的值。
-            </dd>
-            <dt>
-              <!-- <var>str</var> on south edge (input, bit width 1) -->
-              <var>str</var> 位于南边缘（输入，位宽 1）
-            </dt>
-            <dd>
-              <!-- Store: This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When it is 1 or floating, a clock pulse will result in storing the data found on the west edge into memory (provided the <var>sel</var> input is also 1 or floating). -->
-              存储：仅当为数据接口属性选择“单独的加载和存储端口”时，此输入才会出现。 当它为 1 或浮动时，时钟脉冲将导致将在西边沿找到的数据存储到内存中（假设 <var>sel</var> 输入也是 1 或浮动）。
-            </dd>
-            <dt>
-              <!-- <var>sel</var> on south edge (input, bit width 1) -->
-              <var>sel</var> 位于南边缘（输入，位宽 1）
-            </dt>
-            <dd>
-              <!-- Chip select: This input enables or disables the entire RAM module, based on whether the value is 1/floating or 0. The input is meant primarily for situations where you have multiple RAM units, only one of which would be enabled at any time. -->
-              芯片选择：该输入根据值是 1/浮点还是 0 来启用或禁用整个 RAM 模块。该输入主要用于具有多个 RAM 单元的情况，但任何时候只能启用其中一个。
-            </dd>
-            <dt>
-              <!-- triangle on south edge (input, bit width 1) -->
-              南边三角形（输入，位宽 1）
-            </dt>
-            <dd>
-              <!-- Clock input: This is absent when the Data Interface attribute's value is "One asynchronous load/store port." In other circumstances, when <var>ld</var> is 0, and this input rises from 0 to 1 (and <var>sel</var> is 1/undefined and <var>clr</var> is 0), then the value at the currently selected address changes to whatever value is at the <var>D</var> pin. As long as the clock input remains 0 or 1, though, the <var>D</var> value will not be stored into memory. -->
-              时钟输入：当数据接口属性的值为“一个异步加载/存储端口”时，时钟输入不存在。 在其他情况下，当<var>ld</var>为0时，该输入从0上升到1（并且<var>sel</var>为1/undefined且<var>clr</var>为0） ，则当前选定地址处的值将更改为 <var>D</var> 引脚处的任何值。 不过，只要时钟输入保持 0 或 1，<var>D</var> 值就不会存储到内存中。
-            </dd>
-            <dt>
-              <!-- <var>ld</var> on south edge (input, bit width 1) -->
-              <var>ld</var> 位于南边缘（输入，位宽 1）
-            </dt>
-            <dd>
-              <!-- Load: Selects whether the RAM should emit (on <var>D</var>) the value at the current address (<var>A</var>). This output behavior is enabled if <var>out</var> is 1 or undefined; if <var>out</var> is 0, then no value is pushed onto <var>D</var> - but if there is a combined load/store port, stores will be enabled. -->
-              加载：选择 RAM 是否应发出（在 <var>D</var> 上）当前地址 (<var>A</var>) 处的值。 如果 <var>out</var> 为 1 或未定义，则启用此输出行为； 如果 <var>out</var> 为 0，则不会将任何值推送到 <var>D</var> - 但如果存在组合的加载/存储端口，则将启用存储。
-            </dd>
-            <dt>
-              <!-- <var>clr</var> on south edge (input, bit width 1) -->
-              <var>clr</var> 位于南边缘（输入，位宽 1）
-            </dt>
-            <dd>
-              <!-- Clear: When this is 1, all values in memory are pinned to 0, no matter what the other inputs are. -->
-              清除：当该值为 1 时，无论其他输入是什么，内存中的所有值都固定为 0。
-            </dd>
-          </dl>
-          <h2>
-            <!-- Attributes -->
-            属性
-          </h2>
-          <p>
-            <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute. -->
-            当选择或添加组件时，数字“0”到“9”会更改其<q>地址位宽度</q>属性，而Alt-0到Alt-9会更改其<q>数据位宽度</q>属性 > 属性。
-          </p>
-          <dl>
-            <dt>
-              <!-- Address Bit Width -->
-              地址位宽
-            </dt>
-            <dd>
-              <!-- The bit width of the address bits. The number of values stored in RAM is 2<sup><var>addrBitWidth</var></sup>. -->
-              地址位的位宽。 RAM 中存储的值数量为 2<sup><var>addrBitWidth</var></sup>。
-            </dd>
-            <dt>
-              <!-- Data Bit Width -->
-              数据位宽
-            </dt>
-            <dd>
-              <!-- The bit width of each individual value in memory. -->
-              内存中每个单独值的位宽度。
-            </dd>
-            <dt>
-              <!-- Data Interface -->
-              数据接口
-            </dt>
-            <dd>
-              <!-- Configures which of the three interfaces are used for communicating data into and out of the component. -->
-              配置三个接口中的哪一个用于将数据传入和传出组件。
-            </dd>
-          </dl>
-          <h2>
-            <!-- Poke Tool Behavior -->
-            Poke 工具行为
-          </h2>
-          <p>
-            <!-- See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>. -->
-            请参阅<em>用户指南</em>中的<a href="../../guide/mem/mem-poke.html">挖掘内存</a>。
-
-          </p>
-          <h2>
-            <!-- Text Tool Behavior -->
-            文本工具行为
-          </h2>
-          <p>
-            <!-- None. -->
-            无
-          </p>
-          <h2>
-            <!-- Menu Tool Behavior -->
-            菜单工具行为
-          </h2>
-          <p>
-            <!-- See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>. -->
-            请参阅<em>用户指南</em>中的<a href="../../guide/mem/mem-menu.html">弹出菜单和文件</a>。
-          </p>
-          <p>
-            <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-            <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
-
-          </p>
-        </dd>
-      </dl>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:25" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   RAM&lt;
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ram.png" width="32"/>
+    <em>
+     RAM
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Memory</a> -->
+       <a href="index.html">
+        存储
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 1
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ram.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- The RAM component, easily the most complex component in Logisim's built-in libraries, stores up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to to 32 bits (specified in the Data Bit Width attribute). The circuit can load and store values in RAM. Also, the user can modify individual values interactively via the Poke Tool, or the user can modify the entire contents via the Menu Tool. -->
+    RAM 组件无疑是 Logisim-evolution 内置库中最复杂的组件，最多可存储 16,777,216 个值（在“地址位宽”属性中指定），每个值最多可包含 32 位（在“数据位宽”属性中指定） 。 该电路可以在 RAM 中加载和存储值。 此外，用户可以通过 Poke 工具交互地修改单个值，或者用户可以通过菜单工具修改整个内容。
+   </p>
+   <p>
+    <!-- Current values are displayed in the component. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in inverse text (white on black). -->
+    当前值显示在元件中。 显示的地址以灰色列出在显示区域的左侧。 在内部，每个值都使用十六进制列出。 当前所选地址处的值将以反色文本（黑底白字）显示。
+   </p>
+   <p>
+    <!-- The RAM component supports three different interfaces, depending on the Data Interface attribute. -->
+    RAM 组件支持三种不同的接口，具体取决于数据接口属性。
+   </p>
+   <dl>
+    <dt>
+     <!-- One synchronous load/store port (default) -->
+     1个同步加载/存储端口（默认）
+    </dt>
+    <dd>
+     <p>
+      <!-- The component includes a single port on its east side that serves for both loading and storing data. Which it performs depends on the input labeled <em>ld</em>: 1 (or floating) indicates to load the data at the address designated on the component's west side, and 0 indicates to store the data given on the port. To transmit data into and out of the component, you will need to use a Controlled Buffer component, as illustrated below. -->
+      该组件在其东侧有一个端口，用于加载和存储数据。 它执行的操作取决于标记为
+      <em>
+       ld
+      </em>
+      的输入：1（或浮动）表示将数据加载到组件西侧指定的地址，0表示存储端口上给定的数据。 要将数据传入和传出组件，您将需要使用受控缓冲区组件，如下所示。
+     </p>
+     <center>
+      <img alt="#########" src="../../../../img-libs/ramdemo.png"/>
+     </center>
+    </dd>
+    <dt>
+     <!-- One asynchronous load/store port -->
+     1个异步加载/存储端口
+    </dt>
+    <dd>
+     <p>
+      <!-- This is the same as above, except that there is no clock. The value found on the data bus is stored into memory whenever the <em>ld</em> input is 0. If, while the <em>ld</em> input is 0, the address or data changes, then an additional store occurs. This option is meant to more closely approximate the interface of many available random-access memories. -->
+      这与上面相同，只是没有时钟。 只要
+      <em>
+       ld
+      </em>
+      输入为 0，数据总线上找到的值就会存储到内存中。如果在
+      <em>
+       ld
+      </em>
+      输入为 0 时，地址或数据发生变化，则附加一个 发生存储。 此选项旨在更接近许多可用随机存取存储器的接口。
+     </p>
+    </dd>
+    <dt>
+     <!-- Separate load and store ports -->
+     独立的装载和存储端口
+    </dt>
+    <dd>
+     <p>
+      <!-- Two data ports are provided - one on the west side for storing data, and another on the east side for loading data. This option removes the necessity of dealing with the Controlled Buffer and so it is easier to use. -->
+      提供两个数据端口，一个在西侧用于存储数据，另一个在东侧用于加载数据。 此选项消除了处理受控缓冲区的必要性，因此更易于使用。
+     </p>
+    </dd>
+    <dd>
+     <h2>
+      <!-- Pins -->
+      引脚
+     </h2>
+     <dl>
+      <dt>
+       <!-- <var>A</var> on west edge (input, bit width matches Address Bit Width attribute) -->
+       <var>
+        A
+       </var>
+       在西边（输入，位宽与地址位宽属性匹配）
+      </dt>
+      <dd>
+       <!-- Selects which of the values in memory is currently being accessed by the circuit. -->
+       选择电路当前正在访问存储器中的哪个值。
+      </dd>
+      <dt>
+       <!-- <var>D</var> on west edge (input, bit width matches Data Bit Width attribute) -->
+       <var>
+        D
+       </var>
+       在西边（输入，位宽与数据位宽属性匹配）
+      </dt>
+      <dd>
+       <!-- This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When a store is requested (via the clock changing from 0 to 1 while <em>sel</em> and <em>str</em> are both 1 or floating), the value found at this port is stored into memory at the currently selected address. -->
+       仅当为数据接口属性选择“单独的加载和存储端口”时，才会出现此输入。 当请求存储时（通过时钟从 0 变为 1，而
+       <em>
+        sel
+       </em>
+       和
+       <em>
+        str
+       </em>
+       均为 1 或浮动），在此端口找到的值将存储到内存中 当前选择的地址。
+      </dd>
+      <dt>
+       <var>
+        D
+       </var>
+       on east edge (input/output or output, bit width matches Data Bit Width attribute)
+      </dt>
+      <dd>
+       <!-- If <var>sel</var> and <var>ld</var> are 1 or floating, then the RAM component emits the value found at the currently selected address on this port. If there is a single load/store port, the value read from this port is stored whenever a store is requested. -->
+       如果
+       <var>
+        sel
+       </var>
+       和
+       <var>
+        ld
+       </var>
+       为1或浮动，则RAM组件发出在此端口上当前选定地址处找到的值。 如果只有一个加载/存储端口，则每当请求存储时，都会存储从此端口读取的值。
+      </dd>
+      <dt>
+       <!-- <var>str</var> on south edge (input, bit width 1) -->
+       <var>
+        str
+       </var>
+       位于南边缘（输入，位宽 1）
+      </dt>
+      <dd>
+       <!-- Store: This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When it is 1 or floating, a clock pulse will result in storing the data found on the west edge into memory (provided the <var>sel</var> input is also 1 or floating). -->
+       存储：仅当为数据接口属性选择“单独的加载和存储端口”时，此输入才会出现。 当它为 1 或浮动时，时钟脉冲将导致将在西边沿找到的数据存储到内存中（假设
+       <var>
+        sel
+       </var>
+       输入也是 1 或浮动）。
+      </dd>
+      <dt>
+       <!-- <var>sel</var> on south edge (input, bit width 1) -->
+       <var>
+        sel
+       </var>
+       位于南边缘（输入，位宽 1）
+      </dt>
+      <dd>
+       <!-- Chip select: This input enables or disables the entire RAM module, based on whether the value is 1/floating or 0. The input is meant primarily for situations where you have multiple RAM units, only one of which would be enabled at any time. -->
+       芯片选择：该输入根据值是 1/浮点还是 0 来启用或禁用整个 RAM 模块。该输入主要用于具有多个 RAM 单元的情况，但任何时候只能启用其中一个。
+      </dd>
+      <dt>
+       <!-- triangle on south edge (input, bit width 1) -->
+       南边三角形（输入，位宽 1）
+      </dt>
+      <dd>
+       <!-- Clock input: This is absent when the Data Interface attribute's value is "One asynchronous load/store port." In other circumstances, when <var>ld</var> is 0, and this input rises from 0 to 1 (and <var>sel</var> is 1/undefined and <var>clr</var> is 0), then the value at the currently selected address changes to whatever value is at the <var>D</var> pin. As long as the clock input remains 0 or 1, though, the <var>D</var> value will not be stored into memory. -->
+       时钟输入：当数据接口属性的值为“一个异步加载/存储端口”时，时钟输入不存在。 在其他情况下，当
+       <var>
+        ld
+       </var>
+       为0时，该输入从0上升到1（并且
+       <var>
+        sel
+       </var>
+       为1/undefined且
+       <var>
+        clr
+       </var>
+       为0） ，则当前选定地址处的值将更改为
+       <var>
+        D
+       </var>
+       引脚处的任何值。 不过，只要时钟输入保持 0 或 1，
+       <var>
+        D
+       </var>
+       值就不会存储到内存中。
+      </dd>
+      <dt>
+       <!-- <var>ld</var> on south edge (input, bit width 1) -->
+       <var>
+        ld
+       </var>
+       位于南边缘（输入，位宽 1）
+      </dt>
+      <dd>
+       <!-- Load: Selects whether the RAM should emit (on <var>D</var>) the value at the current address (<var>A</var>). This output behavior is enabled if <var>out</var> is 1 or undefined; if <var>out</var> is 0, then no value is pushed onto <var>D</var> - but if there is a combined load/store port, stores will be enabled. -->
+       加载：选择 RAM 是否应发出（在
+       <var>
+        D
+       </var>
+       上）当前地址 (
+       <var>
+        A
+       </var>
+       ) 处的值。 如果
+       <var>
+        out
+       </var>
+       为 1 或未定义，则启用此输出行为； 如果
+       <var>
+        out
+       </var>
+       为 0，则不会将任何值推送到
+       <var>
+        D
+       </var>
+       - 但如果存在组合的加载/存储端口，则将启用存储。
+      </dd>
+      <dt>
+       <!-- <var>clr</var> on south edge (input, bit width 1) -->
+       <var>
+        clr
+       </var>
+       位于南边缘（输入，位宽 1）
+      </dt>
+      <dd>
+       <!-- Clear: When this is 1, all values in memory are pinned to 0, no matter what the other inputs are. -->
+       清除：当该值为 1 时，无论其他输入是什么，内存中的所有值都固定为 0。
+      </dd>
+     </dl>
+     <h2>
+      <!-- Attributes -->
+      属性
+     </h2>
+     <p>
+      <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute. -->
+      当选择或添加组件时，数字“0”到“9”会更改其
+      <q>
+       地址位宽度
+      </q>
+      属性，而Alt-0到Alt-9会更改其
+      <q>
+       数据位宽度
+      </q>
+      属性 &gt; 属性。
+     </p>
+     <dl>
+      <dt>
+       <!-- Address Bit Width -->
+       地址位宽
+      </dt>
+      <dd>
+       <!-- The bit width of the address bits. The number of values stored in RAM is 2<sup><var>addrBitWidth</var></sup>. -->
+       地址位的位宽。 RAM 中存储的值数量为 2
+       <sup>
+        <var>
+         addrBitWidth
+        </var>
+       </sup>
+       。
+      </dd>
+      <dt>
+       <!-- Data Bit Width -->
+       数据位宽
+      </dt>
+      <dd>
+       <!-- The bit width of each individual value in memory. -->
+       内存中每个单独值的位宽度。
+      </dd>
+      <dt>
+       <!-- Data Interface -->
+       数据接口
+      </dt>
+      <dd>
+       <!-- Configures which of the three interfaces are used for communicating data into and out of the component. -->
+       配置三个接口中的哪一个用于将数据传入和传出组件。
+      </dd>
+     </dl>
+     <h2>
+      <!-- Poke Tool Behavior -->
+      Poke 工具行为
+     </h2>
+     <p>
+      <!-- See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>. -->
+      请参阅
+      <em>
+       用户指南
+      </em>
+      中的
+      <a href="../../guide/mem/mem-poke.html">
+       挖掘内存
+      </a>
+      。
+     </p>
+     <h2>
+      <!-- Text Tool Behavior -->
+      文本工具行为
+     </h2>
+     <p>
+      <!-- None. -->
+      无
+     </p>
+     <h2>
+      <!-- Menu Tool Behavior -->
+      菜单工具行为
+     </h2>
+     <p>
+      <!-- See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>. -->
+      请参阅
+      <em>
+       用户指南
+      </em>
+      中的
+      <a href="../../guide/mem/mem-menu.html">
+       弹出菜单和文件
+      </a>
+      。
+     </p>
+     <p>
+      <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+      <b>
+       返回
+      </b>
+      <a href="../index.html">
+       电路元件库参考手册
+      </a>
+     </p>
+    </dd>
+   </dl>
+  </div>
+ </body>
 </html>

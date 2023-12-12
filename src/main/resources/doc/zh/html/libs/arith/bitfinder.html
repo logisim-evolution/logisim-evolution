@@ -1,213 +1,237 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Bit Finder -->
-      位查询器
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- <img class="iconlibs" src="../../../../icons/6464/bitfindr.png" alt="#########" width="32" height="32" align="middle"> <em>Bit Finder</em> -->
-        <img class="iconlibs" src="../../../../icons/6464/bitfindr.png" alt="#########" width="32" height="32" align="middle"> <em>位查询器</em>
-
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库:</strong>
-
-            </td>
-            <td>
-              <!-- <a href="index.html">Arithmetic</a> -->
-              <a href="index.html">算术</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:</strong> -->
-              <strong>介绍:</strong>
-
-            </td>
-            <td>
-              2.6.1
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-            </td>
-            <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/bitfindr.png" alt="#########" width="64" height="64">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- The component takes a multi-bit input and determines the the index of a bit, where the index is computed by counting from 0 as the lowest-order bit. Exactly which index it computes depends on the Type attribute, as illustrated by the examples in the below table for the 8-bit sample input 11010100. -->
-        该元件采用多位输入并确定位的索引，其中索引是通过从 0 作为最低位进行计数来计算的。 它计算的确切索引取决于 Type 属性，如下表中 8 位样本输入 11010100 的示例所示。
-      </p>
-      <blockquote>
-        <table>
-          <thead>
-            <tr>
-              <th>
-                <!-- Type -->
-                类型
-              </th>
-              <th>
-                <!-- Output for 11010100 -->
-                输出为 11010100
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <!-- Lowest-order 1 -->
-                最低阶 1
-              </td>
-              <td align="center">
-                2
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <!-- Highest-order 1 -->
-                最高阶 1
-              </td>
-              <td align="center">
-                7
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Lowest-order 0
-              </td>
-              <td align="center">
-                0
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Highest-order 0
-              </td>
-              <td align="center">
-                5
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </blockquote>
-      <p>
-        <!-- For the lowest-order 1, the output is 2 because if you index the bits starting from 0 for the lowest-order bit, the first 1 you will find is at index 2. (The bits at indices 0 and 1 are both 0.) For the highest-order 1, the output is 7 because the topmost 1 bit is at index 7 (again counting from the lowest-order bit as 0). -->
-        对于最低阶 1，输出为 2，因为如果您对最低阶位从 0 开始索引位，您将找到的第一个 1 位于索引 2 处。（索引 0 和 1 处的位均为 0。 ) 对于最高位 1，输出为 7，因为最高位 1 位位于索引 7（同样从最低位开始计数为 0）。
-      </p>
-      <p>
-        <!-- The component's output on the south edge indicates whether the desired bit was found at all. In the above examples involving the input 11010100, the south output is 1 in all cases. But if the input were 00000000 and the component is to find the lowest-order 1, then the south output would be 0 — and the output on the east edge would be 0 as well. -->
-        南边缘的元件输出指示是否找到了所需的位。 在上面涉及输入 11010100 的示例中，南边输出在所有情况下均为 1。 但如果输入为 00000000 并且该组件要查找最低阶 1，则南边的输出将为 0，而东边的输出也将为 0。
-      </p>
-      <p>
-        <!-- If while searching for the desired value, a value that is neither 0 or 1 is found (the bit could be floating or an error value), then both outputs will consist entirely of error bits. Note that this occurs only if the problematic bit is encountered before finding the desired bit: For the input x1010100, the output would still be 2 if the lowest-order 1 is desired; but we would get error values if the component's type indicates to search for the highest-order 1 or the highest-order 0, since there is an erroneous bit in a higher-order bit than either the highest-order 0 or the highest-order 1. -->
-        如果在搜索所需值时，发现既不是 0 也不是 1 的值（该位可能是浮点值或错误值），则两个输出都将完全由错误位组成。 请注意，只有在找到所需位之前遇到有问题的位时才会发生这种情况：对于输入 x1010100，如果需要最低位 1，则输出仍为 2； 但是如果组件的类型指示搜索最高阶 1 或最高阶 0，我们会得到错误值，因为在比最高阶 0 或最高阶 0 更高阶的位中存在错误位 1.
-      </p>
-      <h2>
-        <!-- Pins -->
-        引脚
-      </h2>
-      <dl>
-        <dt>
-          <!-- West edge (input, bit width matches Data Bits attribute) -->
-          西边（输入，位宽与数据位属性匹配）
-        </dt>
-        <dd>
-          <!-- The multibit input that is to be searched for the desired bit. -->
-          要搜索所需位的多位输入。
-        </dd>
-        <dt>
-          <!-- East edge (output, bit width computed as described below) -->
-          东边（输出，位宽计算如下）
-        </dt>
-        <dd>
-          <!-- The index of the desired bit, counting from 0 for the lowest-order bit. The bit width is the minimum number of bits to store the maximum possible index, which is one less than the value of the Data Bits attribute. -->
-          所需位的索引，从 0 开始计算最低位。 位宽是存储最大可能索引的最小位数，它比 Data Bits 属性的值小 1。
-        </dd>
-        <dt>
-          <!-- South edge (output, bit width 1) -->
-          南边缘（输出，位宽1）
-        </dt>
-        <dd>
-          <!-- 1 if the desired bit is found, 0 if all input bits are the inverse of the desired bit, and the error value if a non-0, non-1 value is found before the desired bit. -->
-          如果找到所需位，则为 1；如果所有输入位都是所需位的逆，则为 0；如果在所需位之前找到非 0、非 1 值，则为错误值。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Attributes -->
-        属性
-      </h2>
-      <p>
-        <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
-        选择或添加元件时，<b class="keybind">Alt-0</b> 到 <b class="keybind">Alt-9</b> 会更改其 <b class="propertie"> 数据位</b>属性。
-
-      </p>
-	  <div class="attliste">
-      <dl>
-        <dt>
-          <!-- <b class="propertie">Data Bits</b> -->
-          <b class="propertie">数据位</b>
-
-        </dt>
-        <dd>
-          <!-- The bit width of the input. -->
-          输入的位宽。
-        </dd>
-        <dt>
-          <!-- <b class="propertie">Type</b> -->
-          <b class="propertie">类型</b>
-
-        </dt>
-        <dd>
-          <!-- Indicates which bit to search for — the lowest-order 0, the highest-order 0, the lowest-order 1, or the highest-order 1. -->
-          指示要搜索的位 - 最低位 0、最高位 0、最低位 1 或最高位 1。
-        </dd>
-      </dl>
-	  </div>
-      <h2>
-        <!-- Poke Tool Behavior -->
-        Poke 工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <h2>
-        <!-- Text Tool Behavior -->
-        文本工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <p>
-         <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-         <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
-
-      </p>
-    </div>
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Bit Finder -->
+   位查询器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/bitfindr.png" alt="#########" width="32" height="32" align="middle"> <em>Bit Finder</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/bitfindr.png" width="32"/>
+    <em>
+     位查询器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Arithmetic</a> -->
+       <a href="index.html">
+        算术
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.6.1
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/bitfindr.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- The component takes a multi-bit input and determines the the index of a bit, where the index is computed by counting from 0 as the lowest-order bit. Exactly which index it computes depends on the Type attribute, as illustrated by the examples in the below table for the 8-bit sample input 11010100. -->
+    该元件采用多位输入并确定位的索引，其中索引是通过从 0 作为最低位进行计数来计算的。 它计算的确切索引取决于 Type 属性，如下表中 8 位样本输入 11010100 的示例所示。
+   </p>
+   <blockquote>
+    <table>
+     <thead>
+      <tr>
+       <th>
+        <!-- Type -->
+        类型
+       </th>
+       <th>
+        <!-- Output for 11010100 -->
+        输出为 11010100
+       </th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>
+        <!-- Lowest-order 1 -->
+        最低阶 1
+       </td>
+       <td align="center">
+        2
+       </td>
+      </tr>
+      <tr>
+       <td>
+        <!-- Highest-order 1 -->
+        最高阶 1
+       </td>
+       <td align="center">
+        7
+       </td>
+      </tr>
+      <tr>
+       <td>
+        Lowest-order 0
+       </td>
+       <td align="center">
+        0
+       </td>
+      </tr>
+      <tr>
+       <td>
+        Highest-order 0
+       </td>
+       <td align="center">
+        5
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </blockquote>
+   <p>
+    <!-- For the lowest-order 1, the output is 2 because if you index the bits starting from 0 for the lowest-order bit, the first 1 you will find is at index 2. (The bits at indices 0 and 1 are both 0.) For the highest-order 1, the output is 7 because the topmost 1 bit is at index 7 (again counting from the lowest-order bit as 0). -->
+    对于最低阶 1，输出为 2，因为如果您对最低阶位从 0 开始索引位，您将找到的第一个 1 位于索引 2 处。（索引 0 和 1 处的位均为 0。 ) 对于最高位 1，输出为 7，因为最高位 1 位位于索引 7（同样从最低位开始计数为 0）。
+   </p>
+   <p>
+    <!-- The component's output on the south edge indicates whether the desired bit was found at all. In the above examples involving the input 11010100, the south output is 1 in all cases. But if the input were 00000000 and the component is to find the lowest-order 1, then the south output would be 0 — and the output on the east edge would be 0 as well. -->
+    南边缘的元件输出指示是否找到了所需的位。 在上面涉及输入 11010100 的示例中，南边输出在所有情况下均为 1。 但如果输入为 00000000 并且该组件要查找最低阶 1，则南边的输出将为 0，而东边的输出也将为 0。
+   </p>
+   <p>
+    <!-- If while searching for the desired value, a value that is neither 0 or 1 is found (the bit could be floating or an error value), then both outputs will consist entirely of error bits. Note that this occurs only if the problematic bit is encountered before finding the desired bit: For the input x1010100, the output would still be 2 if the lowest-order 1 is desired; but we would get error values if the component's type indicates to search for the highest-order 1 or the highest-order 0, since there is an erroneous bit in a higher-order bit than either the highest-order 0 or the highest-order 1. -->
+    如果在搜索所需值时，发现既不是 0 也不是 1 的值（该位可能是浮点值或错误值），则两个输出都将完全由错误位组成。 请注意，只有在找到所需位之前遇到有问题的位时才会发生这种情况：对于输入 x1010100，如果需要最低位 1，则输出仍为 2； 但是如果组件的类型指示搜索最高阶 1 或最高阶 0，我们会得到错误值，因为在比最高阶 0 或最高阶 0 更高阶的位中存在错误位 1.
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge (input, bit width matches Data Bits attribute) -->
+     西边（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The multibit input that is to be searched for the desired bit. -->
+     要搜索所需位的多位输入。
+    </dd>
+    <dt>
+     <!-- East edge (output, bit width computed as described below) -->
+     东边（输出，位宽计算如下）
+    </dt>
+    <dd>
+     <!-- The index of the desired bit, counting from 0 for the lowest-order bit. The bit width is the minimum number of bits to store the maximum possible index, which is one less than the value of the Data Bits attribute. -->
+     所需位的索引，从 0 开始计算最低位。 位宽是存储最大可能索引的最小位数，它比 Data Bits 属性的值小 1。
+    </dd>
+    <dt>
+     <!-- South edge (output, bit width 1) -->
+     南边缘（输出，位宽1）
+    </dt>
+    <dd>
+     <!-- 1 if the desired bit is found, 0 if all input bits are the inverse of the desired bit, and the error value if a non-0, non-1 value is found before the desired bit. -->
+     如果找到所需位，则为 1；如果所有输入位都是所需位的逆，则为 0；如果在所需位之前找到非 0、非 1 值，则为错误值。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+    选择或添加元件时，
+    <b class="keybind">
+     Alt-0
+    </b>
+    到
+    <b class="keybind">
+     Alt-9
+    </b>
+    会更改其
+    <b class="propertie">
+     数据位
+    </b>
+    属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Data Bits</b> -->
+      <b class="propertie">
+       数据位
+      </b>
+     </dt>
+     <dd>
+      <!-- The bit width of the input. -->
+      输入的位宽。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Type</b> -->
+      <b class="propertie">
+       类型
+      </b>
+     </dt>
+     <dd>
+      <!-- Indicates which bit to search for — the lowest-order 0, the highest-order 0, the lowest-order 1, or the highest-order 1. -->
+      指示要搜索的位 - 最低位 0、最高位 0、最低位 1 或最高位 1。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
 </html>

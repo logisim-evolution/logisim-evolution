@@ -1,176 +1,208 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-21T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
-    <title>
-      <!-- Priority Encoder -->
-      优先编码器
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        <!-- <img class="iconlibs" src="../../../../icons/6464/priencod.png" alt="#########" height="32" width="32"> <em>Priority Encoder</em> -->
-        <img class="iconlibs" src="../../../../icons/6464/priencod.png" alt="#########" height="32" width="32"> <em>优先编码器</em>
-
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <!-- <strong>Library:</strong> -->
-              <strong>库:</strong>
-
-            </td>
-            <td>
-              <!-- <a href="index.html">Plexers</a> -->
-              <a href="index.html">复用器</a>
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <!-- <strong>Introduced:</strong> -->
-              <strong>介绍:</strong>
-
-            </td>
-            <td>
-              2.3.0
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <!-- <strong>Appearance:</strong> -->
-              <strong>外观符号:</strong>
-            </td>
-            <td valign="top">
-              <img  class="appearancelibs"  src="../../../../img-libs/priencod.png"  alt="#########" height="64" width="64">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        <!-- Behavior -->
-        行为
-      </h2>
-      <p>
-        <!-- The component has a number of inputs on its west edge, with the first labeled <q>0</q> and the other numbered from there. The component determines the indices of the inputs whose values are 1, and it emits the highest index. For example, if inputs 0, 2, 5, and 6 are all 1, then the priority  encoder emits a value of 110. If no inputs are 1, or if the component is disabled, then the output of the priority encoder is floating. -->
-        该元件在其西边缘有多个输入，第一个标记为 <q>0</q>，另一个从此处开始编号。 该元件确定值为 1 的输入的索引，并发出最高索引。 例如，如果输入 0、2、5 和 6 均为 1，则优先级编码器发出值 110。如果没有输入为 1，或者元件被禁用，则优先级编码器的输出为浮动。
-      </p>
-      <p>
-        <!-- The priority encoder is designed so that a number of encoders can be daisy-chained to accommodate additional inputs. In particular, the component includes an enable input and an enable output. Whenever the enable input is 0, the component is disabled, and the output will be all floating bits. The enable output is 1 whenever the component is enabled and none of the indexed inputs are 1. Thus, you can take two priority encoders and connect the enable output of the first to the enable input of the second: If any of the indexed inputs to the first are 1, then the second will be disabled and so its output will be all floating. But if none of the first's indexed inputs are 1, then its output will be all-floating bits, and the second priority encoder will be enabled and it will identify the highest-priority input with a 1. -->
-        优先级编码器的设计使得多个编码器可以菊花链方式连接以容纳额外的输入。 具体地，该组件包括使能输入和使能输出。 每当使能输入为 0 时，该组件将被禁用，并且输出将全部为浮点位。 只要组件已启用且所有索引输入均不为 1，则启用输出为 1。因此，您可以采用两个优先级编码器，并将第一个编码器的启用输出连接到第二个的启用输入： 第一个为 1，然后第二个将被禁用，因此其输出将全部浮动。 但是，如果第一个索引输入都不为 1，则其输出将是全浮点位，并且第二个优先级编码器将被启用，并且它将用 1 识别最高优先级输入。
-      </p>
-      <p>
-        <!-- An additional output of the priority encoder is 1 whenever the priority encoder is enabled and finds a 1 on one of the indexed inputs. When chaining priority encoders together, this output can be used to identify which of the encoders was triggered. -->
-        每当优先级编码器启用并且在索引输入之一上发现 1 时，优先级编码器的附加输出为 1。 将优先级编码器链接在一起时，此输出可用于识别触发了哪个编码器。
-      </p>
-      <h2>
-        <!-- Pins (assuming component faces east) -->
-        引脚（假设组件朝东）
-      </h2>
-      <dl>
-        <dt>
-          <!-- West edge, variable number (inputs, bit width 1) -->
-          西边沿，可变数量（输入，位宽 1）
-        </dt>
-        <dd>
-          <!-- Input values, indexed from 0 at the top/west end of the edge. -->
-          输入值，从边缘顶部/西端的 0 开始索引。
-        </dd>
-        <dt>
-          <!-- East edge, upper pin (output, bit width matches Select Bits attribute) -->
-          东边，上部引脚（输出，位宽与选择位属性匹配）
-        </dt>
-        <dd>
-          <!-- Output: the highest index among those inputs whose value is 1 - or all floating bits if no inputs are 1 or if the component is disabled via the Enable In input. -->
-          输出：值为 1 的输入中的最高索引 - 如果没有输入为 1 或者通过启用输入输入禁用了组件，则为所有浮点位。
-        </dd>
-        <dt>
-          <!-- East edge, lower pin (output, bit width 1) -->
-          东边，下引脚（输出，位宽1）
-        </dt>
-        <dd>
-          <!-- Group Signal: 1 if the component is enabled and at least one indexed input has a value of 1; otherwise this output is 0. -->
-          组信号：如果组件已启用并且至少一个索引输入的值为 1，则为 1； 否则此输出为 0。
-        </dd>
-        <dt>
-          <!-- South edge (input, bit width 1) -->
-          南边缘（输入，位宽1）
-        </dt>
-        <dd>
-          <!-- Enable In: if 0, the component is disabled; otherwise the component is enabled. -->
-          Enable In：如果为0，则该组件被禁用； 否则该组件将被启用。
-        </dd>
-        <dt>
-          <!-- North edge (output, bit width 1) -->
-          北边（输出，位宽1）
-        </dt>
-        <dd>
-          <!-- Enable Out: 1 if this component is enabled and none of the indexed inputs are 1; otherwise the output is 0. -->
-          Enable Out：如果该组件已启用且所有索引输入均不为 1，则为 1； 否则输出为 0。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Attributes -->
-        属性
-      </h2>
-      <p>
-        <!-- When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute. -->
-        当选择或添加元件时，数字“1”到“4”会更改其<q>Select Bits</q>属性，并且箭头键会更改其<q>Facing</q>属性。
-      </p>
-      <dl>
-        <dt>
-          <!-- Facing -->
-          方向
-        </dt>
-        <dd>
-          <!-- The direction of the component (its output relative to its input). -->
-          元件的方向（其输出相对于其输入）。
-        </dd>
-        <dt>
-          <!-- Select Bits -->
-          选择位
-        </dt>
-        <dd>
-          <!-- The bit width of the component's primary output. The number of indexed inputs to the priority encoder will be 2<sup><small><var>selectBits</var></small></sup>. -->
-          元件主要输出的位宽。 优先级编码器的索引输入数量将为 2<sup><small><var>selectBits</var></small></sup>。
-        </dd>
-        <dt>
-          <!-- Disabled Output -->
-          禁用输出
-        </dt>
-        <dd>
-          <!-- Specifies what each bit of the output should be when the component is disabled (i.e., when the enable pin is 0). Options include zero and floating; in the latter case, the output is effectively disconnected from any other ports. -->
-          指定当元件被禁用时（即，当启用引脚为 0 时）输出的每一位应该是什么。 选项包括零和浮动； 在后一种情况下，输出实际上与任何其他端口断开。
-        </dd>
-      </dl>
-      <h2>
-        <!-- Poke Tool Behavior -->
-        Poke 工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <h2>
-        <!-- Text Tool Behavior -->
-        文本工具行为
-      </h2>
-      <p>
-        <!-- None. -->
-        无
-      </p>
-      <p>
-        <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-        <b>返回</b> <a href="../index.html">电路元件库参考手册</a>
-
-      </p>
-    </div>-
-  </body>
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Priority Encoder -->
+   优先编码器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/priencod.png" alt="#########" height="32" width="32"> <em>Priority Encoder</em> -->
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/priencod.png" width="32"/>
+    <em>
+     优先编码器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Plexers</a> -->
+       <a href="index.html">
+        复用器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.3.0
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/priencod.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- The component has a number of inputs on its west edge, with the first labeled <q>0</q> and the other numbered from there. The component determines the indices of the inputs whose values are 1, and it emits the highest index. For example, if inputs 0, 2, 5, and 6 are all 1, then the priority  encoder emits a value of 110. If no inputs are 1, or if the component is disabled, then the output of the priority encoder is floating. -->
+    该元件在其西边缘有多个输入，第一个标记为
+    <q>
+     0
+    </q>
+    ，另一个从此处开始编号。 该元件确定值为 1 的输入的索引，并发出最高索引。 例如，如果输入 0、2、5 和 6 均为 1，则优先级编码器发出值 110。如果没有输入为 1，或者元件被禁用，则优先级编码器的输出为浮动。
+   </p>
+   <p>
+    <!-- The priority encoder is designed so that a number of encoders can be daisy-chained to accommodate additional inputs. In particular, the component includes an enable input and an enable output. Whenever the enable input is 0, the component is disabled, and the output will be all floating bits. The enable output is 1 whenever the component is enabled and none of the indexed inputs are 1. Thus, you can take two priority encoders and connect the enable output of the first to the enable input of the second: If any of the indexed inputs to the first are 1, then the second will be disabled and so its output will be all floating. But if none of the first's indexed inputs are 1, then its output will be all-floating bits, and the second priority encoder will be enabled and it will identify the highest-priority input with a 1. -->
+    优先级编码器的设计使得多个编码器可以菊花链方式连接以容纳额外的输入。 具体地，该组件包括使能输入和使能输出。 每当使能输入为 0 时，该组件将被禁用，并且输出将全部为浮点位。 只要组件已启用且所有索引输入均不为 1，则启用输出为 1。因此，您可以采用两个优先级编码器，并将第一个编码器的启用输出连接到第二个的启用输入： 第一个为 1，然后第二个将被禁用，因此其输出将全部浮动。 但是，如果第一个索引输入都不为 1，则其输出将是全浮点位，并且第二个优先级编码器将被启用，并且它将用 1 识别最高优先级输入。
+   </p>
+   <p>
+    <!-- An additional output of the priority encoder is 1 whenever the priority encoder is enabled and finds a 1 on one of the indexed inputs. When chaining priority encoders together, this output can be used to identify which of the encoders was triggered. -->
+    每当优先级编码器启用并且在索引输入之一上发现 1 时，优先级编码器的附加输出为 1。 将优先级编码器链接在一起时，此输出可用于识别触发了哪个编码器。
+   </p>
+   <h2>
+    <!-- Pins (assuming component faces east) -->
+    引脚（假设组件朝东）
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge, variable number (inputs, bit width 1) -->
+     西边沿，可变数量（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Input values, indexed from 0 at the top/west end of the edge. -->
+     输入值，从边缘顶部/西端的 0 开始索引。
+    </dd>
+    <dt>
+     <!-- East edge, upper pin (output, bit width matches Select Bits attribute) -->
+     东边，上部引脚（输出，位宽与选择位属性匹配）
+    </dt>
+    <dd>
+     <!-- Output: the highest index among those inputs whose value is 1 - or all floating bits if no inputs are 1 or if the component is disabled via the Enable In input. -->
+     输出：值为 1 的输入中的最高索引 - 如果没有输入为 1 或者通过启用输入输入禁用了组件，则为所有浮点位。
+    </dd>
+    <dt>
+     <!-- East edge, lower pin (output, bit width 1) -->
+     东边，下引脚（输出，位宽1）
+    </dt>
+    <dd>
+     <!-- Group Signal: 1 if the component is enabled and at least one indexed input has a value of 1; otherwise this output is 0. -->
+     组信号：如果组件已启用并且至少一个索引输入的值为 1，则为 1； 否则此输出为 0。
+    </dd>
+    <dt>
+     <!-- South edge (input, bit width 1) -->
+     南边缘（输入，位宽1）
+    </dt>
+    <dd>
+     <!-- Enable In: if 0, the component is disabled; otherwise the component is enabled. -->
+     Enable In：如果为0，则该组件被禁用； 否则该组件将被启用。
+    </dd>
+    <dt>
+     <!-- North edge (output, bit width 1) -->
+     北边（输出，位宽1）
+    </dt>
+    <dd>
+     <!-- Enable Out: 1 if this component is enabled and none of the indexed inputs are 1; otherwise the output is 0. -->
+     Enable Out：如果该组件已启用且所有索引输入均不为 1，则为 1； 否则输出为 0。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute. -->
+    当选择或添加元件时，数字“1”到“4”会更改其
+    <q>
+     Select Bits
+    </q>
+    属性，并且箭头键会更改其
+    <q>
+     Facing
+    </q>
+    属性。
+   </p>
+   <dl>
+    <dt>
+     <!-- Facing -->
+     方向
+    </dt>
+    <dd>
+     <!-- The direction of the component (its output relative to its input). -->
+     元件的方向（其输出相对于其输入）。
+    </dd>
+    <dt>
+     <!-- Select Bits -->
+     选择位
+    </dt>
+    <dd>
+     <!-- The bit width of the component's primary output. The number of indexed inputs to the priority encoder will be 2<sup><small><var>selectBits</var></small></sup>. -->
+     元件主要输出的位宽。 优先级编码器的索引输入数量将为 2
+     <sup>
+      <small>
+       <var>
+        selectBits
+       </var>
+      </small>
+     </sup>
+     。
+    </dd>
+    <dt>
+     <!-- Disabled Output -->
+     禁用输出
+    </dt>
+    <dd>
+     <!-- Specifies what each bit of the output should be when the component is disabled (i.e., when the enable pin is 0). Options include zero and floating; in the latter case, the output is effectively disconnected from any other ports. -->
+     指定当元件被禁用时（即，当启用引脚为 0 时）输出的每一位应该是什么。 选项包括零和浮动； 在后一种情况下，输出实际上与任何其他端口断开。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+  -
+ </body>
 </html>
