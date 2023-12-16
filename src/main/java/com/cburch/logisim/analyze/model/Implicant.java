@@ -11,15 +11,7 @@ package com.cburch.logisim.analyze.model;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.swing.JTextArea;
 
@@ -297,7 +289,7 @@ public class Implicant implements Comparable<Implicant> {
     // To find the minimal cover here we should implement the Petrick's method (https://en.wikipedia.org/wiki/Petrick%27s_method)
     // For the moment we are just going to greedyly pick
     // TODO: Implement Petrick's method
-    if (!termsToCover.isEmpty()) report(outputArea, String.format("\n\n\s", S.get("implicantGreedy")));
+    /*if (!termsToCover.isEmpty()) report(outputArea, String.format("\n\n\s", S.get("implicantGreedy")));
     nrEssentialPrimes = 0L;
     while (!termsToCover.isEmpty()) {
       final var termsToRemove = new ArrayList<Implicant>();
@@ -310,6 +302,94 @@ public class Implicant implements Comparable<Implicant> {
         termsToRemove.addAll(primes.get(group));
       }
       for (final var term : termsToRemove) termsToCover.remove(term);
+    }*/
+    
+    // It is possible that we still have min/max terms that are covered by multiple primes.
+    // The minimal cover can be found using Petrick's method
+    if (!termsToCover.isEmpty()) {
+      final var currentExpr = new HashSet<HashSet<HashSet<Implicant>>>();
+      final var nextExpr = new HashSet<HashSet<HashSet<Implicant>>>();
+      
+      // Populate the HashSet in order to begin Petrick's method
+      for (final var term : termsToCover.keySet()) {
+    	final var group = new HashSet<HashSet<Implicant>>();
+    	for (final var impl : termsToCover.get(term)) {
+          final var impli = new HashSet<Implicant>();
+    	  impli.add(impl);
+    	  group.add(impli);
+        }
+    	nextExpr.add(group);
+      }
+      
+      boolean couldDoTransformation = false;
+      do {
+    	  couldDoTransformation = false;
+    	  currentExpr.clear();
+    	  currentExpr.addAll(nextExpr);
+    	  nextExpr.clear();
+    	  final var iter = currentExpr.iterator();
+    	  
+    	  while (iter.hasNext()) {
+    		  final var first = iter.next();
+    		  if (!iter.hasNext()) { // If there is only one left, add it to the next list right away
+    			  nextExpr.add(first);
+    			  break;
+    		  }
+    		  final var second = iter.next();
+    		  
+    		  // If there are two elements left, then combine them
+    		  final var group = new HashSet<HashSet<Implicant>>();
+    		  for (final var firstConj : first) {
+    			  for (final var secondConj : second) {
+    				  final var conj = new HashSet<Implicant>();
+    				  conj.addAll(firstConj);
+    				  conj.addAll(secondConj);
+    				  group.add(conj);
+    			  }
+    		  }
+    		  nextExpr.add(group);
+    		  couldDoTransformation = true; // If elements were combined, set indicator variable to true
+    	  }
+    	  
+    	  // After combining elements, apply reductions
+    	  for (final var group : nextExpr) {
+    		  final var implGrpToRemove = new ArrayList<HashSet<Implicant>>();
+    		  for (final var conj1 : group) {
+    			  if (implGrpToRemove.contains(conj1)) continue;
+    			  for (final var conj2 : group) {
+    				  if (conj1 == conj2 || implGrpToRemove.contains(conj2)) continue;
+    				  if (conj2.containsAll(conj1)) {
+    					  implGrpToRemove.add(conj2);
+    					  continue;
+    				  }
+    				  if (conj1.containsAll(conj2)) {
+    					  implGrpToRemove.add(conj1);
+    					  break;
+    				  }
+    			  }
+    		  }
+    		  if (!implGrpToRemove.isEmpty()) {
+    			  group.removeAll(implGrpToRemove);
+    			  couldDoTransformation = true;
+    		  }
+    	  }
+      } while (couldDoTransformation);
+      
+      // Get the possible covers, only one can be left here
+      final var resGroup = nextExpr.iterator().next();
+      
+      final var results = new HashMap<Integer, ArrayList<HashSet<Implicant>>>();
+      for (final var grp : resGroup) {
+    	  if (results.get(grp.size()) == null) {
+    		  results.put(grp.size(), new ArrayList<>());
+    	  }
+    	  results.get(grp.size()).add(grp);
+      }
+      
+      final var minimumPrimes = results.get(Collections.min(results.keySet()));
+      // TODO: Select cheapest implicants.
+      // TODO: Return all possible covers.
+      essentialPrimes.addAll(minimumPrimes.get(0));
     }
 
     // TODO: Return multiple minimal covers if present (Petrick's method)
