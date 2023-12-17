@@ -725,6 +725,7 @@ public class FpgaIoInformationSettingsDialog {
     selWindow.pack();
     selWindow.setLocationRelativeTo(IOcomps.getParentFrame());
     selWindow.setModal(true);
+    selWindow.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     selWindow.setAlwaysOnTop(true);
     abort = false;
     while (!abort) {
