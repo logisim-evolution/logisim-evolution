@@ -114,7 +114,7 @@ jobs:
         id: snapcraft
 
       - name: 'Upload *.snap artifact.'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
            path: ${{ steps.snapcraft.outputs.snap }}
@@ -153,7 +153,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -170,7 +170,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
@@ -188,7 +188,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -207,7 +207,7 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
@@ -244,7 +244,7 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload DMG'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
@@ -274,7 +274,7 @@ jobs:
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload MSI'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
