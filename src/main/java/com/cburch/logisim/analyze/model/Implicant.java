@@ -387,9 +387,20 @@ public class Implicant implements Comparable<Implicant> {
       }
       
       final var minimumPrimes = results.get(Collections.min(results.keySet()));
-      // TODO: Select cheapest implicants.
+      // Select cheapest prime covers now, meaning the ones with most total unknowns
+      final var costMap = new HashMap<Integer, ArrayList<HashSet<Implicant>>>();
+      
+      for (final var cover : minimumPrimes) {
+    	  final var unknown = cover.stream().mapToInt(i -> i.getUnknownCount()).sum();
+    	  if (!costMap.keySet().contains(unknown)) {
+    		  costMap.put(unknown, new ArrayList<>());
+    	  }
+    	  costMap.get(unknown).add(cover);
+      }
+      
+      final var cheapestCover = costMap.get(Collections.max(costMap.keySet()));
       // TODO: Return all possible covers.
-      essentialPrimes.addAll(minimumPrimes.get(0));
+      essentialPrimes.addAll(cheapestCover.get(0));
     }
 
     // TODO: Return multiple minimal covers if present (Petrick's method)
