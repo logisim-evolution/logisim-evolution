@@ -84,13 +84,20 @@ public final class SvgCreator {
     return createRectangular(doc, rect);
   }
 
+  /**
+   * Serializes an image shape.
+   *
+   * @param doc Parent element
+   * @param img Image shape
+   * @return Serialized image shape
+   */
   public static Element createImage(Document doc, Image img) {
     final var elt = doc.createElement("image");
     elt.setAttribute("x", "" + img.getX());
     elt.setAttribute("y", "" + img.getY());
     elt.setAttribute("width", "" + img.getWidth());
     elt.setAttribute("height", "" + img.getHeight());
-    elt.setAttribute("url", img.getUrl());
+    elt.setAttribute("imageData", img.getImageData());
     return elt;
   }
 

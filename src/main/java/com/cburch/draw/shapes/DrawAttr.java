@@ -12,6 +12,7 @@ package com.cburch.draw.shapes;
 import static com.cburch.draw.Strings.S;
 
 import com.cburch.draw.util.EditableLabel;
+import com.cburch.draw.util.ImageAttribute;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
@@ -74,7 +75,7 @@ public class DrawAttr {
       Attributes.forColor("fill", S.getter("attrFill"));
   public static final Attribute<Integer> CORNER_RADIUS =
           Attributes.forIntegerRange("rx", S.getter("attrRx"), 1, 1000);
-  public static final Attribute<String> URL = Attributes.forString("url", S.getter("attrUrl"));
+  public static final Attribute<String> IMAGE_DATA = new ImageAttribute();
   public static final List<Attribute<?>> ATTRS_TEXT // for text
       = createAttributes(new Attribute[] {FONT, HALIGNMENT, VALIGNMENT, FILL_COLOR});
   public static final List<Attribute<?>> ATTRS_TEXT_TOOL // for text tool
@@ -82,7 +83,8 @@ public class DrawAttr {
   public static final List<Attribute<?>> ATTRS_STROKE // for line, polyline
       = createAttributes(new Attribute[] {STROKE_WIDTH, STROKE_COLOR});
 
-  public static final List<Attribute<?>> ATTRS_IMAGE = createAttributes(new Attribute[] {URL});
+  public static final List<Attribute<?>> ATTRS_IMAGE =
+      createAttributes(new Attribute[] {IMAGE_DATA});
   // attribute lists for rectangle, oval, polygon
   private static final List<Attribute<?>> ATTRS_FILL_STROKE =
       createAttributes(new Attribute[] {PAINT_TYPE, STROKE_WIDTH, STROKE_COLOR});

@@ -131,7 +131,7 @@ public final class SvgReader {
     final var y = Integer.parseInt(elt.getAttribute("y"));
     final var w = Integer.parseInt(elt.getAttribute("width"));
     final var h = Integer.parseInt(elt.getAttribute("height"));
-    return new Image(elt.getAttribute("url"), x, y, w, h);
+    return new Image(elt.getAttribute("imageData"), x, y, w, h);
   }
 
   public static AbstractCanvasObject createShape(Element elt) {

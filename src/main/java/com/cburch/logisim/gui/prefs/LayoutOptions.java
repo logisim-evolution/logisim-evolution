@@ -47,8 +47,6 @@ class LayoutOptions extends OptionsPanel {
               S.getter("layoutNamedCircuitBoxesFixedSize")),
           new PrefBoolean(
               AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
-          new PrefBoolean(
-                  AppPreferences.DOWNLOAD_IMAGES, S.getter("layoutDownloadImages")),
         };
 
     for (var i = 0; i < 2; i++) {
