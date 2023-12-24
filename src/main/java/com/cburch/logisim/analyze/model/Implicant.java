@@ -307,8 +307,7 @@ public class Implicant implements Comparable<Implicant> {
     // It is possible that we still have min/max terms that are covered by multiple primes.
     // The minimal cover can be found using Petrick's method
     if (!termsToCover.isEmpty()) {
-      final var currentExpr = new HashSet<HashSet<HashSet<Implicant>>>();
-      final var nextExpr = new HashSet<HashSet<HashSet<Implicant>>>();
+      final var simplificationExpression = new ArrayList<HashSet<HashSet<Implicant>>>();
       
       // Populate the HashSet in order to begin Petrick's method
       for (final var term : termsToCover.keySet()) {
@@ -318,24 +317,16 @@ public class Implicant implements Comparable<Implicant> {
     	  impli.add(impl);
     	  group.add(impli);
         }
-    	nextExpr.add(group);
+    	simplificationExpression.add(group);
       }
       
-      boolean couldDoTransformation = false;
       do {
-    	  couldDoTransformation = false;
-    	  currentExpr.clear();
-    	  currentExpr.addAll(nextExpr);
-    	  nextExpr.clear();
-    	  final var iter = currentExpr.iterator();
-    	  
-    	  while (iter.hasNext()) {
-    		  final var first = iter.next();
-    		  if (!iter.hasNext()) { // If there is only one left, add it to the next list right away
-    			  nextExpr.add(first);
+    	  for (int i = 0; i < simplificationExpression.size(); i++) {
+    		  final var first = simplificationExpression.get(i);
+    		  if (i+1 >= simplificationExpression.size()) { // If there is only one left, skip it for this round
     			  break;
     		  }
-    		  final var second = iter.next();
+    		  final var second = simplificationExpression.remove(i+1);
     		  
     		  // If there are two elements left, then combine them
     		  final var group = new HashSet<HashSet<Implicant>>();
@@ -347,12 +338,11 @@ public class Implicant implements Comparable<Implicant> {
     				  group.add(conj);
     			  }
     		  }
-    		  nextExpr.add(group);
-    		  couldDoTransformation = true; // If elements were combined, set indicator variable to true
+    		  simplificationExpression.set(i, group);
     	  }
     	  
     	  // After combining elements, apply reductions
-    	  for (final var group : nextExpr) {
+    	  for (final var group : simplificationExpression) {
     		  final var implGrpToRemove = new ArrayList<HashSet<Implicant>>();
     		  for (final var conj1 : group) {
     			  if (implGrpToRemove.contains(conj1)) continue;
@@ -370,13 +360,12 @@ public class Implicant implements Comparable<Implicant> {
     		  }
     		  if (!implGrpToRemove.isEmpty()) {
     			  group.removeAll(implGrpToRemove);
-    			  couldDoTransformation = true;
     		  }
     	  }
-      } while (couldDoTransformation);
+      } while (simplificationExpression.size() > 1);
       
       // Get the possible covers, only one can be left here
-      final var resGroup = nextExpr.iterator().next();
+      final var resGroup = simplificationExpression.get(0);
       
       final var results = new HashMap<Integer, ArrayList<HashSet<Implicant>>>();
       for (final var grp : resGroup) {
@@ -398,9 +387,9 @@ public class Implicant implements Comparable<Implicant> {
     	  costMap.get(unknown).add(cover);
       }
       
-      final var cheapestCover = costMap.get(Collections.max(costMap.keySet()));
+      final var cheapestCovers = costMap.get(Collections.max(costMap.keySet()));
       // TODO: Return all possible covers.
-      essentialPrimes.addAll(cheapestCover.get(0));
+      essentialPrimes.addAll(cheapestCovers.get(0));
     }
 
     // TODO: Return multiple minimal covers if present (Petrick's method)
