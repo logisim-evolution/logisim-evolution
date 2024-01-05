@@ -285,94 +285,76 @@ public class Implicant implements Comparable<Implicant> {
         for (final var element : termsToCover.keySet()) termsToCover.get(element).remove(prime);
       }
     } while (couldDoRowReduction || couldDoColumnReduction);
-    // It can happen that we still have max/min terms left that are covered by multiple groups.
-    // To find the minimal cover here we should implement the Petrick's method (https://en.wikipedia.org/wiki/Petrick%27s_method)
-    // For the moment we are just going to greedyly pick
-    // TODO: Implement Petrick's method
-    /*if (!termsToCover.isEmpty()) report(outputArea, String.format("\n\n\s", S.get("implicantGreedy")));
-    nrEssentialPrimes = 0L;
-    while (!termsToCover.isEmpty()) {
-      final var termsToRemove = new ArrayList<Implicant>();
-      for (final var term : termsToCover.keySet()) {
-        if (termsToRemove.contains(term)) continue;
-        final var group = termsToCover.get(term).get(0);
-        essentialPrimes.add(group);
-        if ((nrEssentialPrimes++ % 16L) == 0) report(outputArea, "\n");
-        report(outputArea, String.format(" %s", getGroupRepresentation(group.values, group.unknowns, nrOfInputs)));
-        termsToRemove.addAll(primes.get(group));
-      }
-      for (final var term : termsToRemove) termsToCover.remove(term);
-    }*/
     
-    // It is possible that we still have min/max terms that are covered by multiple primes.
+    // It is possible that we still have multiple covers left.
     // The minimal cover can be found using Petrick's method
     if (!termsToCover.isEmpty()) {
       final var simplificationExpression = new ArrayList<HashSet<HashSet<Implicant>>>();
       
       // Populate the HashSet in order to begin Petrick's method
       for (final var term : termsToCover.keySet()) {
-    	final var group = new HashSet<HashSet<Implicant>>();
-    	for (final var impl : termsToCover.get(term)) {
+        final var group = new HashSet<HashSet<Implicant>>();
+        for (final var impl : termsToCover.get(term)) {
           final var impli = new HashSet<Implicant>();
-    	  impli.add(impl);
-    	  group.add(impli);
+          impli.add(impl);
+          group.add(impli);
         }
-    	simplificationExpression.add(group);
+        simplificationExpression.add(group);
       }
       
       do {
-    	  for (int i = 0; i < simplificationExpression.size(); i++) {
-    		  final var first = simplificationExpression.get(i);
-    		  if (i+1 >= simplificationExpression.size()) { // If there is only one left, skip it for this round
-    			  break;
-    		  }
-    		  final var second = simplificationExpression.remove(i+1);
-    		  
-    		  // If there are two elements left, then combine them
-    		  final var group = new HashSet<HashSet<Implicant>>();
-    		  for (final var firstConj : first) {
-    			  for (final var secondConj : second) {
-    				  final var conj = new HashSet<Implicant>();
-    				  conj.addAll(firstConj);
-    				  conj.addAll(secondConj);
-    				  group.add(conj);
-    			  }
-    		  }
-    		  simplificationExpression.set(i, group);
-    	  }
-    	  
-    	  // After combining elements, apply reductions
-    	  for (final var group : simplificationExpression) {
-    		  final var implGrpToRemove = new ArrayList<HashSet<Implicant>>();
-    		  for (final var conj1 : group) {
-    			  if (implGrpToRemove.contains(conj1)) continue;
-    			  for (final var conj2 : group) {
-    				  if (conj1 == conj2 || implGrpToRemove.contains(conj2)) continue;
-    				  if (conj2.containsAll(conj1)) {
-    					  implGrpToRemove.add(conj2);
-    					  continue;
-    				  }
-    				  if (conj1.containsAll(conj2)) {
-    					  implGrpToRemove.add(conj1);
-    					  break;
-    				  }
-    			  }
-    		  }
-    		  if (!implGrpToRemove.isEmpty()) {
-    			  group.removeAll(implGrpToRemove);
-    		  }
-    	  }
+        for (int i = 0; i < simplificationExpression.size(); i++) {
+          final var first = simplificationExpression.get(i);
+          if (i + 1 >= simplificationExpression.size()) { // If there is only one left, skip it
+            break;
+          }
+          final var second = simplificationExpression.remove(i + 1);
+
+          // If there are two elements left, then combine them
+          final var group = new HashSet<HashSet<Implicant>>();
+          for (final var firstConj : first) {
+            for (final var secondConj : second) {
+              final var conj = new HashSet<Implicant>();
+              conj.addAll(firstConj);
+              conj.addAll(secondConj);
+              group.add(conj);
+            }
+          }
+          simplificationExpression.set(i, group);
+        }
+
+        // After combining elements, apply reductions
+        for (final var group : simplificationExpression) {
+          final var implGrpToRemove = new ArrayList<HashSet<Implicant>>();
+          for (final var conj1 : group) {
+            if (implGrpToRemove.contains(conj1)) continue;
+            for (final var conj2 : group) {
+              if (conj1 == conj2 || implGrpToRemove.contains(conj2)) continue;
+              if (conj2.containsAll(conj1)) {
+                implGrpToRemove.add(conj2);
+                continue;
+              }
+              if (conj1.containsAll(conj2)) {
+                implGrpToRemove.add(conj1);
+                break;
+              }
+            }
+          }
+          if (!implGrpToRemove.isEmpty()) {
+            group.removeAll(implGrpToRemove);
+          }
+        }
       } while (simplificationExpression.size() > 1);
-      
-      // Get the possible covers, only one can be left here
+
+      // Get the possible covers, only one can element can be left in the ArrayList here
       final var resGroup = simplificationExpression.get(0);
-      
+
       final var results = new HashMap<Integer, ArrayList<HashSet<Implicant>>>();
       for (final var grp : resGroup) {
-    	  if (results.get(grp.size()) == null) {
-    		  results.put(grp.size(), new ArrayList<>());
-    	  }
-    	  results.get(grp.size()).add(grp);
+        if (results.get(grp.size()) == null) {
+          results.put(grp.size(), new ArrayList<>());
+        }
+        results.get(grp.size()).add(grp);
       }
       
       final var minimumPrimes = results.get(Collections.min(results.keySet()));
@@ -380,11 +362,11 @@ public class Implicant implements Comparable<Implicant> {
       final var costMap = new HashMap<Integer, ArrayList<HashSet<Implicant>>>();
       
       for (final var cover : minimumPrimes) {
-    	  final var unknown = cover.stream().mapToInt(i -> i.getUnknownCount()).sum();
-    	  if (!costMap.keySet().contains(unknown)) {
-    		  costMap.put(unknown, new ArrayList<>());
-    	  }
-    	  costMap.get(unknown).add(cover);
+        final var unknown = cover.stream().mapToInt(i -> i.getUnknownCount()).sum();
+        if (!costMap.keySet().contains(unknown)) {
+          costMap.put(unknown, new ArrayList<>());
+        }
+        costMap.get(unknown).add(cover);
       }
       
       final var cheapestCovers = costMap.get(Collections.max(costMap.keySet()));
