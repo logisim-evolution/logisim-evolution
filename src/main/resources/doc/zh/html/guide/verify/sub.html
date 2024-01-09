@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Substituting libraries -->
+   替换库
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Substituting libraries -->
+    替换库
+   </h1>
+   <p>
+    <!-- Now suppose we have two Logisim circuits that are supposed to do the same thing. As an instructor, you might have had students complete an assignment: You have one file containing your solution, but you have several student files containing their work. Maybe the assignment was to build a two-bit adder. -->
+    现在假设我们有两个 Logisim-evolution 电路，它们应该执行相同的操作。 作为一名教师，您可能让学生完成一项作业：您有一个包含解决方案的文件，但有多个包含他们作业的学生文件。 也许任务是构建一个两位加法器。
+   </p>
+   <p>
+    <!-- I'll imagine that we have two files, named <tt><b>master.circ</b></tt> and <tt><b>query.circ</b></tt>. Each file contains a circuit named <b class=propertie>Adder2</b> (it's important that the circuit to test be named exactly the same), whose appearance is the following. -->
+    我假设我们有两个文件，名为
+    <tt>
+     <b>
+      master.circ
+     </b>
+    </tt>
+    和
+    <tt>
+     <b>
+      query.circ
+     </b>
+    </tt>
+    。 每个文件都包含一个名为
+    <b class="propertie">
+     Adder2
+    </b>
+    的电路（重要的是要测试的电路命名完全相同），其外观如下。
+   </p>
+   <blockquote>
+    <table>
+     <tbody>
+      <tr>
+       <td>
+        <!-- <tt>Adder2 in master.circ</tt> -->
+        <tt>
+         master.circ 中的 Adder2
+        </tt>
+       </td>
+       <td>
+        <!-- <tt>Adder2 in query.circ</tt> -->
+        <tt>
+         query.circ 中的 Adder2
+        </tt>
+       </td>
+      </tr>
+      <tr>
+       <td>
+        <img alt="#########" src="../../../../img-guide/verify-adder-master.png"/>
+       </td>
+       <td>
+        <img alt="#########" src="../../../../img-guide/verify-adder-query.png"/>
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </blockquote>
+   <p>
+    <!-- As you can see, the master circuit uses Logisim's built-in adder, while the query circuit uses two subcircuits representing a half adder and a full adder (which themselves are built up of simple gates). For the purpose of our example, the query circuit has a stupid error: The <var>carry</var> from the half adder is not connected into the full adder. -->
+    正如您所看到的，主电路使用 Logisim-evolution 的内置加法器，而查询电路使用两个子电路，分别代表半加器和全加器（它们本身由简单的门组成）。 就我们的示例而言，查询电路有一个愚蠢的错误：来自半加器的
+    <var>
+     进位
+    </var>
+    未连接到全加器。
+   </p>
+   <p>
+    <!-- We build our testing circuit into a different file <tt><b>test.circ</b></tt>. There, we load <tt><b>master.circ</b></tt> as a Logisim Library <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>|&nbsp;Load Library&nbsp;|</b>→ <b class=menu>|&nbsp;Logisim Library&nbsp;|</b>, and we insert its 2-bit adder as a subcircuit. We could execute this circuit directly to get the desired output for a perfect solution. -->
+    我们将测试电路构建到不同的文件
+    <tt>
+     <b>
+      test.circ
+     </b>
+    </tt>
+    中。 在那里，我们加载
+    <tt>
+     <b>
+      master.circ
+     </b>
+    </tt>
+    作为 Logisim 库
+    <b class="menu">
+     | Project |
+    </b>
+    →
+    <b class="menu">
+     | Load Library |
+    </b>
+    →
+    <b class="menu">
+     | Logisim Library |
+    </b>
+    ，然后我们插入其 2 位加法器作为子电路。 我们可以直接执行该电路以获得完美解决方案所需的输出。
+   </p>
+   <blockquote>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-evolution.jar test.circ -tty table
+     </tt>
+    </div>
+   </blockquote>
+   <p>
+    <!-- But we want to execute the circuit using <tt><b>query.circ</b></tt> rather than <tt><b>master.circ</b></tt> as the loaded library. The naive approach would be to open Logisim and load that library instead; or you might simply remove the <tt><b>master.circ</b></tt> file and rename <tt><b>query.circ</b></tt> to be named <tt><b>master.circ</b></tt> instead. But Logisim includes a handy <b calls="porpertie"><tt>-sub</tt></b> option that temporarily replace one file by another during that session — without making any changes on disk. -->
+    但我们希望使用
+    <tt>
+     <b>
+      query.circ
+     </b>
+    </tt>
+    而不是
+    <tt>
+     <b>
+      master.circ
+     </b>
+    </tt>
+    作为加载的库来执行电路。 最简单的方法是打开 Logisim-evolution 并加载该库； 或者您可以简单地删除
+    <tt>
+     <b>
+      master.circ
+     </b>
+    </tt>
+    文件并将
+    <tt>
+     <b>
+      query.circ
+     </b>
+    </tt>
+    重命名为
+    <tt>
+     &lt; b&gt;master.circ
+    </tt>
+    相反。 但 Logisim 包含一个方便的
+    <b calls="porpertie">
+     <tt>
+      -sub
+     </tt>
+    </b>
+    选项，可以在会话期间临时用一个文件替换另一个文件，而无需在磁盘上进行任何更改。
+   </p>
+   <blockquote>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-evolution.jar test.circ -tty table -sub master.circ query.circ
+     </tt>
+    </div>
+   </blockquote>
+   <p>
+    <!-- The output you would see from this is shown below; it is of course different from what we saw in <a href="index.html">the previous section</a> because the library common to <tt><b>adder2</b></tt> has been replaced in the test circuit by that of <tt><b>query.circ</b></tt> erroneous. -->
+    您将看到的输出如下所示； 它当然与我们在
+    <a href="index.html">
+     上一节
+    </a>
+    中看到的不同，因为
+    <tt>
+     <b>
+      adder2
+     </b>
+    </tt>
+    通用的库已被替换 在测试电路中，
+    <tt>
+     <b>
+      query.circ
+     </b>
+    </tt>
+    的错误。
+   </p>
+   <blockquote>
+    <pre>00      00      0E0
+01      00      0E1
+10      00      EE0
+11      00      EE1
+00      01      0E1
+01      01      0E0
+10      01      EE1
+11      01      EE0
+00      10      EE0
+01      10      EE1
+10      10      1E0
+11      10      1E1
+00      11      EE1
+01      11      EE0
+10      11      1E1
+11      11      1E0
+</pre>
+   </blockquote>
+   <p>
+    <!-- <b>Next:</b> <a href="other.html">Other verification options</a>. -->
+    <!-- <b>Next:</b> <a href="other.html">Other verification options</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="another.html">
+     其他验证选项
+    </a>
+    。
+   </p>
+  </div>
+ </body>
+</html>
