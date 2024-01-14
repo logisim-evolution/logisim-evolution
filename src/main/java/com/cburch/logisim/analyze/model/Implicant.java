@@ -491,7 +491,7 @@ public class Implicant implements Comparable<Implicant> {
         term = Expressions.or(term, literal);
       }
     }
-    return term == null ? Expressions.constant(1) : term;
+    return term == null ? Expressions.constant(0) : term;
   }
 
   static SortedMap<Implicant, String> computePartition(AnalyzerModel model) {
