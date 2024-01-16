@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
 
+import javax.swing.JTextArea;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,12 +23,22 @@ public class ImplicantTest {
         Arguments.of("a,b,c,d", "b'c+a b'+a'b c'+a'b d'+b c'd+c d'+a d",
             5, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS),
         Arguments.of("a,b", "a b + a b'", 1, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS),
+        Arguments.of("a,b", "a+a'", 1, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS),
+        Arguments.of("a,b", "a a'", 0, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS),
+        Arguments.of("a,b,c,d", "a'b'c'd'+a'b'c'd+a'b c'd+a b c'd'+a b c'd +a b'c'd'",
+            3, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS),
+        Arguments.of("a,b,c,d,e,f", "a'b'd'+b'e'+b d e'+a b d'+b d'e", 4,
+            AnalyzerModel.FORMAT_SUM_OF_PRODUCTS),
         
         // Expressions to be minimized as CNF
         Arguments.of("a,b,c,d", "b c'd+a 'b'd'+a'b'c+a'c d'+b'c'd'+a b'd+a c'+b c d'",
             4, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS),
         Arguments.of("a,b,c,d", "b'c+a b'+a'b c'+a'b d'+b c'd+c d'+a d",
-            3, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS)
+            3, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS),
+        Arguments.of("a,b", "a+a'", 0, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS),
+        Arguments.of("a,b", "a a'", 1, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS),
+        Arguments.of("a,b,c,d", "(a+b+c+d)(a+b+c+d')(a+b'+c+d')(a'+b'+c+d)(a'+b'+c+d')"
+            + "(a'+b+c+d)", 3, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS)
       );
   }
   
@@ -66,8 +78,8 @@ public class ImplicantTest {
         () -> model.getOutputExpressions().setExpression("x", Parser.parse(expr, model)),
         "Failed to parse expression '" + expr + "'!");
     
-    // Minimize Expression
-    final var res = Implicant.computeMinimal(format, model, "x", null);
+    // Minimize Expression (use outputArea to allow for larger expressions)
+    final var res = Implicant.computeMinimal(format, model, "x", new JTextArea());
     
     // Add new Expression to the analyzer model (needed to verify Expression is equivalent)
     model.getOutputExpressions().setExpression("y", Implicant.toExpression(format, model, res));
