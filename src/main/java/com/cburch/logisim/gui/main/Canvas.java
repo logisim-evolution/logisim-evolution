@@ -736,6 +736,20 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     //
     @Override
     public void keyPressed(KeyEvent e) {
+      if (e.isControlDown()) { // If CTRL is pressed, check for + or -
+        final var zoomControl = proj.getFrame().getZoomControl();
+        switch (e.getKeyCode()) {
+          case KeyEvent.VK_PLUS: // Accept keycode for plus on main block
+          case KeyEvent.VK_ADD: // Also accept for the plus on the num-pad
+            zoomControl.zoomIn(); // For + zoom in
+            return;
+          case KeyEvent.VK_MINUS: // Keycode for minus on main block
+          case KeyEvent.VK_SUBTRACT: // Keycode for minus on num-pad
+            zoomControl.zoomOut(); // For - zoom out
+            return;
+          default: // If another key was pressed do nothing
+        }
+      }
       final var tool = proj.getTool();
       if (tool != null) {
         tool.keyPressed(Canvas.this, e);
