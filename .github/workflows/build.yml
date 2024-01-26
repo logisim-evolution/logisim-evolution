@@ -87,4 +87,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ([ -z $SONAR_TOKEN ] || ./gradlew sonar)
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: ([ -z $SONAR_TOKEN ] || [ -z $SONAR_HOST_URL ] || ./gradlew sonar)
