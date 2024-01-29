@@ -34,7 +34,7 @@ jobs:
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes that matters for us..."
-      uses: dorny/paths-filter@v2
+      uses: dorny/paths-filter@v3
       id: filter
       with:
         list-files: 'escape'
