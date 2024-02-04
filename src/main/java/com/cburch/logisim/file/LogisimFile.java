@@ -70,6 +70,47 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     }
   }
 
+  private static class AutosaveThread extends UniquelyNamedThread {
+    private static int threadCount = 0;
+
+    private boolean run;
+    private LogisimFile file;
+
+    public AutosaveThread(LogisimFile file) {
+      super("AutosaveThread-" + threadCount++);
+      this.file = file;
+      run = true;
+    }
+
+    @Override
+    public void run() {
+      while (run) {
+        try {
+          sleep(30000); // TODO: think about whether this time should be adjustable
+        } catch (InterruptedException ignored) {
+          continue; // If thread is interrupted go to beginning of loop immediately
+        }
+        if (!file.isAutosaveDirty) continue;
+        if (file.getLoader().autosave(file)) {
+          file.isAutosaveDirty = false;
+        } else {
+          System.out.println("Autosaving failed...");
+        }
+        // Clear interrupted status
+        interrupted();
+      }
+    }
+
+    public void abort(boolean delete) throws InterruptedException {
+      run = false; // Prepare the thread to stop
+      this.interrupt(); // Notify the thread of it
+      if (delete) { // If we want to delete the autosave
+        this.join(); // Wait for the thread to exit, so another save won't be generated
+        file.getLoader().deleteAutosave(); // Then delete the autosave
+      }
+    }
+  }
+
   private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
   private final LinkedList<String> messages = new LinkedList<>();
   private final Options options = new Options();
@@ -79,9 +120,13 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   private Circuit main = null;
   private String name;
   private boolean isDirty = false;
+  private boolean isAutosaveDirty = false;
+  private AutosaveThread autosaveThread = null;
 
   LogisimFile(Loader loader) {
     this.loader = loader;
+    this.autosaveThread = new AutosaveThread(this);
+    autosaveThread.start();
 
     // Creates the default project name, adding an underscore if needed
     name = S.get("defaultProjectName");
@@ -574,6 +619,11 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       isDirty = value;
       fireEvent(LibraryEvent.DIRTY_STATE, value ? Boolean.TRUE : Boolean.FALSE);
     }
+    // The autosave dirty value must be set to dirty at the same time as for normal
+    // saves, and at a normal save the autosave will also become clean
+    if (isAutosaveDirty != value) {
+      isAutosaveDirty = value;
+    }
   }
 
   public void setMainCircuit(Circuit circuit) {
@@ -612,5 +662,15 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       loader.showError(err);
     }
   }
-  
+
+  void interruptAutosaveThread() {
+	  autosaveThread.interrupt();
+  }
+
+  public void stopAutosaveThread(boolean delete) {
+	  try {
+		  autosaveThread.abort(delete);
+	  } catch (InterruptedException ignored) {
+	  }
+  }
 }

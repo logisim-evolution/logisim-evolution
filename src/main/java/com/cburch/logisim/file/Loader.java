@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,6 +122,7 @@ public class Loader implements LibraryLoader {
   private final Builtin builtin = new Builtin();
   // to be cleared with each new file
   private File mainFile = null;
+  private File autosaveFile = null;
   private final Stack<File> filesOpening = new Stack<>();
   private Map<File, File> substitutions = new HashMap<>();
 
@@ -140,6 +143,22 @@ public class Loader implements LibraryLoader {
       if (!candidate.exists()) return candidate;
     }
     return null;
+  }
+
+  // Determine the autosave file name for any .circ file as .<basename>.circ.autosave
+  private static File determineAutosaveName(File base) {
+    if (base == null) {
+      String timestamp =
+          DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss").format(LocalDateTime.now());
+      final var candidate = new File(System.getProperty("user.home") +
+          File.separator + ".logisim-unnamed-autosave_" + timestamp + ".circ.autosave");
+      if (!candidate.exists()) return candidate;
+      return null;
+    }
+    if (!base.getName().endsWith(LOGISIM_EXTENSION)) return null;
+    final var dir = base.getParentFile();
+    final var name = "." + base.getName() + ".autosave";
+    return new File(dir, name);
   }
 
   private static void recoverBackup(File backup, File dest) {
@@ -346,6 +365,7 @@ public class Loader implements LibraryLoader {
   }
 
   public boolean save(LogisimFile file, File dest) {
+    file.interruptAutosaveThread(); // Notify autosave thread of save
     final var reference = LibraryManager.instance.findReference(file, dest);
     if (reference != null) {
       OptionPane.showMessageDialog(
@@ -419,7 +439,52 @@ public class Loader implements LibraryLoader {
       // FIXME: delete can fail. Ensure we will not have snowball effect here!
       backup.delete();
     }
+    if (autosaveFile != null && autosaveFile.exists()) {
+      deleteAutosave();
+    }
     return true;
+  }
+
+  /**
+   * Method to perform autosaves. Essentially does the same as save()
+   * but without any failsafes, if saving fails it simply fails.
+   *
+   * @param file The file that should be autosaved
+   *
+   * @return True if writing was successfull, else false;
+   */
+  public boolean autosave(LogisimFile file) {
+    final var oldAutosave = autosaveFile;
+    autosaveFile = determineAutosaveName(mainFile);
+    if (autosaveFile == null) {
+      System.out.println("Was unable to determine valid autosave file");
+      return false;
+    }
+    FileOutputStream fwrite = null;
+    try {
+      System.out.println("Autosaving to '" + autosaveFile.toString() + "'!");
+      fwrite = new FileOutputStream(autosaveFile);
+      file.write(fwrite, this, autosaveFile, null);
+      fwrite.close();
+    } catch (IOException e) {
+      return false;
+    }
+    if (oldAutosave != null && !oldAutosave.equals(autosaveFile)) {
+      System.out.println("Deleting old autosave '" + oldAutosave.toString() + "'!");
+      oldAutosave.delete();
+    }
+    return true;
+  }
+
+  /**
+   * Method to delete the latest autosave.
+   *
+   * @return True if deletion was successful,
+   *     false if the file is null or deletion failed
+   */
+  public boolean deleteAutosave() {
+    System.out.println("Deleting autosave!");
+    return autosaveFile != null ? autosaveFile.delete() : false;
   }
 
   private void setMainFile(File value) {
