@@ -31,7 +31,7 @@ jobs:
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes in monitored locations"
-      uses: dorny/paths-filter@v2
+      uses: dorny/paths-filter@v3
       id: filter
       with:
         filters: |
