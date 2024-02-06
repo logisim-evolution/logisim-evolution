@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
+import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,21 +210,23 @@ public class TtyInterface {
     }
   }
 
-  private static boolean loadRam(CircuitState circState, File loadFile) throws IOException {
+  private static boolean loadMem(CircuitState circState, File loadFile, String loadMemLabel) throws IOException {
     if (loadFile == null) return false;
 
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
-      if (comp.getFactory() instanceof Ram ramFactory) {
-        final var ramState = circState.getInstanceState(comp);
-        final var m = ramFactory.getContents(ramState);
-        HexFile.open(m, loadFile);
-        found = true;
+      if (comp.getFactory() instanceof Mem memFactory) {
+        if (loadMemLabel == null || loadMemLabel.equals(comp.getAttributeSet().getValue(StdAttr.LABEL))) {
+          final var romState = circState.getInstanceState(comp);
+          final var m = memFactory.getContents(romState);
+          HexFile.open(m, loadFile);
+          found = true;
+        }
       }
     }
 
     for (final var sub : circState.getSubStates()) {
-      found |= loadRam(sub, loadFile);
+      found |= loadMem(sub, loadFile, loadMemLabel);
     }
     return found;
   }
@@ -319,11 +323,11 @@ public class TtyInterface {
 
     CircuitState circState = new CircuitState(proj, circuit);
 
-    // we load the ram before first propagation
+    // we load the memories before first propagation
     // so the first propagation emits correct values
-    if (args.getLoadFile() != null) {
+    for (final Pair<File, String> p : args.getMemoriesToLoad()) {
       try {
-        final var loaded = loadRam(circState, args.getLoadFile());
+        final var loaded = loadMem(circState, p.getLeft(), p.getRight());
         if (!loaded) {
           logger.error("{}", S.get("loadNoRamError"));
           System.exit(-1);
