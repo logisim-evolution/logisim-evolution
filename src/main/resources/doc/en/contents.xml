@@ -173,7 +173,7 @@
 			<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
 			<tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" />
 			<tocitem target="io_led" text="LED" image="icon_led" />
-			<tocitem target="io_ledRVB" text="LED RVB" image="icon_rvbled" />
+			<tocitem target="io_ledRVB" text="LED RGB" image="icon_rvbled" />
 			<tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" />
 			<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
@@ -181,7 +181,7 @@
 <!-- not documented 
      		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
-			<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
+			<tocitem target="io_videorvb" text="Video RGB" image="icon_videorvb" />
 -->	
 		</tocitem>
 <!-- not documented 
