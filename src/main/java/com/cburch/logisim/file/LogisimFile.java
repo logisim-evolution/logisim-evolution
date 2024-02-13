@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -96,7 +97,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         } else {
           System.out.println("Autosaving failed...");
         }
-        // Clear interrupted status
+        // Clear interrupted status before next iteration
         interrupted();
       }
     }
@@ -122,6 +123,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   private boolean isDirty = false;
   private boolean isAutosaveDirty = false;
   private AutosaveThread autosaveThread = null;
+  private boolean autosaveLoaded = false;
 
   LogisimFile(Loader loader) {
     this.loader = loader;
@@ -208,10 +210,29 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public static LogisimFile load(File file, Loader loader) throws IOException {
-    final var inputStream = new FileInputStream(file);
+    // Get the Path an autosave would be expected at for this file
+    final var autosave = Loader.findAutosaveFile(file);
+    var loadFile = file; // Select the given file to be opened by default
+    var autosaveLoading = false;
+
+    if (autosave.isPresent()) { // If autosave is present prompt user about it
+      final var res = loader.showOptions(S.get("contentHandleAutosave", file.getName()),
+          S.get("titleHandleAutosave"), new String[] {S.get("loadOption"), S.get("discardOption")},
+          0);
+
+      if (res == JOptionPane.CLOSED_OPTION) { // If the prompt was closed do nothing and fail
+        return null;
+      } else if (res == 0) { // If load is selected select the autosave to be loaded
+        loadFile = autosave.get(); // Set load file to the autosave path
+        autosaveLoading = true; // also set this to true to remember an autosave was loaded
+      }
+    }
+
+    LogisimFile result = null;
+    FileInputStream inputStream = new FileInputStream(loadFile);
     Throwable firstExcept = null;
     try {
-      return loadSub(inputStream, loader, file);
+      result = loadSub(inputStream, loader, file);
     } catch (Throwable t) {
       firstExcept = t;
     } finally {
@@ -221,21 +242,27 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     // We'll now try to do it using a reader. This is to work around
     // Logisim versions prior to 2.5.1, when files were not saved using
     // UTF-8 as the encoding (though the XML file reported otherwise).
-    try {
-      final var readerInputStream = new ReaderInputStream(new FileReader(file), "UTF8");
-      return loadSub(readerInputStream, loader, file);
-    } catch (Exception t) {
-      firstExcept.printStackTrace();
-      loader.showError(S.get("xmlFormatError", firstExcept.toString()));
-    } finally {
+    if (result == null) {
       try {
-        inputStream.close();
-      } catch (Exception ignored) {
-        // Do nothing.
+        final var readerInputStream = new ReaderInputStream(new FileReader(loadFile), "UTF8");
+        result = loadSub(readerInputStream, loader, file);
+      } catch (Exception t) {
+        if (firstExcept != null) {
+          firstExcept.printStackTrace();
+          loader.showError(S.get("xmlFormatError", firstExcept.toString()));
+        }
+      } finally {
+        try {
+          inputStream.close();
+        } catch (Exception ignored) {
+          // Do nothing.
+        }
       }
     }
 
-    return null;
+    // Save to the resulting LogisimFile that it was loaded from an autosave
+    if (result != null) result.autosaveLoaded = autosaveLoading;
+    return result;
   }
 
   public static LogisimFile load(InputStream in, Loader loader) throws IOException {
@@ -664,13 +691,16 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   void interruptAutosaveThread() {
-	  autosaveThread.interrupt();
+    autosaveThread.interrupt();
   }
 
   public void stopAutosaveThread(boolean delete) {
-	  try {
-		  autosaveThread.abort(delete);
-	  } catch (InterruptedException ignored) {
-	  }
+    try {
+      autosaveThread.abort(delete);
+    } catch (InterruptedException ignored) {}
+  }
+
+  public boolean isAutosaveLoaded() {
+    return autosaveLoaded;
   }
 }

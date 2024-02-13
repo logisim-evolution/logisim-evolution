@@ -29,8 +29,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Stack;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
@@ -111,6 +113,8 @@ public class Loader implements LibraryLoader {
   public static final String LOGISIM_EXTENSION = ".circ";
   public static final String LOGISIM_LIBRARY_DIR = "library";
   public static final String LOGISIM_CIRCUIT_DIR = "circuit";
+  public static final String LOGISIM_UNNAMED_AUTOSAVE_PREFIX = ".logisim-unnamed-autosave_";
+  public static final String LOGISIM_UNNAMED_AUTOSAVE_SUFFIX = ".circ.autosave";
   public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
   public static final FileFilter LOGISIM_DIRECTORY = new LogisimDirectoryFilter();
   public static final FileFilter JAR_FILTER = new JarFileFilter();
@@ -150,8 +154,8 @@ public class Loader implements LibraryLoader {
     if (base == null) {
       String timestamp =
           DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss").format(LocalDateTime.now());
-      final var candidate = new File(System.getProperty("user.home") +
-          File.separator + ".logisim-unnamed-autosave_" + timestamp + ".circ.autosave");
+      final var candidate = new File(System.getProperty("user.home") + File.separator
+          + LOGISIM_UNNAMED_AUTOSAVE_PREFIX + timestamp + LOGISIM_UNNAMED_AUTOSAVE_SUFFIX);
       if (!candidate.exists()) return candidate;
       return null;
     }
@@ -159,6 +163,12 @@ public class Loader implements LibraryLoader {
     final var dir = base.getParentFile();
     final var name = "." + base.getName() + ".autosave";
     return new File(dir, name);
+  }
+
+  static Optional<File> findAutosaveFile(File base) {
+    final var as = determineAutosaveName(base);
+    if (as == null || !as.exists()) return Optional.empty();
+    return Optional.of(as);
   }
 
   private static void recoverBackup(File backup, File dest) {
@@ -536,6 +546,28 @@ public class Loader implements LibraryLoader {
           parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
       message = source.getMessage();
     }
+  }
+
+  /**
+   * Method to show an OptionDialog showing Options and returning the result.
+   *
+   * @param message The message to be shown in the dialog
+   * @param title The title of the dialog
+   * @param options The Options to be available for selection
+   * @param initialSelection The index of the default selected Option
+   *
+   * @return The index of the selected Option
+   */
+  public int showOptions(String message, String title, String[] options, int initialSelection) {
+    return OptionPane.showOptionDialog(
+            parent,
+            message,
+            title,
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[initialSelection % options.length]);
   }
 
   private String toProjectName(File file) {
