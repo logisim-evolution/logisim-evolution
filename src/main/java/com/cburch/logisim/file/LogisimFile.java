@@ -18,6 +18,7 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.base.BaseLibrary;
@@ -87,7 +88,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     public void run() {
       while (run) {
         try {
-          sleep(30000); // TODO: think about whether this time should be adjustable
+          sleep(AppPreferences.AUTOSAVE_INTERVAL.get() * 1000);
         } catch (InterruptedException ignored) {
           continue; // If thread is interrupted go to beginning of loop immediately
         }
@@ -95,7 +96,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         if (file.getLoader().autosave(file)) {
           file.isAutosaveDirty = false;
         } else {
-          System.out.println("Autosaving failed...");
+          file.loader.showError(S.get("autosaveError", file.name));
+          run = false;
         }
         // Clear interrupted status before next iteration
         interrupted();
@@ -127,8 +129,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   LogisimFile(Loader loader) {
     this.loader = loader;
-    this.autosaveThread = new AutosaveThread(this);
-    autosaveThread.start();
+    if (AppPreferences.AUTOSAVE_ENABLED.getBoolean()) {
+      this.autosaveThread = new AutosaveThread(this);
+      autosaveThread.start();
+    }
 
     // Creates the default project name, adding an underscore if needed
     name = S.get("defaultProjectName");
@@ -210,7 +214,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public static LogisimFile load(File file, Loader loader) throws IOException {
-    // Get the Path an autosave would be expected at for this file
+    // Get the Path of this file's autosave if it exists
     final var autosave = Loader.findAutosaveFile(file);
     var loadFile = file; // Select the given file to be opened by default
     var autosaveLoading = false;
@@ -224,7 +228,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         return null;
       } else if (res == 0) { // If load is selected select the autosave to be loaded
         loadFile = autosave.get(); // Set load file to the autosave path
+        loader.setAutosavePath(autosave.get());
         autosaveLoading = true; // also set this to true to remember an autosave was loaded
+      } else if (res == 1) {
+        autosave.get().delete();
       }
     }
 
@@ -242,15 +249,13 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     // We'll now try to do it using a reader. This is to work around
     // Logisim versions prior to 2.5.1, when files were not saved using
     // UTF-8 as the encoding (though the XML file reported otherwise).
-    if (result == null) {
+    if (firstExcept != null) {
       try {
         final var readerInputStream = new ReaderInputStream(new FileReader(loadFile), "UTF8");
         result = loadSub(readerInputStream, loader, file);
       } catch (Exception t) {
-        if (firstExcept != null) {
-          firstExcept.printStackTrace();
-          loader.showError(S.get("xmlFormatError", firstExcept.toString()));
-        }
+        firstExcept.printStackTrace();
+        loader.showError(S.get("xmlFormatError", firstExcept.toString()));
       } finally {
         try {
           inputStream.close();
@@ -691,10 +696,12 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   void interruptAutosaveThread() {
+    if (autosaveThread == null) return;
     autosaveThread.interrupt();
   }
 
   public void stopAutosaveThread(boolean delete) {
+    if (autosaveThread == null) return;
     try {
       autosaveThread.abort(delete);
     } catch (InterruptedException ignored) {}

@@ -467,12 +467,10 @@ public class Loader implements LibraryLoader {
     final var oldAutosave = autosaveFile;
     autosaveFile = determineAutosaveName(mainFile);
     if (autosaveFile == null) {
-      System.out.println("Was unable to determine valid autosave file");
       return false;
     }
     FileOutputStream fwrite = null;
     try {
-      System.out.println("Autosaving to '" + autosaveFile.toString() + "'!");
       fwrite = new FileOutputStream(autosaveFile);
       file.write(fwrite, this, autosaveFile, null);
       fwrite.close();
@@ -480,7 +478,6 @@ public class Loader implements LibraryLoader {
       return false;
     }
     if (oldAutosave != null && !oldAutosave.equals(autosaveFile)) {
-      System.out.println("Deleting old autosave '" + oldAutosave.toString() + "'!");
       oldAutosave.delete();
     }
     return true;
@@ -493,7 +490,6 @@ public class Loader implements LibraryLoader {
    *     false if the file is null or deletion failed
    */
   public boolean deleteAutosave() {
-    System.out.println("Deleting autosave!");
     return autosaveFile != null ? autosaveFile.delete() : false;
   }
 
@@ -593,5 +589,9 @@ public class Loader implements LibraryLoader {
           window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
       return null;
     }
+  }
+
+  public void setAutosavePath(File f) {
+    autosaveFile = new File(f.getParent(), f.getName());
   }
 }
