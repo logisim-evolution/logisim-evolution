@@ -80,7 +80,8 @@ public class AutosaveOptions extends OptionsPanel {
       var val = -1;
       try {
         val = Integer.parseInt(autosaveInterval.getText());
-      } catch (NumberFormatException ignored) {}
+      } catch (NumberFormatException ignored) {
+      }
       if (val <= 0 || val > 10000) {
         setContent();
       } else {

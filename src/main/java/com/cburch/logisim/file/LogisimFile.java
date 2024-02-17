@@ -704,7 +704,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     if (autosaveThread == null) return;
     try {
       autosaveThread.abort(delete);
-    } catch (InterruptedException ignored) {}
+    } catch (InterruptedException ignored) {
+    }
   }
 
   public boolean isAutosaveLoaded() {
