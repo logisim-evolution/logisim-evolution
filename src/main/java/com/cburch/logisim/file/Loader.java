@@ -153,7 +153,7 @@ public class Loader implements LibraryLoader {
   private static File determineAutosaveName(File base) {
     if (base == null) {
       String timestamp =
-          DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss").format(LocalDateTime.now());
+          DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
       final var candidate = new File(System.getProperty("user.home") + File.separator
           + LOGISIM_UNNAMED_AUTOSAVE_PREFIX + timestamp + LOGISIM_UNNAMED_AUTOSAVE_SUFFIX);
       if (!candidate.exists()) return candidate;
@@ -461,7 +461,7 @@ public class Loader implements LibraryLoader {
    *
    * @param file The file that should be autosaved
    *
-   * @return True if writing was successfull, else false;
+   * @return True if writing was successful, else false;
    */
   public boolean autosave(LogisimFile file) {
     final var oldAutosave = autosaveFile;

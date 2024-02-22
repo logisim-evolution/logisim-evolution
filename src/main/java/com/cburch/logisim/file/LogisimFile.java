@@ -229,7 +229,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       } else if (res == 0) { // If load is selected select the autosave to be loaded
         loadFile = autosave.get(); // Set load file to the autosave path
         loader.setAutosavePath(autosave.get());
-        autosaveLoading = true; // also set this to true to remember an autosave was loaded
+        autosaveLoading = true; // Also set this to true to remember an autosave was loaded
       } else if (res == 1) {
         autosave.get().delete();
       }
