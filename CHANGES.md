@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an autosave feature along with preferences for it.
   * Added a new preference to allow the user to choose the action keys for many functions.
   * Changed RAM default output from error to undefined [#1747]
   * Added support for scanning 7-segment display on FPGA-boards

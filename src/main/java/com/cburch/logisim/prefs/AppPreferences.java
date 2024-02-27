@@ -438,6 +438,13 @@ public class AppPreferences {
   private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(AppPreferences.class);
 
+  // Autosave preferences
+  public static final String AUTOSAVE_ENABLE = "autosaveEnabled";
+  public static final String AUTOSAVE_PERIOD = "autosaveInterval";
+
+  public static final PrefMonitor<Boolean> AUTOSAVE_ENABLED = create(new PrefMonitorBoolean(AUTOSAVE_ENABLE, true));
+  public static final PrefMonitor<Integer> AUTOSAVE_INTERVAL = create(new PrefMonitorInt(AUTOSAVE_PERIOD, 30));
+
   // Template preferences
   public static final int IconSize = 16;
   public static final int FONT_SIZE = 14;
