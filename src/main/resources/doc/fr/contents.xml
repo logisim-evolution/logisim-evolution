@@ -174,14 +174,14 @@
 			<tocitem target="io_joystick" image="icon_joystick" text="Manette"/>
 			<tocitem target="io_keyboard" image="icon_keyboard" text="Clavier"/>
 			<tocitem target="io_led" image="icon_led" text="LED"/>
-			<tocitem target="io_ledRVB" text="LED rVB" image="icon_led RVB" />			
+			<tocitem target="io_ledRGB" text="LED RVB" image="icon_led RGB" />			
 			<tocitem target="io_7seg" image="icon_7seg" text="Afficheur 7-Segments"/>
 			<tocitem target="io_hexdig" image="icon_hexdig" text="Afficheur Hexadecimal"/>
 			<tocitem target="io_dotmat" image="icon_dotmat" text="Matrice de LED"/>
 			<tocitem target="io_tty" image="icon_tty" text="TTY"/>
 			<tocitem target="io_Port_IO" image="icon_Port_IO" text="Port I/O"  />
 			<tocitem target="io_Repetar"  image="icon_repetar" text="Reptar Local Bus"/>
-			<tocitem target="io_videorvb"  image="icon_videorvb" text="Afficheur Video RVB"/>
+			<tocitem target="io_videorgb"  image="icon_videorgb" text="Afficheur Video RVB"/>
 		</tocitem>
 		<tocitem target="hdl" text="HDL-IP">
 			<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />

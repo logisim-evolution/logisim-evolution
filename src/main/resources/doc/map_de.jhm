@@ -232,14 +232,14 @@
 	<mapID target="icon_joystick"    url="icons/1616/joystick.png" />
 	<mapID target="icon_keyboard"    url="icons/1616/keyboard.png" />
 	<mapID target="icon_led"         url="icons/1616/led.png" />
-	<mapID target="icon_rvbled"      url="icons/1616/rgbled.png" />
+	<mapID target="icon_rgbled"      url="icons/1616/rgbled.png" />
 	<mapID target="icon_7seg"        url="icons/1616/7seg.png" />
 	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
-	<mapID target="icon_videorvb"    url="icons/1616/rgbvideo.png" />	
+	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	
 
 	<mapID target="icon_ttl"         url="icons/1616/ttl.png" />	
 	<mapID target="icon_reds_console" url="icons/1616/tcl.png" />	
