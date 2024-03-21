@@ -33,6 +33,7 @@
   * Added TTL 74541: Octal buffers with three-state outputs
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
