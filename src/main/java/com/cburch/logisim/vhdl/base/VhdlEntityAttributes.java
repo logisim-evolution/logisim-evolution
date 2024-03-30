@@ -57,8 +57,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           || value.equals("(default)")
           || value.equals(toDisplayString(null))) return null;
       final var v = Long.parseLong(value);
-      if (v < start) throw new NumberFormatException("integer too small");
-      if (v > end) throw new NumberFormatException("integer too large");
+      if (v < start) throw new NumberFormatException("integer must be at least " + start);
+      if (v > end) throw new NumberFormatException("integer must be at most " + end);
       return (int) v;
     }
 
