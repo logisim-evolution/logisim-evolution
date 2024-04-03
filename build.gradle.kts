@@ -17,7 +17,7 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("org.sonarqube") version "4.4.1.3373"
+  id("org.sonarqube") version "5.0.0.4638"
 }
 
 repositories {
@@ -38,7 +38,7 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.12")
   implementation("org.slf4j:slf4j-simple:2.0.12")
-  implementation("com.formdev:flatlaf:3.4")
+  implementation("com.formdev:flatlaf:3.4.1")
   implementation("commons-cli:commons-cli:1.6.0")
   implementation("org.apache.commons:commons-text:1.11.0")
 
