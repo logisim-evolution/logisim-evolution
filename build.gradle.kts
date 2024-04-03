@@ -17,7 +17,7 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("org.sonarqube") version "4.4.1.3373"
+  id("org.sonarqube") version "5.0.0.4638"
 }
 
 repositories {
