@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an autosave feature along with preferences for it.
   * Added a new preference to allow the user to choose the action keys for many functions.
   * Changed RAM default output from error to undefined [#1747]
   * Added support for scanning 7-segment display on FPGA-boards
@@ -33,6 +34,7 @@
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
   * Added partial support for VHDL time units
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

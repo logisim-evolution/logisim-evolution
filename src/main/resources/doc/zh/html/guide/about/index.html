@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-21T16:12:10.000000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- About the program Logisim-evolution -->
+   关于 Logisim-evolution 程序
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <img alt="#########" height="276" src="../../../../img-guide/logisim.png" width="734"/>
+   <h1>
+    <!-- About the program Logisim-evolution -->
+    关于 Logisim-evolution 程序
+   </h1>
+   <p>
+    <!-- <strong>Logisim</strong> Logisim is an educational tool for designing and simulating digital logic circuits. It has been originally created by <a href="https://www.cburch.com/logisim/" rel="nofollow">Dr. Carl Burch</a> and actively developed until 2011. After this date the author focused on other projects, and recently the development has been officially stopped <a href="https://www.cburch.com/logisim/retire-note.html" rel="nofollow">(see his message here)</a>. -->
+    <strong>
+     Logisim-evolution
+    </strong>
+    Logisim-evolution 是一款用于设计和模拟数字逻辑电路的教育工具。 它最初是由
+    <a href="https://www.cburch.com/logisim/" rel="nofollow">
+     Dr. 创建的。 Carl Burch
+    </a>
+    并积极开发直至2011年。此后作者专注于其他项目，最近已正式停止开发
+    <a href="https://www.cburch.com/logisim/retire-note.html" rel="nofollow">
+     （在此处查看他的消息）
+    </a>
+    。
+   </p>
+   <p>
+    <!-- In the meantime, people from a group of swiss institutes (<a href="https://www.bfh.ch" rel="nofollow">Haute École Spécialisée Bernoise</a>,<a href="https://hepia.hesge.ch/" rel="nofollow">Haute École du paysage, d'ingénierie et d'architecture de Genève</a>,<a href="https://heig-vd.ch/" rel="nofollow">Haute École d'Ingénierie et de Gestion du Canton de Vaud</a>) started developing a version of Logisim that fitted their courses, integrating several tools -- for instance a chronogram, the possibility to test the schematics directly on an electronic board, TCL/TK consoles, ... -->
+    与此同时，来自瑞士一些机构（
+    <a href="https://www.bfh.ch" rel="nofollow">
+     Haute École Spécialisée Bernoise
+    </a>
+    、
+    <a href="https:/ /hepia.hesge.ch/" rel="nofollow">
+     日内瓦高等风景、建筑与建筑学院
+    </a>
+    ,
+    <a href="https://heig-vd.ch/" rel="nofollow">
+     Haute École d'Ingénierie et de Gestion du Canton de Vaud
+    </a>
+    ）开始开发适合他们课程的 Logisim 版本，集成了多种工具 - 例如计时表、直接测试原理图的可能性 在电子板上、TCL/TK 控制台上...
+   </p>
+   <p>
+    <!-- We have decided to release this new Logisim version under the name <b><a href="https://github.com/logisim-evolution/logisim-evolution/blob/master/README.md"> Logisim-evolution</a></b>, to highlight the large number of changes that occurred in these years, and we actively seek the contribution of the community. -->
+    我们决定以
+    <b>
+     <a href="https://github.com/logisim-evolution/logisim-evolution/blob/master/README.md">
+      Logisim-evolution
+      <!-- 的名称发布这个新的 Logisim 版本 a-->
+     </a>
+    </b>
+    ，强调这些年来发生的大量变化，我们积极寻求社区的贡献。
+   </p>
+   <p>
+    <!-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. (see below license) -->
+    该程序是自由软件：您可以根据自由软件基金会发布的 GNU 通用公共许可证（许可证版本 3）的条款重新分发和/或修改它。 分发此程序的目的是希望它有用，但不提供任何保证； 甚至没有适销性或特定用途适用性的默示保证。 有关更多详细信息，请参阅 GNU 通用公共许可证。 （见下面的许可证）
+   </p>
+   <h2>
+    <!-- Languages -->
+    语言
+   </h2>
+   <p>
+    <!-- Logisim supports many languages. Many of them were automatically translated using DeepL. If you should find bizarre translations, please do not hesitate to correct them in the corresponding property files and to make a pull request! -->
+    Logisim 支持多种语言。 其中许多是使用 DeepL 自动翻译的。 如果您发现奇怪的翻译，请毫不犹豫地在相应的属性文件中更正它们并提出拉取请求！
+   </p>
+   <h2>
+    <!-- What's new in logisim-evolution -->
+    logisim-evolution 的新功能
+   </h2>
+   <ul>
+    <!-- <li>Chronogram -- to see the evolution of signals in your circuit -->
+    <li>
+     计时图——查看电路中信号的演变
+    </li>
+    <!-- <li>Electronic board integration -- schematics can now be simulated on real hardware! -->
+    <li>
+     电子板集成 - 现在可以在真实硬件上模拟原理图！
+    </li>
+    <!-- <li>Board editor -- to add new electronic boards -->
+    <li>
+     看板编辑器——添加新的电子看板
+    </li>
+    <!-- <li>VHDL component -- a new component type whose behavior is specified in VHDL le comportement est spécifié dans VHDL -->
+    <li>
+     VHDL 组件——一种新的组件类型，其行为在 VHDL 中指定，VHDL 中的特殊功能
+    </li>
+    <!-- <li>TCL/TK console -- interfaces between the circuit and the user -->
+    <li>
+     TCL/TK 控制台——电路与用户之间的接口
+    </li>
+    <!-- <li>DIP switches -->
+    <li>
+     DIP 开关
+    </li>
+    <!-- <li>RGB LEDs -->
+    <li>
+     RGB LED
+    </li>
+    <!-- <li>Large number of bug-fixes -->
+    <li>
+     大量错误修复
+    </li>
+    <!-- <li>GUI improvements -->
+    <li>
+     图形用户界面改进
+    </li>
+    <!-- <li>Automatic updates -->
+    <li>
+     自动更新
+    </li>
+    <!-- <li>Code refactoring -->
+    <li>
+     代码重构
+    </li>
+    <li>
+     ...
+    </li>
+   </ul>
+   <h2>
+    <!-- Retro-compatibility -->
+    复古兼容性
+    <!-- </h2>We cannot assure retro-compatibility of logisim-evolution with files created with the original Logisim. We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names, but components evolved in shape since then (think, for instance, to RAM and counters). You might need to rework a bit your circuits when opening them with logisim-evolution -- but the changes will be stored in the new format, therefore you have to do your work only once. -->
+   </h2>
+   我们无法保证 logisim-evolution 与使用原始 Logisim 创建的文件的向后兼容性。 我们合并了一个解析器，它可以更改组件的名称以满足 VHDL 对变量名称的要求，但从那时起组件的形状就发生了变化（例如，RAM 和计数器）。 使用 logisim-evolution 打开电路时，您可能需要对电路进行一些修改 - 但更改将以新格式存储，因此您只需完成一次工作。
+   <h2>
+    <!-- Wish-list -->
+    愿望清单
+   </h2>
+   <p>
+    <!-- Logisim-evolution is a continuously-growing software, and we have several ideas we would like to implement. In particular, we would like to have: -->
+    Logisim-evolution 是一个不断发展的软件，我们有几个想要实现的想法。 我们特别希望：
+    <!-- </p>unit tests for the code -->
+   </p>
+   代码的单元测试
+   <ul>
+    <!-- <li>extensive documentation -->
+    <li>
+     丰富的文档
+    </li>
+    <!-- <li>test circuits -->
+    <li>
+     测试电路
+    </li>
+    <!-- <li>... If you are willing to contribute with any of these, please feel free to contact us! -->
+    <li>
+     ...如果您愿意为其中任何一个做出贡献，请随时与我们联系！
+    </li>
+   </ul>
+   <h2>
+    <!-- How to get support for logisim-evolution -->
+    如何获得对 logisim-evolution 的支持
+   </h2>
+   <p>
+    <!-- Unfortunately, we do not have enough resources to provide direct support for logisim-evolution. We will, however, try to deal with the raised issues in a best-effort way. -->
+    不幸的是，我们没有足够的资源来为 logisim-evolution 提供直接支持。 不过，我们将尽力以最佳方式处理所提出的问题。
+   </p>
+   <p>
+    <!-- If you find a bug or have an idea for an interesting feature, please do not hesitate to open a ticket! -->
+    如果您发现错误或对有趣的功能有想法，请随时开票！
+   </p>
+   <p>
+    <a href="https://github.com/logisim-evolution/logisim-evolution/blob/master/README.md">
+     Logisim-evolution
+    </a>
+   </p>
+   <h2>
+    <!-- License -->
+    执照
+   </h2>
+   <p>
+    <!-- The code is licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GENERAL PUBLIC LICENSE, version 3.</a><br> -->
+    该代码已获得
+    <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">
+     GNU 通用公共许可证版本 3
+    </a>
+    <br/>
+    的许可。
+        local version
+    <a href="../../../../gpl.html">
+     GPL
+    </a>
+   </p>
+   <p align="center">
+    <img alt="GPL" class="notscal" src="../../../../img-guide/gplv3-127x51.png"/>
+   </p>
+   <h2>
+    <!-- Credits -->
+    制作人员
+   </h2>
+   <!-- The Logisim-evolution project is based on Logisim software by: -->
+   Logisim-evolution 项目基于 Logisim软件：
+   <ul>
+    <!-- <li>Carl Burch - <a href="https://www.hendrix.edu/">Hendrix College</a>, USA</li> -->
+    <li>
+     Carl Burch -
+     <a href="https://www.hendrix.edu/">
+      亨德里克斯学院
+     </a>
+     ，美国
+    </li>
+   </ul>
+   <!-- The following people and institutions actively contributed to further development of `Logisim-evolution`: -->
+   以下人员和机构为“Logisim-evolution”的进一步发展做出了积极贡献：
+   <ul>
+    <!-- <li>David H. Hutchens, <a href="https://www.millersville.edu/">Millersville University</a>, Pennsylvania, USA</li> -->
+    <li>
+     David H. Hutchens,
+     <a href="https://www.millersville.edu/">
+      米勒斯维尔大学
+     </a>
+     , 宾夕法尼亚州, USA
+    </li>
+    <!-- <li>Kevin Walsh - [College of the Holy Cross](http://www.holycross.edu/), USA</li> -->
+    <li>
+     Kevin Walsh - [圣十字学院](http://www.holycross.edu/), USA
+    </li>
+    <!-- <li>Moshe Berman, <a href="http://www.brooklyn.cuny.edu/">Brooklyn College</a>, USA</li> -->
+    <li>
+     Moshe Berman,
+     <a href="http://www.brooklyn.cuny.edu/">
+      布鲁克林学院
+     </a>
+     , USA
+    </li>
+    <!-- <li><a href="https://www.pucminas.br/destaques/Paginas/default.aspx">Theldo Cruz Franqueira - [Pontifícia Universidade Católica de Minas Gerais</a>, Brazil</li> -->
+    <li>
+     <a href="https://www.pucminas.br/destaques/Paginas/default.aspx">
+      塞尔多·克鲁兹·弗兰奎拉 - [米纳斯吉拉斯天主教大学
+     </a>
+     , Brazil
+    </li>
+    <!-- <li>Theo Kluter, <a href="http://www.microlab.ch/">Bern University of Applied Sciences</a>, Switzerland.</li> -->
+    <li>
+     Theo Kluter,
+     <a href="http://www.microlab.ch/">
+      伯尔尼应用科技大学
+     </a>
+     , Switzerland.
+    </li>
+    <!-- <li><a href="http://MarcinOrlowski.com/">Marcin Orlowski</a>, Poland</li> -->
+    <li>
+     <a href="http://MarcinOrlowski.com/">
+      马尔辛·奥尔洛斯基
+     </a>
+     , Poland
+    </li>
+    <!-- <li><a href="https://github.com/zdimension/">Tom Niget</a>, <a href="https://leat.univ-cotedazur.fr/">LEAT</a>, <a href="https://polytech.univ-cotedazur.fr/">Polytech Nice-Sophia</a>, France</li> -->
+    <li>
+     <a href="https://github.com/zdimension/">
+      Tom Niget
+     </a>
+     ,
+     <a href="https://leat.univ-cotedazur.fr/">
+      LEAT
+     </a>
+     ,
+     <a href="https://polytech.univ-cotedazur.fr/">
+      尼斯索菲亚理工学院
+     </a>
+     , France
+    </li>
+    <!-- <li><a href="http://www.bfh.ch/">Haute École Spécialisée Bernoise</a>, Switzerland</li> -->
+    <li>
+     <a href="http://www.bfh.ch/">
+      伯努瓦斯高等专业学校
+     </a>
+     , Switzerland
+    </li>
+    <!-- <li><a href="http://hepia.hesge.ch/">Haute École du paysage, d'ingénierie et d'architecture de Genève</a>, Switzerland</li> -->
+    <li>
+     <a href="http://hepia.hesge.ch/">
+      日内瓦高级景观、工程与建筑学院
+     </a>
+     , Switzerland
+    </li>
+    <!-- <li><a href="http://www.heig-vd.ch/">Haute École d'Ingénierie et de Gestion du Canton de Vaud</a>, Switzerland</li> -->
+    <li>
+     <a href="http://www.heig-vd.ch/">
+      沃州高等工程与管理学院
+     </a>
+     , Switzerland
+    </li>
+   </ul>
+   <!-- If you feel that your name should be in this list, please feel free to <a href="https://github.com/logisim-evolution/logisim-evolution/issues">open a ticket</a>. -->
+   如果您认为您的名字应该在此列表中，请随时
+   <a href="https://github.com/logisim-evolution/logisim-evolution/issues">
+    开具票证
+   </a>
+   。
+   <p>
+    <!-- <strong>Next: </strong> <em><a href="../index.html">User Guide</a></em>. -->
+    <strong>
+     下一节:
+    </strong>
+    <em>
+     <a href="../index.html">
+      用户指南
+     </a>
+    </em>
+    .
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Other verification options -->
+   其他验证选项
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Other verification options -->
+    其他验证选项
+   </h1>
+   <p>
+    <!-- There are a some additional options related to command-line execution. -->
+    还有一些与命令行执行相关的附加选项。
+   </p>
+   <h2>
+    <!-- The <tt>-load</tt> command-line parameter -->
+    <tt>
+     -load
+    </tt>
+    命令行参数
+   </h2>
+   <p>
+    <!-- A more complex circuit might include a RAM component that needs to be loaded with a program in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM component in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.) -->
+    更复杂的电路可能包括需要加载程序才能使电路执行任何操作的 RAM 组件。 您可以在命令行指定一个内存映像文件，该文件将在仿真开始之前加载到电路中的任何 RAM 组件中。 （这在加载 GUI 时不起作用 - 它仅适用于命令行执行。）
+   </p>
+   <blockquote>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt
+     </tt>
+    </div>
+   </blockquote>
+   <p>
+    <!-- The order of the parameters is not important (except the <tt>table</tt> parameter must be immediately after <tt>-tty</tt>, and the memory image's filename must be immediately after <tt>-load</tt>). The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>. -->
+    参数的顺序并不重要（除了
+    <tt>
+     table
+    </tt>
+    参数必须紧接在
+    <tt>
+     -tty
+    </tt>
+    之后，并且内存映像的文件名必须紧接在
+    <tt>
+     -load
+    </tt>
+    之后 tt&gt;）。 内存映像文件应采用
+    <a href="../mem/mem-menu.html">
+     Logisim 的内存映像格式
+    </a>
+    。
+   </p>
+   <p>
+    <!-- Logisim searches for RAM recursively, so this will still work if RAM is nested within a subcircuit. There is no way, though, to distinguish different RAM components: Logisim will attempt to load the same file into every RAM that it can find. -->
+    Logisim-evolution 递归地搜索 RAM，因此如果 RAM 嵌套在子电路中，这仍然有效。 但是，无法区分不同的 RAM 组件：Logisim-evolution 将尝试将相同的文件加载到它能找到的每个 RAM 中。
+   </p>
+   <h2>
+    <!-- Options for the <tt>-tty</tt> parameter -->
+    <tt>
+     -tty
+    </tt>
+    参数的选项
+   </h2>
+   <p>
+    <!-- In our examples thus far, we've always used <tt><b>-tty&nbsp;table</b></tt> to indicate that a table of output values should be displayed. You can customize the behavior in other ways by listing one or more options, separated by commas. For instance, you might write <q><tt>-tty&nbsp;table,halt,speed</tt></q>, and the program will perform all three behaviors listed below. (The order in which they are listed does not matter.) -->
+    到目前为止，在我们的示例中，我们始终使用
+    <tt>
+     <b>
+      -tty table
+     </b>
+    </tt>
+    来指示应显示输出值表。 您可以通过列出一个或多个选项（以逗号分隔）以其他方式自定义行为。 例如，您可以编写
+    <q>
+     <tt>
+      -tty table,halt,speed
+     </tt>
+    </q>
+    ，程序将执行下面列出的所有三种行为。 （它们列出的顺序并不重要。）
+   </p>
+   <dl>
+    <dt>
+     <tt>
+      halt
+     </tt>
+    </dt>
+    <dd>
+     <p>
+      <!-- After the simulation ends, a one-line message is displayed explaining why the simulation ended. Error conditions - such as a detected oscillation - are displayed in any case. -->
+      模拟结束后，会显示一行消息，解释模拟结束的原因。 任何情况下都会显示错误情况（例如检测到的振荡）。
+     </p>
+    </dd>
+    <dt>
+     <tt>
+      speed
+     </tt>
+    </dt>
+    <dd>
+     <p>
+      <!-- If you use <tt>speed</tt> in conjunction with <tt>-tty</tt>, then after completing the simulation Logisim will display a summary of how quickly the circuit was simulated, such as: -->
+      如果将
+      <tt>
+       speed
+      </tt>
+      与
+      <tt>
+       -tty
+      </tt>
+      结合使用，则在完成仿真后 Logisim 将显示电路仿真速度的摘要，例如：
+     </p>
+     <blockquote>
+      <tt>
+       714 Hz (509 ticks in 712 milliseconds)
+      </tt>
+      &lt; /blockquote&gt;
+      <p>
+       <!-- Note that displaying information during the simulation makes the simulation go much slower. As just one comparison, the same circuit and image ran at 714&nbsp;Hz above with just the <tt>speed</tt> option but 490&nbsp;Hz with the <tt>table</tt> option as well. -->
+       请注意，在模拟过程中显示信息会使模拟速度变慢。 作为一项比较，相同的电路和图像在仅使用
+       <tt>
+        speed
+       </tt>
+       选项时以 714 Hz 以上运行，但在使用
+       <tt>
+        table
+       </tt>
+       选项时也以 490 Hz 运行。
+      </p>
+     </blockquote>
+    </dd>
+    <dt>
+     <tt>
+      stats
+     </tt>
+    </dt>
+    <dd>
+     <p>
+      <!-- Shows a tab-delimited table containing statistics about components used by the top-level "main" circuit in the project. The table includes four columns: -->
+      显示一个制表符分隔的表，其中包含有关项目中顶级“主”电路使用的组件的统计信息。 该表包括四列：
+     </p>
+     <ul>
+      <!-- <li>Unique: The number of times that component appears in the circuit's hierarchy, where each subcircuit within the hierarchy is counted only once. -->
+      <li>
+       唯一：该组件出现在电路层次结构中的次数，其中层次结构中的每个子电路仅计算一次。
+      </li>
+      <!-- <li>Recursive: The number of times that component appears in the circuit's hierarchy, where we count each subcircuit as many times as it appears in the hierarchy. -->
+      <li>
+       递归：组件在电路层次结构中出现的次数，其中我们对每个子电路在层次结构中出现的次数进行计数。
+      </li>
+      <!-- <li>Component: The name of the component. -->
+      <li>
+       组件：组件的名称。
+      </li>
+      <!-- <li>Library: The name of the library from which the component came. -->
+      <li>
+       库：组件所在库的名称。
+      </li>
+     </ul>
+     <p>
+      <!-- The distinction between "Unique" and "Recursive" is explained further under <q><a href="../menu/project.html">Project menu</a></q> section. If the file uses circuits from a loaded Logisim library, those components are considered to be "black boxes": The contents of the library's circuits are not included in the unique and recursive counts. -->
+      <q>
+       <a href="../menu/project.html">
+        项目菜单
+       </a>
+      </q>
+      部分进一步解释了“唯一”和“递归”之间的区别。 如果文件使用已加载 Logisim 库中的电路，则这些组件将被视为“黑匣子”：库电路的内容不包含在唯一和递归计数中。
+     </p>
+     <p>
+      <!-- (This feature can be useful for instructors who assign students to build projects using a subset of Logisim's libraries.) -->
+      （此功能对于分配学生使用 Logisim 库的子集构建项目的教师非常有用。）
+     </p>
+    </dd>
+    <dt>
+     <tt>
+      table
+     </tt>
+    </dt>
+    <dd>
+     <p>
+      <!-- (as already discussed) -->
+      （正如已经讨论过的）
+     </p>
+    </dd>
+    <dt>
+     <tt>
+      tty
+     </tt>
+    </dt>
+    <dd>
+     <p>
+      <!-- Any TTY components send their output to the display (standard output), and any information typed at the keyboard is sent to all Keyboard components in the circuit. These components are included even if they are nested deeply in the subcircuit hierarchy. -->
+      任何 TTY 组件都会将其输出发送到显示器（标准输出），并且在键盘上键入的任何信息都会发送到电路中的所有键盘组件。 即使这些组件深深嵌套在子电路层次结构中，它们也会被包含在内。
+     </p>
+    </dd>
+   </dl>
+   <p>
+    <!-- <b>Next:</b> <a href="multi.html">Testing multiple files</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="multi.html">
+     测试多个文件
+    </a>
+    。
+   </p>
+  </div>
+ </body>
+</html>

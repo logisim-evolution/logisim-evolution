@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:25" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Counter -->
+   计数器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/counter.png" alt="#########" width="32" height="32"> <em>Counter</em> -->
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/counter.png" width="32"/>
+    <em>
+     计数器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Memory</a> -->
+       <a href="index.html">
+        存储
+       </a>
+      </td>
+      <td rowspan="3">
+       <img alt="#########" class="appearancelibshaut" height="128" src="../../../../img-libs/lcounter.png" width="64"/>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.3.0
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/counter.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- The counter holds a single value, whose value is emitted on the output <var>Q</var>. Each time the clock input (diagrammed with a triangle on the component's south edge) triggers according to its Trigger attribute, the value in the counter may update based on the two inputs on the component's west edge: The upper input is called <var>load</var> and the lower is called <var>count</var>, and they are interpreted as follows. -->
+    计数器保存一个值，其值在输出
+    <var>
+     Q
+    </var>
+    上发出。 每次时钟输入（在组件南边缘上用三角形表示）根据其 Trigger 属性触发时，计数器中的值可能会根据元件西边缘上的两个输入进行更新： 上面的输入称为
+    <var>
+     load
+    </var>
+    和较低的称为
+    <var>
+     count
+    </var>
+    ，它们的解释如下。
+   </p>
+   <center>
+    <table>
+     <thead>
+      <tr>
+       <td>
+        <!-- <var>load</var> -->
+        <var>
+         载入
+        </var>
+       </td>
+       <td>
+        <!-- <var>count</var> -->
+        <var>
+         总数
+        </var>
+       </td>
+       <td>
+        <!-- trigger action -->
+        触发动作
+       </td>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td align="center">
+        0 or z
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td>
+        <!-- The counter remains unchanged. -->
+        计数器保持不变。
+       </td>
+      </tr>
+      <tr>
+       <td align="center">
+        0 or z
+       </td>
+       <td align="center">
+        1 or z
+       </td>
+       <td>
+        <!-- The counter increments. -->
+        计数器递增。
+       </td>
+      </tr>
+      <tr>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td>
+        <!-- The counter loads the value found at the <var>D</var> input. -->
+        计数器加载在
+        <var>
+         D
+        </var>
+        输入处找到的值。
+       </td>
+      </tr>
+      <tr>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        1 or z
+       </td>
+       <td>
+        <!-- The counter decrements. -->
+        计数器递减。
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </center>
+   <p>
+    <!-- The range of counting can be configured using the Maximum Value attribute. When the counter reaches this value, the next increment wraps the counter back to 0; and if it is at 0, then a decrement will wrap the counter around back to its maximum value. -->
+    计数范围可以使用最大值属性进行配置。 当计数器达到该值时，下一个增量会将计数器回绕到 0； 如果它为 0，则递减将使计数器回到其最大值。
+   </p>
+   <p>
+    <!-- In addition to the output <var>Q</var>, the component also includes a single-bit output <var>carry</var>. This is 1 whenever the counter is at its maximum and the <var>load</var> and <var>count</var> inputs indicate that the component should increment on the next step - or when the counter is at 0 and the <var>load</var> and <var>count</var> inputs indicate to decrement at the next step. -->
+    除了输出
+    <var>
+     Q
+    </var>
+    之外，该组件还包括一个单位输出
+    <var>
+     进位
+    </var>
+    。 每当计数器达到最大值并且
+    <var>
+     load
+    </var>
+    和
+    <var>
+     count
+    </var>
+    输入指示组件应在下一步中递增时，或者当计数器为 0 并且
+    <var>
+     load
+    </var>
+    和
+    <var>
+     count
+    </var>
+    输入指示在下一步递减。
+   </p>
+   <p>
+    <!-- The <var>clear</var> input resets the counter's value to 0 (all zeroes) asynchronously; that is, as long as the <var>clr</var> input is 1, the value is pinned to 0, regardless of the clock input. -->
+    <var>
+     clear
+    </var>
+    输入将计数器的值异步重置为 0（全零）； 也就是说，只要
+    <var>
+     clr
+    </var>
+    输入为 1，无论时钟输入如何，该值都会固定为 0。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute) -->
+     东边，标记为
+     <var>
+      Q
+     </var>
+     （输出，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- Outputs the value currently stored by the counter. -->
+     输出计数器当前存储的值。
+    </dd>
+    <dt>
+     <!-- East edge, lower pin (output, bit width 1) -->
+     东边，下引脚（输出，位宽1）
+    </dt>
+    <dd>
+     <!-- Carry: When <var>load</var> and <var>count</var> indicate to increment, this output is 1 whenever the counter is at its maximum. When <var>load</var> and <var>count</var> indicate to decrement, this output is 1 whenever the counter is at 0. At all other times, this output is 0. -->
+     进位：当
+     <var>
+      load
+     </var>
+     和
+     <var>
+      count
+     </var>
+     表示递增时，每当计数器达到最大值时，该输出为1。 当
+     <var>
+      load
+     </var>
+     和
+     <var>
+      count
+     </var>
+     指示递减时，每当计数器为 0 时，此输出为 1。在所有其他时间，此输出为 0。
+    </dd>
+    <dt>
+     <!-- West edge, top pin (input, bit width 1) -->
+     西边，顶部引脚（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Load: When this is 1 while the <var>count</var> input is 0, the counter will load the value found at the <var>data</var> input at the next clock trigger - or, if the <var>count</var> input happens to be 1, the counter's value will decrement. -->
+     加载：当该值为 1 而
+     <var>
+      count
+     </var>
+     输入为 0 时，计数器将在下一个时钟触发时加载在
+     <var>
+      data
+     </var>
+     输入处找到的值 - 或者，如果
+     <var>
+      &gt;count
+     </var>
+     输入恰好为 1，计数器的值将递减。
+    </dd>
+    <dt>
+     <!-- West edge, middle pin labeled <var>D</var> (input, bit with matches Data Bits attribute) -->
+     西边缘，中间引脚标记为
+     <var>
+      D
+     </var>
+     （输入，与数据位属性匹配的位）
+    </dt>
+    <dd>
+     <!-- Data: When the clock triggers while <var>load</var> is 1 and <var>count</var> is 0, the counter's value changes to the value found at this input. -->
+     数据：当时钟在
+     <var>
+      load
+     </var>
+     为 1 且
+     <var>
+      count
+     </var>
+     为 0 时触发时，计数器的值将更改为此输入处找到的值。
+    </dd>
+    <dt>
+     <!-- West edge, lower pin labeled <var>ct</var> (input, bit width 1) -->
+     西边，下部引脚标记为
+     <var>
+      ct
+     </var>
+     （输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Count: When this is 1 or unconnected, the value in the counter increments whenever the clock input is triggered - or it decrements if the <var>load</var> input happens to also be 1. -->
+     计数：当该值为 1 或未连接时，每当时钟输入被触发时，计数器中的值就会递增 - 或者如果
+     <var>
+      load
+     </var>
+     输入碰巧也是 1，则计数器中的值会递减。
+    </dd>
+    <dt>
+     <!-- South edge, indicated with a triangle (input, bit width 1) -->
+     南边，用三角形表示（输入，位宽1）
+    </dt>
+    <dd>
+     <!-- Clock: At the instant that this is triggered as specified by the Trigger attribute, the counter updates as indicated by the <var>load</var> and <var>count</var> inputs. -->
+     时钟：在按“触发器”属性指定的方式触发此事件时，计数器会根据
+     <var>
+      load
+     </var>
+     和
+     <var>
+      count
+     </var>
+     输入进行更新。
+    </dd>
+    <dt>
+     <!-- South edge, labeled 0 (input, bit width 1) -->
+     南边缘，标记为 0（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Clear: When 0 or undefined, this input has no effect. As long as it is 1, the counter's value is asynchronously pinned to 0. This occurs asynchronously - that is, without regard to the current clock input value. As long as this is 1, the other inputs have no effect. -->
+     清除：当为 0 或未定义时，该输入无效。 只要它为 1，计数器的值就会异步固定为 0。这是异步发生的，即不考虑当前时钟输入值。 只要该值为 1，其他输入就没有影响。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute. -->
+    当选择或添加组件时，Alt-0 到 Alt-9 会更改其
+    <q>
+     数据位
+    </q>
+    属性。
+   </p>
+   <dl>
+    <dt>
+     <!-- Data Bits -->
+     数据位
+    </dt>
+    <dd>
+     <!-- The bit width of the value emitted by the component. -->
+     组件发出的值的位宽度。
+    </dd>
+    <dt>
+     <!-- Maximum Value -->
+     最大值
+    </dt>
+    <dd>
+     <!-- The maximum value, at which point the counter will set its carry output. -->
+     最大值，此时计数器将设置其进位输出。
+    </dd>
+    <dt>
+     <!-- Action On Overflow -->
+     溢出操作
+    </dt>
+    <dd>
+     <!-- The behavior when the counter attempts to increment beyond the maximum value or decrement beyond 0. Four possible actions are supported: -->
+     当计数器尝试递增超过最大值或递减超过 0 时的行为。支持四种可能的操作：
+     <dl>
+      <dt>
+       <!-- Wrap around -->
+       环绕
+      </dt>
+      <dd>
+       <!-- The next value is 0 (if incrementing - the maximum value if decrementing) -->
+       下一个值为 0（如果递增 - 如果递减则为最大值）
+      </dd>
+      <dt>
+       <!-- Stay at value -->
+       保持价值
+      </dt>
+      <dd>
+       <!-- The counter's value remains at the maximum (or 0 if decrementing) -->
+       计数器的值保持最大值（如果递减则为 0）
+      </dd>
+      <dt>
+       <!-- Continue counting -->
+       继续计数
+      </dt>
+      <dd>
+       <!-- The counter continues incrementing/decrementing, keeping the number of bits as provided by the Data Bits attribute -->
+       计数器继续递增/递减，保持数据位属性提供的位数
+      </dd>
+      <dt>
+       <!-- Load next value -->
+       加载下一个值
+      </dt>
+      <dd>
+       <!-- The next value is loaded from the D input. -->
+       下一个值从 D 输入加载。
+      </dd>
+     </dl>
+    </dd>
+    <dt>
+     <!-- Trigger -->
+     扳机
+    </dt>
+    <dd>
+     <!-- Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the counter should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should update at the instant the clock falls from 1 to 0. -->
+     配置如何解释时钟输入。
+     <q>
+      上升沿
+     </q>
+     值表示计数器应在时钟从0上升到1的瞬间更新其值。
+     <q>
+      下降沿
+     </q>
+     值表示应在时钟从0上升到1的瞬间更新其值 时钟从 1 落到 0。
+    </dd>
+    <dt>
+     <!-- Label -->
+     标签
+    </dt>
+    <dd>
+     <!-- The text within the label associated with the component. -->
+     与组件关联的标签内的文本。
+    </dd>
+    <dt>
+     <!-- Label Font -->
+     标签字体
+    </dt>
+    <dd>
+     <!-- The font with which to render the label. -->
+     用于呈现标签的字体。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- Clicking the counter brings keyboard focus to the component (indicated by a red rectangle), and typing hexadecimal digits will change the value stored in the counter. -->
+    单击计数器会将键盘焦点移至组件（由红色矩形表示），并且键入十六进制数字将更改存储在计数器中的值。
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- Allows the label associated with the component to be edited. -->
+    允许编辑与组件关联的标签。
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

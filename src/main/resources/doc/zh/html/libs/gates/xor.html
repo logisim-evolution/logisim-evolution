@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- XOR/XNOR/Odd Parity/Even Parity Gate -->
+   异或门、同或门、奇校验、偶校验
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansxorgate.png" width="32"/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansxnorgate.png" width="32"/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansparityoddgate.png" width="32"/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansparityevengate.png" width="32"/>
+       <br/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecxorgate.png" width="32"/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecxnorgate.png" width="32"/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecparityoddgate.png" width="32"/>
+       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecparityevengate.png" width="32"/>
+      </td>
+      <td>
+       <h1>
+        <!-- <em>XOR/XNOR/<br>Odd Parity/Even Parity Gate</em> -->
+        <em>
+         异或/异或非/
+         <br/>
+         奇校验/偶校验门
+        </em>
+       </h1>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Gates</a> -->
+       <a href="index.html">
+        门
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 1 for XOR/Odd/Even; 2.0 Beta 6 for XNOR
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <table>
+        <tbody>
+         <tr>
+          <th>
+          </th>
+          <th width="50">
+           XOR
+          </th>
+          <th width="50">
+           XNOR
+          </th>
+          <th width="50">
+           Odd Parity
+          </th>
+          <th width="50">
+           Even Parity
+          </th>
+         </tr>
+         <tr>
+          <td align="left" valign="middle">
+           ANSI:
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ansxorgate.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ansxnorgate.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/oddparitygate.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/evenparitygate.png" width="64"/>
+          </td>
+         </tr>
+         <tr>
+          <td align="left" valign="middle">
+           IEC:
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/iecxorgate.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/iecxnorgate.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/oddparitygate.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/evenparitygate.png" width="64"/>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- The XOR, XNOR, Even Parity, and Odd Parity gates each compute the respective function of the inputs, and emit the result on the output. -->
+    XOR、XNOR、偶校验和奇校验门各自计算输入的相应函数，并在输出上发出结果。
+   </p>
+   <p>
+    <!-- By default, any inputs that are left unconnected are ignored — that's if the input truly has nothing attached to it, not even a wire. In this way, you can insert a 5-input gate but only attach two inputs, and it will work as a 2-input gate; this relieves you from having to worry about configuring the number of inputs every time you create a gate. (If all inputs are unconnected, the output is the error value <em>X</em>.) Some users, though, prefer that Logisim insist that all inputs be connected, since this is what corresponds to real-world gates. You can enable this behavior by going to the Project &gt; Options… menu item, selecting the Simulation tab, and selecting <q>Error for undefined inputs</q> for <q>Gate Output When Undefined.</q> -->
+    默认情况下，任何未连接的输入都会被忽略——也就是说，如果输入确实没有任何连接，甚至没有电线。 这样，您可以插入一个 5 输入门，但只附加两个输入，它将作为 2 输入门工作； 这使您不必担心每次创建门时配置输入数量。 （如果所有输入均未连接，则输出为错误值
+    <em>
+     X
+    </em>
+    。）不过，有些用户更喜欢 Logisim-evolution 坚持所有输入均已连接，因为这对应于现实世界的门。 您可以通过转到“项目”&gt;“启用此行为”。 选项…菜单项，选择“模拟”选项卡，然后为
+    <q>
+     未定义时的门输出选择
+     <q>
+      未定义输入的错误
+     </q>
+     。
+    </q>
+   </p>
+   <p>
+    <!-- The two-input truth table for the gates is the following. -->
+    门的双输入真值表如下。
+   </p>
+   <center>
+    <table>
+     <tbody>
+      <tr>
+       <th>
+        <var>
+         x
+        </var>
+       </th>
+       <th>
+        <var>
+         y
+        </var>
+       </th>
+       <th>
+        XOR
+       </th>
+       <th>
+        XNOR
+       </th>
+       <th>
+        Odd
+       </th>
+       <th>
+        Even
+       </th>
+      </tr>
+      <tr>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+      </tr>
+      <tr>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+      </tr>
+      <tr>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+      </tr>
+      <tr>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+       <td align="center">
+        0
+       </td>
+       <td align="center">
+        1
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </center>
+   <p>
+    <!-- As you can see, the Odd Parity gate and the XOR gate behave identically with two inputs; similarly, the even parity gate and the XNOR gate behave identically. But if there are more than two specified inputs, the XOR gate will emit 1 only when there is exactly one 1 input, whereas the Odd Parity gate will emit 1 if there are an odd number of 1 inputs. The XNOR gate will emit 1 only when there is <em>not</em> exactly one 1 input, while the Even Parity gate will emit 1 if there are an even number of 1 inputs. The XOR and XNOR gates include an attribute titled Multiple-Input Behavior that allow them to be configured to use the Odd Parity and Even Parity behavior. -->
+    正如您所看到的，奇奇偶校验门和异或门对于两个输入的行为相同； 类似地，偶校验门和异或非门的行为相同。 但如果有两个以上的指定输入，则仅当恰好有一个 1 输入时，异或门才会发出 1，而如果有奇数个 1 输入，则奇奇偶校验门才会发出 1。 仅当
+    <em>
+     不
+    </em>
+    恰好有一个 1 输入时，异或非门才会发出 1，而偶校验门在有偶数个 1 输入时才会发出 1。 XOR 和 XNOR 门包括一个名为多输入行为的属性，允许将它们配置为使用奇校验和偶校验行为。
+   </p>
+   <p>
+    <!-- If any of the inputs are the error value (e.g., if conflicting values are coming into the same wire) or floating, then the output will be the error value. -->
+    如果任何输入是错误值（例如，如果冲突的值进入同一线路）或浮动，则输出将是错误值。
+   </p>
+   <p>
+    <!-- The multi-bit versions of each gate will perform its one-bit transformation bitwise on its inputs. -->
+    每个门的多位版本将对其输入按位执行其一位转换。
+   </p>
+   <p>
+    <!-- <strong>Note:</strong> Many authorities contend that the shaped XOR gate's behavior should correspond to the odd parity gate, but there is not agreement on this point. Logisim's default behavior for XOR gates is based on the IEEE 91 standard. It is also consistent with the intuitive meaning underlying the term <em>exclusive or</em>: A waiter asking whether you want a side dish of mashed potatoes, carrots, peas, or cole slaw will only accept one choice, not three, whatever some authorities may tell you. (I must admit, though, that I have not subjected this statement to a rigorous test.) You can configure the XOR and XNOR gates to use parity by changing its <q>Multiple-Input Behavior</q> attribute. -->
+    <strong>
+     注意：
+    </strong>
+    许多权威人士认为异或门的行为应该与奇奇偶校验门相对应，但在这一点上尚未达成一致。 Logisim 异或门的默认行为基于 IEEE 91 标准。 这也与术语“独家或”的直观含义一致：服务员询问您是否想要一份土豆泥、胡萝卜、豌豆或凉拌卷心菜的配菜，他只会接受一种选择，而不是三种， 无论一些权威人士可能告诉你什么。 （不过，我必须承认，我没有对该语句进行严格的测试。）您可以通过更改其
+    <q>
+     多输入行为
+    </q>
+    属性来配置异或门和异或非门以使用奇偶校验。
+   </p>
+   <h2>
+    <!-- Pins (assuming component faces east) -->
+    引脚（假设元件朝东）
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge (inputs, bit width according to Data Bits attribute) -->
+     西边（输入，位宽根据数据位属性）
+    </dt>
+    <dd>
+     <p>
+      <!-- The inputs into the component. There will be as many of these as specified in the Number of Inputs attribute. -->
+      元件的输入。 输入数量属性中指定的数量将相同。
+     </p>
+     <p>
+      <!-- Note that if you are using shaped gates, the west side of XOR and XNOR gates will be curved. Nonetheless, the input pins are in a line. Logisim will draw short stubs illustrating this; and if you overshoot a stub, it will silently assume that you did not mean to overshoot it. In "printer view", these stubs will not be drawn unless they are connected to wires. -->
+      请注意，如果您使用异形门，异或门和异或非门的西侧将是弯曲的。 尽管如此，输入引脚还是排成一行。 Logisim 将绘制短存根来说明这一点； 如果你超过了一个存根，它会默默地认为你并不是故意超过它的。 在“打印机视图”中，除非将这些存根连接到电线，否则不会绘制这些存根。
+     </p>
+    </dd>
+    <dt>
+     <!-- East edge (output, bit width according to Data Bits attribute) -->
+     东边（输出，位宽根据数据位属性）
+    </dt>
+    <dd>
+     <p>
+      <!-- The gate's output, whose value is computed based on the current inputs as described above. -->
+      门的输出，其值是根据如上所述的当前输入计算的。
+     </p>
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Number of Inputs</q> attribute, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, and the arrow keys alter its <q>Facing</q> attribute. -->
+    当选择或添加组件时，数字“0”到“9”会更改其
+    <q>
+     输入数量
+    </q>
+    属性，Alt-0到Alt-9会更改其
+    <q>
+     数据位
+    </q>
+    属性，方向键更改其
+    <q>
+     方向
+    </q>
+    属性。
+   </p>
+   <dl>
+    <dt>
+     <!-- Facing -->
+     方向
+    </dt>
+    <dd>
+     <!-- The direction of the component (its output relative to its inputs). -->
+     元件的方向（其输出相对于其输入）。
+    </dd>
+    <dt>
+     <!-- Data Bits -->
+     数据位
+    </dt>
+    <dd>
+     <!-- The bit width of the component's inputs and outputs. -->
+     元件输入和输出的位宽。
+    </dd>
+    <dt>
+     <!-- Gate Size -->
+     门大小
+    </dt>
+    <dd>
+     <!-- Determines whether to draw a wider or narrower version of the component. This does not affect the number of inputs, which is specified by the Number of Inputs attribute; however, if the number of inputs exceeds 3 (for a narrow component) or 5 (for a wide component), then the gate will be drawn with "wings" to be able to accommodate the number of inputs requested. -->
+     确定是否绘制较宽或较窄版本的元件。 这不会影响输入数量，输入数量由“输入数量”属性指定； 但是，如果输入数量超过 3 个（对于窄组件）或 5 个（对于宽元件），则门将带有“翅膀”，以便能够容纳所请求的输入数量。
+    </dd>
+    <dt>
+     <!-- Number of Inputs -->
+     输入数量
+    </dt>
+    <dd>
+     <!-- Determines how many pins to have for the component on its west side. -->
+     确定元件在其西侧有多少个引脚。
+    </dd>
+    <dt>
+     <!-- Output Value -->
+     输出值
+    </dt>
+    <dd>
+     <!-- Indicates how false and true results should be translated into output values. By default, false is indicated by a low voltage (0) and true by a high voltage (1), but one or the other can be replaced by a high-impedance (<q>floating</q>) value instead. This allows wired-or and wired-and onnections, as illustrated in the <a href="basic.html">AND/OR/NAND/NOR Gate documentation</a>. -->
+     指示如何将错误和正确的结果转换为输出值。 默认情况下，假由低电压 (0) 表示，真由高电压 (1) 表示，但其中之一可以用高阻抗（
+     <q>
+      浮动
+     </q>
+     ）值代替。 这允许有线或以及有线和连接，如
+     <a href="basic.html">
+      AND/OR/NAND/NOR Gate文档
+     </a>
+     中所示。
+    </dd>
+    <dt>
+     <!-- Label -->
+     标签
+    </dt>
+    <dd>
+     <!-- The text within the label associated with the gate. -->
+     与门关联的标签内的文本。
+    </dd>
+    <dt>
+     <!-- Label Font -->
+     标签字体
+    </dt>
+    <dd>
+     <!-- The font with which to render the label. -->
+     用于呈现标签的字体。
+    </dd>
+    <dt>
+     <!-- Multiple-Input Behavior (XOR and XNOR only) -->
+     多输入行为（仅限 XOR 和 XNOR）
+    </dt>
+    <dd>
+     <!-- When three or more inputs are provided, the XOR/XNOR gate's output will either be based on whether exactly one input is 1 (the default) or an odd number of inputs are 1. -->
+     当提供三个或更多输入时，XOR/XNOR 门的输出将基于是否恰好有一个输入为 1（默认）或奇数个输入为 1。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- Allows the label associated with the gate to be edited. -->
+    允许编辑与门关联的标签。
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Hex Digit Display -->
+   十六进制数码显示
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/hexdig.png" alt="#########"> <em>Hex Digit Display</em> -->
+    <img alt="#########" class="iconlibs" src="../../../../icons/6464/hexdig.png"/>
+    <em>
+     十六进制数码显示
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Input/Output</a> -->
+       <a href="index.html">
+        输入/输出
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.2.0
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="Working" class="appearancelibs" height="64" src="../../../../img-libs/hexdig.png" width="64"/>
+       <img alt="No valid input" class="appearancelibs" height="64" src="../../../../img-libs/hexdigoff.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- Using a seven-segment display, shows the hexadecimal digit corresponding to the four-bit input. If any of the inputs are not 0/1 (either floating or error), then the display stays blank (all segments off). A separate one-bit input controls the display of the decimal point.  -->
+    使用七段显示器，显示与四位输入相对应的十六进制数字。 如果任何输入不是 0/1（浮动或错误），则显示保持空白（所有段关闭）。 一个单独的一位输入控制小数点的显示。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- South edge, first from left (input, bit width 4) -->
+     南边缘，左起第一个（输入，位宽 4）
+    </dt>
+    <dd>
+     <!-- This input is interpreted as an unsigned four-bit number, and the corresponding hexadecimal digit is displayed. -->
+     该输入被解释为无符号的四位数字，并显示相应的十六进制数字。
+    </dd>
+    <dt>
+     <!-- South edge, second from left (input, bit width 1) -->
+     南边缘，左数第二个（输入，位宽 1）
+    </dt>
+    <dd>
+     <!-- Controls the decimal point. If this is left unconnected, the decimal point remains off. -->
+     控制小数点。 如果未连接，则小数点保持关闭状态。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">On Color.</b> -->
+      <b class="property">
+       关于颜色。
+      </b>
+     </dt>
+     <dd>
+      <!-- The color with which to draw the display segments and decimal point when they are on. (red by default). -->
+      当显示段和小数点打开时用于绘制显示段和小数点的颜色。 （默认为红色）。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Off Color.</b> -->
+      <b class="property">
+       颜色。
+      </b>
+     </dt>
+     <dd>
+      <!-- The color with which to draw the display segments and decimal point when they are off. (grey By default). -->
+      当显示段和小数点关闭时用于绘制显示段和小数点的颜色。 （默认为灰色）。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Background</b>  -->
+      <b class="propertie">
+       背景
+      </b>
+     </dt>
+     <dd>
+      <!-- The color with which to draw the display's background (transparent by default). -->
+      用于绘制显示器背景的颜色（默认为透明）。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Has deciaml point:</b> -->
+      <b class="property">
+       有小数点：
+      </b>
+     </dt>
+     <dd>
+      <!-- If <q>yes</q> the decimal point is available, if <q>no</q> the decimal point is hidden. -->
+      如果
+      <q>
+       yes
+      </q>
+      小数点可用，如果
+      <q>
+       no
+      </q>
+      小数点隐藏。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label </b> -->
+      <b class="propertie">
+       标签
+      </b>
+     </dt>
+     <dd>
+      <!-- The text within the label associated with the component. -->
+      与组件关联的标签内的文本。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label Location </b> -->
+      <b class="propertie">
+       标签位置
+      </b>
+     </dt>
+     <dd>
+      <!-- The location of the label relative to the component. -->
+      标签相对于组件的位置。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label Font </b> -->
+      <b class="propertie">
+       标签字体
+      </b>
+     </dt>
+     <dd>
+      <!-- The font with which to render the label. -->
+      用于呈现标签的字体。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label visible </b> -->
+      <b class="propertie">
+       标签可见
+      </b>
+     </dt>
+     <dd>
+      <!-- Display or not the label. -->
+      显示或不显示标签。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

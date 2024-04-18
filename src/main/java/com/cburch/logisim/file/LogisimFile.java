@@ -18,6 +18,7 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.base.BaseLibrary;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -70,6 +72,48 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     }
   }
 
+  private static class AutosaveThread extends UniquelyNamedThread {
+    private static int threadCount = 0;
+
+    private boolean run;
+    private LogisimFile file;
+
+    public AutosaveThread(LogisimFile file) {
+      super("AutosaveThread-" + threadCount++);
+      this.file = file;
+      run = true;
+    }
+
+    @Override
+    public void run() {
+      while (run) {
+        try {
+          sleep(AppPreferences.AUTOSAVE_INTERVAL.get() * 1000);
+        } catch (InterruptedException ignored) {
+          continue; // If thread is interrupted go to beginning of loop immediately
+        }
+        if (!file.isAutosaveDirty) continue;
+        if (file.getLoader().autosave(file)) {
+          file.isAutosaveDirty = false;
+        } else {
+          file.loader.showError(S.get("autosaveError", file.name));
+          run = false;
+        }
+        // Clear interrupted status before next iteration
+        interrupted();
+      }
+    }
+
+    public void abort(boolean delete) throws InterruptedException {
+      run = false; // Prepare the thread to stop
+      this.interrupt(); // Notify the thread of it
+      if (delete) { // If we want to delete the autosave
+        this.join(); // Wait for the thread to exit, so another save won't be generated
+        file.getLoader().deleteAutosave(); // Then delete the autosave
+      }
+    }
+  }
+
   private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
   private final LinkedList<String> messages = new LinkedList<>();
   private final Options options = new Options();
@@ -79,9 +123,16 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   private Circuit main = null;
   private String name;
   private boolean isDirty = false;
+  private boolean isAutosaveDirty = false;
+  private AutosaveThread autosaveThread = null;
+  private boolean autosaveLoaded = false;
 
   LogisimFile(Loader loader) {
     this.loader = loader;
+    if (AppPreferences.AUTOSAVE_ENABLED.getBoolean()) {
+      this.autosaveThread = new AutosaveThread(this);
+      autosaveThread.start();
+    }
 
     // Creates the default project name, adding an underscore if needed
     name = S.get("defaultProjectName");
@@ -163,10 +214,32 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public static LogisimFile load(File file, Loader loader) throws IOException {
-    final var inputStream = new FileInputStream(file);
+    // Get the Path of this file's autosave if it exists
+    final var autosave = Loader.findAutosaveFile(file);
+    var loadFile = file; // Select the given file to be opened by default
+    var autosaveLoading = false;
+
+    if (autosave.isPresent()) { // If autosave is present prompt user about it
+      final var res = loader.showOptions(S.get("contentHandleAutosave", file.getName()),
+          S.get("titleHandleAutosave"), new String[] {S.get("loadOption"), S.get("discardOption")},
+          0);
+
+      if (res == JOptionPane.CLOSED_OPTION) { // If the prompt was closed do nothing and fail
+        return null;
+      } else if (res == 0) { // If load is selected select the autosave to be loaded
+        loadFile = autosave.get(); // Set load file to the autosave path
+        loader.setAutosavePath(autosave.get());
+        autosaveLoading = true; // Also set this to true to remember an autosave was loaded
+      } else if (res == 1) {
+        autosave.get().delete();
+      }
+    }
+
+    LogisimFile result = null;
+    FileInputStream inputStream = new FileInputStream(loadFile);
     Throwable firstExcept = null;
     try {
-      return loadSub(inputStream, loader, file);
+      result = loadSub(inputStream, loader, file);
     } catch (Throwable t) {
       firstExcept = t;
     } finally {
@@ -176,21 +249,25 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     // We'll now try to do it using a reader. This is to work around
     // Logisim versions prior to 2.5.1, when files were not saved using
     // UTF-8 as the encoding (though the XML file reported otherwise).
-    try {
-      final var readerInputStream = new ReaderInputStream(new FileReader(file), "UTF8");
-      return loadSub(readerInputStream, loader, file);
-    } catch (Exception t) {
-      firstExcept.printStackTrace();
-      loader.showError(S.get("xmlFormatError", firstExcept.toString()));
-    } finally {
+    if (firstExcept != null) {
       try {
-        inputStream.close();
-      } catch (Exception ignored) {
-        // Do nothing.
+        final var readerInputStream = new ReaderInputStream(new FileReader(loadFile), "UTF8");
+        result = loadSub(readerInputStream, loader, file);
+      } catch (Exception t) {
+        firstExcept.printStackTrace();
+        loader.showError(S.get("xmlFormatError", firstExcept.toString()));
+      } finally {
+        try {
+          inputStream.close();
+        } catch (Exception ignored) {
+          // Do nothing.
+        }
       }
     }
 
-    return null;
+    // Save to the resulting LogisimFile that it was loaded from an autosave
+    if (result != null) result.autosaveLoaded = autosaveLoading;
+    return result;
   }
 
   public static LogisimFile load(InputStream in, Loader loader) throws IOException {
@@ -574,6 +651,11 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       isDirty = value;
       fireEvent(LibraryEvent.DIRTY_STATE, value ? Boolean.TRUE : Boolean.FALSE);
     }
+    // The autosave dirty value must be set to dirty at the same time as for normal
+    // saves, and at a normal save the autosave will also become clean
+    if (isAutosaveDirty != value) {
+      isAutosaveDirty = value;
+    }
   }
 
   public void setMainCircuit(Circuit circuit) {
@@ -612,5 +694,21 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       loader.showError(err);
     }
   }
-  
+
+  void interruptAutosaveThread() {
+    if (autosaveThread == null) return;
+    autosaveThread.interrupt();
+  }
+
+  public void stopAutosaveThread(boolean delete) {
+    if (autosaveThread == null) return;
+    try {
+      autosaveThread.abort(delete);
+    } catch (InterruptedException ignored) {
+    }
+  }
+
+  public boolean isAutosaveLoaded() {
+    return autosaveLoaded;
+  }
 }

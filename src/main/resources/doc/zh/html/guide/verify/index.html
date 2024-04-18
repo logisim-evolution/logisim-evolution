@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Command-line verification -->
+   命令行验证
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Command-line verification -->
+    命令行验证
+   </h1>
+   <blockquote>
+    <!-- <em>Subsections:</em><br> -->
+    <em>
+     小节：
+    </em>
+    <br/>
+    <!-- <a href="sub.html">Substituting libraries</a><br> -->
+    <a href="sub.html">
+     替换库
+    </a>
+    <br/>
+    <!-- <a href="other.html">Other verification options</a><br> -->
+    <a href="other.html">
+     其他验证选项
+    </a>
+    <br/>
+    <!-- <a href="multi.html">Testing multiple files</a><br> -->
+    <a href="multi.html">
+     测试多个文件
+    </a>
+    <br/>
+    <!-- <a href="test.html">Test Vectors</a> -->
+    <a href="test.html">
+     测试载体
+    </a>
+   </blockquote>
+   <p>
+    <!-- Logisim includes basic support for executing circuits from the command-line. This is intended both to help with scripted verification of circuit designs and to help instructors perform automated testing of students' solutions. -->
+    Logisim-evolution 包括对从命令行执行电路的基本支持。 这样做的目的是帮助对电路设计进行脚本验证，并帮助教师对学生的解决方案进行自动测试。
+   </p>
+   <p>
+    <!-- We'll start by seeing how to execute a circuit from the command line. For our example, we'll suppose we've built the below circuit in a file named <tt>adder-test.circ</tt>. It uses a two-bit adder as a subcircuit and iterates using a counter through all 16 possible inputs to it. -->
+    我们将首先了解如何从命令行执行电路。 对于我们的示例，我们假设我们已在名为
+    <tt>
+     adder-test.circ
+    </tt>
+    的文件中构建了以下电路。 它使用两位加法器作为子电路，并使用计数器迭代所有 16 个可能的输入。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/verify-adder-test.png"/>
+   </p>
+   <p>
+    <!-- After this circuit has been built, we then execute Logisim from the command line, providing the filename of the project and the <b class=propertie>-tty</b> option with the &lt;<b class=propertie>table</b> parameter. -->
+    构建此电路后，我们从命令行执行 Logisim-evolution，提供项目的文件名和
+    <b class="propertie">
+     -tty
+    </b>
+    选项以及 &lt;
+    <b class="propertie">
+     table
+    </b>
+    参数。
+   </p>
+   <blockquote>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-filename.jar adder-test.circ -tty table
+     </tt>
+    </div>
+   </blockquote>
+   <p>
+    <!-- Without bringing up any windows, Logisim loads the circuit and begins to execute it, ticking any clocks as fast as it can while completing the propagation between each tick. After each propagation is completed, Logisim loads the current values of the output pins; if any have changed from the previous propagation, then all values are displayed in tab-delimited format. If there is an output pin labeled with the special word <var>halt</var> (case sensitive), its output is not displayed — but once the pin's value reaches 1 after a propagation is completed, Logisim ends the simulation. -->
+    在不打开任何窗口的情况下，Logisim-evolution 加载电路并开始执行它，尽可能快地滴答任何时钟，同时完成每个滴答之间的传播。 每次传播完成后，Logisim-evolution 加载输出引脚的当前值； 如果与之前的传播相比有任何更改，则所有值都以制表符分隔的格式显示。 如果有一个输出引脚标有特殊单词
+    <var>
+     halt
+    </var>
+    （区分大小写），则不会显示其输出 - 但一旦传播完成后该引脚的值达到 1，Logisim-evolution 就会结束模拟。
+   </p>
+   <p>
+    <!-- For our example, Logisim displays the table below. Because we have two output pins corresponding to the two inputs <var>a</var> and <var>b</var> into the two-bit adder, these outputs are included as the first two columns of the output. And there is another output pin <var>sum</var> corresponding to the two-bit adder's output, so it is the third column. The columns are ordered left-to-right according to the top-down ordering within the circuit. -->
+    对于我们的示例，Logisim-evolution 显示下表。 因为我们有两个输出引脚对应于两位加法器的两个输入
+    <var>
+     a
+    </var>
+    和
+    <var>
+     b
+    </var>
+    ，所以这些输出被包含为输出的前两列。 另外还有一个输出引脚
+    <var>
+     sum
+    </var>
+    对应两位加法器的输出，所以是第三列。 这些列根据电路内自上而下的顺序从左到右排序。
+   </p>
+   <blockquote>
+    <pre>00      00      000
+01      00      001
+10      00      010
+11      00      011
+00      01      001
+01      01      010
+10      01      011
+11      01      100
+00      10      010
+01      10      011
+10      10      100
+11      10      101
+00      11      011
+01      11      100
+10      11      101
+11      11      110
+</pre>
+   </blockquote>
+   <p>
+    <!-- <b>Next:</b> <a href="sub.html">Substituting libraries</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="sub.html">
+     替换库
+    </a>
+    .
+   </p>
+  </div>
+ </body>
+</html>
