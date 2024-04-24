@@ -237,7 +237,7 @@ public class MenuSimulate extends Menu {
     upStateMenu.setText(S.get("simulateUpStateMenu"));
     log.setText(S.get("simulateLogItem"));
     test.setText(S.get("simulateTestItem"));
-    assemblyWindow.setText("Assembly viewer");
+    assemblyWindow.setText(S.get("simulateAssemblyViewer"));
   }
 
   private void recreateStateMenu(JMenu menu, List<CircuitStateMenuItem> items, int code) {

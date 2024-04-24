@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Probe -->
+   探针
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/probe.png" width="32"/>
+    <!-- <em> Probe</em> -->
+    <em>
+     探针
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Wiring</a> -->
+       <a href="index.html">
+        线路
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0.3 (in Base library, moved to Wiring in 2.7.0)
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td>
+       <table>
+        <tbody>
+         <tr>
+          <th colspan="2">
+           <!-- Arrow -->
+           箭头形状
+          </th>
+          <th colspan="2">
+           <!-- Classic -->
+           经典形状
+          </th>
+         </tr>
+         <tr>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/probe0.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/probe1.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/probe2.png" width="64"/>
+          </td>
+          <td>
+           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/probe3.png" width="64"/>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- A probe is an element that simply displays the value at a given point in a circuit. It does not itself interact with other components. -->
+    探针是一种简单地显示电路中给定点的值的元件。 它本身不与其他元件交互。
+   </p>
+   <p>
+    <!-- In most respects, the probe component duplicates the functionality found in a <a href="../wiring/pin.html">Pin component</a> configured as an output pin. The primary difference is that if the circuit is used as a subcircuit component, then an output pin will be a part of that interface, whereas a probe is not. They also are different in that the probe does not have a Data Bits attribute to be configured: The bit width is inferred from whatever value it happens to see on its input. Graphically, they are similar but have slightly different borders: A pin has a thick, black border, whereas a probe has a thin, gray border. -->
+    在大多数方面，探针元件复制了配置为输出引脚的
+    <a href="../wiring/pin.html">
+     引脚元件
+    </a>
+    中的功能。 主要区别在于，如果电路用作子电路元件，则输出引脚将成为该接口的一部分，而探针则不是。 它们的不同之处还在于探针没有要配置的数据位属性：位宽度是根据它在输入上碰巧看到的任何值推断出来的。 从图形上看，它们相似，但边框略有不同：引脚具有粗的黑色边框，而探针具有细的灰色边框。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <p>
+    <!-- A probe component has only one pin, which will acts as an input to the probe. The width that this pin accepts is adaptive: The probe will adapt to inputs of any width. -->
+    探针元件只有一个引脚，用作探针的输入。 该引脚接受的宽度是自适应的：探针将适应任何宽度的输入。
+   </p>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
+    当选择或添加元件时，箭头键会更改其
+    <b class="propertie">
+     方向
+    </b>
+    属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Facing </b> -->
+      <b class="propertie">
+       方向
+      </b>
+     </dt>
+     <dd>
+      <!-- The side of the component where its input pin should be. -->
+      元件输入引脚所在的一侧。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Radix</b> -->
+      <b class="propertie">
+       基数
+      </b>
+     </dt>
+     <dd>
+      <!-- Allows you to define the base in which the values will be represented.<br> -->
+      允许您定义表示值的基数。
+      <br/>
+      <!-- Example for 1010 in binary<br> -->
+      二进制 1010 的示例
+      <br/>
+      Binary :
+      <b>
+       1010
+       <sub>
+        b
+       </sub>
+      </b>
+      <br/>
+      Octal :
+      <b>
+       12
+       <sub>
+        o
+       </sub>
+      </b>
+      <br/>
+      Signed decimal :
+      <b>
+       -6
+       <sub>
+        s
+       </sub>
+      </b>
+      <br/>
+      Unsigned deciaml :
+      <b>
+       10
+       <sub>
+        u
+       </sub>
+      </b>
+      <br/>
+      Hexadecimal :
+      <b>
+       A
+       <sub>
+        h
+       </sub>
+      </b>
+      <br/>
+      <!-- &emsp;Float&emsp;: <b>1.4E-44<sub>f</sub> </b> Only in 32 or 64 bits 1 or 0. If not present the value <b>NaN<sub>f</sub></b> <br> -->
+      Float :
+      <b>
+       1.4E-44
+       <sub>
+        f
+       </sub>
+      </b>
+      仅在 32 或 64 位中有值
+      <b>
+       NaN
+       <sub>
+        f
+       </sub>
+      </b>
+      <br/>
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label </b> -->
+      <b class="propertie">
+       标签
+      </b>
+     </dt>
+     <dd>
+      <!-- The text within the label associated with the component. -->
+      与元件关联的标签内的文本,注意标签的文本：必须以字母开头，只能包含字符[a-Za-Z_0-9]，不能包含多个连接的“_”，不能以“_”结尾，不能是保留的 VHDL 关键字，不能是保留的 Verilog 关键字。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label Location </b> -->
+      <b class="propertie">
+       标签位置
+      </b>
+     </dt>
+     <dd>
+      <!-- The location of the label relative to the component. -->
+      标签位置与元件相关
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label Font </b> -->
+      <b class="propertie">
+       标签字体
+      </b>
+     </dt>
+     <dd>
+      <!-- The font with which to render the label. -->
+      用于设置标签的字体。
+     </dd>
+     <!-- <b class="propertie">Appearence </b> -->
+     <b class="propertie">
+      行为
+     </b>
+     <dd>
+      <!-- There are two types of appearance, CLassic Logisim and Arrow Shapes. See the examples at the top of the page -->
+      有两种外观类型：经典 Logisim 和箭头形状。 请参阅页面顶部的示例
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- Allows the label associated with the component to be edited. -->
+    允许编辑与元件关联的标签。
+   </p>
+   <p>
+    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- The Canvas -->
+   画布
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <!-- <b>Next:</b> <a href="tutor-wires.html">Step 0: Orienting yourself</a> -->
+    <b>
+     上一节:
+    </b>
+    <a href="index.html">
+     图形界面
+    </a>
+   </p>
+   <h1>
+    <!-- The Canvas -->
+    画布
+   </h1>
+   <p>
+    <!-- The <b class=reffig>canvas</b> is really the most visible part of Liogisim-evolution is where you draw your circuits and their symbol to finally simulate the operation. -->
+    <b class="reffig">
+    画布
+    </b>
+    是Liogisim-evolution中最明显的部分，您可以在其中绘制电路及其符号以最终模拟操作。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/tutorial-shot-labeled.png"/>
+   </p>
+   <p>
+    <!-- It is composed of only a few elements:<br> -->
+    它仅由几个元素组成：
+    <br/>
+   </p>
+   <p>
+    <!-- <b>Horizontal and vertical scroll bars</b> : They work as in most programs, just drag the sliders to move the view to other parts of the drawing. They can also be manipulated from the keyboard or mouse with the following combinations: -->
+    <b>
+     水平和垂直滚动条
+    </b>
+    ：它们的工作方式与大多数程序相同，只需拖动滑块即可将视图移动到绘图的其他部分。 还可以通过键盘或鼠标通过以下组合来操作它们：
+   </p>
+   <ul>
+    <!-- <li><b class="tkeybd">Mouse wheel</b> or keys <b class="tkeybd">up/down arrow</b> : vertical scrolling -->
+    <li>
+     <b class="tkeybd">
+      鼠标滚轮
+     </b>
+     或按键
+     <b class="tkeybd">
+      向上/向下箭头
+     </b>
+     ：垂直滚动
+    </li>
+    <li>
+     <!-- <b class="tkeybd">Shift-Mouse wheel</b> or keys <b class="tkeybd">right/left arrow</b>: horizontal scrolling -->
+     <b class="tkeybd">
+      Shift-鼠标滚轮
+     </b>
+     或按键
+     <b class="tkeybd">
+      右/左箭头
+     </b>
+     ：水平滚动
+    </li>
+    <!-- <li>Key <b class="tkeybd">PgUp</b> : go to the top of the page -->
+    <li>
+     按键
+     <b class="tkeybd">
+      PgUp
+     </b>
+     ：转到页面顶部
+    </li>
+    <!-- <li>Key <b class="tkeybd">PgDn</b> : go to bottom of page -->
+    <li>
+     键
+     <b class="tkeybd">
+      PgDn
+     </b>
+     ：转到页面底部
+    </li>
+   </ul>
+   <p>
+    <!-- <b>Range indicators</b> when the schematic is larger than the display area of the indicators are displayed. The guides displayed in the corners and / or on the sides indicate the directions where the drawing extends. Below is an example of the indicators on the top of the page. -->
+    <b>
+     范围指示器
+    </b>
+    当原理图大于指示器的显示区域时显示。 显示在角落和/或侧面的参考线指示绘图延伸的方向。 以下是页面顶部指标的示例。
+    <p align="center">
+     <img alt="#########" class="notscal" src="../../../../img-guide/camvasguide.png"/>
+     <p>
+      <!-- <p><b>The centering button</b>  <img class="notscal" src="../../../../img-guide/canvasrecenter.png" alt="#########"> It places the center of the diagram in the center of the work surface.<br> -->
+      <p>
+       <b>
+        居中按钮
+       </b>
+       <img alt="#### #####" class="notscal" src="../../../../img-guide/canvasrecenter.png"/>
+       它将图表的中心放置在工作表面的中心。
+       <br/>
+      </p>
+      <p>
+       <!-- <b>The zoom:</b> At the bottom left is the control of the zoom factor. You can change it by dragging the cursor or using one of the two buttons to the left and right of the rate or with <b class="tkeybd">Ctrl - mouse wheel</b> in the work area. -->
+       <b>
+        缩放：
+       </b>
+       左下角是缩放系数的控件。 您可以通过拖动光标或使用速率左侧和右侧的两个按钮之一或使用工作区域中的
+       <b class="tkeybd">
+        Ctrl - 鼠标滚轮
+       </b>
+       来更改它。
+      </p>
+      <p align="center">
+       <img alt="#########" class="notscal" src="../../../../img-guide/zoom.png"/>
+      </p>
+      <p>
+       <!-- The button <b class="button"> 100% </b>:fits the zoom to display the diagram at its actual size.<br> -->
+       按钮
+       <b class="button">
+        100%
+       </b>
+       ：适合缩放以按实际大小显示图表。
+       <br/>
+       <!-- The button <b class="button"> Auto </b>: fits the zoom so that the whole diagram is visible.<br>        <b>The grid button :</b><img class=intxt src="../../../../img-guide/buttongrid.png" alt="#########"> On the right of the zoom, Toggle mode alternately <b>"grid displayed"</b> in the mode <b>"invisible grid"</b>. -->
+       按钮
+       <b class="button">
+        自动
+       </b>
+       ：适合缩放，以便整个图表可见。
+       <br/>
+       <b>
+        网格按钮：:
+       </b>
+       <img alt="#########" class="intxt" src="../../../../img-guide/buttongrid.png"/>
+       在缩放右侧，交替切换模式
+       <b>
+        “网格显示”
+       </b>
+       模式
+       <b>
+        “隐形网格”
+       </b>
+       。
+      </p>
+      <p>
+       <!-- <b>Next:</b> <a href="gui-menu.html">The menus</a>. -->
+       <b>
+        下一节:
+       </b>
+       <a href="gui-menu.html">
+        菜单
+       </a>
+       .
+      </p>
+     </p>
+     <p>
+     </p>
+     <p>
+     </p>
+     <p>
+     </p>
+    </p>
+   </p>
+  </div>
+ </body>
+</html>

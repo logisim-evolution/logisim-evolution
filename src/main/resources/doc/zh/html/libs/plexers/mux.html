@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Multiplexer -->
+   复用器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/multiplexer.png" alt="#########" height="32" width="32"> <em>Multiplexer</em> -->
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/multiplexer.png" width="32"/>
+    <em>
+     复用器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Plexers</a> -->
+       <a href="index.html">
+        复用器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 11
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/mux.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- Copies an input on the west edge onto the output on the east edge; which of the inputs to copy is specified via the current value received through the input on the south edge. I find it useful to think of a multiplexer as analogous to a railroad switch, controlled by the select input. -->
+    将西边的输入复制到东边的输出； 要复制哪个输入是通过南边缘输入接收到的当前值指定的。 我发现将多路复用器视为类似于铁路开关，由选择输入控制是有用的。
+   </p>
+   <p>
+    <!-- (Incidentally, some authorities spell this <em>multiplex<strong>o</strong>r</em>, but <em>multiplex<strong>e</strong>r</em> is the predominant spelling.) -->
+    （顺便说一句，一些权威机构将其拼写为
+    <em>
+     Multiplex
+     <strong>
+      o
+     </strong>
+     r
+    </em>
+    ，但
+    <em>
+     Multiplex
+     <strong>
+      e
+     </strong>
+     r
+    </em>
+    是主要拼写。）
+   </p>
+   <h2>
+    <!-- Pins (assuming component faces east, select is bottom/left) -->
+    引脚（假设元件朝东，选择底部/左侧）
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge, variable number (inputs, bit width matches Data Bits attribute) -->
+     西边，可变数量（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- Data values, one of which is to be routed to the output. Each input data value is numbered, starting with 0 on the north. -->
+     数据值，其中之一将被路由到输出。 每个输入数据值均已编号，从北面的 0 开始。
+    </dd>
+    <dt>
+     <!-- East edge (output, bit width matches Data Bits attribute) -->
+     东边（输出，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- The output value will match the input values on the west edge whose number is the same as the value currently received through the select input on the south. If the select input contains any unspecified (i.e., floating) bits, then the output is completely floating. -->
+     输出值将与西边的输入值匹配，其编号与当前通过南边的选择输入接收到的值相同。 如果选择输入包含任何未指定（即浮动）位，则输出完全浮动。
+    </dd>
+    <dt>
+     <!-- South edge, left side indicated by gray circle (input, bit width matches Select Bits attribute) -->
+     南边缘，灰色圆圈表示的左侧（输入，位宽与 Select Bits 属性匹配）
+    </dt>
+    <dd>
+     <!-- Select input: The value of this input determines which input on the west edge to route to the output on the east edge. -->
+     选择输入：此输入的值确定将西边缘的哪个输入路由到东边缘的输出。
+    </dd>
+    <dt>
+     <!-- South edge, right side (input, bit width 1) -->
+     南边，右侧（输入，位宽1）
+    </dt>
+    <dd>
+     <!-- Enable: When 0, the multiplexer's output consists of all floating bits, regardless of the data and select inputs. -->
+     启用：为 0 时，多路复用器的输出由所有浮动位组成，无论数据和选择输入如何。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, and the arrow keys alter its <q>Facing</q> attribute. -->
+    当选择或添加元件时，数字“1”到“4”会更改其
+    <q>
+     选择位
+    </q>
+    属性，Alt-0到Alt-9会更改其
+    <q>
+     数据位
+    </q>
+    属性 ，方向键更改其
+    <q>
+     Facing
+    </q>
+    属性。
+   </p>
+   <dl>
+    <dt>
+     <!-- Facing -->
+     方向
+    </dt>
+    <dd>
+     <!-- The direction of the component (its output relative to its input). -->
+     元件的方向（其输出相对于其输入）。
+    </dd>
+    <dt>
+     <!-- Select Location -->
+     选择位置
+    </dt>
+    <dd>
+     <!-- The location of the select and enable lines relative to the component. -->
+     选择线和启用线相对于组件的位置。
+    </dd>
+    <dt>
+     <!-- Select Bits -->
+     选择位
+    </dt>
+    <dd>
+     <!-- The bit width of the component's select input on its south edge. The number of inputs to the multiplexer will be 2<sup><var>selectBits</var></sup>. -->
+     元件南边缘的选择输入的位宽度。 多路复用器的输入数量将为 2
+     <sup>
+      <var>
+       selectBits
+      </var>
+     </sup>
+     。
+    </dd>
+    <dt>
+     <!-- Data Bits -->
+     数据位
+    </dt>
+    <dd>
+     <!-- The bit width of the data being routed through the multiplexer. -->
+     通过多路复用器路由的数据的位宽度。
+    </dd>
+    <dt>
+     <!-- Disabled Output -->
+     禁用输出
+    </dt>
+    <dd>
+     <!-- Specifies what each bit of the output should be when the component is disabled (i.e., when the enable pin is 0). Options include zero and floating; in the latter case, the output is effectively disconnected from any other ports. -->
+     指定当元件被禁用时（即，当启用引脚为 0 时）输出的每一位应该是什么。 选项包括零和浮动； 在后一种情况下，输出实际上与任何其他端口断开。
+    </dd>
+    <dt>
+     <!-- Include Enable? -->
+     包括启用吗？
+    </dt>
+    <dd>
+     <!-- The component has an enable input when this attribute is <q>yes.</q> The attribute is primarily for supporting circuits built using older versions of Logisim that did not provide an enable input. -->
+     当该属性为
+     <q>
+      yes
+     </q>
+     时，该元件具有启用输入。该属性主要用于支持使用不提供启用输入的旧版本 Logisim 构建的电路。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

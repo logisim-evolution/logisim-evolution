@@ -445,10 +445,12 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     var ret = false;
     if (result == 0) {
       ret = ProjectActions.doSave(project);
+      project.getLogisimFile().stopAutosaveThread(false);
     } else if (result == 1) {
       // Close the current project
       dispose();
       ret = true;
+      project.getLogisimFile().stopAutosaveThread(true);
     }
 
     return ret;

@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Graphic chart
+    </title>
+    <link rel="stylesheet" type="text/css" href="styletest1.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Graphic chart
+      </h1>
+      <p>
+        Malheureusement javahelp V2.0 est assez pauvre dans la présentation graphique et il ne supporte que le CSS V1.x. Ce document présente la charte et les constructions utilisées dans la documentation de logisim.
+      </p>
+      <h2>
+        L'en-tête et fichier html
+      </h2>
+      <p>
+        L'entête est assez commune, les lignes a adapter sont :<br>
+        La langue de la page :<code>META http-equiv="Content-Language" content="<b>en</b>"</code><br>
+        la référence au fichier CSS selon hyérachie des dossiers :<code>LINK rel="stylesheet" type="text/css" href="<b>..\style.css</b>"</code>
+      </p>
+      <pre><code>
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+ &lt;META http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
+ &lt;META http-equiv="Content-Language" content="en"&gt;
+ &lt;title&gt;Graphic chart&lt;/title&gt;
+&lt;LINK rel="stylesheet" type="text/css" href="..\style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class="maindiv"&gt;
+...
+...the content of the page here
+...
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;/code&gt;
+</code></pre>
+<h2>Les titres et sous titres</h2>
+<p>
+Les balises &lt;h1&gt; &lt;h2&gt; &lt;h3&gt; sont utilisées et vous pouvez observer les titre de cette page pour les effets.
+</p>
+<h2>Les mises en valeur du text</h2>
+<table>
+        <tbody>
+          <tr border=1>
+            <td width=125>
+				<b>Reference to</b>
+            </td>
+            <td width=75>
+				<b>Tag</b>
+            </td >
+            <td>
+				<b>Result</b>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              The guide<br>
+              The guide's page :
+            </td>
+            <td>
+			  <b>&lt;i&gt;</b>
+			</td>
+            <td>
+              <i>Beginner's Guide</i>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Variables :
+            </td>
+            <td>
+              <b>&lt;var&gt;</b>
+            </td>
+            <td>
+              <var>variable</var>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Property :
+            </td>
+            <td>
+              <b>&lt;prop&gt;</b>
+            </td>
+            <td>
+              <prop>orientation</prop>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Buttons :
+            </td>
+            <td>
+              <b>&lt;key&gt;</b>
+            </td>
+            <td>
+              <key>Ctrl-A Right click</key>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Menu :
+            </td>
+            <td>
+              <b>&lt;men&gt;</b>
+            </td>
+            <td>
+              <men>|&nbsp;Simulation&nbsp;|</men> → <men>|&nbsp;Ticks Enabled&nbsp;|</men>
+            </td>
+          </tr>
+         <tr>
+            <td>
+              Note :
+            </td>
+            <td>
+              <b>&lt;not&gt;</b>
+            </td>
+            <td>
+              <not>Note :</not> ceci est une note</men>
+            </td>
+          </tr>
+		  <tr>
+            <td>
+              Ref figure :
+            </td>
+            <td>
+              <b>&lt;fig&gt;</b>
+            </td>
+            <td>
+              <fig>La porte AND</fig>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </body>
+</html>
