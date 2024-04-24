@@ -1,11 +1,11 @@
 package com.cburch.draw.util;
 
-import static com.cburch.logisim.std.Strings.S;
+import static com.cburch.draw.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.proj.Strings;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.JInputDialog;
+
 import java.awt.Component;
 import java.awt.Window;
 import java.io.File;
@@ -22,7 +22,7 @@ import javax.swing.filechooser.FileFilter;
 public class ImageAttribute extends Attribute<String> {
 
   public ImageAttribute() {
-    super("", S.getter("attrImageData"));
+    super("image", S.getter("attrImageData"));
   }
 
   @Override
@@ -37,7 +37,7 @@ public class ImageAttribute extends Attribute<String> {
 
   @Override
   public String toDisplayString(String value) {
-    return S.get("romContentsValue");
+    return com.cburch.logisim.std.Strings.S.get("romContentsValue");
   }
 
   private static class ImageCell extends JLabel implements JInputDialog {
@@ -45,7 +45,7 @@ public class ImageAttribute extends Attribute<String> {
     String imageData;
 
     ImageCell(Window source) {
-      super(S.get("romContentsValue"));
+      super(com.cburch.logisim.std.Strings.S.get("romContentsValue"));
       this.source = source;
     }
 
@@ -64,10 +64,10 @@ public class ImageAttribute extends Attribute<String> {
 
         @Override
         public String getDescription() {
-          return com.cburch.logisim.file.Strings.S.get("imageFileFilter");
+          return S.get("imageFileFilter");
         }
       });
-      chooser.setDialogTitle(Strings.S.get("FileOpenImage"));
+      chooser.setDialogTitle(S.get("FileOpenImage"));
 
       final var returnVal = chooser.showOpenDialog(null);
       if (returnVal != JFileChooser.APPROVE_OPTION) {
