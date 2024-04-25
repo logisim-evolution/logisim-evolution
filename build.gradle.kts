@@ -33,14 +33,14 @@ dependencies {
   implementation("javax.help:javahelp:2.0.05")
   implementation("com.fifesoft:rsyntaxtextarea:3.4.0")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
-  implementation("org.drjekyll:colorpicker:1.4.5")
+  implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.13")
   implementation("org.slf4j:slf4j-simple:2.0.13")
   implementation("com.formdev:flatlaf:3.4.1")
-  implementation("commons-cli:commons-cli:1.6.0")
-  implementation("org.apache.commons:commons-text:1.11.0")
+  implementation("commons-cli:commons-cli:1.7.0")
+  implementation("org.apache.commons:commons-text:1.12.0")
 
   // NOTE: Do not upgrade the jflex version. Later versions do not work.
   compileOnly("de.jflex:jflex:1.4.1")
