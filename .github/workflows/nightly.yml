@@ -21,7 +21,7 @@ on:
     - cron: "0 0 * * *"
 
 env:
-  JDK_VERSION: 16
+  JDK_VERSION: 21
   JDK_DISTRO: 'temurin'
 
 jobs:

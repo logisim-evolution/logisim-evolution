@@ -27,8 +27,8 @@
 
 ## Requirements ##
 
-`Logisim-evolution` is written in Java 16. To build it from sources you need JDK
-(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 16 or newer.
+`Logisim-evolution` is written in Java 21. To build it from sources you need JDK
+(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 21 or newer.
 
 **NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
 
@@ -86,7 +86,7 @@ If you wish to create a Java JAR package, which can then be run without [Gradle]
 ```
 
 which will create `logisim-evolution-<version>-all.jar` in `build/libs/`.
-To run it with JRE/JDK 16 or higher, type:
+To run it with JRE/JDK 21 or higher, type:
 
 ```bash
 java -jar logisim-evolution-<version>-all.jar
@@ -107,7 +107,7 @@ Packages can be built by running the `createAll` task:
 
 > **NOTE:** `jpackage` creates the installer for the platform that builds it. Building cross-platform installers is not supported
 > by Java's `jpackage` utility. You may also need to install additional developer tools for the platform in order to build the
-> installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/16/jpackage/packaging-overview.html)
+> installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/21/jpackage/packaging-overview.html)
 > for more details of tool requirements.
 
 To see all available tasks run: `./gradlew tasks --all`
