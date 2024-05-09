@@ -173,7 +173,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_amd64.deb
           name: ${{ needs.git_check.outputs.base_name }}_amd64.deb
 
         # ###########################################################################################
@@ -229,13 +229,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+      - name: Set up aarch64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
 
-      - name: "Build DMG"
+      - name: "Build aarch64 DMG"
         run: |
           # Have no mercy.
           set -euo pipefail
@@ -243,7 +243,29 @@ jobs:
           chmod +x gradlew
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
-      - name: 'Upload DMG'
+      - name: 'Upload aarch64 DMG'
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-aarch64.dmg
+          name: ${{ needs.git_check.outputs.base_name }}-aarch64.dmg
+
+      - name: Set up x86_64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: ${{ env.JDK_DISTRO }}
+          architecture: "x64"
+
+      - name: "Build x86_64 DMG"
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          chmod +x gradlew
+          ./gradlew createDmg -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload x86_64 DMG'
         uses: actions/upload-artifact@v4
         if: success()
         with:
