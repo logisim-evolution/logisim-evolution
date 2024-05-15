@@ -254,6 +254,28 @@ fun deleteDirectoryContents(directory: String) {
 }
 
 /**
+ * Helper function to verify the distribution file now exists in build/dist.
+ * It issues a warning if it does not and also lists the contents of its directory.
+*/
+fun verifyFileExists(filename: String) {
+  var theFile = File(filename)
+  if (theFile.isFile()) {
+    return
+  }
+  logger.warn("*** WARNING ***");
+  logger.warn("File does not exist: ${filename}")
+  var parentDir = theFile.getParentFile();
+  if (parentDir != null && parentDir.isDirectory()) {
+    logger.warn("Directory actually contains:")
+    for (file in parentDir.list()) {
+      logger.warn("  ${file}")
+    }
+  } else {
+    logger.warn("Parent directory does not exist: ${parentDir}");
+  }
+}
+
+/**
  * Task createPackageInput
  *
  * Creates a packageInput directory containing only the current shadowJar file
@@ -298,8 +320,8 @@ tasks.register("createDeb") {
   // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
   val appVersion = ext.get(APP_VERSION) as String
   val targetDir = ext.get(TARGET_DIR) as String
-  val debPackagePath = "${targetDir}/${project.name}_${appVersion}-1_amd64.deb"
-  outputs.file(debPackagePath)
+  val outputFile = "${targetDir}/${project.name}_${appVersion}_amd64.deb"
+  outputs.file(outputFile)
 
   doFirst {
     if (!OperatingSystem.current().isLinux) {
@@ -310,6 +332,7 @@ tasks.register("createDeb") {
   doLast {
     val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -324,7 +347,8 @@ tasks.register("createRpm") {
   dependsOn("createPackageInput")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm")
+  var outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm"
+  outputs.file(outputFile);
 
   doFirst {
     if (!OperatingSystem.current().isLinux) {
@@ -335,6 +359,7 @@ tasks.register("createRpm") {
   doLast {
     val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -353,7 +378,8 @@ tasks.register("createMsi") {
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi")
+  var outputFile = "${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi"
+  outputs.file(outputFile);
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -391,6 +417,7 @@ tasks.register("createMsi") {
       throw GradleException("createMsi failed to rename .msi file to include architecture ${osArch}")
     }
     delete("${targetDir}/${fromFile}")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -470,7 +497,9 @@ tasks.register("createDmg") {
   val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(appDirName)
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg")
+
+  val outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg"
+  outputs.file(outputFile);
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -490,6 +519,7 @@ tasks.register("createDmg") {
         "--type", "dmg",
       )
     runCommand(params, "Error while creating the DMG package")
+    verifyFileExists(outputFile);
   }
 }
 
