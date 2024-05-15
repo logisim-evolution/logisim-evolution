@@ -45,7 +45,7 @@ Project highlights:
 ## Requirements ##
 
 `Logisim-evolution` is a Java application; therefore, it can run on any operating system supporting the Java runtime enviroment.
-It requires [Java 16 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
+It requires [Java 21 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
 
 ---
 
