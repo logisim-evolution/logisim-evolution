@@ -10,6 +10,7 @@
 package com.cburch.draw.toolbar;
 
 import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -117,7 +118,7 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
     if (toolbar.getToolbarModel().isSelected(item)) {
       final var dim = item.getDimension(toolbar.getOrientation());
       GraphicsUtil.switchToWidth(g, 2);
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       g.drawRect(BORDER, BORDER, dim.width, dim.height);
       GraphicsUtil.switchToWidth(g, 1);
     }
