@@ -7,19 +7,35 @@ public class ArithmeticInstruction {
         InstructionRegister ir = hartData.getIR();
         switch (ir.func3()) {
             case 0x0:   // addi rd,rs1,imm_I
-                System.out.println("opcode: " + ir.opcode());
-                System.out.println("destination register: " + ir.rd());
-                System.out.println("function: " + ir.func3());
-                System.out.println("source register 1: " + ir.rs1());
-                System.out.println("immediate value: " + ir.imm_I());
-                System.out.println("Test 0x300093 instruction: ");
-                System.out.println("BEFORE: x0 = " + hartData.getX(0) + ", x1 = " + hartData.getX(1));
                 hartData.setX(ir.rd(),hartData.getX(ir.rs1()) + ir.imm_I());
-                System.out.println("AFTER: x0 = " + hartData.getX(0) + ", x1 = " + hartData.getX(1));
-                System.out.println("Should be x1 = x0 + 3.");
+                break;
+            case 0x1:   // slli rd,rs1,imm_U
+                hartData.setX(ir.rd(),hartData.getX(ir.rs1()) << ir.imm_U());
+                break;
+            case 0x2:   // slti rd,rs1,imm_I
+                hartData.setX(ir.rd(), (hartData.getX(ir.rs1()) < ir.imm_I() ? 1 : 0) );
+                break;
+            case 0x3:   // sltiu rd,rs1,imm_I
+                hartData.setX(ir.rd(), (hartData.getX(ir.rs1()) < ir.imm_I() ? 1 : 0));
                 break;
             case 0x4:   // xori rd,rs1,imm_I
                 hartData.setX(ir.rd(),hartData.getX(ir.rs1()) ^ ir.imm_I());
+                break;
+            case 0x5:
+                // srli rd,rs1,imm_U
+                if (ir.func7() == 0x0) {
+                    hartData.setX(ir.rd(),hartData.getX(ir.rs1()) >> ir.imm_U());
+                }
+                // srai rd,rs1,imm_U
+                else if (ir.func7() == (1 << 5)) {
+                    hartData.setX(ir.rd(),hartData.getX(ir.rs1()) >> ir.imm_U());
+                }
+                break;
+            case 0x6:   // ori rd,rs1,imm_I
+                hartData.setX(ir.rd(),hartData.getX(ir.rs1()) | ir.imm_I());
+                break;
+            case 0x7:   // andi rd,rs1,imm_I
+                hartData.setX(ir.rd(),hartData.getX(ir.rs1()) & ir.imm_I());
                 break;
         }
     }
