@@ -26,6 +26,7 @@ import com.cburch.logisim.std.ttl.TtlLibrary;
 import com.cburch.logisim.std.wiring.WiringLibrary;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.riscv.RiscvComponents;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,8 @@ public class Builtin extends Library {
             new TclLibrary(),
             new BfhLibrary(),
             new ExtraIoLibrary(),
-            new Soc());
+            new Soc(),
+            new RiscvComponents());
   }
 
   @Override
