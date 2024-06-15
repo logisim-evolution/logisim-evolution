@@ -11,7 +11,11 @@ package com.cburch.logisim.gui.icons;
 
 import com.cburch.logisim.prefs.AppPreferences;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
 
 public abstract class BaseIcon implements javax.swing.Icon {
 
