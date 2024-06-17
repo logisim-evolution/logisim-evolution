@@ -2,7 +2,6 @@ package com.cburch.logisim.riscv;
 
 public class ArithmeticInstruction {
 
-
     public static void executeImmediate(rv32imData hartData) {
         InstructionRegister ir = hartData.getIR();
         switch (ir.func3()) {
@@ -15,7 +14,7 @@ public class ArithmeticInstruction {
             case 0x2:   // slti rd,rs1,imm_I
                 hartData.setX(ir.rd(), (hartData.getX(ir.rs1()) < ir.imm_I()) ? 1 : 0);
                 break;
-            case 0x3:   // sltiu rd,rs1,imm_I //compare both rs1 & imm_I unsigned
+            case 0x3:   // sltiu rd,rs1,imm_I
                 hartData.setX(ir.rd(), (Long.compareUnsigned(hartData.getX(ir.rs1()),ir.imm_I()) < 0) ? 1 : 0);
                 break;
             case 0x4:   // xori rd,rs1,imm_I
