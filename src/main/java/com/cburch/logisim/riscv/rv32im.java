@@ -13,6 +13,9 @@ import com.cburch.logisim.data.*;
 import com.cburch.logisim.instance.*;
 import com.cburch.logisim.util.GraphicsUtil;
 
+import java.awt.*;
+
+import static com.cburch.logisim.riscv.CpuDrawSupport.*;
 import static com.cburch.logisim.std.Strings.S;
 
 /**
@@ -46,17 +49,17 @@ class rv32im extends InstanceFactory {
 
   public rv32im() {
     super(_ID);
-    setOffsetBounds(Bounds.create(-60, -20, 60, 80));
+    setOffsetBounds(Bounds.create(-60, -20, 50+130, 80 + 495 + 30 + 10));
 
     Port ps[] = new Port[7];
 
     ps[CLOCK] = new Port(-60, 0, Port.INPUT, 1);
     ps[RESET] = new Port(-60, 10, Port.INPUT, 1);
     ps[DATA_IN] = new Port(-60, 30, Port.INPUT, 32);
-    ps[ADDRESS] = new Port(0, 0, Port.OUTPUT, 32);
-    ps[DATA_OUT] = new Port(0, 10, Port.OUTPUT, 32);
-    ps[MEMREAD] = new Port(0, 30, Port.OUTPUT, 1);
-    ps[MEMWRITE] = new Port(0, 40, Port.OUTPUT, 1);
+    ps[ADDRESS] = new Port(120, 0, Port.OUTPUT, 32);
+    ps[DATA_OUT] = new Port(120, 10, Port.OUTPUT, 32);
+    ps[MEMREAD] = new Port(120, 30, Port.OUTPUT, 1);
+    ps[MEMWRITE] = new Port(120, 40, Port.OUTPUT, 1);
 
     ps[CLOCK].setToolTip(S.getter("rv32imClock"));
     ps[RESET].setToolTip(S.getter("rv32imReset"));
@@ -104,13 +107,15 @@ class rv32im extends InstanceFactory {
     if (painter.getShowState()) {
       final var state = rv32imData.get(painter);
       final var bds = painter.getBounds();
-      /* GraphicsUtil.drawCenteredText(
-          painter.getGraphics(),
-          StringUtil.toHexString(BIT_WIDTH.getWidth(), state.getValue().toLongValue()),
-          bds.getX() + bds.getWidth() / 2,
-          bds.getY() + bds.getHeight() / 2);
-       */
+      final var graphics = (Graphics2D) painter.getGraphics();
+      final var posX = bds.getX() + 10;
+      final var posY = bds.getY() + 110;
+
+      GraphicsUtil.drawCenteredText(graphics, "RISC-V RV32IM", posX+80, posY-77);
+      drawHexReg(graphics, posX, posY - 40, false, (int) state.getPC().get(), "PC", true);
+      drawRegisters(graphics, posX, posY, false, state);
     }
+
   }
 
   @Override
