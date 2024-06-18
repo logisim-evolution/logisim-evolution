@@ -577,7 +577,7 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> COMPONENT_GHOST_COLOR =
       create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
-          create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+      create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
 
 
   // Layout preferences
