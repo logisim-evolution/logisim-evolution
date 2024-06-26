@@ -329,7 +329,7 @@ public class Ram extends Mem {
         newMemValue = dataInValue;
       } else {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          long mask = 0xFF << (i * 8);
+          long mask = 0xFFL << (i * 8);
           long andMask = ~mask;
           if (state.getPortValue(RamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
