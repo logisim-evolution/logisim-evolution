@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.GroundIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -40,7 +41,7 @@ public class Ground extends InstanceFactory {
 
   public Ground() {
     super(_ID, S.getter("groundComponent"), new AbstractConstantHdlGeneratorFactory());
-    setIconName("ground.gif");
+    setIcon(new GroundIcon());
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},
         new Object[] {Direction.SOUTH, BitWidth.ONE});

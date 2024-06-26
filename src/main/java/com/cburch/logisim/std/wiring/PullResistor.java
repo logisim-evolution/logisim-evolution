@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.PullResistorIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -28,7 +29,6 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -63,9 +63,7 @@ public class PullResistor extends InstanceFactory {
           });
   public static final PullResistor FACTORY = new PullResistor();
 
-  private static final Icon ICON_SHAPED = IconsUtil.getIcon("pullshap.gif");
-
-  private static final Icon ICON_RECTANGULAR = IconsUtil.getIcon("pullrect.gif");
+  private static final Icon ICON = new PullResistorIcon();
 
   public PullResistor() {
     super(_ID, S.getter("pullComponent"));
@@ -162,13 +160,7 @@ public class PullResistor extends InstanceFactory {
   //
   @Override
   public void paintIcon(InstancePainter painter) {
-    Icon icon;
-    if (painter.getGateShape() == AppPreferences.SHAPE_SHAPED) {
-      icon = ICON_SHAPED;
-    } else {
-      icon = ICON_RECTANGULAR;
-    }
-    icon.paintIcon(painter.getDestination(), painter.getGraphics(), 2, 2);
+    ICON.paintIcon(painter.getDestination(), painter.getGraphics(), 2, 2);
   }
 
   @Override
