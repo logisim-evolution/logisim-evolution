@@ -93,14 +93,14 @@ network connections. You can click "Deny" as we do not need network access curre
 
 ### Package Manager ###
 
-`Logisim-evolution` is available from a bunch of [package managers](https://repology.org/project/logisim-evolution/versions).  
-Note that these (except for Snap) are not maintained by the core developers.  
+`Logisim-evolution` is available from a bunch of [package managers](https://repology.org/project/logisim-evolution/versions).
+Note that these (except for Snap) are not maintained by the core developers.
 If you should observe a bug in Logisim-evolution while using one of these packages,
 first make sure that it can be reproduced with the most recent official packages
 [provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases)
 and ideally the HEAD of our [main branch](https://github.com/logisim-evolution/logisim-evolution/tree/main)
 before [creating an issue](https://github.com/logisim-evolution/logisim-evolution/issues) on
-the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).  
+the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).
 Otherwise, report the issue to the package maintainer!
 
 * [Snap](https://snapcraft.io/logisim-evolution) (`snap install logisim-evolution`)
@@ -110,6 +110,7 @@ Otherwise, report the issue to the package maintainer!
 * [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
 * [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) (`winget install -e --id logisim-evolution.logisim-evolution`)
 * [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
+* [nixpkgs](https://search.nixos.org/packages?channel=24.05&show=logisim-evolution)(`nix-shell -p logisim-evolution`)
 
 ### Nightly builds ###
 
@@ -133,5 +134,5 @@ if you found a bug or have suggestions for improvement.
 
 ## License ##
 
-* `Logisim-evolution` is copyrighted ©2001-2023 by Logisim-evolution [developers](docs/credits.md).
+* `Logisim-evolution` is copyrighted ©2001-2024 by Logisim-evolution [developers](docs/credits.md).
 * This is free software licensed under [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
