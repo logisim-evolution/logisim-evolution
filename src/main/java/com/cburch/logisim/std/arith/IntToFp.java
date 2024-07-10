@@ -95,7 +95,7 @@ public class IntToFp extends InstanceFactory {
     final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
     final var out = switch (dataWidthOut.getWidth()) {
       // TODO: can replace Value.fp32Tofp16_raw(Float.floatToRawIntBits((float) out_val)) with Float.floatToFloat16((float) out_val) in Java 20 or later
-      case 16 -> Value.createKnown(16, Value.fp32Tofp16_raw(Float.floatToRawIntBits((float) out_val)));
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
       case 32 -> Value.createKnown((float) out_val);
       case 64 -> Value.createKnown(out_val);
       default -> Value.ERROR;
