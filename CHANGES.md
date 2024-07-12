@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Updated Java requirement to Java 21.
   * Added an autosave feature along with preferences for it.
   * Added a new preference to allow the user to choose the action keys for many functions.
   * Changed RAM default output from error to undefined [#1747]

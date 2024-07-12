@@ -19,13 +19,13 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.icons.SplitterIcon;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.IntegerConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.tools.key.ParallelConfigurator;
-import com.cburch.logisim.util.IconsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.event.InputEvent;
@@ -35,7 +35,7 @@ public class SplitterFactory extends AbstractComponentFactory {
 
   public static final SplitterFactory instance = new SplitterFactory();
 
-  private static final Icon toolIcon = IconsUtil.getIcon("splitter.gif");
+  private static final Icon toolIcon = new SplitterIcon();
 
   private SplitterFactory() {}
 

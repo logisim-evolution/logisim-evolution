@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.TransmissionGateIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -47,7 +48,7 @@ public class TransmissionGate extends InstanceFactory {
 
   public TransmissionGate() {
     super(_ID, S.getter("transmissionGateComponent"));
-    setIconName("transmis.gif");
+    setIcon(new TransmissionGateIcon());
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH},
         new Object[] {Direction.EAST, StdAttr.SELECT_TOP_RIGHT, BitWidth.ONE});

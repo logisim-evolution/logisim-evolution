@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.PowerIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -52,7 +53,7 @@ public class Power extends InstanceFactory {
 
   public Power() {
     super(_ID, S.getter("powerComponent"), new PowerHdlGeneratorFactory());
-    setIconName("power.gif");
+    setIcon(new PowerIcon());
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},
         new Object[] {Direction.NORTH, BitWidth.ONE});

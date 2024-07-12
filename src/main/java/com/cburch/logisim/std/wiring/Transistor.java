@@ -21,6 +21,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.TransistorIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -30,10 +31,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.WireRepair;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import javax.swing.Icon;
 
 public class Transistor extends InstanceFactory {
   /**
@@ -54,8 +53,7 @@ public class Transistor extends InstanceFactory {
   static final int INPUT = 1;
   static final int GATE = 2;
 
-  private static final Icon ICON_N = IconsUtil.getIcon("trans1.gif");
-  private static final Icon ICON_P = IconsUtil.getIcon("trans0.gif");
+  private static final TransistorIcon ICON = new TransistorIcon();
 
   public Transistor() {
     super(_ID, S.getter("transistorComponent"));
@@ -232,8 +230,8 @@ public class Transistor extends InstanceFactory {
   @Override
   public void paintIcon(InstancePainter painter) {
     Object type = painter.getAttributeValue(ATTR_TYPE);
-    Icon icon = type == TYPE_N ? ICON_N : ICON_P;
-    icon.paintIcon(painter.getDestination(), painter.getGraphics(), 2, 2);
+    ICON.setNTypeGate(type == TYPE_N);
+    ICON.paintIcon(painter.getDestination(), painter.getGraphics(), 2, 2);
   }
 
   @Override
