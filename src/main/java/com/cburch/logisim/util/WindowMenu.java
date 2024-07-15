@@ -17,14 +17,23 @@ import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
+import com.cburch.logisim.Main;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.prefs.AppPreferences;
+
 public class WindowMenu extends Menu {
-  private class MyListener implements LocaleListener, ActionListener {
+  private class MyListener implements LocaleListener, ActionListener, PropertyChangeListener{
     @Override
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
@@ -34,6 +43,8 @@ public class WindowMenu extends Menu {
         doZoom();
       } else if (src == close) {
         doClose();
+      } else if (src == toolbar) {
+        doToolbar();
       } else if (src instanceof WindowMenuItem choice) {
         if (choice.isSelected()) {
           final var item = findOwnerItem();
@@ -68,6 +79,14 @@ public class WindowMenu extends Menu {
           MacCompatibility.isQuitAutomaticallyPresent()
               ? S.get("windowZoomItemMac")
               : S.get("windowZoomItem"));
+      toolbar.setText(S.get("windowShowToolbarItem"));
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+      if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
+        toolbar.setState(isToolbarVisible());
+      }
     }
   }
 
@@ -77,6 +96,7 @@ public class WindowMenu extends Menu {
   private final MyListener myListener = new MyListener();
   private final JMenuItem minimize = new JMenuItem();
   private final JMenuItem zoom = new JMenuItem();
+  private final JCheckBoxMenuItem toolbar = new JCheckBoxMenuItem();
   private final JMenuItem close = new JMenuItem();
   private final JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
   private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
@@ -109,6 +129,11 @@ public class WindowMenu extends Menu {
       zoom.addActionListener(myListener);
       close.addActionListener(myListener);
     }
+
+    toolbar.setEnabled(true);
+    toolbar.setState(isToolbarVisible());
+    toolbar.addActionListener(myListener);
+    AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myListener);
 
     computeEnabled();
     computeContents();
@@ -143,6 +168,8 @@ public class WindowMenu extends Menu {
     add(minimize);
     add(zoom);
     add(close);
+    addSeparator();
+    add(toolbar);
 
     if (!persistentItems.isEmpty()) {
       addSeparator();
@@ -244,5 +271,21 @@ public class WindowMenu extends Menu {
 
   void setNullItemSelected(boolean value) {
     nullItem.setSelected(value);
+  }
+
+  static boolean isToolbarVisible() {
+    String loc = AppPreferences.TOOLBAR_PLACEMENT.get();
+    return loc == null || !loc.equals(AppPreferences.TOOLBAR_HIDDEN);
+  }
+
+  static void setToolbarVisibility(boolean show) {
+    if (show)
+      AppPreferences.TOOLBAR_PLACEMENT.set(Direction.NORTH.toString());
+    else
+      AppPreferences.TOOLBAR_PLACEMENT.set(AppPreferences.TOOLBAR_HIDDEN);
+  }
+
+  void doToolbar() {
+    setToolbarVisibility(toolbar.getState());
   }
 }
