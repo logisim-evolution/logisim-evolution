@@ -1,0 +1,4 @@
+[console_scripts]
+trans-tool = transtool.main:TransTool.start
+transtool = transtool.main:TransTool.start
+
