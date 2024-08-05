@@ -61,8 +61,8 @@ public class BitWidth implements Comparable<BitWidth> {
     @Override
     public BitWidth parse(String value) {
       int v = (int) Long.parseLong(value);
-      if (v < min) throw new NumberFormatException("integer too small");
-      if (v > max) throw new NumberFormatException("integer too large");
+      if (v < min) throw new NumberFormatException("bit width must be at least " + min);
+      if (v > max) throw new NumberFormatException("bit width must be at most " + max);
       return BitWidth.create(v);
     }
   }
