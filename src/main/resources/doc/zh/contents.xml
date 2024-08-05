@@ -412,8 +412,8 @@
 			<!-- <tocitem target="io_led" text="LED" image="icon_led" /> -->
 			<tocitem target="io_led" text="LED" image="icon_led" />
 
-			<!-- <tocitem target="io_ledRVB" text="LED RVB" image="icon_rvbled" /> -->
-			<tocitem target="io_ledRVB" text="LED条" image="icon_rvbled" />
+			<!-- <tocitem target="io_ledRGB" text="LED RGB" image="icon_rgbled" /> -->
+			<tocitem target="io_ledRGB" text="LED条" image="icon_rgbled" />
 
 			<!-- <tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" /> -->
 			<tocitem target="io_7seg" text="7段数码管" image="icon_7seg" />
@@ -432,8 +432,8 @@
 			<!-- <tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" /> -->
 			<!-- <tocitem target="io_Repetar" text="Reptar本地总线" image="icon_repetar" /> -->
 
-			<!-- <tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" /> -->
-			<!-- <tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" /> -->
+			<!-- <tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" /> -->
+			<!-- <tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" /> -->
 
 	
 		</tocitem>
