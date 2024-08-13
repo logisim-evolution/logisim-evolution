@@ -72,6 +72,7 @@ The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-
 is also available and can be run on any system with a supported Java runtime installed.
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/logisim-evolution)
+
 ---
 
 **Note for macOS users**:

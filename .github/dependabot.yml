@@ -21,4 +21,3 @@ updates:
     schedule:
       interval: "weekly"
     target-branch: "main"
-
