@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+<<<<<<< HEAD
     target-branch: "main"
     ignore:
       - dependency-name: "de.jflex:jflex"
@@ -14,10 +15,19 @@ updates:
       junit:
          patterns:
            - "org.junit*"
+=======
+    target-branch: "develop"
+    ignore:
+      - dependency-name: "de.jflex:jflex"
+>>>>>>> 1746abb1552b81f9bf5540350f9a92e238e90960
 
   - package-ecosystem: "github-actions"
     # directory of "/" for github-actions means .github/workflows
     directory: "/"
     schedule:
       interval: "weekly"
+<<<<<<< HEAD
     target-branch: "main"
+=======
+    target-branch: "develop"
+>>>>>>> 1746abb1552b81f9bf5540350f9a92e238e90960
