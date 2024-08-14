@@ -191,7 +191,7 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public String toString(Value value) {
-      return value.getWidth() == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue());
+      return value.toStringFromFloatValue();
     }
 
     @Override
