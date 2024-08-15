@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+
+* v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
   * Added an autosave feature along with preferences for it.
   * Added a new preference to allow the user to choose the action keys for many functions.
