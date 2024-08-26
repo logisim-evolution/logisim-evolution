@@ -37,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class SelectionActions {
+
   private SelectionActions() {}
 
   /**
@@ -230,15 +231,44 @@ public class SelectionActions {
     return new Translate(sel, dx, dy, repl);
   }
 
+  private abstract static class SelectedComponentsAction extends Action {
+    public CircuitTransaction xnForward;
+    public CircuitTransaction xnReverse;
+    private boolean hasDoneFirstTime = false;
+
+    @Override
+    public void doIt(Project proj) {
+      if (hasDoneFirstTime) {
+        this.redo(proj);
+      } else {
+        this.doItFirstTime(proj);
+        hasDoneFirstTime = true;
+      }
+    }
+
+    public abstract void doItFirstTime(Project proj);
+
+    @Override
+    public void undo(Project proj) {
+      if (xnReverse != null) {
+        xnReverse.execute();
+      }
+    }
+
+    public void redo(Project proj) {
+      if (xnForward != null) {
+        xnForward.execute();
+      }
+    }
+  }
+
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
-  private static class Anchor extends Action {
-
+  private static class Anchor extends SelectedComponentsAction {
     private final Selection sel;
     private final int numAnchor;
     private final SelectionSave before;
-    private CircuitTransaction xnReverse;
 
     Anchor(Selection sel, int numAnchor) {
       this.sel = sel;
@@ -247,10 +277,11 @@ public class SelectionActions {
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       final var circuit = proj.getCurrentCircuit();
       final var xn = new CircuitMutation(circuit);
       sel.dropAll(xn);
+      xnForward = xn;
       final var result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
@@ -274,25 +305,22 @@ public class SelectionActions {
       }
       return otherAfter != null && otherAfter.equals(this.before);
     }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
   }
 
-  private static class Copy extends Action {
+  private static class Copy extends SelectedComponentsAction {
     private final Selection sel;
     private Clipboard oldClip;
+    private Clipboard newClip;
 
     Copy(Selection sel) {
       this.sel = sel;
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       oldClip = Clipboard.get();
       Clipboard.set(sel, sel.getAttributeSet());
+      newClip = Clipboard.get();
     }
 
     @Override
@@ -309,12 +337,18 @@ public class SelectionActions {
     public void undo(Project proj) {
       Clipboard.set(oldClip);
     }
+
+    @Override
+    public void redo(Project proj) {
+      Clipboard.set(newClip);
+    }
   }
 
-  private static class Cut extends Action {
+  private static class Cut extends SelectedComponentsAction {
     private final Selection sel;
     private final Action second;
     private Clipboard oldClip;
+    private Clipboard newClip;
 
     Cut(Selection sel) {
       this.sel = sel;
@@ -322,9 +356,10 @@ public class SelectionActions {
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       oldClip = Clipboard.get();
       Clipboard.set(sel, sel.getAttributeSet());
+      newClip = Clipboard.get();
       second.doIt(proj);
     }
 
@@ -338,21 +373,27 @@ public class SelectionActions {
       second.undo(proj);
       Clipboard.set(oldClip);
     }
+
+    @Override
+    public void redo(Project proj) {
+      Clipboard.set(newClip);
+      second.doIt(proj);
+    }
   }
 
-  private static class Delete extends Action {
+  private static class Delete extends SelectedComponentsAction {
     private final Selection sel;
-    private CircuitTransaction xnReverse;
 
     Delete(Selection sel) {
       this.sel = sel;
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       final var circuit = proj.getCurrentCircuit();
       final var xn = new CircuitMutation(circuit);
       sel.deleteAllHelper(xn);
+      xnForward = xn;
       final var result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
@@ -361,23 +402,16 @@ public class SelectionActions {
     public String getName() {
       return S.get("deleteSelectionAction");
     }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
   }
 
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
-  private static class Drop extends Action {
-
+  private static class Drop extends SelectedComponentsAction {
     private final Selection sel;
     private final Component[] drops;
     private final int numDrops;
     private final SelectionSave before;
-    private CircuitTransaction xnReverse;
 
     Drop(Selection sel, Collection<Component> toDrop, int numDrops) {
       this.sel = sel;
@@ -388,14 +422,13 @@ public class SelectionActions {
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       final var circuit = proj.getCurrentCircuit();
       final var xn = new CircuitMutation(circuit);
-
       for (Component comp : drops) {
         sel.remove(xn, comp);
       }
-
+      xnForward = xn;
       final var result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
@@ -421,16 +454,10 @@ public class SelectionActions {
 
       return otherAfter != null && otherAfter.equals(this.before);
     }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
   }
 
-  private static class Duplicate extends Action {
+  private static class Duplicate extends SelectedComponentsAction {
     private final Selection sel;
-    private CircuitTransaction xnReverse;
     private SelectionSave after;
 
     Duplicate(Selection sel) {
@@ -438,11 +465,11 @@ public class SelectionActions {
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       final var circuit = proj.getCurrentCircuit();
       final var xn = new CircuitMutation(circuit);
       sel.duplicateHelper(xn);
-
+      xnForward = xn;
       final var result = xn.execute();
       xnReverse = result.getReverseTransaction();
       after = SelectionSave.create(sel);
@@ -452,17 +479,11 @@ public class SelectionActions {
     public String getName() {
       return S.get("duplicateSelectionAction");
     }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
   }
 
-  private static class Paste extends Action {
+  private static class Paste extends SelectedComponentsAction {
     private final Selection sel;
     private final HashMap<Component, Component> componentReplacements;
-    private CircuitTransaction xnReverse;
     private SelectionSave after;
 
     Paste(Selection sel, HashMap<Component, Component> replacements) {
@@ -487,7 +508,7 @@ public class SelectionActions {
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       final var clip = Clipboard.get();
       final var circuit = proj.getCurrentCircuit();
       final var xn = new CircuitMutation(circuit);
@@ -511,10 +532,12 @@ public class SelectionActions {
 
       if (!toAdd.isEmpty()) {
         sel.pasteHelper(xn, toAdd);
+        xnForward = xn;
         final var result = xn.execute();
         xnReverse = result.getReverseTransaction();
         after = SelectionSave.create(sel);
       } else {
+        xnForward = null;
         xnReverse = null;
       }
     }
@@ -523,22 +546,14 @@ public class SelectionActions {
     public String getName() {
       return S.get("pasteClipboardAction");
     }
-
-    @Override
-    public void undo(Project proj) {
-      if (xnReverse != null) {
-        xnReverse.execute();
-      }
-    }
   }
 
-  private static class Translate extends Action {
+  private static class Translate extends SelectedComponentsAction {
     private final Selection sel;
     private final int dx;
     private final int dy;
     private final ReplacementMap replacements;
     private final SelectionSave before;
-    private CircuitTransaction xnReverse;
 
     Translate(Selection sel, int dx, int dy, ReplacementMap replacements) {
       this.sel = sel;
@@ -549,15 +564,14 @@ public class SelectionActions {
     }
 
     @Override
-    public void doIt(Project proj) {
+    public void doItFirstTime(Project proj) {
       final var circuit = proj.getCurrentCircuit();
       final var xn = new CircuitMutation(circuit);
-
       sel.translateHelper(xn, dx, dy);
       if (replacements != null) {
         xn.replace(replacements);
       }
-
+      xnForward = xn;
       CircuitTransactionResult result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
@@ -580,11 +594,6 @@ public class SelectionActions {
         otherAfter = dupe.after;
       }
       return otherAfter != null && otherAfter.equals(this.before);
-    }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
     }
   }
 }
