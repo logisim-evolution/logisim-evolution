@@ -149,5 +149,5 @@ Once it is running without bugs on your local fork, request a *Pull request* by:
 * On the right-hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right-hand side select your branch, for example: *base: bugfixes*
 * On the left-hand side select the main branch *base: main* (**Important:** All pull requests **MUST**
-  be on the [branch `main`](https://github.com/logisim-evolution/logisim-evolution/tree/main).
+  be made on the branch [`main`](https://github.com/logisim-evolution/logisim-evolution/tree/main).
 * Make sure that there are no conflicts reported.

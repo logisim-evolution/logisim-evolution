@@ -123,10 +123,11 @@ Note that these builds may be unstable since the main branch is a work in progre
 
 To get nightly downloads, please
 [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
-and browse to the last successful run of the `Nightly` worker.
-It should be the first from the top that took a several minutes to run.
-Nightly runs each night, but terminates quickly and does not produce new packages if nothing has changed.
-Note that due to Github internals, all files are provided as ZIP archives.
+and browse to the last successful build from the `Nightly` worker.
+Nightly runs each night, but terminates quickly and does not produce new packages if nothing has changed since the last run.
+Find the most recent run that contains the packages.
+The time Nightly took to run, given near the clock icon on the right, helps your search.
+Note that due to GitHub internals, all files are provided as ZIP archives.
 You must unzip the downloaded file to get the installation package.
 
 Please share your experience in [Discussions](https://github.com/logisim-evolution/logisim-evolution/discussions)
