@@ -117,7 +117,7 @@ To see all available tasks run: `./gradlew tasks --all`
 `Logisim-evolution` is often updated.
 The [branch `main`](https://github.com/logisim-evolution/logisim-evolution/tree/main)
 is the place where all the work on next release happens.
-Once the code reaches the point it is ready for the next public release, the public release will be created from `main`
+Once the code reaches the point it is ready, the next public release will be created from `main`.
 
 If you want to contribute, or even just see what we are currently working on, checkout the `main` branch
 and build `Logisim-evolution` from source as described above.
@@ -149,5 +149,5 @@ Once it is running without bugs on your local fork, request a *Pull request* by:
 * On the right-hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right-hand side select your branch, for example: *base: bugfixes*
 * On the left-hand side select the main branch *base: main* (**Important:** All pull requests **MUST**
-  be made on the branch [`main`](https://github.com/logisim-evolution/logisim-evolution/tree/main).
+  be made against [that branch](https://github.com/logisim-evolution/logisim-evolution/tree/main).
 * Make sure that there are no conflicts reported.
