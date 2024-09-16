@@ -117,9 +117,9 @@ To see all available tasks run: `./gradlew tasks --all`
 `Logisim-evolution` is often updated.
 The [branch `main`](https://github.com/logisim-evolution/logisim-evolution/tree/main)
 is the place where all the work on next release happens.
-Once the code reaches the point it is ready for the next public release, it will
-be merged into the [`master` branch](https://github.com/logisim-evolution/logisim-evolution/tree/master) and released.
-But if you want to contribute, or even just see what we are currently working on, checkout the `main` branch
+Once the code reaches the point it is ready, the next public release will be created from `main`.
+
+If you want to contribute, or even just see what we are currently working on, checkout the `main` branch
 and build `Logisim-evolution` from source as described above.
 
 **If you see any issues or have any ideas for improvement, please
@@ -137,7 +137,7 @@ If you want to contribute to Logisim-evolution, this is how to do it:
 * As all the development happens on [`main` branch](https://github.com/logisim-evolution/logisim-evolution/tree/main),
   ensure you checkout [`main` branch](https://github.com/logisim-evolution/logisim-evolution/tree/main) before you
   create your own branch.
-* Fix the bugs you want to fix on your local fork in the
+* Fix the bugs you want to fix on your local fork of the
   [`main` branch](https://github.com/logisim-evolution/logisim-evolution/tree/main).
 * Add the features you want to add on your local fork.
 * Add/modify the documentation/language support on your local fork.
@@ -149,8 +149,5 @@ Once it is running without bugs on your local fork, request a *Pull request* by:
 * On the right-hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right-hand side select your branch, for example: *base: bugfixes*
 * On the left-hand side select the main branch *base: main* (**Important:** All pull requests **MUST**
-  be on the [branch `main`](https://github.com/logisim-evolution/logisim-evolution/tree/main) as
-  the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only
-  holds the code of the latest stable release, and we do not allow any external contributions to that
-  particular branch.
+  be made against [that branch](https://github.com/logisim-evolution/logisim-evolution/tree/main).
 * Make sure that there are no conflicts reported.
