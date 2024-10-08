@@ -13,11 +13,11 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.47.0"
+  id("com.github.ben-manes.versions") version "0.51.0"
   java
   application
-  id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("org.sonarqube") version "4.3.1.3277"
+  id("com.gradleup.shadow") version "8.3.3"
+  id("org.sonarqube") version "5.1.0.4882"
 }
 
 repositories {
@@ -29,18 +29,18 @@ application {
 }
 
 dependencies {
-  implementation("org.hamcrest:hamcrest:2.2")
+  implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.3.4")
+  implementation("com.fifesoft:rsyntaxtextarea:3.5.1")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
-  implementation("org.drjekyll:colorpicker:1.4.5")
+  implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:2.0.9")
-  implementation("org.slf4j:slf4j-simple:2.0.9")
-  implementation("com.formdev:flatlaf:3.2.1")
-  implementation("commons-cli:commons-cli:1.5.0")
-  implementation("org.apache.commons:commons-text:1.10.0")
+  implementation("org.slf4j:slf4j-api:2.0.16")
+  implementation("org.slf4j:slf4j-simple:2.0.16")
+  implementation("com.formdev:flatlaf:3.5.1")
+  implementation("commons-cli:commons-cli:1.9.0")
+  implementation("org.apache.commons:commons-text:1.12.0")
 
   // NOTE: Do not upgrade the jflex version. Later versions do not work.
   compileOnly("de.jflex:jflex:1.4.1")
@@ -49,9 +49,9 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.10.0"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+  testImplementation(platform("org.junit:junit-bom:5.11.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.11.2")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.14.1")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -62,6 +62,7 @@ val APP_DIR_NAME = "appDirName"
 val APP_VERSION = "appVersion"
 val APP_VERSION_SHORT = "appVersionShort"
 val APP_URL = "appUrl"
+val BUILD_DIR = "buildDir"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
@@ -76,8 +77,8 @@ val TARGET_FILE_PATH_BASE_SHORT = "targetFilePathBaseShort"
 val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_16
-  targetCompatibility = JavaVersion.VERSION_16
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
 }
 
 /**
@@ -105,6 +106,10 @@ extra.apply {
   // Architecture used for build
   val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
   set(OS_ARCH, osArch)
+
+  // Build Directory
+  val buildDir = getLayout().getBuildDirectory().get().asFile.toString()
+  set(BUILD_DIR, buildDir)
 
   // Destination folder where packages are stored.
   val targetDir="${buildDir}/dist"
@@ -182,6 +187,7 @@ extra.apply {
 
 java {
   sourceSets["main"].java {
+    val buildDir = getLayout().getBuildDirectory().get().asFile
     srcDir("${buildDir}/generated/logisim/java")
     srcDir("${buildDir}/generated/sources/srcgen")
   }
@@ -248,6 +254,28 @@ fun deleteDirectoryContents(directory: String) {
 }
 
 /**
+ * Helper function to verify the distribution file now exists in build/dist.
+ * It issues a warning if it does not and also lists the contents of its directory.
+*/
+fun verifyFileExists(filename: String) {
+  var theFile = File(filename)
+  if (theFile.isFile()) {
+    return
+  }
+  logger.warn("*** WARNING ***");
+  logger.warn("File does not exist: ${filename}")
+  var parentDir = theFile.getParentFile();
+  if (parentDir != null && parentDir.isDirectory()) {
+    logger.warn("Directory actually contains:")
+    for (file in parentDir.list()) {
+      logger.warn("  ${file}")
+    }
+  } else {
+    logger.warn("Parent directory does not exist: ${parentDir}");
+  }
+}
+
+/**
  * Task createPackageInput
  *
  * Creates a packageInput directory containing only the current shadowJar file
@@ -292,8 +320,8 @@ tasks.register("createDeb") {
   // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
   val appVersion = ext.get(APP_VERSION) as String
   val targetDir = ext.get(TARGET_DIR) as String
-  val debPackagePath = "${targetDir}/${project.name}_${appVersion}-1_amd64.deb"
-  outputs.file(debPackagePath)
+  val outputFile = "${targetDir}/${project.name}_${appVersion}_amd64.deb"
+  outputs.file(outputFile)
 
   doFirst {
     if (!OperatingSystem.current().isLinux) {
@@ -304,6 +332,7 @@ tasks.register("createDeb") {
   doLast {
     val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -318,7 +347,8 @@ tasks.register("createRpm") {
   dependsOn("createPackageInput")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm")
+  var outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm"
+  outputs.file(outputFile);
 
   doFirst {
     if (!OperatingSystem.current().isLinux) {
@@ -329,6 +359,7 @@ tasks.register("createRpm") {
   doLast {
     val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -347,7 +378,8 @@ tasks.register("createMsi") {
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi")
+  var outputFile = "${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi"
+  outputs.file(outputFile);
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -385,6 +417,7 @@ tasks.register("createMsi") {
       throw GradleException("createMsi failed to rename .msi file to include architecture ${osArch}")
     }
     delete("${targetDir}/${fromFile}")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -395,7 +428,9 @@ tasks.register("createMsi") {
  */
 tasks.register("createApp") {
   val supportDir = ext.get(SUPPORT_DIR) as String
-  val dest = "${buildDir}/macOS-${ext.get(OS_ARCH) as String}"
+  val buildDir = ext.get(BUILD_DIR) as String
+  val arch = ext.get(OS_ARCH) as String
+  val dest = "${buildDir}/macOS-${arch}"
 
   group = "build"
   description = "Makes the macOS application."
@@ -420,32 +455,32 @@ tasks.register("createApp") {
         // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
         "--app-version", ext.get(APP_VERSION_SHORT) as String,
         "--type", "app-image",
-        // Can't use until Java 17 // "--mac-app-category", "education"
+        "--mac-app-category", "education"
     )
     runCommand(params, "Error while creating the .app directory.")
 
     val appDirName = ext.get(APP_DIR_NAME) as String
-    val pListFilename = "${appDirName}/Contents/Info.plist"
-    val tempPList = "${dest}/Info.plist"
-    runCommand(listOf(
-        "awk",
-        "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-            + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
-            + "{print >\"${tempPList}\"};"
-            + "/NSHighResolutionCapable/{"
-            + "print \"  <string>true</string>\" >\"${tempPList}\";"
-            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
-            + "}",
-        pListFilename,
-    ), "Error while patching Info.plist file.")
+    if ("x86_64".equals(arch)) {
+      val pListFilename = "${appDirName}/Contents/Info.plist"
+      val tempPList = "${dest}/Info.plist"
+      runCommand(listOf(
+          "awk",
+          "{print >\"${tempPList}\"};"
+              + "/NSHighResolutionCapable/{"
+              + "print \"  <string>true</string>\" >\"${tempPList}\";"
+              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
+              + "}",
+          pListFilename,
+      ), "Error while patching Info.plist file.")
 
-    runCommand(listOf(
-        "mv", tempPList, pListFilename
-    ), "Error while moving Info.plist into the .app directory.")
+      runCommand(listOf(
+          "mv", tempPList, pListFilename
+      ), "Error while moving Info.plist into the .app directory.")
 
-    runCommand(listOf(
-        "codesign", "--force", "--sign", "-", appDirName
-    ), "Error while executing: codesign")
+      runCommand(listOf(
+          "codesign", "--force", "--sign", "-", appDirName
+      ), "Error while executing: codesign")
+    }
   }
 }
 
@@ -463,7 +498,9 @@ tasks.register("createDmg") {
   val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(appDirName)
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg")
+
+  val outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg"
+  outputs.file(outputFile);
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -483,6 +520,7 @@ tasks.register("createDmg") {
         "--type", "dmg",
       )
     runCommand(params, "Error while creating the DMG package")
+    verifyFileExists(outputFile);
   }
 }
 
@@ -564,6 +602,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
  */
 tasks.register("genBuildInfo") {
   // Target location for generated files.
+  val buildDir = ext.get(BUILD_DIR) as String
   val buildInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
 
   group = "build"
@@ -589,6 +628,7 @@ tasks.register("genBuildInfo") {
 tasks.register("genVhdlSyntax") {
   val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
   val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
+  val buildDir = ext.get(BUILD_DIR) as String
   val targetDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/vhdl/syntax/"
 
   group = "build"

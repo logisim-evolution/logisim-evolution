@@ -50,6 +50,8 @@ class WindowOptions extends OptionsPanel {
   private final JLabel gridZoomedDotColorTitle;
   private final ColorChooserButton componentColor;
   private final JLabel componentColorTitle;
+  private final ColorChooserButton componentIconColor;
+  private final JLabel componentIconColorTitle;
   private final JButton gridColorsResetButton;
 
   private final ZoomSlider zoomValue;
@@ -126,6 +128,10 @@ class WindowOptions extends OptionsPanel {
     componentColor = new ColorChooserButton(window, AppPreferences.COMPONENT_COLOR);
     panel.add(componentColorTitle);
     panel.add(componentColor);
+    componentIconColorTitle = new JLabel(S.get("windowComponentIconColor"));
+    componentIconColor = new ColorChooserButton(window, AppPreferences.COMPONENT_ICON_COLOR);
+    panel.add(componentIconColorTitle);
+    panel.add(componentIconColor);
 
     gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);

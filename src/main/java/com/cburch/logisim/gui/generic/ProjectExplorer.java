@@ -392,6 +392,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
 
       // draw tool icon
+      g.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
       final var gfxIcon = g.create();
       final var context = new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(

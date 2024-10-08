@@ -3,6 +3,10 @@
 # Changes #
 
 * @dev (????-??-??)
+
+* v3.9.0 (2024-08-15)
+  * Updated Java requirement to Java 21.
+  * Added an autosave feature along with preferences for it.
   * Added a new preference to allow the user to choose the action keys for many functions.
   * Changed RAM default output from error to undefined [#1747]
   * Added support for scanning 7-segment display on FPGA-boards
@@ -31,6 +35,8 @@
   * Added TTL 74381: arithmetic logic unit
   * Added TTL 74541: Octal buffers with three-state outputs
   * Added TTL 74670: 4-by-4 register file with three-state outputs
+  * Added 16 bit floating point support for floating point arithmetic
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

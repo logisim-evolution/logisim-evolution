@@ -543,6 +543,20 @@ public class Value {
     return Double.longBitsToDouble(value);
   }
 
+  public float toFloatValueFromFP16() {
+    if (error != 0 || unknown != 0 || width != 16) return Float.NaN;
+    return Float.float16ToFloat((short) value);
+  }
+
+  public String toStringFromFloatValue() {
+    return switch (getWidth()) {
+      case 16 -> String.format("%.4g", toFloatValueFromFP16());
+      case 32 -> Float.toString(toFloatValue());
+      case 64 -> Double.toString(toDoubleValue());
+      default -> "NaN";
+    };
+  }
+
   public String toOctalString() {
     if (width <= 1) {
       return toString();

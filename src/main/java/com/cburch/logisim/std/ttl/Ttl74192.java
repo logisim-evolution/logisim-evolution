@@ -44,7 +44,7 @@ public class Ttl74192 extends AbstractTtlGate {
   public static final int PORT_INDEX_CLEAR = 12;
   public static final int PORT_INDEX_A = 13;
   private static final String[] PORT_NAMES = {
-      "Data Input A",
+      "Data Input B",
       "Data Output B",
       "Data Output A",
       "Count Down",

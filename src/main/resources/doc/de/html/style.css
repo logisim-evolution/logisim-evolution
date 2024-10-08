@@ -9,7 +9,6 @@ java-help supports version 1 of CSS
 div.maindiv {
 	max-width:560px;
 	border:solid 0px;
-	background-color:#FFFFFF;
 }
 
 /* div  for the tiny code in the pages */

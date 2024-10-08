@@ -34,8 +34,8 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
     super(new BorderLayout());
     this.project = proj;
 
-    SimulationToolbarModel toolbarModel = new SimulationToolbarModel(proj, menu);
-    Toolbar toolbar = new Toolbar(toolbarModel);
+    final var toolbarModel = new SimulationToolbarModel(proj, menu);
+    final var toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
     model = new SimulationTreeModel(proj.getRootCircuitStates());
@@ -59,7 +59,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
     if (e.getClickCount() == 2) {
       TreePath path = tree.getPathForLocation(e.getX(), e.getY());
       if (path != null) {
-        Object last = path.getLastPathComponent();
+        final var last = path.getLastPathComponent();
         if (last instanceof SimulationTreeCircuitNode node) {
           project.setCircuitState(node.getCircuitState());
         }

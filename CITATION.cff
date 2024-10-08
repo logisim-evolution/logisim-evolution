@@ -82,6 +82,6 @@ keywords:
   - verilog
   - circuit
 license: GPL-3.0
-commit: d8ee95e07a0ebd668bcc857748146ac32905358b
-version: 3.8.0
-date-released: '2202-10-02'
+commit: 83c38fdb2f3002255e0bdd06b80035bf270b20a4
+version: 3.9.0
+date-released: '2024-08-15'

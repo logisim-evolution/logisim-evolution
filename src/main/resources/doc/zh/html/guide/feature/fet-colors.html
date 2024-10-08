@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   导线颜色
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <b>
+     上一节:
+    </b>
+    <a href="fet-splitting.html">
+     分线器
+    </a>
+   </p>
+   <h1>
+    <!-- Wire colors -->
+    导线颜色
+   </h1>
+   <p>
+    <!-- We are now in a position to summarize the full rainbow of colors that Logisim wires can take on. The following little circuit illustrates all of them at once. -->
+    我们现在可以总结 Logisim-evolution 导线可以呈现的全部彩色颜色。 下面的小电路同时说明了所有这些。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/bundles-colors.png"/>
+   </p>
+   <ul>
+    <li>
+     <p>
+      <!-- <strong>Gray:</strong> The wire's bit width is unknown. This occurs because the wire is not attached to any components' inputs and outputs. (All inputs and outputs have a defined bit width.) -->
+      <strong>
+       灰色：
+      </strong>
+      线路的位宽未知。 发生这种情况是因为导线未连接到任何组件的输入和输出。 （所有输入和输出都有定义的位宽度。）
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Blue:</strong> The wire carries a one-bit value, but nothing is driving a specific value onto the wire. We call this a <em>floating</em> bit; some people call it a <em>high-impedance</em> value. In this example, the component placing a value onto the wire is a three-state pin, so it can emit this floating value. -->
+      <strong>
+       蓝色：
+      </strong>
+      线路承载一位值，但没有任何东西将特定值驱动到线路上。 我们称之为
+      <em>
+       浮动
+      </em>
+      位； 有些人称之为
+      <em>
+       高阻抗
+      </em>
+      值。 在此示例中，将值放置到线上的组件是三态引脚，因此它可以发出此浮动值。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Dark green:</strong> The wire is carrying a one-bit 0 value. -->
+      <strong>
+       深绿色：
+      </strong>
+      线路携带一位 0 值。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Bright green:</strong> The wire is carrying a one-bit 1 value. -->
+      <strong>
+       亮绿色：
+      </strong>
+      导线携带一位 1 值。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Black:</strong> The wire is carrying a multi-bit value. Some or all of the bits may not be specified. -->
+      <strong>
+       黑色：
+      </strong>
+      导线携带多位值。 可能未指定部分或全部位。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Red:</strong> The wire is carrying an error value. This often arises because a gate cannot determine the proper output, perhaps because it has no inputs. It could also arise because two components are trying to send different values onto the wire; this is what happens in the above example, where one input pin places 0 onto the wire while another places 1 onto the same wire, causing a conflict. Multi-bit wires will turn red when any of the bits carried are error values. -->
+      <strong>
+       红色：
+      </strong>
+      导线带有错误值。 这种情况经常发生，因为门无法确定正确的输出，可能是因为它没有输入。 它也可能是因为两个组件试图将不同的值发送到线路上而出现的。 这就是上面示例中发生的情况，其中一个输入引脚将 0 放置到电线上，而另一个输入引脚将 1 放置到同一电线上，从而导致冲突。 当携带的任何位是错误值时，多位线将变为红色。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Orange:</strong> The components attached to the wire do not agree in bit width. An orange wire is effectively "broken": It does not carry values between components. Here, we've attached a two-bit component to a one-bit component, so they are incompatible. -->
+      <strong>
+       橙色：
+      </strong>
+      连接到导线的组件的位宽度不一致。 橙色线实际上是“断线”：它不在组件之间传送值。 在这里，我们将两位组件附加到一位组件上，因此它们是不兼容的。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- <strong>Green-Fuchsia:</strong> This color scheme indicates that the wire was selected with the tool <b class=propertie>push</b> (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">). This allows us to know the way and also the indication of the state of the line will be displayed in a small bubble and it also allows to follow a connection in a complex scheme. -->
+      <strong>
+       绿色-紫红色：
+      </strong>
+      此配色方案表示使用工具
+      <b class="propertie">
+       push
+      </b>
+      (
+      <img alt="#########" class="icontxt" src="../../../../icons/1616/toolpoke.png"/>
+      )。 这使我们能够知道路线，并且线路状态的指示将显示在小气泡中，并且还允许遵循复杂方案中的连接。
+     </p>
+    </li>
+   </ul>
+   <p>
+    <!-- <b>Next:</b> <a href="fet-autolabel.html">Self numbered label</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="fet-autolabel.html">
+     自编号标签
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
+</html>

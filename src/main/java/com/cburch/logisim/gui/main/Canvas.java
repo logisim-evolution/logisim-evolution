@@ -57,6 +57,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.AdjustmentEvent;
@@ -709,6 +710,21 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     updateArrows();
   }
 
+  private void doZoom(Point mouseLocation, boolean zoomIn) {
+    var zoomControl = proj.getFrame().getZoomControl();
+    if (zoomIn) {
+      zoomControl.zoomIn();
+    } else {
+      zoomControl.zoomOut();
+    }
+    if (mouseLocation != null) {
+      final var rect = getViewableRect();
+      final var zoom = proj.getFrame().getZoomModel().getZoomFactor();
+      setHorizontalScrollBar((int) ((mouseLocation.getX() - rect.width / 2) * zoom));
+      setVerticalScrollBar((int) ((mouseLocation.getY() - rect.height / 2) * zoom));
+    }
+  }
+
   private class MyListener
       implements BaseMouseInputListenerContract,
           KeyListener,
@@ -736,6 +752,27 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     //
     @Override
     public void keyPressed(KeyEvent e) {
+      if (e.isControlDown()) { // If CTRL is pressed, check for + or -
+        final var ml = Canvas.this.getMousePosition(); // Determine mouse location
+        if (ml != null) { // Handle the Cursor not being on the component
+          final var oldx = ml.x;
+          final var oldy = ml.y;
+          final var newx = (int) Math.round(ml.getX() / getZoomFactor());
+          final var newy = (int) Math.round(ml.getY() / getZoomFactor());
+          ml.translate(newx - oldx, newy - oldy);
+        }
+        switch (e.getKeyCode()) {
+          case KeyEvent.VK_PLUS: // Accept keycode for plus on main block
+          case KeyEvent.VK_ADD: // Also accept for the plus on the num-pad
+            doZoom(ml, true);
+            return;
+          case KeyEvent.VK_MINUS: // Keycode for minus on main block
+          case KeyEvent.VK_SUBTRACT: // Keycode for minus on num-pad
+            doZoom(ml, false); // For - zoom out
+            return;
+          default: // If another key was pressed do nothing
+        }
+      }
       final var tool = proj.getTool();
       if (tool != null) {
         tool.keyPressed(Canvas.this, e);
@@ -886,19 +923,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     public void mouseWheelMoved(MouseWheelEvent mwe) {
       final var tool = proj.getTool();
       if (mwe.isControlDown()) {
-        var zoomControl = proj.getFrame().getZoomControl();
-
         repairMouseEvent(mwe);
-        if (mwe.getWheelRotation() < 0) {
-          zoomControl.zoomIn();
-        } else {
-          zoomControl.zoomOut();
-        }
-        final var rect = getViewableRect();
-        final var zoom = proj.getFrame().getZoomModel().getZoomFactor();
-        setHorizontalScrollBar((int) ((mwe.getX() - rect.width / 2) * zoom));
-        setVerticalScrollBar((int) ((mwe.getY() - rect.height / 2) * zoom));
-
+        doZoom(mwe.getPoint(), mwe.getWheelRotation() < 0);
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');

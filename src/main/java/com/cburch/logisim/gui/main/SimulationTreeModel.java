@@ -37,8 +37,8 @@ public class SimulationTreeModel implements TreeModel {
   }
 
   private TreePath findPath(Object node) {
-    ArrayList<Object> path = new ArrayList<>();
-    Object current = node;
+    final var path = new ArrayList<Object>();
+    var current = node;
     while (current instanceof TreeNode treeNode) {
       path.add(0, current);
       current = treeNode.getParent();
@@ -50,15 +50,17 @@ public class SimulationTreeModel implements TreeModel {
   }
 
   protected void fireNodeChanged(Object node) {
-    TreeModelEvent e = new TreeModelEvent(this, findPath(node));
-    for (TreeModelListener l : listeners) {
-      l.treeNodesChanged(e);
+    if (node != null) {
+      final var e = new TreeModelEvent(this, findPath(node));
+      for (final var l : listeners) {
+        l.treeNodesChanged(e);
+      }
     }
   }
 
   protected void fireStructureChanged(Object node) {
-    TreeModelEvent e = new TreeModelEvent(this, findPath(node));
-    for (TreeModelListener l : listeners) {
+    final var e = new TreeModelEvent(this, findPath(node));
+    for (final var l : listeners) {
       l.treeStructureChanged(e);
     }
   }
@@ -82,15 +84,11 @@ public class SimulationTreeModel implements TreeModel {
   }
 
   public void setCurrentView(CircuitState value) {
-    CircuitState oldView = currentView;
+    final var oldView = currentView;
     if (oldView != value) {
       currentView = value;
-
-      SimulationTreeCircuitNode node1 = mapToNode(oldView);
-      if (node1 != null) fireNodeChanged(node1);
-
-      SimulationTreeCircuitNode node2 = mapToNode(value);
-      if (node2 != null) fireNodeChanged(node2);
+      fireNodeChanged(mapToNode(oldView));
+      fireNodeChanged(mapToNode(value));
     }
   }
 
@@ -122,19 +120,17 @@ public class SimulationTreeModel implements TreeModel {
   }
 
   private SimulationTreeCircuitNode mapToNode(CircuitState state) {
-    TreePath path = mapToPath(state);
-    if (path == null) {
-      return null;
-    } else {
-      return (SimulationTreeCircuitNode) path.getLastPathComponent();
-    }
+    final var path = mapToPath(state);
+    return (path != null)
+        ? (SimulationTreeCircuitNode) path.getLastPathComponent()
+        : null;
   }
 
   public TreePath mapToPath(CircuitState state) {
     if (state == null) return null;
-    ArrayList<CircuitState> path = new ArrayList<>();
-    CircuitState current = state;
-    CircuitState parent = current.getParentState();
+    final var path = new ArrayList<CircuitState>();
+    var current = state;
+    var parent = current.getParentState();
     while (parent != null && parent != state) {
       path.add(current);
       current = parent;
@@ -142,14 +138,14 @@ public class SimulationTreeModel implements TreeModel {
     }
     path.add(current);
 
-    Object[] pathNodes = new Object[path.size() + 1];
+    final var pathNodes = new Object[path.size() + 1];
     pathNodes[0] = root;
     int pathPos = 1;
     SimulationTreeNode node = root;
     for (int i = path.size() - 1; i >= 0; i--) {
       current = path.get(i);
       SimulationTreeNode oldNode = node;
-      for (TreeNode child : Collections.list(node.children())) {
+      for (final var child : Collections.list(node.children())) {
         if (child instanceof SimulationTreeCircuitNode circNode) {
           if (circNode.getCircuitState() == current) {
             node = circNode;

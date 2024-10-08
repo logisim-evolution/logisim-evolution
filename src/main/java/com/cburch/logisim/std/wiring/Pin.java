@@ -278,7 +278,7 @@ public class Pin extends InstanceFactory {
       text = new JFormattedTextField();
       text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
       text.setColumns(11);
-      text.setText(bitWidth == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue()));
+      text.setText(value.toStringFromFloatValue());
       text.selectAll();
 
       text.getDocument()
@@ -340,7 +340,12 @@ public class Pin extends InstanceFactory {
           else if (s.equalsIgnoreCase("-inf")) val = Double.NEGATIVE_INFINITY;
           else if (s.equalsIgnoreCase("nan")) val = Double.NaN;
           else val = Double.parseDouble(s);
-          newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
+          newVal = switch (bitWidth) {
+            case 16 -> Value.createKnown(16, Float.floatToFloat16((float) val));
+            case 32 -> Value.createKnown((float) val);
+            case 64 -> Value.createKnown(val);
+            default -> Value.ERROR;
+          };
         }
         setVisible(false);
         pinState.intendedValue = newVal;
@@ -765,7 +770,7 @@ public class Pin extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return attr.equals(ProbeAttributes.PROBEAPPEARANCE) 
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE)
         ? ProbeAttributes.getDefaultProbeAppearance()
         : super.getDefaultAttributeValue(attr, ver);
   }

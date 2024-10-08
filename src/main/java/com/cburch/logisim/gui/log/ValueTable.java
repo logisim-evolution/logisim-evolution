@@ -65,7 +65,7 @@ public class ValueTable extends JPanel {
     scrollPane.setVerticalScrollBar(vsb);
     scrollPane.setColumnHeaderView(header);
     scrollPane.getViewport().setBorder(null);
-    Border b = scrollPane.getViewportBorder();
+    final var b = scrollPane.getViewportBorder();
     scrollPane.setViewportBorder(null);
     scrollPane.setBorder(b);
     setLayout(new BorderLayout());
@@ -259,7 +259,7 @@ public class ValueTable extends JPanel {
 
       if (!(rowStart <= row && row < rowStart + rowCount)) return null;
 
-      Cell cell = rowData[row - rowStart][col];
+      final var cell = rowData[row - rowStart][col];
 
       if (cell == null) return null;
 

@@ -340,7 +340,6 @@ public class WiringTool extends Tool {
     g2.translate(x, y);
     final int[] points = {3, 13, 8, 13, 8, 3, 13, 3};
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
-    g2.setColor(Color.BLACK);
     for (var i = 0; i < points.length - 2; i += 2)
       g2.drawLine(
           AppPreferences.getScaled(points[i]),

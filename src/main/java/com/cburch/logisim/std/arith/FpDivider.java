@@ -96,14 +96,26 @@ public class FpDivider extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
-    final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
+    final var a_val = switch (dataWidth.getWidth()) {
+      case 16 -> a.toFloatValueFromFP16();
+      case 32 -> a.toFloatValue();
+      case 64 -> a.toDoubleValue();
+      default -> Double.NaN;
+    };
+    final var b_val = switch (dataWidth.getWidth()) {
+      case 16 -> b.toFloatValueFromFP16();
+      case 32 -> b.toFloatValue();
+      case 64 -> b.toDoubleValue();
+      default -> Double.NaN;
+    };
 
     final var out_val = a_val / b_val;
-    final var out =
-        dataWidth.getWidth() == 64
-            ? Value.createKnown(out_val)
-            : Value.createKnown((float) out_val);
+    final var out = switch (dataWidth.getWidth()) {
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
+      case 32 -> Value.createKnown((float) out_val);
+      case 64 -> Value.createKnown(out_val);
+      default -> Value.ERROR;
+    };
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

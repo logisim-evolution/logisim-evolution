@@ -137,7 +137,7 @@ public class Print {
       final var g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
       final var fm = g.getFontMetrics();
       final var head =
-          (header != null && !header.equals(""))
+          (header != null && !header.isEmpty())
               ? format(header, pageIndex + 1, circuits.size(), circ.getName())
               : null;
       final var headHeight = (head == null ? 0 : fm.getHeight());

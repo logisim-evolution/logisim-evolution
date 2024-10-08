@@ -29,7 +29,7 @@ jobs:
 
       # https://github.com/marketplace/actions/paths-changes-filter
       - name: "Looking for modified files..."
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -42,7 +42,7 @@ jobs:
           # Have no mercy.
           set -euo pipefail
 
-          sudo pip install trans-tool
+          sudo pip install pysimple-log==0.0.5 trans-tool==2.5.2
           trans-tool --version
 
           # Declare constants

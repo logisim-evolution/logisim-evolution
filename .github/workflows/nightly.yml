@@ -21,7 +21,7 @@ on:
     - cron: "0 0 * * *"
 
 env:
-  JDK_VERSION: 16
+  JDK_VERSION: 21
   JDK_DISTRO: 'temurin'
 
 jobs:
@@ -114,7 +114,7 @@ jobs:
         id: snapcraft
 
       - name: 'Upload *.snap artifact.'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
            path: ${{ steps.snapcraft.outputs.snap }}
@@ -136,7 +136,7 @@ jobs:
         # ###########################################################################################
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -153,7 +153,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -170,10 +170,10 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
-          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_amd64.deb
           name: ${{ needs.git_check.outputs.base_name }}_amd64.deb
 
         # ###########################################################################################
@@ -188,7 +188,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -207,7 +207,7 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
@@ -229,13 +229,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v3
+
+      - name: Set up aarch64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
 
-      - name: "Build DMG"
+      - name: "Build aarch64 DMG"
         run: |
           # Have no mercy.
           set -euo pipefail
@@ -243,8 +244,30 @@ jobs:
           chmod +x gradlew
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
-      - name: 'Upload DMG'
-        uses: actions/upload-artifact@v3
+      - name: 'Upload aarch64 DMG'
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-aarch64.dmg
+          name: ${{ needs.git_check.outputs.base_name }}-aarch64.dmg
+
+      - name: Set up x86_64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: ${{ env.JDK_DISTRO }}
+          architecture: "x64"
+
+      - name: "Build x86_64 DMG"
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          chmod +x gradlew
+          ./gradlew createDmg -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload x86_64 DMG'
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
@@ -265,7 +288,7 @@ jobs:
       - name: "Checkout sources"
         uses: actions/checkout@v4
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -274,7 +297,7 @@ jobs:
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload MSI'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.

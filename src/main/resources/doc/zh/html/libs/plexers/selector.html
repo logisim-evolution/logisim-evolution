@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Bit Selector -->
+   位选择器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/bitselector.png" alt="#########" height="32" width="32"> <em>Bit Selector</em> -->
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/bitselector.png" width="32"/>
+    <em>
+     位选择器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Plexers</a> -->
+       <a href="index.html">
+        复用器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.0.5
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/selector.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- Given an input of several bits, this will divide it into several equal-sized groups (starting from the lowest-order bit) and output the group selected by the select input. -->
+    给定多个位的输入，这会将其分为几个大小相等的组（从最低位开始）并输出由选择输入选择的组。
+   </p>
+   <p>
+    <!-- For example, if we have an eight-bit input 01010101, and we are to have a three-bit output, then group 0 will be the lowest-order three bits 101, group 1 will be the next three bits, 010, and group 2 will be the next three bits 001. (Any bits beyond the top are filled in with 0.) The select input will be a two-bit number that selects which of these three groups to output; if the select input is 3, then 000 will be the output. -->
+    例如，如果我们有一个八位输入 01010101，并且我们将有一个三位输出，那么组 0 将是最低位三位 101，组 1 将是接下来的三位 010，组 2 将是接下来的三位 001。（超出顶部的任何位都用 0 填充。）选择输入将是一个两位数，用于选择要输出这三组中的哪一组； 如果选择输入为 3，则输出为 000。
+   </p>
+   <h2>
+    <!-- Pins (assuming component faces east) -->
+    引脚（假设元件朝东）
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge (input, bit width matches Data Bits attribute) -->
+     西边（输入，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     <!-- Data value from which bits should be selected for the output. -->
+     应从中选择哪些位用于输出的数据值。
+    </dd>
+    <dt>
+     <!-- East edge (output, bit width matches Output Bits attribute) -->
+     东边（输出，位宽与输出位属性匹配）
+    </dt>
+    <dd>
+     <!-- A group of bits from the data value, as selected by the select input. -->
+     数据值中的一组位，由选择输入选择。
+    </dd>
+    <dt>
+     <!-- South edge (input, bit width is quotient of Data Bits and Output Bits, rounded up) -->
+     南沿（输入，位宽是数据位和输出位的商，向上舍入）
+    </dt>
+    <dd>
+     <!-- Select input: Determines which of the bit groups should be routed to the output. -->
+     选择输入：确定应将哪些位组路由到输出。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Output Bits</q> attribute, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, and the arrow keys alter its <q>Facing</q> attribute. -->
+    当选择或添加元件时，数字“0”到“9”会更改其
+    <q>
+     输出位
+    </q>
+    属性，Alt-0到Alt-9会更改其
+    <q>
+     数据位
+    </q>
+    属性 ，方向键更改其
+    <q>
+     Facing
+    </q>
+    属性。
+   </p>
+   <dl>
+    <dt>
+     <!-- Facing -->
+     方向
+    </dt>
+    <dd>
+     <!-- The direction of the component (its output relative to its input). -->
+     元件的方向（其输出相对于其输入）。
+    </dd>
+    <dt>
+     <!-- Data Bits -->
+     数据位
+    </dt>
+    <dd>
+     <!-- The bit width of the component's data input. -->
+     元件数据输入的位宽度。
+    </dd>
+    <dt>
+     <!-- Output Bits -->
+     输出位
+    </dt>
+    <dd>
+     <!-- The bit width of the component's output. -->
+     元件输出的位宽。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

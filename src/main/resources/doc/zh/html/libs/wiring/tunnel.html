@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Tunnel -->
+   隧道
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/tunnel.png" width="32"/>
+    <em>
+     Tunnel
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Wiring</a> -->
+       <a href="index.html">
+        线路
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        介绍:
+       </strong>
+      </td>
+      <td>
+       2.5.0 (in Base library, moved to Wiring in 2.7.0)
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观符号:
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="notscal" src="../../../../img-libs/tunnel.png"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- A <q>tunnel</q> acts like a wire in that it binds points together, but unlike a wire the connection is not explicitly drawn. This is helpful when you need to connect points far apart in the circuit and a network of wires would make the circuit much more ugly. The below illustration illustrates how this works. -->
+    <q>
+     隧道
+    </q>
+    的作用类似于电线，它将点绑定在一起，但与电线不同的是，它的连接不是显式绘制的。 当您需要连接电路中相距较远的点并且电线网络会使电路变得更加丑陋时，这很有用。 下图说明了其工作原理。
+   </p>
+   <center>
+    <img alt="#########" src="../../../../img-libs/tunnel-demo.png"/>
+   </center>
+   <p>
+    <!-- The illustration above shows how this works. Here the three tunnels have the same label, <em>Clk_A</em>, and represents the three points to which the tunnels are connected. If one of the tunnels has a different label, such as <em>R_W</em>, then it would be part of a different set of tunnels.<br> -->
+    上图显示了其工作原理。 这里，三个隧道具有相同的标签
+    <em>
+     Clk_A
+    </em>
+    ，并代表隧道连接的三个点。 如果其中一个隧道具有不同的标签，例如
+    <em>
+     R_W
+    </em>
+    ，那么它将属于另一组隧道的一部分。
+    <br/>
+    <!-- In the following example we can observe the occurrence of an error on activation of the controlled buffer conflicting with the bottom pin. -->
+    在下面的示例中，我们可以观察到激活底部引脚元件，会引发错误。错误原因隧道是没有方向性的，一组隧道里，哪个是输入，哪个是输出，是不确定的，多个隧道组合在一起，就可会产生冲突，从而引发错误，下图例子可以每种情况进行分析，有冲突就会发生错误。
+   </p>
+   <center>
+    <img alt="#########" src="../../../../img-libs/tunnel-demo1.gif"/>
+   </center>
+   <p>
+    <!-- The controlled buffer emits a floating output since its lower input is <b class="zerov">0</b>. Normally this causes the wire from the controlled buffer to be blue, but here it is bright green. This is correct, as it is connected through the tunnel to the bottom pin which is <b class="unov">1</b>. If the buffer control goes to <b class="unov">1</b>, the tunnel will carry this value to the other points and it will conflict with the <b class="unov">1</b> on the bottom pin triggering an error. Red wires (<b class="evalue">E</b>) can then be seen running through the three tunnels as in the example. -->
+    <!-- 受控缓冲区发出动态输出，因为其较低输入为 <b class="zerov">0</b>。 通常这会导致受控缓冲区的电线呈蓝色，但这里它是亮绿色。 这是正确的，因为它通过隧道连接到底部引脚 <b class="unov">1</b>。 如果缓冲区控制转到<b class="unov">1</b>，隧道会将此值携带到其他点，并且会与上的<b class="unov">1</b>冲突 底部引脚触发错误。 然后可以看到红线 (<b class="evalue">E</b>) 穿过三个隧道，如示例中所示。 -->
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <p>
+    <!-- A tunnel has only one pin, whose bit width matches the tunnel's <b class="propertie">Data Bits</b> attribute. This pin is neither an input nor an output — Tunnels of the same label are simply interconnected transparently like wires. -->
+    一条隧道只有一个引脚，其位宽与隧道的
+    <b class="propertie">
+     数据位
+    </b>
+    属性匹配。 该引脚既不是输入也不是输出——相同标签的隧道只是像电线一样透明地互连。
+   </p>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
+    选择或添加元件时，
+    <b class="tkeybd">
+     Alt-0
+    </b>
+    到
+    <b class="tkeybd">
+     Alt-9
+    </b>
+    会更改其
+    <b class="propertie">
+     数据位
+    </b>
+    属性和箭头键更改其
+    <b class="propertie">
+     方向
+    </b>
+    属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Facing</b> -->
+      <b class="propertie">
+       方向
+      </b>
+     </dt>
+     <dd>
+      <!-- The direction toward which the tunnel points. -->
+      隧道指向的方向。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Data Bits</b> -->
+      <b class="propertie">
+       数据位
+      </b>
+     </dt>
+     <dd>
+      <!-- The number of bits for the tunnel. -->
+      隧道的位数。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label</b> -->
+      <b class="propertie">
+       标签
+      </b>
+     </dt>
+     <dd>
+      <!-- The text within the label associated with the tunnel. This tunnel is connected to all other tunnels with exactly the same label. -->
+      与隧道关联的标签内的文本。 只有标签文本相同的隧道，才能形成通路，与其他完全相同的标签隧道连通。
+     </dd>
+     <dt>
+      <!-- <b class="propertie">Label Font</b> -->
+      <b class="propertie">
+       标签字体
+      </b>
+     </dt>
+     <dd>
+      <!-- The font with which to render the label. -->
+      设置标签的字体。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    Poke 工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- Allows the label associated with the tunnel to be edited. -->
+    允许编辑与隧道关联的标签。
+   </p>
+   <p>
+    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     电路元件库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

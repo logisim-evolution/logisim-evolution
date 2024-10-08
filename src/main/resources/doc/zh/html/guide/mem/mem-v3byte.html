@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2020-01-10T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- v3.0 hex byte plain -->
+   v3.0 十六进制字节普通
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <p>
+   <b>
+    上一节:
+   </b>
+   <a href="mem-v3word.html">
+    文件 v3字
+   </a>
+  </p>
+  <h1>
+   <!-- v3.0 hex byte plain big-endian -->
+   v3.0 十六进制字节普通大端字节序
+  </h1>
+  <div class="maindiv">
+   <p>
+    <!-- This file is structured as in previous versions, the first line indicates the type of structure and then the following lines represent the sequence of bits in the memory. They are in ASCII with only hexadecimal symbols (two digits) without the 0x tag.  -->
+    该文件的结构与以前的版本相同，第一行表示结构的类型，然后接下来的行表示内存中的位序列。 它们采用 ASCII 格式，仅包含十六进制符号（两位数字），没有 0x 标签。
+   </p>
+   <blockquote>
+    <pre>v3.0 hex bytes plain big-endian
+3f45a8c96ea00042f261613443f8b2cb
+50950e0604427da5a9641e91526c7970
+a7eb2d655343913e6b7d39db17730c77
+058ea8ae931cbe211d218d412c76a495</pre>
+   </blockquote>
+   <p>
+    <!-- The line returns of his not interpreted. With the exception of the first line, there are no layout rules. Spaces are ignored. -->
+    他的行返回未解释。 除了第一行之外，没有任何布局规则。 空格被忽略。
+   </p>
+   <p>
+    <!-- You can place comments in the file using the '#' symbol. All characters in the line starting with the '#' symbol will be ignored. -->
+    您可以使用“#”符号在文件中添加注释。 行中以“#”符号开头的所有字符都将被忽略。
+   </p>
+   <p>
+    <!-- There is no need to specify the 0x prefix before the data, however if they exist they will simply be ignored. -->
+    无需在数据前指定 0x 前缀，但如果存在，它们将被忽略。
+   </p>
+   <p>
+    <!-- If the length of the data set of the file is shorter than the memory space the remaining cells will be initialized to 0 for ROM and for RAM to 0 or randomly according to the parameters in <a href="../opts/index.html">Project options</a>. -->
+    如果文件数据集的长度小于内存空间，则剩余单元将被初始化为 ROM（ROM）为 0，RAM（RAM）为 0，或者根据
+    <a href="../opts/index.html">
+     项目选项
+    </a>
+    。
+   </p>
+   <p align="center">
+    <img alt="#########" height="348" src="../../../../img-guide/membyteplainbe.png" width="480"/>
+   </p>
+   <p>
+    <!-- In the big-endian mode the memory is considered as a sequence of bytes regardless of the size of its words, with left to right the high bytes and then the low bytes. In the figure above, the hexadecimal signs are represented in their binary value in the blue/green area and it can be observed that the bytes of the file (top) are copied into the memory in sequence with examples for memories with 4bits, 7bits and 12bits words. Observe the alignment offset for words not multiple of 8 for example in the 7-bit word memory. -->
+    在大端模式下，内存被视为字节序列，无论其字的大小如何，从左到右先是高字节，然后是低字节。 在上图中，蓝色/绿色区域中的十六进制符号以其二进制值表示，可以观察到文件的字节（顶部）按顺序复制到内存中，以 4 位、7 位和 12位字。 观察 7 位字存储器中字的对齐偏移量不是 8 的倍数。
+   </p>
+   <p>
+    <h1 id="little">
+     <!-- v3.0 hex byte plain little-endian -->
+     v3.0 十六进制字节普通小端字节序
+    </h1>
+    <div class="maindiv">
+     <p>
+      <!-- This format follows the same rules as previous formats. Unlike the reading direction, in the little-endian mode it is read from right to left. -->
+      此格式遵循与以前的格式相同的规则。 与读取方向不同，在小端模式下，它是从右向左读取的。
+     </p>
+     <blockquote>
+      <pre>v3.0 hex bytes plain little-endian
+3f45a8c96ea00042f261613443f8b2cb
+50950e0604427da5a9641e91526c7970
+a7eb2d655343913e6b7d39db17730c77
+058ea8ae931cbe211d218d412c76a495</pre>
+     </blockquote>
+     <p align="center">
+      <img alt="#########" height="348" src="../../../../img-guide/membyteplainle.png" width="480"/>
+     </p>
+     <p>
+      <!-- In the little-endian mode the memory is considered as a sequence of bytes with from right to left the low low bits and then the high bits. In the figure above we can see that the bytes of the file (top) are copied into the memory in sequence with examples for memories with 4bits, 7bits and 12bits words. You can observe the alignment offset for example for the 7-bit word memory. -->
+      在小端模式下，内存被视为字节序列，从右到左依次为低位和高位。 在上图中，我们可以看到文件的字节（顶部）按顺序复制到内存中，以具有 4 位、7 位和 12 位字的内存为例。 例如，您可以观察 7 位字存储器的对齐偏移量。
+      <p align="center">
+       <img alt="#########" class="notscal" src="../../../../img-guide/memelitle.png"/>
+      </p>
+      <!-- The same examples are displayed in the component. -->
+      组件中显示相同的示例。
+     </p>
+     <h1 id="addr">
+      <!-- v3.0 hex bytes addressed big-endian -->
+      v3.0 十六进制字节寻址大端
+     </h1>
+     <p>
+      <!-- this format is identical to the previous ones with the possibility to specify the address of the memory word or to start recording the data of the line.<br>		This one is in hexadecimal followed by the character <b>:</b>. -->
+      此格式与前面的格式相同，可以指定内存字的地址或开始记录行的数据。
+      <br/>
+      此格式为十六进制，后跟字符
+      <b>
+       ：
+      </b>
+      。
+     </p>
+     <blockquote>
+      <pre>v3.0 hex bytes addressed big-endian
+00: 3f45a8c96ea75086cce5d39d87456709
+20: 56788888882efff0ec45670900000000
+30: 9863fec8a2d75d342e1f008090445578</pre>
+     </blockquote>
+     <p>
+      <!-- In this example the 8 words at address 0x10 are not specified. These cells will be initialized to 0 and for RAM according to the parameters in <a href="../opts/index.html">Project options</a>, to 0 or randomly. -->
+      在此示例中，未指定地址 0x10 处的 8 个字。 这些单元格将根据
+      <a href="../opts/index.html">
+       项目选项
+      </a>
+      中的参数将 RAM 初始化为 0，或者随机初始化为 0。
+     </p>
+     <p align="center">
+      <img alt="#########" class="notscal" src="../../../../img-guide/membytepleinadrbig.png"/>
+     </p>
+     <h1 id="addr">
+      <!-- v3.0 hex bytes addressed little-endian -->
+      v3.0 十六进制字节寻址小尾数法
+     </h1>
+     <p>
+      <!-- This format is identical to the previous ones with the possibility to specify the address of the memory word or to start recording the data of the line.  -->
+      该格式与之前的格式相同，可以指定存储器字的地址或开始记录该行的数据。
+     </p>
+     <blockquote>
+      <pre>v3.0 hex bytes addressed little-endian
+00: 3f45a8c96ea75086cce5d39d87456709
+20: 56788888882efff0ec45670900000000
+30: 9863fec8a2d75d342e1f008090445578</pre>
+     </blockquote>
+     <p>
+      <!-- <strong>Next:</strong> <a href="mem-menu.html">Pop-up menus and files</a>. -->
+      <strong>
+       下一节:
+      </strong>
+      <a href="mem-vbinary.html">
+       文件二进制
+      </a>
+      .
+     </p>
+    </div>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
+</html>
