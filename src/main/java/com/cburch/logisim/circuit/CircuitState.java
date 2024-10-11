@@ -118,7 +118,10 @@ public class CircuitState implements InstanceData {
               break;
             }
           }
-          if (!found && compState instanceof RamState state) Ram.closeHexFrame(state);
+          if (!found && compState instanceof RamState state){
+            Ram.closeHexFrame(state);
+            DualportRam.closeHexFrame(state);
+          }
           if (!found && compState instanceof CircuitState sub) {
             sub.parentState = null;
             subStates.remove(sub);
