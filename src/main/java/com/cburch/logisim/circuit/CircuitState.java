@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.extra.Buzzer;
 import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.DualportRam;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
