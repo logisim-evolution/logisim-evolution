@@ -2,7 +2,12 @@
 
 # Changes #
 
-* @dev (????-??-??)
+* @dev (2024-10-10)
+  * Added dual port RAM component. [#79]
+    * It's a type of memory RAM that is typically used to implement processor registers.
+    * Added spanish translations related to it.
+    * It doesn't supports bidirectional operations.
+    * It doesn't supports line sizes, as it's restricted to one input and two inputs.
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
