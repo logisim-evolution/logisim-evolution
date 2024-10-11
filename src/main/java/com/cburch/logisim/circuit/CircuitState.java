@@ -393,6 +393,9 @@ public class CircuitState implements InstanceData {
       if (comp.getFactory() instanceof Ram ram) {
         final var remove = ram.reset(this, Instance.getInstanceFor(comp));
         if (remove) componentData.put(comp, null);
+      } else if (comp.getFactory() instanceof DualportRam dpram) {
+        final var remove = dpram.reset(this, Instance.getInstanceFor(comp));
+        if (remove) componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
         Buzzer.stopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
