@@ -331,7 +331,9 @@ public class DualportRamAppearance {
   }
 
   private static Port getAddrPort(int portIndex, AttributeSet attrs) {
-    final var result = new Port(0, 10+(40*portIndex), Port.INPUT, attrs.getValue(Mem.ADDR_ATTR));
+    final var classic = classicAppearance(attrs);
+    final var yoffset = classic ? (20 * portIndex) : (40 * portIndex);
+    final var result = new Port(0, 10 + yoffset, Port.INPUT, attrs.getValue(Mem.ADDR_ATTR));
     switch(portIndex){
       case 0:
         result.setToolTip(S.getter("memAddr1Tip"));
@@ -413,7 +415,7 @@ public class DualportRamAppearance {
     if (portIndex >= nrWEs) return null;
     var ypos = 180+(portIndex*10);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES) && classicAppearance(attrs))
-      ypos = 30;
+      ypos = 140;
     final var result = new Port(0, ypos, Port.INPUT, 1);
     result.setToolTip(S.getter("dpramWETip"));
     return result;
@@ -425,7 +427,7 @@ public class DualportRamAppearance {
     if (portIndex >= nrClks) return null;
     var ypos = 200;
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES) && classicAppearance(attrs))
-      ypos = 40;
+      ypos = 170;
     final var result = new Port(0, ypos, Port.INPUT, 1);
     result.setToolTip(S.getter("ramClkTip"));
     return result;
@@ -437,7 +439,7 @@ public class DualportRamAppearance {
     if (portIndex >= nrLEs) return null;
     var ypos = 140+(portIndex*20);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES) && classicAppearance(attrs))
-      ypos = 40;
+      ypos = 100+(portIndex*20);
     final var result = new Port(0, ypos, Port.INPUT, 1);
     switch (portIndex) {
       case 0 -> result.setToolTip(S.getter("dpramLETip1"));
