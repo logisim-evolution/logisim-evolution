@@ -176,7 +176,7 @@ class SelectionBase {
     for (final var comp : components) {
       final var oldLoc = comp.getLocation();
       final var attrs =
-          translate || (comp.getFactory() instanceof Rom) || (comp.getFactory() instanceof Ram)
+          translate || (comp.getFactory() instanceof Rom) || ((comp.getFactory() instanceof Ram || comp.getFactory() instanceof DualportRam))
               ? comp.getAttributeSet()
               : (AttributeSet) comp.getAttributeSet().clone();
       var newX = oldLoc.getX() + dx;
