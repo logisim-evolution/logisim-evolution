@@ -29,6 +29,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
 import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.DualportRam;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
