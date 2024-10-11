@@ -25,6 +25,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.DualportRam;
 import com.cburch.logisim.std.memory.RamAttributes;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.util.CollectionUtil;
