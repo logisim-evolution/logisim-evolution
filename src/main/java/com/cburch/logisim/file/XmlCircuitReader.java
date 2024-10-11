@@ -95,7 +95,7 @@ public class XmlCircuitReader extends CircuitTransaction {
     final var locStr = elt.getAttribute("loc");
     final var attrs = source.createAttributeSet();
     var defaults = source;
-    if (isHolyCross && source instanceof Ram) {
+    if (isHolyCross && (source instanceof Ram || source instanceof DualportRam)) {
       final var ramAttrs = (RamAttributes) attrs;
       ramAttrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
       ramAttrs.updateAttributes();
