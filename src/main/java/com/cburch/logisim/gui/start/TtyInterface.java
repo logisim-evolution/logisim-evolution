@@ -219,6 +219,11 @@ public class TtyInterface {
         final var m = ramFactory.getContents(ramState);
         HexFile.open(m, loadFile);
         found = true;
+      } else if (comp.getFactory() instanceof DualportRam dpramFactory) {
+        final var dpramState = circState.getInstanceState(comp);
+        final var m = dpramFactory.getContents(dpramState);
+        HexFile.open(m, loadFile);
+        found = true;
       }
     }
 
