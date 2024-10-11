@@ -18,6 +18,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.DualportRam;
 import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Graphics;
