@@ -370,7 +370,7 @@ public class DualportRam extends Mem {
     }
 
     if (!goodAddr2 && !outputNotEnabled2) {
-      setValue.accept(Value.createUnknown(dataBits));
+      setValue2.accept(Value.createUnknown(dataBits));
       return;
     }
 
