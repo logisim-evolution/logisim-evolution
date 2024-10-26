@@ -354,25 +354,28 @@ public class DualportRam extends Mem {
 
     /* if the address is bogus set error value accordingly */
 
-    if (errorValue && !outputNotEnabled) {
+    boolean value_is_error = errorValue || errorValue2;
+    boolean value_is_bad = !goodAddr || !goodAddr2;
+
+    if (errorValue) {
       setValue.accept(Value.createError(dataBits));
-      return;
     }
 
-    if (errorValue2 && !outputNotEnabled2) {
+    if (errorValue2) {
       setValue2.accept(Value.createError(dataBits));
-      return;
     }
 
-    if (!goodAddr && !outputNotEnabled) {
+    if (value_is_error) return;
+
+    if (!goodAddr) {
       setValue.accept(Value.createUnknown(dataBits));
-      return;
     }
 
-    if (!goodAddr2 && !outputNotEnabled2) {
+    if (!goodAddr2) {
       setValue2.accept(Value.createUnknown(dataBits));
-      return;
     }
+
+    if (value_is_bad) return;
 
     final var asyncRead = async || attrs.getValue(Mem.ASYNC_READ);
 
