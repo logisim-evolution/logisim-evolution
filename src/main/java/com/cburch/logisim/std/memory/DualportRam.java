@@ -286,15 +286,11 @@ public class DualportRam extends Mem {
     final var outputEnabled = !state.getPortValue(DualportRamAppearance.getLEIndex(0, attrs)).equals(Value.FALSE);
     final var outputEnabled2 = !state.getPortValue(DualportRamAppearance.getLEIndex(1, attrs)).equals(Value.FALSE);
     if (outputEnabled && goodAddr && !misalignError) {
-      //for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr);
         state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), Value.createKnown(width, val), DELAY);
-      //}
     } else if (outputEnabled && (errorValue || (goodAddr && misalignError))) {
-      //for (var i = 0; i < dataLines; i++)
         state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), Value.createError(width), DELAY);
     } else {
-      //for (var i = 0; i < dataLines; i++)
         state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), Value.createUnknown(width), DELAY);
     }
     if (outputEnabled2 && goodAddr2 && !misalignError) {
