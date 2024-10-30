@@ -13,7 +13,7 @@ We have decided to release this new Logisim version under the name logisim-evolu
 
 ## Languages
 
-Logisim supports many languages. Many of them are automatically translated by deepl. If you detect bizar translations please do not hesitate to correct them in the corresponding property files and ask for a pull-request.
+Logisim supports many languages. Many of them are automatically translated by deepl. If you detect bizarre translations please do not hesitate to correct them in the corresponding property files and ask for a pull-request.
 
 ## What's new in logisim-evolution
 
