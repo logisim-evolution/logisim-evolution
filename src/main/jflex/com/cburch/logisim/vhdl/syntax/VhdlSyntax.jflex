@@ -166,6 +166,9 @@ import org.fife.ui.rsyntaxtextarea.TokenImpl;
 		return zzCurrentPos>=s.offset+s.count;
 	}
 
+	public final int yystate() {
+		return zzLexicalState;
+	}
 
 	/**
 	 * Resets the scanner to read from a new input stream.
@@ -505,4 +508,3 @@ URL						= (((https?|f(tp|ile))"://"|"www.")({URLCharacters}{URLEndCharacter})?)
 	\n						{ addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken; }
 	<<EOF>>					{ addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken; }
 }
-
