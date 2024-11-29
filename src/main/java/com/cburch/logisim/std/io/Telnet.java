@@ -104,7 +104,6 @@ public class Telnet extends InstanceFactory {
     painter.drawPort(RD, "rd", Direction.WEST);
     painter.drawPort(AVAIL, "av", Direction.WEST);
 
-
     var metric = g.getFontMetrics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
@@ -187,13 +186,13 @@ public class Telnet extends InstanceFactory {
     }
   }
 
-    @Override
+  @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     instance.computeLabelTextField(Instance.AVOID_SIDES);
   }
 
-   @Override
+  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_SIDES);
