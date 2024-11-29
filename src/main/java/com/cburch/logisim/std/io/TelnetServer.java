@@ -221,7 +221,7 @@ public class TelnetServer implements InstanceData {
      *
      * @param value the byte value
      */
-    synchronized public void put(byte value) {
+    public synchronized void put(byte value) {
       if (inBuffer < size) {
         data[newest] = value;
         newest = inc(newest);
@@ -232,7 +232,7 @@ public class TelnetServer implements InstanceData {
     /**
      * @return the byte at the tail of the buffer
      */
-    synchronized public byte peek() {
+    public synchronized byte peek() {
       if (inBuffer > 0) {
         return data[oldest];
       } else {
@@ -243,7 +243,7 @@ public class TelnetServer implements InstanceData {
     /**
      * deletes a byte from the tail of the buffer
      */
-    synchronized public void delete() {
+    public synchronized void delete() {
       if (inBuffer > 0) {
         oldest = inc(oldest);
         inBuffer--;
@@ -253,7 +253,7 @@ public class TelnetServer implements InstanceData {
     /**
      * deletes all buffered data
      */
-    synchronized public void deleteAll() {
+    public synchronized void deleteAll() {
       oldest = 0;
       newest = 0;
       inBuffer = 0;
@@ -262,7 +262,7 @@ public class TelnetServer implements InstanceData {
     /**
      * @return true if there is data available
      */
-    synchronized public boolean hasData() {
+    public synchronized boolean hasData() {
       return inBuffer > 0;
     }
 
