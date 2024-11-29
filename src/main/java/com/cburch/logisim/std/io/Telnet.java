@@ -7,6 +7,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -14,9 +15,13 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.TelnetServer.ServerHolder;
+import com.cburch.logisim.tools.key.BitWidthConfigurator;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
+import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class Telnet extends InstanceFactory {
@@ -70,6 +75,10 @@ public class Telnet extends InstanceFactory {
     );
     setOffsetBounds(Bounds.create(-30, -20, 40, 60));
     setIconName("telnet.gif");
+    setKeyConfigurator(
+        JoinedConfigurator.create(
+            new BitWidthConfigurator(StdAttr.WIDTH),
+            new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 
     final var ps = new Port[6];
     ps[IN] = new Port(-30, 10, Port.INPUT, 8);
@@ -95,8 +104,6 @@ public class Telnet extends InstanceFactory {
     painter.drawPort(RD, "rd", Direction.WEST);
     painter.drawPort(AVAIL, "av", Direction.WEST);
 
-    g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
-    painter.drawLabel();
 
     var metric = g.getFontMetrics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
@@ -119,6 +126,9 @@ public class Telnet extends InstanceFactory {
         y0 + metric.getHeight() - 4,
         GraphicsUtil.H_CENTER,
         GraphicsUtil.V_BOTTOM);
+
+    g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
+    painter.drawLabel();
   }
 
   private TelnetServer getData(InstanceState state) {
@@ -174,6 +184,19 @@ public class Telnet extends InstanceFactory {
           state.deleteOldest();
         }
       }
+    }
+  }
+
+    @Override
+  protected void configureNewInstance(Instance instance) {
+    instance.addAttributeListener();
+    instance.computeLabelTextField(Instance.AVOID_SIDES);
+  }
+
+   @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == StdAttr.LABEL_LOC) {
+      instance.computeLabelTextField(Instance.AVOID_SIDES);
     }
   }
 }
