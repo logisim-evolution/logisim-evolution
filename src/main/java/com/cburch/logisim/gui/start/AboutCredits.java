@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.start;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.generated.BuildInfo;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.awt.Color;
@@ -21,6 +22,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.ImageObserver;
 import java.net.URL;
 import java.util.ArrayList;
@@ -98,6 +100,13 @@ class AboutCredits extends JComponent {
 
   @Override
   protected void paintComponent(Graphics g) {
+    if (AppPreferences.AntiAliassing.getBoolean()) {
+      Graphics2D g2 = (Graphics2D) g;
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+
     if (startMillis == 0) {
       startMillis = System.currentTimeMillis();
       lines.initialize(getGraphics(), getWidth(), getHeight());
