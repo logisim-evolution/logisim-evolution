@@ -52,7 +52,7 @@ class AboutCredits extends JComponent {
     lines = new Lines();
     lines
         .title(BuildInfo.displayName)
-        .h2(String.format("Copyright \u00A92001-%s %s developers", BuildInfo.year, BuildInfo.name))
+        .h2(String.format("Copyright \u00A9 2001-%s %s developers", BuildInfo.year, BuildInfo.name))
         .url(BuildInfo.url)
         .space()
         .h1(S.get("creditsDevelopedBy"))
