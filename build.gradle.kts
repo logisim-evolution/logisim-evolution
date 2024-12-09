@@ -38,7 +38,7 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.16")
   implementation("org.slf4j:slf4j-simple:2.0.16")
-  implementation("com.formdev:flatlaf:3.5.2")
+  implementation("com.formdev:flatlaf:3.5.4")
   implementation("commons-cli:commons-cli:1.9.0")
   implementation("org.apache.commons:commons-text:1.12.0")
 
