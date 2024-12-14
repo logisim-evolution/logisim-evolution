@@ -6,6 +6,6 @@ Exec=LogisimEvolution.sh
 Icon=com.github.reds.LogisimEvolution
 Terminal=false
 Type=Application
-Categories=Electronics
+Categories=Education;Electronics
 MimeType=application/x-logisim-circuit;
 X-Desktop-File-Install-Version=0.24
