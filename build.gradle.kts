@@ -40,7 +40,7 @@ dependencies {
   implementation("org.slf4j:slf4j-simple:2.0.16")
   implementation("com.formdev:flatlaf:3.5.2")
   implementation("commons-cli:commons-cli:1.9.0")
-  implementation("org.apache.commons:commons-text:1.12.0")
+  implementation("org.apache.commons:commons-text:1.13.0")
 
   // NOTE: Do not upgrade the jflex version. Later versions do not work.
   compileOnly("de.jflex:jflex:1.4.1")
