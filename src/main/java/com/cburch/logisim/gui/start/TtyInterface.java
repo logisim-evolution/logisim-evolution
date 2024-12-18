@@ -29,6 +29,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
 import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.DualportRam;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
@@ -218,6 +219,11 @@ public class TtyInterface {
         final var m = ramFactory.getContents(ramState);
         HexFile.open(m, loadFile);
         found = true;
+      } else if (comp.getFactory() instanceof DualportRam dpramFactory) {
+        final var dpramState = circState.getInstanceState(comp);
+        final var m = dpramFactory.getContents(dpramState);
+        HexFile.open(m, loadFile);
+        found = true;
       }
     }
 
@@ -235,6 +241,11 @@ public class TtyInterface {
       if (comp.getFactory() instanceof Ram ramFactory) {
         final var ramState = circState.getInstanceState(comp);
         final var m = ramFactory.getContents(ramState);
+        HexFile.save(saveFile, m, "v3.0 hex words plain");
+        found = true;
+      } else if (comp.getFactory() instanceof DualportRam dpramFactory) {
+        final var dpramState = circState.getInstanceState(comp);
+        final var m = dpramFactory.getContents(dpramState);
         HexFile.save(saveFile, m, "v3.0 hex words plain");
         found = true;
       }

@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.extra.Buzzer;
 import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.DualportRam;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -117,7 +118,10 @@ public class CircuitState implements InstanceData {
               break;
             }
           }
-          if (!found && compState instanceof RamState state) Ram.closeHexFrame(state);
+          if (!found && compState instanceof RamState state){
+            Ram.closeHexFrame(state);
+            DualportRam.closeHexFrame(state);
+          }
           if (!found && compState instanceof CircuitState sub) {
             sub.parentState = null;
             subStates.remove(sub);
@@ -388,6 +392,9 @@ public class CircuitState implements InstanceData {
     for (final var comp : componentData.keySet()) {
       if (comp.getFactory() instanceof Ram ram) {
         final var remove = ram.reset(this, Instance.getInstanceFor(comp));
+        if (remove) componentData.put(comp, null);
+      } else if (comp.getFactory() instanceof DualportRam dpram) {
+        final var remove = dpram.reset(this, Instance.getInstanceFor(comp));
         if (remove) componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
         Buzzer.stopBuzzerSound(comp, this);
