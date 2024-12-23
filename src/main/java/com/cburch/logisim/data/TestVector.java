@@ -19,7 +19,14 @@ import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ * Represents the data contents of a Logisim Evolution test vector file,
+ * Also provides functionality for parsing test vector files from disk.
+ * <p>
+ * The contents of the test vector are made available through the fields <code>columnName</code>,
+ * <code>columnWidth</code>, <code>columnRadix</code> and <code>data</code>.
+ * Each of these is an * array containing column information, in order.
+ * They all have the same length.
+ * Code taken from <a href="http://www.cs.cornell.edu/courses/cs3410/2015sp/">Cornell's version of Logisim</a>
  */
 public class TestVector {
 
@@ -29,8 +36,8 @@ public class TestVector {
     public boolean accept(File f) {
       if (!f.isFile()) return true;
 
-      String name = f.getName();
-      int i = name.lastIndexOf('.');
+      final var name = f.getName();
+      final var i = name.lastIndexOf('.');
       return (i > 0 && name.substring(i).equalsIgnoreCase(".txt"));
     }
 
@@ -128,13 +135,33 @@ public class TestVector {
     }
   }
 
+  /**
+   * A java FileFilter that accepts Logisim Evoltion test vector files.
+   */
   public static final FileFilter FILE_FILTER = new TestVectorFilter();
+  /**
+   * An array containing the names of the test vector columns.
+   */
   public String[] columnName;
+  /**
+   * An array containing the bit widths of the test vector columns.
+   */
   public BitWidth[] columnWidth;
+  /**
+   * An array containing the numerical radix of the string representation
+   * of the test vector columns.
+   */
   public int[] columnRadix;
-
+  /**
+   * An array containing data values represented by the test vector columns.
+   */
   public List<Value[]> data;
 
+  /**
+   * Constructs a TestVector object by parsing the contents of the given File.
+   *
+   * @param src the File object to read from.
+   */
   public TestVector(File src) throws IOException {
     try (final var in = new BufferedReader(new FileReader(src))) {
       final var r = new TestVectorReader(in);
@@ -142,6 +169,11 @@ public class TestVector {
     }
   }
 
+  /**
+   * Constructs a TestVector object by parsing the contents of the file with the given filename.
+   *
+   * @param filename the path of the file to read from.
+   */
   public TestVector(String filename) throws IOException {
     this(new File(filename));
   }
