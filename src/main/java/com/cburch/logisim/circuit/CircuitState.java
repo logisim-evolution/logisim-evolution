@@ -20,6 +20,7 @@ import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.io.TelnetServer;
 import com.cburch.logisim.std.io.extra.Buzzer;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
@@ -394,6 +395,8 @@ public class CircuitState implements InstanceData {
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider guiProvider)
           guiProvider.destroy();
+        if (componentData.get(comp) instanceof TelnetServer telnetServer)
+          telnetServer.deleteAll();
         // it.remove(); ktt1: clear out the state instead of removing the key to
         // prevent concurrent modification error
         componentData.put(comp, null);
