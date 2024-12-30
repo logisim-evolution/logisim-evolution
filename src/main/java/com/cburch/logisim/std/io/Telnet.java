@@ -50,7 +50,7 @@ public class Telnet extends InstanceFactory {
       Attributes.forIntegerRange("port", S.getter("telnetPortAttr"), 1, 65535);
 
   private static final Attribute<Integer> ATTR_BUFFER =
-      Attributes.forIntegerRange("buflen", S.getter("keybBufferLengthAttr"), 1, 256);
+      Attributes.forIntegerRange("buflen", S.getter("keybBufferLengthAttr"), 1, 1024);
 
   public Telnet() {
     super(_ID, S.getter("telnetComponent"));
