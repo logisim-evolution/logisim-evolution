@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added Telnet component
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
