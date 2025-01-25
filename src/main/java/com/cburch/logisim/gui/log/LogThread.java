@@ -150,10 +150,6 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
           }
         }
       }
-      try {
-        Thread.sleep(FLUSH_FREQUENCY);
-      } catch (InterruptedException ignored) {
-      }
     }
     synchronized (lock) {
       if (writer != null) {
