@@ -393,15 +393,6 @@ public class MenuSimulate extends Menu {
         /* Restart VHDL simulation (in QuestaSim) */
         if (vhdl != null && vhdl.isRunning()) {
           vhdl.reset();
-          // Wait until the restart finishes, otherwise the signal reset will be
-          // sent to the VHDL simulator before the sim is loaded and errors will
-          // occur. Wait time (0.5 sec) is arbitrary.
-          // FIXME: Find a better way to do blocking reset.
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-          }
         }
         sim.reset();
         proj.repaintCanvas();
