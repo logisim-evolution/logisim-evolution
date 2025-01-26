@@ -560,9 +560,9 @@ class CircuitWires {
   // create the new bundle map.
 
   /*synchronized*/ private BundleMap getBundleMap() {
+    if (masterBundleMap != null) return masterBundleMap;
     if (SwingUtilities.isEventDispatchThread()) {
       // AWT event thread.
-      if (masterBundleMap != null) return masterBundleMap;
       final var ret = new BundleMap();
       try {
         computeBundleMap(ret);
