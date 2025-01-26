@@ -625,7 +625,9 @@ tasks.register("genBuildInfo") {
  *
  * Generates the VhdlSyntax.java file
 */
-tasks.register("genVhdlSyntax") {
+open class ExecOperationsJarTask @Inject constructor(@Internal val execOperations: ExecOperations) : Jar()
+
+tasks.register<ExecOperationsJarTask>("genVhdlSyntax") {
   val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
   val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
   val buildDir = ext.get(BUILD_DIR) as String
@@ -655,7 +657,7 @@ tasks.register("genVhdlSyntax") {
 
   doLast() {
     logging.captureStandardOutput(LogLevel.DEBUG)
-    javaexec {
+    execOperations.javaexec {
       classpath = files(jflexJarFileName)
       args = listOf(
           "--nobak",
