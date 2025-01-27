@@ -149,10 +149,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
       for (int i = 0; i < vector.data.size() && !canceled; i++) {
         while (paused) {
           if (canceled) return;
-          try {
-            Thread.sleep(1000);
-          } catch (InterruptedException ignored) {
-          }
         }
         try {
           test(i);
