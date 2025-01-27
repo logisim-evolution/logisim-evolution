@@ -100,6 +100,9 @@ public class Clock extends InstanceFactory {
     }
 
     boolean updateTick(int ticks, AttributeSet attrs) {
+      /* All this variables should be class fields, to avoid
+      /* recalculating them on each tick (!!!).
+      /* Them must be set only once, when the TextEdit component with the value changes.
       int durationHigh = attrs.getValue(ATTR_HIGH);
       int durationLow = attrs.getValue(ATTR_LOW);
       int cycle = durationHigh + durationLow;
@@ -108,7 +111,9 @@ public class Clock extends InstanceFactory {
       Value desired = (isLow ? Value.FALSE : Value.TRUE);
       if (sending.equals(desired)) return false;
       sending = desired;
-      return true;
+      */
+      sending = (sending.equals(Value.FALSE)) ? Value.TRUE : Value.FALSE;
+      return sending.equals(Value.FALSE);
     }
 
     @Override
