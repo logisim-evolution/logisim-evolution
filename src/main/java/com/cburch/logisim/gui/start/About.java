@@ -157,11 +157,6 @@ public class About {
     public void run() {
       while (running) {
         panel.repaint();
-        try {
-          Thread.sleep(20);
-        } catch (InterruptedException ignored) {
-          // Let's pretend nothing happened.
-        }
       }
     }
   } // PanelThread
