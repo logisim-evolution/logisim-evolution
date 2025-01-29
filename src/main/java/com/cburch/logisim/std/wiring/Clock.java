@@ -47,7 +47,21 @@ public class Clock extends InstanceFactory {
    * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Clock";
-
+  /**
+  * int durationHigh = attrs.getValue(ATTR_HIGH);
+  * int durationLow = attrs.getValue(ATTR_LOW);
+  * int cycle = durationHigh + durationLow;
+  * NOTE. phase is not good like this, inside of updateTick. It makes 
+  * TWO slow mod operations, when the atomic operation of updateTick should be just 
+  * FLIPPING `desired` value.
+  * int phase = ((attrs.getValue(ATTR_PHASE) % cycle) + cycle) % cycle;
+  * Then isLow does another mod operation... going even slower :(
+  * 
+  * isLow is completely trivial, is just an .equals() as atomical operation.
+  * durationHigh, durationLow, and phase should be set on swing .onChange() of
+  * the components (The JTextEdit) of the Clock!
+  */
+  private boolean isLow;
   public static class ClockLogger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -100,20 +114,9 @@ public class Clock extends InstanceFactory {
     }
 
     boolean updateTick(int ticks, AttributeSet attrs) {
-      /* All this variables should be class fields, to avoid
-      /* recalculating them on each tick (!!!).
-      /* Them must be set only once, when the TextEdit component with the value changes.
-      int durationHigh = attrs.getValue(ATTR_HIGH);
-      int durationLow = attrs.getValue(ATTR_LOW);
-      int cycle = durationHigh + durationLow;
-      int phase = ((attrs.getValue(ATTR_PHASE) % cycle) + cycle) % cycle;
-      boolean isLow = ((ticks + phase) % cycle) < durationLow;
-      Value desired = (isLow ? Value.FALSE : Value.TRUE);
-      if (sending.equals(desired)) return false;
-      sending = desired;
-      */
-      sending = (sending.equals(Value.FALSE)) ? Value.TRUE : Value.FALSE;
-      return sending.equals(Value.FALSE);
+      isLow = sending.equals(Value.FALSE);
+      sending = (isLow ? Value.TRUE : Value.FALSE);
+      return isLow;
     }
 
     @Override
