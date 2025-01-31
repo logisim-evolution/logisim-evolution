@@ -61,7 +61,6 @@ public class Clock extends InstanceFactory {
   * durationHigh, durationLow, and phase should be set on swing .onChange() of
   * the components (The JTextEdit) of the Clock!
   */
-  private boolean isLow;
   public static class ClockLogger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -114,9 +113,15 @@ public class Clock extends InstanceFactory {
     }
 
     boolean updateTick(int ticks, AttributeSet attrs) {
-      isLow = sending.equals(Value.FALSE);
-      sending = (isLow ? Value.TRUE : Value.FALSE);
-      return isLow;
+      int durationHigh = attrs.getValue(ATTR_HIGH); //1
+      int durationLow = attrs.getValue(ATTR_LOW); //1
+      int cycle = durationHigh + durationLow; //2
+      int phase = ((attrs.getValue(ATTR_PHASE) % cycle) + cycle) % cycle;//0
+      boolean isLow = ((ticks + phase) % cycle) < durationLow;
+      Value desired = ((isLow) ? Value.FALSE : Value.TRUE);
+      if (sending.equals(desired)) return false;
+      sending = desired;
+      return true;
     }
 
     @Override
