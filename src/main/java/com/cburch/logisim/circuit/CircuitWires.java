@@ -181,7 +181,7 @@ class CircuitWires {
   // derived data
   private Bounds bounds = Bounds.EMPTY_BOUNDS;
 
-  private BundleMap masterBundleMap = null;
+  private volatile BundleMap masterBundleMap = null;
 
   CircuitWires() {}
 
@@ -560,7 +560,8 @@ class CircuitWires {
   // create the new bundle map.
 
   /*synchronized*/ private BundleMap getBundleMap() {
-    if (masterBundleMap != null) return masterBundleMap;
+    final var map = masterBundleMap;
+    if (map != null) return map;
     if (SwingUtilities.isEventDispatchThread()) {
       // AWT event thread.
       final var ret = new BundleMap();
