@@ -54,7 +54,7 @@ public class Simulator {
       return didPropagate;
     }
   }
-  
+
   public static interface StatusListener {
     public void simulatorReset(Event e);
     public void simulatorStateChanged(Event e);
@@ -63,7 +63,7 @@ public class Simulator {
   public static interface Listener extends StatusListener {
     public void propagationCompleted(Event e);
   }
-  
+
   public static interface ProgressListener extends Listener {
     public boolean wantsProgressEvents();
     public void propagationInProgress(Event e);
@@ -346,7 +346,7 @@ public class Simulator {
       var doStep = false;
       var doProp = false;
       var now = 0L;
-      
+
       simStateLock.lock();
 
       try {
@@ -435,7 +435,7 @@ public class Simulator {
       // doStep);
 
       exceptionEncountered = false;
-      
+
       var oops = false;
       var osc = false;
       var ticked = false;
