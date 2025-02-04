@@ -97,7 +97,7 @@ public class ComponentDrawContext {
       g.drawLine(x - 1, y - CLK_SZD, x - CLK_SZ, y);
       g.drawLine(x - 1, y + CLK_SZD, x - CLK_SZ, y);
     }
-    
+
     GraphicsUtil.switchToWidth(g, 1);
   }
 

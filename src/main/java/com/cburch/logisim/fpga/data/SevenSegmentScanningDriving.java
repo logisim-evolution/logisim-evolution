@@ -51,7 +51,7 @@ public class SevenSegmentScanningDriving {
   public static final char SEVEN_SEG_SCANNING_ACTIVE_LOW = 1;
   public static final char SEVEN_SEG_SCANNING_ACTIVE_HI = 2;
   public static final char UNKNOWN = 255;
-  
+
   public static final String[] DRIVING_STRINGS = {
     "SevenSegDecoded",
     "SevenSegScanningActiveLow",

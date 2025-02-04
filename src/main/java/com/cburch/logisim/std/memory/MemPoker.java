@@ -165,7 +165,7 @@ public class MemPoker extends InstancePoker {
         }
       }
     }
- 
+
     @Override
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();

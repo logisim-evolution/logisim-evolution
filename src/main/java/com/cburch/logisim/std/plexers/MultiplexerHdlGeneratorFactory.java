@@ -74,7 +74,7 @@ public class MultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
                    {{end}} {{process}} makeMux;
                    """);
     } else {
-      if (nrOfBits == 1) 
+      if (nrOfBits == 1)
         contents.add("reg s_selected_vector;");
       else
         contents.add("reg [{{1}}:0] s_selected_vector;", NR_OF_BITS_STRING);

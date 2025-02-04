@@ -22,12 +22,12 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.util.LineBuffer;
 
 public class SevenSegmentScanningGenericHdlGenerator {
-  
+
   public static String InternalSignalName = "scanningSevenSegSegments";
   public static String SevenSegmentSegmenInputs = "allSegments";
   public static String SevenSegmentControlOutput = "digitDecodedSelect";
   public static String SevenSegmentSegmentOutput = "scannedSegments";
-  
+
   public static AbstractHdlGeneratorFactory getSpecificHDLGenerator(String type) {
     final var typeId = SevenSegmentScanningDriving.getId(type);
     return switch (typeId) {
@@ -46,7 +46,7 @@ public class SevenSegmentScanningGenericHdlGenerator {
       default -> null;
     };
   }
-  
+
   public static String getSpecificHDLName(String type) {
     return getSpecificHDLName(SevenSegmentScanningDriving.getId(type));
   }
@@ -56,7 +56,7 @@ public class SevenSegmentScanningGenericHdlGenerator {
     wires.put(String.format("s_%s%d", InternalSignalName, identifier), nrOfRows * 8);
     return wires;
   }
-  
+
   public static SortedMap<String, Integer> getExternalSignals(
       char typeId,
       int nrOfRows,
@@ -84,7 +84,7 @@ public class SevenSegmentScanningGenericHdlGenerator {
         break;
       case SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI,
         SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW: componentMap.add(
-            SevenSegmendScanningSelectedHdlGenerator.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, 
+            SevenSegmendScanningSelectedHdlGenerator.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow,
                 typeId == SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW)).getWithIndent();
         break;
     }
@@ -97,7 +97,7 @@ public class SevenSegmentScanningGenericHdlGenerator {
     }
     return componentMap.empty().get();
   }
-  
+
   public static List<String> getSegmentConnections(FpgaIoInformationContainer segment, int id) {
     final var connections = LineBuffer.getHdlBuffer();
     final var wires = new HashMap<String, String>();
@@ -112,7 +112,7 @@ public class SevenSegmentScanningGenericHdlGenerator {
     Hdl.addAllWiresSorted(connections, wires);
     return connections.get();
   }
-  
+
   public static String getExternalSignalName(int nrOfRows, int identifier, int pinNr) {
     if (pinNr < 8) return String.format("Displ%d_%s", identifier, SevenSegment.getOutputLabel(pinNr));
     return String.format("Displ%dSelect[%d]", identifier, pinNr - 8);

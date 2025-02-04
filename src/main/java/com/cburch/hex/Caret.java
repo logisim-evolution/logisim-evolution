@@ -238,7 +238,7 @@ public class Caret {
       // do nothing
     }
 
-    
+
     @Override
     public void focusGained(FocusEvent e) {
       expose(cursor, false);

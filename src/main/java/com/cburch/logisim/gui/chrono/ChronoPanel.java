@@ -61,7 +61,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   private JScrollPane rightScroll;
   private JSplitPane splitPane;
   private JButton selButton;
-  
+
   // listeners
 
   public ChronoPanel(LogFrame logFrame) {

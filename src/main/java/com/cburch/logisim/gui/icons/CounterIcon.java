@@ -28,7 +28,7 @@ public class CounterIcon extends BaseIcon {
       final var y = scale((float) (8.5 + i * 5)) - (float) ones.getBounds().getCenterY();
       final var xOnes = scale((float) 11.5) - (float) ones.getBounds().getCenterX();
       final var xTens = scale((float) 3.5) - (float) tens.getBounds().getCenterX();
-      
+
       ones.draw(g2, xOnes, y);
       tens.draw(g2, xTens, y);
     }

@@ -112,7 +112,7 @@ public class Implicant implements Comparable<Implicant> {
     // the HashMap keeps track of the group (key) implicant and the number of min/max terms in this group (HashSet)
     final var currentTable = new HashMap<Integer, HashMap<Implicant, HashSet<Implicant>>>();
     final var newTable = new HashMap<Integer, HashMap<Implicant, HashSet<Implicant>>>();
-    // for terms to cover is the "key" the min/maxterms that need to be covered, and the ArrayList 
+    // for terms to cover is the "key" the min/maxterms that need to be covered, and the ArrayList
     // the set of prime covers that cover the key
     final var termsToCover = new HashMap<Implicant, ArrayList<Implicant>>();
     var allDontCare = true;
@@ -192,7 +192,7 @@ public class Implicant implements Comparable<Implicant> {
                 }
               }
             }
-          } 
+          }
         }
       }
       // now we add the primes to the set
@@ -201,7 +201,7 @@ public class Implicant implements Comparable<Implicant> {
           if (implicant.isPrime && !implicant.isDontCare) {
             primes.put(implicant, currentTable.get(key).get(implicant));
             if ((nrOfPrimes % 16L) == 0L) report(outputArea, "\n");
-            report(outputArea, String.format("%s ", 
+            report(outputArea, String.format("%s ",
                   getGroupRepresentation(implicant.values, implicant.unknowns, nrOfInputs)));
             nrOfPrimes++;
           }
@@ -293,12 +293,12 @@ public class Implicant implements Comparable<Implicant> {
         for (final var element : termsToCover.keySet()) termsToCover.get(element).remove(prime);
       }
     } while (couldDoRowReduction || couldDoColumnReduction);
-    
+
     // It is possible that we still have multiple covers left.
     // The minimal cover can be found using Petrick's method
     if (!termsToCover.isEmpty()) {
       final var simplificationExpression = new ArrayList<HashSet<HashSet<Implicant>>>();
-      
+
       // Populate the HashSet in order to begin Petrick's method
       for (final var term : termsToCover.keySet()) {
         final var group = new HashSet<HashSet<Implicant>>();
@@ -309,7 +309,7 @@ public class Implicant implements Comparable<Implicant> {
         }
         simplificationExpression.add(group);
       }
-      
+
       do {
         for (int i = 0; i < simplificationExpression.size(); i++) {
           final var first = simplificationExpression.get(i);
@@ -364,11 +364,11 @@ public class Implicant implements Comparable<Implicant> {
         }
         results.get(grp.size()).add(grp);
       }
-      
+
       final var minimumPrimes = results.get(Collections.min(results.keySet()));
       // Select cheapest prime covers now, meaning the ones with most total unknowns
       final var costMap = new HashMap<Integer, ArrayList<HashSet<Implicant>>>();
-      
+
       for (final var cover : minimumPrimes) {
         final var unknown = cover.stream().mapToInt(i -> i.getUnknownCount()).sum();
         if (!costMap.keySet().contains(unknown)) {
@@ -376,7 +376,7 @@ public class Implicant implements Comparable<Implicant> {
         }
         costMap.get(unknown).add(cover);
       }
-      
+
       final var cheapestCovers = costMap.get(Collections.max(costMap.keySet()));
       // TODO: Return all possible covers.
       essentialPrimes.addAll(cheapestCovers.get(0));

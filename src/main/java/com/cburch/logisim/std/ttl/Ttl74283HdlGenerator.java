@@ -65,7 +65,7 @@ public class Ttl74283HdlGenerator extends AbstractHdlGeneratorFactory {
           assign   S2   = result[1];
           assign   S3   = result[2];
           assign   S4   = result[3];
-          assign   {Cout, result} = oppA + oppB + Cin;        
+          assign   {Cout, result} = oppA + oppB + Cin;
           """);
     }
     return contents.empty();

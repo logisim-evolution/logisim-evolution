@@ -79,7 +79,7 @@ public class Ttl74175HdlGenerator extends AbstractHdlGeneratorFactory {
           assign Q3        = curState[2];
           assign nQ4       = ~curState[3];
           assign Q4        = curState[3];
-          
+
           always @(posedge {{CLK}} or negedge nCLR)
           begin
              if (~nCLR) curState <= 0;

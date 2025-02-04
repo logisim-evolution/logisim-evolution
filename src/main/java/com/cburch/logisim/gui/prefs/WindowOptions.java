@@ -38,7 +38,7 @@ class WindowOptions extends OptionsPanel {
   private final PrefBoolean[] checks;
   private final PrefOptionList canvasPlacement;
   private final PrefOptionList toolbarPlacement;
-  
+
   private final JButton resetWindowLayoutButton;
   private final ColorChooserButton canvasBgColor;
   private final JLabel canvasBgColorTitle;
@@ -65,7 +65,7 @@ class WindowOptions extends OptionsPanel {
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private JPanel previewPanel;
   private int index = 0;
-    
+
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
   protected final String cmdSetAutoScaleFactor = "set-auto-scale-factor";

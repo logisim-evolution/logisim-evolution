@@ -198,7 +198,7 @@ public class RamAppearance {
 
   public static Bounds getBounds(AttributeSet attrs) {
     int xoffset = (seperatedBus(attrs)) ? 40 : 50;
-  
+
     if (classicAppearance(attrs)) {
       int len = Math.max(64, (getNrLEPorts(attrs) + 1) * 10);
       return Bounds.create(0, 0, Mem.SymbolWidth + 40, getControlHeight(attrs) + len);
@@ -206,7 +206,7 @@ public class RamAppearance {
       int len = Math.max(attrs.getValue(Mem.DATA_ATTR).getWidth() * 20, (getNrLEPorts(attrs) + 1) * 10);
       return Bounds.create(0, 0, Mem.SymbolWidth + xoffset, getControlHeight(attrs) + len);
     }
-    
+
   }
 
   public static boolean classicAppearance(AttributeSet attrs) {
@@ -788,7 +788,7 @@ public class RamAppearance {
       cidx++;
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
-    
+
     /* draw output enable text*/
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
       final var idx = getOEIndex(i, attrs);

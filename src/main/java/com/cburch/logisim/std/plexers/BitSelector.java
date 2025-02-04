@@ -106,7 +106,7 @@ public class BitSelector extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-    
+
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     PlexersLibrary.drawTrapezoid(g, painter.getBounds(), facing, 9);
     final var bds = painter.getBounds();

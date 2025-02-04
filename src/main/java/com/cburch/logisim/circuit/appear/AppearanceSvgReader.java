@@ -132,7 +132,7 @@ public class AppearanceSvgReader {
   }
 
   private static Boolean isInputPinReference(Element elt) {
-    
+
     if (elt.hasAttribute("dir")) {
       final var direction = elt.getAttribute("dir");
       return direction.equals("in");

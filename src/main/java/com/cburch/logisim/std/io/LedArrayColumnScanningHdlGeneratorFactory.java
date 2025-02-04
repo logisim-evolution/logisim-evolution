@@ -82,7 +82,7 @@ public class LedArrayColumnScanningHdlGeneratorFactory extends AbstractHdlGenera
     generics.put(SCANNING_COUNTER_VALUE_STRING, Integer.toString(scanningReload - 1));
     return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
   }
-  
+
   public static LineBuffer getPortMap(int id) {
     final var ports = new HashMap<String, String>();
     ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress, id));
