@@ -55,13 +55,13 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
 
   private static final int WE = 2;
   private static final int IN = 3;
-  public static final int BORDER = 5;
+  public static final int BORDER = 6;
   public static final int ROW_HEIGHT = 15;
 
   public static final int COL_WIDTH = 7;
 
   private static final Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 64);
-  public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
+  public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 11);
 
   private static final Attribute<Integer> ATTR_COLUMNS =
       Attributes.forIntegerRange("cols", S.getter("ttyColsAttr"), 1, 120);
@@ -108,12 +108,11 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     var tempGraphics = tempImage.getGraphics();
     tempGraphics.setFont(DEFAULT_FONT);
 
-    int dynamicColWidth = tempGraphics.getFontMetrics().charWidth('W'); // Common character
+    int dynamicColWidth = tempGraphics.getFontMetrics().charWidth('W'); 
     tempGraphics.dispose();
     
     var width = 2 * BORDER + cols * dynamicColWidth;
 
-    var width = 2 * BORDER + cols * COL_WIDTH;
     if (width < 30) width = 30;
     var height = 2 * BORDER + rows * ROW_HEIGHT;
     if (height < 30) height = 30;
