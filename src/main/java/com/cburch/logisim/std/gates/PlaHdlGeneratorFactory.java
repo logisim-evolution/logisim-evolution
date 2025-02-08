@@ -25,14 +25,14 @@ public class PlaHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(Port.OUTPUT, "result", 0, Pla.OUT_PORT, Pla.ATTR_OUT_WIDTH);
   }
 
-  private static String VhdlBits(char[] b) {
+  private static String vhdlBits(char[] b) {
     final var s = new StringBuilder();
     for (final var c : b) s.insert(0, ((c == '0' || c == '1') ? c : '-'));
     if (b.length == 1) return "'" + s + "'";
     else return "\"" + s + "\"";
   }
 
-  private static String VerilogBits(char[] b) {
+  private static String verilogBits(char[] b) {
     final var s = new StringBuilder();
     s.append(b.length);
     s.append("'b");
@@ -62,7 +62,7 @@ public class PlaHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         for (PlaTable.Row r : tt.rows()) {
           contents.add(
               "{{1}}{{2}} {{when}} std_match(Index, {{3}}) {{else}}",
-              leader, VhdlBits(r.outBits), VhdlBits(r.inBits));
+              leader, vhdlBits(r.outBits), vhdlBits(r.inBits));
           leader = " ".repeat(leader.length());
         }
         contents.add("{{1}}{{2}};", leader, zeros(outSz));
@@ -71,7 +71,7 @@ public class PlaHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents.add("casez (index)");
 
       for (var r : tt.rows()) {
-        contents.add("  {{1}}: result = {{2}};", VerilogBits(r.inBits), VerilogBits(r.outBits));
+        contents.add("  {{1}}: result = {{2}};", verilogBits(r.inBits), verilogBits(r.outBits));
       }
 
       contents.add("  default: result = {{1}}'0;", tt.outSize());
