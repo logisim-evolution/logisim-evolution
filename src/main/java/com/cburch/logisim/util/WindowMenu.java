@@ -30,7 +30,7 @@ import javax.swing.WindowConstants;
 import com.cburch.logisim.data.Direction;
 
 public class WindowMenu extends Menu {
-  private class MyListener implements LocaleListener, ActionListener, PropertyChangeListener{
+  private class MyListener implements LocaleListener, ActionListener, PropertyChangeListener {
     @Override
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
