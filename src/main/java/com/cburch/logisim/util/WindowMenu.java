@@ -17,20 +17,17 @@ import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.WindowConstants;
 
-import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class WindowMenu extends Menu {
   private class MyListener implements LocaleListener, ActionListener, PropertyChangeListener{
@@ -209,11 +206,11 @@ public class WindowMenu extends Menu {
       windowClosable.requestClose();
     } else if (owner != null) {
       int action = owner.getDefaultCloseOperation();
-      if (action == JFrame.EXIT_ON_CLOSE) {
+      if (action == WindowConstants.EXIT_ON_CLOSE) {
         System.exit(0);
-      } else if (action == JFrame.HIDE_ON_CLOSE) {
+      } else if (action == WindowConstants.HIDE_ON_CLOSE) {
         owner.setVisible(false);
-      } else if (action == JFrame.DISPOSE_ON_CLOSE) {
+      } else if (action == WindowConstants.DISPOSE_ON_CLOSE) {
         owner.dispose();
       }
     }
