@@ -127,6 +127,10 @@ extra.apply {
   val supportDir="${projectDir}/support/jpackage"
   set(SUPPORT_DIR, supportDir)
 
+  // Project name with uppercase first letter
+  val uppercaseProjectName = project.name.replaceFirstChar { it.uppercase() }.trim()
+  set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
+
   // Base name of produced artifacts. Suffixes will be added later by relevant tasks.
   val baseFilename = "${project.name}-${appVersion}"
   set(TARGET_FILE_PATH_BASE, "${targetDir}/${baseFilename}")
@@ -180,8 +184,6 @@ extra.apply {
   set(LINUX_PARAMS, linuxParams)
 
   // All the macOS specific stuff.
-  val uppercaseProjectName = project.name.replaceFirstChar { it.uppercase() }.trim()
-  set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
   set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
@@ -375,6 +377,7 @@ tasks.register("createMsi") {
 
   val supportDir = ext.get(SUPPORT_DIR) as String
   val osArch = ext.get(OS_ARCH) as String
+  val projectName = project.name
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
@@ -391,11 +394,11 @@ tasks.register("createMsi") {
     val targetDir = ext.get(TARGET_DIR) as String
     val version = ext.get(APP_VERSION_SHORT) as String
     val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
-        "--name", project.name,
+        "--name", projectName,
         "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
-        "--win-menu-group", project.name as String,
+        "--win-menu-group", projectName,
         "--win-shortcut",
         "--win-dir-chooser",
         "--win-menu",
@@ -406,12 +409,12 @@ tasks.register("createMsi") {
         "--app-version", version,
     )
     runCommand(params, "Error while creating the MSI package.")
-    val fromFile = "${project.name}-${version}.msi"
+    val fromFile = "${projectName}-${version}.msi"
     val copyReturn = copy {
       from(targetDir)
       into(targetDir)
       include(fromFile)
-      rename(fromFile, "${project.name}-${version}-${osArch}.msi")
+      rename(fromFile, "${projectName}-${version}-${osArch}.msi")
     }
     if (!copyReturn.didWork) {
       throw GradleException("createMsi failed to rename .msi file to include architecture ${osArch}")
@@ -496,6 +499,7 @@ tasks.register("createDmg") {
 
   val appDirName = ext.get(APP_DIR_NAME) as String
   val osArch = ext.get(OS_ARCH) as String
+  val projectName = project.name
 
   inputs.dir(appDirName)
 
@@ -512,7 +516,7 @@ tasks.register("createDmg") {
     val params = listOf(
         ext.get(JPACKAGE) as String,
         "--app-image", appDirName,
-        "--name", project.name,
+        "--name", projectName,
         // We can pass full version here, even if contains suffix part too.
         // We also append the architecture to add it to the package name.
         "--app-version", "${ext.get(APP_VERSION) as String}-${osArch}",
@@ -545,7 +549,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
   val appVersion = ext.get(APP_VERSION) as String
-  val projectName = project.name.replaceFirstChar { it.uppercase() }.trim()
+  val projectName = ext.get(UPPERCASE_PROJECT_NAME) as String
   val displayName = "${projectName} v${appVersion}"
   val url = ext.get(APP_URL) as String
 
