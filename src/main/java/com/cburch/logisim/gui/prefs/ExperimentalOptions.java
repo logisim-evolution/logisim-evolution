@@ -36,6 +36,7 @@ class ExperimentalOptions extends OptionsPanel {
               new PrefOption(AppPreferences.ACCEL_NONE, S.getter("accelNone")),
               new PrefOption(AppPreferences.ACCEL_OPENGL, S.getter("accelOpenGL")),
               new PrefOption(AppPreferences.ACCEL_D3D, S.getter("accelD3D")),
+              new PrefOption(AppPreferences.ACCEL_METAL, S.getter("accelMetal")),
             });
 
     final var accelPanel = new JPanel(new BorderLayout());
