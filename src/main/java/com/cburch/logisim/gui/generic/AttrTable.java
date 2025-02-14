@@ -405,7 +405,7 @@ public class AttrTable extends JPanel implements LocaleListener {
           return true;
         }
         return false;
-      } 
+      }
       if (anEvent instanceof MouseEvent) {
         return ((MouseEvent) anEvent).getClickCount() >= 1;
       }

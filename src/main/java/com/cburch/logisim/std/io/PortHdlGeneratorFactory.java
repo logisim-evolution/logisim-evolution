@@ -31,7 +31,7 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
             "{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{>}};",
             Hdl.getNetName(componentInfo, 0, true, nets),
             LOCAL_INPUT_BUBBLE_BUS_NAME,
-            endIndex); 
+            endIndex);
       } else {
         contents.add(
             "{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",

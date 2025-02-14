@@ -124,7 +124,7 @@ public class AbstractOctalBuffers extends AbstractTtlGate {
           new int[] { i + 6, i + 10, i + 14, i + 6 },
           new int[] { y + height - 16, y + height - 22, y + height - 16, y + height - 16 },
           4);
-      
+
       // enable
       if (i < x + 150) {
         g.fillOval(i + 4, y + height - 29, 2, 2);
@@ -180,7 +180,7 @@ public class AbstractOctalBuffers extends AbstractTtlGate {
           new int[] { i - 6, i - 10, i - 14, i - 6 },
           new int[] { y + 16, y + 22, y + 16, y + 16 },
           4);
-      
+
       // enable
       if (i < x + 190) {
         g.fillOval(i - 16, y + 27, 2, 2);
