@@ -1005,24 +1005,32 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
+      final var circular = radX == radY;
       final var contents = new StringBuilder();
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color);
-      if (rotation != 0)
+      if (!circular && rotation != 0) {
+        //Circles look the same when rotated in any orientation.
+        //Therefore, only apply rotation handling for non-circular ellipses.
         contents.append(", rotate around={").append(this.rotation).append(":")
             .append(getPoint(start)).append("}");
+      }
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-      contents.append("] ");
+      contents.append("]");
       contents.append(getPoint(start));
-      contents.append("ellipse (").append(radX).append(" and ").append(radY).append(" );");
+      if (circular) {
+        contents.append("circle (").append(radX).append(");");
+      } else {
+        contents.append("ellipse (").append(radX).append(" and ").append(radY).append(");");
+      }
       return contents.toString();
     }
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final boolean circular = radX == radY;
+      final var circular = radX == radY;
       final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
