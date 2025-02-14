@@ -998,23 +998,30 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final var ne = root.createElement("ellipse");
+      final boolean circular = radX == radY;
+      final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
       if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", Double.toString(rounded(width)));
-      if (rotation != 0)
+      if (!circular && rotation != 0) {
+        //Circles look the same when rotated in any orientation.
+        //Therefore, only apply rotation handling for non-circular ellipses.
         ne.setAttribute(
             "transform",
             "translate(" + start.getX() + " " + start.getY() + ") rotate(" + this.rotation + ")");
-      else {
+      } else {
         ne.setAttribute("cx", Double.toString(start.getX()));
         ne.setAttribute("cy", Double.toString(start.getY()));
       }
-      ne.setAttribute("rx", Double.toString(Math.abs(radX)));
-      ne.setAttribute("ry", Double.toString(Math.abs(radY)));
+      if (circular) {
+        ne.setAttribute("r", Double.toString(Math.abs(radX)));
+      } else {
+        ne.setAttribute("rx", Double.toString(Math.abs(radX)));
+        ne.setAttribute("ry", Double.toString(Math.abs(radY)));
+      }
     }
   }
 
