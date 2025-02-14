@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Added Telnet component
+  * Fixed TTY appearance bug while changing various zoom levels.
   * Added Metal graphics acceleration
   * Added option to hide/show toolbar
 
