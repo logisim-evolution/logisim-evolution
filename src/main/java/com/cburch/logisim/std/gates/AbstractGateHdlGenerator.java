@@ -25,6 +25,8 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
   private static final int BUBBLES_GENERIC = -2;
   private static final String BUBBLES_MASK = "BubblesMask";
 
+  static String results = "result";
+
   public AbstractGateHdlGenerator() {
     super();
     myParametersList
@@ -49,7 +51,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
           input,
           floatingToZero);
     }
-    myPorts.add(Port.OUTPUT, "result", BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
+    myPorts.add(Port.OUTPUT, results, BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
   }
 
   public boolean getFloatingValue(boolean isInverted) {
@@ -123,7 +125,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     oneLine
         .append(spaces)
         .append(Hdl.assignPreamble())
-        .append("result")
+        .append(results)
         .append(indexString)
         .append(Hdl.assignOperator());
     if (inverted) oneLine.append(Hdl.notOperator()).append("(");
@@ -197,7 +199,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     oneLine
         .append(spaces)
         .append(Hdl.assignPreamble())
-        .append("result")
+        .append(results)
         .append(indexString)
         .append(Hdl.assignOperator());
     if (inverted) oneLine.append(Hdl.notOperator()).append("(");
