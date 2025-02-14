@@ -292,6 +292,30 @@ public class TikZInfo implements Cloneable {
         }
         if (merged) l.remove();
         else ((TikZLine) obj).closeIfPossible();
+      } else if (obj.getClass() == TikZElipse.class) {
+        //This non-instanceof check must be used so that we DON'T match with classes that extend TikZElipse.
+        final var ovalA = (TikZElipse) obj;
+        final var circular = ovalA.radX == ovalA.radY;
+        var redundant = false;
+        for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
+          final var n = contents.get(i);
+          if (n.getClass() == TikZElipse.class) {
+            final var ovalB = (TikZElipse) n;
+            final var centerMatch = ovalA.start.getX() == ovalB.start.getX() && ovalA.start.getY() == ovalB.start.getY();
+            final var radiusMatch = ovalA.radX == ovalB.radX && ovalA.radY == ovalB.radY;
+            final var rotaryMatch = ovalA.rotation == ovalB.rotation;
+            if (centerMatch && radiusMatch && (circular || rotaryMatch)) {
+              if (ovalA.filled && ovalB.filled) {
+                redundant = true;
+                break;
+              } else if (!ovalA.filled && !ovalB.filled && (ovalA.strokeWidth == ovalB.strokeWidth)) {
+                redundant = true;
+                break;
+              }
+            }
+          }
+        }
+        if (redundant) l.remove();
       }
     }
   }
