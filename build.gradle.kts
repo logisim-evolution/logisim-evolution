@@ -13,10 +13,10 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.51.0"
+  id("com.github.ben-manes.versions") version "0.52.0"
   java
   application
-  id("com.gradleup.shadow") version "8.3.5"
+  id("com.gradleup.shadow") version "8.3.6"
   id("org.sonarqube") version "6.0.1.5171"
 }
 
@@ -31,7 +31,7 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.5.3")
+  implementation("com.fifesoft:rsyntaxtextarea:3.5.4")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")

@@ -286,11 +286,13 @@ public class AppPreferences {
   }
 
   public static void handleGraphicsAcceleration() {
+    final var accel = GRAPHICS_ACCELERATION.get();
     try {
-      final var accel = GRAPHICS_ACCELERATION.get();
       System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
       System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
+      System.setProperty("sun.java2d.metal", Boolean.toString(accel.equals(ACCEL_METAL)));
     } catch (Exception ignored) {
+      System.err.println("Note: Could not enable " + accel + " graphics acceleration.");
     }
   }
 
@@ -778,11 +780,13 @@ public class AppPreferences {
 
   public static final String ACCEL_D3D = "d3d";
 
+  public static final String ACCEL_METAL = "metal";
+
   public static final PrefMonitor<String> GRAPHICS_ACCELERATION =
       create(
           new PrefMonitorStringOpts(
               "graphicsAcceleration",
-              new String[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D},
+              new String[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D, ACCEL_METAL},
               ACCEL_DEFAULT));
   public static final PrefMonitor<Boolean> AntiAliassing =
       create(new PrefMonitorBoolean("AntiAliassing", true));
