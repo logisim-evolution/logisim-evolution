@@ -34,7 +34,7 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
   public static final String ACTIVE_LOW_STRING = "activeLow";
   public static final String SCANNING_COUNTER_BITS_STRING = "nrOfScanningCounterBits";
   public static final String SCANNING_COUNTER_VALUE_STRING = "scanningCounterReloadValue";
-  
+
   public SevenSegmentScanningDecodedHdlGeneratorFactory() {
     super();
     myParametersList
@@ -75,11 +75,11 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
     generics.put(SCANNING_COUNTER_VALUE_STRING, Integer.toString(scanningReload - 1));
     return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
   }
-  
+
   public static int nrOfControlBits(int nrOfDigits, int nrOfDecodedBits) {
     return Math.max((int) Math.ceil(Math.log(nrOfDigits) / Math.log(2.0)), nrOfDecodedBits);
   }
-    
+
   public static LineBuffer getPortMap(int id) {
     final var ports = new HashMap<String, String>();
     ports.put(SevenSegmentScanningGenericHdlGenerator.SevenSegmentSegmenInputs,
@@ -90,9 +90,9 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
         ports.put(segName, String.format("Displ%d_%s", id, segName));
     return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
-  
+
   public static List<String> getTickCounterCode() {
-    final var contents = 
+    final var contents =
         LineBuffer.getHdlBuffer()
             .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("counterBits", SCANNING_COUNTER_BITS_STRING)
@@ -123,18 +123,18 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
       contents.addVhdlKeywords().add(
           """
           s_tickNext <= '1' {{when}} s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) {{else}} '0';
-          
+
           s_scanningCounterNext <= ({{others}} => '0') {{when}} s_tickReg /= '0' {{and}} s_tickReg /= '1' {{else}} -- for simulation
                                    std_logic_vector(to_unsigned({{counterValue}}-1, {{counterBits}}))
                                       {{when}} s_tickNext = '1' {{else}}
                                    std_logic_vector(unsigned(s_scanningCounterReg)-1);
-          
+
           s_columnCounterNext <= ({{others}} => '0') {{when}} s_tickReg /= '0' {{and}} s_tickReg /= '1' {{else}} -- for simulation
                                  s_columnCounterReg {{when}} s_tickReg = '0' {{else}}
                                  std_logic_vector(to_unsigned({{digitReload}} - 1, {{nrControlBits}}))
                                    {{when}} s_columnCounterReg = std_logic_vector(to_unsigned(0, {{nrControlBits}})) {{else}}
                                  std_logic_vector(unsigned(s_columnCounterReg)-1);
-          
+
           makeFlops : {{process}} ({{clock}}) {{is}}
           {{begin}}
              {{if}} (rising_edge({{clock}})) {{then}}
@@ -143,7 +143,7 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
                 s_tickReg            <= s_tickNext;
              {{end}} {{if}};
           {{end}} {{process}} makeFlops;
-          
+
           {{seg_a}} <= {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_a_id}}) {{when}} {{activeLow}} = 0 {{else}} {{not}} {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_a_id}});
           {{seg_b}} <= {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_b_id}}) {{when}} {{activeLow}} = 0 {{else}} {{not}} {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_b_id}});
           {{seg_c}} <= {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_c_id}}) {{when}} {{activeLow}} = 0 {{else}} {{not}} {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_c_id}});
@@ -152,7 +152,7 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
           {{seg_f}} <= {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_f_id}}) {{when}} {{activeLow}} = 0 {{else}} {{not}} {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_f_id}});
           {{seg_g}} <= {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_g_id}}) {{when}} {{activeLow}} = 0 {{else}} {{not}} {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{seg_g_id}});
           {{dp}} <= {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{dp_id}}) {{when}} {{activeLow}} = 0 {{else}} {{not}} {{segmentInputs}}(to_integer(unsigned(s_columnCounterReg))*8 + {{dp_id}});
-          """).empty();  
+          """).empty();
     } else {
       contents.add(
           """
@@ -160,7 +160,7 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
           assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;
           assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{counterValue}} : s_scanningCounterReg - 1;
           assign s_columnCounterNext =  (s_tickReg == 1'b0) ? s_columnCounterReg : (s_columnCounterReg == 0) ? {{digitReload}} - 1 : s_columnCounterReg - 1;
-          
+
           assign {{seg_a}} = {{segmentInputs}}[s_columnCounterReg * 8 + {{seg_a_id}}] ^ activeLow;
           assign {{seg_b}} = {{segmentInputs}}[s_columnCounterReg * 8 + {{seg_b_id}}] ^ activeLow;
           assign {{seg_c}} = {{segmentInputs}}[s_columnCounterReg * 8 + {{seg_c_id}}] ^ activeLow;
@@ -189,7 +189,7 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
     }
     return contents.get();
   }
-  
+
   public static List<String> getDecoderCounterCode() {
     final var contents =
         LineBuffer.getHdlBuffer()
@@ -198,13 +198,13 @@ public class SevenSegmentScanningDecodedHdlGeneratorFactory extends AbstractHdlG
       contents.addVhdlKeywords().add(
           """
           {{controlOutput}} <= s_columnCounterReg;
-          
+
           """).empty();
     } else {
       contents.add(
           """
           assign {{controlOutput}} = s_columnCounterReg;
-          
+
           """).empty();
     }
     return contents.get();

@@ -195,7 +195,7 @@ public abstract class DownloadBase {
       synthesizer = SynthesizedClockHdlGeneratorInstanceFactory.getSynthesizedClockHdlGeneratorFactory(
         myBoardInformation.fpga.getTechnology(),
         myBoardInformation.fpga.getVendor(),
-        isClockScalingRequested(), 
+        isClockScalingRequested(),
         myBoardInformation.fpga.getClockFrequency(),
         preMultiplier,
         preDivider);
@@ -295,14 +295,14 @@ public abstract class DownloadBase {
           final var name = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLName(type);
           if (worker != null && name != null) {
             if (!Hdl.writeEntity(
-                projectDir + worker.getRelativeDirectory(), 
+                projectDir + worker.getRelativeDirectory(),
                 worker.getEntity(rootSheet.getNetList(), null, name),
                 name)) {
               return false;
             }
             if (!Hdl.writeArchitecture(
                 projectDir + worker.getRelativeDirectory(),
-                worker.getArchitecture(rootSheet.getNetList(), null, name), 
+                worker.getArchitecture(rootSheet.getNetList(), null, name),
                 name)) {
               return false;
             }
@@ -419,9 +419,9 @@ public abstract class DownloadBase {
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
             pinMaps.put(
                 SevenSegmentScanningGenericHdlGenerator.getExternalSignalName(
-                    comp.getNrOfRows(), 
-                    comp.getArrayId(), 
-                    pin), 
+                    comp.getNrOfRows(),
+                    comp.getArrayId(),
+                    pin),
                 comp.getPinLocation(pin));
           }
         }
@@ -435,5 +435,5 @@ public abstract class DownloadBase {
     }
     return pinMaps;
   }
-  
+
 }
