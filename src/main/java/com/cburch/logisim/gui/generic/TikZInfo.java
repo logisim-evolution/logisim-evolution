@@ -377,13 +377,12 @@ public class TikZInfo implements Cloneable {
     writer.write("% 1) \\resizebox{10cm}{!}{\"below picture\"} to scale horizontally to 10 cm\n");
     writer.write("% 2) \\resizebox{!}{15cm}{\"below picture\"} to scale vertically to 15 cm\n");
     writer.write("% 3) \\resizebox{10cm}{15cm}{\"below picture\"} a combination of above two\n");
-    writer.write(
-        "% It is not recomended to use the scale option of the tikzpicture environment.\n");
+    writer.write("% It is not recomended to use the scale option of the tikzpicture environment.\n");
     writer.write("\\begin{tikzpicture}[x=1pt,y=-1pt,line cap=rect]\n");
     for (int i = 0; i < usedFonts.size(); i++) writer.write(getFontDefinition(i));
     writer.write(getColorDefinitions());
     for (final var obj : contents) writer.write(obj.getTikZCommand() + "\n");
-    writer.write("\\end{tikzpicture}\n\n");
+    writer.write("\\end{tikzpicture}\n");
     writer.close();
   }
 
@@ -585,7 +584,7 @@ public class TikZInfo implements Cloneable {
       else contents.append("\\draw ");
       contents.append("[line width=");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)).append("pt, ").append(color).append(" ] ");
+      contents.append(rounded(width)).append("pt, ").append(color).append("]");
       if (points.isEmpty()) {
         contents.append(getPoint(start));
         contents.append("--");
@@ -598,8 +597,12 @@ public class TikZInfo implements Cloneable {
           contents.append(getPoint(point));
         }
       }
-      if (close) contents.append("-- cycle");
-      contents.append(";");
+      if (close) {
+        contents.append("-- cycle;");
+      } else {
+        //This is necessary to eliminate space between last point and final semicolon.
+        contents.setCharAt(contents.length() - 1, ';');
+      }
       return contents.toString();
     }
 
@@ -702,11 +705,12 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(filled ? "\\fill " : "\\draw ").append("[line width=").append(rounded(width)).append("pt, ").append(color);
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-      contents.append(" ] ");
+      contents.append("]");
       for (final var point : myPath) {
         contents.append(point.getTikZCommand());
       }
-      contents.append(";");
+      //The output from BezierInfo::getTikZCommand() will always end in a space, so:
+      contents.setCharAt(contents.length() - 1, ';');
       return contents.toString();
     }
 
@@ -826,12 +830,11 @@ public class TikZInfo implements Cloneable {
           contents.append(getPoint(startPoint));
         } else {
           if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append("-- ").append(getPoint(endPoint));
+            contents.append("--").append(getPoint(endPoint));
           } else {
-            contents.append(".. controls ").append(getPoint(controlPoint1)).append(" ");
-            if (controlPoint2 != null) contents.append(" and ").append(getPoint(controlPoint2))
-                .append(" ");
-            contents.append(".. ").append(getPoint(endPoint));
+            contents.append(".. controls").append(getPoint(controlPoint1));
+            if (controlPoint2 != null) contents.append("and").append(getPoint(controlPoint2));
+            contents.append("..").append(getPoint(endPoint));
           }
         }
         return contents.toString();
