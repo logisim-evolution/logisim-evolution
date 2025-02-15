@@ -93,7 +93,7 @@ public class ClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (Hdl.isVhdl()) {
       contents.addVhdlKeywords().add("""
           clockBus <= globalClock&s_outputRegs;
-          
+
           makeOutputs : {{process}}(globalClock) {{is}}
           {{begin}}
              {{if}} (rising_edge(globalClock)) {{then}}

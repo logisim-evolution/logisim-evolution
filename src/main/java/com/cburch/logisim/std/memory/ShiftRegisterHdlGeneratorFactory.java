@@ -235,7 +235,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   public LineBuffer getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return getExtraComp(false);
   }
-  
+
   private LineBuffer getExtraComp(boolean isEntity) {
     return LineBuffer.getHdlBuffer().addVhdlKeywords()
         .pair("clock", HdlPorts.getClockName(1))

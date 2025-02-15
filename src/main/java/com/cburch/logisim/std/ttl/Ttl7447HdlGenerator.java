@@ -74,7 +74,7 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
             Segg  <= realSegments(6);
 
             bcd   <= BCD3&BCD2&BCD1&BCD0;
-            
+
             realSegments <= ({{others}} => '1') {{when}} BI = '0' {{else}}
                             ({{others}} => '0') {{when}} LT = '0' {{else}}
                             ({{others}} => '1') {{when}} (RBI='0') {{and}} (bcd=x"0") {{else}}
@@ -90,7 +90,7 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
           assign Segf = realSegments[5];
           assign Segg = realSegments[6];
           assign bcd  = {BCD3, BCD2, BCD1, BCD0};
-          
+
           assign realSegments = BI == 0 ? 7'h7F : LT == 0 ? 0 : RBI == 0 && bcd == 0 ? 7'h7F : !segments;
           """);
     }

@@ -178,7 +178,7 @@ public class PlaTable {
     }
     for (var i = 0; i < orBits.length(); i++) {
       final var s = orBits.charAt(i);
-      if (s != ONE && s != ZERO)        
+      if (s != ONE && s != ZERO)
         throw new IOException(S.get("plaInvalideOutputBitError", "" + line, "" + s));
       r.outBits[orBits.length() - i - 1] = s;
     }
