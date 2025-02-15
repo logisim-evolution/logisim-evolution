@@ -197,7 +197,7 @@ public class TikZInfo implements Cloneable {
   }
 
   public void addElipse(int x, int y, int width, int height, boolean filled) {
-    contents.add(new TikZElipse(x, y, width, height, filled));
+    contents.add(new TikZEllipse(x, y, width, height, filled));
   }
 
   public void addArc(
@@ -292,15 +292,15 @@ public class TikZInfo implements Cloneable {
         }
         if (merged) l.remove();
         else ((TikZLine) obj).closeIfPossible();
-      } else if (obj.getClass() == TikZElipse.class) {
+      } else if (obj.getClass() == TikZEllipse.class) {
         //This non-instanceof check must be used so that we DON'T match with classes that extend TikZElipse.
-        final var ovalA = (TikZElipse) obj;
+        final var ovalA = (TikZEllipse) obj;
         final var circular = ovalA.radX == ovalA.radY;
         var redundant = false;
         for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
           final var n = contents.get(i);
-          if (n.getClass() == TikZElipse.class) {
-            final var ovalB = (TikZElipse) n;
+          if (n.getClass() == TikZEllipse.class) {
+            final var ovalB = (TikZEllipse) n;
             final var centerMatch = ovalA.start.getX() == ovalB.start.getX() && ovalA.start.getY() == ovalB.start.getY();
             final var radiusMatch = ovalA.radX == ovalB.radX && ovalA.radY == ovalB.radY;
             final var rotaryMatch = ovalA.rotation == ovalB.rotation;
@@ -971,15 +971,15 @@ public class TikZInfo implements Cloneable {
     }
   }
 
-  private class TikZElipse extends AbstratctTikZ {
+  private class TikZEllipse extends AbstratctTikZ {
 
     protected double radX;
     protected double radY;
     protected int rotation;
 
-    public TikZElipse() {}
+    public TikZEllipse() {}
 
-    public TikZElipse(int x, int y, int width, int height, boolean filled) {
+    public TikZEllipse(int x, int y, int width, int height, boolean filled) {
       super(x + (width >> 1), y + (height >> 1), 0, 0);
       init(width, height, filled);
     }
@@ -993,7 +993,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public DrawObject clone() {
-      final var newIns = new TikZElipse();
+      final var newIns = new TikZEllipse();
       newIns.start = (Point) start.clone();
       newIns.end = (Point) end.clone();
       newIns.strokeWidth = strokeWidth;
@@ -1060,7 +1060,7 @@ public class TikZInfo implements Cloneable {
     }
   }
 
-  private class TikZArc extends TikZElipse {
+  private class TikZArc extends TikZEllipse {
     private double startAngle;
     private double stopAngle;
     private Point2D startPos = new Point2D.Double();
