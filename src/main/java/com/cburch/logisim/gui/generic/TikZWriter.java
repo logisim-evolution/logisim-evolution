@@ -357,12 +357,12 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void drawOval(int x, int y, int width, int height) {
-    MyInfo.addElipse(x, y, width, height, false);
+    MyInfo.addEllipse(x, y, width, height, false);
   }
 
   @Override
   public void fillOval(int x, int y, int width, int height) {
-    MyInfo.addElipse(x, y, width, height, true);
+    MyInfo.addEllipse(x, y, width, height, true);
   }
 
   @Override

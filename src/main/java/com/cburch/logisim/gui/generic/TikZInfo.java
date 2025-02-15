@@ -196,7 +196,7 @@ public class TikZInfo implements Cloneable {
     contents.add(new TikZRectangle(x, y, width, height, arcWidth, arcHeight, filled));
   }
 
-  public void addElipse(int x, int y, int width, int height, boolean filled) {
+  public void addEllipse(int x, int y, int width, int height, boolean filled) {
     contents.add(new TikZEllipse(x, y, width, height, filled));
   }
 
@@ -293,7 +293,7 @@ public class TikZInfo implements Cloneable {
         if (merged) l.remove();
         else ((TikZLine) obj).closeIfPossible();
       } else if (obj.getClass() == TikZEllipse.class) {
-        //This non-instanceof check must be used so that we DON'T match with classes that extend TikZElipse.
+        //This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
         final var ovalA = (TikZEllipse) obj;
         final var circular = ovalA.radX == ovalA.radY;
         var redundant = false;
