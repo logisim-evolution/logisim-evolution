@@ -88,6 +88,39 @@ public class Keyboard extends InstanceFactory {
           default -> used = false;
         }
       }
+
+      int modifierKeys = data.getModifierKeys();
+      switch (e.getKeyCode()) {
+        case KeyEvent.VK_CONTROL:
+          if((modifierKeys & 0b0001) == 0) {
+            changed = true;
+          }
+          modifierKeys |= 0b0001;
+          break;
+
+        case KeyEvent.VK_ALT:
+          if((modifierKeys & 0b0010) == 0) {
+            changed = true;
+          }
+          modifierKeys |= 0b0010;
+          break;
+
+        case KeyEvent.VK_SHIFT:
+          if((modifierKeys & 0b0100) == 0) {
+            changed = true;
+          }
+          modifierKeys |= 0b0100;
+          break;
+
+        case KeyEvent.VK_ESCAPE:
+          if((modifierKeys & 0b1000) == 0) {
+            changed = true;
+          }
+          modifierKeys |= 0b1000;
+          break;
+      }
+      data.setModifierKeys(modifierKeys);
+
       if (used) e.consume();
       if (changed) state.getInstance().fireInvalidated();
     }
@@ -107,7 +140,48 @@ public class Keyboard extends InstanceFactory {
       }
       if (changed) state.getInstance().fireInvalidated();
     }
+
+    @Override
+    public void keyReleased(InstanceState state, KeyEvent e) {
+      final var data = getKeyboardState(state);
+      int modifierKeys = data.getModifierKeys();
+      boolean changed = false;
+
+      switch (e.getKeyCode()) {
+        case KeyEvent.VK_CONTROL:
+          if ((modifierKeys & 0b1000) == 0b1000) {
+            changed = true;
+          }
+          modifierKeys ^= 0b0001;
+          break;
+
+        case KeyEvent.VK_ALT:
+          if ((modifierKeys & 0b1000) == 0b1000) {
+            changed = true;
+          }
+          modifierKeys ^= 0b0010;
+          break;
+
+        case KeyEvent.VK_SHIFT:
+          if ((modifierKeys & 0b1000) == 0b1000) {
+            changed = true;
+          }
+          modifierKeys ^= 0b0100;
+          break;
+
+        case KeyEvent.VK_ESCAPE:
+          if ((modifierKeys & 0b1000) == 0b1000) {
+            changed = true;
+          }
+          modifierKeys ^= 0b1000;
+          break;
+      }
+
+      data.setModifierKeys(modifierKeys);
+      if (changed) state.getInstance().fireInvalidated();
+    }
   }
+
 
   public static void addToBuffer(InstanceState state, char[] newChars) {
     final var keyboardData = getKeyboardState(state);
@@ -142,6 +216,8 @@ public class Keyboard extends InstanceFactory {
   private static final int AVL = 3;
   private static final int OUT = 4;
 
+  private static final int MOD = 5;
+
   private static final int DELAY0 = 9;
   private static final int DELAY1 = 11;
 
@@ -166,10 +242,11 @@ public class Keyboard extends InstanceFactory {
     setIcon(new KeyboardIcon());
     setInstancePoker(Poker.class);
 
-    final var ps = new Port[5];
+    final var ps = new Port[6];
     ps[CLR] = new Port(20, 10, Port.INPUT, 1);
     ps[CK] = new Port(0, 0, Port.INPUT, 1);
     ps[RE] = new Port(10, 10, Port.INPUT, 1);
+    ps[MOD] = new Port(120, 10, Port.OUTPUT, 4);
     ps[AVL] = new Port(130, 10, Port.OUTPUT, 1);
     ps[OUT] = new Port(140, 10, Port.OUTPUT, 7);
     ps[CLR].setToolTip(S.getter("keybClearTip"));
@@ -177,6 +254,7 @@ public class Keyboard extends InstanceFactory {
     ps[RE].setToolTip(S.getter("keybEnableTip"));
     ps[AVL].setToolTip(S.getter("keybAvailTip"));
     ps[OUT].setToolTip(S.getter("keybOutputTip"));
+    ps[MOD].setToolTip(S.getter("keybModTip"));
     setPorts(ps);
   }
 
@@ -295,6 +373,7 @@ public class Keyboard extends InstanceFactory {
     painter.drawPort(RE);
     painter.drawPort(AVL);
     painter.drawPort(OUT);
+    painter.drawPort(MOD);
 
     if (showState) {
       String str;
@@ -357,5 +436,8 @@ public class Keyboard extends InstanceFactory {
     final var out = Value.createKnown(BitWidth.create(7), c & 0x7F);
     circState.setPort(OUT, out, DELAY0);
     circState.setPort(AVL, c != '\0' ? Value.TRUE : Value.FALSE, DELAY1);
+
+    final var mod = Value.createKnown(BitWidth.create(4), state.getModifierKeys());
+    circState.setPort(MOD, mod, DELAY0);
   }
 }
