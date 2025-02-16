@@ -135,15 +135,10 @@ public class VhdlSimulatorTop implements CircuitListener {
     int i = 0;
     /* Wait in case starting simulation to early*/
     while (getProject().getFrame() == null) {
-      try {
-        Thread.sleep(100);
         if (i == 10) {
           break;
         }
-        i++;
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+        i++;    
     }
 
     if (i != 10) {

@@ -363,11 +363,6 @@ public class CircuitState implements InstanceData {
           dirty.addAll(circuit.wires.points.getSplitLocations());
           break;
         } catch (ConcurrentModificationException e) {
-          // try again...
-          try {
-            Thread.sleep(1);
-          } catch (InterruptedException ignored) {
-          }
           if (i == 0) e.printStackTrace();
         }
       }
