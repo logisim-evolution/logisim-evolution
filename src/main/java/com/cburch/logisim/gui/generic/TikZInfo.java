@@ -291,7 +291,6 @@ public class TikZInfo implements Cloneable {
           }
         }
         if (merged) l.remove();
-        else ((TikZLine) obj).closeIfPossible();
       } else if (obj.getClass() == TikZEllipse.class) {
         //This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
         final var ovalA = (TikZEllipse) obj;
@@ -535,14 +534,6 @@ public class TikZInfo implements Cloneable {
       if (getEndPoint().equals(l.getStartPoint())) return true;
       if (getStartPoint().equals(l.getStartPoint())) return true;
       return getEndPoint().equals(l.getEndPoint());
-    }
-
-    public void closeIfPossible() {
-      if (points.isEmpty()) return;
-      if (getStartPoint().equals(getEndPoint())) {
-        points.remove(points.size() - 1);
-        close = true;
-      }
     }
 
     private void addPoints(ArrayList<Point> p, int start, int end, boolean atEnd, boolean reverseOrder) {
