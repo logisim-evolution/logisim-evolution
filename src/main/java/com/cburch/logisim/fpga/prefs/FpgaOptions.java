@@ -274,8 +274,8 @@ public class FpgaOptions extends OptionsPanel {
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
     ReportPan.setBorder(BorderFactory.createTitledBorder(S.get("ReporterOptions")));
     vhdlPan.setBorder(BorderFactory.createTitledBorder(S.get("VhdlOptions")));
-    HDL_Used.getJLabel().setText(S.get("HDLLanguageUsed"));   
-    AppPreferences.Boards.localeChanged(); 
+    HDL_Used.getJLabel().setText(S.get("HDLLanguageUsed"));
+    AppPreferences.Boards.localeChanged();
   }
 
   private void selectWorkSpace(Component parentComponent) {

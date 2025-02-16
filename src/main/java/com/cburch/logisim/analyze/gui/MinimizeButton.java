@@ -30,7 +30,7 @@ public class MinimizeButton  extends JButton {
   private final JFrame parent;
   private final AnalyzerModel model;
   private final int format;
-    
+
   public MinimizeButton(JFrame parent, AnalyzerModel model, int format) {
     this.parent = parent;
     this.model = model;
@@ -40,9 +40,9 @@ public class MinimizeButton  extends JButton {
 
   void doOptimize() {
     final var choice = OptionPane.showConfirmDialog(
-          parent, 
-          S.get("OptimizeLongTimeWarning"), 
-          S.get("minimizeFunctionTitle"), 
+          parent,
+          S.get("OptimizeLongTimeWarning"),
+          S.get("minimizeFunctionTitle"),
           OptionPane.YES_NO_OPTION);
     if (choice != OptionPane.YES_OPTION) return;
     final var info = new JTextArea(20, 80);
@@ -57,8 +57,8 @@ public class MinimizeButton  extends JButton {
     pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     final var doneButton = new JButton(S.get("minimizeDone"));
     final var infoPanel = new JDialog(
-          parent, 
-          S.get("minimizeFunctionTitle"), 
+          parent,
+          S.get("minimizeFunctionTitle"),
           true);
     infoPanel.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     infoPanel.add(pane, BorderLayout.CENTER);

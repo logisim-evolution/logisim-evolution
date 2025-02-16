@@ -21,7 +21,7 @@ import com.cburch.logisim.util.LineBuffer;
 public class SevenSegmendScanningSelectedHdlGenerator extends SevenSegmentScanningDecodedHdlGeneratorFactory {
 
   public static final String HDL_IDENTIFIER =  "SevenSegmentScanning";
-    
+
 
   public static final int SELECT_DIGIT_INVERTED_ID = -7;
   public static final String SELECT_DIGIT_INVERTED_STRING = "activeLowSelectPins";
@@ -39,7 +39,7 @@ public class SevenSegmendScanningSelectedHdlGenerator extends SevenSegmentScanni
       myPorts.add(Port.OUTPUT, segName, 1, id++);
     }
   }
-  
+
   public static LineBuffer getGenericMap(
           int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow, boolean selectActiveLow) {
     final var scanningReload = (int) (fpgaClockFrequency / 1000);
@@ -55,8 +55,8 @@ public class SevenSegmendScanningSelectedHdlGenerator extends SevenSegmentScanni
     generics.put(SCANNING_COUNTER_VALUE_STRING, Integer.toString(scanningReload - 1));
     return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
   }
-  
-  
+
+
   public static List<String> getDecodedCode() {
     final var contents =
         LineBuffer.getHdlBuffer()
@@ -68,28 +68,28 @@ public class SevenSegmendScanningSelectedHdlGenerator extends SevenSegmentScanni
       contents.addVhdlKeywords().add(
           """
           genSels : {{for}} n {{in}} {{nMax}} - 1 {{downto}} 0 {{generate}}
-            {{controlOutput}}(n) <= '1' 
+            {{controlOutput}}(n) <= '1'
                {{when}} (s_columnCounterReg = std_logic_vector(to_unsigned(n, {{nrBits}})) {{and}} {{sVal}} = 0) {{or}}
                     (s_columnCounterReg /= std_logic_vector(to_unsigned(n, {{nrBits}})) {{and}} {{sVal}} = 1) {{else}} '0';
           {{end}} {{generate}};
-          
+
           """).empty();
     } else {
       contents.add(
           """
           genvar n;
-          
+
           generate
             for (n = 0; n < {{nMax}}; n = n + 1)
               assign {{controlOutput}}[n] = s_columnCounterReg == n ? ~{{sVal}} : {{sVal}};
           endgenerate
-          
+
           """).empty();
     }
     return contents.get();
   }
 
-  
+
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()

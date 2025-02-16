@@ -18,7 +18,7 @@ public class BitWidth implements Comparable<BitWidth> {
     private final BitWidth[] choices;
     private final int min;
     private final int max;
-  
+
     public Attribute(String name, StringGetter disp) {
       super(name, disp);
       this.min = MINWIDTH;

@@ -73,10 +73,10 @@ public class BcdToSevenSegmentDisplayHdlGeneratorFactory extends AbstractHdlGene
                 assign segmentE = s_outputValue[4];
                 assign segmentF = s_outputValue[5];
                 assign segmentG = s_outputValue[6];
-                
+
                 reg [6:0] s_rOutputValue;
                 assign s_outputValue = s_rOutputValue;
-                
+
                 always @*
                   begin
                     case (bcdIn)
@@ -91,7 +91,7 @@ public class BcdToSevenSegmentDisplayHdlGeneratorFactory extends AbstractHdlGene
                       4'h8 : s_rOutputValue <= 7'b1111111;
                       4'h9 : s_rOutputValue <= 7'b1101111;
                       default : s_rOutputValue <= 7'b0000000;
-                    endcase 
+                    endcase
                   end
             """);
   }

@@ -120,7 +120,7 @@ class MemContentsSub {
 
   private static class ShortPage extends MemContents.Page {
     private short[] data;
-  
+
     public ShortPage(int size, long mask, boolean randomize) {
       data = new short[size];
       if (AppPreferences.Memory_Startup_Unknown.get() && randomize) {
