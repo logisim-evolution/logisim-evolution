@@ -341,6 +341,11 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
+  public void drawRect(int x, int y, int width, int height) {
+    MyInfo.addRectangle(x, y, x + width, y + height, false, false);
+  }
+
+  @Override
   public void clearRect(int x, int y, int width, int height) {
     MyInfo.addRectangle(x, y, x + width, y + height, true, true);
   }
