@@ -11,10 +11,18 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import com.cburch.contracts.BaseDocumentListenerContract;
-import com.cburch.hdl.HdlFile;
+
 import com.cburch.hdl.HdlModel;
 import com.cburch.hdl.HdlModelListener;
+import com.cburch.hdl.Strings;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
@@ -31,8 +39,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -42,7 +48,36 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+
+
 public class HdlContentEditor extends JDialog implements JInputDialog {
+
+  public static void open(File file, HdlContentEditor editor) throws IOException {
+
+    try (final var in = new BufferedReader(new FileReader(file))) {
+
+      final var content = new StringBuilder();
+      String l;
+
+      while ((l = in.readLine()) != null) {
+        content.append(l);
+        content.append(System.getProperty("line.separator"));
+      }
+      editor.setText(content.toString());
+    } catch (IOException ex) {
+      throw new IOException(Strings.S.get("hdlFileReaderError"));
+    }
+  }
+
+  public static void save(File file, HdlContentEditor editor) throws IOException {
+
+    try (final var out = new BufferedWriter(new FileWriter(file))) {
+      final var data = editor.getText();
+      out.write(data, 0, data.length());
+    } catch (IOException ex) {
+      throw new IOException(Strings.S.get("hdlFileWriterError"));
+    }
+  }
 
   private class EditorListener implements BaseDocumentListenerContract {
 
@@ -73,7 +108,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
         if (choice == JFileChooser.APPROVE_OPTION) {
           final var f = chooser.getSelectedFile();
           try {
-            HdlFile.open(f, HdlContentEditor.this);
+            HdlContentEditor.open(f, HdlContentEditor.this);
           } catch (IOException e) {
             OptionPane.showMessageDialog(
                 HdlContentEditor.this,
@@ -90,7 +125,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
         if (choice == JFileChooser.APPROVE_OPTION) {
           final var f = chooser.getSelectedFile();
           try {
-            HdlFile.save(f, HdlContentEditor.this);
+            HdlContentEditor.save(f, HdlContentEditor.this);
           } catch (IOException e) {
             OptionPane.showMessageDialog(
                 HdlContentEditor.this,
