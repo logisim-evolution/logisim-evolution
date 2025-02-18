@@ -914,11 +914,11 @@ public class TikZInfo implements Cloneable {
         final var width = strokeWidth * BASIC_STROKE_WIDTH;
         contents.append(rounded(width)).append("pt, ").append(color);
         if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-        contents.append(" ] ");
+        contents.append("]");
         contents.append(getPoint(start));
         contents.append("rectangle");
         contents.append(getPoint(end));
-        contents.append(";");
+        contents.setCharAt(contents.length() - 1, ';');
       } else {
         /* TODO : change to tikz command as pgfpicture causes sometimes troubles */
         contents.append("\\begin{pgfpicture}\n");

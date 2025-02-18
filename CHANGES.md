@@ -7,6 +7,8 @@
   * Fixed TTY appearance bug while changing various zoom levels.
   * Added Metal graphics acceleration
   * Added option to hide/show toolbar
+  * Corrected appearance of NOT gates in TikZ/SVG image export
+  * Corrected disjoint corners in arrow-style Pins
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.

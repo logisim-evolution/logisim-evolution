@@ -1004,11 +1004,11 @@ public class Pin extends InstanceFactory {
         GraphicsUtil.switchToWidth(g, 2);
       }
       g.setColor(col);
-      g.drawLine(-15, -rheight / 2, -5, 0);
-      g.drawLine(-15, rheight / 2, -5, 0);
-      g.drawLine(-rwidth, -rheight / 2, -rwidth, rheight / 2);
-      g.drawLine(-rwidth, -rheight / 2, -15, -rheight / 2);
-      g.drawLine(-rwidth, rheight / 2, -15, rheight / 2);
+      int[] xPoints = new int[] {-rwidth, -15, -5, -15, -rwidth};
+      int yBottom = rheight / 2;
+      int yTop = -yBottom;
+      int[] yPoints = new int[] {yTop, yTop, 0, yBottom, yBottom};
+      g.drawPolygon(xPoints, yPoints, 5);
       drawNewStyleValue(painter, rwidth, rheight, false, isGhost);
       g2.rotate(-rotation);
       g2.translate(-xpos, -ypos);
@@ -1068,11 +1068,11 @@ public class Pin extends InstanceFactory {
         GraphicsUtil.switchToWidth(g, 2);
       }
       g.setColor(col);
-      g.drawLine(10 - rwidth, -rheight / 2, -rwidth, 0);
-      g.drawLine(10 - rwidth, rheight / 2, -rwidth, 0);
-      g.drawLine(-5, -rheight / 2, -5, rheight / 2);
-      g.drawLine(-5, -rheight / 2, 10 - rwidth, -rheight / 2);
-      g.drawLine(-5, rheight / 2, 10 - rwidth, rheight / 2);
+      int[] xPoints = new int[] {-5, 10 - rwidth, -rwidth, 10 - rwidth, -5};
+      int yTop = rheight / 2;
+      int yBottom = -yTop;
+      int[] yPoints = new int[] {yTop, yTop, 0, yBottom, yBottom};
+      g.drawPolygon(xPoints, yPoints, 5);
       drawNewStyleValue(painter, rwidth, rheight, true, isGhost);
       g2.rotate(-rotation);
       g2.translate(-xpos, -ypos);
