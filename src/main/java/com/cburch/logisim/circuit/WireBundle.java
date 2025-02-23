@@ -12,7 +12,7 @@ package com.cburch.logisim.circuit;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.HashSet;
 
 class WireBundle {
   private BitWidth width = BitWidth.UNKNOWN;
@@ -20,14 +20,16 @@ class WireBundle {
   private WireBundle parent;
   private Location widthDeterminant = null;
   private boolean isBus_ = false;
-  WireThread[] threads = null;
-  final CopyOnWriteArraySet<Location> points = new CopyOnWriteArraySet<>(); // points
+  WireThread[] threads = null; // will be set when undleMap is done being constructed
+  Location[] xpoints = null; // will be set when BundleMap is done being constructed
+  HashSet<Location> tempPoints = new HashSet<>();
   // bundle
   // hits
   private WidthIncompatibilityData incompatibilityData = null;
 
-  WireBundle() {
+  WireBundle(Location p) {
     parent = this;
+    tempPoints.add(p);
   }
 
   void addPullValue(Value val) {
@@ -53,14 +55,6 @@ class WireBundle {
       return BitWidth.UNKNOWN;
     } else {
       return width;
-    }
-  }
-
-  Location getWidthDeterminant() {
-    if (incompatibilityData != null) {
-      return null;
-    } else {
-      return widthDeterminant;
     }
   }
 
@@ -101,10 +95,6 @@ class WireBundle {
     }
     this.width = width;
     this.widthDeterminant = det;
-    this.threads = new WireThread[width.getWidth()];
-    for (int i = 0; i < threads.length; i++) {
-      threads[i] = new WireThread();
-    }
   }
 
   void unite(WireBundle other) {

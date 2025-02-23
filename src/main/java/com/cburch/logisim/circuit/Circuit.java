@@ -764,10 +764,6 @@ public class Circuit {
     return wires.getWidth(p);
   }
 
-  public Location getWidthDeterminant(Location p) {
-    return wires.getWidthDeterminant(p);
-  }
-
   public Set<WidthIncompatibilityData> getWidthIncompatibilityData() {
     return wires.getWidthIncompatibilityData();
   }

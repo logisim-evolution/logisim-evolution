@@ -16,6 +16,14 @@ import java.util.Arrays;
 
 public class Value {
 
+  private static int hashcode(int width, long error, long unknown, long value) {
+    var hashCode = width;
+    hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
+    hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
+    hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
+    return hashCode;
+  }
+
   private static Value create(int width, long error, long unknown, long value) {
     if (width == 0) {
       return Value.NIL;
@@ -30,10 +38,7 @@ public class Value {
       unknown = unknown & mask & ~error;
       value = value & mask & ~unknown & ~error;
 
-      var hashCode = width;
-      hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
-      hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
-      hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
+      final var hashCode = Value.hashcode(width, error, unknown, value);
       Object cached = cache.get(hashCode);
       if (cached != null) {
         Value val = (Value) cached;
@@ -49,7 +54,7 @@ public class Value {
   }
 
   public static Value create_unsafe(int width, long error, long unknown, long value) {
-    int hashCode = 31 * (31 * (31 * width + (int) error) + (int) unknown) + (int) value;
+    int hashCode = Value.hashcode(width, error, unknown, value);
     Object obj = cache.get(hashCode);
     if (obj != null) {
       Value val = (Value) obj;
@@ -369,11 +374,7 @@ public class Value {
 
   @Override
   public int hashCode() {
-    var ret = width;
-    ret = 31 * ret + (int) (error ^ (error >>> 32));
-    ret = 31 * ret + (int) (unknown ^ (unknown >>> 32));
-    ret = 31 * ret + (int) (value ^ (value >>> 32));
-    return ret;
+    return Value.hashcode(width, error, unknown, value);
   }
 
   public boolean isErrorValue() {

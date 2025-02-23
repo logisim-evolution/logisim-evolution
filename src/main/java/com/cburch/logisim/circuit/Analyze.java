@@ -359,10 +359,10 @@ public class Analyze {
           throw new AnalyzeException.CannotHandle("incompatible widths");
         }
         final var t = bundle.threads[locationBit.bit];
-        for (final var tb : t.getBundles()) {
-          for (final var p2 : tb.b.points) {
+        for (int i = 0; i < t.steps; i++) {
+          for (Location p2 : t.bundle[i].xpoints) {
             if (p2.equals(locationBit.loc)) continue;
-            final var p2b = new LocationBit(p2, tb.loc);
+            final var p2b = new LocationBit(p2, t.position[i]);
             final var old = expressionMap.get(p2b);
             if (old != null) {
               final var eCause = expressionMap.currentCause;

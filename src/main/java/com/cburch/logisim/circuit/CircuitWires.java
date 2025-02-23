@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +58,8 @@ class CircuitWires {
     WireBundle createBundleAt(Location p) {
       var ret = pointBundles.get(p);
       if (ret == null) {
-        ret = new WireBundle();
+        ret = new WireBundle(p);
         pointBundles.put(p, ret);
-        ret.points.add(p);
         bundles.add(ret);
       }
       return ret;
@@ -104,29 +102,262 @@ class CircuitWires {
     }
   }
 
-  static class State {
-    final BundleMap bundleMap;
-    final HashMap<WireThread, Value> thrValues = new HashMap<>();
+  static class ValuedThread {
+    int steps;
+    ValuedBus[] bus;
+    int[] position;
+    boolean pullUp, pullDown;
+    Value val = null;
+    ValuedThread(WireThread t, HashMap<WireBundle, ValuedBus> allBuses) {
+      steps = t.steps;
+      position = t.position;
+      bus = new ValuedBus[steps];
+      for (int i = 0; i < steps; i++) {
+        WireBundle b = t.bundle[i];
+        bus[i] = allBuses.get(b);
+        Value pullHere = b.getPullValue();
+        pullUp |= (pullHere == Value.TRUE);
+        pullDown |= (pullHere == Value.FALSE);
+      }
+      if (pullUp && pullDown)
+        pullUp = pullDown = false;
+    }
+    ValuedThread(ValuedThread t, HashMap<ValuedBus, ValuedBus> xBus) { // for cloning
+      steps = t.steps;
+      bus = new ValuedBus[steps];
+      for (int i = 0; i < steps; i++)
+        bus[i] = xBus.get(t.bus[i]);
+      position = t.position;
+      pullUp = t.pullUp;
+      pullDown = t.pullDown;
+      val = t.val;
+    }
+    Value recalculate() {
+      Value ret = Value.UNKNOWN;
+      for (int i = 0; i < steps; i++) {
+        ValuedBus vb = bus[i];
+        int pos = position[i];
+        // todo: we could cache, for each bus, the sum of valAtPoint
+        for (int j = 0; j < vb.valAtPoint.length; j++) {
+          Value val = vb.valAtPoint[j];
+          if (val == null || val == Value.NIL)
+            continue;
+          ret = ret.combine(val.get(pos));
+        }
+      }
+      if (ret != Value.UNKNOWN)
+        return ret;
+      else if (pullUp)
+        return Value.TRUE;
+      else if (pullDown)
+        return Value.FALSE;
+      else
+        return Value.UNKNOWN;
+    }
+  }
 
-    State(BundleMap bundleMap) {
+  static class ValuedBus {
+    int idx = -1;
+    ValuedThread[] threads;
+    Location[] points;
+    Value[] valAtPoint;
+    int width;
+    ValuedBus[] dependentBuses; // buses affected if this one changes value.
+    // int error, unknown, value; // todo, cache sum of valAtPoint
+    boolean dirty;
+
+    ValuedBus(WireBundle wb) {
+      idx = -1; // filled in by caller
+      points = wb.xpoints;
+      valAtPoint = new Value[points.length];
+      width = wb.threads == null ? -1 : wb.getWidth().getWidth();
+      dirty = true;
+    }
+
+    ValuedBus(ValuedBus vb) { // for cloning
+      idx = vb.idx;
+      points = vb.points;
+      valAtPoint = vb.valAtPoint.clone();
+      width = vb.width;
+      dirty = vb.dirty;
+    }
+
+    void makeThreads(WireThread[] wbthreads, HashMap<WireBundle, ValuedBus> allBuses,
+                     HashMap<WireThread, ValuedThread> allThreads) {
+      if (width <= 0)
+        return;
+      threads = new ValuedThread[width];
+      for (int i = 0; i < width; i++) {
+        WireThread t = wbthreads[i];
+        threads[i] = allThreads.get(t);
+        if (threads[i] == null) {
+          threads[i] = new ValuedThread(t, allBuses);
+          allThreads.put(t, threads[i]);
+        }
+      }
+    }
+
+    void makeThreads(ValuedThread[] oldThreads, HashMap<ValuedBus, ValuedBus> xBus,
+                     HashMap<ValuedThread, ValuedThread> xThread) { // for cloning
+      if (width <= 0)
+        return;
+      threads = new ValuedThread[width];
+      for (int i = 0; i < width; i++) {
+        ValuedThread tOld = oldThreads[i];
+        ValuedThread tNew = xThread.get(tOld);
+        if (tNew == null) {
+          tNew = new ValuedThread(tOld, xBus);
+          xThread.put(tOld, tNew);
+        }
+        threads[i] = tNew;
+      }
+    }
+
+    Value recalculate() {
+      if (width == 1) {
+        Value tv = threads[0].val;
+        if (tv == null)
+          tv = threads[0].val = threads[0].recalculate();
+        return tv;
+      }
+      long error = 0, unknown = 0, value = 0;
+      for (int i = 0; i < width; i++) {
+        long mask = 1L << i;
+        Value tv = threads[i].val;
+        if (tv == null)
+          tv = threads[i].val = threads[i].recalculate();
+        if (tv == Value.TRUE)
+          value |= mask;
+        else if (tv == Value.FALSE)
+          ;
+        else if (tv == Value.UNKNOWN)
+          unknown |= mask;
+        else
+          error |= mask;
+      }
+      return Value.create_unsafe(width, error, unknown, value);
+    }
+  }
+
+  static class State {
+    private BundleMap bundleMap; // original source of connectivity info
+    ValuedBus[] buses;
+    int numDirty;
+    HashMap<Location, ValuedBus> busAt = new HashMap<>();
+
+    State(CircuitState circState, BundleMap bundleMap) {
       this.bundleMap = bundleMap;
+      HashMap<WireBundle, ValuedBus> allBuses = new HashMap<>();
+      HashMap<ValuedBus, WireBundle> srcBuses = new HashMap<>();
+      buses = new ValuedBus[bundleMap.bundles.size()];
+      int i = 0;
+      for (WireBundle wb : bundleMap.bundles) {
+        ValuedBus vb = new ValuedBus(wb);
+        vb.idx = i++;
+        buses[vb.idx] = vb;
+        for (Location loc : wb.xpoints) {
+          ValuedBus old = busAt.put(loc, vb);
+          if (old != null) {
+            throw new IllegalStateException("oops, two wires occupy same location");
+          }
+        }
+        allBuses.put(wb, vb);
+        srcBuses.put(vb, wb);
+      }
+      HashMap<WireThread, ValuedThread> allThreads = new HashMap<>();
+      for (ValuedBus vb : buses) {
+        vb.makeThreads(srcBuses.get(vb).threads, allBuses, allThreads);
+        if (circState != null) {
+          for (int j = 0; j < vb.points.length; j++) {
+            Value val = circState.getComponentOutputAt(vb.points[j]);
+            vb.valAtPoint[j] = val;
+          }
+        }
+      }
+      for (ValuedBus vb : buses) {
+        if (vb.threads == null)
+          continue;
+        HashSet<ValuedBus> deps = new HashSet<>();
+        for (ValuedThread t : vb.threads)
+          for (ValuedBus dep : t.bus)
+            if (dep != vb)
+              deps.add(dep);
+        int n = deps.size();
+        if (n == 0)
+          continue;
+        vb.dependentBuses = deps.toArray(new ValuedBus[n]);
+      }
+      numDirty = buses.length;
+    }
+
+    State(State s) { // for cloning
+      this.bundleMap = s.bundleMap;
+      this.buses = new ValuedBus[s.buses.length];
+      this.numDirty = s.numDirty;
+      HashMap<ValuedBus, ValuedBus> xBus = new HashMap<>();
+      for (int i = 0; i < buses.length; i++) {
+        ValuedBus vbOld = s.buses[i];
+        ValuedBus vbNew = new ValuedBus(vbOld);
+        buses[i] = vbNew;
+        xBus.put(vbOld, vbNew);
+      }
+      HashMap<ValuedThread, ValuedThread> xThread = new HashMap<>();
+      for (int i = 0; i < buses.length; i++) {
+        ValuedBus vbOld = s.buses[i];
+        ValuedBus vbNew = buses[i];
+        if (vbOld.dependentBuses != null) {
+          int n = vbOld.dependentBuses.length;
+          vbNew.dependentBuses = new ValuedBus[n];
+          for (int j = 0; j < n; j++)
+            vbNew.dependentBuses[j] = xBus.get(vbOld);
+        }
+        vbNew.makeThreads(vbOld.threads, xBus, xThread);
+      }
+    }
+
+    void markClean(ValuedBus vb) {
+      if (!vb.dirty) {
+        throw new IllegalStateException("can't clean element that is not dirty");
+      }
+      if (vb.idx > numDirty - 1) {
+        throw new IllegalStateException("bad position for dirty element");
+      }
+      if (vb.idx < numDirty - 1) {
+        ValuedBus other = buses[numDirty - 1];
+        other.idx = vb.idx;
+        buses[other.idx] = other;
+        vb.idx = numDirty - 1;
+        buses[vb.idx] = vb;
+      }
+      vb.dirty = false;
+      numDirty--;
+    }
+
+    void markDirty(ValuedBus vb) {
+      if (vb.dirty) {
+        throw new IllegalStateException("can't mark dirty element as dirty");
+      }
+      if (vb.idx < numDirty) {
+        throw new IllegalStateException("bad position for clean element");
+      }
+      if (vb.idx > numDirty) {
+        ValuedBus other = buses[numDirty];
+        other.idx = vb.idx;
+        buses[other.idx] = other;
+        vb.idx = numDirty;
+        buses[vb.idx] = vb;
+      }
+      if (vb.threads != null) {
+        for (ValuedThread vt : vb.threads)
+          vt.val = null;
+      }
+      vb.dirty = true;
+      numDirty++;
     }
 
     @Override
     public Object clone() {
-      final var ret = new State(this.bundleMap);
-      ret.thrValues.putAll(this.thrValues);
-      return ret;
-    }
-  }
-
-  static class ThreadBundle {
-    final int loc;
-    final WireBundle b;
-
-    ThreadBundle(int loc, WireBundle b) {
-      this.loc = loc;
-      this.b = b;
+      return new State(this);
     }
   }
 
@@ -240,9 +471,9 @@ class CircuitWires {
       final var b = it.next();
       final var bpar = b.find();
       if (bpar != b) { // b isn't group's representative
-        for (final var pt : b.points) {
+        for (final var pt : b.tempPoints) {
           ret.setBundleAt(pt, bpar);
-          bpar.points.add(pt);
+          bpar.tempPoints.add(pt);
         }
         bpar.addPullValue(b.getPullValue());
         it.remove();
@@ -284,6 +515,19 @@ class CircuitWires {
       }
     }
 
+    // finish constructing the bundles, start constructing the threads
+    for (WireBundle b : ret.getBundles()) {
+      b.xpoints = b.tempPoints.toArray(new Location[b.tempPoints.size()]);
+      b.tempPoints = null;
+      BitWidth width = b.getWidth();
+      if (width != BitWidth.UNKNOWN) {
+        int n = width.getWidth();
+        b.threads = new WireThread[n];
+        for (int i = 0; i < n; i++)
+          b.threads[i] = new WireThread();
+      }
+    }
+
     // unite threads going through splitters
     for (final var spl : splitters) {
       synchronized (spl) {
@@ -316,17 +560,26 @@ class CircuitWires {
 
     // merge any threads united by previous step
     for (final var wireBundle : ret.getBundles()) {
-      if (wireBundle.isValid() && wireBundle.threads != null) {
+      if (wireBundle.threads != null) {
         for (int i = 0; i < wireBundle.threads.length; i++) {
-          final var thr = wireBundle.threads[i].find();
+          final var thr = wireBundle.threads[i].getRepresentative();
           wireBundle.threads[i] = thr;
-          thr.getBundles().add(new ThreadBundle(i, wireBundle));
+          thr.addBundlePosition(i, wireBundle);
         }
       }
     }
 
-    // All threads are sewn together! Compute the exception set before
-    // leaving
+    // finish constructing the threads
+    for (WireBundle b : ret.getBundles()) {
+      if (b.threads != null) {
+        for (WireThread t : b.threads)
+          t.finishConstructing();
+      }
+    }
+
+    // All bundles are made, all threads are now sewn together.
+
+    // Compute the exception set before leaving.
     final var exceptions = points.getWidthIncompatibilityData();
     if (CollectionUtil.isNotEmpty(exceptions)) {
       for (final var wid : exceptions) {
@@ -345,7 +598,7 @@ class CircuitWires {
       var b = ret.getBundleAt(loc);
       if (b == null) {
         b = ret.createBundleAt(loc);
-        b.points.add(loc);
+        b.tempPoints.add(loc);
         ret.setBundleAt(loc, b);
       }
       final var instance = Instance.getInstanceFor(comp);
@@ -384,7 +637,7 @@ class CircuitWires {
         if (loc != foundLocation) {
           final var bundle = ret.getBundleAt(loc);
           if (bundle == null) {
-            foundBundle.points.add(loc);
+            foundBundle.tempPoints.add(loc);
             ret.setBundleAt(loc, foundBundle);
           } else {
             bundle.unite(foundBundle);
@@ -400,12 +653,12 @@ class CircuitWires {
       final var bundleA = ret.getBundleAt(wire.e0);
       if (bundleA == null) {
         final var bundleB = ret.createBundleAt(wire.e1);
-        bundleB.points.add(wire.e0);
+        bundleB.tempPoints.add(wire.e0);
         ret.setBundleAt(wire.e0, bundleB);
       } else {
         final var bundleB = ret.getBundleAt(wire.e1);
         if (bundleB == null) { // t1 doesn't exist
-          bundleA.points.add(wire.e1);
+          bundleA.tempPoints.add(wire.e1);
           ret.setBundleAt(wire.e1, bundleA);
         } else {
           bundleB.unite(bundleA); // unite bundles
@@ -556,18 +809,29 @@ class CircuitWires {
   // painting. AWT sometimes locks a splitter, then changes components and
   // wires.
   // Computing a new bundle map requires both locking splitters and touching
-  // the components and wires, so to avoid deadlock, only the AWT should
-  // create the new bundle map.
+  // the components and wires, so to avoid deadlock, only the AWT should create
+  // the new bundle map. The bundle map is (essentially, if not entirely)
+  // read-only once it is fully constructed.
+  // The simulation thread never creates a new bundle map. On the other hand,
+  // the simulation thread creates the State objects for each simulated instance
+  // of the circuit, and each State duplicates data from the bundle map.
+
+  private class BundleMapGetter implements Runnable {
+    BundleMap result;
+    public void run() {
+      result = getBundleMap();
+    }
+  }
 
   /*synchronized*/ private BundleMap getBundleMap() {
-    final var map = masterBundleMap;
+    final var map = masterBundleMap; // volatile read by AWT or simulation thread
     if (map != null) return map;
     if (SwingUtilities.isEventDispatchThread()) {
       // AWT event thread.
       final var ret = new BundleMap();
       try {
         computeBundleMap(ret);
-        masterBundleMap = ret;
+        masterBundleMap = ret; // volatile write by AWT thread
       } catch (Exception t) {
         ret.invalidate();
         logger.error(t.getLocalizedMessage());
@@ -576,10 +840,11 @@ class CircuitWires {
     } else {
       // Simulation thread.
       try {
-        final var ret = new BundleMap[1];
-        SwingUtilities.invokeAndWait(() -> ret[0] = getBundleMap());
-        return ret[0];
-      } catch (Exception e) {
+        BundleMapGetter awtThread = new BundleMapGetter();
+        SwingUtilities.invokeAndWait(awtThread);
+        return awtThread.result;
+      } catch (Exception t) {
+        logger.error(t.getLocalizedMessage());
         final var ret = new BundleMap();
         ret.invalidate();
         return ret;
@@ -589,25 +854,6 @@ class CircuitWires {
 
   Iterator<? extends Component> getComponents() {
     return IteratorUtil.createJoinedIterator(splitters.iterator(), wires.iterator());
-  }
-
-  private Value getThreadValue(CircuitState state, WireThread t) {
-    var ret = Value.UNKNOWN;
-    var pull = Value.UNKNOWN;
-    for (final var tb : t.getBundles()) {
-      for (final var p : tb.b.points) {
-        final var val = state.getComponentOutputAt(p);
-        if (val != null && val != Value.NIL) {
-          ret = ret.combine(val.get(tb.loc));
-        }
-      }
-      final var pullHere = tb.b.getPullValue();
-      if (pullHere != Value.UNKNOWN) pull = pull.combine(pullHere);
-    }
-    if (pull != Value.UNKNOWN) {
-      ret = pullValue(ret, pull);
-    }
-    return ret;
   }
 
   BitWidth getWidth(Location q) {
@@ -620,16 +866,6 @@ class CircuitWires {
     if (qb != null && qb.isValid()) return qb.getWidth();
 
     return BitWidth.UNKNOWN;
-  }
-
-  Location getWidthDeterminant(Location q) {
-    final var det = points.getWidth(q);
-    if (det != BitWidth.UNKNOWN) return q;
-
-    final var qb = getBundleMap().getBundleAt(q);
-    if (qb != null && qb.isValid()) return qb.getWidthDeterminant();
-
-    return q;
   }
 
   Set<WidthIncompatibilityData> getWidthIncompatibilityData() {
@@ -657,7 +893,7 @@ class CircuitWires {
     final var wireBundle = getWireBundle(start.e0);
     if (wireBundle == null) return WireSet.EMPTY;
     final var wires = new HashSet<Wire>();
-    for (final var loc : wireBundle.points) {
+    for (final var loc : wireBundle.xpoints) {
       wires.addAll(points.getWires(loc));
     }
     return new WireSet(wires);
@@ -675,91 +911,69 @@ class CircuitWires {
   //
   void propagate(CircuitState circState, Set<Location> points) {
     final var map = getBundleMap();
-    final var dirtyThreads = new CopyOnWriteArraySet<WireThread>(); // affected threads
+    ArrayList<WireThread> dirtyThreads = new ArrayList<>();
 
     // get state, or create a new one if current state is outdated
     var state = circState.getWireData();
     if (state == null || state.bundleMap != map) {
       // if it is outdated, we need to compute for all threads
-      state = new State(map);
-      for (final var bundle : map.getBundles()) {
-        final var wireThreads = bundle.threads;
-        if (bundle.isValid() && wireThreads != null) {
-          dirtyThreads.addAll(Arrays.asList(wireThreads));
-        }
-      }
+      state = new State(circState, map);
       circState.setWireData(state);
+      // note: all buses are already marked as dirty
     }
 
-    // determine affected threads, and set values for unwired points
-    for (final var point : points) {
-      final var wireBundle = map.getBundleAt(point);
-      if (wireBundle == null) { // point is not wired
-        circState.setValueByWire(point, circState.getComponentOutputAt(point));
+    for (Location p : points) { // for each point of interest
+      ValuedBus vb = state.busAt.get(p);
+      if (vb == null) {
+        // point is not wired: just set that point's value and be done
+        circState.setValueByWire(p, circState.getComponentOutputAt(p));
+      } else if (vb.threads == null) {
+        // point is wired to a threadless (e.g. invalid-width) bundle:
+        // propagate NIL across entire bundle
+        if (vb.dirty)
+          state.markClean(vb);
+        for (Location buspt : vb.points)
+          circState.setValueByWire(buspt, Value.NIL);
       } else {
-        final var th = wireBundle.threads;
-        if (!wireBundle.isValid() || th == null) {
-          // immediately propagate NILs across invalid bundles
-          final var pbPoints = wireBundle.points;
-          if (pbPoints == null) {
-            circState.setValueByWire(point, Value.NIL);
-          } else {
-            for (final var loc2 : pbPoints) {
-              circState.setValueByWire(loc2, Value.NIL);
+        // common case... it is wired to a normal bus: update the stored value
+        // of this point on the bus, mark the bus as dirty, and mark as dirty
+        // any related buses.
+        for (int i = 0; i < vb.points.length; i++) {
+          if (vb.points[i].equals(p)) {
+            Value val = circState.getComponentOutputAt(p);
+            Value old = vb.valAtPoint[i];
+            if ((val == null || val == Value.NIL) && (old == null || old == Value.NIL))
+              break; // ignore, both old and new are NIL
+            if (val != null && old != null && val.equals(old))
+              break; // ignore, both old and new are same non-NIL value
+            vb.valAtPoint[i] = val;
+            if (!vb.dirty) {
+              state.markDirty(vb);
+              if (vb.dependentBuses != null) {
+                for (ValuedBus dep : vb.dependentBuses)
+                  if (!dep.dirty)
+                    state.markDirty(dep);
+              }
             }
-          }
-        } else {
-          dirtyThreads.addAll(Arrays.asList(th));
-        }
-      }
-    }
-
-    if (dirtyThreads.isEmpty()) return;
-
-    // determine values of affected threads
-    final var bundles = new HashSet<ThreadBundle>();
-    for (final var t : dirtyThreads) {
-      final var v = getThreadValue(circState, t);
-      state.thrValues.put(t, v);
-      bundles.addAll(t.getBundles());
-    }
-
-    // now propagate values through circuit
-    next_bundle: for (final var tb : bundles) {
-      final var b = tb.b;
-      if (!b.isValid() || b.threads == null) continue next_bundle;
-
-      final var width = b.threads.length;
-      if (width < 0 || width > 64) continue next_bundle;
-      Value bv = null;
-      if (width == 1) {
-        bv = state.thrValues.get(b.threads[0]);
-      } else {
-        long error = 0;
-        long unknown = 0;
-        long value = 0;
-        for (int i = 0; i < width; i++) {
-          final var tv = state.thrValues.get(b.threads[i]);
-          if (tv == null) continue next_bundle;
-          long mask = 1L << i;
-          if (tv == Value.TRUE) {
-            value |= mask;
-          } else if (tv == Value.FALSE) {
-          } else if (tv == Value.UNKNOWN) {
-            unknown |= mask;
-          } else {
-            error |= mask;
+            break;
           }
         }
-        bv = Value.create_unsafe(width, error, unknown, value);
-      }
-
-      if (bv != null) {
-        for (final var p : b.points) {
-          circState.setValueByWire(p, bv);
-        }
       }
     }
+
+    if (state.numDirty <= 0) return;
+
+    // recompute thread values for all threads passing through dirty buses,
+    // recompute aggregate bus values for all dirty buses,
+    // and post those notifications to all bus points
+    for (int i = 0; i < state.numDirty; i++) {
+      ValuedBus vb = state.buses[i];
+      Value val = vb.recalculate();
+      vb.dirty = false;
+      for (Location p : vb.points)
+        circState.setValueByWire(p, val);
+    }
+    state.numDirty = 0;
   }
 
   private Bounds recomputeBounds() {
