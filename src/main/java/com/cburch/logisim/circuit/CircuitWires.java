@@ -725,26 +725,33 @@ class CircuitWires {
     }
 
     // now propagate values through circuit
-    for (final var tb : bundles) {
+    next_bundle: for (final var tb : bundles) {
       final var b = tb.b;
+      if (!b.isValid() || b.threads == null) continue next_bundle;
 
+      final var width = b.threads.length;
+      if (width < 0 || width > 64) continue next_bundle;
       Value bv = null;
-      if (!b.isValid() || b.threads == null) {
-        // do nothing
-      } else if (b.threads.length == 1) {
+      if (width == 1) {
         bv = state.thrValues.get(b.threads[0]);
       } else {
-        final var tvs = new Value[b.threads.length];
-        var tvsValid = true;
-        for (var i = 0; i < tvs.length; i++) {
+        long error = 0;
+        long unknown = 0;
+        long value = 0;
+        for (int i = 0; i < width; i++) {
           final var tv = state.thrValues.get(b.threads[i]);
-          if (tv == null) {
-            tvsValid = false;
-            break;
+          if (tv == null) continue next_bundle;
+          long mask = 1L << i;
+          if (tv == Value.TRUE) {
+            value |= mask;
+          } else if (tv == Value.FALSE) {
+          } else if (tv == Value.UNKNOWN) {
+            unknown |= mask;
+          } else {
+            error |= mask;
           }
-          tvs[i] = tv;
         }
-        if (tvsValid) bv = Value.create(tvs);
+        bv = Value.create_unsafe(width, error, unknown, value);
       }
 
       if (bv != null) {

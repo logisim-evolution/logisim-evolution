@@ -48,6 +48,20 @@ public class Value {
     }
   }
 
+  public static Value create_unsafe(int width, long error, long unknown, long value) {
+    int hashCode = 31 * (31 * (31 * width + (int) error) + (int) unknown) + (int) value;
+    Object obj = cache.get(hashCode);
+    if (obj != null) {
+      Value val = (Value) obj;
+      if (val.value == value && val.width == width
+          && val.error == error && val.unknown == unknown)
+        return val;
+    }
+    Value ret = new Value(width, error, unknown, value);
+    cache.put(hashCode, ret);
+    return ret;
+  }
+
   public static Value create(Value[] values) {
     if (values.length == 0) return NIL;
     if (values.length == 1) return values[0];
