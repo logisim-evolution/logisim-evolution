@@ -65,7 +65,7 @@ public class Propagator {
       } else if (e.getAttribute().equals(Options.ATTR_SIM_RAND)) {
         p.updateRandomness();
       } else if (e.getAttribute().equals(Options.ATTR_SIM_LIMIT)) {
-        p.updateOscillationLimit();
+        p.updateSimLimit();
       }
     }
   }
@@ -114,9 +114,6 @@ public class Propagator {
     }
   }
 
-  //
-  // static methods
-  //
   static Value computeValue(SetData causes) {
     if (causes == null) return Value.NIL;
     var ret = causes.val;
@@ -157,7 +154,7 @@ public class Propagator {
     final var l = new Listener(this);
     root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
     updateRandomness();
-    updateOscillationLimit();
+    updateSimLimit();
   }
 
   private SetData addCause(CircuitState state, SetData head, SetData data) {
@@ -191,10 +188,7 @@ public class Propagator {
     return head;
   }
 
-  //
-  // private methods
-  //
-  void checkComponentEnds(CircuitState state, Component comp) {
+  static void checkComponentEnds(CircuitState state, Component comp) {
     for (final var end : comp.getEnds()) {
       final var loc = end.getLocation();
       final var oldHead = state.causes.get(loc);
@@ -214,9 +208,6 @@ public class Propagator {
     if (isOscillating) oscPoints.draw(context);
   }
 
-  //
-  // public methods
-  //
   CircuitState getRootState() {
     return root;
   }
@@ -269,6 +260,9 @@ public class Propagator {
     return propagate(null, null);
   }
 
+  /**
+   * Safe to call from sim thread
+   */
   public boolean propagate(Simulator.ProgressListener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
     root.processDirtyPoints();
@@ -299,7 +293,7 @@ public class Propagator {
     return iters > 0;
   }
 
-  private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
+  private static SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
     final var causes = state.causes;
     if (head == null) {
     } else if (head.cause == cause) {
@@ -359,6 +353,9 @@ public class Propagator {
     setDataSerialNumber++;
   }
 
+  /**
+   * Safe to call from sim thread
+   */
   boolean step(PropagationPoints changedPoints) {
     oscPoints.clear();
     root.processDirtyPoints();
@@ -442,11 +439,9 @@ public class Propagator {
     simRandomShift = logVal;
   }
 
-  private void updateOscillationLimit() {
+  private void updateSimLimit() {
     final var opts = root.getProject().getOptions();
     final var lim = opts.getAttributeSet().getValue(Options.ATTR_SIM_LIMIT);
     simLimit = lim;
   }
-
-
 }

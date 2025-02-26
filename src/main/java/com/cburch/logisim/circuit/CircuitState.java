@@ -313,7 +313,7 @@ public class CircuitState implements InstanceData {
     dirtyComponents.addAll(comps);
   }
 
-  public void markPointAsDirty(Location pt) {
+  void markPointAsDirty(Location pt) {
     dirtyPoints.add(pt);
   }
 
