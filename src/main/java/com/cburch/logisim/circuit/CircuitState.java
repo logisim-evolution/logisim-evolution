@@ -200,12 +200,12 @@ public class CircuitState implements InstanceData {
       final var newValue = oldValue.cloneFor(this);
       this.causes.put(key, newValue);
     }
-    if (src.wireData != null) {
-      this.wireData = (CircuitWires.State) src.wireData.clone();
-    }
     this.values.putAll(src.values);
     this.dirtyComponents.addAll(src.dirtyComponents);
     this.dirtyPoints.addAll(src.dirtyPoints);
+    if (src.wireData != null) {
+      this.wireData = circuit.wires.newState(this); // all buses will be marked as dirty
+    }
   }
 
   public void drawOscillatingPoints(ComponentDrawContext context) {

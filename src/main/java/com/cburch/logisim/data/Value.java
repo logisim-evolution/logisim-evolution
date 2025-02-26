@@ -14,7 +14,7 @@ import com.cburch.logisim.util.Cache;
 import java.awt.Color;
 import java.util.Arrays;
 
-public class Value {
+public final class Value {
 
   private static int hashcode(int width, long error, long unknown, long value) {
     var hashCode = width;
@@ -286,14 +286,48 @@ public class Value {
       if (this == UNKNOWN) return other;
       if (other == UNKNOWN) return this;
       return ERROR;
-    } else {
+    } else if (this.width == other.width) {
       long disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
+      return Value.create(
+          width,
+          this.error | other.error | disagree,
+          this.unknown & other.unknown,
+          this.value | other.value);
+    } else {
+      long thisknown = ~this.unknown & (this.width == 32 ? -1 : ~(-1 << this.width));
+      long otherknown = ~other.unknown & (other.width == 32 ? -1 : ~(-1 << other.width));
+      long disagree = (this.value ^ other.value) & thisknown & otherknown;
       return Value.create(
           Math.max(this.width, other.width),
           this.error | other.error | disagree,
-          this.unknown & other.unknown,
-          (this.value & ~this.unknown) | (other.value & ~other.unknown));
+          ~thisknown & ~otherknown,
+          this.value | other.value);
     }
+  }
+
+  public static final Value combineLikeWidths(Value[] vals) { // all widths must match
+    for (int i = 0; i < vals.length; i++) {
+      Value v = vals[i];
+      if (v != null && v != NIL) {
+        int width = v.width;
+        long error = v.error;
+        long unknown = v.unknown;
+        long value = v.value;
+        for (int j = i + 1; j < vals.length; j++) {
+          v = vals[j];
+          if (v == null || v == NIL)
+            continue;
+          if (v.width != width)
+            throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in Value.combine");
+          long disagree = (value ^ v.value) & ~(unknown | v.unknown);
+          error |= v.error | disagree;
+          unknown &= v.unknown;
+          value |= v.value;
+        }
+        return Value.create(width, error, unknown, value);
+      }
+    }
+    return Value.NIL;
   }
 
   /**

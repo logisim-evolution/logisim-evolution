@@ -122,26 +122,14 @@ class CircuitWires {
       if (pullUp && pullDown)
         pullUp = pullDown = false;
     }
-    ValuedThread(ValuedThread t, HashMap<ValuedBus, ValuedBus> xBus) { // for cloning
-      steps = t.steps;
-      bus = new ValuedBus[steps];
-      for (int i = 0; i < steps; i++)
-        bus[i] = xBus.get(t.bus[i]);
-      position = t.position;
-      pullUp = t.pullUp;
-      pullDown = t.pullDown;
-      val = t.val;
-    }
+
     Value recalculate() {
       Value ret = Value.UNKNOWN;
       for (int i = 0; i < steps; i++) {
         ValuedBus vb = bus[i];
         int pos = position[i];
-        // todo: we could cache, for each bus, the sum of valAtPoint
-        for (int j = 0; j < vb.valAtPoint.length; j++) {
-          Value val = vb.valAtPoint[j];
-          if (val == null || val == Value.NIL)
-            continue;
+        Value val = vb.valAtPointSum;
+        if (val != Value.NIL) {
           ret = ret.combine(val.get(pos));
         }
       }
@@ -161,9 +149,9 @@ class CircuitWires {
     ValuedThread[] threads;
     Location[] points;
     Value[] valAtPoint;
+    Value valAtPointSum; // cached sum of valAtPoint, or null if dirty
     int width;
     ValuedBus[] dependentBuses; // buses affected if this one changes value.
-    // int error, unknown, value; // todo, cache sum of valAtPoint
     boolean dirty;
 
     ValuedBus(WireBundle wb) {
@@ -172,14 +160,6 @@ class CircuitWires {
       valAtPoint = new Value[points.length];
       width = wb.threads == null ? -1 : wb.getWidth().getWidth();
       dirty = true;
-    }
-
-    ValuedBus(ValuedBus vb) { // for cloning
-      idx = vb.idx;
-      points = vb.points;
-      valAtPoint = vb.valAtPoint.clone();
-      width = vb.width;
-      dirty = vb.dirty;
     }
 
     void makeThreads(WireThread[] wbthreads, HashMap<WireBundle, ValuedBus> allBuses,
@@ -194,22 +174,6 @@ class CircuitWires {
           threads[i] = new ValuedThread(t, allBuses);
           allThreads.put(t, threads[i]);
         }
-      }
-    }
-
-    void makeThreads(ValuedThread[] oldThreads, HashMap<ValuedBus, ValuedBus> xBus,
-                     HashMap<ValuedThread, ValuedThread> xThread) { // for cloning
-      if (width <= 0)
-        return;
-      threads = new ValuedThread[width];
-      for (int i = 0; i < width; i++) {
-        ValuedThread tOld = oldThreads[i];
-        ValuedThread tNew = xThread.get(tOld);
-        if (tNew == null) {
-          tNew = new ValuedThread(tOld, xBus);
-          xThread.put(tOld, tNew);
-        }
-        threads[i] = tNew;
       }
     }
 
@@ -237,6 +201,10 @@ class CircuitWires {
       }
       return Value.create_unsafe(width, error, unknown, value);
     }
+  }
+
+  State newState(CircuitState circState) {
+    return new State(circState, getBundleMap());
   }
 
   static class State {
@@ -290,31 +258,6 @@ class CircuitWires {
       numDirty = buses.length;
     }
 
-    State(State s) { // for cloning
-      this.bundleMap = s.bundleMap;
-      this.buses = new ValuedBus[s.buses.length];
-      this.numDirty = s.numDirty;
-      HashMap<ValuedBus, ValuedBus> xBus = new HashMap<>();
-      for (int i = 0; i < buses.length; i++) {
-        ValuedBus vbOld = s.buses[i];
-        ValuedBus vbNew = new ValuedBus(vbOld);
-        buses[i] = vbNew;
-        xBus.put(vbOld, vbNew);
-      }
-      HashMap<ValuedThread, ValuedThread> xThread = new HashMap<>();
-      for (int i = 0; i < buses.length; i++) {
-        ValuedBus vbOld = s.buses[i];
-        ValuedBus vbNew = buses[i];
-        if (vbOld.dependentBuses != null) {
-          int n = vbOld.dependentBuses.length;
-          vbNew.dependentBuses = new ValuedBus[n];
-          for (int j = 0; j < n; j++)
-            vbNew.dependentBuses[j] = xBus.get(vbOld);
-        }
-        vbNew.makeThreads(vbOld.threads, xBus, xThread);
-      }
-    }
-
     void markClean(ValuedBus vb) {
       if (!vb.dirty) {
         throw new IllegalStateException("can't clean element that is not dirty");
@@ -353,11 +296,6 @@ class CircuitWires {
       }
       vb.dirty = true;
       numDirty++;
-    }
-
-    @Override
-    public Object clone() {
-      return new State(this);
     }
   }
 
@@ -942,6 +880,7 @@ class CircuitWires {
           if (vb.points[i].equals(p)) {
             Value val = circState.getComponentOutputAt(p);
             Value old = vb.valAtPoint[i];
+            vb.valAtPointSum = null;
             if ((val == null || val == Value.NIL) && (old == null || old == Value.NIL))
               break; // ignore, both old and new are NIL
             if (val != null && old != null && val.equals(old))
@@ -962,6 +901,12 @@ class CircuitWires {
     }
 
     if (state.numDirty <= 0) return;
+
+    // recompute valAtPointSum for each dirty bus
+    for (int i = 0; i < state.numDirty; i++) {
+      ValuedBus vb = state.buses[i];
+      vb.valAtPointSum = Value.combineLikeWidths(vb.valAtPoint);
+    }
 
     // recompute thread values for all threads passing through dirty buses,
     // recompute aggregate bus values for all dirty buses,
@@ -1045,9 +990,6 @@ class CircuitWires {
     voidBundleMap();
   }
 
-  //
-  // helper methods
-  //
   private void voidBundleMap() {
     // This should really only be called by AWT thread, but main() also
     // calls it during startup. It should not be called by the simulation
