@@ -26,6 +26,7 @@ import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -62,7 +63,9 @@ public class CircuitState implements InstanceData {
           // disconnect from tree
           final var subState = (CircuitState) getData(comp);
           if (subState != null && subState.parentComp == comp) {
-            subStates.remove(subState);
+            synchronized (dirtyLock) {
+              substates.remove(subState);
+            }
             subState.parentState = null;
             subState.parentComp = null;
             subState.reset();
@@ -74,14 +77,17 @@ public class CircuitState implements InstanceData {
           markPointAsDirty(w.getEnd0());
           markPointAsDirty(w.getEnd1());
         } else {
-          if (base != null) base.checkComponentEnds(CircuitState.this, comp);
+          Propagator.checkComponentEnds(CircuitState.this, comp);
           dirtyComponents.remove(comp);
         }
       } else if (action == CircuitEvent.ACTION_CLEAR) {
         /* Whole circuit was cleared */
         temporaryClock = null;
         knownClocks = false;
-        subStates.clear();
+        synchronized (dirtyLock) {
+          substates.clear();
+          substatesWorking = new CircuitState[0];
+        }
         wireData = null;
         for (final var comp : componentData.keySet()) {
           if (componentData.get(comp) instanceof ComponentDataGuiProvider dataGuiProvider)
@@ -93,7 +99,9 @@ public class CircuitState implements InstanceData {
         componentData.clear();
         values.clear();
         dirtyComponents.clear();
-        dirtyPoints.clear();
+        synchronized (dirtyLock) {
+          dirtyPoints.clear();
+        }
         causes.clear();
       } else if (action == CircuitEvent.ACTION_INVALIDATE) {
         final var comp = (Component) event.getData();
@@ -121,7 +129,9 @@ public class CircuitState implements InstanceData {
           if (!found && compState instanceof RamState state) Ram.closeHexFrame(state);
           if (!found && compState instanceof CircuitState sub) {
             sub.parentState = null;
-            subStates.remove(sub);
+            synchronized (dirtyLock) {
+              substates.remove(sub);
+            }
           }
         }
       }
@@ -136,14 +146,17 @@ public class CircuitState implements InstanceData {
   private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
   // state
-  private HashSet<CircuitState> subStates = new HashSet<>();
 
   private CircuitWires.State wireData = null;
   private final HashMap<Component, Object> componentData = new HashMap<>();
   private final Map<Location, Value> values = new HashMap<>();
-  private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
-  private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
   final HashMap<Location, SetData> causes = new HashMap<>();
+  private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
+  //private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
+  //private final HashSet<Location> dirtyPoints = new HashSet<>();
+  private ArrayList<Location> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
+  private HashSet<CircuitState> substates = new HashSet<>(); // protected by dirtyLock
+  private Object dirtyLock = new Object();
 
   private static int lastId = 0;
   private final int id = lastId++;
@@ -176,13 +189,19 @@ public class CircuitState implements InstanceData {
     this.parentComp = src.parentComp;
     this.parentState = src.parentState;
     final var substateData = new HashMap<CircuitState, CircuitState>();
-    this.subStates = new HashSet<>();
-    for (final var oldSub : src.subStates) {
-      final var newSub = new CircuitState(src.proj, oldSub.circuit);
-      newSub.copyFrom(oldSub, base);
-      newSub.parentState = this;
-      this.subStates.add(newSub);
-      substateData.put(oldSub, newSub);
+    this.substates = new HashSet<>();
+    synchronized (src.dirtyLock) {
+      // note: we don't bother with our this.dirtyLock here: it isn't needed
+      // (b/c no other threads have a reference to his yet), and to avoid the
+      // possibility of deadlock (though  that shouldn't happen either since no
+      // other threads have references to this yet).
+      for (final var oldSub : src.substates) {
+        final var newSub = new CircuitState(src.proj, oldSub.circuit);
+        newSub.copyFrom(oldSub, base);
+        newSub.parentState = this;
+        this.substates.add(newSub);
+        substateData.put(oldSub, newSub);
+      }
     }
     for (final var key : src.componentData.keySet()) {
       final var oldValue = src.componentData.get(key);
@@ -202,7 +221,13 @@ public class CircuitState implements InstanceData {
     }
     this.values.putAll(src.values);
     this.dirtyComponents.addAll(src.dirtyComponents);
-    this.dirtyPoints.addAll(src.dirtyPoints);
+    synchronized (src.dirtyLock) {
+      // note: we don't bother with our this.dirtyLock here: it isn't needed
+      // (b/c no other threads have a reference to his yet), and to avoid the
+      // possibility of deadlock (though  that shouldn't happen either since no
+      // other threads have references to this yet).
+      this.dirtyPoints.addAll(src.dirtyPoints);
+    }
     if (src.wireData != null) {
       this.wireData = circuit.wires.newState(this); // all buses will be marked as dirty
     }
@@ -266,7 +291,7 @@ public class CircuitState implements InstanceData {
   }
 
   public Set<CircuitState> getSubStates() { // returns Set of CircuitStates
-    return subStates;
+    return substates;
   }
 
   public Value getValue(Location pt) {
@@ -314,7 +339,9 @@ public class CircuitState implements InstanceData {
   }
 
   void markPointAsDirty(Location pt) {
-    dirtyPoints.add(pt);
+    synchronized (dirtyLock) {
+      dirtyPoints.add(pt);
+    }
   }
 
   void processDirtyComponents() {
@@ -348,21 +375,35 @@ public class CircuitState implements InstanceData {
       }
     }
 
-    final var subs = new CircuitState[subStates.size()];
-    for (final var substate : subStates.toArray(subs)) {
+    synchronized (dirtyLock) {
+      substatesWorking = substates.toArray(substatesWorking);
+    }
+    for (CircuitState substate : substatesWorking) {
+      if (substate == null) break;
       substate.processDirtyComponents();
     }
   }
 
+  private ArrayList<Location> dirtyPointsWorking = new ArrayList<>();
+  private CircuitState[] substatesWorking = new CircuitState[0];
+
   void processDirtyPoints() {
-    final var dirty = new HashSet<>(dirtyPoints);
-    dirtyPoints.clear();
+    if (!dirtyPointsWorking.isEmpty()) {
+      throw new IllegalStateException("INTERNAL ERROR: dirtyPointWorking not empty");
+    }
+    synchronized (dirtyLock) {
+      ArrayList<Location> other = dirtyPoints;
+      dirtyPoints = dirtyPointsWorking; // dirtyPoints is now empty
+      dirtyPointsWorking = other; // working set is now ready to process
+      substatesWorking = substates.toArray(substatesWorking);
+    }
     if (circuit.wires.isMapVoided()) {
       for (var i = 3; i >= 0; i--) {
         try {
-          dirty.addAll(circuit.wires.points.getSplitLocations());
+          dirtyPointsWorking.addAll(circuit.wires.points.getSplitLocations());
           break;
         } catch (ConcurrentModificationException e) {
+          System.out.printf("warning: concurrent exception upon voided map (tries left %d)\n", i);
           // try again...
           try {
             Thread.sleep(1);
@@ -372,14 +413,14 @@ public class CircuitState implements InstanceData {
         }
       }
     }
-    if (!dirty.isEmpty()) {
-      circuit.wires.propagate(this, dirty);
+    if (!dirtyPointsWorking.isEmpty()) {
+      circuit.wires.propagate(this, dirtyPointsWorking);
+      dirtyPointsWorking.clear();
     }
 
-    final var subs = new CircuitState[subStates.size()];
-    for (final var substate : subStates.toArray(subs)) {
-      /* TODO: Analyze why this bug happens, e.g. a substate that is null! */
-      if (substate != null) substate.processDirtyPoints();
+    for (final var substate : substatesWorking) {
+      if (substate == null) break;
+      substate.processDirtyPoints();
     }
   }
 
@@ -404,12 +445,16 @@ public class CircuitState implements InstanceData {
     }
     values.clear();
     dirtyComponents.clear();
-    dirtyPoints.clear();
+    synchronized (dirtyLock) {
+      dirtyPoints.clear();
+    }
     causes.clear();
     markAllComponentsDirty();
 
-    for (CircuitState sub : subStates) {
-      sub.reset();
+    synchronized (dirtyLock) {
+      for (CircuitState sub : substates) {
+        sub.reset();
+      }
     }
   }
 
@@ -422,14 +467,18 @@ public class CircuitState implements InstanceData {
         // removed.
         if (oldState != null && oldState.parentComp == comp) {
           // it looks like it's being removed
-          subStates.remove(oldState);
+          synchronized (dirtyLock) {
+            substates.remove(oldState);
+          }
           oldState.parentState = null;
           oldState.parentComp = null;
           oldState.reset();
         }
         if (newState != null && newState.parentState != this) {
           // this is the first time I've heard about this CircuitState
-          subStates.add(newState);
+          synchronized (dirtyLock) {
+            substates.add(newState);
+          }
           newState.base = this.base;
           newState.parentState = this;
           newState.parentComp = comp;
@@ -485,9 +534,14 @@ public class CircuitState implements InstanceData {
     for (final var clock : circuit.getClocks())
       ret |= Clock.tick(this, ticks, clock);
 
-    final var subs = new CircuitState[subStates.size()];
-    for (final var substate : subStates.toArray(subs))
+    final var subs = new CircuitState[substates.size()];
+    synchronized (dirtyLock) {
+      substatesWorking = substates.toArray(substatesWorking);
+    }
+    for (final var substate : substatesWorking) {
+      if (substate == null) break;
       ret |= substate.toggleClocks(ticks);
+    }
     return ret;
   }
 

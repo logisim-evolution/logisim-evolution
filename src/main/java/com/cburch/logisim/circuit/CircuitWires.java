@@ -847,7 +847,7 @@ class CircuitWires {
   //
   // utility methods
   //
-  void propagate(CircuitState circState, Set<Location> points) {
+  void propagate(CircuitState circState, ArrayList<Location> points) {
     final var map = getBundleMap();
     ArrayList<WireThread> dirtyThreads = new ArrayList<>();
 

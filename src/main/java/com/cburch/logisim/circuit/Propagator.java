@@ -157,7 +157,7 @@ public class Propagator {
     updateSimLimit();
   }
 
-  private SetData addCause(CircuitState state, SetData head, SetData data) {
+  private static SetData addCause(CircuitState state, SetData head, SetData data) {
     if (data.val == null) { // actually, it should be removed
       return removeCause(state, head, data.loc, data.cause);
     }
