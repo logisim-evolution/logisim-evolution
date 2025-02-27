@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.data;
 
-import com.cburch.logisim.util.Cache;
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,15 +21,12 @@ public class Location implements Comparable<Location> {
     // we round to half-grid base
     final var xRounded = hasToSnap ? Math.round(x / 5) * 5 : x;
     final var yRounded = hasToSnap ? Math.round(y / 5) * 5 : y;
-    final var hashCode = 31 * xRounded + yRounded;
-    final var ret = cache.get(hashCode);
-    if (ret != null) {
-      final var loc = (Location) ret;
-      if (loc.x == xRounded && loc.y == yRounded) return loc;
-    }
-    final var loc = new Location(hashCode, xRounded, yRounded, hasToSnap);
-    cache.put(hashCode, loc);
-    return loc;
+    // minimize hash collisions
+    int hashCode = (int)Short.MAX_VALUE * xRounded + yRounded;
+    // randomize order for better hashing
+    hashCode ^= hashCode >> 14;
+    hashCode ^= hashCode << 11;
+    return new Location(hashCode, xRounded, yRounded, hasToSnap);
   }
 
   public static Location parse(String value) {
@@ -57,7 +53,6 @@ public class Location implements Comparable<Location> {
     return Location.create(x, y, true);
   }
 
-  private static final Cache cache = new Cache();
   private final int hashCode;
   private final int x;
   private final int y;

@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
@@ -382,7 +383,7 @@ public class Propagator {
     clock = toProcess.peek().time;
 
     // propagate all values for this clock tick
-    final var visited = new HashMap<CircuitState, HashSet<ComponentPoint>>();
+    final var visited = new HashMap<CircuitState, ArrayList<ComponentPoint>>();
     while (true) {
       final var data = toProcess.peek();
       if (data == null || data.time != clock) break;
@@ -392,9 +393,11 @@ public class Propagator {
       // if it's already handled for this clock tick, continue
       var handled = visited.get(state);
       if (handled != null) {
-        if (!handled.add(new ComponentPoint(data.cause, data.loc))) continue;
+        var comp = new ComponentPoint(data.cause, data.loc);
+        if (!handled.contains(comp)) handled.add(comp);
+        else continue;
       } else {
-        handled = new HashSet<>();
+        handled = new ArrayList<>();
         visited.put(state, handled);
         handled.add(new ComponentPoint(data.cause, data.loc));
       }
@@ -415,7 +418,7 @@ public class Propagator {
 
       // if the value at point has changed, propagate it
       if (!newVal.equals(oldVal)) {
-        state.markPointAsDirty(data.loc);
+        state.markPointAsDirtyFromPropagator(data.loc);
       }
     }
 
