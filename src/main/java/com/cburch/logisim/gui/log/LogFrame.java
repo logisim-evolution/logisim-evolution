@@ -93,7 +93,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     @Override
     public void propagationInProgress(Simulator.Event e) {
-      curModel.propagationCompleted(false, true, false); // treat as a single-step
+      curModel.propagationCompleted(0, true, false); // treat as a single-step
     }
 
     @Override

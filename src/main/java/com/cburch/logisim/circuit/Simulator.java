@@ -27,11 +27,11 @@ public class Simulator {
 
   public static class Event {
     private final Simulator source;
-    private final boolean didTick;
+    private final int didTick;
     private final boolean didSingleStep;
     private final boolean didPropagate;
 
-    public Event(Simulator src, boolean t, boolean s, boolean p) {
+    public Event(Simulator src, int t, boolean s, boolean p) {
       source = src;
       didTick = t;
       didSingleStep = s;
@@ -42,7 +42,7 @@ public class Simulator {
       return source;
     }
 
-    public boolean didTick() {
+    public int didTick() {
       return didTick;
     }
 
@@ -138,6 +138,7 @@ public class Simulator {
     // lastTick is used only within loop() by a single thread.
     // No synchronization needed.
     private long lastTick = System.nanoTime(); // time of last propagation start
+    private int lastTickCount = 1; // number of ticks combined in the timer lastTick
 
     SimThread(Simulator s) {
       super("SimThread");
@@ -344,7 +345,7 @@ public class Simulator {
       var doTick = false;
       var doTickIfStable = false;
       var doStep = false;
-      var doProp = false;
+      var doProp = 0;
       var now = 0L;
 
       simStateLock.lock();
@@ -362,7 +363,7 @@ public class Simulator {
           if (resetRequested) {
             resetRequested = false;
             doReset = true;
-            doProp = autoPropagating;
+            doProp = autoPropagating ? 1 : 0;
             ready = true;
           } else if (nudgeRequested) {
             nudgeRequested = false;
@@ -376,44 +377,32 @@ public class Simulator {
           } else if (manualTicksRequested > 0) {
             // variable is decremented below
             doTick = true;
-            doProp = autoPropagating;
+            doProp = autoPropagating ? manualTicksRequested : 0;
             doStep = !autoPropagating;
             ready = true;
           } else {
             if (autoTicking && autoPropagating && autoTickNanos > 0) {
               // see if it is time to do an auto-tick
-              final var smooth = smoothingFactor;
-              final var lastNanos = now - lastTick;
-              if (avgTickNanos <= 0) {
-                avgTickNanos = autoTickNanos;
+              final int smooth = smoothingFactor;
+              long lastNanos = now - lastTick;
+              if (lastNanos <= 0) lastNanos = 1; // time can run backwards
+              lastNanos /= lastTickCount;
+              final double avg = ((smooth - 1.0) / smooth) * avgTickNanos + (1.0 / smooth) * lastNanos;
+              final long deadline = lastTick + autoTickNanos * lastTickCount;
+              final long delta = deadline - now;
+              if (delta <= 0) {
+                // If we are late, catch up as much as possible in one frame
+                avgTickNanos = avg;
                 doTick = true;
-                doProp = true;
+                doProp = (int)(20_000_000 / Math.max((double)autoTickNanos, avg)); // catch up in one step
+                if (doProp <= 0) doProp = 1;
+                if (doProp > 500) doProp = 500; // limit maximal speedup due to this optimisation to 500x
                 ready = true;
               } else {
-                final var avg = ((smooth - 1.0) / smooth) * avgTickNanos + (1.0 / smooth) * lastNanos;
-                final var deadline = lastTick + autoTickNanos - (long) ((smooth - 1) * (avgTickNanos - autoTickNanos));
-                final var delta = deadline - now;
-                if (delta <= 1000) {
-                  avgTickNanos = avg;
-                  doTick = true;
-                  doProp = true;
-                  ready = true;
-                } else if (delta < 1000000) {
-                  simStateLock.unlock();
-                  try {
-                    var time = 0L;
-                    do {
-                      time = System.nanoTime();
-                    } while (time < deadline);
-                  } finally {
-                    simStateLock.lock();
-                  }
-                } else {
-                  try {
-                    simStateUpdated.awaitNanos(delta);
-                  } catch (InterruptedException e) {
-                    // Do Nothing
-                  }
+                try {
+                  simStateUpdated.awaitNanos(delta);
+                } catch (InterruptedException e) {
+                  // Do Nothing
                 }
               }
             } else {
@@ -438,7 +427,7 @@ public class Simulator {
 
       var oops = false;
       var osc = false;
-      var ticked = false;
+      var ticked = 0;
       var stepped = false;
       var propagated = false;
       var hasClocks = true;
@@ -458,20 +447,25 @@ public class Simulator {
 
       if (doTick || (doTickIfStable && prop != null && !prop.isPending())) {
         lastTick = now;
-        ticked = true;
-        if (prop != null) {
-          hasClocks = prop.toggleClocks();
-        }
+        lastTickCount = doProp;
+        assert doProp != 0;
       }
 
-      if (doProp || doNudge) {
+      if (doProp != 0 || doNudge) {
         try {
-          propagated = doProp;
+          propagated = doProp != 0;
+          if (doNudge) doProp = 1;
           final var listener = sim.progressListener;
-          final var evt = listener == null ? null : new Event(sim, false, false, false);
+          final var evt = listener == null ? null : new Event(sim, 0, false, false);
           stepPoints.clear();
           if (prop != null) {
-            propagated |= prop.propagate(listener, evt);
+            for (int i = 0; i < doProp; i++) {
+              if (doTick || (doTickIfStable && !prop.isPending())) {
+                hasClocks = prop.toggleClocks();
+                ticked++;
+              }
+              propagated |= prop.propagate(listener, evt);
+            }
           }
         } catch (Exception err) {
           oops = true;
@@ -500,29 +494,39 @@ public class Simulator {
       var clockDied = false;
       exceptionEncountered = oops;
       oscillating = osc;
-      simStateLock.lock();
-      try {
-        if (osc) {
+      if (osc) {
+        simStateLock.lock();
+        try {
           autoPropagating = false;
           autoPropagatingUnsynchronized = false;
           nudgeRequested = false;
+        } finally {
+          simStateLock.unlock();
         }
-        if (ticked && manualTicksRequested > 0) {
+      }
+      if (ticked > 0 && manualTicksRequested > 0) {
+        simStateLock.lock();
+        try {
           manualTicksRequested--;
+        } finally {
+          simStateLock.unlock();
         }
-        if (autoTicking && !hasClocks) {
+      }
+      if (autoTicking && !hasClocks) {
+        simStateLock.lock();
+        try {
           autoTicking = false;
           autoTickingUnsynchronized = false;
           clockDied = true;
+        } finally {
+          simStateLock.unlock();
         }
-      } finally {
-        simStateLock.unlock();
       }
 
       // We report nudges, but we report them as no-ops, unless they were
       // accompanied by a tick, step, or propagate. That allows for a repaint in
       // some components.
-      if (ticked || stepped || propagated || doNudge) {
+      if (ticked > 0 || stepped || propagated || doNudge) {
         sim.firePropagationCompleted(ticked, stepped && !propagated, propagated); // FIXME: ack, wrong thread!
       }
       if (clockDied) {
@@ -668,14 +672,14 @@ public class Simulator {
 
   // called from simThread, but probably should not be
   private void fireSimulatorReset() {
-    final var event = new Event(this, false, false, false);
+    final var event = new Event(this, 0, false, false);
     for (final var listener : copyStatusListeners()) {
       listener.simulatorReset(event);
     }
   }
 
   // called from simThread, but probably should not be
-  private void firePropagationCompleted(boolean t, boolean s, boolean p) {
+  private void firePropagationCompleted(int t, boolean s, boolean p) {
     final var event = new Event(this, t, s, p);
     var nrListeners = numListeners;
     if (nrListeners < 0) {
@@ -704,7 +708,7 @@ public class Simulator {
   // called only from gui thread, but need copy here anyway because listeners
   // can add/remove from listeners list?
   private void fireSimulatorStateChanged() {
-    final var event = new Event(this, false, false, false);
+    final var event = new Event(this, 0, false, false);
     for (final var listener : copyStatusListeners()) {
       listener.simulatorStateChanged(event);
     }

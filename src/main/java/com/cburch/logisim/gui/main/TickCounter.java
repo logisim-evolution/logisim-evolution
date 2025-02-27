@@ -111,9 +111,9 @@ public class TickCounter implements Simulator.Listener {
 
   @Override
   public void propagationCompleted(Simulator.Event e) {
-    if (e.didTick()) {
+    if (e.didTick() > 0) {
       simulator = e.getSource();
-      tickCount++;
+      tickCount += e.didTick();
     }
   }
 }
