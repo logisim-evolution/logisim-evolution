@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.instance;
 
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.EndData;
@@ -49,6 +50,10 @@ public class InstanceStateImpl implements InstanceState {
 
   public CircuitState getCircuitState() {
     return circuitState;
+  }
+
+  public CircuitState createCircuitSubstateFor(Circuit circ) {
+    return circuitState.createCircuitSubstateFor(component, circ);
   }
 
   @Override

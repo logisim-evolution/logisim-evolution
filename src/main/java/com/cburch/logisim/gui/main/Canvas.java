@@ -1069,7 +1069,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
             state = state.getParentState();
           }
           if (state != null) {
-            getProject().setCircuitState(last.cloneState());
+            getProject().setCircuitState(last.cloneAsNewRootState());
           }
         }
       }

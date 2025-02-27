@@ -193,7 +193,7 @@ public class Analyze {
     final var columns = new Entry[outputNames.size()][rowCount];
 
     for (var i = 0; i < rowCount; i++) {
-      final var circuitState = new CircuitState(proj, circuit);
+      final var circuitState = CircuitState.createRootState(proj, circuit);
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
