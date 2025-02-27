@@ -302,7 +302,7 @@ public class MenuSimulate extends Menu {
       if (currentSim != null) {
         currentSim.addSimulatorListener(myListener);
       }
-      myListener.simulatorStateChanged(new Simulator.Event(sim, false, false, false));
+      myListener.simulatorStateChanged(new Simulator.Event(sim, 0, false, false));
     }
 
     clearItems(downStateItems);
