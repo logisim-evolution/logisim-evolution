@@ -9,6 +9,7 @@
   * Added option to hide/show toolbar
   * Corrected appearance of NOT gates in TikZ/SVG image export
   * Corrected disjoint corners in arrow-style Pins
+  * Subcircuits with a "clk" input are now drawn with a clock symbol
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
