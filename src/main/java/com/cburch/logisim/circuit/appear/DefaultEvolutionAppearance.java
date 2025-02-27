@@ -98,8 +98,9 @@ public class DefaultEvolutionAppearance {
     final var ry = OFFS + (9 - (ay + 9) % 10);
 
     final var ret = new ArrayList<CanvasObject>();
-    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, fixedSize);
-    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, fixedSize);
+    final var bottomY = ry + height - thight;
+    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, bottomY - 10, 0, dy, true, sdy, fixedSize);
+    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, bottomY - 10, 0, dy, false, sdy, fixedSize);
     var rect = new Rectangle(rx + 10, ry + height - thight, width - 20, thight);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
@@ -129,6 +130,7 @@ public class DefaultEvolutionAppearance {
       List<Instance> pins,
       int x,
       int y,
+      int bottomY,
       int dX,
       int dY,
       boolean isLeftSide,
@@ -144,24 +146,17 @@ public class DefaultEvolutionAppearance {
               : Wire.WIDTH >> 1;
       final var height =
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
-      Rectangle rect;
       if (isLeftSide) {
         ldX = 15;
         hAlign = EditableLabel.LEFT;
-        rect = new Rectangle(x, y - offset, 10, height);
       } else {
         ldX = -15;
         hAlign = EditableLabel.RIGHT;
-        rect = new Rectangle(x - 10, y - offset, 10, height);
       }
-      rect.setValue(DrawAttr.STROKE_WIDTH, 1);
-      rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-      rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
-      dest.add(rect);
-      dest.add(new AppearancePort(Location.create(x, y, true), pin));
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
         var label = pin.getAttributeValue(StdAttr.LABEL);
         if (label.equals("clk")) {
+          y = bottomY;
           Location[] pts = {
             Location.create(x + 10 + 1, y - 4, false),
             Location.create(x + 10 + 8, y, false),
@@ -184,6 +179,17 @@ public class DefaultEvolutionAppearance {
           dest.add(textLabel);
         }
       }
+      Rectangle rect;
+      if (isLeftSide) {
+        rect = new Rectangle(x, y - offset, 10, height);
+      } else {
+        rect = new Rectangle(x - 10, y - offset, 10, height);
+      }
+      rect.setValue(DrawAttr.STROKE_WIDTH, 1);
+      rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
+      rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
+      dest.add(rect);
+      dest.add(new AppearancePort(Location.create(x, y, true), pin));
       x += dX;
       y += dY;
     }
