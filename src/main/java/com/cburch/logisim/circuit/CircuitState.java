@@ -60,14 +60,14 @@ public class CircuitState implements InstanceData {
         if (comp.getFactory() instanceof SubcircuitFactory) {
           knownClocks = false; // just in case, will be recomputed by simulator
           // disconnect from tree
-          final var subState = (CircuitState) getData(comp);
-          if (subState != null && subState.parentComp == comp) {
+          final var substate = (CircuitState) getData(comp);
+          if (substate != null && substate.parentComp == comp) {
             synchronized (dirtyLock) {
-              substates.remove(subState);
+              substates.remove(substate);
             }
-            subState.parentState = null;
-            subState.parentComp = null;
-            subState.reset();
+            substate.parentState = null;
+            substate.parentComp = null;
+            substate.reset();
           }
         } else if (getData(comp) instanceof ComponentDataGuiProvider guiProvider) {
           guiProvider.destroy();
@@ -201,11 +201,11 @@ public class CircuitState implements InstanceData {
     this.parentComp = src.parentComp;
     this.parentState = src.parentState;
     final var substateData = new HashMap<CircuitState, CircuitState>();
-    this.substates = new HashSet<>();
+    this.substates = new HashSet<CircuitState>();
     synchronized (src.dirtyLock) {
       // note: we don't bother with our this.dirtyLock here: it isn't needed
-      // (b/c no other threads have a reference to his yet), and to avoid the
-      // possibility of deadlock (though  that shouldn't happen either since no
+      // (b/c no other threads have a reference to this yet), and to avoid the
+      // possibility of deadlock (though that shouldn't happen either since no
       // other threads have references to this yet).
       for (final var oldSub : src.substates) {
         final var newSub = CircuitState.createRootState(src.proj, oldSub.circuit);
@@ -239,8 +239,8 @@ public class CircuitState implements InstanceData {
     }
     synchronized (src.dirtyLock) {
       // note: we don't bother with our this.dirtyLock here: it isn't needed
-      // (b/c no other threads have a reference to his yet), and to avoid the
-      // possibility of deadlock (though  that shouldn't happen either since no
+      // (b/c no other threads have a reference to this yet), and to avoid the
+      // possibility of deadlock (though that shouldn't happen either since no
       // other threads have references to this yet).
       this.dirtyComponents.addAll(src.dirtyComponents);
       this.dirtyPoints.addAll(src.dirtyPoints);
@@ -303,46 +303,36 @@ public class CircuitState implements InstanceData {
     return parentComp;
   }
 
-  public Set<CircuitState> getSubStates() { // returns Set of CircuitStates
+  public Set<CircuitState> getSubstates() { // returns Set of CircuitStates
     return substates;
   }
 
   public Value getValue(Location pt) {
     final var ret = getValueByWire(pt);
     if (ret != null) return ret;
-
-    final var wid = circuit.getWidth(pt);
-    return Value.createUnknown(wid);
+    return Value.createUnknown(circuit.getWidth(pt));
   }
 
   Value getValueByWire(Location p) {
+    Value v = null;
     if (p.x % 10 == 0 && p.y % 10 == 0
         && p.x < FASTPATH_GRID_WIDTH * 10
         && p.y < FASTPATH_GRID_HEIGHT * 10) {
       // fast path
       int x = p.x / 10;
       int y = p.y / 10;
-      // int xy = circuit.wires.points.fastpathRedirect(x, y);
-      // x = (xy >> 16) & 0xffff;
-      // y = xy & 0xffff;
-      Value v = fastpath_grid[y][x];
-      if (v != null)
-        return v;
-      else
-        return CircuitWires.getBusValue(this, p);
+      v = fastpath_grid[y][x];
     } else {
       // slow path
-      return values.get(p);
+      v = values.get(p);
     }
+    return v != null ? v : CircuitWires.getBusValue(this, p);
   }
 
   CircuitWires.State getWireData() {
     return wireData;
   }
 
-  //
-  // methods for other classes within package
-  //
   public boolean isSubstate() {
     return parentState != null;
   }
@@ -401,7 +391,7 @@ public class CircuitState implements InstanceData {
 
   void processDirtyPoints() {
     if (!dirtyPointsWorking.isEmpty()) {
-      throw new IllegalStateException("INTERNAL ERROR: dirtyPointWorking not empty");
+      throw new IllegalStateException("INTERNAL ERROR: dirtyPointsWorking not empty");
     }
     synchronized (dirtyLock) {
       ArrayList<Location> other = dirtyPoints;
@@ -436,7 +426,7 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  void reset() {
+  public void reset() {
     temporaryClock = null;
     wireData = null;
     for (final var comp : componentData.keySet()) {
@@ -460,6 +450,9 @@ public class CircuitState implements InstanceData {
     synchronized (dirtyLock) {
       dirtyComponents.clear();
       dirtyPoints.clear();
+      for (CircuitState sub : substates) {
+        sub.reset();
+      }
     }
     causes.clear();
     markAllComponentsDirty();
@@ -576,7 +569,6 @@ public class CircuitState implements InstanceData {
     for (final var clock : circuit.getClocks())
       ret |= Clock.tick(this, ticks, clock);
 
-    final var subs = new CircuitState[substates.size()];
     synchronized (dirtyLock) {
       substatesWorking = substates.toArray(substatesWorking);
     }

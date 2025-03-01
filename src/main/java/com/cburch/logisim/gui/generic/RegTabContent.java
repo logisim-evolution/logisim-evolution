@@ -150,8 +150,8 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
       return cs.getValue(loc);
     }
 
-    if (CollectionUtil.isNotEmpty(cs.getSubStates())) {
-      for (final var cst : cs.getSubStates()) {
+    if (CollectionUtil.isNotEmpty(cs.getSubstates())) {
+      for (final var cst : cs.getSubstates()) {
         final var ret = findVal(cst, cn, loc);
         if (ret != null) return ret;
       }

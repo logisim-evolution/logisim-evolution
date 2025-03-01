@@ -221,7 +221,7 @@ public class TtyInterface {
       }
     }
 
-    for (final var sub : circState.getSubStates()) {
+    for (final var sub : circState.getSubstates()) {
       found |= loadRam(sub, loadFile);
     }
     return found;
@@ -240,7 +240,7 @@ public class TtyInterface {
       }
     }
 
-    for (final var sub : circState.getSubStates()) {
+    for (final var sub : circState.getSubstates()) {
       found |= saveRam(sub, saveFile);
     }
     return found;
@@ -260,7 +260,7 @@ public class TtyInterface {
       }
     }
 
-    for (CircuitState sub : circState.getSubStates()) {
+    for (CircuitState sub : circState.getSubstates()) {
       found |= prepareForTty(sub, keybStates);
     }
     return found;

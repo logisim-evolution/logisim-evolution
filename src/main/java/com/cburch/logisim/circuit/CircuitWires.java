@@ -368,9 +368,6 @@ class CircuitWires {
 
   CircuitWires() {}
 
-  //
-  // action methods
-  //
   // NOTE: this could be made much more efficient in most cases to
   // avoid voiding the bundle map.
   /*synchronized*/ boolean add(Component comp) {
@@ -425,8 +422,8 @@ class CircuitWires {
       if (bpar != b) { // b isn't group's representative
         for (final var pt : b.tempPoints) {
           ret.setBundleAt(pt, bpar);
-          bpar.tempPoints.add(pt);
         }
+        bpar.tempPoints.addAll(b.tempPoints);
         bpar.addPullValue(b.getPullValue());
         it.remove();
       }
