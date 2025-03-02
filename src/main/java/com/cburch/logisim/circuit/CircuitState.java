@@ -497,9 +497,22 @@ public class CircuitState implements InstanceData {
         fastpath_grid[y][x] = null;
   }
 
+  // for CircuitWires - to set value at point
+  void setValueByWire(Location p, Value v, Component[] affected) {
+    boolean changed;
+    if (p.x % 10 == 0 && p.y % 10 == 0
+        && p.x < FASTPATH_GRID_WIDTH * 10
+        && p.y < FASTPATH_GRID_HEIGHT * 10) {
+      changed = fastpath(p, v);
+    } else {
+      changed = slowpath(p, v);
+    }
+    if (changed)
+      markDirtyComponents(p, affected);
+  }
 
   // for CircuitWires - to set value at point
-  void setValueByWire(Location p, Value v) { // todo: cache relevant Components in CircuitWires
+  void setValueByWire(Location p, Value v) {
     boolean changed;
     if (p.x % 10 == 0 && p.y % 10 == 0
         && p.x < FASTPATH_GRID_WIDTH * 10
@@ -553,12 +566,23 @@ public class CircuitState implements InstanceData {
     }
     // NOTE: this will cause a double-propagation on components
     // whose outputs have just changed.
+    // FIXME: huh?
     if (found)
       base.locationTouched(this, p);
   }
 
   void setWireData(CircuitWires.State data) {
     wireData = data;
+  }
+
+  private void markDirtyComponents(Location p, Component[] affected) {
+    for (Component comp : affected)
+      markComponentAsDirty(comp);
+    // NOTE: this will cause a double-propagation on components
+    // whose outputs have just changed.
+    // FIXME: huh?
+    if (affected.length > 0)
+      base.locationTouched(this, p);
   }
 
   boolean toggleClocks(int ticks) {

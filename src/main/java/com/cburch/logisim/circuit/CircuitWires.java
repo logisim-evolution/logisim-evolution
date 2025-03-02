@@ -145,23 +145,11 @@ class CircuitWires {
     }
   }
 
-  static Location[] locationsWithComponents(CircuitPoints pts, Location[] locs) {
-    ArrayList<Location> found = new ArrayList<>();
-    for (Location p : locs) {
-      for (Component comp : pts.getComponents(p)) {
-        if (!(comp instanceof Wire) && !(comp instanceof Splitter)) {
-          found.add(p);
-        }
-      }
-    }
-    int n = found.size();
-    return n == locs.length ? locs : found.toArray(new Location[n]);
-  }
-
   static class ValuedBus {
     int idx = -1;
     ValuedThread[] threads;
     Location[] componentPoints; // subset of wire bundle xpoints that have components at them
+    Component[][] componentsAffected; // components at each of those points
     Value[] valAtPoint;
     Value valAtPointSum; // cached sum of valAtPoint, or null if dirty
     Value val; // cached final value for bus
@@ -171,10 +159,41 @@ class CircuitWires {
 
     ValuedBus(WireBundle wb, CircuitPoints pts) {
       idx = -1; // filled in by caller
-      componentPoints = locationsWithComponents(pts, wb.xpoints);
+      filterComponents(pts, wb.xpoints);
       valAtPoint = new Value[componentPoints.length];
       width = wb.threads == null ? -1 : wb.getWidth().getWidth();
       dirty = true;
+    }
+
+    void filterComponents(CircuitPoints pts, Location[] locs) {
+      ArrayList<Location> found = new ArrayList<>();
+      ArrayList<ArrayList<Component>> affected = new ArrayList<>();
+      for (Location p : locs) {
+        ArrayList<Component> a = null;
+        for (Component comp : pts.getComponents(p)) {
+          if (!(comp instanceof Wire) && !(comp instanceof Splitter)) {
+            if (a == null) {
+              int i = found.indexOf(p);
+              if (i >= 0) {
+                // should not happen; but would if locs contains duplicate locations
+                a = affected.get(i);
+              } else {
+                found.add(p);
+                a = new ArrayList<Component>();
+                affected.add(a);
+              }
+            }
+            a.add(comp);
+          }
+        }
+      }
+      int n = found.size();
+      componentPoints = n == locs.length ? locs : found.toArray(new Location[n]);
+      componentsAffected = new Component[n][];
+      for (int i = 0; i < n; i++) {
+        ArrayList<Component> a = affected.get(i);
+        componentsAffected[i] = a.toArray(new Component[a.size()]);
+      }
     }
 
     void makeThreads(WireThread[] wbthreads, HashMap<WireBundle, ValuedBus> allBuses,
@@ -888,8 +907,12 @@ class CircuitWires {
         // propagate NIL across entire bundle
         if (vb.dirty)
           state.markClean(vb);
-        for (Location buspt : vb.componentPoints)
-          circState.setValueByWire(buspt, Value.NIL);
+        int n = vb.componentPoints.length;
+        for (int i = 0; i < n; i++) {
+          Location buspt = vb.componentPoints[i];
+          Component[] affected = vb.componentsAffected[i];
+          circState.setValueByWire(buspt, Value.NIL, affected);
+        }
       } else {
         // common case... it is wired to a normal bus: update the stored value
         // of this point on the bus, mark the bus as dirty, and mark as dirty
@@ -933,8 +956,12 @@ class CircuitWires {
       ValuedBus vb = state.buses[i];
       Value val = vb.val = vb.recalculate();
       vb.dirty = false;
-      for (Location p : vb.componentPoints)
-        circState.setValueByWire(p, val);
+      int n = vb.componentPoints.length;
+      for (int j = 0; j < n; j++) {
+        Location p = vb.componentPoints[j];
+        Component[] affected = vb.componentsAffected[j];
+        circState.setValueByWire(p, val, affected);
+      }
     }
     state.numDirty = 0;
   }
