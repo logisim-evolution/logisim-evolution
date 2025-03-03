@@ -64,6 +64,7 @@ public class CircuitState implements InstanceData {
           if (substate != null && substate.parentComp == comp) {
             synchronized (dirtyLock) {
               substates.remove(substate);
+              substatesDirty = true;
             }
             substate.parentState = null;
             substate.parentComp = null;
@@ -102,6 +103,7 @@ public class CircuitState implements InstanceData {
           dirtyPoints.clear();
           substates.clear();
           substatesWorking = new CircuitState[0];
+          substatesDirty = true;
         }
         causes.clear();
       } else if (action == CircuitEvent.ACTION_INVALIDATE) {
@@ -132,6 +134,7 @@ public class CircuitState implements InstanceData {
             sub.parentState = null;
             synchronized (dirtyLock) {
               substates.remove(sub);
+              substatesDirty = true;
             }
           }
         }
@@ -212,6 +215,7 @@ public class CircuitState implements InstanceData {
         newSub.copyFrom(oldSub);
         newSub.parentState = this;
         this.substates.add(newSub);
+        this.substatesDirty = true;
         substateData.put(oldSub, newSub);
       }
     }
@@ -370,7 +374,10 @@ public class CircuitState implements InstanceData {
       ArrayList<Component> other = dirtyComponents;
       dirtyComponents = dirtyComponentsWorking; // dirtyComponents is now empty
       dirtyComponentsWorking = other; // working set is now ready to process
-      substatesWorking = substates.toArray(substatesWorking);
+      if (substatesDirty) {
+        substatesDirty = false;
+        substatesWorking = substates.toArray(substatesWorking);
+      }
     }
     for (Component comp : dirtyComponentsWorking) {
       comp.propagate(this);
@@ -388,6 +395,7 @@ public class CircuitState implements InstanceData {
 
   private ArrayList<Location> dirtyPointsWorking = new ArrayList<>();
   private CircuitState[] substatesWorking = new CircuitState[0];
+  private boolean substatesDirty = true;
 
   void processDirtyPoints() {
     if (!dirtyPointsWorking.isEmpty()) {
@@ -397,7 +405,10 @@ public class CircuitState implements InstanceData {
       ArrayList<Location> other = dirtyPoints;
       dirtyPoints = dirtyPointsWorking; // dirtyPoints is now empty
       dirtyPointsWorking = other; // working set is now ready to process
-      substatesWorking = substates.toArray(substatesWorking);
+      if (substatesDirty) {
+        substatesDirty = false;
+        substatesWorking = substates.toArray(substatesWorking);
+      }
     }
     if (circuit.wires.isMapVoided()) {
       for (var i = 3; i >= 0; i--) {
@@ -465,6 +476,7 @@ public class CircuitState implements InstanceData {
       System.out.println("fixme: removed stale circuitstate... should never happen");
       synchronized (dirtyLock) {
         substates.remove(oldState);
+        substatesDirty = true;
       }
       oldState.parentState = null;
       oldState.parentComp = null;
@@ -472,6 +484,7 @@ public class CircuitState implements InstanceData {
     CircuitState newState = new CircuitState(proj, circ, base);
     synchronized (dirtyLock) {
       substates.add(newState);
+      substatesDirty = true;
     }
     newState.parentState = this;
     newState.parentComp = comp;
@@ -603,7 +616,10 @@ public class CircuitState implements InstanceData {
     }
 
     synchronized (dirtyLock) {
-      substatesWorking = substates.toArray(substatesWorking);
+      if (substatesDirty) {
+        substatesDirty = false;
+        substatesWorking = substates.toArray(substatesWorking);
+      }
     }
     for (final var substate : substatesWorking) {
       if (substate == null) break;
