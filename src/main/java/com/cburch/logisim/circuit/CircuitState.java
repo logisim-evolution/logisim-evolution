@@ -586,21 +586,30 @@ public class CircuitState implements InstanceData {
   }
 
   boolean toggleClocks(int ticks) {
-    var ret = false;
+    var hasClocks = false;
     if (temporaryClock != null)
-      ret |= temporaryClockValidateOrTick(ticks);
+      hasClocks |= temporaryClockValidateOrTick(ticks);
 
-    for (final var clock : circuit.getClocks())
-      ret |= Clock.tick(this, ticks, clock);
+    for (Component clock : circuit.getClocks()) {
+      hasClocks = true;
+      boolean dirty = Clock.tick(this, ticks, clock);
+      if (dirty) {
+        markComponentAsDirty(clock);
+        // If simulator is in single step mode, we want to hilight the
+        // invalidated components (which are likely Pins, Buttons, or other
+        // inputs), so pass this component to the simulator for display.
+        proj.getSimulator().addPendingInput(this, clock);
+      }
+    }
 
     synchronized (dirtyLock) {
       substatesWorking = substates.toArray(substatesWorking);
     }
     for (final var substate : substatesWorking) {
       if (substate == null) break;
-      ret |= substate.toggleClocks(ticks);
+      hasClocks |= substate.toggleClocks(ticks);
     }
-    return ret;
+    return hasClocks;
   }
 
   private boolean temporaryClockValidateOrTick(int ticks) {
@@ -614,8 +623,17 @@ public class CircuitState implements InstanceData {
       }
       if (ticks >= 0) {
         final var state = getInstanceState(instance);
-        pin.setValue(state, ticks % 2 == 0 ? Value.FALSE : Value.TRUE);
-        state.fireInvalidated();
+        Value vOld = pin.getValue(state);
+        Value vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
+        if (!vNew.equals(vOld)) {
+          pin.setValue(state, vNew);
+          // state.fireInvalidated();
+          markComponentAsDirty(temporaryClock);
+          // If simulator is in single step mode, we want to hilight the
+          // invalidated components (which are likely Pins, Buttons, or other
+          // inputs), so pass this component to the simulator for display.
+          proj.getSimulator().addPendingInput(this, temporaryClock);
+        }
       }
       return true;
 
