@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.EndData;
@@ -673,67 +674,67 @@ class CircuitWires {
   //
   // utility methods
   //
-  void propagate(CircuitState circState, Set<Location> points) {
-    final var map = getBundleMap();
-    final var dirtyThreads = new CopyOnWriteArraySet<WireThread>(); // affected threads
+  void propagate(CircuitState circState, Iterable<Location> points) {
+    final BundleMap map = getBundleMap();
+
+    // determine values of affected threads
+    final var wirebundles = new HashSet<WireBundle>(map.getBundles().size());
 
     // get state, or create a new one if current state is outdated
     var state = circState.getWireData();
     if (state == null || state.bundleMap != map) {
       // if it is outdated, we need to compute for all threads
       state = new State(map);
-      for (final var bundle : map.getBundles()) {
-        final var wireThreads = bundle.threads;
-        if (bundle.isValid() && wireThreads != null) {
-          dirtyThreads.addAll(Arrays.asList(wireThreads));
-        }
-      }
+      for (final var bundle : map.getBundles())
+        if (bundle.isValid() && bundle.threads != null)
+          wirebundles.add(bundle);
       circState.setWireData(state);
     }
 
     // determine affected threads, and set values for unwired points
     for (final var point : points) {
       final var wireBundle = map.getBundleAt(point);
-      if (wireBundle == null) { // point is not wired
+      if (wireBundle == null) // point is not wired
         circState.setValueByWire(point, circState.getComponentOutputAt(point));
-      } else {
-        final var th = wireBundle.threads;
-        if (!wireBundle.isValid() || th == null) {
-          // immediately propagate NILs across invalid bundles
-          final var pbPoints = wireBundle.points;
-          if (pbPoints == null) {
-            circState.setValueByWire(point, Value.NIL);
-          } else {
-            for (final var loc2 : pbPoints) {
-              circState.setValueByWire(loc2, Value.NIL);
-            }
-          }
+      else if (!wireBundle.isValid() || wireBundle.threads == null) {
+        // immediately propagate NILs across invalid bundles
+        final var pbPoints = wireBundle.points;
+        if (pbPoints == null) {
+          circState.setValueByWire(point, Value.NIL);
         } else {
-          dirtyThreads.addAll(Arrays.asList(th));
+          for (final var loc2 : pbPoints) {
+            circState.setValueByWire(loc2, Value.NIL);
+          }
+        }
+      }
+      else
+        wirebundles.add(wireBundle);
+    }
+
+    @SuppressWarnings("unchecked")
+    final var bundles = (HashSet<WireBundle>)wirebundles.clone();
+
+    for (final var wireBundle : wirebundles) {
+      for (final var t : wireBundle.threads) {
+        final var v = getThreadValue(circState, t);
+        state.thrValues.put(t, v);
+        for (final var tb : t.getBundles()) {
+          if (tb.b != wireBundle) {
+            bundles.add(tb.b);
+          }
         }
       }
     }
 
-    if (dirtyThreads.isEmpty()) return;
-
-    // determine values of affected threads
-    final var bundles = new HashSet<ThreadBundle>();
-    for (final var t : dirtyThreads) {
-      final var v = getThreadValue(circState, t);
-      state.thrValues.put(t, v);
-      bundles.addAll(t.getBundles());
-    }
-
     // now propagate values through circuit
-    for (final var tb : bundles) {
-      final var b = tb.b;
-
+    for (final var b : bundles) {
       Value bv = null;
       if (!b.isValid() || b.threads == null) {
         // do nothing
       } else if (b.threads.length == 1) {
         bv = state.thrValues.get(b.threads[0]);
       } else {
+        // TODO is a new array really needed here? Can't this be done using Value.combine or something? 
         final var tvs = new Value[b.threads.length];
         var tvsValid = true;
         for (var i = 0; i < tvs.length; i++) {

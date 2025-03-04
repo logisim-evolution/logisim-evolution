@@ -997,7 +997,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       Attribute<?> attr = e.getAttribute();
       if (attr == Options.ATTR_GATE_UNDEFINED) {
         final var circState = getCircuitState();
-        circState.markComponentsDirty(getCircuit().getNonWires());
+        circState.markAllComponentsDirty();
         // TODO actually, we'd want to mark all components in
         // subcircuits as dirty as well
       }
