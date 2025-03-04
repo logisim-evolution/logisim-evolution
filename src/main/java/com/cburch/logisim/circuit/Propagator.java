@@ -18,12 +18,11 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.HashSet;
 //import java.util.PriorityQueue;
 import java.util.Random;
 
 public class Propagator {
-  private static class ComponentPoint {
+  static class ComponentPoint {
     final Component cause;
     final Location loc;
 
@@ -347,14 +346,15 @@ public class Propagator {
     return true;
   }
 
+  int visitedNonce = 1;
   private void stepInternal(PropagationPoints changedPoints) {
     if (toProcess.isEmpty()) return;
 
     // update clock
     clock = toProcess.peek().time;
+    visitedNonce++; // used to ensure a fresh circuitState.visited set.
 
     // propagate all values for this clock tick
-    final var visited = new HashMap<CircuitState, HashSet<ComponentPoint>>();
     while (true) {
       final var data = toProcess.peek();
       if (data == null || data.time != clock) break;
@@ -362,14 +362,13 @@ public class Propagator {
       final var state = data.state;
 
       // if it's already handled for this clock tick, continue
-      var handled = visited.get(state);
-      if (handled != null) {
-        if (!handled.add(new ComponentPoint(data.cause, data.loc))) continue;
-      } else {
-        handled = new HashSet<>();
-        visited.put(state, handled);
-        handled.add(new ComponentPoint(data.cause, data.loc));
+      if (state.visitedNonce != visitedNonce) {
+        // first time visiting this circuitState during this call to stepInternal
+        state.visitedNonce = visitedNonce;
+        state.visited.clear();
       }
+      if (!state.visited.add(new ComponentPoint(data.cause, data.loc)))
+        continue; // this component+loc change has already been handled
 
       /*
        * DEBUGGING - comment out Simulator.log(data.time + ": proc " +
