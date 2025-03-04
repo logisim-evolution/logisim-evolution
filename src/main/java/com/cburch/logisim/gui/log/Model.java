@@ -581,7 +581,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     fireSignalsExtended(null); // changed, not extended, but works fine for now
   }
 
-  public void propagationCompleted(boolean ticked, boolean stepped, boolean propagated) {
+  public void propagationCompleted(int ticked, boolean stepped, boolean propagated) {
     if (!stepped && !propagated) {
       // No signals have changed. This was a nudge that resulted in no signal
       // changes, or a tick in single-step mode that hasn't yet propagated
