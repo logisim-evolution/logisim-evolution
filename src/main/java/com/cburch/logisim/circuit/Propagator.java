@@ -138,6 +138,7 @@ public class Propagator {
 
   // private final PriorityQueue<SetData> toProcess = new PriorityQueue<>();
   private SplayQueue<SetData> toProcess = new SplayQueue<SetData>();
+  // private LinkedQueue<SetData> toProcess = new LinkedQueue<SetData>();
   private int clock = 0;
   private boolean isOscillating = false;
   private boolean oscAdding = false;
@@ -346,8 +347,6 @@ public class Propagator {
     return true;
   }
 
-  long __n = 0;
-  long __c = 0;
   private void stepInternal(PropagationPoints changedPoints) {
     if (toProcess.isEmpty()) return;
 
@@ -359,15 +358,8 @@ public class Propagator {
     while (true) {
       final var data = toProcess.peek();
       if (data == null || data.time != clock) break;
-      __n++;
-      __c += toProcess.size();
       toProcess.remove();
       final var state = data.state;
-
-      if (__n % 1000000 == 0) {
-        System.out.printf("%s pri queue %s ops avg size %s\n",
-            this, __n, ((double) __c) / __n);
-      }
 
       // if it's already handled for this clock tick, continue
       var handled = visited.get(state);
