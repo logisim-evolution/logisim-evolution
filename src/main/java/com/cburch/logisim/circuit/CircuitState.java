@@ -28,7 +28,6 @@ import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,13 +45,16 @@ public class CircuitState implements InstanceData {
 
       if (action == CircuitEvent.ACTION_ADD) {
         /* Component was added */
-        final var comp = (Component) event.getData();
-        if (comp instanceof Wire wire) {
-          markPointAsDirty(wire.getEnd0());
-          markPointAsDirty(wire.getEnd1());
-        } else {
-          markComponentAsDirty(comp);
-        }
+        // Nothing to do: CircuitWires.BundleMap will be voided, causing
+        // everything to be marked dirty.
+        // Component comp = (Component) event.getData();
+        // if (comp instanceof Wire) {
+        //   Wire w = (Wire) comp;
+        //   markPointAsDirty(w.getEnd0(), null);
+        //   markPointAsDirty(w.getEnd1(), null);
+        // } else {
+        //   markComponentAsDirty(comp);
+        // }
       } else if (action == CircuitEvent.ACTION_REMOVE) {
         /* Component was removed */
         final var comp = (Component) event.getData();
@@ -77,10 +79,14 @@ public class CircuitState implements InstanceData {
           guiProvider.destroy();
         }
         if (comp instanceof Wire w) {
-          markPointAsDirty(w.getEnd0());
-          markPointAsDirty(w.getEnd1());
+          // Nothing to do: CircuitWires.BundleMap will be voided, causing
+          // everything to be marked dirty.
+          // markPointAsDirty(w.getEnd0(), null);
+          // markPointAsDirty(w.getEnd1(), null);
         } else {
-          Propagator.checkComponentEnds(CircuitState.this, comp);
+          // Nothing else to do: CircuitWires.BundleMap will be voided, causing
+          // everything to be marked dirty.
+          // Propagator.checkComponentEnds(CircuitState.this, comp);
           synchronized (dirtyLock) {
             while (dirtyComponents.remove(comp)) {
             }
@@ -104,6 +110,7 @@ public class CircuitState implements InstanceData {
         synchronized (dirtyLock) {
           dirtyComponents.clear();
           dirtyPoints.clear();
+          dirtyPointVals.clear();
           substates.clear();
           substatesWorking = new CircuitState[0];
           substatesDirty = true;
@@ -160,6 +167,9 @@ public class CircuitState implements InstanceData {
   final HashMap<Location, SetData> causes = new HashMap<>();
   HashSet<Propagator.ComponentPoint> visited = new HashSet<>(); // used by Propagator
   int visitedNonce; // used by Propagator;
+  // The visited member holds the set of every [component,loc] pair (where the
+  // component is among those in this circuit) that has been visited during the
+  // current iteration of Propagator.stepInternal().
 
   //private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
   //private HashSet<Component> dirtyComponents = new HashSet<>(); // protected by dirtyLock
@@ -167,6 +177,7 @@ public class CircuitState implements InstanceData {
   //private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
   //private final HashSet<Location> dirtyPoints = new HashSet<>();
   private ArrayList<Location> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
+  private ArrayList<Value> dirtyPointVals = new ArrayList<>(); // protected by dirtyLock
   private HashSet<CircuitState> substates = new HashSet<>(); // protected by dirtyLock
   private Object dirtyLock = new Object();
 
@@ -254,6 +265,7 @@ public class CircuitState implements InstanceData {
       // other threads have references to this yet).
       this.dirtyComponents.addAll(src.dirtyComponents);
       this.dirtyPoints.addAll(src.dirtyPoints);
+      this.dirtyPointVals.addAll(src.dirtyPointVals);
     }
     if (src.wireData != null) {
       this.wireData = circuit.wires.newState(this); // all buses will be marked as dirty
@@ -271,6 +283,7 @@ public class CircuitState implements InstanceData {
     return circuit;
   }
 
+  // TODO: can we eliminate this... is it used only when initializing BundleMap?
   Value getComponentOutputAt(Location p) {
     // for CircuitWires - to get values, ignoring wires' contributions
     final var causeList = causes.get(p);
@@ -365,9 +378,10 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  void markPointAsDirty(Location pt) {
+  void markPointAsDirty(Location pt, Value newVal) {
     synchronized (dirtyLock) {
       dirtyPoints.add(pt);
+      dirtyPointVals.add(newVal);
     }
   }
 
@@ -400,6 +414,7 @@ public class CircuitState implements InstanceData {
   }
 
   private ArrayList<Location> dirtyPointsWorking = new ArrayList<>();
+  private ArrayList<Value> dirtyPointValsWorking = new ArrayList<>();
   private CircuitState[] substatesWorking = new CircuitState[0];
   private boolean substatesDirty = true;
 
@@ -409,33 +424,55 @@ public class CircuitState implements InstanceData {
     }
     synchronized (dirtyLock) {
       ArrayList<Location> other = dirtyPoints;
+      ArrayList<Value> otherVals = dirtyPointVals;
       dirtyPoints = dirtyPointsWorking; // dirtyPoints is now empty
+      dirtyPointVals = dirtyPointValsWorking; // dirtyPointVals is now empty
       dirtyPointsWorking = other; // working set is now ready to process
+      dirtyPointValsWorking = otherVals; // working set is now ready to process
       if (substatesDirty) {
         substatesDirty = false;
         substatesWorking = substates.toArray(substatesWorking);
       }
     }
-    if (circuit.wires.isMapVoided()) {
-      for (var i = 3; i >= 0; i--) {
-        try {
-          dirtyPointsWorking.addAll(circuit.wires.points.getSplitLocations());
-          break;
-        } catch (ConcurrentModificationException e) {
-          System.out.printf("warning: concurrent exception upon voided map (tries left %d)\n", i);
-          // try again...
-          try {
-            Thread.sleep(1);
-          } catch (InterruptedException ignored) {
-          }
-          if (i == 0) e.printStackTrace();
-        }
-      }
-    }
-    if (!dirtyPointsWorking.isEmpty()) {
-      circuit.wires.propagate(this, dirtyPointsWorking);
-      dirtyPointsWorking.clear();
-    }
+    // Note: When a new wire map is created (because wires or splitters have
+    // changed, for example), we need to mark all the splitter locations as
+    // dirty. This used to be handled here by detecting when the map was voided,
+    // and explicitly marking all the splitter locations as dirty. But We can't
+    // reliably touch circuit.wires.points.getAllLocations(), because we are
+    // on the simulator thread here, and the UI/AWT thread owns that data
+    // structure. So the hack below just tried a few times hoping to not get a
+    // run-time exception. Instead, we now put the splitter location list in
+    // the wire map itself when it is created (which is done by CircuitWires
+    // carefully in a thread-safe way).
+    //
+    // if (circuit.wires.isMapVoided()) {
+    //   // Note: this is a stopgap hack until we figure out the cause of the
+    //   // concurrent modification exception.
+    //   for (int i = 3; i >= 0; i--) {
+    //     try {
+    //       dirtyPointsWorking.addAll(circuit.wires.points.getAllLocations());
+    //       break;
+    //     } catch (ConcurrentModificationException e) {
+    //       System.out.printf("warning: concurrent exception upon voided map (tries left %d)\n", i);
+    //       // try again...
+    //       try {
+    //         Thread.sleep(1);
+    //       } catch (InterruptedException e2) {
+    //         // Yes, swallow the interrupt -- if simulator thread is interrupted
+    //         // while it is in here, we want to keep going. The simulator thread
+    //         // uses interrupts only for cancelling its own sleep/wait calls, not
+    //         // this sleep call.
+    //       }
+    //       if (i == 0)
+    //         e.printStackTrace();
+    //     }
+    //   }
+    // }
+    // if (!dirtyPointsWorking.isEmpty()) {
+    circuit.wires.propagate(this, dirtyPointsWorking, dirtyPointValsWorking);
+    dirtyPointsWorking.clear();
+    dirtyPointValsWorking.clear();
+    //}
 
     for (final var substate : substatesWorking) {
       if (substate == null) break;
@@ -467,6 +504,7 @@ public class CircuitState implements InstanceData {
     synchronized (dirtyLock) {
       dirtyComponents.clear();
       dirtyPoints.clear();
+      dirtyPointVals.clear();
       for (CircuitState sub : substates) {
         sub.reset();
       }

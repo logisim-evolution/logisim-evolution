@@ -43,6 +43,8 @@ class CircuitWires {
   static class BundleMap {
     final HashMap<Location, WireBundle> pointBundles = new HashMap<>();
     final HashSet<WireBundle> bundles = new HashSet<>();
+    ArrayList<Location> allLocations = new ArrayList<>();
+    HashMap<Location, ArrayList> componentsAtLocations = new HashMap<>();
     boolean isValid = true;
     // NOTE: It would make things more efficient if we also had
     // a set of just the first bundle in each tree.
@@ -157,35 +159,24 @@ class CircuitWires {
     ValuedBus[] dependentBuses; // buses affected if this one changes value.
     boolean dirty;
 
-    ValuedBus(WireBundle wb, CircuitPoints pts) {
+    ValuedBus(WireBundle wb, BundleMap bm) {
       idx = -1; // filled in by caller
-      filterComponents(pts, wb.xpoints);
+      filterComponents(bm, wb.xpoints);
       valAtPoint = new Value[componentPoints.length];
       width = wb.threads == null ? -1 : wb.getWidth().getWidth();
       dirty = true;
     }
 
-    void filterComponents(CircuitPoints pts, Location[] locs) {
+    void filterComponents(BundleMap bm, Location[] locs) {
       ArrayList<Location> found = new ArrayList<>();
       ArrayList<ArrayList<Component>> affected = new ArrayList<>();
       for (Location p : locs) {
-        ArrayList<Component> a = null;
-        for (Component comp : pts.getComponents(p)) {
-          if (!(comp instanceof Wire) && !(comp instanceof Splitter)) {
-            if (a == null) {
-              int i = found.indexOf(p);
-              if (i >= 0) {
-                // should not happen; but would if locs contains duplicate locations
-                a = affected.get(i);
-              } else {
-                found.add(p);
-                a = new ArrayList<Component>();
-                affected.add(a);
-              }
-            }
-            a.add(comp);
-          }
-        }
+        @SuppressWarnings("unchecked")
+        ArrayList<Component> a = bm.componentsAtLocations.get(p);
+        if (a == null)
+          continue;
+        found.add(p);
+        affected.add(a);
       }
       int n = found.size();
       componentPoints = n == locs.length ? locs : found.toArray(new Location[n]);
@@ -238,7 +229,7 @@ class CircuitWires {
   }
 
   State newState(CircuitState circState) {
-    return new State(circState, getBundleMap(), points);
+    return new State(circState, getBundleMap());
   }
 
   static class State {
@@ -247,14 +238,14 @@ class CircuitWires {
     int numDirty;
     HashMap<Location, ValuedBus> busAt = new HashMap<>();
 
-    State(CircuitState circState, BundleMap bundleMap, CircuitPoints pts) {
+    State(CircuitState circState, BundleMap bundleMap) {
       this.bundleMap = bundleMap;
       HashMap<WireBundle, ValuedBus> allBuses = new HashMap<>();
       HashMap<ValuedBus, WireBundle> srcBuses = new HashMap<>();
       buses = new ValuedBus[bundleMap.bundles.size()];
       int i = 0;
       for (WireBundle wb : bundleMap.bundles) {
-        ValuedBus vb = new ValuedBus(wb, pts);
+        ValuedBus vb = new ValuedBus(wb, bundleMap);
         vb.idx = i++;
         buses[vb.idx] = vb;
         for (Location loc : wb.xpoints) {
@@ -547,6 +538,27 @@ class CircuitWires {
 
     // All bundles are made, all threads are now sewn together.
 
+    // Record all component locations so they can be marked as dirty when this
+    // wire bundle map is used to initialize a new State.
+    ret.allLocations.addAll(points.getAllLocations());
+
+    // Record all interesting component (non-wire, non-splitter) locations so
+    // they can be used to filter out uninteresting points when this wire bundle
+    // map is used to initialize a new State. We also need to know which
+    // interesting components are at those locations.
+    for (Location p : ret.allLocations) {
+      ArrayList<Component> a = null;
+      for (Component comp : points.getComponents(p)) {
+        if ((comp instanceof Wire) || (comp instanceof Splitter))
+          continue;
+        if (a == null)
+          a = new ArrayList<Component>();
+        a.add(comp);
+      }
+      if (a != null)
+        ret.componentsAtLocations.put(p, a);
+    }
+
     // Compute the exception set before leaving.
     final var exceptions = points.getWidthIncompatibilityData();
     if (CollectionUtil.isNotEmpty(exceptions)) {
@@ -703,7 +715,7 @@ class CircuitWires {
         }
       }
 
-      for (final var loc : points.getSplitLocations()) {
+      for (Location loc : points.getAllLocations()) {
         if (points.getComponentCount(loc) > 2) {
           final var wb = bmap.getBundleAt(loc);
           if (wb != null) {
@@ -755,7 +767,7 @@ class CircuitWires {
       // this is just an approximation, but it's good enough since
       // the problem is minor, and hidden only exists for a short
       // while at a time anway.
-      for (final var loc : points.getSplitLocations()) {
+      for (Location loc : points.getAllLocations()) {
         if (points.getComponentCount(loc) > 2) {
           var icount = 0;
           for (final var comp : points.getComponents(loc)) {
@@ -880,11 +892,11 @@ class CircuitWires {
     return new WireSet(wires);
   }
 
-  boolean isMapVoided() {
-    return masterBundleMap == null;
-  }
+  // boolean isMapVoided() {
+  //   return masterBundleMap == null; // volatile read by simulation thread
+  // }
 
-  void propagate(CircuitState circState, ArrayList<Location> points) {
+  void propagate(CircuitState circState, ArrayList<Location> dirtyPoints, ArrayList<Value> newVals) {
     final var map = getBundleMap();
     ArrayList<WireThread> dirtyThreads = new ArrayList<>();
 
@@ -892,16 +904,23 @@ class CircuitWires {
     var state = circState.getWireData();
     if (state == null || state.bundleMap != map) {
       // if it is outdated, we need to compute for all threads
-      state = new State(circState, map, this.points);
+      state = new State(circState, map);
       circState.setWireData(state);
-      // note: all buses are already marked as dirty
+      // note: all buses are already marked as dirty.
+      // But we need to mark all points as dirty as well
+      dirtyPoints.addAll(map.allLocations);
+      for (Location p : map.allLocations)
+        newVals.add(circState.getComponentOutputAt(p));
     }
 
-    for (Location p : points) { // for each point of interest
+    int npoints = dirtyPoints.size();
+    for (int k = 0; k < npoints; k++) { // for each point of interest
+      Location p = dirtyPoints.get(k);
+      Value val = newVals.get(k);
       ValuedBus vb = state.busAt.get(p);
       if (vb == null) {
         // point is not wired: just set that point's value and be done
-        circState.setValueByWire(p, circState.getComponentOutputAt(p));
+        circState.setValueByWire(p, val);
       } else if (vb.threads == null) {
         // point is wired to a threadless (e.g. invalid-width) bundle:
         // propagate NIL across entire bundle
@@ -919,7 +938,6 @@ class CircuitWires {
         // any related buses.
         for (int i = 0; i < vb.componentPoints.length; i++) {
           if (vb.componentPoints[i].equals(p)) {
-            Value val = circState.getComponentOutputAt(p);
             Value old = vb.valAtPoint[i];
             vb.valAtPointSum = null;
             if ((val == null || val == Value.NIL) && (old == null || old == Value.NIL))
