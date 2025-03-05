@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.circuit;
 
-import com.cburch.logisim.circuit.Propagator.SetData;
+import com.cburch.logisim.circuit.Propagator.DrivenValue;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentState;
@@ -105,8 +105,10 @@ public class CircuitState implements InstanceData {
           }
         }
         componentData.clear();
-        values.clear();
-        clearFastpathGrid();
+        synchronized (valuesLock) {
+          slowpath_values.clear(); // slow path
+          clearFastpathGrid(); // fast path
+        }
         synchronized (dirtyLock) {
           dirtyComponents.clear();
           dirtyPoints.clear();
@@ -115,7 +117,7 @@ public class CircuitState implements InstanceData {
           substatesWorking = new CircuitState[0];
           substatesDirty = true;
         }
-        causes.clear();
+        slowpath_drivers.clear();
       } else if (action == CircuitEvent.ACTION_INVALIDATE) {
         final var comp = (Component) event.getData();
         markComponentAsDirty(comp);
@@ -163,8 +165,33 @@ public class CircuitState implements InstanceData {
 
   private CircuitWires.State wireData = null;
   private final HashMap<Component, Object> componentData = new HashMap<>();
-  private final Map<Location, Value> values = new HashMap<>();
-  final HashMap<Location, SetData> causes = new HashMap<>();
+
+  private static final int FASTPATH_GRID_WIDTH = 200;
+  private static final int FASTPATH_GRID_HEIGHT = 200;
+
+  // slowpath_values and fastpath_values store values resulting from propagation
+  // *within* this circuit, i.e. the outputs of componnents in this circuit
+  // together with the values carried on wires and buses in this circuit. When
+  // components embedded in this circuit are called upon to re-calculate /
+  // propagate, the components will call getValue() to pick out values from
+  // these data structures. These are the values you would see if you stick a
+  // probe at some location on the circuit sheet.
+  Map<Location, Value> slowpath_values = new HashMap<>(); // protected by valuesLock
+  Value[][] fastpath_values = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // protected by valuesLock
+
+  // slowpath_drivers and fastpass_drivers store {component,value} pairs for each
+  // component that is currently emitting a value *into* this circuit, i.e.
+  // the values that sources/drivers are putting out and that will ultimately
+  // get propagated along wires and busses to other points in the circuit. These
+  // are essentially the values you would see at the outputs of components if
+  // you somehow froze all their inputs then removed all wires, splitters,
+  // tunnels, and other connectivity within the circuit so that each component's
+  // outputs could be observed in isolation.
+  HashMap<Location, DrivenValue> slowpath_drivers = new HashMap<>(); // used by Propagator, protected by valuesLock
+  // DrivenValue[][] fastpath_drivers = new DrivenValue[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // used by Propagator, protected by valuesLock
+
+  Object valuesLock = new Object();
+
   HashSet<Propagator.ComponentPoint> visited = new HashSet<>(); // used by Propagator
   int visitedNonce; // used by Propagator;
   // The visited member holds the set of every [component,loc] pair (where the
@@ -180,10 +207,6 @@ public class CircuitState implements InstanceData {
   private ArrayList<Value> dirtyPointVals = new ArrayList<>(); // protected by dirtyLock
   private HashSet<CircuitState> substates = new HashSet<>(); // protected by dirtyLock
   private Object dirtyLock = new Object();
-
-  private static final int FASTPATH_GRID_WIDTH = 200;
-  private static final int FASTPATH_GRID_HEIGHT = 200;
-  private Value[][] fastpath_grid = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH];
 
   private static int lastId = 0;
   private final int id = lastId++;
@@ -211,10 +234,6 @@ public class CircuitState implements InstanceData {
     ret.parentComp = null;
     ret.parentState = null;
     return ret;
-  }
-
-  public boolean containsKey(Location pt) {
-    return values.containsKey(pt);
   }
 
   private void copyFrom(CircuitState src) {
@@ -247,16 +266,18 @@ public class CircuitState implements InstanceData {
         this.componentData.put(key, newValue);
       }
     }
-    for (final var key : src.causes.keySet()) {
-      final var oldValue = src.causes.get(key);
-      final var newValue = oldValue.cloneFor(this);
-      this.causes.put(key, newValue);
-    }
-    this.values.clear();
-    this.values.putAll(src.values);
-    for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
-      System.arraycopy(src.fastpath_grid[y], 0,
-          this.fastpath_grid[y], 0, FASTPATH_GRID_WIDTH);
+    Propagator.copyDrivenValues(this, src);
+    // note: we don't bother with our this.valuesLock here: it isn't needed
+    // (b/c no other threads have a reference to this yet), and to avoid the
+    // possibility of deadlock (though that shouldn't happen either since no
+    // other threads have references to this yet).
+    this.slowpath_values.clear(); // slow path
+    synchronized (src.valuesLock) {
+      this.slowpath_values.putAll(src.slowpath_values); // slow path
+      for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
+        System.arraycopy(src.fastpath_values[y], 0,
+            this.fastpath_values[y], 0, FASTPATH_GRID_WIDTH);
+      }
     }
     synchronized (src.dirtyLock) {
       // note: we don't bother with our this.dirtyLock here: it isn't needed
@@ -281,13 +302,6 @@ public class CircuitState implements InstanceData {
   //
   public Circuit getCircuit() {
     return circuit;
-  }
-
-  // TODO: can we eliminate this... is it used only when initializing BundleMap?
-  Value getComponentOutputAt(Location p) {
-    // for CircuitWires - to get values, ignoring wires' contributions
-    final var causeList = causes.get(p);
-    return Propagator.computeValue(causeList);
   }
 
   public Object getData(Component comp) {
@@ -330,13 +344,7 @@ public class CircuitState implements InstanceData {
     return substates;
   }
 
-  public Value getValue(Location pt) {
-    final var ret = getValueByWire(pt);
-    if (ret != null) return ret;
-    return Value.createUnknown(circuit.getWidth(pt));
-  }
-
-  Value getValueByWire(Location p) {
+  public Value getValue(Location p) {
     Value v = null;
     if (p.x % 10 == 0 && p.y % 10 == 0
         && p.x < FASTPATH_GRID_WIDTH * 10
@@ -344,12 +352,20 @@ public class CircuitState implements InstanceData {
       // fast path
       int x = p.x / 10;
       int y = p.y / 10;
-      v = fastpath_grid[y][x];
+      synchronized (valuesLock) {
+        v = fastpath_values[y][x];
+        if (v == null)
+          v = CircuitWires.getBusValue(this, p);
+      }
     } else {
       // slow path
-      v = values.get(p);
+      synchronized (valuesLock) {
+        v = slowpath_values.get(p);
+        if (v == null)
+          v = CircuitWires.getBusValue(this, p);
+      }
     }
-    return v != null ? v : CircuitWires.getBusValue(this, p);
+    return v != null ? v : Value.createUnknown(circuit.getWidth(p));
   }
 
   CircuitWires.State getWireData() {
@@ -499,8 +515,10 @@ public class CircuitState implements InstanceData {
         componentData.put(comp, null);
       }
     }
-    values.clear();
-    clearFastpathGrid();
+    synchronized (valuesLock) {
+      slowpath_values.clear(); // slow path
+      clearFastpathGrid(); // fast path
+    }
     synchronized (dirtyLock) {
       dirtyComponents.clear();
       dirtyPoints.clear();
@@ -509,7 +527,7 @@ public class CircuitState implements InstanceData {
         sub.reset();
       }
     }
-    causes.clear();
+    slowpath_drivers.clear();
     markAllComponentsDirty();
   }
 
@@ -548,10 +566,10 @@ public class CircuitState implements InstanceData {
     base.setValue(this, pt, val, cause, delay);
   }
 
-  private void clearFastpathGrid() {
+  private void clearFastpathGrid() { // precondition: valuesLock held
     for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++)
       for (int x = 0; x < FASTPATH_GRID_WIDTH; x++)
-        fastpath_grid[y][x] = null;
+        fastpath_values[y][x] = null;
   }
 
   // for CircuitWires - to set value at point
@@ -560,9 +578,13 @@ public class CircuitState implements InstanceData {
     if (p.x % 10 == 0 && p.y % 10 == 0
         && p.x < FASTPATH_GRID_WIDTH * 10
         && p.y < FASTPATH_GRID_HEIGHT * 10) {
-      changed = fastpath(p, v);
+      synchronized (valuesLock) {
+        changed = fastpath(p, v);
+      }
     } else {
-      changed = slowpath(p, v);
+      synchronized (valuesLock) {
+        changed = slowpath(p, v);
+      }
     }
     if (changed)
       markDirtyComponents(p, affected);
@@ -574,28 +596,32 @@ public class CircuitState implements InstanceData {
     if (p.x % 10 == 0 && p.y % 10 == 0
         && p.x < FASTPATH_GRID_WIDTH * 10
         && p.y < FASTPATH_GRID_HEIGHT * 10) {
-      changed = fastpath(p, v);
+      synchronized (valuesLock) {
+        changed = fastpath(p, v);
+      }
     } else {
-      changed = slowpath(p, v);
+      synchronized (valuesLock) {
+        changed = slowpath(p, v);
+      }
     }
     if (changed) {
       markDirtyComponentsAt(p);
     }
   }
 
-  private boolean fastpath(Location p, Value v) {
+  private boolean fastpath(Location p, Value v) { // precondition: valuesLock held
     int x = p.x / 10;
     int y = p.y / 10;
     if (v == Value.NIL) {
-      if (fastpath_grid[y][x] != null) {
-        fastpath_grid[y][x] = null;
+      if (fastpath_values[y][x] != null) {
+        fastpath_values[y][x] = null;
         return true;
       } else {
         return false;
       }
     } else {
-      if (!v.equals(fastpath_grid[y][x])) {
-        fastpath_grid[y][x] = v;
+      if (!v.equals(fastpath_values[y][x])) {
+        fastpath_values[y][x] = v;
         return true;
       } else {
         return false;
@@ -603,12 +629,12 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  private boolean slowpath(Location p, Value v) {
+  private boolean slowpath(Location p, Value v) { // precondition: valuesLock held
     if (v == Value.NIL) {
-      Object old = values.remove(p);
+      Object old = slowpath_values.remove(p);
       return (old != null && old != Value.NIL);
     } else {
-      Object old = values.put(p, v);
+      Object old = slowpath_values.put(p, v);
       return !v.equals(old);
     }
   }

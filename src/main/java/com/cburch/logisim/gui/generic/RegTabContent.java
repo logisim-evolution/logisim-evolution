@@ -146,8 +146,9 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
    * @return The value, or null if it cannot be found.
    */
   private synchronized Value findVal(CircuitState cs, String cn, Location loc) {
-    if (cs.containsKey(loc) && cs.getCircuit().getName().equals(cn)) {
-      return cs.getValue(loc);
+    if (cs.getCircuit().getName().equals(cn)) {
+      final var value = cs.getValue(loc);
+      if (value != null) return cs.getValue(loc);
     }
 
     if (CollectionUtil.isNotEmpty(cs.getSubstates())) {

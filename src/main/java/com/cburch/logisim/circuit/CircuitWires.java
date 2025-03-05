@@ -262,7 +262,7 @@ class CircuitWires {
         vb.makeThreads(srcBuses.get(vb).threads, allBuses, allThreads);
         if (circState != null) {
           for (int j = 0; j < vb.componentPoints.length; j++) {
-            Value val = circState.getComponentOutputAt(vb.componentPoints[j]);
+            Value val = Propagator.getDrivenValueAt(circState, vb.componentPoints[j]);
             vb.valAtPoint[j] = val;
           }
         }
@@ -910,7 +910,7 @@ class CircuitWires {
       // But we need to mark all points as dirty as well
       dirtyPoints.addAll(map.allLocations);
       for (Location p : map.allLocations)
-        newVals.add(circState.getComponentOutputAt(p));
+        newVals.add(Propagator.getDrivenValueAt(circState, p));
     }
 
     int npoints = dirtyPoints.size();
@@ -920,6 +920,7 @@ class CircuitWires {
       ValuedBus vb = state.busAt.get(p);
       if (vb == null) {
         // point is not wired: just set that point's value and be done
+        // todo: we could keep track of the affected components here
         circState.setValueByWire(p, val);
       } else if (vb.threads == null) {
         // point is wired to a threadless (e.g. invalid-width) bundle:
