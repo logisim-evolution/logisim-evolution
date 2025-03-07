@@ -10,6 +10,7 @@
 package com.cburch.logisim.data;
 
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.circuit.CircuitWires.BusConnection;
 import com.cburch.logisim.util.Cache;
 import java.awt.Color;
 import java.util.Arrays;
@@ -305,16 +306,18 @@ public final class Value {
     }
   }
 
-  public static final Value combineLikeWidths(Value[] vals) { // all widths must match
-    for (int i = 0; i < vals.length; i++) {
-      Value v = vals[i];
+  // public static final Value combineLikeWidths(Value[] vals) { // all widths must match
+  public static final Value combineLikeWidths(BusConnection[] vals) { // all widths must match
+    int n = vals.length;
+    for (int i = 0; i < n; i++) {
+      Value v = vals[i].drivenValue;
       if (v != null && v != NIL) {
         int width = v.width;
         long error = v.error;
         long unknown = v.unknown;
         long value = v.value;
-        for (int j = i + 1; j < vals.length; j++) {
-          v = vals[j];
+        for (int j = i + 1; j < n; j++) {
+          v = vals[j].drivenValue;
           if (v == null || v == NIL)
             continue;
           if (v.width != width)
@@ -671,5 +674,13 @@ public final class Value {
           0,
           this.value ^ other.value);
     }
+  }
+
+  public static boolean equal(Value a, Value b) {
+    if ((a == null || a == Value.NIL) && (b == null || b == Value.NIL))
+      return true; // both are effectively NIL
+    if (a != null && b != null && a.equals(b))
+      return true; // both are same non-NIL value
+    return false;
   }
 }

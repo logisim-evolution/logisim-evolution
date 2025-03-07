@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.PullResistor;
 import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.util.CollectionUtil;
@@ -38,16 +39,52 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class CircuitWires {
+// CircuitWires stores and calculates the values being propagated along all
+// wires and buses in a circuit, essentially anything related to the netlist
+// connectivity of the circuit.
+public class CircuitWires {
 
-  static class BundleMap {
-    final HashMap<Location, WireBundle> pointBundles = new HashMap<>();
-    final HashSet<WireBundle> bundles = new HashSet<>();
+  // Connectivity holds info about how the Circuit's buses, wires, tunnels, and
+  // splitters are connected to each other and to components. This gets
+  // re-computed from scratch each time the circuit changes. It does *not* hold
+  // any Values, which are dynamically computed by the simulator. It holds only
+  // the static connectivity defined by the circuit. Within this data structure
+  // are:
+  // - WireBundle: a bus/wire as drawn by the user. Think: like an unbroken,
+  //   physical ribbon cable that acts as a bundle of one or more threads. It
+  //   has a width 1 <= n <= 32 (or incompatibilityData if the width is not
+  //   consistent across the length of the bus), and touches a set of Location
+  //   points (all the corners, intersections, and component port locations
+  //   along the bus). It also has a pullValue, e.g. if there is a pull-down
+  //   resistor connected to the bus. A WireBundle can traverse tunnels, but not
+  //   splitters.
+  // - WireThread: a 1-bit element of a WireBundle. Think: an
+  //   electrically-contiguous trace within a circuit. Each wire WireThread
+  //   traverses one or more WireBundles, and has a specific position within
+  //   each WireBundle that it traverses. WireThreads traverse through
+  //   splitters.
+  private static class Connectivity {
+
+    // All wire bundles. Initially, a bundle is created and added to this for
+    // every bus wire segment, splitter endpoint, pull resistor endpoint, etc.
+    // Eventually, as bundles get unified together across intersecting points,
+    // tunnels, etc., this set gets trimmed down to just a single representative
+    // WireBundle for each bus.
+    HashSet<WireBundle> bundles = new HashSet<>();
+
+    // Given a location, returns wire bundle at that location (if any)
+    HashMap<Location, WireBundle> pointBundles = new HashMap<>();
+
+    // All locations touched by a wire bundle
     ArrayList<Location> allLocations = new ArrayList<>();
-    HashMap<Location, ArrayList> componentsAtLocations = new HashMap<>();
-    boolean isValid = true;
-    // NOTE: It would make things more efficient if we also had
-    // a set of just the first bundle in each tree.
+
+    // Given a location, returns a list of Components that have a port at that location.
+    HashMap<Location, ArrayList<Component>> componentsAtLocations = new HashMap<>();
+
+    // The isValid flag remains true unless something goes wrong during initialization.
+    volatile boolean isValid = true;
+
+    // Info about width incompatibilities, used by GUI to display error.
     HashSet<WidthIncompatibilityData> incompatibilityData = null;
 
     void addWidthIncompatibilityData(WidthIncompatibilityData e) {
@@ -65,6 +102,10 @@ class CircuitWires {
         bundles.add(ret);
       }
       return ret;
+    }
+
+    void setBundleAt(Location p, WireBundle b) {
+      pointBundles.put(p, b);
     }
 
     WireBundle getBundleAt(Location p) {
@@ -90,10 +131,6 @@ class CircuitWires {
     boolean isValid() {
       return isValid;
     }
-
-    void setBundleAt(Location p, WireBundle b) {
-      pointBundles.put(p, b);
-    }
   }
 
   static class SplitterData {
@@ -104,12 +141,15 @@ class CircuitWires {
     }
   }
 
+  // ValuedThread is similar to WireThread, but also holds the
+  // dynamically-computed 1-bit simulation Value carried on the thread as well.
   static class ValuedThread {
-    int steps;
-    ValuedBus[] bus;
-    int[] position;
-    boolean pullUp, pullDown;
-    Value val = null;
+    int steps; // length of the thread (# of buses it traverses)
+    ValuedBus[] bus; // buses traversed by this thread
+    int[] position; // position of this thread within each of those buses
+    boolean pullUp, pullDown; // whether this thread is being pulled up, or down, or neither
+    Value threadVal; // cached, resolved value carried by this thread (or error for conflicts, etc.)
+    // threadVal is set to null when thread is dirty and should be recalculated
 
     ValuedThread(WireThread t, HashMap<WireBundle, ValuedBus> allBuses) {
       steps = t.steps;
@@ -126,65 +166,94 @@ class CircuitWires {
         pullUp = pullDown = false;
     }
 
-    Value recalculate() {
-      Value ret = Value.UNKNOWN;
+    Value threadValue() {
+      if (threadVal != null)
+        return threadVal;
+      threadVal = Value.UNKNOWN;
       for (int i = 0; i < steps; i++) {
         ValuedBus vb = bus[i];
         int pos = position[i];
-        Value val = vb.valAtPointSum;
-        if (val != Value.NIL) {
-          ret = ret.combine(val.get(pos));
-        }
+        Value v = vb.localDrivenValue;
+        if (v != Value.NIL)
+          threadVal = threadVal.combine(v.get(pos));
       }
-      if (ret != Value.UNKNOWN)
-        return ret;
-      else if (pullUp)
-        return Value.TRUE;
-      else if (pullDown)
-        return Value.FALSE;
-      else
-        return Value.UNKNOWN;
+      if (threadVal == Value.UNKNOWN && pullUp)
+        threadVal = Value.TRUE;
+      else if (threadVal == Value.UNKNOWN && pullDown)
+        threadVal = Value.FALSE;
+      return threadVal;
     }
   }
 
-  static class ValuedBus {
-    int idx = -1;
-    ValuedThread[] threads;
-    Location[] componentPoints; // subset of wire bundle xpoints that have components at them
-    Component[][] componentsAffected; // components at each of those points
-    Value[] valAtPoint;
-    Value valAtPointSum; // cached sum of valAtPoint, or null if dirty
-    Value val; // cached final value for bus
-    int width;
-    ValuedBus[] dependentBuses; // buses affected if this one changes value.
-    boolean dirty;
+  // BusConnection represents a point at which a Component connects to a
+  // ValuedBus.
+  // FIXME: it might be best to hold a reference to some kind of
+  // CircuitComponentInfo data structure instead here, where we can store a flag
+  // about whether this component has been marked dirty yet or not.
+  public static class BusConnection {
+    public final Component component;
+    public final Location location;
+    public final boolean isSink, isBidirectional;
+    public Value drivenValue; // value this component is driving onto the bus (null for sinks)
+    // todo: maybe also keep point number, or EndData, etc.?
 
-    ValuedBus(WireBundle wb, BundleMap bm) {
-      idx = -1; // filled in by caller
-      filterComponents(bm, wb.xpoints);
-      valAtPoint = new Value[componentPoints.length];
+    BusConnection(Component comp, Location loc) {
+      component = comp;
+      location = loc;
+      EndData e = comp.getEnd(loc);
+      // if (e == null)
+      //   System.out.printf("missing end for %s at %s\n", comp, loc);
+      // Special case: Pin is treated as a sink, because it needs notifications
+      // of any changes to inputs in order to set the UI color propertly.
+      isSink = (e.getType() == EndData.INPUT_ONLY)
+          || (comp.getFactory() instanceof Pin);
+      isBidirectional = (e.getType() == EndData.INPUT_OUTPUT);
+      drivenValue = null;
+    }
+  }
+
+  // ValuedBus is similar to WireBundle, but also holds the dynamically-computed
+  // n-bit simulation Value (formed from joining all n 1-bit values from the
+  // threads passing through this bus.
+  static class ValuedBus {
+    int idx; // State.buses[idx] will hold this ValuedBus
+    int width; // negative for invalid width
+    ValuedThread[] threads; // threads passing through this bus
+
+    BusConnection[] connections; // sink and source components connected to this bus
+    Location[] locations; // set of all locations for those connections
+
+    Value localDrivenValue; // sum of connections[i].drivenValue
+    Value busVal; // cached, resolved value carried by this bus (or error for conflicts, etc.)
+    boolean dirty; // whether localDrivenValue and busVal and valid
+    ValuedBus[] dependentBuses; // other buses affected if this one's localDrivenValue changes
+
+    // Location[] componentPoints; // subset of wire bundle xpoints that have components at them
+    // Component[][] componentsAffected; // components at each of those points
+    // Value[] valAtPoint;
+    // Value valAtPointSum; // cached sum of valAtPoint, or null if dirty
+
+    ValuedBus(int i, WireBundle wb, Connectivity cmap) {
+      idx = i;
+      filterComponents(cmap, wb.xpoints); // initializes locations[] and connections[]
       width = wb.threads == null ? -1 : wb.getWidth().getWidth();
       dirty = true;
     }
 
-    void filterComponents(BundleMap bm, Location[] locs) {
-      ArrayList<Location> found = new ArrayList<>();
-      ArrayList<ArrayList<Component>> affected = new ArrayList<>();
-      for (Location p : locs) {
-        @SuppressWarnings("unchecked")
-        ArrayList<Component> a = bm.componentsAtLocations.get(p);
+    void filterComponents(Connectivity cmap, Location[] xpoints) {
+      ArrayList<Location> locs = new ArrayList<>();
+      ArrayList<BusConnection> conns = new ArrayList<>();
+      for (Location p : xpoints) {
+        ArrayList<Component> a = cmap.componentsAtLocations.get(p);
         if (a == null)
           continue;
-        found.add(p);
-        affected.add(a);
+        locs.add(p);
+        for (Component c : a)
+          conns.add(new BusConnection(c, p));
       }
-      int n = found.size();
-      componentPoints = n == locs.length ? locs : found.toArray(new Location[n]);
-      componentsAffected = new Component[n][];
-      for (int i = 0; i < n; i++) {
-        ArrayList<Component> a = affected.get(i);
-        componentsAffected[i] = a.toArray(new Component[a.size()]);
-      }
+      int n = locs.size();
+      locations = n == xpoints.length ? xpoints : locs.toArray(new Location[n]);
+      connections = conns.toArray(new BusConnection[conns.size()]);
     }
 
     void makeThreads(WireThread[] wbthreads, HashMap<WireBundle, ValuedBus> allBuses,
@@ -203,18 +272,19 @@ class CircuitWires {
     }
 
     Value recalculate() {
-      if (width == 1) {
-        Value tv = threads[0].val;
-        if (tv == null)
-          tv = threads[0].val = threads[0].recalculate();
-        return tv;
+      if (width <= 0) {
+        busVal = Value.NIL;
+        dirty = false;
+        return busVal;
+      } else if (width == 1) {
+        busVal = threads[0].threadValue();
+        dirty = false;
+        return busVal;
       }
       long error = 0, unknown = 0, value = 0;
       for (int i = 0; i < width; i++) {
         long mask = 1L << i;
-        Value tv = threads[i].val;
-        if (tv == null)
-          tv = threads[i].val = threads[i].recalculate();
+        Value tv = threads[i].threadValue();
         if (tv == Value.TRUE)
           value |= mask;
         else if (tv == Value.FALSE)
@@ -224,29 +294,31 @@ class CircuitWires {
         else
           error |= mask;
       }
-      return Value.create_unsafe(width, error, unknown, value);
+      busVal = Value.create_unsafe(width, error, unknown, value);
+      dirty = false;
+      return busVal;
     }
   }
 
-  State newState(CircuitState circState) {
-    return new State(circState, getBundleMap());
+  State newState(CircuitState circState) { // for cloning CircuitState
+    return new State(getConnectivity(), circState.getWireData());
   }
 
   static class State {
-    private BundleMap bundleMap; // original source of connectivity info
+    private Connectivity connectivity; // original source of connectivity info
+    HashMap<Location, ValuedBus> busAt = new HashMap<>();
     ValuedBus[] buses;
     int numDirty;
-    HashMap<Location, ValuedBus> busAt = new HashMap<>();
 
-    State(CircuitState circState, BundleMap bundleMap) {
-      this.bundleMap = bundleMap;
+    State(Connectivity cm, State prev) {
+      connectivity = cm;
       HashMap<WireBundle, ValuedBus> allBuses = new HashMap<>();
       HashMap<ValuedBus, WireBundle> srcBuses = new HashMap<>();
-      buses = new ValuedBus[bundleMap.bundles.size()];
-      int i = 0;
-      for (WireBundle wb : bundleMap.bundles) {
-        ValuedBus vb = new ValuedBus(wb, bundleMap);
-        vb.idx = i++;
+      // initialize buses[] and busAt<>
+      buses = new ValuedBus[connectivity.bundles.size()];
+      int idx = 0;
+      for (WireBundle wb : connectivity.bundles) {
+        ValuedBus vb = new ValuedBus(idx++, wb, connectivity);
         buses[vb.idx] = vb;
         for (Location loc : wb.xpoints) {
           ValuedBus old = busAt.put(loc, vb);
@@ -257,16 +329,17 @@ class CircuitWires {
         allBuses.put(wb, vb);
         srcBuses.put(vb, wb);
       }
+      // create threads for all buses
       HashMap<WireThread, ValuedThread> allThreads = new HashMap<>();
-      for (ValuedBus vb : buses) {
+      for (ValuedBus vb : buses)
         vb.makeThreads(srcBuses.get(vb).threads, allBuses, allThreads);
-        if (circState != null) {
-          for (int j = 0; j < vb.componentPoints.length; j++) {
-            Value val = Propagator.getDrivenValueAt(circState, vb.componentPoints[j]);
-            vb.valAtPoint[j] = val;
-          }
-        }
+      // initialize BusConnection driven values from previous State, if any
+      if (prev != null) {
+        for (ValuedBus vb : buses)
+          for (BusConnection bc : vb.connections)
+            bc.drivenValue = prev.getDrivenValue(bc.component, bc.location);
       }
+      // compute bus dependencies
       for (ValuedBus vb : buses) {
         if (vb.threads == null)
           continue;
@@ -276,11 +349,21 @@ class CircuitWires {
             if (dep != vb)
               deps.add(dep);
         int n = deps.size();
-        if (n == 0)
-          continue;
         vb.dependentBuses = deps.toArray(new ValuedBus[n]);
       }
+      // mark all dirty: recomputes values and triggers component propagation
       numDirty = buses.length;
+    }
+
+    Value getDrivenValue(Component c, Location loc) {
+      ValuedBus vb = busAt.get(loc);
+      if (vb == null)
+        return null;
+      for (BusConnection bc : vb.connections) {
+        if (bc.component.equals(c) && bc.location.equals(loc))
+          return bc.drivenValue;
+      }
+      return null;
     }
 
     void markClean(ValuedBus vb) {
@@ -290,7 +373,7 @@ class CircuitWires {
       if (vb.idx > numDirty - 1) {
         throw new IllegalStateException("bad position for dirty element");
       }
-      if (vb.idx < numDirty - 1) {
+      if (vb.idx < numDirty - 1) { // swap toward end of dirty section of array
         ValuedBus other = buses[numDirty - 1];
         other.idx = vb.idx;
         buses[other.idx] = other;
@@ -303,26 +386,37 @@ class CircuitWires {
 
     void markDirty(ValuedBus vb) {
       if (vb.dirty) {
-        throw new IllegalStateException("can't mark dirty element as dirty");
+        return;
       }
       if (vb.idx < numDirty) {
         throw new IllegalStateException("bad position for clean element");
       }
-      if (vb.idx > numDirty) {
+      vb.localDrivenValue = null; // need to recompute based on connections[i].drivenValue
+      vb.busVal = null; // need to recompute based on threads[i].threadValue
+      if (vb.idx > numDirty) { // swap toward dirty section of array
         ValuedBus other = buses[numDirty];
         other.idx = vb.idx;
         buses[other.idx] = other;
         vb.idx = numDirty;
         buses[vb.idx] = vb;
       }
-      if (vb.threads != null) {
+      if (vb.threads != null) { // invalidate threads
         for (ValuedThread vt : vb.threads)
-          vt.val = null;
+          vt.threadVal = null;
       }
       vb.dirty = true;
       numDirty++;
     }
   }
+
+  // Elements of the circuit, organized by type.
+  private HashSet<Wire> wires = new HashSet<>(); // Components of type Wire
+  private HashSet<Splitter> splitters = new HashSet<>(); // Components of type Splitter
+  private HashSet<Component> tunnels = new HashSet<>(); // Components having Tunnel factory
+  private HashSet<Component> pulls = new HashSet<>(); // Components having PullResistor factory
+  private HashSet<Component> components = new HashSet<>(); // other Components
+
+  private TunnelListener tunnelListener = new TunnelListener();
 
   private class TunnelListener implements AttributeListener {
     @Override
@@ -333,54 +427,24 @@ class CircuitWires {
     @Override
     public void attributeValueChanged(AttributeEvent e) {
       final var attr = e.getAttribute();
-      if (attr == StdAttr.LABEL || attr == PullResistor.ATTR_PULL_TYPE) {
-        voidBundleMap();
-      }
-    }
-  }
-
-  private static Value pullValue(Value base, Value pullTo) {
-    if (base.isFullyDefined()) {
-      return base;
-    } else if (base.getWidth() == 1) {
-      if (base == Value.UNKNOWN) return pullTo;
-      else return base;
-    } else {
-      final var ret = base.getAll();
-      for (var i = 0; i < ret.length; i++) {
-        if (ret[i] == Value.UNKNOWN) ret[i] = pullTo;
-      }
-      return Value.create(ret);
+      if (attr == StdAttr.LABEL || attr == PullResistor.ATTR_PULL_TYPE)
+        voidConnectivity();
     }
   }
 
   static final Logger logger = LoggerFactory.getLogger(CircuitWires.class);
 
-  // user-given data
-  private final HashSet<Wire> wires = new HashSet<>();
-  private final HashSet<Splitter> splitters = new HashSet<>();
-  private final HashSet<Component> tunnels = new HashSet<>(); // of
-  // Components
-  // with
-  // Tunnel
-  // factory
-  private final TunnelListener tunnelListener = new TunnelListener();
-  private final HashSet<Component> pulls = new HashSet<>(); // of
-  // Components
-  // with
-  // PullResistor
-  // factory
-
   final CircuitPoints points = new CircuitPoints();
   private Bounds bounds = Bounds.EMPTY_BOUNDS;
 
-  private volatile BundleMap masterBundleMap = null;
+  private volatile Connectivity masterConnectivity = null;
 
   CircuitWires() {}
 
   // NOTE: this could be made much more efficient in most cases to
-  // avoid voiding the bundle map.
+  // avoid voiding the connectivity map.
   /*synchronized*/ boolean add(Component comp) {
+    // System.out.println("wires adding " + comp);
     var added = true;
     if (comp instanceof Wire wire) {
       added = addWire(wire);
@@ -394,18 +458,20 @@ class CircuitWires {
       } else if (factory instanceof PullResistor) {
         pulls.add(comp);
         comp.getAttributeSet().addAttributeListener(tunnelListener);
+      } else {
+        components.add(comp);
       }
     }
     if (added) {
       points.add(comp);
-      voidBundleMap();
+      voidConnectivity();
     }
     return added;
   }
 
   /*synchronized*/ void add(Component comp, EndData end) {
     points.add(comp, end);
-    voidBundleMap();
+    voidConnectivity();
   }
 
   private boolean addWire(Wire w) {
@@ -418,9 +484,11 @@ class CircuitWires {
     return true;
   }
 
-  // To be called by getBundleMap only
-  private void computeBundleMap(BundleMap ret) {
+  // To be called by getConnectivity() only
+  private void computeConnectivity(Connectivity ret) {
+    // System.out.println("computing new connectivity map");
     // create bundles corresponding to wires and tunnels
+    connectComponents(ret);
     connectWires(ret);
     connectTunnels(ret);
     connectPullResistors(ret);
@@ -539,7 +607,7 @@ class CircuitWires {
     // All bundles are made, all threads are now sewn together.
 
     // Record all component locations so they can be marked as dirty when this
-    // wire bundle map is used to initialize a new State.
+    // wire connectivity map is used to initialize a new State.
     ret.allLocations.addAll(points.getAllLocations());
 
     // Record all interesting component (non-wire, non-splitter) locations so
@@ -572,7 +640,7 @@ class CircuitWires {
     }
   }
 
-  private void connectPullResistors(BundleMap ret) {
+  private void connectPullResistors(Connectivity ret) {
     for (final var comp : pulls) {
       final var loc = comp.getEnd(0).getLocation();
       var b = ret.getBundleAt(loc);
@@ -586,7 +654,7 @@ class CircuitWires {
     }
   }
 
-  private void connectTunnels(BundleMap ret) {
+  private void connectTunnels(Connectivity ret) {
     // determine the sets of tunnels
     final var tunnelSets = new HashMap<String, ArrayList<Location>>();
     for (final var comp : tunnels) {
@@ -627,7 +695,25 @@ class CircuitWires {
     }
   }
 
-  private void connectWires(BundleMap ret) {
+  private void connectComponents(Connectivity ret) {
+    // make a WireBundle object for each output or bidirectional port
+    // of a component
+    for (Component comp : components) {
+      for (EndData e : comp.getEnds()) {
+        if (e.getType() == EndData.INPUT_ONLY)
+          continue;
+        Location loc = e.getLocation();
+        WireBundle b = ret.getBundleAt(loc);
+        if (b == null) {
+          b = ret.createBundleAt(loc);
+          b.tempPoints.add(loc);
+          ret.setBundleAt(loc, b);
+        }
+      }
+    }
+  }
+
+  private void connectWires(Connectivity ret) {
     // make a WireBundle object for each tree of connected wires
     for (final var wire : wires) {
       final var bundleA = ret.getBundleAt(wire.e0);
@@ -654,7 +740,7 @@ class CircuitWires {
     ValuedBus vb = s.busAt.get(loc);
     if (vb == null)
       return Value.NIL; // return state.getValue(loc); // fallback, probably wrong, who cares
-    Value v = vb.val;
+    Value v = vb.busVal;
     if (v == null)
       return Value.NIL; // return state.getValue(loc); // fallback, probably wrong, who cares
     return v;
@@ -668,20 +754,22 @@ class CircuitWires {
     GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     final var highlighted = context.getHighlightedWires();
 
-    final var bmap = getBundleMap();
-    final var isValid = bmap.isValid();
+    Connectivity cmap = getConnectivity();
+    boolean isValid = cmap.isValid();
     if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var wire : wires) {
         final var s = wire.e0;
         final var t = wire.e1;
-        final var wb = bmap.getBundleAt(s);
+        final var wb = cmap.getBundleAt(s);
         var width = 5;
         if (!wb.isValid()) {
           g.setColor(Value.widthErrorColor);
-        } else if (showState) {
-          g.setColor(!isValid ? Value.nilColor : getBusValue(state, s).getColor());
-        } else {
+        } else if (!showState) {
           g.setColor(Color.BLACK);
+        } else if (!isValid) {
+          g.setColor(Value.nilColor);
+        } else {
+          g.setColor(getBusValue(state, s).getColor());
         }
         if (highlighted.containsWire(wire)) {
           width = wb.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH;
@@ -717,7 +805,7 @@ class CircuitWires {
 
       for (Location loc : points.getAllLocations()) {
         if (points.getComponentCount(loc) > 2) {
-          final var wb = bmap.getBundleAt(loc);
+          final var wb = cmap.getBundleAt(loc);
           if (wb != null) {
             var color = Color.BLACK;
             if (!wb.isValid()) {
@@ -745,7 +833,7 @@ class CircuitWires {
         if (!hidden.contains(wire)) {
           final var s = wire.e0;
           final var t = wire.e1;
-          final var wb = bmap.getBundleAt(s);
+          final var wb = cmap.getBundleAt(s);
           if (!wb.isValid()) {
             g.setColor(Value.widthErrorColor);
           } else if (showState) {
@@ -774,7 +862,7 @@ class CircuitWires {
             if (!hidden.contains(comp)) ++icount;
           }
           if (icount > 2) {
-            final var wireBundle = bmap.getBundleAt(loc);
+            final var wireBundle = cmap.getBundleAt(loc);
             if (wireBundle != null) {
               if (!wireBundle.isValid()) {
                 g.setColor(Value.widthErrorColor);
@@ -795,36 +883,36 @@ class CircuitWires {
     }
   }
 
-  // There are only two threads that need to use the bundle map, I think:
+  // There are only two threads that need to use the connectivity map, I think:
   // the AWT event thread, and the simulation worker thread.
   // AWT does modifications to the components and wires, then voids the
-  // masterBundleMap, and eventually recomputes a new map (if needed) during
+  // masterConnectivity, and eventually recomputes a new map (if needed) during
   // painting. AWT sometimes locks a splitter, then changes components and
   // wires.
-  // Computing a new bundle map requires both locking splitters and touching
+  // Computing a new connectivity map requires both locking splitters and touching
   // the components and wires, so to avoid deadlock, only the AWT should create
-  // the new bundle map. The bundle map is (essentially, if not entirely)
+  // the new connectivity map. The connectivity map is (essentially, if not entirely)
   // read-only once it is fully constructed.
-  // The simulation thread never creates a new bundle map. On the other hand,
+  // The simulation thread never creates a new connectivity map. On the other hand,
   // the simulation thread creates the State objects for each simulated instance
-  // of the circuit, and each State duplicates data from the bundle map.
+  // of the circuit, and each State duplicates data from the connectivity map.
 
-  private class BundleMapGetter implements Runnable {
-    BundleMap result;
+  private class ConnectivityGetter implements Runnable {
+    Connectivity result;
     public void run() {
-      result = getBundleMap();
+      result = getConnectivity();
     }
   }
 
-  /*synchronized*/ private BundleMap getBundleMap() {
-    final var map = masterBundleMap; // volatile read by AWT or simulation thread
+  /*synchronized*/ private Connectivity getConnectivity() {
+    final var map = masterConnectivity; // volatile read by AWT or simulation thread
     if (map != null) return map;
     if (SwingUtilities.isEventDispatchThread()) {
       // AWT event thread.
-      final var ret = new BundleMap();
+      final var ret = new Connectivity();
       try {
-        computeBundleMap(ret);
-        masterBundleMap = ret; // volatile write by AWT thread
+        computeConnectivity(ret);
+        masterConnectivity = ret; // volatile write by AWT thread
       } catch (Exception t) {
         ret.invalidate();
         logger.error(t.getLocalizedMessage());
@@ -833,12 +921,12 @@ class CircuitWires {
     } else {
       // Simulation thread.
       try {
-        BundleMapGetter awtThread = new BundleMapGetter();
+        ConnectivityGetter awtThread = new ConnectivityGetter();
         SwingUtilities.invokeAndWait(awtThread);
         return awtThread.result;
       } catch (Exception t) {
         logger.error(t.getLocalizedMessage());
-        final var ret = new BundleMap();
+        final var ret = new Connectivity();
         ret.invalidate();
         return ret;
       }
@@ -853,16 +941,16 @@ class CircuitWires {
     final var det = points.getWidth(q);
     if (det != BitWidth.UNKNOWN) return det;
 
-    final var bmap = getBundleMap();
-    if (!bmap.isValid()) return BitWidth.UNKNOWN;
-    final var qb = bmap.getBundleAt(q);
+    Connectivity cmap = getConnectivity();
+    if (!cmap.isValid()) return BitWidth.UNKNOWN;
+    final var qb = cmap.getBundleAt(q);
     if (qb != null && qb.isValid()) return qb.getWidth();
 
     return BitWidth.UNKNOWN;
   }
 
   Set<WidthIncompatibilityData> getWidthIncompatibilityData() {
-    return getBundleMap().getWidthIncompatibilityData();
+    return getConnectivity().getWidthIncompatibilityData();
   }
 
   Bounds getWireBounds() {
@@ -874,8 +962,8 @@ class CircuitWires {
   }
 
   WireBundle getWireBundle(Location query) {
-    final var bundleMap = getBundleMap();
-    return bundleMap.getBundleAt(query);
+    Connectivity cmap = getConnectivity();
+    return cmap.getBundleAt(query);
   }
 
   Set<Wire> getWires() {
@@ -896,93 +984,106 @@ class CircuitWires {
   //   return masterBundleMap == null; // volatile read by simulation thread
   // }
 
-  void propagate(CircuitState circState, ArrayList<Location> dirtyPoints, ArrayList<Value> newVals) {
-    final var map = getBundleMap();
+  void propagate(CircuitState circState, ArrayList<Propagator.SimulatorEvent> dirtyPoints) {
+    Connectivity map = getConnectivity();
     ArrayList<WireThread> dirtyThreads = new ArrayList<>();
 
     // get state, or create a new one if current state is outdated
-    var state = circState.getWireData();
-    if (state == null || state.bundleMap != map) {
+    var s = circState.getWireData();
+    if (s == null || s.connectivity != map) {
       // if it is outdated, we need to compute for all threads
-      state = new State(circState, map);
-      circState.setWireData(state);
-      // note: all buses are already marked as dirty.
-      // But we need to mark all points as dirty as well
-      dirtyPoints.addAll(map.allLocations);
-      for (Location p : map.allLocations)
-        newVals.add(Propagator.getDrivenValueAt(circState, p));
+      s = new State(map, s);
+      circState.setWireData(s);
+      // Note: all buses are already marked as dirty.
+      // But some component ports that were previously connected to buses
+      // might no longer be connected to those same buses (or might not
+      // be connected to any bus), and vice versa. So we should mark all
+      // components as dirty.
+      circState.clearValuesByWire();
+      circState.markComponentsDirty(components);
     }
 
+    // make note of updates from simulator
     int npoints = dirtyPoints.size();
     for (int k = 0; k < npoints; k++) { // for each point of interest
-      Location p = dirtyPoints.get(k);
-      Value val = newVals.get(k);
-      ValuedBus vb = state.busAt.get(p);
+      Propagator.SimulatorEvent ev = dirtyPoints.get(k);
+      Location p = ev.loc;
+      Component cause = ev.cause;
+      Value val = ev.val;
+
+      ValuedBus vb = s.busAt.get(p);
       if (vb == null) {
+        System.out.printf("simulator event, but no bus: comp=%s loc=%s val=%s ", cause, p, val);
         // point is not wired: just set that point's value and be done
         // todo: we could keep track of the affected components here
-        circState.setValueByWire(p, val);
+        // System.out.printf("  loc %s not wired, accept val %s\n", p, val);
+        // circState.setValueByWire(val, p);
       } else if (vb.threads == null) {
         // point is wired to a threadless (e.g. invalid-width) bundle:
+        // ignore new value
         // propagate NIL across entire bundle
-        if (vb.dirty)
-          state.markClean(vb);
-        int n = vb.componentPoints.length;
-        for (int i = 0; i < n; i++) {
-          Location buspt = vb.componentPoints[i];
-          Component[] affected = vb.componentsAffected[i];
-          circState.setValueByWire(buspt, Value.NIL, affected);
-        }
+        // for (Location buspt : vb.componentPoints)
+        //   circState.setValueByWire(buspt, Value.NIL);
+        // int n = vb.componentPoints.length;
+        // for (int i = 0; i < n; i++) {
+        //   Location buspt = vb.componentPoints[i];
+        //   Component[] affected = vb.componentsAffected[i];
+        //   circState.setValueByWire(buspt, Value.NIL, affected);
+        // }
       } else {
         // common case... it is wired to a normal bus: update the stored value
         // of this point on the bus, mark the bus as dirty, and mark as dirty
         // any related buses.
-        for (int i = 0; i < vb.componentPoints.length; i++) {
-          if (vb.componentPoints[i].equals(p)) {
-            Value old = vb.valAtPoint[i];
-            vb.valAtPointSum = null;
-            if ((val == null || val == Value.NIL) && (old == null || old == Value.NIL))
-              break; // ignore, both old and new are NIL
-            if (val != null && old != null && val.equals(old))
-              break; // ignore, both old and new are same non-NIL value
-            vb.valAtPoint[i] = val;
-            if (!vb.dirty) {
-              state.markDirty(vb);
-              if (vb.dependentBuses != null) {
-                for (ValuedBus dep : vb.dependentBuses)
-                  if (!dep.dirty)
-                    state.markDirty(dep);
-              }
-            }
+        // System.out.printf("  loc %s is wired, processing val %s\n", p, val);
+        // fixme: sort the connections list, sources first, then bidir, then sinks
+        for (BusConnection bc : vb.connections) {
+          if (bc.location.equals(p) && bc.component.equals(cause)) {
+            Value old = bc.drivenValue;
+            if (Value.equal(old, val))
+              continue;
+            bc.drivenValue = val;
+            s.markDirty(vb);
+            for (ValuedBus dep : vb.dependentBuses)
+              s.markDirty(dep);
             break;
           }
         }
       }
     }
 
-    if (state.numDirty <= 0) return;
+    if (s.numDirty <= 0)
+      return;
 
-    // recompute valAtPointSum for each dirty bus
-    for (int i = 0; i < state.numDirty; i++) {
-      ValuedBus vb = state.buses[i];
-      vb.valAtPointSum = Value.combineLikeWidths(vb.valAtPoint);
-    }
-
-    // recompute thread values for all threads passing through dirty buses,
-    // recompute aggregate bus values for all dirty buses,
-    // and post those notifications to all bus points
-    for (int i = 0; i < state.numDirty; i++) {
-      ValuedBus vb = state.buses[i];
-      Value val = vb.val = vb.recalculate();
-      vb.dirty = false;
-      int n = vb.componentPoints.length;
-      for (int j = 0; j < n; j++) {
-        Location p = vb.componentPoints[j];
-        Component[] affected = vb.componentsAffected[j];
-        circState.setValueByWire(p, val, affected);
+    // recompute localDrivenValue for each dirty bus
+    for (int i = 0; i < s.numDirty; i++) {
+      ValuedBus vb = s.buses[i];
+      if (vb.width <= 0) {
+        // this bundle has inconsistent widths, or no width, hence no localDrivenValue
+        vb.localDrivenValue = Value.NIL;
+      } else {
+        vb.localDrivenValue = Value.combineLikeWidths(vb.connections);
       }
     }
-    state.numDirty = 0;
+
+    // recompute threadVal for all threads passing through dirty buses,
+    // recompute aggregate busVal for all dirty buses,
+    // and post those results to the circuit state
+    for (int i = 0; i < s.numDirty; i++) {
+      ValuedBus vb = s.buses[i];
+      Value old = vb.busVal;
+      Value val = vb.recalculate();
+      if (Value.equal(old, val))
+        continue;
+      circState.setValueByWire(val, vb.locations, vb.connections);
+      // int n = vb.componentPoints.length;
+      // for (int j = 0; j < n; j++) {
+      //   Location p = vb.componentPoints[j];
+      //   Component[] affected = vb.componentsAffected[j];
+      //   // System.out.printf("  loc %s ready, set val %s affects %d components\n", p, val, (affected == null ? 0 : affected.length));
+      //   circState.setValueByWire(p, val, affected);
+      // }
+    }
+    s.numDirty = 0;
   }
 
   private Bounds recomputeBounds() {
@@ -1028,12 +1129,12 @@ class CircuitWires {
       }
     }
     points.remove(comp);
-    voidBundleMap();
+    voidConnectivity();
   }
 
   /*synchronized*/ void remove(Component comp, EndData end) {
     points.remove(comp, end);
-    voidBundleMap();
+    voidConnectivity();
   }
 
   private void removeWire(Wire w) {
@@ -1051,13 +1152,15 @@ class CircuitWires {
   /*synchronized*/ void replace(Component comp, EndData oldEnd, EndData newEnd) {
     points.remove(comp, oldEnd);
     points.add(comp, newEnd);
-    voidBundleMap();
+    // System.out.printf("replaced %s %s with %s\n", comp, oldEnd, newEnd);
+    voidConnectivity();
   }
 
-  private void voidBundleMap() {
+  private void voidConnectivity() {
+    // System.out.println("voiding connectivity info");
     // This should really only be called by AWT thread, but main() also
     // calls it during startup. It should not be called by the simulation
     // thread.
-    masterBundleMap = null;
+    masterConnectivity = null; // volatile write by AWT thread (and sometimes main/startup)
   }
 }

@@ -1233,7 +1233,7 @@ public class Pin extends InstanceFactory {
       Value found = state.getPortValue(0);
       q.intendedValue = found;
       q.foundValue = found;
-      state.setPort(0, Value.createUnknown(attrs.width), 1);
+      //state.setPort(0, Value.createUnknown(attrs.width), 1);
     } else {
       Value found = state.getPortValue(0);
       Value toSend = q.intendedValue;
@@ -1260,6 +1260,56 @@ public class Pin extends InstanceFactory {
       }
     }
   }
+
+  // FIXME: Attributes are a confusing mess. "Output?", "Three State?", and
+  // "Pull Behavior" all interact in complicated ways. There seems to currently
+  // only be a few possible combinations that are implemented:
+  //   Output pin:
+  //     UI can display 0, 1, E, or X, and subcircuit passes whatever is
+  //     displayed up to parent. Tristate and pull options are ignored.
+  //   Input pin with tristate but no pull:
+  //     UI can display and choose 0, 1, or X, and also shows red if there is an
+  //     error on the output bus. Parent circuit can send 0, 1, x, or E, and all
+  //     will pass through into subcircuit.
+  //   Input pin with pull-up (or pull-down):
+  //     UI can display and choose only 0 or 1, but also shows red if there is
+  //     an error on the output bus. Parent circuit can send 0 or 1, but if it
+  //     tries to send X or E these get converted to 1 (or 0 for pull-down). I
+  //     think the behavior for E here is unreasonable: E should get sent
+  //     through no matter what. The tristate option is ignored here. The UI
+  //     when viewing a subcircuit doesn't distinguish between the case where
+  //     parent circuit sends 1, and when parent sends an X that gets pulled-up
+  //     to 1. I think it could show blue in one case, just like it shows red in
+  //     cases of errors. Or show x, but color it to match the 1 value (or 0
+  //     value).
+  //   Input pin without tristate:
+  //     This behaves the same as as tri-state with pull-down.
+  //
+  // Notice that tri-state=false is esentially pointless, and can be removed.
+  //
+  // It seems plausible to add support for another combination:
+  //   Output pin with pull-up (or pull-down):
+  //      UI could display 0, 1, E, or X, but X gets converted to 0 or 1 before
+  //      being sent up to parent. Color could match what is being sent up to
+  //      parent.
+  //
+  // Summarizing and simplifying new proposal:
+  //   Output pin with no pull:
+  //      Depending on value of connected bus, UI displays 0, 1, E, or X, and
+  //      subcircuit passes whatever is displayed up to parent. Color matches
+  //      both the connected bus and the value passed up to parent.
+  //   Output pin with pull-up (or pull-down):
+  //      Depending on value of connected bus, UI displays 0, 1, or E, with any
+  //      X values displaying as 0 or 1. Color matches connected bus. So a
+  //      pulled-up X would show as a blue 1 (or blue 0 for pull-down).
+  //   Input pin with no pull:
+  //      User can choose 0, 1, or X. Parent circuit can send 0, 1, E, or X.
+  //      UI displays whatever user chose (or parent sent). Color matches
+  //      whatever is displayed.
+  //   Input pin with pull-up (or pull-down):
+  //      User can choose 0 or 1. Parent circuit can send 0, 1, or E, but if it
+  //      tries to send X it gets converted to and displayed as 1 (or 0).
+  //      Color matches whatever user chose (or parent sent).
 
   @Override
   public boolean requiresNonZeroLabel() {
