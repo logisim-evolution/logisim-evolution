@@ -175,6 +175,8 @@ public class PowerOnReset extends InstanceFactory {
       if (e.getSource() == tim) {
         if (value) {
           value = false;
+          System.out.println("Timer fired, setting value to false in POR: " + this + " state: " + state);
+          state.setPort(0, Value.createKnown(BitWidth.ONE, tend), 1);
           state.getInstance().fireInvalidated();
           tim.stop();
         }
@@ -314,7 +316,9 @@ public class PowerOnReset extends InstanceFactory {
     if (ret == null) {
       ret = new PORState(state);
       state.setData(ret);
+      System.out.println("Creating new PORstate: " + ret);
     }
+    System.out.println("Setting POR output to: " + ret.getValue());
 
     state.setPort(0, Value.createKnown(BitWidth.ONE, ret.getValue() ? ret.gettstart() : ret.gettend()), 0);
 

@@ -23,6 +23,7 @@ import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -61,8 +62,7 @@ public class SubcircuitFactory extends InstanceFactory {
       final var superState = proj.getCircuitState();
       if (superState == null) return;
 
-      final var subState = getSubstate(superState, instance);
-      if (subState == null) return;
+      CircuitState subState = getSubstate(superState, instance.getComponent());
       proj.setCircuitState(subState);
     }
 
@@ -296,23 +296,23 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   public CircuitState getSubstate(CircuitState superState, Component comp) {
-    return getSubstate(createInstanceState(superState, comp));
-  }
-
-  //
-  // propagation-oriented methods
-  //
-  public CircuitState getSubstate(CircuitState superState, Instance instance) {
-    return getSubstate(createInstanceState(superState, instance));
-  }
-
-  private CircuitState getSubstate(InstanceState instanceState) {
-    var subState = (CircuitState) instanceState.getData();
+    CircuitState subState = (CircuitState) superState.getData(comp);
     if (subState == null) {
-      subState = instanceState.createCircuitSubstateFor(source);
-      instanceState.fireInvalidated();
+      subState = superState.createCircuitSubstateFor(comp, source);
+      if (comp instanceof InstanceComponent)
+        ((InstanceComponent) comp).fireInvalidated();
+      else
+        System.out.println("wrong kind... " + comp);
     }
     return subState;
+  }
+
+  private CircuitState getSubstate(InstanceState stateInContext) {
+    if (stateInContext instanceof InstanceStateImpl)
+      return getSubstate(((InstanceStateImpl) stateInContext).getCircuitState(),
+          ((InstanceStateImpl) stateInContext).getComponent());
+    else
+      throw new IllegalArgumentException("getSubstate on wrong type " + stateInContext);
   }
 
   @Override
@@ -382,16 +382,16 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   @Override
-  public void propagate(InstanceState superState) {
-    final var subState = getSubstate(superState);
+  public void propagate(InstanceState stateInContext) {
+    final var subState = getSubstate(stateInContext);
 
-    final var attrs = (CircuitAttributes) superState.getAttributeSet();
+    final var attrs = (CircuitAttributes) stateInContext.getAttributeSet();
     final var pins = attrs.getPinInstances();
     for (var i = 0; i < pins.length; i++) {
       final var pin = pins[i];
       final var pinState = subState.getInstanceState(pin);
       if (Pin.FACTORY.isInputPin(pin)) {
-        final var newVal = superState.getPortValue(i);
+        final var newVal = stateInContext.getPortValue(i);
         final var oldVal = Pin.FACTORY.getValue(pinState);
         if (!newVal.equals(oldVal)) {
           Pin.FACTORY.setValue(pinState, newVal);
@@ -399,7 +399,7 @@ public class SubcircuitFactory extends InstanceFactory {
         }
       } else { // it is output-only
         final var val = pinState.getPortValue(0);
-        superState.setPort(i, val, 1);
+        stateInContext.setPort(i, val, 1);
       }
     }
   }

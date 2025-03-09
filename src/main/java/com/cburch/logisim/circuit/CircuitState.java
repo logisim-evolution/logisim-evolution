@@ -16,9 +16,11 @@ import com.cburch.logisim.comp.ComponentState;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.TelnetServer;
 import com.cburch.logisim.std.io.extra.Buzzer;
@@ -319,18 +321,26 @@ public class CircuitState implements InstanceData {
     return componentData.get(comp);
   }
 
+  private InstanceStateImpl reusableInstanceState = new InstanceStateImpl(this, null);
+
+  // FIXME: wtf?
   public InstanceState getInstanceState(Component comp) {
     final var factory = comp.getFactory();
-    if (factory instanceof InstanceFactory instanceFactory) {
-      return instanceFactory.createInstanceState(this, comp);
+    if (factory instanceof InstanceFactory) {
+      if (comp != ((InstanceComponent) comp).getInstance().getComponent())
+        throw new IllegalStateException("instanceComponent.getInstance().getComponent() is wrong");
+      reusableInstanceState.repurpose(this, comp);
+      return reusableInstanceState;
     }
     throw new RuntimeException("getInstanceState requires instance component");
   }
 
+  // FIXME: wtf?
   public InstanceState getInstanceState(Instance instance) {
     final var factory = instance.getFactory();
     if (factory instanceof InstanceFactory) {
-      return factory.createInstanceState(this, instance);
+      reusableInstanceState.repurpose(this, instance.getComponent());
+      return reusableInstanceState;
     }
     throw new RuntimeException("getInstanceState() requires instance component");
   }

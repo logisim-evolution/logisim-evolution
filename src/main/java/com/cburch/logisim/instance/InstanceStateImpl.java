@@ -22,7 +22,10 @@ public class InstanceStateImpl implements InstanceState {
   private CircuitState circuitState;
   private Component component;
 
+  //static int cnt = 0;
   public InstanceStateImpl(CircuitState circuitState, Component component) {
+    //int n = ++cnt; // System.out.println("alloc " + (++cnt));
+    //if (n % 10000 == 0) try { throw new Exception(); } catch (Exception e) { e.printStackTrace(); }
     this.circuitState = circuitState;
     this.component = component;
 
@@ -56,6 +59,10 @@ public class InstanceStateImpl implements InstanceState {
     return circuitState.createCircuitSubstateFor(component, circ);
   }
 
+  public Component getComponent() {
+    return component;
+  }
+
   @Override
   public InstanceData getData() {
     return ((InstanceData) circuitState.getData(component));
@@ -75,7 +82,6 @@ public class InstanceStateImpl implements InstanceState {
            ? instComp.getInstance()
            : null;
   }
-
   @Override
   public int getPortIndex(Port port) {
     return this.getInstance().getPorts().indexOf(port);
