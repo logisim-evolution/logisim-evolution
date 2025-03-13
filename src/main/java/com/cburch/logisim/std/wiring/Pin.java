@@ -702,13 +702,7 @@ public class Pin extends InstanceFactory {
 
   private static Value pull2(Value mod, BitWidth expectedWidth, Value pullTo) {
     if (mod.getWidth() == expectedWidth.getWidth()) {
-      Value[] vs = mod.getAll();
-      for (int i = 0; i < vs.length; i++) {
-        if (vs[i] == Value.UNKNOWN) {
-          vs[i] = pullTo;
-        }
-      }
-      return Value.create(vs);
+      return mod.pullEachBitTowards(pullTo);
     } else {
       return Value.createKnown(expectedWidth, 0);
     }

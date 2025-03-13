@@ -147,7 +147,7 @@ public class CircuitWires {
     int steps; // length of the thread (# of buses it traverses)
     ValuedBus[] bus; // buses traversed by this thread
     int[] position; // position of this thread within each of those buses
-    boolean pullUp, pullDown; // whether this thread is being pulled up, or down, or neither
+    boolean pullUp, pullDown, pullError; // whether this thread is being pulled up, or down, or error, or neither
     Value threadVal; // cached, resolved value carried by this thread (or error for conflicts, etc.)
     // threadVal is set to null when thread is dirty and should be recalculated
 
@@ -161,9 +161,12 @@ public class CircuitWires {
         Value pullHere = b.getPullValue();
         pullUp |= (pullHere == Value.TRUE);
         pullDown |= (pullHere == Value.FALSE);
+        pullError |= (pullHere == Value.ERROR);
       }
-      if (pullUp && pullDown)
+      if (pullUp && pullDown) {
         pullUp = pullDown = false;
+        pullError = true;
+      }
     }
 
     Value threadValue() {
@@ -177,10 +180,15 @@ public class CircuitWires {
         if (v != Value.NIL)
           threadVal = threadVal.combine(v.get(pos));
       }
-      if (threadVal == Value.UNKNOWN && pullUp)
-        threadVal = Value.TRUE;
-      else if (threadVal == Value.UNKNOWN && pullDown)
-        threadVal = Value.FALSE;
+      if (threadVal == Value.UNKNOWN) {
+        if (pullUp) {
+          threadVal = Value.TRUE;
+        } else if (pullDown) {
+          threadVal = Value.FALSE;
+        } else if (pullError) {
+          threadVal = Value.ERROR;
+        }
+      }
       return threadVal;
     }
   }
@@ -215,10 +223,14 @@ public class CircuitWires {
   // ValuedBus is similar to WireBundle, but also holds the dynamically-computed
   // n-bit simulation Value (formed from joining all n 1-bit values from the
   // threads passing through this bus.
+  // Degenerate case: If this bus isn't connected to any other buses (e.g. via
+  // splitters), then all bits can be calculated together in one pass, rather
+  // than calculating each thread separately then combining the results. This
+  // case is detected by checking if there are dependent buses.
   static class ValuedBus {
     int idx; // State.buses[idx] will hold this ValuedBus
     int width; // negative for invalid width
-    ValuedThread[] threads; // threads passing through this bus
+    ValuedThread[] threads; // threads passing through this bus (or null if dependentBuses is empty, or if invalid width)
 
     BusConnection[] connections; // sink and source components connected to this bus
     Location[] locations; // set of all locations for those connections
@@ -227,6 +239,7 @@ public class CircuitWires {
     Value busVal; // cached, resolved value carried by this bus (or error for conflicts, etc.)
     boolean dirty; // whether localDrivenValue and busVal and valid
     ValuedBus[] dependentBuses; // other buses affected if this one's localDrivenValue changes
+    Value pullVal; // only used if dependentBuses is empty
 
     // Location[] componentPoints; // subset of wire bundle xpoints that have components at them
     // Component[][] componentsAffected; // components at each of those points
@@ -237,6 +250,7 @@ public class CircuitWires {
       idx = i;
       filterComponents(cmap, wb.xpoints); // initializes locations[] and connections[]
       width = wb.threads == null ? -1 : wb.getWidth().getWidth();
+      pullVal = wb.getPullValue();
       dirty = true;
     }
 
@@ -260,6 +274,15 @@ public class CircuitWires {
                      HashMap<WireThread, ValuedThread> allThreads) {
       if (width <= 0)
         return;
+      boolean degenerate = true;
+      for (WireThread t : wbthreads) {
+        if (t.steps > 1) {
+          degenerate = false;
+          break;
+        }
+      }
+      if (degenerate)
+        return;
       threads = new ValuedThread[width];
       for (int i = 0; i < width; i++) {
         WireThread t = wbthreads[i];
@@ -274,6 +297,13 @@ public class CircuitWires {
     Value recalculate() {
       if (width <= 0) {
         busVal = Value.NIL;
+        dirty = false;
+        return busVal;
+      } else if (dependentBuses.length == 0) {
+        // degenerate case: threads are irrelevant
+        busVal = localDrivenValue;
+        if (pullVal != null)
+          busVal = busVal.pullEachBitTowards(pullVal);
         dirty = false;
         return busVal;
       } else if (width == 1) {
@@ -329,7 +359,7 @@ public class CircuitWires {
         allBuses.put(wb, vb);
         srcBuses.put(vb, wb);
       }
-      // create threads for all buses
+      // create threads for all buses that need them
       HashMap<WireThread, ValuedThread> allThreads = new HashMap<>();
       for (ValuedBus vb : buses)
         vb.makeThreads(srcBuses.get(vb).threads, allBuses, allThreads);
@@ -341,19 +371,26 @@ public class CircuitWires {
       }
       // compute bus dependencies
       for (ValuedBus vb : buses) {
-        if (vb.threads == null)
+        if (vb.width <= 0)
           continue;
-        HashSet<ValuedBus> deps = new HashSet<>();
-        for (ValuedThread t : vb.threads)
-          for (ValuedBus dep : t.bus)
-            if (dep != vb)
-              deps.add(dep);
-        int n = deps.size();
-        vb.dependentBuses = deps.toArray(new ValuedBus[n]);
+        if (vb.threads == null) {
+          // degenerate
+          vb.dependentBuses = EMPTY_DEPENDENCIES;
+        } else {
+          HashSet<ValuedBus> deps = new HashSet<>();
+          for (ValuedThread t : vb.threads)
+            for (ValuedBus dep : t.bus)
+              if (dep != vb)
+                deps.add(dep);
+          int n = deps.size();
+          vb.dependentBuses = deps.toArray(new ValuedBus[n]);
+        }
       }
       // mark all dirty: recomputes values and triggers component propagation
       numDirty = buses.length;
     }
+
+    static final ValuedBus[] EMPTY_DEPENDENCIES = new ValuedBus[0];
 
     Value getDrivenValue(Component c, Location loc) {
       ValuedBus vb = busAt.get(loc);
@@ -1018,9 +1055,8 @@ public class CircuitWires {
         // todo: we could keep track of the affected components here
         // System.out.printf("  loc %s not wired, accept val %s\n", p, val);
         // circState.setValueByWire(val, p);
-      } else if (vb.threads == null) {
-        // point is wired to a threadless (e.g. invalid-width) bundle:
-        // ignore new value
+      } else if (vb.width <= 0) {
+        // point is wired to a bus with invalid width: ignore new value
         // propagate NIL across entire bundle
         // for (Location buspt : vb.componentPoints)
         //   circState.setValueByWire(buspt, Value.NIL);
@@ -1032,8 +1068,8 @@ public class CircuitWires {
         // }
       } else {
         // common case... it is wired to a normal bus: update the stored value
-        // of this point on the bus, mark the bus as dirty, and mark as dirty
-        // any related buses.
+        // of this point on the bus, mark the bus as dirty, and (if not
+        // degenerate) mark as dirty any related buses.
         // System.out.printf("  loc %s is wired, processing val %s\n", p, val);
         // fixme: sort the connections list, sources first, then bidir, then sinks
         for (BusConnection bc : vb.connections) {
@@ -1065,7 +1101,7 @@ public class CircuitWires {
       }
     }
 
-    // recompute threadVal for all threads passing through dirty buses,
+    // recompute threadVal for all threads passing through dirty buses (if not degenerate),
     // recompute aggregate busVal for all dirty buses,
     // and post those results to the circuit state
     for (int i = 0; i < s.numDirty; i++) {

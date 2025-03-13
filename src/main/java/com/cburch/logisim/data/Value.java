@@ -683,4 +683,30 @@ public final class Value {
       return true; // both are same non-NIL value
     return false;
   }
+
+  public Value pullTowardsBits(Value other) {
+    // wherever this is unknown, use other's value for that bit instead
+    if (width <= 0 || unknown == 0 || other.width <= 0)
+      return this;
+    long e = error | (unknown & other.error);
+    long v = value | (unknown & other.value);
+    long u = unknown & (other.unknown | (other.width == 64 ? 0 : (-1L << other.width)));
+    return Value.create(width, e, u, v);
+  }
+
+  public Value pullEachBitTowards(Value bit) {
+    // wherever this is unknown, use bit instead
+    if (width <= 0 || unknown == 0 || bit.width <= 0)
+      return this;
+    if (bit == ERROR)
+      return Value.create(width, error | unknown, 0, value);
+    else if (bit == TRUE)
+      return Value.create(width, error, 0, value | unknown);
+    else if (bit == FALSE)
+      return Value.create(width, error, 0, value | 0);
+    else if (bit == UNKNOWN)
+      return this;
+    else
+      throw new IllegalArgumentException("pull value must be 1, 0, X, or E");
+  }
 }
