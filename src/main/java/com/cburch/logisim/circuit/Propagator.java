@@ -16,8 +16,11 @@ import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
+import com.cburch.logisim.util.QNodeQueue;
+import com.cburch.logisim.util.SplayQueue;
+import com.cburch.logisim.util.QNode;
 import java.lang.ref.WeakReference;
-//import java.util.PriorityQueue;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 public class Propagator {
@@ -76,7 +79,7 @@ public class Propagator {
   //   DrivenValue(Component c, Value v) { driver = c; val = v; }
   // }
 
-  public static class SimulatorEvent extends SplayQueue.Node
+  public static class SimulatorEvent extends QNode
       implements Comparable<SimulatorEvent> {
 
     final int time;
@@ -174,9 +177,20 @@ public class Propagator {
    */
   private volatile int simRandomShift;
 
-  // private PriorityQueue<SimulatorEvent> toProcess = new PriorityQueue<>();
-  private SplayQueue<SimulatorEvent> toProcess = new SplayQueue<>();
-  //private LinkedQueue<SimulatorEvent> toProcess = new LinkedQueue<>();
+  private class PriorityEventQueue<T extends QNode> extends PriorityQueue<T> implements QNodeQueue<T> {
+  }
+
+  // The simulator event queue can be implemented by a PriorityEventQueue,
+  // SplayQueue, or LinkedQueue. LinkedQueue seems fastest in practice, though
+  // it has poor worst-case performance. SplayQueue should have good
+  // expected-case performance, but it seems a bit slower than LinkedQueue
+  // for simpler simulations. SplayQueue is best for complex simulations.
+  // PriorityEventQueue, using Java's PriorityQueue, seems slightly worse than the
+  // others. It is trivial to switch between the implementations, just change the
+  // object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
+
+  private QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<SimulatorEvent>();
+
   private int clock = 0;
   private boolean isOscillating = false;
   private boolean oscAdding = false;

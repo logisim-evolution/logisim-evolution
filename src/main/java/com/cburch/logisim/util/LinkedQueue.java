@@ -7,32 +7,29 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.circuit;
-import static com.cburch.logisim.circuit.SplayQueue.Node;
+package com.cburch.logisim.util;
 
-// A simple linked-list queue implementation, using keys of type long, and
-// values that extend type SplayQueue.Node. This supports (approximately) a
+// A simple linked-list priority queue implementation, using keys of type long,
+// and values that extend type QNode. This supports (approximately) a
 // subset of the java.util.PriorityQueue API, but only enough to support
 // Propagator.
-public class LinkedQueue<T extends SplayQueue.Node> {
-
-  // Objects in the queue must be subclasses of SplayQueue.Node.
-
-  private Node head, tail;
+// Objects in the queue must be subclasses of QNode.
+public class LinkedQueue<T extends QNode> implements QNodeQueue<T> {
+  private QNode head, tail;
   private int size;
 
   // add(t) inserts a new node into the queue.
-  public void add(T t) {
+  public boolean add(T t) {
     size++;
 
     if (tail == null) {
       head = tail = t;
       t.left = t.right = null;
-      return;
+      return true;
     }
 
     // Find node p that should precede t.
-    Node p = tail;
+    QNode p = tail;
     while (p != null && t.key < p.key)
       p = p.left;
 
@@ -50,6 +47,7 @@ public class LinkedQueue<T extends SplayQueue.Node> {
         p.right.left = t;
       p.right = t;
     }
+    return true;
   }
 
   public int size() {
@@ -87,7 +85,7 @@ public class LinkedQueue<T extends SplayQueue.Node> {
     return t;
   }
 
-  String id(Node n) {
+  String id(QNode n) {
     if (n == null)
       return "null";
     else

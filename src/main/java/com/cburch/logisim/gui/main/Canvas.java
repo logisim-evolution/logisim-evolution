@@ -116,7 +116,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
   private volatile boolean paintDirty = false; // only for within paintComponent
-  private boolean inPaint = false; // only for within paintComponent
+  private volatile boolean inPaint = false; // only for within paintComponent
 
   public Canvas(Project proj) {
     this.proj = proj;

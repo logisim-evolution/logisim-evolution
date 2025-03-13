@@ -11,32 +11,22 @@
 // available at: https://algs4.cs.princeton.edu/33balanced/SplayBST.java
 // as implemented by Kevin Walsh (kwalsh@holycross.edu, http://mathcs.holycross.edu/~kwalsh).
 
-package com.cburch.logisim.circuit;
+package com.cburch.logisim.util;
 
 // A simple splay tree implementation, using keys of type long, and values that
-// extend type SplayQueue.Node. This supports (approximately) a subset of the
+// extend type QNode. This supports (approximately) a subset of the
 // java.util.PriorityQueue API, but only enough to support Propagator.
-public class SplayQueue<T extends SplayQueue.Node> {
-
-  // Objects in the queue must be subclasses of Node.
-  public static class Node {
-    final long key;
-    Node left, right;
-    public Node(long key) {
-      this.key = key;
-    }
-  }
-
-  // Root of the tree.
-  private Node root;
+// Objects in the queue must be subclasses of QNode.
+public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
+  private QNode root;
   private int size;
 
   // add(t) inserts a new node into the queue.
-  public void add(T t) {
+  public boolean add(T t) {
     if (root == null) {
       root = t;
       size++;
-      return;
+      return true;
     }
     root = splay(root, t.key);
     long cmp = t.key - root.key;
@@ -58,6 +48,7 @@ public class SplayQueue<T extends SplayQueue.Node> {
     } else {
       throw new IllegalArgumentException("SplayQueue keys must be unique");
     }
+    return true;
   }
 
   public int size() {
@@ -75,7 +66,7 @@ public class SplayQueue<T extends SplayQueue.Node> {
 
   // splay(t, k) rebalances the tree rooted at node t around key k, by moving a
   // node close to k (or an exact match, if it exists) up to the root.
-  private static Node splay(Node t, long k) {
+  private static QNode splay(QNode t, long k) {
     if (t == null)
       return null;
 
@@ -115,7 +106,7 @@ public class SplayQueue<T extends SplayQueue.Node> {
 
   // splay(t) rebalances the tree rooted at node t, by moving the smallest node
   // to the root.
-  private static Node splay(Node t) {
+  private static QNode splay(QNode t) {
     if (t == null)
       return null;
     if (t.left == null)
@@ -125,15 +116,15 @@ public class SplayQueue<T extends SplayQueue.Node> {
     return t.left == null ? t : rotateRight(t);
   }
 
-  private static Node rotateRight(Node t) {
-    Node x = t.left;
+  private static QNode rotateRight(QNode t) {
+    QNode x = t.left;
     t.left = x.right;
     x.right = t;
     return x;
   }
 
-  private static Node rotateLeft(Node t) {
-    Node x = t.right;
+  private static QNode rotateLeft(QNode t) {
+    QNode x = t.right;
     t.right = x.left;
     x.left = t;
     return x;
