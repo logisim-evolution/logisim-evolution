@@ -185,15 +185,28 @@ public class TikZInfo implements Cloneable {
     contents.add(new TikZBezier(s, filled));
   }
 
-  public void addRectangle(int x, int y, int width, int height, boolean filled, boolean backcolor) {
-    TikZRectangle obj = new TikZRectangle(x, y, width, height, filled);
+  public void addRectangle(int x1, int y1, int x2, int y2, boolean filled, boolean backcolor) {
+    TikZRectangle obj = new TikZRectangle(x1, y1, x2, y2, filled);
     if (backcolor) obj.setBackColor();
     contents.add(obj);
   }
 
-  public void addRoundedRectangle(
-      int x, int y, int width, int height, int arcWidth, int arcHeight, boolean filled) {
-    contents.add(new TikZRectangle(x, y, width, height, arcWidth, arcHeight, filled));
+  public void addRoundedRectangle(int x1, int y1, int x2, int y2, int arcWidth, int arcHeight, boolean filled) {
+    int width = Math.abs(x1 - x2);
+    int height = Math.abs(y1 - y2);
+    int xDiameter = Math.max(0, Math.min(arcWidth, width));
+    int yDiameter = Math.max(0, Math.min(arcHeight, height));
+    //The previous two lines implement a just-in-case data normalization.
+    //The SVG standard asserts this behavior, so I've replicated it here.
+    if ((xDiameter == 0) || (yDiameter == 0)) {
+      addRectangle(x1, y1, x2, y2, filled, false);
+      return;
+    }
+    if ((xDiameter == width) && (yDiameter == height)) {
+      addEllipse(x1, y1, width, height, filled);
+      return;
+    }
+    contents.add(new TikZRectangle(x1, y1, x2, y2, xDiameter, yDiameter, filled));
   }
 
   public void addEllipse(int x, int y, int width, int height, boolean filled) {
