@@ -307,12 +307,11 @@ public final class Value {
   }
 
   // public static final Value combineLikeWidths(Value[] vals) { // all widths must match
-  public static final Value combineLikeWidths(BusConnection[] vals) { // all widths must match
+  public static final Value combineLikeWidths(int width, BusConnection[] vals) { // all widths must match
     int n = vals.length;
     for (int i = 0; i < n; i++) {
       Value v = vals[i].drivenValue;
       if (v != null && v != NIL) {
-        int width = v.width;
         long error = v.error;
         long unknown = v.unknown;
         long value = v.value;
@@ -330,7 +329,7 @@ public final class Value {
         return Value.create(width, error, unknown, value);
       }
     }
-    return Value.NIL;
+    return Value.createUnknown(BitWidth.create(width));
   }
 
   /**
