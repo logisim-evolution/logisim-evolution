@@ -131,13 +131,13 @@ public class CircuitState implements InstanceData {
         }
         // slowpath_drivers.clear();
       } else if (action == CircuitEvent.ACTION_INVALIDATE) {
+        /* Component ends changed */
         final var comp = (Component) event.getData();
         markComponentAsDirty(comp);
         // If simulator is in single step mode, we want to hilight the
         // invalidated components (which are likely Pins, Buttons, or other
         // inputs), so pass this component to the simulator for display.
         proj.getSimulator().addPendingInput(CircuitState.this, comp);
-        // TODO detemine if this should really be missing if (base != null) base.checkComponentEnds(CircuitState.this, comp);
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
         final var map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
