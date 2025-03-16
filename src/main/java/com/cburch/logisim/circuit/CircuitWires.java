@@ -1065,7 +1065,7 @@ public class CircuitWires {
 
       ValuedBus vb = s.busAt.get(p);
       if (vb == null) {
-        System.out.printf("simulator event, but no bus: comp=%s loc=%s val=%s ", cause, p, val);
+        // System.out.printf("simulator event, but no bus: comp=%s loc=%s val=%s ", cause, p, val);
         // point is not wired: just set that point's value and be done
         // todo: we could keep track of the affected components here
         // System.out.printf("  loc %s not wired, accept val %s\n", p, val);
