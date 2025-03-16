@@ -78,6 +78,9 @@ public class CircuitWires {
     // All locations touched by a wire bundle
     ArrayList<Location> allLocations = new ArrayList<>();
 
+    // All components except wires, splitters, and pull resistors
+    ArrayList<Component> allComponents = new ArrayList<>();
+
     // Given a location, returns a list of Components that have a port at that location.
     HashMap<Location, ArrayList<Component>> componentsAtLocations = new HashMap<>();
 
@@ -217,6 +220,13 @@ public class CircuitWires {
           || (comp.getFactory() instanceof Pin);
       isBidirectional = (e.getType() == EndData.INPUT_OUTPUT);
       drivenValue = null;
+    }
+
+    @Override
+    public String toString() {
+      return String.format("component %s at %s is %sdirectional %s val %s",
+          component, location, isBidirectional ? "bi" : "uni",
+          isSink ? "sink" : "source", drivenValue);
     }
   }
 
@@ -643,6 +653,10 @@ public class CircuitWires {
 
     // All bundles are made, all threads are now sewn together.
 
+    // Record all interesting components so they can be marked as dirty when
+    // this wire connectivity map is used to initialize a new State.
+    ret.allComponents.addAll(components);
+
     // Record all component locations so they can be marked as dirty when this
     // wire connectivity map is used to initialize a new State.
     ret.allLocations.addAll(points.getAllLocations());
@@ -1037,7 +1051,8 @@ public class CircuitWires {
       // be connected to any bus), and vice versa. So we should mark all
       // components as dirty.
       circState.clearValuesByWire();
-      circState.markComponentsDirty(components);
+      circState.markComponentsDirty(map.allComponents);
+      // circState.markDirtyPoints(map.allLocations);
     }
 
     // make note of updates from simulator
@@ -1162,6 +1177,8 @@ public class CircuitWires {
       } else if (factory instanceof PullResistor) {
         pulls.remove(comp);
         comp.getAttributeSet().removeAttributeListener(tunnelListener);
+      } else {
+        components.remove(comp);
       }
     }
     points.remove(comp);
