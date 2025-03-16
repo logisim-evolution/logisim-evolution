@@ -74,10 +74,6 @@ public class TikZInfo implements Cloneable {
     return " (" + rounded(p.getX()) + "," + rounded(p.getY()) + ") ";
   }
 
-  public static String getPgfPoint(Point2D p) {
-    return "\\pgfpoint{" + p.getX() + "}{" + p.getY() + "}";
-  }
-
   @Override
   public TikZInfo clone() {
     var newInst = new TikZInfo();
@@ -918,34 +914,66 @@ public class TikZInfo implements Cloneable {
       return newIns;
     }
 
+    private static String quickPointTrim(double x, double y) {
+      return "(" + rounded(x) + "," + rounded(y) + ")";
+    }
+
+    private static String quickPoint(double x, double y) {
+      return " " + quickPointTrim(x, y) + " ";
+    }
+
     @Override
     public String getTikZCommand() {
       final var contents = new StringBuilder();
+      contents.append(filled ? "\\fill " : "\\draw ");
+      contents.append("[line width=");
+      final var ptWidth = strokeWidth * BASIC_STROKE_WIDTH;
+      contents.append(rounded(ptWidth)).append("pt, ").append(color);
+      if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
       if (rad == null) {
-        contents.append(filled ? "\\fill " : "\\draw ");
-        contents.append("[line width=");
-        final var width = strokeWidth * BASIC_STROKE_WIDTH;
-        contents.append(rounded(width)).append("pt, ").append(color);
-        if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
         contents.append("]");
         contents.append(getPoint(start));
         contents.append("rectangle");
         contents.append(getPoint(end));
         contents.setCharAt(contents.length() - 1, ';');
       } else {
-        /* TODO : change to tikz command as pgfpicture causes sometimes troubles */
-        contents.append("\\begin{pgfpicture}\n");
-        contents.append("   \\begin{pgfmagnify}{1pt}{-1pt}\n");
-        contents.append("      \\pgfsetrectcap\n");
-        contents.append("      \\pgfsetcornersarced{").append(getPgfPoint(rad)).append("}\n");
-        contents.append("      \\pgfsetlinewidth{").append(strokeWidth).append("}\n");
-        contents.append("      \\color{").append(color).append("}\n");
-        contents.append("      \\pgfsetfillopacity{").append(alpha).append("}\n");
-        contents.append("      \\pgfpathrectanglecorners{").append(getPgfPoint(start)).append("}{")
-            .append(getPgfPoint(end)).append("}\n");
-        contents.append("      \\pgfusepath{").append(filled ? "fill" : "stroke").append("}\n");
-        contents.append("   \\end{pgfmagnify}\n");
-        contents.append("\\end{pgfpicture}");
+        final double width = Math.abs(start.getX() - end.getX());
+        final double height = Math.abs(start.getY() - end.getY());
+        final double xRadius = rad.getX();
+        final double yRadius = rad.getY();
+        final double xHalf = width / 2.0;
+        final double yHalf = height / 2.0;
+        final double xGap = xHalf - xRadius;
+        final double yGap = yHalf - yRadius;
+        final double xMid = Math.min(start.getX(), end.getX()) + (width / 2.0);
+        final double yMid = Math.min(start.getY(), end.getY()) + (height / 2.0);
+        contents.append(", shift={").append(quickPointTrim(xMid, yMid)).append("}, ");
+        contents.append("x radius=").append(xRadius).append(", ");
+        contents.append("y radius=").append(yRadius).append("]");
+        if (xRadius >= xHalf) {
+          //This if check could be a "==" due to the normalization in addRoundedRectangle(),
+          //but I'm using a ">=" here just in case of floating-point funny business.
+          contents.append(quickPoint(-xHalf, -yGap));
+          contents.append("arc[start angle=180, delta angle=180] --");
+          contents.append(quickPoint(xHalf, yGap));
+          contents.append("arc[start angle=0, delta angle=180] -- cycle;");
+        } else if (yRadius >= yHalf) {
+          //This if check could be a "==" due to the normalization in addRoundedRectangle(),
+          //but I'm using a ">=" here just in case of floating-point funny business.
+          contents.append(quickPoint(xGap, -yHalf));
+          contents.append("arc[start angle=270, delta angle=180] --");
+          contents.append(quickPoint(-xGap, yHalf));
+          contents.append("arc[start angle=90, delta angle=180] -- cycle;");
+        } else {
+          contents.append(quickPoint(xGap, -yHalf));
+          contents.append("arc[start angle=270, delta angle=90] --");
+          contents.append(quickPoint(xHalf, yGap));
+          contents.append("arc[start angle=0, delta angle=90] --");
+          contents.append(quickPoint(-xGap, yHalf));
+          contents.append("arc[start angle=90, delta angle=90] --");
+          contents.append(quickPoint(-xHalf, -yGap));
+          contents.append("arc[start angle=180, delta angle=90] -- cycle;");
+        }
       }
       return contents.toString();
     }
