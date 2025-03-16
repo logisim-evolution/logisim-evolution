@@ -149,7 +149,7 @@ public class CircuitState implements InstanceData {
           for (final var repl : map.getReplacementsFor(comp)) {
             if (repl.getFactory().getClass() == compFactory) {
               found = true;
-              setData(repl, compState);
+              replaceData(repl, compState);
               break;
             }
           }
@@ -416,11 +416,9 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  void markPointAsDirty(Propagator.SimulatorEvent ev) { // Location pt, Component cause, Value drivenValue) {
+  void markPointAsDirty(Propagator.SimulatorEvent ev) {
     synchronized (dirtyLock) {
       dirtyPoints.add(ev);
-      // dirtyPoints.add(pt);
-      // dirtyPointVals.add(newVal);
     }
   }
 
@@ -581,10 +579,49 @@ public class CircuitState implements InstanceData {
     return newState;
   }
 
+  private void replaceData(Component comp, Object data) {
+    // This happens when subcirc is copy/paste/moved, which causes a new
+    // component to be created, and we want to transfer the now-defunct
+    // component's state over to the newly-created component.
+    // If comp is a subcircuit, the data will be a CircuitState.
+    // Otherwise data might be a RamState, or some other built-in component state.
+    if (data instanceof CircuitState) {
+      CircuitState sub = (CircuitState) data;
+      // DEBUG: System.out.printf("comp is %s\n", comp);
+      // DEBUG: System.out.printf("with old data %s\n", getData(comp));
+      // DEBUG: if (getData(comp) instanceof CircuitState)
+      // DEBUG:  System.out.printf("        new data parent %s\n", ((CircuitState)getData(comp)).parentComp);
+      // DEBUG: System.out.printf("setting new data %s\n", data);
+      // DEBUG: System.out.printf("        new data parent %s\n", sub.parentComp);
+      // data was already removed from componentData[orig].
+      // need to register it now under componentdata[comp], done below.
+      // also need to set parentcomp
+      // but don't need to add to substates, b/c it should already be there
+      sub.parentComp = comp;
+      CircuitState old = (CircuitState) componentData.put(comp, data);
+      synchronized (dirtyLock) {
+        // DEBUG: System.out.println("removing old substate " + old);
+        if (old != null) {
+          substates.remove(old);
+          old.parentState = null;
+        }
+        // DEBUG: System.out.println("adding new substate " + sub);
+        sub.parentState = this;
+        substates.add(sub);
+        substatesDirty = true;
+        dirtyComponents.add(comp);
+      }
+    } else {
+      componentData.put(comp, data);
+    }
+  }
+
   public void setData(Component comp, Object data) {
-    if (data instanceof CircuitState newState) {
+    if (data instanceof CircuitState) {
       // fixme: should never happen?
-      // System.out.println("fixme: setData with circuitstate... should never happen");
+      System.out.println("fixme: setData with circuitstate... should never happen");
+      Thread.dumpStack();
+      ((CircuitState) data).parentComp = comp;
     }
     componentData.put(comp, data);
   }
