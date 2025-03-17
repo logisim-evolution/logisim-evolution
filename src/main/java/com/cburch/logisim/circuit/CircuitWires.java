@@ -212,10 +212,8 @@ public class CircuitWires {
       component = comp;
       location = loc;
       EndData e = comp.getEnd(loc);
-      // if (e == null)
-      //   System.out.printf("missing end for %s at %s\n", comp, loc);
       // Special case: Pin is treated as a sink, because it needs notifications
-      // of any changes to inputs in order to set the UI color propertly.
+      // of any changes to inputs in order to set the UI color properly.
       isSink = (e.getType() == EndData.INPUT_ONLY)
           || (comp.getFactory() instanceof Pin);
       isBidirectional = (e.getType() == EndData.INPUT_OUTPUT);
@@ -250,11 +248,6 @@ public class CircuitWires {
     boolean dirty; // whether localDrivenValue and busVal and valid
     ValuedBus[] dependentBuses; // other buses affected if this one's localDrivenValue changes
     Value pullVal; // only used if dependentBuses is empty
-
-    // Location[] componentPoints; // subset of wire bundle xpoints that have components at them
-    // Component[][] componentsAffected; // components at each of those points
-    // Value[] valAtPoint;
-    // Value valAtPointSum; // cached sum of valAtPoint, or null if dirty
 
     ValuedBus(int i, WireBundle wb, Connectivity cmap) {
       idx = i;
@@ -493,7 +486,6 @@ public class CircuitWires {
   // NOTE: this could be made much more efficient in most cases to
   // avoid voiding the connectivity map.
   /*synchronized*/ boolean add(Component comp) {
-    // System.out.println("wires adding " + comp);
     var added = true;
     if (comp instanceof Wire wire) {
       added = addWire(wire);
@@ -535,7 +527,6 @@ public class CircuitWires {
 
   // To be called by getConnectivity() only
   private void computeConnectivity(Connectivity ret) {
-    // System.out.println("computing new connectivity map");
     // create bundles corresponding to wires and tunnels
     connectComponents(ret);
     connectWires(ret);
@@ -789,13 +780,13 @@ public class CircuitWires {
   static Value getBusValue(CircuitState state, Location loc) {
     State s = state.getWireData();
     if (s == null)
-      return Value.NIL; // return state.getValue(loc); // fallback, probably wrong, who cares
+      return Value.NIL; // fallback, probably wrong, who cares
     ValuedBus vb = s.busAt.get(loc);
     if (vb == null)
-      return Value.NIL; // return state.getValue(loc); // fallback, probably wrong, who cares
+      return Value.NIL; // fallback, probably wrong, who cares
     Value v = vb.busVal;
     if (v == null)
-      return Value.NIL; // return state.getValue(loc); // fallback, probably wrong, who cares
+      return Value.NIL; // fallback, probably wrong, who cares
     return v;
   }
 
@@ -957,7 +948,7 @@ public class CircuitWires {
     }
   }
 
-  /*synchronized*/ private Connectivity getConnectivity() {
+  private Connectivity getConnectivity() {
     final var map = masterConnectivity; // volatile read by AWT or simulation thread
     if (map != null) return map;
     if (SwingUtilities.isEventDispatchThread()) {
@@ -1033,10 +1024,6 @@ public class CircuitWires {
     return new WireSet(wires);
   }
 
-  // boolean isMapVoided() {
-  //   return masterBundleMap == null; // volatile read by simulation thread
-  // }
-
   void propagate(CircuitState circState, ArrayList<Propagator.SimulatorEvent> dirtyPoints) {
     Connectivity map = getConnectivity();
     ArrayList<WireThread> dirtyThreads = new ArrayList<>();
@@ -1054,7 +1041,6 @@ public class CircuitWires {
       // components as dirty.
       circState.clearValuesByWire();
       circState.markComponentsDirty(map.allComponents);
-      // circState.markDirtyPoints(map.allLocations);
     }
 
     // make note of updates from simulator
@@ -1067,27 +1053,14 @@ public class CircuitWires {
 
       ValuedBus vb = s.busAt.get(p);
       if (vb == null) {
-        // System.out.printf("simulator event, but no bus: comp=%s loc=%s val=%s ", cause, p, val);
-        // point is not wired: just set that point's value and be done
         // todo: we could keep track of the affected components here
-        // System.out.printf("  loc %s not wired, accept val %s\n", p, val);
-        // circState.setValueByWire(val, p);
       } else if (vb.width <= 0) {
         // point is wired to a bus with invalid width: ignore new value
         // propagate NIL across entire bundle
-        // for (Location buspt : vb.componentPoints)
-        //   circState.setValueByWire(buspt, Value.NIL);
-        // int n = vb.componentPoints.length;
-        // for (int i = 0; i < n; i++) {
-        //   Location buspt = vb.componentPoints[i];
-        //   Component[] affected = vb.componentsAffected[i];
-        //   circState.setValueByWire(buspt, Value.NIL, affected);
-        // }
       } else {
         // common case... it is wired to a normal bus: update the stored value
         // of this point on the bus, mark the bus as dirty, and (if not
         // degenerate) mark as dirty any related buses.
-        // System.out.printf("  loc %s is wired, processing val %s\n", p, val);
         // fixme: sort the connections list, sources first, then bidir, then sinks
         for (BusConnection bc : vb.connections) {
           if (bc.location.equals(p) && bc.component.equals(cause)) {
@@ -1128,13 +1101,6 @@ public class CircuitWires {
       if (Value.equal(old, val))
         continue;
       circState.setValueByWire(val, vb.locations, vb.connections);
-      // int n = vb.componentPoints.length;
-      // for (int j = 0; j < n; j++) {
-      //   Location p = vb.componentPoints[j];
-      //   Component[] affected = vb.componentsAffected[j];
-      //   // System.out.printf("  loc %s ready, set val %s affects %d components\n", p, val, (affected == null ? 0 : affected.length));
-      //   circState.setValueByWire(p, val, affected);
-      // }
     }
     s.numDirty = 0;
   }
@@ -1166,7 +1132,7 @@ public class CircuitWires {
     return bounds;
   }
 
-  /*synchronized*/ void remove(Component comp) {
+  void remove(Component comp) {
     if (comp instanceof Wire wire) {
       removeWire(wire);
     } else if (comp instanceof Splitter) {
@@ -1187,7 +1153,7 @@ public class CircuitWires {
     voidConnectivity();
   }
 
-  /*synchronized*/ void remove(Component comp, EndData end) {
+  void remove(Component comp, EndData end) {
     points.remove(comp, end);
     voidConnectivity();
   }
@@ -1204,14 +1170,13 @@ public class CircuitWires {
     }
   }
 
-  /*synchronized*/ void replace(Component comp, EndData oldEnd, EndData newEnd) {
+  void replace(Component comp, EndData oldEnd, EndData newEnd) {
     points.remove(comp, oldEnd);
     points.add(comp, newEnd);
     voidConnectivity();
   }
 
   private void voidConnectivity() {
-    // System.out.println("voiding connectivity info");
     // This should really only be called by AWT thread, but main() also
     // calls it during startup. It should not be called by the simulation
     // thread.

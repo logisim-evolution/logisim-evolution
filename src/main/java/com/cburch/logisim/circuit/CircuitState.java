@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.circuit;
 
-// import com.cburch.logisim.circuit.Propagator.DrivenValue;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentState;
@@ -56,15 +55,6 @@ public class CircuitState implements InstanceData {
         /* Component was added */
         // Nothing to do: CircuitWires.BundleMap will be voided, causing
         // everything to be marked dirty.
-        Component comp = (Component) event.getData();
-        // System.out.println("added comp " + comp);
-        // if (comp instanceof Wire) {
-        //   Wire w = (Wire) comp;
-        //   markPointAsDirty(w.getEnd0(), null);
-        //   markPointAsDirty(w.getEnd1(), null);
-        // } else {
-        //   markComponentAsDirty(comp);
-        // }
       } else if (action == CircuitEvent.ACTION_REMOVE) {
         /* Component was removed */
         final var comp = (Component) event.getData();
@@ -91,14 +81,9 @@ public class CircuitState implements InstanceData {
         if (comp instanceof Wire w) {
           // Nothing to do: CircuitWires.BundleMap will be voided, causing
           // everything to be marked dirty.
-          // markPointAsDirty(w.getEnd0(), null);
-          // markPointAsDirty(w.getEnd1(), null);
-          // System.out.println("removed wire " + comp);
         } else {
           // Nothing else to do: CircuitWires.BundleMap will be voided, causing
           // everything to be marked dirty.
-          // Propagator.checkComponentEnds(CircuitState.this, comp);
-          // System.out.println("removed comp " + comp);
           synchronized (dirtyLock) {
             while (dirtyComponents.remove(comp)) {
             }
@@ -124,12 +109,10 @@ public class CircuitState implements InstanceData {
         synchronized (dirtyLock) {
           dirtyComponents.clear();
           dirtyPoints.clear();
-          // dirtyPointVals.clear();
           substates.clear();
           substatesWorking = new CircuitState[0];
           substatesDirty = true;
         }
-        // slowpath_drivers.clear();
       } else if (action == CircuitEvent.ACTION_INVALIDATE) {
         /* Component ends changed */
         final var comp = (Component) event.getData();
@@ -199,24 +182,15 @@ public class CircuitState implements InstanceData {
   // you somehow froze all their inputs then removed all wires, splitters,
   // tunnels, and other connectivity within the circuit so that each component's
   // outputs could be observed in isolation.
-  // HashMap<Location, DrivenValue> slowpath_drivers = new HashMap<>(); // used by Propagator, protected by valuesLock
-  // DrivenValue[][] fastpath_drivers = new DrivenValue[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // used by Propagator, protected by valuesLock
 
   Object valuesLock = new Object();
 
-  // HashSet<Propagator.ComponentPoint> visited = new HashSet<>(); // used by Propagator
-  // int visitedNonce; // used by Propagator;
   // The visited member holds the set of every [component,loc] pair (where the
   // component is among those in this circuit) that has been visited during the
   // current iteration of Propagator.stepInternal().
 
-  //private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
-  //private HashSet<Component> dirtyComponents = new HashSet<>(); // protected by dirtyLock
   private ArrayList<Component> dirtyComponents = new ArrayList<>(); // protected by dirtyLock
-  //private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
-  //private final HashSet<Location> dirtyPoints = new HashSet<>();
-  // private ArrayList<Location> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
-  // private ArrayList<Value> dirtyPointVals = new ArrayList<>(); // protected by dirtyLock
+
   private ArrayList<Propagator.SimulatorEvent> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
   private HashSet<CircuitState> substates = new HashSet<>(); // protected by dirtyLock
   private Object dirtyLock = new Object();
@@ -299,7 +273,6 @@ public class CircuitState implements InstanceData {
       // other threads have references to this yet).
       this.dirtyComponents.addAll(src.dirtyComponents);
       this.dirtyPoints.addAll(src.dirtyPoints);
-      // this.dirtyPointVals.addAll(src.dirtyPointVals);
     }
     if (src.wireData != null) {
       this.wireData = circuit.wires.newState(this); // all buses will be marked as dirty
@@ -323,7 +296,6 @@ public class CircuitState implements InstanceData {
 
   private InstanceStateImpl reusableInstanceState = new InstanceStateImpl(this, null);
 
-  // FIXME: wtf?
   public InstanceState getInstanceState(Component comp) {
     final var factory = comp.getFactory();
     if (factory instanceof InstanceFactory) {
@@ -335,7 +307,6 @@ public class CircuitState implements InstanceData {
     throw new RuntimeException("getInstanceState requires instance component");
   }
 
-  // FIXME: wtf?
   public InstanceState getInstanceState(Instance instance) {
     final var factory = instance.getFactory();
     if (factory instanceof InstanceFactory) {
@@ -452,8 +423,6 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  // private ArrayList<Location> dirtyPointsWorking = new ArrayList<>();
-  // private ArrayList<Value> dirtyPointValsWorking = new ArrayList<>();
   private ArrayList<Propagator.SimulatorEvent> dirtyPointsWorking = new ArrayList<>();
   private CircuitState[] substatesWorking = new CircuitState[0];
   private boolean substatesDirty = true;
@@ -464,11 +433,8 @@ public class CircuitState implements InstanceData {
     }
     synchronized (dirtyLock) {
       ArrayList<Propagator.SimulatorEvent> other = dirtyPoints;
-      // ArrayList<Value> otherVals = dirtyPointVals;
       dirtyPoints = dirtyPointsWorking; // dirtyPoints is now empty
-      // dirtyPointVals = dirtyPointValsWorking; // dirtyPointVals is now empty
       dirtyPointsWorking = other; // working set is now ready to process
-      // dirtyPointValsWorking = otherVals; // working set is now ready to process
       if (substatesDirty) {
         substatesDirty = false;
         substatesWorking = substates.toArray(substatesWorking);
@@ -484,36 +450,8 @@ public class CircuitState implements InstanceData {
     // run-time exception. Instead, we now put the splitter location list in
     // the wire map itself when it is created (which is done by CircuitWires
     // carefully in a thread-safe way).
-    //
-    // if (circuit.wires.isMapVoided()) {
-    //   // Note: this is a stopgap hack until we figure out the cause of the
-    //   // concurrent modification exception.
-    //   for (int i = 3; i >= 0; i--) {
-    //     try {
-    //       dirtyPointsWorking.addAll(circuit.wires.points.getAllLocations());
-    //       break;
-    //     } catch (ConcurrentModificationException e) {
-    //       System.out.printf("warning: concurrent exception upon voided map (tries left %d)\n", i);
-    //       // try again...
-    //       try {
-    //         Thread.sleep(1);
-    //       } catch (InterruptedException e2) {
-    //         // Yes, swallow the interrupt -- if simulator thread is interrupted
-    //         // while it is in here, we want to keep going. The simulator thread
-    //         // uses interrupts only for cancelling its own sleep/wait calls, not
-    //         // this sleep call.
-    //       }
-    //       if (i == 0)
-    //         e.printStackTrace();
-    //     }
-    //   }
-    // }
-    // if (!dirtyPointsWorking.isEmpty()) {
-    // circuit.wires.propagate(this, dirtyPointsWorking, dirtyPointValsWorking);
     circuit.wires.propagate(this, dirtyPointsWorking);
     dirtyPointsWorking.clear();
-    // dirtyPointValsWorking.clear();
-    //}
 
     for (final var substate : substatesWorking) {
       if (substate == null) break;
@@ -535,8 +473,6 @@ public class CircuitState implements InstanceData {
           guiProvider.destroy();
         if (componentData.get(comp) instanceof TelnetServer telnetServer)
           telnetServer.deleteAll();
-        // it.remove(); ktt1: clear out the state instead of removing the key to
-        // prevent concurrent modification error
         componentData.put(comp, null);
       }
     }
@@ -547,12 +483,10 @@ public class CircuitState implements InstanceData {
     synchronized (dirtyLock) {
       dirtyComponents.clear();
       dirtyPoints.clear();
-      // dirtyPointVals.clear();
       for (CircuitState sub : substates) {
         sub.reset();
       }
     }
-    // slowpath_drivers.clear();
     markAllComponentsDirty();
   }
 
@@ -587,12 +521,6 @@ public class CircuitState implements InstanceData {
     // Otherwise data might be a RamState, or some other built-in component state.
     if (data instanceof CircuitState) {
       CircuitState sub = (CircuitState) data;
-      // DEBUG: System.out.printf("comp is %s\n", comp);
-      // DEBUG: System.out.printf("with old data %s\n", getData(comp));
-      // DEBUG: if (getData(comp) instanceof CircuitState)
-      // DEBUG:  System.out.printf("        new data parent %s\n", ((CircuitState)getData(comp)).parentComp);
-      // DEBUG: System.out.printf("setting new data %s\n", data);
-      // DEBUG: System.out.printf("        new data parent %s\n", sub.parentComp);
       // data was already removed from componentData[orig].
       // need to register it now under componentdata[comp], done below.
       // also need to set parentcomp
@@ -600,12 +528,10 @@ public class CircuitState implements InstanceData {
       sub.parentComp = comp;
       CircuitState old = (CircuitState) componentData.put(comp, data);
       synchronized (dirtyLock) {
-        // DEBUG: System.out.println("removing old substate " + old);
         if (old != null) {
           substates.remove(old);
           old.parentState = null;
         }
-        // DEBUG: System.out.println("adding new substate " + sub);
         sub.parentState = this;
         substates.add(sub);
         substatesDirty = true;
@@ -667,26 +593,6 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  // // for CircuitWires - to set value at point where there is no bus, just a
-  // // bunch of components
-  // void setValueByWire(Value v, Location p) {
-  //   boolean changed;
-  //   if (p.x >= 0 && p.y >= 0
-  //       && p.x % 10 == 0 && p.y % 10 == 0
-  //       && p.x < FASTPATH_GRID_WIDTH*10
-  //       && p.y < FASTPATH_GRID_HEIGHT*10) {
-  //     synchronized (valuesLock) {
-  //       changed = fastpath(p, v);
-  //     }
-  //   } else {
-  //     synchronized (valuesLock) {
-  //       changed = slowpath(p, v);
-  //     }
-  //   }
-  //   if (changed)
-  //     markDirtyComponentsAt(p);
-  // }
-
   private boolean fastpath(Location p, Value v) { // precondition: valuesLock held
     int x = p.x / 10;
     int y = p.y / 10;
@@ -717,31 +623,6 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  // private void markDirtyComponentsAt(Location p) {
-  //   boolean found = false;
-  //   for (Component comp : circuit.getComponents(p)) {
-  //     if (!(comp instanceof Wire) && !(comp instanceof Splitter)) {
-  //       found = true;
-  //       markComponentAsDirty(comp);
-  //     }
-  //   }
-  //   // NOTE: this will cause a double-propagation on components
-  //   // whose outputs have just changed.
-  //   // FIXME: huh?
-  //   if (found)
-  //     base.locationTouched(this, p);
-  // }
-
-  // private void markDirtyComponents(Location p, Component[] affected) {
-  //   for (Component comp : affected)
-  //     markComponentAsDirty(comp);
-  //   // NOTE: this will cause a double-propagation on components
-  //   // whose outputs have just changed.
-  //   // FIXME: huh?
-  //   if (affected.length > 0)
-  //     base.locationTouched(this, p);
-  // }
-
   void setWireData(CircuitWires.State data) {
     wireData = data;
   }
@@ -749,9 +630,6 @@ public class CircuitState implements InstanceData {
   private void markDirtyComponents(Location p, Component[] affected) {
     for (Component comp : affected)
       markComponentAsDirty(comp);
-    // NOTE: this will cause a double-propagation on components
-    // whose outputs have just changed.
-    // FIXME: huh?
     if (affected.length > 0)
       base.locationTouched(this, p);
   }
@@ -801,7 +679,6 @@ public class CircuitState implements InstanceData {
         Value vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
         if (!vNew.equals(vOld)) {
           pin.setValue(state, vNew);
-          // state.fireInvalidated();
           markComponentAsDirty(temporaryClock);
           // If simulator is in single step mode, we want to hilight the
           // invalidated components (which are likely Pins, Buttons, or other

@@ -306,7 +306,6 @@ public final class Value {
     }
   }
 
-  // public static final Value combineLikeWidths(Value[] vals) { // all widths must match
   public static final Value combineLikeWidths(int width, BusConnection[] vals) { // all widths must match
     int n = vals.length;
     for (int i = 0; i < n; i++) {
