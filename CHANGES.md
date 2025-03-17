@@ -9,6 +9,7 @@
   * Added option to hide/show toolbar
   * Corrected appearance of NOT gates in TikZ/SVG image export
   * Corrected disjoint corners in arrow-style Pins
+  * Improved output of rectangles with rounded corners in TikZ image export
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
