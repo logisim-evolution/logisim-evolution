@@ -49,8 +49,8 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.12.0"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
+  testImplementation(platform("org.junit:junit-bom:5.12.1"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.12.1")
   testImplementation("org.mockito:mockito-junit-jupiter:5.16.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
