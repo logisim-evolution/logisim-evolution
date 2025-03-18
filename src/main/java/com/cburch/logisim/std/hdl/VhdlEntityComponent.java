@@ -11,28 +11,23 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
-import com.cburch.hdl.HdlModel;
-import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
-import com.cburch.logisim.gui.main.Frame;
-import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
-import java.awt.Window;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.WeakHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VhdlEntityComponent extends GenericInterfaceComponent {
+public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponent> {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -41,63 +36,13 @@ public class VhdlEntityComponent extends GenericInterfaceComponent {
    */
   public static final String _ID = "VHDL Entity";
 
-  static class ContentAttribute extends Attribute<VhdlContentComponent> {
-
-    public ContentAttribute() {
-      super("content", S.getter("vhdlContentAttr"));
-    }
-
-    @Override
-    public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
-      final var proj = (source instanceof Frame frame) ? frame.getProject() : null;
-      return VhdlEntityAttributes.getContentEditor(source, value, proj);
-    }
-
-    @Override
-    public VhdlContentComponent parse(String value) {
-      VhdlContentComponent content = VhdlContentComponent.create();
-      if (!content.compare(value)) content.setContent(value);
-      return content;
-    }
-
-    @Override
-    public String toDisplayString(VhdlContentComponent value) {
-      return S.get("vhdlContentValue");
-    }
-
-    @Override
-    public String toStandardString(VhdlContentComponent value) {
-      return value.getContent();
-    }
-  }
-
-  static class VhdlEntityListener implements HdlModelListener {
-
-    final Instance instance;
-
-    VhdlEntityListener(Instance instance) {
-      this.instance = instance;
-    }
-
-    @Override
-    public void contentSet(HdlModel source) {
-      // ((InstanceState)
-      // instance).getProject().getSimulator().getVhdlSimulator().fireInvalidated();
-      instance.fireInvalidated();
-      instance.recomputeBounds();
-    }
-  }
-
   static final Logger logger = LoggerFactory.getLogger(VhdlEntityComponent.class);
 
-  public static final Attribute<VhdlContentComponent> CONTENT_ATTR = new ContentAttribute();
-
-  private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
+  public static final Attribute<VhdlContentComponent> CONTENT_ATTR = new HdlContentAttribute<>(VhdlContentComponent::create);
 
   public VhdlEntityComponent() {
-    super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true);
+    super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true, CONTENT_ATTR);
 
-    this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
   }
 
@@ -113,18 +58,6 @@ public class VhdlEntityComponent extends GenericInterfaceComponent {
     if (attrs == null) return null;
     final var atrs = (VhdlEntityAttributes) attrs;
     return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
-  }
-
-  @Override
-  protected void configureNewInstance(Instance instance) {
-    final var content = instance.getAttributeValue(CONTENT_ATTR);
-    final var listener = new VhdlEntityListener(instance);
-
-    contentListeners.put(instance, listener);
-    content.addHdlModelListener(listener);
-
-    instance.addAttributeListener();
-    updatePorts(instance);
   }
 
   @Override
@@ -145,31 +78,6 @@ public class VhdlEntityComponent extends GenericInterfaceComponent {
     }
 
     return getHDLName(attrs) + label;
-  }
-
-  @Override
-  protected String getGIAttributesName(AttributeSet attrs) {
-    final var content = attrs.getValue(CONTENT_ATTR);
-    return content.getName();
-  }
-
-  @Override
-  protected Port[] getGIAttributesInputs(AttributeSet attrs) {
-    final var content = attrs.getValue(CONTENT_ATTR);
-    return content.getInputs();
-  }
-
-  @Override
-  protected Port[] getGIAttributesOutputs(AttributeSet attrs) {
-    final var content = attrs.getValue(CONTENT_ATTR);
-    return content.getOutputs();
-  }
-
-  @Override
-  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == CONTENT_ATTR) {
-      updatePorts(instance);
-    }
   }
 
   /**

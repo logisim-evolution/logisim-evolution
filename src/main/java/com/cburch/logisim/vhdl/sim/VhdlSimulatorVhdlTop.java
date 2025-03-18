@@ -90,7 +90,7 @@ public class VhdlSimulatorVhdlTop {
             state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR).getPorts()) {
           VhdlParser.PortDescription nport =
               new VhdlParser.PortDescription(
-                  port.getToolTip(), type[port.getType()], port.getFixedBitWidth().getWidth());
+                  port.getName(), port.getType(), port.getWidthInt());
           myPorts.add(nport);
         }
       }

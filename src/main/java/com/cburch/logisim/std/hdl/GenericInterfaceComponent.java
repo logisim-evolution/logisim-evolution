@@ -9,9 +9,11 @@
 
 package com.cburch.logisim.std.hdl;
 
-import java.awt.Color;
-import java.util.Arrays;
+import static com.cburch.logisim.vhdl.Strings.S;
 
+import java.awt.Color;
+
+import com.cburch.hdl.HdlModel.PortDescription;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
@@ -69,13 +71,16 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
         GraphicsUtil.H_CENTER,
         GraphicsUtil.V_BOTTOM);
 
-    final var glbLabel = painter.getAttributeValue(StdAttr.LABEL);
-    if (glbLabel != null) {
-      final var font = g.getFont();
-      g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(
-          g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
-      g.setFont(font);
+    final var labelVis = painter.getAttributeValue(StdAttr.LABEL_VISIBILITY);
+    if (labelVis != null && labelVis.booleanValue()) {
+      final var glbLabel = painter.getAttributeValue(StdAttr.LABEL);
+      if (glbLabel != null) {
+        final var font = g.getFont();
+        g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
+        GraphicsUtil.drawCenteredText(
+            g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
+        g.setFont(font);
+      }
     }
 
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
@@ -88,7 +93,7 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
     for (var i = 0; i < inputs.length; i++)
       GraphicsUtil.drawText(
           g,
-          StringUtil.resizeString(inputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
+          StringUtil.resizeString(inputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
           bds.getX() + 5,
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_LEFT,
@@ -96,7 +101,7 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
     for (var i = 0; i < outputs.length; i++)
       GraphicsUtil.drawText(
           g,
-          StringUtil.resizeString(outputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
+          StringUtil.resizeString(outputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
           bds.getX() + WIDTH - 5,
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_RIGHT,
@@ -116,22 +121,49 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
    * Get the input ports for the given attributes.
    * The returned value is not to be modified.
    */
-  protected abstract Port[] getGIAttributesInputs(AttributeSet attrs);
+  protected abstract PortDescription[] getGIAttributesInputs(AttributeSet attrs);
 
   /**
    * Get the output ports for the given attributes.
    * The returned value is not to be modified.
    */
-  protected abstract Port[] getGIAttributesOutputs(AttributeSet attrs);
+  protected abstract PortDescription[] getGIAttributesOutputs(AttributeSet attrs);
 
   /**
    * Called by subclasses when something happens which changes anything affecting getGIAttributes* functions.
    */
   protected void updatePorts(Instance instance) {
-    Port[] inputs = getGIAttributesInputs(instance.getAttributeSet());
-    Port[] outputs = getGIAttributesOutputs(instance.getAttributeSet());
-    Port[] result = Arrays.copyOf(inputs, inputs.length + outputs.length);
-    System.arraycopy(outputs, 0, result, inputs.length, outputs.length);
+    PortDescription[] inputs = getGIAttributesInputs(instance.getAttributeSet());
+    PortDescription[] outputs = getGIAttributesOutputs(instance.getAttributeSet());
+    Port[] result = new Port[inputs.length + outputs.length];
+    int resultIndex = 0;
+
+    int i = 0;
+    for (var desc : inputs) {
+      result[resultIndex] =
+          new Port(
+              0,
+              (i * HdlCircuitComponent.PORT_GAP) + HdlCircuitComponent.HEIGHT,
+              desc.getType(),
+              desc.getWidth());
+      result[resultIndex].setToolTip(S.getter(desc.getName()));
+      resultIndex++;
+      i++;
+    }
+
+    i = 0;
+    for (var desc : outputs) {
+      result[resultIndex] =
+          new Port(
+              HdlCircuitComponent.WIDTH,
+              (i * HdlCircuitComponent.PORT_GAP) + HdlCircuitComponent.HEIGHT,
+              desc.getType(),
+              desc.getWidth());
+      result[resultIndex].setToolTip(S.getter(desc.getName()));
+      resultIndex++;
+      i++;
+    }
+
     instance.setPorts(result);
     instance.recomputeBounds();
   }

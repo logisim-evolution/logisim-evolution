@@ -12,34 +12,31 @@ package com.cburch.logisim.std.hdl;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
-public class VhdlEntityAttributes extends AbstractAttributeSet {
+public class BlifCircuitAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> attributes =
       Arrays.asList(
-          VhdlEntityComponent.CONTENT_ATTR,
+          BlifCircuitComponent.CONTENT_ATTR,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
-          StdAttr.LABEL_VISIBILITY,
-          VhdlSimConstants.SIM_NAME_ATTR);
+          StdAttr.LABEL_VISIBILITY);
 
-  private VhdlContentComponent content;
+  private BlifContentComponent content;
   private String label = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = false;
-  private String simName = "";
 
-  VhdlEntityAttributes() {
-    content = VhdlContentComponent.create();
+  BlifCircuitAttributes() {
+    content = BlifContentComponent.create();
   }
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    final var attr = (VhdlEntityAttributes) dest;
+    final var attr = (BlifCircuitAttributes) dest;
     attr.labelFont = labelFont;
     attr.content = content.clone();
   }
@@ -52,7 +49,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == VhdlEntityComponent.CONTENT_ATTR) {
+    if (attr == BlifCircuitComponent.CONTENT_ATTR) {
       return (V) content;
     }
     if (attr == StdAttr.LABEL) {
@@ -64,17 +61,14 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.LABEL_VISIBILITY) {
       return (V) labelVisible;
     }
-    if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return (V) simName;
-    }
     return null;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    if (attr == VhdlEntityComponent.CONTENT_ATTR) {
-      final var newContent = (VhdlContentComponent) value;
+    if (attr == BlifCircuitComponent.CONTENT_ATTR) {
+      final var newContent = (BlifContentComponent) value;
       if (!content.equals(newContent)) content = newContent;
       fireAttributeValueChanged(attr, value, null);
     }
@@ -95,16 +89,5 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     }
-    if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      final var name = (String) value;
-      if (value.equals(simName)) return;
-      simName = name;
-      fireAttributeValueChanged(attr, value, null);
-    }
-  }
-
-  @Override
-  public boolean isToSave(Attribute<?> attr) {
-    return attr.isToSave() && attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

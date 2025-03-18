@@ -34,9 +34,9 @@ public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var outputs = contents.getOutputs();
     var portId = 0;
     for (final var input : inputs)
-      myPorts.add(Port.INPUT, input.getToolTip(), input.getFixedBitWidth().getWidth(), portId++);
+      myPorts.add(Port.INPUT, input.getName(), input.getWidthInt(), portId++);
     for (final var output : outputs)
-      myPorts.add(Port.OUTPUT, output.getToolTip(), output.getFixedBitWidth().getWidth(), portId++);
+      myPorts.add(Port.OUTPUT, output.getName(), output.getWidthInt(), portId++);
   }
 
   @Override

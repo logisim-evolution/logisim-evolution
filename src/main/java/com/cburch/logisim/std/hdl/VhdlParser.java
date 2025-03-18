@@ -11,7 +11,7 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
-import com.cburch.logisim.data.BitWidth;
+import com.cburch.hdl.HdlModel.PortDescription;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +39,6 @@ public class VhdlParser {
 
     public IllegalVhdlContentException(Throwable cause) {
       super(cause);
-    }
-  }
-
-  // NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-  // getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-  // that in future, but for now it looks stupid in this file only.
-  public record PortDescription(String getName, String getType, int getWidthInt, BitWidth getWidth) {
-    public PortDescription(String name, String type, int width) {
-      this(name, type, width, BitWidth.create(width));
     }
   }
 

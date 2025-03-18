@@ -11,15 +11,15 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.Port;
 
 /**
  * Represents a BLIF circuit.
  */
-public class BlifCircuitComponent extends GenericInterfaceComponent {
+public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentComponent> {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -28,28 +28,19 @@ public class BlifCircuitComponent extends GenericInterfaceComponent {
    */
   public static final String _ID = "BLIFCircuit";
 
+  public static final Attribute<BlifContentComponent> CONTENT_ATTR = new HdlContentAttribute<>(BlifContentComponent::create);
+
   public BlifCircuitComponent() {
-    super(_ID, S.getter("blifComponent"), null, false);
+    super(_ID, S.getter("blifComponent"), null, false, CONTENT_ATTR);
     this.setIcon(new ArithmeticIcon("BLIF"));
+  }
+
+  @Override
+  public AttributeSet createAttributeSet() {
+    return new BlifCircuitAttributes();
   }
 
   @Override
   public void propagate(InstanceState state) {
   }
-
-  @Override
-  protected String getGIAttributesName(AttributeSet attrs) {
-    return "generic";
-  }
-
-  @Override
-  protected Port[] getGIAttributesInputs(AttributeSet attrs) {
-    return new Port[0];
-  }
-
-  @Override
-  protected Port[] getGIAttributesOutputs(AttributeSet attrs) {
-    return new Port[0];
-  }
-
 }

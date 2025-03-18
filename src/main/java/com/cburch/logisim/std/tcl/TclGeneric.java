@@ -18,6 +18,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
@@ -174,7 +175,7 @@ public class TclGeneric extends TclComponent {
     for (var i = 0; i < inputs.length; i++)
       GraphicsUtil.drawText(
           g,
-          StringUtil.resizeString(inputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
+          StringUtil.resizeString(inputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
           bds.getX() + 5,
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_LEFT,
@@ -182,7 +183,7 @@ public class TclGeneric extends TclComponent {
     for (var i = 0; i < outputs.length; i++)
       GraphicsUtil.drawText(
           g,
-          StringUtil.resizeString(outputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
+          StringUtil.resizeString(outputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
           bds.getX() + WIDTH - 5,
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_RIGHT,
@@ -195,7 +196,39 @@ public class TclGeneric extends TclComponent {
   @Override
   void updatePorts(Instance instance) {
     final var content = instance.getAttributeValue(CONTENT_ATTR);
-    instance.setPorts(content.getPorts());
-    setPorts(content.getPorts());
+    HdlModel.PortDescription[] inputs = content.getInputs();
+    HdlModel.PortDescription[] outputs = content.getOutputs();
+
+    Port[] result = new Port[inputs.length + outputs.length];
+    int resultIndex = 0;
+
+    int i = 0;
+    for (var desc : inputs) {
+      result[resultIndex] =
+          new Port(
+              0,
+              (i * PORT_GAP) + HEIGHT,
+              desc.getType(),
+              desc.getWidth());
+      result[resultIndex].setToolTip(S.getter(desc.getName()));
+      resultIndex++;
+      i++;
+    }
+
+    i = 0;
+    for (var desc : outputs) {
+      result[resultIndex] =
+          new Port(
+              WIDTH,
+              (i * PORT_GAP) + HEIGHT,
+              desc.getType(),
+              desc.getWidth());
+      result[resultIndex].setToolTip(S.getter(desc.getName()));
+      resultIndex++;
+      i++;
+    }
+
+    instance.setPorts(result);
+    setPorts(result);
   }
 }
