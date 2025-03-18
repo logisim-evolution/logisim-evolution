@@ -67,32 +67,35 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
   // splay(t, k) rebalances the tree rooted at node t around key k, by moving a
   // node close to k (or an exact match, if it exists) up to the root.
   private static QNode splay(QNode t, long k) {
-    if (t == null)
-      return null;
+    if (t == null) return null;
 
     long cmp1 = k - t.key;
     if (cmp1 < 0) {
-      if (t.left == null)
+      if (t.left == null) {
         return t; // can't go any further left
+      }
       long cmp2 = k - t.left.key;
       if (cmp2 < 0) {
         t.left.left = splay(t.left.left, k);
         t = rotateRight(t);
       } else if (cmp2 > 0) {
         t.left.right = splay(t.left.right, k);
-        if (t.left.right != null)
+        if (t.left.right != null) {
           t.left = rotateLeft(t.left);
+        }
       }
       return t.left == null ? t : rotateRight(t);
 
     } else if (cmp1 > 0) {
-      if (t.right == null)
+      if (t.right == null) {
         return t; // can't go any further right
+      }
       long cmp2 = k - t.right.key;
       if (cmp2 < 0) {
         t.right.left  = splay(t.right.left, k);
-        if (t.right.left != null)
+        if (t.right.left != null) {
           t.right = rotateRight(t.right);
+        }
       } else if (cmp2 > 0) {
         t.right.right = splay(t.right.right, k);
         t = rotateLeft(t);
@@ -107,10 +110,10 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
   // splay(t) rebalances the tree rooted at node t, by moving the smallest node
   // to the root.
   private static QNode splay(QNode t) {
-    if (t == null)
-      return null;
-    if (t.left == null)
+    if (t == null) return null;
+    if (t.left == null) {
       return t; // can't go any further left
+    }
     t.left.left = splay(t.left.left);
     t = rotateRight(t);
     return t.left == null ? t : rotateRight(t);
@@ -132,8 +135,7 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
 
   // peek() returns the smallest node, or null if the queue is empty.
   public T peek() {
-    if (root == null)
-      return null;
+    if (root == null) return null;
     root = splay(root);
     @SuppressWarnings("unchecked")
     T ret = (T) root;
@@ -142,8 +144,7 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
 
   // remove() removes the smallest node, or null if the queue is empty.
   public T remove() {
-    if (root == null)
-      return null;
+    if (root == null) return null;
     size--;
     @SuppressWarnings("unchecked")
     T t = (T) splay(root);

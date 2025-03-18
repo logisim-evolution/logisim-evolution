@@ -48,9 +48,11 @@ public interface Component extends Location.At {
   // basic information methods
 
   public default EndData getEnd(Location p) {
-    for (EndData e : getEnds())
-      if (p.equals(e.getLocation()))
+    for (EndData e : getEnds()) {
+      if (p.equals(e.getLocation())) {
         return e;
+      }
+    }
     return null;
   }
 

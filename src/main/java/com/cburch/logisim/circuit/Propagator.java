@@ -180,8 +180,9 @@ public class Propagator {
     final var logThreshold = 3 * oscThreshold / 4;
     var iters = 0;
     while (!toProcess.isEmpty()) {
-      if (iters > 0 && propListener != null)
+      if (iters > 0 && propListener != null) {
         propListener.propagationInProgress(propEvent);
+      }
       iters++;
 
       if (iters < logThreshold) {
@@ -231,11 +232,6 @@ public class Propagator {
       }
     }
     toProcess.add(new SimulatorEvent(clock + delay, eventSerialNumber, state, pt, cause, val));
-    /*
-     * DEBUGGING - comment out Simulator.log(clock + ": set " + pt + " in "
-     * + state + " to " + val + " by " + cause + " after " + delay); //
-     */
-
     eventSerialNumber++;
   }
 
@@ -296,7 +292,9 @@ public class Propagator {
     final var rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
     final var val = rand;
     var logVal = 0;
-    while ((1 << logVal) < val) logVal++;
+    while ((1 << logVal) < val) {
+      logVal++;
+    }
     simRandomShift = logVal;
   }
 

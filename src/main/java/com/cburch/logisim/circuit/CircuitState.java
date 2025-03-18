@@ -53,7 +53,7 @@ public class CircuitState implements InstanceData {
 
       if (action == CircuitEvent.ACTION_ADD) {
         /* Component was added */
-        // Nothing to do: CircuitWires.BundleMap will be voided, causing
+        // Nothing to do: CircuitWires.Connectivity will be voided, causing
         // everything to be marked dirty.
       } else if (action == CircuitEvent.ACTION_REMOVE) {
         /* Component was removed */
@@ -79,10 +79,10 @@ public class CircuitState implements InstanceData {
           guiProvider.destroy();
         }
         if (comp instanceof Wire w) {
-          // Nothing to do: CircuitWires.BundleMap will be voided, causing
+          // Nothing to do: CircuitWires.Connectivity will be voided, causing
           // everything to be marked dirty.
         } else {
-          // Nothing else to do: CircuitWires.BundleMap will be voided, causing
+          // Nothing else to do: CircuitWires.Connectivity will be voided, causing
           // everything to be marked dirty.
           synchronized (dirtyLock) {
             while (dirtyComponents.remove(comp)) {
@@ -95,9 +95,9 @@ public class CircuitState implements InstanceData {
         knownClocks = false;
         wireData = null;
         for (final var comp : componentData.keySet()) {
-          if (componentData.get(comp) instanceof ComponentDataGuiProvider dataGuiProvider)
+          if (componentData.get(comp) instanceof ComponentDataGuiProvider dataGuiProvider) {
             dataGuiProvider.destroy();
-          else if (componentData.get(comp) instanceof CircuitState circuitState) {
+          } else if (componentData.get(comp) instanceof CircuitState circuitState) {
             circuitState.reset();
           }
         }
@@ -246,8 +246,11 @@ public class CircuitState implements InstanceData {
       final var oldValue = src.componentData.get(key);
       if (oldValue instanceof CircuitState) {
         final var newValue = substateData.get(oldValue);
-        if (newValue != null) this.componentData.put(key, newValue);
-        else this.componentData.remove(key);
+        if (newValue != null) {
+          this.componentData.put(key, newValue);
+        } else {
+          this.componentData.remove(key);
+        }
       } else {
         final var newValue = (oldValue instanceof ComponentState state) ? state.clone() : oldValue;
         this.componentData.put(key, newValue);
@@ -262,8 +265,7 @@ public class CircuitState implements InstanceData {
     synchronized (src.valuesLock) {
       this.slowpath_values.putAll(src.slowpath_values); // slow path
       for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
-        System.arraycopy(src.fastpath_values[y], 0,
-            this.fastpath_values[y], 0, FASTPATH_GRID_WIDTH);
+        System.arraycopy(src.fastpath_values[y], 0, this.fastpath_values[y], 0, FASTPATH_GRID_WIDTH);
       }
     }
     synchronized (src.dirtyLock) {
@@ -299,8 +301,9 @@ public class CircuitState implements InstanceData {
   public InstanceState getInstanceState(Component comp) {
     final var factory = comp.getFactory();
     if (factory instanceof InstanceFactory) {
-      if (comp != ((InstanceComponent) comp).getInstance().getComponent())
+      if (comp != ((InstanceComponent) comp).getInstance().getComponent()) {
         throw new IllegalStateException("instanceComponent.getInstance().getComponent() is wrong");
+      }
       reusableInstanceState.repurpose(this, comp);
       return reusableInstanceState;
     }
@@ -347,15 +350,17 @@ public class CircuitState implements InstanceData {
       int y = p.y / 10;
       synchronized (valuesLock) {
         v = fastpath_values[y][x];
-        if (v == null)
+        if (v == null) {
           v = CircuitWires.getBusValue(this, p);
+        }
       }
     } else {
       // slow path
       synchronized (valuesLock) {
         v = slowpath_values.get(p);
-        if (v == null)
+        if (v == null) {
           v = CircuitWires.getBusValue(this, p);
+        }
       }
     }
     return v != null ? v : Value.createUnknown(circuit.getWidth(p));
@@ -411,8 +416,9 @@ public class CircuitState implements InstanceData {
       for (Component comp : dirtyComponentsWorking) {
         comp.propagate(this);
         // pin values also get propagated to parent state
-        if (comp.getFactory() instanceof Pin && parentState != null)
+        if (comp.getFactory() instanceof Pin && parentState != null) {
           parentComp.propagate(parentState);
+        }
       }
     } finally {
       dirtyComponentsWorking.clear();
@@ -469,10 +475,8 @@ public class CircuitState implements InstanceData {
       } else if (comp.getFactory() instanceof Buzzer) {
         Buzzer.stopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
-        if (componentData.get(comp) instanceof ComponentDataGuiProvider guiProvider)
-          guiProvider.destroy();
-        if (componentData.get(comp) instanceof TelnetServer telnetServer)
-          telnetServer.deleteAll();
+        if (componentData.get(comp) instanceof ComponentDataGuiProvider guiProvider) guiProvider.destroy();
+        if (componentData.get(comp) instanceof TelnetServer telnetServer) telnetServer.deleteAll();
         componentData.put(comp, null);
       }
     }
@@ -557,9 +561,11 @@ public class CircuitState implements InstanceData {
   }
 
   private void clearFastpathGrid() { // precondition: valuesLock held
-    for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++)
-      for (int x = 0; x < FASTPATH_GRID_WIDTH; x++)
+    for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
+      for (int x = 0; x < FASTPATH_GRID_WIDTH; x++) {
         fastpath_values[y][x] = null;
+      }
+    }
   }
 
   // for CircuitWires - to set value at point
@@ -580,8 +586,9 @@ public class CircuitState implements InstanceData {
       base.locationTouched(this, p);
     }
     for (CircuitWires.BusConnection bc : connections) {
-      if (bc.isSink || (bc.isBidirectional && !Value.equal(v, bc.drivenValue)))
+      if (bc.isSink || (bc.isBidirectional && !Value.equal(v, bc.drivenValue))) {
         markComponentAsDirty(bc.component);
+      }
     }
   }
 
@@ -628,16 +635,19 @@ public class CircuitState implements InstanceData {
   }
 
   private void markDirtyComponents(Location p, Component[] affected) {
-    for (Component comp : affected)
+    for (Component comp : affected) {
       markComponentAsDirty(comp);
-    if (affected.length > 0)
+    }
+    if (affected.length > 0) {
       base.locationTouched(this, p);
+    }
   }
 
   boolean toggleClocks(int ticks) {
     var hasClocks = false;
-    if (temporaryClock != null)
+    if (temporaryClock != null) {
       hasClocks |= temporaryClockValidateOrTick(ticks);
+    }
 
     for (Component clock : circuit.getClocks()) {
       hasClocks = true;

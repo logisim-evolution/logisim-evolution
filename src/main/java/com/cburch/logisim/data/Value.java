@@ -17,14 +17,6 @@ import java.util.Arrays;
 
 public final class Value {
 
-  private static int hashcode(int width, long error, long unknown, long value) {
-    var hashCode = width;
-    hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
-    hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
-    hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
-    return hashCode;
-  }
-
   private static Value create(int width, long error, long unknown, long value) {
     if (width == 0) {
       return Value.NIL;
@@ -59,9 +51,9 @@ public final class Value {
     Object obj = cache.get(hashCode);
     if (obj != null) {
       Value val = (Value) obj;
-      if (val.value == value && val.width == width
-          && val.error == error && val.unknown == unknown)
+      if (val.value == value && val.width == width && val.error == error && val.unknown == unknown) {
         return val;
+      }
     }
     Value ret = new Value(width, error, unknown, value);
     cache.put(hashCode, ret);
@@ -196,6 +188,14 @@ public final class Value {
     }
   }
 
+  private static int hashcode(int width, long error, long unknown, long value) {
+    var hashCode = width;
+    hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
+    hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
+    hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
+    return hashCode;
+  }
+
   public static char TRUECHAR = AppPreferences.TRUE_CHAR.get().charAt(0);
   public static char FALSECHAR = AppPreferences.FALSE_CHAR.get().charAt(0);
   public static char UNKNOWNCHAR = AppPreferences.UNKNOWN_CHAR.get().charAt(0);
@@ -306,7 +306,7 @@ public final class Value {
     }
   }
 
-  public static final Value combineLikeWidths(int width, BusConnection[] vals) { // all widths must match
+  public static Value combineLikeWidths(int width, BusConnection[] vals) { // all widths must match
     int n = vals.length;
     for (int i = 0; i < n; i++) {
       Value v = vals[i].drivenValue;
@@ -316,10 +316,10 @@ public final class Value {
         long value = v.value;
         for (int j = i + 1; j < n; j++) {
           v = vals[j].drivenValue;
-          if (v == null || v == NIL)
-            continue;
-          if (v.width != width)
-            throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in Value.combine");
+          if (v == null || v == NIL) continue;
+          if (v.width != width) {
+            throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in Value.combineLikeWidths");
+          }
           long disagree = (value ^ v.value) & ~(unknown | v.unknown);
           error |= v.error | disagree;
           unknown &= v.unknown;
@@ -675,17 +675,18 @@ public final class Value {
   }
 
   public static boolean equal(Value a, Value b) {
-    if ((a == null || a == Value.NIL) && (b == null || b == Value.NIL))
+    if ((a == null || a == Value.NIL) && (b == null || b == Value.NIL)) {
       return true; // both are effectively NIL
-    if (a != null && b != null && a.equals(b))
+    }
+    if (a != null && b != null && a.equals(b)) {
       return true; // both are same non-NIL value
+    }
     return false;
   }
 
   public Value pullTowardsBits(Value other) {
     // wherever this is unknown, use other's value for that bit instead
-    if (width <= 0 || unknown == 0 || other.width <= 0)
-      return this;
+    if (width <= 0 || unknown == 0 || other.width <= 0) return this;
     long e = error | (unknown & other.error);
     long v = value | (unknown & other.value);
     long u = unknown & (other.unknown | (other.width == 64 ? 0 : (-1L << other.width)));
@@ -694,17 +695,17 @@ public final class Value {
 
   public Value pullEachBitTowards(Value bit) {
     // wherever this is unknown, use bit instead
-    if (width <= 0 || unknown == 0 || bit.width <= 0)
-      return this;
-    if (bit == ERROR)
+    if (width <= 0 || unknown == 0 || bit.width <= 0) return this;
+    if (bit == ERROR) {
       return Value.create(width, error | unknown, 0, value);
-    else if (bit == TRUE)
+    } else if (bit == TRUE) {
       return Value.create(width, error, 0, value | unknown);
-    else if (bit == FALSE)
+    } else if (bit == FALSE) {
       return Value.create(width, error, 0, value | 0);
-    else if (bit == UNKNOWN)
+    } else if (bit == UNKNOWN) {
       return this;
-    else
+    } else {
       throw new IllegalArgumentException("pull value must be 1, 0, X, or E");
+    }
   }
 }

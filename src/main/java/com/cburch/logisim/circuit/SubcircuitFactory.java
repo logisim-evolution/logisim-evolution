@@ -222,8 +222,11 @@ public class SubcircuitFactory extends InstanceFactory {
       var backs = false;
       while (back >= 0 && back <= label.length() - 2) {
         final var c = label.charAt(back + 1);
-        if (c == 'n') lines++;
-        else if (c == '\\') backs = true;
+        if (c == 'n') {
+          lines++;
+        } else if (c == '\\') {
+          backs = true;
+        }
         back = label.indexOf('\\', back + 2);
       }
 
@@ -299,20 +302,22 @@ public class SubcircuitFactory extends InstanceFactory {
     CircuitState subState = (CircuitState) superState.getData(comp);
     if (subState == null) {
       subState = superState.createCircuitSubstateFor(comp, source);
-      if (comp instanceof InstanceComponent)
+      if (comp instanceof InstanceComponent) {
         ((InstanceComponent) comp).fireInvalidated();
-      else
+      } else {
         System.out.println("wrong kind... " + comp);
+      }
     }
     return subState;
   }
 
   private CircuitState getSubstate(InstanceState stateInContext) {
-    if (stateInContext instanceof InstanceStateImpl)
+    if (stateInContext instanceof InstanceStateImpl) {
       return getSubstate(((InstanceStateImpl) stateInContext).getCircuitState(),
           ((InstanceStateImpl) stateInContext).getComponent());
-    else
+    } else {
       throw new IllegalArgumentException("getSubstate on wrong type " + stateInContext);
+    }
   }
 
   @Override
@@ -408,12 +413,13 @@ public class SubcircuitFactory extends InstanceFactory {
   public void paintIcon(InstancePainter painter) {
     final var g2 = (Graphics2D) painter.getGraphics().create();
     final var attrs = (CircuitAttributes) painter.getAttributeSet();
-    if (attrs.getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CLASSIC))
+    if (attrs.getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CLASSIC)) {
       paintClasicIcon(g2);
-    else if (attrs
-        .getValue(CircuitAttributes.APPEARANCE_ATTR)
-        .equals(CircuitAttributes.APPEAR_FPGA)) paintHCIcon(g2);
-    else paintEvolutionIcon(g2);
+    } else if (attrs.getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_FPGA)) {
+      paintHCIcon(g2);
+    } else {
+      paintEvolutionIcon(g2);
+    }
     g2.dispose();
   }
 
@@ -435,8 +441,7 @@ public class SubcircuitFactory extends InstanceFactory {
         AppPreferences.getScaled(14));
     final var wh = AppPreferences.getScaled(3);
     for (var y = 0; y < 3; y++) {
-      if (y == 1) g2.setColor(Value.trueColor);
-      else g2.setColor(Value.falseColor);
+      g2.setColor(y == 1 ? Value.trueColor : Value.falseColor);
       g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(y * 4 + 3), wh, wh);
       if (y < 2) {
         g2.setColor(Value.unknownColor);
@@ -461,8 +466,7 @@ public class SubcircuitFactory extends InstanceFactory {
         (float) (AppPreferences.getIconSize() / 4 - l.getBounds().getCenterY()));
     final var wh = AppPreferences.getScaled(3);
     for (int y = 1; y < 3; y++) {
-      if (y == 1) g2.setColor(Value.trueColor);
-      else g2.setColor(Value.falseColor);
+      g2.setColor(y == 1 ? Value.trueColor : Value.falseColor);
       g2.fillOval(AppPreferences.getScaled(0), AppPreferences.getScaled(y * 4 + 3), wh, wh);
       if (y < 2) {
         g2.setColor(Value.unknownColor);

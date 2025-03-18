@@ -29,7 +29,6 @@ import com.cburch.logisim.util.IteratorUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -173,15 +172,15 @@ public class CircuitWires {
     }
 
     Value threadValue() {
-      if (threadVal != null)
-        return threadVal;
+      if (threadVal != null) return threadVal;
       threadVal = Value.UNKNOWN;
       for (int i = 0; i < steps; i++) {
         ValuedBus vb = bus[i];
         int pos = position[i];
         Value v = vb.localDrivenValue;
-        if (v != Value.NIL)
+        if (v != Value.NIL) {
           threadVal = threadVal.combine(v.get(pos));
+        }
       }
       if (threadVal == Value.UNKNOWN) {
         if (pullUp) {
@@ -262,11 +261,11 @@ public class CircuitWires {
       ArrayList<BusConnection> conns = new ArrayList<>();
       for (Location p : xpoints) {
         ArrayList<Component> a = cmap.componentsAtLocations.get(p);
-        if (a == null)
-          continue;
+        if (a == null) continue;
         locs.add(p);
-        for (Component c : a)
+        for (Component c : a) {
           conns.add(new BusConnection(c, p));
+        }
       }
       int n = locs.size();
       locations = n == xpoints.length ? xpoints : locs.toArray(new Location[n]);
@@ -275,8 +274,7 @@ public class CircuitWires {
 
     void makeThreads(WireThread[] wbthreads, HashMap<WireBundle, ValuedBus> allBuses,
                      HashMap<WireThread, ValuedThread> allThreads) {
-      if (width <= 0)
-        return;
+      if (width <= 0) return;
       boolean degenerate = true;
       for (WireThread t : wbthreads) {
         if (t.steps > 1) {
@@ -284,8 +282,7 @@ public class CircuitWires {
           break;
         }
       }
-      if (degenerate)
-        return;
+      if (degenerate) return;
       threads = new ValuedThread[width];
       for (int i = 0; i < width; i++) {
         WireThread t = wbthreads[i];
@@ -305,8 +302,9 @@ public class CircuitWires {
       } else if (dependentBuses.length == 0) {
         // degenerate case: threads are irrelevant
         busVal = localDrivenValue;
-        if (pullVal != null)
+        if (pullVal != null) {
           busVal = busVal.pullEachBitTowards(pullVal);
+        }
         dirty = false;
         return busVal;
       } else if (width == 1) {
@@ -318,14 +316,15 @@ public class CircuitWires {
       for (int i = 0; i < width; i++) {
         long mask = 1L << i;
         Value tv = threads[i].threadValue();
-        if (tv == Value.TRUE)
+        if (tv == Value.TRUE) {
           value |= mask;
-        else if (tv == Value.FALSE)
+        } else if (tv == Value.FALSE) {
           ;
-        else if (tv == Value.UNKNOWN)
+        } else if (tv == Value.UNKNOWN) {
           unknown |= mask;
-        else
+        } else {
           error |= mask;
+        }
       }
       busVal = Value.create_unsafe(width, error, unknown, value);
       dirty = false;
@@ -364,29 +363,35 @@ public class CircuitWires {
       }
       // create threads for all buses that need them
       HashMap<WireThread, ValuedThread> allThreads = new HashMap<>();
-      for (ValuedBus vb : buses)
+      for (ValuedBus vb : buses) {
         vb.makeThreads(srcBuses.get(vb).threads, allBuses, allThreads);
+      }
       // initialize BusConnection driven values from previous State, if any,
       // but only if they are not sinks (or pins, which always count as sinks)
       if (prev != null) {
-        for (ValuedBus vb : buses)
-          for (BusConnection bc : vb.connections)
-            if (!bc.isSink)
+        for (ValuedBus vb : buses) {
+          for (BusConnection bc : vb.connections) {
+            if (!bc.isSink) {
               bc.drivenValue = prev.getDrivenValue(bc.component, bc.location);
+            }
+          }
+        }
       }
       // compute bus dependencies
       for (ValuedBus vb : buses) {
-        if (vb.width <= 0)
-          continue;
+        if (vb.width <= 0) continue;
         if (vb.threads == null) {
           // degenerate
           vb.dependentBuses = EMPTY_DEPENDENCIES;
         } else {
           HashSet<ValuedBus> deps = new HashSet<>();
-          for (ValuedThread t : vb.threads)
-            for (ValuedBus dep : t.bus)
-              if (dep != vb)
+          for (ValuedThread t : vb.threads) {
+            for (ValuedBus dep : t.bus) {
+              if (dep != vb) {
                 deps.add(dep);
+              }
+            }
+          }
           int n = deps.size();
           vb.dependentBuses = deps.toArray(new ValuedBus[n]);
         }
@@ -399,11 +404,11 @@ public class CircuitWires {
 
     Value getDrivenValue(Component c, Location loc) {
       ValuedBus vb = busAt.get(loc);
-      if (vb == null)
-        return null;
+      if (vb == null) return null;
       for (BusConnection bc : vb.connections) {
-        if (bc.component.equals(c) && bc.location.equals(loc))
+        if (bc.component.equals(c) && bc.location.equals(loc)) {
           return bc.drivenValue;
+        }
       }
       return null;
     }
@@ -443,8 +448,9 @@ public class CircuitWires {
         buses[vb.idx] = vb;
       }
       if (vb.threads != null) { // invalidate threads
-        for (ValuedThread vt : vb.threads)
+        for (ValuedThread vt : vb.threads) {
           vt.threadVal = null;
+        }
       }
       vb.dirty = true;
       numDirty++;
@@ -469,8 +475,9 @@ public class CircuitWires {
     @Override
     public void attributeValueChanged(AttributeEvent e) {
       final var attr = e.getAttribute();
-      if (attr == StdAttr.LABEL || attr == PullResistor.ATTR_PULL_TYPE)
+      if (attr == StdAttr.LABEL || attr == PullResistor.ATTR_PULL_TYPE) {
         voidConnectivity();
+      }
     }
   }
 
@@ -590,8 +597,9 @@ public class CircuitWires {
       if (width != BitWidth.UNKNOWN) {
         int n = width.getWidth();
         b.threads = new WireThread[n];
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
           b.threads[i] = new WireThread();
+        }
       }
     }
 
@@ -639,8 +647,9 @@ public class CircuitWires {
     // finish constructing the threads
     for (WireBundle b : ret.getBundles()) {
       if (b.threads != null) {
-        for (WireThread t : b.threads)
+        for (WireThread t : b.threads) {
           t.finishConstructing();
+        }
       }
     }
 
@@ -661,14 +670,15 @@ public class CircuitWires {
     for (Location p : ret.allLocations) {
       ArrayList<Component> a = null;
       for (Component comp : points.getComponents(p)) {
-        if ((comp instanceof Wire) || (comp instanceof Splitter))
-          continue;
-        if (a == null)
+        if ((comp instanceof Wire) || (comp instanceof Splitter)) continue;
+        if (a == null) {
           a = new ArrayList<Component>();
+        }
         a.add(comp);
       }
-      if (a != null)
+      if (a != null) {
         ret.componentsAtLocations.put(p, a);
+      }
     }
 
     // Compute the exception set before leaving.
@@ -680,7 +690,9 @@ public class CircuitWires {
     }
     for (final var wireBundle : ret.getBundles()) {
       final var e = wireBundle.getWidthIncompatibilityData();
-      if (e != null) ret.addWidthIncompatibilityData(e);
+      if (e != null) {
+        ret.addWidthIncompatibilityData(e);
+      }
     }
   }
 
@@ -744,8 +756,7 @@ public class CircuitWires {
     // of a component
     for (Component comp : components) {
       for (EndData e : comp.getEnds()) {
-        if (e.getType() == EndData.INPUT_ONLY)
-          continue;
+        if (e.getType() == EndData.INPUT_ONLY) continue;
         Location loc = e.getLocation();
         WireBundle b = ret.getBundleAt(loc);
         if (b == null) {
@@ -779,14 +790,17 @@ public class CircuitWires {
 
   static Value getBusValue(CircuitState state, Location loc) {
     State s = state.getWireData();
-    if (s == null)
+    if (s == null) {
       return Value.NIL; // fallback, probably wrong, who cares
+    }
     ValuedBus vb = s.busAt.get(loc);
-    if (vb == null)
+    if (vb == null) {
       return Value.NIL; // fallback, probably wrong, who cares
+    }
     Value v = vb.busVal;
-    if (v == null)
+    if (v == null) {
       return Value.NIL; // fallback, probably wrong, who cares
+    }
     return v;
   }
 
@@ -1065,20 +1079,19 @@ public class CircuitWires {
         for (BusConnection bc : vb.connections) {
           if (bc.location.equals(p) && bc.component.equals(cause)) {
             Value old = bc.drivenValue;
-            if (Value.equal(old, val))
-              continue;
+            if (Value.equal(old, val)) continue;
             bc.drivenValue = val;
             s.markDirty(vb);
-            for (ValuedBus dep : vb.dependentBuses)
+            for (ValuedBus dep : vb.dependentBuses) {
               s.markDirty(dep);
+            }
             break;
           }
         }
       }
     }
 
-    if (s.numDirty <= 0)
-      return;
+    if (s.numDirty <= 0) return;
 
     // recompute localDrivenValue for each dirty bus
     for (int i = 0; i < s.numDirty; i++) {
@@ -1098,8 +1111,7 @@ public class CircuitWires {
       ValuedBus vb = s.buses[i];
       Value old = vb.busVal;
       Value val = vb.recalculate();
-      if (Value.equal(old, val))
-        continue;
+      if (Value.equal(old, val)) continue;
       circState.setValueByWire(val, vb.locations, vb.connections);
     }
     s.numDirty = 0;

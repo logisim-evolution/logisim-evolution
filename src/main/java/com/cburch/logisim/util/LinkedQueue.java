@@ -30,8 +30,9 @@ public class LinkedQueue<T extends QNode> implements QNodeQueue<T> {
 
     // Find node p that should precede t.
     QNode p = tail;
-    while (p != null && t.key < p.key)
+    while (p != null && t.key < p.key) {
       p = p.left;
+    }
 
     if (p == null) {
       t.right = head;
@@ -41,10 +42,11 @@ public class LinkedQueue<T extends QNode> implements QNodeQueue<T> {
     } else {
       t.right = p.right;
       t.left = p;
-      if (p.right == null)
+      if (p.right == null) {
         tail = t;
-      else
+      } else {
         p.right.left = t;
+      }
       p.right = t;
     }
     return true;
@@ -72,24 +74,25 @@ public class LinkedQueue<T extends QNode> implements QNodeQueue<T> {
 
   // remove() removes the smallest node, or null if the queue is empty.
   public T remove() {
-    if (head == null)
-      return null;
+    if (head == null) return null;
     size--;
     @SuppressWarnings("unchecked")
     T t = (T) head;
     head = head.right;
-    if (head == null)
+    if (head == null) {
       tail = null;
-    else
+    } else {
       head.left = null;
+    }
     return t;
   }
 
   String id(QNode n) {
-    if (n == null)
+    if (n == null) {
       return "null";
-    else
+    } else {
       return "@" + n.hashCode();
+    }
   }
 
 }

@@ -36,8 +36,7 @@ class WireThread {
   }
 
   void finishConstructing() {
-    if (tempBundlePositions == null)
-      return;
+    if (tempBundlePositions == null) return;
     steps = tempBundlePositions.size();
     bundle = new WireBundle[steps];
     position = new int[steps];
@@ -64,7 +63,8 @@ class WireThread {
   void unite(WireThread other) {
     WireThread us = this.getRepresentative();
     WireThread them = other.getRepresentative();
-    if (us != them)
+    if (us != them) {
       us.representative = them;
+    }
   }
 }
