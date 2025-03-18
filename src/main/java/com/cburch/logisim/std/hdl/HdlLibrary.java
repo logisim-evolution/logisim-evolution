@@ -28,8 +28,10 @@ public class HdlLibrary extends Library {
   public static final String _ID = "HDL-IP";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
+      new FactoryDescription(
+          VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
+      new FactoryDescription(
+          BlifCircuitComponent.class, S.getter("blifComponent"), new ArithmeticIcon("BLIF"))
   };
 
   private List<Tool> tools = null;
