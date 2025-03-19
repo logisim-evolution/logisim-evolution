@@ -173,27 +173,16 @@ public class CircuitState implements InstanceData {
   // probe at some location on the circuit sheet.
   Map<Location, Value> slowpath_values = new HashMap<>(); // protected by valuesLock
   Value[][] fastpath_values = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // protected by valuesLock
-
-  // slowpath_drivers and fastpass_drivers store {component,value} pairs for each
-  // component that is currently emitting a value *into* this circuit, i.e.
-  // the values that sources/drivers are putting out and that will ultimately
-  // get propagated along wires and busses to other points in the circuit. These
-  // are essentially the values you would see at the outputs of components if
-  // you somehow froze all their inputs then removed all wires, splitters,
-  // tunnels, and other connectivity within the circuit so that each component's
-  // outputs could be observed in isolation.
-
-  Object valuesLock = new Object();
+  final Object valuesLock = new Object();
 
   // The visited member holds the set of every [component,loc] pair (where the
   // component is among those in this circuit) that has been visited during the
   // current iteration of Propagator.stepInternal().
 
   private ArrayList<Component> dirtyComponents = new ArrayList<>(); // protected by dirtyLock
-
   private ArrayList<Propagator.SimulatorEvent> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
   private HashSet<CircuitState> substates = new HashSet<>(); // protected by dirtyLock
-  private Object dirtyLock = new Object();
+  private final Object dirtyLock = new Object();
 
   private static int lastId = 0;
   private final int id = lastId++;
@@ -264,7 +253,7 @@ public class CircuitState implements InstanceData {
     this.slowpath_values.clear(); // slow path
     synchronized (src.valuesLock) {
       this.slowpath_values.putAll(src.slowpath_values); // slow path
-      for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
+      for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
         System.arraycopy(src.fastpath_values[y], 0, this.fastpath_values[y], 0, FASTPATH_GRID_WIDTH);
       }
     }
@@ -340,30 +329,30 @@ public class CircuitState implements InstanceData {
   }
 
   public Value getValue(Location p) {
-    Value v = null;
+    Value value = null;
     if (p.x >= 0 && p.y >= 0
         && p.x % 10 == 0 && p.y % 10 == 0
         && p.x < FASTPATH_GRID_WIDTH * 10
         && p.y < FASTPATH_GRID_HEIGHT * 10) {
       // fast path
-      int x = p.x / 10;
-      int y = p.y / 10;
+      final var x = p.x / 10;
+      final var y = p.y / 10;
       synchronized (valuesLock) {
-        v = fastpath_values[y][x];
-        if (v == null) {
-          v = CircuitWires.getBusValue(this, p);
+        value = fastpath_values[y][x];
+        if (value == null) {
+          value = CircuitWires.getBusValue(this, p);
         }
       }
     } else {
       // slow path
       synchronized (valuesLock) {
-        v = slowpath_values.get(p);
-        if (v == null) {
-          v = CircuitWires.getBusValue(this, p);
+        value = slowpath_values.get(p);
+        if (value == null) {
+          value = CircuitWires.getBusValue(this, p);
         }
       }
     }
-    return v != null ? v : Value.createUnknown(circuit.getWidth(p));
+    return value != null ? value : Value.createUnknown(circuit.getWidth(p));
   }
 
   CircuitWires.State getWireData() {
@@ -404,7 +393,7 @@ public class CircuitState implements InstanceData {
       throw new IllegalStateException("INTERNAL ERROR: dirtyComponentsWorking not empty");
     }
     synchronized (dirtyLock) {
-      ArrayList<Component> other = dirtyComponents;
+      final var other = dirtyComponents;
       dirtyComponents = dirtyComponentsWorking; // dirtyComponents is now empty
       dirtyComponentsWorking = other; // working set is now ready to process
       if (substatesDirty) {
@@ -413,7 +402,7 @@ public class CircuitState implements InstanceData {
       }
     }
     try { // comp.propagate() can fail if external (or std) library is buggy
-      for (Component comp : dirtyComponentsWorking) {
+      for (final var comp : dirtyComponentsWorking) {
         comp.propagate(this);
         // pin values also get propagated to parent state
         if (comp.getFactory() instanceof Pin && parentState != null) {
@@ -423,7 +412,7 @@ public class CircuitState implements InstanceData {
     } finally {
       dirtyComponentsWorking.clear();
     }
-    for (CircuitState substate : substatesWorking) {
+    for (final var substate : substatesWorking) {
       if (substate == null) break;
       substate.processDirtyComponents();
     }
@@ -438,7 +427,7 @@ public class CircuitState implements InstanceData {
       throw new IllegalStateException("INTERNAL ERROR: dirtyPointsWorking not empty");
     }
     synchronized (dirtyLock) {
-      ArrayList<Propagator.SimulatorEvent> other = dirtyPoints;
+      final var other = dirtyPoints;
       dirtyPoints = dirtyPointsWorking; // dirtyPoints is now empty
       dirtyPointsWorking = other; // working set is now ready to process
       if (substatesDirty) {
@@ -487,7 +476,7 @@ public class CircuitState implements InstanceData {
     synchronized (dirtyLock) {
       dirtyComponents.clear();
       dirtyPoints.clear();
-      for (CircuitState sub : substates) {
+      for (final var sub : substates) {
         sub.reset();
       }
     }
@@ -495,7 +484,7 @@ public class CircuitState implements InstanceData {
   }
 
   public CircuitState createCircuitSubstateFor(Component comp, Circuit circ) {
-    CircuitState oldState = (CircuitState) componentData.get(comp);
+    final var oldState = (CircuitState) componentData.get(comp);
     if (oldState != null && oldState.parentComp == comp) {
       // fixme: Does this ever happen?
       System.out.println("fixme: removed stale circuitstate... should never happen");
@@ -506,7 +495,7 @@ public class CircuitState implements InstanceData {
       oldState.parentState = null;
       oldState.parentComp = null;
     }
-    CircuitState newState = new CircuitState(proj, circ, base);
+    final var newState = new CircuitState(proj, circ, base);
     synchronized (dirtyLock) {
       substates.add(newState);
       substatesDirty = true;
@@ -524,13 +513,13 @@ public class CircuitState implements InstanceData {
     // If comp is a subcircuit, the data will be a CircuitState.
     // Otherwise data might be a RamState, or some other built-in component state.
     if (data instanceof CircuitState) {
-      CircuitState sub = (CircuitState) data;
+      final var sub = (CircuitState) data;
       // data was already removed from componentData[orig].
       // need to register it now under componentdata[comp], done below.
       // also need to set parentcomp
       // but don't need to add to substates, b/c it should already be there
       sub.parentComp = comp;
-      CircuitState old = (CircuitState) componentData.put(comp, data);
+      final var old = (CircuitState) componentData.put(comp, data);
       synchronized (dirtyLock) {
         if (old != null) {
           substates.remove(old);
@@ -561,8 +550,8 @@ public class CircuitState implements InstanceData {
   }
 
   private void clearFastpathGrid() { // precondition: valuesLock held
-    for (int y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
-      for (int x = 0; x < FASTPATH_GRID_WIDTH; x++) {
+    for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
+      for (var x = 0; x < FASTPATH_GRID_WIDTH; x++) {
         fastpath_values[y][x] = null;
       }
     }
@@ -570,7 +559,7 @@ public class CircuitState implements InstanceData {
 
   // for CircuitWires - to set value at point
   void setValueByWire(Value v, Location[] points, CircuitWires.BusConnection[] connections) {
-    for (Location p : points) {
+    for (final var p : points) {
       if (p.x >= 0 && p.y >= 0
           && p.x % 10 == 0 && p.y % 10 == 0
           && p.x < FASTPATH_GRID_WIDTH * 10
@@ -585,7 +574,7 @@ public class CircuitState implements InstanceData {
       }
       base.locationTouched(this, p);
     }
-    for (CircuitWires.BusConnection bc : connections) {
+    for (final var bc : connections) {
       if (bc.isSink || (bc.isBidirectional && !Value.equal(v, bc.drivenValue))) {
         markComponentAsDirty(bc.component);
       }
@@ -601,8 +590,8 @@ public class CircuitState implements InstanceData {
   }
 
   private boolean fastpath(Location p, Value v) { // precondition: valuesLock held
-    int x = p.x / 10;
-    int y = p.y / 10;
+    final var x = p.x / 10;
+    final var y = p.y / 10;
     if (v == Value.NIL) {
       if (fastpath_values[y][x] != null) {
         fastpath_values[y][x] = null;
@@ -622,10 +611,10 @@ public class CircuitState implements InstanceData {
 
   private boolean slowpath(Location p, Value v) { // precondition: valuesLock held
     if (v == Value.NIL) {
-      Object old = slowpath_values.remove(p);
+      final var old = slowpath_values.remove(p);
       return (old != null && old != Value.NIL);
     } else {
-      Object old = slowpath_values.put(p, v);
+      final var old = slowpath_values.put(p, v);
       return !v.equals(old);
     }
   }
@@ -635,7 +624,7 @@ public class CircuitState implements InstanceData {
   }
 
   private void markDirtyComponents(Location p, Component[] affected) {
-    for (Component comp : affected) {
+    for (final var comp : affected) {
       markComponentAsDirty(comp);
     }
     if (affected.length > 0) {
@@ -651,7 +640,7 @@ public class CircuitState implements InstanceData {
 
     for (Component clock : circuit.getClocks()) {
       hasClocks = true;
-      boolean dirty = Clock.tick(this, ticks, clock);
+      final var dirty = Clock.tick(this, ticks, clock);
       if (dirty) {
         markComponentAsDirty(clock);
         // If simulator is in single step mode, we want to hilight the
@@ -685,8 +674,8 @@ public class CircuitState implements InstanceData {
       }
       if (ticks >= 0) {
         final var state = getInstanceState(instance);
-        Value vOld = pin.getValue(state);
-        Value vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
+        final var vOld = pin.getValue(state);
+        final var vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
         if (!vNew.equals(vOld)) {
           pin.setValue(state, vNew);
           markComponentAsDirty(temporaryClock);

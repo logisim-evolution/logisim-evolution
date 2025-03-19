@@ -157,7 +157,7 @@ public class CircuitWires {
       steps = t.steps;
       position = t.position;
       bus = new ValuedBus[steps];
-      for (int i = 0; i < steps; i++) {
+      for (var i = 0; i < steps; i++) {
         WireBundle b = t.bundle[i];
         bus[i] = allBuses.get(b);
         Value pullHere = b.getPullValue();
@@ -174,10 +174,10 @@ public class CircuitWires {
     Value threadValue() {
       if (threadVal != null) return threadVal;
       threadVal = Value.UNKNOWN;
-      for (int i = 0; i < steps; i++) {
+      for (var i = 0; i < steps; i++) {
         ValuedBus vb = bus[i];
-        int pos = position[i];
-        Value v = vb.localDrivenValue;
+        final var pos = position[i];
+        final var v = vb.localDrivenValue;
         if (v != Value.NIL) {
           threadVal = threadVal.combine(v.get(pos));
         }
@@ -210,7 +210,7 @@ public class CircuitWires {
     BusConnection(Component comp, Location loc) {
       component = comp;
       location = loc;
-      EndData e = comp.getEnd(loc);
+      final var e = comp.getEnd(loc);
       // Special case: Pin is treated as a sink, because it needs notifications
       // of any changes to inputs in order to set the UI color properly.
       isSink = (e.getType() == EndData.INPUT_ONLY)
@@ -257,25 +257,25 @@ public class CircuitWires {
     }
 
     void filterComponents(Connectivity cmap, Location[] xpoints) {
-      ArrayList<Location> locs = new ArrayList<>();
-      ArrayList<BusConnection> conns = new ArrayList<>();
-      for (Location p : xpoints) {
-        ArrayList<Component> a = cmap.componentsAtLocations.get(p);
-        if (a == null) continue;
-        locs.add(p);
-        for (Component c : a) {
-          conns.add(new BusConnection(c, p));
+      final var locs = new ArrayList<Location>();
+      final var conns = new ArrayList<BusConnection>();
+      for (final var point : xpoints) {
+        final var allComponents = cmap.componentsAtLocations.get(point);
+        if (allComponents == null) continue;
+        locs.add(point);
+        for (final var comp : allComponents) {
+          conns.add(new BusConnection(comp, point));
         }
       }
-      int n = locs.size();
-      locations = n == xpoints.length ? xpoints : locs.toArray(new Location[n]);
+      final var size = locs.size();
+      locations = size == xpoints.length ? xpoints : locs.toArray(new Location[size]);
       connections = conns.toArray(new BusConnection[conns.size()]);
     }
 
     void makeThreads(WireThread[] wbthreads, HashMap<WireBundle, ValuedBus> allBuses,
                      HashMap<WireThread, ValuedThread> allThreads) {
       if (width <= 0) return;
-      boolean degenerate = true;
+      var degenerate = true;
       for (WireThread t : wbthreads) {
         if (t.steps > 1) {
           degenerate = false;
@@ -284,8 +284,8 @@ public class CircuitWires {
       }
       if (degenerate) return;
       threads = new ValuedThread[width];
-      for (int i = 0; i < width; i++) {
-        WireThread t = wbthreads[i];
+      for (var i = 0; i < width; i++) {
+        final var t = wbthreads[i];
         threads[i] = allThreads.get(t);
         if (threads[i] == null) {
           threads[i] = new ValuedThread(t, allBuses);
@@ -313,9 +313,9 @@ public class CircuitWires {
         return busVal;
       }
       long error = 0, unknown = 0, value = 0;
-      for (int i = 0; i < width; i++) {
+      for (var i = 0; i < width; i++) {
         long mask = 1L << i;
-        Value tv = threads[i].threadValue();
+        final var tv = threads[i].threadValue();
         if (tv == Value.TRUE) {
           value |= mask;
         } else if (tv == Value.FALSE) {
@@ -349,10 +349,10 @@ public class CircuitWires {
       // initialize buses[] and busAt<>
       buses = new ValuedBus[connectivity.bundles.size()];
       int idx = 0;
-      for (WireBundle wb : connectivity.bundles) {
-        ValuedBus vb = new ValuedBus(idx++, wb, connectivity);
+      for (final var wb : connectivity.bundles) {
+        final var vb = new ValuedBus(idx++, wb, connectivity);
         buses[vb.idx] = vb;
-        for (Location loc : wb.xpoints) {
+        for (final var loc : wb.xpoints) {
           ValuedBus old = busAt.put(loc, vb);
           if (old != null) {
             throw new IllegalStateException("oops, two wires occupy same location");
@@ -363,14 +363,14 @@ public class CircuitWires {
       }
       // create threads for all buses that need them
       HashMap<WireThread, ValuedThread> allThreads = new HashMap<>();
-      for (ValuedBus vb : buses) {
+      for (final var vb : buses) {
         vb.makeThreads(srcBuses.get(vb).threads, allBuses, allThreads);
       }
       // initialize BusConnection driven values from previous State, if any,
       // but only if they are not sinks (or pins, which always count as sinks)
       if (prev != null) {
-        for (ValuedBus vb : buses) {
-          for (BusConnection bc : vb.connections) {
+        for (final var vb : buses) {
+          for (final var bc : vb.connections) {
             if (!bc.isSink) {
               bc.drivenValue = prev.getDrivenValue(bc.component, bc.location);
             }
@@ -378,22 +378,22 @@ public class CircuitWires {
         }
       }
       // compute bus dependencies
-      for (ValuedBus vb : buses) {
+      for (final var vb : buses) {
         if (vb.width <= 0) continue;
         if (vb.threads == null) {
           // degenerate
           vb.dependentBuses = EMPTY_DEPENDENCIES;
         } else {
           HashSet<ValuedBus> deps = new HashSet<>();
-          for (ValuedThread t : vb.threads) {
-            for (ValuedBus dep : t.bus) {
+          for (final var t : vb.threads) {
+            for (final var dep : t.bus) {
               if (dep != vb) {
                 deps.add(dep);
               }
             }
           }
-          int n = deps.size();
-          vb.dependentBuses = deps.toArray(new ValuedBus[n]);
+          final var size = deps.size();
+          vb.dependentBuses = deps.toArray(new ValuedBus[size]);
         }
       }
       // mark all dirty: recomputes values and triggers component propagation
@@ -403,9 +403,9 @@ public class CircuitWires {
     static final ValuedBus[] EMPTY_DEPENDENCIES = new ValuedBus[0];
 
     Value getDrivenValue(Component c, Location loc) {
-      ValuedBus vb = busAt.get(loc);
+      final var vb = busAt.get(loc);
       if (vb == null) return null;
-      for (BusConnection bc : vb.connections) {
+      for (final var bc : vb.connections) {
         if (bc.component.equals(c) && bc.location.equals(loc)) {
           return bc.drivenValue;
         }
@@ -421,7 +421,7 @@ public class CircuitWires {
         throw new IllegalStateException("bad position for dirty element");
       }
       if (vb.idx < numDirty - 1) { // swap toward end of dirty section of array
-        ValuedBus other = buses[numDirty - 1];
+        final var other = buses[numDirty - 1];
         other.idx = vb.idx;
         buses[other.idx] = other;
         vb.idx = numDirty - 1;
@@ -432,23 +432,21 @@ public class CircuitWires {
     }
 
     void markDirty(ValuedBus vb) {
-      if (vb.dirty) {
-        return;
-      }
+      if (vb.dirty) return;
       if (vb.idx < numDirty) {
         throw new IllegalStateException("bad position for clean element");
       }
       vb.localDrivenValue = null; // need to recompute based on connections[i].drivenValue
       vb.busVal = null; // need to recompute based on threads[i].threadValue
       if (vb.idx > numDirty) { // swap toward dirty section of array
-        ValuedBus other = buses[numDirty];
+        final var other = buses[numDirty];
         other.idx = vb.idx;
         buses[other.idx] = other;
         vb.idx = numDirty;
         buses[vb.idx] = vb;
       }
       if (vb.threads != null) { // invalidate threads
-        for (ValuedThread vt : vb.threads) {
+        for (final var vt : vb.threads) {
           vt.threadVal = null;
         }
       }
@@ -590,14 +588,14 @@ public class CircuitWires {
     }
 
     // finish constructing the bundles, start constructing the threads
-    for (WireBundle b : ret.getBundles()) {
+    for (final var b : ret.getBundles()) {
       b.xpoints = b.tempPoints.toArray(new Location[b.tempPoints.size()]);
       b.tempPoints = null;
       BitWidth width = b.getWidth();
       if (width != BitWidth.UNKNOWN) {
-        int n = width.getWidth();
+        final var n = width.getWidth();
         b.threads = new WireThread[n];
-        for (int i = 0; i < n; i++) {
+        for (var i = 0; i < n; i++) {
           b.threads[i] = new WireThread();
         }
       }
@@ -645,9 +643,9 @@ public class CircuitWires {
     }
 
     // finish constructing the threads
-    for (WireBundle b : ret.getBundles()) {
+    for (final var b : ret.getBundles()) {
       if (b.threads != null) {
-        for (WireThread t : b.threads) {
+        for (final var t : b.threads) {
           t.finishConstructing();
         }
       }
@@ -667,9 +665,9 @@ public class CircuitWires {
     // they can be used to filter out uninteresting points when this wire bundle
     // map is used to initialize a new State. We also need to know which
     // interesting components are at those locations.
-    for (Location p : ret.allLocations) {
+    for (final var p : ret.allLocations) {
       ArrayList<Component> a = null;
-      for (Component comp : points.getComponents(p)) {
+      for (final var comp : points.getComponents(p)) {
         if ((comp instanceof Wire) || (comp instanceof Splitter)) continue;
         if (a == null) {
           a = new ArrayList<Component>();
@@ -754,11 +752,11 @@ public class CircuitWires {
   private void connectComponents(Connectivity ret) {
     // make a WireBundle object for each output or bidirectional port
     // of a component
-    for (Component comp : components) {
-      for (EndData e : comp.getEnds()) {
+    for (final var comp : components) {
+      for (final var e : comp.getEnds()) {
         if (e.getType() == EndData.INPUT_ONLY) continue;
         Location loc = e.getLocation();
-        WireBundle b = ret.getBundleAt(loc);
+        var b = ret.getBundleAt(loc);
         if (b == null) {
           b = ret.createBundleAt(loc);
           b.tempPoints.add(loc);
@@ -789,15 +787,15 @@ public class CircuitWires {
   }
 
   static Value getBusValue(CircuitState state, Location loc) {
-    State s = state.getWireData();
+    final var s = state.getWireData();
     if (s == null) {
       return Value.NIL; // fallback, probably wrong, who cares
     }
-    ValuedBus vb = s.busAt.get(loc);
+    final var vb = s.busAt.get(loc);
     if (vb == null) {
       return Value.NIL; // fallback, probably wrong, who cares
     }
-    Value v = vb.busVal;
+    final var v = vb.busVal;
     if (v == null) {
       return Value.NIL; // fallback, probably wrong, who cares
     }
@@ -812,8 +810,8 @@ public class CircuitWires {
     GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     final var highlighted = context.getHighlightedWires();
 
-    Connectivity cmap = getConnectivity();
-    boolean isValid = cmap.isValid();
+    final var cmap = getConnectivity();
+    final var isValid = cmap.isValid();
     if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var wire : wires) {
         final var s = wire.e0;
@@ -861,7 +859,7 @@ public class CircuitWires {
         }
       }
 
-      for (Location loc : points.getAllLocations()) {
+      for (final var loc : points.getAllLocations()) {
         if (points.getComponentCount(loc) > 2) {
           final var wb = cmap.getBundleAt(loc);
           if (wb != null) {
@@ -913,7 +911,7 @@ public class CircuitWires {
       // this is just an approximation, but it's good enough since
       // the problem is minor, and hidden only exists for a short
       // while at a time anyway.
-      for (Location loc : points.getAllLocations()) {
+      for (final var loc : points.getAllLocations()) {
         if (points.getComponentCount(loc) > 2) {
           var icount = 0;
           for (final var comp : points.getComponents(loc)) {
@@ -979,7 +977,7 @@ public class CircuitWires {
     } else {
       // Simulation thread.
       try {
-        ConnectivityGetter awtThread = new ConnectivityGetter();
+        final var awtThread = new ConnectivityGetter();
         SwingUtilities.invokeAndWait(awtThread);
         return awtThread.result;
       } catch (Exception t) {
@@ -999,7 +997,7 @@ public class CircuitWires {
     final var det = points.getWidth(q);
     if (det != BitWidth.UNKNOWN) return det;
 
-    Connectivity cmap = getConnectivity();
+    final var cmap = getConnectivity();
     if (!cmap.isValid()) return BitWidth.UNKNOWN;
     final var qb = cmap.getBundleAt(q);
     if (qb != null && qb.isValid()) return qb.getWidth();
@@ -1020,7 +1018,7 @@ public class CircuitWires {
   }
 
   WireBundle getWireBundle(Location query) {
-    Connectivity cmap = getConnectivity();
+    final var cmap = getConnectivity();
     return cmap.getBundleAt(query);
   }
 
@@ -1039,8 +1037,8 @@ public class CircuitWires {
   }
 
   void propagate(CircuitState circState, ArrayList<Propagator.SimulatorEvent> dirtyPoints) {
-    Connectivity map = getConnectivity();
-    ArrayList<WireThread> dirtyThreads = new ArrayList<>();
+    final var map = getConnectivity();
+    final var dirtyThreads = new ArrayList<WireThread>();
 
     // get state, or create a new one if current state is outdated
     var s = circState.getWireData();
@@ -1058,14 +1056,14 @@ public class CircuitWires {
     }
 
     // make note of updates from simulator
-    int npoints = dirtyPoints.size();
-    for (int k = 0; k < npoints; k++) { // for each point of interest
-      Propagator.SimulatorEvent ev = dirtyPoints.get(k);
-      Location p = ev.loc;
-      Component cause = ev.cause;
-      Value val = ev.val;
+    var npoints = dirtyPoints.size();
+    for (var k = 0; k < npoints; k++) { // for each point of interest
+      final var ev = dirtyPoints.get(k);
+      final var p = ev.loc;
+      final var cause = ev.cause;
+      final var val = ev.val;
 
-      ValuedBus vb = s.busAt.get(p);
+      final var vb = s.busAt.get(p);
       if (vb == null) {
         // todo: we could keep track of the affected components here
       } else if (vb.width <= 0) {
@@ -1076,13 +1074,13 @@ public class CircuitWires {
         // of this point on the bus, mark the bus as dirty, and (if not
         // degenerate) mark as dirty any related buses.
         // fixme: sort the connections list, sources first, then bidir, then sinks
-        for (BusConnection bc : vb.connections) {
+        for (final var bc : vb.connections) {
           if (bc.location.equals(p) && bc.component.equals(cause)) {
-            Value old = bc.drivenValue;
+            final var old = bc.drivenValue;
             if (Value.equal(old, val)) continue;
             bc.drivenValue = val;
             s.markDirty(vb);
-            for (ValuedBus dep : vb.dependentBuses) {
+            for (final var dep : vb.dependentBuses) {
               s.markDirty(dep);
             }
             break;
@@ -1094,8 +1092,8 @@ public class CircuitWires {
     if (s.numDirty <= 0) return;
 
     // recompute localDrivenValue for each dirty bus
-    for (int i = 0; i < s.numDirty; i++) {
-      ValuedBus vb = s.buses[i];
+    for (var i = 0; i < s.numDirty; i++) {
+      final var vb = s.buses[i];
       if (vb.width <= 0) {
         // this bundle has inconsistent widths, or no width, hence no localDrivenValue
         vb.localDrivenValue = Value.NIL;
@@ -1107,10 +1105,10 @@ public class CircuitWires {
     // recompute threadVal for all threads passing through dirty buses (if not degenerate),
     // recompute aggregate busVal for all dirty buses,
     // and post those results to the circuit state
-    for (int i = 0; i < s.numDirty; i++) {
-      ValuedBus vb = s.buses[i];
-      Value old = vb.busVal;
-      Value val = vb.recalculate();
+    for (var i = 0; i < s.numDirty; i++) {
+      final var vb = s.buses[i];
+      final var old = vb.busVal;
+      final var val = vb.recalculate();
       if (Value.equal(old, val)) continue;
       circState.setValueByWire(val, vb.locations, vb.connections);
     }

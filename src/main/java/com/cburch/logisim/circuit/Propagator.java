@@ -16,6 +16,7 @@ import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
+import com.cburch.logisim.util.LinkedQueue;
 import com.cburch.logisim.util.QNodeQueue;
 import com.cburch.logisim.util.SplayQueue;
 import com.cburch.logisim.util.QNode;
@@ -117,7 +118,7 @@ public class Propagator {
   // others. It is trivial to switch between the implementations, just change the
   // object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
 
-  private QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<SimulatorEvent>();
+  private QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<>();
 
   private int clock = 0;
   private boolean isOscillating = false;
