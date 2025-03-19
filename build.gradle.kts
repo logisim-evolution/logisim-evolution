@@ -36,8 +36,8 @@ dependencies {
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:2.0.16")
-  implementation("org.slf4j:slf4j-simple:2.0.16")
+  implementation("org.slf4j:slf4j-api:2.0.17")
+  implementation("org.slf4j:slf4j-simple:2.0.17")
   implementation("com.formdev:flatlaf:3.5.4")
   implementation("commons-cli:commons-cli:1.9.0")
   implementation("org.apache.commons:commons-text:1.13.0")
@@ -49,9 +49,9 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.11.4"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.15.2")
+  testImplementation(platform("org.junit:junit-bom:5.12.1"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.12.1")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
