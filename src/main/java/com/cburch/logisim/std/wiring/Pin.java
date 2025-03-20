@@ -1255,64 +1255,6 @@ public class Pin extends InstanceFactory {
     }
   }
 
-  // Before version 4.0.0: Attributes are a confusing mess. "Output?", "Three
-  // State?", and "Pull Behavior" all interact in complicated ways. There seems
-  // to currently only be a few possible combinations that are implemented:
-  //   Output pin:
-  //     UI can display 0, 1, E, or X, and subcircuit passes whatever is
-  //     received. When connected to a blue wire, displays X regardless of
-  //     tri-state option. When connected to a gray wire, or to no wire at all,
-  //     it displays either 0 (if tri-state option is not selected), or X (if
-  //     tri-state option is selected), but regardless, passes the X up to
-  //     parent. The pull option is ignored.
-  //   Input pin with tristate but no pull:
-  //     UI can display and choose 0, 1, or X, and also shows red if there is an
-  //     error on the output bus. Parent circuit can send 0, 1, X, or E, and all
-  //     will pass through into subcircuit.
-  //   Input pin with pull-up (or pull-down):
-  //     UI can display and choose only 0 or 1, but also shows red if there is
-  //     an error on the output bus. Parent circuit can send 0 or 1, but if it
-  //     tries to send X or E these get converted to 1 (or 0 for pull-down). I
-  //     think the behavior for E here is unreasonable: E should get sent
-  //     through no matter what. The tristate option is ignored here. The UI
-  //     when viewing a subcircuit doesn't distinguish between the case where
-  //     parent circuit sends 1, and when parent sends an X that gets pulled-up
-  //     to 1. I think it could show blue in one case, just like it shows red in
-  //     cases of errors. Or show X, but color it to match the 1 value (or 0
-  //     value).
-  //   Input pin without tristate:
-  //     This behaves the same as as tri-state with pull-down.
-  //
-  // Notice that tri-state=false is esentially pointless, and can be removed.
-  //
-  //
-  // It seems plausible to add support for another combination:
-  //   Output pin with pull-up (or pull-down):
-  //      UI could display 0, 1, E, or X, but X gets converted to 0 or 1 before
-  //      being sent up to parent. Color could match what is being sent up to
-  //      parent.
-  //
-  // Version 4.0.0: Simplified new behavior:
-  //   Note: Any gray wire (NIL value) is treated as if it were a blue wire
-  //      (Unknown value).^Z
-  //   Output pin with tri-state/floating option (no pull):
-  //      Depending on value of connected bus, UI displays 0, 1, E, or X, and
-  //      subcircuit passes whatever is displayed up to parent. Here, color
-  //      matches both the connected bus (but gray counts as blue) and the value
-  //      passed up to parent (but NIL counts as Unknown).
-  //   Output pin with pull-up (or pull-down):
-  //      Depending on value of connected bus, UI displays 0, 1, or E, with any
-  //      X values displaying as 0 or 1. Color matches connected bus. So a
-  //      pulled-up X would show as a blue 1 (or blue 0 for pull-down).
-  //   Input pin with no pull:
-  //      User can choose 0, 1, or X. Parent circuit can send 0, 1, E, or X.
-  //      UI displays whatever user chose (or parent sent). Color matches
-  //      whatever is displayed.
-  //   Input pin with pull-up (or pull-down):
-  //      User can choose 0 or 1. Parent circuit can send 0, 1, or E, but if it
-  //      tries to send X it gets converted to and displayed as 1 (or 0).
-  //      Color matches whatever user chose (or parent sent).
-
   @Override
   public boolean requiresNonZeroLabel() {
     return true;

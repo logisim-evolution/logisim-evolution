@@ -54,11 +54,21 @@ public class Propagator {
       implements Comparable<SimulatorEvent> {
 
     final int time;
-    int serialNumber; // used to make the times unique
-    final CircuitState state; // state of circuit containing component
-    final Location loc; // the location at which value is emitted
-    final Component cause; // component emitting the value
-    Value val; // value being emitted
+
+    /** Used to make the times unique */
+    int serialNumber;
+
+    /** State of circuit containing component */
+    final CircuitState state;
+
+    /** The location at which value is emitted */
+    final Location loc;
+
+    /** Component emitting the value */
+    final Component cause;
+
+    /** Value being emitted */
+    Value val;
 
     private SimulatorEvent(int time, int serialNumber,
                            CircuitState state, Location loc, Component cause, Value val) {
@@ -92,7 +102,8 @@ public class Propagator {
     }
   }
 
-  private final CircuitState root; // root of state tree
+  /** Root of state tree */
+  private final CircuitState root;
 
   /** The number of clock cycles to let pass before deciding that the circuit is oscillating. */
   private volatile int simLimit;
@@ -107,14 +118,15 @@ public class Propagator {
   private class PriorityEventQueue<T extends QNode> extends PriorityQueue<T> implements QNodeQueue<T> {
   }
 
-  // The simulator event queue can be implemented by a PriorityEventQueue,
-  // SplayQueue, or LinkedQueue. LinkedQueue seems fastest in practice, though
-  // it has poor worst-case performance. SplayQueue should have good
-  // expected-case performance, but it seems a bit slower than LinkedQueue
-  // for simpler simulations. SplayQueue is best for complex simulations.
-  // PriorityEventQueue, using Java's PriorityQueue, seems slightly worse than the
-  // others. It is trivial to switch between the implementations, just change the
-  // object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
+  /**
+   * The simulator event queue can be implemented by a PriorityEventQueue,
+   * SplayQueue, or LinkedQueue. Kevin Walsh reported that the LinkedQueue
+   * seems fastest in practice, though it has poor worst-case performance.
+   * For me, even for a simple CPU simulation, SplayQueue is faster.
+   * PriorityEventQueue, using Java's PriorityQueue, seems slightly worse than the
+   * others. It is trivial to switch between the implementations, just change the
+   * object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
+   */
   private final QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<>();
 
   private int clock = 0;
@@ -166,9 +178,7 @@ public class Propagator {
     return propagate(null, null);
   }
 
-  /**
-   * Safe to call from sim thread
-   */
+  /** Safe to call from sim thread */
   public boolean propagate(Simulator.ProgressListener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
     root.processDirtyPoints();
@@ -233,9 +243,7 @@ public class Propagator {
     eventSerialNumber++;
   }
 
-  /**
-   * Safe to call from sim thread
-   */
+  /** Safe to call from sim thread */
   boolean step(PropagationPoints changedPoints) {
     oscPoints.clear();
     root.processDirtyPoints();

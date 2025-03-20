@@ -13,15 +13,16 @@
 
 package com.cburch.logisim.util;
 
-// A simple splay tree implementation, using keys of type long, and values that
-// extend type QNode. This supports (approximately) a subset of the
-// java.util.PriorityQueue API, but only enough to support Propagator.
-// Objects in the queue must be subclasses of QNode.
+/**
+ * A simple splay tree implementation, using keys of type long, and values that
+ * extend type QNode. This supports (approximately) a subset of the
+ * java.util.PriorityQueue API, but only enough to support Propagator.
+ * Objects in the queue must be subclasses of QNode.
+ */
 public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
   private QNode root;
   private int size;
 
-  // add(t) inserts a new node into the queue.
   public boolean add(T t) {
     if (root == null) {
       root = t;
@@ -64,8 +65,10 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
     size = 0;
   }
 
-  // splay(t, k) rebalances the tree rooted at node t around key k, by moving a
-  // node close to k (or an exact match, if it exists) up to the root.
+  /**
+   * splay(t, k) rebalances the tree rooted at node t around key k, by moving a
+   * node close to k (or an exact match, if it exists) up to the root.
+   */
   private static QNode splay(QNode t, long k) {
     if (t == null) return null;
 
@@ -107,8 +110,7 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
     }
   }
 
-  // splay(t) rebalances the tree rooted at node t, by moving the smallest node
-  // to the root.
+  /** splay(t) rebalances the tree rooted at node t, by moving the smallest node to the root. */
   private static QNode splay(QNode t) {
     if (t == null) return null;
     if (t.left == null) {
@@ -133,7 +135,6 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
     return x;
   }
 
-  // peek() returns the smallest node, or null if the queue is empty.
   public T peek() {
     if (root == null) return null;
     root = splay(root);
@@ -142,7 +143,6 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
     return ret;
   }
 
-  // remove() removes the smallest node, or null if the queue is empty.
   public T remove() {
     if (root == null) return null;
     size--;

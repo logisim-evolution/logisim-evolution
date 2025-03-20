@@ -38,55 +38,63 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// CircuitWires stores and calculates the values being propagated along all
-// wires and buses in a circuit, essentially anything related to the netlist
-// connectivity of the circuit.
+/**
+ * CircuitWires stores and calculates the values being propagated along all
+ * wires and buses in a circuit, essentially anything related to the netlist
+ * connectivity of the circuit.
+ */
 public class CircuitWires {
 
-  // Connectivity holds info about how the Circuit's buses, wires, tunnels, and
-  // splitters are connected to each other and to components. This gets
-  // re-computed from scratch each time the circuit changes. It does *not* hold
-  // any Values, which are dynamically computed by the simulator. It holds only
-  // the static connectivity defined by the circuit. Within this data structure
-  // are:
-  // - WireBundle: a bus/wire as drawn by the user. Think: like an unbroken,
-  //   physical ribbon cable that acts as a bundle of one or more threads. It
-  //   has a width 1 <= n <= 32 (or incompatibilityData if the width is not
-  //   consistent across the length of the bus), and touches a set of Location
-  //   points (all the corners, intersections, and component port locations
-  //   along the bus). It also has a pullValue, e.g. if there is a pull-down
-  //   resistor connected to the bus. A WireBundle can traverse tunnels, but not
-  //   splitters.
-  // - WireThread: a 1-bit element of a WireBundle. Think: an
-  //   electrically-contiguous trace within a circuit. Each wire WireThread
-  //   traverses one or more WireBundles, and has a specific position within
-  //   each WireBundle that it traverses. WireThreads traverse through
-  //   splitters.
+  /**
+   * Connectivity holds info about how the Circuit's buses, wires, tunnels, and
+   * splitters are connected to each other and to components. This gets
+   * re-computed from scratch each time the circuit changes. It does *not* hold
+   * any Values, which are dynamically computed by the simulator. It holds only
+   * the static connectivity defined by the circuit. Within this data structure
+   * are:
+   *
+   * - WireBundle: a bus/wire as drawn by the user. Think: like an unbroken,
+   *   physical ribbon cable that acts as a bundle of one or more threads. It
+   *   has a width 1 <= n <= 32 (or incompatibilityData if the width is not
+   *   consistent across the length of the bus), and touches a set of Location
+   *   points (all the corners, intersections, and component port locations
+   *   along the bus). It also has a pullValue, e.g. if there is a pull-down
+   *   resistor connected to the bus. A WireBundle can traverse tunnels, but not
+   *   splitters.
+   *
+   * - WireThread: a 1-bit element of a WireBundle. Think: an
+   *   electrically-contiguous trace within a circuit. Each wire WireThread
+   *   traverses one or more WireBundles, and has a specific position within
+   *   each WireBundle that it traverses. WireThreads traverse through
+   *   splitters.
+   */
   private static class Connectivity {
 
-    // All wire bundles. Initially, a bundle is created and added to this for
-    // every bus wire segment, splitter endpoint, pull resistor endpoint, etc.
-    // Eventually, as bundles get unified together across intersecting points,
-    // tunnels, etc., this set gets trimmed down to just a single representative
-    // WireBundle for each bus.
+    /**
+     * All wire bundles. Initially, a bundle is created and added to this for
+     * every bus wire segment, splitter endpoint, pull resistor endpoint, etc.
+     * Eventually, as bundles get unified together across intersecting points,
+     * tunnels, etc., this set gets trimmed down to just a single representative
+     * WireBundle for each bus.
+     */
     HashSet<WireBundle> bundles = new HashSet<>();
 
-    // Given a location, returns wire bundle at that location (if any)
+    /** Given a location, returns wire bundle at that location (if any) */
     HashMap<Location, WireBundle> pointBundles = new HashMap<>();
 
-    // All locations touched by a wire bundle
+    /** All locations touched by a wire bundle */
     ArrayList<Location> allLocations = new ArrayList<>();
 
-    // All components except wires, splitters, and pull resistors
+    /** All components except wires, splitters, and pull resistors */
     ArrayList<Component> allComponents = new ArrayList<>();
 
-    // Given a location, returns a list of Components that have a port at that location.
+    /** Given a location, returns a list of Components that have a port at that location. */
     HashMap<Location, ArrayList<Component>> componentsAtLocations = new HashMap<>();
 
-    // The isValid flag remains true unless something goes wrong during initialization.
+    /** The isValid flag remains true unless something goes wrong during initialization. */
     volatile boolean isValid = true;
 
-    // Info about width incompatibilities, used by GUI to display error.
+    /** Info about width incompatibilities, used by GUI to display error. */
     HashSet<WidthIncompatibilityData> incompatibilityData = null;
 
     void addWidthIncompatibilityData(WidthIncompatibilityData e) {
@@ -143,15 +151,28 @@ public class CircuitWires {
     }
   }
 
-  // ValuedThread is similar to WireThread, but also holds the
-  // dynamically-computed 1-bit simulation Value carried on the thread as well.
+  /**
+   * ValuedThread is similar to WireThread, but also holds the
+   * dynamically-computed 1-bit simulation Value carried on the thread as well.
+   */
   static class ValuedThread {
-    int steps; // length of the thread (# of buses it traverses)
-    ValuedBus[] bus; // buses traversed by this thread
-    int[] position; // position of this thread within each of those buses
-    boolean pullUp, pullDown, pullError; // whether this thread is being pulled up, or down, or error, or neither
-    Value threadVal; // cached, resolved value carried by this thread (or error for conflicts, etc.)
-    // threadVal is set to null when thread is dirty and should be recalculated
+    /** Length of the thread (# of buses it traverses) */
+    int steps;
+
+    /** Buses traversed by this thread */
+    ValuedBus[] bus;
+
+    /** Position of this thread within each of those buses */
+    int[] position;
+
+    /** Whether this thread is being pulled up, or down, or error, or neither */
+    boolean pullUp, pullDown, pullError;
+
+    /**
+     * Cached, resolved value carried by this thread (or error for conflicts, etc.)
+     * ThreadVal is set to null when thread is dirty and should be recalculated
+     */
+    Value threadVal;
 
     ValuedThread(WireThread t, HashMap<WireBundle, ValuedBus> allBuses) {
       steps = t.steps;
@@ -195,16 +216,20 @@ public class CircuitWires {
     }
   }
 
-  // BusConnection represents a point at which a Component connects to a
-  // ValuedBus.
-  // FIXME: it might be best to hold a reference to some kind of
-  // CircuitComponentInfo data structure instead here, where we can store a flag
-  // about whether this component has been marked dirty yet or not.
+  /**
+   * BusConnection represents a point at which a Component connects to a
+   * ValuedBus.
+   * FIXME: it might be best to hold a reference to some kind of
+   * CircuitComponentInfo data structure instead here, where we can store a flag
+   * about whether this component has been marked dirty yet or not.
+   */
   public static class BusConnection {
     public final Component component;
     public final Location location;
     public final boolean isSink, isBidirectional;
-    public Value drivenValue; // value this component is driving onto the bus (null for sinks)
+
+    /** Value this component is driving onto the bus (null for sinks) */
+    public Value drivenValue;
     // todo: maybe also keep point number, or EndData, etc.?
 
     BusConnection(Component comp, Location loc) {
@@ -227,26 +252,45 @@ public class CircuitWires {
     }
   }
 
-  // ValuedBus is similar to WireBundle, but also holds the dynamically-computed
-  // n-bit simulation Value (formed from joining all n 1-bit values from the
-  // threads passing through this bus.
-  // Degenerate case: If this bus isn't connected to any other buses (e.g. via
-  // splitters), then all bits can be calculated together in one pass, rather
-  // than calculating each thread separately then combining the results. This
-  // case is detected by checking if there are dependent buses.
+  /**
+   * ValuedBus is similar to WireBundle, but also holds the dynamically-computed
+   * n-bit simulation Value (formed from joining all n 1-bit values from the
+   * threads passing through this bus.
+   * Degenerate case: If this bus isn't connected to any other buses (e.g. via
+   * splitters), then all bits can be calculated together in one pass, rather
+   * than calculating each thread separately then combining the results. This
+   * case is detected by checking if there are dependent buses.
+   */
   static class ValuedBus {
-    int idx; // State.buses[idx] will hold this ValuedBus
-    int width; // negative for invalid width
-    ValuedThread[] threads; // threads passing through this bus (or null if dependentBuses is empty, or if invalid width)
+    /** State.buses[idx] will hold this ValuedBus */
+    int idx;
 
-    BusConnection[] connections; // sink and source components connected to this bus
-    Location[] locations; // set of all locations for those connections
+    /** Negative for invalid width */
+    int width;
 
-    Value localDrivenValue; // sum of connections[i].drivenValue
-    Value busVal; // cached, resolved value carried by this bus (or error for conflicts, etc.)
-    boolean dirty; // whether localDrivenValue and busVal and valid
-    ValuedBus[] dependentBuses; // other buses affected if this one's localDrivenValue changes
-    Value pullVal; // only used if dependentBuses is empty
+    /** Threads passing through this bus (or null if dependentBuses is empty, or if invalid width) */
+    ValuedThread[] threads;
+
+    /** Sink and source components connected to this bus */
+    BusConnection[] connections;
+
+    /** Set of all locations for those connections */
+    Location[] locations;
+
+    /** Sum of connections[i].drivenValue */
+    Value localDrivenValue;
+
+    /** Cached, resolved value carried by this bus (or error for conflicts, etc.) */
+    Value busVal;
+
+    /** Whether localDrivenValue and busVal and valid */
+    boolean dirty;
+
+    /** Other buses affected if this one's localDrivenValue changes */
+    ValuedBus[] dependentBuses;
+
+    /** Only used if dependentBuses is empty */
+    Value pullVal;
 
     ValuedBus(int i, WireBundle wb, Connectivity cmap) {
       idx = i;
@@ -337,10 +381,13 @@ public class CircuitWires {
   }
 
   static class State {
+    /** Original source of connectivity info */
     private Connectivity connectivity; // original source of connectivity info
     HashMap<Location, ValuedBus> busAt = new HashMap<>();
     ValuedBus[] buses;
     int numDirty;
+    static final ValuedBus[] EMPTY_DEPENDENCIES = new ValuedBus[0];
+
 
     State(Connectivity cm, State prev) {
       connectivity = cm;
@@ -399,8 +446,6 @@ public class CircuitWires {
       // mark all dirty: recomputes values and triggers component propagation
       numDirty = buses.length;
     }
-
-    static final ValuedBus[] EMPTY_DEPENDENCIES = new ValuedBus[0];
 
     Value getDrivenValue(Component c, Location loc) {
       final var vb = busAt.get(loc);
@@ -462,6 +507,13 @@ public class CircuitWires {
   private HashSet<Component> pulls = new HashSet<>(); // Components having PullResistor factory
   private HashSet<Component> components = new HashSet<>(); // other Components
 
+  static final Logger logger = LoggerFactory.getLogger(CircuitWires.class);
+
+  final CircuitPoints points = new CircuitPoints();
+  private Bounds bounds = Bounds.EMPTY_BOUNDS;
+
+  private volatile Connectivity masterConnectivity = null;
+
   private TunnelListener tunnelListener = new TunnelListener();
 
   private class TunnelListener implements AttributeListener {
@@ -479,18 +531,11 @@ public class CircuitWires {
     }
   }
 
-  static final Logger logger = LoggerFactory.getLogger(CircuitWires.class);
-
-  final CircuitPoints points = new CircuitPoints();
-  private Bounds bounds = Bounds.EMPTY_BOUNDS;
-
-  private volatile Connectivity masterConnectivity = null;
-
   CircuitWires() {}
 
   // NOTE: this could be made much more efficient in most cases to
   // avoid voiding the connectivity map.
-  /*synchronized*/ boolean add(Component comp) {
+  boolean add(Component comp) {
     var added = true;
     if (comp instanceof Wire wire) {
       added = addWire(wire);
@@ -515,7 +560,7 @@ public class CircuitWires {
     return added;
   }
 
-  /*synchronized*/ void add(Component comp, EndData end) {
+  void add(Component comp, EndData end) {
     points.add(comp, end);
     voidConnectivity();
   }
@@ -530,7 +575,7 @@ public class CircuitWires {
     return true;
   }
 
-  // To be called by getConnectivity() only
+  /** To be called by getConnectivity() only */
   private void computeConnectivity(Connectivity ret) {
     // create bundles corresponding to wires and tunnels
     connectComponents(ret);

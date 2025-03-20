@@ -34,16 +34,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-// CircuitState holds the simulation state of a Circuit (or Subcircuit), i.e.
-// the values being carried along all wires and buses, along with the
-// InstanceData for all components embedded in the circuit. Most of the
-// dynamically-computed data is actually in CircuitWires. In here there is
-// mostly just a few pointers to other data structures and the dirty lists
-// (lists of locations or components that need to be recomputed).
-//
-// Note: Each CircuitState belongs to (at most) one Propagator. Some of the
-// members in here more properly belong to Propagator (or, vice versa, some of
-// the functionality in Propagator could equally well be in here.
+/**
+ * CircuitState holds the simulation state of a Circuit (or Subcircuit), i.e.
+ * the values being carried along all wires and buses, along with the
+ * InstanceData for all components embedded in the circuit. Most of the
+ * dynamically-computed data is actually in CircuitWires. In here there is
+ * mostly just a few pointers to other data structures and the dirty lists
+ * (lists of locations or components that need to be recomputed).
+ *
+ * Note: Each CircuitState belongs to (at most) one Propagator. Some of the
+ * members in here more properly belong to Propagator (or, vice versa, some of
+ * the functionality in Propagator could equally well be in here.
+ */
 public class CircuitState implements InstanceData {
 
   private class MyCircuitListener implements CircuitListener {
@@ -150,12 +152,21 @@ public class CircuitState implements InstanceData {
   }
 
   private final MyCircuitListener myCircuitListener = new MyCircuitListener();
-  private Propagator base = null; // inherited from base of tree of CircuitStates
-  private final Project proj; // project containing this circuit
-  private final Circuit circuit; // circuit being simulated
 
-  private CircuitState parentState = null; // parent in tree of CircuitStates
-  private Component parentComp = null; // subcircuit component containing this
+  /** Inherited from base of tree of CircuitStates */
+  private Propagator base = null;
+
+  /** Project containing this circuit */
+  private final Project proj;
+
+  /** Circuit being simulated */
+  private final Circuit circuit;
+
+  /** Parent in tree of CircuitStates */
+  private CircuitState parentState = null;
+
+  /** subcircuit component containing this */
+  private Component parentComp = null;
   // state
 
   private CircuitWires.State wireData = null;
@@ -170,15 +181,36 @@ public class CircuitState implements InstanceData {
   // components embedded in this circuit are called upon to re-calculate /
   // propagate, the components will call getValue() to pick out values from
   // these data structures. These are the values you would see if you stick a
-  // probe at some location on the circuit sheet.
-  private Map<Location, Value> slowpathValues = new HashMap<>(); // protected by valuesLock
-  private Value[][] fastpathValues = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // protected by valuesLock
+  // probe at some location on the circuit sheet. They are protected by valuesLock.
+  /** values propagated in this circuit. Protected by valuesLock */
+  private Map<Location, Value> slowpathValues = new HashMap<>();
+  /** values propagated in this circuit. Protected by valuesLock */
+  private Value[][] fastpathValues = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH];
+  /** Protects slowPathValues and fastPathValues */
   private final Object valuesLock = new Object();
 
-  private ArrayList<Component> dirtyComponents = new ArrayList<>(); // protected by dirtyLock
-  private ArrayList<Propagator.SimulatorEvent> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
-  private HashSet<CircuitState> substates = new HashSet<>(); // protected by dirtyLock
+  // dirtyComponents, dirtyPoints, and substates are components being marked as dirty.
+  // They will later be shifted to the working sets to be processed.
+  // They are protected by dirtyLock
+  /** Protected by dirtyLock */
+  private ArrayList<Component> dirtyComponents = new ArrayList<>();
+  /** Protected by dirtyLock */
+  private ArrayList<Propagator.SimulatorEvent> dirtyPoints = new ArrayList<>();
+  /** Protected by dirtyLock */
+  private HashSet<CircuitState> substates = new HashSet<>();
+  /** Protects dirtyComponents, dirtyPoints, and substates */
   private final Object dirtyLock = new Object();
+
+  // dirtyComponentsWorking, dirtyPointsWorking, and substatesWorking are those elements
+  // of this circuit that are being processed.
+  /** Components being processed. */
+  ArrayList<Component> dirtyComponentsWorking = new ArrayList<>();
+  /** Points being processed */
+  private ArrayList<Propagator.SimulatorEvent> dirtyPointsWorking = new ArrayList<>();
+  /** Substates being processed */
+  private CircuitState[] substatesWorking = new CircuitState[0];
+  private boolean substatesDirty = true;
+
 
   private static int lastId = 0;
   private final int id = lastId++;
@@ -241,7 +273,6 @@ public class CircuitState implements InstanceData {
         this.componentData.put(key, newValue);
       }
     }
-    // Propagator.copyDrivenValues(this, src);
     // note: we don't bother with our this.valuesLock here: it isn't needed
     // (b/c no other threads have a reference to this yet), and to avoid the
     // possibility of deadlock (though that shouldn't happen either since no
@@ -383,7 +414,6 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  ArrayList<Component> dirtyComponentsWorking = new ArrayList<>();
   void processDirtyComponents() {
     if (!dirtyComponentsWorking.isEmpty()) {
       throw new IllegalStateException("INTERNAL ERROR: dirtyComponentsWorking not empty");
@@ -413,10 +443,6 @@ public class CircuitState implements InstanceData {
       substate.processDirtyComponents();
     }
   }
-
-  private ArrayList<Propagator.SimulatorEvent> dirtyPointsWorking = new ArrayList<>();
-  private CircuitState[] substatesWorking = new CircuitState[0];
-  private boolean substatesDirty = true;
 
   void processDirtyPoints() {
     if (!dirtyPointsWorking.isEmpty()) {
@@ -545,7 +571,8 @@ public class CircuitState implements InstanceData {
     base.setValue(this, pt, val, cause, delay);
   }
 
-  private void clearFastpathGrid() { // precondition: valuesLock held
+  /** precondition: valuesLock held */
+  private void clearFastpathGrid() {
     for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
       for (var x = 0; x < FASTPATH_GRID_WIDTH; x++) {
         fastpathValues[y][x] = null;
@@ -553,7 +580,7 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  // for CircuitWires - to set value at point
+  /** for CircuitWires - to set value at point */
   void setValueByWire(Value v, Location[] points, CircuitWires.BusConnection[] connections) {
     for (final var p : points) {
       if (p.x >= 0 && p.y >= 0
@@ -577,7 +604,7 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  // for CircuitWires - to set value at point
+  /** for CircuitWires - to set value at point */
   void clearValuesByWire() {
     synchronized (valuesLock) {
       slowpathValues.clear(); // slow path
@@ -585,7 +612,8 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  private boolean fastpath(Location p, Value v) { // precondition: valuesLock held
+  /** precondition: valuesLock held */
+  private boolean fastpath(Location p, Value v) {
     final var x = p.x / 10;
     final var y = p.y / 10;
     if (v == Value.NIL) {
@@ -605,7 +633,8 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  private boolean slowpath(Location p, Value v) { // precondition: valuesLock held
+  /** precondition: valuesLock held */
+  private boolean slowpath(Location p, Value v) {
     if (v == Value.NIL) {
       final var old = slowpathValues.remove(p);
       return (old != null && old != Value.NIL);
