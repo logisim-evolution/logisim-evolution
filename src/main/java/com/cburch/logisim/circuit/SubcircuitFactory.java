@@ -61,9 +61,7 @@ public class SubcircuitFactory extends InstanceFactory {
     public void actionPerformed(ActionEvent e) {
       final var superState = proj.getCircuitState();
       if (superState == null) return;
-
-      CircuitState subState = getSubstate(superState, instance.getComponent());
-      proj.setCircuitState(subState);
+      proj.setCircuitState(getSubstate(superState, instance.getComponent()));
     }
 
     @Override
@@ -299,7 +297,7 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   public CircuitState getSubstate(CircuitState superState, Component comp) {
-    CircuitState subState = (CircuitState) superState.getData(comp);
+    var subState = (CircuitState) superState.getData(comp);
     if (subState == null) {
       subState = superState.createCircuitSubstateFor(comp, source);
       if (comp instanceof InstanceComponent) {

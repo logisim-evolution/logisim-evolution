@@ -14,9 +14,9 @@ import java.util.HashSet;
 class WireThread {
   private WireThread representative;
   private HashSet<BundlePosition> tempBundlePositions = new HashSet<>();
-  public int steps; // will be set when BundleMap is done being constructed
-  public WireBundle[] bundle; // will be set when BundleMap is done being constructed
-  public int[] position; // will be set when BundleMap is done being constructed
+  public int steps; // will be set when Connectivity is done being constructed
+  public WireBundle[] bundle; // will be set when Connectivity is done being constructed
+  public int[] position; // will be set when Connectivity is done being constructed
 
   private static class BundlePosition {
     int pos;
@@ -41,7 +41,7 @@ class WireThread {
     bundle = new WireBundle[steps];
     position = new int[steps];
     int i = 0;
-    for (BundlePosition bp : tempBundlePositions) {
+    for (final var bp : tempBundlePositions) {
       bundle[i] = bp.b;
       position[i] = bp.pos;
       i++;
@@ -61,8 +61,8 @@ class WireThread {
   }
 
   void unite(WireThread other) {
-    WireThread us = this.getRepresentative();
-    WireThread them = other.getRepresentative();
+    final var us = this.getRepresentative();
+    final var them = other.getRepresentative();
     if (us != them) {
       us.representative = them;
     }

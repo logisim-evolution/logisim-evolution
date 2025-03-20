@@ -74,9 +74,7 @@ public class Propagator {
     public SimulatorEvent cloneFor(CircuitState newState) {
       final var newProp = newState.getPropagator();
       final var dtime = newProp.clock - state.getPropagator().clock;
-      SimulatorEvent ret = new SimulatorEvent(time + dtime,
-          newProp.eventSerialNumber++, newState, loc, cause, val);
-      return ret;
+      return new SimulatorEvent(time + dtime, newProp.eventSerialNumber++, newState, loc, cause, val);
     }
 
     @Override
@@ -117,8 +115,7 @@ public class Propagator {
   // PriorityEventQueue, using Java's PriorityQueue, seems slightly worse than the
   // others. It is trivial to switch between the implementations, just change the
   // object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
-
-  private QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<>();
+  private final QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<>();
 
   private int clock = 0;
   private boolean isOscillating = false;
@@ -266,7 +263,7 @@ public class Propagator {
       SimulatorEvent ev = toProcess.peek();
       if (ev == null || ev.time != clock) break;
       toProcess.remove();
-      CircuitState state = ev.state;
+      final var state = ev.state;
 
       if (changedPoints != null) changedPoints.add(state, ev.loc);
 

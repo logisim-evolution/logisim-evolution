@@ -103,7 +103,7 @@ public class CircuitState implements InstanceData {
         }
         componentData.clear();
         synchronized (valuesLock) {
-          slowpath_values.clear(); // slow path
+          slowpathValues.clear(); // slow path
           clearFastpathGrid(); // fast path
         }
         synchronized (dirtyLock) {
@@ -164,20 +164,16 @@ public class CircuitState implements InstanceData {
   private static final int FASTPATH_GRID_WIDTH = 200;
   private static final int FASTPATH_GRID_HEIGHT = 200;
 
-  // slowpath_values and fastpath_values store values resulting from propagation
+  // slowpathValues and fastpathValues store values resulting from propagation
   // *within* this circuit, i.e. the outputs of componnents in this circuit
   // together with the values carried on wires and buses in this circuit. When
   // components embedded in this circuit are called upon to re-calculate /
   // propagate, the components will call getValue() to pick out values from
   // these data structures. These are the values you would see if you stick a
   // probe at some location on the circuit sheet.
-  Map<Location, Value> slowpath_values = new HashMap<>(); // protected by valuesLock
-  Value[][] fastpath_values = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // protected by valuesLock
-  final Object valuesLock = new Object();
-
-  // The visited member holds the set of every [component,loc] pair (where the
-  // component is among those in this circuit) that has been visited during the
-  // current iteration of Propagator.stepInternal().
+  private Map<Location, Value> slowpathValues = new HashMap<>(); // protected by valuesLock
+  private Value[][] fastpathValues = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH]; // protected by valuesLock
+  private final Object valuesLock = new Object();
 
   private ArrayList<Component> dirtyComponents = new ArrayList<>(); // protected by dirtyLock
   private ArrayList<Propagator.SimulatorEvent> dirtyPoints = new ArrayList<>(); // protected by dirtyLock
@@ -250,11 +246,11 @@ public class CircuitState implements InstanceData {
     // (b/c no other threads have a reference to this yet), and to avoid the
     // possibility of deadlock (though that shouldn't happen either since no
     // other threads have references to this yet).
-    this.slowpath_values.clear(); // slow path
+    this.slowpathValues.clear(); // slow path
     synchronized (src.valuesLock) {
-      this.slowpath_values.putAll(src.slowpath_values); // slow path
+      this.slowpathValues.putAll(src.slowpathValues); // slow path
       for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
-        System.arraycopy(src.fastpath_values[y], 0, this.fastpath_values[y], 0, FASTPATH_GRID_WIDTH);
+        System.arraycopy(src.fastpathValues[y], 0, this.fastpathValues[y], 0, FASTPATH_GRID_WIDTH);
       }
     }
     synchronized (src.dirtyLock) {
@@ -338,7 +334,7 @@ public class CircuitState implements InstanceData {
       final var x = p.x / 10;
       final var y = p.y / 10;
       synchronized (valuesLock) {
-        value = fastpath_values[y][x];
+        value = fastpathValues[y][x];
         if (value == null) {
           value = CircuitWires.getBusValue(this, p);
         }
@@ -346,7 +342,7 @@ public class CircuitState implements InstanceData {
     } else {
       // slow path
       synchronized (valuesLock) {
-        value = slowpath_values.get(p);
+        value = slowpathValues.get(p);
         if (value == null) {
           value = CircuitWires.getBusValue(this, p);
         }
@@ -470,7 +466,7 @@ public class CircuitState implements InstanceData {
       }
     }
     synchronized (valuesLock) {
-      slowpath_values.clear(); // slow path
+      slowpathValues.clear(); // slow path
       clearFastpathGrid(); // fast path
     }
     synchronized (dirtyLock) {
@@ -552,7 +548,7 @@ public class CircuitState implements InstanceData {
   private void clearFastpathGrid() { // precondition: valuesLock held
     for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
       for (var x = 0; x < FASTPATH_GRID_WIDTH; x++) {
-        fastpath_values[y][x] = null;
+        fastpathValues[y][x] = null;
       }
     }
   }
@@ -584,7 +580,7 @@ public class CircuitState implements InstanceData {
   // for CircuitWires - to set value at point
   void clearValuesByWire() {
     synchronized (valuesLock) {
-      slowpath_values.clear(); // slow path
+      slowpathValues.clear(); // slow path
       clearFastpathGrid(); // fast path
     }
   }
@@ -593,15 +589,15 @@ public class CircuitState implements InstanceData {
     final var x = p.x / 10;
     final var y = p.y / 10;
     if (v == Value.NIL) {
-      if (fastpath_values[y][x] != null) {
-        fastpath_values[y][x] = null;
+      if (fastpathValues[y][x] != null) {
+        fastpathValues[y][x] = null;
         return true;
       } else {
         return false;
       }
     } else {
-      if (!v.equals(fastpath_values[y][x])) {
-        fastpath_values[y][x] = v;
+      if (!v.equals(fastpathValues[y][x])) {
+        fastpathValues[y][x] = v;
         return true;
       } else {
         return false;
@@ -611,10 +607,10 @@ public class CircuitState implements InstanceData {
 
   private boolean slowpath(Location p, Value v) { // precondition: valuesLock held
     if (v == Value.NIL) {
-      final var old = slowpath_values.remove(p);
+      final var old = slowpathValues.remove(p);
       return (old != null && old != Value.NIL);
     } else {
-      final var old = slowpath_values.put(p, v);
+      final var old = slowpathValues.put(p, v);
       return !v.equals(old);
     }
   }

@@ -295,13 +295,13 @@ public final class Value {
           this.unknown & other.unknown,
           this.value | other.value);
     } else {
-      long thisknown = ~this.unknown & (this.width == 32 ? -1 : ~(-1 << this.width));
-      long otherknown = ~other.unknown & (other.width == 32 ? -1 : ~(-1 << other.width));
-      long disagree = (this.value ^ other.value) & thisknown & otherknown;
+      long thisKnown = ~this.unknown & (this.width == 64 ? -1 : ~(-1 << this.width));
+      long otherKnown = ~other.unknown & (other.width == 64 ? -1 : ~(-1 << other.width));
+      long disagree = (this.value ^ other.value) & thisKnown & otherKnown;
       return Value.create(
           Math.max(this.width, other.width),
           this.error | other.error | disagree,
-          ~thisknown & ~otherknown,
+          ~thisKnown & ~otherKnown,
           this.value | other.value);
     }
   }

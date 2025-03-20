@@ -73,7 +73,7 @@ class WireRepair extends CircuitTransaction {
 
   private void doMerges(CircuitMutator mutator) {
     final var sets = new MergeSets();
-    for (Location loc : circuit.wires.points.getAllLocations()) {
+    for (final var loc : circuit.wires.points.getAllLocations()) {
       Collection<?> at = circuit.getComponents(loc);
       if (at.size() == 2) {
         Iterator<?> atit = at.iterator();
@@ -197,7 +197,7 @@ class WireRepair extends CircuitTransaction {
   }
 
   private void doSplits(CircuitMutator mutator) {
-    Set<Location> allLocs = circuit.wires.points.getAllLocations();
+    final var allLocs = circuit.wires.points.getAllLocations();
     final var repl = new ReplacementMap();
     for (final var w : circuit.getWires()) {
       final var w0 = w.getEnd0();
