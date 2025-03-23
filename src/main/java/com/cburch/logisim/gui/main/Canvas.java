@@ -115,7 +115,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private MouseMappings mappings;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
-  private volatile boolean paintDirty = false; // only for within paintComponent
   private volatile boolean inPaint = false; // only for within paintComponent
 
   public Canvas(Project proj) {
@@ -462,15 +461,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     return pane == null ? 1.0 : pane.getZoomFactor();
   }
 
-  boolean ifPaintDirtyReset() {
-    if (paintDirty) {
-      paintDirty = false;
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   boolean isPopupMenuUp() {
     return myListener.menuOn;
   }
@@ -497,31 +487,16 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
 
-    inPaint = true;
+    inPaint = true; // volatile
     try {
       super.paintComponent(g);
-      boolean clear = false;
-      int paintedDirty = 0;
-      if (clear) {
-        paintedDirty++;
-        /* Kevin Walsh:
-         * Clear the screen so we don't get
-         * artifacts due to aliasing (e.g. where
-         * semi-transparent (gray) pixels on the
-         * edges of a line turn would darker if
-         * painted a second time.
-         */
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, getWidth(), getHeight());
-      }
-      clear = true;
       painter.paintContents(g, proj);
       if (canvasPane == null) {
         viewport.paintContents(g);
       }
     } finally {
-      inPaint = false;
       synchronized (repaintLock) {
+        inPaint = false;
         repaintLock.notifyAll();
       }
       paintCoordinator.repaintCompleted();
@@ -543,15 +518,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   @Override
   public void recomputeSize() {
     computeSize(true);
-  }
-
-  @Override
-  public void repaint() {
-    if (inPaint) {
-      paintDirty = true;
-    } else {
-      super.repaint();
-    }
   }
 
   @Override
