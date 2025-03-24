@@ -23,16 +23,21 @@ import java.awt.event.ActionListener;
 //      depending on the user's chosen tick frequency.
 //  (2) CanvasPaintCoordinator keeps track of those requests, and periodically
 //      invokes canvas.repaint(), which enqueues work on the AWT thread. The
-//      repaint() calls are metered so they occur at most once per 50
-//      milliseconds (so 20 redraws per second), and so there is never more than
-//      one repaint() outstanding at a time.
+//      repaint() calls are metered so they occur at most once per approx 50
+//      milliseconds (so about 20 redraws per second), and so there is never more than
+//      one repaint() outstanding at a time. We use a
 //  (3) The ATW thread services the repaint() requests performs the drawing. It
 //      also invokes repaintCompleted() as a callback to notify
 //      CanvasPaintCoordinator that the repaining is finished, so that another
 //      repaint() can be issued, if and when needed.
 
 class CanvasPaintCoordinator {
-  private static final int REPAINT_TIMESPAN = 50; // 50 ms between repaints
+
+  // We use a variety of times around 50ms to avoid common factors
+  // with the auto-tick frequencies.
+  private static final int[] REPAINT_TIMESPANS =
+      new int[] { 47, 53, 49, 51, 50, 47, 53, 50, 48, 52 };
+  private int repaintTimespanIdx = 0;
 
   private Canvas canvas;
 
@@ -71,7 +76,9 @@ class CanvasPaintCoordinator {
       sDirtied++;
       tDirtied = now;
       long ago = now - tCleaned;
-      if (!cleaning && ago >= REPAINT_TIMESPAN) {
+      int repaint_timespan = REPAINT_TIMESPANS[repaintTimespanIdx];
+      repaintTimespanIdx = (repaintTimespanIdx + 1) % REPAINT_TIMESPANS.length;
+      if (!cleaning && ago >= repaint_timespan) {
         // it's been a while, so repaint immediately
         cleaning = true;
         sCleaned = sDirtied;
@@ -80,7 +87,7 @@ class CanvasPaintCoordinator {
       } else if (!cleaning) {
         // we repainted too recently, so repaint in a little while
         cleaning = true;
-        repaintSoon = REPAINT_TIMESPAN - ago;
+        repaintSoon = repaint_timespan - ago;
       }
     }
     if (repaintNow) {
@@ -98,7 +105,9 @@ class CanvasPaintCoordinator {
     synchronized (lock) {
       cleaning = false;
       long ago = now - tCleaned;
-      if (sCleaned < sDirtied && ago >= REPAINT_TIMESPAN) {
+      int repaintTimespan = REPAINT_TIMESPANS[repaintTimespanIdx];
+      repaintTimespanIdx = (repaintTimespanIdx + 1) % REPAINT_TIMESPANS.length;
+      if (sCleaned < sDirtied && ago >= repaintTimespan) {
         // it's been a while, so repaint immediately
         cleaning = true;
         sCleaned = sDirtied;
@@ -107,7 +116,7 @@ class CanvasPaintCoordinator {
       } else if (sCleaned < sDirtied) {
         // we repainted too recently, so repaint in a little while
         cleaning = true;
-        repaintSoon = REPAINT_TIMESPAN - ago;
+        repaintSoon = repaintTimespan - ago;
       }
     }
     if (repaintNow) {
