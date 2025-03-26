@@ -58,7 +58,7 @@ class PropagationPoints {
 
   private void addSubstates(HashMap<CircuitState, CircuitState> map, CircuitState source, CircuitState value) {
     map.put(source, value);
-    for (final var s : source.getSubStates()) {
+    for (final var s : source.getSubstates()) {
       addSubstates(map, s, value);
     }
   }
@@ -73,7 +73,9 @@ class PropagationPoints {
 
     final var circState = context.getCircuitState();
     final var stateMap = new HashMap<CircuitState, CircuitState>();
-    for (final var state : circState.getSubStates()) addSubstates(stateMap, state, state);
+    for (final var state : circState.getSubstates()) {
+      addSubstates(stateMap, state, state);
+    }
 
     final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
@@ -97,7 +99,9 @@ class PropagationPoints {
 
     final var state = context.getCircuitState();
     final var stateMap = new HashMap<CircuitState, CircuitState>();
-    for (final var s : state.getSubStates()) addSubstates(stateMap, s, s);
+    for (final var s : state.getSubstates()) {
+      addSubstates(stateMap, s, s);
+    }
 
     final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);

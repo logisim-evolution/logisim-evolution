@@ -73,7 +73,7 @@ class WireRepair extends CircuitTransaction {
 
   private void doMerges(CircuitMutator mutator) {
     final var sets = new MergeSets();
-    for (final var loc : circuit.wires.points.getSplitLocations()) {
+    for (final var loc : circuit.wires.points.getAllLocations()) {
       Collection<?> at = circuit.getComponents(loc);
       if (at.size() == 2) {
         Iterator<?> atit = at.iterator();
@@ -111,7 +111,7 @@ class WireRepair extends CircuitTransaction {
     mutator.replace(circuit, repl);
   }
 
-  private void doMergeSet(ArrayList<Wire> mergeSet, ReplacementMap replacements, Set<Location> splitLocs) {
+  private void doMergeSet(ArrayList<Wire> mergeSet, ReplacementMap replacements, Set<Location> allLocs) {
     final var ends = new TreeSet<Location>();
     for (final var w : mergeSet) {
       ends.add(w.getEnd0());
@@ -123,7 +123,7 @@ class WireRepair extends CircuitTransaction {
     mids.add(whole.getEnd0());
     mids.add(whole.getEnd1());
     for (final var loc : whole) {
-      if (splitLocs.contains(loc)) {
+      if (allLocs.contains(loc)) {
         for (final var comp : circuit.getComponents(loc)) {
           if (!mergeSet.contains(comp)) {
             mids.add(loc);
@@ -187,23 +187,23 @@ class WireRepair extends CircuitTransaction {
     }
 
     final var replacements = new ReplacementMap();
-    final var splitLocs = circuit.wires.points.getSplitLocations();
+    Set<Location> allLocs = circuit.wires.points.getAllLocations();
     for (final var mergeSet : mergeSets.getMergeSets()) {
       if (mergeSet.size() > 1) {
-        doMergeSet(mergeSet, replacements, splitLocs);
+        doMergeSet(mergeSet, replacements, allLocs);
       }
     }
     mutator.replace(circuit, replacements);
   }
 
   private void doSplits(CircuitMutator mutator) {
-    final var splitLocs = circuit.wires.points.getSplitLocations();
+    final var allLocs = circuit.wires.points.getAllLocations();
     final var repl = new ReplacementMap();
     for (final var w : circuit.getWires()) {
       final var w0 = w.getEnd0();
       final var w1 = w.getEnd1();
       ArrayList<Location> splits = null;
-      for (final var loc : splitLocs) {
+      for (final var loc : allLocs) {
         if (w.contains(loc) && !loc.equals(w0) && !loc.equals(w1)) {
           if (splits == null) splits = new ArrayList<>();
           splits.add(loc);

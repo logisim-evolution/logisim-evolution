@@ -305,7 +305,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     }
   }
 
-  void fireInvalidated() {
+  public void fireInvalidated() {
     final var listeners = this.listeners;
     if (listeners != null) {
       ComponentEvent e = null;

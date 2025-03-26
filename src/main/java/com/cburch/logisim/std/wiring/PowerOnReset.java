@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -72,7 +73,7 @@ public class PowerOnReset extends InstanceFactory {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       PORState ret = (PORState) state.getData();
-      ret.reset();
+      ret.reset(state);
     }
   }
 
@@ -99,14 +100,15 @@ public class PowerOnReset extends InstanceFactory {
   private static class PORState implements InstanceData, Cloneable, ActionListener {
 
     private boolean value;
+    private InstanceComponent component;
     private final Timer tim;
-    private final InstanceState state;
     private int tstart;
     private int tend;
     private int duration;
 
     public PORState(InstanceState state) {
       value = true;
+      component = state.getInstance().getComponent();
       DurationAttribute attr =
           (DurationAttribute) state.getAttributeSet().getAttribute("PorHighDuration");
       duration = state.getAttributeValue(attr) * 1000;
@@ -121,7 +123,6 @@ public class PowerOnReset extends InstanceFactory {
       }
       state.setPort(0, Value.createKnown(BitWidth.ONE, tstart), 0);
       tim.start();
-      this.state = state;
     }
 
     public boolean getValue() {
@@ -136,7 +137,7 @@ public class PowerOnReset extends InstanceFactory {
       return tend;
     }
 
-    public void reset() {
+    public void reset(InstanceState state) {
       if (value) {
         tim.stop();
         value = false;
@@ -175,7 +176,7 @@ public class PowerOnReset extends InstanceFactory {
       if (e.getSource() == tim) {
         if (value) {
           value = false;
-          state.getInstance().fireInvalidated();
+          component.fireInvalidated();
           tim.stop();
         }
       }

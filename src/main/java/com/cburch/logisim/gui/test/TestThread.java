@@ -117,7 +117,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   void matchPins() throws TestException {
     int n = vector.columnName.length;
     pin = new Instance[n];
-    CircuitState state = new CircuitState(this.project, this.circuit);
+    CircuitState state = CircuitState.createRootState(this.project, this.circuit);
 
     for (int i = 0; i < n; i++) {
       String columnName = vector.columnName[i];

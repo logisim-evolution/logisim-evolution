@@ -499,7 +499,7 @@ public class Pin extends InstanceFactory {
                 OptionPane.OK_CANCEL_OPTION,
                 OptionPane.WARNING_MESSAGE);
         if (choice == OptionPane.OK_OPTION) {
-          circState = circState.cloneState();
+          circState = circState.cloneAsNewRootState();
           canvas.getProject().setCircuitState(circState);
           state = circState.getInstanceState(state.getInstance());
         } else {
@@ -702,13 +702,7 @@ public class Pin extends InstanceFactory {
 
   private static Value pull2(Value mod, BitWidth expectedWidth, Value pullTo) {
     if (mod.getWidth() == expectedWidth.getWidth()) {
-      Value[] vs = mod.getAll();
-      for (int i = 0; i < vs.length; i++) {
-        if (vs[i] == Value.UNKNOWN) {
-          vs[i] = pullTo;
-        }
-      }
-      return Value.create(vs);
+      return mod.pullEachBitTowards(pullTo);
     } else {
       return Value.createKnown(expectedWidth, 0);
     }
@@ -1233,7 +1227,7 @@ public class Pin extends InstanceFactory {
       Value found = state.getPortValue(0);
       q.intendedValue = found;
       q.foundValue = found;
-      state.setPort(0, Value.createUnknown(attrs.width), 1);
+      //state.setPort(0, Value.createUnknown(attrs.width), 1);
     } else {
       Value found = state.getPortValue(0);
       Value toSend = q.intendedValue;
