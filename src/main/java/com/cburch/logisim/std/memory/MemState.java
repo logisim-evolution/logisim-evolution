@@ -303,16 +303,21 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 
   void scrollToShow(long addr) {
     if (recalculateParameters) return;
-    if (isValidAddr(addr)) {
-      int NrOfDataItemsDisplayed = NrOfLines * nrDataSymbolsEachLine;
-      while (addr < curScroll) {
-        curScroll -= nrDataSymbolsEachLine;
-        if (curScroll < 0) curScroll = 0;
-      }
-      while (addr >= (curScroll + NrOfDataItemsDisplayed)) {
-        curScroll += nrDataSymbolsEachLine;
+    int addrBits = contents.getLogLength();
+    if ((addr >>> addrBits) != 0) return;
+    if (addr < curScroll) {
+      long linesToScroll = (curScroll - addr + nrDataSymbolsEachLine - 1) / nrDataSymbolsEachLine;
+      curScroll -= linesToScroll * nrDataSymbolsEachLine;
+    } else if (addr >= (curScroll + NrOfLines * nrDataSymbolsEachLine)) {
+      long curScrollEnd = curScroll + NrOfLines * nrDataSymbolsEachLine - 1;
+      long linesToScroll = (addr - curScrollEnd + nrDataSymbolsEachLine - 1) / nrDataSymbolsEachLine;
+      curScroll += linesToScroll * nrDataSymbolsEachLine;
+      long totalNrOfEntries = (1 << addrBits);
+      if ((curScroll + (NrOfLines * nrDataSymbolsEachLine)) > totalNrOfEntries) {
+        curScroll = totalNrOfEntries - (NrOfLines * nrDataSymbolsEachLine);
       }
     }
+    if (curScroll < 0) curScroll = 0;
   }
 
   //
