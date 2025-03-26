@@ -17,103 +17,118 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class TickCounter implements Simulator.Listener {
-  private final DecimalFormat formatter;
-  private Simulator simulator;
-  private long tickCount = 0;
+  private final DecimalFormat [] formatterWithDigits = new DecimalFormat[4];
+  private final String [] spaces = {"", " ", "  ", "   ", "    "};
+  private long fullTickCount = 0;
   private long startTime;
+  private long tickTime;
+  private Object lock = new Object(); // lock for fullTickCount, startTime, tickTime
+  private boolean autoTicking = false;
+  private double requestedClockFrequency;
+  private long processedTickCount = 0;
   private boolean useKiloHertz = false;
-  private double previousFrequency = 0.0;
-  private long elapsedTimeSinceLastUnitUpdate = 0;
   static final int NANOSECONDS_PER_SECONDS = 1_000_000_000;
-  static final int UNIT_UPDATE_THRESHOLD_NANOSECONDS = NANOSECONDS_PER_SECONDS / 2;
-  static final int TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION = 1000;
-  static final int WEIGHT_REDUCTION_TICKS_COUNT = TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION / 2;
 
   public TickCounter() {
-    clear();
-    formatter = new DecimalFormat("0.00");
-    formatter.setRoundingMode(RoundingMode.HALF_UP);
-  }
-
-  public void clear() {
-    // If we know the requested frequency, let's initialize the counts to this frequency.
-    // It provides a nicer effect at low frequencies, and doesn't hurt at high frequencies.
-    if (simulator != null) {
-      final var tickPeriodNanoseconds = NANOSECONDS_PER_SECONDS / simulator.getTickFrequency();
-      tickCount = 12; // We'll set the frequency as if it happened during 12 ticks already.
-      startTime = System.nanoTime() - (long) (tickCount * tickPeriodNanoseconds);
-    } else {
-      tickCount = 0;
-      startTime = System.nanoTime();
+    String pattern = ".";
+    for (int i = 0; i < 4; i++) {
+      formatterWithDigits[i] = new DecimalFormat(pattern);
+      formatterWithDigits[i].setRoundingMode(RoundingMode.HALF_UP);
+      pattern += "0";
     }
   }
 
-  public String getTickRate() {
+  public void clear(Simulator simulator) {
+    synchronized (lock) {
+      fullTickCount = -1;
+      startTime = 0;
+    }
+    autoTicking = simulator.isAutoTicking();
+    requestedClockFrequency = simulator.getTickFrequency() / 2.0;
+    processedTickCount = 0;
+  }
+
+  public double getFullCyclesPerSecond() {
+    long started;
+    long fullCount;
+    long timeOfTick;
+    synchronized (lock) {
+      started = startTime;
+      fullCount = fullTickCount;
+      timeOfTick = tickTime;
+    }
+
     // Don't compute the clock frequency if simulation is manual.
-    if (simulator == null || !simulator.isAutoTicking()) {
-      return "";
+    if (!autoTicking || fullTickCount < 1) {
+      return requestedClockFrequency;
     }
-
-    final var currentFrequency = simulator.getTickFrequency();
-
-    // Reset history when the user changes the desired simulation frequency.
-    if (previousFrequency != currentFrequency) {
-      previousFrequency = currentFrequency;
-      clear();
-    }
-
-    final var elapsedTime = System.nanoTime() - startTime;
-
+    final var elapsedTime = timeOfTick - started;
     // If we didn't have any elapsed time we can't compute a frequency.
     if (elapsedTime == 0) {
-      return "";
+      return requestedClockFrequency;
     }
+
+    var tickCount = fullCount - processedTickCount;
 
     // If we didn't have any ticks we can't compute a frequency.
     if (tickCount < 1) {
-      return "";
+      return requestedClockFrequency;
     }
 
-    final var ticksPerNanoseconds = (double) tickCount / elapsedTime;
-    final var fullCyclesPerSeconds = NANOSECONDS_PER_SECONDS / 2.0 * ticksPerNanoseconds; // 2 ticks per cycles
-    elapsedTimeSinceLastUnitUpdate += elapsedTime;
+    final var ticksPerNanosecond = (double) tickCount / elapsedTime;
+    final var ticksPerSecond = ticksPerNanosecond * NANOSECONDS_PER_SECONDS;
+    final var fullCyclesPerSecond = ticksPerSecond / 2.0; // 2 ticks per cycle
 
-    // If time has come, update the frequency unit.
-    if (elapsedTimeSinceLastUnitUpdate > UNIT_UPDATE_THRESHOLD_NANOSECONDS) {
-      useKiloHertz = (fullCyclesPerSeconds > 1000.0);
-      elapsedTimeSinceLastUnitUpdate = 0;
-    }
-
-    // If we accumulated a lot of ticks then lets reduce the weight of the past.
-    if (tickCount > TICKS_THRESHOLD_BEFORE_HISTORY_WEIGHT_REDUCTION) {
-      tickCount -= WEIGHT_REDUCTION_TICKS_COUNT;
-      final var nanoseconds = WEIGHT_REDUCTION_TICKS_COUNT / ticksPerNanoseconds;
+    // If we accumulated a lot of ticks or time then lets reduce the weight of the past.
+    var thresholdForWeightReduction = fullCyclesPerSecond > 50 ? fullCyclesPerSecond : 50;
+    if (tickCount > thresholdForWeightReduction) {
+      var weightReductionTickCount = tickCount / 2; // reduce history by half
+      processedTickCount += weightReductionTickCount;
+      final var nanoseconds = weightReductionTickCount / ticksPerNanosecond;
+      // We can modify startTime here because simThread only sets it to nanoTime when fullTickCount is -1.
       startTime += (long) nanoseconds;
     }
-
-    if (useKiloHertz) {
-      return S.get("tickRateKHz", formatter.format(fullCyclesPerSeconds / 1000.0));
-    } else {
-      return S.get("tickRateHz", formatter.format(fullCyclesPerSeconds));
-    }
+    return fullCyclesPerSecond;
   }
 
+  public String getTickRate() {
+    if (!autoTicking) {
+      return "";
+    }
+    var fullCyclesPerSecond = getFullCyclesPerSecond();
+
+    // update the frequency unit if needed
+    if (fullCyclesPerSecond > 999.5) useKiloHertz = true;
+    if (fullCyclesPerSecond < 900.0) useKiloHertz = false;
+
+    // display 3 significant digits of the frequency
+    final var unitsKey = useKiloHertz ? "tickRateKHz" : "tickRateHz";
+    final var displayNum = useKiloHertz ? fullCyclesPerSecond / 1000.0 : fullCyclesPerSecond;
+    final var fractionalDigits = displayNum < 0.9995 ? 3 : displayNum < 9.995 ? 2 : displayNum < 99.95 ? 1 : 0;
+    var display = formatterWithDigits[fractionalDigits].format(displayNum);
+    return S.get(unitsKey, display);
+  }
+
+  @Override
   public void simulatorStateChanged(Simulator.Event e) {
-    simulator = e.getSource();
-    clear();
+    clear(e.getSource());
   }
 
   @Override
   public void simulatorReset(Simulator.Event e) {
-    simulator = e.getSource();
-    clear();
+    clear(e.getSource());
   }
 
   @Override
   public void propagationCompleted(Simulator.Event e) {
-    if (e.didTick()) {
-      simulator = e.getSource();
-      tickCount++;
+    if (e.didTick() && e.getSource().isAutoTicking()) {
+      synchronized (lock) {
+        tickTime = System.nanoTime();
+        if (fullTickCount == -1) {
+          startTime = tickTime;
+        }
+        fullTickCount++;
+      }
     }
   }
 }

@@ -1077,7 +1077,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           final var oldProp = oldState.getPropagator();
           final var newProp = newState.getPropagator();
           if (oldProp != newProp) {
-            tickCounter.clear();
+            tickCounter.clear(proj.getSimulator());
           }
         }
       }
@@ -1101,7 +1101,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void simulatorStateChanged(Simulator.Event e) {
-      // do nothing
+      paintCoordinator.requestRepaint();
     }
 
     @Override
