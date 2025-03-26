@@ -14,6 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
@@ -691,8 +692,8 @@ public class RamAppearance {
       label = !classic ? "" : getNrOEPorts(attrs) == 1 ? "OE" : "OE" + i;
       final var idx = getOEIndex(i, attrs);
       if (!classic) {
-        final var loc = inst.getPortLocation(idx);
-        g.drawLine(loc.getX(), loc.getY(), loc.getX() + 20, loc.getY());
+        drawCable(g, inst.getPortLocation(idx),
+            attrs.getValue(RamAttributes.OUTPUT_ENABLE_MODE) != RamAttributes.ENABLE_ACTIVE_HIGH);
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
@@ -701,8 +702,8 @@ public class RamAppearance {
       label = !classic ? "" : getNrWEPorts(attrs) == 1 ? "WE" : "WE" + i;
       final var idx = getWEIndex(i, attrs);
       if (!classic) {
-        final var loc = inst.getPortLocation(idx);
-        g.drawLine(loc.getX(), loc.getY(), loc.getX() + 20, loc.getY());
+        drawCable(g, inst.getPortLocation(idx),
+            attrs.getValue(RamAttributes.WRITE_ENABLE_MODE) != RamAttributes.ENABLE_ACTIVE_HIGH);
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
@@ -711,13 +712,10 @@ public class RamAppearance {
       final var idx = getClkIndex(i, attrs);
       if (!classic) {
         final var loc = inst.getPortLocation(idx);
-        var xend = 20;
-        if (attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_FALLING)
-            || attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_LOW)) {
-          xend -= 8;
-          g.drawOval(loc.getX() + 12, loc.getY() - 4, 8, 8);
-        }
-        g.drawLine(loc.getX(), loc.getY(), loc.getX() + xend, loc.getY());
+        final var inverted =
+            attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_FALLING)
+                || attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_LOW);
+        drawCable(g, loc, inverted);
         if (synchronous(attrs)) painter.drawClockSymbol(loc.getX() + 20, loc.getY());
         painter.drawPort(idx);
       } else {
@@ -753,6 +751,15 @@ public class RamAppearance {
       painter.drawPort(idx);
     }
     g.dispose();
+  }
+
+  private static void drawCable(Graphics2D g, Location loc, Boolean inverted) {
+    var xEnd = 20;
+    if (inverted) {
+      xEnd -= 8;
+      g.drawOval(loc.getX() + 12, loc.getY() - 4, 8, 8);
+    }
+    g.drawLine(loc.getX(), loc.getY(), loc.getX() + xEnd, loc.getY());
   }
 
   private static void drawControlBlock(Instance inst, AttributeSet attrs, InstancePainter painter) {
