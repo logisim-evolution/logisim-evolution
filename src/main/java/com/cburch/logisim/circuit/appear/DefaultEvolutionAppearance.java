@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
 public class DefaultEvolutionAppearance {
 
@@ -139,7 +140,11 @@ public class DefaultEvolutionAppearance {
     int hAlign;
     final var color = Color.DARK_GRAY;
     int ldX;
-    for (final var pin : pins) {
+    ListIterator<Instance> iter = pins.listIterator();
+    boolean multipleClockPins = false;
+    while (iter.hasNext()) {
+      final var index = iter.nextIndex();
+      final var pin = iter.next();
       final var offset =
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
               ? Wire.WIDTH_BUS >> 1
@@ -153,31 +158,43 @@ public class DefaultEvolutionAppearance {
         ldX = -15;
         hAlign = EditableLabel.RIGHT;
       }
-      if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        var label = pin.getAttributeValue(StdAttr.LABEL);
-        if (label.equals("clk")) {
-          y = bottomY;
-          Location[] pts = {
-            Location.create(x + 10 + 1, y - 4, false),
-            Location.create(x + 10 + 8, y, false),
-            Location.create(x + 10 + 1, y + 4, false)
-          };
-          final var locs = UnmodifiableList.create(pts);
-          final var clk = new Poly(false, locs);
-          clk.updateValue(DrawAttr.STROKE_WIDTH, 2);
-          dest.add(clk);
-        } else {
-          final var maxLength = 12;
-          final var ellipsis = "...";
-          if (isFixedSize && label.length() > maxLength) {
-            label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
-          }
-          final var textLabel = new Text(x + ldX, y + ldy, label);
-          textLabel.getLabel().setHorizontalAlignment(hAlign);
-          textLabel.getLabel().setColor(color);
-          textLabel.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
-          dest.add(textLabel);
+      boolean shouldDrawLabel = true;
+      boolean isClockPin = Pin.FACTORY.isClockPin(pin);
+      if (isClockPin) {
+        int pinsFromEnd = pins.size() - 1 - index;
+        if (pinsFromEnd > 0) {
+          // Need variable for last clock pin to know its label should be visible
+          multipleClockPins = true;
         }
+        shouldDrawLabel = multipleClockPins;
+        y = bottomY - dY * pinsFromEnd;
+        Location[] pts = {
+          Location.create(x + 10 + 1, y - 4, false),
+          Location.create(x + 10 + 8, y, false),
+          Location.create(x + 10 + 1, y + 4, false)
+        };
+        final var locs = UnmodifiableList.create(pts);
+        final var clk = new Poly(false, locs);
+        clk.updateValue(DrawAttr.STROKE_WIDTH, 2);
+        dest.add(clk);
+      }
+      String label = pin.getAttributeValue(StdAttr.LABEL);
+      if (shouldDrawLabel && label != null && !label.isEmpty()) {
+        final var maxLength = 12;
+        final var ellipsis = "...";
+        if (isFixedSize && label.length() > maxLength) {
+          label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
+        }
+        int textX = x + ldX;
+        if (isClockPin) {
+          // Adjust by width of clock symbol
+          textX += 8;
+        }
+        final var textLabel = new Text(textX, y + ldy, label);
+        textLabel.getLabel().setHorizontalAlignment(hAlign);
+        textLabel.getLabel().setColor(color);
+        textLabel.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
+        dest.add(textLabel);
       }
       Rectangle rect;
       if (isLeftSide) {

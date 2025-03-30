@@ -15,7 +15,8 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Pin;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,25 +33,26 @@ class DefaultAppearance {
   }
 
   static void sortPinList(List<Instance> pins, Direction facing) {
-    // Remove any clk pin and then add it to the end after sorting
-    Instance clk = null;
+    // Remove any clock pins and then add them to the end after sorting
+    ArrayList<Instance> clockPins = new ArrayList<>();
     for (var it = pins.iterator(); it.hasNext(); ) {
       var pin = it.next();
-      if (!pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        continue;
-      }
-      var label = pin.getAttributeValue(StdAttr.LABEL);
-      if (label.equals("clk")) {
-        clk = pin;
+      if (Pin.FACTORY.isClockPin(pin)) {
+        clockPins.add(pin);
         it.remove();
-        break;
       }
     }
 
-    if (facing == Direction.NORTH || facing == Direction.SOUTH) Location.sortHorizontal(pins);
-    else Location.sortVertical(pins);
+    if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+      Location.sortHorizontal(pins);
+      Location.sortHorizontal(clockPins);
+    }
+    else {
+      Location.sortVertical(pins);
+      Location.sortVertical(clockPins);
+    }
 
-    // clk pin always comes last
-    if (clk != null) pins.add(clk);
+    // Clock pins always come last
+    pins.addAll(clockPins);
   }
 }
