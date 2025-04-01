@@ -138,33 +138,49 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     throw new UnsupportedOperationException("moveHandle");
   }
 
+
   @Override
   public boolean overlaps(CanvasObject other) {
     final var a = this.getBounds();
     final var b = other.getBounds();
     final var c = a.intersect(b);
     final var rand = new Random();
+
     if (c.getWidth() == 0 || c.getHeight() == 0) {
       return false;
-    } else if (other instanceof AbstractCanvasObject that) {
-      for (var i = 0; i < OVERLAP_TRIES; i++) {
-        if (i % 2 == 0) {
-          final var loc = this.getRandomPoint(c, rand);
-          if (loc != null && that.contains(loc, false)) return true;
-        } else {
-          final var loc = that.getRandomPoint(c, rand);
-          if (loc != null && this.contains(loc, false)) return true;
-        }
-      }
-      return false;
+    }
+
+    if (other instanceof AbstractCanvasObject that) {
+      return checkOverlapWithRotation(that, rand, c);
     } else {
-      for (var i = 0; i < OVERLAP_TRIES; i++) {
-        final var loc = this.getRandomPoint(c, rand);
-        if (loc != null && other.contains(loc, false)) return true;
-      }
-      return false;
+      return checkOverlapWithoutRotation(other, rand, c);
     }
   }
+
+  private boolean checkOverlapWithRotation(AbstractCanvasObject that, Random rand, Bounds c) {
+    for (var i = 0; i < OVERLAP_TRIES; i++) {
+      final var loc = (i % 2 == 0) ? this.getRandomPoint(c, rand) : that.getRandomPoint(c, rand);
+      if (loc != null && checkContains(that, loc)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean checkOverlapWithoutRotation(CanvasObject other, Random rand, Bounds c) {
+    for (var i = 0; i < OVERLAP_TRIES; i++) {
+      final var loc = this.getRandomPoint(c, rand);
+      if (loc != null && checkContains(other, loc)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean checkContains(CanvasObject obj, Location loc) {
+    return obj.contains(loc, false);
+  }
+
 
   @Override
   public void removeAttributeListener(AttributeListener l) {
