@@ -127,7 +127,7 @@ public class Propagator {
    * others. It is trivial to switch between the implementations, just change the
    * object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
    */
-  private final QNodeQueue<SimulatorEvent> toProcess = new SplayQueue<>();
+  private final QNodeQueue<SimulatorEvent> toProcess = new PriorityEventQueue<>();
 
   private int clock = 0;
   private boolean isOscillating = false;
