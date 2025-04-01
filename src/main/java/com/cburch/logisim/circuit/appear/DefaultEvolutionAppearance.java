@@ -11,6 +11,7 @@ package com.cburch.logisim.circuit.appear;
 
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.draw.shapes.Poly;
 import com.cburch.draw.shapes.Rectangle;
 import com.cburch.draw.shapes.Text;
 import com.cburch.draw.util.EditableLabel;
@@ -20,11 +21,13 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
 public class DefaultEvolutionAppearance {
 
@@ -96,8 +99,9 @@ public class DefaultEvolutionAppearance {
     final var ry = OFFS + (9 - (ay + 9) % 10);
 
     final var ret = new ArrayList<CanvasObject>();
-    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, fixedSize);
-    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, fixedSize);
+    final var bottomY = ry + height - thight;
+    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, bottomY - 10, 0, dy, true, sdy, fixedSize);
+    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, bottomY - 10, 0, dy, false, sdy, fixedSize);
     var rect = new Rectangle(rx + 10, ry + height - thight, width - 20, thight);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
@@ -127,6 +131,7 @@ public class DefaultEvolutionAppearance {
       List<Instance> pins,
       int x,
       int y,
+      int bottomY,
       int dX,
       int dY,
       boolean isLeftSide,
@@ -135,21 +140,66 @@ public class DefaultEvolutionAppearance {
     int hAlign;
     final var color = Color.DARK_GRAY;
     int ldX;
-    for (final var pin : pins) {
+    ListIterator<Instance> iter = pins.listIterator();
+    boolean multipleClockPins = false;
+    while (iter.hasNext()) {
+      final var index = iter.nextIndex();
+      final var pin = iter.next();
       final var offset =
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
               ? Wire.WIDTH_BUS >> 1
               : Wire.WIDTH >> 1;
       final var height =
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
-      Rectangle rect;
       if (isLeftSide) {
         ldX = 15;
         hAlign = EditableLabel.LEFT;
-        rect = new Rectangle(x, y - offset, 10, height);
       } else {
         ldX = -15;
         hAlign = EditableLabel.RIGHT;
+      }
+      boolean shouldDrawLabel = true;
+      boolean isClockPin = Pin.FACTORY.isClockPin(pin);
+      if (isClockPin) {
+        int pinsFromEnd = pins.size() - 1 - index;
+        if (pinsFromEnd > 0) {
+          // Need variable for last clock pin to know its label should be visible
+          multipleClockPins = true;
+        }
+        shouldDrawLabel = multipleClockPins;
+        y = bottomY - dY * pinsFromEnd;
+        Location[] pts = {
+          Location.create(x + 10 + 1, y - 4, false),
+          Location.create(x + 10 + 8, y, false),
+          Location.create(x + 10 + 1, y + 4, false)
+        };
+        final var locs = UnmodifiableList.create(pts);
+        final var clk = new Poly(false, locs);
+        clk.updateValue(DrawAttr.STROKE_WIDTH, 2);
+        dest.add(clk);
+      }
+      String label = pin.getAttributeValue(StdAttr.LABEL);
+      if (shouldDrawLabel && label != null && !label.isEmpty()) {
+        final var maxLength = 12;
+        final var ellipsis = "...";
+        if (isFixedSize && label.length() > maxLength) {
+          label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
+        }
+        int textX = x + ldX;
+        if (isClockPin) {
+          // Adjust by width of clock symbol
+          textX += 8;
+        }
+        final var textLabel = new Text(textX, y + ldy, label);
+        textLabel.getLabel().setHorizontalAlignment(hAlign);
+        textLabel.getLabel().setColor(color);
+        textLabel.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
+        dest.add(textLabel);
+      }
+      Rectangle rect;
+      if (isLeftSide) {
+        rect = new Rectangle(x, y - offset, 10, height);
+      } else {
         rect = new Rectangle(x - 10, y - offset, 10, height);
       }
       rect.setValue(DrawAttr.STROKE_WIDTH, 1);
@@ -157,19 +207,6 @@ public class DefaultEvolutionAppearance {
       rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
       dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y, true), pin));
-      if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        var label = pin.getAttributeValue(StdAttr.LABEL);
-        final var maxLength = 12;
-        final var ellipsis = "...";
-        if (isFixedSize && label.length() > maxLength) {
-          label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
-        }
-        final var textLabel = new Text(x + ldX, y + ldy, label);
-        textLabel.getLabel().setHorizontalAlignment(hAlign);
-        textLabel.getLabel().setColor(color);
-        textLabel.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
-        dest.add(textLabel);
-      }
       x += dX;
       y += dY;
     }

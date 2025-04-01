@@ -851,6 +851,11 @@ public class Pin extends InstanceFactory {
     return attrs.type != EndData.OUTPUT_ONLY;
   }
 
+  public boolean isClockPin(Instance instance) {
+    PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
+    return attrs.isClock();
+  }
+
   private void drawNewStyleValue(
       InstancePainter painter, int width, int height, boolean isOutput, boolean isGhost) {
     /* Note: we are here in an translated environment the point (0,0) presents the pin location*/

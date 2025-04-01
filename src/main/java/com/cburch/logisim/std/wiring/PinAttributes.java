@@ -102,6 +102,15 @@ class PinAttributes extends ProbeAttributes {
     return type != EndData.INPUT_ONLY;
   }
 
+  boolean isClock() {
+    if (isOutput()) return false;
+
+    String lbl = getValue(StdAttr.LABEL);
+    if (lbl == null) return false;
+
+    return lbl.matches("(?i).*(clk|clock).*");
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
