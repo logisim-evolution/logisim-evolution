@@ -12,34 +12,43 @@ package com.cburch.logisim.gui.generic;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.log.LoggableContract;
 import com.cburch.logisim.gui.main.Frame;
+import static com.cburch.logisim.gui.Strings.S;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
 import com.cburch.logisim.util.AlphanumComparator;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.LocaleManager;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Comparator;
+import java.util.Arrays;
 import java.util.HashMap;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class RegTabContent extends JScrollPane implements LocaleListener, Simulator.Listener {
-  private static final long serialVersionUID = 1L;
-  private static final HashMap<String, Component> registers = new HashMap<>();
-  private final JPanel panel = new JPanel(new GridBagLayout());
-  private final GridBagConstraints gbc = new GridBagConstraints();
-  private final Project proj;
+  private JPanel panel = new JPanel(new GridBagLayout());
+  private GridBagConstraints c = new GridBagConstraints();
+  private Project proj;
+  private MyLabel hdrName = new MyLabel("", Font.ITALIC | Font.BOLD, false, Color.LIGHT_GRAY);
+  private MyLabel hdrValue = new MyLabel("", Font.BOLD, false, Color.LIGHT_GRAY);
 
   public RegTabContent(Frame frame) {
     super();
@@ -48,178 +57,167 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     getVerticalScrollBar().setUnitIncrement(16);
     proj.getSimulator().addSimulatorListener(this);
 
-    fillArray();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.anchor = GridBagConstraints.FIRST_LINE_START;
+    c.ipady = 2;
+
+    fill();
+    localeChanged();
+    LocaleManager.addLocaleListener(this);
   }
 
-  /**
-   * This function will clear and fill the registers tab and refresh their value. It will start by
-   * iterate over all circuits of the current project to register all the "Register" components
-   * (providing their attributes are correctly set). It will then fill the panel with each register
-   * found, including their current value.
-   */
-  private void fillArray() {
-    registers.clear();
+  private void fill() {
     panel.removeAll();
-    for (final var circ : proj.getLogisimFile().getCircuits()) {
-      getAllRegisters(circ);
-    }
-    if (proj.getLogisimFile().getLibrary("prodis_v1.3") instanceof LoadedLibrary loadedLib) {
-      if (loadedLib.getBase() instanceof LogisimFile lsFile) {
-        for (final var circ : lsFile.getCircuits()) {
-          getAllRegisters(circ);
-        }
-      }
-    }
 
-    // FIXME: hardcoded strings
-    final var col1 = new MyLabel("Circuit", Font.ITALIC | Font.BOLD);
-    final var col2 = new MyLabel("Reg name", Font.BOLD);
-    final var col3 = new MyLabel("Value", Font.BOLD);
+    c.weighty = 0;
+    c.gridy = 0;
+    c.gridx = 0;
+    c.weightx = 0.7;
+    panel.add(hdrName, c);
+    c.gridx = 1;
+    c.weightx = 0.3;
+    panel.add(hdrValue, c);
 
-    col1.setColor(Color.LIGHT_GRAY);
-    col2.setColor(Color.LIGHT_GRAY);
-    col3.setColor(Color.LIGHT_GRAY);
+    CircuitState cs = proj.getCircuitState();
+    if (cs == null)
+      return;
+    Circuit circ = cs.getCircuit();
 
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-    gbc.ipady = 2;
-    gbc.weighty = 0;
+    enumerate(null, circ, cs);
 
-    var y = 0;
-    gbc.gridy = y;
-    gbc.gridx = 0;
-    gbc.weightx = 0.3;
-    panel.add(col1, gbc);
-    gbc.gridx++;
-    gbc.weightx = 0.5;
-    panel.add(col2, gbc);
-    gbc.gridx++;
-    gbc.weightx = 0.2;
-    panel.add(col3, gbc);
-    y++;
-
-    if (!registers.isEmpty()) {
-      final var keys = registers.keySet().stream().sorted(new AlphanumComparator()).toList();
-      for (final var key : keys) {
-        gbc.gridy = y;
-        gbc.gridx = 0;
-        final var circuitName = key.split("/")[0];
-        panel.add(new MyLabel(circuitName, Font.ITALIC, true), gbc);
-        gbc.gridx++;
-        final var registerName = key.split("/")[1];
-        panel.add(new MyLabel(registerName), gbc);
-        gbc.gridx++;
-        final var selReg = registers.get(key);
-        var mainCircState = proj.getCircuitState();
-        if (mainCircState == null) continue;
-        while (mainCircState.getParentState() != null) { // Get the main circuit
-          mainCircState = mainCircState.getParentState();
-        }
-        final var val = findVal(mainCircState, circuitName, selReg.getEnd(0).getLocation()); // Get Q port location
-
-        if (val != null) {
-          final var hexLabel = new MyLabel(val.toHexString());
-          hexLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, hexLabel.getFont().getSize()));
-          panel.add(hexLabel, gbc);
-        } else {
-          panel.add(new MyLabel("-"), gbc);
-        }
-        y++;
-      }
-    }
-    gbc.weighty = 1;
-    gbc.gridy++;
-    gbc.gridx = 0;
-    gbc.weightx = 1;
-    panel.add(new MyLabel(""), gbc);
+    c.weighty = 1;
+    c.gridy++;
+    c.gridx = 0;
+    c.weightx = 1;
+    panel.add(new MyLabel("", 0, false, null), c);
     panel.validate();
+    repaint();
   }
 
-  /**
-   * This function will search for the value at a given location in a circuit with the given name.
-   * The function will search iteratively in all sub-circuits of the given circuit if it cannot be
-   * found directly, and will return null if the value cannot be found.
-   *
-   * @param cs The state of the circuit in which the value is searched.
-   * @param cn The name of the circuit in which the value must be found.
-   * @param loc The location of the value in the circuit.
-   * @return The value, or null if it cannot be found.
-   */
-  private synchronized Value findVal(CircuitState cs, String cn, Location loc) {
-    if (cs.getCircuit().getName().equals(cn)) {
-      final var value = cs.getValue(loc);
-      if (value != null) return cs.getValue(loc);
-    }
-
-    if (CollectionUtil.isNotEmpty(cs.getSubstates())) {
-      for (final var cst : cs.getSubstates()) {
-        final var ret = findVal(cst, cn, loc);
-        if (ret != null) return ret;
-      }
-    }
-    return null;
+  private void enumerate(String prefix, Circuit circ, CircuitState cs) {
+    enumerateLoggables(prefix, circ, cs);
+    enumerateSubcircuits(prefix, circ, cs);
   }
 
-  /**
-   * This function will register all the components of type "Register" contain in the given circuit.
-   * The registers will only be registered if their ATTR_SHOW_IN_TAB is set to true, and if their
-   * label is not empty.
-   *
-   * @param circuit The circuit in which the registers are searched.
-   */
-  private synchronized void getAllRegisters(Circuit circuit) {
-    for (final var comp : circuit.getNonWires()) {
-      if (comp.getFactory().getName().equals("Register")) {
-        if (comp.getAttributeSet().getValue(Register.ATTR_SHOW_IN_TAB) && !comp.getAttributeSet().getValue(StdAttr.LABEL).equals("")) {
-          registers.put(circuit.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL), comp);
-        }
-      }
+  private void enumerateLoggables(String prefix, Circuit circ, CircuitState cs) {
+    HashMap<Component, String> names = new HashMap<>();
+
+    for (Component comp : circ.getNonWires()) {
+      AttributeSet as = comp.getAttributeSet();
+      if (!as.containsAttribute(Register.ATTR_SHOW_IN_TAB))
+        continue;
+      if (!as.getValue(Register.ATTR_SHOW_IN_TAB))
+        continue;
+      LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
+      if (log == null)
+        continue;
+      String name = log.getLogName(null);
+      if (name == null)
+        name = comp.getFactory().getName() + comp.getLocation();
+      names.put(comp, name);
+    }
+    if (names.isEmpty())
+      return;
+    Object[] comps = names.keySet().toArray();
+    Arrays.sort(comps, new CompareByNameLocEtc(names));
+    for (Object o : comps) {
+      Component comp = (Component) o;
+      String name = names.get(comp);
+      if (prefix != null)
+        name = prefix + "/" + name;
+      LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
+      Value val = log.getLogValue(cs, null);
+      c.gridy++;
+      c.gridx = 0;
+      panel.add(new MyLabel(name, Font.ITALIC, true, null), c);
+      c.gridx = 1;
+      panel.add(new MyLabel(val == null ? "-" : val.toHexString(), 0, false, null), c);
+    }
+  }
+
+  private void enumerateSubcircuits(String prefix, Circuit circ, CircuitState cs) {
+    HashMap<Component, String> names = new HashMap<>();
+
+    for (Component comp : circ.getNonWires()) {
+      if (!(comp.getFactory() instanceof SubcircuitFactory))
+        continue;
+      SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
+      String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
+      if (name == null || name.equals(""))
+        name = factory.getSubcircuit().getName() + comp.getLocation();
+      names.put(comp, name);
+    }
+    if (names.isEmpty())
+      return;
+    Object[] comps = names.keySet().toArray();
+    Arrays.sort(comps, new CompareByNameLocEtc(names));
+    for (Object o : comps) {
+      Component comp = (Component) o;
+      String name = names.get(comp);
+      if (prefix != null)
+        name = prefix + "/" + name;
+      SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
+      CircuitState substate = factory.getSubstate(cs, comp);
+      enumerate(name, factory.getSubcircuit(), substate);
     }
   }
 
   @Override
   public void localeChanged() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    hdrName.setText(S.get("registerTabNameTitle"));
+    hdrValue.setText(S.get("registerTabValueTitle"));
   }
 
   @Override
   public void simulatorReset(Simulator.Event e) {
-    fillArray();
+    fill();
   }
 
   @Override
   public void propagationCompleted(Simulator.Event e) {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    fillArray();
+    fill();
   }
 
   @Override
   public void simulatorStateChanged(Simulator.Event e) {
-    // FIXME: we should have some more advanced logic here?
-    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  private static class CompareByNameLocEtc implements Comparator<Object> {
+    HashMap<Component, String> names;
+    CompareByNameLocEtc(HashMap<Component, String> names) {
+      this.names = names;
+    }
+    public int compare(Object a, Object b) {
+      String aName = names.get((Component) a);
+      String bName = names.get((Component) b);
+      int d = aName.compareToIgnoreCase(bName);
+      if (d == 0)
+        d = ((Component) a).getLocation().compareTo(((Component) b).getLocation());
+      if (d == 0)
+        d = a.hashCode() - b.hashCode(); // last resort, for stability
+      return d;
+    }
   }
 
   private static class MyLabel extends JLabel {
-    private static final long serialVersionUID = 1L;
-
-    private MyLabel(String text) {
+    private MyLabel(String text, int style, boolean small, Color bg) {
       super(text);
+      if (bg != null) {
+        setOpaque(true);
+        setBackground(bg);
+        setBorder(BorderFactory.createMatteBorder(0, 4, 0, 4, bg));
+      } else {
+        setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
+      }
+      if (style == 0 && !small)
+        return;
+      Font f = getFont();
+      if (style != 0)
+        f = f.deriveFont(style);
+      if (small)
+        f = f.deriveFont(f.getSize2D() - 2);
+      setFont(f);
     }
 
-    private MyLabel(String text, int style) {
-      super(text);
-      setFont(getFont().deriveFont(style));
-    }
-
-    private MyLabel(String text, int style, boolean small) {
-      super(text);
-      setFont(getFont().deriveFont(style));
-      setFont(getFont().deriveFont(getFont().getSize2D() - 2));
-    }
-
-    private void setColor(Color color) {
-      setBackground(color);
-      setOpaque(true);
-    }
   }
 }
