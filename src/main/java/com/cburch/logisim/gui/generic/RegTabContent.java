@@ -10,24 +10,22 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitEvent;
+import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.file.LoadedLibrary;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.log.LoggableContract;
 import com.cburch.logisim.gui.main.Frame;
 import static com.cburch.logisim.gui.Strings.S;
-import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.proj.ProjectEvent;
+import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.memory.Register;
-import com.cburch.logisim.util.AlphanumComparator;
-import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 
@@ -36,19 +34,27 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Comparator;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class RegTabContent extends JScrollPane implements LocaleListener, Simulator.Listener {
+public class RegTabContent extends JScrollPane
+    implements LocaleListener, Simulator.Listener, ProjectListener, CircuitListener {
   private JPanel panel = new JPanel(new GridBagLayout());
   private GridBagConstraints c = new GridBagConstraints();
   private Project proj;
   private MyLabel hdrName = new MyLabel("", Font.ITALIC | Font.BOLD, false, Color.LIGHT_GRAY);
   private MyLabel hdrValue = new MyLabel("", Font.BOLD, false, Color.LIGHT_GRAY);
+  private boolean showing = false;
+  private CircuitState circuitState;
+  private ArrayList<Circuit> circuits = new ArrayList<>();
+  private ArrayList<Watcher> watchers = new ArrayList<>();
 
   public RegTabContent(Frame frame) {
     super();
@@ -61,14 +67,51 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     c.anchor = GridBagConstraints.FIRST_LINE_START;
     c.ipady = 2;
 
-    fill();
     localeChanged();
     LocaleManager.addLocaleListener(this);
+
+    addComponentListener(new ComponentAdapter() {
+      public void componentShown(ComponentEvent e) {
+        showing = true;
+        fill();
+      }
+      public void componentHidden(ComponentEvent e) {
+        showing = false;
+      }
+    });
+
+    proj.addProjectListener(this);
+
+    clear();
+    circuitState = proj.getCircuitState();
+    fill();
   }
 
-  private void fill() {
-    panel.removeAll();
+  @Override
+  public void projectChanged(ProjectEvent event) {
+    if (event.getAction() == ProjectEvent.ACTION_SET_STATE) {
+      clear();
+      circuitState = proj.getCircuitState();
+      fill();
+    }
+  }
 
+  @Override
+  public void circuitChanged(CircuitEvent event) {
+    if (circuitState != null && event.getAction() != CircuitEvent.ACTION_INVALIDATE) {
+      clear();
+      fill();
+    }
+  }
+
+  void clear() {
+    if (circuits.isEmpty())
+      return;
+    for (Circuit circ : circuits)
+      circ.removeCircuitListener(this);
+    circuits.clear();
+    watchers.clear();
+    panel.removeAll();
     c.weighty = 0;
     c.gridy = 0;
     c.gridx = 0;
@@ -77,24 +120,35 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     c.gridx = 1;
     c.weightx = 0.3;
     panel.add(hdrValue, c);
+  }
 
-    CircuitState cs = proj.getCircuitState();
-    if (cs == null)
+  private void fill() {
+    if (!showing || circuitState == null)
       return;
-    Circuit circ = cs.getCircuit();
+    if (circuits.isEmpty())
+      enumerate();
+    for (Watcher w : watchers)
+      w.update();
+  }
 
-    enumerate(null, circ, cs);
-
+  private void enumerate() {
+    if (circuitState == null)
+      return;
+    Circuit circ = circuitState.getCircuit();
+    enumerate(null, circ, circuitState);
     c.weighty = 1;
     c.gridy++;
     c.gridx = 0;
     c.weightx = 1;
-    panel.add(new MyLabel("", 0, false, null), c);
+    panel.add(new MyLabel("", 0, false, null), c); // padding at bottom
     panel.validate();
-    repaint();
   }
 
   private void enumerate(String prefix, Circuit circ, CircuitState cs) {
+    if (!circuits.contains(circ)) {
+      circuits.add(circ);
+      circ.addCircuitListener(this);
+    }
     enumerateLoggables(prefix, circ, cs);
     enumerateSubcircuits(prefix, circ, cs);
   }
@@ -131,7 +185,30 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
       c.gridx = 0;
       panel.add(new MyLabel(name, Font.ITALIC, true, null), c);
       c.gridx = 1;
-      panel.add(new MyLabel(val == null ? "-" : val.toHexString(), 0, false, null), c);
+      MyLabel v = new MyLabel("-", 0, false, null);
+      panel.add(v, c);
+      watchers.add(new Watcher(log, cs, v));
+    }
+  }
+
+  private static class Watcher {
+    LoggableContract log;
+    CircuitState cs;
+    MyLabel label;
+    Value val;
+    Watcher(LoggableContract log, CircuitState cs, MyLabel label) {
+      this.log = log;
+      this.cs = cs;
+      this.label = label;
+      update();
+    }
+    void update() {
+      Value newVal = log.getLogValue(cs, null);
+      if (val == null && newVal == null
+          || (val != null && newVal != null && val.equals(newVal)))
+        return;
+      val = newVal;
+      label.setText(val == null ? "-" : val.toHexString());
     }
   }
 
@@ -218,6 +295,5 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
         f = f.deriveFont(f.getSize2D() - 2);
       setFont(f);
     }
-
   }
 }
