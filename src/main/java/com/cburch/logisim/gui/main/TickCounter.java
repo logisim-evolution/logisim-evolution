@@ -18,15 +18,17 @@ import java.text.DecimalFormat;
 
 public class TickCounter implements Simulator.Listener {
   private final DecimalFormat [] formatterWithDigits = new DecimalFormat[4];
-  private final String [] spaces = {"", " ", "  ", "   ", "    "};
+  private final long [] hertzValue = {1, 1000, 1000000};
+  private final double [] hertzMinValue = {0.0, 999.5, 999500.0};
+  private final String [] hertzKey = {"tickRateHz", "tickRateKHz", "tickRateMHz"};
+  private final int HZ = 0, KHZ = 1, MHZ = 2; // index constants for hertz arrays
   private long fullTickCount = 0;
   private long startTime;
   private long tickTime;
-  private Object lock = new Object(); // lock for fullTickCount, startTime, tickTime
+  private final Object lock = new Object(); // lock for fullTickCount, startTime, tickTime
   private boolean autoTicking = false;
   private double requestedClockFrequency;
   private long processedTickCount = 0;
-  private boolean useKiloHertz = false;
   static final int NANOSECONDS_PER_SECONDS = 1_000_000_000;
 
   public TickCounter() {
@@ -95,18 +97,17 @@ public class TickCounter implements Simulator.Listener {
     if (!autoTicking) {
       return "";
     }
-    var fullCyclesPerSecond = getFullCyclesPerSecond();
+    final var fullCyclesPerSecond = getFullCyclesPerSecond();
 
-    // update the frequency unit if needed
-    if (fullCyclesPerSecond > 999.5) useKiloHertz = true;
-    if (fullCyclesPerSecond < 900.0) useKiloHertz = false;
+    final var units = hertzMinValue[MHZ] <= fullCyclesPerSecond ? MHZ
+        : hertzMinValue[KHZ] <= fullCyclesPerSecond ? KHZ
+        : HZ;
 
     // display 3 significant digits of the frequency
-    final var unitsKey = useKiloHertz ? "tickRateKHz" : "tickRateHz";
-    final var displayNum = useKiloHertz ? fullCyclesPerSecond / 1000.0 : fullCyclesPerSecond;
+    final var displayNum = fullCyclesPerSecond / hertzValue[units];
     final var fractionalDigits = displayNum < 0.9995 ? 3 : displayNum < 9.995 ? 2 : displayNum < 99.95 ? 1 : 0;
     var display = formatterWithDigits[fractionalDigits].format(displayNum);
-    return S.get(unitsKey, display);
+    return S.get(hertzKey[units], display);
   }
 
   @Override
@@ -122,11 +123,10 @@ public class TickCounter implements Simulator.Listener {
   @Override
   public void propagationCompleted(Simulator.Event e) {
     if (e.didTick() && e.getSource().isAutoTicking()) {
+      final var nanoTime = System.nanoTime();
       synchronized (lock) {
-        tickTime = System.nanoTime();
-        if (fullTickCount == -1) {
-          startTime = tickTime;
-        }
+        tickTime = nanoTime;
+        if (fullTickCount == -1) startTime = nanoTime;
         fullTickCount++;
       }
     }
