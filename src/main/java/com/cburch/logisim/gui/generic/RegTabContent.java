@@ -47,7 +47,7 @@ import javax.swing.JScrollPane;
 public class RegTabContent extends JScrollPane
     implements LocaleListener, Simulator.Listener, ProjectListener, CircuitListener {
   private final JPanel panel = new JPanel(new GridBagLayout());
-  private final GridBagConstraints c = new GridBagConstraints();
+  private final GridBagConstraints gridConstraints = new GridBagConstraints();
   private final Project proj;
   private final MyLabel hdrName = new MyLabel("", Font.ITALIC | Font.BOLD, false, Color.LIGHT_GRAY);
   private final MyLabel hdrValue = new MyLabel("", Font.BOLD, false, Color.LIGHT_GRAY);
@@ -62,9 +62,9 @@ public class RegTabContent extends JScrollPane
     proj = frame.getProject();
     getVerticalScrollBar().setUnitIncrement(16);
 
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.anchor = GridBagConstraints.FIRST_LINE_START;
-    c.ipady = 2;
+    gridConstraints.fill = GridBagConstraints.HORIZONTAL;
+    gridConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
+    gridConstraints.ipady = 2;
 
     localeChanged();
     LocaleManager.addLocaleListener(this);
@@ -75,6 +75,7 @@ public class RegTabContent extends JScrollPane
         fill();
         proj.getSimulator().addSimulatorListener(RegTabContent.this);
       }
+
       public void componentHidden(ComponentEvent e) {
         showing = false;
         proj.getSimulator().removeSimulatorListener(RegTabContent.this);
@@ -106,45 +107,42 @@ public class RegTabContent extends JScrollPane
   }
 
   void clear() {
-    if (circuits.isEmpty())
-      return;
-    for (Circuit circ : circuits)
+    if (circuits.isEmpty()) return;
+    for (Circuit circ : circuits) {
       circ.removeCircuitListener(this);
+    }
     circuits.clear();
     synchronized (watchers) {
       watchers.clear();
     }
     panel.removeAll();
-    c.weighty = 0;
-    c.gridy = 0;
-    c.gridx = 0;
-    c.weightx = 0.7;
-    panel.add(hdrName, c);
-    c.gridx = 1;
-    c.weightx = 0.3;
-    panel.add(hdrValue, c);
+    gridConstraints.weighty = 0;
+    gridConstraints.gridy = 0;
+    gridConstraints.gridx = 0;
+    gridConstraints.weightx = 0.7;
+    panel.add(hdrName, gridConstraints);
+    gridConstraints.gridx = 1;
+    gridConstraints.weightx = 0.3;
+    panel.add(hdrValue, gridConstraints);
   }
 
   public void fill() {
-    if (!showing || circuitState == null)
-      return;
-    if (circuits.isEmpty())
-      enumerate();
+    if (!showing || circuitState == null) return;
+    if (circuits.isEmpty()) enumerate();
     updateWatchers();
     writeLabels();
   }
 
   public void updateWatchers() {
     synchronized (watchers) {
-      for (Watcher w : watchers) {
-        w.update();
+      for (Watcher watcher : watchers) {
+        watcher.update();
       }
     }
   }
 
   public void writeLabels() {
-    if (!showing || circuitState == null)
-      return;
+    if (!showing || circuitState == null) return;
     synchronized (watchers) {
       for (final var watcher : watchers) {
         watcher.writeToLabel();
@@ -153,15 +151,14 @@ public class RegTabContent extends JScrollPane
   }
 
   private void enumerate() {
-    if (circuitState == null)
-      return;
+    if (circuitState == null) return;
     Circuit circ = circuitState.getCircuit();
     enumerate(null, circ, circuitState);
-    c.weighty = 1;
-    c.gridy++;
-    c.gridx = 0;
-    c.weightx = 1;
-    panel.add(new MyLabel("", 0, false, null), c); // padding at bottom
+    gridConstraints.weighty = 1;
+    gridConstraints.gridy++;
+    gridConstraints.gridx = 0;
+    gridConstraints.weightx = 1;
+    panel.add(new MyLabel("", 0, false, null), gridConstraints); // padding at bottom
     panel.validate();
   }
 
@@ -179,35 +176,33 @@ public class RegTabContent extends JScrollPane
 
     for (Component comp : circ.getNonWires()) {
       AttributeSet as = comp.getAttributeSet();
-      if (!as.containsAttribute(Register.ATTR_SHOW_IN_TAB))
-        continue;
-      if (!as.getValue(Register.ATTR_SHOW_IN_TAB))
-        continue;
+      if (!as.containsAttribute(Register.ATTR_SHOW_IN_TAB)) continue;
+      if (!as.getValue(Register.ATTR_SHOW_IN_TAB)) continue;
       LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
-      if (log == null)
-        continue;
+      if (log == null) continue;
       String name = log.getLogName(null);
-      if (name == null)
+      if (name == null) {
         name = comp.getFactory().getName() + comp.getLocation();
+      }
       names.put(comp, name);
     }
-    if (names.isEmpty())
-      return;
+    if (names.isEmpty()) return;
     Object[] comps = names.keySet().toArray();
     Arrays.sort(comps, new CompareByNameLocEtc(names));
-    for (Object o : comps) {
-      Component comp = (Component) o;
+    for (Object obj : comps) {
+      Component comp = (Component) obj;
       String name = names.get(comp);
-      if (prefix != null)
+      if (prefix != null) {
         name = prefix + "/" + name;
+      }
       LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
       Value val = log.getLogValue(cs, null);
-      c.gridy++;
-      c.gridx = 0;
-      panel.add(new MyLabel(name, Font.ITALIC, true, null), c);
-      c.gridx = 1;
+      gridConstraints.gridy++;
+      gridConstraints.gridx = 0;
+      panel.add(new MyLabel(name, Font.ITALIC, true, null), gridConstraints);
+      gridConstraints.gridx = 1;
       MyLabel v = new MyLabel("-", 0, false, null);
-      panel.add(v, c);
+      panel.add(v, gridConstraints);
       synchronized (watchers) {
         watchers.add(new Watcher(log, cs, v));
       }
@@ -228,8 +223,9 @@ public class RegTabContent extends JScrollPane
     void update() {
       Value newVal = log.getLogValue(cs, null);
       if (val == null && newVal == null
-          || (val != null && newVal != null && val.equals(newVal)))
+          || (val != null && newVal != null && val.equals(newVal))) {
         return;
+      }
       val = newVal;
     }
 
@@ -242,23 +238,23 @@ public class RegTabContent extends JScrollPane
     HashMap<Component, String> names = new HashMap<>();
 
     for (Component comp : circ.getNonWires()) {
-      if (!(comp.getFactory() instanceof SubcircuitFactory))
-        continue;
+      if (!(comp.getFactory() instanceof SubcircuitFactory)) continue;
       SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
       String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
-      if (name == null || name.equals(""))
+      if (name == null || name.equals("")) {
         name = factory.getSubcircuit().getName() + comp.getLocation();
+      }
       names.put(comp, name);
     }
-    if (names.isEmpty())
-      return;
+    if (names.isEmpty()) return;
     Object[] comps = names.keySet().toArray();
     Arrays.sort(comps, new CompareByNameLocEtc(names));
-    for (Object o : comps) {
-      Component comp = (Component) o;
+    for (Object obj : comps) {
+      Component comp = (Component) obj;
       String name = names.get(comp);
-      if (prefix != null)
+      if (prefix != null) {
         name = prefix + "/" + name;
+      }
       SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
       CircuitState substate = factory.getSubstate(cs, comp);
       enumerate(name, factory.getSubcircuit(), substate);
@@ -290,36 +286,39 @@ public class RegTabContent extends JScrollPane
     CompareByNameLocEtc(HashMap<Component, String> names) {
       this.names = names;
     }
-    public int compare(Object a, Object b) {
-      String aName = names.get((Component) a);
-      String bName = names.get((Component) b);
-      int d = aName.compareToIgnoreCase(bName);
-      if (d == 0)
-        d = ((Component) a).getLocation().compareTo(((Component) b).getLocation());
-      if (d == 0)
-        d = a.hashCode() - b.hashCode(); // last resort, for stability
-      return d;
+    public int compare(Object left, Object right) {
+      String aName = names.get((Component) left);
+      String bName = names.get((Component) right);
+      int diff = aName.compareToIgnoreCase(bName);
+      if (diff == 0) {
+        diff = ((Component) left).getLocation().compareTo(((Component) right).getLocation());
+      }
+      if (diff == 0) {
+        diff = left.hashCode() - right.hashCode(); // last resort, for stability
+      }
+      return diff;
     }
   }
 
   private static class MyLabel extends JLabel {
-    private MyLabel(String text, int style, boolean small, Color bg) {
+    private MyLabel(String text, int style, boolean small, Color bgColor) {
       super(text);
-      if (bg != null) {
+      if (bgColor != null) {
         setOpaque(true);
-        setBackground(bg);
-        setBorder(BorderFactory.createMatteBorder(0, 4, 0, 4, bg));
+        setBackground(bgColor);
+        setBorder(BorderFactory.createMatteBorder(0, 4, 0, 4, bgColor));
       } else {
         setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
       }
-      if (style == 0 && !small)
-        return;
-      Font f = getFont();
-      if (style != 0)
-        f = f.deriveFont(style);
-      if (small)
-        f = f.deriveFont(f.getSize2D() - 2);
-      setFont(f);
+      if (style == 0 && !small) return;
+      Font font = getFont();
+      if (style != 0) {
+        font = font.deriveFont(style);
+      }
+      if (small) {
+        font = font.deriveFont(font.getSize2D() - 2);
+      }
+      setFont(font);
     }
   }
 }
