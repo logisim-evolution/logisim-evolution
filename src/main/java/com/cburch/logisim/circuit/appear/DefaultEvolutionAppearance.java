@@ -159,7 +159,7 @@ public class DefaultEvolutionAppearance {
       rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
       dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y, true), pin));
-      boolean isClockPin = Pin.FACTORY.isClockPin(pin);
+      final var isClockPin = Pin.FACTORY.isClockPin(pin);
       if (isClockPin) {
         Location[] pts = {
           Location.create(x + 10 + 1, y - 4, false),
