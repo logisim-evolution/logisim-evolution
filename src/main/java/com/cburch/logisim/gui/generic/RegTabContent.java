@@ -123,13 +123,26 @@ public class RegTabContent extends JScrollPane
     panel.add(hdrValue, c);
   }
 
-  private void fill() {
+  public void fill() {
     if (!showing || circuitState == null)
       return;
     if (circuits.isEmpty())
       enumerate();
+    updateWatchers();
+    writeLabels();
+  }
+
+  public void updateWatchers() {
     for (Watcher w : watchers)
       w.update();
+  }
+
+  public void writeLabels() {
+    if (!showing || circuitState == null)
+      return;
+    for (final var watcher : watchers) {
+      watcher.writeToLabel();
+    }
   }
 
   private void enumerate() {
@@ -209,6 +222,9 @@ public class RegTabContent extends JScrollPane
           || (val != null && newVal != null && val.equals(newVal)))
         return;
       val = newVal;
+    }
+
+    void writeToLabel() {
       label.setText(val == null ? "-" : val.toHexString());
     }
   }
@@ -248,12 +264,12 @@ public class RegTabContent extends JScrollPane
 
   @Override
   public void simulatorReset(Simulator.Event e) {
-    fill();
+    updateWatchers();
   }
 
   @Override
   public void propagationCompleted(Simulator.Event e) {
-    fill();
+    updateWatchers();
   }
 
   @Override

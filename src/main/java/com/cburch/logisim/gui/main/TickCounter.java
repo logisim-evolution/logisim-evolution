@@ -18,10 +18,6 @@ import java.text.DecimalFormat;
 
 public class TickCounter implements Simulator.Listener {
   private final DecimalFormat [] formatterWithDigits = new DecimalFormat[4];
-  private final long [] hertzValue = {1, 1000, 1000000};
-  private final double [] hertzMinValue = {0.0, 999.5, 999500.0};
-  private final String [] hertzKey = {"tickRateHz", "tickRateKHz", "tickRateMHz"};
-  private final int HZ = 0, KHZ = 1, MHZ = 2; // index constants for hertz arrays
   private long fullTickCount = 0;
   private long startTime;
   private long tickTime;
@@ -30,6 +26,10 @@ public class TickCounter implements Simulator.Listener {
   private double requestedClockFrequency;
   private long processedTickCount = 0;
   static final int NANOSECONDS_PER_SECONDS = 1_000_000_000;
+  static final long [] hertzValue = {1, 1000, 1000000};
+  static final double [] hertzMinValue = {0.0, 999.5, 999500.0};
+  static final String [] hertzKey = {"tickRateHz", "tickRateKHz", "tickRateMHz"};
+  static final int HZ = 0, KHZ = 1, MHZ = 2; // index constants for hertz arrays
 
   public TickCounter() {
     String pattern = ".";
