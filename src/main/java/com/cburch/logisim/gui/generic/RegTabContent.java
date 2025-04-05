@@ -55,6 +55,7 @@ public class RegTabContent extends JScrollPane
   private CircuitState circuitState;
   private final ArrayList<Circuit> circuits = new ArrayList<>();
   private final ArrayList<Watcher> watchers = new ArrayList<>();
+  private final Object watchersLock = new Object();
 
   public RegTabContent(Frame frame) {
     super();
@@ -106,13 +107,13 @@ public class RegTabContent extends JScrollPane
     }
   }
 
-  void clear() {
+  private void clear() {
     if (circuits.isEmpty()) return;
     for (final var circ : circuits) {
       circ.removeCircuitListener(this);
     }
     circuits.clear();
-    synchronized (watchers) {
+    synchronized (watchersLock) {
       watchers.clear();
     }
     panel.removeAll();
@@ -126,26 +127,26 @@ public class RegTabContent extends JScrollPane
     panel.add(hdrValue, gridConstraints);
   }
 
-  public void fill() {
+  private void fill() {
     if (!showing || circuitState == null) return;
     if (circuits.isEmpty()) {
       enumerate();
     }
     updateWatchers();
-    writeLabels();
+    writeValuesToLabels();
   }
 
-  public void updateWatchers() {
-    synchronized (watchers) {
+  private void updateWatchers() {
+    synchronized (watchersLock) {
       for (final var watcher : watchers) {
         watcher.update();
       }
     }
   }
 
-  public void writeLabels() {
+  public void writeValuesToLabels() {
     if (!showing || circuitState == null) return;
-    synchronized (watchers) {
+    synchronized (watchersLock) {
       for (final var watcher : watchers) {
         watcher.writeToLabel();
       }
@@ -174,7 +175,7 @@ public class RegTabContent extends JScrollPane
   }
 
   private void enumerateLoggables(String prefix, Circuit circ, CircuitState cs) {
-    HashMap<Component, String> names = new HashMap<>();
+    final var names = new HashMap<Component, String>();
 
     for (final var comp : circ.getNonWires()) {
       AttributeSet as = comp.getAttributeSet();
@@ -204,40 +205,14 @@ public class RegTabContent extends JScrollPane
       gridConstraints.gridx = 1;
       final var label = new MyLabel("-", 0, false, null);
       panel.add(label, gridConstraints);
-      synchronized (watchers) {
+      synchronized (watchersLock) {
         watchers.add(new Watcher(log, cs, label));
       }
     }
   }
 
-  private static class Watcher {
-    LoggableContract log;
-    CircuitState cs;
-    MyLabel label;
-    Value val;
-    Watcher(LoggableContract log, CircuitState cs, MyLabel label) {
-      this.log = log;
-      this.cs = cs;
-      this.label = label;
-      update();
-    }
-
-    void update() {
-      final var newVal = log.getLogValue(cs, null);
-      if (val == null && newVal == null
-          || (val != null && newVal != null && val.equals(newVal))) {
-        return;
-      }
-      val = newVal;
-    }
-
-    void writeToLabel() {
-      label.setText(val == null ? "-" : val.toHexString());
-    }
-  }
-
   private void enumerateSubcircuits(String prefix, Circuit circ, CircuitState cs) {
-    HashMap<Component, String> names = new HashMap<>();
+    final var names = new HashMap<Component, String>();
 
     for (final var comp : circ.getNonWires()) {
       if (!(comp.getFactory() instanceof SubcircuitFactory)) continue;
@@ -321,6 +296,32 @@ public class RegTabContent extends JScrollPane
         font = font.deriveFont(font.getSize2D() - 2);
       }
       setFont(font);
+    }
+  }
+
+  private static class Watcher {
+    LoggableContract log;
+    CircuitState cs;
+    MyLabel label;
+    Value val;
+    Watcher(LoggableContract log, CircuitState cs, MyLabel label) {
+      this.log = log;
+      this.cs = cs;
+      this.label = label;
+      update();
+    }
+
+    void update() {
+      final var newVal = log.getLogValue(cs, null);
+      if (val == null && newVal == null
+          || (val != null && newVal != null && val.equals(newVal))) {
+        return;
+      }
+      val = newVal;
+    }
+
+    void writeToLabel() {
+      label.setText(val == null ? "-" : val.toHexString());
     }
   }
 }

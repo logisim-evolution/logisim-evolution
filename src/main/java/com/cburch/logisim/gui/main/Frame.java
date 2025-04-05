@@ -112,7 +112,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // for the Appearance view
   private AppearanceView appearance;
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
-  public final RegTabContent regTabContent;
+  private final RegTabContent regTabContent;
 
   public Frame(Project project) {
     super(project);
@@ -225,6 +225,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+  }
+
+  public RegTabContent getRegTabContent() {
+    return regTabContent;
   }
 
   /**
