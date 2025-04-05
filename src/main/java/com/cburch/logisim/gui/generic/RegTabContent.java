@@ -108,7 +108,7 @@ public class RegTabContent extends JScrollPane
 
   void clear() {
     if (circuits.isEmpty()) return;
-    for (Circuit circ : circuits) {
+    for (final var circ : circuits) {
       circ.removeCircuitListener(this);
     }
     circuits.clear();
@@ -128,14 +128,16 @@ public class RegTabContent extends JScrollPane
 
   public void fill() {
     if (!showing || circuitState == null) return;
-    if (circuits.isEmpty()) enumerate();
+    if (circuits.isEmpty()) {
+      enumerate();
+    }
     updateWatchers();
     writeLabels();
   }
 
   public void updateWatchers() {
     synchronized (watchers) {
-      for (Watcher watcher : watchers) {
+      for (final var watcher : watchers) {
         watcher.update();
       }
     }
@@ -174,37 +176,36 @@ public class RegTabContent extends JScrollPane
   private void enumerateLoggables(String prefix, Circuit circ, CircuitState cs) {
     HashMap<Component, String> names = new HashMap<>();
 
-    for (Component comp : circ.getNonWires()) {
+    for (final var comp : circ.getNonWires()) {
       AttributeSet as = comp.getAttributeSet();
       if (!as.containsAttribute(Register.ATTR_SHOW_IN_TAB)) continue;
       if (!as.getValue(Register.ATTR_SHOW_IN_TAB)) continue;
-      LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
+      final var log = (LoggableContract) comp.getFeature(LoggableContract.class);
       if (log == null) continue;
-      String name = log.getLogName(null);
+      var name = log.getLogName(null);
       if (name == null) {
         name = comp.getFactory().getName() + comp.getLocation();
       }
       names.put(comp, name);
     }
     if (names.isEmpty()) return;
-    Object[] comps = names.keySet().toArray();
+    final var comps = names.keySet().toArray();
     Arrays.sort(comps, new CompareByNameLocEtc(names));
-    for (Object obj : comps) {
-      Component comp = (Component) obj;
-      String name = names.get(comp);
+    for (final var obj : comps) {
+      final var comp = (Component) obj;
+      var name = names.get(comp);
       if (prefix != null) {
         name = prefix + "/" + name;
       }
-      LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
-      Value val = log.getLogValue(cs, null);
+      final var log = (LoggableContract) comp.getFeature(LoggableContract.class);
       gridConstraints.gridy++;
       gridConstraints.gridx = 0;
       panel.add(new MyLabel(name, Font.ITALIC, true, null), gridConstraints);
       gridConstraints.gridx = 1;
-      MyLabel v = new MyLabel("-", 0, false, null);
-      panel.add(v, gridConstraints);
+      final var label = new MyLabel("-", 0, false, null);
+      panel.add(label, gridConstraints);
       synchronized (watchers) {
-        watchers.add(new Watcher(log, cs, v));
+        watchers.add(new Watcher(log, cs, label));
       }
     }
   }
@@ -220,8 +221,9 @@ public class RegTabContent extends JScrollPane
       this.label = label;
       update();
     }
+
     void update() {
-      Value newVal = log.getLogValue(cs, null);
+      final var newVal = log.getLogValue(cs, null);
       if (val == null && newVal == null
           || (val != null && newVal != null && val.equals(newVal))) {
         return;
@@ -237,26 +239,26 @@ public class RegTabContent extends JScrollPane
   private void enumerateSubcircuits(String prefix, Circuit circ, CircuitState cs) {
     HashMap<Component, String> names = new HashMap<>();
 
-    for (Component comp : circ.getNonWires()) {
+    for (final var comp : circ.getNonWires()) {
       if (!(comp.getFactory() instanceof SubcircuitFactory)) continue;
-      SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
-      String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
+      final var factory = (SubcircuitFactory) comp.getFactory();
+      var name = comp.getAttributeSet().getValue(StdAttr.LABEL);
       if (name == null || name.equals("")) {
         name = factory.getSubcircuit().getName() + comp.getLocation();
       }
       names.put(comp, name);
     }
     if (names.isEmpty()) return;
-    Object[] comps = names.keySet().toArray();
+    final var comps = names.keySet().toArray();
     Arrays.sort(comps, new CompareByNameLocEtc(names));
-    for (Object obj : comps) {
+    for (final var obj : comps) {
       Component comp = (Component) obj;
-      String name = names.get(comp);
+      var name = names.get(comp);
       if (prefix != null) {
         name = prefix + "/" + name;
       }
-      SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
-      CircuitState substate = factory.getSubstate(cs, comp);
+      final var factory = (SubcircuitFactory) comp.getFactory();
+      final var substate = factory.getSubstate(cs, comp);
       enumerate(name, factory.getSubcircuit(), substate);
     }
   }
@@ -287,16 +289,16 @@ public class RegTabContent extends JScrollPane
       this.names = names;
     }
     public int compare(Object left, Object right) {
-      String aName = names.get((Component) left);
-      String bName = names.get((Component) right);
-      int diff = aName.compareToIgnoreCase(bName);
-      if (diff == 0) {
-        diff = ((Component) left).getLocation().compareTo(((Component) right).getLocation());
+      final var leftName = names.get((Component) left);
+      final var rightName = names.get((Component) right);
+      int ret = leftName.compareToIgnoreCase(rightName);
+      if (ret == 0) {
+        ret = ((Component) left).getLocation().compareTo(((Component) right).getLocation());
       }
-      if (diff == 0) {
-        diff = left.hashCode() - right.hashCode(); // last resort, for stability
+      if (ret == 0) {
+        ret = left.hashCode() - right.hashCode(); // last resort, for stability
       }
-      return diff;
+      return ret;
     }
   }
 
