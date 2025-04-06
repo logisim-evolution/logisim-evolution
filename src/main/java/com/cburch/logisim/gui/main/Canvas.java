@@ -480,6 +480,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   @Override
   public void paintComponent(final Graphics g) {
+    // Also update register values showing in the state registers tab
+    getProject().getFrame().getRegTabContent().writeValuesToLabels();
+
     if (AppPreferences.AntiAliassing.getBoolean()) {
       final var g2 = (Graphics2D) g;
       g2.setRenderingHint(
