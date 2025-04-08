@@ -39,6 +39,8 @@ import java.awt.event.ComponentEvent;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,8 +56,7 @@ public class RegTabContent extends JScrollPane
   private boolean showing = false;
   private CircuitState circuitState;
   private final ArrayList<Circuit> circuits = new ArrayList<>();
-  private final ArrayList<Watcher> watchers = new ArrayList<>();
-  private final Object watchersLock = new Object();
+  private final CopyOnWriteArrayList<Watcher> watchers = new CopyOnWriteArrayList<>();
 
   public RegTabContent(Frame frame) {
     super();
@@ -113,9 +114,7 @@ public class RegTabContent extends JScrollPane
       circ.removeCircuitListener(this);
     }
     circuits.clear();
-    synchronized (watchersLock) {
-      watchers.clear();
-    }
+    watchers.clear();
     panel.removeAll();
     gridConstraints.weighty = 0;
     gridConstraints.gridy = 0;
@@ -137,19 +136,15 @@ public class RegTabContent extends JScrollPane
   }
 
   private void updateWatchers() {
-    synchronized (watchersLock) {
-      for (final var watcher : watchers) {
-        watcher.update();
-      }
+    for (final var watcher : watchers) {
+      watcher.update();
     }
   }
 
   public void writeValuesToLabels() {
     if (!showing || circuitState == null) return;
-    synchronized (watchersLock) {
-      for (final var watcher : watchers) {
-        watcher.writeToLabel();
-      }
+    for (final var watcher : watchers) {
+      watcher.writeToLabel();
     }
   }
 
@@ -205,9 +200,7 @@ public class RegTabContent extends JScrollPane
       gridConstraints.gridx = 1;
       final var label = new MyLabel("-", 0, false, null);
       panel.add(label, gridConstraints);
-      synchronized (watchersLock) {
-        watchers.add(new Watcher(log, cs, label));
-      }
+      watchers.add(new Watcher(log, cs, label));
     }
   }
 
@@ -300,9 +293,9 @@ public class RegTabContent extends JScrollPane
   }
 
   private static class Watcher {
-    LoggableContract log;
-    CircuitState cs;
-    MyLabel label;
+    final LoggableContract log;
+    final CircuitState cs;
+    final MyLabel label;
     Value val;
     Watcher(LoggableContract log, CircuitState cs, MyLabel label) {
       this.log = log;
