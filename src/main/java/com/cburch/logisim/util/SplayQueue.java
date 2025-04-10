@@ -14,7 +14,7 @@
 package com.cburch.logisim.util;
 
 /**
- * A simple splay tree implementation, using keys of type long, and values that
+ * A simple splay tree implementation, using values that
  * extend type QNode. This supports (approximately) a subset of the
  * java.util.PriorityQueue API, but only enough to support Propagator.
  * Objects in the queue must be subclasses of QNode.
@@ -29,8 +29,8 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
       size++;
       return true;
     }
-    root = splay(root, t.key);
-    long cmp = t.key - root.key;
+    root = splay(root, t);
+    long cmp = t.compareTo(root);
 
     if (cmp < 0) {
       // New node t displaces root, which moves down right.
@@ -69,15 +69,15 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
    * splay(t, k) rebalances the tree rooted at node t around key k, by moving a
    * node close to k (or an exact match, if it exists) up to the root.
    */
-  private static QNode splay(QNode t, long k) {
+  private static QNode splay(QNode t, QNode k) {
     if (t == null) return null;
 
-    long cmp1 = k - t.key;
+    long cmp1 = k.compareTo(t);
     if (cmp1 < 0) {
       if (t.left == null) {
         return t; // can't go any further left
       }
-      long cmp2 = k - t.left.key;
+      long cmp2 = k.compareTo(t.left);
       if (cmp2 < 0) {
         t.left.left = splay(t.left.left, k);
         t = rotateRight(t);
@@ -93,7 +93,7 @@ public class SplayQueue<T extends QNode> implements QNodeQueue<T> {
       if (t.right == null) {
         return t; // can't go any further right
       }
-      long cmp2 = k - t.right.key;
+      long cmp2 = k.compareTo(t.right);
       if (cmp2 < 0) {
         t.right.left  = splay(t.right.left, k);
         if (t.right.left != null) {

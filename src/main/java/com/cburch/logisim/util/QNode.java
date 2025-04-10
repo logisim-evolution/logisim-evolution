@@ -9,11 +9,22 @@
 
 package com.cburch.logisim.util;
 
-public class QNode {
-  final long key;
+public class QNode implements Comparable<QNode> {
+  public final int timeKey, serialNumber;
   QNode left, right;
 
-  public QNode(long key) {
-    this.key = key;
+  public QNode(int timeKey, int serialNumber) {
+    this.timeKey = timeKey;
+    this.serialNumber = serialNumber;
   }
+
+  @Override
+  public int compareTo(QNode other) {
+    // Yes, these subtractions may overflow. This is intentional, as it
+    // avoids potential wraparound problems as the counters increment.
+    int ret = timeKey - other.timeKey;
+    if (ret == 0) ret = serialNumber - other.serialNumber;
+    return ret;
+  }
+
 }
