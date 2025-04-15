@@ -11,9 +11,12 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.hdl.HdlModel;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
+import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;
 
 /**
@@ -42,5 +45,76 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
 
   @Override
   public void propagate(InstanceState state) {
+    // get the circuit, make sure it matches, etc.
+    final var content = state.getAttributeValue(contentAttr);
+    // can't do anything if it didn't compile...
+    if (content.compiled == null)
+      return;
+    BlifCircuitState id = (BlifCircuitState) state.getData();
+    if (id == null || id.circuit != content.compiled) {
+      id = new BlifCircuitState(content.compiled);
+      state.setData(id);
+    }
+
+    // alright, load in inputs
+    loadInInputs(0, content.inputs, content.compiledInputPinsX, id, state);
+    // In a rather 'at the last minute' change, outputs were made outputs and inputs were made inputs.
+    // This is because the propagation model suggested by SimpleGrayCounter suggests that feedback would occur if all pins were bi-directional.
+    // Still, the support is left in the design in case it is needed.
+    // loadInInputs(content.inputs.length, content.outputs, content.compiledOutputPinsX, id, state);
+
+    id.circuit.simulate(id.cells, id.auxData);
+
+    // read out outputs
+    // readOutOutputs(0, content.inputs, content.compiledInputPinsO, id, state);
+    readOutOutputs(content.inputs.length, content.outputs, content.compiledOutputPinsO, id, state);
+  }
+
+  private void loadInInputs(int base, HdlModel.PortDescription[] set, int[][] pinX, BlifCircuitState id, InstanceState state) {
+    for (int i = 0; i < set.length; i++) {
+      Value v = state.getPortValue(base + i);
+      int width = set[i].getWidthInt();
+      for (int j = 0; j < width; j++) {
+        byte b = DenseLogicCircuit.LEV_NONE;
+        Value bit = v.get(i);
+        if (bit == Value.FALSE)
+          b = DenseLogicCircuit.LEV_LOW;
+        else if (bit == Value.TRUE)
+          b = DenseLogicCircuit.LEV_HIGH;
+        else if (bit == Value.ERROR)
+          b = DenseLogicCircuit.LEV_ERR;
+        id.circuit.setCell(pinX[i][j], b, id.cells, id.auxData);
+      }
+    }
+  }
+
+  private void readOutOutputs(int base, HdlModel.PortDescription[] set, int[][] pinO, BlifCircuitState id, InstanceState state) {
+    for (int i = 0; i < set.length; i++) {
+      Value[] translated = new Value[set[i].getWidthInt()];
+      for (int j = 0; j < translated.length; j++)
+        translated[j] = DenseLogicCircuit.LEV_TO_LS[id.cells[pinO[i][j]]];
+      state.setPort(base + i, Value.create(translated), 1);
+    }
+  }
+
+  public class BlifCircuitState implements InstanceData {
+    public final DenseLogicCircuit circuit; 
+    public final byte[] cells;
+    public final int[] auxData;
+
+    public BlifCircuitState(DenseLogicCircuit circuit) {
+      this(circuit, circuit.newCells(), circuit.newAuxData());
+    }
+
+    public BlifCircuitState(DenseLogicCircuit circuit, byte[] cells, int[] auxData) {
+      this.circuit = circuit;
+      this.cells = cells;
+      this.auxData = auxData;
+    }
+
+    @Override
+    public BlifCircuitState clone() {
+      return new BlifCircuitState(circuit, cells.clone(), auxData.clone());
+    }
   }
 }

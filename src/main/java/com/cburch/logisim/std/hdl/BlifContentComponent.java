@@ -13,7 +13,6 @@ import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.hdl.HdlModel;
 import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.std.hdl.VhdlParser.IllegalVhdlContentException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,6 +60,7 @@ public class BlifContentComponent extends HdlContent {
   protected PortDescription[] inputs;
   protected PortDescription[] outputs;
   protected DenseLogicCircuit compiled;
+  protected int[][] compiledInputPinsX, compiledInputPinsO, compiledOutputPinsX, compiledOutputPinsO;
   protected String name;
 
   protected BlifContentComponent() {
@@ -98,31 +98,29 @@ public class BlifContentComponent extends HdlContent {
 
   @Override
   public PortDescription[] getInputs() {
-    if (inputs == null) return new PortDescription[0];
-
-    return inputs;
+    return inputs == null ? new PortDescription[0] : inputs;
   }
 
   @Override
   public String getName() {
-    if (name == null) return "";
-
-    return name;
+    return name == null ? "" : name;
   }
 
   @Override
   public PortDescription[] getOutputs() {
-    if (outputs == null) return new PortDescription[0];
-
-    return outputs;
+    return outputs == null ? new PortDescription[0] : outputs;
   }
 
   @Override
   public boolean setContent(String content) {
     final var parser = new BlifParser(content);
+    DenseLogicCircuit compiledDLC;
     try {
       parser.parse();
+      compiledDLC = parser.compile();
     } catch (Exception ex) {
+      // important for debugging!
+      ex.printStackTrace();
       OptionPane.showMessageDialog(
           null, ex.getMessage(), S.get("validationParseError"), OptionPane.ERROR_MESSAGE);
       return false;
@@ -134,7 +132,11 @@ public class BlifContentComponent extends HdlContent {
     final var outputsDesc = parser.getOutputs();
     inputs = inputsDesc.toArray(new PortDescription[0]);
     outputs = outputsDesc.toArray(new PortDescription[0]);
-    compiled = parser.compile();
+    compiled = compiledDLC;
+    compiledInputPinsX = derivePins(compiled, inputs, parser, false);
+    compiledInputPinsO = derivePins(compiled, inputs, parser, true);
+    compiledOutputPinsX = derivePins(compiled, outputs, parser, false);
+    compiledOutputPinsO = derivePins(compiled, outputs, parser, true);
 
     this.content = new StringBuilder(content);
     fireContentSet();
@@ -142,6 +144,15 @@ public class BlifContentComponent extends HdlContent {
     return true;
   }
 
-  public void parse() throws IllegalVhdlContentException {
+  private int[][] derivePins(DenseLogicCircuit compiled, PortDescription[] ports, BlifParser parser, boolean output) {
+    int[][] results = new int[ports.length][];
+    for (int i = 0; i < ports.length; i++) {
+      PortDescription desc = ports[i];
+      int[] result = new int[desc.getWidthInt()];
+      for (int j = 0; j < result.length; j++)
+        result[j] = compiled.symbolTable.get(parser.getPinDLCSymbol(desc, i, output));
+      results[i] = result;
+    }
+    return results;
   }
 }

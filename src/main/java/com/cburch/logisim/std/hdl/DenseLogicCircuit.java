@@ -11,6 +11,8 @@ package com.cburch.logisim.std.hdl;
 
 import java.util.Map;
 
+import com.cburch.logisim.data.Value;
+
 /**
  * A stored dense logic circuit.
  * The state of the circuit is made up of byte 'cells'.
@@ -22,6 +24,10 @@ public final class DenseLogicCircuit {
   public static final int LEV_HIGH = 2;
   public static final int LEV_ERR = 3;
   public static final int LEV_COUNT = 4;
+  /**
+   * Translates DenseLogicCircuit levels to Logisim values.
+   */
+  public static final Value[] LEV_TO_LS = {Value.NIL, Value.FALSE, Value.TRUE, Value.ERROR};
 
   // Gate types
   // 'Bus merge operator': Joins A and B onto the bus.
@@ -152,9 +158,12 @@ public final class DenseLogicCircuit {
   }
 
   /**
-   * Marks a cell update in the given auxData.
+   * Updates a cell.
    */
-  public final void markCellUpdate(int cell, int[] auxData) {
+  public final void setCell(int cell, byte value, byte[] cells, int[] auxData) {
+    if (cells[cell] == value)
+      return;
+    cells[cell] = value;
     for (int g : cellUpdateNotifiesGate[cell]) {
       if (auxData[g] == -1) {
         auxData[g] = auxData[gateCount];

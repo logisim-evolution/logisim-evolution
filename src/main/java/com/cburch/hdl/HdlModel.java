@@ -10,7 +10,6 @@
 package com.cburch.hdl;
 
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.instance.Port;
 
 public interface HdlModel {
   // NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's

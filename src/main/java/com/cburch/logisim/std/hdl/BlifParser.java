@@ -24,7 +24,7 @@ import com.cburch.logisim.instance.Port;
  * The objective here is to provide a Yosys-compatible target.
  * This can be compiled with something like: write_blif -icells -buf BUF A Y test1.blif
  */
-public class BlifParser {
+public final class BlifParser {
   private final List<PortDescription> inputs;
   private final List<PortDescription> outputs;
   private final List<Gate> gates;
@@ -114,16 +114,40 @@ public class BlifParser {
     // Oh well.
     inputSet.removeIf((s) -> outputSet.contains(s));
     // Now parse inputs and outputs into port descriptions (aka the hard part).
-    parseNamesIntoDescriptions(inputs, inputSet);
-    parseNamesIntoDescriptions(outputs, outputSet);
+    parseNamesIntoDescriptions(inputs, inputSet, Port.INPUT);
+    parseNamesIntoDescriptions(outputs, outputSet, Port.OUTPUT);
   }
 
-  private void parseNamesIntoDescriptions(List<PortDescription> ports, SortedSet<String> src) {
+  /**
+   * This and getPinBLIFSymbol describe the outer layer of the 'ABI' used for the ports.
+   * The inner layer is the "x."/"i."/"o." prefix set described in compileBidiPin.
+   * Of these, only "x." and "o." are relevant externally.
+   */
+  private void parseNamesIntoDescriptions(List<PortDescription> ports, SortedSet<String> src, String type) {
     // For now, use a very bad implementation just to get things kind of working.
     while (!src.isEmpty()) {
       String queue = src.removeFirst();
-      ports.add(new PortDescription(queue, Port.INOUT, 1));
+      ports.add(new PortDescription(queue, type, 1));
     }
+  }
+
+  /**
+   * Describes the outer 'ABI' (and used by compilePort to compile it).
+   */
+  public String getPinBLIFSymbol(PortDescription port, int index) {
+    int width = port.getWidthInt();
+    if (width == 1) {
+      return port.getName();
+    } else {
+      return port.getName() + "[" + index + "]";
+    }
+  }
+
+  /**
+   * Implements the 'inner ABI' (the input/output line mechanism used to try and prevent self-propagation).
+   */
+  public String getPinDLCSymbol(PortDescription port, int index, boolean output) {
+    return (output ? "o." : "x.") + getPinBLIFSymbol(port, index);
   }
 
   public List<PortDescription> getInputs() {
@@ -200,12 +224,8 @@ public class BlifParser {
    */
   private void compilePort(DenseLogicCircuitBuilder builder, PortDescription port) {
     int width = port.getWidthInt();
-    if (width == 1) {
-      compileBidiPin(builder, port.getName());
-    } else {
-      for (int i = 0; i < width; i++)
-        compileBidiPin(builder, port.getName() + "[" + i + "]");
-    }
+    for (int i = 0; i < width; i++)
+      compileBidiPin(builder, getPinBLIFSymbol(port, i));
   }
   private int compileGetInput(DenseLogicCircuitBuilder builder, String pin) {
     Integer existing = builder.symbolTable.get("i." + pin);
