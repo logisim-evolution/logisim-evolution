@@ -28,6 +28,8 @@ public class BlifParser {
   private final List<PortDescription> inputs;
   private final List<PortDescription> outputs;
   private final List<Gate> gates;
+  private final List<DFF> dff;
+  private final List<DFFSR> dffsr;
   private final List<String> pullups;
   private final List<String> pulldowns;
   private final String source;
@@ -38,6 +40,8 @@ public class BlifParser {
     this.inputs = new ArrayList<>();
     this.outputs = new ArrayList<>();
     this.gates = new ArrayList<>();
+    this.dff = new ArrayList<>();
+    this.dffsr = new ArrayList<>();
     this.pullups = new ArrayList<>();
     this.pulldowns = new ArrayList<>();
   }
@@ -95,6 +99,10 @@ public class BlifParser {
             pullups.add(pins.get("Y"));
           } else if (type.equals("PULLDOWN")) {
             pulldowns.add(pins.get("Y"));
+          } else if (type.equals("DFF")) {
+            dff.add(new DFF(pins.get("C"), pins.get("D"), pins.get("Q")));
+          } else if (type.equals("DFFSR")) {
+            dffsr.add(new DFFSR(pins.get("C"), pins.get("D"), pins.get("Q"), pins.get("S"), pins.get("R")));
           } else {
             throw new RuntimeException("Unknown subcircuit " + type);
           }
@@ -154,6 +162,17 @@ public class BlifParser {
       int yOutput = compileGetOutput(builder, g.y);
       builder.attachGate(g.type, aInput, bInput, yOutput);
     }
+    // install DFFs
+    for (DFF ff : dff)
+      builder.attachBuffer(builder.addDFF(compileGetInput(builder, ff.c), compileGetInput(builder, ff.d)), compileGetOutput(builder, ff.q));
+    for (DFFSR ff : dffsr) {
+      int c = compileGetInput(builder, ff.c);
+      int d = compileGetInput(builder, ff.d);
+      int q = compileGetOutput(builder, ff.q);
+      int s = compileGetInput(builder, ff.s);
+      int r = compileGetInput(builder, ff.r);
+      builder.attachBuffer(builder.addDFFSR(c, d, s, r), q);
+    }
     // install pullups/pulldowns
     for (String s : pullups)
       builder.setCellPull(compileGetOutput(builder, s), DenseLogicCircuit.LEV_HIGH);
@@ -211,5 +230,17 @@ public class BlifParser {
    * BLIF subcircuit data.
    */
   public record Gate(int type, String a, String b, String y) {
+  }
+
+  /**
+   * BLIF subcircuit data.
+   */
+  public record DFF(String c, String d, String q) {
+  }
+
+  /**
+   * BLIF subcircuit data.
+   */
+  public record DFFSR(String c, String d, String q, String s, String r) {
   }
 }

@@ -38,8 +38,14 @@ public final class DenseLogicCircuit {
   /**
    * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
    * Notably, DFF scripts may reuse resources to build more complex flip-flops that all manipulate the same bit of memory.
+   * The flip-flop is coerced at all times to be either high or low to prevent errors spreading.
    */
   public static final int SQOP_DFF = 0;
+  /**
+   * D-latch[D, E, Q]: Whenever cell[E] is high, set cell[Q] to cell[D].
+   * When reading from cell[D], it is coerced to be either high or low. 
+   */
+  public static final int SQOP_LATCH = 1;
 
   /**
    * The amount of cells in the circuit.
@@ -47,6 +53,12 @@ public final class DenseLogicCircuit {
    * The first LEV_COUNT cells are reserved as constants.
    */
   public final int cellCount;
+
+  /**
+   * The amount of combinatorial gates in the circuit.
+   */
+  public final int gateCount;
+
   /**
    * Cell pull values.
    * These are also used as the initial values of each cell.
@@ -54,10 +66,6 @@ public final class DenseLogicCircuit {
    * These include bus nodes that may get added after the pullup/pulldown is added.
    */
   private final byte[] cellPull;
-  /**
-   * The amount of combinatorial gates in the circuit.
-   */
-  public final int gateCount;
   /**
    * The size of the update queue section of auxData / start of sequential logic data.
    */
@@ -235,13 +243,35 @@ public final class DenseLogicCircuit {
         int xOld = auxData[x];
         int xNew = cells[c];
         auxData[x] = xNew;
-        if (xNew == LEV_HIGH && xNew != xOld) {
-          cells[q] = cells[d];
+        int newValueSrc = q;
+        if (xNew == LEV_HIGH && xNew != xOld)
+          newValueSrc = d;
+        byte newValue = (byte) (cells[newValueSrc] == LEV_HIGH ? LEV_HIGH : LEV_LOW);
+        if (cells[q] != newValue) {
+          cells[q] = newValue;
           // inlined: markCellUpdate
           for (int g : cellUpdateNotifiesGate[q]) {
             if (auxData[g] == -1) {
               auxData[g] = auxData[gateCount];
               auxData[gateCount] = g;
+            }
+          }
+        }
+      } break;
+      case SQOP_LATCH: {
+        int d = sequentialScript[ptr++];
+        int e = sequentialScript[ptr++];
+        int q = sequentialScript[ptr++];
+        if (cells[e] == LEV_HIGH) {
+          byte newValue = (byte) (cells[d] == LEV_HIGH ? LEV_HIGH : LEV_LOW);
+          if (cells[q] != newValue) {
+            cells[q] = newValue;
+            // inlined: markCellUpdate
+            for (int g : cellUpdateNotifiesGate[q]) {
+              if (auxData[g] == -1) {
+                auxData[g] = auxData[gateCount];
+                auxData[gateCount] = g;
+              }
             }
           }
         }

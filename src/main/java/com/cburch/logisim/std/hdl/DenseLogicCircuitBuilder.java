@@ -73,6 +73,13 @@ public final class DenseLogicCircuitBuilder {
   }
 
   /**
+   * Shorthand for attaching a BUS gate as a buffer.
+   */
+  public void attachBuffer(int from, int to) {
+    attachGate(DenseLogicCircuit.GATE_BUS, from, from, to);
+  }
+
+  /**
    * Builds the dense logic circuit.
    */
   public DenseLogicCircuit build() {
@@ -147,7 +154,7 @@ public final class DenseLogicCircuitBuilder {
   /**
    * Adds a D-flipflop. Returns the Q line cell.
    */
-  public int addDFF(int d, int c) {
+  public int addDFF(int c, int d) {
     int q = addCellInternal(true).index;
     int x = seqDataSize++;
     seqScript.add(DenseLogicCircuit.SQOP_DFF);
@@ -155,6 +162,33 @@ public final class DenseLogicCircuitBuilder {
     seqScript.add(c);
     seqScript.add(q);
     seqScript.add(x);
+    setCellPull(q, DenseLogicCircuit.LEV_LOW);
+    return q;
+  }
+
+  /**
+   * Adds a DFFSR flipflop. Returns the Q line cell.
+   */
+  public int addDFFSR(int c, int d, int s, int r) {
+    int q = addCellInternal(true).index;
+    int xc = seqDataSize++;
+    // C
+    seqScript.add(DenseLogicCircuit.SQOP_DFF);
+    seqScript.add(d);
+    seqScript.add(c);
+    seqScript.add(q);
+    seqScript.add(xc);
+    // S
+    seqScript.add(DenseLogicCircuit.SQOP_LATCH);
+    seqScript.add(DenseLogicCircuit.LEV_HIGH);
+    seqScript.add(s);
+    seqScript.add(q);
+    // R
+    seqScript.add(DenseLogicCircuit.SQOP_LATCH);
+    seqScript.add(DenseLogicCircuit.LEV_LOW);
+    seqScript.add(r);
+    seqScript.add(q);
+    setCellPull(q, DenseLogicCircuit.LEV_LOW);
     return q;
   }
 
