@@ -30,17 +30,28 @@ public final class DenseLogicCircuit {
   public static final Value[] LEV_TO_LS = {Value.NIL, Value.FALSE, Value.TRUE, Value.ERROR};
 
   // Gate types
-  // 'Bus merge operator': Joins A and B onto the bus.
+  /**
+   * 'Bus merge operator': Joins A and B onto the bus.
+   */
   public static final int GATE_BUS = 0;
-  // Tri-state: If B is HIGH, then A is forwarded; else NONE
+  /**
+   * Tri-state: If B is HIGH, then A is forwarded; else NONE
+   */
   public static final int GATE_TRIS = 1;
-  public static final int GATE_AND = 2;
-  public static final int GATE_OR = 3;
-  public static final int GATE_XOR = 4;
-  public static final int GATE_NAND = 5;
-  public static final int GATE_NOR = 6;
-  public static final int GATE_NXOR = 7;
-  public static final String[] GATE_TYPE_NAMES = {"BUS", "TRIS", "AND", "OR", "XOR", "NAND", "NOR", "NXOR"};
+  /**
+   * GATE_TRIS with inverted B input.
+   * This was added to simplify 2-input muxes.
+   * Doing this to D-flipflops would break counters.
+   * I'm not strictly sure latches won't break either, so I don't believe too much engineering effort is justified here.
+   */
+  public static final int GATE_TRISI = 2;
+  public static final int GATE_AND = 3;
+  public static final int GATE_OR = 4;
+  public static final int GATE_XOR = 5;
+  public static final int GATE_NAND = 6;
+  public static final int GATE_NOR = 7;
+  public static final int GATE_NXOR = 8;
+  public static final String[] GATE_TYPE_NAMES = {"BUS", "TRIS", "TRISI", "AND", "OR", "XOR", "NAND", "NOR", "NXOR"};
 
   /**
    * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
@@ -206,6 +217,10 @@ public final class DenseLogicCircuit {
         break;
       case GATE_TRIS:
         if (vB == LEV_HIGH)
+          vO = vA;
+        break;
+      case GATE_TRISI:
+        if (vB != LEV_HIGH)
           vO = vA;
         break;
       case GATE_AND:

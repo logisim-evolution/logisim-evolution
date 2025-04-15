@@ -214,6 +214,9 @@ public final class DenseLogicCircuitBuilder {
     seqScript.add(c);
     seqScript.add(q);
     seqScript.add(xc);
+    // https://en.wikipedia.org/wiki/Flip-flop_(electronics)#/media/File:Edge_triggered_D_flip_flop_with_set_and_reset.svg
+    // This schematic indicates that the S/R lines are asynchronous and not edge-based.
+    // Therefore, use SQOP_LATCH to directly overwrite the latch contents.
     // S
     seqScript.add(DenseLogicCircuit.SQOP_LATCH);
     seqScript.add(DenseLogicCircuit.LEV_HIGH);

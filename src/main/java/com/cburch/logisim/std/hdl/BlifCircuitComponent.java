@@ -55,6 +55,9 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
       id = new BlifCircuitState(content.compiled);
       state.setData(id);
     }
+    // this can somehow get out of sync, so give it a bit
+    if (state.getInstance().getPorts().size() != content.inputs.length + content.outputs.length)
+      return;
 
     // alright, load in inputs
     loadInInputs(0, content.inputs, content.compiledInputPinsX, id, state);
