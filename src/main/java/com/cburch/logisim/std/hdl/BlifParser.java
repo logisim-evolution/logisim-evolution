@@ -80,6 +80,7 @@ public final class BlifParser {
           if (type.equals("BUF")) {
             gates.add(new Gate(DenseLogicCircuit.GATE_BUS, pins.get("A"), pins.get("A"), pins.get("Y")));
           } else if (type.equals("NOT")) {
+            // !(A|A)
             gates.add(new Gate(DenseLogicCircuit.GATE_NOR, pins.get("A"), pins.get("A"), pins.get("Y")));
           } else if (type.equals("AND")) {
             gates.add(new Gate(DenseLogicCircuit.GATE_AND, pins.get("A"), pins.get("B"), pins.get("Y")));

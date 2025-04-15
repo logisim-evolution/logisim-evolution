@@ -40,6 +40,7 @@ public final class DenseLogicCircuit {
   public static final int GATE_NAND = 5;
   public static final int GATE_NOR = 6;
   public static final int GATE_NXOR = 7;
+  public static final String[] GATE_TYPE_NAMES = {"BUS", "TRIS", "AND", "OR", "XOR", "NAND", "NOR", "NXOR"};
 
   /**
    * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
@@ -146,14 +147,19 @@ public final class DenseLogicCircuit {
    */
   public final int[] newAuxData() {
     int[] dat = new int[auxDataSize];
-    // setup the initial queue
-    // each gate is followed by next gate
-    for (int i = 0; i < gateCount - 1; i++)
-      dat[i] = i + 1;
-    // last gate ends list
-    dat[gateCount - 1] = -1;
-    // list starts with first gate
-    dat[gateCount] = 0;
+    if (gateCount != 0) {
+      // setup the initial queue
+      // each gate is followed by next gate
+      for (int i = 0; i < gateCount - 1; i++)
+        dat[i] = i + 1;
+      // last gate ends list
+      dat[gateCount - 1] = -1;
+      // list starts with first gate
+      dat[gateCount] = 0;
+    } else {
+      // there are no gates, so the update queue must be empty
+      dat[gateCount] = -1;
+    }
     return dat;
   }
 
@@ -178,11 +184,12 @@ public final class DenseLogicCircuit {
    */
   private final void simulateCombinatorial(byte[] cells, int[] auxData) {
     // Maximum iteration count of the amount of gates multiplied by itself.
-    // This is a pessimistic count, it shouldn't be needed in most cases.
+    // This is a pessimistic count; it shouldn't be needed in most cases.
     // The main problem is A = !A.
     long maxIterationCount = (long) gateCount;
     maxIterationCount *= maxIterationCount;
-    for (long i = 0; i < maxIterationCount; i++) {
+    while (maxIterationCount > 0) {
+      maxIterationCount--;
       int gateToEval = auxData[gateCount];
       if (gateToEval == -1)
         break;

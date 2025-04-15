@@ -12,6 +12,7 @@ package com.cburch.logisim.std.hdl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -19,6 +20,8 @@ import java.util.TreeSet;
  * Rewrites gates to make attaching multiple outputs to the same line work; thus, it includes peephole optimizations.
  */
 public final class DenseLogicCircuitBuilder {
+  public final static boolean DEBUG = false;
+
   private ArrayList<GateInfo> gates = new ArrayList<>();
   private ArrayList<CellInfo> cells = new ArrayList<>();
   private ArrayList<Integer> seqScript = new ArrayList<>();
@@ -83,7 +86,12 @@ public final class DenseLogicCircuitBuilder {
    * Builds the dense logic circuit.
    */
   public DenseLogicCircuit build() {
-    // notification array
+    var inverseMap = new HashMap<Integer, String>();
+    for (Map.Entry<String, Integer> ent : symbolTable.entrySet())
+      inverseMap.put(ent.getValue(), ent.getKey());
+    if (DEBUG)
+      System.out.println("-- DenseLogicCircuitBuilder --");
+    // pull & notification array
     byte[] cellPull = new byte[cells.size()];
     int[][] cellUpdateNotifiesGate = new int[cells.size()][];
     for (int i = 0; i < cellPull.length; i++) {
@@ -94,6 +102,18 @@ public final class DenseLogicCircuitBuilder {
       for (Integer gate : cell.notifiesTheseGates)
         notifyArray[idx++] = gate;
       cellUpdateNotifiesGate[i] = notifyArray;
+      if (DEBUG) {
+        String addInfo = "";
+        String sym = inverseMap.get(i);
+        if (sym != null)
+          addInfo = " (" + sym + ")";
+        System.out.print(" C" + i + addInfo + " notifies");
+        for (int na : notifyArray) {
+          System.out.print(" G");
+          System.out.print(na);
+        }
+        System.out.println();
+      }
     }
     // assemble gates
     byte[] gateTypes = new byte[gates.size()];
@@ -106,6 +126,15 @@ public final class DenseLogicCircuitBuilder {
       gateCellA[i] = gi.pinA.index;
       gateCellB[i] = gi.pinB.index;
       gateCellO[i] = gi.pinOutput.index;
+      if (DEBUG) {
+        System.out.print(" G" + i + " ");
+        debugWriteCell(inverseMap, gi.pinOutput.index);
+        System.out.print(" = ");
+        debugWriteCell(inverseMap, gi.pinA.index);
+        System.out.print(" " + DenseLogicCircuit.GATE_TYPE_NAMES[gi.type] + " ");
+        debugWriteCell(inverseMap, gi.pinB.index);
+        System.out.println();
+      }
     }
     // copy seq script
     int[] seq = new int[seqScript.size()];
@@ -113,6 +142,13 @@ public final class DenseLogicCircuitBuilder {
       seq[i] = seqScript.get(i);
     // output
     return new DenseLogicCircuit(cellPull, cellUpdateNotifiesGate, gateTypes, gateCellA, gateCellB, gateCellO, seq, seqDataSize, Collections.unmodifiableMap(new HashMap<>(symbolTable)));
+  }
+  private void debugWriteCell(Map<Integer, String> inverseMap, int i) {
+    System.out.print("C");
+    System.out.print(i);
+    String sym = inverseMap.get(i);
+    if (sym != null)
+      System.out.print(" (" + sym + ")");
   }
 
   /**

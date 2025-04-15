@@ -76,7 +76,7 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
       int width = set[i].getWidthInt();
       for (int j = 0; j < width; j++) {
         byte b = DenseLogicCircuit.LEV_NONE;
-        Value bit = v.get(i);
+        Value bit = v.get(j);
         if (bit == Value.FALSE)
           b = DenseLogicCircuit.LEV_LOW;
         else if (bit == Value.TRUE)
