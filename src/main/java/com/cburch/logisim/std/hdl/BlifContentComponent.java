@@ -13,6 +13,8 @@ import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.hdl.HdlModel;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.std.hdl.VhdlParser.IllegalVhdlContentException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,8 +60,8 @@ public class BlifContentComponent extends HdlContent {
   protected StringBuilder content;
   protected PortDescription[] inputs;
   protected PortDescription[] outputs;
+  protected DenseLogicCircuit compiled;
   protected String name;
-  protected String libraries;
 
   protected BlifContentComponent() {
     setContent(TEMPLATE);
@@ -117,7 +119,7 @@ public class BlifContentComponent extends HdlContent {
 
   @Override
   public boolean setContent(String content) {
-    final var parser = new VhdlParser(content);
+    final var parser = new BlifParser(content);
     try {
       parser.parse();
     } catch (Exception ex) {
@@ -127,16 +129,19 @@ public class BlifContentComponent extends HdlContent {
     }
 
     name = parser.getName();
-    libraries = parser.getLibraries();
 
     final var inputsDesc = parser.getInputs();
     final var outputsDesc = parser.getOutputs();
     inputs = inputsDesc.toArray(new PortDescription[0]);
     outputs = outputsDesc.toArray(new PortDescription[0]);
+    compiled = parser.compile();
 
     this.content = new StringBuilder(content);
     fireContentSet();
 
     return true;
+  }
+
+  public void parse() throws IllegalVhdlContentException {
   }
 }
