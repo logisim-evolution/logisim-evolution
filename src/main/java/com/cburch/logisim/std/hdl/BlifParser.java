@@ -28,6 +28,8 @@ public class BlifParser {
   private final List<PortDescription> inputs;
   private final List<PortDescription> outputs;
   private final List<Gate> gates;
+  private final List<String> pullups;
+  private final List<String> pulldowns;
   private final String source;
   private String name;
 
@@ -36,6 +38,8 @@ public class BlifParser {
     this.inputs = new ArrayList<>();
     this.outputs = new ArrayList<>();
     this.gates = new ArrayList<>();
+    this.pullups = new ArrayList<>();
+    this.pulldowns = new ArrayList<>();
   }
 
   public String getName() {
@@ -67,6 +71,8 @@ public class BlifParser {
             pins.put(k, v);
           }
 
+          // This list is partially based on https://github.com/YosysHQ/yosys/blob/0c689091e2a0959b1a6173de1bd7bd679b6120b2/examples/cmos/cmos_cells.lib
+          // However, this I feel is a more general set of gates.
           if (type.equals("BUF")) {
             gates.add(new Gate(DenseLogicCircuit.GATE_BUS, pins.get("A"), pins.get("A"), pins.get("Y")));
           } else if (type.equals("NOT")) {
@@ -84,8 +90,11 @@ public class BlifParser {
           } else if (type.equals("NXOR")) {
             gates.add(new Gate(DenseLogicCircuit.GATE_NXOR, pins.get("A"), pins.get("B"), pins.get("Y")));
           } else if (type.equals("TRIS")) {
-            // the Yosys cell library doesn't expose this, but I feel it may be useful
             gates.add(new Gate(DenseLogicCircuit.GATE_TRIS, pins.get("A"), pins.get("B"), pins.get("Y")));
+          } else if (type.equals("PULLUP")) {
+            pullups.add(pins.get("Y"));
+          } else if (type.equals("PULLDOWN")) {
+            pulldowns.add(pins.get("Y"));
           } else {
             throw new RuntimeException("Unknown subcircuit " + type);
           }
@@ -145,6 +154,11 @@ public class BlifParser {
       int yOutput = compileGetOutput(builder, g.y);
       builder.attachGate(g.type, aInput, bInput, yOutput);
     }
+    // install pullups/pulldowns
+    for (String s : pullups)
+      builder.setCellPull(compileGetOutput(builder, s), DenseLogicCircuit.LEV_HIGH);
+    for (String s : pulldowns)
+      builder.setCellPull(compileGetOutput(builder, s), DenseLogicCircuit.LEV_LOW);
     // done!
     return builder.build();
   }

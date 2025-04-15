@@ -34,11 +34,10 @@ public final class DenseLogicCircuit {
   public static final int GATE_NAND = 5;
   public static final int GATE_NOR = 6;
   public static final int GATE_NXOR = 7;
-  // Pullup/pulldown: Iff A = LEV_NONE then it is set to B.
-  public static final int GATE_PULL = 8;
 
   /**
-   * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change. 
+   * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
+   * Notably, DFF scripts may reuse resources to build more complex flip-flops that all manipulate the same bit of memory.
    */
   public static final int SQOP_DFF = 0;
 
@@ -49,49 +48,57 @@ public final class DenseLogicCircuit {
    */
   public final int cellCount;
   /**
+   * Cell pull values.
+   * These are also used as the initial values of each cell.
+   * They are attached to the cell, and not the gate, because pullups/pulldowns must execute after all the bus nodes.
+   * These include bus nodes that may get added after the pullup/pulldown is added.
+   */
+  private final byte[] cellPull;
+  /**
    * The amount of combinatorial gates in the circuit.
    */
   public final int gateCount;
   /**
    * The size of the update queue section of auxData / start of sequential logic data.
    */
-  public final int updateQueueSize;
+  private final int updateQueueSize;
   /**
    * The amount of auxillary data (contains the update queue and sequential logic data).
    */
-  public final int auxDataSize;
+  private final int auxDataSize;
   /**
    * The amount and types of combinatorial gates.
    */
-  public final byte[] gateTypes;
+  private final byte[] gateTypes;
   /**
    * Combinatorial gate input A.
    */
-  public final int[] gateCellA;
+  private final int[] gateCellA;
   /**
    * Combinatorial gate input B.
    */
-  public final int[] gateCellB;
+  private final int[] gateCellB;
   /**
    * Combinatorial gate output cell.
    */
-  public final int[] gateCellO;
+  private final int[] gateCellO;
   /**
    * Cell updates notify these gates.
    */
-  public final int[][] cellUpdateNotifiesGate;
+  private final int[][] cellUpdateNotifiesGate;
   /**
    * Sequential script.
    */
-  public final int[] sequentialScript;
+  private final int[] sequentialScript;
   /**
    * "Symbol table" of cells.
    * Doesn't necessarily cover all cells.
    */
   public final Map<String, Integer> symbolTable;
 
-  public DenseLogicCircuit(int[][] cellUpdateNotifiesGate, byte[] gateTypes, int[] gateCellA, int[] gateCellB, int[] gateCellO, int[] seq, int seqDataSize, Map<String, Integer> symbolTable) {
-    this.cellCount = cellUpdateNotifiesGate.length;
+  public DenseLogicCircuit(byte[] cellPull, int[][] cellUpdateNotifiesGate, byte[] gateTypes, int[] gateCellA, int[] gateCellB, int[] gateCellO, int[] seq, int seqDataSize, Map<String, Integer> symbolTable) {
+    this.cellCount = cellPull.length;
+    this.cellPull = cellPull;
     this.gateCount = gateTypes.length;
     this.updateQueueSize = gateCount + 1;
     this.auxDataSize = updateQueueSize + seqDataSize;
@@ -117,10 +124,7 @@ public final class DenseLogicCircuit {
    * Creates a newly initialized cell array for a new simulation.
    */
   public final byte[] newCells() {
-    byte[] dat = new byte[cellCount];
-    for (int i = 0; i < LEV_COUNT; i++)
-      dat[i] = (byte) i;
-    return dat;
+    return cellPull.clone();
   }
 
   /**
@@ -198,11 +202,10 @@ public final class DenseLogicCircuit {
       case GATE_NXOR:
         vO = (vA == LEV_HIGH ^ vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH;
         break;
-      case GATE_PULL:
-        vO = vA == LEV_NONE ? vB : vA;
-        break;
       }
       int outCell = gateCellO[gateToEval];
+      if (vO == LEV_NONE)
+        vO = cellPull[outCell];
       if (vO != cells[outCell]) {
         cells[outCell] = (byte) vO;
         // inlined: markCellUpdate

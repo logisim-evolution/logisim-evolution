@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 /**
  * Builds a dense logic circuit.
+ * Rewrites gates to make attaching multiple outputs to the same line work; thus, it includes peephole optimizations.
  */
 public final class DenseLogicCircuitBuilder {
   private ArrayList<GateInfo> gates = new ArrayList<>();
@@ -26,8 +27,11 @@ public final class DenseLogicCircuitBuilder {
 
   public DenseLogicCircuitBuilder() {
     // Create constant cells.
-    for (int i = 0; i < DenseLogicCircuit.LEV_COUNT; i++)
-      cells.add(new CellInfo(i, true));
+    for (int i = 0; i < DenseLogicCircuit.LEV_COUNT; i++) {
+      CellInfo ci = new CellInfo(i, true);
+      ci.pull = (byte) i;
+      cells.add(ci);
+    }
   }
 
   /**
@@ -39,13 +43,30 @@ public final class DenseLogicCircuitBuilder {
     GateInfo existingGate = outCellInfo.currentDrivingGate;
     if (existingGate != null) {
       // there is already a driving gate!
-      // setup intermediate cells and redirect.
-      CellInfo existingGateOutputCell = addCellInternal(false);
-      existingGate.setOutput(existingGateOutputCell);
-      CellInfo incomingGateOutputCell = addCellInternal(false);
-      addGate(gateType, cells.get(a), cells.get(b)).setOutput(incomingGateOutputCell);
-      // add in the bus gate
-      addGate(DenseLogicCircuit.GATE_BUS, existingGateOutputCell, incomingGateOutputCell).setOutput(outCellInfo);
+      if (existingGate.pinA == existingGate.pinB && existingGate.type == DenseLogicCircuit.GATE_BUS) {
+        // opt: if the driving gate is a BUF, we can use the spare port.
+        if (a == b && gateType == DenseLogicCircuit.GATE_BUS) {
+          // if these are both BUFs, we can combine them.
+          existingGate.setPinB(cells.get(b));
+        } else {
+          CellInfo incomingGateOutputCell = addCellInternal(false);
+          addGate(gateType, cells.get(a), cells.get(b)).setOutput(incomingGateOutputCell);
+          existingGate.setPinB(incomingGateOutputCell);
+        }
+      } else {
+        // setup intermediate cells and redirect.
+        CellInfo existingGateOutputCell = addCellInternal(false);
+        existingGate.setOutput(existingGateOutputCell);
+        if (a == b && gateType == DenseLogicCircuit.GATE_BUS) {
+          // opt: BUF fast-path for an incoming BUF on any existing gate
+          addGate(DenseLogicCircuit.GATE_BUS, existingGateOutputCell, cells.get(a)).setOutput(outCellInfo);
+        } else {
+          CellInfo incomingGateOutputCell = addCellInternal(false);
+          addGate(gateType, cells.get(a), cells.get(b)).setOutput(incomingGateOutputCell);
+          // add in the bus gate
+          addGate(DenseLogicCircuit.GATE_BUS, existingGateOutputCell, incomingGateOutputCell).setOutput(outCellInfo);
+        }
+      }
     } else {
       addGate(gateType, cells.get(a), cells.get(b)).setOutput(outCellInfo);
     }
@@ -56,9 +77,11 @@ public final class DenseLogicCircuitBuilder {
    */
   public DenseLogicCircuit build() {
     // notification array
+    byte[] cellPull = new byte[cells.size()];
     int[][] cellUpdateNotifiesGate = new int[cells.size()][];
-    for (int i = 0; i < cellUpdateNotifiesGate.length; i++) {
+    for (int i = 0; i < cellPull.length; i++) {
       CellInfo cell = cells.get(i);
+      cellPull[i] = cell.pull;
       int[] notifyArray = new int[cell.notifiesTheseGates.size()];
       int idx = 0;
       for (Integer gate : cell.notifiesTheseGates)
@@ -82,7 +105,7 @@ public final class DenseLogicCircuitBuilder {
     for (int i = 0; i < seq.length; i++)
       seq[i] = seqScript.get(i);
     // output
-    return new DenseLogicCircuit(cellUpdateNotifiesGate, gateTypes, gateCellA, gateCellB, gateCellO, seq, seqDataSize, Collections.unmodifiableMap(new HashMap<>(symbolTable)));
+    return new DenseLogicCircuit(cellPull, cellUpdateNotifiesGate, gateTypes, gateCellA, gateCellB, gateCellO, seq, seqDataSize, Collections.unmodifiableMap(new HashMap<>(symbolTable)));
   }
 
   /**
@@ -100,6 +123,15 @@ public final class DenseLogicCircuitBuilder {
    */
   public int addCell(boolean ext) {
     return addCellInternal(ext).index;
+  }
+
+  /**
+   * Sets the pullup/pulldown of a cell, used when gates evaluate to LEV_NONE.
+   * This is also the initial value of the cell.
+   * Note that there's only one pull per cell.
+   */
+  public void setCellPull(int cell, int pull) {
+    cells.get(cell).pull = (byte) pull;
   }
 
   /**
@@ -144,6 +176,11 @@ public final class DenseLogicCircuitBuilder {
     boolean externallyDriven;
 
     /**
+     * Indicates pull/init.
+     */
+    byte pull = (byte) DenseLogicCircuit.LEV_NONE;
+
+    /**
      * These gates are notified by this cell.
      */
     TreeSet<Integer> notifiesTheseGates = new TreeSet<>();
@@ -157,16 +194,24 @@ public final class DenseLogicCircuitBuilder {
    * Contains info about a gate.
    */
   private class GateInfo {
-    final int type;
+    final int type, index;
     CellInfo pinA;
     CellInfo pinB;
     CellInfo pinOutput;
     GateInfo(int index, int t, CellInfo a, CellInfo b) {
+      this.index = index;
       type = t;
       pinA = a;
       a.notifiesTheseGates.add(index);
       pinB = b;
       b.notifiesTheseGates.add(index);
+    }
+
+    void setPinB(CellInfo b) {
+      if (pinA != pinB)
+        pinB.notifiesTheseGates.remove(index);
+      this.pinB = b;
+      pinB.notifiesTheseGates.add(index);
     }
 
     GateInfo setOutput(CellInfo cell) {
