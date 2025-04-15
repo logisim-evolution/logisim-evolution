@@ -60,6 +60,10 @@ public class BlifContentComponent extends HdlContent {
   protected PortDescription[] inputs;
   protected PortDescription[] outputs;
   protected DenseLogicCircuit compiled;
+  /**
+   * These map the input/output bits to cells.
+   * Some values may be -1 (indicating a bit does not exist for some reason).
+   */
   protected int[][] compiledInputPinsX, compiledInputPinsO, compiledOutputPinsX, compiledOutputPinsO;
   protected String name;
 
@@ -149,8 +153,16 @@ public class BlifContentComponent extends HdlContent {
     for (int i = 0; i < ports.length; i++) {
       PortDescription desc = ports[i];
       int[] result = new int[desc.getWidthInt()];
-      for (int j = 0; j < result.length; j++)
-        result[j] = compiled.symbolTable.get(parser.getPinDLCSymbol(desc, i, output));
+      for (int j = 0; j < result.length; j++) {
+        String symbol = parser.getPinDLCSymbol(desc, j, output);
+        Integer symRes = compiled.symbolTable.get(symbol);
+        if (symRes != null) {
+          result[j] = symRes;
+        } else {
+          // System.out.println("suspicious: " + symbol + " missing");
+          result[j] = -1;
+        }
+      }
       results[i] = result;
     }
     return results;

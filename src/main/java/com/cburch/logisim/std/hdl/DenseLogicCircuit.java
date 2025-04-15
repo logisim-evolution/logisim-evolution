@@ -27,7 +27,7 @@ public final class DenseLogicCircuit {
   /**
    * Translates DenseLogicCircuit levels to Logisim values.
    */
-  public static final Value[] LEV_TO_LS = {Value.NIL, Value.FALSE, Value.TRUE, Value.ERROR};
+  public static final Value[] LEV_TO_LS = {Value.UNKNOWN, Value.FALSE, Value.TRUE, Value.ERROR};
 
   // Gate types
   /**
@@ -51,7 +51,15 @@ public final class DenseLogicCircuit {
   public static final int GATE_NAND = 6;
   public static final int GATE_NOR = 7;
   public static final int GATE_NXOR = 8;
-  public static final String[] GATE_TYPE_NAMES = {"BUS", "TRIS", "TRISI", "AND", "OR", "XOR", "NAND", "NOR", "NXOR"};
+  public static final int GATE_ANDNOT = 9;
+  public static final int GATE_ORNOT = 10;
+  /**
+   * These are used both for debugging and also by BlifParser.
+   */
+  public static final String[] GATE_TYPE_NAMES = {
+      "BUS", "TRIS", "TRISI", "AND",
+      "OR", "XOR", "NAND", "NOR",
+      "NXOR", "ANDNOT", "ORNOT"};
 
   /**
    * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
@@ -233,13 +241,19 @@ public final class DenseLogicCircuit {
         vO = (vA == LEV_HIGH ^ vB == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
         break;
       case GATE_NAND:
-        vO = (vA == LEV_HIGH && vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH;
+        vO = (vA == LEV_HIGH && vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
         break;
       case GATE_NOR:
-        vO = (vA == LEV_HIGH || vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH;
+        vO = (vA == LEV_HIGH || vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
         break;
       case GATE_NXOR:
-        vO = (vA == LEV_HIGH ^ vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH;
+        vO = (vA == LEV_HIGH ^ vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
+        break;
+      case GATE_ANDNOT:
+        vO = (vA == LEV_HIGH && vB != LEV_HIGH) ? LEV_HIGH : LEV_LOW;
+        break;
+      case GATE_ORNOT:
+        vO = (vA == LEV_HIGH || vB != LEV_HIGH) ? LEV_HIGH : LEV_LOW;
         break;
       }
       int outCell = gateCellO[gateToEval];

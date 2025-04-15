@@ -12,7 +12,9 @@ package com.cburch.logisim.std.hdl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.cburch.hdl.HdlModel.PortDescription;
@@ -22,14 +24,17 @@ import com.cburch.logisim.instance.Port;
  * Parses a BLIF file.
  * The BLIF file must contain a single circuit made up of a fixed set of supported subcircuits.
  * The objective here is to provide a Yosys-compatible target.
- * This can be compiled with something like: write_blif -icells -buf BUF A Y test1.blif
+ * This can be compiled with something like: write_blif -icells -conn test1.blif
+ * Some effort has been made to support other configurations of Yosys, but icells must be used.
  */
 public final class BlifParser {
   private final List<PortDescription> inputs;
   private final List<PortDescription> outputs;
   private final List<Gate> gates;
+  private final List<Mux> muxes;
   private final List<DFF> dff;
   private final List<DFFSR> dffsr;
+  private final List<Latch> latches;
   private final List<String> pullups;
   private final List<String> pulldowns;
   private final String source;
@@ -40,8 +45,10 @@ public final class BlifParser {
     this.inputs = new ArrayList<>();
     this.outputs = new ArrayList<>();
     this.gates = new ArrayList<>();
+    this.muxes = new ArrayList<>();
     this.dff = new ArrayList<>();
     this.dffsr = new ArrayList<>();
+    this.latches = new ArrayList<>();
     this.pullups = new ArrayList<>();
     this.pulldowns = new ArrayList<>();
   }
@@ -51,8 +58,13 @@ public final class BlifParser {
   }
 
   public void parse() {
-    TreeSet<String> inputSet = new TreeSet<>();
-    TreeSet<String> outputSet = new TreeSet<>();
+    // Determinism is absolutely important here; exact ordering is less important, but should be consistent.
+    // Preserving original order is probably not ideal, as it requires trusting the generator not to reorder things itself.
+    // While Yosys does appear to avoid this, assuming this as a guarantee feels naive and dangerous.
+    // TreeMap/Map uses String.compare, which does not take locale into account.
+    // This is an intentional choice on my part and should apply to everything in this code that affects port order.
+    var inputSet = new TreeSet<String>();
+    var outputSet = new TreeSet<String>();
     for (String s : source.split("\n")) {
       String lineActual = s.trim();
       if (lineActual.startsWith(".")) {
@@ -64,7 +76,26 @@ public final class BlifParser {
         } else if (words[0].equals(".outputs")) {
           for (int i = 1; i < words.length; i++)
             outputSet.add(words[i]);
-        } else if (words[0].equals(".subckt")) {
+        } else if (words[0].equals(".names")) {
+          // If Yosys is correctly configured, this is only used for constants.
+          if (words.length == 2) {
+            if (words[1].equals("$true")) {
+              // constant, we generate this internally
+            } else if (words[1].equals("$false")) {
+              // constant, we generate this internally
+            } else if (words[1].equals("$undef")) {
+              // constant, we generate this internally
+            } else {
+              // There's probably something to be said for the need to translate these exception messages somehow...
+              throw new RuntimeException("unexpected .names (did you pass '-icells -conn' to 'write_blif'?)");
+            }
+          } else {
+            throw new RuntimeException(".names of unexpected length (did you pass '-icells -conn' to 'write_blif'?)");
+          }
+        } else if (words[0].equals(".conn")) {
+          // .conn IN OUT ; enabled with -conn
+          gates.add(new Gate(DenseLogicCircuit.GATE_BUS, words[1], words[1], words[2]));
+        } else if (words[0].equals(".subckt") || words[0].equals(".gate")) {
           String type = words[1];
           HashMap<String, String> pins = new HashMap<>();
           for (int i = 2; i < words.length; i++) {
@@ -76,26 +107,17 @@ public final class BlifParser {
           }
 
           // This list is partially based on https://github.com/YosysHQ/yosys/blob/0c689091e2a0959b1a6173de1bd7bd679b6120b2/examples/cmos/cmos_cells.lib
-          // However, this I feel is a more general set of gates.
+          // However, this I feel is a more general set of components.
+          // Note that the binary gates are in the simulator core (as DenseLogicCircuit.GATE_TYPE_NAMES).
           if (type.equals("BUF")) {
             gates.add(new Gate(DenseLogicCircuit.GATE_BUS, pins.get("A"), pins.get("A"), pins.get("Y")));
           } else if (type.equals("NOT")) {
             // !(A|A)
             gates.add(new Gate(DenseLogicCircuit.GATE_NOR, pins.get("A"), pins.get("A"), pins.get("Y")));
-          } else if (type.equals("AND")) {
-            gates.add(new Gate(DenseLogicCircuit.GATE_AND, pins.get("A"), pins.get("B"), pins.get("Y")));
-          } else if (type.equals("NAND")) {
-            gates.add(new Gate(DenseLogicCircuit.GATE_NAND, pins.get("A"), pins.get("B"), pins.get("Y")));
-          } else if (type.equals("OR")) {
-            gates.add(new Gate(DenseLogicCircuit.GATE_OR, pins.get("A"), pins.get("B"), pins.get("Y")));
-          } else if (type.equals("NOR")) {
-            gates.add(new Gate(DenseLogicCircuit.GATE_NOR, pins.get("A"), pins.get("B"), pins.get("Y")));
-          } else if (type.equals("XOR")) {
-            gates.add(new Gate(DenseLogicCircuit.GATE_XOR, pins.get("A"), pins.get("B"), pins.get("Y")));
-          } else if (type.equals("NXOR")) {
-            gates.add(new Gate(DenseLogicCircuit.GATE_NXOR, pins.get("A"), pins.get("B"), pins.get("Y")));
           } else if (type.equals("TRIS")) {
             gates.add(new Gate(DenseLogicCircuit.GATE_TRIS, pins.get("A"), pins.get("B"), pins.get("Y")));
+          } else if (type.equals("MUX")) {
+            muxes.add(new Mux(pins.get("A"), pins.get("B"), pins.get("S"), pins.get("Y")));
           } else if (type.equals("PULLUP")) {
             pullups.add(pins.get("Y"));
           } else if (type.equals("PULLDOWN")) {
@@ -104,8 +126,20 @@ public final class BlifParser {
             dff.add(new DFF(pins.get("C"), pins.get("D"), pins.get("Q")));
           } else if (type.equals("DFFSR")) {
             dffsr.add(new DFFSR(pins.get("C"), pins.get("D"), pins.get("Q"), pins.get("S"), pins.get("R")));
+          } else if (type.equals("DLATCH")) {
+            latches.add(new Latch(pins.get("D"), pins.get("E"), pins.get("Q")));
           } else {
-            throw new RuntimeException("Unknown subcircuit " + type);
+            boolean found = false;
+            for (int gateType = 0; gateType < DenseLogicCircuit.GATE_TYPE_NAMES.length; gateType++) {
+              if (type.equals(DenseLogicCircuit.GATE_TYPE_NAMES[gateType])) {
+                // found a binary gate
+                gates.add(new Gate(gateType, pins.get("A"), pins.get("B"), pins.get("Y")));
+                found = true;
+                break;
+              }
+            }
+            if (!found)
+              throw new RuntimeException("Unknown gate: " + type);
           }
         }
       }
@@ -125,10 +159,45 @@ public final class BlifParser {
    * Of these, only "x." and "o." are relevant externally.
    */
   private void parseNamesIntoDescriptions(List<PortDescription> ports, SortedSet<String> src, String type) {
-    // For now, use a very bad implementation just to get things kind of working.
+    // See inputSet/outputSet for data structure choice rationale.
+    var maxBitNumbers = new TreeMap<String, Integer>();
     while (!src.isEmpty()) {
       String queue = src.removeFirst();
+      if (queue.endsWith("]")) {
+        // this *could* be a set
+        int leftIdx = queue.lastIndexOf('[');
+        if (leftIdx != -1) {
+          String bitIndex = queue.substring(leftIdx + 1, queue.length() - 1);
+          try {
+            int num = Integer.parseUnsignedInt(bitIndex);
+            String prefix = queue.substring(0, leftIdx);
+            Integer existing = maxBitNumbers.get(prefix);
+            if (existing != null)
+              if (existing > num)
+                num = existing;
+            maxBitNumbers.put(prefix, num);
+            // handled
+            continue;
+          } catch (NumberFormatException ex) {
+            // ok, it didn't parse, fall back
+          }
+        }
+      }
+      // Single port, regardless of what it says
       ports.add(new PortDescription(queue, type, 1));
+    }
+    // All buses are handled in this separate pass, since aggregation needs to happen.
+    // This means buses always go after individual signals.
+    // Note the +1 ; the given value is the bit number, so we have to add 1 to it to get the bit count.
+    for (Map.Entry<String, Integer> map : maxBitNumbers.entrySet()) {
+      int width = map.getValue() + 1;
+      if (width == 1) {
+        // So something interesting has happened in this case: we have found a 'bus' of only 1 bit.
+        // The way this 'ABI' works is based on bit width, so we really need to get that [0] back in somehow.
+        ports.add(new PortDescription(map.getKey() + "[0]", type, 1));
+      } else {
+        ports.add(new PortDescription(map.getKey(), type, width));
+      }
     }
   }
 
@@ -187,9 +256,27 @@ public final class BlifParser {
       int yOutput = compileGetOutput(builder, g.y);
       builder.attachGate(g.type, aInput, bInput, yOutput);
     }
+    // install muxes
+    for (Mux m : muxes) {
+      // Muxes are interesting, because we don't natively support them (they would be 3-input).
+      // But we do have the building blocks to implement them in a better way.
+      // The TRIS and TRISI gates are attached, and a BUS gate is automatically added by the builder.
+      // This creates a 3-gate mux which also handles tri-state inputs.
+      // It would also be possible to create a 3-gate mux with regular logic with some inverted inputs.
+      // i.e. Y = (B & S) | (A & !S); this would use the ANDNOT gate. Again: no tri-state.
+      int aInput = compileGetInput(builder, m.a);
+      int bInput = compileGetInput(builder, m.b);
+      int sInput = compileGetInput(builder, m.s);
+      int yOutput = compileGetOutput(builder, m.y);
+      builder.attachGate(DenseLogicCircuit.GATE_TRISI, aInput, sInput, yOutput);
+      builder.attachGate(DenseLogicCircuit.GATE_TRIS, bInput, sInput, yOutput);
+    }
     // install DFFs
     for (DFF ff : dff)
       builder.attachBuffer(builder.addDFF(compileGetInput(builder, ff.c), compileGetInput(builder, ff.d)), compileGetOutput(builder, ff.q));
+    // install latches
+    for (Latch l : latches)
+      builder.attachBuffer(builder.addLatch(compileGetInput(builder, l.d), compileGetInput(builder, l.e)), compileGetOutput(builder, l.q));
     for (DFFSR ff : dffsr) {
       int c = compileGetInput(builder, ff.c);
       int d = compileGetInput(builder, ff.d);
@@ -247,21 +334,18 @@ public final class BlifParser {
     return res;
   }
 
-  /**
-   * BLIF subcircuit data.
-   */
   public record Gate(int type, String a, String b, String y) {
   }
 
-  /**
-   * BLIF subcircuit data.
-   */
+  public record Mux(String a, String b, String s, String y) {
+  }
+
   public record DFF(String c, String d, String q) {
   }
 
-  /**
-   * BLIF subcircuit data.
-   */
   public record DFFSR(String c, String d, String q, String s, String r) {
+  }
+
+  public record Latch(String d, String e, String q) {
   }
 }

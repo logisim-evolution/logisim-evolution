@@ -78,6 +78,9 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
       Value v = state.getPortValue(base + i);
       int width = set[i].getWidthInt();
       for (int j = 0; j < width; j++) {
+        int cellId = pinX[i][j];
+        if (cellId == -1)
+          continue;
         byte b = DenseLogicCircuit.LEV_NONE;
         Value bit = v.get(j);
         if (bit == Value.FALSE)
@@ -86,7 +89,7 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
           b = DenseLogicCircuit.LEV_HIGH;
         else if (bit == Value.ERROR)
           b = DenseLogicCircuit.LEV_ERR;
-        id.circuit.setCell(pinX[i][j], b, id.cells, id.auxData);
+        id.circuit.setCell(cellId, b, id.cells, id.auxData);
       }
     }
   }
@@ -94,8 +97,14 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
   private void readOutOutputs(int base, HdlModel.PortDescription[] set, int[][] pinO, BlifCircuitState id, InstanceState state) {
     for (int i = 0; i < set.length; i++) {
       Value[] translated = new Value[set[i].getWidthInt()];
-      for (int j = 0; j < translated.length; j++)
-        translated[j] = DenseLogicCircuit.LEV_TO_LS[id.cells[pinO[i][j]]];
+      for (int j = 0; j < translated.length; j++) {
+        int cellId = pinO[i][j];
+        if (cellId == -1) {
+          translated[j] = Value.UNKNOWN;
+        } else {
+          translated[j] = DenseLogicCircuit.LEV_TO_LS[id.cells[cellId]];
+        }
+      }
       state.setPort(base + i, Value.create(translated), 1);
     }
   }

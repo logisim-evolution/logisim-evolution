@@ -231,6 +231,19 @@ public final class DenseLogicCircuitBuilder {
     return q;
   }
 
+  /**
+   * Adds a D-latch. Returns the Q line cell.
+   */
+  public int addLatch(int d, int e) {
+    int q = addCellInternal(true).index;
+    seqScript.add(DenseLogicCircuit.SQOP_LATCH);
+    seqScript.add(d);
+    seqScript.add(e);
+    seqScript.add(q);
+    setCellPull(q, DenseLogicCircuit.LEV_LOW);
+    return q;
+  }
+
   private class CellInfo {
     /**
      * Records the index.
