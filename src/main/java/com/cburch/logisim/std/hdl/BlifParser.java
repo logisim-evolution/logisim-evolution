@@ -27,6 +27,9 @@ import java.util.TreeSet;
  * Some effort has been made to support other configurations of Yosys, but icells must be used.
  */
 public final class BlifParser {
+  public static final String RECOMMENDED_LOGIC_LIBRARY_URL =
+      "https://github.com/YosysHQ/yosys/tree/main/examples/cmos";
+
   private final List<PortDescription> inputs;
   private final List<PortDescription> outputs;
   private final List<Gate> gates;
@@ -94,6 +97,8 @@ public final class BlifParser {
         } else if (words[0].equals(".model")) {
           // use this as a name source if possible
           if (words.length > 1) {
+            if (name != null)
+              throw new RuntimeException("many tops (try 'synth -flatten -top " + name + "')");
             name = words[1];
           }
         } else if (words[0].equals(".names")) {
@@ -107,10 +112,10 @@ public final class BlifParser {
               // constant, we generate this internally
             } else {
               // There's probably something to be said about translating these exception messages.
-              throw new RuntimeException("unexpected .names (try '-icells -conn')");
+              throw new RuntimeException("odd .names (try 'write_blif -icells -conn out.blif')");
             }
           } else {
-            throw new RuntimeException(".names of unexpected length (try '-icells -conn')");
+            throw new RuntimeException("odd .names (try 'write_blif -icells -conn out.blif')");
           }
         } else if (words[0].equals(".conn")) {
           // .conn IN OUT ; enabled with -conn
@@ -175,7 +180,8 @@ public final class BlifParser {
               }
             }
             if (!found) {
-              throw new RuntimeException("Unknown gate: " + type);
+              throw new RuntimeException("unknown gate " + type + "\n" +
+                  "try basing your script on " + RECOMMENDED_LOGIC_LIBRARY_URL);
             }
           }
         }

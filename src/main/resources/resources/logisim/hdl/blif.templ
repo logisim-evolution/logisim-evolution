@@ -40,7 +40,7 @@
 # read_verilog example.v
 # read_verilog -lib yosys-cmos/cmos_cells.v
 # check -assert
-# synth -top example
+# synth -flatten -top example
 # dfflibmap -liberty yosys-cmos/cmos_cells.lib
 # abc -liberty yosys-cmos/cmos_cells.lib
 # opt_clean
