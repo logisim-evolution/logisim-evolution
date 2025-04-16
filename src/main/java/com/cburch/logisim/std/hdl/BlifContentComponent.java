@@ -56,7 +56,7 @@ public class BlifContentComponent extends HdlContent {
     return tmp.toString();
   }
 
-  private static final String RESOURCE = "/resources/logisim/hdl/vhdl.templ";
+  private static final String RESOURCE = "/resources/logisim/hdl/blif.templ";
 
   private static final String TEMPLATE = loadTemplate();
 
