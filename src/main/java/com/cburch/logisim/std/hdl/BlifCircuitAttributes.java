@@ -16,6 +16,9 @@ import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * BlifCircuitAttributes is essentially a copy of VhdlEntityAttributes, but for BLIF.
+ */
 public class BlifCircuitAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> attributes =
@@ -69,23 +72,31 @@ public class BlifCircuitAttributes extends AbstractAttributeSet {
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == BlifCircuitComponent.CONTENT_ATTR) {
       final var newContent = (BlifContentComponent) value;
-      if (!content.equals(newContent)) content = newContent;
+      if (!content.equals(newContent)) {
+        content = newContent;
+      }
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL && value instanceof String newLabel) {
       final var oldlabel = label;
-      if (label.equals(newLabel)) return;
+      if (label.equals(newLabel)) {
+        return;
+      }
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
     }
     if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
-      if (labelFont.equals(newFont)) return;
+      if (labelFont.equals(newFont)) {
+        return;
+      }
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       final var newVis = (Boolean) value;
-      if (labelVisible.equals(newVis)) return;
+      if (labelVisible.equals(newVis)) {
+        return;
+      }
       labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     }

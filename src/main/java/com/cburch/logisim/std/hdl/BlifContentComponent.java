@@ -13,7 +13,6 @@ import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.hdl.HdlModel;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,9 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * BlifContentComponent connects the BLIF parser with the rest of the HDL content code.
+ */
 public class BlifContentComponent extends HdlContent {
 
   public static BlifContentComponent create() {
@@ -43,7 +45,9 @@ public class BlifContentComponent extends HdlContent {
       return "";
     } finally {
       try {
-        if (input != null) input.close();
+        if (input != null) {
+          input.close();
+        }
       } catch (IOException ex) {
         Logger.getLogger(BlifContentComponent.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -64,7 +68,10 @@ public class BlifContentComponent extends HdlContent {
    * These map the input/output bits to cells.
    * Some values may be -1 (indicating a bit does not exist for some reason).
    */
-  protected int[][] compiledInputPinsX, compiledInputPinsO, compiledOutputPinsX, compiledOutputPinsO;
+  protected int[][] compiledInputPinsX;
+  protected int[][] compiledInputPinsO;
+  protected int[][] compiledOutputPinsX;
+  protected int[][] compiledOutputPinsO;
   protected String name;
 
   protected BlifContentComponent() {
@@ -118,10 +125,10 @@ public class BlifContentComponent extends HdlContent {
   @Override
   public boolean setContent(String content) {
     final var parser = new BlifParser(content);
-    DenseLogicCircuit compiledDLC;
+    DenseLogicCircuit compiledCircuit;
     try {
       parser.parse();
-      compiledDLC = parser.compile();
+      compiledCircuit = parser.compile();
     } catch (Exception ex) {
       // important for debugging!
       ex.printStackTrace();
@@ -136,11 +143,11 @@ public class BlifContentComponent extends HdlContent {
     final var outputsDesc = parser.getOutputs();
     inputs = inputsDesc.toArray(new PortDescription[0]);
     outputs = outputsDesc.toArray(new PortDescription[0]);
-    compiled = compiledDLC;
-    compiledInputPinsX = derivePins(compiled, inputs, parser, false);
-    compiledInputPinsO = derivePins(compiled, inputs, parser, true);
-    compiledOutputPinsX = derivePins(compiled, outputs, parser, false);
-    compiledOutputPinsO = derivePins(compiled, outputs, parser, true);
+    compiled = compiledCircuit;
+    compiledInputPinsX = derivePins(parser, compiled, inputs, false);
+    compiledInputPinsO = derivePins(parser, compiled, inputs, true);
+    compiledOutputPinsX = derivePins(parser, compiled, outputs, false);
+    compiledOutputPinsO = derivePins(parser, compiled, outputs, true);
 
     this.content = new StringBuilder(content);
     fireContentSet();
@@ -148,13 +155,14 @@ public class BlifContentComponent extends HdlContent {
     return true;
   }
 
-  private int[][] derivePins(DenseLogicCircuit compiled, PortDescription[] ports, BlifParser parser, boolean output) {
+  private int[][] derivePins(BlifParser parser, DenseLogicCircuit compiled,
+      PortDescription[] ports, boolean output) {
     int[][] results = new int[ports.length][];
     for (int i = 0; i < ports.length; i++) {
       PortDescription desc = ports[i];
       int[] result = new int[desc.getWidthInt()];
       for (int j = 0; j < result.length; j++) {
-        String symbol = parser.getPinDLCSymbol(desc, j, output);
+        String symbol = parser.getPinDlcSymbol(desc, j, output);
         Integer symRes = compiled.symbolTable.get(symbol);
         if (symRes != null) {
           result[j] = symRes;

@@ -17,10 +17,10 @@ import java.util.TreeSet;
 
 /**
  * Builds a dense logic circuit.
- * Rewrites gates to make attaching multiple outputs to the same line work; thus, it includes peephole optimizations.
+ * This inserts the logic for multiple gates attached to the same line.
  */
 public final class DenseLogicCircuitBuilder {
-  public final static boolean DEBUG = false;
+  public static final boolean DEBUG = false;
 
   private ArrayList<GateInfo> gates = new ArrayList<>();
   private ArrayList<CellInfo> cells = new ArrayList<>();
@@ -28,6 +28,9 @@ public final class DenseLogicCircuitBuilder {
   public final HashMap<String, Integer> symbolTable = new HashMap<>();
   private int seqDataSize = 0;
 
+  /**
+   * Creates a circuit builder with just the constant cells.
+   */
   public DenseLogicCircuitBuilder() {
     // Create constant cells.
     for (int i = 0; i < DenseLogicCircuit.LEV_COUNT; i++) {
@@ -43,31 +46,31 @@ public final class DenseLogicCircuitBuilder {
    */
   public void attachGate(int gateType, int a, int b, int o) {
     CellInfo outCellInfo = cells.get(o);
-    GateInfo existingGate = outCellInfo.currentDrivingGate;
-    if (existingGate != null) {
+    GateInfo oldGate = outCellInfo.currentDrivingGate;
+    if (oldGate != null) {
       // there is already a driving gate!
-      if (existingGate.pinA == existingGate.pinB && existingGate.type == DenseLogicCircuit.GATE_BUS) {
+      if (oldGate.pinA == oldGate.pinB && oldGate.type == DenseLogicCircuit.GATE_BUS) {
         // opt: if the driving gate is a BUF, we can use the spare port.
         if (a == b && gateType == DenseLogicCircuit.GATE_BUS) {
           // if these are both BUFs, we can combine them.
-          existingGate.setPinB(cells.get(b));
+          oldGate.setPinB(cells.get(b));
         } else {
-          CellInfo incomingGateOutputCell = addCellInternal(false);
-          addGate(gateType, cells.get(a), cells.get(b)).setOutput(incomingGateOutputCell);
-          existingGate.setPinB(incomingGateOutputCell);
+          CellInfo newGateOut = addCellInternal(false);
+          addGate(gateType, cells.get(a), cells.get(b)).setOutput(newGateOut);
+          oldGate.setPinB(newGateOut);
         }
       } else {
         // setup intermediate cells and redirect.
-        CellInfo existingGateOutputCell = addCellInternal(false);
-        existingGate.setOutput(existingGateOutputCell);
+        CellInfo oldGateOut = addCellInternal(false);
+        oldGate.setOutput(oldGateOut);
         if (a == b && gateType == DenseLogicCircuit.GATE_BUS) {
           // opt: BUF fast-path for an incoming BUF on any existing gate
-          addGate(DenseLogicCircuit.GATE_BUS, existingGateOutputCell, cells.get(a)).setOutput(outCellInfo);
+          addGate(DenseLogicCircuit.GATE_BUS, oldGateOut, cells.get(a)).setOutput(outCellInfo);
         } else {
-          CellInfo incomingGateOutputCell = addCellInternal(false);
-          addGate(gateType, cells.get(a), cells.get(b)).setOutput(incomingGateOutputCell);
+          CellInfo newGateOut = addCellInternal(false);
+          addGate(gateType, cells.get(a), cells.get(b)).setOutput(newGateOut);
           // add in the bus gate
-          addGate(DenseLogicCircuit.GATE_BUS, existingGateOutputCell, incomingGateOutputCell).setOutput(outCellInfo);
+          addGate(DenseLogicCircuit.GATE_BUS, oldGateOut, newGateOut).setOutput(outCellInfo);
         }
       }
     } else {
@@ -87,10 +90,12 @@ public final class DenseLogicCircuitBuilder {
    */
   public DenseLogicCircuit build() {
     var inverseMap = new HashMap<Integer, String>();
-    for (Map.Entry<String, Integer> ent : symbolTable.entrySet())
+    for (Map.Entry<String, Integer> ent : symbolTable.entrySet()) {
       inverseMap.put(ent.getValue(), ent.getKey());
-    if (DEBUG)
+    }
+    if (DEBUG) {
       System.out.println("-- DenseLogicCircuitBuilder --");
+    }
     // pull & notification array
     byte[] cellPull = new byte[cells.size()];
     int[][] cellUpdateNotifiesGate = new int[cells.size()][];
@@ -99,14 +104,16 @@ public final class DenseLogicCircuitBuilder {
       cellPull[i] = cell.pull;
       int[] notifyArray = new int[cell.notifiesTheseGates.size()];
       int idx = 0;
-      for (Integer gate : cell.notifiesTheseGates)
+      for (Integer gate : cell.notifiesTheseGates) {
         notifyArray[idx++] = gate;
+      }
       cellUpdateNotifiesGate[i] = notifyArray;
       if (DEBUG) {
         String addInfo = "";
         String sym = inverseMap.get(i);
-        if (sym != null)
+        if (sym != null) {
           addInfo = " (" + sym + ")";
+        }
         System.out.print(" C" + i + addInfo + " notifies");
         for (int na : notifyArray) {
           System.out.print(" G");
@@ -138,17 +145,22 @@ public final class DenseLogicCircuitBuilder {
     }
     // copy seq script
     int[] seq = new int[seqScript.size()];
-    for (int i = 0; i < seq.length; i++)
+    for (int i = 0; i < seq.length; i++) {
       seq[i] = seqScript.get(i);
+    }
     // output
-    return new DenseLogicCircuit(cellPull, cellUpdateNotifiesGate, gateTypes, gateCellA, gateCellB, gateCellO, seq, seqDataSize, Collections.unmodifiableMap(new HashMap<>(symbolTable)));
+    return new DenseLogicCircuit(cellPull, cellUpdateNotifiesGate, gateTypes,
+        gateCellA, gateCellB, gateCellO, seq, seqDataSize,
+        Collections.unmodifiableMap(new HashMap<>(symbolTable)));
   }
+
   private void debugWriteCell(Map<Integer, String> inverseMap, int i) {
     System.out.print("C");
     System.out.print(i);
     String sym = inverseMap.get(i);
-    if (sym != null)
+    if (sym != null) {
       System.out.print(" (" + sym + ")");
+    }
   }
 
   /**
@@ -190,7 +202,7 @@ public final class DenseLogicCircuitBuilder {
   /**
    * Adds a D-flipflop. Returns the Q line cell.
    */
-  public int addDFF(int c, int d) {
+  public int addDff(int c, int d) {
     int q = addCellInternal(true).index;
     int x = seqDataSize++;
     seqScript.add(DenseLogicCircuit.SQOP_DFF);
@@ -205,7 +217,7 @@ public final class DenseLogicCircuitBuilder {
   /**
    * Adds a DFFSR flipflop. Returns the Q line cell.
    */
-  public int addDFFSR(int c, int d, int s, int r) {
+  public int addDffsr(int c, int d, int s, int r) {
     int q = addCellInternal(true).index;
     int xc = seqDataSize++;
     // C
@@ -276,14 +288,17 @@ public final class DenseLogicCircuitBuilder {
       externallyDriven = ext;
     }
   }
+
   /**
    * Contains info about a gate.
    */
   private class GateInfo {
-    final int type, index;
+    final int type;
+    final int index;
     CellInfo pinA;
     CellInfo pinB;
     CellInfo pinOutput;
+
     GateInfo(int index, int t, CellInfo a, CellInfo b) {
       this.index = index;
       type = t;
@@ -294,8 +309,9 @@ public final class DenseLogicCircuitBuilder {
     }
 
     void setPinB(CellInfo b) {
-      if (pinA != pinB)
+      if (pinA != pinB) {
         pinB.notifiesTheseGates.remove(index);
+      }
       this.pinB = b;
       pinB.notifiesTheseGates.add(index);
     }
@@ -308,10 +324,12 @@ public final class DenseLogicCircuitBuilder {
       }
       // link
       if (cell != null) {
-        if (cell.externallyDriven)
+        if (cell.externallyDriven) {
           throw new RuntimeException("Cannot set driving gate for an externally driven cell!");
-        if (cell.currentDrivingGate != null)
+        }
+        if (cell.currentDrivingGate != null) {
           throw new RuntimeException("setOutput does not insert bus gates automatically!");
+        }
         cell.currentDrivingGate = this;
       }
       pinOutput = cell;

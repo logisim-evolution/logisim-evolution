@@ -11,8 +11,6 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
-import java.awt.Color;
-
 import com.cburch.hdl.HdlModel.PortDescription;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
@@ -26,11 +24,14 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
+import java.awt.Color;
 
 /**
  * Base class.
- * This base class provides a standard port layout and drawing code for generic logic interfaces (like for VHDL).
- * It does not assume much about the target; the goal is simply to keep the port layout code in one place.
+ * This base class provides a standard port layout
+ *  and drawing code for generic logic interfaces (like for VHDL).
+ * It does not assume much about the target;
+ *  the goal is simply to keep the port layout code in one place.
  */
 public abstract class GenericInterfaceComponent extends InstanceFactory {
   public GenericInterfaceComponent(String name,
@@ -48,8 +49,8 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    int nbInputs = getGIAttributesInputs(attrs).length;
-    int nbOutputs = getGIAttributesOutputs(attrs).length;
+    int nbInputs = getGiAttributesInputs(attrs).length;
+    int nbOutputs = getGiAttributesOutputs(attrs).length;
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
   }
 
@@ -65,7 +66,7 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.drawText(
         g,
-        StringUtil.resizeString(getGIAttributesName(attrs), metric, WIDTH),
+        StringUtil.resizeString(getGiAttributesName(attrs), metric, WIDTH),
         x0,
         y0,
         GraphicsUtil.H_CENTER,
@@ -87,10 +88,10 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 
-    final var inputs = getGIAttributesInputs(attrs);
-    final var outputs = getGIAttributesOutputs(attrs);
+    final var inputs = getGiAttributesInputs(attrs);
+    final var outputs = getGiAttributesOutputs(attrs);
 
-    for (var i = 0; i < inputs.length; i++)
+    for (var i = 0; i < inputs.length; i++) {
       GraphicsUtil.drawText(
           g,
           StringUtil.resizeString(inputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
@@ -98,7 +99,8 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-    for (var i = 0; i < outputs.length; i++)
+    }
+    for (var i = 0; i < outputs.length; i++) {
       GraphicsUtil.drawText(
           g,
           StringUtil.resizeString(outputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
@@ -106,6 +108,7 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_CENTER);
+    }
 
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
@@ -115,26 +118,27 @@ public abstract class GenericInterfaceComponent extends InstanceFactory {
   /**
    * Get the chip name for the given attributes.
    */
-  protected abstract String getGIAttributesName(AttributeSet attrs);
+  protected abstract String getGiAttributesName(AttributeSet attrs);
 
   /**
    * Get the input ports for the given attributes.
    * The returned value is not to be modified.
    */
-  protected abstract PortDescription[] getGIAttributesInputs(AttributeSet attrs);
+  protected abstract PortDescription[] getGiAttributesInputs(AttributeSet attrs);
 
   /**
    * Get the output ports for the given attributes.
    * The returned value is not to be modified.
    */
-  protected abstract PortDescription[] getGIAttributesOutputs(AttributeSet attrs);
+  protected abstract PortDescription[] getGiAttributesOutputs(AttributeSet attrs);
 
   /**
-   * Called by subclasses when something happens which changes anything affecting getGIAttributes* functions.
+   * Called by subclasses when something happens
+   *  which changes anything affecting getGiAttributes* functions.
    */
   protected void updatePorts(Instance instance) {
-    PortDescription[] inputs = getGIAttributesInputs(instance.getAttributeSet());
-    PortDescription[] outputs = getGIAttributesOutputs(instance.getAttributeSet());
+    PortDescription[] inputs = getGiAttributesInputs(instance.getAttributeSet());
+    PortDescription[] outputs = getGiAttributesOutputs(instance.getAttributeSet());
     Port[] result = new Port[inputs.length + outputs.length];
     int resultIndex = 0;
 

@@ -9,9 +9,8 @@
 
 package com.cburch.logisim.std.hdl;
 
-import java.util.Map;
-
 import com.cburch.logisim.data.Value;
+import java.util.Map;
 
 /**
  * A stored dense logic circuit.
@@ -35,14 +34,15 @@ public final class DenseLogicCircuit {
    */
   public static final int GATE_BUS = 0;
   /**
-   * Tri-state: If B is HIGH, then A is forwarded; else NONE
+   * Tri-state: If B is HIGH, then A is forwarded; else NONE.
    */
   public static final int GATE_TRIS = 1;
   /**
    * GATE_TRIS with inverted B input.
    * This was added to simplify 2-input muxes.
    * Doing this to D-flipflops would break counters.
-   * I'm not strictly sure latches won't break either, so I don't believe too much engineering effort is justified here.
+   * I'm not strictly sure latches won't break either,
+   *  so I don't believe too much engineering effort is justified here.
    */
   public static final int GATE_TRISI = 2;
   public static final int GATE_AND = 3;
@@ -62,9 +62,12 @@ public final class DenseLogicCircuit {
       "NXOR", "ANDNOT", "ORNOT"};
 
   /**
-   * D-flipflop[D, C, Q, X]: When cell[C] goes to high, set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
-   * Notably, DFF scripts may reuse resources to build more complex flip-flops that all manipulate the same bit of memory.
-   * The flip-flop is coerced at all times to be either high or low to prevent errors spreading.
+   * D-flipflop[D, C, Q, X]: When cell[C] goes to high,
+   *  set cell[Q] to cell[D]. Uses seqData[X] to detect this change.
+   * Notably, DFF scripts may reuse resources to build more complex
+   *  flip-flops that all manipulate the same bit of memory.
+   * The flip-flop is coerced at all times to be either high or low
+   *  to prevent errors spreading.
    */
   public static final int SQOP_DFF = 0;
   /**
@@ -88,7 +91,8 @@ public final class DenseLogicCircuit {
   /**
    * Cell pull values.
    * These are also used as the initial values of each cell.
-   * They are attached to the cell, and not the gate, because pullups/pulldowns must execute after all the bus nodes.
+   * They are attached to the cell, and not the gate,
+   *  because pullups/pulldowns must execute after all the bus nodes.
    * These include bus nodes that may get added after the pullup/pulldown is added.
    */
   private final byte[] cellPull;
@@ -130,7 +134,15 @@ public final class DenseLogicCircuit {
    */
   public final Map<String, Integer> symbolTable;
 
-  public DenseLogicCircuit(byte[] cellPull, int[][] cellUpdateNotifiesGate, byte[] gateTypes, int[] gateCellA, int[] gateCellB, int[] gateCellO, int[] seq, int seqDataSize, Map<String, Integer> symbolTable) {
+  /**
+   * Creates the DenseLogicCircuit.
+   * This is not the simulation instance!
+   * It is simply the circuit itself.
+   * The simulation instance is made up of the cells and auxData arrays.
+   */
+  public DenseLogicCircuit(byte[] cellPull, int[][] cellUpdateNotifiesGate, byte[] gateTypes,
+      int[] gateCellA, int[] gateCellB, int[] gateCellO, int[] seq, int seqDataSize,
+      Map<String, Integer> symbolTable) {
     this.cellCount = cellPull.length;
     this.cellPull = cellPull;
     this.gateCount = gateTypes.length;
@@ -169,8 +181,9 @@ public final class DenseLogicCircuit {
     if (gateCount != 0) {
       // setup the initial queue
       // each gate is followed by next gate
-      for (int i = 0; i < gateCount - 1; i++)
+      for (int i = 0; i < gateCount - 1; i++) {
         dat[i] = i + 1;
+      }
       // last gate ends list
       dat[gateCount - 1] = -1;
       // list starts with first gate
@@ -186,8 +199,9 @@ public final class DenseLogicCircuit {
    * Updates a cell.
    */
   public final void setCell(int cell, byte value, byte[] cells, int[] auxData) {
-    if (cells[cell] == value)
+    if (cells[cell] == value) {
       return;
+    }
     cells[cell] = value;
     for (int g : cellUpdateNotifiesGate[cell]) {
       if (auxData[g] == -1) {
@@ -199,7 +213,7 @@ public final class DenseLogicCircuit {
 
   /**
    * Simulates the combinatorial part of a tick.
-   * This has to be run twice; once to get data into the sequential components, once to get it out.
+   * This has to be run twice; once to get data into the sequential gates, again to get it out.
    */
   private final void simulateCombinatorial(byte[] cells, int[] auxData) {
     // Maximum iteration count of the amount of gates multiplied by itself.
@@ -210,57 +224,63 @@ public final class DenseLogicCircuit {
     while (maxIterationCount > 0) {
       maxIterationCount--;
       int gateToEval = auxData[gateCount];
-      if (gateToEval == -1)
+      if (gateToEval == -1) {
         break;
+      }
       // update next gate register & clear this gate
       auxData[gateCount] = auxData[gateToEval];
       auxData[gateToEval] = -1;
       // run gate
-      int vA = cells[gateCellA[gateToEval]];
-      int vB = cells[gateCellB[gateToEval]];
-      int vO = LEV_NONE;
+      int va = cells[gateCellA[gateToEval]];
+      int vb = cells[gateCellB[gateToEval]];
+      int vo = LEV_NONE;
       switch (gateTypes[gateToEval]) {
-      case GATE_BUS:
-        vO = vA | vB;
-        break;
-      case GATE_TRIS:
-        if (vB == LEV_HIGH)
-          vO = vA;
-        break;
-      case GATE_TRISI:
-        if (vB != LEV_HIGH)
-          vO = vA;
-        break;
-      case GATE_AND:
-        vO = (vA == LEV_HIGH && vB == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
-        break;
-      case GATE_OR:
-        vO = (vA == LEV_HIGH || vB == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
-        break;
-      case GATE_XOR:
-        vO = (vA == LEV_HIGH ^ vB == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
-        break;
-      case GATE_NAND:
-        vO = (vA == LEV_HIGH && vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
-        break;
-      case GATE_NOR:
-        vO = (vA == LEV_HIGH || vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
-        break;
-      case GATE_NXOR:
-        vO = (vA == LEV_HIGH ^ vB == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
-        break;
-      case GATE_ANDNOT:
-        vO = (vA == LEV_HIGH && vB != LEV_HIGH) ? LEV_HIGH : LEV_LOW;
-        break;
-      case GATE_ORNOT:
-        vO = (vA == LEV_HIGH || vB != LEV_HIGH) ? LEV_HIGH : LEV_LOW;
-        break;
+        case GATE_BUS:
+          vo = va | vb;
+          break;
+        case GATE_TRIS:
+          if (vb == LEV_HIGH) {
+            vo = va;
+          }
+          break;
+        case GATE_TRISI:
+          if (vb != LEV_HIGH) {
+            vo = va;
+          }
+          break;
+        case GATE_AND:
+          vo = (va == LEV_HIGH && vb == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
+          break;
+        case GATE_OR:
+          vo = (va == LEV_HIGH || vb == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
+          break;
+        case GATE_XOR:
+          vo = (va == LEV_HIGH ^ vb == LEV_HIGH) ? LEV_HIGH : LEV_LOW;
+          break;
+        case GATE_NAND:
+          vo = (va == LEV_HIGH && vb == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
+          break;
+        case GATE_NOR:
+          vo = (va == LEV_HIGH || vb == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
+          break;
+        case GATE_NXOR:
+          vo = (va == LEV_HIGH ^ vb == LEV_HIGH) ? LEV_LOW : LEV_HIGH; // inverted output
+          break;
+        case GATE_ANDNOT:
+          vo = (va == LEV_HIGH && vb != LEV_HIGH) ? LEV_HIGH : LEV_LOW;
+          break;
+        case GATE_ORNOT:
+          vo = (va == LEV_HIGH || vb != LEV_HIGH) ? LEV_HIGH : LEV_LOW;
+          break;
+        default:
+          throw new RuntimeException("invalid gate opcode " + gateTypes[gateToEval]);
       }
       int outCell = gateCellO[gateToEval];
-      if (vO == LEV_NONE)
-        vO = cellPull[outCell];
-      if (vO != cells[outCell]) {
-        cells[outCell] = (byte) vO;
+      if (vo == LEV_NONE) {
+        vo = cellPull[outCell];
+      }
+      if (vo != cells[outCell]) {
+        cells[outCell] = (byte) vo;
         // inlined: markCellUpdate
         for (int g : cellUpdateNotifiesGate[outCell]) {
           if (auxData[g] == -1) {
@@ -278,37 +298,22 @@ public final class DenseLogicCircuit {
   private final void simulateSequential(byte[] cells, int[] auxData) {
     int ptr = 0;
     while (ptr < sequentialScript.length) {
-      switch (sequentialScript[ptr++]) {
-      case SQOP_DFF: {
-        int d = sequentialScript[ptr++];
-        int c = sequentialScript[ptr++];
-        int q = sequentialScript[ptr++];
-        // notice the 'relocation' of x to past the update queue
-        int x = updateQueueSize + sequentialScript[ptr++];
-        int xOld = auxData[x];
-        int xNew = cells[c];
-        auxData[x] = xNew;
-        int newValueSrc = q;
-        if (xNew == LEV_HIGH && xNew != xOld)
-          newValueSrc = d;
-        byte newValue = (byte) (cells[newValueSrc] == LEV_HIGH ? LEV_HIGH : LEV_LOW);
-        if (cells[q] != newValue) {
-          cells[q] = newValue;
-          // inlined: markCellUpdate
-          for (int g : cellUpdateNotifiesGate[q]) {
-            if (auxData[g] == -1) {
-              auxData[g] = auxData[gateCount];
-              auxData[gateCount] = g;
-            }
+      int seqType = sequentialScript[ptr++];
+      switch (seqType) {
+        case SQOP_DFF: {
+          int d = sequentialScript[ptr++];
+          int c = sequentialScript[ptr++];
+          int q = sequentialScript[ptr++];
+          // notice the 'relocation' of x to past the update queue
+          int x = updateQueueSize + sequentialScript[ptr++];
+          int xvOld = auxData[x];
+          int xvNew = cells[c];
+          auxData[x] = xvNew;
+          int newValueSrc = q;
+          if (xvNew == LEV_HIGH && xvNew != xvOld) {
+            newValueSrc = d;
           }
-        }
-      } break;
-      case SQOP_LATCH: {
-        int d = sequentialScript[ptr++];
-        int e = sequentialScript[ptr++];
-        int q = sequentialScript[ptr++];
-        if (cells[e] == LEV_HIGH) {
-          byte newValue = (byte) (cells[d] == LEV_HIGH ? LEV_HIGH : LEV_LOW);
+          byte newValue = (byte) (cells[newValueSrc] == LEV_HIGH ? LEV_HIGH : LEV_LOW);
           if (cells[q] != newValue) {
             cells[q] = newValue;
             // inlined: markCellUpdate
@@ -319,8 +324,27 @@ public final class DenseLogicCircuit {
               }
             }
           }
-        }
-      } break;
+        } break;
+        case SQOP_LATCH: {
+          int d = sequentialScript[ptr++];
+          int e = sequentialScript[ptr++];
+          int q = sequentialScript[ptr++];
+          if (cells[e] == LEV_HIGH) {
+            byte newValue = (byte) (cells[d] == LEV_HIGH ? LEV_HIGH : LEV_LOW);
+            if (cells[q] != newValue) {
+              cells[q] = newValue;
+              // inlined: markCellUpdate
+              for (int g : cellUpdateNotifiesGate[q]) {
+                if (auxData[g] == -1) {
+                  auxData[g] = auxData[gateCount];
+                  auxData[gateCount] = g;
+                }
+              }
+            }
+          }
+        } break;
+        default:
+          throw new RuntimeException("invalid seq. opcode " + seqType);
       }
     }
   }
