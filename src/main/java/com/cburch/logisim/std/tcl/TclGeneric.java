@@ -38,7 +38,6 @@ public class TclGeneric extends TclComponent {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   *
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "TclGeneric";
@@ -61,7 +60,9 @@ public class TclGeneric extends TclComponent {
     @Override
     public VhdlContentComponent parse(String value) {
       final var content = VhdlContentComponent.create();
-      if (!content.compare(value)) content.setContent(value);
+      if (!content.compare(value)) {
+        content.setContent(value);
+      }
       return content;
     }
 
@@ -95,6 +96,9 @@ public class TclGeneric extends TclComponent {
 
   private final WeakHashMap<Instance, TclGenericListener> contentListeners;
 
+  /**
+   * Creates a TclGeneric component.
+   */
   public TclGeneric() {
     super(_ID, S.getter("tclGeneric"));
 
@@ -162,7 +166,8 @@ public class TclGeneric extends TclComponent {
     if (glbLabel != null) {
       final var font = g.getFont();
       g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
+      GraphicsUtil.drawCenteredText(g, glbLabel,
+          bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
       g.setFont(font);
     }
 
@@ -172,7 +177,7 @@ public class TclGeneric extends TclComponent {
     final var inputs = content.getInputs();
     final var outputs = content.getOutputs();
 
-    for (var i = 0; i < inputs.length; i++)
+    for (var i = 0; i < inputs.length; i++) {
       GraphicsUtil.drawText(
           g,
           StringUtil.resizeString(inputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
@@ -180,7 +185,8 @@ public class TclGeneric extends TclComponent {
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-    for (var i = 0; i < outputs.length; i++)
+    }
+    for (var i = 0; i < outputs.length; i++) {
       GraphicsUtil.drawText(
           g,
           StringUtil.resizeString(outputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
@@ -188,6 +194,7 @@ public class TclGeneric extends TclComponent {
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_CENTER);
+    }
 
     painter.drawBounds();
     painter.drawPorts();

@@ -15,9 +15,11 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
-
 import java.util.ArrayList;
 
+/**
+ * Copies VHDL entities into generated output.
+ */
 public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final String HDL_DIRECTORY = "circuit";
@@ -33,10 +35,12 @@ public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var inputs = contents.getInputs();
     final var outputs = contents.getOutputs();
     var portId = 0;
-    for (final var input : inputs)
+    for (final var input : inputs) {
       myPorts.add(Port.INPUT, input.getName(), input.getWidthInt(), portId++);
-    for (final var output : outputs)
+    }
+    for (final var output : outputs) {
       myPorts.add(Port.OUTPUT, output.getName(), output.getWidthInt(), portId++);
+    }
   }
 
   @Override

@@ -25,35 +25,54 @@ import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Simulated VHDL entity via external tool.
+ */
 public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponent> {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   *
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "VHDL Entity";
 
   static final Logger logger = LoggerFactory.getLogger(VhdlEntityComponent.class);
 
-  public static final Attribute<VhdlContentComponent> CONTENT_ATTR = new HdlContentAttribute<>(VhdlContentComponent::create);
+  public static final Attribute<VhdlContentComponent> CONTENT_ATTR =
+      new HdlContentAttribute<>(VhdlContentComponent::create);
 
+  /**
+   * Creates a VhdlEntityComponent.
+   */
   public VhdlEntityComponent() {
     super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true, CONTENT_ATTR);
 
     this.setIcon(new ArithmeticIcon("VHDL"));
   }
 
-  public void setSimName(AttributeSet attrs, String SName) {
-    if (attrs == null) return;
+  /**
+   * During the process of preparing files for the simulator, the name of each simulated component
+   *  must be set. These simulation names are stored in the component attributes.
+   * The given name will be ignored if a label has been set by the user.
+   */
+  public void setSimName(AttributeSet attrs, String simName) {
+    if (attrs == null) {
+      return;
+    }
     final var atrs = (VhdlEntityAttributes) attrs;
-    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
-    if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
+    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : simName;
+    if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR)) {
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, label);
+    }
   }
 
+  /**
+   * Retrieves the simulation name. Can return null in some cases.
+   */
   public String getSimName(AttributeSet attrs) {
-    if (attrs == null) return null;
+    if (attrs == null) {
+      return null;
+    }
     final var atrs = (VhdlEntityAttributes) attrs;
     return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
   }
@@ -118,12 +137,12 @@ public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponen
       vhdlSimulator.send("sync");
 
       /* Get response from tcl server */
-      String server_response;
-      while ((server_response = vhdlSimulator.receive()) != null
-          && server_response.length() > 0
-          && !server_response.equals("sync")) {
+      String serverResponse;
+      while ((serverResponse = vhdlSimulator.receive()) != null
+          && serverResponse.length() > 0
+          && !serverResponse.equals("sync")) {
 
-        final var parameters = server_response.split(":");
+        final var parameters = serverResponse.split(":");
 
         final var busValue = parameters[1];
 
@@ -164,7 +183,8 @@ public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponen
       }
 
       throw new UnsupportedOperationException(
-          "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
+          "VHDL component simulation is not supported."
+          + " This could be because there is no Questasim/Modelsim simulation server running.");
     }
   }
 

@@ -19,7 +19,6 @@ import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 import com.cburch.logisim.vhdl.base.VhdlParser;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -52,9 +51,14 @@ public class VhdlSimulatorVhdlTop {
     valid = false;
   }
 
+  /**
+   * If the top file has been invalidated, regenerates the VHDL top file.
+   */
   public void generate(List<Component> comps) {
     /* Do not generate if file is already valid */
-    if (valid) return;
+    if (valid) {
+      return;
+    }
 
     final var lineSeparator = System.getProperty("line.separator");
 

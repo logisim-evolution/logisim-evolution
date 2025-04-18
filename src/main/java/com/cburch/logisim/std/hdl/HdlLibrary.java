@@ -17,6 +17,10 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
+/**
+ * Contains the HDL-IP library.
+ * This library contains components for simulating HDL entities in Logisim. 
+ */
 public class HdlLibrary extends Library {
 
   /**

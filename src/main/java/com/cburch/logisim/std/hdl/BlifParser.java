@@ -97,8 +97,9 @@ public final class BlifParser {
         } else if (words[0].equals(".model")) {
           // use this as a name source if possible
           if (words.length > 1) {
-            if (name != null)
+            if (name != null) {
               throw new RuntimeException("many tops (try 'synth -flatten -top " + name + "')");
+            }
             name = words[1];
           }
         } else if (words[0].equals(".names")) {
@@ -180,8 +181,8 @@ public final class BlifParser {
               }
             }
             if (!found) {
-              throw new RuntimeException("unknown gate " + type + "\n" +
-                  "try basing your script on " + RECOMMENDED_LOGIC_LIBRARY_URL);
+              throw new RuntimeException("unknown gate " + type + "\n"
+                + "try basing your script on " + RECOMMENDED_LOGIC_LIBRARY_URL);
             }
           }
         }

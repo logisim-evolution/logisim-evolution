@@ -11,25 +11,31 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.proj.Project;
 import java.awt.Dialog;
 import java.awt.Window;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
-import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.gui.main.Frame;
-import com.cburch.logisim.proj.Project;
-
 /**
  * Universal code for any textual simulated HDL format.
  */
 public class HdlContentAttribute<C extends HdlContent> extends Attribute<C> {
+  /**
+   * Returns an HdlContentEditor to edit HdlContent.
+   * This is suitable for returning from getCellEditor.
+   */
   public static HdlContentEditor getContentEditor(Window source, HdlContent value, Project proj) {
     synchronized (windowRegistry) {
       HdlContentEditor ret = windowRegistry.get(value);
       if (ret == null) {
-        if (source instanceof Frame frame) ret = new HdlContentEditor(frame, proj, value);
-        else ret = new HdlContentEditor((Dialog) source, proj, value);
+        if (source instanceof Frame frame) {
+          ret = new HdlContentEditor(frame, proj, value);
+        } else {
+          ret = new HdlContentEditor((Dialog) source, proj, value);
+        }
         windowRegistry.put(value, ret);
       }
       return ret;
@@ -55,7 +61,9 @@ public class HdlContentAttribute<C extends HdlContent> extends Attribute<C> {
   @Override
   public C parse(String value) {
     C content = contentFactory.get();
-    if (!content.compare(value)) content.setContent(value);
+    if (!content.compare(value)) {
+      content.setContent(value);
+    }
     return content;
   }
 

@@ -25,8 +25,15 @@ import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/**
+ * VhdlContentComponent connects the VHDL interface parser with other code.
+ * (The parsed VHDL interface is then used for the ports of a VHDL entity component.)
+ */
 public class VhdlContentComponent extends HdlContent {
 
+  /**
+   * Creates a new VhdlContentComponent.
+   */
   public static VhdlContentComponent create() {
     return new VhdlContentComponent();
   }
@@ -47,7 +54,9 @@ public class VhdlContentComponent extends HdlContent {
       return "";
     } finally {
       try {
-        if (input != null) input.close();
+        if (input != null) {
+          input.close();
+        }
       } catch (IOException ex) {
         Logger.getLogger(VhdlContentComponent.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -95,8 +104,13 @@ public class VhdlContentComponent extends HdlContent {
         .equals(value.replaceAll("\\r\\n|\\r|\\n", " "));
   }
 
+  /**
+   * Returns the detected VHDL architecture.
+   */
   public String getArchitecture() {
-    if (architecture == null) return "";
+    if (architecture == null) {
+      return "";
+    }
 
     return architecture;
   }
@@ -108,55 +122,43 @@ public class VhdlContentComponent extends HdlContent {
 
   @Override
   public PortDescription[] getInputs() {
-    if (inputs == null) return new PortDescription[0];
-
-    return inputs;
+    return inputs == null ? new PortDescription[0] : inputs;
   }
 
   public int getInputsNumber() {
-    if (inputs == null) return 0;
-
-    return inputs.length;
+    return inputs == null ? 0 : inputs.length;
   }
 
   public String getLibraries() {
-    if (libraries == null) return "";
-
-    return libraries;
+    return libraries == null ? "" : libraries;
   }
 
   @Override
   public String getName() {
-    if (name == null) return "";
-
-    return name;
+    return name == null ? "" : name;
   }
 
   @Override
   public PortDescription[] getOutputs() {
-    if (outputs == null) return new PortDescription[0];
-
-    return outputs;
+    return outputs == null ? new PortDescription[0] : outputs;
   }
 
   public int getOutputsNumber() {
-    if (outputs == null) return 0;
-
-    return outputs.length;
+    return outputs == null ? 0 : outputs.length;
   }
 
   public PortDescription[] getPorts() {
-    if (inputs == null || outputs == null) return new PortDescription[0];
-
-    return concat(inputs, outputs);
+    return (inputs == null || outputs == null) ? new PortDescription[0] : concat(inputs, outputs);
   }
 
   public int getPortsNumber() {
-    if (inputs == null || outputs == null) return 0;
-
-    return inputs.length + outputs.length;
+    return (inputs == null || outputs == null) ? 0 : inputs.length + outputs.length;
   }
 
+  /**
+   * Parses the content.
+   * This is the 'guts' of setContent, after external validation may have been performed.
+   */
   public boolean parseContent(String content) {
     final var parser = new VhdlParser(content);
     try {
@@ -214,8 +216,9 @@ public class VhdlContentComponent extends HdlContent {
         return false;
       case Softwares.SUCCESS:
         return parseContent(content);
+      default:
+        // This is not a change in behaviour, but had to be moved during linting.
+        return false;
     }
-
-    return false;
   }
 }

@@ -11,6 +11,13 @@ package com.cburch.hdl;
 
 import com.cburch.logisim.data.BitWidth;
 
+/**
+ * HdlModel is a base interface for objects that contain mutable text representing code
+ *  written in an HDL. Listeners may be attached to appropriately handle updates.
+ * Implementors should typically use HdlContent.
+ * It should not be confused with the other HdlModel, located in
+ *  the logisim.vhdl.base package.
+ */
 public interface HdlModel {
   // NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
   // getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
