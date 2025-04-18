@@ -14,6 +14,9 @@ import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.util.Arrays;
 
+/**
+ * HdlContent is a base class for attribute content that contains a simulatable HDL string.
+ */
 public abstract class HdlContent implements HdlModel, Cloneable {
 
   protected static <T> T[] concat(T[] first, T[] second) {

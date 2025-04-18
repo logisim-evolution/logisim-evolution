@@ -17,6 +17,10 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
+/**
+ * Contains the HDL-IP library.
+ * This library contains components for simulating HDL entities in Logisim. 
+ */
 public class HdlLibrary extends Library {
 
   /**
@@ -28,8 +32,10 @@ public class HdlLibrary extends Library {
   public static final String _ID = "HDL-IP";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
+      new FactoryDescription(
+          VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
+      new FactoryDescription(
+          BlifCircuitComponent.class, S.getter("blifComponent"), new ArithmeticIcon("BLIF"))
   };
 
   private List<Tool> tools = null;
