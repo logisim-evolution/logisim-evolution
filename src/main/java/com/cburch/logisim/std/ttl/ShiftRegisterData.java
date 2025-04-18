@@ -80,7 +80,7 @@ public class ShiftRegisterData extends ClockState implements InstanceData {
    * @param v the value to be pushed into the shift register
    */
   public void pushUp(Value v) {
-    vsPos = toInternalIndex(-1);
+    vsPos = toInternalIndex(vs.length - 1);
 
     vs[vsPos] = v;
   }
