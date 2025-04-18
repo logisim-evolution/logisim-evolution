@@ -12,6 +12,7 @@
   * Improved output of rectangles with rounded corners in TikZ image export
   * Redesigned simulation engine to fix synchronization issues and increase speed
   * Subcircuits with clock input(s) are now drawn with a clock symbol
+  * Added TTL 74194: 4-bit bidirectional universal shift register
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
