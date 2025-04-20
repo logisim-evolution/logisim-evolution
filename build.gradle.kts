@@ -424,6 +424,75 @@ tasks.register("createMsi") {
   }
 }
 
+
+/**
+ * Task: createExe
+ *
+ * Creates an executable for Windows.
+ */
+tasks.register("createExe") {
+  group = "build"
+  description = "Creates the executable for Windows"
+  dependsOn("createPackageInput")
+
+  val supportDir = ext.get(SUPPORT_DIR) as String
+  val buildDir = ext.get(BUILD_DIR) as String
+  val osArch = ext.get(OS_ARCH) as String
+  val projectName = project.name
+  val dest = "${buildDir}/windows-${osArch}"
+
+
+  inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
+  inputs.dir("${supportDir}/windows")
+  outputs.dir("$dest/$projectName")
+
+  doFirst {
+    if (!OperatingSystem.current().isWindows) {
+      throw GradleException("This task runs on Windows only.")
+    }
+  }
+
+  doLast {
+    deleteDirectoryContents(dest)
+    val version = ext.get(APP_VERSION_SHORT) as String
+    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
+        "--name", projectName,
+        "--dest", dest,
+        "--icon", "${supportDir}/windows/Logisim-evolution.ico",
+        "--type", "app-image",
+        // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
+        // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+        // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
+        "--app-version", version,
+    )
+    runCommand(params, "Error while creating the Windows executable.")
+    verifyFileExists("${dest}/${projectName}/${projectName}.exe")
+  }
+}
+
+/**
+ * Task: createWindowsPortableZip
+ *
+ * Create a self-contained archive for Windows.
+ */
+tasks.register<Zip>("createWindowsPortableZip") {
+  group = "build"
+  description = "Makes the self-contained zip archive for Windows"
+
+  val inputFiles = tasks.getByName("createExe").outputs.files
+
+  dependsOn("createExe")
+  from(inputFiles)
+
+  val osArch = ext.get(OS_ARCH) as String
+  val version = ext.get(APP_VERSION) as String
+  val targetDir = ext.get(TARGET_DIR) as String
+  val projectName = project.name
+
+  archiveFileName = "${projectName}-${version}-windows-${osArch}.zip"
+  destinationDirectory.set(file(targetDir))
+}
+
 /**
  * Task: createApp
  *
@@ -698,6 +767,7 @@ tasks.register("createAll") {
   }
   if (OperatingSystem.current().isWindows) {
     dependsOn("createMsi")
+    dependsOn("createWindowsPortableZip")
   }
   if (OperatingSystem.current().isMacOsX) {
     dependsOn("createDmg")
