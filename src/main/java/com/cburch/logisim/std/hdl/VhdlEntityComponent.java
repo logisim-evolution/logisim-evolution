@@ -11,131 +11,70 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
-import com.cburch.hdl.HdlModel;
-import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
-import com.cburch.logisim.gui.main.Frame;
-import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceFactory;
-import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
-import java.awt.Color;
-import java.awt.Window;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VhdlEntityComponent extends InstanceFactory {
+/**
+ * Simulated VHDL entity via external tool.
+ */
+public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponent> {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   *
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "VHDL Entity";
 
-  static class ContentAttribute extends Attribute<VhdlContentComponent> {
-
-    public ContentAttribute() {
-      super("content", S.getter("vhdlContentAttr"));
-    }
-
-    @Override
-    public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
-      final var proj = (source instanceof Frame frame) ? frame.getProject() : null;
-      return VhdlEntityAttributes.getContentEditor(source, value, proj);
-    }
-
-    @Override
-    public VhdlContentComponent parse(String value) {
-      VhdlContentComponent content = VhdlContentComponent.create();
-      if (!content.compare(value)) content.setContent(value);
-      return content;
-    }
-
-    @Override
-    public String toDisplayString(VhdlContentComponent value) {
-      return S.get("vhdlContentValue");
-    }
-
-    @Override
-    public String toStandardString(VhdlContentComponent value) {
-      return value.getContent();
-    }
-  }
-
-  static class VhdlEntityListener implements HdlModelListener {
-
-    final Instance instance;
-
-    VhdlEntityListener(Instance instance) {
-      this.instance = instance;
-    }
-
-    @Override
-    public void contentSet(HdlModel source) {
-      // ((InstanceState)
-      // instance).getProject().getSimulator().getVhdlSimulator().fireInvalidated();
-      instance.fireInvalidated();
-      instance.recomputeBounds();
-    }
-  }
-
   static final Logger logger = LoggerFactory.getLogger(VhdlEntityComponent.class);
 
-  public static final Attribute<VhdlContentComponent> CONTENT_ATTR = new ContentAttribute();
-  static final int WIDTH = 140;
-  static final int HEIGHT = 40;
-  static final int PORT_GAP = 10;
+  public static final Attribute<VhdlContentComponent> CONTENT_ATTR =
+      new HdlContentAttribute<>(VhdlContentComponent::create);
 
-  static final int X_PADDING = 5;
-
-  private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
-
+  /**
+   * Creates a VhdlEntityComponent.
+   */
   public VhdlEntityComponent() {
-    super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true);
+    super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true, CONTENT_ATTR);
 
-    this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
   }
 
-  public void setSimName(AttributeSet attrs, String SName) {
-    if (attrs == null) return;
+  /**
+   * During the process of preparing files for the simulator, the name of each simulated component
+   *  must be set. These simulation names are stored in the component attributes.
+   * The given name will be ignored if a label has been set by the user.
+   */
+  public void setSimName(AttributeSet attrs, String simName) {
+    if (attrs == null) {
+      return;
+    }
     final var atrs = (VhdlEntityAttributes) attrs;
-    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
-    if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
+    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : simName;
+    if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR)) {
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, label);
+    }
   }
 
+  /**
+   * Retrieves the simulation name. Can return null in some cases.
+   */
   public String getSimName(AttributeSet attrs) {
-    if (attrs == null) return null;
+    if (attrs == null) {
+      return null;
+    }
     final var atrs = (VhdlEntityAttributes) attrs;
     return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
-  }
-
-  @Override
-  protected void configureNewInstance(Instance instance) {
-    final var content = instance.getAttributeValue(CONTENT_ATTR);
-    final var listener = new VhdlEntityListener(instance);
-
-    contentListeners.put(instance, listener);
-    content.addHdlModelListener(listener);
-
-    instance.addAttributeListener();
-    updatePorts(instance);
   }
 
   @Override
@@ -156,79 +95,6 @@ public class VhdlEntityComponent extends InstanceFactory {
     }
 
     return getHDLName(attrs) + label;
-  }
-
-  @Override
-  public Bounds getOffsetBounds(AttributeSet attrs) {
-    final var content = attrs.getValue(CONTENT_ATTR);
-    final var nbInputs = content.getInputsNumber();
-    final var nbOutputs = content.getOutputsNumber();
-
-    return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
-  }
-
-  @Override
-  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == CONTENT_ATTR) {
-      updatePorts(instance);
-      instance.recomputeBounds();
-    }
-  }
-
-  @Override
-  public void paintInstance(InstancePainter painter) {
-    final var g = painter.getGraphics();
-    final var content = painter.getAttributeValue(CONTENT_ATTR);
-    var metric = g.getFontMetrics();
-
-    final var bds = painter.getBounds();
-    final var x0 = bds.getX() + (bds.getWidth() / 2);
-    final var y0 = bds.getY() + metric.getHeight() + 12;
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    GraphicsUtil.drawText(
-        g,
-        StringUtil.resizeString(content.getName(), metric, WIDTH),
-        x0,
-        y0,
-        GraphicsUtil.H_CENTER,
-        GraphicsUtil.V_BOTTOM);
-
-    final var glbLabel = painter.getAttributeValue(StdAttr.LABEL);
-    if (glbLabel != null) {
-      final var font = g.getFont();
-      g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(
-          g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
-      g.setFont(font);
-    }
-
-    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-    g.setFont(g.getFont().deriveFont((float) 10));
-    metric = g.getFontMetrics();
-
-    final var inputs = content.getInputs();
-    final var outputs = content.getOutputs();
-
-    for (var i = 0; i < inputs.length; i++)
-      GraphicsUtil.drawText(
-          g,
-          StringUtil.resizeString(inputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
-          bds.getX() + 5,
-          bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
-          GraphicsUtil.H_LEFT,
-          GraphicsUtil.V_CENTER);
-    for (var i = 0; i < outputs.length; i++)
-      GraphicsUtil.drawText(
-          g,
-          StringUtil.resizeString(outputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
-          bds.getX() + WIDTH - 5,
-          bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
-          GraphicsUtil.H_RIGHT,
-          GraphicsUtil.V_CENTER);
-
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    painter.drawBounds();
-    painter.drawPorts();
   }
 
   /**
@@ -271,12 +137,12 @@ public class VhdlEntityComponent extends InstanceFactory {
       vhdlSimulator.send("sync");
 
       /* Get response from tcl server */
-      String server_response;
-      while ((server_response = vhdlSimulator.receive()) != null
-          && server_response.length() > 0
-          && !server_response.equals("sync")) {
+      String serverResponse;
+      while ((serverResponse = vhdlSimulator.receive()) != null
+          && serverResponse.length() > 0
+          && !serverResponse.equals("sync")) {
 
-        final var parameters = server_response.split(":");
+        final var parameters = serverResponse.split(":");
 
         final var busValue = parameters[1];
 
@@ -317,7 +183,8 @@ public class VhdlEntityComponent extends InstanceFactory {
       }
 
       throw new UnsupportedOperationException(
-          "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
+          "VHDL component simulation is not supported."
+          + " This could be because there is no Questasim/Modelsim simulation server running.");
     }
   }
 
@@ -342,10 +209,5 @@ public class VhdlEntityComponent extends InstanceFactory {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
     }
-  }
-
-  void updatePorts(Instance instance) {
-    VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
-    instance.setPorts(content.getPorts());
   }
 }
