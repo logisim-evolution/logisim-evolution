@@ -195,7 +195,7 @@ java {
   }
 }
 
-task<Jar>("sourcesJar") {
+tasks.register<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a JAR archive with project sources."
   dependsOn.add("classes")
