@@ -56,6 +56,7 @@ public class RegTabContent extends JScrollPane
   private boolean showing = false;
   private CircuitState circuitState;
   private final ArrayList<Circuit> circuits = new ArrayList<>();
+  private final ArrayList<Watcher> buildWatchers = new ArrayList<>();
   private final CopyOnWriteArrayList<Watcher> watchers = new CopyOnWriteArrayList<>();
 
   public RegTabContent(Frame frame) {
@@ -124,12 +125,15 @@ public class RegTabContent extends JScrollPane
     gridConstraints.gridx = 1;
     gridConstraints.weightx = 0.3;
     panel.add(hdrValue, gridConstraints);
+    panel.repaint();
   }
 
   private void fill() {
     if (!showing || circuitState == null) return;
     if (circuits.isEmpty()) {
       enumerate();
+      watchers.addAll(buildWatchers);
+      buildWatchers.clear();
     }
     updateWatchers();
     writeValuesToLabels();
@@ -200,7 +204,7 @@ public class RegTabContent extends JScrollPane
       gridConstraints.gridx = 1;
       final var label = new MyLabel("-", 0, false, null);
       panel.add(label, gridConstraints);
-      watchers.add(new Watcher(log, cs, label));
+      buildWatchers.add(new Watcher(log, cs, label));
     }
   }
 
