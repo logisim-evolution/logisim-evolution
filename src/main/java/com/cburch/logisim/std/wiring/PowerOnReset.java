@@ -11,6 +11,7 @@ package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -101,6 +102,7 @@ public class PowerOnReset extends InstanceFactory {
 
     private boolean value;
     private InstanceComponent component;
+    private Simulator simulator;
     private final Timer tim;
     private int tstart;
     private int tend;
@@ -109,6 +111,7 @@ public class PowerOnReset extends InstanceFactory {
     public PORState(InstanceState state) {
       value = true;
       component = state.getInstance().getComponent();
+      simulator = state.getProject().getSimulator();
       DurationAttribute attr =
           (DurationAttribute) state.getAttributeSet().getAttribute("PorHighDuration");
       duration = state.getAttributeValue(attr) * 1000;
@@ -177,6 +180,7 @@ public class PowerOnReset extends InstanceFactory {
         if (value) {
           value = false;
           component.fireInvalidated();
+          if (simulator != null) simulator.nudge();
           tim.stop();
         }
       }
