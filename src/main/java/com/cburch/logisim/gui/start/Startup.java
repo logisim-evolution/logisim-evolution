@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.generated.BuildInfo;
@@ -43,11 +44,7 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.help.JHelp;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -885,6 +882,10 @@ public class Startup implements AWTEventListener {
       System.exit(-1);
     }
 
+    // Load in any user-defined default circuit files
+    var defaultLibraries = templLoader.loadCustomStartupLibraries(
+            System.getProperty("user.home") + File.separator + "logisim-defaults");
+
     // load in template
     loadTemplate(templLoader, templFile, templEmpty);
 
@@ -994,8 +995,9 @@ public class Startup implements AWTEventListener {
     }
 
     // load file
+    Project proj = null;
     if (filesToOpen.isEmpty()) {
-      final var proj = ProjectActions.doNew(monitor);
+      proj = ProjectActions.doNew(monitor);
       proj.setStartupScreen(true);
       if (showSplash) {
         monitor.close();
@@ -1003,7 +1005,6 @@ public class Startup implements AWTEventListener {
     } else {
       var numOpened = 0;
       var first = true;
-      Project proj;
       for (final var fileToOpen : filesToOpen) {
         try {
           if (testVector != null) {
@@ -1046,6 +1047,9 @@ public class Startup implements AWTEventListener {
       }
       if (numOpened == 0) System.exit(-1);
     }
+
+    if(proj != null)
+      proj.doAction(LogisimFileActions.loadLibraries(defaultLibraries, proj.getLogisimFile()));
 
     for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);
