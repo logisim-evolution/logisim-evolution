@@ -29,13 +29,13 @@ public class CustomLibraryImportTest {
   private static final String RANDOM_FILE_DATA = "Lorem Ipsum";
 
   private static class TestFile {
-      public String contents;
-      public String fileName;
+    public String contents;
+    public String fileName;
 
-      public TestFile(String contents, String fileName) {
-        this.contents = contents;
-        this.fileName = fileName;
-      }
+    public TestFile(String contents, String fileName) {
+      this.contents = contents;
+      this.fileName = fileName;
+    }
   }
 
 

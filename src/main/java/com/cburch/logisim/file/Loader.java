@@ -358,28 +358,27 @@ public class Loader implements LibraryLoader {
     File directory = new File(customLibraryDirectoryPath);
 
     if (!directory.exists() || !LOGISIM_DIRECTORY.accept(directory)) {
-        return new Library[0];
+      return new Library[0];
     }
 
     var files = directory.listFiles();
 
     if (files == null) {
-        return new Library[0];
+      return new Library[0];
     }
 
     List<Library> loadedLibraries = new ArrayList<>();
     for (File file : files) {
-        if (!LOGISIM_FILTER.accept(file)) continue;
+      if (!LOGISIM_FILTER.accept(file)) continue;
 
-        try {
-            var library = loadLogisimLibrary(file);
+      try {
+        var library = loadLogisimLibrary(file);
 
-            if (library != null && !library.getLibraries().isEmpty())
-                loadedLibraries.add(library);
-        } catch (NullPointerException e) {
-            continue;
-        }
-
+        if (library != null && !library.getLibraries().isEmpty())
+          loadedLibraries.add(library);
+      } catch (NullPointerException e) {
+        continue;
+      }
     }
 
     return loadedLibraries.toArray(new Library[0]);
