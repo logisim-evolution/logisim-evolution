@@ -162,6 +162,10 @@ extra.apply {
       "--input", packageInputDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
+      // The following list of modules to be added by `jpackage` was obtained using
+      // `jdeps --print-module-deps --ignore-missing-deps build/libs/logisim-evolution-4.0.0dev-all.jar`.
+      // TODO: Run `jdeps` as part of a suitable gradle task instead of manually maintaining it.
+      "--add-modules", "java.base,java.compiler,java.desktop,java.naming,java.prefs,java.scripting,java.sql",
       "--copyright", copyrights,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
