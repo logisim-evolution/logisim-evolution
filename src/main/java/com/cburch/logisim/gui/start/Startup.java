@@ -44,7 +44,11 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.help.JHelp;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -1048,7 +1052,7 @@ public class Startup implements AWTEventListener {
       if (numOpened == 0) System.exit(-1);
     }
 
-    if(proj != null)
+    if (proj != null)
       proj.doAction(LogisimFileActions.loadLibraries(defaultLibraries, proj.getLogisimFile()));
 
     for (final var fileToPrint : filesToPrint) {

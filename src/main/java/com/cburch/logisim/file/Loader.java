@@ -25,7 +25,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Stack;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -349,35 +355,34 @@ public class Loader implements LibraryLoader {
 
   // Loads all the custom logisim (.circ) libraries found in the default library folder
   public Library[] loadCustomStartupLibraries(String customLibraryDirectoryPath) {
-    File directory = new File(customLibraryDirectoryPath);
+      File directory = new File(customLibraryDirectoryPath);
 
-    if (!directory.exists() || !LOGISIM_DIRECTORY.accept(directory)) {
-      return new Library[0];
-    }
-
-    var files = directory.listFiles();
-
-    if (files == null) {
-      return new Library[0];
-    }
-
-    List<Library> loadedLibraries = new ArrayList<>();
-    for (File file : files) {
-      if(!LOGISIM_FILTER.accept(file)) continue;
-
-      try{
-        var library = loadLogisimLibrary(file);
-
-        if(library != null && !library.getLibraries().isEmpty())
-          loadedLibraries.add(library);
-      }
-      catch (NullPointerException e) {
-        continue;
+      if (!directory.exists() || !LOGISIM_DIRECTORY.accept(directory)) {
+          return new Library[0];
       }
 
-    }
+      var files = directory.listFiles();
 
-    return loadedLibraries.toArray(new Library[0]);
+      if (files == null) {
+          return new Library[0];
+      }
+
+      List<Library> loadedLibraries = new ArrayList<>();
+      for (File file : files) {
+          if (!LOGISIM_FILTER.accept(file)) continue;
+
+          try {
+              var library = loadLogisimLibrary(file);
+
+              if (library != null && !library.getLibraries().isEmpty())
+                  loadedLibraries.add(library);
+          } catch (NullPointerException e) {
+              continue;
+          }
+
+      }
+
+      return loadedLibraries.toArray(new Library[0]);
   }
 
   public void reload(LoadedLibrary lib) {
