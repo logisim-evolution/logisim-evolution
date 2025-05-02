@@ -212,7 +212,7 @@ tasks.register<Jar>("sourcesJar") {
 
 
 /**
- * Helper method that simplifies runining external commands using ProcessBuilder().
+ * Helper method that simplifies running external commands using ProcessBuilder().
  * Will throw GradleException on command failure (non-zero return code).
  *
  * params: List of strings which signifies the external program file to be invoked and its arguments (if any).
