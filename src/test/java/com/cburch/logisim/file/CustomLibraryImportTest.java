@@ -11,9 +11,8 @@ package com.cburch.logisim.file;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.cburch.logisim.gui.start.SplashScreen;
+import com.cburch.logisim.Main;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,8 +44,11 @@ This file is intended to be loaded by Logisim-evolution v4.0.0dev(https://github
      */
     @Test
     public final void testLoadCustomStartupLibraries() {
+        // Make the program run headless
+        Main.headless = true;
+
         // Create a loader to test loading files with
-        var testLoader = new Loader(new SplashScreen());
+        var testLoader = new Loader(null);
 
         // Test for an invalid file type
         TestFile[] files = new TestFile[]{ new TestFile(RANDOM_FILE_DATA,  "not_a_logisim_file.txt") };
