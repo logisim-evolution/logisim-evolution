@@ -63,6 +63,8 @@ val APP_VERSION = "appVersion"
 val APP_VERSION_SHORT = "appVersionShort"
 val APP_URL = "appUrl"
 val BUILD_DIR = "buildDir"
+val JDEPS = "jdeps"
+val JDEPS_FILE = "jdepsFile"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
@@ -149,6 +151,10 @@ extra.apply {
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val jpackage = "${javaHome}/bin/jpackage"
   set(JPACKAGE, jpackage)
+  val jdeps = "${javaHome}/bin/jdeps"
+  set(JDEPS, jdeps)
+  val jdepsFile = "${buildDir}/neededJavaModules.txt"
+  set(JDEPS_FILE, jdepsFile)
 
   // Copyrights note.
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
@@ -162,10 +168,6 @@ extra.apply {
       "--input", packageInputDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
-      // The following list of modules to be added by `jpackage` was obtained using
-      // `jdeps --print-module-deps --ignore-missing-deps build/libs/logisim-evolution-4.0.0dev-all.jar`.
-      // TODO: Run `jdeps` as part of a suitable gradle task instead of manually maintaining it.
-      "--add-modules", "java.base,java.compiler,java.desktop,java.naming,java.prefs,java.scripting,java.sql",
       "--copyright", copyrights,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
@@ -282,11 +284,49 @@ fun verifyFileExists(filename: String) {
 }
 
 /**
+ * Function that returns the named parameters list plus the --adds-modules option
+ */
+fun addNeededModulesTo(parametersName: String): List<String> {
+  val fileName = ext.get(JDEPS_FILE) as String
+  val file = File(fileName)
+  if (!file.isFile()) {
+    throw GradleException("No ${fileName} exists")
+  }
+  val dependencies = File(fileName).readLines()[0]
+  val addModules = listOf("--add-modules", dependencies)
+  return (ext.get(parametersName) as List<Any?>).filterIsInstance<String>() + addModules
+}
+
+/**
+ * Task createNeededJavaModules
+ *
+ * Uses jdeps to create a file containing a list of the needed Java modules.
+ */
+tasks.register("createNeededJavaModules") {
+  group = "build"
+  description = "Creates a file containing the jdeps dependencies"
+  dependsOn("shadowJar")
+  val libsDir = ext.get(LIBS_DIR) as String
+  val shadowJarFilename = ext.get(SHADOW_JAR_FILE_NAME) as String
+  val jarFileName = "${libsDir}/${shadowJarFilename}"
+  val outFileName = ext.get(JDEPS_FILE) as String
+  inputs.file(jarFileName)
+  outputs.file(outFileName)
+
+  doLast {
+    val cmd = listOf(ext.get(JDEPS) as String, "--print-module-deps", "--ignore-missing-deps", jarFileName)
+    val neededJavaModules = runCommand(cmd, "Error while finding Java dependencies with jdeps.")
+    File(outFileName).writeText(neededJavaModules)
+    verifyFileExists(outFileName)
+  }
+}
+
+/**
  * Task createPackageInput
  *
  * Creates a packageInput directory containing only the current shadowJar file
  * because jpackage includes everything in its input directory in the package.
-*/
+ */
 tasks.register("createPackageInput") {
   group = "build"
   description = "Creates a packageInput directory that only contains the current shadowJar file"
@@ -318,9 +358,10 @@ tasks.register("createPackageInput") {
 tasks.register("createDeb") {
   group = "build"
   description = "Makes DEB Linux installation package."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
+  inputs.file(ext.get(JDEPS_FILE) as String)
 
   // Debian uses `_` to separate name from version string.
   // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
@@ -336,7 +377,7 @@ tasks.register("createDeb") {
   }
 
   doLast {
-    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "deb")
+    val params = addNeededModulesTo(LINUX_PARAMS) + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
     verifyFileExists(outputFile);
   }
@@ -350,9 +391,10 @@ tasks.register("createDeb") {
 tasks.register("createRpm") {
   group = "build"
   description = "Makes RPM Linux installation package."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   var outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm"
   outputs.file(outputFile);
 
@@ -363,7 +405,7 @@ tasks.register("createRpm") {
   }
 
   doLast {
-    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "rpm")
+    val params = addNeededModulesTo(LINUX_PARAMS) + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
     verifyFileExists(outputFile);
   }
@@ -377,7 +419,7 @@ tasks.register("createRpm") {
 tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
 
   val supportDir = ext.get(SUPPORT_DIR) as String
   val osArch = ext.get(OS_ARCH) as String
@@ -385,6 +427,7 @@ tasks.register("createMsi") {
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   var outputFile = "${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi"
   outputs.file(outputFile);
 
@@ -397,7 +440,7 @@ tasks.register("createMsi") {
   doLast {
     val targetDir = ext.get(TARGET_DIR) as String
     val version = ext.get(APP_VERSION_SHORT) as String
-    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
+    val params = addNeededModulesTo(SHARED_PARAMS) + listOf(
         "--name", projectName,
         "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
@@ -437,7 +480,7 @@ tasks.register("createMsi") {
 tasks.register("createExe") {
   group = "build"
   description = "Creates the executable for Windows"
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
 
   val supportDir = ext.get(SUPPORT_DIR) as String
   val buildDir = ext.get(BUILD_DIR) as String
@@ -448,6 +491,7 @@ tasks.register("createExe") {
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   outputs.dir("$dest/$projectName")
 
   doFirst {
@@ -459,7 +503,7 @@ tasks.register("createExe") {
   doLast {
     deleteDirectoryContents(dest)
     val version = ext.get(APP_VERSION_SHORT) as String
-    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
+    val params = addNeededModulesTo(SHARED_PARAMS) + listOf(
         "--name", projectName,
         "--dest", dest,
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
@@ -510,9 +554,10 @@ tasks.register("createApp") {
 
   group = "build"
   description = "Makes the macOS application."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/macos")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   outputs.dir(dest)
 
   doFirst {
@@ -523,7 +568,7 @@ tasks.register("createApp") {
 
   doLast {
     deleteDirectoryContents(dest)
-    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
+    val params = addNeededModulesTo(SHARED_PARAMS) + listOf(
         "--dest", dest,
         "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
         "--file-associations", "${supportDir}/macos/file.jpackage",
