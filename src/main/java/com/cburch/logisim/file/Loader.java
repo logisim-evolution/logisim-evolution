@@ -159,9 +159,10 @@ public class Loader implements LibraryLoader {
       if (!candidate.exists()) return candidate;
       return null;
     }
-    if (!base.getName().endsWith(LOGISIM_EXTENSION)) return null;
+    var extension = ".autosave";
+    if (!base.getName().endsWith(LOGISIM_EXTENSION)) extension = ".circ.autosave";
     final var dir = base.getParentFile();
-    final var name = "." + base.getName() + ".autosave";
+    final var name = "." + base.getName() + extension;
     return new File(dir, name);
   }
 
