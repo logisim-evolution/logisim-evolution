@@ -296,10 +296,20 @@ jobs:
       - name: "Build MSI"
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
-      - name: 'Upload MSI'
+      - name: "Upload MSI"
         uses: actions/upload-artifact@v4
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
           path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-amd64.msi
           name: ${{ needs.git_check.outputs.base_name }}-amd64.msi
+
+      - name: "Build self-contained archive for Windows"
+        run: .\gradlew.bat createWindowsPortableZip -x checkstyleMain -x checkstyleTest
+
+      - name: "Upload self-contained archive for Windows"
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-windows-amd64.zip
+          name: ${{ needs.git_check.outputs.base_name }}-windows-amd64.zip
