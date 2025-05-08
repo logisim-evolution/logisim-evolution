@@ -21,7 +21,6 @@ import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.base.HdlModelListener;
 import com.cburch.logisim.vhdl.file.HdlFile;
-import com.cburch.logisim.vhdl.syntax.VhdlSyntax;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -174,7 +173,7 @@ public class HdlContentView extends JPanel
 
     editor = new RSyntaxTextArea(ROWS, COLUMNS);
     if (lang.equals("vhdl")) {
-      ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new VhdlSyntax());
+      ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_VHDL);
     } else {
       editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_DELPHI);
     }
