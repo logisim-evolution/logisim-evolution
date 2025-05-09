@@ -18,4 +18,3 @@ and therefore will need referencing for any projects you use them in.
 
 As of present, libraries are only automatically imported on *startup*. By creating a new file through the user interface,
 only built-in libraries will be imported.
-
