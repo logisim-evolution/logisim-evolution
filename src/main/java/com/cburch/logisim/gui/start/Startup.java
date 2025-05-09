@@ -44,6 +44,8 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -760,6 +762,11 @@ public class Startup implements AWTEventListener {
     System.exit(-1);
   }
 
+  private static String getProgramDirectory() {
+    var pathOfMainClass = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    return URLDecoder.decode(pathOfMainClass.getParentFile().getAbsolutePath(), StandardCharsets.UTF_8);
+  }
+
   private void doOpenFile(File file) {
     if (initialized) {
       ProjectActions.doOpen(null, null, file);
@@ -888,7 +895,7 @@ public class Startup implements AWTEventListener {
 
     // Load in any user-defined default circuit files
     var defaultLibraries = templLoader.loadCustomStartupLibraries(
-            System.getProperty("user.home") + File.separator + "logisim-defaults");
+            getProgramDirectory() + File.separator + "logisim-defaults");
 
     // load in template
     loadTemplate(templLoader, templFile, templEmpty);
