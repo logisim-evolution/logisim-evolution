@@ -10,8 +10,8 @@
 package com.cburch.logisim.util;
 
 /**
- * A simple linked-list priority queue implementation, using keys of type long,
- * and values that extend type QNode. This supports (approximately) a
+ * A simple linked-list priority queue implementation, using
+ * values that extend type QNode. This supports (approximately) a
  * subset of the java.util.PriorityQueue API, but only enough to support
  * Propagator.
  * Objects in the queue must be subclasses of QNode.
@@ -31,7 +31,7 @@ public class LinkedQueue<T extends QNode> implements QNodeQueue<T> {
 
     // Find node p that should precede t.
     QNode p = tail;
-    while (p != null && t.key < p.key) {
+    while (p != null && t.compareTo(p) < 0) {
       p = p.left;
     }
 

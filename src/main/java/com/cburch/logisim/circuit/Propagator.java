@@ -16,8 +16,10 @@ import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LinkedQueue;
 import com.cburch.logisim.util.QNodeQueue;
+import com.cburch.logisim.util.QueueOfQueues;
 import com.cburch.logisim.util.SplayQueue;
 import com.cburch.logisim.util.QNode;
 import java.lang.ref.WeakReference;
@@ -50,14 +52,7 @@ public class Propagator {
     }
   }
 
-  public static class SimulatorEvent extends QNode
-      implements Comparable<SimulatorEvent> {
-
-    final int time;
-
-    /** Used to make the times unique */
-    int serialNumber;
-
+  public static class SimulatorEvent extends QNode {
     /** State of circuit containing component */
     final CircuitState state;
 
@@ -72,9 +67,7 @@ public class Propagator {
 
     private SimulatorEvent(int time, int serialNumber,
                            CircuitState state, Location loc, Component cause, Value val) {
-      super(((long) time << 32) | (serialNumber & 0xFFFFFFFFL));
-      this.time = time;
-      this.serialNumber = serialNumber;
+      super(time, serialNumber);
       this.state = state;
       this.cause = cause;
       this.loc = loc;
@@ -84,16 +77,7 @@ public class Propagator {
     public SimulatorEvent cloneFor(CircuitState newState) {
       final var newProp = newState.getPropagator();
       final var dtime = newProp.clock - state.getPropagator().clock;
-      return new SimulatorEvent(time + dtime, newProp.eventSerialNumber++, newState, loc, cause, val);
-    }
-
-    @Override
-    public int compareTo(SimulatorEvent o) {
-      // Yes, these subtractions may overflow. This is intentional, as it
-      // avoids potential wraparound problems as the counters increment.
-      int ret = this.time - o.time;
-      if (ret != 0) return ret;
-      return this.serialNumber - o.serialNumber;
+      return new SimulatorEvent(timeKey + dtime, newProp.eventSerialNumber++, newState, loc, cause, val);
     }
 
     @Override
@@ -119,15 +103,11 @@ public class Propagator {
   }
 
   /**
-   * The simulator event queue can be implemented by a PriorityEventQueue,
-   * SplayQueue, or LinkedQueue. Kevin Walsh reported that the LinkedQueue
-   * seems fastest in practice, though it has poor worst-case performance.
-   * For me, even for a simple CPU simulation, SplayQueue is faster.
-   * PriorityEventQueue, using Java's PriorityQueue, seems slightly worse than the
-   * others. It is trivial to switch between the implementations, just change the
-   * object to a new one of: SplayQueue, LinkedQueue, or PriorityEventQueue.
+   * The simulator event queue can be implemented by a Java PriorityQueue, SplayQueue, LinkedQueue,
+   * or QueueOfQueues with the time queue either linked or TreeMap.The user may choose the
+   * implementation in the Experimental panel of User Preferences.
    */
-  private final QNodeQueue<SimulatorEvent> toProcess = new PriorityEventQueue<>();
+  private final QNodeQueue<SimulatorEvent> toProcess;
 
   private int clock = 0;
   private boolean isOscillating = false;
@@ -146,6 +126,15 @@ public class Propagator {
     this.root = root;
     final var l = new Listener(this);
     root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
+    final var simQueueType = AppPreferences.SIMULATION_QUEUE.get();
+    toProcess = switch (simQueueType) {
+      case AppPreferences.SIM_QUEUE_LIST_OF_QUEUES, AppPreferences.SIM_QUEUE_TREE_OF_QUEUES
+          -> new QueueOfQueues<>(simQueueType);
+      case AppPreferences.SIM_QUEUE_LINKED -> new LinkedQueue<>();
+      case AppPreferences.SIM_QUEUE_SPLAY  -> new SplayQueue<>();
+      // case AppPreferences.SIM_QUEUE_PRIORITY  -> new PriorityEventQueue<>();
+      default -> new PriorityEventQueue<>();
+    };
     updateRandomness();
     updateSimLimit();
   }
@@ -264,12 +253,12 @@ public class Propagator {
     if (toProcess.isEmpty()) return;
 
     // update clock
-    clock = toProcess.peek().time;
+    clock = toProcess.peek().timeKey;
 
     // propagate all values for this clock tick
     while (true) {
       SimulatorEvent ev = toProcess.peek();
-      if (ev == null || ev.time != clock) break;
+      if (ev == null || ev.timeKey != clock) break;
       toProcess.remove();
       final var state = ev.state;
 
