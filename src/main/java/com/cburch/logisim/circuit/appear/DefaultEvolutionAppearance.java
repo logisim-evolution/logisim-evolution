@@ -49,7 +49,7 @@ public class DefaultEvolutionAppearance {
         Direction pinEdge;
         final var label = new Text(0, 0, pin.getAttributeValue(StdAttr.LABEL));
         final var labelWidth = label.getText().length() * DrawAttr.FIXED_FONT_CHAR_WIDTH;
-        if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
+        if (pin.getAttributeValue(Pin.ATTR_TYPE) == Pin.OUTPUT) {
           pinEdge = Direction.EAST;
           if (labelWidth > maxRightLabelLength) maxRightLabelLength = labelWidth;
         } else {

@@ -18,7 +18,6 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -104,7 +103,7 @@ public class Pin extends InstanceFactory {
       Value value = pinState.intendedValue;
       bitWidth = value.getWidth();
       PinAttributes attrs = (PinAttributes) state.getAttributeSet();
-      tristate = (attrs.threeState && attrs.pull == PULL_NONE);
+      tristate = attrs.behavior == TRISTATE;
 
       setTitle(S.get("PinEnterDecimal"));
       GridBagConstraints gbc = new GridBagConstraints();
@@ -256,7 +255,7 @@ public class Pin extends InstanceFactory {
       final var value = pinState.intendedValue;
       bitWidth = value.getWidth();
       final var attrs = (PinAttributes) state.getAttributeSet();
-      tristate = (attrs.threeState && attrs.pull == PULL_NONE);
+      tristate = attrs.behavior == TRISTATE;
 
       setTitle(S.get("PinEnterFloat"));
       final var gbc = new GridBagConstraints();
@@ -391,8 +390,7 @@ public class Pin extends InstanceFactory {
       PinAttributes attrs = (PinAttributes) state.getAttributeSet();
       String ret = attrs.label;
       if (ret == null || ret.equals("")) {
-        String type =
-            attrs.type == EndData.INPUT_ONLY ? S.get("pinInputName") : S.get("pinOutputName");
+        String type = attrs.type == INPUT ? S.get("pinInputName") : S.get("pinOutputName");
         return type + state.getInstance().getLocation();
       } else {
         return ret;
@@ -413,7 +411,7 @@ public class Pin extends InstanceFactory {
     @Override
     public boolean isInput(InstanceState state, Object option) {
       PinAttributes attrs = (PinAttributes) state.getAttributeSet();
-      return attrs.type == EndData.INPUT_ONLY;
+      return attrs.type == INPUT;
     }
   }
 
@@ -511,8 +509,18 @@ public class Pin extends InstanceFactory {
       int r = (radix == RadixOption.RADIX_16 ? 4 : (radix == RadixOption.RADIX_8 ? 3 : 1));
       if (bit + r > width.getWidth()) r = width.getWidth() - bit;
       Value[] val = pinState.intendedValue.getAll();
-      boolean tristate = (attrs.threeState && attrs.pull == PULL_NONE);
-      if (ch == 0) {
+      boolean tristate = (attrs.behavior == TRISTATE);
+      // if this was just converted from substate to root state, normalize val
+      if (tristate) { // convert E bits to x
+        for (int b = 0; b < val.length; b++)
+          if (val[b] != Value.TRUE && val[b] != Value.FALSE && val[b] != Value.UNKNOWN)
+            val[b] = Value.UNKNOWN;
+      } else { // convert E and X bits to 1
+        for (int b = 0; b < val.length; b++)
+          if (val[b] != Value.TRUE && val[b] != Value.FALSE)
+            val[b] = Value.TRUE;
+      }
+      if (ch == 0) { // toggle
         boolean ones = true, defined = true;
         for (int b = bit; b < bit + r; b++) {
           if (val[b] == Value.FALSE) ones = false;
@@ -545,8 +553,7 @@ public class Pin extends InstanceFactory {
         for (int i = 0; i < r; i++)
           val[bit + i] = (((d & (1 << i)) != 0) ? Value.TRUE : Value.FALSE);
       }
-      for (int b = bit; b < bit + r; b++)
-        pinState.intendedValue = pinState.intendedValue.set(b, val[b]);
+      pinState.intendedValue = Value.create(val);
       state.fireInvalidated();
       return true;
     }
@@ -658,14 +665,8 @@ public class Pin extends InstanceFactory {
   }
 
   private static class PinState implements InstanceData, Cloneable {
-
-    Value intendedValue;
-    Value foundValue;
-
-    public PinState(Value sending, Value receiving) {
-      this.intendedValue = sending;
-      this.foundValue = receiving;
-    }
+    Value foundValue; // for color - received value from wire connected to this pin
+    Value intendedValue; // for display - output: received value; input: UI or parent value
 
     @Override
     public Object clone() {
@@ -683,16 +684,15 @@ public class Pin extends InstanceFactory {
     var ret = (PinState) state.getData();
     if (ret == null) {
       var initialValue = attrs.getValue(ATTR_INITIAL);
-      final var newValue = attrs.threeState
-            ? Value.createUnknown(width)
-            : Value.createKnown(width.getWidth(), initialValue);
-      ret = new PinState(newValue, newValue);
+      final var newValue = attrs.behavior == TRISTATE
+          ? Value.createUnknown(width)
+          : Value.createKnown(width.getWidth(), initialValue);
+      ret = new PinState();
+      ret.foundValue = ret.intendedValue = newValue;
       state.setData(ret);
     }
     if (ret.intendedValue.getWidth() != width.getWidth()) {
-      ret.intendedValue =
-          ret.intendedValue.extendWidth(
-              width.getWidth(), attrs.threeState ? Value.UNKNOWN : Value.FALSE);
+      ret.intendedValue = ret.intendedValue.extendWidth(width.getWidth(), attrs.defaultBitValue());
     }
     if (ret.foundValue.getWidth() != width.getWidth()) {
       ret.foundValue = ret.foundValue.extendWidth(width.getWidth(), Value.UNKNOWN);
@@ -700,30 +700,27 @@ public class Pin extends InstanceFactory {
     return ret;
   }
 
-  private static Value pull2(Value mod, BitWidth expectedWidth, Value pullTo) {
-    if (mod.getWidth() == expectedWidth.getWidth()) {
-      return mod.pullEachBitTowards(pullTo);
-    } else {
-      return Value.createKnown(expectedWidth, 0);
-    }
-  }
+  public static final AttributeOption INPUT = new AttributeOption("input",
+      S.getter("pinInputOption"));
+  public static final AttributeOption OUTPUT = new AttributeOption("output",
+      S.getter("pinOutputOption"));
+  public static final Attribute<AttributeOption> ATTR_TYPE =
+      Attributes.forOption("type", S.getter("pinTypeAttr"),
+          new AttributeOption[] { INPUT, OUTPUT });
 
-  public static final Attribute<Boolean> ATTR_TRISTATE =
-      Attributes.forBoolean("tristate", S.getter("pinThreeStateAttr"));
-  public static final Attribute<Boolean> ATTR_TYPE =
-      Attributes.forBoolean("output", S.getter("pinOutputAttr"));
-  public static final AttributeOption PULL_NONE =
-      new AttributeOption("none", S.getter("pinPullNoneOption"));
-  public static final AttributeOption PULL_UP =
-      new AttributeOption("up", S.getter("pinPullUpOption"));
-  public static final AttributeOption PULL_DOWN =
-      new AttributeOption("down", S.getter("pinPullDownOption"));
+  public static final AttributeOption SIMPLE = new AttributeOption("simple",
+      S.getter("pinSimpleOption"));
+  public static final AttributeOption TRISTATE = new AttributeOption("tristate",
+      S.getter("pinTristateOption"));
+  public static final AttributeOption PULL_DOWN = new AttributeOption("pulldown",
+      S.getter("pinPullDownOption"));
+  public static final AttributeOption PULL_UP = new AttributeOption("pullup",
+      S.getter("pinPullUpOption"));
+  public static final Attribute<AttributeOption> ATTR_BEHAVIOR =
+      Attributes.forOption("behavior", S.getter("pinBehaviorAttr"),
+          new AttributeOption[] { SIMPLE, TRISTATE, PULL_DOWN, PULL_UP });
   public static final Attribute<Long> ATTR_INITIAL =
-      Attributes.forHexLong("initial", S.getter("pinResetValue"));
-
-  public static final Attribute<AttributeOption> ATTR_PULL =
-      Attributes.forOption(
-          "pull", S.getter("pinPullAttr"), new AttributeOption[] {PULL_NONE, PULL_UP, PULL_DOWN});
+      Attributes.forHexLong("initial", S.getter("pinResetValue"));;
 
   public static final Pin FACTORY = new Pin();
   private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
@@ -749,9 +746,6 @@ public class Pin extends InstanceFactory {
     else return Direction.NORTH;
   }
 
-  //
-  // methods for instances
-  //
   @Override
   protected void configureNewInstance(Instance instance) {
     PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
@@ -796,21 +790,10 @@ public class Pin extends InstanceFactory {
         facing, width, attrs.getValue(RadixOption.ATTRIBUTE), NewLayout, true);
   }
 
-  public int getType(Instance instance) {
-    PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-    return attrs.type;
-  }
-
-  //
-  // state information methods
-  //
   public Value getValue(InstanceState state) {
     return getState(state).intendedValue;
   }
 
-  //
-  // basic information methods
-  //
   public BitWidth getWidth(Instance instance) {
     PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
     return attrs.width;
@@ -818,10 +801,8 @@ public class Pin extends InstanceFactory {
 
   @Override
   public boolean hasThreeStateDrivers(AttributeSet attrs) {
-    /*
-     * We ignore for the moment the three-state property of the pin, as it
-     * is not an active component, just wiring
-     */
+    // For purposes of HDL, Pin never generates floating values, regardless of
+    // attributes.
     return false;
   }
 
@@ -841,14 +822,14 @@ public class Pin extends InstanceFactory {
       instance.recomputeBounds();
       PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
       instance.computeLabelTextField(Instance.AVOID_LEFT, pinLabelLoc(attrs.facing));
-    } else if (attr == Pin.ATTR_TRISTATE || attr == Pin.ATTR_PULL) {
+    } else if (attr == Pin.ATTR_BEHAVIOR) {
       instance.fireInvalidated();
     }
   }
 
   public boolean isInputPin(Instance instance) {
     PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-    return attrs.type != EndData.OUTPUT_ONLY;
+    return attrs.type == INPUT;
   }
 
   public boolean isClockPin(Instance instance) {
@@ -1123,9 +1104,6 @@ public class Pin extends InstanceFactory {
     }
   }
 
-  //
-  // graphics methods
-  //
   @Override
   public void paintIcon(InstancePainter painter) {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
@@ -1205,8 +1183,9 @@ public class Pin extends InstanceFactory {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
     Graphics g = painter.getGraphics();
     Bounds bds = painter.getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
-    boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
+    boolean IsOutput = attrs.type == OUTPUT;
     PinState state = getState(painter);
+    //Value value = pull(attrs, state.intendedValue);
     Value found = state.foundValue;
     int x = bds.getX();
     int y = bds.getY();
@@ -1228,35 +1207,15 @@ public class Pin extends InstanceFactory {
     PinAttributes attrs = (PinAttributes) state.getAttributeSet();
 
     PinState q = getState(state);
-    if (attrs.type == EndData.OUTPUT_ONLY) {
-      Value found = state.getPortValue(0);
-      q.intendedValue = found;
-      q.foundValue = found;
-      //state.setPort(0, Value.createUnknown(attrs.width), 1);
+    Value found = state.getPortValue(0);
+    if (attrs.type == OUTPUT) {
+      q.foundValue = found; // for color
+      q.intendedValue = found; // for display
     } else {
-      Value found = state.getPortValue(0);
-      Value toSend = q.intendedValue;
-
-      Object pull = attrs.pull;
-      Value pullTo = null;
-      if (pull == PULL_DOWN) {
-        pullTo = Value.FALSE;
-      } else if (pull == PULL_UP) {
-        pullTo = Value.TRUE;
-      } else if (!attrs.threeState && !state.isCircuitRoot()) {
-        pullTo = Value.FALSE;
-      }
-      if (pullTo != null) {
-        toSend = pull2(toSend, attrs.width, pullTo);
-        if (state.isCircuitRoot()) {
-          q.intendedValue = toSend;
-        }
-      }
-
-      q.foundValue = found;
-      if (!toSend.equals(found)) { // ignore if no change
-        state.setPort(0, toSend, 1);
-      }
+      q.foundValue = found; // for color
+      Value drive = pull(attrs, q.intendedValue);
+      if (!drive.equals(found))
+        state.setPort(0, drive, 1);
     }
   }
 
@@ -1265,31 +1224,95 @@ public class Pin extends InstanceFactory {
     return true;
   }
 
-  public void setValue(InstanceState state, Value value) {
-    PinAttributes attrs = (PinAttributes) state.getAttributeSet();
-    Object pull = attrs.pull;
+  // Before version 4.0.0: Attributes are a confusing mess. "Output?", "Three
+  // State?", and "Pull Behavior" all interact in complicated ways. There seems
+  // to currently only be a few possible combinations that are implemented:
+  // Note: gray wires (with NIL value) are never connected to ports. Any wire
+  // connected to a port is simulated as Unknown and shown as blue.
+  //   Output pin:
+  //     UI can display 0, 1, E, or X, and subcircuit passes whatever is
+  //     received. When connected to a blue wire, displays X regardless of
+  //     tri-state option. When disconnected entirely, it displays either 0 (if
+  //     tri-state option is not selected), or X (if tri-state option is
+  //     selected), but regardless, passes the X up to parent. The pull option
+  //     is ignored.
+  //   Input pin with tristate but no pull:
+  //     UI can display and choose 0, 1, or X, and also shows red if there is an
+  //     error on the output bus. Parent circuit can send 0, 1, X, or E, and all
+  //     will pass through into subcircuit.
+  //   Input pin with pull-up (or pull-down):
+  //     UI can display and choose only 0 or 1, but also shows red if there is
+  //     an error on the output bus. Parent circuit can send 0 or 1, but if it
+  //     tries to send X or E these get converted to 1 (or 0 for pull-down). I
+  //     think the behavior for E here is unreasonable: E should get sent
+  //     through no matter what. The tristate option is ignored here. The UI
+  //     when viewing a subcircuit doesn't distinguish between the case where
+  //     parent circuit sends 1, and when parent sends an X that gets pulled-up
+  //     to 1. I think it could show blue in one case, just like it shows red in
+  //     cases of errors. Or show X, but color it to match the 1 value (or 0
+  //     value).
+  //   Input pin without tristate:
+  //     This behaves the same as tri-state with pull-down.
+  //
+  // Notice that tri-state=false seems pointless, but is the default because it
+  // has an important UI difference: UI can select only 0 or 1, but Pull
+  // attribute separately specifies what happens to Unknown values from parent
+  // circuit, either leaving them alone (tri-state-like) or pulling up or down.
+  //
+  // It seems plausible to add support for another combination:
+  //   Output pin with pull-up (or pull-down):
+  //      UI could display 0, 1, E, or X, but X gets converted to 0 or 1 before
+  //      being sent up to parent. Color could match what is being sent up to
+  //      parent.
+  // On the other hand, this just adds complexity, with no real benefit over
+  // simply wiring things up properly.
+  //
+  // Version 4.0.0: Simplified new behavior:
+  //   Output pin [behavior option hidden, has no effect]
+  //      Depending on value of connected bus, UI displays 0, 1, E, or X, and
+  //      subcircuit passes whatever is displayed up to parent. Color matches
+  //      both the connected bus and the value passed up to parent. This is the
+  //      simplest option, and it is the only option for output pins.
+  //   Input pin in simple mode: [Behavior=simple]
+  //      User can choose 0 or 1. Parent circuit can send 0, 1, E, or X. UI
+  //      displays whatever user chose (or parent sent). Sends whatever is
+  //      displayed to connected bus. Color matches whatever appears on
+  //      connected bus (which may be different from what is displayed). Note:
+  //      This mode never generates floating values, it only passes them along
+  //      from a parent circuit.
+  //   Input pin in tristate mode: [Behavior=tristate]
+  //      Same circuit behavior as simple, but different UI behavior.
+  //      User can choose 0, 1, or X. Parent circuit can send 0, 1, E, or X. UI
+  //      displays whatever user chose (or parent sent). Sends whatever is
+  //      displayed to connected bus. Color matches whatever appears on
+  //      connected bus (which may be different from what is displayed). Note:
+  //      This mode can generate X values from the UI, but for purposes of
+  //      HDL-generation, this mode never generates floating values, it only
+  //      passes them along from a parent circuit.
+  //   Input pin with pull-up (or pull-down): [Behavior=pullup/pulldown]
+  //      Same UI behavior as simple, but different circuit behavior.
+  //      User can choose 0 or 1. Parent circuit can send 0, 1, or E, but if it
+  //      tries to send X it gets converted to and displayed as 1 (or 0). Sends
+  //      whatever is displayed to connected bus. Color matches whatever appears
+  //      on connected bus. [or we could show blue in case of pull, or half
+  //      blue]
 
+  public void driveInputPin(InstanceState state, Value value) {
+    PinAttributes attrs = (PinAttributes) state.getAttributeSet();
     PinState myState = getState(state);
-    if (value == Value.NIL) {
-      myState.intendedValue = Value.createUnknown(attrs.width);
-    } else {
-      Value sendValue;
-      if (pull == PULL_NONE || pull == null || value.isFullyDefined()) {
-        sendValue = value;
-      } else {
-        Value[] bits = value.getAll();
-        if (pull == PULL_UP) {
-          for (int i = 0; i < bits.length; i++) {
-            if (bits[i] != Value.FALSE) bits[i] = Value.TRUE;
-          }
-        } else if (pull == PULL_DOWN) {
-          for (int i = 0; i < bits.length; i++) {
-            if (bits[i] != Value.TRUE) bits[i] = Value.FALSE;
-          }
-        }
-        sendValue = Value.create(bits);
-      }
-      myState.intendedValue = sendValue;
-    }
+    // don't pull here -- instead, pull when displaying and propagating
+    myState.intendedValue = value; // pull(attrs, value);
   }
+
+  private Value pull(PinAttributes attrs, Value value) {
+    if (value == Value.NIL)
+      return Value.createUnknown(attrs.width);
+    else if (attrs.behavior == PULL_UP)
+      return value.pullEachBitTowards(Value.TRUE);
+    else if (attrs.behavior == PULL_DOWN)
+      return value.pullEachBitTowards(Value.FALSE);
+    else
+      return value;
+  }
+
 }

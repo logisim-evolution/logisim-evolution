@@ -397,7 +397,7 @@ public class SubcircuitFactory extends InstanceFactory {
         final var newVal = stateInContext.getPortValue(i);
         final var oldVal = Pin.FACTORY.getValue(pinState);
         if (!newVal.equals(oldVal)) {
-          Pin.FACTORY.setValue(pinState, newVal);
+          Pin.FACTORY.driveInputPin(pinState, newVal);
           Pin.FACTORY.propagate(pinState);
         }
       } else { // it is output-only
