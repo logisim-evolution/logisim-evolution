@@ -1082,7 +1082,7 @@ class XmlReader {
       elt.removeChild(b);
     }
     if (type == null && output != null) {
-      appendChildAttribute(doc, elt, "type", output.equalsIgnoreCase("true") ? "output" : "inputk");
+      appendChildAttribute(doc, elt, "type", output.equalsIgnoreCase("true") ? "output" : "input");
     }
     if (behavior == null) {
       if ("up".equalsIgnoreCase(pull)) {
