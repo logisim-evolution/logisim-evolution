@@ -1045,41 +1045,52 @@ class XmlReader {
     //   behavior=simple|tristate|pullup|pulldown
     String wiringLibName = findLibNameByDesc(root, "#Wiring");
     for (Element compElt : XmlIterator.forDescendantElements(root, "comp")) {
-      String lib = compElt.getAttribute("lib");
-      String name = compElt.getAttribute("name");
-      if (name == null || lib == null || !name.equals("Pin") || !lib.equals(wiringLibName))
-        continue;
-      String output = null, tristate = null, pull = null, type = null, behavior = null;
-      ArrayList<Element> bad = new ArrayList<>();
-      for (Element attrElt : XmlIterator.forChildElements(compElt, "a")) {
-        String aname = attrElt.getAttribute("name");
-        String aval = attrElt.getAttribute("val");
-        if ("output".equalsIgnoreCase(aname)) {
-          output = aval;
-          bad.add(attrElt);
-        } else if ("tristate".equalsIgnoreCase(aname)) {
-          tristate = aval;
-          bad.add(attrElt);
-        } else if ("pull".equalsIgnoreCase(aname)) {
-          pull = aval;
-          bad.add(attrElt);
-        } else if ("type".equalsIgnoreCase(aname)) {
-          type = aval;
-        } else if ("behavior".equalsIgnoreCase(aname)) {
-          behavior = aval;
-        }
+      convertObsoletePinAttributes(doc, compElt, wiringLibName);
+    }
+    for (Element toolElt : XmlIterator.forDescendantElements(root, "tool")) {
+      convertObsoletePinAttributes(doc, toolElt, wiringLibName);
+    }
+  }
+
+  private void convertObsoletePinAttributes(Document doc, Element elt, String wiringLibName) {
+    String lib = elt.getAttribute("lib");
+    String name = elt.getAttribute("name");
+    if (name == null || lib == null || !name.equals("Pin") || !lib.equals(wiringLibName)) {
+      return;
+    }
+    String output = null, tristate = null, pull = null, type = null, behavior = null;
+    ArrayList<Element> bad = new ArrayList<>();
+    for (Element attrElt : XmlIterator.forChildElements(elt, "a")) {
+      String aname = attrElt.getAttribute("name");
+      String aval = attrElt.getAttribute("val");
+      if ("output".equalsIgnoreCase(aname)) {
+        output = aval;
+        bad.add(attrElt);
+      } else if ("tristate".equalsIgnoreCase(aname)) {
+        tristate = aval;
+        bad.add(attrElt);
+      } else if ("pull".equalsIgnoreCase(aname)) {
+        pull = aval;
+        bad.add(attrElt);
+      } else if ("type".equalsIgnoreCase(aname)) {
+        type = aval;
+      } else if ("behavior".equalsIgnoreCase(aname)) {
+        behavior = aval;
       }
-      for (Element b : bad)
-        compElt.removeChild(b);
-      if (type == null && output != null)
-        appendChildAttribute(doc, compElt, "type", output.equalsIgnoreCase("true") ? "output" : "inputk");
-      if (behavior == null) {
-        if ("up".equalsIgnoreCase(pull))
-          appendChildAttribute(doc, compElt, "behavior", "pullup");
-        else if ("down".equalsIgnoreCase(pull))
-          appendChildAttribute(doc, compElt, "behavior", "pulldown");
-        else if ("true".equalsIgnoreCase(tristate))
-          appendChildAttribute(doc, compElt, "behavior", "tristate");
+    }
+    for (Element b : bad) {
+      elt.removeChild(b);
+    }
+    if (type == null && output != null) {
+      appendChildAttribute(doc, elt, "type", output.equalsIgnoreCase("true") ? "output" : "inputk");
+    }
+    if (behavior == null) {
+      if ("up".equalsIgnoreCase(pull)) {
+        appendChildAttribute(doc, elt, "behavior", "pullup");
+      } else if ("down".equalsIgnoreCase(pull)) {
+        appendChildAttribute(doc, elt, "behavior", "pulldown");
+      } else if ("true".equalsIgnoreCase(tristate)) {
+        appendChildAttribute(doc, elt, "behavior", "tristate");
       }
     }
   }
