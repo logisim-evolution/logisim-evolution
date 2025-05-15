@@ -1033,14 +1033,11 @@ class XmlReader {
       repairForLegacyLibrary(doc, root);
     }
 
-    // As of version 4.0.0-HC, the #TCL library is gone.
-    // repairByEradicatingLibrary(doc, root, "TCL", "#TCL");
-
     // Before version 4.0.0, Pin components had attributes:
     //   output=true|false
     //   tristate=true|false
     //   pull=up|down (or missing)
-    // These are now consolodated into two attributes:
+    // These are now consolidated into two attributes:
     //   type=input|output
     //   behavior=simple|tristate|pullup|pulldown
     String wiringLibName = findLibNameByDesc(root, "#Wiring");
@@ -1317,5 +1314,4 @@ class XmlReader {
     }
     return null;
   }
-
 }
