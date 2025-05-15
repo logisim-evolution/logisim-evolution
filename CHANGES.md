@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * New take on project export/import a zip-file is generated which can include a user provided "README.md".
   * Added Telnet component
   * Fixed TTY appearance bug while changing various zoom levels.
   * Added Metal graphics acceleration
@@ -103,6 +104,7 @@
   * Added a setting to select lower- or upper-case VHDL keywords.
   * Added project export feature.
   * Cleaned-up the written .circ file.
+  * Cleaned-up the library tree of loaded projects.
 
 * v3.6.1 (2021-09-27)
   * Fixed bug in LED-array
