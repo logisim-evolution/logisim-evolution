@@ -221,7 +221,7 @@ public class TtyInterface {
       }
     }
 
-    for (final var sub : circState.getSubStates()) {
+    for (final var sub : circState.getSubstates()) {
       found |= loadRam(sub, loadFile);
     }
     return found;
@@ -240,7 +240,7 @@ public class TtyInterface {
       }
     }
 
-    for (final var sub : circState.getSubStates()) {
+    for (final var sub : circState.getSubstates()) {
       found |= saveRam(sub, saveFile);
     }
     return found;
@@ -260,7 +260,7 @@ public class TtyInterface {
       }
     }
 
-    for (CircuitState sub : circState.getSubStates()) {
+    for (CircuitState sub : circState.getSubstates()) {
       found |= prepareForTty(sub, keybStates);
     }
     return found;
@@ -317,10 +317,10 @@ public class TtyInterface {
       return;
     }
 
-    CircuitState circState = new CircuitState(proj, circuit);
-    // we have to do our initial propagation before the simulation starts -
-    // it's necessary to populate the circuit with substates.
-    circState.getPropagator().propagate();
+    CircuitState circState = CircuitState.createRootState(proj, circuit);
+
+    // we load the ram before first propagation
+    // so the first propagation emits correct values
     if (args.getLoadFile() != null) {
       try {
         final var loaded = loadRam(circState, args.getLoadFile());
@@ -333,6 +333,11 @@ public class TtyInterface {
         System.exit(-1);
       }
     }
+
+    // we have to do our initial propagation before the simulation starts -
+    // it's necessary to populate the circuit with substates.
+    circState.getPropagator().propagate();
+
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
 
@@ -404,7 +409,7 @@ public class TtyInterface {
     final var valueMap = new HashMap<Instance, Value>();
     for (var i = 0; i < rowCount; i++) {
       valueMap.clear();
-      final var circuitState = new CircuitState(proj, circuit);
+      final var circuitState = CircuitState.createRootState(proj, circuit);
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();

@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
@@ -23,70 +22,71 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
       Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_DIR);
-    var nrOfPins =
-        componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
+    var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
+    final var startIndex = componentInfo.getLocalBubbleInputStartId();
+    final var endIndex = startIndex + nrOfPins - 1;
     if (portType == PortIo.INPUT) {
-      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
-        final var startIndex =
-            componentInfo.getLocalBubbleInputStartId() + busIndex * BitWidth.MAXWIDTH;
-        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
-        nrOfPins -= nrOfBitsInThisBus;
-        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
+      if (nrOfPins == 1) {
+        contents.add(
+            "{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{>}};",
+            Hdl.getNetName(componentInfo, 0, true, nets),
+            LOCAL_INPUT_BUBBLE_BUS_NAME,
+            endIndex);
+      } else {
         contents.add(
             "{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
-            Hdl.getBusName(componentInfo, busIndex, nets),
+            Hdl.getBusName(componentInfo, 0, nets),
             LOCAL_INPUT_BUBBLE_BUS_NAME,
             endIndex,
             Hdl.vectorLoopId(),
             startIndex);
       }
     } else if (portType == PortIo.OUTPUT) {
-      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
-        final var startIndex =
-            componentInfo.getLocalBubbleOutputStartId() + busIndex * BitWidth.MAXWIDTH;
-        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
-        nrOfPins -= nrOfBitsInThisBus;
-        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
+      if (nrOfPins == 1) {
+        contents.add(
+            "{{assign}} {{1}}{{<}}{{2}}{{>}}{{=}}{{3}};",
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+            endIndex,
+            Hdl.getNetName(componentInfo, 0, true, nets));
+      } else {
         contents.add(
             "{{assign}} {{1}}{{<}}{{2}}{{3}}{{4}}{{>}}{{=}}{{5}};",
             LOCAL_OUTPUT_BUBBLE_BUS_NAME,
             endIndex,
             Hdl.vectorLoopId(),
             startIndex,
-            Hdl.getBusName(componentInfo, busIndex, nets));
+            Hdl.getBusName(componentInfo, 0, nets));
       }
     } else {
       // first we handle the input connections, and after that the output connections
-      var outputIndex = 0;
-      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
-        final var startIndex =
-            componentInfo.getLocalBubbleInOutStartId() + busIndex * BitWidth.MAXWIDTH;
-        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
-        nrOfPins -= nrOfBitsInThisBus;
-        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
-        final var inputIndex = (portType == PortIo.INOUTSE) ? (busIndex + 1) : (busIndex * 2 + 1);
-        outputIndex = inputIndex + 1;
+      if (nrOfPins == 1) {
+        contents.add(
+            "{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{>}};",
+            Hdl.getNetName(componentInfo, 2, true, nets),
+            LOCAL_INOUT_BUBBLE_BUS_NAME,
+            endIndex);
+      } else {
         contents.add(
             "{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
-            Hdl.getBusName(componentInfo, inputIndex, nets),
+            Hdl.getBusName(componentInfo, 2, nets),
             LOCAL_INOUT_BUBBLE_BUS_NAME,
             endIndex,
             Hdl.vectorLoopId(),
             startIndex);
       }
-      var enableIndex = 0;
-      nrOfPins =
-          componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
-      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
-        final var startIndex =
-            componentInfo.getLocalBubbleInOutStartId() + busIndex * BitWidth.MAXWIDTH;
-        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
-        nrOfPins -= nrOfBitsInThisBus;
-        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
-        if ((portType != PortIo.INOUTSE) && (busIndex > 0)) enableIndex += 2;
-        // simple case first, we have a single output enable
-        if (portType == PortIo.INOUTSE) {
-          if (Hdl.isVhdl()) {
+      // simple case first, we have a single output enable
+      if (portType == PortIo.INOUTSE || nrOfPins == 1) {
+        if (Hdl.isVhdl()) {
+          if (nrOfPins == 1) {
+            contents
+                .addVhdlKeywords()
+                .add(
+                    "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} ({{others}} => 'Z');",
+                    LOCAL_INOUT_BUBBLE_BUS_NAME,
+                    startIndex,
+                    Hdl.getNetName(componentInfo, 1, true, nets),
+                    Hdl.getNetName(componentInfo, 0, true, nets));
+          } else {
             contents
                 .addVhdlKeywords()
                 .add(
@@ -94,38 +94,47 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
                     LOCAL_INOUT_BUBBLE_BUS_NAME,
                     endIndex,
                     startIndex,
-                    Hdl.getBusName(componentInfo, outputIndex++, nets),
-                    Hdl.getNetName(componentInfo, enableIndex, true, nets));
+                    Hdl.getBusName(componentInfo, 1, nets),
+                    Hdl.getNetName(componentInfo, 0, true, nets));
+          }
+        } else {
+          if (nrOfPins == 1) {
+            contents.add(
+                "assign {{1}}[{{2}}] = ({{3}}) ? {{4}} : {{5}}'bZ;",
+                LOCAL_INOUT_BUBBLE_BUS_NAME,
+                startIndex,
+                Hdl.getNetName(componentInfo, 0, true, nets),
+                Hdl.getNetName(componentInfo, 1, true, nets),
+                nrOfPins);
           } else {
             contents.add(
                 "assign {{1}}[{{2}}:{{3}}] = ({{4}}) ? {{5}} : {{6}}'bZ;",
                 LOCAL_INOUT_BUBBLE_BUS_NAME,
                 endIndex,
                 startIndex,
-                Hdl.getNetName(componentInfo, enableIndex, true, nets),
-                Hdl.getBusName(componentInfo, outputIndex++, nets),
-                nrOfBitsInThisBus);
+                Hdl.getNetName(componentInfo, 0, true, nets),
+                Hdl.getBusName(componentInfo, 1, nets),
+                nrOfPins);
           }
-        } else {
-          // we have to enumerate over each and every bit
-          for (var busBitIndex = 0; busBitIndex < nrOfBitsInThisBus; busBitIndex++) {
-            if (Hdl.isVhdl()) {
-              contents.add(
-                  "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} 'Z';",
-                  LOCAL_INOUT_BUBBLE_BUS_NAME,
-                  startIndex + busBitIndex,
-                  Hdl.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets),
-                  Hdl.getBusEntryName(componentInfo, enableIndex, true, busBitIndex, nets));
-            } else {
-              contents.add(
-                  "assign {{1}}[{{2}}] = ({{3}}) ? {{4}} : 1'bZ;",
-                  LOCAL_INOUT_BUBBLE_BUS_NAME,
-                  startIndex + busBitIndex,
-                  Hdl.getBusEntryName(componentInfo, enableIndex, true, busBitIndex, nets),
-                  Hdl.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets));
-            }
+        }
+      } else {
+        // we have to enumerate over each and every bit
+        for (var busBitIndex = 0; busBitIndex < nrOfPins; busBitIndex++) {
+          if (Hdl.isVhdl()) {
+            contents.addVhdlKeywords().add(
+                "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} 'Z';",
+                LOCAL_INOUT_BUBBLE_BUS_NAME,
+                startIndex + busBitIndex,
+                Hdl.getBusEntryName(componentInfo, 1, true, busBitIndex, nets),
+                Hdl.getBusEntryName(componentInfo, 0, true, busBitIndex, nets));
+          } else {
+            contents.add(
+                "assign {{1}}[{{2}}] = ({{3}}) ? {{4}} : 1'bZ;",
+                LOCAL_INOUT_BUBBLE_BUS_NAME,
+                startIndex + busBitIndex,
+                Hdl.getBusEntryName(componentInfo, 0, true, busBitIndex, nets),
+                Hdl.getBusEntryName(componentInfo, 1, true, busBitIndex, nets));
           }
-          outputIndex++;
         }
       }
     }

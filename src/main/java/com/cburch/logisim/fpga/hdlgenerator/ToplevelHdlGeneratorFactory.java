@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PinActivity;
+import com.cburch.logisim.fpga.data.SevenSegmentScanningDriving;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -25,6 +26,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.io.LedArrayGenericHdlGeneratorFactory;
+import com.cburch.logisim.std.io.SevenSegmentScanningGenericHdlGenerator;
 import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -38,19 +40,25 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private final MappableResourcesContainer myIOComponents;
   private final boolean requiresFPGAClock;
   private final boolean hasLedArray;
+  private final boolean hasScanningSevenSeg;
+  private final ArrayList<FpgaIoInformationContainer> myScanningSevenSegs = new ArrayList<FpgaIoInformationContainer>();
   private final ArrayList<FpgaIoInformationContainer> myLedArrays;
   private final HashMap<String, Boolean> ledArrayTypesUsed;
+  private final HashMap<String, Boolean> ScanningSevenSegmentsUsed = new HashMap<String, Boolean>();
+  private final SynthesizedClockHdlGeneratorFactory mySynthesizedClockHdlGeneratorFactory;
   public static final String HDL_DIRECTORY = "toplevel";
 
   public ToplevelHdlGeneratorFactory(
-      long fpgaClock, double tickClock, Circuit topLevel, MappableResourcesContainer ioComponents) {
+      long fpgaClock, double tickClock, Circuit topLevel, MappableResourcesContainer ioComponents, SynthesizedClockHdlGeneratorFactory synthesizedClockHdlGeneratorFactory) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
     myCircuit = topLevel;
     myIOComponents = ioComponents;
+    mySynthesizedClockHdlGeneratorFactory = synthesizedClockHdlGeneratorFactory;
     var hasScanningLedArray = false;
     var hasLedArray = false;
+    var hasScanningSevenSeg = false;
     final var nets = topLevel.getNetList();
     final var ledArrayTypesUsed = new HashMap<String, Boolean>();
     final var ledArrays = new ArrayList<FpgaIoInformationContainer>();
@@ -73,12 +81,23 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             hasScanningLedArray = true;
         }
       }
+      if (comp.getType().equals(IoComponentTypes.SevenSegmentScanning)) {
+        if (comp.hasMap()) {
+          myScanningSevenSegs.add(comp);
+          comp.setArrayId(myScanningSevenSegs.indexOf(comp));
+          ScanningSevenSegmentsUsed.put(SevenSegmentScanningDriving.getStrings().get(comp.getArrayDriveMode()), true);
+          hasScanningSevenSeg = true;
+        }
+      }
     }
-    requiresFPGAClock = hasScanningLedArray;
+    requiresFPGAClock = hasScanningLedArray | hasScanningSevenSeg;
     this.hasLedArray = hasLedArray;
     this.ledArrayTypesUsed = ledArrayTypesUsed;
+    this.hasScanningSevenSeg = hasScanningSevenSeg;
     myLedArrays = ledArrays;
     if (nrOfClockTrees > 0) {
+      // Add wire to hold clock synthesizer output
+      myWires.addWire(SynthesizedClockHdlGeneratorFactory.SYNTHESIZED_CLOCK, 1);
       myWires.addWire(TickComponentHdlGeneratorFactory.FPGA_TICK, 1);
       for (var clockId = 0; clockId < nrOfClockTrees; clockId++)
         myWires.addWire(
@@ -153,7 +172,24 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               ledArray.getNrOfRows(),
               ledArray.getNrOfColumns(),
               myLedArrays.indexOf(ledArray));
-      for (final var port : ports.keySet()) myPorts.add(Port.OUTPUT, port, ports.get(port), null);
+      for (final var port : ports.keySet()) {
+        myPorts.add(Port.OUTPUT, port, ports.get(port), null);
+      }
+    }
+    for (final var scanningSevenSeg : myScanningSevenSegs) {
+      myWires.addAllWires(
+          SevenSegmentScanningGenericHdlGenerator.getInternalSignals(
+              scanningSevenSeg.getNrOfRows(),
+              myScanningSevenSegs.indexOf(scanningSevenSeg)));
+      final var ports =
+          SevenSegmentScanningGenericHdlGenerator.getExternalSignals(
+              scanningSevenSeg.getArrayDriveMode(),
+              scanningSevenSeg.getNrOfRows(),
+              scanningSevenSeg.getNrOfColumns(),
+              myScanningSevenSegs.indexOf(scanningSevenSeg));
+      for (final var port : ports.keySet()) {
+        myPorts.add(Port.OUTPUT, port, ports.get(port), null);
+      }
     }
     if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock)
       myPorts.add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, null);
@@ -169,9 +205,16 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     return hasLedArray;
   }
 
+  public boolean hasScanningSevenSeg() {
+    return hasScanningSevenSeg;
+  }
+
   public boolean hasLedArrayType(String type) {
-    if (!ledArrayTypesUsed.containsKey(type)) return false;
-    return ledArrayTypesUsed.get(type);
+    return ledArrayTypesUsed.containsKey(type) ? ledArrayTypesUsed.get(type) : false;
+  }
+
+  public boolean hasScanningSevenSegmentType(String type) {
+    return ScanningSevenSegmentsUsed.containsKey(type) ? ScanningSevenSegmentsUsed.get(type) : false;
   }
 
   @Override
@@ -179,6 +222,10 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var components = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
+      // Add clock synthesizer
+      components
+          .add(mySynthesizedClockHdlGeneratorFactory.getComponentInstantiation(theNetlist, null, SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER))
+          .empty();
       final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
       components
           .add(
@@ -211,6 +258,15 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           components.add(worker.getComponentInstantiation(theNetlist, null, name)).empty();
       }
     }
+    for (final var type : SevenSegmentScanningDriving.DRIVING_STRINGS) {
+      if (hasScanningSevenSegmentType(type)) {
+        final var worker = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLGenerator(type);
+        final var name = SevenSegmentScanningGenericHdlGenerator.getSpecificHDLName(type);
+        if (worker != null && name != null) {
+          components.add(worker.getComponentInstantiation(theNetlist, null, name)).empty();
+        }
+      }
+    }
     final var worker = new CircuitHdlGeneratorFactory(myCircuit);
     components.add(
         worker.getComponentInstantiation(
@@ -236,6 +292,11 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (nrOfClockTrees > 0) {
       contents.empty().addRemarkBlock("The clock tree components are defined here");
       var index = 0L;
+      // Add the clock synthesizer port map
+      contents
+          .add(
+            mySynthesizedClockHdlGeneratorFactory.getComponentMap(null, index++, null, SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER))
+          .empty();
       final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
       contents
           .add(
@@ -273,6 +334,21 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add(
             LedArrayGenericHdlGeneratorFactory.getArrayConnections(
                 array, myLedArrays.indexOf(array)));
+      }
+    }
+    if (hasScanningSevenSeg) {
+      contents.empty().addRemarkBlock("The Seven segment scanning arrays are connected here");
+      for (final var sevenSeg : myScanningSevenSegs) {
+        contents.add(
+            SevenSegmentScanningGenericHdlGenerator.getComponentMap(
+                sevenSeg.getArrayDriveMode(),
+                sevenSeg.getNrOfRows(),
+                sevenSeg.getNrOfColumns(),
+                myScanningSevenSegs.indexOf(sevenSeg),
+                fpgaClockFrequency,
+                sevenSeg.getActivityLevel() == PinActivity.ACTIVE_LOW));
+        contents.add(
+            SevenSegmentScanningGenericHdlGenerator.getSegmentConnections(sevenSeg, myScanningSevenSegs.indexOf(sevenSeg)));
       }
     }
     return contents;

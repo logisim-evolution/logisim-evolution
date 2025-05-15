@@ -36,11 +36,11 @@ class Clipboard {
     components = new HashSet<>();
     oldAttrs = null;
     newAttrs = null;
-    for (Component base : sel.getComponents()) {
-      AttributeSet baseAttrs = base.getAttributeSet();
-      AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
+    for (final var base : sel.getComponents()) {
+      final var baseAttrs = base.getAttributeSet();
+      final var copyAttrs = (AttributeSet) baseAttrs.clone();
 
-      Component copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
+      final var copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
       components.add(copy);
       if (baseAttrs == viewAttrs) {
         oldAttrs = baseAttrs;
@@ -79,7 +79,7 @@ class Clipboard {
   }
 
   public static void set(Clipboard value) {
-    Clipboard old = current;
+    final var old = current;
     current = value;
     propertySupport.firePropertyChange(CONTENTS_PROPERTY, old, current);
   }

@@ -21,8 +21,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpSubtractor extends InstanceFactory {
@@ -62,9 +64,9 @@ public class FpSubtractor extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(OUT);
@@ -74,7 +76,7 @@ public class FpSubtractor extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(x - 15, y, x - 5, y);
 
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
@@ -92,14 +94,26 @@ public class FpSubtractor extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
-    final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
+    final var a_val = switch (dataWidth.getWidth()) {
+      case 16 -> a.toFloatValueFromFP16();
+      case 32 -> a.toFloatValue();
+      case 64 -> a.toDoubleValue();
+      default -> Double.NaN;
+    };
+    final var b_val = switch (dataWidth.getWidth()) {
+      case 16 -> b.toFloatValueFromFP16();
+      case 32 -> b.toFloatValue();
+      case 64 -> b.toDoubleValue();
+      default -> Double.NaN;
+    };
 
     final var out_val = a_val - b_val;
-    final var out =
-        dataWidth.getWidth() == 64
-            ? Value.createKnown(out_val)
-            : Value.createKnown((float) out_val);
+    final var out = switch (dataWidth.getWidth()) {
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
+      case 32 -> Value.createKnown((float) out_val);
+      case 64 -> Value.createKnown(out_val);
+      default -> Value.ERROR;
+    };
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

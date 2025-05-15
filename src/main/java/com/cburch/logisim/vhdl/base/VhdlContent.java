@@ -19,11 +19,11 @@ import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.Softwares;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,24 +45,23 @@ public class VhdlContent extends HdlContent {
   }
 
   public static VhdlContent create(String name, LogisimFile file) {
-    VhdlContent content = new VhdlContent(name, file);
+    final var content = new VhdlContent(name, file);
     if (!content.setContent(TEMPLATE.replaceAll("%entityname%", name))) content.showErrors();
     return content;
   }
 
   public static VhdlContent parse(String name, String vhdl, LogisimFile file) {
-    VhdlContent content = new VhdlContent(name, file);
+    final var content = new VhdlContent(name, file);
     if (!content.setContent(vhdl)) content.showErrors();
     return content;
   }
 
   private static String loadTemplate() {
-    InputStream input = VhdlContent.class.getResourceAsStream(RESOURCE);
-    BufferedReader in = new BufferedReader(new InputStreamReader(input));
+    final var input = VhdlContent.class.getResourceAsStream(RESOURCE);
+    final var in = new BufferedReader(new InputStreamReader(input));
 
-    StringBuilder tmp = new StringBuilder();
-    String line;
-
+    final var tmp = new StringBuilder();
+    var line = "";
     try {
       while ((line = in.readLine()) != null) {
         tmp.append(line);
@@ -227,16 +226,17 @@ public class VhdlContent extends HdlContent {
   }
 
   public boolean setName(String name) {
-    if (name == null) return false;
-    if (labelVHDLInvalidNotify(name, logiFile)) return false;
-    String entPat = ENTITY_PATTERN.replaceAll("%entityname%", this.name);
-    String archPat = ARCH_PATTERN.replaceAll("%entityname%", this.name);
-    String endPat = END_PATTERN.replaceAll("%entityname%", this.name);
-    String s = content.toString();
-    s = s.replaceAll("(?is)" + entPat, "$1" + name + "$2"); // entity NAME is
-    s = s.replaceAll("(?is)" + archPat, "$1" + name); // architecture foo of NAME
-    s = s.replaceAll("(?is)" + endPat, "$1" + name + "$2"); // end NAME ;
-    return setContent(s);
+    if (name == null || labelVHDLInvalidNotify(name, logiFile)) {
+      return false;
+    }
+    final var entPat = ENTITY_PATTERN.replaceAll("%entityname%", this.name);
+    final var archPat = ARCH_PATTERN.replaceAll("%entityname%", this.name);
+    final var endPat = END_PATTERN.replaceAll("%entityname%", this.name);
+    var str = content.toString();
+    str = str.replaceAll("(?is)" + entPat, "$1" + name + "$2"); // entity NAME is
+    str = str.replaceAll("(?is)" + archPat, "$1" + name); // architecture foo of NAME
+    str = str.replaceAll("(?is)" + endPat, "$1" + name + "$2"); // end NAME ;
+    return setContent(str);
   }
 
   private final StringBuilder errTitle = new StringBuilder();
@@ -249,13 +249,13 @@ public class VhdlContent extends HdlContent {
     if (valid && errTitle.length() == 0 && errMessage.length() == 0) return;
     if (errException != null) errException.printStackTrace();
     if (errCode == Softwares.ERROR) {
-      JTextArea message = new JTextArea();
+      final var message = new JTextArea();
       message.setText(errMessage.toString());
       message.setEditable(false);
       message.setLineWrap(false);
       message.setMargin(new Insets(5, 5, 5, 5));
 
-      JScrollPane sp = new JScrollPane(message);
+      final var sp = new JScrollPane(message);
       sp.setPreferredSize(new Dimension(700, 400));
 
       OptionPane.showOptionDialog(
@@ -295,11 +295,11 @@ public class VhdlContent extends HdlContent {
       errCode = Softwares.validateVhdl(content.toString(), errTitle, errMessage);
       if (errCode != Softwares.SUCCESS) return false;
 
-      VhdlParser parser = new VhdlParser(content.toString());
+      final var parser = new VhdlParser(content.toString());
       try {
         parser.parse();
       } catch (Exception ex) {
-        String msg = ex.getMessage();
+        var msg = ex.getMessage();
         if (msg == null || msg.length() == 0) msg = ex.toString();
         errTitle.append(S.get("validationParseError"));
         errMessage.append(msg);
@@ -323,17 +323,17 @@ public class VhdlContent extends HdlContent {
       ports.addAll(parser.getOutputs());
 
       // If name and type is unchanged, keep old generic and attribute.
-      Generic[] oldGenerics = generics;
-      List<Attribute<Integer>> oldAttrs = genericAttrs;
+      final var oldGenerics = generics;
+      final var oldAttrs = genericAttrs;
 
       generics = new Generic[parser.getGenerics().size()];
       genericAttrs = new ArrayList<>();
-      int i = 0;
-      for (VhdlParser.GenericDescription g : parser.getGenerics()) {
-        boolean found = false;
+      var i = 0;
+      for (final var g : parser.getGenerics()) {
+        var found = false;
         if (oldGenerics != null) {
-          for (int j = 0; j < oldGenerics.length; j++) {
-            Generic old = oldGenerics[j];
+          for (var j = 0; j < oldGenerics.length; j++) {
+            final var old = oldGenerics[j];
             if (old != null
                 && old.getName().equals(g.getName())
                 && old.getType().equals(g.getType())) {

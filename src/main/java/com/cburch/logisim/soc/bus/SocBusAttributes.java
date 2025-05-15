@@ -114,7 +114,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       final var v = (Boolean) value;
-      if (labelVisible != v) {
+      if (labelVisible.equals(v)) {
         labelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
@@ -126,7 +126,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     }
     if (attr == SOC_TRACE_VISIBLE) {
       final var v = (Boolean) value;
-      if (traceVisible != v) {
+      if (traceVisible.equals(v)) {
         traceVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }

@@ -352,25 +352,25 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     expand.setEnabled(getRowCount() < table.getRowCount());
     count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
 
-    final var layout = new GridBagLayout();
-    setLayout(layout);
-    final var gc = new GridBagConstraints();
-    gc.fill = GridBagConstraints.HORIZONTAL;
-    gc.gridx = 0;
-    gc.gridy = 0;
-    gc.weightx = 1;
-    layout.setConstraints(toolbar, gc);
+    final var gbl = new GridBagLayout();
+    setLayout(gbl);
+    final var gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.weightx = 1;
+    gbl.setConstraints(toolbar, gbc);
     add(toolbar);
-    gc.gridy++;
-    layout.setConstraints(count, gc);
+    gbc.gridy++;
+    gbl.setConstraints(count, gbc);
     add(count);
-    gc.gridy++;
-    layout.setConstraints(headerPane, gc);
+    gbc.gridy++;
+    gbl.setConstraints(headerPane, gbc);
     add(headerPane);
-    gc.fill = GridBagConstraints.BOTH;
-    gc.gridy++;
-    gc.weighty = 1;
-    layout.setConstraints(bodyPane, gc);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.gridy++;
+    gbc.weighty = 1;
+    gbl.setConstraints(bodyPane, gbc);
     add(bodyPane);
     inDim = new ColumnGroupDimensions(table.getInputVariables());
     outDim = new ColumnGroupDimensions(table.getOutputVariables());
@@ -395,10 +395,10 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             done = true;
             // account for missing scrollbar on header portion
             final var pad = bodyPane.getVerticalScrollBar().getWidth();
-            GridBagConstraints gc = layout.getConstraints(headerPane);
-            Insets i = gc.insets;
-            gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
-            layout.setConstraints(headerPane, gc);
+            GridBagConstraints gbc = gbl.getConstraints(headerPane);
+            Insets i = gbc.insets;
+            gbc.insets.set(i.top, i.left, i.bottom, i.right + pad);
+            gbl.setConstraints(headerPane, gbc);
             invalidate();
             repaint();
           }

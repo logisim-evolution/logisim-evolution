@@ -21,14 +21,14 @@ class SelectionSave {
   private SelectionSave() {}
 
   public static SelectionSave create(Selection sel) {
-    SelectionSave save = new SelectionSave();
+    final var save = new SelectionSave();
 
-    Collection<Component> lifted = sel.getFloatingComponents();
+    final var lifted = sel.getFloatingComponents();
     if (!lifted.isEmpty()) {
       save.floating = lifted.toArray(new Component[0]);
     }
 
-    Collection<Component> selected = sel.getAnchoredComponents();
+    final var selected = sel.getAnchoredComponents();
     if (!selected.isEmpty()) {
       save.anchored = selected.toArray(new Component[0]);
     }
@@ -37,11 +37,9 @@ class SelectionSave {
   }
 
   private static boolean isSame(Component[] save, Collection<Component> sel) {
-    if (save == null) {
-      return sel.isEmpty();
-    } else {
-      return toSet(save).equals(sel);
-    }
+    return (save == null)
+      ? sel.isEmpty()
+      : toSet(save).equals(sel);
   }
 
   private static boolean isSame(Component[] a, Component[] b) {
@@ -62,7 +60,7 @@ class SelectionSave {
   }
 
   private static HashSet<Component> toSet(Component[] comps) {
-    HashSet<Component> ret = new HashSet<>(comps.length);
+    final var ret = new HashSet<Component>(comps.length);
     ret.addAll(Arrays.asList(comps));
     return ret;
   }
@@ -86,10 +84,14 @@ class SelectionSave {
   public int hashCode() {
     int ret = 0;
     if (floating != null) {
-      for (Component c : floating) ret += c.hashCode();
+      for (final var c : floating) {
+        ret += c.hashCode();
+      }
     }
     if (anchored != null) {
-      for (Component c : anchored) ret += c.hashCode();
+      for (final var c : anchored) {
+        ret += c.hashCode();
+      }
     }
     return ret;
   }

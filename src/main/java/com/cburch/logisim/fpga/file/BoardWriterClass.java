@@ -38,6 +38,7 @@ public class BoardWriterClass {
   public static final String IO_SET_STRING = "BiDirPinSet";
   public static final String RECT_SET_STRING = "Rect_x_y_w_h";
   public static final String LED_ARRAY_INFO_STRING = "LedArrayInfo";
+  public static final String SCANNING_SEVEN_SEGMENT_INFO_STRING = "ScanningSevenSegInfo";
   public static final String MAP_ROTATION = "rotation";
   public static final String[] CLOCK_SECTION_STRINGS = {
     "Frequency", "FPGApin", "PullBehavior", "IOStandard"

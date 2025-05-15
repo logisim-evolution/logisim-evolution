@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created">
+   <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+   <meta content="zh" http-equiv="Content-Language"/>
+   <!-- <title>VHDL simulator</title> -->
+   <title>
+    VHDL模拟器
+   </title>
+   <link href="../../style.css" rel="stylesheet" type="text/css"/>
+  </meta>
+ </head>
+ <body>
+  <div class="maindiv">
+   <!-- <h1>VHDL simulator</h1> -->
+   <h1>
+    VHDL 模拟器
+   </h1>
+   <!-- <p>Logisim cannot directly perform VHDL content simulation. Instead,QuestaSim is used as a background task. -->
+   <p>
+    Logisim-evolution无法直接执行VHDL内容模拟。 相反，QuestaSim 被用作后台任务。
+   </p>
+   <!-- <h2>Enable simulator</h2> -->
+   <h2>
+    启用模拟器
+   </h2>
+   <!-- <p>You can enable the simulator through the <i>Simulate</i> > <i>VHDL Simulation Enabled</i> menu. When you do this, the simulator console log appears on the bottom of the drawing pane. At the bottom bar of the simulator log, you have the simulator status indicator. The  states are : -->
+   <p>
+    您可以通过
+    <i>
+     模拟
+    </i>
+    &gt;
+    <i>
+     VHDL 模拟启用
+    </i>
+    菜单启用模拟器。 执行此操作时，模拟器控制台日志将显示在绘图窗格的底部。 在模拟器日志的底部栏，您可以看到模拟器状态指示器。 这些州是：
+    <p align="center">
+     <img src="../../../img-guide/hdl-ip-sim-log.png"/>
+    </p>
+    <ul>
+     <li>
+      <img class="intxt" src="../../../../img-guide/hdl-ip-state-disabled.png"/>
+      <!-- Disabled (console disappears) -->
+      禁用（控制台消失）
+     </li>
+     <li>
+      <img class="intxt" src="../../../../img-guide/hdl-ip-state-enabled.png"/>
+      <!-- Enabled (but inactive) -->
+      已启用（但未激活）
+     </li>
+     <li>
+      <img class="intxt" src="../../../../img-guide/hdl-ip-state-starting.png"/>
+      <!-- Starting -->
+      开始
+     </li>
+     <li>
+      <img class="intxt" src="../../../../img-guide/hdl-ip-state-active.png"/>
+      <!-- Active -->
+      积极的
+     </li>
+    </ul>
+   </p>
+   <!-- <p>The simulator starts automatically when it's enabled and the circuit contains VHDL components. It is not possible to start the simulator when there aren't any VHDL components in the circuit. -->
+   <p>
+    模拟器在启用且电路包含 VHDL 组件时自动启动。 当电路中没有任何 VHDL 组件时，无法启动模拟器。
+   </p>
+   <h2>
+    Restart
+   </h2>
+   <!-- <p>The VHDL simulation is restarted when you reset the Logisim simulation. This concerns only the simulation state, it does not reload the simulation (and the source files). -->
+   <p>
+    重置 Logisim-evolution仿真时，VHDL仿真将重新启动。 这仅涉及模拟状态，它不会重新加载模拟（和源文件）。
+   </p>
+   <!-- <p>If you have changed the content of some VHDL component you have to restart the VHDL simulator. This is never done automatically. You can restart the simulator through the <i>Simulate</i> menu. -->
+   <p>
+    如果您更改了某些 VHDL 组件的内容，则必须重新启动 VHDL 模拟器。 这永远不会自动完成。 您可以通过
+    <i>
+     Simulate
+    </i>
+    菜单重新启动模拟器。
+   </p>
+   <h2>
+    Time
+   </h2>
+   <!-- <p>The QuestaSim simulation step time has to be considered unpredictable, as it depends on the number of VHDL components in the circuit. The absolute minimum step is 100ns. Therefore, usage of time-based simulation events must be avoided (like <i>wait for        10ns</i>). You must only have signal-based events. -->
+   <p>
+    QuestaSim 仿真步骤时间必须被视为不可预测，因为它取决于电路中 VHDL 组件的数量。 绝对最小步长为 100ns。 因此，必须避免使用基于时间的模拟事件（例如
+    <i>
+     等待10ns
+    </i>
+    ）。 您只能有基于信号的事件。
+   </p>
+   <!-- <h2>Multiple instances</h2> -->
+   <h2>
+    多个实例
+   </h2>
+   <!-- <p>Actually, you can only have a single instance of VHDL simulator. That means that you have to disable it on the first project if you want to have it enabled on a second one. If you try to enable it on two projects it will fail and show you an error message. -->
+   <p>
+    实际上，您只能拥有一个 VHDL 模拟器实例。 这意味着如果您想在第二个项目上启用它，则必须在第一个项目上禁用它。 如果您尝试在两个项目上启用它，它将失败并显示错误消息。
+   </p>
+   <!-- <p><b>Next:</b> <a href="testbenchs.html">Simulating test benchs</a>. -->
+   <p>
+    <b>
+     下一节:
+    </b>
+    <a href="testbenchs.html">
+     模拟测试台
+    </a>
+    .
+   </p>
+  </div>
+ </body>
+</html>

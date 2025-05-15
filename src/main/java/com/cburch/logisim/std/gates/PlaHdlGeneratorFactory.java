@@ -25,11 +25,21 @@ public class PlaHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(Port.OUTPUT, "result", 0, Pla.OUT_PORT, Pla.ATTR_OUT_WIDTH);
   }
 
-  private static String bits(char[] b) {
+  private static String vhdlBits(char[] b) {
     final var s = new StringBuilder();
     for (final var c : b) s.insert(0, ((c == '0' || c == '1') ? c : '-'));
     if (b.length == 1) return "'" + s + "'";
     else return "\"" + s + "\"";
+  }
+
+  private static String verilogBits(char[] b) {
+    final var s = new StringBuilder();
+    s.append(b.length);
+    s.append("'b");
+    for (final var c : b) {
+      s.append(c == '0' || c == '1' ? c : '?');
+    }
+    return s.toString();
   }
 
   private static String zeros(int sz) {
@@ -52,19 +62,26 @@ public class PlaHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         for (PlaTable.Row r : tt.rows()) {
           contents.add(
               "{{1}}{{2}} {{when}} std_match(Index, {{3}}) {{else}}",
-              leader, bits(r.outBits), bits(r.inBits));
+              leader, vhdlBits(r.outBits), vhdlBits(r.inBits));
           leader = " ".repeat(leader.length());
         }
         contents.add("{{1}}{{2}};", leader, zeros(outSz));
       }
     } else {
-      // TODO
+      contents.add("casez (index)");
+
+      for (var r : tt.rows()) {
+        contents.add("  {{1}}: result = {{2}};", verilogBits(r.inBits), verilogBits(r.outBits));
+      }
+
+      contents.add("  default: result = {{1}}'0;", tt.outSize());
+      contents.add("endcase");
     }
     return contents.empty();
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return Hdl.isVhdl();
+    return true;
   }
 }

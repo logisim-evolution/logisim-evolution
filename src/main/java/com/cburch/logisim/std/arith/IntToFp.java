@@ -22,7 +22,9 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+
 import java.awt.Color;
 import java.math.BigInteger;
 
@@ -71,9 +73,8 @@ public class IntToFp extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN);
     painter.drawPort(OUT, "I\u2192F", Direction.WEST);
     painter.drawPort(ERR);
@@ -92,10 +93,13 @@ public class IntToFp extends InstanceFactory {
     final var a_val = extend(dataWidthIn.getWidth(), a.toLongValue(), unsigned);
 
     final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
-    final var out =
-        dataWidthOut.getWidth() == 64
-            ? Value.createKnown(out_val)
-            : Value.createKnown((float) out_val);
+    final var out = switch (dataWidthOut.getWidth()) {
+      // TODO: can replace Value.fp32Tofp16_raw(Float.floatToRawIntBits((float) out_val)) with Float.floatToFloat16((float) out_val) in Java 20 or later
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
+      case 32 -> Value.createKnown((float) out_val);
+      case 64 -> Value.createKnown(out_val);
+      default -> Value.ERROR;
+    };
 
     // propagate them
     final var delay = (dataWidthIn.getWidth() + 2) * PER_DELAY;

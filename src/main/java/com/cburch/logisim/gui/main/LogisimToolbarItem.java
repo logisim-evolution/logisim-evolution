@@ -30,7 +30,8 @@ public class LogisimToolbarItem implements ToolbarItem {
   private StringGetter toolTip;
 
   public LogisimToolbarItem(
-      MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
+      final MenuListener menu, final String iconName,
+      final LogisimMenuItem action, final StringGetter toolTip) {
     this.menu = menu;
     this.icon = IconsUtil.getIcon(iconName);
     this.action = action;
@@ -38,7 +39,8 @@ public class LogisimToolbarItem implements ToolbarItem {
   }
 
   public LogisimToolbarItem(
-      MenuListener menu, Icon icon, LogisimMenuItem action, StringGetter toolTip) {
+      final MenuListener menu, final Icon icon, final LogisimMenuItem action,
+      final StringGetter toolTip) {
     this.menu = menu;
     this.icon = icon;
     this.action = action;
@@ -52,7 +54,7 @@ public class LogisimToolbarItem implements ToolbarItem {
   }
 
   @Override
-  public Dimension getDimension(Object orientation) {
+  public Dimension getDimension(final Object orientation) {
     if (icon == null) {
       return new Dimension(
           AppPreferences.getScaled(AppPreferences.IconSize),
@@ -66,14 +68,12 @@ public class LogisimToolbarItem implements ToolbarItem {
 
   @Override
   public String getToolTip() {
-    if (toolTip != null) {
-      return toolTip.toString();
-    } else {
-      return null;
-    }
+    return toolTip != null
+      ? toolTip.toString()
+      : null;
   }
 
-  public void setToolTip(StringGetter toolTip) {
+  public void setToolTip(final StringGetter toolTip) {
     this.toolTip = toolTip;
   }
 
@@ -83,13 +83,13 @@ public class LogisimToolbarItem implements ToolbarItem {
   }
 
   @Override
-  public void paintIcon(Component destination, Graphics gfx) {
+  public void paintIcon(final Component destination, final Graphics gfx) {
     if (!isSelectable() && gfx instanceof Graphics2D g2d) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
     }
 
     if (icon == null) {
-      int simple = AppPreferences.getScaled(AppPreferences.IconSize) >> 2;
+      final var simple = AppPreferences.getScaled(AppPreferences.IconSize) >> 2;
       gfx.setColor(new Color(255, 128, 128));
       gfx.fillRect(simple, simple, 2 * simple, 2 * simple);
       gfx.setColor(Color.BLACK);

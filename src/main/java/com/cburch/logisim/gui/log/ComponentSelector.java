@@ -195,12 +195,12 @@ public class ComponentSelector extends JTable {
 
     @Override
     public void circuitChanged(CircuitEvent event) {
-      int action = event.getAction();
-      if (action == CircuitEvent.ACTION_SET_NAME)
-        tableModel.fireTableDataChanged(); // overkill, but works
-      else if (computeChildren()) tableModel.fireTableDataChanged(); // overkill, but works
-      else if (action == CircuitEvent.ACTION_INVALIDATE)
-        tableModel.fireTableDataChanged(); // overkill, but works
+      final var action = event.getAction();
+      if ((action == CircuitEvent.ACTION_SET_NAME)
+          || computeChildren()
+          || (action == CircuitEvent.ACTION_INVALIDATE)) {
+        tableModel.fireTableDataChanged();
+      }
     }
 
     private ComponentNode findChildFor(Component c) {
@@ -213,7 +213,7 @@ public class ComponentSelector extends JTable {
     }
 
     private CircuitNode findChildFor(Circuit c) {
-      for (TreeNode<?> o : children) {
+      for (final var o : children) {
         if (o instanceof CircuitNode child) {
           if (child.circ == c) return child;
         }

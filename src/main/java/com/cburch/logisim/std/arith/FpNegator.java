@@ -22,8 +22,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpNegator extends InstanceFactory {
@@ -60,9 +62,8 @@ public class FpNegator extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN);
     painter.drawPort(OUT, "-x", Direction.WEST);
     painter.drawPort(ERR);
@@ -71,7 +72,6 @@ public class FpNegator extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -85,13 +85,20 @@ public class FpNegator extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN);
-    final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
+    final var a_val = switch (dataWidth.getWidth()) {
+      case 16 -> a.toFloatValueFromFP16();
+      case 32 -> a.toFloatValue();
+      case 64 -> a.toDoubleValue();
+      default -> Double.NaN;
+    };
 
     final var out_val = a_val * -1;
-    final var out =
-        dataWidth.getWidth() == 64
-            ? Value.createKnown(out_val)
-            : Value.createKnown((float) out_val);
+    final var out = switch (dataWidth.getWidth()) {
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
+      case 32 -> Value.createKnown((float) out_val);
+      case 64 -> Value.createKnown(out_val);
+      default -> Value.ERROR;
+    };
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

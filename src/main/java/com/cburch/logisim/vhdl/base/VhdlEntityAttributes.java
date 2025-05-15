@@ -56,9 +56,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           || value.equals("default")
           || value.equals("(default)")
           || value.equals(toDisplayString(null))) return null;
-      long v = Long.parseLong(value);
-      if (v < start) throw new NumberFormatException("integer too small");
-      if (v > end) throw new NumberFormatException("integer too large");
+      final var v = Long.parseLong(value);
+      if (v < start) throw new NumberFormatException("integer must be at least " + start);
+      if (v > end) throw new NumberFormatException("integer must be at most " + end);
       return (int) v;
     }
 
@@ -232,19 +232,22 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
       return;
     }
+
     if (attr == StdAttr.LABEL && value instanceof String newLabel) {
-      final var oldlabel = label;
+      final var oldLabel = label;
       if (label.equals(newLabel)) return;
       label = newLabel;
-      fireAttributeValueChanged(attr, value, (V) oldlabel);
+      fireAttributeValueChanged(attr, value, (V) oldLabel);
       return;
     }
+
     if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
+
     if (attr == StdAttr.LABEL_VISIBILITY) {
       final var newVisibility = (Boolean) value;
       if (labelVisible.equals(newVisibility)) return;
@@ -252,6 +255,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
       return;
     }
+
     if (attr == StdAttr.FACING) {
       final var direction = (Direction) value;
       if (facing.equals(direction)) return;
@@ -259,6 +263,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
       return;
     }
+
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
       final var name = (String) value;
       if (name.equals(simName)) return;
@@ -266,6 +271,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
       return;
     }
+
     if (attr == StdAttr.APPEARANCE
         && (value == StdAttr.APPEAR_FPGA
             || value == StdAttr.APPEAR_CLASSIC
@@ -276,6 +282,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
       return;
     }
+
     if (genericValues != null) {
       genericValues.put((Attribute<Integer>) attr, (Integer) value);
       fireAttributeValueChanged(attr, value, null);
@@ -300,8 +307,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     @Override
     public void appearanceChanged(HdlModel source) {
       attrs.vhdlInstance.recomputeBounds();
-      attrs.fireAttributeValueChanged(
-          StdAttr.APPEARANCE, ((VhdlContent) source).getAppearance(), null);
+      attrs.fireAttributeValueChanged(StdAttr.APPEARANCE, ((VhdlContent) source).getAppearance(), null);
     }
   }
 

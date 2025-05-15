@@ -101,7 +101,7 @@ public class RoundRectangle extends Rectangular {
       y += r + (int) (u - 2 * horz);
     } else if (u < 2 * horz + 2 * vert) {
       x += w;
-      y += (u - 2 * w - h);
+      y += (int) (u - 2 * w - h);
     } else {
       var rx = radius;
       var ry = radius;

@@ -34,7 +34,7 @@ public class BcdToSevenSegmentDisplayHdlGeneratorFactory extends AbstractHdlGene
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    return LineBuffer.getBuffer()
+    return (Hdl.isVhdl()) ? LineBuffer.getBuffer()
         .addVhdlKeywords()
         .empty()
         .add("""
@@ -63,11 +63,41 @@ public class BcdToSevenSegmentDisplayHdlGeneratorFactory extends AbstractHdlGene
                {{end}} {{case}};
             {{end}} {{process}} makeSegs;
             """)
-        .empty();
+        .empty() : LineBuffer.getBuffer()
+            .empty()
+            .add("""
+                assign segmentA = s_outputValue[0];
+                assign segmentB = s_outputValue[1];
+                assign segmentC = s_outputValue[2];
+                assign segmentD = s_outputValue[3];
+                assign segmentE = s_outputValue[4];
+                assign segmentF = s_outputValue[5];
+                assign segmentG = s_outputValue[6];
+
+                reg [6:0] s_rOutputValue;
+                assign s_outputValue = s_rOutputValue;
+
+                always @*
+                  begin
+                    case (bcdIn)
+                      4'h0 : s_rOutputValue <= 7'b0111111;
+                      4'h1 : s_rOutputValue <= 7'b0000110;
+                      4'h2 : s_rOutputValue <= 7'b1011011;
+                      4'h3 : s_rOutputValue <= 7'b1001111;
+                      4'h4 : s_rOutputValue <= 7'b1100110;
+                      4'h5 : s_rOutputValue <= 7'b1101101;
+                      4'h6 : s_rOutputValue <= 7'b1111101;
+                      4'h7 : s_rOutputValue <= 7'b0000111;
+                      4'h8 : s_rOutputValue <= 7'b1111111;
+                      4'h9 : s_rOutputValue <= 7'b1101111;
+                      default : s_rOutputValue <= 7'b0000000;
+                    endcase
+                  end
+            """);
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return Hdl.isVhdl();
+    return true;
   }
 }

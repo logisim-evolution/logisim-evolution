@@ -44,6 +44,8 @@ public class PreferencesFrame extends LFrame.Dialog {
           new ExperimentalOptions(this),
           new SoftwaresOptions(this),
           new FpgaOptions(this),
+          new HotkeyOptions(this),
+          new AutosaveOptions(this),
         };
     tabbedPane = new JTabbedPane();
     int intlIndex = -1;

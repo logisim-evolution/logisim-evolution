@@ -45,7 +45,7 @@ public class Ttl747266 extends AbstractTtlGate {
     final var portwidth = 18;
     final var portheight = 15;
     final var youtput = y + (up ? 20 : 40);
-    Drawgates.paintXor(g, x + 44, youtput, portwidth - 4, portheight, true);
+    Drawgates.paintXor(g, x + 44, youtput, portwidth, portheight, true);
     // output line
     Drawgates.paintOutputgate(g, x + 50, y, x + 48, youtput, up, height);
     // input lines
@@ -55,10 +55,10 @@ public class Ttl747266 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    for (byte i = 2; i < 6; i += 3) {
+    for (var i = 2; i < 6; i += 3) {
       state.setPort(i, (state.getPortValue(i - 1).xor(state.getPortValue(i - 2)).not()), 1);
     }
-    for (byte i = 6; i < 12; i += 3) {
+    for (var i = 6; i < 12; i += 3) {
       state.setPort(i, (state.getPortValue(i + 1).xor(state.getPortValue(i + 2)).not()), 1);
     }
   }

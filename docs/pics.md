@@ -18,3 +18,5 @@ Images demonstrating Logisim-evolution in action, running on various platforms.
 ![Logisim-evolution](img/logisim-evolution-01.png)
 
 ![Logisim-evolution](img/logisim-evolution-02.png)
+
+![Logisim-evolution](img/logisim-evolution-03.png)

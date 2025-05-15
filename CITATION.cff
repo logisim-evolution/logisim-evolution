@@ -1,0 +1,87 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Logisim-evolution
+message: >-
+  Logisim-evolution is educational software for designing
+  and simulating digital logic circuits.
+type: software
+authors:
+  - given-names: Carl
+    family-names: Burch
+    affiliation: Hendrix College
+  - given-names: Theo
+    family-names: Kluter
+    affiliation: Bern University of Applied Sciences
+  - given-names: Torsten
+    family-names: Maehne
+    affiliation: Bern University of Applied Sciences
+  - given-names: Kevin
+    family-names: Walsh
+    affiliation: College of the Holy Cross
+  - given-names: David H.
+    family-names: Hutchens
+    affiliation: Millersville University
+  - given-names: Marcin
+    family-names: Orlowski
+  - given-names: Tom
+    family-names: Niget
+    affiliation: Polytech Nice-Sophia
+  - given-names: Moshe
+    family-names: Berman
+    affiliation: Brooklyn College
+  - given-names: Theldo
+    affiliation: Pontifícia Universidade Católica de Minas Gerais
+    family-names: Franqueira
+    name-particle: Cruz
+identifiers:
+  - type: url
+    value: >-
+      https://github.com/logisim-evolution/logisim-evolution/releases
+    description: The URL of the releases of the software.
+repository-code: 'https://github.com/logisim-evolution/logisim-evolution'
+abstract: >
+  Logisim-evolution is educational software for designing
+  and simulating digital logic circuits. Logisim-evolution
+  is free, open-source, and cross-platform.
+
+
+  Project highlights:
+
+  - easy to use circuit designer,
+
+  - logic circuit simulations,
+
+  - chronogram (to see the evolution of signals in your
+  circuit),
+
+  - electronic board integration (schematics can be
+  simulated on real hardware),
+
+  - VHDL components (components behavior can be specified in
+  VHDL!),
+
+  - TCL/TK console (interfaces between the circuit and the
+  user),
+
+  - huge library of components (LEDs, TTLs, switches, SoCs),
+
+  - supports multiple languages,
+
+  - and more!
+keywords:
+  - digital-simulation
+  - digital-logic
+  - digital-circuit
+  - education
+  - simulation
+  - logic
+  - fpga
+  - vhdl
+  - verilog
+  - circuit
+license: GPL-3.0
+commit: 83c38fdb2f3002255e0bdd06b80035bf270b20a4
+version: 3.9.0
+date-released: '2024-08-15'

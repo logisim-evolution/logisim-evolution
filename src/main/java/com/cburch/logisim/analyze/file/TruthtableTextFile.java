@@ -295,7 +295,7 @@ public class TruthtableTextFile {
         int ix = line.indexOf('#');
         if (ix >= 0) line = line.substring(0, ix);
         line = line.trim();
-        if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
+        if (line.equals("") || (line.matches("\\s*[-~_=][- ~_=|]*"))) {
           continue;
         } else if (inputs.vars.isEmpty()) {
           validateHeader(line, inputs, outputs, lineno);

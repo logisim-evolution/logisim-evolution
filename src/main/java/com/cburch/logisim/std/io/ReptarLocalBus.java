@@ -23,6 +23,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -140,10 +141,11 @@ public class ReptarLocalBus extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
-    painter.drawBounds();
 
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() - 2));
+
+    painter.drawBounds();
     painter.drawPort(SP6_LB_nCS3_O, "SP6_LB_nCS3_o", Direction.WEST);
     painter.drawPort(SP6_LB_nADV_ALE_O, "SP6_LB_nADV_ALE_o", Direction.WEST);
     painter.drawPort(SP6_LB_RE_nOE_O, "SP6_LB_RE_nOE_o", Direction.WEST);
@@ -160,7 +162,7 @@ public class ReptarLocalBus extends InstanceFactory {
     // int x = loc.getX();
     // int y = loc.getY();
     // GraphicsUtil.switchToWidth(g, 2);
-    // g.setColor(Color.BLACK);
+    // g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     // g.drawLine(x - 15, y, x - 5, y);
     // g.drawLine(x - 10, y - 5, x - 10, y + 5);
     // GraphicsUtil.switchToWidth(g, 1);

@@ -19,7 +19,6 @@ import com.cburch.logisim.util.JInputDialog;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -28,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.LinkedList;
@@ -49,6 +50,11 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 @SuppressWarnings("serial")
+
+/*
+ * Attribute table panel
+ * Shows detailed attributes of the selected element.
+ */
 public class AttrTable extends JPanel implements LocaleListener {
 
   private static final AttrTableModel NULL_ATTR_MODEL = new NullAttrModel();
@@ -74,12 +80,9 @@ public class AttrTable extends JPanel implements LocaleListener {
     table.setRowHeight(AppPreferences.getScaled(AppPreferences.BOX_SIZE));
 
     final var baseFont = title.getFont();
-    final var titleSize = Math.round(baseFont.getSize() * 1.2f);
+    final var titleSize = Math.round(baseFont.getSize() * 1.2F);
     final var titleFont = baseFont.deriveFont(AppPreferences.getScaled((float) titleSize)).deriveFont(Font.BOLD);
     title.setFont(titleFont);
-    final var bgColor = new Color(240, 240, 240);
-    setBackground(bgColor);
-    table.setBackground(bgColor);
     table.setDefaultRenderer(String.class, new HdlColorRenderer());
 
     final var propPanel = new JPanel(new BorderLayout(0, 0));
@@ -105,7 +108,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     updateTitle();
   }
 
-  public boolean getTitleEnabled() {
+  public boolean isTitleEnabled() {
     return titleEnabled;
   }
 
@@ -133,6 +136,8 @@ public class AttrTable extends JPanel implements LocaleListener {
       title.setVisible(false);
     }
   }
+
+  /* ******************************************************************************************** */
 
   private static class MyDialog extends JDialogOk {
     JInputComponent input;
@@ -171,10 +176,14 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
   }
 
+  /* ******************************************************************************************** */
+
   private static class NullAttrModel implements AttrTableModel {
 
     @Override
-    public void addAttrTableModelListener(AttrTableModelListener listener) {}
+    public void addAttrTableModelListener(AttrTableModelListener listener) {
+      // Do nothing.
+    }
 
     @Override
     public AttrTableModelRow getRow(int rowIndex) {
@@ -192,7 +201,9 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
 
     @Override
-    public void removeAttrTableModelListener(AttrTableModelListener listener) {}
+    public void removeAttrTableModelListener(AttrTableModelListener listener) {
+      // Do nothing.
+    }
   }
 
   private static class TitleLabel extends JLabel {
@@ -204,6 +215,8 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
   }
 
+  /* ******************************************************************************************** */
+
   private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 
     final LinkedList<CellEditorListener> listeners = new LinkedList<>();
@@ -212,6 +225,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     int[] currentRowIndexes;
     Component currentEditor;
     boolean multiEditActive = false;
+    boolean stoppedCellEditing = false;
 
     //
     // ActionListener methods
@@ -264,7 +278,9 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
 
     @Override
-    public void focusGained(FocusEvent e) {}
+    public void focusGained(FocusEvent e) {
+      // Do nothing
+    }
 
     //
     // FocusListener methods
@@ -385,7 +401,15 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     @Override
     public boolean isCellEditable(EventObject anEvent) {
-      // Asks the editor if it can start editing using anEvent.
+      if (anEvent instanceof KeyEvent) {
+        if (((KeyEvent) anEvent).getKeyCode() == KeyEvent.VK_SPACE) {
+          return true;
+        }
+        return false;
+      }
+      if (anEvent instanceof MouseEvent) {
+        return ((MouseEvent) anEvent).getClickCount() >= 1;
+      }
       return true;
     }
 
@@ -406,7 +430,12 @@ public class AttrTable extends JPanel implements LocaleListener {
     public boolean stopCellEditing() {
       // Tells the editor to stop editing and accept any partially
       // edited value as the value of the editor.
+      if (stoppedCellEditing) {
+        return false;
+      }
+      stoppedCellEditing = true;
       fireEditingStopped();
+      stoppedCellEditing = false;
       return true;
     }
   }
@@ -463,7 +492,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
       final var ed = table.getCellEditor();
       if (row >= 0
-          && ed instanceof CellEditor cellEd
+          && ed instanceof AttrTable.CellEditor cellEd
           && cellEd.isEditing(attrModel.getRow(row))) {
         ed.cancelCellEditing();
       }
@@ -490,11 +519,9 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     @Override
     public String getColumnName(int columnIndex) {
-      if (columnIndex == 0) {
-        return "Attribute";
-      } else {
-        return "Value";
-      }
+      return (columnIndex == 0)
+             ? "Attribute"
+             : "Value";
     }
 
     @Override

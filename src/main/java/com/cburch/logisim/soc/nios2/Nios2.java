@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
@@ -37,6 +38,8 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.gui.SocCpuShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
@@ -164,6 +167,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   public void paintInstance(InstancePainter painter) {
     Location loc = painter.getLocation();
     Graphics2D g2 = (Graphics2D) painter.getGraphics();
+    g2.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawLabel();
     painter.drawClock(CLOCK, Direction.EAST);

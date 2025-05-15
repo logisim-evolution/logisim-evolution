@@ -17,6 +17,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.SynthesizedClockHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
@@ -64,7 +65,7 @@ public class ClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof final netlistComponent componentInfo)) return map;
-    map.put("globalClock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    map.put("globalClock", SynthesizedClockHdlGeneratorFactory.SYNTHESIZED_CLOCK);
     map.put("clockTick", TickComponentHdlGeneratorFactory.FPGA_TICK);
     map.put("clockBus", getClockNetName(componentInfo.getComponent(), nets));
     return map;
@@ -92,7 +93,7 @@ public class ClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (Hdl.isVhdl()) {
       contents.addVhdlKeywords().add("""
           clockBus <= globalClock&s_outputRegs;
-          
+
           makeOutputs : {{process}}(globalClock) {{is}}
           {{begin}}
              {{if}} (rising_edge(globalClock)) {{then}}

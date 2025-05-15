@@ -39,6 +39,10 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Represents a list model for external FPGA boards.
+ * It manages addition, removal, and retrieval of external boards.
+ */
 public class FpgaBoards implements ActionListener {
 
   private class ExternalBoardModel implements ListModel<String> {
@@ -108,7 +112,7 @@ public class FpgaBoards implements ActionListener {
 
     @Override
     public String getElementAt(int index) {
-      int size = nrOfExternalBoards();
+      final var size = nrOfExternalBoards();
       return (index < size) ? BoardList.getBoardName(externalBoards.get(index)) : null;
     }
 
@@ -138,12 +142,17 @@ public class FpgaBoards implements ActionListener {
 
     public void insertSorted(String value) {
       add(value);
-      Comparable<String> cmp = BoardList.getBoardName(value);
+      final var cmp = BoardList.getBoardName(value);
       for (var i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
         Collections.swap(this, i, i - 1);
     }
   }
 
+  /**
+   * Handles action events triggered by the component's UI elements.
+   *
+   * @param e The action event to handle.
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
     if (e.getSource().equals(addButton)) {
@@ -184,10 +193,15 @@ public class FpgaBoards implements ActionListener {
   private JScrollPane boardPane;
   private JList<String> boardNamesList;
   private JButton addButton;
+  private JLabel extBoardPanelTitl;
   private JButton removeButton;
   private JComboBox<String> boardSelector;
   private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
 
+  /**
+   * Initializes a new instance of the FpgaBoards class.
+   * Loads external boards from preferences on creation.
+   */
   public FpgaBoards() {
     final var prefs = AppPreferences.getPrefs();
     for (var i = 0; i < MaxBoards; i++) {
@@ -200,6 +214,14 @@ public class FpgaBoards implements ActionListener {
     }
   }
 
+  /**
+   * Adds an external board to the list of managed boards.
+   *
+   * @param filename The path to the board file.
+   * @param oldindex Previous index value for the board, used for preference cleanup.
+   * @param prefs    The preferences instance where the board is stored.
+   * @return True if the board was added successfully; False otherwise.
+   */
   private boolean addExternalBoard(String filename, int oldindex, Preferences prefs) {
     /* first we check if the file exists */
     final var f = new File(filename);
@@ -226,23 +248,45 @@ public class FpgaBoards implements ActionListener {
     return true;
   }
 
+  /**
+   * Adds an external board to the list.
+   *
+   * @param filename The path to the board file.
+   * @return True if the board was added successfully; False otherwise.
+   */
   public boolean addExternalBoard(String filename) {
     final var prefs = AppPreferences.getPrefs();
     return addExternalBoard(filename, MaxBoards, prefs);
   }
 
+  /**
+   * Retrieves the file path for a given board name.
+   *
+   * @param boardName The name of the board.
+   */
   public String getBoardFilePath(String boardName) {
     return buildInBoards.getBoardFilePath(boardName);
   }
 
+  /**
+   * Retrieves a list of all available board names.
+   */
   public List<String> getBoardNames() {
     return buildInBoards.getBoardNames();
   }
 
+  /**
+   * Retrieves the file name for the currently selected board.
+   */
   public String getSelectedBoardFileName() {
     return buildInBoards.getBoardFilePath(AppPreferences.SelectedBoard.get());
   }
 
+  /**
+   * Creates and returns a JComboBox containing the list of boards.
+   *
+   * @return A JComboBox containing board names.
+   */
   public JComboBox<String> boardSelector() {
     if (boardSelector == null) {
       boardSelector = new JComboBox<>();
@@ -251,55 +295,80 @@ public class FpgaBoards implements ActionListener {
     return boardSelector;
   }
 
+  /**
+   * Creates and returns a JPanel with UI elements to manage board addition and removal.
+   *
+   * @return A JPanel for board management.
+   */
   public JPanel addRemovePanel() {
     final var panel = new JPanel();
     final int nrBoards = extBoardModel.nrOfExternalBoards();
-    final var thisLayout = new GridBagLayout();
-    final var c = new GridBagConstraints();
-    panel.setLayout(thisLayout);
+    final var gbc = new GridBagConstraints();
+    panel.setLayout(new GridBagLayout());
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-    c.gridwidth = 2;
-    c.gridx = 0;
-    c.gridy = 0;
-    c.weightx = 1.0;
-    c.fill = GridBagConstraints.CENTER;
-    panel.add(new JLabel(S.get("ExternalBoards")), c);
-    c.gridy = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    panel.add(new JSeparator(), c);
-    c.gridheight = 10;
-    c.gridwidth = 1;
-    c.gridy = 2;
+    gbc.gridwidth = 2;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.CENTER;
+    extBoardPanelTitl = new JLabel(S.get("ExternalBoards"));
+    panel.add(extBoardPanelTitl, gbc);
+    gbc.gridy = 1;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    panel.add(new JSeparator(), gbc);
+    gbc.gridheight = 10;
+    gbc.gridwidth = 1;
+    gbc.gridy = 2;
     boardNamesList = new JList<>(extBoardModel);
     boardNamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     if (boardNamesList.getModel().getSize() != 0) boardNamesList.setSelectedIndex(0);
     boardPane = new JScrollPane(boardNamesList);
-    panel.add(boardPane, c);
-    c.gridheight = 1;
-    c.gridwidth = 1;
-    c.gridy = 2;
-    c.gridx = 1;
+    panel.add(boardPane, gbc);
+    gbc.gridheight = 1;
+    gbc.gridwidth = 1;
+    gbc.gridy = 2;
+    gbc.gridx = 1;
     addButton = new JButton();
     addButton.setText(S.get("AddBoard"));
     addButton.setEnabled(nrBoards < MaxBoards);
     addButton.addActionListener(this);
-    panel.add(addButton, c);
-    c.gridy = 3;
+    panel.add(addButton, gbc);
+    gbc.gridy = 3;
     removeButton = new JButton();
     removeButton.setText(S.get("RemoveBoard"));
     removeButton.setEnabled(nrBoards > 0);
     removeButton.addActionListener(this);
-    panel.add(removeButton, c);
+    panel.add(removeButton, gbc);
 
     return panel;
   }
 
+  /**
+   * Updates the textual content of UI components based on the
+   * current locale.
+   */
+  public void localeChanged() {
+    addButton.setText(S.get("AddBoard"));
+    extBoardPanelTitl.setText(S.get("ExternalBoards"));
+    removeButton.setText(S.get("RemoveBoard"));
+  }
+
+  /**
+   * Updates the state (enabled/disabled) of the add and remove
+   * buttons based on current conditions.
+   */
   private void updateButtons() {
     final var size = extBoardModel.nrOfExternalBoards();
     if (addButton != null) addButton.setEnabled(size < MaxBoards);
     if (removeButton != null) removeButton.setEnabled(size > 0);
   }
 
+  /**
+   * Rebuilds the board selector component with updated board information.
+   *
+   * @param update Whether to update the current selection.
+   * @param board The board to select if updating selection.
+   */
   private void rebuildBoardSelector(boolean update, String board) {
     if (boardSelector == null) return;
     boardSelector.removeActionListener(this);
@@ -324,6 +393,11 @@ public class FpgaBoards implements ActionListener {
     boardSelector.addActionListener(this);
   }
 
+  /**
+   * Removes a given board filename from preferences.
+   *
+   * @param fname The filename of the board to remove.
+   */
   private void removeFromPrefs(String fname) {
     final var prefs = AppPreferences.getPrefs();
     for (var i = 0; i < MaxBoards; i++) {
@@ -332,17 +406,28 @@ public class FpgaBoards implements ActionListener {
     }
   }
 
+  /**
+   * Removes a given board by its name.
+   *
+   * @param name The name of the board to remove.
+   * @return True if the board was removed successfully; False otherwise.
+   */
   private boolean removeBoard(String name) {
     if (name == null) return false;
     final var qualifier = buildInBoards.getBoardFilePath(name);
     if (extBoardModel.contains(qualifier)) {
       extBoardModel.remove(qualifier);
-    } else return false;
+    } else {
+      return false;
+    }
     if (!buildInBoards.removeExternalBoard(qualifier)) return false;
     removeFromPrefs(qualifier);
     return true;
   }
 
+  /**
+   * Rebuilds the preferences tree to update stored board information.
+   */
   private void rebuildPrefsTree() {
     final var prefs = AppPreferences.getPrefs();
     for (var i = 0; i < extBoardModel.getSize(); i++) {
@@ -353,6 +438,12 @@ public class FpgaBoards implements ActionListener {
     }
   }
 
+  /**
+   * Adds a new board. Shows a file chooser dialog for the user to select the board file.
+   *
+   * @param updateSelection Whether to update the board selection or not.
+   * @return True if a board was successfully added; False otherwise.
+   */
   private boolean addBoard(boolean updateSelection) {
     if (extBoardModel.getSize() >= MaxBoards) {
       OptionPane.showMessageDialog(
@@ -383,7 +474,11 @@ public class FpgaBoards implements ActionListener {
     rebuildBoardSelector(updateSelection, BoardList.getBoardName(boardFileName));
     return true;
   }
-
+  /**
+   * Opens a file chooser dialog to let the user pick a board file.
+   *
+   * @return The selected file path or null if no file was chosen.
+   */
   private String getBoardFile() {
     final var fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
     final var filter = new FileNameExtensionFilter("Board files", "xml", "xml");

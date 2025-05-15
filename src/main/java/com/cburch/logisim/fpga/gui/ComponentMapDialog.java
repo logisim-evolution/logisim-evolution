@@ -89,93 +89,93 @@ public class ComponentMapDialog
     panel.setAlwaysOnTop(true);
     panel.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
-    GridBagLayout thisLayout = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    panel.setLayout(thisLayout);
+    GridBagLayout gbl = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    panel.setLayout(gbl);
 
     /* Add the board Picture */
     boardPicture = new BoardManipulator(panel, parentFrame, mappable);
     boardPicture.addComponentListener(this);
-    c.gridx = 0;
+    gbc.gridx = 0;
 
     /* Add some text */
     unmappedText.setHorizontalAlignment(JLabel.CENTER);
     unmappedText.setPreferredSize(
         new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridwidth = 1;
-    panel.add(unmappedText, c);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.gridwidth = 1;
+    panel.add(unmappedText, gbc);
     mappedText.setHorizontalAlignment(JLabel.CENTER);
     mappedText.setPreferredSize(
         new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    c.gridx = 1;
-    panel.add(mappedText, c);
+    gbc.gridx = 1;
+    panel.add(mappedText, gbc);
     commandText.setHorizontalAlignment(JLabel.CENTER);
     commandText.setPreferredSize(
         new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
-    c.gridx = 2;
-    panel.add(commandText, c);
+    gbc.gridx = 2;
+    panel.add(commandText, gbc);
 
-    c.gridy = 1;
-    panel.add(boardPicture.getUnmapOneButton(), c);
+    gbc.gridy = 1;
+    panel.add(boardPicture.getUnmapOneButton(), gbc);
 
     /* Add the UnMapAll button */
-    c.gridy = 2;
-    panel.add(boardPicture.getUnmapAllButton(), c);
+    gbc.gridy = 2;
+    panel.add(boardPicture.getUnmapAllButton(), gbc);
 
     /* Add the Load button */
     loadButton.setActionCommand("Load");
     loadButton.addActionListener(this);
     loadButton.setEnabled(true);
-    c.gridy = 3;
-    panel.add(loadButton, c);
+    gbc.gridy = 3;
+    panel.add(loadButton, gbc);
 
     /* Add the Save button */
     saveButton.setActionCommand("Save");
     saveButton.addActionListener(this);
     saveButton.setEnabled(true);
-    c.gridy = 4;
-    panel.add(saveButton, c);
+    gbc.gridy = 4;
+    panel.add(saveButton, gbc);
 
     /* Add the Cancel button */
     cancelButton.setActionCommand("Cancel");
     cancelButton.addActionListener(this);
     cancelButton.setEnabled(true);
-    c.gridy = 5;
-    panel.add(cancelButton, c);
+    gbc.gridy = 5;
+    panel.add(cancelButton, gbc);
 
     /* Add the Done button */
     doneButton.setActionCommand("Done");
     doneButton.addActionListener(this);
-    c.gridy = 6;
-    panel.add(doneButton, c);
+    gbc.gridy = 6;
+    panel.add(doneButton, gbc);
 
     /* Add the Zoom button */
-    c.gridy = 7;
-    panel.add(boardPicture.getZoomSlider(), c);
+    gbc.gridy = 7;
+    panel.add(boardPicture.getZoomSlider(), gbc);
 
     /* Add the unmapped list */
     unmappedPane = new JScrollPane(boardPicture.getUnmappedList());
-    c.fill = GridBagConstraints.BOTH;
-    c.gridx = 0;
-    c.gridy = 1;
-    c.gridheight = 7;
-    panel.add(unmappedPane, c);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.gridheight = 7;
+    panel.add(unmappedPane, gbc);
 
     /* Add the mapped list */
     mappedPane = new JScrollPane(boardPicture.getMappedList());
-    c.gridx = 1;
-    c.gridheight = 7;
-    panel.add(mappedPane, c);
+    gbc.gridx = 1;
+    gbc.gridheight = 7;
+    panel.add(mappedPane, gbc);
 
-    c.gridx = 0;
-    c.gridheight = 1;
-    c.gridy = 8;
-    c.gridwidth = 3;
-    c.fill = GridBagConstraints.BOTH;
-    panel.add(boardPicture, c);
+    gbc.gridx = 0;
+    gbc.gridheight = 1;
+    gbc.gridy = 8;
+    gbc.gridwidth = 3;
+    gbc.fill = GridBagConstraints.BOTH;
+    panel.add(boardPicture, gbc);
     panel.setLocationRelativeTo(null);
     panel.setVisible(true);
     localeChanged();

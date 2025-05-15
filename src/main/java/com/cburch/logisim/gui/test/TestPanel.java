@@ -17,7 +17,7 @@ import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.log.ValueTable;
-import com.cburch.logisim.util.StringUtil;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JPanel;

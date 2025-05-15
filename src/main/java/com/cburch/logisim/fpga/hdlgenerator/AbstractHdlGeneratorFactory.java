@@ -446,7 +446,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return directoryName.toString();
   }
 
-  private List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
+  protected List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
     final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
     var maxNameLength = 0;

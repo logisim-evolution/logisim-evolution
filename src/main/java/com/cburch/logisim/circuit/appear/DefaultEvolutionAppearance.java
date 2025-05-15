@@ -11,6 +11,7 @@ package com.cburch.logisim.circuit.appear;
 
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.draw.shapes.Poly;
 import com.cburch.draw.shapes.Rectangle;
 import com.cburch.draw.shapes.Text;
 import com.cburch.draw.util.EditableLabel;
@@ -20,6 +21,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -157,14 +159,31 @@ public class DefaultEvolutionAppearance {
       rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
       dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y, true), pin));
+      final var isClockPin = Pin.FACTORY.isClockPin(pin);
+      if (isClockPin) {
+        Location[] pts = {
+          Location.create(x + 10 + 1, y - 4, false),
+          Location.create(x + 10 + 8, y, false),
+          Location.create(x + 10 + 1, y + 4, false)
+        };
+        final var locs = UnmodifiableList.create(pts);
+        final var clk = new Poly(false, locs);
+        clk.updateValue(DrawAttr.STROKE_WIDTH, 2);
+        dest.add(clk);
+      }
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
         var label = pin.getAttributeValue(StdAttr.LABEL);
-        final var maxLength = 12;
+        final var maxLength = (isClockPin) ? 11 : 12;
         final var ellipsis = "...";
         if (isFixedSize && label.length() > maxLength) {
           label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
         }
-        final var textLabel = new Text(x + ldX, y + ldy, label);
+        int textX = x + ldX;
+        if (isClockPin) {
+          // Adjust by width of clock symbol
+          textX += 8;
+        }
+        final var textLabel = new Text(textX, y + ldy, label);
         textLabel.getLabel().setHorizontalAlignment(hAlign);
         textLabel.getLabel().setColor(color);
         textLabel.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);

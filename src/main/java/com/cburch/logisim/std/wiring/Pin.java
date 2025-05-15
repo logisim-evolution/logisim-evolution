@@ -278,7 +278,7 @@ public class Pin extends InstanceFactory {
       text = new JFormattedTextField();
       text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
       text.setColumns(11);
-      text.setText(bitWidth == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue()));
+      text.setText(value.toStringFromFloatValue());
       text.selectAll();
 
       text.getDocument()
@@ -340,7 +340,12 @@ public class Pin extends InstanceFactory {
           else if (s.equalsIgnoreCase("-inf")) val = Double.NEGATIVE_INFINITY;
           else if (s.equalsIgnoreCase("nan")) val = Double.NaN;
           else val = Double.parseDouble(s);
-          newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
+          newVal = switch (bitWidth) {
+            case 16 -> Value.createKnown(16, Float.floatToFloat16((float) val));
+            case 32 -> Value.createKnown((float) val);
+            case 64 -> Value.createKnown(val);
+            default -> Value.ERROR;
+          };
         }
         setVisible(false);
         pinState.intendedValue = newVal;
@@ -494,7 +499,7 @@ public class Pin extends InstanceFactory {
                 OptionPane.OK_CANCEL_OPTION,
                 OptionPane.WARNING_MESSAGE);
         if (choice == OptionPane.OK_OPTION) {
-          circState = circState.cloneState();
+          circState = circState.cloneAsNewRootState();
           canvas.getProject().setCircuitState(circState);
           state = circState.getInstanceState(state.getInstance());
         } else {
@@ -648,7 +653,7 @@ public class Pin extends InstanceFactory {
         GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(x - 6, y, x, y);
       }
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
   }
 
@@ -697,13 +702,7 @@ public class Pin extends InstanceFactory {
 
   private static Value pull2(Value mod, BitWidth expectedWidth, Value pullTo) {
     if (mod.getWidth() == expectedWidth.getWidth()) {
-      Value[] vs = mod.getAll();
-      for (int i = 0; i < vs.length; i++) {
-        if (vs[i] == Value.UNKNOWN) {
-          vs[i] = pullTo;
-        }
-      }
-      return Value.create(vs);
+      return mod.pullEachBitTowards(pullTo);
     } else {
       return Value.createKnown(expectedWidth, 0);
     }
@@ -765,7 +764,7 @@ public class Pin extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return attr.equals(ProbeAttributes.PROBEAPPEARANCE) 
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE)
         ? ProbeAttributes.getDefaultProbeAppearance()
         : super.getDefaultAttributeValue(attr, ver);
   }
@@ -852,6 +851,11 @@ public class Pin extends InstanceFactory {
     return attrs.type != EndData.OUTPUT_ONLY;
   }
 
+  public boolean isClockPin(Instance instance) {
+    PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
+    return attrs.isClock();
+  }
+
   private void drawNewStyleValue(
       InstancePainter painter, int width, int height, boolean isOutput, boolean isGhost) {
     /* Note: we are here in an translated environment the point (0,0) presents the pin location*/
@@ -863,12 +867,13 @@ public class Pin extends InstanceFactory {
     RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
     Direction dir = painter.getAttributeSet().getValue(StdAttr.FACING);
     int westTranslate = (isOutput) ? width : width + 10;
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     if (dir == Direction.WEST) {
       g2.rotate(-Math.PI);
       g2.translate(westTranslate, 0);
     }
     if (!painter.getShowState()) {
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
       GraphicsUtil.drawCenteredText(
           g,
           "x" + ((PinAttributes) painter.getAttributeSet()).width.getWidth(),
@@ -884,7 +889,7 @@ public class Pin extends InstanceFactory {
           (int) ((double) LabelValueXOffset / 0.7),
           (int) ((double) labelYPos / 0.7));
       g2.scale(1.0 / 0.7, 1.0 / 0.7);
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
       if (radix == null || radix == RadixOption.RADIX_2) {
         int wid = value.getWidth();
         if (wid == 0) {
@@ -908,7 +913,7 @@ public class Pin extends InstanceFactory {
             g.setColor(Color.WHITE);
           }
           GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
-          if (radix == RadixOption.RADIX_2 && !isOutput) g.setColor(Color.BLACK);
+          if (radix == RadixOption.RADIX_2 && !isOutput) g.setColor(baseColor);
           ++cur;
           if (cur == 8) {
             cur = 0;
@@ -951,7 +956,7 @@ public class Pin extends InstanceFactory {
       g.drawRect(x + 1, y + 1, width - 1, height - 1);
       if (!isGhost) {
         if (!painter.getShowState()) {
-          g.setColor(Color.BLACK);
+          g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
           GraphicsUtil.drawCenteredText(
               g, "x" + attrs.width.getWidth(), x + width / 2, y + height / 2);
         } else {
@@ -984,24 +989,25 @@ public class Pin extends InstanceFactory {
       }
       g2.translate(xpos, ypos);
       g2.rotate(rotation);
+      Color col = g.getColor();
       if (isBus) {
+        g.setColor(Value.multiColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
         g.drawLine(Wire.WIDTH_BUS / 2 - 5, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
       } else {
-        Color col = g.getColor();
         if (painter.getShowState())
           g.setColor(LineColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
         g.drawLine(-5, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
-        g.setColor(col);
       }
-      g.drawLine(-15, -rheight / 2, -5, 0);
-      g.drawLine(-15, rheight / 2, -5, 0);
-      g.drawLine(-rwidth, -rheight / 2, -rwidth, rheight / 2);
-      g.drawLine(-rwidth, -rheight / 2, -15, -rheight / 2);
-      g.drawLine(-rwidth, rheight / 2, -15, rheight / 2);
+      g.setColor(col);
+      int[] xPoints = new int[] {-rwidth, -15, -5, -15, -rwidth};
+      int yBottom = rheight / 2;
+      int yTop = -yBottom;
+      int[] yPoints = new int[] {yTop, yTop, 0, yBottom, yBottom};
+      g.drawPolygon(xPoints, yPoints, 5);
       drawNewStyleValue(painter, rwidth, rheight, false, isGhost);
       g2.rotate(-rotation);
       g2.translate(-xpos, -ypos);
@@ -1047,24 +1053,25 @@ public class Pin extends InstanceFactory {
       }
       g2.translate(xpos, ypos);
       g2.rotate(rotation);
+      final var col = g.getColor();
       if (isBus) {
+        g.setColor(Value.multiColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
         g.drawLine(-3, 0, -Wire.WIDTH_BUS / 2, 0);
         GraphicsUtil.switchToWidth(g, 2);
       } else {
-        Color col = g.getColor();
         if (painter.getShowState())
           g.setColor(LineColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
         g.drawLine(-3, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
-        g.setColor(col);
       }
-      g.drawLine(10 - rwidth, -rheight / 2, -rwidth, 0);
-      g.drawLine(10 - rwidth, rheight / 2, -rwidth, 0);
-      g.drawLine(-5, -rheight / 2, -5, rheight / 2);
-      g.drawLine(-5, -rheight / 2, 10 - rwidth, -rheight / 2);
-      g.drawLine(-5, rheight / 2, 10 - rwidth, rheight / 2);
+      g.setColor(col);
+      int[] xPoints = new int[] {-5, 10 - rwidth, -rwidth, 10 - rwidth, -5};
+      int yTop = rheight / 2;
+      int yBottom = -yTop;
+      int[] yPoints = new int[] {yTop, yTop, 0, yBottom, yBottom};
+      g.drawPolygon(xPoints, yPoints, 5);
       drawNewStyleValue(painter, rwidth, rheight, true, isGhost);
       g2.rotate(-rotation);
       g2.translate(-xpos, -ypos);
@@ -1076,7 +1083,7 @@ public class Pin extends InstanceFactory {
       }
       if (!isGhost) {
         if (!painter.getShowState()) {
-          g.setColor(Color.BLACK);
+          g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
           GraphicsUtil.drawCenteredText(
               g, "x" + attrs.width.getWidth(), x + width / 2, y + height / 2);
         } else {
@@ -1129,6 +1136,7 @@ public class Pin extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     BitWidth w = attrs.getValue(StdAttr.WIDTH);
     int pinSize = iconSize >> 2;
+    final var baseColor = g.getColor();
     if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
       int arrowHeight = (10 * iconSize) >> 4;
       int yoff = (3 * iconSize) >> 4;
@@ -1143,7 +1151,7 @@ public class Pin extends InstanceFactory {
             xoff + iconSize - (pinSize << 1),
             xoff
           };
-      g.setColor(Color.black);
+      g.setColor(baseColor);
       g.drawPolygon(xPoints, yPoints, xPoints.length);
       g.setColor(Value.TRUE.getColor());
       GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(2));
@@ -1166,7 +1174,7 @@ public class Pin extends InstanceFactory {
         pinx = iconOffset + (boxWidth >> 1) - (pinWidth >> 1);
         piny = iconOffset + boxWidth;
       }
-      g.setColor(Color.black);
+      g.setColor(baseColor);
       if (output) {
         g.drawOval(iconOffset, iconOffset, boxWidth, boxWidth);
       } else {
@@ -1188,7 +1196,7 @@ public class Pin extends InstanceFactory {
         else
           xpos = (iconSize - pinSize) / 2 - (float) bw.getBounds().getCenterX();
       bw.draw(g, xpos, ypos);
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
     }
   }
 
@@ -1203,7 +1211,7 @@ public class Pin extends InstanceFactory {
     int x = bds.getX();
     int y = bds.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.black);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (IsOutput) {
       drawOutputShape(
           painter, x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1, found.getColor(), false);
@@ -1224,7 +1232,7 @@ public class Pin extends InstanceFactory {
       Value found = state.getPortValue(0);
       q.intendedValue = found;
       q.foundValue = found;
-      state.setPort(0, Value.createUnknown(attrs.width), 1);
+      //state.setPort(0, Value.createUnknown(attrs.width), 1);
     } else {
       Value found = state.getPortValue(0);
       Value toSend = q.intendedValue;

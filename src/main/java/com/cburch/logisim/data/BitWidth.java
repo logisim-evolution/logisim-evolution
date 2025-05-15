@@ -18,7 +18,7 @@ public class BitWidth implements Comparable<BitWidth> {
     private final BitWidth[] choices;
     private final int min;
     private final int max;
-  
+
     public Attribute(String name, StringGetter disp) {
       super(name, disp);
       this.min = MINWIDTH;
@@ -61,8 +61,8 @@ public class BitWidth implements Comparable<BitWidth> {
     @Override
     public BitWidth parse(String value) {
       int v = (int) Long.parseLong(value);
-      if (v < min) throw new NumberFormatException("integer too small");
-      if (v > max) throw new NumberFormatException("integer too large");
+      if (v < min) throw new NumberFormatException("bit width must be at least " + min);
+      if (v > max) throw new NumberFormatException("bit width must be at most " + max);
       return BitWidth.create(v);
     }
   }
@@ -79,7 +79,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
   private static void ensurePrefab() {
     if (prefab == null) {
-      prefab = new BitWidth[Math.min(64, MAXWIDTH) + 1];
+      prefab = new BitWidth[MAXWIDTH + 1];
       prefab[0] = UNKNOWN;
       prefab[1] = ONE;
       for (int i = 2; i < prefab.length; i++) {

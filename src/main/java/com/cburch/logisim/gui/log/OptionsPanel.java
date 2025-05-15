@@ -139,7 +139,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     selectionButton = frame.makeSelectionButton();
     selectionPanel.add(selectionButton);
 
-    ButtonGroup g = new ButtonGroup();
+    final var g = new ButtonGroup();
     g.add(stepTime);
     g.add(realTime);
     g.add(clockTime);
@@ -175,7 +175,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     clockOptionsPanel.add(clockGate.getPanel());
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-    Box clockSrcBox = new Box(BoxLayout.X_AXIS);
+    final var clockSrcBox = new Box(BoxLayout.X_AXIS);
     clockSrcBox.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     clockSrcBox.setAlignmentX(0.0f);
     clockSrcBox.add(clockSrcLabel);
@@ -199,7 +199,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     limit.setEditor(new JSpinner.NumberEditor(limit, "####"));
     limit.setMaximumSize(limit.getPreferredSize());
     unlimited.setAlignmentX(0.0f);
-    Box limitBox = new Box(BoxLayout.X_AXIS);
+    final var limitBox = new Box(BoxLayout.X_AXIS);
     limitBox.add(limitLabel);
     limitBox.add(Box.createRigidArea(new Dimension(6, 0)));
     limitBox.add(limit);
@@ -210,45 +210,45 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     historyPanel.add(limitBox);
     historyPanel.add(Box.createVerticalGlue());
 
-    JPanel inner = new ScrollablePanel();
+    final var inner = new ScrollablePanel();
 
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
-    inner.setLayout(gb);
+    final var gbl = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
+    inner.setLayout(gbl);
 
-    gc.fill = GridBagConstraints.BOTH;
-    gc.insets = new Insets(5, 5, 5, 5);
-    gc.weightx = gc.weighty = 0.0f;
-    gc.gridx = gc.gridy = 0;
-    gb.setConstraints(selectionPanel, gc);
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.insets = new Insets(5, 5, 5, 5);
+    gbc.weightx = gbc.weighty = 0.0f;
+    gbc.gridx = gbc.gridy = 0;
+    gbl.setConstraints(selectionPanel, gbc);
     inner.add(selectionPanel);
 
-    gc.gridy = 1;
+    gbc.gridy = 1;
 
-    gb.setConstraints(modePanel, gc);
+    gbl.setConstraints(modePanel, gbc);
     inner.add(modePanel);
 
-    gc.gridx = 1;
-    gc.gridy = 0;
-    gc.gridheight = 2;
-    gb.setConstraints(optionsPanel, gc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.gridheight = 2;
+    gbl.setConstraints(optionsPanel, gbc);
     inner.add(optionsPanel);
 
-    gc.gridx = 2;
-    gb.setConstraints(historyPanel, gc);
+    gbc.gridx = 2;
+    gbl.setConstraints(historyPanel, gbc);
     inner.add(historyPanel);
 
     java.awt.Component fill = Box.createGlue();
-    gc.gridx = 3;
-    gb.setConstraints(fill, gc);
+    gbc.gridx = 3;
+    gbl.setConstraints(fill, gbc);
     inner.add(fill);
 
-    gc.weightx = gc.weighty = 1.0f;
-    gc.gridx = 0;
-    gc.gridy = 2;
-    gc.gridheight = 1;
-    gc.gridwidth = 4;
-    gb.setConstraints(description, gc);
+    gbc.weightx = gbc.weighty = 1.0f;
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbc.gridheight = 1;
+    gbc.gridwidth = 4;
+    gbl.setConstraints(description, gbc);
     inner.add(description);
     description.setFont(description.getFont().deriveFont(Font.PLAIN));
 
@@ -413,7 +413,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     @Override
     public boolean verify(JComponent input) {
       text = ((JTextField) input).getText().trim();
-      String s = S.get(suffix);
+      final var s = S.get(suffix);
       if (text.endsWith(s)) text = text.substring(0, text.length() - s.length()).trim();
       scale = 1;
       matched = false;
@@ -559,6 +559,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   @Override
   public void localeChanged() {
     selectionPanel.setBorder(BorderFactory.createTitledBorder(S.get("selectionLabel")));
+    selectionButton.setText(S.get("buttonAddRemoveSignals"));
     modePanel.setBorder(BorderFactory.createTitledBorder(S.get("modeLabel")));
     historyPanel.setBorder(BorderFactory.createTitledBorder(S.get("historyLabel")));
     stepTime.setText(S.get("stepTime"));

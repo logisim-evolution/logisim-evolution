@@ -163,6 +163,7 @@ public class ShiftRegister extends InstanceFactory {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     final var blockwidth = symbolWidth;
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(xpos + 10, ypos, xpos + blockwidth + 10, ypos);
     g.drawLine(xpos + 10, ypos, xpos + 10, ypos + 60);
     g.drawLine(xpos + blockwidth + 10, ypos, xpos + blockwidth + 10, ypos + 60);
@@ -225,6 +226,8 @@ public class ShiftRegister extends InstanceFactory {
     final var realXpos = xpos + 10;
     final var dataWidth = (nrOfBits == 1) ? 2 : 5;
     final var lineFix = (nrOfBits == 1) ? 1 : 2;
+    final var componentColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var inOutputConectionColor = (nrOfBits == 1) ? componentColor : Value.multiColor;
     int height = (currentStage == 0) ? 30 : 20;
     final var lastBlock = (currentStage == (nrOfStages - 1));
     final var blockWidth = symbolWidth;
@@ -264,13 +267,17 @@ public class ShiftRegister extends InstanceFactory {
     /* Draw the Inputs */
     if (currentStage == 0 || hasLoad) {
       GraphicsUtil.switchToWidth(g, dataWidth);
+      g.setColor(inOutputConectionColor);
       g.drawLine(realXpos - 10, realYpos + 10, realXpos - lineFix, realYpos + 10);
+      g.setColor(componentColor);
       if (currentStage == 0) {
         painter.drawPort(IN);
         GraphicsUtil.drawText(
             g, "1,3D", realXpos + 1, realYpos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
         if (hasLoad) {
+          g.setColor(inOutputConectionColor);
           g.drawLine(realXpos - 10, realYpos + 20, realXpos - lineFix, realYpos + 20);
+          g.setColor(componentColor);
           GraphicsUtil.drawText(
               g, "2,3D", realXpos + 1, realYpos + 20, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
         }
@@ -285,6 +292,7 @@ public class ShiftRegister extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
     /* Draw the outputs */
     GraphicsUtil.switchToWidth(g, dataWidth);
+    g.setColor(inOutputConectionColor);
     if (hasLoad || lastBlock) {
       if (currentStage == 0) {
         g.drawLine(
@@ -306,7 +314,9 @@ public class ShiftRegister extends InstanceFactory {
       painter.drawPort(6 + 2 * currentStage + 1);
     }
     GraphicsUtil.switchToWidth(g, 1);
+
     /* Draw stage value */
+    g.setColor(componentColor);
     if (painter.getShowState() && (data_value != null)) {
       if (data_value.isFullyDefined()) g.setColor(Color.LIGHT_GRAY);
       else if (data_value.isErrorValue()) g.setColor(Color.RED);
@@ -330,7 +340,7 @@ public class ShiftRegister extends InstanceFactory {
           realYpos + yoff + 10,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-      g.setColor(Color.BLACK);
+      g.setColor(componentColor);
     }
   }
 

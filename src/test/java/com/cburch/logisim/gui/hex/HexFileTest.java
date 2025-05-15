@@ -1,8 +1,7 @@
 package com.cburch.logisim.gui.hex;
 
-import com.cburch.logisim.Main;
 import com.cburch.logisim.std.memory.MemContents;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -95,9 +94,9 @@ public class HexFileTest {
     assertTrue(index >= 0);
     assertTrue(index < HexFile.formatDescriptions.length);
 
-    final var rng = new Random(index * addressSize * wordSize + 1);
+    final var rng = new Random((long) index * addressSize * wordSize + 1);
 
-    final var memoryContents = MemContents.create(addressSize, wordSize, true);
+    final var memoryContents = MemContents.create(addressSize, wordSize, false);
 
     final var values = new HashMap<Long, Long>();
     // (1L << size) doesn't work if size is 64

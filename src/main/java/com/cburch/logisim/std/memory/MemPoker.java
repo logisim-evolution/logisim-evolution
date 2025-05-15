@@ -27,39 +27,64 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void keyTyped(InstanceState state, KeyEvent e) {
-      final var c = e.getKeyChar();
       final var val = Character.digit(e.getKeyChar(), 16);
       final var data = (MemState) state.getData();
       if (val >= 0) {
         long newScroll = (data.getScroll() * 16 + val) & (data.getLastAddress());
         data.setScroll(newScroll);
-      } else if (c == ' ') {
-        data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
-      } else if (c == '\r' || c == '\n') {
-        data.setScroll(data.getScroll() + data.getNrOfLineItems());
-      } else if (c == '\u0008' || c == '\u007f') {
-        data.setScroll(data.getScroll() - data.getNrOfLineItems());
-      } else if (c == 'R' || c == 'r') {
-        data.getContents().clear();
+      } else {
+        switch (e.getKeyChar()) {
+          case ' ' -> {
+            if (e.isControlDown()) { // Ctrl + space
+              data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            } else {                   // Space
+              data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            }
+          }
+          case '\n', '\r' -> {
+            if (e.isControlDown()) {  // Ctrl + Cariage return
+              data.setScroll(data.getScroll() - data.getNrOfLineItems());
+            } else {                    // Cariage return
+              data.setScroll(data.getScroll() + data.getNrOfLineItems());
+            }
+          }
+          case '\u0008' -> {            // Backspace Delete
+            data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+          }
+          case '\u007F' -> {
+            if (e.isControlDown()) {  // Ctrl + Backspace or Ctrl + Delete
+              data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            }
+          }
+          case 'R', 'r' -> {
+            data.getContents().clear();
+          }
+          default -> {
+          }
+        }
       }
     }
 
     @Override
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();
-      if (e.getKeyCode() == KeyEvent.VK_UP) {
-        data.setScroll(data.getScroll() - data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        data.setScroll(data.getScroll() + data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-        data.setScroll(data.getScroll() - data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        data.setScroll(data.getScroll() + data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-        data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-        data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+      switch (e.getKeyCode()) {
+        case KeyEvent.VK_UP ->
+          data.setScroll(data.getScroll() - data.getNrOfLineItems());
+        case KeyEvent.VK_DOWN ->
+          data.setScroll(data.getScroll() + data.getNrOfLineItems());
+        case KeyEvent.VK_LEFT ->
+          data.setScroll(data.getScroll() - data.getNrOfLineItems());
+        case KeyEvent.VK_RIGHT ->
+          data.setScroll(data.getScroll() + data.getNrOfLineItems());
+        case KeyEvent.VK_PAGE_UP ->
+          data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+        case KeyEvent.VK_PAGE_DOWN ->
+          data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+        default -> {
+        }
       }
+      e.consume();
     }
 
     @Override
@@ -99,40 +124,68 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void keyTyped(InstanceState state, KeyEvent e) {
-      final var c = e.getKeyChar();
       final var val = Character.digit(e.getKeyChar(), 16);
       final var data = (MemState) state.getData();
       if (val >= 0) {
         curValue = curValue * 16 + val;
         data.getContents().set(data.getCursor(), curValue);
         state.fireInvalidated();
-      } else if (c == ' ' || c == '\t') {
-        moveTo(data, data.getCursor() + 1);
-      } else if (c == '\r' || c == '\n') {
-        moveTo(data, data.getCursor() + data.getNrOfLineItems());
-      } else if (c == '\u0008' || c == '\u007f') {
-        moveTo(data, data.getCursor() - 1);
-      } else if (c == 'R' || c == 'r') {
-        data.getContents().clear();
+      } else {
+        switch (e.getKeyChar()) {
+          case ' ' -> {
+            if (e.isControlDown()) { // Ctrl + space
+              moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            } else {  // Space
+              moveTo(data, data.getCursor() + 1);
+            }
+          }
+          case '\n', '\r' -> {
+            if (e.isControlDown()) {  // Ctrl + Carriage return
+              moveTo(data, data.getCursor() - data.getNrOfLineItems());
+            } else {  // Carriage return
+              moveTo(data, data.getCursor() + data.getNrOfLineItems());
+            }
+          }
+          case '\u0008' -> {  //  Backspace
+            moveTo(data, data.getCursor() - 1);
+
+          }
+          case 'R', 'r' -> {
+            data.getContents().clear();
+          }
+          case '\u007F' -> {
+            if (e.isControlDown()) {  // Ctrl + Backspace or Ctrl + Delete
+              moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            } else {  //  Delete
+              data.getContents().set(data.getCursor(), 0);
+            }
+          }
+          default -> {
+          }
+        }
       }
     }
 
     @Override
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();
-      if (e.getKeyCode() == KeyEvent.VK_UP) {
-        moveTo(data, data.getCursor() - data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        moveTo(data, data.getCursor() + data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-        moveTo(data, data.getCursor() - 1);
-      } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        moveTo(data, data.getCursor() + 1);
-      } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-        moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
-      } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-        moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+      switch (e.getKeyCode()) {
+        case KeyEvent.VK_UP ->
+          moveTo(data, data.getCursor() - data.getNrOfLineItems());
+        case KeyEvent.VK_DOWN ->
+          moveTo(data, data.getCursor() + data.getNrOfLineItems());
+        case KeyEvent.VK_LEFT ->
+          moveTo(data, data.getCursor() - 1);
+        case KeyEvent.VK_RIGHT ->
+          moveTo(data, data.getCursor() + 1);
+        case KeyEvent.VK_PAGE_UP ->
+          moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+        case KeyEvent.VK_PAGE_DOWN ->
+          moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+        default -> {
+        }
       }
+      e.consume();
     }
 
     private void moveTo(MemState data, long addr) {

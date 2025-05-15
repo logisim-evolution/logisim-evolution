@@ -26,6 +26,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -103,6 +104,7 @@ public class Shifter extends InstanceFactory {
   private void drawArrow(Graphics g, int x, int y, int d) {
     int[] px = {x + d, x, x + d};
     int[] py = {y + d, y, y - d};
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.fillPolygon(px, py, 3);
   }
 
@@ -123,15 +125,14 @@ public class Shifter extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
     painter.drawPorts();
-
     Location loc = painter.getLocation();
     int x = loc.getX() - 15;
     int y = loc.getY();
     Object shift = painter.getAttributeValue(ATTR_SHIFT);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (shift == SHIFT_LOGICAL_RIGHT) {
       g.fillRect(x, y - 1, 8, 3);
       drawArrow(g, x + 10, y, -4);

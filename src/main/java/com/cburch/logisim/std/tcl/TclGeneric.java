@@ -18,7 +18,9 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
@@ -36,7 +38,6 @@ public class TclGeneric extends TclComponent {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
-   *
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "TclGeneric";
@@ -59,7 +60,9 @@ public class TclGeneric extends TclComponent {
     @Override
     public VhdlContentComponent parse(String value) {
       final var content = VhdlContentComponent.create();
-      if (!content.compare(value)) content.setContent(value);
+      if (!content.compare(value)) {
+        content.setContent(value);
+      }
       return content;
     }
 
@@ -93,6 +96,9 @@ public class TclGeneric extends TclComponent {
 
   private final WeakHashMap<Instance, TclGenericListener> contentListeners;
 
+  /**
+   * Creates a TclGeneric component.
+   */
   public TclGeneric() {
     super(_ID, S.getter("tclGeneric"));
 
@@ -143,6 +149,7 @@ public class TclGeneric extends TclComponent {
     final var g = painter.getGraphics();
     final var content = painter.getAttributeValue(CONTENT_ATTR);
     var metric = g.getFontMetrics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     final var bds = painter.getBounds();
     final var x0 = bds.getX() + (bds.getWidth() / 2);
@@ -159,33 +166,35 @@ public class TclGeneric extends TclComponent {
     if (glbLabel != null) {
       final var font = g.getFont();
       g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
+      GraphicsUtil.drawCenteredText(g, glbLabel,
+          bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
       g.setFont(font);
     }
 
-    g.setColor(Color.GRAY);
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 
     final var inputs = content.getInputs();
     final var outputs = content.getOutputs();
 
-    for (var i = 0; i < inputs.length; i++)
+    for (var i = 0; i < inputs.length; i++) {
       GraphicsUtil.drawText(
           g,
-          StringUtil.resizeString(inputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
+          StringUtil.resizeString(inputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
           bds.getX() + 5,
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-    for (var i = 0; i < outputs.length; i++)
+    }
+    for (var i = 0; i < outputs.length; i++) {
       GraphicsUtil.drawText(
           g,
-          StringUtil.resizeString(outputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
+          StringUtil.resizeString(outputs[i].getName(), metric, (WIDTH / 2) - X_PADDING),
           bds.getX() + WIDTH - 5,
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_CENTER);
+    }
 
     painter.drawBounds();
     painter.drawPorts();
@@ -194,7 +203,39 @@ public class TclGeneric extends TclComponent {
   @Override
   void updatePorts(Instance instance) {
     final var content = instance.getAttributeValue(CONTENT_ATTR);
-    instance.setPorts(content.getPorts());
-    setPorts(content.getPorts());
+    HdlModel.PortDescription[] inputs = content.getInputs();
+    HdlModel.PortDescription[] outputs = content.getOutputs();
+
+    Port[] result = new Port[inputs.length + outputs.length];
+    int resultIndex = 0;
+
+    int i = 0;
+    for (var desc : inputs) {
+      result[resultIndex] =
+          new Port(
+              0,
+              (i * PORT_GAP) + HEIGHT,
+              desc.getType(),
+              desc.getWidth());
+      result[resultIndex].setToolTip(S.getter(desc.getName()));
+      resultIndex++;
+      i++;
+    }
+
+    i = 0;
+    for (var desc : outputs) {
+      result[resultIndex] =
+          new Port(
+              WIDTH,
+              (i * PORT_GAP) + HEIGHT,
+              desc.getType(),
+              desc.getWidth());
+      result[resultIndex].setToolTip(S.getter(desc.getName()));
+      resultIndex++;
+      i++;
+    }
+
+    instance.setPorts(result);
+    setPorts(result);
   }
 }

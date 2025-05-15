@@ -36,8 +36,24 @@ import javax.swing.event.ChangeListener;
 class WindowOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private final PrefBoolean[] checks;
-  private final PrefOptionList toolbarPlacement;
   private final PrefOptionList canvasPlacement;
+  private final PrefOptionList toolbarPlacement;
+
+  private final JButton resetWindowLayoutButton;
+  private final ColorChooserButton canvasBgColor;
+  private final JLabel canvasBgColorTitle;
+  private final ColorChooserButton gridBgColor;
+  private final JLabel gridBgColorTitle;
+  private final ColorChooserButton gridDotColor;
+  private final JLabel gridDotColorTitle;
+  private final ColorChooserButton gridZoomedDotColor;
+  private final JLabel gridZoomedDotColorTitle;
+  private final ColorChooserButton componentColor;
+  private final JLabel componentColorTitle;
+  private final ColorChooserButton componentIconColor;
+  private final JLabel componentIconColorTitle;
+  private final JButton gridColorsResetButton;
+
   private final ZoomSlider zoomValue;
   private final JButton zoomAutoButton;
   private final JLabel lookfeelLabel;
@@ -49,15 +65,6 @@ class WindowOptions extends OptionsPanel {
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private JPanel previewPanel;
   private int index = 0;
-
-  private final ColorChooserButton canvasBgColor;
-  private final JLabel canvasBgColorTitle;
-  private final ColorChooserButton gridBgColor;
-  private final JLabel gridBgColorTitle;
-  private final ColorChooserButton gridDotColor;
-  private final JLabel gridDotColorTitle;
-  private final ColorChooserButton gridZoomedDotColor;
-  private final JLabel gridZoomedDotColorTitle;
 
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
@@ -117,8 +124,16 @@ class WindowOptions extends OptionsPanel {
     gridZoomedDotColor = new ColorChooserButton(window, AppPreferences.GRID_ZOOMED_DOT_COLOR);
     panel.add(gridZoomedDotColorTitle);
     panel.add(gridZoomedDotColor);
+    componentColorTitle = new JLabel(S.get("windowComponentColor"));
+    componentColor = new ColorChooserButton(window, AppPreferences.COMPONENT_COLOR);
+    panel.add(componentColorTitle);
+    panel.add(componentColor);
+    componentIconColorTitle = new JLabel(S.get("windowComponentIconColor"));
+    componentIconColor = new ColorChooserButton(window, AppPreferences.COMPONENT_ICON_COLOR);
+    panel.add(componentIconColorTitle);
+    panel.add(componentIconColor);
 
-    final var gridColorsResetButton = new JButton();
+    gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);
     gridColorsResetButton.setActionCommand(cmdResetGridColors);
     gridColorsResetButton.setText(S.get("windowGridColorsReset"));
@@ -178,11 +193,11 @@ class WindowOptions extends OptionsPanel {
     initThemePreviewer();
 
     setLayout(new TableLayout(1));
-    final var but = new JButton();
-    but.addActionListener(listener);
-    but.setActionCommand(cmdResetWindowLayout);
-    but.setText(S.get("windowToolbarReset"));
-    add(but);
+    resetWindowLayoutButton = new JButton();
+    resetWindowLayoutButton.addActionListener(listener);
+    resetWindowLayoutButton.setActionCommand(cmdResetWindowLayout);
+    resetWindowLayoutButton.setText(S.get("windowToolbarReset"));
+    add(resetWindowLayoutButton);
     for (final var check : checks) {
       add(check);
     }
@@ -230,6 +245,14 @@ class WindowOptions extends OptionsPanel {
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     importantA.setText(S.get("windowToolbarPleaserestart"));
     importantB.setText(S.get("windowToolbarImportant"));
+    resetWindowLayoutButton.setText(S.get("windowToolbarReset"));
+    canvasBgColorTitle.setText(S.get("windowCanvasBgColor"));
+    gridBgColorTitle.setText(S.get("windowGridBgColor"));
+    gridDotColorTitle.setText(S.get("windowGridDotColor"));
+    gridZoomedDotColorTitle.setText(S.get("windowGridZoomedDotColor"));
+    componentColorTitle.setText(S.get("windowComponentColor"));
+    gridColorsResetButton.setText(S.get("windowGridColorsReset"));
+    zoomAutoButton.setText(S.get("windowSetAutoScaleFactor"));
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {

@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"
+    groups:
+      slf4j:
+         patterns:
+           - "org.slf4j*"
+      junit:
+         patterns:
+           - "org.junit*"
+
+  - package-ecosystem: "github-actions"
+    # directory of "/" for github-actions means .github/workflows
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"

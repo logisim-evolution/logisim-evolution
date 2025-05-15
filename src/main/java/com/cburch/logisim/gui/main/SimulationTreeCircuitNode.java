@@ -57,7 +57,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   @Override
   public void circuitChanged(CircuitEvent event) {
-    int action = event.getAction();
+    final var action = event.getAction();
     if (action == CircuitEvent.ACTION_SET_NAME) {
       model.fireNodeChanged(this);
     } else {
@@ -70,9 +70,9 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   @Override
   public int compare(Component a, Component b) {
     if (a != b) {
-      var nameA = a.getFactory().getDisplayName();
-      var nameB = b.getFactory().getDisplayName();
-      int ret = nameA.compareToIgnoreCase(nameB);
+      final var nameA = a.getFactory().getDisplayName();
+      final var nameB = b.getFactory().getDisplayName();
+      final var ret = nameA.compareToIgnoreCase(nameB);
       if (ret != 0) return ret;
     }
     return a.getLocation().toString().compareTo(b.getLocation().toString());
@@ -80,13 +80,13 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   // returns true if changed
   private boolean computeChildren() {
-    ArrayList<TreeNode> newChildren = new ArrayList<>();
-    ArrayList<Component> subcircs = new ArrayList<>();
-    for (Component comp : circuitState.getCircuit().getNonWires()) {
+    final var newChildren = new ArrayList<TreeNode>();
+    final var subcircs = new ArrayList<Component>();
+    for (final var comp : circuitState.getCircuit().getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         subcircs.add(comp);
       } else {
-        TreeNode toAdd = model.mapComponentToNode(comp);
+        final var toAdd = model.mapComponentToNode(comp);
         if (toAdd != null) {
           newChildren.add(toAdd);
         }
@@ -94,7 +94,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
     newChildren.sort(new CompareByName());
     subcircs.sort(this);
-    for (Component comp : subcircs) {
+    for (final var comp : subcircs) {
       final var factory = (SubcircuitFactory) comp.getFactory();
       final var state = factory.getSubstate(circuitState, comp);
       SimulationTreeCircuitNode toAdd = null;
@@ -137,12 +137,12 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   @Override
   public String toString() {
     if (subcircComp != null) {
-      String label = subcircComp.getAttributeSet().getValue(StdAttr.LABEL);
-      if (label != null && !label.equals("")) {
+      final var label = subcircComp.getAttributeSet().getValue(StdAttr.LABEL);
+      if (label != null && !label.isEmpty()) {
         return label;
       }
     }
-    String ret = circuitState.getCircuit().getName();
+    var ret = circuitState.getCircuit().getName();
     if (subcircComp != null) {
       ret += subcircComp.getLocation();
     }

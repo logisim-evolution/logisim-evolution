@@ -43,9 +43,9 @@ public class ToolAttributeAction extends Action {
   }
 
   public static Action create(Tool tool, Attribute<?> attr, Object value) {
-    AttributeSet attrs = tool.getAttributeSet();
-    KeyConfigurationEvent e = new KeyConfigurationEvent(0, attrs, null, null);
-    KeyConfigurationResult r = new KeyConfigurationResult(e, attr, value);
+    final var attrs = tool.getAttributeSet();
+    final var e = new KeyConfigurationEvent(0, attrs, null, null);
+    final var r = new KeyConfigurationResult(e, attr, value);
     return new ToolAttributeAction(r);
   }
 
@@ -67,7 +67,7 @@ public class ToolAttributeAction extends Action {
   @Override
   public void undo(Project proj) {
     if (affectsAppearance()) {
-      ActionTransaction xn = new ActionTransaction(true);
+      final var xn = new ActionTransaction(true);
       xn.execute();
     } else {
       execute(false);
@@ -75,7 +75,7 @@ public class ToolAttributeAction extends Action {
   }
 
   boolean affectsAppearance() {
-    AttributeSet attrs = config.getEvent().getAttributeSet();
+    final var attrs = config.getEvent().getAttributeSet();
     if (attrs instanceof FactoryAttributes factoryAttributes) {
       final var factory = factoryAttributes.getFactory();
       if (factory instanceof SubcircuitFactory) {
@@ -94,9 +94,9 @@ public class ToolAttributeAction extends Action {
   private void execute(boolean forward) {
     if (forward) {
       AttributeSet attrs = config.getEvent().getAttributeSet();
-      Map<Attribute<?>, Object> newValues = config.getAttributeValues();
-      Map<Attribute<?>, Object> oldValues = new HashMap<>(newValues.size());
-      for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
+      final var newValues = config.getAttributeValues();
+      final Map<Attribute<?>, Object> oldValues = new HashMap<>(newValues.size());
+      for (final var entry : newValues.entrySet()) {
         @SuppressWarnings("unchecked")
         Attribute<Object> attr = (Attribute<Object>) entry.getKey();
         oldValues.put(attr, attrs.getValue(attr));
@@ -106,7 +106,7 @@ public class ToolAttributeAction extends Action {
     } else {
       AttributeSet attrs = config.getEvent().getAttributeSet();
       Map<Attribute<?>, Object> oldValues = this.oldValues;
-      for (Map.Entry<Attribute<?>, Object> entry : oldValues.entrySet()) {
+      for (final var entry : oldValues.entrySet()) {
         @SuppressWarnings("unchecked")
         Attribute<Object> attr = (Attribute<Object>) entry.getKey();
         attrs.setValue(attr, entry.getValue());
@@ -123,8 +123,8 @@ public class ToolAttributeAction extends Action {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      AttributeSet attrs = config.getEvent().getAttributeSet();
+      final var accessMap = new HashMap<Circuit, Integer>();
+      final var attrs = config.getEvent().getAttributeSet();
       if (attrs instanceof FactoryAttributes factoryAttributes) {
         final var factory = factoryAttributes.getFactory();
         if (factory instanceof SubcircuitFactory sub) {

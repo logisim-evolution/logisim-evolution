@@ -235,10 +235,12 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       var boxHeight = Math.max(linedKMapInfo.getHeight(), numberedKMapInfo.getHeight());
       linedKMapInfo.calculateOffsets(boxWidth, boxHeight);
       numberedKMapInfo.calculateOffsets(boxWidth, boxHeight);
-      final var ctx = g.getFontRenderContext();
-      int selectedHeight;
-      final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
-      selectedHeight = 3 * (int) t1.getBounds().getHeight();
+      int selectedHeight = 0;
+      if (g != null) {
+        final var ctx = g.getFontRenderContext();
+        final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
+        selectedHeight = 3 * (int) t1.getBounds().getHeight();
+      }
       selInfo = Bounds.create(0, boxHeight, boxWidth, selectedHeight);
       setPreferredSize(new Dimension(boxWidth, boxHeight + selectedHeight));
       kMapDim = new Dimension(boxWidth, boxHeight);

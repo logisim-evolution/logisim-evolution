@@ -21,7 +21,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import java.awt.Color;
@@ -60,8 +59,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   private static ToolbarItem findItem(List<ToolbarItem> items, Tool tool) {
     for (final var item : items) {
-      if (item instanceof ToolItem) {
-        if (tool == ((ToolItem) item).tool) {
+      if (item instanceof ToolItem toolItem) {
+        if (tool == toolItem.tool) {
           return item;
         }
       }
@@ -220,7 +219,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       }
 
       // draw tool icon
-      gfx.setColor(Color.BLACK);
+      gfx.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
       final var gfxCopy = gfx.create();
       final var c = new ComponentDrawContext(destination, null, null, gfx, gfxCopy);
       tool.paintIcon(c, AppPreferences.ICON_BORDER, AppPreferences.ICON_BORDER);

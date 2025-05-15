@@ -12,29 +12,16 @@ package com.cburch.logisim.std.hdl;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
-import java.awt.Dialog;
 import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Window;
 import java.util.Arrays;
 import java.util.List;
-import java.util.WeakHashMap;
 
+/**
+ * VhdlEntityAttributes is a special attribute set.
+ * This attribute set is unique in setting up and cloning the VhdlContentComponent.
+ */
 public class VhdlEntityAttributes extends AbstractAttributeSet {
-
-  public static HdlContentEditor getContentEditor(Window source, HdlContent value, Project proj) {
-    synchronized (windowRegistry) {
-      HdlContentEditor ret = windowRegistry.get(value);
-      if (ret == null) {
-        if (source instanceof Frame frame) ret = new HdlContentEditor(frame, proj, value);
-        else ret = new HdlContentEditor((Dialog) source, proj, value);
-        windowRegistry.put(value, ret);
-      }
-      return ret;
-    }
-  }
 
   private static final List<Attribute<?>> attributes =
       Arrays.asList(
@@ -43,9 +30,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
           VhdlSimConstants.SIM_NAME_ATTR);
-
-  private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<>();
 
   private VhdlContentComponent content;
   private String label = "";
@@ -95,29 +79,39 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == VhdlEntityComponent.CONTENT_ATTR) {
       final var newContent = (VhdlContentComponent) value;
-      if (!content.equals(newContent)) content = newContent;
+      if (!content.equals(newContent)) {
+        content = newContent;
+      }
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL && value instanceof String newLabel) {
       final var oldlabel = label;
-      if (label.equals(newLabel)) return;
+      if (label.equals(newLabel)) {
+        return;
+      }
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
     }
     if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
-      if (labelFont.equals(newFont)) return;
+      if (labelFont.equals(newFont)) {
+        return;
+      }
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       final var newVis = (Boolean) value;
-      if (labelVisible.equals(newVis)) return;
+      if (labelVisible.equals(newVis)) {
+        return;
+      }
       labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
       final var name = (String) value;
-      if (value.equals(simName)) return;
+      if (value.equals(simName)) {
+        return;
+      }
       simName = name;
       fireAttributeValueChanged(attr, value, null);
     }

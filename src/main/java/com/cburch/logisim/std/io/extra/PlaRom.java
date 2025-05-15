@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.tools.MenuExtender;
@@ -191,13 +192,13 @@ public class PlaRom extends InstanceFactory {
   }
 
   private static final Attribute<Integer> ATTR_INPUTS =
-      Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 32);
+      Attributes.forIntegerRange("inputs", S.getter("plaBitWidthIn"), 1, 32);
 
   private static final Attribute<Integer> ATTR_AND =
       Attributes.forIntegerRange("and", S.getter("PlaANDAttr"), 1, 32);
 
   private static final Attribute<Integer> ATTR_OUTPUTS =
-      Attributes.forIntegerRange("outputs", S.getter("PlaOutputsAttr"), 1, 32);
+      Attributes.forIntegerRange("outputs", S.getter("plaBitWidthOut"), 1, 32);
 
   private static final ContentsAttribute CONTENTS_ATTR = new ContentsAttribute();
 
@@ -290,6 +291,7 @@ public class PlaRom extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     PlaRomData data = getPlaRomData(painter);
     Graphics g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawRoundBounds(Color.WHITE);
     Bounds bds = painter.getBounds();
     g.setFont(new Font("sans serif", Font.BOLD, 11));
@@ -304,7 +306,6 @@ public class PlaRom extends InstanceFactory {
         bds.getY() + bds.getHeight() / 3 * 2 - 3);
     painter.drawPort(0);
     painter.drawPort(1);
-    g.setColor(Color.GRAY);
     painter.drawPort(2, S.get("ramCSLabel"), Direction.SOUTH);
     painter.drawLabel();
   }

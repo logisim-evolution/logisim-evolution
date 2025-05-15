@@ -60,10 +60,10 @@ public class Ttl7404 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    for (byte i = 1; i < 6; i += 2) {
+    for (var i = 1; i < 6; i += 2) {
       state.setPort(i, state.getPortValue(i - 1).not(), 1);
     }
-    for (byte i = 6; i < 12; i += 2) {
+    for (var i = 6; i < 12; i += 2) {
       state.setPort(i, state.getPortValue(i + 1).not(), 1);
     }
   }

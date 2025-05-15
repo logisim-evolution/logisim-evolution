@@ -296,7 +296,7 @@ public class XilinxDownload implements VendorDownload {
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getLedArrayMaps(mapInfo, rootNetList, boardInfo);
+    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
     for (var key : LedArrayMap.keySet()) {
       contents.add("NET \"" + LedArrayMap.get(key) + "\" LOC=\"" + key + "\";");
     }

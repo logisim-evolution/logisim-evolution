@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created">
+   <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+   <meta content="zh" http-equiv="Content-Language"/>
+   <!-- <title>Simulating test benchs</title> -->
+   <title>
+    模拟测试台
+   </title>
+   <link href="../../style.css" rel="stylesheet" type="text/css"/>
+  </meta>
+ </head>
+ <body>
+  <div class="maindiv">
+   <!-- <h1>Simulating test benchs</h1> -->
+   <h1>
+    模拟测试台
+   </h1>
+   <!-- <p>You can add a test bench to your circuit to test it, but you have to consider the following restrictions due to the simulation architecture. -->
+   <p>
+    您可以在电路中添加测试台来测试它，但由于仿真架构，您必须考虑以下限制。
+   </p>
+   <p align="center">
+    <img src="../../../../img-guide/hdl-ip-tb.png"/>
+   </p>
+   <!-- <h2>Simulation must be driven by Logisim</h2> -->
+   <h2>
+    仿真必须由 Logisim-evolution 驱动
+   </h2>
+   <!-- <p>You cannot add event generating elements to your test bench, for example, you cannot add a clock generator process. Your test bench must take an external clock from Logisim as input. -->
+   <p>
+    您无法将事件生成元素添加到测试平台，例如，您无法添加时钟生成器进程。 您的测试平台必须采用 Logisim 的外部时钟作为输入。
+   </p>
+   <!-- <h2>Don't use time based conditions</h2> -->
+   <h2>
+    不要使用基于时间的条件
+   </h2>
+   <!-- <p>The time representation does not exist in Logisim, no you cannot have event based on time, for example <i>wait for 5 ns</i>. If you want to make asynchronous verification, you must add a <i>sysclk</i> who has at least twice the frequency of the mainclk. This way, you will be able to check the signals not only on the main clock rising edges but at any time you need. -->
+   <p>
+    Logisim-evolution 中不存在时间表示，不可以有基于时间的事件，例如
+    <i>
+     等待 5 ns
+    </i>
+    。 如果要进行异步验证，则必须添加一个频率至少是mainclk两倍的
+    <i>
+     sysclk
+    </i>
+    。 这样，您不仅可以在主时钟上升沿检查信号，而且可以在任何需要的时候检查信号。
+   </p>
+   <!-- <p><b>Next:</b> <a href="../index.html">User's Guide -->
+   <p>
+    <b>
+     下一步：
+    </b>
+    <a href="../index.html">
+     用户指南
+    </a>
+    .
+   </p>
+  </div>
+ </body>
+</html>

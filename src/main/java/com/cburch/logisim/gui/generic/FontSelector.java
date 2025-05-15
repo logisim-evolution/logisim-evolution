@@ -15,6 +15,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.LocaleManager;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Font;
@@ -47,7 +48,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
   private JCheckBox italicAttribute;
   private int fontSize;
   private int fontStyle;
-  
+
   public static final FontSelector FONT_SELECTOR = new FontSelector();
 
   @SuppressWarnings("unchecked")
@@ -71,6 +72,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
     add(new JScrollPane(selectableFontFamilies), BorderLayout.WEST);
     add(new JScrollPane(selectableFontSize), BorderLayout.CENTER);
     add(new JScrollPane(getStyle()), BorderLayout.EAST);
+    LocaleManager.addLocaleListener(this);
     localeChanged();
   }
 
@@ -78,7 +80,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
   public Object getValue() {
     return currentFont;
   }
-  
+
   private JPanel getStyle() {
     final var panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -90,7 +92,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
     panel.add(italicAttribute);
     return panel;
   }
-  
+
   private void fontChanged() {
     preview.setCaretPosition(0);
     preview.setFont(new Font(currentFont.getFamily(), fontStyle, AppPreferences.getScaled(fontSize)));
@@ -110,7 +112,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
         italicAttribute.setSelected((fontStyle & Font.ITALIC) != 0);
         fontChanged();
         return;
-      } 
+      }
     }
     throw new IllegalArgumentException("Object is neither a font nor a supported font type!");
   }

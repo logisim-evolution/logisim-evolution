@@ -23,7 +23,6 @@ public class SelectIcon extends BaseIcon {
       sxp[i] = AppPreferences.getScaled(xp[i]);
       syp[i] = AppPreferences.getScaled(yp[i]);
     }
-    g2.setColor(java.awt.Color.black);
     g2.fillPolygon(sxp, syp, xp.length);
   }
 

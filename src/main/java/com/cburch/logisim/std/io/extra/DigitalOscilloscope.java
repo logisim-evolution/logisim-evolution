@@ -24,6 +24,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BasicStroke;
@@ -148,21 +149,22 @@ public class DigitalOscilloscope extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Bounds bds = painter.getBounds();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var bds = painter.getBounds();
     // if showclock = true all diagram lines are moved down
-    byte showclock = (byte) (painter.getAttributeValue(SHOW_CLOCK) ? 1 : 0);
-    int x = bds.getX();
-    int y = bds.getY();
-    int width = bds.getWidth();
-    int height = bds.getHeight();
-    byte inputs = (byte) (painter.getAttributeValue(ATTR_INPUTS).byteValue() + showclock);
-    byte length = (byte) (painter.getAttributeValue(ATTR_NSTATE).byteValue() * 2);
+    final var showclock = (byte) (painter.getAttributeValue(SHOW_CLOCK) ? 1 : 0);
+    final var x = bds.getX();
+    final var y = bds.getY();
+    final var width = bds.getWidth();
+    final var height = bds.getHeight();
+    final var inputs = (byte) (painter.getAttributeValue(ATTR_INPUTS).byteValue() + showclock);
+    final var length = (byte) (painter.getAttributeValue(ATTR_NSTATE).byteValue() * 2);
     DiagramState diagramstate = getDiagramState(painter);
     Graphics2D g = (Graphics2D) painter.getGraphics();
     // draw border
     painter.drawRoundBounds(painter.getAttributeValue(ATTR_COLOR));
     // draw white space
-    g.setColor(new Color(250, 250, 250));
+    g.setColor(Color.WHITE);
     g.fillRoundRect(
         x + border, y + border, width - 2 * border, height - 2 * border, border / 2, border / 2);
     // draw clock edge lines if not disabled
@@ -203,7 +205,7 @@ public class DigitalOscilloscope extends InstanceFactory {
 
       GraphicsUtil.switchToWidth(g, 2);
       if (diagramstate.getmoveback() && diagramstate.getState(i, length - 1) != null) {
-        g.setColor(Color.BLACK);
+        g.setColor(baseColor);
         g.drawLine(
             x + border + 15 * length,
             y + border + i * 30 + 30 + showclock * 2,
@@ -267,7 +269,7 @@ public class DigitalOscilloscope extends InstanceFactory {
                 g, Integer.toString(cknum), x + border + 15 * j + 7, y + border + 5);
             if (showclock == 1 && i == 0)
               g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
-            else g.setColor(Color.BLACK);
+            else g.setColor(baseColor);
           }
         } else if (diagramstate.getState(i + (showclock == 0 ? 1 : 0), j) == Boolean.FALSE)
           // 0 line
@@ -278,6 +280,7 @@ public class DigitalOscilloscope extends InstanceFactory {
               y + border + 30 * (i + 1) + showclock * 2);
       }
     }
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRoundRect(
         x + border, y + border, width - 2 * border, height - 2 * border, border / 2, border / 2);
 

@@ -14,6 +14,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
@@ -233,11 +234,14 @@ public class VivadoDownload implements VendorDownload {
             final var ioStandard = info.getIoStandard();
             if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
               contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.getConstraintedIoStandard(info.getIoStandard()), netName);
+            final var pullBehavior = info.getPullBehavior();
+            if (pullBehavior == PullBehaviors.PULL_DOWN || pullBehavior == PullBehaviors.PULL_UP)
+              contents.add("    set_property {{1}} TRUE [get_ports {{{2}}}]", PullBehaviors.getConstrainedPullString(pullBehavior), netName);
           }
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getLedArrayMaps(mapInfo, rootNetList, boardInfo);
+    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
     for (final var key : LedArrayMap.keySet()) {
       contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", key, LedArrayMap.get(key));
     }

@@ -149,14 +149,14 @@ public class PainterShaped {
       GraphicsUtil.switchToWidth(g, 2);
       int[] xp = new int[4];
       int[] yp = new int[4];
-      xp[0] = -6;
-      yp[0] = 0;
+      xp[0] = -7;
+      yp[0] = -1;
       xp[1] = -19;
       yp[1] = -6;
       xp[2] = -19;
       yp[2] = 6;
-      xp[3] = -6;
-      yp[3] = 0;
+      xp[3] = -7;
+      yp[3] = 1;
       g.drawPolyline(xp, yp, 4);
       g.drawOval(-6, -3, 6, 6);
     } else {

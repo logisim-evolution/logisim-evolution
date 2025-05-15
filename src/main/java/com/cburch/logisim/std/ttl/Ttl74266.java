@@ -48,10 +48,10 @@ public class Ttl74266 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    for (byte i = 2; i < 6; i += 3) {
+    for (var i = 2; i < 6; i += 3) {
       state.setPort(i, (state.getPortValue(i - 1).xor(state.getPortValue(i - 2)).not() == Value.TRUE) ? Value.UNKNOWN : Value.FALSE, 1);
     }
-    for (byte i = 6; i < 12; i += 3) {
+    for (var i = 6; i < 12; i += 3) {
       state.setPort(i, (state.getPortValue(i + 1).xor(state.getPortValue(i + 2)).not() == Value.TRUE) ? Value.UNKNOWN : Value.FALSE, 1);
     }
   }

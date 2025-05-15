@@ -162,17 +162,17 @@ public class Ttl74164 extends AbstractTtlGate {
     } else if (triggered) {
       data.clear();
 
-      data.push(state.getPortValue(PORT_INDEX_A) == Value.TRUE
+      data.pushDown(state.getPortValue(PORT_INDEX_A) == Value.TRUE
                 && state.getPortValue(PORT_INDEX_B) == Value.TRUE
                 ? Value.TRUE : Value.FALSE);
 
-      data.push(state.getPortValue(PORT_INDEX_QA));
-      data.push(state.getPortValue(PORT_INDEX_QB));
-      data.push(state.getPortValue(PORT_INDEX_QC));
-      data.push(state.getPortValue(PORT_INDEX_QD));
-      data.push(state.getPortValue(PORT_INDEX_QE));
-      data.push(state.getPortValue(PORT_INDEX_QF));
-      data.push(state.getPortValue(PORT_INDEX_QG));
+      data.pushDown(state.getPortValue(PORT_INDEX_QA));
+      data.pushDown(state.getPortValue(PORT_INDEX_QB));
+      data.pushDown(state.getPortValue(PORT_INDEX_QC));
+      data.pushDown(state.getPortValue(PORT_INDEX_QD));
+      data.pushDown(state.getPortValue(PORT_INDEX_QE));
+      data.pushDown(state.getPortValue(PORT_INDEX_QF));
+      data.pushDown(state.getPortValue(PORT_INDEX_QG));
     }
     state.setPort(PORT_INDEX_QA, data.get(0), 4);
     state.setPort(PORT_INDEX_QB, data.get(1), 4);

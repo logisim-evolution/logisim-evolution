@@ -1,0 +1,102 @@
+/* 
+This CSS documenet is suitable for use in java help v2.0
+It is not suitable for the web and hijacks some CSS rules
+*/
+
+/* For spaces, page background */
+div.maindiv {
+	max-width:560px;
+	border:solid 1px;
+}
+
+/* For for the truth tables */
+table.encapsul{
+  text-align:center;
+}
+table.truthtable {
+  border:0;
+  border-collapse : collapse;
+  text-align:center;
+}
+/* cell truth tables */
+td.space {
+	background-color:#ffffff;
+	padding:3;
+}
+td.zerov {
+	color:#008000;
+	padding:3;
+	text-align:center;
+}
+td.unov {
+	color:#00FF00;
+	padding:3;
+	text-align:center;
+}
+td.uvalue {
+	color:#0000FF;
+	padding:3;
+	text-align:center;
+}
+
+td.evalue {
+	color:#FF0000;
+	padding:3;
+	text-align:center;
+}
+
+td.space {
+	padding:3;
+	text-align:center;
+}
+
+/* cell in title truth tables*/
+th.tspace {
+	background-color:#e0e0e0;
+	padding:3;
+}
+
+
+td.tzerov {
+	color:#008000;
+	padding:3;
+	background-color:#e0e0e0;
+}
+td.tunov {
+	color:#00FF00;
+	padding:3;
+	background-color:#e0e0e0;
+}
+td.tuvalue {
+	color:#0000FF;
+	padding:3;
+	background-color:#e0e0e0;
+}
+td.tevalue {
+	color:#FF0000;
+	padding:3;
+	background-color:#e0e0e0;
+}
+
+/* cell  tables */
+td.left {
+	 text-align:left;
+}
+td.center {
+	 text-align:center;
+}
+td.right {
+	 text-align:right;
+}
+
+b.uvalue {
+	 color:#0000FF;
+	 font-weight: normal
+}
+b.evalue {
+	 color:#FF0000;
+	 font-weight: normal
+}
+
+
+

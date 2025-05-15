@@ -16,7 +16,6 @@ import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class VhdlParser {
@@ -29,13 +28,14 @@ public class VhdlParser {
       this.input = input;
     }
 
-    boolean next(Pattern p) {
+    boolean next(Pattern pat) {
       m = null;
-      Matcher match = p.matcher(input);
+      final var match = pat.matcher(input);
       if (!match.lookingAt()) return false;
       m = match;
-      if (match.hitEnd()) input = "";
-      else input = input.substring(m.end());
+      input = match.hitEnd()
+              ? ""
+              : input.substring(m.end());
       return true;
     }
 
@@ -218,9 +218,9 @@ public class VhdlParser {
   }
 
   private String getPortType(String type) throws IllegalVhdlContentException {
-    if (type.equalsIgnoreCase("in")) return Port.INPUT;
-    if (type.equalsIgnoreCase("out")) return Port.OUTPUT;
-    if (type.equalsIgnoreCase("inout")) return Port.INOUT;
+    if ("in".equalsIgnoreCase(type)) return Port.INPUT;
+    if ("out".equalsIgnoreCase(type)) return Port.OUTPUT;
+    if ("input".equalsIgnoreCase(type)) return Port.INOUT;
 
     throw new IllegalVhdlContentException(S.get("invalidTypeException") + ": " + type);
   }
@@ -244,7 +244,7 @@ public class VhdlParser {
   }
 
   private void parseLibraries(Scanner input) {
-    StringBuilder result = new StringBuilder();
+    final var result = new StringBuilder();
     while (input.next(LIBRARY) || input.next(USING)) {
       result.append(input.match().group().trim().replaceAll("\\s+", " "));
       result.append(System.getProperty("line.separator"));
@@ -297,15 +297,15 @@ public class VhdlParser {
     // Example: "name1, name2, name3 : integer"
     if (!input.next(GENERIC))
       throw new IllegalVhdlContentException(S.get("genericDeclarationException"));
-    String names = input.match().group(1).trim();
-    String type = input.match().group(2).trim();
+    final var names = input.match().group(1).trim();
+    var type = input.match().group(2).trim();
     if (!type.equalsIgnoreCase("integer")
         && !type.equalsIgnoreCase("natural")
         && !type.equalsIgnoreCase("positive")) {
       throw new IllegalVhdlContentException(S.get("genericTypeException") + ": " + type);
     }
     type = type.toLowerCase();
-    int dval = 0;
+    var dval = 0;
     if (type.equals("positive")) {
       dval = 1;
     }
@@ -320,7 +320,7 @@ public class VhdlParser {
         throw new IllegalVhdlContentException(S.get("genericValueException") + ": " + dval);
     }
 
-    for (String name : names.split("\\s*,\\s*")) {
+    for (final var name : names.split("\\s*,\\s*")) {
       generics.add(new GenericDescription(name, type, dval));
     }
   }

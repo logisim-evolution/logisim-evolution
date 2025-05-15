@@ -44,6 +44,7 @@ public enum IoComponentTypes {
   Pin,
   SevenSegment,
   SevenSegmentNoDp,
+  SevenSegmentScanning,
   DIPSwitch,
   RgbLed,
   LedArray,
@@ -84,6 +85,7 @@ public enum IoComponentTypes {
     return switch (comp) {
       case PortIo -> 8;
       case LocalBus -> 16;
+      case Pin -> 1;
       default -> 0;
     };
   }
@@ -105,6 +107,7 @@ public enum IoComponentTypes {
       case RgbLed -> 3;
       case LocalBus -> 2;
       case LedArray -> 16;
+      case SevenSegmentScanning -> 9;
       default -> 0;
     };
   }
@@ -131,7 +134,7 @@ public enum IoComponentTypes {
 
   public static Boolean hasRotationAttribute(IoComponentTypes comp) {
     return switch (comp) {
-      case DIPSwitch, SevenSegment, LedArray -> true;
+      case DIPSwitch, SevenSegment, LedArray, SevenSegmentScanning -> true;
       default -> false;
     };
   }
@@ -143,7 +146,7 @@ public enum IoComponentTypes {
         case ROTATION_CCW_90 -> S.get("DipSwitchCCW90");
         default -> S.get("DipSwitchZero");
       };
-      case SevenSegment -> switch (rotation) {
+      case SevenSegment, SevenSegmentScanning -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
         default -> S.get("SevenSegmentZero");
@@ -277,6 +280,54 @@ public enum IoComponentTypes {
               }
             }
             partialMap[w][h] = indexes[yIndex][xIndex];
+          }
+        break;
+      case SevenSegmentScanning:
+        final var segments = getSevenSegmentDisplayArray(true);
+        var segmentWidth = 0f;
+        switch (mapRotation) {
+          case ROTATION_CCW_90, ROTATION_CW_90 -> {
+            partX = (float) width / (float) 7;
+            partY = (float) height / (float) (5 * nrOfRows);
+            segmentWidth = (float) height / (float) nrOfRows;
+          }
+          default -> {
+            partX = (float) width / (float) (5 * nrOfRows);
+            partY = (float) height / (float) 7; 
+            segmentWidth = (float) width / (float) nrOfRows;
+          }
+        }
+        xIndex = 0;
+        yIndex = 0;
+        var selectedSegment = 0;
+        var selectedSegmentIndex = 0f;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) {
+            switch (mapRotation) {
+              case ROTATION_CCW_90 -> {
+                selectedSegment = nrOfRows - 1 - (int) ((float) h / segmentWidth);
+                selectedSegmentIndex = (float) h % segmentWidth;
+                xIndex = (int) ((segmentWidth - selectedSegmentIndex) / partY);
+                if (xIndex < 0) xIndex = 0;
+                yIndex = (int) ((float) w / partX);
+              }
+              case ROTATION_CW_90 -> {
+                selectedSegment = (int) ((float) h / segmentWidth);
+                selectedSegmentIndex = (float) h % segmentWidth;
+                xIndex = (int) (selectedSegmentIndex / partY);
+                yIndex = (int) ((float) w / partX);
+              }
+              default -> {
+                selectedSegment = (int) ((float) w / segmentWidth);
+                selectedSegmentIndex = (float) w % segmentWidth;
+                xIndex = (int) (selectedSegmentIndex / partX);
+                yIndex = (int) ((float) h / partY);
+              }
+            }
+            if (xIndex > 4) xIndex = 4;
+            if (yIndex > 7) yIndex = 7;
+            final var pinNr = segments[yIndex][xIndex] < 0 ? -1 : segments[yIndex][xIndex] + (8 * selectedSegment);
+            partialMap[w][h] = pinNr;
           }
         break;
       case LedArray:
@@ -423,6 +474,53 @@ public enum IoComponentTypes {
           }
         }
         break;
+      case SevenSegmentScanning:
+        final var segments = getSevenSegmentDisplayArray(true);
+        final var searchNr = pinNr % 8;
+        final var segment = pinNr / 8;
+        switch (mapRotation) {
+          case ROTATION_CCW_90, ROTATION_CW_90 -> {
+            partX = (float) width / (float) 7;
+            partY = (float) height / (float) (5 * nrOfRows);
+          }
+          default -> {
+            partX = (float) width / (float) (5 * nrOfRows);
+            partY = (float) height / (float) 7; 
+          }
+        }
+        for (var xIndex = 0; xIndex < 5; xIndex++) {
+          for (var yIndex = 0; yIndex < 7; yIndex++) {
+            if (segments[yIndex][xIndex] == searchNr) {
+              switch (mapRotation) {
+                case ROTATION_CCW_90 -> {
+                  realXIndex = yIndex;
+                  realXIndexPlusOne = yIndex + 1;
+                  realYIndex = 4 - xIndex + (nrOfRows - 1 - segment) * 5;
+                  realYIndexPlusOne = 5 - xIndex + (nrOfRows - 1 - segment) * 5;
+                }
+                case ROTATION_CW_90 -> {
+                  realXIndex = 6 - yIndex;
+                  realXIndexPlusOne = 7 - yIndex;
+                  realYIndex = xIndex + segment * 5;
+                  realYIndexPlusOne = xIndex + 1 + segment * 5;
+                }
+                default -> {
+                  realXIndex = xIndex + segment * 5;
+                  realXIndexPlusOne = xIndex + 1 + segment * 5;
+                  realYIndex = yIndex;
+                  realYIndexPlusOne = yIndex + 1;
+                }
+              }
+              boxXpos = x + (int) ((float) realXIndex * partX);
+              boxYpos = y + (int) ((float) realYIndex * partY);
+              /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
+              boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
+              boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
+              g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
+            }
+          }
+        }
+        break;
       case LedArray:
         final var selectedColumn = pinNr % nrOfColumns;
         final var selectedRow = pinNr / nrOfColumns;
@@ -494,7 +592,8 @@ public enum IoComponentTypes {
           IoComponentTypes.RgbLed,
           IoComponentTypes.SevenSegment,
           IoComponentTypes.LedArray,
-          IoComponentTypes.SevenSegmentNoDp);
+          IoComponentTypes.SevenSegmentNoDp,
+          IoComponentTypes.SevenSegmentScanning);
 
   public static final Set<IoComponentTypes> IN_OUT_COMPONENT_SET =
       EnumSet.of(IoComponentTypes.Pin, IoComponentTypes.PortIo);

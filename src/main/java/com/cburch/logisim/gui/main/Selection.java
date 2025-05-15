@@ -9,20 +9,20 @@
 
 package com.cburch.logisim.gui.main;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.CustomHandles;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -59,20 +59,19 @@ public class Selection extends SelectionBase {
   public void draw(ComponentDrawContext context, Set<Component> hidden) {
     Graphics g = context.getGraphics();
 
-    for (Component c : lifted) {
+    for (final var c : lifted) {
       if (!hidden.contains(c)) {
-        var loc = c.getLocation();
-
-        var gfxNew = g.create();
+        final var loc = c.getLocation();
+        final var gfxNew = g.create();
         context.setGraphics(gfxNew);
-        c.getFactory().drawGhost(context, Color.GRAY, loc.getX(), loc.getY(), c.getAttributeSet());
+        c.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), loc.getX(), loc.getY(), c.getAttributeSet());
         gfxNew.dispose();
       }
     }
 
     for (Component comp : unionSet) {
       if (!suppressHandles.contains(comp) && !hidden.contains(comp)) {
-        var gfxNew = g.create();
+        final var gfxNew = g.create();
         context.setGraphics(gfxNew);
         CustomHandles handler = (CustomHandles) comp.getFeature(CustomHandles.class);
         if (handler == null) {
@@ -92,14 +91,14 @@ public class Selection extends SelectionBase {
       dx = Canvas.snapXToGrid(dx);
       dy = Canvas.snapYToGrid(dy);
     }
-    Graphics g = context.getGraphics();
-    for (Component comp : unionSet) {
-      AttributeSet attrs = comp.getAttributeSet();
-      Location loc = comp.getLocation();
-      int x = loc.getX() + dx;
-      int y = loc.getY() + dy;
+    final var g = context.getGraphics();
+    for (final var comp : unionSet) {
+      final var attrs = comp.getAttributeSet();
+      final var loc = comp.getLocation();
+      final var x = loc.getX() + dx;
+      final var y = loc.getY() + dy;
       context.setGraphics(g.create());
-      comp.getFactory().drawGhost(context, Color.gray, x, y, attrs);
+      comp.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), x, y, attrs);
       context.getGraphics().dispose();
     }
     context.setGraphics(g);
@@ -125,32 +124,32 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsContaining(Location query) {
-    HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    final var ret = new HashSet<Component>();
+    for (final var comp : unionSet) {
       if (comp.contains(query)) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getComponentsContaining(Location query, Graphics g) {
-    HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    final var ret = new HashSet<Component>();
+    for (final var comp : unionSet) {
       if (comp.contains(query, g)) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getComponentsWithin(Bounds bds) {
-    HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    final var ret = new HashSet<Component>();
+    for (final var comp : unionSet) {
       if (bds.contains(comp.getBounds())) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getComponentsWithin(Bounds bds, Graphics g) {
-    HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    final var ret = new HashSet<Component>();
+    for (final var comp : unionSet) {
       if (bds.contains(comp.getBounds(g))) ret.add(comp);
     }
     return ret;
@@ -199,19 +198,18 @@ public class Selection extends SelectionBase {
     @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getAction() == CircuitEvent.TRANSACTION_DONE) {
-        Circuit circuit = event.getCircuit();
-        ReplacementMap repl = event.getResult().getReplacementMap(circuit);
-        boolean change = false;
+        final var circuit = event.getCircuit();
+        final var repl = event.getResult().getReplacementMap(circuit);
+        var change = false;
 
-        ArrayList<Component> oldAnchored;
-        oldAnchored = new ArrayList<>(getComponents());
-        for (Component comp : oldAnchored) {
-          Collection<Component> replacedBy = repl.getReplacementsFor(comp);
+        final var oldAnchored = new ArrayList<Component>(getComponents());
+        for (final var comp : oldAnchored) {
+          final var replacedBy = repl.getReplacementsFor(comp);
           if (replacedBy != null) {
             change = true;
             selected.remove(comp);
             lifted.remove(comp);
-            for (Component add : replacedBy) {
+            for (final var add : replacedBy) {
               if (circuit.contains(add)) {
                 selected.add(add);
               } else {
@@ -229,22 +227,22 @@ public class Selection extends SelectionBase {
 
     @Override
     public void projectChanged(ProjectEvent event) {
-      int type = event.getAction();
+      final var type = event.getAction();
       if (type == ProjectEvent.ACTION_START) {
-        SelectionSave save = SelectionSave.create(Selection.this);
+        final var save = SelectionSave.create(Selection.this);
         savedSelections.put((Action) event.getData(), save);
       } else if (type == ProjectEvent.ACTION_COMPLETE) {
-        SelectionSave save = savedSelections.get(event.getData());
+        final var save = savedSelections.get(event.getData());
         if (save != null && save.isSame(Selection.this)) {
           savedSelections.remove(event.getData());
         }
       } else if (type == ProjectEvent.ACTION_MERGE) {
-        SelectionSave save = savedSelections.get(event.getOldData());
+        final var save = savedSelections.get(event.getOldData());
         savedSelections.put((Action) event.getData(), save);
       } else if (type == ProjectEvent.UNDO_COMPLETE) {
-        Circuit circ = event.getProject().getCurrentCircuit();
-        Action act = (Action) event.getData();
-        SelectionSave save = savedSelections.get(act);
+        final var circ = event.getProject().getCurrentCircuit();
+        final var act = (Action) event.getData();
+        final var save = savedSelections.get(act);
         if (save != null) {
           lifted.clear();
           selected.clear();
@@ -254,7 +252,7 @@ public class Selection extends SelectionBase {
             else cs = save.getAnchoredComponents();
 
             if (cs != null) {
-              for (Component c : cs) {
+              for (final var c : cs) {
                 if (circ.contains(c)) {
                   selected.add(c);
                 } else {

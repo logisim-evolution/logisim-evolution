@@ -22,7 +22,7 @@ public class AttrTableCircuitModel extends AttributeSetTableModel {
   private final Project proj;
   private final Circuit circ;
 
-  public AttrTableCircuitModel(Project proj, Circuit circ) {
+  public AttrTableCircuitModel(final Project proj, final Circuit circ) {
     super(circ.getStaticAttributes());
     this.proj = proj;
     this.circ = circ;
@@ -34,12 +34,12 @@ public class AttrTableCircuitModel extends AttributeSetTableModel {
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+  public void setValueRequested(final Attribute<Object> attr, Object value) throws AttrTableSetException {
     if (!proj.getLogisimFile().contains(circ)) {
-      String msg = S.get("cannotModifyCircuitError");
+      final var msg = S.get("cannotModifyCircuitError");
       throw new AttrTableSetException(msg);
     } else {
-      CircuitMutation xn = new CircuitMutation(circ);
+      final var xn = new CircuitMutation(circ);
       xn.setForCircuit(attr, value);
       proj.doAction(xn.toAction(S.getter("changeCircuitAttrAction")));
     }

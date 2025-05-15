@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.proj.Project;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -229,6 +230,15 @@ public class InstancePainter implements InstanceState {
     }
     circState.setData(comp, value);
   }
+
+  public CircuitState createCircuitSubstateFor(Circuit circ) {
+    CircuitState circState = context.getCircuitState();
+    if (circState == null || comp == null) {
+      throw new UnsupportedOperationException("createCircuitSubstateFor on InstancePainter");
+    }
+    return circState.createCircuitSubstateFor(comp, circ);
+  }
+
 
   void setFactory(InstanceFactory factory, AttributeSet attrs) {
     this.comp = null;

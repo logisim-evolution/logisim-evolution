@@ -24,8 +24,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.math.BigInteger;
@@ -168,9 +170,9 @@ public class Multiplier extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(OUT);
@@ -181,7 +183,7 @@ public class Multiplier extends InstanceFactory {
     int x = loc.getX();
     int y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(x - 15, y - 5, x - 5, y + 5);
     g.drawLine(x - 15, y + 5, x - 5, y - 5);
     GraphicsUtil.switchToWidth(g, 1);

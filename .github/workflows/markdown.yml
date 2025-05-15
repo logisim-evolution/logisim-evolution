@@ -4,9 +4,9 @@ name: "MD Lint"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   markdown_lint:
@@ -16,11 +16,11 @@ jobs:
     steps:
     # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changed doc related files..."
-      uses: dorny/paths-filter@v2
+      uses: dorny/paths-filter@v3
       id: filter
       with:
         filters: |
@@ -36,4 +36,3 @@ jobs:
         # LICENSE is externally sourced and we're not going to fix it.
         exclude: "LICENSE.md"
         config_file: .markdownlint.yaml
-

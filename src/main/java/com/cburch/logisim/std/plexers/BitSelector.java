@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -106,9 +107,9 @@ public class BitSelector extends InstanceFactory {
     final var g = painter.getGraphics();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     PlexersLibrary.drawTrapezoid(g, painter.getBounds(), facing, 9);
     final var bds = painter.getBounds();
-    g.setColor(Color.BLACK);
     GraphicsUtil.drawCenteredText(
         g, "Sel", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
     painter.drawPorts();

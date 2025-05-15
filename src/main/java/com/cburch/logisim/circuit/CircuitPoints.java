@@ -157,10 +157,7 @@ class CircuitPoints {
     return getComponents(loc);
   }
 
-  //
-  // access methods
-  //
-  Set<Location> getSplitLocations() {
+  Set<Location> getAllLocations() {
     return map.keySet();
   }
 

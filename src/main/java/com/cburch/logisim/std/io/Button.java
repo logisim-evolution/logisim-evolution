@@ -31,6 +31,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -191,6 +192,7 @@ public class Button extends InstanceFactory {
     var y = bds.getY();
     final var w = bds.getWidth();
     final var h = bds.getHeight();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
 
     Value val;
     if (painter.getShowState()) {
@@ -234,7 +236,7 @@ public class Button extends InstanceFactory {
 
       g.setColor(color);
       g.fillRect(x, y, w - DEPTH, h - DEPTH);
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
       g.drawRect(x, y, w - DEPTH, h - DEPTH);
     } else {
       depress = 0;
@@ -244,7 +246,7 @@ public class Button extends InstanceFactory {
       g.fillPolygon(xp, yp, xp.length);
       g.setColor(color);
       g.fillRect(x, y, w - DEPTH, h - DEPTH);
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
       g.drawRect(x, y, w - DEPTH, h - DEPTH);
       g.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
       g.drawPolygon(xp, yp, xp.length);

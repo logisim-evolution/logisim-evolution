@@ -11,20 +11,26 @@ package com.cburch.logisim.util;
 
 import static com.cburch.logisim.util.Strings.S;
 
+import com.cburch.logisim.gui.menu.Menu;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 
-public class WindowMenu extends JMenu {
-  private class MyListener implements LocaleListener, ActionListener {
+import com.cburch.logisim.data.Direction;
+
+public class WindowMenu extends Menu {
+  private class MyListener implements LocaleListener, ActionListener, PropertyChangeListener {
     @Override
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
@@ -34,6 +40,8 @@ public class WindowMenu extends JMenu {
         doZoom();
       } else if (src == close) {
         doClose();
+      } else if (src == toolbar) {
+        doToolbar();
       } else if (src instanceof WindowMenuItem choice) {
         if (choice.isSelected()) {
           final var item = findOwnerItem();
@@ -47,10 +55,14 @@ public class WindowMenu extends JMenu {
 
     private WindowMenuItem findOwnerItem() {
       for (WindowMenuItem i : persistentItems) {
-        if (i.getJFrame() == owner) return i;
+        if (i.getJFrame() == owner) {
+          return i;
+        }
       }
       for (WindowMenuItem i : transientItems) {
-        if (i.getJFrame() == owner) return i;
+        if (i.getJFrame() == owner) {
+          return i;
+        }
       }
       return null;
     }
@@ -64,6 +76,14 @@ public class WindowMenu extends JMenu {
           MacCompatibility.isQuitAutomaticallyPresent()
               ? S.get("windowZoomItemMac")
               : S.get("windowZoomItem"));
+      toolbar.setText(S.get("windowShowToolbarItem"));
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+      if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
+        toolbar.setState(isToolbarVisible());
+      }
     }
   }
 
@@ -73,6 +93,7 @@ public class WindowMenu extends JMenu {
   private final MyListener myListener = new MyListener();
   private final JMenuItem minimize = new JMenuItem();
   private final JMenuItem zoom = new JMenuItem();
+  private final JCheckBoxMenuItem toolbar = new JCheckBoxMenuItem();
   private final JMenuItem close = new JMenuItem();
   private final JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
   private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
@@ -88,8 +109,13 @@ public class WindowMenu extends JMenu {
     WindowMenuManager.addMenu(this);
 
     final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
-    minimize.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
-    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask));
+    minimize.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
+    close.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
 
     if (owner == null) {
       minimize.setEnabled(false);
@@ -101,6 +127,11 @@ public class WindowMenu extends JMenu {
       close.addActionListener(myListener);
     }
 
+    toolbar.setEnabled(true);
+    toolbar.setState(isToolbarVisible());
+    toolbar.addActionListener(myListener);
+    AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myListener);
+
     computeEnabled();
     computeContents();
 
@@ -108,9 +139,20 @@ public class WindowMenu extends JMenu {
     myListener.localeChanged();
   }
 
+  @Override
+  public void hotkeyUpdate() {
+    minimize.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
+    close.setAccelerator(((PrefMonitorKeyStroke)
+        AppPreferences.HOTKEY_WINDOW_CLOSE).getWithMask(0));
+  }
+
   void addMenuItem(Object source, WindowMenuItem item, boolean isPersistent) {
-    if (isPersistent) persistentItems.add(item);
-    else transientItems.add(item);
+    if (isPersistent) {
+      persistentItems.add(item);
+    } else {
+      transientItems.add(item);
+    }
     item.addActionListener(myListener);
     computeContents();
   }
@@ -123,6 +165,8 @@ public class WindowMenu extends JMenu {
     add(minimize);
     add(zoom);
     add(close);
+    addSeparator();
+    add(toolbar);
 
     if (!persistentItems.isEmpty()) {
       addSeparator();
@@ -149,7 +193,8 @@ public class WindowMenu extends JMenu {
     }
   }
 
-  void computeEnabled() {
+  @Override
+  protected void computeEnabled() {
     WindowMenuItemManager currentManager = WindowMenuManager.getCurrentManager();
     minimize.setEnabled(currentManager != null);
     zoom.setEnabled(currentManager != null);
@@ -161,11 +206,11 @@ public class WindowMenu extends JMenu {
       windowClosable.requestClose();
     } else if (owner != null) {
       int action = owner.getDefaultCloseOperation();
-      if (action == JFrame.EXIT_ON_CLOSE) {
+      if (action == WindowConstants.EXIT_ON_CLOSE) {
         System.exit(0);
-      } else if (action == JFrame.HIDE_ON_CLOSE) {
+      } else if (action == WindowConstants.HIDE_ON_CLOSE) {
         owner.setVisible(false);
-      } else if (action == JFrame.DISPOSE_ON_CLOSE) {
+      } else if (action == WindowConstants.DISPOSE_ON_CLOSE) {
         owner.dispose();
       }
     }
@@ -178,7 +223,9 @@ public class WindowMenu extends JMenu {
   }
 
   void doZoom() {
-    if (owner == null) return;
+    if (owner == null) {
+      return;
+    }
 
     owner.pack();
     final var screenSize = owner.getToolkit().getScreenSize();
@@ -204,8 +251,12 @@ public class WindowMenu extends JMenu {
       }
     }
 
-    if (locChanged) owner.setLocation(windowLoc);
-    if (sizeChanged) owner.setSize(windowSize);
+    if (locChanged) {
+      owner.setLocation(windowLoc);
+    }
+    if (sizeChanged) {
+      owner.setSize(windowSize);
+    }
   }
 
   void removeMenuItem(Object source, JRadioButtonMenuItem item) {
@@ -217,5 +268,21 @@ public class WindowMenu extends JMenu {
 
   void setNullItemSelected(boolean value) {
     nullItem.setSelected(value);
+  }
+
+  static boolean isToolbarVisible() {
+    String loc = AppPreferences.TOOLBAR_PLACEMENT.get();
+    return loc == null || !loc.equals(AppPreferences.TOOLBAR_HIDDEN);
+  }
+
+  static void setToolbarVisibility(boolean show) {
+    if (show)
+      AppPreferences.TOOLBAR_PLACEMENT.set(Direction.NORTH.toString());
+    else
+      AppPreferences.TOOLBAR_PLACEMENT.set(AppPreferences.TOOLBAR_HIDDEN);
+  }
+
+  void doToolbar() {
+    setToolbarVisibility(toolbar.getState());
   }
 }

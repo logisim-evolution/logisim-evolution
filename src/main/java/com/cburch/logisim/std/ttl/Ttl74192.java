@@ -14,8 +14,8 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -44,7 +44,7 @@ public class Ttl74192 extends AbstractTtlGate {
   public static final int PORT_INDEX_CLEAR = 12;
   public static final int PORT_INDEX_A = 13;
   private static final String[] PORT_NAMES = {
-      "Data Input A",
+      "Data Input B",
       "Data Output B",
       "Data Output A",
       "Count Down",

@@ -191,7 +191,8 @@ public class MapComponent {
   public boolean isInternalMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     return isBoardMapped(pin)
-        && maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray);
+        && (maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray)
+            || maps.get(pin).getIoComp().getType().equals(IoComponentTypes.SevenSegmentScanning));
   }
 
   public boolean isBoardMapped(int pin) {

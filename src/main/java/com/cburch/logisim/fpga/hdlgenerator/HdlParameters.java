@@ -173,7 +173,7 @@ public class HdlParameters {
               totalValue += bitWidth.getWidth();
             } else throw new UnsupportedOperationException(notAnIntExMsg);
           }
-          selectedValue = (long) Math.pow(totalValue, 2D);
+          selectedValue = (long) Math.pow(2D, totalValue);
           break;
 
         case MAP_LN2:
@@ -206,7 +206,7 @@ public class HdlParameters {
           var mask = 1L;
           for (var i = 0; i < nrOfInputs; i++) {
             // VHDL is particular with the general type std_logic_vector, as it does an upto, so we have to exchange the bits
-            final var realIndex = Hdl.isVhdl() ? nrOfInputs - i - 1 : i;   
+            final var realIndex = Hdl.isVhdl() ? nrOfInputs - i - 1 : i;
             final var inputIsInverted = attrs.getValue(new NegateAttribute(realIndex, null));
             if (Boolean.TRUE.equals(inputIsInverted)) bubbleMask |= mask;
             mask <<= 1L;

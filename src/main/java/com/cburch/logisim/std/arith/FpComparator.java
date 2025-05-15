@@ -23,8 +23,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpComparator extends InstanceFactory {
@@ -83,9 +85,8 @@ public class FpComparator extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(GT, ">", Direction.WEST);
@@ -97,7 +98,6 @@ public class FpComparator extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -113,8 +113,18 @@ public class FpComparator extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
-    final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
+    final var a_val = switch (dataWidth.getWidth()) {
+      case 16 -> a.toFloatValueFromFP16();
+      case 32 -> a.toFloatValue();
+      case 64 -> a.toDoubleValue();
+      default -> Double.NaN;
+    };
+    final var b_val = switch (dataWidth.getWidth()) {
+      case 16 -> b.toFloatValueFromFP16();
+      case 32 -> b.toFloatValue();
+      case 64 -> b.toDoubleValue();
+      default -> Double.NaN;
+    };
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

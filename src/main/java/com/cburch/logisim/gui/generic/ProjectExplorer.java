@@ -13,7 +13,6 @@ import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.gui.icons.TreeIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -26,10 +25,10 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -393,6 +392,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
 
       // draw tool icon
+      g.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
       final var gfxIcon = g.create();
       final var context = new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(

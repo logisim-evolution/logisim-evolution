@@ -113,44 +113,44 @@ public class FpgaOptions extends OptionsPanel {
             });
 
     GridBagLayout layout = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
+    GridBagConstraints gbc = new GridBagConstraints();
     setLayout(layout);
 
-    c.insets = new Insets(2, 4, 4, 2);
-    c.anchor = GridBagConstraints.BASELINE_LEADING;
+    gbc.insets = new Insets(2, 4, 4, 2);
+    gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.NONE;
-    add(WorkspaceLabel, c);
-    c.gridx = 2;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    add(WorkSpaceButton, c);
-    c.gridx = 1;
-    c.gridy = 0;
-    c.weightx = 1.0;
-    add(WorkSpacePath, c);
-    c.gridx = 0;
-    c.gridy = 1;
-    c.gridwidth = 2;
-    add(HDL_Used.getJLabel(), c);
-    c.gridx = 2;
-    c.gridy = 1;
-    c.gridwidth = 1;
-    add(HDL_Used.getJComboBox(), c);
-    c.gridx = 0;
-    c.gridy = 3;
-    c.gridwidth = 3;
-    add(getVhdlOptions(), c);
-    c.gridy++;
-    add(AppPreferences.Boards.addRemovePanel(), c);
-    c.gridy++;
-    add(getReporterOptions(), c);
-    c.gridy++;
-    add(getEditCols(), c);
-    c.gridy++;
-    add(getMapCols(), c);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.NONE;
+    add(WorkspaceLabel, gbc);
+    gbc.gridx = 2;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    add(WorkSpaceButton, gbc);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.weightx = 1.0;
+    add(WorkSpacePath, gbc);
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.gridwidth = 2;
+    add(HDL_Used.getJLabel(), gbc);
+    gbc.gridx = 2;
+    gbc.gridy = 1;
+    gbc.gridwidth = 1;
+    add(HDL_Used.getJComboBox(), gbc);
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    gbc.gridwidth = 3;
+    add(getVhdlOptions(), gbc);
+    gbc.gridy++;
+    add(AppPreferences.Boards.addRemovePanel(), gbc);
+    gbc.gridy++;
+    add(getReporterOptions(), gbc);
+    gbc.gridy++;
+    add(getEditCols(), gbc);
+    gbc.gridy++;
+    add(getMapCols(), gbc);
     localeChanged();
   }
 
@@ -173,75 +173,75 @@ public class FpgaOptions extends OptionsPanel {
   private JPanel getReporterOptions() {
     ReportPan = new JPanel();
     ReportPan.setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
     SupressGated = ((PrefMonitorBoolean) AppPreferences.SupressGatedClockWarnings).getCheckBox();
-    ReportPan.add(SupressGated, c);
-    c.gridy++;
+    ReportPan.add(SupressGated, gbc);
+    gbc.gridy++;
     SupressOpen = ((PrefMonitorBoolean) AppPreferences.SupressOpenPinWarnings).getCheckBox();
-    ReportPan.add(SupressOpen, c);
+    ReportPan.add(SupressOpen, gbc);
     return ReportPan;
   }
 
   private JPanel getEditCols() {
     editPan = new JPanel();
     editPan.setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    editPan.add(EditSelectLabel, c);
-    c.gridx++;
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    editPan.add(EditSelectLabel, gbc);
+    gbc.gridx++;
     EditSelectColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_COLOR);
-    editPan.add(EditSelectColor, c);
-    c.gridx++;
-    editPan.add(EditHighligtLabel, c);
+    editPan.add(EditSelectColor, gbc);
+    gbc.gridx++;
+    editPan.add(EditHighligtLabel, gbc);
     EditHighligtColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR);
-    c.gridx++;
-    editPan.add(EditHighligtColor, c);
-    c.gridy++;
-    c.gridx = 0;
-    editPan.add(EditMoveLabel, c);
+    gbc.gridx++;
+    editPan.add(EditHighligtColor, gbc);
+    gbc.gridy++;
+    gbc.gridx = 0;
+    editPan.add(EditMoveLabel, gbc);
     EditMoveColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_MOVE_COLOR);
-    c.gridx++;
-    editPan.add(EditMoveColor, c);
-    c.gridx++;
-    editPan.add(EditResizeLabel, c);
+    gbc.gridx++;
+    editPan.add(EditMoveColor, gbc);
+    gbc.gridx++;
+    editPan.add(EditResizeLabel, gbc);
     EditResizeColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_RESIZE_COLOR);
-    c.gridx++;
-    editPan.add(EditResizeColor, c);
+    gbc.gridx++;
+    editPan.add(EditResizeColor, gbc);
     return editPan;
   }
 
   private JPanel getMapCols() {
     mapPan = new JPanel();
     mapPan.setLayout(new GridBagLayout());
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
     mapPan.add(MappedLabel);
-    c.gridx++;
+    gbc.gridx++;
     MappedColor = new ColorChooserButton(frame, AppPreferences.FPGA_MAPPED_COLOR);
     mapPan.add(MappedColor);
-    c.gridx++;
+    gbc.gridx++;
     mapPan.add(SelMapLabel);
-    c.gridx++;
+    gbc.gridx++;
     SelMapColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECTED_MAPPED_COLOR);
     mapPan.add(SelMapColor);
-    c.gridx = 0;
-    c.gridy++;
-    mapPan.add(SelectMapLabel, c);
-    c.gridx++;
+    gbc.gridx = 0;
+    gbc.gridy++;
+    mapPan.add(SelectMapLabel, gbc);
+    gbc.gridx++;
     SelectMapColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR);
-    mapPan.add(SelectMapColor, c);
-    c.gridx++;
-    mapPan.add(SelectLabel, c);
-    c.gridx++;
+    mapPan.add(SelectMapColor, gbc);
+    gbc.gridx++;
+    mapPan.add(SelectLabel, gbc);
+    gbc.gridx++;
     SelectColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECT_COLOR);
-    mapPan.add(SelectColor, c);
+    mapPan.add(SelectColor, gbc);
     return mapPan;
   }
 
@@ -274,6 +274,8 @@ public class FpgaOptions extends OptionsPanel {
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
     ReportPan.setBorder(BorderFactory.createTitledBorder(S.get("ReporterOptions")));
     vhdlPan.setBorder(BorderFactory.createTitledBorder(S.get("VhdlOptions")));
+    HDL_Used.getJLabel().setText(S.get("HDLLanguageUsed"));
+    AppPreferences.Boards.localeChanged();
   }
 
   private void selectWorkSpace(Component parentComponent) {

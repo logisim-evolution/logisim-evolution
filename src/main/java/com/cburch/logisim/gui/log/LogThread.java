@@ -56,8 +56,8 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
     }
     if (headerDirty) {
       if (model.getFileHeader()) {
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < model.getSignalCount(); i++) {
+        final var buf = new StringBuilder();
+        for (var i = 0; i < model.getSignalCount(); i++) {
           if (i > 0) buf.append("\t");
           buf.append(model.getItem(i).getDisplayName());
         }
@@ -66,7 +66,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
       headerDirty = false;
     }
     Signal.Iterator[] cur = new Signal.Iterator[model.getSignalCount()];
-    for (int i = 0; i < model.getSignalCount(); i++) {
+    for (var i = 0; i < model.getSignalCount(); i++) {
       final var s = model.getSignal(i);
       cur[i] = cursors.get(s);
       if (cur[i] == null) {
@@ -74,7 +74,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
         cursors.put(s, cur[i]);
       }
     }
-    long timeStop = model.getEndTime();
+    final var timeStop = model.getEndTime();
     while (timeNextWrite < timeStop) {
       var duration = timeStop - timeNextWrite;
       final var buf = new StringBuilder();

@@ -13,9 +13,9 @@ name: "Translations"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   translations_lint:
@@ -25,11 +25,11 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # https://github.com/marketplace/actions/paths-changes-filter
       - name: "Looking for modified files..."
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -42,9 +42,9 @@ jobs:
           # Have no mercy.
           set -euo pipefail
 
-          sudo pip install trans-tool
+          sudo pip install pysimple-log==0.0.5 trans-tool==2.5.2
           trans-tool --version
-          
+
           # Declare constants
           declare -r resources_path="src/main/resources/resources/logisim/"
           declare -r base_language="en"

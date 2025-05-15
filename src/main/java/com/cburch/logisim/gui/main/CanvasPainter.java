@@ -70,10 +70,10 @@ class CanvasPainter implements PropertyChangeListener {
         if (drawn) continue;
 
         // compute the caption combining all similar points
-        var caption = "" + w.getWidth();
+        final var caption = new StringBuilder("" + w.getWidth());
         for (var j = i + 1; j < ex.size(); j++) {
           if (ex.getPoint(j).equals(p)) {
-            caption += "/" + ex.getBitWidth(j);
+            caption.append("/" + ex.getBitWidth(j));
             break;
           }
         }
@@ -87,7 +87,7 @@ class CanvasPainter implements PropertyChangeListener {
         GraphicsUtil.switchToWidth(g, 3);
         GraphicsUtil.outlineText(
             g,
-            caption,
+            caption.toString(),
             p.getX() + 4,
             p.getY() + 1 + fm.getAscent(),
             Value.widthErrorCaptionColor,
@@ -103,14 +103,11 @@ class CanvasPainter implements PropertyChangeListener {
   private void drawWithUserState(Graphics base, Graphics g, Project proj) {
     final var circ = proj.getCurrentCircuit();
     final var sel = proj.getSelection();
-    var dragTool = canvas.getDragTool();
-    Set<Component> hidden;
-    if (dragTool == null) {
-      hidden = NO_COMPONENTS;
-    } else {
-      hidden = dragTool.getHiddenComponents(canvas);
-      if (hidden == null) hidden = NO_COMPONENTS;
-    }
+    final var dragTool = canvas.getDragTool();
+    var hidden = (dragTool == null)
+            ? NO_COMPONENTS
+            : dragTool.getHiddenComponents(canvas);
+    if (hidden == null) hidden = NO_COMPONENTS;
 
     // draw halo around component whose attributes we are viewing
     final var showHalo = AppPreferences.ATTRIBUTE_HALO.getBoolean();
@@ -181,26 +178,22 @@ class CanvasPainter implements PropertyChangeListener {
   // painting methods
   //
   void paintContents(Graphics g, Project proj) {
-    var clip = g.getClipBounds();
-    var size = canvas.getSize();
+    final var size = canvas.getSize();
     final double zoomFactor = canvas.getZoomFactor();
-    if (canvas.ifPaintDirtyReset() || clip == null) {
-      clip = new Rectangle(0, 0, size.width, size.height);
-    }
 
     grid.paintGrid(g);
     g.setColor(Color.black);
 
-    var gfxScaled = g.create();
+    final var gfxScaled = g.create();
     if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
       g2d.scale(zoomFactor, zoomFactor);
     }
     drawWithUserState(g, gfxScaled, proj);
     drawWidthIncompatibilityData(g, gfxScaled, proj);
-    var circ = proj.getCurrentCircuit();
+    final var circ = proj.getCurrentCircuit();
 
-    var circState = proj.getCircuitState();
-    var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);
+    final var circState = proj.getCircuitState();
+    final var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);
     ptContext.setHighlightedWires(highlightedWires);
     gfxScaled.setColor(Color.RED);
     circState.drawOscillatingPoints(ptContext);

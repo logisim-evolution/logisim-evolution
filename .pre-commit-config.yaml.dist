@@ -45,6 +45,7 @@ repos:
     hooks:
       # Forbid files containing CRLF end-lines to be committed
       - id: forbid-crlf
+        exclude: gradlew.bat
 
   - repo: https://github.com/MarcinOrlowski/pre-commit-hooks
     rev: 1.3.0
@@ -53,9 +54,9 @@ repos:
       - id: checkstyle-jar
       # This hook trims trailing whitespace.
       - id: trailing-whitespaces
-        exclude_types: ['xml']
+        exclude_types: ['xml','png','jpeg','svg','jar']
         args: ['--markdown-linebreak-ext=md', '--fix=yes']
       # Ensures that a file is either empty, or ends with one newline
       - id: end-of-file
-        exclude_types: ['xml']
+        exclude_types: ['xml','png','jpeg','svg','jar']
         args: ['--fix=yes']

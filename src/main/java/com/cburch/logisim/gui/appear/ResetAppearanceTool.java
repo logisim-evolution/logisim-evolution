@@ -61,9 +61,9 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
     final var appearance = canvas.getCircuit().getAppearance();
     if (appearance == null) return;
     // FIXME: hardcoded string
-    if (OptionPane.showConfirmDialog(canvas, 
-        "Are you sure you want to remove the current custom appearance and replace it?", 
-        isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default", 
+    if (OptionPane.showConfirmDialog(canvas,
+        "Are you sure you want to remove the current custom appearance and replace it?",
+        isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       if (isClear) appearance.resetDefaultCustomAppearance();
       else appearance.loadDefaultLogisimAppearance();

@@ -286,3 +286,9 @@ gradle-app.setting
 
 # default pre-commit config
 /.pre-commit-config.yaml
+
+# VSCode settins
+.vscode
+
+# python代码
+*.py

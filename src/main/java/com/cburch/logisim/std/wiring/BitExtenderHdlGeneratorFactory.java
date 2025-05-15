@@ -36,8 +36,8 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
     }
     if (componentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
       /* Special case: Single bit output */
-      final var connectedNet = componentInfo.getComponent().getEnd(1).getWidth().getWidth() == 1 
-          ?  Hdl.getNetName(componentInfo, 1, true, nets) 
+      final var connectedNet = componentInfo.getComponent().getEnd(1).getWidth().getWidth() == 1
+          ?  Hdl.getNetName(componentInfo, 1, true, nets)
           :  Hdl.getBusEntryName(componentInfo, 1, true, 0, nets);
       contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getNetName(componentInfo, 0, true, nets), connectedNet);
       contents.add(
