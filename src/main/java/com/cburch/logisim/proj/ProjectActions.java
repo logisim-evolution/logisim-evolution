@@ -483,9 +483,10 @@ public final class ProjectActions {
                       && !entryName.toLowerCase().endsWith(".jar")) {
                     continue;
                   }
+                  if (entryName.startsWith("..")) continue;
                   // make sure the library dir exists
                   if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
-                  filename = String.format("%s%s%s", exportDirectory, File.separator, entry.getName()); 
+                  filename = String.format("%s%s%s", exportDirectory, File.separator, entryName); 
                   zipInput = zipFile.getInputStream(entry);
                   fileOutput = new FileOutputStream(filename);
                   final var bytes = new byte[1024];
