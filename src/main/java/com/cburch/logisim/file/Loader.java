@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.JFileChooser;

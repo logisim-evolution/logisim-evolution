@@ -40,6 +40,7 @@ dependencies {
   implementation("org.slf4j:slf4j-simple:2.0.17")
   implementation("com.formdev:flatlaf:3.6")
   implementation("commons-cli:commons-cli:1.9.0")
+  implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
   implementation("org.apache.commons:commons-text:1.13.1")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
