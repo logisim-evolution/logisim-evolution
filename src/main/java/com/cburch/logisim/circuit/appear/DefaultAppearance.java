@@ -31,7 +31,10 @@ class DefaultAppearance {
   }
 
   static void sortPinList(List<Instance> pins, Direction facing) {
-    if (facing == Direction.NORTH || facing == Direction.SOUTH) Location.sortHorizontal(pins);
-    else Location.sortVertical(pins);
+    if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+      Location.sortHorizontal(pins);
+    } else {
+      Location.sortVertical(pins);
+    }
   }
 }

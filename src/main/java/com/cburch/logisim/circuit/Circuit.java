@@ -748,8 +748,8 @@ public class Circuit {
     return wires.points.getSplitCauses(loc);
   }
 
-  public Set<Location> getSplitLocations() {
-    return wires.points.getSplitLocations();
+  public Set<Location> getAllLocations() {
+    return wires.points.getAllLocations();
   }
 
   public AttributeSet getStaticAttributes() {
@@ -762,10 +762,6 @@ public class Circuit {
 
   public BitWidth getWidth(Location p) {
     return wires.getWidth(p);
-  }
-
-  public Location getWidthDeterminant(Location p) {
-    return wires.getWidthDeterminant(p);
   }
 
   public Set<WidthIncompatibilityData> getWidthIncompatibilityData() {

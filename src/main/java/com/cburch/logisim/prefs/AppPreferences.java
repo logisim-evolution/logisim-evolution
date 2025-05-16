@@ -788,6 +788,20 @@ public class AppPreferences {
               "graphicsAcceleration",
               new String[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D, ACCEL_METAL},
               ACCEL_DEFAULT));
+
+  public static final String SIM_QUEUE_DEFAULT = "default";
+  public static final String SIM_QUEUE_PRIORITY = "priority";
+  public static final String SIM_QUEUE_SPLAY = "splay";
+  public static final String SIM_QUEUE_LINKED = "linked";
+  public static final String SIM_QUEUE_LIST_OF_QUEUES = "listOfQueues";
+  public static final String SIM_QUEUE_TREE_OF_QUEUES = "treeOfQueues";
+  public static final PrefMonitor<String> SIMULATION_QUEUE =
+      create(
+          new PrefMonitorStringOpts("simQueue",
+              new String[] {SIM_QUEUE_DEFAULT, SIM_QUEUE_PRIORITY, SIM_QUEUE_SPLAY,
+                            SIM_QUEUE_LINKED, SIM_QUEUE_LIST_OF_QUEUES, SIM_QUEUE_TREE_OF_QUEUES},
+              SIM_QUEUE_DEFAULT)
+      );
   public static final PrefMonitor<Boolean> AntiAliassing =
       create(new PrefMonitorBoolean("AntiAliassing", true));
 

@@ -58,7 +58,7 @@ public class TestBench {
   /* Check if the label correspond to any of the output signals */
   private boolean searchMatchingPins(Circuit circuit) {
     /* Going to look for the matching output pin outputSignals */
-    final var state = new CircuitState(proj, proj.getCurrentCircuit());
+    final var state = CircuitState.createRootState(proj, proj.getCurrentCircuit());
     var j = 0;
     var pinMatched = 0;
 

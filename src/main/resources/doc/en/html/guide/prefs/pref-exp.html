@@ -26,6 +26,43 @@
         <li>
           <b>Graphics acceleration:</b> One Logisim user observed that adding <tt>-Dsun.java2d.d3d=True</tt> to the command line seemed to improve Logisim's graphics performance by telling it to use hardware graphics acceleration. This drop-down box attempts to configure Logisim to set this up; reports about whether this drop-down box has any effect on performance would be welcome. It won't have any effect until Logisim is restarted.
         </li>
+        <li>
+          <b>Simulation Event Queue:</b>
+          The Simulation Event Queue is a priority queue of events to be processed by the simulator.
+          The choice of queue implementation has an impact on the efficiency, and speed, of the simulation.
+          The most efficient for one project may not be the most efficient for another.
+          We are currently providing 5 choices. We ask for feedback about which works better for you.
+          You can make comments in the Simulation Queue discussion at
+          https://github.com/logisim-evolution/logisim-evolution/discussions.
+          A change won't have any effect until the project is closed and opened again. The choices are:
+          <ul>
+            <li>
+              <b>Java Priority Queue:</b> This is currently the default.
+              A solid choice that deals reasonably with extreme situations, but not especially fast.
+            </li>
+            <li>
+              <b>Splay Tree  Priority Queue:</b>
+              This can be faster, but for some projects it may have an unbalanced tree and
+              since it is recursive it may even fail on a stack overflow.
+            </li>
+            <li>
+              <b>Linked Priority Queue:</b> A linked queue that searches from the back for insertion.
+              Fast for some projects, but it has poor worst case performance.
+            </li>
+            <li>
+              <b>Sorted Linked List of Queues:</b> Can be quite fast.
+              This implementation uses a sorted list of time nodes, each of which has a standard linked queue
+              to hold all events targeting that time.
+            </li>
+            <li>
+              <b>Sorted Tree of Queues:</b> Can also be quite fast.
+              It uses a Sorted Tree for the time nodes.
+              It works better than the Linked List of Queues on projects with a large number of different delays.
+              However, it has more overhead on simpler projects.
+              Even very large projects may be slower than with the Linked List of Queues.
+            </li>
+          </ul>
+        </li>
       </ul>
       <p>
         <b>Next:</b> <a href="pref-cmdline.html">Command line options</a>.
