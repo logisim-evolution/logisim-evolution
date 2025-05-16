@@ -33,6 +33,7 @@ Project highlights:
 * VHDL components (components behavior can be specified in VHDL!),
 * TCL/TK console (interfaces between the circuit and the user),
 * huge library of components (LEDs, TTLs, switches, SoCs),
+* allows for custom libraries to be [loaded on startup](docs/automatic_library_import.md)
 * supports [multiple languages](docs/docs.md#translations),
 * and more!
 
