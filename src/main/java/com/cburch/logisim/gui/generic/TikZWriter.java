@@ -341,6 +341,11 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
+  public void drawRect(int x, int y, int width, int height) {
+    MyInfo.addRectangle(x, y, x + width, y + height, false, false);
+  }
+
+  @Override
   public void clearRect(int x, int y, int width, int height) {
     MyInfo.addRectangle(x, y, x + width, y + height, true, true);
   }
@@ -357,12 +362,12 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void drawOval(int x, int y, int width, int height) {
-    MyInfo.addElipse(x, y, width, height, false);
+    MyInfo.addEllipse(x, y, width, height, false);
   }
 
   @Override
   public void fillOval(int x, int y, int width, int height) {
-    MyInfo.addElipse(x, y, width, height, true);
+    MyInfo.addEllipse(x, y, width, height, true);
   }
 
   @Override

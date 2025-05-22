@@ -261,7 +261,7 @@ public class Project {
     } else {
       var ret = recentRootState.get(circuit);
       if (ret == null) {
-        ret = new CircuitState(this, circuit);
+        ret = CircuitState.createRootState(this, circuit);
         recentRootState.put(circuit, ret);
         allRootStates.add(ret);
       }
@@ -499,7 +499,7 @@ public class Project {
   public void setCurrentCircuit(Circuit circuit) {
     var circState = recentRootState.get(circuit);
     if (circState == null) {
-      circState = new CircuitState(this, circuit);
+      circState = CircuitState.createRootState(this, circuit);
       recentRootState.put(circuit, circState);
       allRootStates.add(circState);
     }

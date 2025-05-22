@@ -55,7 +55,7 @@ public class VhdlSimConstants {
     }
 
     /* Add subcircuits comp */
-    for (CircuitState sub : s.getSubStates()) {
+    for (CircuitState sub : s.getSubstates()) {
       vhdlComp.addAll(getVhdlComponents(sub, newStyle));
     }
 

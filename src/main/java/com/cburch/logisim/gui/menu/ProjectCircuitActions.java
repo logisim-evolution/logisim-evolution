@@ -150,7 +150,7 @@ public class ProjectCircuitActions {
     if (vhdl == null) return;
 
     final var content = VhdlContent.parse(null, vhdl, proj.getLogisimFile());
-    if (content != null) return;
+    if (content == null) return;
     if (VhdlContent.labelVHDLInvalidNotify(content.getName(), proj.getLogisimFile())) return;
 
     proj.doAction(LogisimFileActions.addVhdl(content));

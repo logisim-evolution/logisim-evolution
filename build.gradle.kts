@@ -17,7 +17,7 @@ plugins {
   java
   application
   id("com.gradleup.shadow") version "8.3.6"
-  id("org.sonarqube") version "6.0.1.5171"
+  id("org.sonarqube") version "6.2.0.5505"
 }
 
 repositories {
@@ -31,27 +31,25 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.5.4")
+  implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:2.0.16")
-  implementation("org.slf4j:slf4j-simple:2.0.16")
-  implementation("com.formdev:flatlaf:3.5.4")
+  implementation("org.slf4j:slf4j-api:2.0.17")
+  implementation("org.slf4j:slf4j-simple:2.0.17")
+  implementation("com.formdev:flatlaf:3.6")
   implementation("commons-cli:commons-cli:1.9.0")
-  implementation("org.apache.commons:commons-text:1.13.0")
-
-  // NOTE: Do not upgrade the jflex version. Later versions do not work.
-  compileOnly("de.jflex:jflex:1.4.1")
+  implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
+  implementation("org.apache.commons:commons-text:1.13.1")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.11.4"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.15.2")
+  testImplementation(platform("org.junit:junit-bom:5.12.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.17.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -63,6 +61,8 @@ val APP_VERSION = "appVersion"
 val APP_VERSION_SHORT = "appVersionShort"
 val APP_URL = "appUrl"
 val BUILD_DIR = "buildDir"
+val JDEPS = "jdeps"
+val JDEPS_FILE = "jdepsFile"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
@@ -127,6 +127,10 @@ extra.apply {
   val supportDir="${projectDir}/support/jpackage"
   set(SUPPORT_DIR, supportDir)
 
+  // Project name with uppercase first letter
+  val uppercaseProjectName = project.name.replaceFirstChar { it.uppercase() }.trim()
+  set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
+
   // Base name of produced artifacts. Suffixes will be added later by relevant tasks.
   val baseFilename = "${project.name}-${appVersion}"
   set(TARGET_FILE_PATH_BASE, "${targetDir}/${baseFilename}")
@@ -145,6 +149,10 @@ extra.apply {
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val jpackage = "${javaHome}/bin/jpackage"
   set(JPACKAGE, jpackage)
+  val jdeps = "${javaHome}/bin/jdeps"
+  set(JDEPS, jdeps)
+  val jdepsFile = "${buildDir}/neededJavaModules.txt"
+  set(JDEPS_FILE, jdepsFile)
 
   // Copyrights note.
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
@@ -180,8 +188,6 @@ extra.apply {
   set(LINUX_PARAMS, linuxParams)
 
   // All the macOS specific stuff.
-  val uppercaseProjectName = project.name.replaceFirstChar { it.uppercase() }.trim()
-  set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
   set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
@@ -193,7 +199,7 @@ java {
   }
 }
 
-task<Jar>("sourcesJar") {
+tasks.register<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a JAR archive with project sources."
   dependsOn.add("classes")
@@ -206,7 +212,7 @@ task<Jar>("sourcesJar") {
 
 
 /**
- * Helper method that simplifies runining external commands using ProcessBuilder().
+ * Helper method that simplifies running external commands using ProcessBuilder().
  * Will throw GradleException on command failure (non-zero return code).
  *
  * params: List of strings which signifies the external program file to be invoked and its arguments (if any).
@@ -276,11 +282,49 @@ fun verifyFileExists(filename: String) {
 }
 
 /**
+ * Function that returns the named parameters list plus the --adds-modules option
+ */
+fun addNeededModulesTo(parametersName: String): List<String> {
+  val fileName = ext.get(JDEPS_FILE) as String
+  val file = File(fileName)
+  if (!file.isFile()) {
+    throw GradleException("No ${fileName} exists")
+  }
+  val dependencies = File(fileName).readLines()[0]
+  val addModules = listOf("--add-modules", dependencies)
+  return (ext.get(parametersName) as List<Any?>).filterIsInstance<String>() + addModules
+}
+
+/**
+ * Task createNeededJavaModules
+ *
+ * Uses jdeps to create a file containing a list of the needed Java modules.
+ */
+tasks.register("createNeededJavaModules") {
+  group = "build"
+  description = "Creates a file containing the jdeps dependencies"
+  dependsOn("shadowJar")
+  val libsDir = ext.get(LIBS_DIR) as String
+  val shadowJarFilename = ext.get(SHADOW_JAR_FILE_NAME) as String
+  val jarFileName = "${libsDir}/${shadowJarFilename}"
+  val outFileName = ext.get(JDEPS_FILE) as String
+  inputs.file(jarFileName)
+  outputs.file(outFileName)
+
+  doLast {
+    val cmd = listOf(ext.get(JDEPS) as String, "--print-module-deps", "--ignore-missing-deps", jarFileName)
+    val neededJavaModules = runCommand(cmd, "Error while finding Java dependencies with jdeps.")
+    File(outFileName).writeText(neededJavaModules)
+    verifyFileExists(outFileName)
+  }
+}
+
+/**
  * Task createPackageInput
  *
  * Creates a packageInput directory containing only the current shadowJar file
  * because jpackage includes everything in its input directory in the package.
-*/
+ */
 tasks.register("createPackageInput") {
   group = "build"
   description = "Creates a packageInput directory that only contains the current shadowJar file"
@@ -312,9 +356,10 @@ tasks.register("createPackageInput") {
 tasks.register("createDeb") {
   group = "build"
   description = "Makes DEB Linux installation package."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
+  inputs.file(ext.get(JDEPS_FILE) as String)
 
   // Debian uses `_` to separate name from version string.
   // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
@@ -330,7 +375,7 @@ tasks.register("createDeb") {
   }
 
   doLast {
-    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "deb")
+    val params = addNeededModulesTo(LINUX_PARAMS) + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
     verifyFileExists(outputFile);
   }
@@ -344,9 +389,10 @@ tasks.register("createDeb") {
 tasks.register("createRpm") {
   group = "build"
   description = "Makes RPM Linux installation package."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   var outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm"
   outputs.file(outputFile);
 
@@ -357,7 +403,7 @@ tasks.register("createRpm") {
   }
 
   doLast {
-    val params = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf("--type", "rpm")
+    val params = addNeededModulesTo(LINUX_PARAMS) + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
     verifyFileExists(outputFile);
   }
@@ -371,13 +417,15 @@ tasks.register("createRpm") {
 tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
 
   val supportDir = ext.get(SUPPORT_DIR) as String
   val osArch = ext.get(OS_ARCH) as String
+  val projectName = project.name
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/windows")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   var outputFile = "${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi"
   outputs.file(outputFile);
 
@@ -390,12 +438,12 @@ tasks.register("createMsi") {
   doLast {
     val targetDir = ext.get(TARGET_DIR) as String
     val version = ext.get(APP_VERSION_SHORT) as String
-    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
-        "--name", project.name,
+    val params = addNeededModulesTo(SHARED_PARAMS) + listOf(
+        "--name", projectName,
         "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
-        "--win-menu-group", project.name as String,
+        "--win-menu-group", projectName,
         "--win-shortcut",
         "--win-dir-chooser",
         "--win-menu",
@@ -406,12 +454,12 @@ tasks.register("createMsi") {
         "--app-version", version,
     )
     runCommand(params, "Error while creating the MSI package.")
-    val fromFile = "${project.name}-${version}.msi"
+    val fromFile = "${projectName}-${version}.msi"
     val copyReturn = copy {
       from(targetDir)
       into(targetDir)
       include(fromFile)
-      rename(fromFile, "${project.name}-${version}-${osArch}.msi")
+      rename(fromFile, "${projectName}-${version}-${osArch}.msi")
     }
     if (!copyReturn.didWork) {
       throw GradleException("createMsi failed to rename .msi file to include architecture ${osArch}")
@@ -419,6 +467,76 @@ tasks.register("createMsi") {
     delete("${targetDir}/${fromFile}")
     verifyFileExists(outputFile);
   }
+}
+
+
+/**
+ * Task: createExe
+ *
+ * Creates an executable for Windows.
+ */
+tasks.register("createExe") {
+  group = "build"
+  description = "Creates the executable for Windows"
+  dependsOn("createPackageInput", "createNeededJavaModules")
+
+  val supportDir = ext.get(SUPPORT_DIR) as String
+  val buildDir = ext.get(BUILD_DIR) as String
+  val osArch = ext.get(OS_ARCH) as String
+  val projectName = project.name
+  val dest = "${buildDir}/windows-${osArch}"
+
+
+  inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
+  inputs.dir("${supportDir}/windows")
+  inputs.file(ext.get(JDEPS_FILE) as String)
+  outputs.dir("$dest/$projectName")
+
+  doFirst {
+    if (!OperatingSystem.current().isWindows) {
+      throw GradleException("This task runs on Windows only.")
+    }
+  }
+
+  doLast {
+    deleteDirectoryContents(dest)
+    val version = ext.get(APP_VERSION_SHORT) as String
+    val params = addNeededModulesTo(SHARED_PARAMS) + listOf(
+        "--name", projectName,
+        "--dest", dest,
+        "--icon", "${supportDir}/windows/Logisim-evolution.ico",
+        "--type", "app-image",
+        // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
+        // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+        // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
+        "--app-version", version,
+    )
+    runCommand(params, "Error while creating the Windows executable.")
+    verifyFileExists("${dest}/${projectName}/${projectName}.exe")
+  }
+}
+
+/**
+ * Task: createWindowsPortableZip
+ *
+ * Create a self-contained archive for Windows.
+ */
+tasks.register<Zip>("createWindowsPortableZip") {
+  group = "build"
+  description = "Makes the self-contained zip archive for Windows"
+
+  val inputFiles = tasks.getByName("createExe").outputs.files
+
+  dependsOn("createExe")
+  from(inputFiles)
+
+  val osArch = ext.get(OS_ARCH) as String
+  val version = ext.get(APP_VERSION) as String
+  val targetDir = ext.get(TARGET_DIR) as String
+  val projectName = project.name
+
+  archiveFileName = "${projectName}-${version}-windows-${osArch}.zip"
+  destinationDirectory.set(file(targetDir))
 }
 
 /**
@@ -434,9 +552,10 @@ tasks.register("createApp") {
 
   group = "build"
   description = "Makes the macOS application."
-  dependsOn("createPackageInput")
+  dependsOn("createPackageInput", "createNeededJavaModules")
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${supportDir}/macos")
+  inputs.file(ext.get(JDEPS_FILE) as String)
   outputs.dir(dest)
 
   doFirst {
@@ -447,7 +566,7 @@ tasks.register("createApp") {
 
   doLast {
     deleteDirectoryContents(dest)
-    val params = (ext.get(SHARED_PARAMS) as List<Any?>).filterIsInstance<String>() + listOf(
+    val params = addNeededModulesTo(SHARED_PARAMS) + listOf(
         "--dest", dest,
         "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
         "--file-associations", "${supportDir}/macos/file.jpackage",
@@ -496,6 +615,7 @@ tasks.register("createDmg") {
 
   val appDirName = ext.get(APP_DIR_NAME) as String
   val osArch = ext.get(OS_ARCH) as String
+  val projectName = project.name
 
   inputs.dir(appDirName)
 
@@ -512,7 +632,7 @@ tasks.register("createDmg") {
     val params = listOf(
         ext.get(JPACKAGE) as String,
         "--app-image", appDirName,
-        "--name", project.name,
+        "--name", projectName,
         // We can pass full version here, even if contains suffix part too.
         // We also append the architecture to add it to the package name.
         "--app-version", "${ext.get(APP_VERSION) as String}-${osArch}",
@@ -545,7 +665,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
   val appVersion = ext.get(APP_VERSION) as String
-  val projectName = project.name.replaceFirstChar { it.uppercase() }.trim()
+  val projectName = ext.get(UPPERCASE_PROJECT_NAME) as String
   val displayName = "${projectName} v${appVersion}"
   val url = ext.get(APP_URL) as String
 
@@ -621,55 +741,6 @@ tasks.register("genBuildInfo") {
 }
 
 /**
- * Task genVhdlSyntax
- *
- * Generates the VhdlSyntax.java file
-*/
-open class ExecOperationsJarTask @Inject constructor(@Internal val execOperations: ExecOperations) : Jar()
-
-tasks.register<ExecOperationsJarTask>("genVhdlSyntax") {
-  val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
-  val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
-  val buildDir = ext.get(BUILD_DIR) as String
-  val targetDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/vhdl/syntax/"
-
-  group = "build"
-  description = "Generates VhdlSyntax.java"
-  inputs.files(sourceFile)
-  inputs.files(skeletonFile)
-  outputs.dir(targetDir)
-
-  var jflexJarFileName = ""
-
-  doFirst() {
-    configurations.compileClasspath {
-      resolvedConfiguration.resolvedArtifacts.forEach { ra: ResolvedArtifact ->
-        val id = ra.moduleVersion.id
-        if ("de.jflex".equals(id.group) && "jflex".equals(id.name)) {
-          jflexJarFileName = ra.file.toString()
-        }
-      }
-    }
-    if (jflexJarFileName.isEmpty()) {
-      throw GradleException("Could not find jflex jar file.")
-    }
-  }
-
-  doLast() {
-    logging.captureStandardOutput(LogLevel.DEBUG)
-    execOperations.javaexec {
-      classpath = files(jflexJarFileName)
-      args = listOf(
-          "--nobak",
-          "-d", targetDir,
-          "--skel", skeletonFile,
-          sourceFile
-      )
-    }
-  }
-}
-
-/**
  * Task: genFiles
  *
  * Umbrella task to generate all generated files
@@ -677,7 +748,7 @@ tasks.register<ExecOperationsJarTask>("genVhdlSyntax") {
 tasks.register("genFiles") {
   group = "build"
   description = "Generates all generated files."
-  dependsOn("genBuildInfo", "genVhdlSyntax")
+  dependsOn("genBuildInfo")
 }
 
 /**
@@ -694,6 +765,7 @@ tasks.register("createAll") {
   }
   if (OperatingSystem.current().isWindows) {
     dependsOn("createMsi")
+    dependsOn("createWindowsPortableZip")
   }
   if (OperatingSystem.current().isMacOsX) {
     dependsOn("createDmg")

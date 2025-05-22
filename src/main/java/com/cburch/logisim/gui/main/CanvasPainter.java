@@ -178,12 +178,8 @@ class CanvasPainter implements PropertyChangeListener {
   // painting methods
   //
   void paintContents(Graphics g, Project proj) {
-    var clip = g.getClipBounds();
     final var size = canvas.getSize();
     final double zoomFactor = canvas.getZoomFactor();
-    if (canvas.ifPaintDirtyReset() || clip == null) {
-      clip = new Rectangle(0, 0, size.width, size.height);
-    }
 
     grid.paintGrid(g);
     g.setColor(Color.black);

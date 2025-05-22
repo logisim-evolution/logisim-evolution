@@ -47,6 +47,15 @@ public interface Component extends Location.At {
   List<EndData> getEnds(); // list of EndDatas
   // basic information methods
 
+  public default EndData getEnd(Location p) {
+    for (EndData e : getEnds()) {
+      if (p.equals(e.getLocation())) {
+        return e;
+      }
+    }
+    return null;
+  }
+
   ComponentFactory getFactory();
 
   default void setFactory(ComponentFactory fact) {

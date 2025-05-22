@@ -3,10 +3,20 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added automatic custom Logisim library loading at startup.
+  * Created unit tests for loading custom Logisim libraries at startup.
+  * Updated documentation for the automatic loading of custom Logisim libraries.
+  * New take on project export/import a zip-file is generated which can include a user provided "README.md".
   * Added Telnet component
   * Fixed TTY appearance bug while changing various zoom levels.
   * Added Metal graphics acceleration
   * Added option to hide/show toolbar
+  * Corrected appearance of NOT gates in TikZ/SVG image export
+  * Corrected disjoint corners in arrow-style Pins
+  * Improved output of rectangles with rounded corners in TikZ image export
+  * Redesigned simulation engine to fix synchronization issues and increase speed
+  * Subcircuits with clock input(s) are now drawn with a clock symbol
+  * Added TTL 74194: 4-bit bidirectional universal shift register
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
@@ -97,6 +107,7 @@
   * Added a setting to select lower- or upper-case VHDL keywords.
   * Added project export feature.
   * Cleaned-up the written .circ file.
+  * Cleaned-up the library tree of loaded projects.
 
 * v3.6.1 (2021-09-27)
   * Fixed bug in LED-array

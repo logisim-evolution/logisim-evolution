@@ -59,8 +59,8 @@ public class Location implements Comparable<Location> {
 
   private static final Cache cache = new Cache();
   private final int hashCode;
-  private final int x;
-  private final int y;
+  public final int x;
+  public final int y;
   private final boolean hasToSnap;
 
   private Location(int hashCode, int x, int y, boolean hasToSnap) {

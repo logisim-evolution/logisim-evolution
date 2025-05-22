@@ -321,14 +321,6 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   @Override
-  public void propagate(CircuitState state) {
-    // Normally this is handled by CircuitWires, and so it won't get
-    // called. The exception is when a wire is added or removed
-    state.markPointAsDirty(e0);
-    state.markPointAsDirty(e1);
-  }
-
-  @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException();
   }

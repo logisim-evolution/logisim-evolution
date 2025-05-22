@@ -12,6 +12,8 @@ package com.cburch.logisim.instance;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.proj.Project;
 
 public interface InstanceState {
@@ -38,6 +40,8 @@ public interface InstanceState {
   boolean isCircuitRoot();
 
   boolean isPortConnected(int portIndex);
+
+  CircuitState createCircuitSubstateFor(Circuit circ);
 
   void setData(InstanceData value);
 

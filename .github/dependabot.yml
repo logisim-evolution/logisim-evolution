@@ -5,8 +5,6 @@ updates:
     schedule:
       interval: "weekly"
     target-branch: "main"
-    ignore:
-      - dependency-name: "de.jflex:jflex"
     groups:
       slf4j:
          patterns:
