@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added automatic custom Logisim library loading at startup.
+  * Created unit tests for loading custom Logisim libraries at startup.
+  * Updated documentation for the automatic loading of custom Logisim libraries.
   * New take on project export/import a zip-file is generated which can include a user provided "README.md".
   * Added Telnet component
   * Fixed TTY appearance bug while changing various zoom levels.
