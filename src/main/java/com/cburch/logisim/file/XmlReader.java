@@ -1041,25 +1041,25 @@ class XmlReader {
     //   type=input|output
     //   behavior=simple|tristate|pullup|pulldown
     String wiringLibName = findLibNameByDesc(root, "#Wiring");
-    for (Element compElt : XmlIterator.forDescendantElements(root, "comp")) {
+    for (final Element compElt : XmlIterator.forDescendantElements(root, "comp")) {
       convertObsoletePinAttributes(doc, compElt, wiringLibName);
     }
-    for (Element toolElt : XmlIterator.forDescendantElements(root, "tool")) {
+    for (final Element toolElt : XmlIterator.forDescendantElements(root, "tool")) {
       convertObsoletePinAttributes(doc, toolElt, wiringLibName);
     }
   }
 
   private void convertObsoletePinAttributes(Document doc, Element elt, String wiringLibName) {
-    String lib = elt.getAttribute("lib");
-    String name = elt.getAttribute("name");
+    final var lib = elt.getAttribute("lib");
+    final var name = elt.getAttribute("name");
     if (name == null || lib == null || !name.equals("Pin") || !lib.equals(wiringLibName)) {
       return;
     }
     String output = null, tristate = null, pull = null, type = null, behavior = null;
-    ArrayList<Element> bad = new ArrayList<>();
-    for (Element attrElt : XmlIterator.forChildElements(elt, "a")) {
-      String aname = attrElt.getAttribute("name");
-      String aval = attrElt.getAttribute("val");
+    final var bad = new ArrayList<Element>();
+    for (final var attrElt : XmlIterator.forChildElements(elt, "a")) {
+      final var aname = attrElt.getAttribute("name");
+      final var aval = attrElt.getAttribute("val");
       if ("output".equalsIgnoreCase(aname)) {
         output = aval;
         bad.add(attrElt);
@@ -1075,8 +1075,8 @@ class XmlReader {
         behavior = aval;
       }
     }
-    for (Element b : bad) {
-      elt.removeChild(b);
+    for (final var badElement : bad) {
+      elt.removeChild(badElement);
     }
     if (type == null && output != null) {
       appendChildAttribute(doc, elt, "type", output.equalsIgnoreCase("true") ? "output" : "input");
@@ -1093,10 +1093,10 @@ class XmlReader {
   }
 
   private static void appendChildAttribute(Document doc, Element elt, String name, String val) {
-    Element a = doc.createElement("a");
-    a.setAttribute("name", name);
-    a.setAttribute("val", val);
-    elt.appendChild(a);
+    final var attr = doc.createElement("a");
+    attr.setAttribute("name", name);
+    attr.setAttribute("val", val);
+    elt.appendChild(attr);
   }
 
   private Document loadXmlFrom(InputStream is) throws SAXException, IOException {
@@ -1306,9 +1306,9 @@ class XmlReader {
   }
 
   private static String findLibNameByDesc(Element root, String libdesc) {
-    for (Element libElt : XmlIterator.forChildElements(root, "lib")) {
-      String desc = libElt.getAttribute("desc");
-      String name = libElt.getAttribute("name");
+    for (final var libElt : XmlIterator.forChildElements(root, "lib")) {
+      final var desc = libElt.getAttribute("desc");
+      final var name = libElt.getAttribute("name");
       if (name != null && desc != null && desc.equals(libdesc))
         return name;
     }

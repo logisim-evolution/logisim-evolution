@@ -21,21 +21,15 @@ import java.util.List;
 
 class PinAttributes extends ProbeAttributes {
   public static PinAttributes instance = new PinAttributes();
-  private static final List<Attribute<?>> INPIN_ATTRIBUTES = Arrays
-      .asList(StdAttr.FACING, Pin.ATTR_TYPE,
-          StdAttr.WIDTH, Pin.ATTR_BEHAVIOR,
-          StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
-          RadixOption.ATTRIBUTE, PROBEAPPEARANCE, Pin.ATTR_INITIAL);
-  private static final List<Attribute<?>> TRISTATE_ATTRIBUTES = Arrays
-      .asList(StdAttr.FACING, Pin.ATTR_TYPE,
-          StdAttr.WIDTH, Pin.ATTR_BEHAVIOR,
-          StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
-          RadixOption.ATTRIBUTE, PROBEAPPEARANCE /*, Pin.ATTR_INITIAL */);
-  private static final List<Attribute<?>> OUTPIN_ATTRIBUTES = Arrays
-      .asList(StdAttr.FACING, Pin.ATTR_TYPE,
-          StdAttr.WIDTH, /*Pin.ATTR_BEHAVIOR, */
-          StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
-          RadixOption.ATTRIBUTE, PROBEAPPEARANCE /*, Pin.ATTR_INITIAL */);
+  private static final List<Attribute<?>> INPIN_ATTRIBUTES = Arrays.asList(StdAttr.FACING, Pin.ATTR_TYPE,
+      StdAttr.WIDTH, Pin.ATTR_BEHAVIOR, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
+      RadixOption.ATTRIBUTE, PROBEAPPEARANCE, Pin.ATTR_INITIAL);
+  private static final List<Attribute<?>> TRISTATE_ATTRIBUTES = Arrays.asList(StdAttr.FACING, Pin.ATTR_TYPE,
+      StdAttr.WIDTH, Pin.ATTR_BEHAVIOR, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
+      RadixOption.ATTRIBUTE, PROBEAPPEARANCE /*, Pin.ATTR_INITIAL */);
+  private static final List<Attribute<?>> OUTPIN_ATTRIBUTES = Arrays.asList(StdAttr.FACING, Pin.ATTR_TYPE,
+      StdAttr.WIDTH, /*Pin.ATTR_BEHAVIOR, */ StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
+      RadixOption.ATTRIBUTE, PROBEAPPEARANCE /*, Pin.ATTR_INITIAL */);
 
   BitWidth width = BitWidth.ONE;
   AttributeOption type = Pin.INPUT;
@@ -46,8 +40,7 @@ class PinAttributes extends ProbeAttributes {
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return type == Pin.INPUT
-        ? (behavior == Pin.TRISTATE ? TRISTATE_ATTRIBUTES : INPIN_ATTRIBUTES)
+    return type == Pin.INPUT ? (behavior == Pin.TRISTATE ? TRISTATE_ATTRIBUTES : INPIN_ATTRIBUTES)
         : OUTPIN_ATTRIBUTES;
   }
 
@@ -103,7 +96,9 @@ class PinAttributes extends ProbeAttributes {
       fireAttributeListChanged();
     } else if (attr == Pin.ATTR_BEHAVIOR) {
       if (behavior.equals(value)) return;
+      final var attrListChanged = behavior == Pin.TRISTATE || value == Pin.TRISTATE;
       behavior = (AttributeOption) value;
+      if (attrListChanged) fireAttributeListChanged();
     } else if (attr == PROBEAPPEARANCE) {
       final var newAppearance = (AttributeOption) value;
       if (appearance.equals(newAppearance)) return;

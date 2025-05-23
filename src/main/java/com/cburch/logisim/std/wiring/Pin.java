@@ -801,8 +801,7 @@ public class Pin extends InstanceFactory {
 
   @Override
   public boolean hasThreeStateDrivers(AttributeSet attrs) {
-    // For purposes of HDL, Pin never generates floating values, regardless of
-    // attributes.
+    // For purposes of HDL, Pin never generates floating values, regardless of attributes.
     return false;
   }
 
@@ -1185,7 +1184,6 @@ public class Pin extends InstanceFactory {
     Bounds bds = painter.getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
     boolean IsOutput = attrs.type == OUTPUT;
     PinState state = getState(painter);
-    //Value value = pull(attrs, state.intendedValue);
     Value found = state.foundValue;
     int x = bds.getX();
     int y = bds.getY();
@@ -1224,49 +1222,6 @@ public class Pin extends InstanceFactory {
     return true;
   }
 
-  // Before version 4.0.0: Attributes are a confusing mess. "Output?", "Three
-  // State?", and "Pull Behavior" all interact in complicated ways. There seems
-  // to currently only be a few possible combinations that are implemented:
-  // Note: gray wires (with NIL value) are never connected to ports. Any wire
-  // connected to a port is simulated as Unknown and shown as blue.
-  //   Output pin:
-  //     UI can display 0, 1, E, or X, and subcircuit passes whatever is
-  //     received. When connected to a blue wire, displays X regardless of
-  //     tri-state option. When disconnected entirely, it displays either 0 (if
-  //     tri-state option is not selected), or X (if tri-state option is
-  //     selected), but regardless, passes the X up to parent. The pull option
-  //     is ignored.
-  //   Input pin with tristate but no pull:
-  //     UI can display and choose 0, 1, or X, and also shows red if there is an
-  //     error on the output bus. Parent circuit can send 0, 1, X, or E, and all
-  //     will pass through into subcircuit.
-  //   Input pin with pull-up (or pull-down):
-  //     UI can display and choose only 0 or 1, but also shows red if there is
-  //     an error on the output bus. Parent circuit can send 0 or 1, but if it
-  //     tries to send X or E these get converted to 1 (or 0 for pull-down). I
-  //     think the behavior for E here is unreasonable: E should get sent
-  //     through no matter what. The tristate option is ignored here. The UI
-  //     when viewing a subcircuit doesn't distinguish between the case where
-  //     parent circuit sends 1, and when parent sends an X that gets pulled-up
-  //     to 1. I think it could show blue in one case, just like it shows red in
-  //     cases of errors. Or show X, but color it to match the 1 value (or 0
-  //     value).
-  //   Input pin without tristate:
-  //     This behaves the same as tri-state with pull-down.
-  //
-  // Notice that tri-state=false seems pointless, but is the default because it
-  // has an important UI difference: UI can select only 0 or 1, but Pull
-  // attribute separately specifies what happens to Unknown values from parent
-  // circuit, either leaving them alone (tri-state-like) or pulling up or down.
-  //
-  // It seems plausible to add support for another combination:
-  //   Output pin with pull-up (or pull-down):
-  //      UI could display 0, 1, E, or X, but X gets converted to 0 or 1 before
-  //      being sent up to parent. Color could match what is being sent up to
-  //      parent.
-  // On the other hand, this just adds complexity, with no real benefit over
-  // simply wiring things up properly.
-  //
   // Version 4.0.0: Simplified new behavior:
   //   Output pin [behavior option hidden, has no effect]
   //      Depending on value of connected bus, UI displays 0, 1, E, or X, and
