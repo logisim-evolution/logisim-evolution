@@ -16,8 +16,8 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.model.Handle;
 import com.cburch.draw.model.HandleGesture;
 import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.draw.shapes.PropertyReader;
 import com.cburch.draw.shapes.SvgCreator;
-import com.cburch.draw.shapes.SvgReader;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
@@ -273,9 +273,9 @@ public abstract class DynamicElement extends AbstractCanvasObject {
         default -> LABEL_NONE;
       };
     }
-    labelFont = SvgReader.getFontAttribute(elt, "", "SansSerif", 7);
+    labelFont = PropertyReader.getFontAttribute(elt, "", "SansSerif", 7);
     if (elt.hasAttribute("label-color"))
-      labelColor = SvgReader.getColor(elt.getAttribute("label-color"), null);
+      labelColor = PropertyReader.getColor(elt.getAttribute("label-color"), null);
   }
 
   protected Element toSvgElement(Element ret) {
