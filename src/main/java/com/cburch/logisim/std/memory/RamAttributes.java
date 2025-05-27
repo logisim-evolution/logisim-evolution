@@ -50,6 +50,14 @@ public class RamAttributes extends AbstractAttributeSet {
           new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTE_ENABLES});
   static final Attribute<Boolean> CLEAR_PIN =
       Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
+  static final AttributeOption ENABLE_ACTIVE_HIGH = new AttributeOption("activeHigh", S.getter("ramActiveHigh"));
+  static final AttributeOption ENABLE_ACTIVE_LOW = new AttributeOption("activeLow", S.getter("ramActiveLow"));
+  static final Attribute<AttributeOption> OUTPUT_ENABLE_MODE =
+      Attributes.forOption("outputEnableMode", S.getter("ramOutputEnableMode"),
+          new AttributeOption[] {ENABLE_ACTIVE_HIGH, ENABLE_ACTIVE_LOW});
+  static final Attribute<AttributeOption> WRITE_ENABLE_MODE =
+      Attributes.forOption("writeEnableMode", S.getter("ramWriteEnableMode"),
+          new AttributeOption[] {ENABLE_ACTIVE_HIGH, ENABLE_ACTIVE_LOW});
   private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
   private BitWidth addrBits = BitWidth.create(8);
@@ -68,6 +76,8 @@ public class RamAttributes extends AbstractAttributeSet {
   private Boolean allowMisaligned = false;
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
+  private AttributeOption outputEnableMode = ENABLE_ACTIVE_HIGH;
+  private AttributeOption writeEnableMode = ENABLE_ACTIVE_HIGH;
 
   RamAttributes() {
     updateAttributes();
@@ -81,6 +91,8 @@ public class RamAttributes extends AbstractAttributeSet {
     newList.add(Mem.ENABLES_ATTR);
     newList.add(ATTR_TYPE);
     newList.add(CLEAR_PIN);
+    newList.add(WRITE_ENABLE_MODE);
+    newList.add(OUTPUT_ENABLE_MODE);
     if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
       newList.add(StdAttr.TRIGGER);
       if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {
@@ -134,6 +146,8 @@ public class RamAttributes extends AbstractAttributeSet {
     d.allowMisaligned = allowMisaligned;
     d.typeOfEnables = typeOfEnables;
     d.ramType = ramType;
+    d.writeEnableMode = writeEnableMode;
+    d.outputEnableMode = outputEnableMode;
   }
 
   @Override
@@ -191,6 +205,12 @@ public class RamAttributes extends AbstractAttributeSet {
     }
     if (attr == Mem.ENABLES_ATTR) {
       return (V) typeOfEnables;
+    }
+    if (attr == OUTPUT_ENABLE_MODE) {
+      return (V) outputEnableMode;
+    }
+    if (attr == WRITE_ENABLE_MODE) {
+      return (V) writeEnableMode;
     }
     return null;
   }
@@ -295,6 +315,18 @@ public class RamAttributes extends AbstractAttributeSet {
       if (appearance.equals(option)) return;
       appearance = option;
       fireAttributeValueChanged(attr, value, null);
+    } else if (attr == OUTPUT_ENABLE_MODE) {
+      final var val = (AttributeOption) value;
+      if (outputEnableMode != val) {
+        outputEnableMode = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
+    } else if (attr == WRITE_ENABLE_MODE) {
+      final var val = (AttributeOption) value;
+      if (writeEnableMode != val) {
+        writeEnableMode = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
     }
   }
 }
