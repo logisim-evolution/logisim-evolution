@@ -198,7 +198,7 @@ public class Probe extends InstanceFactory {
     g.setFont(Pin.DEFAULT_FONT);
     boolean IsOutput =
         (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE))
-            ? painter.getAttributeValue(Pin.ATTR_TYPE)
+            ? painter.getAttributeValue(Pin.ATTR_TYPE) == Pin.OUTPUT
             : false;
     if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
         != ProbeAttributes.APPEAR_EVOLUTION_NEW) {

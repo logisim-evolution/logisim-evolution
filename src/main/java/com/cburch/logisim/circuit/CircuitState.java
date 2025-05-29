@@ -702,7 +702,7 @@ public class CircuitState implements InstanceData {
         final var vOld = pin.getValue(state);
         final var vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
         if (!vNew.equals(vOld)) {
-          pin.setValue(state, vNew);
+          pin.driveInputPin(state, vNew);
           markComponentAsDirty(temporaryClock);
           // If simulator is in single step mode, we want to hilight the
           // invalidated components (which are likely Pins, Buttons, or other

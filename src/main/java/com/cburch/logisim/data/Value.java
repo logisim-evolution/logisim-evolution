@@ -175,6 +175,10 @@ public final class Value {
     return 10;
   }
 
+  public static Value repeat(Value base, BitWidth width) {
+    return repeat(base, width.getWidth());
+  }
+
   public static Value repeat(Value base, int bits) {
     if (base.getWidth() != 1) {
       throw new IllegalArgumentException("first parameter must be one bit");

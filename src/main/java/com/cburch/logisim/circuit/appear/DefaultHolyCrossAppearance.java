@@ -122,7 +122,7 @@ public class DefaultHolyCrossAppearance {
       Direction pinEdge;
       final var labelString = pin.getAttributeValue(StdAttr.LABEL);
       final var labelWidth = textWidth(labelString);
-      if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
+      if (pin.getAttributeValue(Pin.ATTR_TYPE) == Pin.OUTPUT) {
         pinEdge = Direction.EAST;
         if (labelWidth > maxRightLabelLength) {
           maxRightLabelLength = labelWidth;

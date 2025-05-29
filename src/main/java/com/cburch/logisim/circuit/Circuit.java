@@ -472,7 +472,7 @@ public class Circuit {
     for (var i = 0; i < pin.length; ++i) {
       if (Pin.FACTORY.isInputPin(pin[i])) {
         final var pinState = state.getInstanceState(pin[i]);
-        Pin.FACTORY.setValue(pinState, val[i]);
+        Pin.FACTORY.driveInputPin(pinState, val[i]);
       }
     }
 
