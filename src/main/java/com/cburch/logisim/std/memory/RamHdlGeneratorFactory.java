@@ -38,15 +38,15 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var ramEntries = (1 << nrOfaddressLines);
     final var dataLines = Math.max(1, RamAppearance.getNrLEPorts(attrs));
     myWires
-      .addRegister("s_writeAddressReg", nrOfaddressLines)
-      .addRegister("s_readAddressReg", nrOfaddressLines)
-      .addWire("s_ramWriteAddress", nrOfaddressLines)
-      .addWire("s_ramReadAddress", nrOfaddressLines)
-      .addRegister("s_ramDataOut", nrOfBits)
-      .addWire("s_ramWe",1)
-      .addRegister("s_weReg", 1)
-      .addRegister("s_tickDelayReg", dataLines + 1)
-      .addRegister("s_addressOffsetReg", nrOfaddressLines + 1);
+        .addRegister("s_writeAddressReg", nrOfaddressLines)
+        .addRegister("s_readAddressReg", nrOfaddressLines)
+        .addWire("s_ramWriteAddress", nrOfaddressLines)
+        .addWire("s_ramReadAddress", nrOfaddressLines)
+        .addRegister("s_ramDataOut", nrOfBits)
+        .addWire("s_ramWe", 1)
+        .addRegister("s_weReg", 1)
+        .addRegister("s_tickDelayReg", dataLines + 1)
+        .addRegister("s_addressOffsetReg", nrOfaddressLines + 1);
     if (dataLines == 1) {
       myWires.addWire("s_ramDataIn", nrOfBits);
     } else {
@@ -55,29 +55,29 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (dataLines > 1) {
       for (var idx = 0; idx < dataLines; idx++) {
         myWires
-          .addRegister(String.format("s_dataIn%dReg", idx), nrOfBits)
-          .addRegister(String.format("s_dataOut%dReg", idx), nrOfBits)
-          .addRegister(String.format("s_lineEnable%dReg", idx), 1);
+            .addRegister(String.format("s_dataIn%dReg", idx), nrOfBits)
+            .addRegister(String.format("s_dataOut%dReg", idx), nrOfBits)
+            .addRegister(String.format("s_lineEnable%dReg", idx), 1);
         myPorts
-          .add(Port.INPUT, String.format("data%dIn", idx), nrOfBits, RamAppearance.getDataInIndex(idx, attrs))
-          .add(Port.OUTPUT, String.format("data%dOut", idx), nrOfBits, RamAppearance.getDataOutIndex(idx, attrs))
-          .add(Port.INPUT, String.format("lineEnable%dIn", idx), 1, RamAppearance.getLEIndex(idx, attrs));
+            .add(Port.INPUT, String.format("data%dIn", idx), nrOfBits, RamAppearance.getDataInIndex(idx, attrs))
+            .add(Port.OUTPUT, String.format("data%dOut", idx), nrOfBits, RamAppearance.getDataOutIndex(idx, attrs))
+            .add(Port.INPUT, String.format("lineEnable%dIn", idx), 1, RamAppearance.getLEIndex(idx, attrs));
       }
     } else {
       myWires
-        .addRegister("s_dataInReg", nrOfBits)
-        .addRegister("s_dataOutReg", nrOfBits);
+          .addRegister("s_dataInReg", nrOfBits)
+          .addRegister("s_dataOutReg", nrOfBits);
       myPorts
-        .add(Port.INPUT, "dataIn", nrOfBits, RamAppearance.getDataInIndex(0, attrs))
-        .add(Port.OUTPUT, "dataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
+          .add(Port.INPUT, "dataIn", nrOfBits, RamAppearance.getDataInIndex(0, attrs))
+          .add(Port.OUTPUT, "dataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
     }
     myTypedWires
-      .addArray(MemArrayId, MemArrayStr, nrOfBits, ramEntries)
-      .addWire("s_memContents", MemArrayId);
+        .addArray(MemArrayId, MemArrayStr, nrOfBits, ramEntries)
+        .addWire("s_memContents", MemArrayId);
     myPorts
-      .add(Port.INPUT, "address", nrOfaddressLines, RamAppearance.getAddrIndex(0, attrs))
-      .add(Port.INPUT, "we", 1, RamAppearance.getWEIndex(0, attrs))
-      .add(Port.CLOCK, HdlPorts.getClockName(1), 1, RamAppearance.getClkIndex(0, attrs));
+        .add(Port.INPUT, "address", nrOfaddressLines, RamAppearance.getAddrIndex(0, attrs))
+        .add(Port.INPUT, "we", 1, RamAppearance.getWEIndex(0, attrs))
+        .add(Port.CLOCK, HdlPorts.getClockName(1), 1, RamAppearance.getClkIndex(0, attrs));
   }
   
   private void getGenerationTimeWiresPortsByteEnables(Netlist theNetlist, AttributeSet attrs) {
@@ -300,9 +300,9 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (Hdl.isVhdl()) {
       contents.empty().addVhdlKeywords().addRemarkBlock("The synchronous semi-dual-ported memory is defined here");
       contents.add(String.format("s_ramWriteAddress <= std_logic_vector(unsigned(s_writeAddressReg) + unsigned(s_addressOffsetReg(%d {{downto}} 0)));",
-              nrOfaddressLines-1));
+              nrOfaddressLines - 1));
       contents.add(String.format("s_ramReadAddress <= std_logic_vector(unsigned(s_readAddressReg) + unsigned(s_addressOffsetReg(%d {{downto}} 0)));",
-              nrOfaddressLines-1));
+              nrOfaddressLines - 1));
       contents.add("""
 
                   blockramwrite : {{process}}({{clock}}) {{is}}
@@ -381,7 +381,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           final var binValue = Integer.toBinaryString(idx);
           final var extendedBinValue = new StringBuffer();
           while (extendedBinValue.length() < (nrOfaddressLines + 1 - binValue.length())) {
-              extendedBinValue.append("0");
+            extendedBinValue.append("0");
           }
           extendedBinValue.append(binValue);
           contents.add(String.format("  s_dataIn%dReg {{when}} \"%s\",", idx, extendedBinValue));
@@ -403,7 +403,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                     {{end}} {{process}} dataOutReg;
                     """);
       } else {
-        for (var idx = 0 ; idx < dataLines; idx++) {
+        for (var idx = 0; idx < dataLines; idx++) {
           contents.add(String.format("data%dOut <= s_dataOut%dReg;", idx, idx));
         }
         contents.add("""
@@ -412,7 +412,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                     {{begin}}
                       {{if}} (rising_edge({{clock}})) {{then}}
                     """);
-        for (var idx = 0 ; idx < dataLines; idx++) {
+        for (var idx = 0; idx < dataLines; idx++) {
           contents.add(String.format("    {{if}} (s_tickDelayReg(%d) = '1') {{then}}", idx + 1));
           contents.add(String.format("      s_dataOut%dReg <= s_ramDataOut;", idx));
           contents.add("    {{end}} {{if}};");
@@ -560,7 +560,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
     final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
     final var isLineControlled = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
-    return (Hdl.isVhdl() && separate && !asynch && syncRead && !clearPin && readAfterWrite) || 
-          (isLineControlled && !clearPin);
+    return (Hdl.isVhdl() && separate && !asynch && syncRead && !clearPin && readAfterWrite) 
+          || (isLineControlled && !clearPin);
   }
 }
