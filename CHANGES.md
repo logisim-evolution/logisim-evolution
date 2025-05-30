@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added VHDL and Verilog for the RAM component with line-enables
   * Added automatic custom Logisim library loading at startup.
   * Created unit tests for loading custom Logisim libraries at startup.
   * Updated documentation for the automatic loading of custom Logisim libraries.
