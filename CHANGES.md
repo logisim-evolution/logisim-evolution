@@ -19,7 +19,7 @@
   * Fixed Power-on-Reset propagation issue.
   * Redesigned simulation engine to fix synchronization issues and increase speed.
     * Fixed synchronization and efficiency issues in wires and propagation.
-    * Fixed synchronization and efficiency issues in Propagation listeners.
+    * Fixed synchronization and efficiency issues in propagation listeners.
     * Limited redraws to about 20 frames per second to reduce overhead.
     * Allows users to choose a simulation queue, which changes the efficiency of the simulator depending on circuit design.
   * Simplified Type and Behavior attributes of Pins.
