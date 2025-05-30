@@ -512,7 +512,8 @@ public class ShiftRegister extends InstanceFactory {
 
     state.setPort(OUT, data.get(0), 4);
     if (parallel) {
-      for (var i = 0; i < len - 1; i++) {
+      final var nrOfBits =  (state.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) ? len : len - 1;
+      for (var i = 0; i < nrOfBits; i++) {
         state.setPort(6 + 2 * i + 1, data.get(len - 1 - i), 4);
       }
     }
