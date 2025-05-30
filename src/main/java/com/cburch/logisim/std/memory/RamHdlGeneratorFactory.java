@@ -38,13 +38,15 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var ramEntries = (1 << nrOfaddressLines);
     final var dataLines = Math.max(1, RamAppearance.getNrLEPorts(attrs));
     myWires
-      .addRegister("s_addressReg", nrOfaddressLines)
-      .addWire("s_ramAddress", nrOfaddressLines)
+      .addRegister("s_writeAddressReg", nrOfaddressLines)
+      .addRegister("s_readAddressReg", nrOfaddressLines)
+      .addWire("s_ramWriteAddress", nrOfaddressLines)
+      .addWire("s_ramReadAddress", nrOfaddressLines)
       .addRegister("s_ramDataOut", nrOfBits)
       .addWire("s_ramWe",1)
       .addRegister("s_weReg", 1)
-      .addRegister("s_tickDelayReg", dataLines)
-      .addRegister("s_addressOffsetReg", nrOfaddressLines+1);
+      .addRegister("s_tickDelayReg", dataLines + 1)
+      .addRegister("s_addressOffsetReg", nrOfaddressLines + 1);
     if (dataLines == 1) {
       myWires.addWire("s_ramDataIn", nrOfBits);
     } else {
@@ -297,12 +299,17 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var nrOfaddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     if (Hdl.isVhdl()) {
       contents.empty().addVhdlKeywords().addRemarkBlock("The synchronous semi-dual-ported memory is defined here");
+      contents.add(String.format("s_ramWriteAddress <= std_logic_vector(unsigned(s_writeAddressReg) + unsigned(s_addressOffsetReg(%d {{downto}} 0)));",
+              nrOfaddressLines-1));
+      contents.add(String.format("s_ramReadAddress <= std_logic_vector(unsigned(s_readAddressReg) + unsigned(s_addressOffsetReg(%d {{downto}} 0)));",
+              nrOfaddressLines-1));
       contents.add("""
+
                   blockramwrite : {{process}}({{clock}}) {{is}}
                   {{begin}}
                     {{if}} (rising_edge({{clock}})) {{then}}
                       {{if}} (s_ramWe = '1') {{then}}
-                        s_memContents(to_integer(unsigned(s_ramAddress))) <= s_ramDataIn;
+                        s_memContents(to_integer(unsigned(s_ramWriteAddress))) <= s_ramDataIn;
                       {{end}} {{if}};
                     {{end}} {{if}};
                   {{end}} {{process}} blockramwrite;
@@ -310,26 +317,28 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                   blockramread : {{process}}({{clock}}) {{is}}
                   {{begin}}
                     {{if}} (falling_edge({{clock}})) {{then}}
-                      s_ramDataOut <= s_memContents(to_integer(unsigned(s_ramAddress)));
+                      s_ramDataOut <= s_memContents(to_integer(unsigned(s_ramReadAddress)));
                     {{end}} {{if}};
                   {{end}} {{process}} blockramread;
-
                   """);
       contents.empty().addRemarkBlock("The input registers are defined here");
       contents.add("""
                   inputRegs : {{process}}({{clock}}) {{is}}
                   {{begin}}
-                    {{if}} (rising_edge({{clock}}) {{then}}
+                    {{if}} (rising_edge({{clock}})) {{then}}
+                      {{if}} (s_tickDelayReg(0) = '1') {{then}}
+                        s_readAddressReg <= address;
+                      {{end}} {{if}};
                       {{if}} ({{tick}} = '1') {{then}}
-                        s_addressReg <= address;
-                        s_weReg      <= we;
+                        s_writeAddressReg <= address;
+                        s_weReg           <= we;
                   """);
       if (dataLines == 1) {
-        contents.add("        s_dataInReg <= dataIn;");
+        contents.add("      s_dataInReg <= dataIn;");
       } else {
         for (var idx = 0; idx < dataLines; idx++) {
-          contents.add(String.format("        s_data%dInReg <= data%dIn;", idx, idx));
-          contents.add(String.format("        s_lineEnable%dReg <= lineEnable%dIn;", idx, idx));
+          contents.add(String.format("      s_dataIn%dReg <= data%dIn;", idx, idx));
+          contents.add(String.format("      s_lineEnable%dReg <= lineEnable%dIn;", idx, idx));
         }
       }
       contents.add("""
@@ -338,51 +347,140 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                   {{end}} {{process}} inputRegs;
                   """);
       contents.empty().addRemarkBlock("The FSM's are defined here");
-      
+      contents.add("""
+                  fsms : {{process}}({{clock}}) {{is}}
+                  {{begin}}
+                     {{if}} (rising_edge({{clock}})) {{then}}
+                        s_tickDelayReg(0)  <= {{tick}};
+                  """);
+      if (dataLines == 1) {
+        contents.add("      s_tickDelayReg(1)  <= s_tickDelayReg(0);");
+      } else {
+        contents.add(String.format("      s_tickDelayReg(%d {{downto}} 1) <= s_tickDelayReg(%d {{downto}} 0);", 
+            dataLines, dataLines - 1));
+      }
+      contents.add("""
+                        {{if}} (s_tickDelayReg(0) = '1') {{then}}
+                          s_addressOffsetReg <= (OTHERS => '0');
+                  """);
+      contents.add(String.format("      {{elsif}} (unsigned(s_addressOffsetReg) < to_unsigned(%d,%d)) {{then}}",
+          dataLines, nrOfaddressLines + 1));
+      contents.add(String.format("       s_addressOffsetReg <= std_logic_vector(unsigned(s_addressOffsetReg) + to_unsigned(1,%d));",
+          nrOfaddressLines + 1));             
+      contents.add("""
+                        {{end}} {{if}};
+                     {{end}} {{if}};
+                  {{end}} {{process}} fsms;
+                  """);
+      contents.empty().addRemarkBlock("Here the RamDatIn is defined");
+      if (dataLines == 1) {
+        contents.add("s_ramDataIn <= s_dataInReg;");
+      } else {
+        contents.add("{{with}} (s_addressOffsetReg) {{select}} s_ramDataIn <=");
+        for (var idx = dataLines - 1; idx > 0; idx--) {
+          final var binValue = Integer.toBinaryString(idx);
+          final var extendedBinValue = new StringBuffer();
+          while (extendedBinValue.length() < (nrOfaddressLines + 1 - binValue.length())) {
+              extendedBinValue.append("0");
+          }
+          extendedBinValue.append(binValue);
+          contents.add(String.format("  s_dataIn%dReg {{when}} \"%s\",", idx, extendedBinValue));
+        }
+        contents.add("               s_dataIn0Reg {{when}} {{others}};");
+      }
+      contents.empty().addRemarkBlock("Here the RamDataOut is defined");
+      if (dataLines == 1) {
+        contents.add("""
+                    dataOut <= s_dataOutReg;
+
+                    dataOutReg : {{process}} ({{clock}}) {{is}}
+                    {{begin}}
+                      {{if}} (rising_edge({{clock}})) {{then}}
+                        {{if}} (s_tickDelayReg(1) = '1') {{then}}
+                          s_dataOutReg <= s_ramDataOut;
+                        {{end}} {{if}};
+                      {{end}} {{if}};
+                    {{end}} {{process}} dataOutReg;
+                    """);
+      } else {
+        for (var idx = 0 ; idx < dataLines; idx++) {
+          contents.add(String.format("data%dOut <= s_dataOut%dReg;", idx, idx));
+        }
+        contents.add("""
+
+                    dataOutRegs : {{process}} ({{clock}}) {{is}}
+                    {{begin}}
+                      {{if}} (rising_edge({{clock}})) {{then}}
+                    """);
+        for (var idx = 0 ; idx < dataLines; idx++) {
+          contents.add(String.format("    {{if}} (s_tickDelayReg(%d) = '1') {{then}}", idx + 1));
+          contents.add(String.format("      s_dataOut%dReg <= s_ramDataOut;", idx));
+          contents.add("    {{end}} {{if}};");
+        }
+        contents.add("""
+                      {{end}} {{if}};
+                    {{end}} {{process}} dataOutRegs;
+                    """);
+      }
+      contents.empty().addRemarkBlock("Here the Ram write enable is defined");
+      if (dataLines == 1) {
+        contents.add("s_ramWe <= s_weReg {{and}} s_tickDelayReg(1);");
+      } else {
+        contents.add("s_ramWe <= s_weReg {{and}} (");
+        for (var idx = 0; idx < dataLines; idx++) {
+          contents.add(String.format("          (s_lineEnable%dReg {{and}} s_tickDelayReg(%d))%s", idx, idx + 1,
+                  (idx == dataLines - 1) ? ");" : " {{or}}"));
+        }
+      }
     } else {
       contents.empty().addRemarkBlock("The synchronous semi-dual-ported memory is defined here");
-      contents.add(String.format("assign s_ramAddress = s_addressReg + s_addressOffsetReg[%d:0];", nrOfaddressLines-1));
+      contents.add(String.format("assign s_ramWriteAddress = s_writeAddressReg + s_addressOffsetReg[%d:0];", nrOfaddressLines - 1));
+      contents.add(String.format("assign s_ramReadAddress = s_readAddressReg + s_addressOffsetReg[%d:0];", nrOfaddressLines - 1));
       contents.empty();
       contents.add("""
                   always @(posedge clock)
-                    if (s_ramWe == 1'b1) s_memContents[s_ramAddress] <= s_ramDataIn;
+                    if (s_ramWe == 1'b1) s_memContents[s_ramWriteAddress] <= s_ramDataIn;
                   
                   always @(negedge clock)
-                    s_ramDataOut <= s_memContents[s_ramAddress];
+                    s_ramDataOut <= s_memContents[s_ramReadAddress];
                   """);
       contents.empty().addRemarkBlock("The input registers are defined here");
       contents.add("""
                   always @(posedge clock)
-                    if ({{tick}} == 1'b1)
-                      begin
-                        s_addressReg     <= address;
-                        s_weReg          <= we;
+                    begin
+                      if (s_tickDelayReg[0] == 1'b1)
+                        s_readAddressReg <= address;
+                      if ({{tick}} == 1'b1)
+                        begin
+                          s_writeAddressReg     <= address;
+                          s_weReg               <= we;
                    """);
       if (dataLines == 1) {
-        contents.add("      s_dataInReg      <= dataIn;");
+        contents.add("        s_dataInReg      <= dataIn;");
       } else {
         for (var idx = 0; idx < dataLines; idx++) {
-          contents.add(String.format("      s_dataIn%dReg     <= data%dIn;", idx, idx));
-          contents.add(String.format("      s_lineEnable%dReg <= lineEnable%dIn;", idx, idx));
+          contents.add(String.format("        s_dataIn%dReg     <= data%dIn;", idx, idx));
+          contents.add(String.format("        s_lineEnable%dReg <= lineEnable%dIn;", idx, idx));
         }
       }
       contents.add("""
+                        end
                       end
                   """);
       contents.empty().addRemarkBlock("The FSM's are defined here");
       contents.add("""
                   always @(posedge clock)
                     begin
+                      s_tickDelayReg[0] <= {{tick}};
                   """);
       if (dataLines == 1) {
-        contents.add("    s_tickDelayReg <= {{tick}};");
+        contents.add("    s_tickDelayReg[1] <= s_tickDelayReg[0];");
       } else {
-        contents.add("    s_tickDelayReg[0] <= {{tick}};");
-        contents.add(String.format("    s_tickDelayReg[%d:1] <= s_tickDelayReg[%d:0];", dataLines-1, dataLines-2));
+        contents.add(String.format("    s_tickDelayReg[%d:1] <= s_tickDelayReg[%d:0];", dataLines, dataLines - 1));
       }
-      contents.add(String.format("    s_addressOffsetReg <= ({{tick}} == 1'b1) ? %d'd0 :", nrOfaddressLines+1));
+      contents.add(String.format("    s_addressOffsetReg <= (s_tickDelayReg[0] == 1'b1) ? %d'd0 :", nrOfaddressLines + 1));
       contents.add(String.format("                          s_addressOffsetReg != %d'd%d ? s_addressOffsetReg + %d'd1 :", 
-              nrOfaddressLines+1, dataLines, nrOfaddressLines+1));
+          nrOfaddressLines + 1, dataLines, nrOfaddressLines + 1));
       contents.add("""
                                             s_addressOffsetReg;
                     end
@@ -396,47 +494,47 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                       case (s_addressOffsetReg)
                     """);
         for (var idx = dataLines - 1; idx > 0; idx--) {
-          contents.add(String.format("    %d'd%d    : s_ramDataIn <= s_dataIn%dReg;", nrOfaddressLines+1, idx, idx));
+          contents.add(String.format("    %d'd%d    : s_ramDataIn <= s_dataIn%dReg;", nrOfaddressLines + 1, idx, idx));
         }
         contents.add("""
                         default : s_ramDataIn <= s_dataIn0Reg;
                       endcase;
                     """);
       }
-    }
-    contents.empty().addRemarkBlock("Here the RamDatout is defined");
-    if (dataLines == 1) {
-      contents.add("""
-                  assign dataOut = s_dataOutReg;
-                  
-                  always @(posedge clock)
-                    s_dataOutReg <= (s_tickDelayReg == 1'b1) ? s_ramDataOut : s_dataOutReg;
-                  """);
-    } else {
-      for (var idx = 0; idx < dataLines; idx++) {
-        contents.add(String.format("assign data%dOut = s_dataOut%dReg;", idx, idx));
+      contents.empty().addRemarkBlock("Here the RamDatout is defined");
+      if (dataLines == 1) {
+        contents.add("""
+                    assign dataOut = s_dataOutReg;
+                    
+                    always @(posedge clock)
+                      s_dataOutReg <= (s_tickDelayReg[1] == 1'b1) ? s_ramDataOut : s_dataOutReg;
+                    """);
+      } else {
+        for (var idx = 0; idx < dataLines; idx++) {
+          contents.add(String.format("assign data%dOut = s_dataOut%dReg;", idx, idx));
+        }
+        contents.add("""
+                    
+                    always @(posedge clock)
+                      begin
+                    """);
+        for (var idx = 0; idx < dataLines; idx++) {
+          contents.add(String.format("    s_dataOut%dReg <= (s_tickDelayReg[%d] == 1'b1) ? s_ramDataOut : s_dataOut%dReg;",
+                  idx, idx + 1, idx));
+        }
+        contents.add("""
+                      end
+                    """);
       }
-      contents.add("""
-                  
-                  always @(posedge clock)
-                    begin
-                  """);
-      for (var idx = 0; idx < dataLines; idx++) {
-        contents.add(String.format("    s_dataOut%dReg <= (s_tickDelayReg[%d] == 1'b1) ? s_ramDataOut : s_dataOut%dReg;",
-                idx, idx, idx));
-      }
-      contents.add("""
-                    end
-                  """);
-    }
-    contents.empty().addRemarkBlock("Here the Ram write enable is defined");
-    if (dataLines == 1) {
-      contents.add("assign s_ramWe = s_weReg & s_tickDelayReg;");
-    } else {
-      contents.add("assign s_ramWe = s_weReg & (");
-      for (var idx = 0; idx < dataLines; idx++) {
-        contents.add(String.format("                 (s_lineEnable%dReg & s_tickDelayReg[%d])%s", idx, idx,
-                (idx == dataLines-1) ? ");" : "|"));
+      contents.empty().addRemarkBlock("Here the Ram write enable is defined");
+      if (dataLines == 1) {
+        contents.add("assign s_ramWe = s_weReg & s_tickDelayReg[1];");
+      } else {
+        contents.add("assign s_ramWe = s_weReg & (");
+        for (var idx = 0; idx < dataLines; idx++) {
+          contents.add(String.format("                 (s_lineEnable%dReg & s_tickDelayReg[%d])%s", idx, idx + 1,
+                  (idx == dataLines - 1) ? ");" : "|"));
+        }
       }
     }
     return contents.empty();
