@@ -533,7 +533,7 @@ public class ShiftRegister extends InstanceFactory {
   public String getHDLName(AttributeSet attrs) {
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
     final var extension = (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) ? "Clasic" : "Evolution";
-    return String.format("SHIFTREG_%d_%s", nrOfBits, nrOfStages, extension);
+    return String.format("SHIFTREG_%d_%s", nrOfStages, extension);
   }
 
 }
