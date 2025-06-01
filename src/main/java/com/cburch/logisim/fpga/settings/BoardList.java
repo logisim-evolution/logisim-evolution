@@ -74,8 +74,8 @@ public class BoardList {
     final var entries = zf.entries();
     while (entries.hasMoreElements()) {
       final var fileName = entries.nextElement().getName();
-      if ((new File(dir, fileName)).toPath().normalize().startsWith(dir.toPath().normalize()) &&
-          pattern.matcher(fileName).matches() && fileName.contains(match)) {
+      if ((new File(dir, fileName)).toPath().normalize().startsWith(dir.toPath().normalize())
+          && pattern.matcher(fileName).matches() && fileName.contains(match)) {
         ret.add("url:" + fileName);
       }
     }
