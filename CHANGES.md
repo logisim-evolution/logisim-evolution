@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Updated VHDL and created Verilog generator for RAM component with byte-enables
   * Added VHDL and Verilog for the RAM component with line-enables
   * fixed clasic appearance shift-register bug
   * Added automatic custom Logisim library loading at startup.
