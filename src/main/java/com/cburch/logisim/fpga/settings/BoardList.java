@@ -60,7 +60,7 @@ public class BoardList {
     return ret;
   }
 
-private static Collection<String> getBoardsfromJar(Pattern pattern, String match, File dir) {
+  private static Collection<String> getBoardsfromJar(Pattern pattern, String match, File dir) {
     // All path separators are defined with File.Separator, but when
     // browsing the .jar, java uses slash even in Windows
     match = match.replaceAll("\\\\", "/");
