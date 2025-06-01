@@ -75,7 +75,17 @@ public class BoardList {
     while (entries.hasMoreElements()) {
       final var ze = entries.nextElement();
       final var fileName = ze.getName();
-      if (!(new File(dir, fileName)).toPath().normalize().startsWith(dir.toPath())) continue;
+      try {
+        File targetFile = new File(dir, fileName).getCanonicalFile();
+        if (!targetFile.getPath().startsWith(dir.getCanonicalPath() + File.separator)) continue;
+      } catch (IOException e) {
+        try {
+          zf.close();
+        } catch (IOException e1) {
+          throw new Error(e1);
+        }
+        throw new Error("Error validating zip entry path: " + fileName, e);
+      }
       if (pattern.matcher(fileName).matches() && fileName.contains(match)) ret.add("url:" + fileName);
     }
     try {
