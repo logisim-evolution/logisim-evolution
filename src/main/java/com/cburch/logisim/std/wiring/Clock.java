@@ -21,7 +21,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -174,7 +173,7 @@ public class Clock extends InstanceFactory {
           StdAttr.LABEL_FONT,
           ProbeAttributes.PROBEAPPEARANCE
         },
-        new Object[] {Direction.EAST, 1, 1, 0, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT,ProbeAttributes.APPEAR_EVOLUTION_NEW});
+        new Object[] {Direction.EAST, 1, 1, 0, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ProbeAttributes.APPEAR_EVOLUTION_NEW});
     setFacingAttribute(StdAttr.FACING);
     setInstanceLogger(ClockLogger.class);
     setInstancePoker(ClockPoker.class);
@@ -313,7 +312,7 @@ public class Clock extends InstanceFactory {
     if (newAppear) {
       paintNewShape(painter, x - width, y - (height / 2), width, height, dir, true);
     } else {
-      g.drawRect(x - width, y - (height / 2) , width, height);
+      g.drawRect(x - width, y - (height / 2), width, height);
     }
   }
 
