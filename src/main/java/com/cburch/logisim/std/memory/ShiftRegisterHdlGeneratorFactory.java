@@ -47,12 +47,16 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         .add(Port.INPUT, "shiftEnable", 1, ShiftRegister.SH)
         .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN);
     if (hasParallelLoad) {
+      final var clasicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
       final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
+      final var realNrStages = (clasicLogisim) ? nrOfStages : nrOfStages - 1;
       final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-      myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
-      for (var idx = 0; idx < nrOfStages; idx++) {
-        myPorts.add(Port.INPUT, String.format("dIn%d", idx), nrOfBits, )
+      if (clasicLogisim) {
+        myPorts.add(Port.OUTPUT, "serOut", nrOfBits, ShiftRegister.OUT);
+      } else {
+        myPorts.add(Port.OUTPUT, "Q_0", nrOfBits, ShiftRegister.OUT);
       }
+      myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
     } else {
       myPorts.add(Port.INPUT, "parLoad", 1, Hdl.zeroBit());
     }
