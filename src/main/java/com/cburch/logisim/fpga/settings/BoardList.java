@@ -75,21 +75,8 @@ public class BoardList {
     while (entries.hasMoreElements()) {
       final var ze = entries.nextElement();
       final var fileName = ze.getName();
-      final var accept = pattern.matcher(fileName).matches() && fileName.contains(match);
-      if (accept) {
-        try {
-          // Check that fileName doesn't stray outside target directory: Zip Slip security test.
-          // if getCanonicalFile throws IOException, then assume the worst.
-          if ((new File(dir, fileName)).toPath().normalize().startsWith(dir.toPath())) {
-            ret.add("url:" + fileName);
-            continue;
-          }
-          zf.close();
-        } catch (IOException e1) {
-          // Do nothing since we are about to throw an Error anyway.
-        }
-        throw new Error("Bad entry: " + fileName + " in " + dir);
-      }
+      if (!(new File(dir, fileName)).toPath().normalize().startsWith(dir.toPath())) continue;
+      if (pattern.matcher(fileName).matches() && fileName.contains(match)) ret.add("url:" + fileName);
     }
     try {
       zf.close();
