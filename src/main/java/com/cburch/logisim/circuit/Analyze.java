@@ -203,7 +203,7 @@ public class Analyze {
           v[b] = value ? Value.TRUE : Value.FALSE;
         }
         final var pinState = circuitState.getInstanceState(pin);
-        Pin.FACTORY.setValue(pinState, Value.create(v));
+        Pin.FACTORY.driveInputPin(pinState, Value.create(v));
       }
 
       final var prop = circuitState.getPropagator();

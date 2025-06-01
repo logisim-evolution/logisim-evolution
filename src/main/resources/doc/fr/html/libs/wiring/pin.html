@@ -14,7 +14,7 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/pinInput.png" alt="#########" height="32" width="32">&nbsp; 
+        <img class="iconlibs" src="../../../../icons/6464/pinInput.png" alt="#########" height="32" width="32">&nbsp;
 		<img class="iconlibs" src="../../../../icons/6464/pinOutput.png" alt="#########" height="32" width="32">&nbsp;
 		<em>Broche</em>
       </h1>
@@ -98,8 +98,8 @@
         Comportement
       </h2>
       <p>
-        Le composant "Broche" est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <b class="propertie">sortie?</b>. Vous pouvez observer ci-dessus la manière dont Logisim représente les broches d'entrées et ou de sorties selon sont attribut <b class="propertie">Apparence</b>.<br>
-        Dans le mode "flèche" les entrées auront le branchement du coté pointu et les sorties du coté rectangulaire. Dans l'apparence "classique" les sorties sont reprsentée par un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans tous les cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit). 
+        Le composant "Broche" est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <b class="propertie">Type</b>. Vous pouvez observer ci-dessus la manière dont Logisim représente les broches d'entrées et ou de sorties selon sont attribut <b class="propertie">Apparence</b>.<br>
+        Dans le mode "flèche" les entrées auront le branchement du coté pointu et les sorties du coté rectangulaire. Dans l'apparence "classique" les sorties sont reprsentée par un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans tous les cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit).
       </p>
       <p>
         Une "broche" est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augmente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section <a class=refguide href="../../guide/subcirc/index.html">Design hiérarchique</a> du <a href="../index.html">Guide de l'utilisateur</a> et on utilisera également des broches pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants "Broche" du schéma d'un circuit définissent les contactes qui apparaissent sur le symbole du sous-circuit lorsque qu'il est utilisé dans un autre circuit. Dans une telle construction, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans le schéma du sous-circuit.
@@ -125,7 +125,7 @@
           Le côté du composant dessiné où doit se trouver sa pin d'entrée / sortie.
         </dd>
         <dt>
-           <b class="propertie">Sortie ?</b>
+           <b class="propertie">Type</b>
         </dt>
         <dd>
           Spécifie si le composant est une connexion de sortie ou une connexion d’entrée. <b class=note>Note</b>: Si le composant broche est une entrée, la connexion qui agit comme interface dans un circuit de hyerachie supérieur sera une sortie, et inversement.
@@ -137,16 +137,12 @@
           Le nombre de bits correspondant à la largeur en bit prise en charge par la pin.
         </dd>
         <dt>
-           <b class="propertie">Trois états?</b>
+           <b class="propertie">Behavior</b>
         </dt>
         <dd>
-          Pour une broche d’entrée, cette option détermine si l’utilisateur peut demander à la pin d’émettre des valeurs flottantes (Non spécifiée). L'attribut n'est utile que dans l'interface utilisateur pour la simulation. cela n'a aucun effet sur le comportement de la broche lorsque la disposition du circuit est utilisée comme sous-circuit. Pour une broche de sortie, l'attribut n'a aucun effet.
-        </dd>
-        <dt>
-           <b class="propertie">Pull Comportement</b>
-        </dt>
-        <dd>
-          Pour une broche d'entrée, l'attribut spécifie comment les valeurs flottantes doivent être traitées dans la simulation lorsqu'elles sont reçues en entrée depuis un circuit de hyérachie supérieur. Avec "inchangé", les valeurs flottantes sont reprise dans le schéma sous forme de valeurs flottantes; avec "pull up", ils sont convertis en 1 et avec "pull down", ils sont convertis en valeurs 0.
+          The <b class="propertie">Behavior</b> attribute is only available for an input pin. The attribute specifies how unknown (floating), <b class="uvalue">U</b>, values should be treated. If the <b class="propertie">Behavior</b> is Simple or Tri-state, the <b class="uvalue">U</b> values are sent into the layout as <b class="uvalue">U</b> values. Pull Up converts <b class="uvalue">U</b> values to <b class="unov">1</b> before being sent into the circuit layout. Pull Down converts <b class="uvalue">U</b> values to <b class="zerov">0</b> before being sent into the circuit layout.
+          <br><br>
+          The <b class="propertie">Behavior</b> attribute also specifies what values may be entered into the pin when it is not receiving a value from a parent circuit. Tri-state allows you to enter <b class="uvalue">U</b> values. The other settings do not allow you to enter <b class="uvalue">U</b> values.
         </dd>
         <dt>
            <b class="propertie">Label</b>
@@ -171,7 +167,10 @@
 			&emsp;Décimal signé&emsp;: <b>-6<sub>s</sub></b><br>
 			&emsp;Décimal non signé&emsp;: <b>10<sub>u</sub></b><br>
 			&emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
-			&emsp;flottant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
+             &emsp;flottant&emsp;: <b>6.0E-07<sub>f</sub> </b>&emsp;if bit width is 16<br>
+             &emsp;flottant&emsp;: <b>1.4E-44<sub>f</sub> </b>&emsp;if bit width is 32<br>
+             &emsp;flottant&emsp;: <b>4.9E-323<sub>f</sub> </b>&emsp;if bit width is 64<br>
+             &emsp;flottant&emsp;: <b>NaN<sub>f</sub> </b>&emsp;if bit width is not 16, 32 or 64
         </dd>
 		<dt>
           <b class="propertie">&nbsp;Appearence</b>
@@ -179,9 +178,15 @@
         <dd>
           Il existe deux types d'apparence, la Logisim CLassic et les Formes de flèches. Voir les exemples en haut de la page.
         </dd>
+        <dt>
+          <b class="propertie">&nbsp;Reset Value</b>
+        </dt>
+        <dd>
+          An input pin may be given a reset value if it does not have the Tri-state Behavior. The reset value is given as a hexadecimal value. It is loaded into the pin on a simulator reset. If the input pin has Tri-state Behavior, it is loaded with all unknown (floating), <b class="uvalue">U</b>, bits on a reset.
+        </dd>
       </dl>
       <h2>
-        Comportement de l'outil pousser 
+        Comportement de l'outil pousser
       </h2>
       <p>
         Cliquer sur une broche de sortie n’a aucun effet, bien que les attributs de la broche soient affichés.

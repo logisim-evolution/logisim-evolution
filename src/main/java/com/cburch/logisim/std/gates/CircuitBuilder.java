@@ -707,8 +707,8 @@ public class CircuitBuilder {
     final var factory = Pin.FACTORY;
     final var attrs = factory.createAttributeSet();
     attrs.setValue(StdAttr.FACING, Direction.EAST);
-    attrs.setValue(Pin.ATTR_TYPE, Boolean.FALSE);
-    attrs.setValue(Pin.ATTR_TRISTATE, Boolean.FALSE);
+    attrs.setValue(Pin.ATTR_TYPE, Pin.INPUT);
+    attrs.setValue(Pin.ATTR_BEHAVIOR, Pin.SIMPLE);
     attrs.setValue(StdAttr.LABEL, name);
     attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
     attrs.setValue(StdAttr.WIDTH, BitWidth.create(nrOfBits));
@@ -816,7 +816,8 @@ public class CircuitBuilder {
     final var factory = Pin.FACTORY;
     final var attrs = factory.createAttributeSet();
     attrs.setValue(StdAttr.FACING, Direction.WEST);
-    attrs.setValue(Pin.ATTR_TYPE, Boolean.TRUE);
+    attrs.setValue(Pin.ATTR_TYPE, Pin.OUTPUT);
+    attrs.setValue(Pin.ATTR_BEHAVIOR, Pin.SIMPLE);
     attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
     attrs.setValue(StdAttr.LABEL, name);
     attrs.setValue(StdAttr.WIDTH, BitWidth.create(nrOfBits));
