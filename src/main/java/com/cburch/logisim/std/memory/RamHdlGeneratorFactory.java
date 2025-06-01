@@ -90,13 +90,15 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var ramEntries = (1 << nrOfaddressLines);
     final var truncated = (nrOfBits % 8) != 0;
     myWires
-        .addWire("s_ramdataOut", nrOfBits)
+        .addRegister("s_ramDataOut", nrOfBits)
         .addRegister("s_tickDelayLine", 3)
         .addRegister("s_dataInReg", nrOfBits)
-        .addRegister("s_addressReg", nrOfaddressLines)
+        .addRegister("s_writeAddressReg", nrOfaddressLines)
+        .addRegister("s_readAddressReg", nrOfaddressLines)
         .addRegister("s_weReg", 1)
         .addRegister("s_oeReg", 1)
-        .addRegister("s_dataOutReg", nrOfBits);
+        .addRegister("s_dataOutReg", nrOfBits)
+        .addWire("s_ramAddress", nrOfaddressLines);
     if (byteEnables) {
       myWires
           .addRegister("s_byteEnableReg", nrBePorts);
@@ -152,19 +154,21 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .pair("tick", HdlPorts.getTickName(1));
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    final var syncRead = !attrs.getValue(Mem.ASYNC_READ);
+    final var readAfterWrite = attrs.containsAttribute(Mem.READ_ATTR) & attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
+    final var writeTick = (readAfterWrite) ? 0 : 2;
     if (Hdl.isVhdl()) {
       contents.empty().addVhdlKeywords().addRemarkBlock("The control signals are defined here");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
               .add("s_byteEnable{{1}} <= s_byteEnableReg({{1}}) {{and}} s_tickDelayLine(2) {{and}} s_oeReg;", i)
-              .add("s_we{{1}}         <= s_byteEnableReg({{1}}) {{and}} s_tickDelayLine(0) {{and}} s_weReg;", i);
+              .add("s_we{{1}}         <= s_byteEnableReg({{1}}) {{and}} s_tickDelayLine({{2}}) {{and}} s_weReg;", i, writeTick);
         }
       } else {
-        contents.add("""
-            s_oe <= s_tickDelayLine(2) {{and}} s_oeReg;
-            s_we <= s_tickDelayLine(0) {{and}} s_weReg;
-            """);
+        contents
+            .add("s_oe <= s_tickDelayLine(2) {{and}} s_oeReg;")
+            .add("s_we <= s_tickDelayLine({{1}}) {{and}} s_weReg;", writeTick);
       }
       contents
           .empty()
@@ -173,15 +177,29 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               inputRegs : {{process}}({{clock}}, {{tick}}, address, dataIn, we, oe) {{is}}
               {{begin}}
                  {{if}} (rising_edge({{clock}})) {{then}}
-                    {{if}} ({{tick}} = '1') {{then}}
-                        s_dataInReg  <= dataIn;
-                        s_addressReg <= address;
-                        s_weReg      <= we;
-                        s_oeReg      <= oe;
               """);
+      if (!syncRead) {
+        contents.add("""
+                          {{if}} (s_tickDelayLine(0) = '1') {{then}}
+                             s_readAddressReg  <= address;
+                          {{end}} {{if}};
+                    """);
+      }
+      contents.add("""
+                          {{if}} ({{tick}} = '1') {{then}}
+                            s_dataInReg       <= dataIn;
+                            s_writeAddressReg <= address;
+                  """);
+      if (syncRead) {
+        contents.add("          s_readAddressReg  <= address;");
+      }
+      contents.add("""
+                             s_weReg           <= we;
+                             s_oeReg           <= oe;
+                   """);
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
-          contents.add("         s_byteEnableReg({{1}}) <= byteEnable{{1}}};", i);
+          contents.add("         s_byteEnableReg({{1}}) <= byteEnable{{1}};", i);
       }
       contents
           .add("""
@@ -201,11 +219,14 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               """)
           .empty()
           .addRemarkBlock("The actual memorie(s) is(are) defined here");
+      contents
+          .add("s_ramAddress <= s_writeAddressReg {{when}} s_tickDelayLine({{1}}) = '1' {{else}} s_readAddressReg;", writeTick)
+          .empty();
       if (byteEnables) {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("mem{{1}} : {{process}}({{clock}}, s_we{{1}}, s_dataInReg, s_addressReg) {{is}}", i)
+              .add("mem{{1}} : {{process}}({{clock}}, s_we{{1}}, s_dataInReg, s_ramAddress) {{is}}", i)
               .add("{{begin}}")
               .add("   {{if}} (rising_edge({{clock}})) {{then}}")
               .add("      {{if}} (s_we{{1}} = '1') {{then}}", i);
@@ -219,9 +240,9 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                   ? "s_truncMemContents"
                   : String.format("s_byteMem%dContents", i);
           contents
-              .add("         {{1}}(to_integer(unsigned(s_addressReg))) <= s_dataInReg({{2}} {{downto}} {{3}});", memName, endIndex, startIndex)
+              .add("         {{1}}(to_integer(unsigned(s_ramAddress))) <= s_dataInReg({{2}} {{downto}} {{3}});", memName, endIndex, startIndex)
               .add("      {{end}} {{if}};")
-              .add("      s_ramdataOut({{1}} {{downto}} {{2}}) <= {{3}}(to_integer(unsigned(s_addressReg)));", endIndex, startIndex, memName)
+              .add("      s_ramDataOut({{1}} {{downto}} {{2}}) <= {{3}}(to_integer(unsigned(s_ramAddress)));", endIndex, startIndex, memName)
               .add("   {{end}} {{if}};")
               .add("{{end}} {{process}} mem{{1}};", i)
               .add("");
@@ -229,13 +250,13 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       } else {
         contents
             .add("""
-                mem : {{process}}({{clock}} , s_we, s_dataInReg, s_addressReg) {{is}}
+                mem : {{process}}({{clock}} , s_we, s_dataInReg, s_ramAddress) {{is}}
                 {{begin}}
                    {{if}} (rising_edge({{clock}})) {{then}}
                       {{if}} (s_we = '1') {{then}}
-                         s_memContents(to_integer(unsigned(s_addressReg))) <= s_dataInReg;
+                         s_memContents(to_integer(unsigned(s_ramAddress))) <= s_dataInReg;
                       {{end}} {{if}};
-                      s_ramdataOut <= s_memContents(to_integer(unsigned(s_addressReg)));
+                      s_ramDataOut <= s_memContents(to_integer(unsigned(s_ramAddress)));
                    {{end}} {{if}};
                 {{end}} {{process}} mem;
                 """);
@@ -244,7 +265,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("res{{1}} : {{process}}({{clock}}, s_byteEnable{{1}}, s_ramdataOut) {{is}}", i)
+              .add("res{{1}} : {{process}}({{clock}}, s_byteEnable{{1}}, s_ramDataOut) {{is}}", i)
               .add("{{begin}}")
               .add("   {{if}} (rising_edge({{clock}}) {{then}}")
               .add("      {{if}} (s_byteEnable{{1}} = '1') {{then}}", i);
@@ -254,7 +275,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                   ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
                   : (i + 1) * 8 - 1;
           contents
-              .add("         dataOut({{1}} {{downto}} {{2}}) <= s_ramdataOut({{1}} {{downto}} {{2}});", endIndex, startIndex)
+              .add("         dataOut({{1}} {{downto}} {{2}}) <= s_ramDataOut({{1}} {{downto}} {{2}});", endIndex, startIndex)
               .add("      {{end}} {{if}};")
               .add("   {{end}} {{if}};")
               .add("{{end}} {{process}} res{{1}};", i);
@@ -262,14 +283,130 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       } else {
         contents
             .add("""
-                res : {{process}}({{clock}}, s_oe, s_ramdataOut) {{is}}
+                res : {{process}}({{clock}}, s_oe, s_ramDataOut) {{is}}
                 {{begin}}
                    {{if}} (rising_edge({{clock}})) {{then}}
                       {{if}} (s_oe = '1') {{then}}
-                        dataOut <= s_ramdataOut;
+                        dataOut <= s_ramDataOut;
                       {{end}} {{if}};
                    {{end}} {{if}};
                 {{end}} {{process}} res;
+                """);
+      }
+    } else {
+      contents.empty().addVhdlKeywords().addRemarkBlock("The control signals are defined here");
+      if (byteEnables) {
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents
+              .add("assign s_byteEnable{{1}} = s_byteEnableReg[{{1}}] & s_tickDelayLine[2] & s_oeReg;", i)
+              .add("assign s_we{{1}}         = s_byteEnableReg[{{1}}] & s_tickDelayLine[{{2}}] & s_weReg;", i, writeTick);
+        }
+      } else {
+        contents
+            .add("assign s_oe = s_tickDelayLine[2] & s_oeReg;")
+            .add("assign s_we = s_tickDelayLine[{{1}}] & s_weReg;", writeTick);
+      }
+      contents
+          .empty()
+          .addRemarkBlock("The input registers are defined here")
+          .add("""
+              always @(posedge {{clock}})
+              begin
+              """);
+      if (!syncRead) {
+        contents.add("  s_readAddressReg <= (s_tickDelayLine[0] == 1'b1) ? address : s_readAddressReg;");
+      }
+      contents.add("""
+                     if ({{tick}} == 1'b1)
+                       begin
+                         s_dataInReg       <= dataIn;
+                         s_writeAddressReg <= address;
+                  """);
+      if (syncRead) {
+        contents.add("       s_readAddressReg  <= address;");
+      }
+      contents.add("""
+                          s_weReg           <= we;
+                          s_oeReg           <= oe;
+                   """);
+      if (byteEnables) {
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
+          contents.add("       s_byteEnableReg[{{1}}] <= byteEnable{{1}};", i);
+      }
+      contents
+          .add("""
+                end
+              end
+              """)
+          .empty()
+          .add("""
+              always @(posedge {{clock}})
+                s_tickDelayLine <= {s_tickDelayLine[1:0], tick};
+              """)
+          .empty()
+          .addRemarkBlock("The actual memorie(s) is(are) defined here");
+      contents
+          .add("assign s_ramAddress = (s_tickDelayLine[{{1}}] == 1'b1) ? s_writeAddressReg : s_readAddressReg;", writeTick)
+          .empty();
+      if (byteEnables) {
+        final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents
+              .add("""
+                  always @(posedge {{clock}})
+                    begin    
+                  """);
+          contents.add("    if (s_we{{1}} == 1'b1)", i);
+          final var startIndex = i * 8;
+          final var endIndex =
+              (i == (RamAppearance.getNrBEPorts(attrs) - 1))
+                  ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
+                  : (i + 1) * 8 - 1;
+          final var memName =
+              (i == (RamAppearance.getNrBEPorts(attrs) - 1) && truncated)
+                  ? "s_truncMemContents"
+                  : String.format("s_byteMem%dContents", i);
+          contents
+              .add("      {{1}}[s_ramAddress] <= s_dataInReg[{{2}}:{{3}}];", memName, endIndex, startIndex)
+              .add("    s_ramDataOut[{{1}}:{{2}}] <= {{3}}[s_ramAddress];", endIndex, startIndex, memName)
+              .add("  end")
+              .empty();
+        }
+      } else {
+        contents
+            .add("""
+                always @(posedge clock)
+                  begin
+                    if (s_we == 1'b1)
+                      s_memContents[s_ramAddress] <= s_dataInReg;
+                    s_ramDataOut <= s_memContents[s_ramAddress];
+                  end
+                """);
+      }
+      contents
+            .empty()
+            .addRemarkBlock("The output register is defined here")
+            .add("assign dataOut = s_dataOutReg;");
+      if (byteEnables) {
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents
+              .add("always @(posedge {{clock}})")
+              .add("  if (s_byteEnable{{1}} == 1'b1)", i);
+          final var startIndex = i * 8;
+          final var endIndex =
+              (i == (RamAppearance.getNrBEPorts(attrs) - 1))
+                  ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
+                  : (i + 1) * 8 - 1;
+          contents
+              .add("    s_dataOutReg[{{1}}:{{2}}] <= s_ramDataOut[{{1}}:{{2}}];", endIndex, startIndex)
+              .empty();
+        }
+      } else {
+        contents
+            .add("""
+                always @(posedge {{clock}})
+                  if (s_oe == 1'b1)
+                    s_dataOutReg <= s_ramDataOut;
                 """);
       }
     }
@@ -556,11 +693,9 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     final var asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
-    final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
     final var isLineControlled = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
-    return (Hdl.isVhdl() && separate && !asynch && syncRead && !clearPin && readAfterWrite) 
+    return (separate && !asynch && !clearPin) 
           || (isLineControlled && !clearPin);
   }
 }
