@@ -29,18 +29,12 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   private static final int NEGATE_CLOCK_ID = -1;
   private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -2;
-  private static final String NR_OF_STAGES_STRING = "nrOfStages";
-  private static final int NR_OF_STAGES_ID = -3;
-  private static final String NR_OF_PAR_BITS_STRING = "nrOfParBits";
-  private static final int NR_OF_PAR_BITS_ID = -4;
 
   public ShiftRegisterHdlGeneratorFactory() {
     super();
     myParametersList
         .add(NEGATE_CLOCK_STRING, NEGATE_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, StdAttr.EDGE_TRIGGER, AbstractFlipFlopHdlGeneratorFactory.TRIGGER_MAP)
-        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID, HdlParameters.MAP_MULTIPLY, StdAttr.WIDTH, ShiftRegister.ATTR_LENGTH)
-        .add(NR_OF_STAGES_STRING, NR_OF_STAGES_ID, HdlParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID);
     getWiresPortsDuringHDLWriting = true;
   }
 
@@ -51,12 +45,14 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         .add(Port.CLOCK, HdlPorts.getClockName(1), 1, ShiftRegister.CK)
         .add(Port.INPUT, "reset", 1, ShiftRegister.CLR)
         .add(Port.INPUT, "shiftEnable", 1, ShiftRegister.SH)
-        .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN)
-        .add(Port.INPUT, "d", NR_OF_PAR_BITS_ID, "DUMMY_MAP")
-        .add(Port.OUTPUT, "shiftOut", NR_OF_BITS_ID, ShiftRegister.OUT)
-        .add(Port.OUTPUT, "q", NR_OF_PAR_BITS_ID, "DUMMY_MAP");
+        .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN);
     if (hasParallelLoad) {
+      final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
+      final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
+      for (var idx = 0; idx < nrOfStages; idx++) {
+        myPorts.add(Port.INPUT, String.format("dIn%d", idx), nrOfBits, )
+      }
     } else {
       myPorts.add(Port.INPUT, "parLoad", 1, Hdl.zeroBit());
     }
@@ -151,7 +147,6 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     final var contents = LineBuffer.getHdlBuffer()
             .pair("clock", HdlPorts.getClockName(1))
             .pair("tick", HdlPorts.getTickName(1))
-            .pair("nrOfStages", NR_OF_STAGES_STRING)
             .pair("invertClock", NEGATE_CLOCK_STRING)
             .add(super.getArchitecture(nets, attrs, componentName))
             .empty(3);
@@ -232,42 +227,12 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public LineBuffer getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
-    return getExtraComp(false);
-  }
-
-  private LineBuffer getExtraComp(boolean isEntity) {
-    return LineBuffer.getHdlBuffer().addVhdlKeywords()
-        .pair("clock", HdlPorts.getClockName(1))
-        .pair("tick", HdlPorts.getTickName(1))
-        .pair("nrOfStages", NR_OF_STAGES_STRING)
-        .pair("invertClock", NEGATE_CLOCK_STRING)
-        .add(isEntity ? "{{entity}} singleBitShiftReg {{is}}" : "{{component}} singleBitShiftReg")
-        .add("""
-               {{generic}} ( {{invertClock}} : {{integer}};
-                         {{nrOfStages}}  : {{integer}} );
-               {{port}} ( reset       : {{in}}  std_logic;
-                      {{tick}}        : {{in}}  std_logic;
-                      {{clock}}       : {{in}}  std_logic;
-                      shiftEnable : {{in}}  std_logic;
-                      parLoad     : {{in}}  std_logic;
-                      shiftIn     : {{in}}  std_logic;
-                      d           : {{in}}  std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 );
-                      shiftOut    : {{out}} std_logic;
-                      q           : {{out}} std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 ) );
-            """)
-        .add(isEntity ? "{{end}} {{entity}} singleBitShiftReg;" : "{{end}} {{component}};");
-  }
-
-  @Override
   public List<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents
           .add(super.getEntity(nets, attrs, componentName))
-          .empty()
-          .add(Hdl.getExtendedLibrary())
-          .add(getExtraComp(true));
+          .empty();
     }
     return contents.get();
   }
@@ -277,7 +242,6 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
-        .pair("nrOfStages", NR_OF_STAGES_STRING)
         .pair("invertClock", NEGATE_CLOCK_STRING)
         .pair("nrOfBits", NR_OF_BITS_STRING);
     if (Hdl.isVhdl()) {
