@@ -137,12 +137,12 @@
           Le nombre de bits correspondant à la largeur en bit prise en charge par la pin.
         </dd>
         <dt>
-           <b class="propertie">Behavior</b>
+           <b class="propertie">Comportement</b>
         </dt>
         <dd>
-          The <b class="propertie">Behavior</b> attribute is only available for an input pin. The attribute specifies how unknown (floating), <b class="uvalue">U</b>, values should be treated. If the <b class="propertie">Behavior</b> is Simple or Tri-state, the <b class="uvalue">U</b> values are sent into the layout as <b class="uvalue">U</b> values. Pull Up converts <b class="uvalue">U</b> values to <b class="unov">1</b> before being sent into the circuit layout. Pull Down converts <b class="uvalue">U</b> values to <b class="zerov">0</b> before being sent into the circuit layout.
+          L'attribut <b class="propertie">Comportement</b> n'est disponible que pour une broche d'entrée. Cet attribut indique comment les valeurs inconnues (flottantes), <b class="uvalue">U</b>, doivent être traitées. Si l'attribut <b class="propertie">Comportement</b> est Simple ou Trois états, les valeurs <b class="uvalue">U</b> sont envoyées dans le schéma sous forme de valeurs <b class="uvalue">U</b>. L'attribut Tirage (pull-up) convertit les valeurs <b class="uvalue">U</b> en <b class="unov">1</b> avant de les envoyer dans le schéma de circuit. L'attribut Rappel (pull-down) convertit les valeurs <b class="uvalue">U</b> en <b class="zerov">0</b> avant d'être envoyées dans le schéma de circuit.
           <br><br>
-          The <b class="propertie">Behavior</b> attribute also specifies what values may be entered into the pin when it is not receiving a value from a parent circuit. Tri-state allows you to enter <b class="uvalue">U</b> values. The other settings do not allow you to enter <b class="uvalue">U</b> values.
+          L'attribut <b class="propertie">Comportement</b> spécifie également les valeurs qui peuvent être entrées dans la broche lorsqu'elle ne reçoit pas de valeur d'un circuit parent. Le paramètre Trois états permet d'entrer des valeurs <b class="uvalue">U</b>. Les autres paramètres ne permettent pas d'entrer des valeurs <b class="uvalue">U</b>.
         </dd>
         <dt>
            <b class="propertie">Label</b>
@@ -182,7 +182,7 @@
           <b class="propertie">&nbsp;Reset Value</b>
         </dt>
         <dd>
-          An input pin may be given a reset value if it does not have the Tri-state Behavior. The reset value is given as a hexadecimal value. It is loaded into the pin on a simulator reset. If the input pin has Tri-state Behavior, it is loaded with all unknown (floating), <b class="uvalue">U</b>, bits on a reset.
+          Une broche d'entrée peut recevoir une valeur de réinitialisation si elle ne possède pas le comportement à trois états. La valeur de réinitialisation est donnée sous forme hexadécimale. Elle est chargée dans la broche lors d'une réinitialisation du simulateur. Si la broche d'entrée possède le comportement à trois états, elle est chargée avec tous les bits inconnus (flottants), <b class="uvalue">U</b>, lors d'une réinitialisation.
         </dd>
       </dl>
       <h2>
