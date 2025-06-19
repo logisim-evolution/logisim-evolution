@@ -238,13 +238,13 @@ public class DualPortRam extends Mem {
     }
 
     // next we get the address and the mem value currently stored
-    final var addrValue = state.getPortValue(DualPortRamAppearance.getAddrIndex(0, attrs));
+    final var addrValue1 = state.getPortValue(DualPortRamAppearance.getAddrIndex(0, attrs));
     final var addrValue2 = state.getPortValue(DualPortRamAppearance.getAddrIndex(1, attrs));
     final var addrValueWrite = state.getPortValue(DualPortRamAppearance.getAddrIndex(2, attrs));
-    long addr = addrValue.toLongValue();
+    long addr = addrValue1.toLongValue();
     long addr2 = addrValue2.toLongValue();
     long addrWrite = addrValueWrite.toLongValue();
-    final var goodAddr = addrValue.isFullyDefined() && addr >= 0;
+    final var goodAddr = addrValue1.isFullyDefined() && addr >= 0;
     final var goodAddr2 = addrValue2.isFullyDefined() && addr >= 0;
     final var goodAddrWrite = addrValueWrite.isFullyDefined() && addr >= 0;
     if (goodAddrWrite && addrWrite != myState.getCurrent()) {
@@ -254,9 +254,9 @@ public class DualPortRam extends Mem {
 
     // now we handle the two different behaviors, line-enables or byte-enables
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-      propagateLineEnables(state, addr, goodAddr, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
+      propagateLineEnables(state, addr, goodAddr, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue1.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
     } else {
-      propagateByteEnables(state, addr, goodAddr, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
+      propagateByteEnables(state, addr, goodAddr, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue1.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
     }
   }
 
