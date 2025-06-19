@@ -90,7 +90,7 @@ public class DualPortRam extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public DualPortRam() {
-    super(_ID, S.getter("dpramComponent"), 3, new DualportRamHdlGeneratorFactory(), true);
+    super(_ID, S.getter("dpramComponent"), 3, new DualPortRamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }

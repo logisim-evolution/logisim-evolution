@@ -18,7 +18,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 
-public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
+public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   //TODO: fix HDL generation
   private static final String ByteArrayStr = "byteArray";
   private static final int ByteArrayId = -1;
@@ -27,7 +27,7 @@ public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
   private static final String MemArrayStr = "memoryArray";
   private static final int MemArrayId = -3;
 
-  public DualportRamHdlGeneratorFactory() {
+  public DualPortRamHdlGeneratorFactory() {
     super();
     getWiresPortsDuringHDLWriting = true;
   }
