@@ -19,6 +19,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants.State;
 import java.io.File;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class TestBench {
   /* Check if the label correspond to any of the output signals */
   private boolean searchMatchingPins(Circuit circuit) {
     /* Going to look for the matching output pin outputSignals */
-    final var state = new CircuitState(proj, proj.getCurrentCircuit());
+    final var state = CircuitState.createRootState(proj, proj.getCurrentCircuit());
     var j = 0;
     var pinMatched = 0;
 
@@ -104,9 +105,11 @@ public class TestBench {
     final var vhdlSim = sim.getCircuitState().getProject().getVhdlSimulator();
     vhdlSim.enable();
     sim.setAutoPropagation(true);
-    /* TODO Timeout */
-    while (vhdlSim.isEnabled()) {
-      Thread.yield();
+    if (vhdlSim.getState() == State.STARTING) {
+      /* TODO Timeout */
+      while (!vhdlSim.isRunning()) {
+        Thread.yield();
+      }
     }
 
     return true;

@@ -74,10 +74,6 @@ public class TikZInfo implements Cloneable {
     return " (" + rounded(p.getX()) + "," + rounded(p.getY()) + ") ";
   }
 
-  public static String getPgfPoint(Point2D p) {
-    return "\\pgfpoint{" + p.getX() + "}{" + p.getY() + "}";
-  }
-
   @Override
   public TikZInfo clone() {
     var newInst = new TikZInfo();
@@ -185,19 +181,32 @@ public class TikZInfo implements Cloneable {
     contents.add(new TikZBezier(s, filled));
   }
 
-  public void addRectangle(int x, int y, int width, int height, boolean filled, boolean backcolor) {
-    TikZRectangle obj = new TikZRectangle(x, y, width, height, filled);
+  public void addRectangle(int x1, int y1, int x2, int y2, boolean filled, boolean backcolor) {
+    TikZRectangle obj = new TikZRectangle(x1, y1, x2, y2, filled);
     if (backcolor) obj.setBackColor();
     contents.add(obj);
   }
 
-  public void addRoundedRectangle(
-      int x, int y, int width, int height, int arcWidth, int arcHeight, boolean filled) {
-    contents.add(new TikZRectangle(x, y, width, height, arcWidth, arcHeight, filled));
+  public void addRoundedRectangle(int x1, int y1, int x2, int y2, int arcWidth, int arcHeight, boolean filled) {
+    int width = Math.abs(x1 - x2);
+    int height = Math.abs(y1 - y2);
+    int xDiameter = Math.max(0, Math.min(arcWidth, width));
+    int yDiameter = Math.max(0, Math.min(arcHeight, height));
+    //The previous two lines implement a just-in-case data normalization.
+    //The SVG standard asserts this behavior, so I've replicated it here.
+    if ((xDiameter == 0) || (yDiameter == 0)) {
+      addRectangle(x1, y1, x2, y2, filled, false);
+      return;
+    }
+    if ((xDiameter == width) && (yDiameter == height)) {
+      addEllipse(x1, y1, width, height, filled);
+      return;
+    }
+    contents.add(new TikZRectangle(x1, y1, x2, y2, xDiameter, yDiameter, filled));
   }
 
-  public void addElipse(int x, int y, int width, int height, boolean filled) {
-    contents.add(new TikZElipse(x, y, width, height, filled));
+  public void addEllipse(int x, int y, int width, int height, boolean filled) {
+    contents.add(new TikZEllipse(x, y, width, height, filled));
   }
 
   public void addArc(
@@ -291,7 +300,30 @@ public class TikZInfo implements Cloneable {
           }
         }
         if (merged) l.remove();
-        else ((TikZLine) obj).closeIfPossible();
+      } else if (obj.getClass() == TikZEllipse.class) {
+        //This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
+        final var ovalA = (TikZEllipse) obj;
+        final var circular = ovalA.radX == ovalA.radY;
+        var redundant = false;
+        for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
+          final var n = contents.get(i);
+          if (n.getClass() == TikZEllipse.class) {
+            final var ovalB = (TikZEllipse) n;
+            final var centerMatch = ovalA.start.getX() == ovalB.start.getX() && ovalA.start.getY() == ovalB.start.getY();
+            final var radiusMatch = ovalA.radX == ovalB.radX && ovalA.radY == ovalB.radY;
+            final var rotaryMatch = ovalA.rotation == ovalB.rotation;
+            if (centerMatch && radiusMatch && (circular || rotaryMatch)) {
+              if (ovalA.filled && ovalB.filled) {
+                redundant = true;
+                break;
+              } else if (!ovalA.filled && !ovalB.filled && (ovalA.strokeWidth == ovalB.strokeWidth)) {
+                redundant = true;
+                break;
+              }
+            }
+          }
+        }
+        if (redundant) l.remove();
       }
     }
   }
@@ -353,13 +385,12 @@ public class TikZInfo implements Cloneable {
     writer.write("% 1) \\resizebox{10cm}{!}{\"below picture\"} to scale horizontally to 10 cm\n");
     writer.write("% 2) \\resizebox{!}{15cm}{\"below picture\"} to scale vertically to 15 cm\n");
     writer.write("% 3) \\resizebox{10cm}{15cm}{\"below picture\"} a combination of above two\n");
-    writer.write(
-        "% It is not recomended to use the scale option of the tikzpicture environment.\n");
+    writer.write("% It is not recomended to use the scale option of the tikzpicture environment.\n");
     writer.write("\\begin{tikzpicture}[x=1pt,y=-1pt,line cap=rect]\n");
     for (int i = 0; i < usedFonts.size(); i++) writer.write(getFontDefinition(i));
     writer.write(getColorDefinitions());
     for (final var obj : contents) writer.write(obj.getTikZCommand() + "\n");
-    writer.write("\\end{tikzpicture}\n\n");
+    writer.write("\\end{tikzpicture}\n");
     writer.close();
   }
 
@@ -514,14 +545,6 @@ public class TikZInfo implements Cloneable {
       return getEndPoint().equals(l.getEndPoint());
     }
 
-    public void closeIfPossible() {
-      if (points.isEmpty()) return;
-      if (getStartPoint().equals(getEndPoint())) {
-        points.remove(points.size() - 1);
-        close = true;
-      }
-    }
-
     private void addPoints(ArrayList<Point> p, int start, int end, boolean atEnd, boolean reverseOrder) {
       if (atEnd) {
         if (reverseOrder) for (int i = end - 1; i >= start; i--) points.add(p.get(i));
@@ -561,7 +584,7 @@ public class TikZInfo implements Cloneable {
       else contents.append("\\draw ");
       contents.append("[line width=");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)).append("pt, ").append(color).append(" ] ");
+      contents.append(rounded(width)).append("pt, ").append(color).append("]");
       if (points.isEmpty()) {
         contents.append(getPoint(start));
         contents.append("--");
@@ -574,8 +597,12 @@ public class TikZInfo implements Cloneable {
           contents.append(getPoint(point));
         }
       }
-      if (close) contents.append("-- cycle");
-      contents.append(";");
+      if (close) {
+        contents.append("-- cycle;");
+      } else {
+        //This is necessary to eliminate space between last point and final semicolon.
+        contents.setCharAt(contents.length() - 1, ';');
+      }
       return contents.toString();
     }
 
@@ -678,11 +705,12 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(filled ? "\\fill " : "\\draw ").append("[line width=").append(rounded(width)).append("pt, ").append(color);
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-      contents.append(" ] ");
+      contents.append("]");
       for (final var point : myPath) {
         contents.append(point.getTikZCommand());
       }
-      contents.append(";");
+      //The output from BezierInfo::getTikZCommand() will always end in a space, so:
+      contents.setCharAt(contents.length() - 1, ';');
       return contents.toString();
     }
 
@@ -802,12 +830,11 @@ public class TikZInfo implements Cloneable {
           contents.append(getPoint(startPoint));
         } else {
           if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append("-- ").append(getPoint(endPoint));
+            contents.append("--").append(getPoint(endPoint));
           } else {
-            contents.append(".. controls ").append(getPoint(controlPoint1)).append(" ");
-            if (controlPoint2 != null) contents.append(" and ").append(getPoint(controlPoint2))
-                .append(" ");
-            contents.append(".. ").append(getPoint(endPoint));
+            contents.append(".. controls").append(getPoint(controlPoint1));
+            if (controlPoint2 != null) contents.append("and").append(getPoint(controlPoint2));
+            contents.append("..").append(getPoint(endPoint));
           }
         }
         return contents.toString();
@@ -887,34 +914,66 @@ public class TikZInfo implements Cloneable {
       return newIns;
     }
 
+    private static String quickPointTrim(double x, double y) {
+      return "(" + rounded(x) + "," + rounded(y) + ")";
+    }
+
+    private static String quickPoint(double x, double y) {
+      return " " + quickPointTrim(x, y) + " ";
+    }
+
     @Override
     public String getTikZCommand() {
       final var contents = new StringBuilder();
+      contents.append(filled ? "\\fill " : "\\draw ");
+      contents.append("[line width=");
+      final var ptWidth = strokeWidth * BASIC_STROKE_WIDTH;
+      contents.append(rounded(ptWidth)).append("pt, ").append(color);
+      if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
       if (rad == null) {
-        contents.append(filled ? "\\fill " : "\\draw ");
-        contents.append("[line width=");
-        final var width = strokeWidth * BASIC_STROKE_WIDTH;
-        contents.append(rounded(width)).append("pt, ").append(color);
-        if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-        contents.append(" ] ");
+        contents.append("]");
         contents.append(getPoint(start));
         contents.append("rectangle");
         contents.append(getPoint(end));
-        contents.append(";");
+        contents.setCharAt(contents.length() - 1, ';');
       } else {
-        /* TODO : change to tikz command as pgfpicture causes sometimes troubles */
-        contents.append("\\begin{pgfpicture}\n");
-        contents.append("   \\begin{pgfmagnify}{1pt}{-1pt}\n");
-        contents.append("      \\pgfsetrectcap\n");
-        contents.append("      \\pgfsetcornersarced{").append(getPgfPoint(rad)).append("}\n");
-        contents.append("      \\pgfsetlinewidth{").append(strokeWidth).append("}\n");
-        contents.append("      \\color{").append(color).append("}\n");
-        contents.append("      \\pgfsetfillopacity{").append(alpha).append("}\n");
-        contents.append("      \\pgfpathrectanglecorners{").append(getPgfPoint(start)).append("}{")
-            .append(getPgfPoint(end)).append("}\n");
-        contents.append("      \\pgfusepath{").append(filled ? "fill" : "stroke").append("}\n");
-        contents.append("   \\end{pgfmagnify}\n");
-        contents.append("\\end{pgfpicture}");
+        final double width = Math.abs(start.getX() - end.getX());
+        final double height = Math.abs(start.getY() - end.getY());
+        final double xRadius = rad.getX();
+        final double yRadius = rad.getY();
+        final double xHalf = width / 2.0;
+        final double yHalf = height / 2.0;
+        final double xGap = xHalf - xRadius;
+        final double yGap = yHalf - yRadius;
+        final double xMid = Math.min(start.getX(), end.getX()) + (width / 2.0);
+        final double yMid = Math.min(start.getY(), end.getY()) + (height / 2.0);
+        contents.append(", shift={").append(quickPointTrim(xMid, yMid)).append("}, ");
+        contents.append("x radius=").append(xRadius).append(", ");
+        contents.append("y radius=").append(yRadius).append("]");
+        if (xRadius >= xHalf) {
+          //This if check could be a "==" due to the normalization in addRoundedRectangle(),
+          //but I'm using a ">=" here just in case of floating-point funny business.
+          contents.append(quickPoint(-xHalf, -yGap));
+          contents.append("arc[start angle=180, delta angle=180] --");
+          contents.append(quickPoint(xHalf, yGap));
+          contents.append("arc[start angle=0, delta angle=180] -- cycle;");
+        } else if (yRadius >= yHalf) {
+          //This if check could be a "==" due to the normalization in addRoundedRectangle(),
+          //but I'm using a ">=" here just in case of floating-point funny business.
+          contents.append(quickPoint(xGap, -yHalf));
+          contents.append("arc[start angle=270, delta angle=180] --");
+          contents.append(quickPoint(-xGap, yHalf));
+          contents.append("arc[start angle=90, delta angle=180] -- cycle;");
+        } else {
+          contents.append(quickPoint(xGap, -yHalf));
+          contents.append("arc[start angle=270, delta angle=90] --");
+          contents.append(quickPoint(xHalf, yGap));
+          contents.append("arc[start angle=0, delta angle=90] --");
+          contents.append(quickPoint(-xGap, yHalf));
+          contents.append("arc[start angle=90, delta angle=90] --");
+          contents.append(quickPoint(-xHalf, -yGap));
+          contents.append("arc[start angle=180, delta angle=90] -- cycle;");
+        }
       }
       return contents.toString();
     }
@@ -944,15 +1003,15 @@ public class TikZInfo implements Cloneable {
     }
   }
 
-  private class TikZElipse extends AbstratctTikZ {
+  private class TikZEllipse extends AbstratctTikZ {
 
     protected double radX;
     protected double radY;
     protected int rotation;
 
-    public TikZElipse() {}
+    public TikZEllipse() {}
 
-    public TikZElipse(int x, int y, int width, int height, boolean filled) {
+    public TikZEllipse(int x, int y, int width, int height, boolean filled) {
       super(x + (width >> 1), y + (height >> 1), 0, 0);
       init(width, height, filled);
     }
@@ -966,7 +1025,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public DrawObject clone() {
-      final var newIns = new TikZElipse();
+      final var newIns = new TikZEllipse();
       newIns.start = (Point) start.clone();
       newIns.end = (Point) end.clone();
       newIns.strokeWidth = strokeWidth;
@@ -981,44 +1040,59 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
+      final var circular = radX == radY;
       final var contents = new StringBuilder();
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color);
-      if (rotation != 0)
+      if (!circular && rotation != 0) {
+        //Circles look the same when rotated in any orientation.
+        //Therefore, only apply rotation handling for non-circular ellipses.
         contents.append(", rotate around={").append(this.rotation).append(":")
             .append(getPoint(start)).append("}");
+      }
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-      contents.append("] ");
+      contents.append("]");
       contents.append(getPoint(start));
-      contents.append("ellipse (").append(radX).append(" and ").append(radY).append(" );");
+      if (circular) {
+        contents.append("circle (").append(radX).append(");");
+      } else {
+        contents.append("ellipse (").append(radX).append(" and ").append(radY).append(");");
+      }
       return contents.toString();
     }
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final var ne = root.createElement("ellipse");
+      final var circular = radX == radY;
+      final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
       if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", Double.toString(rounded(width)));
-      if (rotation != 0)
+      if (!circular && rotation != 0) {
+        //Circles look the same when rotated in any orientation.
+        //Therefore, only apply rotation handling for non-circular ellipses.
         ne.setAttribute(
             "transform",
             "translate(" + start.getX() + " " + start.getY() + ") rotate(" + this.rotation + ")");
-      else {
+      } else {
         ne.setAttribute("cx", Double.toString(start.getX()));
         ne.setAttribute("cy", Double.toString(start.getY()));
       }
-      ne.setAttribute("rx", Double.toString(Math.abs(radX)));
-      ne.setAttribute("ry", Double.toString(Math.abs(radY)));
+      if (circular) {
+        ne.setAttribute("r", Double.toString(Math.abs(radX)));
+      } else {
+        ne.setAttribute("rx", Double.toString(Math.abs(radX)));
+        ne.setAttribute("ry", Double.toString(Math.abs(radY)));
+      }
     }
   }
 
-  private class TikZArc extends TikZElipse {
+  private class TikZArc extends TikZEllipse {
     private double startAngle;
     private double stopAngle;
     private Point2D startPos = new Point2D.Double();

@@ -112,6 +112,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // for the Appearance view
   private AppearanceView appearance;
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
+  private final RegTabContent regTabContent;
 
   public Frame(Project project) {
     super(project);
@@ -152,7 +153,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     bottomTab = new JTabbedPane();
     bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
     bottomTab.add(attrTable = new AttrTable(this));
-    bottomTab.add(new RegTabContent(this));
+    regTabContent = new RegTabContent(this);
+    bottomTab.add(regTabContent);
 
     zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
 
@@ -223,6 +225,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+  }
+
+  public RegTabContent getRegTabContent() {
+    return regTabContent;
   }
 
   /**

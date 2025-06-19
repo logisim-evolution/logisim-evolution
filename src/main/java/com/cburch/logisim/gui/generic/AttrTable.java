@@ -225,6 +225,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     int[] currentRowIndexes;
     Component currentEditor;
     boolean multiEditActive = false;
+    boolean stoppedCellEditing = false;
 
     //
     // ActionListener methods
@@ -405,7 +406,7 @@ public class AttrTable extends JPanel implements LocaleListener {
           return true;
         }
         return false;
-      } 
+      }
       if (anEvent instanceof MouseEvent) {
         return ((MouseEvent) anEvent).getClickCount() >= 1;
       }
@@ -429,7 +430,12 @@ public class AttrTable extends JPanel implements LocaleListener {
     public boolean stopCellEditing() {
       // Tells the editor to stop editing and accept any partially
       // edited value as the value of the editor.
+      if (stoppedCellEditing) {
+        return false;
+      }
+      stoppedCellEditing = true;
       fireEditingStopped();
+      stoppedCellEditing = false;
       return true;
     }
   }

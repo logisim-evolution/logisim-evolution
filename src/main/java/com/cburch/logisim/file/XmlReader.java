@@ -1032,6 +1032,71 @@ class XmlReader {
       repairForWiringLibrary(doc, root);
       repairForLegacyLibrary(doc, root);
     }
+
+    // Before version 4.0.0, Pin components had attributes:
+    //   output=true|false
+    //   tristate=true|false
+    //   pull=up|down (or missing)
+    // These are now consolidated into two attributes:
+    //   type=input|output
+    //   behavior=simple|tristate|pullup|pulldown
+    String wiringLibName = findLibNameByDesc(root, "#Wiring");
+    for (final Element compElt : XmlIterator.forDescendantElements(root, "comp")) {
+      convertObsoletePinAttributes(doc, compElt, wiringLibName);
+    }
+    for (final Element toolElt : XmlIterator.forDescendantElements(root, "tool")) {
+      convertObsoletePinAttributes(doc, toolElt, wiringLibName);
+    }
+  }
+
+  private void convertObsoletePinAttributes(Document doc, Element elt, String wiringLibName) {
+    final var lib = elt.getAttribute("lib");
+    final var name = elt.getAttribute("name");
+    if (name == null || lib == null || !name.equals("Pin") || !lib.equals(wiringLibName)) {
+      return;
+    }
+    String output = null, tristate = null, pull = null, type = null, behavior = null;
+    final var bad = new ArrayList<Element>();
+    for (final var attrElt : XmlIterator.forChildElements(elt, "a")) {
+      final var aname = attrElt.getAttribute("name");
+      final var aval = attrElt.getAttribute("val");
+      if ("output".equalsIgnoreCase(aname)) {
+        output = aval;
+        bad.add(attrElt);
+      } else if ("tristate".equalsIgnoreCase(aname)) {
+        tristate = aval;
+        bad.add(attrElt);
+      } else if ("pull".equalsIgnoreCase(aname)) {
+        pull = aval;
+        bad.add(attrElt);
+      } else if ("type".equalsIgnoreCase(aname)) {
+        type = aval;
+      } else if ("behavior".equalsIgnoreCase(aname)) {
+        behavior = aval;
+      }
+    }
+    for (final var badElement : bad) {
+      elt.removeChild(badElement);
+    }
+    if (type == null && output != null) {
+      appendChildAttribute(doc, elt, "type", output.equalsIgnoreCase("true") ? "output" : "input");
+    }
+    if (behavior == null) {
+      if ("up".equalsIgnoreCase(pull)) {
+        appendChildAttribute(doc, elt, "behavior", "pullup");
+      } else if ("down".equalsIgnoreCase(pull)) {
+        appendChildAttribute(doc, elt, "behavior", "pulldown");
+      } else if ("true".equalsIgnoreCase(tristate)) {
+        appendChildAttribute(doc, elt, "behavior", "tristate");
+      }
+    }
+  }
+
+  private static void appendChildAttribute(Document doc, Element elt, String name, String val) {
+    final var attr = doc.createElement("a");
+    attr.setAttribute("name", name);
+    attr.setAttribute("val", val);
+    elt.appendChild(attr);
   }
 
   private Document loadXmlFrom(InputStream is) throws SAXException, IOException {
@@ -1238,5 +1303,15 @@ class XmlReader {
         }
       }
     }
+  }
+
+  private static String findLibNameByDesc(Element root, String libdesc) {
+    for (final var libElt : XmlIterator.forChildElements(root, "lib")) {
+      final var desc = libElt.getAttribute("desc");
+      final var name = libElt.getAttribute("name");
+      if (name != null && desc != null && desc.equals(libdesc))
+        return name;
+    }
+    return null;
   }
 }

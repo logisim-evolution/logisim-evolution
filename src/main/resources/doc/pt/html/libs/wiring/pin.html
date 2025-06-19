@@ -15,7 +15,7 @@
     <div class="maindiv">
       <h1>
 	   <h1>
-        <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp; 
+        <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp;
 		<img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32" height="32">&nbsp;
 		<em>Pino</em>
       </h1>
@@ -99,7 +99,7 @@
         Comportamento
       </h2>
       <p>
-        Um pino pode ser uma saída ou uma entrada para um circuito, dependendo do valor de seu atributo Saída?. Ao desenhar um pino, o Logisim representará as saídas por círculos ou retângulos com bordas arredondadas, e as entradas serão representadas por quadrados ou retângulos. Em ambos os casos, os bits individuais do valor que for recebido ou enviado será mostrada pelo componente (exceto quando for prévia de uma impressão, quando o componente apenas informará quantos bits poderá comportar).
+        Um pino pode ser uma saída ou uma entrada para um circuito, dependendo do valor de seu atributo Type. Ao desenhar um pino, o Logisim representará as saídas por círculos ou retângulos com bordas arredondadas, e as entradas serão representadas por quadrados ou retângulos. Em ambos os casos, os bits individuais do valor que for recebido ou enviado será mostrada pelo componente (exceto quando for prévia de uma impressão, quando o componente apenas informará quantos bits poderá comportar).
       </p>
       <p>
         Um pino é conveniente para se interagir com um circuito, e os usuários iniciantes do Logisim não precisarão usá-los necessariamente. Mas um usuário que estiver construindo um circuito que use vários subcircuitos (como descrito na seção '<a href="../../guide/subcirc/index.html">Subcircuitos</a>' do <em>Guia do Usuário</em>) poderá usar pinos para especificar a interface entre um circuito e um subcircuito. Em particular, o pino de um <i>layout</i> de circuito define como ele aparecerá quando for tomado por subcircuito e seu <i>layout</i> estiver sendo usado por outro. Em tal circuito, os valores enviados ou recebidos por essas posições no subcircuito serão vinculados aos pinos internos de seu <i>layout</i>.
@@ -124,7 +124,7 @@
           A face do componente onde sua entrada/saída deverá estar.
         </dd>
         <dt>
-          Saída?
+          Type
         </dt>
         <dd>
           Serve para especificar se o componente irá funcionar com entrada ou saída. (Observar que se for um pino de entrada, então o pino irá funcionar como se sua interface dentro do circuito fosse uma saída, e vice-versa.)
@@ -136,16 +136,12 @@
           O número de bits para o valor que o pino pode tratar.
         </dd>
         <dt>
-          Tri-state?
+          <b class="propertie">Behavior</b>
         </dt>
         <dd>
-          Para um pino de entrada, serve para configurar se o usuário poderá indicar que o pino poderá emitir valores indefinidos (ou seja, flutuantes). Esse atributo lida apenas com a interface com o usuário; ele não terá qualquer efeito sobre como o pino se comportará quanto o <i>layout</i> do circuito for usado como um subcircuito. Para um pino de saída, o atributo não terá efeito algum.
-        </dd>
-        <dt>
-          Comportamento para Ajuste
-        </dt>
-        <dd>
-          Para um pino de entrada, o atributo especificará como um valor flutuante deverá ser tratado quando recebido por uma entrada, talvez de um circuito que esteja usando o <i>layout</i>, como no caso de um subcircuito. Se "imutável", os valores flutuantes serão enviados como tal; se "<i>pull-up</i>", eles serão convertidos para 1 antes de serem submetidos; e se "<i>pull-down</i>", eles serão convertidos para 0 antes de serem entregues.
+          The <b class="propertie">Behavior</b> attribute is only available for an input pin. The attribute specifies how unknown (floating), <b class="uvalue">U</b>, values should be treated. If the <b class="propertie">Behavior</b> is Simple or Tri-state, the <b class="uvalue">U</b> values are sent into the layout as <b class="uvalue">U</b> values. Pull Up converts <b class="uvalue">U</b> values to <b class="unov">1</b> before being sent into the circuit layout. Pull Down converts <b class="uvalue">U</b> values to <b class="zerov">0</b> before being sent into the circuit layout.
+          <br><br>
+          The <b class="propertie">Behavior</b> attribute also specifies what values may be entered into the pin when it is not receiving a value from a parent circuit. Tri-state allows you to enter <b class="uvalue">U</b> values. The other settings do not allow you to enter <b class="uvalue">U</b> values.
         </dd>
         <dt>
           Rótulo
@@ -176,13 +172,22 @@
 			&emsp;Decimal con sinal&emsp;: <b>-6</b><br>
 			&emsp;Decimal sen sinal&emsp;: <b>10</b><br>
 			&emsp;Hexadecimal&emsp;: <b>A</b><br>
-			&emsp;Float&emsp;: <b> </b><br>
+            &emsp;Float&emsp;: <b>6.0E-07<sub>f</sub> </b>&emsp;if bit width is 16<br>
+            &emsp;Float&emsp;: <b>1.4E-44<sub>f</sub> </b>&emsp;if bit width is 32<br>
+            &emsp;Float&emsp;: <b>4.9E-323<sub>f</sub> </b>&emsp;if bit width is 64<br>
+            &emsp;Float&emsp;: <b>NaN<sub>f</sub> </b>&emsp;if bit width is not 16, 32 or 64
         </dd>
 		<dt>
           <b class="propertie">&nbsp;Aparência</b>
         </dt>
         <dd>
           Existem dois tipos de aparência, Logisim Clássica e Formas de Flecha. Ver os exemplos no topo da página.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Reset Value</b>
+        </dt>
+        <dd>
+          An input pin may be given a reset value if it does not have the Tri-state Behavior. The reset value is given as a hexadecimal value. It is loaded into the pin on a simulator reset. If the input pin has Tri-state Behavior, it is loaded with all unknown (floating), <b class="uvalue">U</b>, bits on a reset.
         </dd>
       </dl>
       <h2>

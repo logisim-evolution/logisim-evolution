@@ -33,7 +33,7 @@ public class XilinxSeries7SynthesizedClockHdlGeneratorFactory extends Synthesize
    * See referenced docs. Base frequency must be 10Mhz or greater, which is edited here.
 
    * @param fpga_clock_frequency  Clock frequency in hertz.
-   * @param preMultiplier         A double to three decimals that will multiply the 
+   * @param preMultiplier         A double to three decimals that will multiply the
    *                              clock frequency.
    * @param preDivider            A double to three decimals that will divide the
    *                              clock frequency.

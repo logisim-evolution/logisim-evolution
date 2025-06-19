@@ -673,16 +673,24 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   // other methods
   //
   void write(OutputStream out, LibraryLoader loader) {
-    write(out, loader, null, null);
+    write(out, loader, null, null, false);
   }
 
-  void write(OutputStream out, LibraryLoader loader, String libraryHome) {
-    write(out, loader, null, libraryHome);
+  void write(OutputStream out, LibraryLoader loader, String mainCircFile) {
+    write(out, loader, null, mainCircFile, false);
   }
 
-  void write(OutputStream out, LibraryLoader loader, File dest, String libraryHome) {
+  void write(OutputStream out, LibraryLoader loader, String mainCircFile, boolean recurse) {
+    write(out, loader, null, mainCircFile, recurse);
+  }
+
+  void write(OutputStream out, LibraryLoader loader, File dest, String mainCircFile) {
+    write(out, loader, dest, mainCircFile, false);
+  }
+
+  void write(OutputStream out, LibraryLoader loader, File dest, String mainCircFile, boolean recurse) {
     try {
-      XmlWriter.write(this, out, loader, dest, libraryHome);
+      XmlWriter.write(this, out, loader, dest, mainCircFile, recurse);
     } catch (TransformerConfigurationException e) {
       loader.showError("internal error configuring transformer");
     } catch (ParserConfigurationException e) {
@@ -692,6 +700,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       var err = S.get("xmlConversionError");
       if (msg == null) err += ": " + msg;
       loader.showError(err);
+    } catch (IOException e) {
+      loader.showError("Unable to create zip file");
+    } catch (LoadFailedException e) {
+      loader.showError("Unable to create zip file");
     }
   }
 

@@ -13,7 +13,7 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp; 
+        <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp;
 		<img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32" height="32">&nbsp;<em>Pin</em>
       </h1>
     <table>
@@ -48,7 +48,7 @@
       Verhalten
     </h2>
     <p>
-      A pin is an output or an input to a circuit, depending on the value of its Output? attribute. In drawing a pin, Logisim represents output pins using a circle or rounded rectangle, and input pins are represented using squares or rectangles. In either case, the individual bits of the value being sent or received is displayed within the component (except within printer view, when the component only says how many bits wide the pin is).
+      A pin is an output or an input to a circuit, depending on the value of its Type attribute. In drawing a pin, Logisim represents output pins using a circle or rounded rectangle, and input pins are represented using squares or rectangles. In either case, the individual bits of the value being sent or received is displayed within the component (except within printer view, when the component only says how many bits wide the pin is).
     </p>
     <p>
       A pin is a convenient component for interacting with a circuit, and beginning Logisim users need not use them in any other way. But a user building a circuit using several subcircuits (as described in the `<a href="../../guide/subcirc/index.html">Subcircuits</a>' section of the <em>User's Guide</em>) will use pins also to specify the interface between a circuit and a subcircuit. In particular, a circuit layout's pin components define the pins that appear on the subcircuit component when the layout is used within another circuit. In such a circuit, the values sent and received to those locations on the subcircuit component are tied to the pins within the subcircuit layout.
@@ -73,7 +73,7 @@
         The side of the component where its input/output pin should be.
       </dd>
       <dt>
-        Output?
+        Type
       </dt>
       <dd>
         Specifies whether the component is an output pin or an input pin. (Note that if the pin component is an input pin, then the pin that acts as its interface within the circuit will be an output, and vice versa.)
@@ -85,16 +85,12 @@
         The number of bits for the value that the pin handles.
       </dd>
       <dt>
-        Three-state?
+        Behavior
       </dt>
       <dd>
-        For an input pin, this configures whether the user can instruct the pin to emit unspecified (i.e., floating) values. The attribute deals with the user interface only; it does not have any effect on how the pin behaves when the circuit layout is used as a subcircuit. For an output pin, the attribute has no effect.
-      </dd>
-      <dt>
-        Pull Behavior
-      </dt>
-      <dd>
-        For an input pin, the attribute specifies how floating values should be treated when received as an input, perhaps from a circuit using the layout as a subcircuit. With "unchanged," the floating values are sent into the layout as floating values; with "pull up," they are converted into 1 values before being sent into the circuit layout; and with "pull down," they are converted into 0 values before being sent into the circuit layout.
+        The <b class="propertie">Behavior</b> attribute is only available for an input pin. The attribute specifies how unknown (floating), <b class="uvalue">U</b>, values should be treated. If the <b class="propertie">Behavior</b> is Simple or Tri-state, the <b class="uvalue">U</b> values are sent into the layout as <b class="uvalue">U</b> values. Pull Up converts <b class="uvalue">U</b> values to <b class="unov">1</b> before being sent into the circuit layout. Pull Down converts <b class="uvalue">U</b> values to <b class="zerov">0</b> before being sent into the circuit layout.
+        <br><br>
+        The <b class="propertie">Behavior</b> attribute also specifies what values may be entered into the pin when it is not receiving a value from a parent circuit. Tri-state allows you to enter <b class="uvalue">U</b> values. The other settings do not allow you to enter <b class="uvalue">U</b> values.
       </dd>
       <dt>
         Label
@@ -113,6 +109,34 @@
       </dt>
       <dd>
         The font with which to render the label.
+      </dd>
+      <dt>
+        Radix
+      </dt>
+      <dd>
+        Allows you to define the base in which the values will be represented.<br>
+        Example for 1010 in binary<br>
+        &emsp;Binary&emsp;: <b>1010<sub>b</sub></b><br>
+        &emsp;Octal&emsp;: <b>12<sub>o</sub></b><br>
+        &emsp;Signed decimal&emsp;: <b>-6<sub>s</sub></b><br>
+        &emsp;Unsigned decimal&emsp;: <b>10<sub>u</sub></b><br>
+        &emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
+        &emsp;Float&emsp;: <b>6.0E-07<sub>f</sub> </b>&emsp;if bit width is 16<br>
+        &emsp;Float&emsp;: <b>1.4E-44<sub>f</sub> </b>&emsp;if bit width is 32<br>
+        &emsp;Float&emsp;: <b>4.9E-323<sub>f</sub> </b>&emsp;if bit width is 64<br>
+        &emsp;Float&emsp;: <b>NaN<sub>f</sub> </b>&emsp;if bit width is not 16, 32 or 64
+      </dd>
+      <dt>
+        Appearance
+      </dt>
+      <dd>
+        There are two types of appearance, Classic Logisim and Arrow Shapes. See the examples at the top of the page
+      </dd>
+      <dt>
+        Reset Value
+      </dt>
+      <dd>
+        An input pin may be given a reset value if it does not have the Tri-state Behavior. The reset value is given as a hexadecimal value. It is loaded into the pin on a simulator reset. If the input pin has Tri-state Behavior, it is loaded with all unknown (floating), <b class="uvalue">U</b>, bits on a reset.
       </dd>
     </dl>
     <h2>

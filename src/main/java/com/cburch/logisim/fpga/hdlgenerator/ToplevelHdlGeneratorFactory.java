@@ -179,9 +179,9 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     for (final var scanningSevenSeg : myScanningSevenSegs) {
       myWires.addAllWires(
           SevenSegmentScanningGenericHdlGenerator.getInternalSignals(
-              scanningSevenSeg.getNrOfRows(), 
+              scanningSevenSeg.getNrOfRows(),
               myScanningSevenSegs.indexOf(scanningSevenSeg)));
-      final var ports = 
+      final var ports =
           SevenSegmentScanningGenericHdlGenerator.getExternalSignals(
               scanningSevenSeg.getArrayDriveMode(),
               scanningSevenSeg.getNrOfRows(),
@@ -204,7 +204,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   public boolean hasLedArray() {
     return hasLedArray;
   }
-  
+
   public boolean hasScanningSevenSeg() {
     return hasScanningSevenSeg;
   }
@@ -212,7 +212,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   public boolean hasLedArrayType(String type) {
     return ledArrayTypesUsed.containsKey(type) ? ledArrayTypesUsed.get(type) : false;
   }
-  
+
   public boolean hasScanningSevenSegmentType(String type) {
     return ScanningSevenSegmentsUsed.containsKey(type) ? ScanningSevenSegmentsUsed.get(type) : false;
   }
@@ -341,11 +341,11 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       for (final var sevenSeg : myScanningSevenSegs) {
         contents.add(
             SevenSegmentScanningGenericHdlGenerator.getComponentMap(
-                sevenSeg.getArrayDriveMode(), 
+                sevenSeg.getArrayDriveMode(),
                 sevenSeg.getNrOfRows(),
                 sevenSeg.getNrOfColumns(),
-                myScanningSevenSegs.indexOf(sevenSeg), 
-                fpgaClockFrequency, 
+                myScanningSevenSegs.indexOf(sevenSeg),
+                fpgaClockFrequency,
                 sevenSeg.getActivityLevel() == PinActivity.ACTIVE_LOW));
         contents.add(
             SevenSegmentScanningGenericHdlGenerator.getSegmentConnections(sevenSeg, myScanningSevenSegs.indexOf(sevenSeg)));

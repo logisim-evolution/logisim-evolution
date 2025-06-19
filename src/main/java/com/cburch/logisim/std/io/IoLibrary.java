@@ -57,6 +57,7 @@ public class IoLibrary extends Library {
     new FactoryDescription(Tty.class, S.getter("ttyComponent"), "tty.gif"),
     new FactoryDescription(PortIo.class, S.getter("pioComponent"), "pio.gif"),
     new FactoryDescription(ReptarLocalBus.class, S.getter("repLBComponent"), "localbus.gif"),
+    new FactoryDescription(Telnet.class, S.getter("telnetComponent"), "telnet.gif"),
   };
 
   private List<Tool> tools = null;

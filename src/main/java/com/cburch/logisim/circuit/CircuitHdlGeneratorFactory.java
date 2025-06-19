@@ -37,7 +37,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private enum bubbleType {
     INPUT, OUTPUT, INOUT
   }
-  
+
   private final Circuit myCircuit;
 
   public CircuitHdlGeneratorFactory(Circuit source) {
@@ -203,11 +203,11 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private String getBubbleIndex(netlistComponent comp, bubbleType type) {
     final var fmt = "{{<}}{{1}} {{2}} {{3}}{{>}}";
     return switch (type) {
-      case INPUT -> LineBuffer.format(fmt, comp.getLocalBubbleInputEndId(), 
+      case INPUT -> LineBuffer.format(fmt, comp.getLocalBubbleInputEndId(),
           Hdl.vectorLoopId(), comp.getLocalBubbleInputStartId());
-      case OUTPUT -> LineBuffer.format(fmt, comp.getLocalBubbleOutputEndId(), 
-          Hdl.vectorLoopId(), comp.getLocalBubbleOutputStartId()); 
-      case INOUT -> LineBuffer.format(fmt, comp.getLocalBubbleInOutEndId(), 
+      case OUTPUT -> LineBuffer.format(fmt, comp.getLocalBubbleOutputEndId(),
+          Hdl.vectorLoopId(), comp.getLocalBubbleOutputStartId());
+      case INOUT -> LineBuffer.format(fmt, comp.getLocalBubbleInOutEndId(),
           Hdl.vectorLoopId(), comp.getLocalBubbleInOutStartId());
       default -> "";
     };
@@ -224,7 +224,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         final var worker = gate.getComponent().getFactory().getHDLGenerator(gate.getComponent().getAttributeSet());
         if (worker != null) {
           if (!worker.isOnlyInlined()) {
-            components.empty().add(worker.getComponentInstantiation(theNetlist, 
+            components.empty().add(worker.getComponentInstantiation(theNetlist,
                 gate.getComponent().getAttributeSet(), compName));
           }
         }
@@ -347,7 +347,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             isFirstLine = false;
           }
           final var thisAttrs = comp.getComponent().getAttributeSet();
-          final var hasLabel = thisAttrs.containsAttribute(StdAttr.LABEL) 
+          final var hasLabel = thisAttrs.containsAttribute(StdAttr.LABEL)
               && !thisAttrs.getValue(StdAttr.LABEL).isEmpty();
           final var compName = hasLabel ? CorrectLabel.getCorrectLabel(thisAttrs.getValue(StdAttr.LABEL)) : "";
           final var remarkLine = LineBuffer.format("{{1}}{{2}}{{3}}", comp.getComponent().getFactory().getDisplayName(),

@@ -14,7 +14,7 @@
   <body>
     <div class="maindiv">
       <h1>
-	  <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp; 
+	  <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp;
 		<img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32" height="32">&nbsp;<em>Контакт</em>
       </h1>
       <table>
@@ -97,7 +97,7 @@
         Поведение
       </h2>
       <p>
-        Контакт - это выход или вход схемы, в зависимости от значения атрибута Выход? . При отрисовке контакта Logisim представляет выходные контакты как кружки или скруглённые прямоугольники, а входные контакты как квадраты или прямоугольники. В обоих случаях отдельные биты значения, которое оправляется или принимается, отображаются внутри данного компонента (кроме Вида для печати, когда компонент говорит только какова разрядность контакта).
+        Контакт - это выход или вход схемы, в зависимости от значения атрибута Type. При отрисовке контакта Logisim представляет выходные контакты как кружки или скруглённые прямоугольники, а входные контакты как квадраты или прямоугольники. В обоих случаях отдельные биты значения, которое оправляется или принимается, отображаются внутри данного компонента (кроме Вида для печати, когда компонент говорит только какова разрядность контакта).
       </p>
       <p>
         Контакт - удобный компонент для взаимодействия со схемой, и начинающим пользователям Logisim не нужно использовать их каким-либо другим образом. Но пользователь, строящий схему с использованием нескольких подсхем (как описано в разделе <a  class=refguide href="../../guide/subcirc/index.html">Подсхемы</a> <em>Руководства пользователя</em> ) будет использовать контакты также чтобы определить интерфейс между схемой и подсхемой. В частности, компоненты Контакт чертежа схемы определяют контакты, которые отображаются на компоненте Подсхема, когда чертёж используется внутри другой схемы. В такой схеме значения, переданные и принятые в этих точках компонента Подсхема, связаны с контактами внутри чертежа подсхемы.
@@ -122,7 +122,7 @@
           Сторона компонента, где должен быть его входной/выходной контакт.
         </dd>
         <dt>
-          Выход?
+          Type
         </dt>
         <dd>
           Определяет, будет компонент выходным контактом или входным. (Заметьте, что если компонент Контакт - входной контакт, то контакт, который выступает в качестве интерфейса в схеме, будет выходом, и наоборот.)
@@ -134,16 +134,12 @@
           Количество битов значения, с которым имеет дело контакт.
         </dd>
         <dt>
-          Три состояния?
+          <b class="propertie">Behavior</b>
         </dt>
         <dd>
-          Для входного контакта этот атрибут определяет, может ли пользователь заставить контакт подать на выход неопределённые (например плавающие) значения. Этот атрибут имеет дело только с интерфейсом пользователя; он никак не влияет на поведение контакта, когда чертёж схемы использован как подсхема. Для выходного контакта атрибут не влияет ни на что.
-        </dd>
-        <dt>
-          Обращение с плавающими
-        </dt>
-        <dd>
-          Для входного контакта атрибут определяет, каким образом следует рассматривать плавающие значения, когда они приняты на входе, возможно с использованием чертежа как подсхемы. При значении "Не менять" плавающие значения передаются в чертёж как плавающие значения; при значении "Повышать" они преобразуются в 1 до того, как передаются в чертёж схемы; и при значении "Понижать" они преобразуются в 0 до того, как передаются в чертёж схемы.
+          The <b class="propertie">Behavior</b> attribute is only available for an input pin. The attribute specifies how unknown (floating), <b class="uvalue">U</b>, values should be treated. If the <b class="propertie">Behavior</b> is Simple or Tri-state, the <b class="uvalue">U</b> values are sent into the layout as <b class="uvalue">U</b> values. Pull Up converts <b class="uvalue">U</b> values to <b class="unov">1</b> before being sent into the circuit layout. Pull Down converts <b class="uvalue">U</b> values to <b class="zerov">0</b> before being sent into the circuit layout.
+          <br><br>
+          The <b class="propertie">Behavior</b> attribute also specifies what values may be entered into the pin when it is not receiving a value from a parent circuit. Tri-state allows you to enter <b class="uvalue">U</b> values. The other settings do not allow you to enter <b class="uvalue">U</b> values.
         </dd>
         <dt>
           Метка
@@ -162,6 +158,12 @@
         </dt>
         <dd>
           Шрифт, которым отрисовывается метка.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Reset Value</b>
+        </dt>
+        <dd>
+          An input pin may be given a reset value if it does not have the Tri-state Behavior. The reset value is given as a hexadecimal value. It is loaded into the pin on a simulator reset. If the input pin has Tri-state Behavior, it is loaded with all unknown (floating), <b class="uvalue">U</b>, bits on a reset.
         </dd>
       </dl>
       <h2>

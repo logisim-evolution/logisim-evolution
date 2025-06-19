@@ -19,7 +19,7 @@ public class DriveStrength {
     }
     return "";
   }
-  
+
   public static String getDriveString(char id) {
     if (id == DEFAULT_STENGTH || id > DRIVE_24) return null;
     return SIMPLE_STRINGS[id];
@@ -63,7 +63,7 @@ public class DriveStrength {
   public static final String[] BEHAVIOR_STRINGS = {
     "Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"
   };
-  
+
   public static final String[] SIMPLE_STRINGS = {
     "0", "2", "4", "8", "16", "24"
   };

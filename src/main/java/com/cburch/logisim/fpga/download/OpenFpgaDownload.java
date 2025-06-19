@@ -40,7 +40,7 @@ public class OpenFpgaDownload  implements VendorDownload {
   private final List<String> architectures;
   private final String HdlType;
   private final boolean writeToFlash;
-  
+
   private final String YOSYS_SCRIPT_FILE = "yosys.script";
   private final String JSON_FILE = "toplevel.json";
   private final String PIN_CONSTRAINT_FILE = "toplevel.lpf";
@@ -66,7 +66,7 @@ public class OpenFpgaDownload  implements VendorDownload {
     this.writeToFlash = writeToFlash;
   }
 
-  
+
   @Override
   public int getNumberOfStages() {
     return HdlType.equals(HdlGeneratorFactory.VHDL) ? 4 : 3;
@@ -165,17 +165,17 @@ public class OpenFpgaDownload  implements VendorDownload {
 
   @Override
   public boolean isBoardConnected() {
-    // TODO: Detect if a board is connected, and in case of multiple boards select the one that should be used 
+    // TODO: Detect if a board is connected, and in case of multiple boards select the one that should be used
     return true;
   }
-  
+
   private List<String> getPinLocations() {
     final var pinInfo = LineBuffer.getBuffer();
     for (final var key : mapInfo.getMappableResources().keySet()) {
       final var map = mapInfo.getMappableResources().get(key);
       for (var pin = 0; pin < map.getNrOfPins(); pin++) {
         if (map.isMapped(pin) && !map.isOpenMapped(pin) && !map.isConstantMapped(pin) && !map.isInternalMapped(pin)) {
-          pinInfo.add("LOCATE COMP \"{{1}}{{2}}\" SITE \"{{3}}\";", 
+          pinInfo.add("LOCATE COMP \"{{1}}{{2}}\" SITE \"{{3}}\";",
               map.isExternalInverted(pin) ? "n_" : "",
               map.getHdlString(pin),
               map.getPinLocation(pin).toUpperCase());
@@ -222,7 +222,7 @@ public class OpenFpgaDownload  implements VendorDownload {
     stage.directory(new File(sandboxPath));
     return stage;
   }
-  
+
   private ProcessBuilder stageYosys() {
     final var command = LineBuffer.getBuffer();
     if (HdlType.equals(HdlGeneratorFactory.VHDL)) {
@@ -242,7 +242,7 @@ public class OpenFpgaDownload  implements VendorDownload {
     stage.directory(new File(sandboxPath));
     return stage;
   }
-  
+
   private ProcessBuilder stageNextpnrEcp5() {
     final var command = LineBuffer.getBuffer();
     command
@@ -260,7 +260,7 @@ public class OpenFpgaDownload  implements VendorDownload {
     stage.directory(new File(sandboxPath));
     return stage;
   }
-  
+
   private ProcessBuilder stageEcppack() {
     final var command = LineBuffer.getBuffer();
     command

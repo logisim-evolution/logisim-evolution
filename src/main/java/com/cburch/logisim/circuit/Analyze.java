@@ -193,7 +193,7 @@ public class Analyze {
     final var columns = new Entry[outputNames.size()][rowCount];
 
     for (var i = 0; i < rowCount; i++) {
-      final var circuitState = new CircuitState(proj, circuit);
+      final var circuitState = CircuitState.createRootState(proj, circuit);
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
@@ -203,7 +203,7 @@ public class Analyze {
           v[b] = value ? Value.TRUE : Value.FALSE;
         }
         final var pinState = circuitState.getInstanceState(pin);
-        Pin.FACTORY.setValue(pinState, Value.create(v));
+        Pin.FACTORY.driveInputPin(pinState, Value.create(v));
       }
 
       final var prop = circuitState.getPropagator();
@@ -359,10 +359,10 @@ public class Analyze {
           throw new AnalyzeException.CannotHandle("incompatible widths");
         }
         final var t = bundle.threads[locationBit.bit];
-        for (final var tb : t.getBundles()) {
-          for (final var p2 : tb.b.points) {
+        for (var i = 0; i < t.steps; i++) {
+          for (final var p2 : t.bundle[i].xpoints) {
             if (p2.equals(locationBit.loc)) continue;
-            final var p2b = new LocationBit(p2, tb.loc);
+            final var p2b = new LocationBit(p2, t.position[i]);
             final var old = expressionMap.get(p2b);
             if (old != null) {
               final var eCause = expressionMap.currentCause;

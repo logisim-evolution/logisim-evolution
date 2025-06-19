@@ -11,6 +11,7 @@ package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -20,6 +21,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -57,7 +59,7 @@ public class PowerOnReset extends InstanceFactory {
   private static final Attribute<AttributeOption> PORSIZE =
       Attributes.forOption(
           "porsize", S.getter("PorSize"), new AttributeOption[] {SIZE_WIDE, SIZE_MEDIUM, SIZE_NARROW});
-  
+
   private static final AttributeOption HTOL =
       new AttributeOption(1, S.getter("porHighToLow"));
   private static final AttributeOption LTOH =
@@ -65,17 +67,17 @@ public class PowerOnReset extends InstanceFactory {
   private static final Attribute<AttributeOption> PORTRANS =
       Attributes.forOption(
           "porTransition", S.getter("porTransition"), new AttributeOption[] {HTOL, LTOH});
-    
+
   public static final PowerOnReset FACTORY = new PowerOnReset();
 
   public static class Poker extends InstancePoker {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       PORState ret = (PORState) state.getData();
-      ret.reset();
+      ret.reset(state);
     }
   }
-    
+
   public PowerOnReset() {
     super(_ID, S.getter("PowerOnResetComponent"));
     setAttributes(
@@ -83,7 +85,7 @@ public class PowerOnReset extends InstanceFactory {
           StdAttr.FACING,
           PORSIZE,
           PORTRANS,
-          new DurationAttribute("PorHighDuration", S.getter("porHighAttr"), 1, 10, false), 
+          new DurationAttribute("PorHighDuration", S.getter("porHighAttr"), 1, 10, false),
         },
         new Object[] {
           Direction.EAST,
@@ -99,19 +101,22 @@ public class PowerOnReset extends InstanceFactory {
   private static class PORState implements InstanceData, Cloneable, ActionListener {
 
     private boolean value;
+    private InstanceComponent component;
+    private Simulator simulator;
     private final Timer tim;
-    private final InstanceState state;
     private int tstart;
     private int tend;
     private int duration;
 
     public PORState(InstanceState state) {
       value = true;
+      component = state.getInstance().getComponent();
+      simulator = state.getProject().getSimulator();
       DurationAttribute attr =
           (DurationAttribute) state.getAttributeSet().getAttribute("PorHighDuration");
       duration = state.getAttributeValue(attr) * 1000;
       tim = new Timer(duration, this);
-      
+
       if (state.getAttributeValue(PORTRANS) == LTOH) {
         tstart = 0;
         tend = 1;
@@ -119,9 +124,8 @@ public class PowerOnReset extends InstanceFactory {
         tstart = 1;
         tend = 0;
       }
-      state.setPort(0, Value.createKnown(BitWidth.ONE, tstart), 0); 
+      state.setPort(0, Value.createKnown(BitWidth.ONE, tstart), 0);
       tim.start();
-      this.state = state;
     }
 
     public boolean getValue() {
@@ -131,12 +135,12 @@ public class PowerOnReset extends InstanceFactory {
     public int gettstart() {
       return tstart;
     }
-    
+
     public int gettend() {
       return tend;
     }
-    
-    public void reset() {
+
+    public void reset(InstanceState state) {
       if (value) {
         tim.stop();
         value = false;
@@ -155,12 +159,12 @@ public class PowerOnReset extends InstanceFactory {
           (DurationAttribute) state.getAttributeSet().getAttribute("PorHighDuration");
       duration = state.getAttributeValue(attr) * 1000;
 
-      state.setPort(0, Value.createKnown(BitWidth.ONE, tstart), 0); 
+      state.setPort(0, Value.createKnown(BitWidth.ONE, tstart), 0);
 
       tim.setInitialDelay(duration);
       tim.start();
     }
-    
+
     @Override
     public Object clone() {
       try {
@@ -175,7 +179,8 @@ public class PowerOnReset extends InstanceFactory {
       if (e.getSource() == tim) {
         if (value) {
           value = false;
-          state.getInstance().fireInvalidated();
+          component.fireInvalidated();
+          if (simulator != null) simulator.nudge();
           tim.stop();
         }
       }
@@ -186,21 +191,21 @@ public class PowerOnReset extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     instance.setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, BitWidth.ONE)});
- 
+
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
 
-    final var psize = attrs.getValue(PORSIZE); 
+    final var psize = attrs.getValue(PORSIZE);
     if (psize == SIZE_MEDIUM) {
       return Bounds.create(0, -20, 40, 40).rotate(Direction.WEST, facing, 0, 0);
     } else if (psize == SIZE_NARROW) {
       return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0, 0);
     } else {
       return Bounds.create(0, -20, 200, 40).rotate(Direction.WEST, facing, 0, 0);
-    }   
+    }
   }
 
   @Override
@@ -208,7 +213,7 @@ public class PowerOnReset extends InstanceFactory {
     if (attr == StdAttr.FACING || attr == PORSIZE) {
       instance.recomputeBounds();
     }
-    
+
   }
 
   @Override
@@ -226,14 +231,14 @@ public class PowerOnReset extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRect(x, y, width, height);
 
-    final var psize = painter.getAttributeValue(PORSIZE); 
+    final var psize = painter.getAttributeValue(PORSIZE);
 
     if (psize == SIZE_WIDE) {
       Font old = g.getFont();
       g.setFont(old.deriveFont(16.0f).deriveFont(Font.BOLD));
-      String txt = S.get("porLongName"); 
-     
-      FontMetrics fm = g.getFontMetrics();  
+      String txt = S.get("porLongName");
+
+      FontMetrics fm = g.getFontMetrics();
       int wide = Math.max(width, height);
 
       int offset = (wide - fm.stringWidth(txt)) / 2;
@@ -257,7 +262,7 @@ public class PowerOnReset extends InstanceFactory {
       int y1;
       int y2;
       int offset;
-      
+
       Font old = g.getFont();
       if  (psize == SIZE_NARROW) {
         g.setFont(old.deriveFont(6.0f).deriveFont(Font.BOLD));
@@ -266,12 +271,12 @@ public class PowerOnReset extends InstanceFactory {
         g.setFont(old.deriveFont(14.0f).deriveFont(Font.BOLD));
         offset = 13;
       }
-      
+
       y1 = y + height - 4;
       y2 = y + offset;
       x1 = x + 3;
       x2 = x + width - 4;
-      
+
       Graphics2D g2 = (Graphics2D) g;
       var oldStroke = g2.getStroke();
       g2.setStroke(new BasicStroke(1));
@@ -279,22 +284,22 @@ public class PowerOnReset extends InstanceFactory {
       g.drawLine(x1, y1, x2, y1);
       x1 = x1 + 1;
       y1 = y1 + 1;
-      g.drawLine(x1, y2, x1, y1); 
+      g.drawLine(x1, y2, x1, y1);
       g2.setStroke(oldStroke);
-      
+
       x1 = x + 4;
       x2 = x + width / 2;
       x3 = x + width - 4;
       y1 = y + offset + 2;
       y2 = y + height - 5;
 
-      final var pstat = painter.getAttributeValue(PORTRANS); 
+      final var pstat = painter.getAttributeValue(PORTRANS);
       if (pstat == LTOH) {
         var tmp = y1;
         y1 = y2;
         y2 = tmp;
       }
-      
+
       g.setColor(Color.RED);
       g.drawLine(x1, y1, x2, y1);
       g.drawLine(x2, y1, x2, y2);

@@ -1,13 +1,43 @@
 [![Logisim-evolution](docs/img/logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 # Changes #
-
 * @dev (2024-10-10)
-  * Added dual port RAM component. [#79]
-    * It's a type of memory RAM that is typically used to implement processor registers.
-    * Added spanish translations related to it.
-    * It doesn't supports bidirectional operations.
-    * It doesn't supports line sizes, as it's restricted to one input and two outputs.
+    * Added dual-ported RAM component. [#79]
+        * It's a type of memory RAM that is typically used to implement processor registers.
+        * Added spanish translations related to it.
+        * It doesn't supports bidirectional operations.
+        * It doesn't supports line sizes, as it's restricted to one input and two outputs.
+
+* @dev (????-??-??)
+    * Updated VHDL and created Verilog generator for RAM component with byte-enables
+    * Added VHDL and Verilog for the RAM component with line-enables
+    * fixed clasic appearance shift-register bug
+    * Added automatic custom Logisim library loading at startup.
+        * Created unit tests for loading custom Logisim libraries at startup.
+        * Updated documentation for the automatic loading of custom Logisim libraries.
+    * New take on project export/import. A zip-file is generated which can include a user provided "README.md".
+    * Added Telnet component.
+    * Added Metal graphics acceleration option.
+    * Added option to hide/show toolbar
+    * Improved drawing appearance.
+        * Fixed TTY appearance bug while changing various zoom levels.
+        * Corrected appearance of NOT gates in TikZ/SVG image export.
+        * Corrected disjoint corners in arrow-style Pins.
+        * Improved output of rectangles with rounded corners in TikZ image export.
+    * Fixed Undo/Redo issues.
+    * Fixed Power-on-Reset propagation issue.
+    * Redesigned simulation engine to fix synchronization issues and increase speed.
+        * Fixed synchronization and efficiency issues in wires and propagation.
+        * Fixed synchronization and efficiency issues in propagation listeners.
+        * Limited redraws to about 20 frames per second to reduce overhead.
+        * Allows users to choose a simulation queue, which changes the efficiency of the simulator depending on circuit design.
+    * Simplified Type and Behavior attributes of Pins.
+        * This change will break circuits with input pins that need to pull floating values to 0 but do not
+          have the Pull Down setting. To fix it, set the Behavior attribute to Pull Down.
+        * Updated Pin documentation.
+    * Subcircuits with clock input(s) are now drawn with a clock symbol.
+    * Added TTL 74194: 4-bit bidirectional universal shift register.
+
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
