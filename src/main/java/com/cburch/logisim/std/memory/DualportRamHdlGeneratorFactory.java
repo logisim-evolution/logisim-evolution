@@ -89,11 +89,14 @@ public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
           .addWire("s_oe", 1);
     }
     myPorts
-        .add(Port.INPUT, "address", nrOfaddressLines, DualportRamAppearance.getAddrIndex(0, attrs))
-        .add(Port.INPUT, "dataIn", nrOfBits, DualportRamAppearance.getDataInIndex(0, attrs))
-        .add(Port.INPUT, "we", 1, DualportRamAppearance.getWEIndex(0, attrs))
-        .add(Port.OUTPUT, "dataOut", nrOfBits, DualportRamAppearance.getDataOutIndex(0, attrs));
-    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, DualportRamAppearance.getClkIndex(0, attrs));
+        .add(Port.INPUT, "address1", nrOfaddressLines, DualPortRamAppearance.getAddrIndex(0, attrs))
+        .add(Port.INPUT, "address2", nrOfaddressLines, DualPortRamAppearance.getAddrIndex(1, attrs))
+        .add(Port.INPUT, "addressWrite", nrOfaddressLines, DualPortRamAppearance.getAddrIndex(2, attrs))
+        .add(Port.INPUT, "dataIn", nrOfBits, DualPortRamAppearance.getDataInIndex(0, attrs))
+        .add(Port.INPUT, "we", 1, DualPortRamAppearance.getWEIndex(0, attrs))
+        .add(Port.OUTPUT, "dataOut0", nrOfBits, DualPortRamAppearance.getDataOutIndex(0, attrs))
+        .add(Port.OUTPUT, "dataOut1", nrOfBits, DualPortRamAppearance.getDataOutIndex(1, attrs));
+    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, DualPortRamAppearance.getClkIndex(0, attrs));
   }
 
   @Override
