@@ -241,7 +241,7 @@ public class DualPortRam extends Mem {
     final var addrValue1 = state.getPortValue(DualPortRamAppearance.getAddrIndex(0, attrs));
     final var addrValue2 = state.getPortValue(DualPortRamAppearance.getAddrIndex(1, attrs));
     final var addrValueWrite = state.getPortValue(DualPortRamAppearance.getAddrIndex(2, attrs));
-    long addr = addrValue1.toLongValue();
+    long addr1 = addrValue1.toLongValue();
     long addr2 = addrValue2.toLongValue();
     long addrWrite = addrValueWrite.toLongValue();
     final var goodAddr = addrValue1.isFullyDefined() && addr >= 0;
@@ -254,13 +254,13 @@ public class DualPortRam extends Mem {
 
     // now we handle the two different behaviors, line-enables or byte-enables
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-      propagateLineEnables(state, addr, goodAddr, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue1.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
+      propagateLineEnables(state, addr1, goodAddr1, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue1.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
     } else {
-      propagateByteEnables(state, addr, goodAddr, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue1.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
+      propagateByteEnables(state, addr1, goodAddr1, addr2, goodAddr2, addrWrite, goodAddrWrite, addrValue1.isErrorValue(), addrValue2.isErrorValue(), addrValueWrite.isErrorValue());
     }
   }
 
-  private void propagateLineEnables(InstanceState state, long addr, boolean goodAddr,
+  private void propagateLineEnables(InstanceState state, long addr1, boolean goodAddr1,
                                     long addr2, boolean goodAddr2,
                                     long addrWrite, boolean goodAddrWrite,
                                     boolean errorValue, boolean errorValue2,
@@ -269,7 +269,7 @@ public class DualPortRam extends Mem {
     final var myState = (RamState) getState(state);
 
     final var dataLines = Math.max(1, DualPortRamAppearance.getNrLEPorts(attrs));
-    final var misaligned = addr % dataLines != 0;
+    final var misaligned = addr1 % dataLines != 0;
     final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
     // perform writes
@@ -285,10 +285,10 @@ public class DualPortRam extends Mem {
     final var width = state.getAttributeValue(DATA_ATTR);
     final var outputEnabled = !state.getPortValue(DualPortRamAppearance.getLEIndex(0, attrs)).equals(Value.FALSE);
     final var outputEnabled2 = !state.getPortValue(DualPortRamAppearance.getLEIndex(1, attrs)).equals(Value.FALSE);
-    if (outputEnabled && goodAddr && !misalignError) {
-        long val = myState.getContents().get(addr);
+    if (outputEnabled && goodAddr1 && !misalignError) {
+        long val = myState.getContents().get(addr1);
         state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), Value.createKnown(width, val), DELAY);
-    } else if (outputEnabled && (errorValue || (goodAddr && misalignError))) {
+    } else if (outputEnabled && (errorValue || (goodAddr1 && misalignError))) {
         state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), Value.createError(width), DELAY);
     } else {
         state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), Value.createUnknown(width), DELAY);
@@ -303,7 +303,7 @@ public class DualPortRam extends Mem {
     }
   }
 
-  private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr,
+  private void propagateByteEnables(InstanceState state, long addr1, boolean goodAddr1,
                                     long addr2, boolean goodAddr2,
                                     long addrWrite, boolean goodAddrWrite,
                                     boolean errorValue, boolean errorValue2,
@@ -311,7 +311,7 @@ public class DualPortRam extends Mem {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
     long newMemValue = myState.getContents().get(myState.getCurrent());
-    long oldMemValue1 = myState.getContents().get(addr);
+    long oldMemValue1 = myState.getContents().get(addr1);
     long oldMemValue2 = myState.getContents().get(addr2);
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
@@ -346,7 +346,7 @@ public class DualPortRam extends Mem {
     final var outputNotEnabled = state.getPortValue(DualPortRamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
     final var outputNotEnabled2 = state.getPortValue(DualPortRamAppearance.getOEIndex(1, attrs)).equals(Value.FALSE);
 
-    Consumer<Value> setValue = (Value value) -> state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), value, DELAY);
+    Consumer<Value> setValue1 = (Value value) -> state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), value, DELAY);
     Consumer<Value> setValue2 = (Value value) -> state.setPort(DualPortRamAppearance.getDataOutIndex(1, attrs), value, DELAY);
 
     /* if both OEs are not activated, just return */
@@ -355,10 +355,10 @@ public class DualPortRam extends Mem {
     /* if the address is bogus set error value accordingly */
 
     boolean value_is_error = errorValue || errorValue2;
-    boolean value_is_bad = !goodAddr || !goodAddr2;
+    boolean value_is_bad = !goodAddr1 || !goodAddr2;
 
     if (errorValue) {
-      setValue.accept(Value.createError(dataBits));
+      setValue1.accept(Value.createError(dataBits));
     }
 
     if (errorValue2) {
@@ -367,8 +367,8 @@ public class DualPortRam extends Mem {
 
     if (value_is_error) return;
 
-    if (!goodAddr) {
-      setValue.accept(Value.createUnknown(dataBits));
+    if (!goodAddr1) {
+      setValue1.accept(Value.createUnknown(dataBits));
     }
 
     if (!goodAddr2) {
@@ -381,7 +381,7 @@ public class DualPortRam extends Mem {
 
     if (asyncRead) {
       if (!outputNotEnabled)
-        setValue.accept(Value.createKnown(dataBits, myState.getContents().get(addr)));
+        setValue1.accept(Value.createKnown(dataBits, myState.getContents().get(addr1)));
       if (!outputNotEnabled2)
         setValue2.accept(Value.createKnown(dataBits, myState.getContents().get(addr2)));
       return;
@@ -390,14 +390,14 @@ public class DualPortRam extends Mem {
     if (edge) {
       if (attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE)) {
         if (!outputNotEnabled) {
-          setValue.accept(Value.createKnown(dataBits, myState.getContents().get(addr)));
+          setValue1.accept(Value.createKnown(dataBits, myState.getContents().get(addr1)));
         }
         if (!outputNotEnabled2) {
           setValue2.accept(Value.createKnown(dataBits, myState.getContents().get(addr2)));
         }
       } else {
         if (!outputNotEnabled) {
-          setValue.accept(Value.createKnown(dataBits, oldMemValue1));
+          setValue1.accept(Value.createKnown(dataBits, oldMemValue1));
         }
         if (!outputNotEnabled2) {
           setValue2.accept(Value.createKnown(dataBits, oldMemValue2));
