@@ -25,7 +25,7 @@ import java.awt.*;
 import static com.cburch.logisim.std.Strings.S;
 
 
-public class DualportRamAppearance {
+public class DualPortRamAppearance {
 
   public static int getNrAddrPorts(AttributeSet attrs) {
     return 3; //Addr1, Addr2, AddrWrite

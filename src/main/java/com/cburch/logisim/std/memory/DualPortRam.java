@@ -103,7 +103,7 @@ public class DualPortRam extends Mem {
 
   @Override
   void configurePorts(Instance instance) {
-    DualportRamAppearance.configurePorts(instance);
+    DualPortRamAppearance.configurePorts(instance);
   }
 
   @Override
@@ -166,7 +166,7 @@ public class DualPortRam extends Mem {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    return DualportRamAppearance.getBounds(attrs);
+    return DualPortRamAppearance.getBounds(attrs);
   }
 
   public MemContents getContents(InstanceState ramState) {
@@ -209,10 +209,10 @@ public class DualPortRam extends Mem {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    if (DualportRamAppearance.classicAppearance(painter.getAttributeSet())) {
-      DualportRamAppearance.drawRamClassic(painter);
+    if (DualPortRamAppearance.classicAppearance(painter.getAttributeSet())) {
+      DualPortRamAppearance.drawRamClassic(painter);
     } else {
-      DualportRamAppearance.drawRamEvolution(painter);
+      DualPortRamAppearance.drawRamEvolution(painter);
     }
   }
 
@@ -223,14 +223,14 @@ public class DualPortRam extends Mem {
 
     // first we check the clear pin
     if (attrs.getValue(DualportRamAttributes.CLEAR_PIN)) {
-      final var clearValue = state.getPortValue(DualportRamAppearance.getClrIndex(0, attrs));
+      final var clearValue = state.getPortValue(DualPortRamAppearance.getClrIndex(0, attrs));
       if (clearValue.equals(Value.TRUE)) {
         myState.getContents().clear();
         final var dataBits = state.getAttributeValue(DATA_ATTR);
 
-        for (var i = 0; i < DualportRamAppearance.getNrDataOutPorts(attrs); i++) {
+        for (var i = 0; i < DualPortRamAppearance.getNrDataOutPorts(attrs); i++) {
           final var portVal = Value.createKnown(dataBits, 0);
-          state.setPort(DualportRamAppearance.getDataOutIndex(i, attrs), portVal, DELAY);
+          state.setPort(DualPortRamAppearance.getDataOutIndex(i, attrs), portVal, DELAY);
         }
 
         return;
@@ -238,9 +238,9 @@ public class DualPortRam extends Mem {
     }
 
     // next we get the address and the mem value currently stored
-    final var addrValue = state.getPortValue(DualportRamAppearance.getAddrIndex(0, attrs));
-    final var addrValue2 = state.getPortValue(DualportRamAppearance.getAddrIndex(1, attrs));
-    final var addrValueWrite = state.getPortValue(DualportRamAppearance.getAddrIndex(2, attrs));
+    final var addrValue = state.getPortValue(DualPortRamAppearance.getAddrIndex(0, attrs));
+    final var addrValue2 = state.getPortValue(DualPortRamAppearance.getAddrIndex(1, attrs));
+    final var addrValueWrite = state.getPortValue(DualPortRamAppearance.getAddrIndex(2, attrs));
     long addr = addrValue.toLongValue();
     long addr2 = addrValue2.toLongValue();
     long addrWrite = addrValueWrite.toLongValue();
@@ -268,38 +268,38 @@ public class DualPortRam extends Mem {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
 
-    final var dataLines = Math.max(1, DualportRamAppearance.getNrLEPorts(attrs));
+    final var dataLines = Math.max(1, DualPortRamAppearance.getNrLEPorts(attrs));
     final var misaligned = addr % dataLines != 0;
     final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-    final var triggered = myState.setClock(state.getPortValue(DualportRamAppearance.getClkIndex(0, attrs)), trigger);
-    final var writeEnabled = triggered && (state.getPortValue(DualportRamAppearance.getWEIndex(0, attrs)) == Value.TRUE);
+    final var triggered = myState.setClock(state.getPortValue(DualPortRamAppearance.getClkIndex(0, attrs)), trigger);
+    final var writeEnabled = triggered && (state.getPortValue(DualPortRamAppearance.getWEIndex(0, attrs)) == Value.TRUE);
     if (writeEnabled && goodAddrWrite && !misalignError) {
-      long dataValue = state.getPortValue(DualportRamAppearance.getDataInIndex(0, attrs)).toLongValue();
+      long dataValue = state.getPortValue(DualPortRamAppearance.getDataInIndex(0, attrs)).toLongValue();
       myState.getContents().set(addrWrite, dataValue);
     }
 
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = !state.getPortValue(DualportRamAppearance.getLEIndex(0, attrs)).equals(Value.FALSE);
-    final var outputEnabled2 = !state.getPortValue(DualportRamAppearance.getLEIndex(1, attrs)).equals(Value.FALSE);
+    final var outputEnabled = !state.getPortValue(DualPortRamAppearance.getLEIndex(0, attrs)).equals(Value.FALSE);
+    final var outputEnabled2 = !state.getPortValue(DualPortRamAppearance.getLEIndex(1, attrs)).equals(Value.FALSE);
     if (outputEnabled && goodAddr && !misalignError) {
         long val = myState.getContents().get(addr);
-        state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), Value.createKnown(width, val), DELAY);
+        state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), Value.createKnown(width, val), DELAY);
     } else if (outputEnabled && (errorValue || (goodAddr && misalignError))) {
-        state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), Value.createError(width), DELAY);
+        state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), Value.createError(width), DELAY);
     } else {
-        state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), Value.createUnknown(width), DELAY);
+        state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), Value.createUnknown(width), DELAY);
     }
     if (outputEnabled2 && goodAddr2 && !misalignError) {
       long val2 = myState.getContents().get(addr2);
-      state.setPort(DualportRamAppearance.getDataOutIndex(1, attrs), Value.createKnown(width, val2), DELAY);
+      state.setPort(DualPortRamAppearance.getDataOutIndex(1, attrs), Value.createKnown(width, val2), DELAY);
     } else if (outputEnabled2 && (errorValue2 || (goodAddr2 && misalignError))) {
-      state.setPort(DualportRamAppearance.getDataOutIndex(1, attrs), Value.createError(width), DELAY);
+      state.setPort(DualPortRamAppearance.getDataOutIndex(1, attrs), Value.createError(width), DELAY);
     } else {
-      state.setPort(DualportRamAppearance.getDataOutIndex(1, attrs), Value.createUnknown(width), DELAY);
+      state.setPort(DualPortRamAppearance.getDataOutIndex(1, attrs), Value.createUnknown(width), DELAY);
     }
   }
 
@@ -315,24 +315,24 @@ public class DualPortRam extends Mem {
     long oldMemValue2 = myState.getContents().get(addr2);
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-    final var weValue = state.getPortValue(DualportRamAppearance.getWEIndex(0, attrs));
+    final var weValue = state.getPortValue(DualPortRamAppearance.getWEIndex(0, attrs));
     final var async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     final var edge =
         !async && myState
-            .setClock(state.getPortValue(DualportRamAppearance.getClkIndex(0, attrs)), trigger);
+            .setClock(state.getPortValue(DualPortRamAppearance.getClkIndex(0, attrs)), trigger);
     final var weAsync =
         (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE))
             || (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     final var weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
     if (goodAddrWrite && weTriggered) {
-      long dataInValue = state.getPortValue(DualportRamAppearance.getDataInIndex(0, attrs)).toLongValue();
-      if (DualportRamAppearance.getNrBEPorts(attrs) == 0) {
+      long dataInValue = state.getPortValue(DualPortRamAppearance.getDataInIndex(0, attrs)).toLongValue();
+      if (DualPortRamAppearance.getNrBEPorts(attrs) == 0) {
         newMemValue = dataInValue;
       } else {
-        for (var i = 0; i < DualportRamAppearance.getNrBEPorts(attrs); i++) {
+        for (var i = 0; i < DualPortRamAppearance.getNrBEPorts(attrs); i++) {
           long mask = 0xFFL << (i * 8);
           long andMask = ~mask;
-          if (state.getPortValue(DualportRamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
+          if (state.getPortValue(DualPortRamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
             newMemValue |= (dataInValue & mask);
           }
@@ -343,11 +343,11 @@ public class DualPortRam extends Mem {
 
     // perform reads
     final var dataBits = state.getAttributeValue(DATA_ATTR);
-    final var outputNotEnabled = state.getPortValue(DualportRamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
-    final var outputNotEnabled2 = state.getPortValue(DualportRamAppearance.getOEIndex(1, attrs)).equals(Value.FALSE);
+    final var outputNotEnabled = state.getPortValue(DualPortRamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
+    final var outputNotEnabled2 = state.getPortValue(DualPortRamAppearance.getOEIndex(1, attrs)).equals(Value.FALSE);
 
-    Consumer<Value> setValue = (Value value) -> state.setPort(DualportRamAppearance.getDataOutIndex(0, attrs), value, DELAY);
-    Consumer<Value> setValue2 = (Value value) -> state.setPort(DualportRamAppearance.getDataOutIndex(1, attrs), value, DELAY);
+    Consumer<Value> setValue = (Value value) -> state.setPort(DualPortRamAppearance.getDataOutIndex(0, attrs), value, DELAY);
+    Consumer<Value> setValue2 = (Value value) -> state.setPort(DualPortRamAppearance.getDataOutIndex(1, attrs), value, DELAY);
 
     /* if both OEs are not activated, just return */
     if (outputNotEnabled && outputNotEnabled2) return;
@@ -418,6 +418,6 @@ public class DualPortRam extends Mem {
 
   @Override
   public int[] clockPinIndex(netlistComponent comp) {
-    return new int[] {DualportRamAppearance.getClkIndex(0, comp.getComponent().getAttributeSet())};
+    return new int[] {DualPortRamAppearance.getClkIndex(0, comp.getComponent().getAttributeSet())};
   }
 }
