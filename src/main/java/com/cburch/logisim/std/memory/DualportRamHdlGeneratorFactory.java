@@ -35,10 +35,8 @@ public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
   @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    final var be = attrs.getValue(DualportRamAttributes.ATTR_ByteEnables);
-    final var byteEnables = be != null && be.equals(DualportRamAttributes.BUS_WITH_BYTEENABLES);
-    final var byteEnableOffset = DualportRamAppearance.getBEIndex(0, attrs);
-    final var nrBePorts = DualportRamAppearance.getNrBEPorts(attrs);
+    final var be = attrs.getValue(DualPortRamAttributes.ATTR_ByteEnables);
+    final var byteEnables = be != null && be.equals(DualPortRamAttributes.BUS_WITH_BYTEENABLES);
     final var byteEnableOffset = DualPortRamAppearance.getBEIndex(0, attrs);
     final var nrBePorts = DualPortRamAppearance.getNrBEPorts(attrs);
     final var nrOfaddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
@@ -99,8 +97,8 @@ public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1));
-    final var be = attrs.getValue(DualportRamAttributes.ATTR_ByteEnables);
-    final var byteEnables = be != null && be.equals(DualportRamAttributes.BUS_WITH_BYTEENABLES);
+    final var be = attrs.getValue(DualPortRamAttributes.ATTR_ByteEnables);
+    final var byteEnables = be != null && be.equals(DualPortRamAttributes.BUS_WITH_BYTEENABLES);
     if (Hdl.isVhdl()) {
       contents.empty().addVhdlKeywords().addRemarkBlock("The control signals are defined here");
       if (byteEnables) {
@@ -232,7 +230,7 @@ public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     final var asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     final var byteEnabled = DualPortRamAppearance.getNrLEPorts(attrs) == 0;
     final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
-    final var clearPin = attrs.getValue(DualportRamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(DualportRamAttributes.CLEAR_PIN);
+    final var clearPin = attrs.getValue(DualPortRamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(DualPortRamAttributes.CLEAR_PIN);
     final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
     return Hdl.isVhdl() && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
   }

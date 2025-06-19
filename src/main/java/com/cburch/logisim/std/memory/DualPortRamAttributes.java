@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.cburch.logisim.std.Strings.S;
 
-public class DualportRamAttributes extends AbstractAttributeSet {
+public class DualPortRamAttributes extends AbstractAttributeSet {
 
   /* here the rest is defined */
   static final AttributeOption VOLATILE =
@@ -66,7 +66,7 @@ public class DualportRamAttributes extends AbstractAttributeSet {
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
 
-  DualportRamAttributes() {
+  DualPortRamAttributes() {
     updateAttributes();
   }
 
@@ -114,7 +114,7 @@ public class DualportRamAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    final var d = (DualportRamAttributes) dest;
+    final var d = (DualPortRamAttributes) dest;
     d.addrBits = addrBits;
     d.dataBits = dataBits;
     d.trigger = trigger;

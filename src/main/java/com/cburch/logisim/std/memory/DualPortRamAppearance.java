@@ -78,7 +78,7 @@ public class DualPortRamAppearance {
     if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     final var async = !synchronous(attrs);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES)
-        && attrs.getValue(DualportRamAttributes.ATTR_ByteEnables).equals(DualportRamAttributes.BUS_WITH_BYTEENABLES)
+        && attrs.getValue(DualPortRamAttributes.ATTR_ByteEnables).equals(DualPortRamAttributes.BUS_WITH_BYTEENABLES)
         && !async) {
       final var nrBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
       return (nrBits < 9) ? 0 : (nrBits + 7) >> 3;
@@ -87,7 +87,7 @@ public class DualPortRamAppearance {
   }
 
   public static int getNrClrPorts(AttributeSet attrs) {
-    return (attrs.containsAttribute(DualportRamAttributes.CLEAR_PIN) && attrs.getValue(DualportRamAttributes.CLEAR_PIN))
+    return (attrs.containsAttribute(DualPortRamAttributes.CLEAR_PIN) && attrs.getValue(DualPortRamAttributes.CLEAR_PIN))
         ? 1
         : 0;
   }

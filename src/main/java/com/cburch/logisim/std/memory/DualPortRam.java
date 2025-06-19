@@ -108,7 +108,7 @@ public class DualPortRam extends Mem {
 
   @Override
   public AttributeSet createAttributeSet() {
-    return new DualportRamAttributes();
+    return new DualPortRamAttributes();
   }
 
   @Override
@@ -158,7 +158,7 @@ public class DualPortRam extends Mem {
     final var ret = (RamState) instance.getData(state);
     if (ret == null) return true;
     final var contents = ret.getContents();
-    if (instance.getAttributeValue(DualportRamAttributes.ATTR_TYPE).equals(DualportRamAttributes.VOLATILE)) {
+    if (instance.getAttributeValue(DualPortRamAttributes.ATTR_TYPE).equals(DualPortRamAttributes.VOLATILE)) {
       contents.condClear();
     }
     return false;
@@ -197,10 +197,10 @@ public class DualPortRam extends Mem {
     if ((attr == Mem.DATA_ATTR)
         || (attr == Mem.ADDR_ATTR)
         || (attr == StdAttr.TRIGGER)
-        || (attr == DualportRamAttributes.ATTR_ByteEnables)
+        || (attr == DualPortRamAttributes.ATTR_ByteEnables)
         || (attr == StdAttr.APPEARANCE)
         || (attr == Mem.LINE_ATTR)
-        || (attr == DualportRamAttributes.CLEAR_PIN)
+        || (attr == DualPortRamAttributes.CLEAR_PIN)
         || (attr == Mem.ENABLES_ATTR)) {
       instance.recomputeBounds();
       configurePorts(instance);
@@ -222,7 +222,7 @@ public class DualPortRam extends Mem {
     final var myState = (RamState) getState(state);
 
     // first we check the clear pin
-    if (attrs.getValue(DualportRamAttributes.CLEAR_PIN)) {
+    if (attrs.getValue(DualPortRamAttributes.CLEAR_PIN)) {
       final var clearValue = state.getPortValue(DualPortRamAppearance.getClrIndex(0, attrs));
       if (clearValue.equals(Value.TRUE)) {
         myState.getContents().clear();
