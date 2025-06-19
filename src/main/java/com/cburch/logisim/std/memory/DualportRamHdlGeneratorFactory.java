@@ -48,10 +48,14 @@ public class DualportRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
         .addWire("s_ramdataOut", nrOfBits)
         .addRegister("s_tickDelayLine", 3)
         .addRegister("s_dataInReg", nrOfBits)
-        .addRegister("s_addressReg", nrOfaddressLines)
+        .addRegister("s_address0Reg", nrOfaddressLines)
+        .addRegister("s_address1Reg", nrOfaddressLines)
+        .addRegister("s_addressWriteReg", nrOfaddressLines)
         .addRegister("s_weReg", 1)
-        .addRegister("s_oeReg", 1)
-        .addRegister("s_dataOutReg", nrOfBits);
+        .addRegister("s_oe0Reg", 1)
+        .addRegister("s_oe1Reg", 1)
+        .addRegister("s_dataOut0Reg", nrOfBits)
+        .addRegister("s_dataOut1Reg", nrOfBits);
     if (byteEnables) {
       myWires
           .addRegister("s_byteEnableReg", nrBePorts);
