@@ -219,7 +219,7 @@ public class DualportRamAppearance {
     /* draw connections */
     drawConnections(inst, attrs, painter);
     /* draw the size */
-    final var type = inst.getFactory() instanceof DualportRam ? "DUALPORT-RAM " : "ROM ";  // FIXME: hardcoded string
+    final var type = inst.getFactory() instanceof DualPortRam ? "DUALPORT-RAM " : "ROM ";  // FIXME: hardcoded string
     GraphicsUtil.drawCenteredText(g,
             type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
@@ -261,7 +261,7 @@ public class DualportRamAppearance {
     /* draw connections */
     drawConnections(inst, attrs, painter);
     /* draw the size */
-    final var type = inst.getFactory() instanceof DualportRam ? "DUALPORT-RAM " : "ROM ";  // FIXME hardcoded string
+    final var type = inst.getFactory() instanceof DualPortRam ? "DUALPORT-RAM " : "ROM ";  // FIXME hardcoded string
     GraphicsUtil.drawCenteredText(g,
             type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),

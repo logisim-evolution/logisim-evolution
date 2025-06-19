@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 
 import static com.cburch.logisim.std.Strings.S;
 
-public class DualportRam extends Mem {
+public class DualPortRam extends Mem {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -89,7 +89,7 @@ public class DualportRam extends Mem {
   private static final Object[][] logOptions = new Object[9][];
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
-  public DualportRam() {
+  public DualPortRam() {
     super(_ID, S.getter("dpramComponent"), 3, new DualportRamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);

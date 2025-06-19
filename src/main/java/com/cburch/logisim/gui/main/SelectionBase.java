@@ -18,7 +18,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Ram;
-import com.cburch.logisim.std.memory.DualportRam;
+import com.cburch.logisim.std.memory.DualPortRam;
 import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Graphics;
@@ -176,7 +176,7 @@ class SelectionBase {
     for (final var comp : components) {
       final var oldLoc = comp.getLocation();
       final var attrs =
-          translate || (comp.getFactory() instanceof Rom) || ((comp.getFactory() instanceof Ram || comp.getFactory() instanceof DualportRam))
+          translate || (comp.getFactory() instanceof Rom) || ((comp.getFactory() instanceof Ram || comp.getFactory() instanceof DualPortRam))
               ? comp.getAttributeSet()
               : (AttributeSet) comp.getAttributeSet().clone();
       var newX = oldLoc.getX() + dx;

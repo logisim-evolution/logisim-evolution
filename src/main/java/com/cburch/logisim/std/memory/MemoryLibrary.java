@@ -37,7 +37,7 @@ public class MemoryLibrary extends Library {
     new FactoryDescription(ShiftRegister.class, S.getter("shiftRegisterComponent"), "shiftreg.gif"),
     new FactoryDescription(Random.class, S.getter("randomComponent"), "random.gif"),
     new FactoryDescription(Ram.class, S.getter("ramComponent"), "ram.gif"),
-    new FactoryDescription(DualportRam.class, S.getter("dpramComponent"), "ram.gif"),
+    new FactoryDescription(DualPortRam.class, S.getter("dpramComponent"), "ram.gif"),
     new FactoryDescription(Rom.class, S.getter("romComponent"), "rom.gif"),
   };
 
