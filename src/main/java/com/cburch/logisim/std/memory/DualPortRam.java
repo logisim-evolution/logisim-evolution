@@ -245,8 +245,8 @@ public class DualPortRam extends Mem {
     long addr2 = addrValue2.toLongValue();
     long addrWrite = addrValueWrite.toLongValue();
     final var goodAddr1 = addrValue1.isFullyDefined() && addr1 >= 0;
-    final var goodAddr2 = addrValue2.isFullyDefined() && addr >= 0;
-    final var goodAddrWrite = addrValueWrite.isFullyDefined() && addr >= 0;
+    final var goodAddr2 = addrValue2.isFullyDefined() && addr2 >= 0;
+    final var goodAddrWrite = addrValueWrite.isFullyDefined() && addrWrite >= 0;
     if (goodAddrWrite && addrWrite != myState.getCurrent()) {
       myState.setCurrent(addrWrite);
       myState.scrollToShow(addrWrite);
