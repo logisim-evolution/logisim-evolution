@@ -29,7 +29,12 @@
           have the Pull Down setting. To fix it, set the Behavior attribute to Pull Down.
         * Updated Pin documentation.
     * Subcircuits with clock input(s) are now drawn with a clock symbol.
-    * Added TTL 74194: 4-bit bidirectional universal shift register.
+    * Added TTL 74194: 4-bit bidirectional universal shift register. 
+    * Added dual-ported RAM component. [#79]
+      * It's a type of memory RAM that is typically used to implement processor registers.
+      * Added spanish translations related to it.
+      * It doesn't supports bidirectional operations.
+      * It doesn't supports line sizes, as it's restricted to one input and two outputs.
 
 
 * v3.9.0 (2024-08-15)
