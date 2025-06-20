@@ -1,6 +1,7 @@
 [![Logisim-evolution](docs/img/logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 # Changes #
+
 * @dev (????-??-??)
     * Updated VHDL and created Verilog generator for RAM component with byte-enables
     * Added VHDL and Verilog for the RAM component with line-enables
