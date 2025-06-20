@@ -1,17 +1,10 @@
 [![Logisim-evolution](docs/img/logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 # Changes #
-* @dev (2024-10-10)
-    * Added dual-ported RAM component. [#79]
-        * It's a type of memory RAM that is typically used to implement processor registers.
-        * Added spanish translations related to it.
-        * It doesn't supports bidirectional operations.
-        * It doesn't supports line sizes, as it's restricted to one input and two outputs.
-
 * @dev (????-??-??)
     * Updated VHDL and created Verilog generator for RAM component with byte-enables
     * Added VHDL and Verilog for the RAM component with line-enables
-    * fixed clasic appearance shift-register bug
+    * fixed classic appearance shift-register bug
     * Added automatic custom Logisim library loading at startup.
         * Created unit tests for loading custom Logisim libraries at startup.
         * Updated documentation for the automatic loading of custom Logisim libraries.
