@@ -31,11 +31,6 @@ public class DualPortRamAttributes extends AbstractAttributeSet {
           "type", S.getter("ramTypeAttr"), new AttributeOption[] {VOLATILE, NONVOLATILE});
   static final AttributeOption BUS_BIDIR =
       new AttributeOption("bidir", S.getter("ramBidirDataBus"));
-  //static final AttributeOption BUS_SEP =
-  //    new AttributeOption("bibus", S.getter("ramSeparateDataBus"));
-  //static final Attribute<AttributeOption> ATTR_DBUS =
-  //    Attributes.forOption(
-  //        "databus", S.getter("ramDataAttr"), new AttributeOption[] {BUS_BIDIR, BUS_SEP});
   static final AttributeOption BUS_WITH_BYTEENABLES =
       new AttributeOption("byteEnables", S.getter("ramWithByteEnables"));
   static final AttributeOption BUS_WITHOUT_BYTE_ENABLES =
@@ -53,7 +48,6 @@ public class DualPortRamAttributes extends AbstractAttributeSet {
   private BitWidth dataBits = BitWidth.create(8);
   private String label = "";
   private AttributeOption trigger = StdAttr.TRIG_RISING;
-  //private AttributeOption busStyle = BUS_SEP;
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = false;
   private AttributeOption byteEnables = BUS_WITHOUT_BYTE_ENABLES;
@@ -92,13 +86,10 @@ public class DualPortRamAttributes extends AbstractAttributeSet {
           newList.add(ATTR_ByteEnables);
         } else changes |= myAttributes.contains(ATTR_ByteEnables);
       } else changes |= myAttributes.contains(Mem.ASYNC_READ);
-      //changes |= myAttributes.contains(Mem.LINE_ATTR);
       changes |= myAttributes.contains(Mem.ALLOW_MISALIGNED);
     } else {
-      //newList.add(Mem.LINE_ATTR);
       newList.add(Mem.ALLOW_MISALIGNED);
       newList.add(StdAttr.TRIGGER);
-      //changes |= !myAttributes.contains(Mem.LINE_ATTR);
       changes |= !myAttributes.contains(Mem.ALLOW_MISALIGNED);
     }
     newList.add(StdAttr.LABEL);
