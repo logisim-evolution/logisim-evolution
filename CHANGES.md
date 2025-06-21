@@ -33,7 +33,7 @@
     * Added TTL 74194: 4-bit bidirectional universal shift register. 
     * Added dual-ported RAM component. [#79]
       * It's a type of memory RAM that is typically used to implement processor registers.
-      * Added spanish translations related to it.
+      * Added spanish, german and french translations related to it.
       * It doesn't supports bidirectional operations.
       * It doesn't supports line sizes, as it's restricted to one input and two outputs.
 
