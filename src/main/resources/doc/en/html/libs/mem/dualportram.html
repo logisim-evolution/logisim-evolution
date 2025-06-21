@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2025-06-21T14:47:54.000000">
+    <meta name="changed" content="2025-06-21T18:14:34.255516">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Dual-Port RAM&lt;
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <!-- TODO: change Dual-Port RAM's icon? -->
+        <img class="iconlibs" src="../../../../icons/6464/ram.png" alt="#########" width="32" height="32"> <em>Dual-Port RAM</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Memory</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              <!-- TODO: placeholder, change before release -->
+              T.B.D.
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/dpram_appearance.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The Dual Port RAM component is a special memory component that behaves similarly to the RAM, storing up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to to 32 bits (specified in the Data Bit Width attribute).
+        The key difference from the RAM memory component is that the Dual Port RAM, as its name implies, has 2 load ports and 1 write port, which allows the circuit to read 2 memory addresses and at the same time write to one memory address.
+        The user can also modify individual values interactively via the Poke Tool, or alternatively modify the entire contents via the Menu Tool.
+      </p>
+      <p>
+        Just like the RAM component, the current values are displayed on it. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in inverse text (white on black).
+      </p>
+      <dl>
+            <dd>
+              <center>
+                <img src="../../../../img-libs/dpram_pins.png" width="384" alt="#########">
+              </center>
+            </dd>
+        <dd>
+          <h2>
+            Pins
+          </h2>
+          <dl>
+            <dt>
+              <var>Address 1</var> on west edge (input, bit width matches Address Bit Width attribute)
+            </dt>
+            <dd>
+              Selects which of the values in memory is currently being read by the circuit to be output into Data 1.
+            </dd>
+            <dt>
+              <var>Address 2</var> on west edge (input, bit width matches Address Bit Width attribute)
+            </dt>
+            <dd>
+              Selects which of the values in memory is currently being read by the circuit to be output into Data 2.
+            </dd>
+            <dt>
+              <var>Address Write</var> on west edge (input, bit width matches Address Bit Width attribute)
+            </dt>
+            <dd>
+              Selects which of the values in memory is currently going to be written to by the circuit.
+            </dd>
+            <dt>
+              <var>Output/Line Enable 1</var> on west edge (input, bit width 1)
+            </dt>
+            <dd>
+              Selects whether the Dual Port RAM should emit on <var>Data 1</var> the value at the address selected in <var>Address 1</var>.
+            </dd>
+            <dt>
+              <var>Output/Line Enable 2</var> on west edge (input, bit width 1)
+            </dt>
+            <dd>
+              Selects whether the Dual Port RAM should emit on <var>Data 2</var> the value at the address selected in <var>Address 2</var>.
+            </dd>
+            <dt>
+              <var>Write Enable</var> on west edge (input, bit width 1)
+            </dt>
+            <dd>
+              Selects whether the Dual Port RAM should write the value specified in <var>Input</var> at the address selected in <var>Address Write</var>.
+            </dd>
+            <dt>
+              <var>Input</var> on west edge (input, bit width matches Data Bit Width attribute)
+            </dt>
+            <dd>
+              If <var>Clock</var> and/or (depending whether the Clock pin is present or not) <var>Write Enable</var> are 1 or floating, the value read from this port is stored into the address selected in <var>Address Write</var> whenever it's requested.
+            </dd>
+            <dt>
+              <var>C1/Clock</var> on west edge (input, bit width 1)
+            </dt>
+            <dd>
+              <p>
+              This pin is absent when the Trigger attribute's value is "High Level" or "Low Level".
+              The value at the address selected in <var>Address Write</var> changes to whatever value is at the <var>Input</var> pin, conditional to the Trigger attribute:
+              </p>
+              <p>
+                If the Trigger attribute's value is "Rising Edge" then this input must rise from 0 to 1 in order for the value to be written.
+              </p>
+              <p>
+                If the Trigger attribute's value is "Falling Edge" then this input must fall from 1 to 0 in order for the value to be written.
+              </p>
+              <p>
+                As long as the clock input remains 0 or 1, though, the <var>Input</var> value will not be stored into memory.
+              </p>
+            </dd>
+            <dt>
+              <var>Clear</var> on north edge (input, bit width 1)
+            </dt>
+            <dd>
+              This pin is present when the "Use clear pin" attribute's value is "Yes".
+              When this pin is 1, all values in memory are pinned to 0, no matter what the other inputs are.
+            </dd>
+            <dt>
+              <var>Data 1</var> on east edge (output, bit width matches Data Bit Width attribute)
+            </dt>
+            <dd>
+              If <var>Clock</var> and/or (depending whether the Clock pin is present or not) <var>Output/Line Enable 1</var> are 1 or floating, then the Dual Port RAM emits in this pin the value in memory read from the address selected in <var>Address 1</var>.
+            </dd>
+            <dt>
+              <var>Data 2</var> on east edge (output, bit width matches Data Bit Width attribute)
+            </dt>
+            <dd>
+              If <var>Clock</var> and/or (depending whether the Clock pin is present or not) <var>Output/Line Enable 2</var> are 1 or floating, then the Dual Port RAM emits in this pin the value in memory read from the address selected in <var>Address 2</var>.
+            </dd>
+          </dl>
+          <h2>
+            Attributes
+          </h2>
+          <p>
+            When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute.
+          </p>
+          <dl>
+            <dt>
+              Address Bit Width
+            </dt>
+            <dd>
+              The bit width of the address bits. The number of values stored in the Dual-Port RAM is 2<sup><var>addrBitWidth</var></sup>.
+            </dd>
+            <dt>
+              Data Bit Width
+            </dt>
+            <dd>
+              The bit width of each individual value in memory.
+            </dd>
+          </dl>
+          <h2>
+            Poke Tool Behavior
+          </h2>
+          <p>
+            See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>.
+          </p>
+          <h2>
+            Text Tool Behavior
+          </h2>
+          <p>
+            None.
+          </p>
+          <h2>
+            Menu Tool Behavior
+          </h2>
+          <p>
+            See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>.
+          </p>
+          <p>
+            <a href="../index.html">Back to <em>Library Reference</em></a>
+          </p>
+        </dd>
+      </dl>
+    </div>
+  </body>
+</html>
