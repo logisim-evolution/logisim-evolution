@@ -56,6 +56,9 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       } else {
         myPorts.add(Port.OUTPUT, "Q_0", nrOfBits, ShiftRegister.OUT);
       }
+      for (var idx = 0; idx < realNrStages; idx++) {
+        
+      }
       myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
     } else {
       myPorts.add(Port.INPUT, "parLoad", 1, Hdl.zeroBit());
