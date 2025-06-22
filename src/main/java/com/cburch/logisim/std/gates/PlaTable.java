@@ -137,6 +137,127 @@ public class PlaTable {
     return ret.toString();
   }
 
+  private abstract static class Parser {
+    private String Comment(String line) {
+      final var separatorIndex = line.indexOf("#");
+
+      return separatorIndex >= 0 ? line.substring(separatorIndex + 1).trim() : "";
+    }
+
+    protected String InputsOutputs(String line) {
+      final var separatorIndex = line.indexOf("#");
+
+      return  separatorIndex >= 0 ? line.substring(0, separatorIndex).trim() : "";
+    }
+
+    private static char[] ToLogicArray(String line, String errorKey) throws IOException {
+      // java char indices and IO indices are in opposite order i.e. str[0] is IO[n] etc
+      var arr = new StringBuffer(line).reverse().toString().toCharArray();
+
+      for (final char ch : arr) {
+        if (ch != ONE && ch != ZERO && ch != DONTCARE)
+          throw new IOException(S.get(errorKey, line, "" + ch));
+      }
+
+      return arr;
+    }
+
+    public PlaTable parse(PlaTable tt, String line) throws IOException {
+      final var andBits = Inputs(line);
+      final var orBits = Outputs(line);
+      final var isCommentLine = andBits.isEmpty() && orBits.isEmpty();
+
+      if (isCommentLine) {
+        return tt;
+      }
+
+      if (tt == null)
+        tt = new PlaTable(andBits.length(), orBits.length(), "PLA");
+      else if (andBits.length() != tt.inSize)
+        throw new IOException(S.get("plaRowExactInBitError", line, "" +  tt.inSize));
+      else if (orBits.length() != tt.outSize)
+        throw new IOException(S.get("plaRowExactOutBitError", line, "" + tt.outSize));
+
+      final var r = tt.addTableRow();
+
+      r.inBits = ToLogicArray(andBits, "plaInvalidInputBitError");
+      r.outBits = ToLogicArray(orBits, "plaInvalidOutputBitError");
+      r.comment = Comment(line);
+
+      return tt;
+    }
+
+    protected abstract String Inputs(String line);
+
+    protected abstract String Outputs(String line);
+
+    protected abstract boolean CanParse(String line);
+  }
+
+  private static class CompactParser extends Parser {
+    protected String Inputs(String line) {
+      final var io = InputsOutputs(line);
+      final var separatorIndex = io.indexOf(" ");
+
+      return  separatorIndex >= 0 ? io.substring(0, separatorIndex).trim() : "";
+    }
+
+    protected String Outputs(String line) {
+      final var io = InputsOutputs(line);
+      final var separatorIndex = io.indexOf(" ");
+
+      return  separatorIndex >= 0 ? io.substring(separatorIndex + 1).trim() : "";
+    }
+
+    @Override
+    protected boolean CanParse(String line) {
+      final var io = InputsOutputs(line);
+
+      return io.matches("[01]+\\s+[01]+");
+    }
+  }
+
+  private static class FlexibleParser extends Parser {
+    private static String StripSeparators(String line) {
+      return  line.replaceAll("[|\\s]", "").trim();
+    }
+
+    protected String Inputs(String line) {
+      final var io = InputsOutputs(line);
+      final var separatorIndex = io.indexOf("||");
+
+      return  separatorIndex >= 0 ? StripSeparators(io.substring(0, separatorIndex)) : "";
+    }
+
+    protected String Outputs(String line) {
+      final var io = InputsOutputs(line);
+      final var separatorIndex = io.indexOf("||");
+
+      return  separatorIndex >= 0 ? StripSeparators(io.substring(separatorIndex + 1)) : "";
+    }
+
+    protected boolean CanParse(String line) {
+      final var io = InputsOutputs(line);
+
+      return io.contains("||");
+    }
+  }
+
+  private final static Parser[] parsers = new Parser[] {
+      new CompactParser(),
+      new FlexibleParser()
+  };
+
+  private static PlaTable parseOneLine(PlaTable tt, String line) throws IOException {
+    for (final var parser : parsers) {
+      if (parser.CanParse(line)) {
+        return parser.parse(tt, line);
+      }
+    }
+
+    return tt;
+  }
+
   public static PlaTable parse(String str) {
     PlaTable tt = null;
     for (final var line : str.split("\n")) {
@@ -148,41 +269,6 @@ public class PlaTable {
       }
     }
     if (tt == null) tt = new PlaTable(2, 2, "PLA");
-    return tt;
-  }
-
-  private static PlaTable parseOneLine(PlaTable tt, String line) throws IOException {
-    line = line.trim();
-    final var jj = line.indexOf("#");
-    String andBits, orBits, comment = "";
-    if (jj >= 0) {
-      comment = line.substring(jj + 1).trim();
-      line = line.substring(0, jj).trim();
-    }
-    if (line.equals("")) return tt;
-    final var ii = line.indexOf(" ");
-    if (ii <= 0) throw new IOException(S.get("plaRowMissingOutputError", "" + line));
-    andBits = line.substring(0, ii).trim();
-    orBits = line.substring(ii + 1).trim();
-    if (tt == null) tt = new PlaTable(andBits.length(), orBits.length(), "PLA");
-    else if (andBits.length() != tt.inSize)
-      throw new IOException(S.get("plaRowExactInBitError", "" + line, "" +  tt.inSize));
-    else if (orBits.length() != tt.outSize)
-      throw new IOException(S.get("plaRowExactOutBitError", "" + line, "" + tt.outSize));
-    final var r = tt.addTableRow();
-    for (var i = 0; i < andBits.length(); i++) {
-      final var s = andBits.charAt(i);
-      if (s != ONE && s != ZERO && s != DONTCARE)
-        throw new IOException(S.get("plaInvalideInputBitError", "" + line, "" + s));
-      r.inBits[andBits.length() - i - 1] = s;
-    }
-    for (var i = 0; i < orBits.length(); i++) {
-      final var s = orBits.charAt(i);
-      if (s != ONE && s != ZERO)
-        throw new IOException(S.get("plaInvalideOutputBitError", "" + line, "" + s));
-      r.outBits[orBits.length() - i - 1] = s;
-    }
-    r.comment = comment;
     return tt;
   }
 
@@ -457,6 +543,12 @@ public class PlaTable {
         final var f = chooser.getSelectedFile();
         try {
           final var loaded = parse(f);
+          if (loaded.inSize() != newTable.inSize()) {
+            throw new IOException(S.get("plaUnexpectedInputWidth", newTable.inSize(), loaded.inSize()));
+          }
+          if (loaded.outSize() != newTable.outSize()) {
+            throw new IOException(S.get("plaUnexpectedOutputWidth", newTable.outSize(), loaded.outSize()));
+          }
           newTable.copyFrom(loaded);
           reset(false);
         } catch (IOException e) {
