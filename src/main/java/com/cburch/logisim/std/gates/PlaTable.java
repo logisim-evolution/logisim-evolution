@@ -138,19 +138,19 @@ public class PlaTable {
   }
 
   private abstract static class Parser {
-    private String Comment(String line) {
+    private String comment(String line) {
       final var separatorIndex = line.indexOf("#");
 
       return separatorIndex >= 0 ? line.substring(separatorIndex + 1).trim() : "";
     }
 
-    protected String InputsOutputs(String line) {
+    protected String inputsOutputs(String line) {
       final var separatorIndex = line.indexOf("#");
 
       return  separatorIndex >= 0 ? line.substring(0, separatorIndex).trim() : "";
     }
 
-    private static char[] ToLogicArray(String line, String errorKey) throws IOException {
+    private static char[] toLogicArray(String line, String errorKey) throws IOException {
       // java char indices and IO indices are in opposite order i.e. str[0] is IO[n] etc
       var arr = new StringBuffer(line).reverse().toString().toCharArray();
 
@@ -163,8 +163,8 @@ public class PlaTable {
     }
 
     public PlaTable parse(PlaTable tt, String line) throws IOException {
-      final var andBits = Inputs(line);
-      final var orBits = Outputs(line);
+      final var andBits = inputs(line);
+      final var orBits = outputs(line);
       final var isCommentLine = andBits.isEmpty() && orBits.isEmpty();
 
       if (isCommentLine) {
@@ -180,77 +180,77 @@ public class PlaTable {
 
       final var r = tt.addTableRow();
 
-      r.inBits = ToLogicArray(andBits, "plaInvalidInputBitError");
-      r.outBits = ToLogicArray(orBits, "plaInvalidOutputBitError");
-      r.comment = Comment(line);
+      r.inBits = toLogicArray(andBits, "plaInvalidInputBitError");
+      r.outBits = toLogicArray(orBits, "plaInvalidOutputBitError");
+      r.comment = comment(line);
 
       return tt;
     }
 
-    protected abstract String Inputs(String line);
+    protected abstract String inputs(String line);
 
-    protected abstract String Outputs(String line);
+    protected abstract String outputs(String line);
 
-    protected abstract boolean CanParse(String line);
+    protected abstract boolean canParse(String line);
   }
 
   private static class CompactParser extends Parser {
-    protected String Inputs(String line) {
-      final var io = InputsOutputs(line);
+    protected String inputs(String line) {
+      final var io = inputsOutputs(line);
       final var separatorIndex = io.indexOf(" ");
 
       return  separatorIndex >= 0 ? io.substring(0, separatorIndex).trim() : "";
     }
 
-    protected String Outputs(String line) {
-      final var io = InputsOutputs(line);
+    protected String outputs(String line) {
+      final var io = inputsOutputs(line);
       final var separatorIndex = io.indexOf(" ");
 
       return  separatorIndex >= 0 ? io.substring(separatorIndex + 1).trim() : "";
     }
 
     @Override
-    protected boolean CanParse(String line) {
-      final var io = InputsOutputs(line);
+    protected boolean canParse(String line) {
+      final var io = inputsOutputs(line);
 
       return io.matches("[01]+\\s+[01]+");
     }
   }
 
   private static class FlexibleParser extends Parser {
-    private static String StripSeparators(String line) {
+    private static String stripSeparators(String line) {
       return  line.replaceAll("[|\\s]", "").trim();
     }
 
-    protected String Inputs(String line) {
-      final var io = InputsOutputs(line);
+    protected String inputs(String line) {
+      final var io = inputsOutputs(line);
       final var separatorIndex = io.indexOf("||");
 
-      return  separatorIndex >= 0 ? StripSeparators(io.substring(0, separatorIndex)) : "";
+      return  separatorIndex >= 0 ? stripSeparators(io.substring(0, separatorIndex)) : "";
     }
 
-    protected String Outputs(String line) {
-      final var io = InputsOutputs(line);
+    protected String outputs(String line) {
+      final var io = inputsOutputs(line);
       final var separatorIndex = io.indexOf("||");
 
-      return  separatorIndex >= 0 ? StripSeparators(io.substring(separatorIndex + 1)) : "";
+      return  separatorIndex >= 0 ? stripSeparators(io.substring(separatorIndex + 1)) : "";
     }
 
-    protected boolean CanParse(String line) {
-      final var io = InputsOutputs(line);
+    protected boolean canParse(String line) {
+      final var io = inputsOutputs(line);
 
       return io.contains("||");
     }
   }
 
-  private final static Parser[] parsers = new Parser[] {
+  private static final Parser[] parsers = new Parser[] {
       new CompactParser(),
       new FlexibleParser()
   };
 
   private static PlaTable parseOneLine(PlaTable tt, String line) throws IOException {
     for (final var parser : parsers) {
-      if (parser.CanParse(line)) {
+      if (parser.canParse(line)) {
         return parser.parse(tt, line);
       }
     }
