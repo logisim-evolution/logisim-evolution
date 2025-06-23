@@ -147,7 +147,7 @@ public class PlaTable {
     protected String inputsOutputs(String line) {
       final var separatorIndex = line.indexOf("#");
 
-      return  separatorIndex >= 0 ? line.substring(0, separatorIndex).trim() : "";
+      return  separatorIndex >= 0 ? line.substring(0, separatorIndex).trim() : line;
     }
 
     private static char[] toLogicArray(String line, String errorKey) throws IOException {
