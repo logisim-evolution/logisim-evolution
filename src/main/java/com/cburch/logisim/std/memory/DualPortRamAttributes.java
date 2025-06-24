@@ -9,11 +9,15 @@
 
 package com.cburch.logisim.std.memory;
 
-import com.cburch.logisim.data.*;
+import com.cburch.logisim.data.AbstractAttributeSet;
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Attributes;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 
-import java.awt.*;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
