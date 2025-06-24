@@ -59,14 +59,12 @@ class ClockState implements Cloneable {
    * @return true if the clock was triggered, false otherwise
    */
   public boolean updateClock(Value newClock, int which, Object trigger) {
+    if (newClock == null || newClock == Value.NIL) return false;
     if (lastClock.getWidth() <= which) {
       lastClock = lastClock.extendWidth(which + 1, Value.FALSE);
     }
-
     final var oldClock = lastClock.get(which);
-
     lastClock = lastClock.set(which, newClock);
-
     return isTriggered(oldClock, newClock, trigger);
   }
 
