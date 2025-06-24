@@ -71,7 +71,7 @@ public class DualPortRamAppearance {
   public static int getNrLEPorts(AttributeSet attrs) {
     if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-        return 2;
+      return 2;
     }
     return 0;
   }
