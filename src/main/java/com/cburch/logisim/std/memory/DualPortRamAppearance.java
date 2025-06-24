@@ -336,7 +336,7 @@ public class DualPortRamAppearance {
     final var classic = classicAppearance(attrs);
     final var yoffset = classic ? (20 * portIndex) : (40 * portIndex);
     final var result = new Port(0, 10 + yoffset, Port.INPUT, attrs.getValue(Mem.ADDR_ATTR));
-    switch(portIndex){
+    switch (portIndex) {
       case 0:
         result.setToolTip(S.getter("memAddr1Tip"));
         break;
@@ -394,7 +394,7 @@ public class DualPortRamAppearance {
     final var nrOEs = getNrOEPorts(attrs);
     if (nrOEs == 0 || portIndex < 0) return null;
     if (portIndex >= nrOEs) return null;
-    var ypos = 140+(portIndex*20);
+    var ypos = 140 + (portIndex * 20);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES) && classicAppearance(attrs))
       ypos = 20;
     final var result = new Port(0, ypos, Port.INPUT, 1);
@@ -415,7 +415,7 @@ public class DualPortRamAppearance {
     final var nrWEs = getNrWEPorts(attrs);
     if (nrWEs == 0 || portIndex < 0) return null;
     if (portIndex >= nrWEs) return null;
-    var ypos = 180+(portIndex*10);
+    var ypos = 180 + (portIndex * 10);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES) && classicAppearance(attrs))
       ypos = 140;
     final var result = new Port(0, ypos, Port.INPUT, 1);
@@ -439,9 +439,9 @@ public class DualPortRamAppearance {
     final var nrLEs = getNrLEPorts(attrs);
     if (nrLEs == 0 || portIndex < 0) return null;
     if (portIndex >= nrLEs) return null;
-    var ypos = 140+(portIndex*20);
+    var ypos = 140 + (portIndex * 20);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES) && classicAppearance(attrs))
-      ypos = 100+(portIndex*20);
+      ypos = 100 + (portIndex * 20);
     final var result = new Port(0, ypos, Port.INPUT, 1);
     switch (portIndex) {
       case 0 -> result.setToolTip(S.getter("dpramLETip1"));
@@ -761,7 +761,7 @@ public class DualPortRamAppearance {
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
       final var idx = getOEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
-      final var label = "M" + cidx + " [Output enable "+ (i + 1) +"]";
+      final var label = "M" + cidx + " [Output enable " + (i + 1) +"]";
       cidx++;
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
