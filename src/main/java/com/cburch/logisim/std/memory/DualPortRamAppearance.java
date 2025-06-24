@@ -20,7 +20,9 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
 
 import static com.cburch.logisim.std.Strings.S;
 
