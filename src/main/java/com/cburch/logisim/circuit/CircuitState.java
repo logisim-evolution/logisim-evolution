@@ -255,7 +255,7 @@ public class CircuitState implements InstanceData {
       // possibility of deadlock (though that shouldn't happen either since no
       // other threads have references to this yet).
       for (final var oldSub : src.substates) {
-        final var newSub = CircuitState.createRootState(src.proj, oldSub.circuit);
+        final var newSub = new CircuitState(src.proj, oldSub.circuit, this.base);
         newSub.copyFrom(oldSub);
         newSub.parentState = this;
         this.substates.add(newSub);
