@@ -312,7 +312,7 @@ tasks.register("createNeededJavaModules") {
   outputs.file(outFileName)
 
   doLast {
-    val cmd = listOf(ext.get(JDEPS) as String, "--print-module-deps", "--ignore-missing-deps", jarFileName)
+    val cmd = listOf(ext.get(JDEPS) as String, "--multi-release", "base","--print-module-deps", "--ignore-missing-deps", jarFileName)
     val neededJavaModules = runCommand(cmd, "Error while finding Java dependencies with jdeps.")
     File(outFileName).writeText(neededJavaModules)
     verifyFileExists(outFileName)
