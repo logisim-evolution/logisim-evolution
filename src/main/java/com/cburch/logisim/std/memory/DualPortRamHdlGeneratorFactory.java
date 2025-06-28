@@ -112,6 +112,8 @@ public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     final var be = attrs.getValue(DualPortRamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(DualPortRamAttributes.BUS_WITH_BYTEENABLES);
     if (Hdl.isVhdl()) {
+      //VHDL specific generated lines
+      //TODO: Work on VHDL generation
       contents.empty().addVhdlKeywords().addRemarkBlock("The control signals are defined here");
       if (byteEnables) {
         for (var i = 0; i < DualPortRamAppearance.getNrBEPorts(attrs); i++) {
@@ -231,6 +233,34 @@ public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
                 {{end}} {{process}} res;
                 """);
       }
+    } else {
+      //Verilog specific generated lines
+      contents
+            .add("always @(posedge clock) begin")
+            .empty()
+            .add("  s_oe1Reg <= oe1;")
+            .add("  s_oe2Reg <= oe2;")
+            .empty()
+            .add("  s_weReg <= we;")
+            .empty()
+            .add("  s_address1Reg <= address1;")
+            .add("  s_address2Reg <= address2;")
+            .add("  s_addressWriteReg <= addressWrite;")
+            .empty()
+            .add("  s_dataInReg <= dataIn;")
+            .add("  if (s_weReg == 1'b1) begin")
+            .add("    s_memContents[s_addressWriteReg] <= s_dataInReg;")
+            .add("  end")
+            .empty()
+            .add("  if (s_oe1Reg == 1'b1) begin")
+            .add("    s_dataOut1 <= s_memContents[s_address1Reg];")
+            .add("  end")
+            .empty()
+            .add("  if (s_oe2Reg == 1'b1) begin")
+            .add("    s_dataOut2 <= s_memContents[s_address2Reg];")
+            .add("  end")
+            .empty()
+            .add("end");
     }
     return contents.empty();
   }
