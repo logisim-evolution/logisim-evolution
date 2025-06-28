@@ -244,6 +244,6 @@ public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     final var clearPin = attrs.getValue(DualPortRamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(DualPortRamAttributes.CLEAR_PIN);
     final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
-    return Hdl.isVhdl() && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
+    return !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
   }
 }
