@@ -761,7 +761,7 @@ public class DualPortRamAppearance {
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
       final var idx = getOEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
-      final var label = "M" + cidx + " [Output enable " + (i + 1) +"]";
+      final var label = "M" + cidx + " [Output enable " + (i + 1) + "]";
       cidx++;
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
