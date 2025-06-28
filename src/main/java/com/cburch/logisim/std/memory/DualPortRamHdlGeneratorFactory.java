@@ -44,29 +44,31 @@ public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     final var async = StdAttr.TRIG_HIGH.equals(trigger) || StdAttr.TRIG_LOW.equals(trigger);
     final var ramEntries = (1 << nrOfaddressLines);
     final var truncated = (nrOfBits % 8) != 0;
+    //TODO: add wires or registers depending on whether it's verilog or VHDL?
     myWires
         .addWire("s_ramdataOut", nrOfBits)
         .addRegister("s_tickDelayLine", 3)
         .addRegister("s_dataInReg", nrOfBits)
-        .addRegister("s_address0Reg", nrOfaddressLines)
         .addRegister("s_address1Reg", nrOfaddressLines)
+        .addRegister("s_address2Reg", nrOfaddressLines)
         .addRegister("s_addressWriteReg", nrOfaddressLines)
         .addRegister("s_weReg", 1)
-        .addRegister("s_oe0Reg", 1)
         .addRegister("s_oe1Reg", 1)
-        .addRegister("s_dataOut0Reg", nrOfBits)
-        .addRegister("s_dataOut1Reg", nrOfBits);
+        .addRegister("s_oe2Reg", 1)
+        .addRegister("s_dataOut1Reg", nrOfBits)
+        .addRegister("s_dataOut2Reg", nrOfBits);
     if (byteEnables) {
       myWires
           .addRegister("s_byteEnableReg", nrBePorts);
       for (var idx = 0; idx < nrBePorts; idx++) {
         myWires
-            .addWire(String.format("s_byteEnable%d", idx), 1)
-            .addWire(String.format("s_we%d", idx), 1);
+            .addWire(String.format("s_byteEnable%d", idx), 1);
         myPorts
             .add(Port.INPUT, String.format("byteEnable%d", idx), 1, byteEnableOffset + nrBePorts - idx - 1);
       }
-      myPorts.add(Port.INPUT, "oe", 1, DualPortRamAppearance.getOEIndex(0, attrs));
+      myWires.addWire("s_we", 1);
+      myPorts.add(Port.INPUT, "oe1", 1, DualPortRamAppearance.getOEIndex(0, attrs));
+      myPorts.add(Port.INPUT, "oe2", 1, DualPortRamAppearance.getOEIndex(1, attrs));
       var nrOfMems = nrBePorts;
       if (truncated) {
         myTypedWires
@@ -80,13 +82,16 @@ public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
         myTypedWires
             .addWire(String.format("s_byteMem%dContents", mem), ByteArrayId);
     } else {
-      myPorts.add(Port.INPUT, "oe", 1, Hdl.oneBit());
+      myPorts
+          .add(Port.INPUT, "oe1", 1, Hdl.oneBit())
+          .add(Port.INPUT, "oe2", 1, Hdl.oneBit());
       myTypedWires
           .addArray(MemArrayId, MemArrayStr, nrOfBits, ramEntries)
           .addWire("s_memContents", MemArrayId);
       myWires
           .addWire("s_we", 1)
-          .addWire("s_oe", 1);
+          .addWire("s_oe1", 1)
+          .addWire("s_oe2", 1);
     }
     myPorts
         .add(Port.INPUT, "address1", nrOfaddressLines, DualPortRamAppearance.getAddrIndex(0, attrs))
@@ -94,8 +99,8 @@ public class DualPortRamHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
         .add(Port.INPUT, "addressWrite", nrOfaddressLines, DualPortRamAppearance.getAddrIndex(2, attrs))
         .add(Port.INPUT, "dataIn", nrOfBits, DualPortRamAppearance.getDataInIndex(0, attrs))
         .add(Port.INPUT, "we", 1, DualPortRamAppearance.getWEIndex(0, attrs))
-        .add(Port.OUTPUT, "dataOut0", nrOfBits, DualPortRamAppearance.getDataOutIndex(0, attrs))
-        .add(Port.OUTPUT, "dataOut1", nrOfBits, DualPortRamAppearance.getDataOutIndex(1, attrs));
+        .add(Port.OUTPUT, "dataOut1", nrOfBits, DualPortRamAppearance.getDataOutIndex(0, attrs))
+        .add(Port.OUTPUT, "dataOut2", nrOfBits, DualPortRamAppearance.getDataOutIndex(1, attrs));
     if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, DualPortRamAppearance.getClkIndex(0, attrs));
   }
 
