@@ -139,7 +139,7 @@ public class CircuitState implements InstanceData {
               break;
             }
           }
-          if (!found && compState instanceof RamState state){
+          if (!found && compState instanceof RamState state) {
             Ram.closeHexFrame(state);
             DualPortRam.closeHexFrame(state);
           }
