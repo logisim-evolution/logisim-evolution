@@ -149,6 +149,7 @@
 	<mapID target="mem_shiftreg"        url="en/html/libs/mem/shiftreg.html" />
 	<mapID target="mem_random"          url="en/html/libs/mem/random.html" />
 	<mapID target="mem_ram"             url="en/html/libs/mem/ram.html" />
+	<mapID target="mem_dualportram"     url="en/html/libs/mem/dualportram.html" />
 	<mapID target="mem_rom"             url="en/html/libs/mem/rom.html" />
 	<mapID target="io"                  url="en/html/libs/io/index.html" />
 	<mapID target="io_button"           url="en/html/libs/io/button.html" />
