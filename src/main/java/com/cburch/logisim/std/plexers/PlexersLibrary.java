@@ -102,7 +102,7 @@ public class PlexersLibrary extends Library {
           "size", S.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
 
   public static final Attribute<BitWidth> ATTR_SELECT =
-      Attributes.forBitWidth("select", S.getter("plexerSelectBitsAttr"), 1, 5);
+      Attributes.forBitWidth("select", S.getter("plexerSelectBitsAttr"), 1, 8);
   public static final Object DEFAULT_SELECT = BitWidth.create(1);
 
   public static final Attribute<Boolean> ATTR_TRISTATE =
