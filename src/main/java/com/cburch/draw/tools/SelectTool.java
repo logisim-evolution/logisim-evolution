@@ -29,9 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import javax.swing.Icon;
 
 public class SelectTool extends AbstractTool {
@@ -53,6 +51,65 @@ public class SelectTool extends AbstractTool {
   private int lastMouseX;
   private int lastMouseY;
   private HandleGesture curGesture;
+
+
+
+  public class MoveHandleAction extends Action {
+    @Override
+    public void execute(Canvas canvas, int mx, int my, int mods, boolean ctrlPressed, int dx, int dy) {
+      // Code for the MOVE_HANDLE case
+      final var gesture = curGesture;
+      if (ctrlPressed) {
+        final var h = gesture.getHandle();
+        dx = canvas.snapX(h.getX() + dx) - h.getX();
+        dy = canvas.snapY(h.getY() + dy) - h.getY();
+      }
+      curGesture = new HandleGesture(gesture.getHandle(), dx, dy, mods);
+      canvas.getSelection().setHandleGesture(curGesture);
+    }
+
+    @Override
+    public void execute(Canvas canvas, int mx, int my, int mods, boolean ctrlPressed, boolean shiftPressed, int dx, int dy) {
+      //dummy
+    }
+  }
+
+  public class MoveAllAction extends Action {
+    @Override
+    public void execute(Canvas canvas, int mx, int my, int mods, boolean ctrlPressed, int dx, int dy) {
+      //dummy
+    }
+
+    @Override
+    public void execute(Canvas canvas, int mx, int my, int mods, boolean ctrlPressed,boolean shiftPressed, int dx, int dy) {
+      // Code for the MOVE_ALL case
+      if (ctrlPressed) {
+        var minX = Integer.MAX_VALUE;
+        var minY = Integer.MAX_VALUE;
+        for (final var o : canvas.getSelection().getSelected()) {
+          for (final var handle : o.getHandles(null)) {
+            final var x = handle.getX();
+            final var y = handle.getY();
+            if (x < minX)
+              minX = x;
+            if (y < minY)
+              minY = y;
+          }
+        }
+        dx = canvas.snapX(minX + dx) - minX;
+        dy = canvas.snapY(minY + dy) - minY;
+      }
+      if (shiftPressed) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          dy = 0;
+        } else {
+          dx = 0;
+        }
+      }
+      canvas.getSelection().setMovingDelta(dx, dy);
+    }
+  }
+
 
   public SelectTool() {
     curAction = IDLE;
@@ -433,6 +490,7 @@ public class SelectTool extends AbstractTool {
     final var newEnd = Location.create(mx, my, false);
     dragEnd = newEnd;
 
+
     final var start = dragStart;
     var dx = newEnd.getX() - start.getX();
     var dy = newEnd.getY() - start.getY();
@@ -447,42 +505,13 @@ public class SelectTool extends AbstractTool {
     final var shiftPressed = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
     final var ctrlPressed = (mods & InputEvent.CTRL_DOWN_MASK) != 0;
 
+
     switch (curAction) {
       case MOVE_HANDLE -> {
-        final var gesture = curGesture;
-        if (ctrlPressed) {
-          final var h = gesture.getHandle();
-          dx = canvas.snapX(h.getX() + dx) - h.getX();
-          dy = canvas.snapY(h.getY() + dy) - h.getY();
-        }
-        curGesture = new HandleGesture(gesture.getHandle(), dx, dy, mods);
-        canvas.getSelection().setHandleGesture(curGesture);
+        new MoveHandleAction().execute(canvas, mx,my,mods,ctrlPressed,dx,dy);
       }
       case MOVE_ALL -> {
-        if (ctrlPressed) {
-          var minX = Integer.MAX_VALUE;
-          var minY = Integer.MAX_VALUE;
-          for (final var o : canvas.getSelection().getSelected()) {
-            for (final var handle : o.getHandles(null)) {
-              final var x = handle.getX();
-              final var y = handle.getY();
-              if (x < minX)
-                minX = x;
-              if (y < minY)
-                minY = y;
-            }
-          }
-          dx = canvas.snapX(minX + dx) - minX;
-          dy = canvas.snapY(minY + dy) - minY;
-        }
-        if (shiftPressed) {
-          if (Math.abs(dx) > Math.abs(dy)) {
-            dy = 0;
-          } else {
-            dx = 0;
-          }
-        }
-        canvas.getSelection().setMovingDelta(dx, dy);
+        new MoveAllAction().execute(canvas,mx,my,mods,ctrlPressed,shiftPressed,dx,dy);
       }
       default -> {
       }
