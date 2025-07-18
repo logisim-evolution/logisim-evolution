@@ -643,7 +643,7 @@ public class Loader implements LibraryLoader {
   public String vhdlImportChooser(Component window) {
     final var chooser = createChooser();
     chooser.setFileFilter(Loader.VHDL_FILTER);
-    chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenDialog"));
+    chooser.setDialogTitle(com.cburch.logisim.file.Strings.S.get("hdlOpenDialog"));
     final var returnVal = chooser.showOpenDialog(window);
     if (returnVal != JFileChooser.APPROVE_OPTION) return null;
     final var selected = chooser.getSelectedFile();
