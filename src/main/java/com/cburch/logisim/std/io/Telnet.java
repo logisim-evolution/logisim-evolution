@@ -50,7 +50,7 @@ public class Telnet extends InstanceFactory {
       Attributes.forIntegerRange("port", S.getter("telnetPortAttr"), 1, 65535);
 
 
-  /**
+  /** 
    * @see <a href="https://github.com/logisim-evolution/logisim-evolution/issues/2284">Increase buffer size for Telnet component. #2284</a>
    * @see <a href="https://github.com/logisim-evolution/logisim-evolution/pull/2285">Update Telnet.java (Increase buffer size draft) #2285</a>
    * @todo n should be the only selectable value for buflen, which is preferable to entering a raw number. For example, provide a dropdown menu with values from 1 to 1024 (in powers of two), each multiplied by 16 × 1024, up to a maximum of 16 MB.
