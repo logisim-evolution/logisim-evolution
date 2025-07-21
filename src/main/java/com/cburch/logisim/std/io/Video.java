@@ -346,7 +346,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
- static final IndexColorModel vga256 = 
+   static final IndexColorModel vga256 = 
           new IndexColorModel(
           8,
           256,
@@ -387,7 +387,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-	
+
   static ColorModel getColorModel(Object model) {
     if (model == COLOR_RGB) return rgb;
     else if (model == COLOR_555_RGB) return rgb555;
