@@ -85,7 +85,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     COLOR_GRAY4
   };
 
-  static final Integer[] SIZE_OPTIONS = {2, 4, 8, 16, 32, 64, 128, 256};
+  static final Integer[] SIZE_OPTIONS = {2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048};
 
   public static final Attribute<String> BLINK_OPTION =
       Attributes.forOption("cursor", S.getter("rgbVideoCursor"), BLINK_OPTIONS);
