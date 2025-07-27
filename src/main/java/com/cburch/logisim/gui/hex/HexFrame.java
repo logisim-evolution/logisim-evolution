@@ -66,6 +66,10 @@ public class HexFrame extends LFrame.SubWindow {
     final var scroll =
         new JScrollPane(
             editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            
+    //Fix: ensure minimum size for the hex editor so it can display 32b addresses.
+    pref.width = Math.max(pref.width, 1280);
+    // Fix: pref.height can be 0, so min(a, b) can return 0. I replaced it with max. Width will never be 0.
     pref.height = Math.min(pref.height, pref.width * 3 / 2);
     scroll.setPreferredSize(pref);
     scroll.getViewport().setBackground(editor.getBackground());

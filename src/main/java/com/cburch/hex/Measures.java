@@ -49,7 +49,7 @@ class Measures {
       while (addrEnd > (1L << logSize)) {
         logSize++;
       }
-      headerChars = (logSize + 3) / 4;
+      headerChars = Math.min((logSize + 3) / 4, 8);  // máx 8 dígitos hex para 32 bits
       cellChars = (model.getValueWidth() + 3) / 4;
     }
 
@@ -81,7 +81,7 @@ class Measures {
     cellHeight = lineHeight;
 
     // compute preferred size
-    final var width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth;
+    final var width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth + 2 * spacerWidth;
     long height;
     if (model == null) {
       height = 16 * cellHeight;
