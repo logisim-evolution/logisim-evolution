@@ -81,7 +81,7 @@ class Measures {
     cellHeight = lineHeight;
 
     // compute preferred size
-    final var width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth + 2 * spacerWidth;
+    final var width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth + spacerWidth;
     long height;
     if (model == null) {
       height = 16 * cellHeight;
