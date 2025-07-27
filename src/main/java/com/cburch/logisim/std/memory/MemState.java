@@ -64,14 +64,14 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
             / (fm.getHeight() + 2); // (dataBits == 1) ? 1 : TotalHeight / (fm.getHeight() + 2);
     if (nrOfLines == 0) nrOfLines = 1;
     var totalShowableEntries = nrDataSymbolsEachLine * nrOfLines;
-    final var totalNrOfEntries = (1 << addrBits);
+    final var totalNrOfEntries = (1L << addrBits);
     while (totalShowableEntries > (totalNrOfEntries + nrDataSymbolsEachLine - 1)) {
       nrOfLines--;
       totalShowableEntries -= nrDataSymbolsEachLine;
     }
     if (nrOfLines == 0) {
       nrOfLines = 1;
-      nrDataSymbolsEachLine = totalNrOfEntries;
+      nrDataSymbolsEachLine = (totalNrOfEntries > Integer.MAX_VALUE) ? 1024 : (int) totalNrOfEntries;
     }
     /* here we calculate to total x-sizes */
     dataBlockSize = nrDataSymbolsEachLine * (dataSize);
@@ -210,14 +210,14 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     if (recalculateParameters || windowChanged(offsetX, offsetY, displayWidth, displayHeight))
       calculateDisplayParameters(g, offsetX, offsetY, displayWidth, displayHeight);
     final var blockHeight = nrOfLines * (charHeight + 2);
-    final var totalNrOfEntries = (1 << getAddrBits());
+    final var totalNrOfEntries = (1L << getAddrBits());
     g.setColor(Color.LIGHT_GRAY);
     g.fillRect(leftX + xOffset, topY + yOffset, dataBlockSize + addrBlockSize, blockHeight);
     g.setColor(Color.DARK_GRAY);
     g.drawRect(leftX + xOffset + addrBlockSize, topY + yOffset, dataBlockSize, blockHeight);
     g.setColor(Color.BLACK);
     /* draw the addresses */
-    int addr = (int) curScroll;
+    long addr = curScroll;
     if ((addr + (nrOfLines * nrDataSymbolsEachLine)) > totalNrOfEntries) {
       addr = totalNrOfEntries - (nrOfLines * nrDataSymbolsEachLine);
       if (addr < 0) addr = 0;
@@ -273,7 +273,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     }
   }
 
-  private boolean highLight(int addr, int nrItemsToHighlight) {
+  private boolean highLight(long addr, int nrItemsToHighlight) {
     return (addr >= curAddr) && (addr < curAddr + nrItemsToHighlight);
   }
 
@@ -312,7 +312,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       long curScrollEnd = curScroll + nrOfLines * nrDataSymbolsEachLine - 1;
       long linesToScroll = (addr - curScrollEnd + nrDataSymbolsEachLine - 1) / nrDataSymbolsEachLine;
       curScroll += linesToScroll * nrDataSymbolsEachLine;
-      long totalNrOfEntries = (1 << addrBits);
+      long totalNrOfEntries = (1L << addrBits);
       if ((curScroll + (nrOfLines * nrDataSymbolsEachLine)) > totalNrOfEntries) {
         curScroll = totalNrOfEntries - (nrOfLines * nrDataSymbolsEachLine);
       }
@@ -345,7 +345,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 
   void setScroll(long addr) {
     if (recalculateParameters) return;
-    long maxAddr = (1 << getAddrBits()) - (nrOfLines * nrDataSymbolsEachLine);
+    long maxAddr = (1L << getAddrBits()) - (nrOfLines * nrDataSymbolsEachLine);
     if (addr > maxAddr) {
       addr = maxAddr; // note: maxAddr could be negative
     }
