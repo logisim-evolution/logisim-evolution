@@ -165,6 +165,7 @@
 			<tocitem target="mem_shiftreg" text="Shift Register" image="icon_shiftreg" />
 			<tocitem target="mem_random" text="Random" image="icon_random" />
 			<tocitem target="mem_ram" text="RAM" image="icon_ram" />
+			<tocitem target="mem_dualportram" text="Dual-Port RAM" image="icon_ram" />
 			<tocitem target="mem_rom" text="ROM" image="icon_rom" />
 		</tocitem>
 		<tocitem target="io" text="Input/Output library">
