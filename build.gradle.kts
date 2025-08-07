@@ -10,6 +10,7 @@
 import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.gradle.jvm.application.tasks.CreateStartScripts
 
 plugins {
   checkstyle
@@ -293,6 +294,20 @@ fun addNeededModulesTo(parametersName: String): List<String> {
   val dependencies = File(fileName).readLines()[0]
   val addModules = listOf("--add-modules", dependencies)
   return (ext.get(parametersName) as List<Any?>).filterIsInstance<String>() + addModules
+}
+
+/**
+ *  Patches the start‑scripts of Windows
+ */
+tasks.withType<CreateStartScripts>().configureEach {
+  doLast {
+    windowsScript.writeText(
+      windowsScript.readText().replace(
+        Regex("""set CLASSPATH=%APP_HOME%\\lib\\.*""", RegexOption.IGNORE_CASE),
+        """set CLASSPATH=%APP_HOME%\\lib\\*"""
+      )
+    )
+  }
 }
 
 /**
