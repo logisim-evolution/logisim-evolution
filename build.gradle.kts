@@ -16,7 +16,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.52.0"
   java
   application
-  id("com.gradleup.shadow") version "8.3.8"
+  id("com.gradleup.shadow") version "9.0.0"
   id("org.sonarqube") version "6.2.0.5505"
 }
 
@@ -835,7 +835,7 @@ tasks {
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
     // Checkstyle version to use
-    toolVersion = "10.25.0"
+    toolVersion = "11.0.0"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
