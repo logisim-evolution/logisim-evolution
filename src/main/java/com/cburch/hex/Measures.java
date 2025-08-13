@@ -23,6 +23,7 @@ class Measures {
   private int cols;
   private int baseX;
   private boolean guessed;
+  private static int bankRows;       // <= 107 374 182 with cellHeight = 20
 
   public Measures(HexEditor hex) {
     this.hex = hex;
@@ -49,7 +50,7 @@ class Measures {
       while (addrEnd > (1L << logSize)) {
         logSize++;
       }
-      headerChars = (logSize + 3) / 4;
+      headerChars = Math.min((logSize + 3) / 4, 8);  // máx 8 dígitos hex para 32 bits
       cellChars = (model.getValueWidth() + 3) / 4;
     }
 
@@ -81,7 +82,7 @@ class Measures {
     cellHeight = lineHeight;
 
     // compute preferred size
-    final var width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth;
+    final var width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth + 2 * spacerWidth;
     long height;
     if (model == null) {
       height = 16 * cellHeight;
@@ -89,8 +90,8 @@ class Measures {
       final var addr0 = getBaseAddress(model);
       final var addr1 = model.getLastOffset();
       final var rows = (int) (((addr1 - addr0 + 1) + cols - 1) / cols);
-      height = rows * cellHeight;
-      if (height > Integer.MAX_VALUE) height = Integer.MAX_VALUE;
+      bankRows = Integer.MAX_VALUE / cellHeight;
+      height = Math.min(rows, bankRows) * cellHeight;
     }
 
     // update preferred size
@@ -182,8 +183,8 @@ class Measures {
 
   public int toY(long addr) {
     long row = (addr - getBaseAddress(hex.getModel())) / cols;
-    long ret = row * cellHeight;
-    return ret < Integer.MAX_VALUE ? (int) ret : Integer.MAX_VALUE;
+    long rowInBank = row % bankRows; // 0 … bankRows‑1
+    return (int) (rowInBank * cellHeight); // always < Integer.MAX_VALUE
   }
 
   void widthChanged() {
@@ -194,8 +195,12 @@ class Measures {
       width = hex.getPreferredSize().width;
     } else {
       width = hex.getWidth();
-      int ret = (width - headerWidth) / (cellWidth + (spacerWidth + 3) / 4);
-      if (ret >= 16) cols = 16;
+      int groupWidth = cellWidth * 4 + spacerWidth;
+      int ret = ((width - headerWidth + spacerWidth) / groupWidth) * 4;
+      if (ret >= 64) cols = 64;
+      else if (ret >= 48) cols = 48;      
+      else if (ret >= 32) cols = 32;
+      else if (ret >= 16) cols = 16;
       else if (ret >= 8) cols = 8;
       else cols = 4;
     }

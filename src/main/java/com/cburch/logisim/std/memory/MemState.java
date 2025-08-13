@@ -64,14 +64,14 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
             / (fm.getHeight() + 2); // (dataBits == 1) ? 1 : TotalHeight / (fm.getHeight() + 2);
     if (nrOfLines == 0) nrOfLines = 1;
     var totalShowableEntries = nrDataSymbolsEachLine * nrOfLines;
-    final var totalNrOfEntries = (1 << addrBits);
+    final var totalNrOfEntries = (1L << addrBits);
     while (totalShowableEntries > (totalNrOfEntries + nrDataSymbolsEachLine - 1)) {
       nrOfLines--;
       totalShowableEntries -= nrDataSymbolsEachLine;
     }
     if (nrOfLines == 0) {
       nrOfLines = 1;
-      nrDataSymbolsEachLine = totalNrOfEntries;
+      nrDataSymbolsEachLine = (totalNrOfEntries > Integer.MAX_VALUE) ? 1024 : (int) totalNrOfEntries;
     }
     /* here we calculate to total x-sizes */
     dataBlockSize = nrDataSymbolsEachLine * (dataSize);
