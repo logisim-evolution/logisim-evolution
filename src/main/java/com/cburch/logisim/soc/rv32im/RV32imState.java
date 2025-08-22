@@ -52,6 +52,14 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 public class RV32imState implements SocUpSimulationStateListener, SocProcessorInterface {
 
+  private static final Integer[] implementedSprs = {
+        0xF11, 0xF12, 0xF13, 0xF14, 0x300, 0x301, 0x304, 0x305,
+        0x341, 0x342, 0x343, 0x344, 0x7B0, 0x7B1, 0x7A0, 0x7A1, 0x7A2, 0x7A4};
+  public static final String[] implementedSprNames = {
+        "MVENDORID", "MARCHID", "MIMPID", "MHARTID", "MSTATUS", "MISA", "MIE", "MTVEC",
+        "MEPC", "MCAUSE", "MTVAL", "MIP", "DCSR", "DPC", "TSELECT", "TDATA1", "TDATA2",
+        "TINFO" };
+
   public class ProcessorState extends JPanel
       implements InstanceData,
           Cloneable,
@@ -60,6 +68,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
           SocUpStateInterface {
     private static final long serialVersionUID = 1L;
     private final int[] registers;
+    private final int[] csrs; // TODO: for the moment the csrs are just dummy to allow for nios 5 simulation
     private final Boolean[] registers_valid;
     private int pc;
     private int lastRegisterWritten = -1;
@@ -71,8 +80,9 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     private Integer entryPoint;
     private boolean programLoaded;
     private final BreakpointPanel bPanel;
-
+    
     public ProcessorState(Instance inst) {
+      csrs = new int[17];
       registers = new int[32];
       registers_valid = new Boolean[32];
       instrTrace = new LinkedList<>();
@@ -116,8 +126,11 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
             ASSEMBLER);
       }
       pc = entryPoint != null ? entryPoint : resetVector;
-      for (int i = 0; i < 31; i++) {
+      for (var i = 0; i < 31; i++) {
         registers_valid[i] = false;
+      }
+      for (var i = 0; i < 17; i++) {
+        csrs[i] = 0;
       }
       lastRegisterWritten = -1;
       instrTrace.clear();
@@ -190,6 +203,19 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       registers_valid[index - 1] = true;
       registers[index - 1] = value;
       lastRegisterWritten = index;
+    }
+    
+    public int getCsrValue(int sprIndex) {
+      final var index = getSprArrayIndex(sprIndex); 
+      return (index < 0)
+          ? 0
+          : csrs[index];
+    }
+    
+    public void writeCsr(int sprIndex, int value) {
+      final var index = getSprArrayIndex(sprIndex);
+      if (index < 4 || index == 17) return; // these are RO CSR's
+      csrs[index] = value;
     }
 
     public void interrupt() {
@@ -562,4 +588,48 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     }
     return 0;
   }
+  
+  public static boolean isSprImplemented(int index) {
+      var contained = false;
+      for (var i = 0; i < implementedSprs.length; i++) {
+        if (implementedSprs[i].equals(index)) {
+          contained = true;
+        }
+      }
+      return contained;
+    }
+    
+    public static int getSprArrayIndex(int index) {
+      if (isSprImplemented(index)) {
+        for (var i = 0; i < implementedSprs.length; i++) {
+          if (implementedSprs[i].equals(index)) {
+            return i;
+          }
+        }
+      }
+      return -1;
+    }
+    
+    public static int getSprArrayIndex(String name) {
+      var index = -1;
+      for (var i = 0; i < implementedSprNames.length; i++) {
+        if (implementedSprNames[i].equals(name.toUpperCase())) {
+          index = i;
+        }
+      }
+      return index;
+    }
+      
+    public static String getSprName(int index) {
+      return isSprImplemented(index)
+            ? implementedSprNames[getSprArrayIndex(index)].toLowerCase()
+            : String.format("0x%03X", index);
+    }
+    
+    public static int getSprValue(int index) {
+      return (index < 0 || index >= implementedSprs.length) 
+            ? -1
+            : implementedSprs[index];
+    }
+    
 }
