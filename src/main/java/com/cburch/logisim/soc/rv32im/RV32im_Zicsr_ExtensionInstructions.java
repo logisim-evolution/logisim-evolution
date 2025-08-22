@@ -153,7 +153,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
       destination = 0;
       final var param1 = instr.getParameter(0);
       final var param2 = instr.getParameter(1);
-      if(param1.length != 1) {
+      if (param1.length != 1) {
         instr.setError(param1[0], S.getter("AssemblerExpectedImmediateValue"));
         valid = false;
         return false;
