@@ -122,9 +122,9 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
       s.append(RV32imState.registerABINames[destination]).append(",");
     }
     s.append(RV32imState.getSprName(sprIndex)).append(",")
-     .append(operation < INSTR_CSRRWI 
-           ? RV32imState.registerABINames[source]
-           : String.format("0x%02X", source));
+        .append(operation < INSTR_CSRRWI 
+              ? RV32imState.registerABINames[source]
+              : String.format("0x%02X", source));
     return s.toString();
   }
 
@@ -176,7 +176,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
           return false;
         }
       }
-      if(param2.length != 1) {
+      if (param2.length != 1) {
         instr.setError(param2[0], S.getter("AssemblerExpectedImmediateValue"));
         valid = false;
         return false;
@@ -204,8 +204,8 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
         }
       }
       instruction |= (operation < 3)
-            ? (operation+1) << 12
-            : (operation+2) << 12;
+            ? (operation + 1) << 12
+            : (operation + 2) << 12;
       instr.setInstructionByteCode(instruction, 4);
       return true;
     }
@@ -218,7 +218,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
       final var param1 = instr.getParameter(0);
       final var param2 = instr.getParameter(1);
       final var param3 = instr.getParameter(2);
-      if(param1.length != 1) {
+      if (param1.length != 1) {
         instr.setError(param1[0], S.getter("AssemblerExpectedRegister"));
         valid = false;
         return false;
@@ -237,7 +237,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
         valid = false;
         return false;
       }
-      if(param2.length != 1) {
+      if (param2.length != 1) {
         instr.setError(param2[0], S.getter("AssemblerExpectedImmediateValue"));
         valid = false;
         return false;
@@ -258,7 +258,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
           return false;
         }
       }
-      if(param3.length != 1) {
+      if (param3.length != 1) {
         instr.setError(param3[0], S.getter("AssemblerExpectedImmediateValue"));
         valid = false;
         return false;
@@ -286,8 +286,8 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
         }
       }
       instruction |= (operation < 3)
-            ? (operation+1) << 12
-            : (operation+2) << 12;
+            ? (operation + 1) << 12
+            : (operation + 2) << 12;
       instr.setInstructionByteCode(instruction, 4);
       return true;
     }
@@ -304,21 +304,21 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
   private boolean decodeBin() {
     if (RV32imSupport.getOpcode(instruction) == OP) {
       switch (RV32imSupport.getFunct3(instruction)) {
-        case 1  : operation = 0;
-                  break;
-        case 2  : operation = 1;
-                  break;
-        case 3  : operation = 2;
-                  break;
-        case 5  : operation = 3;
-                  break;
-        case 6  : operation = 4;
-                  break;
-        case 7  : operation = 5;
-                  break;
-        default : return false;
+        case 1: operation = 0;
+                break;
+        case 2: operation = 1;
+                break;
+        case 3: operation = 2;
+                break;
+        case 5: operation = 3;
+                break;
+        case 6: operation = 4;
+                break;
+        case 7: operation = 5;
+                break;
+        default: return false;
       }
-      sprIndex = (instruction >> 20)&0xFFF;
+      sprIndex = (instruction >> 20) & 0xFFF;
       destination = RV32imSupport.getDestinationRegisterIndex(instruction);
       source  = RV32imSupport.getSourceRegister1Index(instruction);
       return true;

@@ -53,12 +53,12 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 public class RV32imState implements SocUpSimulationStateListener, SocProcessorInterface {
 
   private static final Integer[] implementedSprs = {
-        0xF11, 0xF12, 0xF13, 0xF14, 0x300, 0x301, 0x304, 0x305,
-        0x341, 0x342, 0x343, 0x344, 0x7B0, 0x7B1, 0x7A0, 0x7A1, 0x7A2, 0x7A4};
+      0xF11, 0xF12, 0xF13, 0xF14, 0x300, 0x301, 0x304, 0x305,
+      0x341, 0x342, 0x343, 0x344, 0x7B0, 0x7B1, 0x7A0, 0x7A1, 0x7A2, 0x7A4};
   public static final String[] implementedSprNames = {
-        "MVENDORID", "MARCHID", "MIMPID", "MHARTID", "MSTATUS", "MISA", "MIE", "MTVEC",
-        "MEPC", "MCAUSE", "MTVAL", "MIP", "DCSR", "DPC", "TSELECT", "TDATA1", "TDATA2",
-        "TINFO" };
+      "MVENDORID", "MARCHID", "MIMPID", "MHARTID", "MSTATUS", "MISA", "MIE", "MTVEC",
+      "MEPC", "MCAUSE", "MTVAL", "MIP", "DCSR", "DPC", "TSELECT", "TDATA1", "TDATA2",
+      "TINFO" };
 
   public class ProcessorState extends JPanel
       implements InstanceData,
@@ -590,46 +590,46 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
   
   public static boolean isSprImplemented(int index) {
-      var contained = false;
+    var contained = false;
+    for (var i = 0; i < implementedSprs.length; i++) {
+      if (implementedSprs[i].equals(index)) {
+        contained = true;
+      }
+    }
+    return contained;
+  }
+    
+  public static int getSprArrayIndex(int index) {
+    if (isSprImplemented(index)) {
       for (var i = 0; i < implementedSprs.length; i++) {
         if (implementedSprs[i].equals(index)) {
-          contained = true;
+          return i;
         }
       }
-      return contained;
     }
+    return -1;
+  }
     
-    public static int getSprArrayIndex(int index) {
-      if (isSprImplemented(index)) {
-        for (var i = 0; i < implementedSprs.length; i++) {
-          if (implementedSprs[i].equals(index)) {
-            return i;
-          }
-        }
+  public static int getSprArrayIndex(String name) {
+    var index = -1;
+    for (var i = 0; i < implementedSprNames.length; i++) {
+      if (implementedSprNames[i].equals(name.toUpperCase())) {
+        index = i;
       }
-      return -1;
     }
-    
-    public static int getSprArrayIndex(String name) {
-      var index = -1;
-      for (var i = 0; i < implementedSprNames.length; i++) {
-        if (implementedSprNames[i].equals(name.toUpperCase())) {
-          index = i;
-        }
-      }
-      return index;
-    }
+    return index;
+  }
       
-    public static String getSprName(int index) {
-      return isSprImplemented(index)
-            ? implementedSprNames[getSprArrayIndex(index)].toLowerCase()
-            : String.format("0x%03X", index);
-    }
+  public static String getSprName(int index) {
+    return isSprImplemented(index)
+          ? implementedSprNames[getSprArrayIndex(index)].toLowerCase()
+          : String.format("0x%03X", index);
+  }
     
-    public static int getSprValue(int index) {
-      return (index < 0 || index >= implementedSprs.length) 
-            ? -1
-            : implementedSprs[index];
-    }
+  public static int getSprValue(int index) {
+    return (index < 0 || index >= implementedSprs.length) 
+          ? -1
+          : implementedSprs[index];
+  }
     
 }
