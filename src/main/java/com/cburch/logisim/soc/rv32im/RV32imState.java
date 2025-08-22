@@ -80,7 +80,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     private Integer entryPoint;
     private boolean programLoaded;
     private final BreakpointPanel bPanel;
-    
+
     public ProcessorState(Instance inst) {
       csrs = new int[17];
       registers = new int[32];
