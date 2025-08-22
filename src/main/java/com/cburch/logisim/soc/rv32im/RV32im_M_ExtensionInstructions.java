@@ -51,9 +51,9 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
-    RV32imState.ProcessorState cpuState = (RV32imState.ProcessorState) state;
-    int val1 = cpuState.getRegisterValue(source1);
-    int val2 = cpuState.getRegisterValue(source2);
+    final var cpuState = (RV32imState.ProcessorState) state;
+    final var val1 = cpuState.getRegisterValue(source1);
+    final var val2 = cpuState.getRegisterValue(source2);
     BigInteger opp1, opp2, res;
     BigInteger mask = BigInteger.valueOf(1).shiftLeft(32).subtract(BigInteger.valueOf(1));
     int result = 0;
