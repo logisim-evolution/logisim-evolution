@@ -17,7 +17,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.52.0"
   java
   application
-  id("com.gradleup.shadow") version "9.0.1"
+  id("com.gradleup.shadow") version "9.0.2"
   id("org.sonarqube") version "6.2.0.5505"
 }
 
@@ -50,7 +50,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:5.13.4"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.19.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
