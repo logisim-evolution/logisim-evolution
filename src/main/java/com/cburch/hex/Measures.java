@@ -53,6 +53,7 @@ class Measures {
         logSize++;
       }
       headerChars = Math.min((logSize + 3) / 4, 8);  // ensure max is 8 hex digits for 32 bits
+      cellChars = (model.getValueWidth() + 3) / 4;
     }
 
     // compute character sizes
