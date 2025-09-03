@@ -22,6 +22,7 @@ class KeyboardData implements InstanceData, Cloneable {
   private boolean dispValid;
   private int dispStart;
   private int dispEnd;
+  private int modifierKeys;
 
   public KeyboardData(int capacity) {
     lastClock = Value.UNKNOWN;
@@ -36,6 +37,7 @@ class KeyboardData implements InstanceData, Cloneable {
     dispValid = false;
     dispStart = 0;
     dispEnd = 0;
+    modifierKeys = 0;
   }
 
   @Override
@@ -101,6 +103,10 @@ class KeyboardData implements InstanceData, Cloneable {
     return dispStart;
   }
 
+  public int getModifierKeys() {
+    return modifierKeys;
+  }
+
   public int getNextSpecial(int pos) {
     final var buf = buffer;
     final var len = bufferLength;
@@ -110,6 +116,7 @@ class KeyboardData implements InstanceData, Cloneable {
     }
     return -1;
   }
+
 
   public boolean insert(char value) {
     final var buf = buffer;
@@ -153,6 +160,10 @@ class KeyboardData implements InstanceData, Cloneable {
     final var ret = lastClock;
     lastClock = newClock;
     return ret;
+  }
+
+  public void setModifierKeys(int keys) {
+    modifierKeys = keys;
   }
 
   @Override
