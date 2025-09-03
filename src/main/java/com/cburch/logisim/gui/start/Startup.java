@@ -76,7 +76,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -205,9 +205,15 @@ public class Startup implements AWTEventListener {
   protected static RC printHelp(Options opts) {
     printVersion();
     System.out.println();
-    final var formatter = new HelpFormatter();
-    formatter.setWidth(100);  // Arbitrary chosen value.
-    formatter.printHelp(BuildInfo.name, null, opts, null, true);
+    final var builder = HelpFormatter.builder();
+    builder.setShowSince(false);
+    final var formatter = builder.get();
+    final var sortedOpts = formatter.sort(opts);
+    try {
+      formatter.printHelp(BuildInfo.name, null, sortedOpts, null, true);
+    } catch (Exception ex) {
+      System.out.println("Print help failed: " + ex.getMessage());
+    }
     return RC.QUIT;
   }
 
@@ -273,7 +279,7 @@ public class Startup implements AWTEventListener {
       builder.argName(S.get(argNameKey));
       builder.numberOfArgs(expectedArgsCount);
     }
-    opts.addOption(builder.build());
+    opts.addOption(builder.get());
   }
 
   /**

@@ -26,6 +26,8 @@ public class RV32imAssembler extends AbstractAssembler {
     super.addAssemblerExecutionUnit(new RV32imEnvironmentCallAndBreakpoints());
     /* Here we add the "M" standard extension for integer multiplication and Division */
     super.addAssemblerExecutionUnit(new RV32im_M_ExtensionInstructions());
+    /* Here we add the "Zicsr" standard extension for CSR instructions */
+    super.addAssemblerExecutionUnit(new RV32im_Zicsr_ExtensionInstructions());
   }
 
   public boolean usesRoundedBrackets() {

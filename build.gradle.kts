@@ -16,8 +16,8 @@ plugins {
   id("com.github.ben-manes.versions") version "0.52.0"
   java
   application
-  id("com.gradleup.shadow") version "8.3.8"
-  id("org.sonarqube") version "6.2.0.5505"
+  id("com.gradleup.shadow") version "9.1.0"
+  id("org.sonarqube") version "6.3.1.5724"
 }
 
 repositories {
@@ -38,18 +38,18 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.17")
   implementation("org.slf4j:slf4j-simple:2.0.17")
-  implementation("com.formdev:flatlaf:3.6")
-  implementation("commons-cli:commons-cli:1.9.0")
+  implementation("com.formdev:flatlaf:3.6.1")
+  implementation("commons-cli:commons-cli:1.10.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
-  implementation("org.apache.commons:commons-text:1.13.1")
+  implementation("org.apache.commons:commons-text:1.14.0")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.13.3"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.13.3")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+  testImplementation(platform("org.junit:junit-bom:5.13.4"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.19.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -312,7 +312,7 @@ tasks.register("createNeededJavaModules") {
   outputs.file(outFileName)
 
   doLast {
-    val cmd = listOf(ext.get(JDEPS) as String, "--print-module-deps", "--ignore-missing-deps", jarFileName)
+    val cmd = listOf(ext.get(JDEPS) as String, "--multi-release", "base","--print-module-deps", "--ignore-missing-deps", jarFileName)
     val neededJavaModules = runCommand(cmd, "Error while finding Java dependencies with jdeps.")
     File(outFileName).writeText(neededJavaModules)
     verifyFileExists(outFileName)
@@ -835,7 +835,7 @@ tasks {
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
     // Checkstyle version to use
-    toolVersion = "10.25.0"
+    toolVersion = "11.0.0"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
