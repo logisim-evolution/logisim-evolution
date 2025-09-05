@@ -31,7 +31,7 @@
     * Updated Pin documentation.
   * Subcircuits with clock input(s) are now drawn with a clock symbol.
   * Added TTL 74194: 4-bit bidirectional universal shift register.
-  * Improved the English, French, and German localization.
+  * Improved the English, French, and German localization. Smaller fixes were done to the other languages as well. 
 
 * v3.9.0 (2024-08-15)
   * Updated Java requirement to Java 21.
