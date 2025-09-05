@@ -20,8 +20,10 @@ The following people and institutions actively contributed to further developmen
 * Moshe Berman, [Brooklyn College](https://www.brooklyn.cuny.edu/), USA
 * Theldo Cruz Franqueira,
   [Pontifícia Universidade Católica de Minas Gerais](https://www.pucminas.br/destaques/Paginas/default.aspx), Brazil
-* [Theo Kluter](https://www.bfh.ch/en/theo-kluter), [Berner Fachhochschule | Haute école spécialisée bernoise](https://bfh.ch/electrical), Switzerland 
-* [Torsten Maehne](https://www.bfh.ch/en/torsten-maehne), [Berner Fachhochschule | Haute école spécialisée bernoise](https://bfh.ch/electrical), Switzerland
+* [Theo Kluter](https://www.bfh.ch/en/theo-kluter),
+  [Berner Fachhochschule | Haute école spécialisée bernoise](https://bfh.ch/electrical), Switzerland
+* [Torsten Maehne](https://www.bfh.ch/en/torsten-maehne),
+  [Berner Fachhochschule | Haute école spécialisée bernoise](https://bfh.ch/electrical), Switzerland
 * [Marcin Orlowski](http://www.marcinorlowski.com/), Poland
 * [Tom Niget](https://github.com/zdimension/), [LEAT](https://leat.univ-cotedazur.fr/),
   [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/), France
