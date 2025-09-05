@@ -17,6 +17,8 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
@@ -37,8 +39,10 @@ public class Main {
       if (!GraphicsEnvironment.isHeadless()) {
         FlatLightLaf.installLafInfo();
         FlatDarkLaf.installLafInfo();
-        FlatDarculaLaf.installLafInfo();
         FlatIntelliJLaf.installLafInfo();
+        FlatDarculaLaf.installLafInfo();
+        FlatMacLightLaf.installLafInfo();
+        FlatMacDarkLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
         UIManager.put(
