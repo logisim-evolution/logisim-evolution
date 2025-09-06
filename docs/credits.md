@@ -15,22 +15,22 @@ The `Logisim-evolution` project is based on `Logisim` software by:
 
 The following people and institutions actively contributed to further development of the `Logisim-evolution`:
 
-* David H. Hutchens, [Millersville University](https://www.millersville.edu/), Pennsylvania, USA
-* Kevin Walsh, [College of the Holy Cross](https://www.holycross.edu/), USA
 * Moshe Berman, [Brooklyn College](https://www.brooklyn.cuny.edu/), USA
 * Theldo Cruz Franqueira,
   [Pontifícia Universidade Católica de Minas Gerais](https://www.pucminas.br/destaques/Paginas/default.aspx), Brazil
+* [Zhao Hanyuan](https://github.com/gtxzsxxk),
+  [Tsinghua University](https://www.tsinghua.edu.cn/), China
+* David H. Hutchens, [Millersville University](https://www.millersville.edu/), Pennsylvania, USA
 * [Theo Kluter](https://www.bfh.ch/en/theo-kluter),
   [Berner Fachhochschule | Haute école spécialisée bernoise](https://bfh.ch/electrical), Switzerland
 * [Torsten Maehne](https://www.bfh.ch/en/torsten-maehne),
   [Berner Fachhochschule | Haute école spécialisée bernoise](https://bfh.ch/electrical), Switzerland
-* [Marcin Orlowski](http://www.marcinorlowski.com/), Poland
 * [Tom Niget](https://github.com/zdimension/), [LEAT](https://leat.univ-cotedazur.fr/),
   [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/), France
+* [Marcin Orłowski](http://www.marcinorlowski.com/), Poland
+* Kevin Walsh, [College of the Holy Cross](https://www.holycross.edu/), USA
 * [Liu Yuchen](https://github.com/smallg0at),
   [Beijing University of Technology](https://www.bjut.edu.cn/), China
-* [Zhao Hanyuan](https://github.com/gtxzsxxk),
-  [Tsinghua University](https://www.tsinghua.edu.cn/), China
 * [Berner Fachhochschule | Haute école spécialisée bernoise](https://www.bfh.ch/), Switzerland
 * [Haute école du paysage, d'ingénierie et d'architecture de Genève](https://hepia.hesge.ch/), Switzerland
 * [Haute école d'ingénierie et de gestion du canton de Vaud](https://www.heig-vd.ch/), Switzerland
