@@ -32,6 +32,7 @@ The following people and institutions actively contributed to further developmen
 * [Liu Yuchen](https://github.com/smallg0at),
   [Beijing University of Technology](https://www.bjut.edu.cn/), China
 * [Berner Fachhochschule | Haute école spécialisée bernoise](https://www.bfh.ch/), Switzerland
+* [College of the Holy Cross](https://www.holycross.edu/), USA
 * [Haute école d'ingénierie et de gestion du canton de Vaud](https://www.heig-vd.ch/), Switzerland
 * [Haute école du paysage, d'ingénierie et d'architecture de Genève](https://hepia.hesge.ch/), Switzerland
 
