@@ -32,8 +32,8 @@ The following people and institutions actively contributed to further developmen
 * [Liu Yuchen](https://github.com/smallg0at),
   [Beijing University of Technology](https://www.bjut.edu.cn/), China
 * [Berner Fachhochschule | Haute école spécialisée bernoise](https://www.bfh.ch/), Switzerland
-* [Haute école du paysage, d'ingénierie et d'architecture de Genève](https://hepia.hesge.ch/), Switzerland
 * [Haute école d'ingénierie et de gestion du canton de Vaud](https://www.heig-vd.ch/), Switzerland
+* [Haute école du paysage, d'ingénierie et d'architecture de Genève](https://hepia.hesge.ch/), Switzerland
 
 If you feel that your name should be in this list, please feel free
 to [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues).
