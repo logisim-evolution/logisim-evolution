@@ -97,7 +97,8 @@
 	<mapID target="menu_printertab"     url="fr/html/guide/menu/printertab.html" />
 	<mapID target="menu_assembly"       url="fr/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="fr/html/guide/about/index.html" />
-	<mapID target="about_gpl"           url="gpl.html" />
+	<mapID target="about_gpl"           url="fr/html/guide/about/gpl.html" />
+	<mapID target="about_gpl_tr"        url="fr/html/guide/about/gpl-fr.html" />
 	
 <!-- for testing and validation -->	
 	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
