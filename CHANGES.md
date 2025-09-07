@@ -2,7 +2,7 @@
 
 # Changes #
 
-* @dev (????-??-??)
+* v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables
   * Added VHDL and Verilog for the RAM component with line-enables
   * fixed clasic appearance shift-register bug
