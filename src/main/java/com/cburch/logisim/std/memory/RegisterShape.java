@@ -11,8 +11,8 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.draw.shapes.PropertyReader;
 import com.cburch.draw.shapes.SvgCreator;
-import com.cburch.draw.shapes.SvgReader;
 import com.cburch.draw.util.EditableLabel;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.DynamicElement;
@@ -125,7 +125,7 @@ public class RegisterShape extends DynamicElement {
   @Override
   public void parseSvgElement(Element elt) {
     super.parseSvgElement(elt);
-    setValue(Text.ATTR_FONT, SvgReader.getFontAttribute(elt, "value-", "monospaced", 10));
+    setValue(Text.ATTR_FONT, PropertyReader.getFontAttribute(elt, "value-", "monospaced", 10));
   }
 
   @Override
