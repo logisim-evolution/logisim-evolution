@@ -365,7 +365,14 @@ tasks.register("createDeb") {
   // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
   val appVersion = ext.get(APP_VERSION) as String
   val targetDir = ext.get(TARGET_DIR) as String
-  val outputFile = "${targetDir}/${project.name}_${appVersion}_amd64.deb"
+  // Map system architecture to Debian package architecture naming convention
+  val systemArch = System.getProperty("os.arch").lowercase()
+  val debArch = when (systemArch) {
+    "x86_64", "amd64" -> "amd64"
+    "aarch64", "arm64" -> "arm64"
+    else -> systemArch
+  }
+  val outputFile = "${targetDir}/${project.name}_${appVersion}_${debArch}.deb"
   outputs.file(outputFile)
 
   doFirst {
@@ -393,7 +400,14 @@ tasks.register("createRpm") {
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
   inputs.file(ext.get(JDEPS_FILE) as String)
-  var outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm"
+  // Map system architecture to RPM package architecture naming convention
+  val systemArch = System.getProperty("os.arch").lowercase()
+  val rpmArch = when (systemArch) {
+    "x86_64", "amd64" -> "x86_64"
+    "aarch64", "arm64" -> "aarch64"
+    else -> systemArch
+  }
+  var outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-1.${rpmArch}.rpm"
   outputs.file(outputFile);
 
   doFirst {
