@@ -774,7 +774,13 @@ public class Simulator {
   }
 
   public void setTickFrequency(double freq) {
-    if (simThread.setTickFrequency(freq)) fireSimulatorStateChanged();
+    if (simThread.setTickFrequency(freq)) {
+      final var propagator = simThread.getPropagatorUnsynchronized(); 
+      if (propagator != null) {
+        propagator.getRootState().getCircuit().setTickFrequency(freq);
+      }
+      fireSimulatorStateChanged();
+    }
   }
 
   public void step() {
