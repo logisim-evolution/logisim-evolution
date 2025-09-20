@@ -524,7 +524,7 @@ public class SelectionActions {
         if (factory instanceof SubcircuitFactory circFact) {
           final var depends = canvas.getProject().getDependencies();
           if (!depends.canAdd(circ, circFact.getSubcircuit())) {
-            canvas.setErrorMessage(com.cburch.logisim.tools.Strings.S.getter("circularError"));
+            canvas.setErrorMessage(S.getter("circularError"));
             return;
           }
         }
