@@ -215,6 +215,63 @@ jobs:
 
   # ###############################################################################################
 
+  # Building for Linux Arm.
+  build_linux_arm:
+    name: 'Linux Arm build'
+    runs-on: ubuntu-22.04-arm
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
+    steps:
+      # https://github.com/z0al/dependent-issues
+      - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
+        uses: actions/checkout@v5
+        with:
+          ref: 'main'
+
+      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: ${{ env.JDK_DISTRO }}
+
+      # ###########################################################################################
+
+      - name: 'Build Arm DEB'
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          chmod +x gradlew
+          ./gradlew createDeb -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload *arm64.deb'
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_arm64.deb
+          name: ${{ needs.git_check.outputs.base_name }}_arm64.deb
+
+        # ###########################################################################################
+
+      - name: 'Build Arm RPM'
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          chmod +x gradlew
+          # Needs rpm package, but it should be installed already.
+          ./gradlew createRpm -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload *aarch64.rpm'
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.aarch64.rpm
+          name: ${{ needs.git_check.outputs.base_name }}.aarch64.rpm
+
+  # ###############################################################################################
+
   # Building for macOS.
   build_macos:
     name: 'macOS build'
@@ -313,3 +370,35 @@ jobs:
         with:
           path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-windows-amd64.zip
           name: ${{ needs.git_check.outputs.base_name }}-windows-amd64.zip
+
+  # ###############################################################################################
+
+#  This is currently disabled because JPackage uses the WiX Toolset which is not installed.
+#  # Building for Windows Arm.
+#  build_windows_arm:
+#    name: 'Windows Arm build'
+#    runs-on: windows-11-arm
+#    # Will run only if git_check determined it is needed.
+#    needs: git_check
+#    if: needs.git_check.outputs.run_build == 'true'
+#
+#    steps:
+#      # https://github.com/marketplace/actions/checkout
+#      - name: "Checkout sources"
+#        uses: actions/checkout@v5
+#      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+#        uses: actions/setup-java@v5
+#        with:
+#          java-version: ${{ env.JDK_VERSION }}
+#          distribution: ${{ env.JDK_DISTRO }}
+#
+#      - name: "Build Arm MSI"
+#        run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
+#
+#      - name: "Upload Arm MSI"
+#        uses: actions/upload-artifact@v4
+#        if: success()
+#        with:
+#          # NOTE: Gradle builder creates AArch64 file that always uses short version format in file name.
+#          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-aarch64.msi
+#          name: ${{ needs.git_check.outputs.base_name }}-aarch64.msi
