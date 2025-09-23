@@ -594,7 +594,7 @@ public class Simulator {
   // Everything below here is invoked and accessed only by the User/GUI thread.
   //
 
-  private final SimThread simThread;
+  public final SimThread simThread;
 
   // listeners is protected by a lock because simThread calls the _fire*()
   // methods, but the gui thread can call add/removeSimulatorListener() at any
