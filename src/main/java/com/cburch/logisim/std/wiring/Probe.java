@@ -13,6 +13,8 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -37,7 +39,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 
-public class Probe extends InstanceFactory {
+public class Probe extends InstanceFactory implements DynamicElementProvider {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
@@ -400,5 +402,9 @@ public class Probe extends InstanceFactory {
         state.getInstance().computeLabelTextField(Instance.AVOID_LEFT);
       }
     }
+  }
+
+  public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+    return new ProbeShape(x, y, path);
   }
 }

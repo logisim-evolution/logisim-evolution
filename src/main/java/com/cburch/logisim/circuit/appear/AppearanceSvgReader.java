@@ -27,6 +27,7 @@ import com.cburch.logisim.std.io.TtyShape;
 import com.cburch.logisim.std.memory.CounterShape;
 import com.cburch.logisim.std.memory.RegisterShape;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.ProbeShape;
 import java.util.List;
 import org.w3c.dom.Element;
 
@@ -131,6 +132,7 @@ public class AppearanceSvgReader {
       case "visible-tty" -> new TtyShape(x, y, path);
       case "visible-dotmatrix" -> new DotMatrixShape(x, y, path);
       case "visible-ledbar" -> new LedBarShape(x, y, path);
+      case "visible-probe" -> new ProbeShape(x, y, path);
       default -> null;
     };
   }
