@@ -141,12 +141,23 @@ public class ProjectCircuitActions {
   }
 
   public static void doAddVhdl(Project proj) {
-    final var name = promptForVhdlName(proj.getFrame(), proj.getLogisimFile(), "");
-    if (name != null) {
+    String initialValue = "";
+    while (true) {
+      final var name = promptForNewName(proj.getFrame(), proj.getLogisimFile(), initialValue, true);
+      if (name == null) break;
+
+      if (VhdlContent.labelVHDLInvalidNotify(name, proj.getLogisimFile())) {
+        initialValue = name;
+        continue;
+      }
+
       final var content = VhdlContent.create(name, proj.getLogisimFile());
       if (content != null) {
         proj.doAction(LogisimFileActions.addVhdl(content));
         proj.setCurrentHdlModel(content);
+        break;
+      } else {
+        initialValue = name;
       }
     }
   }
