@@ -87,8 +87,11 @@ public class ProjectCircuitActions {
   }
 
   public static void doAddCircuit(Project proj) {
-    final var name = promptForCircuitName(proj.getFrame(), proj.getLogisimFile(), "");
-    if (name != null) {
+    String initialValue = "";
+    while (true) {
+      final var name = promptForCircuitName(proj.getFrame(), proj.getLogisimFile(), initialValue);
+      if (name == null) break;
+
       String error = null;
       /* Checking for valid names */
       if (name.isEmpty()) {
@@ -103,13 +106,16 @@ public class ProjectCircuitActions {
           error = "\"" + name + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
         }
       }
+
       if (error != null) {
         OptionPane.showMessageDialog(
             proj.getFrame(), error, S.get("circuitCreateTitle"), OptionPane.ERROR_MESSAGE);
+        initialValue = name;
       } else {
         final var circuit = new Circuit(name, proj.getLogisimFile(), proj);
         proj.doAction(LogisimFileActions.addCircuit(circuit));
         proj.setCurrentCircuit(circuit);
+        break;
       }
     }
   }
