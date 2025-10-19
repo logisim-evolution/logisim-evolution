@@ -209,9 +209,13 @@ public class Propagator {
     return iters > 0;
   }
 
+  /** Must be called by the simulation thread */
   void reset() {
     halfClockCycles = 0;
     toProcess.clear();
+    synchronized (nonSimThreadEvents) {
+      nonSimThreadEvents.clear();
+    }
     root.reset();
     isOscillating = false;
   }
@@ -273,6 +277,7 @@ public class Propagator {
 
   /** Must be called from simulation thread */
   boolean step(PropagationPoints changedPoints) {
+    moveNonSimThreadEvents();
     oscPoints.clear();
     root.processDirtyPoints();
     root.processDirtyComponents();
