@@ -37,9 +37,39 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.JFileChooser;
 
 public class Project {
+  public void discardAllEdits() {
+      undoLog.clear();
+      redoLog.clear();
+      undoMods = 0;
+      fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, null));
+  }
+
+  public List<Action> getRedoActions() {
+    List<Action> actions = new ArrayList<>();
+    Iterator<ActionData> iter = redoLog.descendingIterator();
+    while (iter.hasNext()) {
+        actions.add(iter.next().action);
+    }
+    return actions;
+  }
+
+  public void redoUpTo(Action targetAction) {
+    if (redoLog.isEmpty()) return;
+    Action lastRedoneAction = null;
+    do {
+      redoAction();
+      if (!undoLog.isEmpty()) {
+          lastRedoneAction = undoLog.getLast().action;
+      }
+    } while (lastRedoneAction != targetAction && !redoLog.isEmpty());
+  }
+
+
   private static class ActionData {
     final CircuitState circuitState;
     final HdlModel hdlModel;
@@ -81,6 +111,7 @@ public class Project {
   }
 
   private static final int MAX_UNDO_SIZE = 64;
+  private static final int MAX_REDO_SIZE = 20;
 
   private final Simulator simulator = new Simulator();
   private VhdlSimulatorTop vhdlSimulator = null;
@@ -594,6 +625,9 @@ public class Project {
   public void undoAction() {
     if (CollectionUtil.isNotEmpty(undoLog)) {
       redoLog.addLast(undoLog.getLast());
+      while (redoLog.size() > MAX_REDO_SIZE) {
+          redoLog.removeFirst();
+      }
       final var data = undoLog.removeLast();
       if (data.circuitState != null) setCircuitState(data.circuitState);
       else if (data.hdlModel != null) setCurrentHdlModel(data.hdlModel);
