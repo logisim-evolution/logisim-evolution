@@ -21,6 +21,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
+import java.util.Arrays;
+import java.util.List;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.AbstractComponentFactory;
@@ -32,11 +34,12 @@ import com.cburch.logisim.comp.ComponentState;
 import com.cburch.logisim.comp.ComponentUserEvent;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.comp.ManagedComponent;
+import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -45,9 +48,9 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.tools.ToolTipMaker;
 
-// 128 x 128 pixel LCD display with 8bpp color (byte addressed)
 class Video extends ManagedComponent implements ToolTipMaker, AttributeListener {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
@@ -88,7 +91,21 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     COLOR_VGA256
   };
 
-  static final Integer[] SIZE_OPTIONS = {2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048};
+  public static final VideoAttributeOption RESOLUTION_CUSTOM = new VideoAttributeOption(0, 0);
+
+  // RESOLUTION_OPTIONS may be modified (adding or removing) without breaking old projects.
+  // But it must end with RESOLUTION_CUSTOM.
+  static VideoAttributeOption[] RESOLUTION_OPTIONS = {
+      new VideoAttributeOption(128, 128),
+      new VideoAttributeOption(256, 256),
+      new VideoAttributeOption(320, 240),
+      new VideoAttributeOption(640, 480),
+      new VideoAttributeOption(960, 540),
+      new VideoAttributeOption(1024, 768),
+      new VideoAttributeOption(1280, 720),
+      new VideoAttributeOption(1920, 1080),
+      RESOLUTION_CUSTOM
+  };
 
   public static final Attribute<String> BLINK_OPTION =
       Attributes.forOption("cursor", S.getter("rgbVideoCursor"), BLINK_OPTIONS);
@@ -96,16 +113,15 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       Attributes.forOption("reset", S.getter("rgbVideoReset"), RESET_OPTIONS);
   public static final Attribute<String> COLOR_OPTION =
       Attributes.forOption("color", S.getter("rgbVideoColor"), COLOR_OPTIONS);
+  public static final Attribute<AttributeOption> RESOLUTION_OPTION = /* NOT SAVED */
+      Attributes.forOption("resolution", S.getter("rgbVideoResolution"), RESOLUTION_OPTIONS);
   public static final Attribute<Integer> WIDTH_OPTION =
-      Attributes.forOption("width", S.getter("rgbVideoWidth"), SIZE_OPTIONS);
+      Attributes.forIntegerRange("width", S.getter("rgbVideoWidth"), 2, 4096);
   public static final Attribute<Integer> HEIGHT_OPTION =
-      Attributes.forOption("height", S.getter("rgbVideoHeight"), SIZE_OPTIONS);
+      Attributes.forIntegerRange("height", S.getter("rgbVideoHeight"), 2, 4096);
   public static final Attribute<Integer> SCALE_OPTION =
       Attributes.forIntegerRange("scale", S.getter("rgbVideoScale"), 1, 8);
-
-  private static final Attribute<?>[] ATTRIBUTES = {
-    BLINK_OPTION, RESET_OPTION, COLOR_OPTION, WIDTH_OPTION, HEIGHT_OPTION, SCALE_OPTION
-  };
+  public static final Attribute<Integer> DUMMY_OPTION = Attributes.forNoSave();
 
   private static class Factory extends AbstractComponentFactory {
     private Factory() {}
@@ -122,9 +138,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
     @Override
     public AttributeSet createAttributeSet() {
-      return AttributeSets.fixedSet(
-          ATTRIBUTES,
-          new Object[] {BLINK_OPTIONS[0], RESET_OPTIONS[0], COLOR_OPTIONS[0], 128, 128, 2});
+      return new VideoAttributes();
     }
 
     @Override
@@ -209,12 +223,14 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, w, h);
       }
+      g.dispose();
     }
 
     if (!RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
       final var g = state.img.getGraphics();
       g.setColor(Color.BLACK);
       g.fillRect(0, 0, w, h);
+      g.dispose();
     }
   }
 
@@ -530,12 +546,164 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   void configureComponent() {
     final var attrs = getAttributeSet();
     final var bpp = getColorModel(attrs.getValue(COLOR_OPTION)).getPixelSize();
-    final var xs = 31 - Integer.numberOfLeadingZeros(attrs.getValue(WIDTH_OPTION));
-    final var ys = 31 - Integer.numberOfLeadingZeros(attrs.getValue(HEIGHT_OPTION));
+    final var xs = 32 - Integer.numberOfLeadingZeros(attrs.getValue(WIDTH_OPTION) - 1);
+    final var ys = 32 - Integer.numberOfLeadingZeros(attrs.getValue(HEIGHT_OPTION) - 1);
     setEnd(P_X, getLocation().translate(40, 0), BitWidth.create(xs), EndData.INPUT_ONLY);
     setEnd(P_Y, getLocation().translate(50, 0), BitWidth.create(ys), EndData.INPUT_ONLY);
     setEnd(P_DATA, getLocation().translate(60, 0), BitWidth.create(bpp), EndData.INPUT_ONLY);
     recomputeBounds();
     fireComponentInvalidated(new ComponentEvent(this));
+  }
+
+  public static class VideoAttributes extends AbstractAttributeSet {
+    private static final List<Attribute<?>> VIDEO_ATTRIBUTES = Arrays.asList(BLINK_OPTION, RESET_OPTION,
+        COLOR_OPTION, RESOLUTION_OPTION, WIDTH_OPTION, HEIGHT_OPTION, SCALE_OPTION);
+    private static final List<Attribute<?>> ALTERNATE_ATTRIBUTES = Arrays.asList(BLINK_OPTION, RESET_OPTION,
+        COLOR_OPTION, RESOLUTION_OPTION, WIDTH_OPTION, HEIGHT_OPTION, SCALE_OPTION, DUMMY_OPTION);
+
+    String blink = BLINK_OPTIONS[0];
+    String reset = RESET_OPTIONS[0];
+    String color = COLOR_OPTIONS[0];
+    VideoAttributeOption resolution = RESOLUTION_OPTIONS[0];
+    int width = 128;
+    int height = 128;
+    int scale = 2;
+
+    @Override
+    public List<Attribute<?>> getAttributes() {
+      DUMMY_OPTION.setHidden(true);
+      final var custom = resolution == RESOLUTION_CUSTOM;
+      WIDTH_OPTION.setHidden(!custom);
+      HEIGHT_OPTION.setHidden(!custom);
+      /* setHidden() doesn't force the panel to redraw, so we force it by changing attributes */
+      return custom ? VIDEO_ATTRIBUTES : ALTERNATE_ATTRIBUTES;
+    }
+
+    @Override
+    public boolean isToSave(Attribute<?> attr) {
+      return attr == RESOLUTION_OPTION ? false : attr.isToSave();
+    }
+
+    @Override
+    protected void copyInto(AbstractAttributeSet dest) {
+      // do nothing
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <V> V getValue(Attribute<V> attr) {
+      if (attr == BLINK_OPTION) return (V) blink;
+      if (attr == RESET_OPTION) return (V) reset;
+      if (attr == COLOR_OPTION) return (V) color;
+      if (attr == RESOLUTION_OPTION) return (V) resolution;
+      if (attr == WIDTH_OPTION) return (V) (Integer) width;
+      if (attr == HEIGHT_OPTION) return (V) (Integer) height;
+      if (attr == SCALE_OPTION) return (V) (Integer) scale;
+      return null;
+    }
+
+    @Override
+    public <V> void setValue(Attribute<V> attr, V value) {
+      V oldValue = getValue(attr);
+      if (attr == BLINK_OPTION) {
+        final var newBlink = (String) value;
+        if (newBlink.equals(blink)) return;
+        blink = newBlink;
+      } else if (attr == RESET_OPTION) {
+        final var newReset = (String) value;
+        if (newReset.equals(reset)) return;
+        reset = newReset;
+      } else if (attr == COLOR_OPTION) {
+        final var newColor = (String) value;
+        if (newColor.equals(color)) return;
+        color = newColor;
+      } else if (attr == RESOLUTION_OPTION) {
+        final var newResolution = (VideoAttributeOption) value;
+        if (resolution == newResolution) return;
+        resolution = newResolution;
+        adjustWidthHeight();
+        if (resolution == RESOLUTION_CUSTOM || oldValue == RESOLUTION_CUSTOM) {
+          fireAttributeListChanged();
+        }
+        return;
+      } else if (attr == WIDTH_OPTION) {
+        final var newWidth = (int) value;
+        if (newWidth == width) return;
+        width = (int) value;
+        adjustResolution();
+      } else if (attr == HEIGHT_OPTION) {
+        final var newHeight = (int) value;
+        if (newHeight == height) return;
+        height = (int) value;
+        adjustResolution();
+      } else if (attr == SCALE_OPTION) {
+        final var newScale = (int) value;
+        if (newScale == scale) return;
+        scale = (int) value;
+      }
+      fireAttributeValueChanged(attr, value, oldValue);
+    }
+
+    /** Adjusts the resolution attribute to match the width and height */
+    private void adjustResolution() {
+      var foundResolution = RESOLUTION_CUSTOM;
+      for (final var resolutionOption : RESOLUTION_OPTIONS) {
+        if (resolutionOption.matches(width, height)) {
+          foundResolution = resolutionOption;
+        }
+      }
+      if (foundResolution == resolution) return;
+      final var oldResolution = resolution;
+      resolution = foundResolution;
+      fireAttributeValueChanged(RESOLUTION_OPTION, resolution, oldResolution);
+      fireAttributeListChanged();
+    }
+
+    /** Adjusts width and height to match the resolution attribute */
+    private void adjustWidthHeight() {
+      if (resolution != RESOLUTION_CUSTOM) {
+        final var newWidth = resolution.width;
+        final var newHeight = resolution.height;
+        if (newWidth != width) {
+          final var oldWidth = width;
+          width = newWidth;
+          fireAttributeValueChanged(WIDTH_OPTION, width, oldWidth);
+        }
+        if (newHeight != height) {
+          final var oldHeight = height;
+          height = newHeight;
+          fireAttributeValueChanged(HEIGHT_OPTION, height, oldHeight);
+        }
+      }
+    }
+
+    @Override
+    public <V> List<Attribute<?>> attributesMayAlsoBeChanged(Attribute<V> attr, V value) {
+      if (attr == WIDTH_OPTION || attr == HEIGHT_OPTION) {
+        return List.of(RESOLUTION_OPTION);
+      }
+      if (attr == RESOLUTION_OPTION) {
+        return List.of(WIDTH_OPTION, HEIGHT_OPTION);
+      }
+      return null;
+    }
+  }
+
+  public static class VideoAttributeOption extends AttributeOption {
+    int width;  // width of 0 is the Custom option.
+    int height;
+
+    VideoAttributeOption(int width, int height) {
+      super(width == 0 ? "Custom" : String.format("%dx%d", width, height),
+          width == 0 ? S.getter("rgbVideoCustom")
+              : S.getter("rgbVideoResolutionOption", "" + width, "" + height));
+      this.width = width;
+      this.height = height;
+    }
+
+    /** returns true when this has the given width and height */
+    boolean matches(int width, int height) {
+      return width == this.width && height == this.height;
+    }
   }
 }
