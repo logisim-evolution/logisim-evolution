@@ -206,16 +206,16 @@ class MenuEdit extends Menu {
       } else if (src == redo && proj != null) {
         proj.redoAction();
       } else if (src == clearHistory && proj != null) {
-          int result = JOptionPane.showConfirmDialog(
-                  proj.getFrame(),
-                  S.get("clearHistoryWarningMessage"),
-                  S.get("clearHistoryWarningTitle"),
-                  JOptionPane.OK_CANCEL_OPTION,
-                  JOptionPane.WARNING_MESSAGE
-          );
-          if (result == JOptionPane.OK_OPTION) {
-              proj.discardAllEdits();
-          }
+        final var result = JOptionPane.showConfirmDialog(
+          proj.getFrame(),
+          S.get("clearHistoryWarningMessage"),
+          S.get("clearHistoryWarningTitle"),
+          JOptionPane.OK_CANCEL_OPTION,
+          JOptionPane.WARNING_MESSAGE
+        );
+        if (result == JOptionPane.OK_OPTION) {
+            proj.discardAllEdits();
+        }
       }
     }
 
@@ -235,8 +235,8 @@ class MenuEdit extends Menu {
       if (next != null) {
         redo.setText(S.get("editRedoItem", next.getName()));
         redo.setEnabled(true);
-          redoHistory.setEnabled(true);
-          clearHistory.setEnabled(true);
+        redoHistory.setEnabled(true);
+        clearHistory.setEnabled(true);
       } else {
         redo.setText(S.get("editCantRedoItem"));
         redo.setEnabled(false);
