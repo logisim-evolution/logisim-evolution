@@ -43,17 +43,17 @@ import javax.swing.JFileChooser;
 
 public class Project {
   public void discardAllEdits() {
-      undoLog.clear();
-      redoLog.clear();
-      undoMods = 0;
-      fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, null));
+    undoLog.clear();
+    redoLog.clear();
+    undoMods = 0;
+    fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, null));
   }
 
   public List<Action> getRedoActions() {
     List<Action> actions = new ArrayList<>();
     Iterator<ActionData> iter = redoLog.descendingIterator();
     while (iter.hasNext()) {
-        actions.add(iter.next().action);
+      actions.add(iter.next().action);
     }
     return actions;
   }
@@ -64,9 +64,30 @@ public class Project {
     do {
       redoAction();
       if (!undoLog.isEmpty()) {
-          lastRedoneAction = undoLog.getLast().action;
+        lastRedoneAction = undoLog.getLast().action;
       }
     } while (lastRedoneAction != targetAction && !redoLog.isEmpty());
+  }
+
+  public List<Action> getUndoActions() {
+    List<Action> actions = new ArrayList<>();
+    Iterator<ActionData> iter = undoLog.descendingIterator();
+    while (iter.hasNext()) {
+      actions.add(iter.next().action);
+    }
+    return actions;
+  }
+
+  public void undoUpTo(Action targetAction) {
+    if (undoLog.isEmpty()) return;
+    Action lastUndoneAction = null;
+    do {
+      if (undoLog.isEmpty()) break;
+      undoAction();
+      if (!redoLog.isEmpty()) {
+        lastUndoneAction = redoLog.getLast().action;
+      }
+    } while (lastUndoneAction != targetAction && !undoLog.isEmpty());
   }
 
 
@@ -111,7 +132,7 @@ public class Project {
   }
 
   private static final int MAX_UNDO_SIZE = 64;
-  private static final int MAX_REDO_SIZE = 20;
+  private static final int MAX_REDO_SIZE = 64;
 
   private final Simulator simulator = new Simulator();
   private VhdlSimulatorTop vhdlSimulator = null;
@@ -626,7 +647,7 @@ public class Project {
     if (CollectionUtil.isNotEmpty(undoLog)) {
       redoLog.addLast(undoLog.getLast());
       while (redoLog.size() > MAX_REDO_SIZE) {
-          redoLog.removeFirst();
+        redoLog.removeFirst();
       }
       final var data = undoLog.removeLast();
       if (data.circuitState != null) setCircuitState(data.circuitState);
