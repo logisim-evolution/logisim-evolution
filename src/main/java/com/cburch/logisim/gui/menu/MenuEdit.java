@@ -144,7 +144,7 @@ class MenuEdit extends Menu {
     undo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getWithMask(0));
     redo.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getWithMask(0));
     dup.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_MENU_DUPLICATE)
-      .getWithMask(0));
+        .getWithMask(0));
   }
 
   @Override
