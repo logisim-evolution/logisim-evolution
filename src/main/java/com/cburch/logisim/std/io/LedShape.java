@@ -15,6 +15,7 @@ import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
@@ -30,6 +31,11 @@ import org.w3c.dom.Element;
 
 public class LedShape extends DynamicElement {
   static final int DEFAULT_RADIUS = 5;
+  // TODO: localization
+  static final Attribute<Integer> ATTR_RADIUS =
+      Attributes.forIntegerRange("radius", 1, 20);
+
+  int radius = DEFAULT_RADIUS;
 
   public LedShape(int x, int y, DynamicElement.Path p) {
     super(p, Bounds.create(x, y, 2 * DEFAULT_RADIUS, 2 * DEFAULT_RADIUS));
@@ -54,8 +60,28 @@ public class LedShape extends DynamicElement {
   public List<Attribute<?>> getAttributes() {
     return UnmodifiableList.create(
         new Attribute<?>[] {
-          DrawAttr.STROKE_WIDTH, ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR
+          DrawAttr.STROKE_WIDTH, ATTR_RADIUS, ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR
         });
+  }
+  @Override
+  @SuppressWarnings("unchecked")
+  public <V> V getValue(Attribute<V> attr) {
+    if (attr == ATTR_RADIUS) {
+      return (V) Integer.valueOf(radius);
+    }
+    return super.getValue(attr);
+  }
+
+  @Override
+  public void updateValue(Attribute<?> attr, Object value) {
+    if (attr == ATTR_RADIUS) {
+      this.radius = ((Integer) value).intValue();
+      // this seems jank since `bounds` is protected but eh
+      this.bounds = Bounds.create(this.bounds.getX(), this.bounds.getY(), 2 * this.radius, 2 * this.radius);
+      return;
+    }
+    super.updateValue(attr, value);
+    return;
   }
 
   @Override
@@ -87,6 +113,19 @@ public class LedShape extends DynamicElement {
   @Override
   public Element toSvgElement(Document doc) {
     return toSvgElement(doc.createElement("visible-led"));
+  }
+  
+  @Override
+  public Element toSvgElement(Element ret) {
+    ret = super.toSvgElement(ret);
+    if (radius != DEFAULT_RADIUS) ret.setAttribute("value-radius",""+radius);
+    return ret;
+  }
+  
+  @Override
+  public void parseSvgElement(Element elt) {
+    super.parseSvgElement(elt);
+    if (elt.hasAttribute("value-radius")) setValue(ATTR_RADIUS, Integer.valueOf(elt.getAttribute("value-radius")));
   }
 
   @Override
