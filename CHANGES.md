@@ -3,11 +3,12 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Enhanced Redo functionality:
+  * Enhanced Undo and Redo functionality:
+    * Added "Undo History" dropdown menu to view and select specific undo actions.
     * Added "Redo History" dropdown menu to view and select specific redo actions.
     * Added "Clear Undo/Redo History" menu item with confirmation dialog.
-    * Limited redo history (`redoLog`) to a maximum of 20 actions.
-    * Retained standard single-step Redo functionality via menu item.
+    * Limited undo and redo history to a maximum of 64 actions.
+    * Retained standard single-step undo and redo functionality via menu item.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables
