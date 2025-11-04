@@ -106,9 +106,11 @@ class MenuEdit extends Menu {
         public void menuSelected(MenuEvent e) {
           populateRedoHistoryMenu();
         }
+
         @Override public void menuDeselected(MenuEvent e) {
           /* Do nothing */
         }
+
         @Override public void menuCanceled(MenuEvent e) {
           /* Do nothing */
         }
@@ -119,8 +121,14 @@ class MenuEdit extends Menu {
         public void menuSelected(MenuEvent e) {
           populateUndoHistoryMenu();
         }
-        @Override public void menuDeselected(MenuEvent e) { /* Do nothing */ }
-        @Override public void menuCanceled(MenuEvent e) { /* Do nothing */ }
+
+        @Override public void menuDeselected(MenuEvent e) {
+          /* Do nothing */
+        }
+
+        @Override public void menuCanceled(MenuEvent e) {
+          /* Do nothing */
+        }
       });
     }
 
@@ -224,8 +232,8 @@ class MenuEdit extends Menu {
     } else {
       java.util.List<com.cburch.logisim.proj.Action> actions = proj.getRedoActions();
       for (final Action action : actions) {
-          JMenuItem actionItem = new JMenuItem(action.getName());
-          actionItem.addActionListener(new ActionListener() {
+        JMenuItem actionItem = new JMenuItem(action.getName());
+        actionItem.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
             final var currentProj = menubar.getSaveProject();
