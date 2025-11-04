@@ -22,6 +22,8 @@ import com.cburch.logisim.std.io.LedShape;
 import com.cburch.logisim.std.io.RgbLedShape;
 import com.cburch.logisim.std.io.SevenSegmentShape;
 import com.cburch.logisim.std.io.TtyShape;
+import com.cburch.logisim.std.io.DotMatrixShape;
+import com.cburch.logisim.std.io.LedBarShape;
 import com.cburch.logisim.std.memory.CounterShape;
 import com.cburch.logisim.std.memory.RegisterShape;
 import com.cburch.logisim.std.wiring.Pin;
@@ -127,6 +129,8 @@ public class AppearanceSvgReader {
       case "visible-vga" -> new SocVgaShape(x, y, path);
       case "visible-soc-cpu" -> new SocCpuShape(x, y, path);
       case "visible-tty" -> new TtyShape(x, y, path);
+      case "visible-dotmatrix" -> new DotMatrixShape(x, y, path);
+      case "visible-ledbar" -> new LedBarShape(x, y, path);
       default -> null;
     };
   }

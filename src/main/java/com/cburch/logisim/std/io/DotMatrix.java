@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.io;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
@@ -75,5 +76,10 @@ public class DotMatrix extends DotMatrixBase {
   @Override
   public AttributeOption getAttributeItemSelect() {
     return INPUT_SELECT;
+  }
+
+  @Override
+  public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path p) {
+    return new DotMatrixShape(x, y, p);
   }
 }
