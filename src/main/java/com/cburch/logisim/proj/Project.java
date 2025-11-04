@@ -59,14 +59,13 @@ public class Project {
   }
 
   public void redoUpTo(Action targetAction) {
-    if (redoLog.isEmpty()) return;
     Action lastRedoneAction = null;
-    do {
+    while (lastRedoneAction != targetAction && !redoLog.isEmpty()) {
       redoAction();
       if (!undoLog.isEmpty()) {
         lastRedoneAction = undoLog.getLast().action;
       }
-    } while (lastRedoneAction != targetAction && !redoLog.isEmpty());
+    }
   }
 
   public List<Action> getUndoActions() {
@@ -79,17 +78,14 @@ public class Project {
   }
 
   public void undoUpTo(Action targetAction) {
-    if (undoLog.isEmpty()) return;
     Action lastUndoneAction = null;
-    do {
-      if (undoLog.isEmpty()) break;
+    while (lastUndoneAction != targetAction && !undoLog.isEmpty()) {
       undoAction();
       if (!redoLog.isEmpty()) {
         lastUndoneAction = redoLog.getLast().action;
       }
-    } while (lastUndoneAction != targetAction && !undoLog.isEmpty());
+    }
   }
-
 
   private static class ActionData {
     final CircuitState circuitState;

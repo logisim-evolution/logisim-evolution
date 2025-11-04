@@ -104,10 +104,14 @@ class MenuEdit extends Menu {
       redoHistory.addMenuListener(new MenuListener() {
         @Override
         public void menuSelected(MenuEvent e) {
-            populateRedoHistoryMenu();
+          populateRedoHistoryMenu();
         }
-        @Override public void menuDeselected(MenuEvent e) { /* Do nothing */ }
-        @Override public void menuCanceled(MenuEvent e) { /* Do nothing */ }
+        @Override public void menuDeselected(MenuEvent e) {
+          /* Do nothing */
+        }
+        @Override public void menuCanceled(MenuEvent e) {
+          /* Do nothing */
+        }
       });
 
       undoHistory.addMenuListener(new MenuListener() {
@@ -220,9 +224,9 @@ class MenuEdit extends Menu {
     } else {
       java.util.List<com.cburch.logisim.proj.Action> actions = proj.getRedoActions();
       for (final Action action : actions) {
-        JMenuItem actionItem = new JMenuItem(action.getName());
-        actionItem.addActionListener(new ActionListener() {
-        @Override
+          JMenuItem actionItem = new JMenuItem(action.getName());
+          actionItem.addActionListener(new ActionListener() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             final var currentProj = menubar.getSaveProject();
             if (currentProj != null) {
@@ -247,11 +251,11 @@ class MenuEdit extends Menu {
         proj.redoAction();
       } else if (src == clearHistory && proj != null) {
         final var result = JOptionPane.showConfirmDialog(
-          proj.getFrame(),
-          S.get("clearHistoryWarningMessage"),
-          S.get("clearHistoryWarningTitle"),
-          JOptionPane.OK_CANCEL_OPTION,
-          JOptionPane.WARNING_MESSAGE
+            proj.getFrame(),
+            S.get("clearHistoryWarningMessage"),
+            S.get("clearHistoryWarningTitle"),
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.WARNING_MESSAGE
         );
         if (result == JOptionPane.OK_OPTION) {
           proj.discardAllEdits();
