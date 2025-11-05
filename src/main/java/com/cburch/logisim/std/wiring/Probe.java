@@ -129,7 +129,7 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
     return Bounds.create(x, y, bwidth, bheight);
   }
 
-  private static Value getValue(InstanceState state) {
+  public static Value getValue(InstanceState state) {
     StateData data = (StateData) state.getData();
     return data == null ? Value.NIL : data.curValue;
   }

@@ -1,43 +1,14 @@
-/**
- * This file is part of Logisim-evolution.
+/*
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with Logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + Haute École Spécialisée Bernoise
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
- *   + REDS Institute - HEIG-VD, Yverdon-les-Bains, Switzerland
- *     http://reds.heig-vd.ch
- * This version of the project is currently maintained by:
- *   + Kevin Walsh (kwalsh@holycross.edu, http://mathcs.holycross.edu/~kwalsh)
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.wiring;
 import static com.cburch.logisim.std.Strings.S;
-
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Font;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
@@ -52,6 +23,12 @@ import com.cburch.logisim.util.UnmodifiableList;
 import com.cburch.draw.util.EditableLabel;
 import com.cburch.draw.shapes.SvgReader;
 import com.cburch.draw.shapes.SvgCreator;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
+import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class ProbeShape extends DynamicElement {
   static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 10);
@@ -93,6 +70,7 @@ public class ProbeShape extends DynamicElement {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
     if (attr == Text.ATTR_FONT)
       return (V) label.getFont();
@@ -100,12 +78,12 @@ public class ProbeShape extends DynamicElement {
   }
 
   @Override
-  public <V> void updateAttr(Attribute<V> attr, V value) {
+  public void updateValue(Attribute<?> attr, Object value) {
     if (attr == Text.ATTR_FONT) {
       label.setFont((Font)value);
       calculateBounds();
     } else {
-      super.updateAttr(attr, value);
+      super.updateValue(attr, value);
     }
   }
 
@@ -117,7 +95,7 @@ public class ProbeShape extends DynamicElement {
     int w = bounds.getWidth();
     int h = bounds.getHeight();
     if (state != null) {
-      Value val = (Value)getData(state);
+      Value val = Probe.getValue(state.getInstanceState(path.leaf()));
       if (val == null)
         val = Value.NIL;
       RadixOption radix = path.leaf().getAttributeSet().getValue(RadixOption.ATTRIBUTE);
@@ -147,7 +125,7 @@ public class ProbeShape extends DynamicElement {
 
   public void parseSvgElement(Element elt) {
     super.parseSvgElement(elt);
-    setAttr(Text.ATTR_FONT, SvgReader.getFontAttribute(elt, "value-", "monospaced", 10));
+    updateValue(Text.ATTR_FONT, SvgReader.getFontAttribute(elt, "value-", "monospaced", 10));
   }
 
   @Override
