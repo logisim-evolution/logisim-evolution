@@ -15,8 +15,8 @@ import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
@@ -39,8 +39,14 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
 
   public DotMatrixBaseShape(int x, int y, DynamicElement.Path p) {
     super(p, Bounds.create(x, y,
-      p.leafGetAttributeValue( ((DotMatrixBase)p.leaf().getFactory()) .getAttributeColumns()).getWidth() * DEFAULT_SCALE * ((DotMatrixBase)p.leaf().getFactory()) .scaleX,
-      p.leafGetAttributeValue( ((DotMatrixBase)p.leaf().getFactory()) .getAttributeRows()   ).getWidth() * DEFAULT_SCALE * ((DotMatrixBase)p.leaf().getFactory()) .scaleY
+        p.leafGetAttributeValue(
+          ((DotMatrixBase) p.leaf().getFactory()).getAttributeColumns()
+        ).getWidth()
+          * DEFAULT_SCALE * ((DotMatrixBase) p.leaf().getFactory()).scaleX,
+        p.leafGetAttributeValue(
+          ((DotMatrixBase) p.leaf().getFactory()).getAttributeRows()
+        ).getWidth()
+          * DEFAULT_SCALE * ((DotMatrixBase) p.leaf().getFactory()).scaleY
     ));
   }
   
@@ -63,11 +69,15 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
   }
 
   public void updateValue(Attribute<?> attr, Object value) {
+    final var factory = (DotMatrixBase) this.path.leaf().getFactory();
+
     if (attr == ATTR_SCALE) {
       this.scale = ((Integer) value).intValue();
       this.bounds = Bounds.create(this.bounds.getX(), this.bounds.getY(),
-        this.path.leafGetAttributeValue( ((DotMatrixBase)this.path.leaf().getFactory()) .getAttributeColumns()).getWidth() * scale * ((DotMatrixBase)this.path.leaf().getFactory()) .scaleX,
-        this.path.leafGetAttributeValue( ((DotMatrixBase)this.path.leaf().getFactory()) .getAttributeRows()   ).getWidth() * scale * ((DotMatrixBase)this.path.leaf().getFactory()) .scaleY
+        this.path.leafGetAttributeValue(factory.getAttributeColumns()).getWidth()
+          * scale * factory.scaleX,
+        this.path.leafGetAttributeValue(factory.getAttributeRows()).getWidth()
+          * scale * factory.scaleY
       );
     }
     super.updateValue(attr, value);
@@ -75,25 +85,22 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
   
   public void drawShape(Graphics g, int x, int y, AttributeOption shape, int scaleX, int scaleY) {
     if (DotMatrixBase.SHAPE_SQUARE.equals(shape)) {
-      g.fillRect(x, y, scale*scaleX, scale*scaleY);
+      g.fillRect(x, y, scale * scaleX, scale * scaleY);
     } else if (DotMatrixBase.SHAPE_PADDED_SQUARE.equals(shape)) {
       if (scale <= 2) {
         // can't do :(
-        g.fillRect(x, y, scale*scaleX, scale*scaleY);
-      }
-      else if (scale <= 6) {
+        g.fillRect(x, y, scale * scaleX, scale * scaleY);
+      } else if (scale <= 6) {
         g.fillRect(x + 1 * scaleX, y + 1 * scaleY, (scale - 2) * scaleX, (scale - 2) * scaleY);
-      }
-      else {
+      } else {
         g.fillRect(x + 2 * scaleX, y + 2 * scaleY, (scale - 4) * scaleX, (scale - 4) * scaleY);
       }
     } else {
       // DotMatrixBase.SHAPE_CIRCLE is default shape
       if (scale <= 2) {
-        g.fillOval(x, y, scale*scaleX, scale*scaleY);
-      }
-      else {
-        g.fillOval(x + 1 * scaleX, y + 1 * scaleY, (scale-2) * scaleX, (scale-2) * scaleY);
+        g.fillOval(x, y, scale * scaleX, scale * scaleY);
+      } else {
+        g.fillOval(x + 1 * scaleX, y + 1 * scaleY, (scale - 2) * scaleX, (scale - 2) * scaleY);
       }
     }
   }
@@ -102,18 +109,21 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
   public void paintDynamic(Graphics g, CircuitState state) {
     final var onColor = path.leafGetAttributeValue(IoLibrary.ATTR_ON_COLOR);
     final var offColor = path.leafGetAttributeValue(IoLibrary.ATTR_OFF_COLOR);
-    final var scaleX = ((DotMatrixBase)path.leaf().getFactory()) .scaleX;
-    final var scaleY = ((DotMatrixBase)path.leaf().getFactory()) .scaleY;
-    final var shape = path.leafGetAttributeValue( ((DotMatrixBase)path.leaf().getFactory()) .getAttributeShape());
+  
+    final var factory = (DotMatrixBase) this.path.leaf().getFactory();
+
+    final var scaleX = factory.scaleX;
+    final var scaleY = factory.scaleY;
+    final var shape = path.leafGetAttributeValue(factory.getAttributeShape());
     
     // FIXME: path.leaf().getInstanceStateImpl() always returns null here
     
     final var instanceState = state != null ? state.getInstanceState(path.leaf()) : null;
-    final var data = instanceState != null ? ((DotMatrixBase)path.leaf().getFactory()) .getState(instanceState) : null;
-    final var ticks = instanceState != null ? (instanceState).getTickCount() : null;
+    final var data = instanceState != null ? factory.getState(instanceState) : null;
+    final var ticks = instanceState != null ? instanceState.getTickCount() : null;
     
-    final var rows = this.path.leafGetAttributeValue( ((DotMatrixBase)this.path.leaf().getFactory()) .getAttributeRows()   ).getWidth();
-    final var cols = this.path.leafGetAttributeValue( ((DotMatrixBase)this.path.leaf().getFactory()) .getAttributeColumns()).getWidth();
+    final var rows = this.path.leafGetAttributeValue(factory.getAttributeRows()).getWidth();
+    final var cols = this.path.leafGetAttributeValue(factory.getAttributeColumns()).getWidth();
 
     for (var j = 0; j < rows; j++) {
       for (var i = 0; i < cols; i++) {
@@ -140,7 +150,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
       }
     }
 
-    if ( ((DotMatrixBase)path.leaf().getFactory()) .drawBorder) {
+    if (((DotMatrixBase) path.leaf().getFactory()).drawBorder) {
       g.setColor(Color.DARK_GRAY);
       GraphicsUtil.switchToWidth(g, this.getValue(DrawAttr.STROKE_WIDTH));
       g.drawRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
@@ -156,14 +166,18 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
   @Override
   public Element toSvgElement(Element ret) {
     ret = super.toSvgElement(ret);
-    if (scale != DEFAULT_SCALE) ret.setAttribute("value-scale",""+scale);
+    if (scale != DEFAULT_SCALE) {
+      ret.setAttribute("value-scale", "" + scale);
+    }
     return ret;
   }
   
   @Override
   public void parseSvgElement(Element elt) {
     super.parseSvgElement(elt);
-    if (elt.hasAttribute("value-scale")) setValue(ATTR_SCALE, Integer.valueOf(elt.getAttribute("value-scale")));
+    if (elt.hasAttribute("value-scale")) {
+      setValue(ATTR_SCALE, Integer.valueOf(elt.getAttribute("value-scale")));
+    }
   }
 
   @Override

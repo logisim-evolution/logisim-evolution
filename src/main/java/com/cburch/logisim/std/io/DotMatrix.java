@@ -9,14 +9,14 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-
-import static com.cburch.logisim.std.Strings.S;
 
 /** LED dot Matrix */
 public class DotMatrix extends DotMatrixBase {

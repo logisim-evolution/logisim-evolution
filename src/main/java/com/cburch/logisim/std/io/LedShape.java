@@ -63,6 +63,7 @@ public class LedShape extends DynamicElement {
           DrawAttr.STROKE_WIDTH, ATTR_RADIUS, ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR
         });
   }
+
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
@@ -77,7 +78,10 @@ public class LedShape extends DynamicElement {
     if (attr == ATTR_RADIUS) {
       this.radius = ((Integer) value).intValue();
       // this seems jank since `bounds` is protected but eh
-      this.bounds = Bounds.create(this.bounds.getX(), this.bounds.getY(), 2 * this.radius, 2 * this.radius);
+      this.bounds = Bounds.create(
+          this.bounds.getX(), this.bounds.getY(),
+          2 * this.radius, 2 * this.radius
+      );
       return;
     }
     super.updateValue(attr, value);
@@ -118,14 +122,18 @@ public class LedShape extends DynamicElement {
   @Override
   public Element toSvgElement(Element ret) {
     ret = super.toSvgElement(ret);
-    if (radius != DEFAULT_RADIUS) ret.setAttribute("value-radius",""+radius);
+    if (radius != DEFAULT_RADIUS) {
+      ret.setAttribute("value-radius", "" + radius);
+    }
     return ret;
   }
   
   @Override
   public void parseSvgElement(Element elt) {
     super.parseSvgElement(elt);
-    if (elt.hasAttribute("value-radius")) setValue(ATTR_RADIUS, Integer.valueOf(elt.getAttribute("value-radius")));
+    if (elt.hasAttribute("value-radius")) {
+      setValue(ATTR_RADIUS, Integer.valueOf(elt.getAttribute("value-radius")));
+    }
   }
 
   @Override
