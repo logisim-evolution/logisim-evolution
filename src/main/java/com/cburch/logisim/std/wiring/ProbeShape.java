@@ -80,7 +80,7 @@ public class ProbeShape extends DynamicElement {
   @Override
   public void updateValue(Attribute<?> attr, Object value) {
     if (attr == Text.ATTR_FONT) {
-      label.setFont((Font)value);
+      label.setFont((Font) value);
       calculateBounds();
     } else {
       super.updateValue(attr, value);
