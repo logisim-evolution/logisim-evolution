@@ -312,9 +312,26 @@ public class CircuitState implements InstanceData {
     return componentData.get(comp);
   }
 
-  private InstanceStateImpl reusableInstanceState = new InstanceStateImpl(this, null);
+  private final InstanceStateImpl reusableInstanceState = new InstanceStateImpl(this, null);
 
   public InstanceState getInstanceState(Component comp) {
+    final var factory = comp.getFactory();
+    if (factory instanceof InstanceFactory) {
+      if (comp != ((InstanceComponent) comp).getInstance().getComponent()) {
+        throw new IllegalStateException("instanceComponent.getInstance().getComponent() is wrong");
+      }
+      return new InstanceStateImpl(this, comp);
+    }
+    throw new RuntimeException("getInstanceState requires instance component");
+  }
+
+  public InstanceState getInstanceState(Instance instance) {
+    return new InstanceStateImpl(this, instance.getComponent());
+  }
+
+  /** This method returns a reused object. It should only be called using the simulation thread
+   *  inside propagate and with care that there is no conflict with other uses. */
+  public InstanceState getReusableInstanceState(Component comp) {
     final var factory = comp.getFactory();
     if (factory instanceof InstanceFactory) {
       if (comp != ((InstanceComponent) comp).getInstance().getComponent()) {
@@ -326,13 +343,11 @@ public class CircuitState implements InstanceData {
     throw new RuntimeException("getInstanceState requires instance component");
   }
 
-  public InstanceState getInstanceState(Instance instance) {
-    final var factory = instance.getFactory();
-    if (factory instanceof InstanceFactory) {
-      reusableInstanceState.repurpose(this, instance.getComponent());
-      return reusableInstanceState;
-    }
-    throw new RuntimeException("getInstanceState() requires instance component");
+  /** This method returns a reused object. It should only be called using the simulation thread
+   *  inside propagate and with care that there is no conflict with other uses. */
+  public InstanceState getReusableInstanceState(Instance instance) {
+    reusableInstanceState.repurpose(this, instance.getComponent());
+    return reusableInstanceState;
   }
 
   public CircuitState getParentState() {

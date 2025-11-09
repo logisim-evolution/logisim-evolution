@@ -392,7 +392,7 @@ public class SubcircuitFactory extends InstanceFactory {
     final var pins = attrs.getPinInstances();
     for (var i = 0; i < pins.length; i++) {
       final var pin = pins[i];
-      final var pinState = subState.getInstanceState(pin);
+      final var pinState = subState.getReusableInstanceState(pin);
       if (Pin.FACTORY.isInputPin(pin)) {
         final var newVal = stateInContext.getPortValue(i);
         final var oldVal = Pin.FACTORY.getValue(pinState);

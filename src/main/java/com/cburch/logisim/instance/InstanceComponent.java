@@ -411,7 +411,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public void propagate(CircuitState state) {
-    factory.propagate(state.getInstanceState(this));
+    factory.propagate(state.getReusableInstanceState(this));
   }
 
   void recomputeBounds() {
