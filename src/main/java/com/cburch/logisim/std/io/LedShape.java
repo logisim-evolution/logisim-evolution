@@ -33,7 +33,7 @@ public class LedShape extends DynamicElement {
   static final int DEFAULT_RADIUS = 5;
   // TODO: localization
   static final Attribute<Integer> ATTR_RADIUS =
-      Attributes.forIntegerRange("radius", 1, 20);
+      Attributes.forIntegerRange("radius", S.getter("LedRadius"), 1, 20);
 
   int radius = DEFAULT_RADIUS;
 

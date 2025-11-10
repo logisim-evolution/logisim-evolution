@@ -32,7 +32,7 @@ public class SevenSegmentShape extends DynamicElement {
   static final int DEFAULT_SCALE = 2;
   // TODO: localization
   static final Attribute<Integer> ATTR_SCALE =
-      Attributes.forIntegerRange("scale", 1, 6);
+      Attributes.forIntegerRange("scale", S.getter("SegmentScale"), 1, 6);
 
   int scale = DEFAULT_SCALE;
 

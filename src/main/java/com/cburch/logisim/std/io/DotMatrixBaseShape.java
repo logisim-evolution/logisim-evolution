@@ -34,7 +34,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
   // FOR-REVIEW: should this be somewhere else?
   // TODO: internationalization
   static final Attribute<Integer> ATTR_SCALE =
-      Attributes.forIntegerRange("scale", 1, 10);
+      Attributes.forIntegerRange("scale", S.getter("ioMatrixScale"), 1, 10);
   int scale = DEFAULT_SCALE;
 
   public DotMatrixBaseShape(int x, int y, DynamicElement.Path p) {
