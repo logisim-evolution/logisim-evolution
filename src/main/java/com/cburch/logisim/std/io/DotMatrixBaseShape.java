@@ -87,21 +87,18 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
     if (DotMatrixBase.SHAPE_SQUARE.equals(shape)) {
       g.fillRect(x, y, scale * scaleX, scale * scaleY);
     } else if (DotMatrixBase.SHAPE_PADDED_SQUARE.equals(shape)) {
-      if (scale <= 2) {
-        // can't do :(
-        g.fillRect(x, y, scale * scaleX, scale * scaleY);
-      } else if (scale <= 6) {
-        g.fillRect(x + 1 * scaleX, y + 1 * scaleY, (scale - 2) * scaleX, (scale - 2) * scaleY);
-      } else {
-        g.fillRect(x + 2 * scaleX, y + 2 * scaleY, (scale - 4) * scaleX, (scale - 4) * scaleY);
-      }
+      final var padding = (int)Math.floor(scale / (1.0 + 4.0 + 1.0));
+      g.fillRect(
+        x + padding * scaleX, y + padding,
+        (scale - padding * 2) * scaleX, (scale - padding * 2) * scaleY
+      );
     } else {
       // DotMatrixBase.SHAPE_CIRCLE is default shape
-      if (scale <= 2) {
-        g.fillOval(x, y, scale * scaleX, scale * scaleY);
-      } else {
-        g.fillOval(x + 1 * scaleX, y + 1 * scaleY, (scale - 2) * scaleX, (scale - 2) * scaleY);
-      }
+      final var padding = (int)Math.round(scale / (1.0 + 8.0 + 1.0));
+      g.fillOval(
+        x + padding * scaleX, y + padding * scaleY,
+        (scale - 2 * padding) * scaleX, (scale - 2 * padding) * scaleY
+      );
     }
   }
 

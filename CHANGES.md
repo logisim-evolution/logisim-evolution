@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Increased number of components which may be displayed on custom circut appearences and increased
+    options for existing ones.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables

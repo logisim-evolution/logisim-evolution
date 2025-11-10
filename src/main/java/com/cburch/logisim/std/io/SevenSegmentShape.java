@@ -103,13 +103,13 @@ public class SevenSegmentShape extends DynamicElement {
       if (i < 7) {
         int[] seg = SEGMENTS[i];
         g.fillRect(
-          x + PADDING + seg[0] * scale, y + PADDING + seg[1] * scale,
-          seg[2] * scale, seg[3] * scale
+            x + PADDING + seg[0] * scale, y + PADDING + seg[1] * scale,
+            seg[2] * scale, seg[3] * scale
         );
       } else {
         g.fillOval(
-          x + PADDING + 5 * scale, y + PADDING + 8 * scale,
-          1 * scale, 1 * scale
+            x + PADDING + 5 * scale, y + PADDING + 8 * scale,
+            1 * scale, 1 * scale
         ); // draw decimal point
       }
     }
