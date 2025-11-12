@@ -42,6 +42,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   private byte numberOfGatesToDraw = 0;
   protected String[] portNames = null;
   private final HashSet<Byte> outputPorts = new HashSet<>();
+  private final HashSet<Byte> inoutPorts = new HashSet<>();
   private final HashSet<Byte> unusedPins = new HashSet<>();
 
   /**
@@ -123,6 +124,21 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       String[] ttlPortNames,
       HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
+    portNames = ttlPortNames;
+    if (notUsedPins == null) return;
+    for (final var notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
+  }
+
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      byte[] notUsedPins,
+      byte[] inoutPorts,
+      String[] ttlPortNames,
+      HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, generator);
+    for (final var port : inoutPorts) this.inoutPorts.add(port);
     portNames = ttlPortNames;
     if (notUsedPins == null) return;
     for (final var notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
@@ -457,6 +473,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     final var height = bds.getHeight();
     byte portindex = 0;
     var isoutput = false;
+    var isinout = false;
     var hasvccgnd = instance.getAttributeValue(TtlLibrary.VCC_GND);
     var skip = false;
     final var NrOfUnusedPins = unusedPins.size();
@@ -469,6 +486,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 
     for (byte i = 0; i < this.pinNumber; i++) {
       isoutput = outputPorts.contains((byte) (i + 1));
+      isinout = inoutPorts.contains((byte) (i + 1));
       skip = unusedPins.contains((byte) (i + 1));
       // set the position
       if (i < this.pinNumber / 2) {
@@ -510,6 +528,13 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         else
           ps[portindex].setToolTip(
               S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portNames[portindex]));
+      } else if (isinout) { // inout port
+        ps[portindex] = new Port(dx, dy, Port.INOUT, 1);
+        if (this.portNames == null || this.portNames.length <= portindex)
+          ps[portindex].setToolTip(S.getter("ttlInOutTip", ": " + (i + 1)));
+        else
+          ps[portindex].setToolTip(
+              S.getter("ttlInOutTip", (i + 1) + ": " + this.portNames[portindex]));
       } else { // input port
         if (hasvccgnd && i == this.pinNumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
