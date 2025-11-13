@@ -34,9 +34,10 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
 public abstract class AbstractTtlGate extends InstanceFactory {
+  protected static final int DEFAULT_HEIGHT = 60;
   protected static final int PIN_WIDTH = 10;
   protected static final int PIN_HEIGHT = 7;
-  private int height = 60;
+  private int height = DEFAULT_HEIGHT;
   protected final byte pinNumber;
   private final String name;
   private byte numberOfGatesToDraw = 0;
@@ -46,117 +47,96 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   private final HashSet<Byte> unusedPins = new HashSet<>();
 
   /**
-   * @param name = name to display in the center of the TTl
-   * @param pins = the total number of pins (GND and VCC included)
-   * @param outputPorts = an array with the indexes of the output ports (indexes are the same you
+   * @param name name to display in the center of the TTl
+   * @param pins the total number of pins (GND and VCC included)
+   * @param outputPorts an array with the indexes of the output ports (indexes are the same you
    *     can find on Google searching the TTL you want to add)
+   * @param notUsedPins an array with the indexes of the unused ports
+   * @param inoutPorts an array with the indexes of the in/out ports
+   * @param ttlPortNames an array of strings which will be tooltips of the corresponding port in
+   *     the order you pass
+   * @param drawGates if true, it calls the paintInternal method many times as the number of
+   *     output ports passing the coordinates
+   * @param height the desired height of the component
+   * @param generator the HdlGeneratorFactory
    */
-  protected AbstractTtlGate(
-      String name, byte pins, byte[] outputPorts, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+      String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator) {
     super(name, generator);
     setIconName("ttl.gif");
     setAttributes(
-        new Attribute[] {
-          StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL
-        },
-        new Object[] {Direction.EAST, false, false, ""});
+        new Attribute[] {StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
+        new Object[] {Direction.EAST, false, false, ""}
+    );
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
     this.pinNumber = pins;
-    for (byte outputport : outputPorts) this.outputPorts.add(outputport);
-  }
-
-  protected AbstractTtlGate(
-      String name,
-      byte pins,
-      byte[] outputPorts,
-      byte[] notUsedPins,
-      HdlGeneratorFactory generator) {
-    this(name, pins, outputPorts, generator);
-    if (notUsedPins == null) return;
-    for (byte notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
-  }
-
-  /**
-   * @param name = name to display in the center of the TTl
-   * @param pins = the total number of pins (GND and VCC included)
-   * @param outputPorts = an array with the indexes of the output ports (indexes are the same you
-   *     can find on Google searching the TTL you want to add)
-   * @param drawgates = if true, it calls the paintInternal method many times as the number of
-   *     output ports passing the coordinates
-   */
-  protected AbstractTtlGate(
-      String name,
-      byte pins,
-      byte[] outputPorts,
-      boolean drawgates,
-      HdlGeneratorFactory generator) {
-    this(name, pins, outputPorts, generator);
-    this.numberOfGatesToDraw = (byte) (drawgates ? outputPorts.length : 0);
-  }
-
-  /**
-   * @param name = name to display in the center of the TTl
-   * @param pins = the total number of pins (GND and VCC included)
-   * @param outputPorts = an array with the indexes of the output ports (indexes are the same you
-   *     can find on Google searching the TTL you want to add)
-   * @param ttlPortNames = an array of strings which will be tooltips of the corresponding port in
-   *     the order you pass
-   */
-  protected AbstractTtlGate(
-      String name,
-      byte pins,
-      byte[] outputPorts,
-      String[] ttlPortNames,
-      HdlGeneratorFactory generator) {
-    // the ttl name, the total number of pins and an array with the indexes of
-    // output ports (indexes are the one you can find on Google), an array of
-    // strings which will be tooltips of the corresponding port in order
-    this(name, pins, outputPorts, generator);
-    this.portNames = ttlPortNames;
-  }
-
-  protected AbstractTtlGate(
-      String name,
-      byte pins,
-      byte[] outputPorts,
-      byte[] notUsedPins,
-      String[] ttlPortNames,
-      HdlGeneratorFactory generator) {
-    this(name, pins, outputPorts, generator);
+    if (outputPorts != null) {
+      for (final var outPort : outputPorts) {
+        this.outputPorts.add(outPort);
+      }
+    }
+    if (notUsedPins != null) {
+      for (final var notUsedPin : notUsedPins) {
+        unusedPins.add(notUsedPin);
+      }
+    }
+    if (inoutPorts != null) {
+      for (final var port : inoutPorts) {
+        this.inoutPorts.add(port);
+      }
+    }
     portNames = ttlPortNames;
-    if (notUsedPins == null) return;
-    for (final var notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
-  }
-
-  protected AbstractTtlGate(
-      String name,
-      byte pins,
-      byte[] outputPorts,
-      byte[] notUsedPins,
-      byte[] inoutPorts,
-      String[] ttlPortNames,
-      HdlGeneratorFactory generator) {
-    this(name, pins, outputPorts, generator);
-    for (final var port : inoutPorts) this.inoutPorts.add(port);
-    portNames = ttlPortNames;
-    if (notUsedPins == null) return;
-    for (final var notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
-  }
-
-  protected AbstractTtlGate(
-      String name,
-      byte pins,
-      byte[] outputPorts,
-      String[] ttlPortNames,
-      int height,
-      HdlGeneratorFactory generator) {
-    // the ttl name, the total number of pins and an array with the indexes of
-    // output ports (indexes are the one you can find on Google), an array of
-    // strings which will be tooltips of the corresponding port in order
-    this(name, pins, outputPorts, generator);
+    this.numberOfGatesToDraw = (byte) (drawGates ? this.outputPorts.size() : 0);
     this.height = height;
-    this.portNames = ttlPortNames;
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, null, null, null, false, DEFAULT_HEIGHT, generator);
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins,
+      HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, notUsedPins, null, null, false, DEFAULT_HEIGHT, generator);
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, boolean drawGates,
+      HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, null, null, null, drawGates, DEFAULT_HEIGHT, generator);
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames,
+      HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, null, null, ttlPortNames, false, DEFAULT_HEIGHT, generator);
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins,
+      String[] ttlPortNames, HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, notUsedPins, null, ttlPortNames, false, DEFAULT_HEIGHT, generator);
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+      String[] ttlPortNames, HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, notUsedPins, inoutPorts, ttlPortNames, false, DEFAULT_HEIGHT, generator);
+  }
+
+  /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
+   * String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator)} for parameter info. */
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames,
+      int height, HdlGeneratorFactory generator) {
+    this(name, pins, outputPorts, null, null, ttlPortNames, false, height, generator);
   }
 
   private void computeTextField(Instance instance) {
