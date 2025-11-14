@@ -34,7 +34,7 @@ public class Ttl74245 extends AbstractTtlGate {
         (byte) 20,
         new byte [] { }, // output ports
         new byte [] { }, // not used ports
-        new byte[] { 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18 },
+        new byte[] { 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18 }, // inout ports
         new String[] {
           "DIR", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8",
           "B8", "B7", "B6", "B5", "B4", "B3", "B2", "B1", "nOE",

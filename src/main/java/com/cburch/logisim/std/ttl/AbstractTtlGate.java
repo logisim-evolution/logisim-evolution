@@ -47,18 +47,18 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   private final HashSet<Byte> unusedPins = new HashSet<>();
 
   /**
-   * @param name name to display in the center of the TTl
-   * @param pins the total number of pins (GND and VCC included)
-   * @param outputPorts an array with the indexes of the output ports (indexes are the same you
-   *     can find on Google searching the TTL you want to add)
-   * @param notUsedPins an array with the indexes of the unused ports
-   * @param inoutPorts an array with the indexes of the in/out ports
+   * @param name         name to display in the center of the TTl
+   * @param pins         the total number of pins (GND and VCC included)
+   * @param outputPorts  an array with the indexes of the output ports (indexes are the same as you
+   *                         can find on Google searching the TTL you want to add)
+   * @param notUsedPins  an array with the indexes of the unused ports
+   * @param inoutPorts   an array with the indexes of the in/out ports
    * @param ttlPortNames an array of strings which will be tooltips of the corresponding port in
-   *     the order you pass
-   * @param drawGates if true, it calls the paintInternal method many times as the number of
-   *     output ports passing the coordinates
-   * @param height the desired height of the component
-   * @param generator the HdlGeneratorFactory
+   *                         the order you pass
+   * @param drawGates    if true, it calls the paintInternal method many times as the number of
+   *                         output ports passing the coordinates
+   * @param height       the desired height of the component
+   * @param generator    the HdlGeneratorFactory
    */
   protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
       String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator) {
