@@ -486,13 +486,15 @@ public class Circuit {
   public void doTestVector(Project project, Instance[] pin, Value[] val, boolean resetState, 
       com.cburch.logisim.data.TestVector vector, int rowIndex) throws TestException {
     final var state = project.getCircuitState();
+    final var prop = state.getPropagator();
+    prop.setPropagatorThread(Thread.currentThread());
     if (resetState) {
       state.reset();
     }
 
     for (var i = 0; i < pin.length; ++i) {
       if (Pin.FACTORY.isInputPin(pin[i])) {
-        final var pinState = state.getInstanceState(pin[i]);
+        final var pinState = state.getReusableInstanceState(pin[i]);
         // Handle floating input - drive UNKNOWN if value is marked as floating
         Value driveValue = val[i];
         if (vector != null && rowIndex >= 0 && vector.isFloating(rowIndex, i)) {
@@ -504,7 +506,6 @@ public class Circuit {
       }
     }
 
-    final var prop = state.getPropagator();
 
     // Propagate until stable
     
@@ -551,6 +552,7 @@ public class Circuit {
           err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
         }
       }
+      prop.setPropagatorThread(null);
     }
 
     if (err != null) {

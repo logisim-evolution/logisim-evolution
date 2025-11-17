@@ -336,10 +336,13 @@ public class TtyInterface {
 
     // we have to do our initial propagation before the simulation starts -
     // it's necessary to populate the circuit with substates.
-    circState.getPropagator().propagate();
+    final var prop = circState.getPropagator();
+    prop.setPropagatorThread(Thread.currentThread()); // We do not use the simulator
+    prop.propagate();
 
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
+    prop.setPropagatorThread(null);
 
     if (args.getSaveFile() != null) {
       try {
@@ -424,12 +427,14 @@ public class TtyInterface {
       }
 
       final var prop = circuitState.getPropagator();
+      prop.setPropagatorThread(Thread.currentThread()); // We do not use the simulator
       prop.propagate();
       /*
        * TODO for the SimulatorPrototype class do { prop.step(); } while
        * (prop.isPending());
        */
       // TODO: Search for circuit state
+
 
       for (final var pin : outputPins) {
         if (prop.isOscillating()) {
@@ -445,6 +450,7 @@ public class TtyInterface {
       for (final var pin : pinList) {
         currValues.add(valueMap.get(pin));
       }
+      prop.setPropagatorThread(null);
       displayTableRow(needTableHeader, null, currValues, headers, formats, format);
       needTableHeader = false;
     }
