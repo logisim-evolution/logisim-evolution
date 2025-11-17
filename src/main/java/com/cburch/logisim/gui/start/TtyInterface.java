@@ -413,6 +413,8 @@ public class TtyInterface {
     for (var i = 0; i < rowCount; i++) {
       valueMap.clear();
       final var circuitState = CircuitState.createRootState(proj, circuit);
+      final var prop = circuitState.getPropagator();
+      prop.setPropagatorThread(Thread.currentThread()); // We do not use the simulator
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
@@ -421,13 +423,11 @@ public class TtyInterface {
           final var value = TruthTable.isInputSet(i, incol++, inputCount);
           v[b] = value ? Value.TRUE : Value.FALSE;
         }
-        final var pinState = circuitState.getInstanceState(pin);
+        final var pinState = circuitState.getReusableInstanceState(pin);
         Pin.FACTORY.driveInputPin(pinState, Value.create(v));
         valueMap.put(pin, Value.create(v));
       }
 
-      final var prop = circuitState.getPropagator();
-      prop.setPropagatorThread(Thread.currentThread()); // We do not use the simulator
       prop.propagate();
       /*
        * TODO for the SimulatorPrototype class do { prop.step(); } while
@@ -490,7 +490,7 @@ public class TtyInterface {
     while (true) {
       final var curOutputs = new ArrayList<Value>();
       for (final var pin : outputPins) {
-        final var pinState = circState.getInstanceState(pin);
+        final var pinState = circState.getReusableInstanceState(pin);
         final var val = Pin.FACTORY.getValue(pinState);
         if (pin == haltPin) {
           halted |= val.equals(Value.TRUE);

@@ -330,7 +330,7 @@ public class CircuitState implements InstanceData {
   }
 
   /** This method returns a reused object. It should only be called using the simulation thread
-   *  inside propagate and with care that there is no conflict with other uses. */
+   *  and with care that there is no conflict with other uses. */
   public InstanceState getReusableInstanceState(Component comp) {
     final var factory = comp.getFactory();
     if (factory instanceof InstanceFactory) {
@@ -713,7 +713,7 @@ public class CircuitState implements InstanceData {
         return false;
       }
       if (ticks >= 0) {
-        final var state = getInstanceState(instance);
+        final var state = getReusableInstanceState(instance);
         final var vOld = pin.getValue(state);
         final var vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
         if (!vNew.equals(vOld)) {
