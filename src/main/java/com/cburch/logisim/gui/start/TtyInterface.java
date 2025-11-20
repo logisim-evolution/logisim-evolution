@@ -423,7 +423,7 @@ public class TtyInterface {
           final var value = TruthTable.isInputSet(i, incol++, inputCount);
           v[b] = value ? Value.TRUE : Value.FALSE;
         }
-        final var pinState = circuitState.getReusableInstanceState(pin);
+        final var pinState = circuitState.getInstanceState(pin);
         Pin.FACTORY.driveInputPin(pinState, Value.create(v));
         valueMap.put(pin, Value.create(v));
       }
@@ -488,18 +488,22 @@ public class TtyInterface {
     ArrayList<Value> prevOutputs = null;
     final var prop = circState.getPropagator();
     while (true) {
-      final var curOutputs = new ArrayList<Value>();
-      for (final var pin : outputPins) {
-        final var pinState = circState.getReusableInstanceState(pin);
-        final var val = Pin.FACTORY.getValue(pinState);
-        if (pin == haltPin) {
-          halted |= val.equals(Value.TRUE);
-        } else if (showTable) {
-          curOutputs.add(val);
-        }
-      }
       if (showTable) {
+        final var curOutputs = new ArrayList<Value>();
+        for (final var pin : outputPins) {
+          if (pin != haltPin) {
+            final var pinState = circState.getInstanceState(pin);
+            final var val = Pin.FACTORY.getValue(pinState);
+            curOutputs.add(val);
+          }
+        }
         displayTableRow(prevOutputs, curOutputs);
+        prevOutputs = curOutputs;
+      }
+      if (haltPin != null) {
+        final var pinState = circState.getReusableInstanceState(haltPin); // OK as we are not propagating
+        final var val = Pin.FACTORY.getValue(pinState);
+        halted = val.equals(Value.TRUE);
       }
 
       if (halted) {
@@ -518,7 +522,6 @@ public class TtyInterface {
           }
         }
       }
-      prevOutputs = curOutputs;
       tickCount++;
       prop.toggleClocks();
       prop.propagate();

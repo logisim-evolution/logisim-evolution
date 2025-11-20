@@ -340,7 +340,7 @@ public class CircuitState implements InstanceData {
       reusableInstanceState.repurpose(this, comp);
       return reusableInstanceState;
     }
-    throw new RuntimeException("getInstanceState requires instance component");
+    throw new RuntimeException("getInstanceState() requires instance component");
   }
 
   /** This method returns a reused object. It should only be called using the simulation thread
@@ -713,7 +713,7 @@ public class CircuitState implements InstanceData {
         return false;
       }
       if (ticks >= 0) {
-        final var state = getReusableInstanceState(instance);
+        final var state = getReusableInstanceState(instance); // OK as we are in the clock update
         final var vOld = pin.getValue(state);
         final var vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
         if (!vNew.equals(vOld)) {
