@@ -504,7 +504,7 @@ tasks.register("createMsi") {
     val fromFile = "${targetDir}/${projectName}-${version}.msi"
     val toFile = "${targetDir}/${projectName}-${version}-${osArch}.msi"
     func.copyFile(fromFile, toFile)
-    File("${targetDir}/${fromFile}").delete()
+    File(fromFile).delete()
     func.verifyFileExists(outputFile);
   }
 }
@@ -664,8 +664,8 @@ tasks.register("createDmg") {
   val osArch = ext.get(OS_ARCH) as String
   val projectName = project.name
   val jPackage = ext.get(JPACKAGE) as String
-  val appVersion = "${ext.get(APP_VERSION) as String}-${osArch}"
-  val destination = ext.get(TARGET_DIR) as String
+  val appVersion = ext.get(APP_VERSION_SHORT) as String
+  val targetDir = ext.get(TARGET_DIR) as String
   val outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg"
 
   inputs.dir(appDirName)
@@ -682,13 +682,16 @@ tasks.register("createDmg") {
         jPackage,
         "--app-image", appDirName,
         "--name", projectName,
-        // We can pass full version here, even if contains suffix part too.
-        // We also append the architecture to add it to the package name.
+        // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
         "--app-version", appVersion,
-        "--dest", destination,
+        "--dest", targetDir,
         "--type", "dmg",
       )
     func.runCommand(params, "Error while creating the DMG package")
+    val fromFile = "${targetDir}/${projectName}-${appVersion}.dmg"
+    val toFile = "${outputFile}"
+    func.copyFile(fromFile, toFile)
+    File(fromFile).delete()
     func.verifyFileExists(outputFile);
   }
 }
@@ -876,7 +879,7 @@ tasks {
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
     // Checkstyle version to use
-    toolVersion = "12.0.1"
+    toolVersion = "12.1.2"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
