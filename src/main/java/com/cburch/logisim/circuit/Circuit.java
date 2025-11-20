@@ -517,7 +517,10 @@ public class Circuit {
       throw new TestException("propagation failed: " + thr.getMessage());
     }
 
-    if (prop.isOscillating()) throw new TestException("oscillation detected");
+    if (prop.isOscillating()) {
+      prop.setPropagatorThread(null);
+      throw new TestException("oscillation detected");
+    }
 
     FailException err = null;
 
@@ -552,8 +555,8 @@ public class Circuit {
           err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
         }
       }
-      prop.setPropagatorThread(null);
     }
+    prop.setPropagatorThread(null);
 
     if (err != null) {
       throw err;

@@ -329,7 +329,7 @@ public class CircuitState implements InstanceData {
     return new InstanceStateImpl(this, instance.getComponent());
   }
 
-  /** This method returns a reused object. It should only be called using the simulation thread
+  /** This method returns a reused object. It should only be called using the propagate thread
    *  and with care that there is no conflict with other uses. */
   public InstanceState getReusableInstanceState(Component comp) {
     final var factory = comp.getFactory();
@@ -343,8 +343,8 @@ public class CircuitState implements InstanceData {
     throw new RuntimeException("getInstanceState() requires instance component");
   }
 
-  /** This method returns a reused object. It should only be called using the simulation thread
-   *  inside propagate and with care that there is no conflict with other uses. */
+  /** This method returns a reused object. It should only be called using the propagate thread
+   *  and with care that there is no conflict with other uses. */
   public InstanceState getReusableInstanceState(Instance instance) {
     reusableInstanceState.repurpose(this, instance.getComponent());
     return reusableInstanceState;
