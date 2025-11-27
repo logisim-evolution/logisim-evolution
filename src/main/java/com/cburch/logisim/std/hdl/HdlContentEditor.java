@@ -22,7 +22,6 @@ import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.JInputDialog;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.vhdl.syntax.VhdlSyntax;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -40,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
@@ -226,7 +226,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     validate.addActionListener(frameListener);
 
     editor = new RSyntaxTextArea(ROWS, COLUMNS);
-    ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new VhdlSyntax());
+    ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_VHDL);
     editor.setCodeFoldingEnabled(true);
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(editorListener);

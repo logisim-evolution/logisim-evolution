@@ -54,18 +54,44 @@ public class Simulator {
       return didPropagate;
     }
   }
-  
+
   public static interface StatusListener {
+    /**
+     * Notify listeners that the simulator is reset.
+     * Called by the simulation thread.
+     *
+     * @param e The event causing the reset
+     */
     public void simulatorReset(Event e);
+
+    /**
+     * Notify listeners that the simulator state has changed.
+     * Called by either the simulation thread or the gui thread.
+     *
+     * @param e The event causing the state change
+     */
     public void simulatorStateChanged(Event e);
   }
 
   public static interface Listener extends StatusListener {
+    /**
+     * Notify listeners that a propagation has completed.
+     * Called by the simulation thread.
+     *
+     * @param e The event describing the propagation.
+     */
     public void propagationCompleted(Event e);
   }
-  
+
   public static interface ProgressListener extends Listener {
     public boolean wantsProgressEvents();
+
+    /**
+     * Notify listeners that propagation is in progress.
+     * Called by the simulation thread.
+     *
+     * @param e The event describing the propagation.
+     */
     public void propagationInProgress(Event e);
   }
 
@@ -97,7 +123,7 @@ public class Simulator {
   //
   // [single-step] If the User/GUI requests a single-step propagation (this
   //               only happens when autoTicking is off), the thread wakes up
-  //               and invokes step(). If if autoTicking is on and signals are
+  //               and invokes step(). If autoTicking is on and signals are
   //               stable, then toggleClocks() is also called before step().
   private static class SimThread extends UniquelyNamedThread {
 
@@ -346,7 +372,7 @@ public class Simulator {
       var doStep = false;
       var doProp = false;
       var now = 0L;
-      
+
       simStateLock.lock();
 
       try {
@@ -435,7 +461,7 @@ public class Simulator {
       // doStep);
 
       exceptionEncountered = false;
-      
+
       var oops = false;
       var osc = false;
       var ticked = false;
@@ -449,7 +475,7 @@ public class Simulator {
           if (prop != null) {
             prop.reset();
           }
-          sim.fireSimulatorReset(); // TODO: fixme: ack, wrong thread!
+          sim.fireSimulatorReset();
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();
@@ -523,10 +549,10 @@ public class Simulator {
       // accompanied by a tick, step, or propagate. That allows for a repaint in
       // some components.
       if (ticked || stepped || propagated || doNudge) {
-        sim.firePropagationCompleted(ticked, stepped && !propagated, propagated); // FIXME: ack, wrong thread!
+        sim.firePropagationCompleted(ticked, stepped && !propagated, propagated);
       }
       if (clockDied) {
-        sim.fireSimulatorStateChanged(); // FIXME: ack, wrong thread!
+        sim.fireSimulatorStateChanged();
       }
       return true;
     }
@@ -568,12 +594,11 @@ public class Simulator {
   // Everything below here is invoked and accessed only by the User/GUI thread.
   //
 
-  private final SimThread simThread;
+  public final SimThread simThread;
 
   // listeners is protected by a lock because simThread calls the _fire*()
-  // methods, but the gui thread can call add/removeSimulateorListener() at any
-  // time. Really, the _fire*() methods should be done on the gui thread, I
-  // suspect.
+  // methods, but the gui thread can call add/removeSimulatorListener() at any
+  // time.
   private final ArrayList<StatusListener> statusListeners = new ArrayList<>();
   private ArrayList<Listener> activityListeners = new ArrayList<>();
   private volatile ProgressListener progressListener = null;
@@ -666,7 +691,7 @@ public class Simulator {
     return copy;
   }
 
-  // called from simThread, but probably should not be
+  // called from simThread
   private void fireSimulatorReset() {
     final var event = new Event(this, false, false, false);
     for (final var listener : copyStatusListeners()) {
@@ -674,7 +699,7 @@ public class Simulator {
     }
   }
 
-  // called from simThread, but probably should not be
+  // called from simThread
   private void firePropagationCompleted(boolean t, boolean s, boolean p) {
     final var event = new Event(this, t, s, p);
     var nrListeners = numListeners;
@@ -701,8 +726,7 @@ public class Simulator {
     }
   }
 
-  // called only from gui thread, but need copy here anyway because listeners
-  // can add/remove from listeners list?
+  // called from either the gui thread or the simulation thread
   private void fireSimulatorStateChanged() {
     final var event = new Event(this, false, false, false);
     for (final var listener : copyStatusListeners()) {
@@ -750,7 +774,13 @@ public class Simulator {
   }
 
   public void setTickFrequency(double freq) {
-    if (simThread.setTickFrequency(freq)) fireSimulatorStateChanged();
+    if (simThread.setTickFrequency(freq)) {
+      final var propagator = simThread.getPropagatorUnsynchronized(); 
+      if (propagator != null) {
+        propagator.getRootState().getCircuit().setTickFrequency(freq);
+      }
+      fireSimulatorStateChanged();
+    }
   }
 
   public void step() {

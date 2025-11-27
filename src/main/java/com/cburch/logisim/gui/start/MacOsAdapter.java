@@ -40,8 +40,8 @@ class MacOsAdapter {
       try {
         dt.setQuitHandler(
             (e, response) -> {
-              ProjectActions.doQuit();
-              response.performQuit();
+              ProjectActions.doQuit(); // calls System.exit() if quit is not cancelled
+              response.cancelQuit(); // if we get here the quit was cancelled.
             });
       } catch (Exception ignored) {
         // can fail, but just ignore it.

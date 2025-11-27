@@ -17,6 +17,7 @@ import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
@@ -26,6 +27,7 @@ import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -37,6 +39,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -396,59 +402,185 @@ public final class ProjectActions {
   }
 
   /**
-   * Exports a Logisim project in a seperate directory
+   * Imports a Logisim project in a zip file
    *
-   * <p>It is the action listener for the File->Export project... menu option.
+   * <p>It is the action listener for the File->Import project bundle... menu option.
    *
-   * @param proj Project to be exported
-   * @return true if success, false otherwise
+   * @param proj the current project to perform the file->open action afterwards 
+   * @return true if success, false otherwise 
    */
-  public static boolean doExportProject(Project proj) {
-    var ret = proj.isFileDirty() ? doSave(proj) : true;
-    if (ret) {
-      final var loader = proj.getLogisimFile().getLoader();
-      final var oldTool = proj.getTool();
-      proj.setTool(null);
-      final var chooser = loader.createChooser();
-      chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
-      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+  public static boolean doExtractAndRunProject(Project proj) {
+    var ret = true;
+    final var loader = proj.getLogisimFile().getLoader();
+    final var chooser = loader.createChooser();
+    var isCorrectFile = true;
+    do {
+      chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
       chooser.setAcceptAllFileFilterUsed(false);
-      var isCorrectDirectory = false;
-      var exportRootDir = "";
-      do {
-        ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
-        if (!ret) {
-          proj.setTool(oldTool);
-          return false;
-        }
-        final var exportHome = chooser.getSelectedFile();
-        final var exportRoot = loader.getMainFile().getName().replace(".circ", "");
-        exportRootDir = String.format("%s%s%s", exportHome, File.separator, exportRoot);
-        final var exportLibDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_LIBRARY_DIR);
-        final var exportCircDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_CIRCUIT_DIR);
+      chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      chooser.setDialogTitle(S.get("projImportBundle"));
+      ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+      if (!ret) return ret;
+      final var zipFileName = chooser.getSelectedFile().getAbsolutePath();
+      isCorrectFile = Files.exists(Paths.get(zipFileName));
+      if (isCorrectFile) {
         try {
-          final var path = Paths.get(exportRootDir);
-          if (Files.exists(path)) {
-            OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjExistsUnableToCreate", exportRoot));
-          } else {
-            isCorrectDirectory = true;
+          final var zipFile = new ZipFile(zipFileName);
+          final var bundleInfo = ProjectBundleManifest.getManifestInfo(zipFile, proj.getFrame());
+          if (bundleInfo == null) return false;
+          final var mainFileEntry = zipFile.getEntry(bundleInfo.getMainLogisimFilename());
+          if (mainFileEntry == null) {
+            OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projBundleReadError", S.get("projBundleMainNotFound")));
+            return false;
           }
-          if (isCorrectDirectory) {
-            Files.createDirectories(Paths.get(exportLibDir));
-            Files.createDirectories(Paths.get(exportCircDir));
+          final var readmeFileEntry = zipFile.getEntry(ProjectBundleReadme.README_FILE_NAME);
+          if (readmeFileEntry != null) {
+            final var readmeInStream = zipFile.getInputStream(readmeFileEntry);
+            final var dialog = new ProjectBundleReadme(proj, "");
+            dialog.showReadme(readmeInStream);
+            readmeInStream.close();
           }
+          chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
+          chooser.setAcceptAllFileFilterUsed(false);
+          chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+          chooser.setDialogTitle(S.get("projBundleDirectory"));
+          var isCorrectDirectory = true;
+          do {
+            ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+            if (!ret) return ret;
+            final var exportDirectory = chooser.getSelectedFile().getAbsolutePath();
+            final var mainProjectFileName = String.format("%s%s%s", exportDirectory, File.separator, bundleInfo.getMainLogisimFilename()); 
+            var filename =  mainProjectFileName;
+            if (Files.exists(Paths.get(filename)) 
+                || Files.exists(Paths.get(String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR)))) {
+              isCorrectDirectory = false;
+              OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projContainsFileDir", bundleInfo.getMainLogisimFilename(), Loader.LOGISIM_LIBRARY_DIR));
+            } else {
+              isCorrectDirectory = true;
+              // extract the main file
+              var zipInput = zipFile.getInputStream(mainFileEntry);
+              var fileOutput = new FileOutputStream(filename);
+              var data = zipInput.read();
+              while (data > 0) {
+                fileOutput.write(data);
+                data = zipInput.read();
+              }
+              zipInput.close();
+              fileOutput.close();
+              final var zipFileEntries = zipFile.entries();
+              final var libDir = String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR);
+              while (zipFileEntries.hasMoreElements()) {
+                final var entry = zipFileEntries.nextElement();
+                if (entry.isDirectory()) {
+                  final var dirName = entry.getName();
+                  if (!dirName.equals(Loader.LOGISIM_LIBRARY_DIR)) continue;
+                  new File(String.format("%s%s%s", exportDirectory, File.separator, dirName)).mkdirs();
+                } else {
+                  final var entryName = entry.getName();
+                  if (!entryName.startsWith(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator))) continue;
+                  if (entryName.lastIndexOf(File.separator) != entryName.indexOf(File.separator)) continue;
+                  if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) 
+                      && !entryName.toLowerCase().endsWith(".jar")) {
+                    continue;
+                  }
+                  // make sure the library dir exists
+                  if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
+                  filename = String.format("%s%s%s", exportDirectory, File.separator, entryName);
+                  final var testFile = new File(filename);
+                  final var testDir = new File(exportDirectory);
+                  if (!testFile.toPath().normalize().startsWith(testDir.toPath())) continue;
+                  zipInput = zipFile.getInputStream(entry);
+                  fileOutput = new FileOutputStream(filename);
+                  final var bytes = new byte[1024];
+                  var length = 0;
+                  while (((length = zipInput.read(bytes)) >= 0)) {
+                    fileOutput.write(bytes, 0, length);
+                  }
+                  fileOutput.close();
+                  zipInput.close();
+                }
+              }
+              ProjectActions.doOpen(proj.getFrame().getCanvas(), proj, new File(mainProjectFileName));
+            }
+          } while (!isCorrectDirectory);
+          zipFile.close();
         } catch (IOException e) {
-          OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
-          proj.setTool(oldTool);
-          return false;
+          isCorrectFile = false;
+          OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError", 
+              String.format("%s\n%s", zipFileName, e.getMessage())));
         }
-      } while (!isCorrectDirectory);
-      ret &= loader.export(proj.getLogisimFile(), exportRootDir);
-      proj.setTool(oldTool);
-    }
+      } else {
+        OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError", zipFileName));
+      }
+    } while (!isCorrectFile);
     return ret;
   }
 
+  /**
+   * Exports a Logisim project in a zip file
+   *
+   * <p>It is the action listener for the File->Export project bundle... menu option.
+   *
+   * @param proj Project to be exported
+   * @return true if success, false otherwise 
+   */
+  public static boolean doExportProject(Project proj) {
+    var ret = true;
+    final var loader = proj.getLogisimFile().getLoader();
+    final var oldTool = proj.getTool();
+    proj.setTool(null);
+    var mainFileName = loader.getMainFile() == null ? "Untitled.circ" : loader.getMainFile().getName();
+    var zipFile = mainFileName.replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
+    final var chooser = loader.createChooser();
+    chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
+    chooser.setAcceptAllFileFilterUsed(false);
+    chooser.setSelectedFile(new File(zipFile));
+    chooser.setDialogTitle(S.get("projExportBundle"));
+    var isCorrectFile = true;
+    do {
+      ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+      if (!ret) {
+        proj.setTool(oldTool);
+        return false;
+      }
+      try {
+        zipFile = chooser.getSelectedFile().getAbsolutePath();
+        if (!zipFile.endsWith(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION)) {
+          zipFile = zipFile.concat(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
+        }
+        final var path = Paths.get(zipFile);
+        if (Files.exists(path)) {
+          isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
+              new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
+        } else {
+          isCorrectFile = true;
+        }
+        if (isCorrectFile) {
+          final var dialog = new ProjectBundleReadme(proj, mainFileName.replace(Loader.LOGISIM_EXTENSION, ""));
+          final var readmeInfo = dialog.getReadmeInfo();
+          if (readmeInfo == null) return false;
+          final var projectFile = new FileOutputStream(zipFile);
+          final var projectZipFile = new ZipOutputStream(projectFile);
+          ProjectBundleReadme.writeReadmeFile(projectZipFile, readmeInfo);
+          projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
+          mainFileName = chooser.getSelectedFile().getName().replace(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION, "").concat(Loader.LOGISIM_EXTENSION);
+          ret &= loader.export(proj.getLogisimFile(), projectZipFile, mainFileName);
+          final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, mainFileName);
+          ProjectBundleManifest.writeManifest(projectZipFile, info);
+          projectZipFile.close();
+          projectFile.close();
+        }
+      } catch (IOException e) {
+        OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
+        proj.setTool(oldTool);
+        return false;
+      }
+    } while (!isCorrectFile);
+    proj.setTool(oldTool);
+    return ret;
+  }
+
+  
   /**
    * Saves a Logisim project in a .circ file.
    *

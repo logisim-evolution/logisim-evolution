@@ -101,7 +101,7 @@ public class CounterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               0    0   | halt
               0    1   | count up (default)
               1    0   | load
-              1    1   | count down 
+              1    1   | count down
           """)
         .empty();
     if (Hdl.isVhdl()) {
@@ -110,7 +110,7 @@ public class CounterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           countValue   <= s_counterValue;
 
           s_clock      <= {{clock}} {{when}} {{invertClock}} = 0 {{else}} {{not}}({{clock}});
-          
+
           makeCarry : {{process}}(upNotDown, s_counterValue) {{is}}
           {{begin}}
              {{if}} (upNotDown = '0') {{then}}

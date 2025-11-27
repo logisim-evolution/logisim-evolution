@@ -248,13 +248,9 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   }
 
   public Image getImage() {
-    if (image.getWidth() >= IMAGE_WIDTH
-        && image.getWidth() <= 3 * IMAGE_WIDTH
-        && image.getHeight() >= IMAGE_HEIGHT
-        && image.getHeight() <= 3 * IMAGE_HEIGHT) return image;
-    int width = image.getWidth() < IMAGE_WIDTH ? IMAGE_WIDTH : 3 * IMAGE_WIDTH;
-    int height = image.getHeight() < IMAGE_HEIGHT ? IMAGE_HEIGHT : 3 * IMAGE_HEIGHT;
-    return image.getScaledInstance(width, height, 4);
+    return (image.getWidth() == IMAGE_WIDTH && image.getHeight() == IMAGE_HEIGHT) 
+           ? image 
+           : image.getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, 4);
   }
 
   public List<FpgaIoInformationContainer> getIoComponents() {

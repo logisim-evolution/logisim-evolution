@@ -11,8 +11,10 @@ package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -35,6 +37,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
@@ -141,8 +144,7 @@ public class Clock extends InstanceFactory {
     } else {
       dirty = state.updateTick(ticks, attrs);
     }
-    if (dirty) Instance.getInstanceFor(comp).fireInvalidated();
-    return true;
+    return dirty;
   }
 
   public static final Attribute<Integer> ATTR_HIGH =
@@ -168,9 +170,10 @@ public class Clock extends InstanceFactory {
           ATTR_PHASE,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
-          StdAttr.LABEL_FONT
+          StdAttr.LABEL_FONT,
+          ProbeAttributes.PROBEAPPEARANCE
         },
-        new Object[] {Direction.EAST, 1, 1, 0, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT});
+        new Object[] {Direction.EAST, 1, 1, 0, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ProbeAttributes.APPEAR_EVOLUTION_NEW});
     setFacingAttribute(StdAttr.FACING);
     setInstanceLogger(ClockLogger.class);
     setInstancePoker(ClockPoker.class);
@@ -188,21 +191,29 @@ public class Clock extends InstanceFactory {
   }
 
   @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE)
+        ? ProbeAttributes.getDefaultProbeAppearance()
+        : super.getDefaultAttributeValue(attr, ver);
+  }
+
+  @Override
   public String getHDLName(AttributeSet attrs) {
     return "LogisimClockComponent";
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
+    final var newAppear = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE).equals(ProbeAttributes.APPEAR_EVOLUTION_NEW);
     return Probe.getOffsetBounds(
-        attrs.getValue(StdAttr.FACING), BitWidth.ONE, RadixOption.RADIX_2, false, false);
+        attrs.getValue(StdAttr.FACING), BitWidth.ONE, RadixOption.RADIX_2, newAppear, newAppear);
   }
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
-    } else if (attr == StdAttr.FACING) {
+    } else if (attr == StdAttr.FACING || attr == ProbeAttributes.PROBEAPPEARANCE) {
       instance.recomputeBounds();
       instance.computeLabelTextField(Instance.AVOID_LEFT);
     }
@@ -238,6 +249,72 @@ public class Clock extends InstanceFactory {
     g.setColor(Value.TRUE.getColor());
     g.fillOval(pinx, piny, 3, 3);
   }
+  
+  private void paintNewShape(
+      InstancePainter painter,
+      int x,
+      int y,
+      int width,
+      int height,
+      Direction dir,
+      boolean ghost) {
+    java.awt.Graphics g = painter.getGraphics();
+    Graphics2D g2 = (Graphics2D) g;
+    var xpos = x + width;
+    var ypos = y + height / 2;
+    var rwidth = width;
+    var rheight = height;
+    double rotation = 0;
+    if (dir == Direction.NORTH) {
+      rotation = -Math.PI / 2;
+      xpos = x + width / 2;
+      ypos = y;
+      rwidth = height;
+      rheight = width;
+    } else if (dir == Direction.SOUTH) {
+      rotation = Math.PI / 2;
+      xpos = x + width / 2;
+      ypos = y + height;
+      rwidth = height;
+      rheight = width;
+    } else if (dir == Direction.WEST) {
+      rotation = Math.PI;
+      xpos = x;
+      ypos = y + height / 2;
+    }
+    g2.translate(xpos, ypos);
+    g2.rotate(rotation);
+    GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+    if (!ghost) g.drawLine(-5, 0, 0, 0);
+    GraphicsUtil.switchToWidth(g, 2);
+    int[] xPoints = new int[] {-rwidth, -15, -5, -15, -rwidth};
+    int yBottom = rheight / 2;
+    int yTop = -yBottom;
+    int[] yPoints = new int[] {yTop, yTop, 0, yBottom, yBottom};
+    g.drawPolygon(xPoints, yPoints, 5);
+    g2.rotate(-rotation);
+    g2.translate(-xpos, -ypos);
+  }
+
+  @Override
+  public void paintGhost(InstancePainter painter) {
+    final var loc = painter.getLocation();
+    final var bds = painter.getOffsetBounds();
+    final var x = loc.getX();
+    final var y = loc.getY();
+    final var width = bds.getWidth();
+    final var height = bds.getHeight();
+    final var newAppear = painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE).equals(ProbeAttributes.APPEAR_EVOLUTION_NEW);
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
+    Graphics g = painter.getGraphics();
+    GraphicsUtil.switchToWidth(g, 2);
+    g.setColor(Color.GRAY);
+    if (newAppear) {
+      paintNewShape(painter, x - width, y - (height / 2), width, height, dir, true);
+    } else {
+      g.drawRect(x - width, y - (height / 2), width, height);
+    }
+  }
 
   @Override
   public void paintInstance(InstancePainter painter) {
@@ -246,11 +323,20 @@ public class Clock extends InstanceFactory {
     // graphics object - we
     // don't want label
     // included
-    int x = bds.getX();
-    int y = bds.getY();
+    var x = bds.getX();
+    var y = bds.getY();
+    final var width = bds.getWidth();
+    final var height = bds.getHeight();
+    final var newAppear = painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE).equals(ProbeAttributes.APPEAR_EVOLUTION_NEW);
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawRect(x, y, bds.getWidth(), bds.getHeight());
+    final var shapeColor = new Color(AppPreferences.COMPONENT_COLOR.get()); 
+    g.setColor(shapeColor);
+    if (newAppear) {
+      paintNewShape(painter, x, y, width, height, dir, false);
+    } else {
+      g.drawRect(x, y, width, height);
+    }
 
     painter.drawLabel();
 
@@ -263,8 +349,8 @@ public class Clock extends InstanceFactory {
       g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       drawUp = true;
     }
-    x += 10;
-    y += 10;
+    x += (dir == Direction.WEST && newAppear) ? 30 : 10;
+    y += (dir == Direction.NORTH && newAppear) ? 30 : 10;
     int[] xs = {x - 6, x - 6, x, x, x + 6, x + 6};
     int[] ys;
     if (drawUp) {

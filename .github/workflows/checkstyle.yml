@@ -30,7 +30,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes that matters for us..."
@@ -66,7 +66,7 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: "Lint changed files"
       run: |

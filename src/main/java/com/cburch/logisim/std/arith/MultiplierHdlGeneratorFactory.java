@@ -85,7 +85,7 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               reg[{{calcBits}}-1:0] s_multUnsigned;
               reg[{{calcBits}}-1:0] s_intermediateResult;
               reg signed[{{calcBits}}-1:0] s_multSigned;
-              
+
               always @(*)
               begin
                  s_carryIn[{{nrOfBits}}-1:0] = carryIn;

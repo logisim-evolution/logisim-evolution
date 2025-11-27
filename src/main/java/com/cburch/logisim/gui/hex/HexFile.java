@@ -309,7 +309,6 @@ public class HexFile {
       Frame parent, // for window positioning
       Project proj,
       Instance instance) { // for recent file access
-    final var S = com.cburch.logisim.std.Strings.S;
     final var mem = instance == null ? null : (Mem) instance.getFactory();
     final var recent = getRecent(proj, mem, instance);
 

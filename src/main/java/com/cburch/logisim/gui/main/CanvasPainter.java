@@ -22,7 +22,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
@@ -178,12 +177,8 @@ class CanvasPainter implements PropertyChangeListener {
   // painting methods
   //
   void paintContents(Graphics g, Project proj) {
-    var clip = g.getClipBounds();
     final var size = canvas.getSize();
     final double zoomFactor = canvas.getZoomFactor();
-    if (canvas.ifPaintDirtyReset() || clip == null) {
-      clip = new Rectangle(0, 0, size.width, size.height);
-    }
 
     grid.paintGrid(g);
     g.setColor(Color.black);

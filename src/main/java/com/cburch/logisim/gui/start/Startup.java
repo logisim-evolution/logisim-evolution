@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.generated.BuildInfo;
@@ -43,6 +44,8 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,7 +76,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -202,9 +205,15 @@ public class Startup implements AWTEventListener {
   protected static RC printHelp(Options opts) {
     printVersion();
     System.out.println();
-    final var formatter = new HelpFormatter();
-    formatter.setWidth(100);  // Arbitrary chosen value.
-    formatter.printHelp(BuildInfo.name, null, opts, null, true);
+    final var builder = HelpFormatter.builder();
+    builder.setShowSince(false);
+    final var formatter = builder.get();
+    final var sortedOpts = formatter.sort(opts);
+    try {
+      formatter.printHelp(BuildInfo.name, null, sortedOpts, null, true);
+    } catch (Exception ex) {
+      System.out.println("Print help failed: " + ex.getMessage());
+    }
     return RC.QUIT;
   }
 
@@ -270,7 +279,7 @@ public class Startup implements AWTEventListener {
       builder.argName(S.get(argNameKey));
       builder.numberOfArgs(expectedArgsCount);
     }
-    opts.addOption(builder.build());
+    opts.addOption(builder.get());
   }
 
   /**
@@ -759,6 +768,11 @@ public class Startup implements AWTEventListener {
     System.exit(-1);
   }
 
+  private static String getProgramDirectory() {
+    var pathOfMainClass = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    return URLDecoder.decode(pathOfMainClass.getParentFile().getAbsolutePath(), StandardCharsets.UTF_8);
+  }
+
   private void doOpenFile(File file) {
     if (initialized) {
       ProjectActions.doOpen(null, null, file);
@@ -885,6 +899,10 @@ public class Startup implements AWTEventListener {
       System.exit(-1);
     }
 
+    // Load in any user-defined default circuit files
+    var defaultLibraries = templLoader.loadCustomStartupLibraries(
+            getProgramDirectory() + File.separator + "logisim-defaults");
+
     // load in template
     loadTemplate(templLoader, templFile, templEmpty);
 
@@ -994,8 +1012,9 @@ public class Startup implements AWTEventListener {
     }
 
     // load file
+    Project proj = null;
     if (filesToOpen.isEmpty()) {
-      final var proj = ProjectActions.doNew(monitor);
+      proj = ProjectActions.doNew(monitor);
       proj.setStartupScreen(true);
       if (showSplash) {
         monitor.close();
@@ -1003,7 +1022,6 @@ public class Startup implements AWTEventListener {
     } else {
       var numOpened = 0;
       var first = true;
-      Project proj;
       for (final var fileToOpen : filesToOpen) {
         try {
           if (testVector != null) {
@@ -1046,6 +1064,9 @@ public class Startup implements AWTEventListener {
       }
       if (numOpened == 0) System.exit(-1);
     }
+
+    if (proj != null)
+      proj.doAction(LogisimFileActions.loadLibraries(defaultLibraries, proj.getLogisimFile()));
 
     for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);

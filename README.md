@@ -33,6 +33,7 @@ Project highlights:
 * VHDL components (components behavior can be specified in VHDL!),
 * TCL/TK console (interfaces between the circuit and the user),
 * huge library of components (LEDs, TTLs, switches, SoCs),
+* allows for custom libraries to be [loaded on startup](docs/automatic_library_import.md)
 * supports [multiple languages](docs/docs.md#translations),
 * and more!
 
@@ -121,8 +122,8 @@ a new `Nightly build` is created at midnight [UTC](https://en.wikipedia.org/wiki
 
 Note that these builds may be unstable since the main branch is a work in progress.
 
-To get nightly downloads, please
-[click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
+To get nightly downloads, please go to the
+[nightly workflow page](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
 and browse to the last successful build from the `Nightly` worker.
 Nightly runs each night, but terminates quickly and does not produce new packages if nothing has changed since the last run.
 Find the most recent run that contains the packages.

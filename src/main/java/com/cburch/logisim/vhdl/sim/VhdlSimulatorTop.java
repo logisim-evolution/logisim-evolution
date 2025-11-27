@@ -243,7 +243,7 @@ public class VhdlSimulatorTop implements CircuitListener {
     }
 
     /* Test sub-circuits */
-    for (CircuitState sub : s.getSubStates()) {
+    for (CircuitState sub : s.getSubstates()) {
       if (hasVhdlComponent(sub)) return true;
     }
 

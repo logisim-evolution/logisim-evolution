@@ -41,9 +41,8 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
@@ -217,10 +216,8 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     close.addActionListener(frameListener);
     validate.addActionListener(frameListener);
 
-    AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-    atmf.putMapping("text/vhdl", "com.cburch.logisim.vhdl.syntax.VhdlSyntax");
     editor = new RSyntaxTextArea(ROWS, COLUMNS);
-    editor.setSyntaxEditingStyle("text/vhdl");
+    editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_VHDL);
     editor.setCodeFoldingEnabled(true);
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(editorListener);

@@ -44,7 +44,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -104,7 +104,7 @@ jobs:
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: 'main'
 
@@ -114,7 +114,7 @@ jobs:
         id: snapcraft
 
       - name: 'Upload *.snap artifact.'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
            path: ${{ steps.snapcraft.outputs.snap }}
@@ -136,7 +136,7 @@ jobs:
         # ###########################################################################################
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -153,7 +153,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -170,7 +170,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_amd64.deb
@@ -188,7 +188,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -207,11 +207,68 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
           name: ${{ needs.git_check.outputs.base_name }}-src.jar
+
+  # ###############################################################################################
+
+  # Building for Linux Arm.
+  build_linux_arm:
+    name: 'Linux Arm build'
+    runs-on: ubuntu-22.04-arm
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
+    steps:
+      # https://github.com/z0al/dependent-issues
+      - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
+        uses: actions/checkout@v6
+        with:
+          ref: 'main'
+
+      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: ${{ env.JDK_DISTRO }}
+
+      # ###########################################################################################
+
+      - name: 'Build Arm DEB'
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          chmod +x gradlew
+          ./gradlew createDeb -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload *arm64.deb'
+        uses: actions/upload-artifact@v5
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_arm64.deb
+          name: ${{ needs.git_check.outputs.base_name }}_arm64.deb
+
+        # ###########################################################################################
+
+      - name: 'Build Arm RPM'
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          chmod +x gradlew
+          # Needs rpm package, but it should be installed already.
+          ./gradlew createRpm -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload *aarch64.rpm'
+        uses: actions/upload-artifact@v5
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.aarch64.rpm
+          name: ${{ needs.git_check.outputs.base_name }}.aarch64.rpm
 
   # ###############################################################################################
 
@@ -226,12 +283,12 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
 
       - name: Set up aarch64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -245,14 +302,14 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload aarch64 DMG'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-aarch64.dmg
           name: ${{ needs.git_check.outputs.base_name }}-aarch64.dmg
 
       - name: Set up x86_64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -267,7 +324,7 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload x86_64 DMG'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
@@ -286,9 +343,9 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -296,10 +353,52 @@ jobs:
       - name: "Build MSI"
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
-      - name: 'Upload MSI'
-        uses: actions/upload-artifact@v4
+      - name: "Upload MSI"
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
           path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-amd64.msi
           name: ${{ needs.git_check.outputs.base_name }}-amd64.msi
+
+      - name: "Build self-contained archive for Windows"
+        run: .\gradlew.bat createWindowsPortableZip -x checkstyleMain -x checkstyleTest
+
+      - name: "Upload self-contained archive for Windows"
+        uses: actions/upload-artifact@v5
+        if: success()
+        with:
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-windows-amd64.zip
+          name: ${{ needs.git_check.outputs.base_name }}-windows-amd64.zip
+
+  # ###############################################################################################
+
+#  This is currently disabled because JPackage uses the WiX Toolset which is not installed.
+#  # Building for Windows Arm.
+#  build_windows_arm:
+#    name: 'Windows Arm build'
+#    runs-on: windows-11-arm
+#    # Will run only if git_check determined it is needed.
+#    needs: git_check
+#    if: needs.git_check.outputs.run_build == 'true'
+#
+#    steps:
+#      # https://github.com/marketplace/actions/checkout
+#      - name: "Checkout sources"
+#        uses: actions/checkout@v6
+#      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+#        uses: actions/setup-java@v5
+#        with:
+#          java-version: ${{ env.JDK_VERSION }}
+#          distribution: ${{ env.JDK_DISTRO }}
+#
+#      - name: "Build Arm MSI"
+#        run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
+#
+#      - name: "Upload Arm MSI"
+#        uses: actions/upload-artifact@v5
+#        if: success()
+#        with:
+#          # NOTE: Gradle builder creates AArch64 file that always uses short version format in file name.
+#          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-aarch64.msi
+#          name: ${{ needs.git_check.outputs.base_name }}-aarch64.msi

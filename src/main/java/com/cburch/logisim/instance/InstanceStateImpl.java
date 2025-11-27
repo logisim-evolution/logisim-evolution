@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.instance;
 
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.EndData;
@@ -51,6 +52,14 @@ public class InstanceStateImpl implements InstanceState {
     return circuitState;
   }
 
+  public CircuitState createCircuitSubstateFor(Circuit circ) {
+    return circuitState.createCircuitSubstateFor(component, circ);
+  }
+
+  public Component getComponent() {
+    return component;
+  }
+
   @Override
   public InstanceData getData() {
     return ((InstanceData) circuitState.getData(component));
@@ -70,7 +79,6 @@ public class InstanceStateImpl implements InstanceState {
            ? instComp.getInstance()
            : null;
   }
-
   @Override
   public int getPortIndex(Port port) {
     return this.getInstance().getPorts().indexOf(port);

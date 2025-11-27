@@ -472,7 +472,7 @@ public class Circuit {
     for (var i = 0; i < pin.length; ++i) {
       if (Pin.FACTORY.isInputPin(pin[i])) {
         final var pinState = state.getInstanceState(pin[i]);
-        Pin.FACTORY.setValue(pinState, val[i]);
+        Pin.FACTORY.driveInputPin(pinState, val[i]);
       }
     }
 
@@ -748,8 +748,8 @@ public class Circuit {
     return wires.points.getSplitCauses(loc);
   }
 
-  public Set<Location> getSplitLocations() {
-    return wires.points.getSplitLocations();
+  public Set<Location> getAllLocations() {
+    return wires.points.getAllLocations();
   }
 
   public AttributeSet getStaticAttributes() {
@@ -762,10 +762,6 @@ public class Circuit {
 
   public BitWidth getWidth(Location p) {
     return wires.getWidth(p);
-  }
-
-  public Location getWidthDeterminant(Location p) {
-    return wires.getWidthDeterminant(p);
   }
 
   public Set<WidthIncompatibilityData> getWidthIncompatibilityData() {

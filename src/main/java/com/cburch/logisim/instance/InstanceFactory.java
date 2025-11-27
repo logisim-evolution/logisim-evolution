@@ -10,7 +10,6 @@
 package com.cburch.logisim.instance;
 
 import com.cburch.logisim.LogisimVersion;
-import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.AbstractComponentFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -146,14 +145,6 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     final var ret = new InstanceComponent(this, loc, attrs);
     configureNewInstance(ret.getInstance());
     return ret;
-  }
-
-  public final InstanceState createInstanceState(CircuitState state, Component comp) {
-    return createInstanceState(state, ((InstanceComponent) comp).getInstance());
-  }
-
-  public final InstanceState createInstanceState(CircuitState state, Instance instance) {
-    return new InstanceStateImpl(state, instance.getComponent());
   }
 
   @Override
