@@ -26,15 +26,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.cburch.logisim.util.Debug;
 
-class TestPanel extends JPanel implements ValueTable.Model {
+class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.circuit.Simulator.Listener {
 
   static final Color failColor = new Color(0xff9999);
+  static final Color activeButtonColor = new Color(0x99ff99); // Light green
+  static final Color inactiveButtonColor = new Color(0xE0E0FF); // Light blue
   private static final long serialVersionUID = 1L;
   private static final Logger logger = LoggerFactory.getLogger(TestPanel.class);
   
   private final TestFrame testFrame;
   private final ValueTable table;
   private final MyListener myListener = new MyListener();
+  
+  // Track which row's "Set" button is currently active (green)
+  private Integer activeSetRow = null;
+  // Store the pin values when Set is clicked, to detect changes
+  private com.cburch.logisim.data.Value[] storedPinValues = null;
 
   public TestPanel(TestFrame frame) {
     this.testFrame = frame;
@@ -234,8 +241,10 @@ class TestPanel extends JPanel implements ValueTable.Model {
           buttonTooltip += " (Does not run previous steps)";
         }
       }
-      // Use a light blue background to make buttons more visible and clickable
-      Color buttonBg = new Color(0xE0E0FF); // Light blue
+      // Use green background if this is the active row, otherwise light blue
+      Color buttonBg = (activeSetRow != null && activeSetRow == row) 
+          ? activeButtonColor 
+          : inactiveButtonColor; // Light blue
       rowData[i - firstRow][0] =
           new ValueTable.Cell(buttonText, buttonBg, null, buttonTooltip);
       
@@ -309,8 +318,23 @@ class TestPanel extends JPanel implements ValueTable.Model {
   }
 
   public void modelChanged(Model oldModel, Model newModel) {
-    if (oldModel != null) oldModel.removeModelListener(myListener);
-    if (newModel != null) newModel.addModelListener(myListener);
+    if (oldModel != null) {
+      oldModel.removeModelListener(myListener);
+      // Remove simulator listener from old project
+      if (oldModel.getProject() != null) {
+        oldModel.getProject().getSimulator().removeSimulatorListener(this);
+      }
+    }
+    if (newModel != null) {
+      newModel.addModelListener(myListener);
+      // Add simulator listener to new project
+      if (newModel.getProject() != null) {
+        newModel.getProject().getSimulator().addSimulatorListener(this);
+      }
+    }
+    // Reset active row when model changes
+    activeSetRow = null;
+    storedPinValues = null;
     table.setModel(newModel == null ? null : this);
   }
   
@@ -449,6 +473,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
     // Just set the input values and mark them dirty
     com.cburch.logisim.circuit.CircuitState state = project.getCircuitState();
     
+    // Set the pin values first
     for (int j = 0; j < pins.length; j++) {
       if (com.cburch.logisim.std.wiring.Pin.FACTORY.isInputPin(pins[j])) {
         com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
@@ -462,6 +487,22 @@ class TestPanel extends JPanel implements ValueTable.Model {
       }
     }
     
+    // Store the pin values we just set (after setting them) to detect changes later
+    // We'll update this after the first propagation completes to account for propagation effects
+    storedPinValues = new com.cburch.logisim.data.Value[pins.length];
+    for (int j = 0; j < pins.length; j++) {
+      com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+      storedPinValues[j] = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
+    }
+    
+    // Set this row as active (will show green button)
+    activeSetRow = targetFileRow;
+    capturedInitialState = false; // Reset flag so we capture state after first propagation
+    
+    // Refresh the table to show the green button immediately
+    table.dataChanged();
+    table.repaint();
+    
     // Trigger a repaint of the circuit canvas so the changes are visible immediately
     project.repaintCanvas();
     
@@ -472,6 +513,95 @@ class TestPanel extends JPanel implements ValueTable.Model {
     
     // No result to update - we're just setting values, not running a test
     // The circuit will propagate naturally through the simulation thread
+  }
+  
+  // Track if we've captured the initial state after setting values
+  private boolean capturedInitialState = false;
+  
+  @Override
+  public void propagationCompleted(com.cburch.logisim.circuit.Simulator.Event e) {
+    // Check if we have an active row and stored pin values
+    if (activeSetRow == null || storedPinValues == null) {
+      capturedInitialState = false;
+      return;
+    }
+    
+    Model model = getModel();
+    if (model == null) {
+      capturedInitialState = false;
+      return;
+    }
+    
+    TestVector vec = model.getVector();
+    Project project = model.getProject();
+    com.cburch.logisim.circuit.Circuit circuit = model.getCircuit();
+    
+    // Get pins
+    com.cburch.logisim.instance.Instance[] pins = getPinsForVector(vec, circuit, project);
+    if (pins == null) {
+      capturedInitialState = false;
+      return;
+    }
+    
+    // Get current pin values
+    com.cburch.logisim.circuit.CircuitState state = project.getCircuitState();
+    
+    // On the first propagation after setting values, capture the stabilized state
+    // This accounts for propagation effects (e.g., outputs changing due to inputs)
+    if (!capturedInitialState) {
+      for (int j = 0; j < pins.length; j++) {
+        com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+        storedPinValues[j] = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
+      }
+      capturedInitialState = true;
+      return; // Don't check for changes on the first propagation
+    }
+    
+    // After initial state is captured, check if any pin values have changed
+    boolean valuesChanged = false;
+    for (int j = 0; j < pins.length; j++) {
+      com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+      com.cburch.logisim.data.Value currentValue = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
+      
+      // Compare with stored value
+      if (storedPinValues[j] == null || !currentValue.equals(storedPinValues[j])) {
+        valuesChanged = true;
+        break;
+      }
+    }
+    
+    // If values changed, reset the active row
+    if (valuesChanged) {
+      activeSetRow = null;
+      storedPinValues = null;
+      capturedInitialState = false;
+      // Refresh the table to remove green button
+      javax.swing.SwingUtilities.invokeLater(() -> {
+        table.dataChanged();
+      });
+    }
+  }
+  
+  @Override
+  public void simulatorReset(com.cburch.logisim.circuit.Simulator.Event e) {
+    // Reset active row when simulator is reset
+    activeSetRow = null;
+    storedPinValues = null;
+    capturedInitialState = false;
+    javax.swing.SwingUtilities.invokeLater(() -> {
+      table.dataChanged();
+    });
+  }
+  
+  @Override
+  public void simulatorStateChanged(com.cburch.logisim.circuit.Simulator.Event e) {
+    // Reset active row when simulator state changes
+    activeSetRow = null;
+    storedPinValues = null;
+    capturedInitialState = false;
+    javax.swing.SwingUtilities.invokeLater(() -> {
+      table.dataChanged();
+    });
   }
   
   private com.cburch.logisim.instance.Instance[] getPinsForVector(
