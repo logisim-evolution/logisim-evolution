@@ -49,12 +49,16 @@ class TestPanel extends JPanel implements ValueTable.Model {
     if (i == 0 || i == 1) return; // Button and status columns don't support radix changes
     TestVector vec = getModel().getVector();
     int offset = 2; // Button column (0) + status column (1)
-    // <set> and <seq> columns don't support radix changes
+    // <set>, <seq>, and <iter> columns don't support radix changes
     if (vec.setNumbers != null) {
       if (i == offset) return;
       offset++;
     }
     if (vec.seqNumbers != null) {
+      if (i == offset) return;
+      offset++;
+    }
+    if (vec.iterNumbers != null) {
       if (i == offset) return;
       offset++;
     }
