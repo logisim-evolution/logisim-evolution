@@ -155,13 +155,23 @@ A B C Out <set> <seq>
 To facilitate automated testing, the test vector feature can be run from the command line:
 
 ```bash
-logisim -test <circuitname> <vector.txt> <project.circ>
+logisim --test-vector <circuit_name> <test_vector_file> <project.circ>
 ```
 
 Or using the JAR file:
 
 ```bash
-java -jar logisim-evolution.jar -testvector <circuitname> <vector.txt> <project.circ>
+java -jar logisim-evolution.jar --test-vector <circuit_name> <test_vector_file> <project.circ>
+```
+
+**Arguments:**
+- `<circuit_name>`: The name of the circuit to test (must match a circuit in the project file)
+- `<test_vector_file>`: Path to the test vector file (e.g., `TestsDLatch.txt`)
+- `<project.circ>`: Path to the Logisim project file containing the circuit
+
+**Example:**
+```bash
+java -jar logisim-evolution.jar --test-vector dlatch TestsRegisterFile.txt /home/user/Computer.circ
 ```
 
 The command will:
@@ -169,6 +179,7 @@ The command will:
 2. Load and parse the test vector file
 3. Run all tests (respecting sequential execution rules)
 4. Print results showing passed and failed tests
+5. Exit with status code 0 on success, non-zero on failure
 
 ## Backward Compatibility
 
