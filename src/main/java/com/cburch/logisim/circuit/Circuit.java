@@ -464,24 +464,71 @@ public class Circuit {
 
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   * 
+   * @deprecated Use {@link #doTestVector(Project, Instance[], Value[], boolean, TestVector, int)} instead
    */
+  @Deprecated
   public void doTestVector(Project project, Instance[] pin, Value[] val) throws TestException {
+    doTestVector(project, pin, val, true, null, -1);
+  }
+
+  /**
+   * Execute a test vector with optional reset control and special value handling.
+   * 
+   * @param project The project containing the circuit
+   * @param pin Array of pin instances
+   * @param val Array of values to drive/expect
+   * @param resetState If true, reset circuit state before test; if false, maintain state
+   * @param vector The test vector (can be null for backward compatibility)
+   * @param rowIndex The row index in the test vector (used for don't-care/floating checks)
+   * @throws TestException if test fails
+   */
+  public void doTestVector(Project project, Instance[] pin, Value[] val, boolean resetState, 
+      com.cburch.logisim.data.TestVector vector, int rowIndex) throws TestException {
     final var state = project.getCircuitState();
+    if (resetState) {
     state.reset();
+    }
 
     for (var i = 0; i < pin.length; ++i) {
       if (Pin.FACTORY.isInputPin(pin[i])) {
         final var pinState = state.getInstanceState(pin[i]);
-        Pin.FACTORY.driveInputPin(pinState, val[i]);
+        // Handle floating input - drive UNKNOWN if value is marked as floating
+        Value driveValue = val[i];
+        if (vector != null && rowIndex >= 0 && vector.isFloating(rowIndex, i)) {
+          driveValue = Value.UNKNOWN;
+        }
+        Pin.FACTORY.driveInputPin(pinState, driveValue);
+        // Mark the pin component as dirty so it gets processed during propagation
+        state.markComponentAsDirty(pin[i].getComponent());
       }
     }
 
     final var prop = state.getPropagator();
 
+    // Propagate until stable
+    // Use the iteration count from the test vector (or default to 1)
+    // The <iter> value controls the maximum number of propagation cycles
+    int iterations = (vector != null && rowIndex >= 0) ? vector.getIterations(rowIndex) : 1;
+    
+    // Call prop.propagate() directly until stable or max iterations reached
+    // prop.propagate() processes all pending events until the circuit is stable
+    // It returns true if it did any propagation work, false if there was nothing to do
+    // We loop until it returns false (stable) or we hit max iterations
     try {
-      prop.propagate();
+      for (int iter = 0; iter < iterations; iter++) {
+        boolean propagated = prop.propagate();
+        if (prop.isOscillating()) throw new TestException("oscillation detected");
+        // If propagate() returns false, the circuit is already stable (no events to process)
+        // If it returns true, it did work but might need more propagation cycles
+        // We continue looping to ensure all propagation completes
+        // Break early only if we've done at least one propagation and now it's stable
+        if (iter > 0 && !propagated) break; // Circuit is stable after initial propagation
+      }
     } catch (Throwable thr) {
-      thr.printStackTrace();
+      // propagate() might fail if not on simulation thread
+      // This shouldn't happen in normal operation, but handle gracefully
+      throw new TestException("propagation failed: " + thr.getMessage());
     }
 
     if (prop.isOscillating()) throw new TestException("oscillation detected");
@@ -493,6 +540,25 @@ public class Circuit {
       if (Pin.FACTORY.isInputPin(pin[i])) continue;
 
       final var v = Pin.FACTORY.getValue(pinState);
+      
+      // Check for don't care - always pass
+      if (vector != null && rowIndex >= 0 && vector.isDontCare(rowIndex, i)) {
+        continue; // Skip comparison for don't care values
+      }
+      
+      // Check for floating - expect UNKNOWN
+      if (vector != null && rowIndex >= 0 && vector.isFloating(rowIndex, i)) {
+        if (!Value.UNKNOWN.equals(v)) {
+          if (err == null) {
+            err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v);
+          } else {
+            err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v));
+          }
+        }
+        continue;
+      }
+      
+      // Normal value comparison
       if (!val[i].compatible(v)) {
         if (err == null) {
           err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);

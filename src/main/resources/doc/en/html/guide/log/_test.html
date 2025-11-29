@@ -55,11 +55,111 @@ exactly as many digits as the width of the column; decimal values must
 always have fewer, should not have leading zeros, and may have a
 negative sign.</p>
 
+<p>For improved readability, you can use underscores (<code>_</code>) anywhere
+in numeric values. Underscores are ignored during parsing. Examples:
+<code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>,
+<code>1_234</code>, or <code>-5_000</code>.</p>
+
 <p>For hex, octal, and binary values, a digit of 'x' specifies four,
 three, or one "don't care" bits. So the value 101xx is a five bit
 binary value, with the last two bits unspecified, and 0x1ax5 is a hex
 value with four unspecified bits.  Such "don't cares" can not be used
 in decimal notation.</p> 
+
+<h2>Sequential Testing</h2>
+
+<p>The Test Vector feature supports both <strong>combinational</strong> and
+<strong>sequential</strong> circuit testing. By default, tests are combinational:
+the circuit is reset before each test, ensuring each test is independent.</p>
+
+<p>For sequential circuits, you can specify test sequences using the special
+<code>&lt;set&gt;</code> and <code>&lt;seq&gt;</code> header columns:</p>
+
+<ul>
+<li><strong>&lt;set&gt;</strong>: Defines the <strong>sequence ID</strong> - tests with the same set number
+belong to the same sequence and run together. The circuit state is preserved between steps
+in the same set. Tests default to set 0 if not specified.</li>
+<li><strong>&lt;seq&gt;</strong>: Defines the <strong>step number</strong> within a set - this determines
+the execution order of tests within the same set. Tests are executed in order of their
+<code>&lt;seq&gt;</code> value within each <code>&lt;set&gt;</code>. Tests with <code>&lt;seq&gt;</code> of 0
+or missing are treated as combinational (circuit resets between tests, even if they share
+the same set).</li>
+<li><strong>&lt;iter&gt;</strong>: Defines the <strong>number of propagation iterations</strong> to run for this test.
+Each iteration triggers a full propagation cycle on the simulation thread. The
+<code>propagate()</code> method internally loops until stable, so each iteration handles all necessary
+propagation steps. Defaults to 1 if not specified. Use higher values (e.g., 2-5) for complex
+circuits that need multiple propagation cycles to fully settle.</li>
+</ul>
+
+<p>Here is an example of a sequential test vector:</p>
+<pre>
+# Sequential test for a counter
+Clock Reset Count <set> <seq> <iter>
+0     0     0     1     1     1
+1     0     0     1     2     1
+0     0     1     1     3     1
+1     0     1     1     4     1
+0     0     2     1     5     1
+1     0     2     1     6     1
+0     1     0     2     1     1
+</pre>
+
+<p>In this example, the first six tests all have <code>&lt;set&gt; 1</code> with <code>&lt;seq&gt;</code>
+values 1-6, so they form one sequence that runs in order (seq 1, then 2, then 3, etc.)
+without resetting between steps. The last test has <code>&lt;set&gt; 2</code>, so it starts
+a new sequence and the circuit is reset before it runs.</p>
+
+<h2>Special Values</h2>
+
+<p>The Test Vector format supports two special values for more flexible testing:</p>
+
+<ul>
+<li><strong>&lt;DC&gt;</strong> (Don't Care): When used for an output pin, this value
+always passes regardless of the actual output. This is useful when you don't care
+about certain outputs during a test. Case-insensitive (<code>&lt;dc&gt;</code> also works).</li>
+<li><strong>&lt;float&gt;</strong>: When used for an input pin, this drives a floating
+(high-impedance) value. When used for an output pin, this expects the output to be
+floating (UNKNOWN value). Case-insensitive (<code>&lt;FLOAT&gt;</code> also works).</li>
+</ul>
+
+<p>Here is an example using special values:</p>
+<pre>
+# Test with don't care and floating values
+Input Enable Output <set> <seq>
+1      1      <DC>   0     0
+<float> 0      <float> 0     0
+</pre>
+
+<p>In the first test, the output is marked as don't care, so any output value
+will pass. In the second test, the input is floating and the output is expected
+to be floating as well.</p>
+
+<h2>Complete Example</h2>
+
+<p>Here is a complete example combining all features:</p>
+<pre>
+# Mixed combinational and sequential tests
+A B C Out <set> <seq>
+0 0 0 0   0     0
+0 0 1 1   0     0
+1 1 0 1   0     0
+0 1 0 0   0     1
+1 1 1 1   0     1
+0 0 0 <DC> 0     1
+1 0 1 <float> 0     2
+</pre>
+
+<p>In this example:
+<ul>
+<li>The first three tests are combinational (seq=0), so the circuit resets
+between each test, even though they share set 0.</li>
+<li>The next three tests all have set 1 with seq values 1-3, so they form one sequence
+that runs in order without reset.</li>
+<li>The last test has set 2, so it starts a new sequence and the circuit resets before it runs.</li>
+<li>The sixth test uses <code>&lt;DC&gt;</code> for the output, so any output value passes.</li>
+<li>The last test uses <code>&lt;float&gt;</code> for the output, expecting a floating value.</li>
+</ul>
+</p>
 
 <p><strong>Command line:</strong> To facilitate automated testing, the
 test vector feature can be run from the command line, as follows:<br>

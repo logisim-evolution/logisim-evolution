@@ -34,6 +34,9 @@ public class Main {
    * @param args Optional arguments.
    */
   public static void main(String[] args) {
+    // Initialize and print debug/log level information
+    com.cburch.logisim.util.Debug.printStartupMessage();
+    
     System.setProperty("apple.awt.application.name", BuildInfo.name);
     try {
       if (!GraphicsEnvironment.isHeadless()) {

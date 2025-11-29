@@ -227,6 +227,18 @@ public class ValueTable extends JPanel {
     int getRowCount();
 
     void getRowData(int firstRow, int rowCount, Cell[][] rowData);
+    
+    // Optional method for handling row button clicks
+    // Returns true if the column is a button column that should handle clicks
+    default boolean isButtonColumn(int col) {
+      return false;
+    }
+    
+    // Called when a button in the button column is clicked
+    // row is the display row index (after sorting)
+    default void handleButtonClick(int row) {
+      // Default: do nothing
+    }
   }
 
   public static class Cell {
@@ -247,6 +259,47 @@ public class ValueTable extends JPanel {
   private class TableBody extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    TableBody() {
+      setFocusable(true);
+      setRequestFocusEnabled(true);
+      addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          if (model == null) return;
+          
+          // Get the viewport to convert coordinates if needed
+          java.awt.Point viewPos = scrollPane.getViewport().getViewPosition();
+          int x = e.getX();
+          int y = e.getY() + viewPos.y; // Adjust Y for scroll position
+          
+          // Refresh data to ensure rowStart is current
+          refreshData(y, y + cellHeight);
+          
+          int col = findColumn(x, getSize().width);
+          if (col < 0) return;
+          
+          // Check if this is a button column
+          if (model.isButtonColumn(col)) {
+            // Calculate row from Y coordinate (now adjusted for scroll)
+            if (y < 0) return;
+            
+            // Calculate absolute row from adjusted Y
+            int absoluteRow = y / cellHeight;
+            
+            // Check if row is within bounds
+            if (absoluteRow >= 0 && absoluteRow < model.getRowCount()) {
+              model.handleButtonClick(absoluteRow);
+              repaint(); // Refresh display after button click
+            }
+            return;
+          }
+          
+          // Otherwise, handle radix change for other columns
+          if (col >= 0) model.changeColumnValueRadix(col);
+        }
+      });
+    }
 
     @Override
     public String getToolTipText(MouseEvent event) {
