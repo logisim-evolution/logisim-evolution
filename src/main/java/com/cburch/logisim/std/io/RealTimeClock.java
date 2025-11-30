@@ -119,8 +119,8 @@ public class RealTimeClock extends InstanceFactory {
 
     var timeType = instance.getAttributeValue(TIME_TYPE);
     var port = new Port[] {new Port(0, 0, Port.OUTPUT, BitWidth.create(64))};
-    port[0].setToolTip(timeType == TYPE_EPOCH_MILLI ?
-      S.getter("realTimeClockMilliseconds"): S.getter("realTimeClockSeconds"));
+    port[0].setToolTip(timeType == TYPE_EPOCH_MILLI
+          ? S.getter("realTimeClockMilliseconds") : S.getter("realTimeClockSeconds"));
     instance.setPorts(port);
     instance.recomputeBounds();
   }
@@ -140,12 +140,11 @@ public class RealTimeClock extends InstanceFactory {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == TIME_SIZE) {
       instance.recomputeBounds();
-    }
-    else if (attr == TIME_TYPE || attr == StdAttr.FACING){
+    } else if (attr == TIME_TYPE || attr == StdAttr.FACING) {
       var timeType = instance.getAttributeValue(TIME_TYPE);
       var port = new Port[] {new Port(0, 0, Port.OUTPUT, BitWidth.create(64))};
-      port[0].setToolTip(timeType == TYPE_EPOCH_MILLI ?
-        S.getter("realTimeClockMilliseconds"): S.getter("realTimeClockSeconds"));
+      port[0].setToolTip(timeType == TYPE_EPOCH_MILLI
+            ? S.getter("realTimeClockMilliseconds") : S.getter("realTimeClockSeconds"));
       instance.setPorts(port);
       instance.recomputeBounds();
     }
@@ -188,12 +187,12 @@ public class RealTimeClock extends InstanceFactory {
     g2.setStroke(new BasicStroke(1.5f));
     g.drawArc(xCenter, yCenter, circleDiameter, circleDiameter, 0, 360);
 
-    xCenter = xCenter + circleDiameter/2;
-    yCenter = yCenter + circleDiameter/2;
-    int x1 = xCenter - (int)(circleDiameter * 0.24f);
-    int y1 = yCenter - (int)(circleDiameter * 0.24f);
-    int x2 = xCenter + (int)(circleDiameter * 0.18f);
-    int y2 = yCenter - (int)(circleDiameter * 0.18f);
+    xCenter = xCenter + circleDiameter / 2;
+    yCenter = yCenter + circleDiameter / 2;
+    int x1 = xCenter - (int) (circleDiameter * 0.24f);
+    int y1 = yCenter - (int) (circleDiameter * 0.24f);
+    int x2 = xCenter + (int) (circleDiameter * 0.18f);
+    int y2 = yCenter - (int) (circleDiameter * 0.18f);
 
     g2.setStroke(new BasicStroke(1f));
     g.drawLine(xCenter, yCenter, x1, y1);
@@ -218,11 +217,10 @@ public class RealTimeClock extends InstanceFactory {
     var timeType = state.getAttributeValue(TIME_TYPE);
     Value timeValue;
 
-    if(timeType == TYPE_EPOCH_MILLI){
+    if (timeType == TYPE_EPOCH_MILLI) {
       timeValue = Value.createKnown(BitWidth.create(64), ZonedDateTime.now().toInstant().toEpochMilli());
       state.setPort(0, timeValue, 0);
-    }
-    else {
+    } else {
       timeValue = Value.createKnown(BitWidth.create(64), ZonedDateTime.now().toInstant().getEpochSecond());
       state.setPort(0, timeValue, 0);
     }
