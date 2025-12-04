@@ -122,7 +122,7 @@ public class TestVector {
       final var floatFlags = new boolean[columnName.length];
       int setValue = 0;
       int seqValue = 0;
-      int iterValue = 1; // Default to 1 iteration
+      int iterValue = 100; // Default to 100 iterations
       
       // Collect all tokens first
       final var tokens = new ArrayList<String>();
@@ -345,7 +345,7 @@ public class TestVector {
    */
   public int getIterations(int rowIndex) {
     if (iterNumbers == null || rowIndex < 0 || rowIndex >= iterNumbers.length) {
-      return 1; // Default to 1 iteration
+      return 100; // Default to 100 iterations
     }
     return iterNumbers[rowIndex];
   }
