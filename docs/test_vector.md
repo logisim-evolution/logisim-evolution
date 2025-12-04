@@ -200,4 +200,3 @@ All existing test vector files continue to work without modification. The new fe
 
 - [User's Guide](../src/main/resources/doc/en/html/guide/log/_test.html) - HTML documentation with additional examples
 - [Test Vector Window](../src/main/resources/doc/en/html/guide/log/_test.html) - Detailed usage instructions
-
