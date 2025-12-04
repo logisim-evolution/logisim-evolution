@@ -178,9 +178,9 @@ public class TestVector {
           floatFlags[pinIndex] = true;
           vals[pinIndex] = Value.UNKNOWN;
         } else {
-        try {
+          try {
             vals[pinIndex] = Value.fromLogString(columnWidth[pinIndex], t);
-        } catch (Exception e) {
+          } catch (Exception e) {
             String errorMsg = e.getMessage();
             // Enhance error message with column name if it's a "too many bits" error
             if (errorMsg != null && errorMsg.contains("Too many bits") && errorMsg.contains("did you mean [")) {
@@ -194,13 +194,13 @@ public class TestVector {
               }
             }
             throw new IOException("Test Vector data format error: " + errorMsg);
-        }
+          }
         }
         
         if (TestVector.this.data.isEmpty()) {
           if (!dcFlags[pinIndex] && !floatFlags[pinIndex]) {
             columnRadix[pinIndex] = Value.radixOfLogString(columnWidth[pinIndex], t);
-      }
+          }
         }
         pinIndex++;
       }

@@ -39,7 +39,7 @@ public class TestVectorDocsSampleTest {
   @TempDir File tempDir;
 
   @Test
-  public void ActualtestDocsSampleExecution() throws IOException {
+  public void actualtestDocsSampleExecution() throws IOException {
     // Create test vector file matching the D-Latch test case
     // Note: This test vector has <iter> and <seq> but no <set> column
     // All tests default to set=0, and since seq != 0, they should be sequential

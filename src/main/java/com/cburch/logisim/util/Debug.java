@@ -97,7 +97,7 @@ public class Debug {
   /**
    * Check if the current log level is at least as verbose as the given level.
    * Returns true if messages at the given level should be logged.
-   * 
+   *
    * @param level The level to check
    * @return true if the current level is at least as verbose as the given level
    */
@@ -109,7 +109,7 @@ public class Debug {
    * Log a message at the specified level.
    * The message will only be logged if the current log level is at least as verbose
    * as the specified level.
-   * 
+   *
    * @param level The log level
    * @param message The message to log
    */
@@ -149,7 +149,7 @@ public class Debug {
   /**
    * Log a message with format string and arguments at the specified level.
    * Supports both SLF4J-style {} placeholders and Java String.format %s/%d style.
-   * 
+   *
    * @param level The log level
    * @param format The format string (can use {} or %s/%d style)
    * @param args The arguments for the format string
@@ -168,14 +168,14 @@ public class Debug {
       int formatIndex = 0;
       
       while (formatIndex < format.length()) {
-        if (formatIndex < format.length() - 1 && 
-            format.charAt(formatIndex) == '{' && 
-            format.charAt(formatIndex + 1) == '}') {
+        if (formatIndex < format.length() - 1
+            && format.charAt(formatIndex) == '{'
+            && format.charAt(formatIndex + 1) == '}') {
           // Replace {} with appropriate format specifier
           if (argIndex < args.length) {
             Object arg = args[argIndex];
-            if (arg instanceof Integer || arg instanceof Long || 
-                arg instanceof Byte || arg instanceof Short) {
+            if (arg instanceof Integer || arg instanceof Long
+                || arg instanceof Byte || arg instanceof Short) {
               javaFormat.append("%d");
             } else if (arg instanceof Double || arg instanceof Float) {
               javaFormat.append("%f");

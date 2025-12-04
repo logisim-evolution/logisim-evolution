@@ -464,7 +464,7 @@ public class Circuit {
 
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   * 
+   *
    * @deprecated Use {@link #doTestVector(Project, Instance[], Value[], boolean, TestVector, int)} instead
    */
   @Deprecated
@@ -474,7 +474,7 @@ public class Circuit {
 
   /**
    * Execute a test vector with optional reset control and special value handling.
-   * 
+   *
    * @param project The project containing the circuit
    * @param pin Array of pin instances
    * @param val Array of values to drive/expect
@@ -487,7 +487,7 @@ public class Circuit {
       com.cburch.logisim.data.TestVector vector, int rowIndex) throws TestException {
     final var state = project.getCircuitState();
     if (resetState) {
-    state.reset();
+      state.reset();
     }
 
     for (var i = 0; i < pin.length; ++i) {

@@ -175,8 +175,8 @@ public final class Value {
     if (w == 64) {
       if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0) {
         int actualBits = 64 - Long.numberOfLeadingZeros(value & 0x7FFFFFFFFFFFFFFFL);
-        throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "") + 
-            (actualBits > 0 ? " did you mean [" + actualBits + "]?" : ""));
+        throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
+            + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : ""));
       }
     } else {
       // For signed decimal, check if value fits in w-bit signed range
@@ -187,8 +187,8 @@ public final class Value {
           // Calculate actual bits needed (for absolute value)
           long absValue = value < 0 ? -value : value;
           int actualBits = absValue == 0 ? 1 : 64 - Long.numberOfLeadingZeros(absValue) + 1; // +1 for sign bit
-          throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "") + 
-              (actualBits > 0 ? " did you mean [" + actualBits + "]?" : ""));
+          throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
+              + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : ""));
         }
         // Mask to width for signed values (two's complement representation)
         long mask = (1L << w) - 1;
@@ -206,24 +206,22 @@ public final class Value {
             // Use hex digits * 4 as the suggested bit width (each hex digit = 4 bits)
             actualBits = hexDigits * 4;
             reminder = " Remember that 0x means hex and each hex digit is 4 bits";
-          }
-          // For binary values, suggest based on number of binary digits (each binary digit = 1 bit)
-          else if (radix == 2 && cleaned.length() > 0) {
+          } else if (radix == 2 && cleaned.length() > 0) {
+            // For binary values, suggest based on number of binary digits (each binary digit = 1 bit)
             int binaryDigits = cleaned.length() - (cleaned.startsWith("0b") ? 2 : 0); // Subtract "0b" prefix if present
             // Use binary digits as the suggested bit width (each binary digit = 1 bit)
             actualBits = binaryDigits;
             reminder = " Remember that 0b means binary and each binary digit is 1 bit";
-          }
-          // For octal values, suggest based on number of octal digits * 3 (each octal digit = 3 bits)
-          else if (radix == 8 && cleaned.length() > 2) {
+          } else if (radix == 8 && cleaned.length() > 2) {
+            // For octal values, suggest based on number of octal digits * 3 (each octal digit = 3 bits)
             int octalDigits = cleaned.length() - 2; // Subtract "0o" prefix
             // Use octal digits * 3 as the suggested bit width (each octal digit = 3 bits)
             actualBits = octalDigits * 3;
             reminder = " Remember that 0o means octal and each octal digit is 3 bits";
           }
           
-          throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "") + 
-              (actualBits > 0 ? " did you mean [" + actualBits + "]?" : "") + reminder);
+          throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
+              + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : "") + reminder);
         }
       }
     }

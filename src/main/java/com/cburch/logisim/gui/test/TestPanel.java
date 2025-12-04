@@ -120,23 +120,23 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   public int getColumnValueRadix(int i) {
     TestVector vec = getModel().getVector();
     if (i == 0) return 0; // Button column
-      if (i == 1) return 0; // Status column
-      int offset = 2; // Button column (0) + status column (1)
-      // <set>, <seq>, and <iter> columns are always decimal
-      if (vec.setNumbers != null) {
-        if (i == offset) return 10;
-        offset++;
-      }
-      if (vec.seqNumbers != null) {
-        if (i == offset) return 10;
-        offset++;
-      }
-      if (vec.iterNumbers != null) {
-        if (i == offset) return 10;
-        offset++;
-      }
-      // Regular pin columns
-      return vec.columnRadix[i - offset];
+    if (i == 1) return 0; // Status column
+    int offset = 2; // Button column (0) + status column (1)
+    // <set>, <seq>, and <iter> columns are always decimal
+    if (vec.setNumbers != null) {
+      if (i == offset) return 10;
+      offset++;
+    }
+    if (vec.seqNumbers != null) {
+      if (i == offset) return 10;
+      offset++;
+    }
+    if (vec.iterNumbers != null) {
+      if (i == offset) return 10;
+      offset++;
+    }
+    // Regular pin columns
+    return vec.columnRadix[i - offset];
   }
 
   // ValueTable.Model implementation
@@ -145,23 +145,23 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   public BitWidth getColumnValueWidth(int i) {
     TestVector vec = getModel().getVector();
     if (i == 0) return null; // Button column
-      if (i == 1) return null; // Status column
-      int offset = 2; // Button column (0) + status column (1)
-      // <set>, <seq>, and <iter> columns have no width (they're metadata)
-      if (vec.setNumbers != null) {
-        if (i == offset) return null;
-        offset++;
-      }
-      if (vec.seqNumbers != null) {
-        if (i == offset) return null;
-        offset++;
-      }
-      if (vec.iterNumbers != null) {
-        if (i == offset) return null;
-        offset++;
-      }
-      // Regular pin columns
-      return vec.columnWidth[i - offset];
+    if (i == 1) return null; // Status column
+    int offset = 2; // Button column (0) + status column (1)
+    // <set>, <seq>, and <iter> columns have no width (they're metadata)
+    if (vec.setNumbers != null) {
+      if (i == offset) return null;
+      offset++;
+    }
+    if (vec.seqNumbers != null) {
+      if (i == offset) return null;
+      offset++;
+    }
+    if (vec.iterNumbers != null) {
+      if (i == offset) return null;
+      offset++;
+    }
+    // Regular pin columns
+    return vec.columnWidth[i - offset];
   }
 
   Model getModel() {
@@ -189,9 +189,10 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     
     // Determine column offsets (accounting for button column at 0 and status column at 1)
     int setColumnOffset = vec.setNumbers != null ? 2 : -1;
-    int seqColumnOffset = vec.seqNumbers != null ? (setColumnOffset >= 0 ? 3 : 2) : -1;
-    int iterColumnOffset = vec.iterNumbers != null ? 
-        (seqColumnOffset >= 0 ? seqColumnOffset + 1 : (setColumnOffset >= 0 ? 3 : 2)) : -1;
+    int seqColumnOffset = vec.seqNumbers != null
+        ? (setColumnOffset >= 0 ? 3 : 2) : -1;
+    int iterColumnOffset = vec.iterNumbers != null 
+        ? (seqColumnOffset >= 0 ? seqColumnOffset + 1 : (setColumnOffset >= 0 ? 3 : 2)) : -1;
     int pinColumnStart = 2; // Button (0) + status (1)
     if (setColumnOffset >= 0) pinColumnStart++;
     if (seqColumnOffset >= 0) pinColumnStart++;
