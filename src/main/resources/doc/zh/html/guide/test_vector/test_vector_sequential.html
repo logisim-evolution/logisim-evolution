@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="zh">
+	<title>时序测试</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>时序测试</h1>
+
+<p>测试向量功能支持<strong>组合</strong>和<strong>时序</strong>电路测试。默认情况下，测试是组合的：每个测试前都会重置电路，确保每个测试都是独立的。</p>
+
+<p>对于时序电路，您可以使用特殊的
+<code>&lt;set&gt;</code>、<code>&lt;seq&gt;</code> 和 <code>&lt;iter&gt;</code> 标题列来指定测试序列：</p>
+
+<ul>
+<li><strong>&lt;set&gt;</strong>：定义<strong>序列 ID</strong> - 具有相同集合编号的测试属于同一序列并一起运行。同一集合中的步骤之间会保留电路状态。如果未指定，测试默认为集合 0。</li>
+<li><strong>&lt;seq&gt;</strong>：定义集合内的<strong>步骤编号</strong> - 这决定了同一集合内测试的执行顺序。测试按照每个 <code>&lt;set&gt;</code> 内的 <code>&lt;seq&gt;</code> 值顺序执行。<code>&lt;seq&gt;</code> 为 0 或缺失的测试被视为组合测试（测试之间重置电路，即使它们共享同一集合）。</li>
+<li><strong>&lt;iter&gt;</strong>：定义为此测试运行的<strong>传播迭代次数</strong>。每次迭代都会在模拟线程上触发完整的传播周期。<code>propagate()</code> 方法内部循环直到稳定，因此每次迭代都会处理所有必要的传播步骤。如果未指定，默认为 1。对于需要多个传播周期才能完全稳定的复杂电路，请使用更高的值（例如 2-5）。</li>
+</ul>
+
+<p>以下是时序测试向量的示例：</p>
+<pre class="code">
+# 计数器的时序测试
+Clock Reset Count &lt;set&gt; &lt;seq&gt; &lt;iter&gt;
+0     0     0     1     1     1
+1     0     0     1     2     1
+0     0     1     1     3     1
+1     0     1     1     4     1
+0     0     2     1     5     1
+1     0     2     1     6     1
+0     1     0     2     1     1
+</pre>
+
+<p>在此示例中，前六个测试都具有 <code>&lt;set&gt; 1</code> 和 <code>&lt;seq&gt;</code>
+值 1-6，因此它们形成一个按顺序运行的序列（seq 1，然后是 2，然后是 3，等等），步骤之间不重置。最后一个测试具有 <code>&lt;set&gt; 2</code>，因此它开始一个新序列，并在运行前重置电路。</p>
+
+<h2>序列执行规则</h2>
+
+<ul>
+<li>具有相同 <code>&lt;set&gt;</code> 编号的测试属于同一序列</li>
+<li>在每个集合内，测试按其 <code>&lt;seq&gt;</code> 值顺序执行（seq 1，然后是 2，然后是 3，等等）</li>
+<li>同一集合（相同序列 ID）中的测试之间会保持电路状态</li>
+<li>开始新集合（不同的 <code>&lt;set&gt;</code> 编号）时会重置电路</li>
+<li><code>&lt;seq&gt;</code> = 0 或缺失的测试始终是组合的（测试之间重置，即使在同一集合内）</li>
+</ul>
+
+<h2>完整示例</h2>
+
+<p>以下是结合所有功能的完整示例：</p>
+<pre class="code">
+# 混合组合和时序测试
+A B C Out     &lt;set&gt; &lt;seq&gt;
+0 0 0 0       0     0
+0 0 1 1       0     0
+1 1 0 1       0     0
+0 1 0 0       0     1
+1 1 1 1       0     1
+0 0 0 &lt;DC&gt;    0     1
+1 0 1 &lt;float&gt; 0     2
+</pre>
+
+<p>在此示例中：
+<ul>
+<li>前三个测试是组合的（seq=0），因此每个测试之间都会重置电路，即使它们共享集合 0。</li>
+<li>接下来的三个测试都具有集合 1 和 seq 值 1-3，因此它们形成一个按顺序运行而不重置的序列。</li>
+<li>最后一个测试具有集合 2，因此它开始一个新序列，并在运行前重置电路。</li>
+<li>第六个测试对输出使用 <code>&lt;DC&gt;</code>，因此任何输出值都会通过。</li>
+<li>最后一个测试对输出使用 <code>&lt;float&gt;</code>，期望一个浮空值。</li>
+</ul>
+</p>
+
+<p>
+	<b>上一页：</b> <a href="test_vector_special_values.html">特殊值</a> | <b>下一页：</b> <a href="test_vector_cmdline.html">命令行用法</a>。
+</p>
+
+</body>
+</html>
+
