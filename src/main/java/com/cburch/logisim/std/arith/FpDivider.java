@@ -39,8 +39,9 @@ public class FpDivider extends InstanceFactory {
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
   private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
+  private static final int OUT1 = 2;
+  private static final int OUT2 = 3;
+  private static final int ERR = 4;
 
   public FpDivider() {
     super(_ID, S.getter("fpDividerComponent"));
@@ -49,14 +50,16 @@ public class FpDivider extends InstanceFactory {
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u00f7"));
 
-    final var ps = new Port[4];
+    final var ps = new Port[5];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
+    ps[OUT1] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
+    ps[OUT2] = new Port(-10, 20, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
     ps[IN0].setToolTip(S.getter("fpDividerDividendTip"));
     ps[IN1].setToolTip(S.getter("dividerDivisorTip"));
-    ps[OUT].setToolTip(S.getter("dividerOutputTip"));
+    ps[OUT1].setToolTip(S.getter("dividerOutputTip"));
+    ps[OUT2].setToolTip(S.getter("dividerRemainderTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }
@@ -69,7 +72,8 @@ public class FpDivider extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
-    painter.drawPort(OUT);
+    painter.drawPort(OUT1);
+    painter.drawPort(OUT2);
     painter.drawPort(ERR);
 
     final var loc = painter.getLocation();
@@ -117,9 +121,19 @@ public class FpDivider extends InstanceFactory {
       default -> Value.ERROR;
     };
 
+    final var rem_val =  Math.IEEEremainder(a_val, b_val);
+    final var rem = switch (dataWidth.getWidth()) {
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) rem_val));
+      case 32 -> Value.createKnown((float) rem_val);
+      case 64 -> Value.createKnown(rem_val);
+      default -> Value.ERROR;
+    };
+
+
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
-    state.setPort(OUT, out, delay);
+    state.setPort(OUT1, out, delay);
+    state.setPort(OUT2, rem, delay);
     state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(out_val) ? 1 : 0), delay);
   }
 }
