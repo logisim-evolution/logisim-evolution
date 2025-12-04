@@ -79,7 +79,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     }
 
     System.out.println(S.get("testRunning", Integer.toString(vec.data.size())));
-    
+
     if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
       // Debug: Show all sequence numbers in file order
       com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
@@ -336,13 +336,13 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     for (int sortedIdx = 0; sortedIdx < sortedIndices.size() && !canceled; sortedIdx++) {
       int i = sortedIndices.get(sortedIdx);
       
-      while (paused) {
-        if (canceled) return;
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
+        while (paused) {
+          if (canceled) return;
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ignored) {
+          }
         }
-      }
       
       // Determine set number (sequence ID) for this test
       int testSet = 0;
@@ -429,8 +429,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, "Test {}: PASS", sortedIdx + 1);
         }
         
-        canceled = canceled || !model.setResult(vector, i, null);
-      } catch (TestException e) {
+          canceled = canceled || !model.setResult(vector, i, null);
+        } catch (TestException e) {
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
               "Test {}: FAIL - {}", sortedIdx + 1, e.getMessage());
