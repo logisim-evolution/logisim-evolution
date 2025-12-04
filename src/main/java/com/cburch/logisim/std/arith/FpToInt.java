@@ -44,13 +44,15 @@ public class FpToInt extends InstanceFactory {
       new AttributeOption("floor", "floor", S.getter("floorOption"));
   public static final AttributeOption ROUND_OPTION =
       new AttributeOption("round", "round", S.getter("roundOption"));
+    public static final AttributeOption RINT_OPTION =
+      new AttributeOption("rint", "rint", S.getter("rintOption"));
   public static final AttributeOption TRUNCATE_OPTION =
       new AttributeOption("truncate", "truncate", S.getter("truncateOption"));
   public static final Attribute<AttributeOption> MODE_ATTRIBUTE =
       Attributes.forOption(
           "mode",
           S.getter("fpToIntType"),
-          new AttributeOption[] {CEILING_OPTION, FLOOR_OPTION, ROUND_OPTION, TRUNCATE_OPTION});
+          new AttributeOption[] {CEILING_OPTION, FLOOR_OPTION, ROUND_OPTION, RINT_OPTION, TRUNCATE_OPTION});
 
   static final int PER_DELAY = 1;
   private static final int IN = 0;
@@ -102,11 +104,12 @@ public class FpToInt extends InstanceFactory {
       default -> Double.NaN;
     };
 
-    long out_val;
+    final long out_val;
 
     if (roundMode.getValue().equals("ceil")) out_val = (long) Math.ceil(a_val);
     else if (roundMode.getValue().equals("floor")) out_val = (long) Math.floor(a_val);
     else if (roundMode.getValue().equals("round")) out_val = Math.round(a_val);
+    else if (roundMode.getValue().equals("rint")) out_val = (long)Math.rint(a_val);
     else out_val = (long) a_val;
 
     final var out = Value.createKnown(dataWidthOut, out_val);
