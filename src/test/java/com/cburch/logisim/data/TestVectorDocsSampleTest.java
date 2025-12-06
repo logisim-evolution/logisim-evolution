@@ -29,7 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test for D-Latch test vector execution.
- * 
+ *
  * This test verifies that sequential test vectors work correctly for
  * stateful circuits like a D-Latch, where the output depends on previous
  * state as well as current inputs.
@@ -43,10 +43,10 @@ public class TestVectorDocsSampleTest {
     // Create test vector file matching the D-Latch test case
     // Note: This test vector has <seq> but no <set> column
     // All tests default to set=0, and since seq != 0, they should be sequential
-    
 
 
- 
+
+
 
     File testFile = new File(tempDir, "DocsSample_test.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
@@ -59,7 +59,7 @@ public class TestVectorDocsSampleTest {
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
-    
+
     // Verify parsing
     // Column indices: 0=A, 1=B, 2=O_Nor, 3=O_Nand, 4=O_Xor, 5=O_Or, 6=O_And, 7=O_AB[2]
     assertEquals(8, vector.columnName.length);
@@ -71,10 +71,10 @@ public class TestVectorDocsSampleTest {
     assertEquals("O_Or", vector.columnName[5]);
     assertEquals("O_And", vector.columnName[6]);
     assertEquals("O_AB", vector.columnName[7]);
-    
+
     // Verify we have 4 test rows
     assertEquals(4, vector.data.size());
-    
+
     // Verify sequence numbers (should be empty or default to 0 since no <seq> column)
     // When there's no <seq> column, seqNumbers should be empty array
     if (vector.seqNumbers != null && vector.seqNumbers.length > 0) {
@@ -83,7 +83,7 @@ public class TestVectorDocsSampleTest {
         assertEquals(0, vector.seqNumbers[i], "Row " + i + " should default to seq=0");
       }
     }
-    
+
     // Verify set numbers (should default to 0 when not specified)
     // Since there's no <set> column, setNumbers should be empty array
     // But the code should handle this by defaulting to set=0
@@ -93,7 +93,7 @@ public class TestVectorDocsSampleTest {
         assertEquals(0, vector.setNumbers[i], "Row " + i + " should default to set=0");
       }
     }
-    
+
     // Verify test data values
     // Row 0: A=0, B=0, O_Nor=1, O_Nand=1, O_Xor=0, O_Or=0, O_And=0, O_AB=00
     assertEquals(0L, vector.data.get(0)[0].toLongValue()); // A
@@ -104,7 +104,7 @@ public class TestVectorDocsSampleTest {
     assertEquals(0L, vector.data.get(0)[5].toLongValue()); // O_Or
     assertEquals(0L, vector.data.get(0)[6].toLongValue()); // O_And
     assertEquals(0L, vector.data.get(0)[7].toLongValue()); // O_AB
-    
+
     // Row 1: A=0, B=1, O_Nor=0, O_Nand=1, O_Xor=1, O_Or=1, O_And=0, O_AB=01
     assertEquals(0L, vector.data.get(1)[0].toLongValue()); // A
     assertEquals(1L, vector.data.get(1)[1].toLongValue()); // B
@@ -114,7 +114,7 @@ public class TestVectorDocsSampleTest {
     assertEquals(1L, vector.data.get(1)[5].toLongValue()); // O_Or
     assertEquals(0L, vector.data.get(1)[6].toLongValue()); // O_And
     assertEquals(1L, vector.data.get(1)[7].toLongValue()); // O_AB
-    
+
     // Row 2: A=1, B=0, O_Nor=0, O_Nand=1, O_Xor=1, O_Or=1, O_And=0, O_AB=10
     assertEquals(1L, vector.data.get(2)[0].toLongValue()); // A
     assertEquals(0L, vector.data.get(2)[1].toLongValue()); // B
@@ -124,7 +124,7 @@ public class TestVectorDocsSampleTest {
     assertEquals(1L, vector.data.get(2)[5].toLongValue()); // O_Or
     assertEquals(0L, vector.data.get(2)[6].toLongValue()); // O_And
     assertEquals(2L, vector.data.get(2)[7].toLongValue()); // O_AB (binary 10 = decimal 2)
-    
+
     // Row 3: A=1, B=1, O_Nor=0, O_Nand=0, O_Xor=0, O_Or=1, O_And=1, O_AB=11
     assertEquals(1L, vector.data.get(3)[0].toLongValue()); // A
     assertEquals(1L, vector.data.get(3)[1].toLongValue()); // B
@@ -151,14 +151,14 @@ public class TestVectorDocsSampleTest {
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
-    
+
     // Verify set numbers
     assertNotNull(vector.setNumbers);
     assertEquals(4, vector.setNumbers.length);
     for (int i = 0; i < 4; i++) {
       assertEquals(0, vector.setNumbers[i], "Row " + i + " should have set=1");
     }
-    
+
     // Verify sequence numbers
     assertNotNull(vector.seqNumbers);
     assertEquals(4, vector.seqNumbers.length);
@@ -336,30 +336,31 @@ public class TestVectorDocsSampleTest {
         circuitXml.getBytes(StandardCharsets.UTF_8));
     LogisimFile logisimFile = LogisimFile.load(xmlStream, loader);
     assertNotNull(logisimFile, "Circuit should load successfully");
-    
+
     Circuit circuit = logisimFile.getCircuit("testVectorSample");
     assertNotNull(circuit, "testVectorSample circuit should exist");
-    
+
     // Create project
     Project project = new Project(logisimFile);
     project.setCurrentCircuit(circuit);
-    
+
     // Execute test vector using the same method CLI uses
     // This will actually run the tests and throw exceptions on failure
     TestVector vector = new TestVector(testFile.getAbsolutePath());
-    
+
     // Match pins manually (same logic as TestThread.matchPins)
-    com.cburch.logisim.instance.Instance[] pins = 
+    com.cburch.logisim.instance.Instance[] pins =
         new com.cburch.logisim.instance.Instance[vector.columnName.length];
-    com.cburch.logisim.circuit.CircuitState tempState = 
+    com.cburch.logisim.circuit.CircuitState tempState =
         com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit);
-    
+    tempState.getPropagator().setPropagatorThread(Thread.currentThread());
+
     for (int i = 0; i < vector.columnName.length; i++) {
       String columnName = vector.columnName[i];
       boolean found = false;
       for (Component comp : circuit.getNonWires()) {
         if (!(comp.getFactory() instanceof com.cburch.logisim.std.wiring.Pin)) continue;
-        com.cburch.logisim.instance.Instance inst = 
+        com.cburch.logisim.instance.Instance inst =
             com.cburch.logisim.instance.Instance.getInstanceFor(comp);
         com.cburch.logisim.instance.InstanceState pinState = tempState.getInstanceState(comp);
         String label = pinState.getAttributeValue(StdAttr.LABEL);
@@ -368,7 +369,7 @@ public class TestVectorDocsSampleTest {
         if (com.cburch.logisim.std.wiring.Pin.FACTORY.getWidth(inst).getWidth() != vector.columnWidth[i].getWidth()) {
           throw new AssertionError(String.format(
               "test vector column '%s' has width %d, but pin has width %d",
-              columnName, vector.columnWidth[i].getWidth(), 
+              columnName, vector.columnWidth[i].getWidth(),
               com.cburch.logisim.std.wiring.Pin.FACTORY.getWidth(inst).getWidth()));
         }
         pins[i] = inst;
@@ -377,27 +378,27 @@ public class TestVectorDocsSampleTest {
       }
       assertTrue(found, "Pin " + columnName + " should be found in circuit");
     }
-    
+
     // Execute tests and collect expected errors
     // Expected errors based on the circuit's actual behavior
     java.util.List<java.util.Set<String>> expectedErrors = new java.util.ArrayList<>();
-    
+
     // Test 1: A=0, B=0 - expects O_Or=0, O_And=0, but gets O_Or=1, O_And=1
     expectedErrors.add(java.util.Set.of("O_Or = 1 (expected 0)", "O_And = 1 (expected 0)"));
-    
+
     // Test 2: A=0, B=1 - expects O_And=0, but gets O_And=1
     expectedErrors.add(java.util.Set.of("O_And = 1 (expected 0)"));
-    
+
     // Test 3: A=1, B=0 - expects O_And=0, but gets O_And=1
     expectedErrors.add(java.util.Set.of("O_And = 1 (expected 0)"));
-    
+
     // Test 4: A=1, B=1 - expects O_Or=1, O_And=1, but gets O_Or=0, O_And=0
     expectedErrors.add(java.util.Set.of("O_Or = 0 (expected 1)", "O_And = 0 (expected 1)"));
-    
+
     int currentSet = -1;
     int numPass = 0;
     int numFail = 0;
-    
+
     for (int i = 0; i < vector.data.size(); i++) {
       // Determine set and seq (same logic as TestThread.doTestVector)
       int testSet = 0;
@@ -408,16 +409,16 @@ public class TestVectorDocsSampleTest {
       if (vector.seqNumbers != null && i < vector.seqNumbers.length) {
         testSeq = vector.seqNumbers[i];
       }
-      
+
       // Determine if we should reset (same logic as TestThread.doTestVector)
       boolean shouldReset = (testSeq == 0 || testSet != currentSet);
       if (shouldReset) {
         currentSet = testSet;
       }
-      
+
       // Execute the test using Circuit.doTestVector - this will throw TestException if it fails
       try {
-        circuit.doTestVector(project, pins, vector.data.get(i), shouldReset, vector, i);
+        circuit.doTestVector(tempState, pins, vector.data.get(i), shouldReset, vector, i);
         // Test passed - but we expect all tests to fail
         numPass++;
       } catch (com.cburch.logisim.data.FailException e) {
@@ -426,7 +427,7 @@ public class TestVectorDocsSampleTest {
         for (com.cburch.logisim.data.FailException fail : e.getAll()) {
           actualErrors.add(fail.getMessage());
         }
-        
+
         // Verify errors match expected
         java.util.Set<String> expected = expectedErrors.get(i);
         if (!actualErrors.equals(expected)) {
@@ -440,7 +441,7 @@ public class TestVectorDocsSampleTest {
             String.format("Test %d failed with unexpected exception: %s", i + 1, e.getMessage()), e);
       }
     }
-    
+
     // Verify all tests failed as expected
     assertEquals(0, numPass, "Expected 0 tests to pass");
     assertEquals(4, numFail, "Expected 4 tests to fail");
@@ -614,29 +615,30 @@ public class TestVectorDocsSampleTest {
         circuitXml.getBytes(StandardCharsets.UTF_8));
     LogisimFile logisimFile = LogisimFile.load(xmlStream, loader);
     assertNotNull(logisimFile, "Circuit should load successfully");
-    
+
     Circuit circuit = logisimFile.getCircuit("testVectorSampleCorrected");
     assertNotNull(circuit, "testVectorSampleCorrected circuit should exist");
-    
+
     // Create project
     Project project = new Project(logisimFile);
     project.setCurrentCircuit(circuit);
-    
+
     // Execute test vector using the same method CLI uses
     TestVector vector = new TestVector(testFile.getAbsolutePath());
-    
+
     // Match pins manually (same logic as TestThread.matchPins)
-    com.cburch.logisim.instance.Instance[] pins = 
+    com.cburch.logisim.instance.Instance[] pins =
         new com.cburch.logisim.instance.Instance[vector.columnName.length];
-    com.cburch.logisim.circuit.CircuitState tempState = 
+    com.cburch.logisim.circuit.CircuitState tempState =
         com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit);
-    
+    tempState.getPropagator().setPropagatorThread(Thread.currentThread());
+
     for (int i = 0; i < vector.columnName.length; i++) {
       String columnName = vector.columnName[i];
       boolean found = false;
       for (Component comp : circuit.getNonWires()) {
         if (!(comp.getFactory() instanceof com.cburch.logisim.std.wiring.Pin)) continue;
-        com.cburch.logisim.instance.Instance inst = 
+        com.cburch.logisim.instance.Instance inst =
             com.cburch.logisim.instance.Instance.getInstanceFor(comp);
         com.cburch.logisim.instance.InstanceState pinState = tempState.getInstanceState(comp);
         String label = pinState.getAttributeValue(StdAttr.LABEL);
@@ -645,7 +647,7 @@ public class TestVectorDocsSampleTest {
         if (com.cburch.logisim.std.wiring.Pin.FACTORY.getWidth(inst).getWidth() != vector.columnWidth[i].getWidth()) {
           throw new AssertionError(String.format(
               "test vector column '%s' has width %d, but pin has width %d",
-              columnName, vector.columnWidth[i].getWidth(), 
+              columnName, vector.columnWidth[i].getWidth(),
               com.cburch.logisim.std.wiring.Pin.FACTORY.getWidth(inst).getWidth()));
         }
         pins[i] = inst;
@@ -654,12 +656,12 @@ public class TestVectorDocsSampleTest {
       }
       assertTrue(found, "Pin " + columnName + " should be found in circuit");
     }
-    
+
     // Execute tests - with the corrected circuit, all tests should pass
     int currentSet = -1;
     int numPass = 0;
     int numFail = 0;
-    
+
     for (int i = 0; i < vector.data.size(); i++) {
       // Determine set and seq (same logic as TestThread.doTestVector)
       int testSet = 0;
@@ -670,16 +672,16 @@ public class TestVectorDocsSampleTest {
       if (vector.seqNumbers != null && i < vector.seqNumbers.length) {
         testSeq = vector.seqNumbers[i];
       }
-      
+
       // Determine if we should reset (same logic as TestThread.doTestVector)
       boolean shouldReset = (testSeq == 0 || testSet != currentSet);
       if (shouldReset) {
         currentSet = testSet;
       }
-      
+
       // Execute the test using Circuit.doTestVector - this will throw TestException if it fails
       try {
-        circuit.doTestVector(project, pins, vector.data.get(i), shouldReset, vector, i);
+        circuit.doTestVector(tempState, pins, vector.data.get(i), shouldReset, vector, i);
         // Test passed
         numPass++;
       } catch (com.cburch.logisim.data.FailException e) {
@@ -691,7 +693,7 @@ public class TestVectorDocsSampleTest {
         }
         numFail++;
         throw new AssertionError(
-            String.format("Test %d failed unexpectedly with the corrected circuit:\n%s", 
+            String.format("Test %d failed unexpectedly with the corrected circuit:\n%s",
                 i + 1, errorDetails.toString()), e);
       } catch (com.cburch.logisim.data.TestException e) {
         // Test failed with other exception
@@ -700,11 +702,10 @@ public class TestVectorDocsSampleTest {
             String.format("Test %d failed unexpectedly: %s", i + 1, e.getMessage()), e);
       }
     }
-    
+
     // Verify all tests passed as expected
     assertEquals(4, numPass, "Expected 4 tests to pass with the corrected circuit");
     assertEquals(0, numFail, "Expected 0 tests to fail with the corrected circuit");
   }
 
 }
-

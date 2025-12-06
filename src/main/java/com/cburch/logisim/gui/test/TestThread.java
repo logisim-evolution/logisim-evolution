@@ -30,6 +30,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
   private final Project project;
   private final Circuit circuit;
+  private final CircuitState circuitState;
   private final TestVector vector;
   private Instance[] pin;
   private Model model;
@@ -42,6 +43,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     this.project = model.getProject();
     this.circuit = model.getCircuit();
+    this.circuitState = project.getCircuitState().cloneAsNewRootState();
+    this.circuitState.getPropagator().setPropagatorThread(this);
     this.vector = model.getVector();
 
     matchPins();
@@ -54,6 +57,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     super("TestThread-Project");
     this.project = proj;
     this.circuit = circuit;
+    this.circuitState = project.getCircuitState().cloneAsNewRootState();
+    this.circuitState.getPropagator().setPropagatorThread(this);
     this.vector = vec;
 
     matchPins();
@@ -82,12 +87,12 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
       // Debug: Show all sequence numbers in file order
-      com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+      com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
           "=== Test Vector Sequence Analysis ===");
       for (int i = 0; i < vec.data.size(); i++) {
         int setNum = (vec.setNumbers != null && i < vec.setNumbers.length) ? vec.setNumbers[i] : 0;
         int seqNum = (vec.seqNumbers != null && i < vec.seqNumbers.length) ? vec.seqNumbers[i] : 0;
-        com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+        com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
             "Row {}: set={}, seq={}", i, setNum, seqNum);
       }
     }
@@ -97,22 +102,22 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     for (int i = 0; i < vec.data.size(); i++) {
       sortedIndices.add(i);
     }
-    
+
     // Sort by set first, then by sequence
     sortedIndices.sort((a, b) -> {
       int setA = (vec.setNumbers != null && a < vec.setNumbers.length) ? vec.setNumbers[a] : 0;
       int setB = (vec.setNumbers != null && b < vec.setNumbers.length) ? vec.setNumbers[b] : 0;
       int seqA = (vec.seqNumbers != null && a < vec.seqNumbers.length) ? vec.seqNumbers[a] : 0;
       int seqB = (vec.seqNumbers != null && b < vec.seqNumbers.length) ? vec.seqNumbers[b] : 0;
-      
+
       // First compare by set
       int setCompare = Integer.compare(setA, setB);
       if (setCompare != 0) return setCompare;
-      
+
       // Then compare by sequence
       int seqCompare = Integer.compare(seqA, seqB);
       if (seqCompare != 0) return seqCompare;
-      
+
       // If set and seq are the same, maintain original order (by index)
       return Integer.compare(a, b);
     });
@@ -121,43 +126,43 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     int numFail = 0;
     int currentSet = -1; // Track current set (sequence ID)
     boolean shouldReset = true;
-    
+
     // Execute tests in sorted order
     for (int sortedIdx = 0; sortedIdx < sortedIndices.size(); sortedIdx++) {
       int i = sortedIndices.get(sortedIdx);
       try {
         System.out.print((sortedIdx + 1) + " \r");
-        
+
         // Determine set number (sequence ID) for this test
         int testSet = 0;
         if (vec.setNumbers != null && i < vec.setNumbers.length) {
           testSet = vec.setNumbers[i];
         }
-        
+
         // Determine sequence number (step number within set) for this test
         int testSeq = 0;
         if (vec.seqNumbers != null && i < vec.seqNumbers.length) {
           testSeq = vec.seqNumbers[i];
         }
-        
+
         // Determine if we should reset
         // Reset if: starting a new set (sequence ID), or test is combinational (seq == 0)
         if (testSeq == 0 || testSet != currentSet) {
           shouldReset = true;
           currentSet = testSet;
-          
+
           if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
             if (testSeq == 0) {
-              com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+              com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
                   "=== Starting combinational test (Set {}, Seq {}) ===", testSet, testSeq);
             } else {
               // Count how many steps are in this set (sequence)
               int sequenceStepCount = 0;
               for (int j = sortedIdx; j < sortedIndices.size(); j++) {
                 int rowIdx = sortedIndices.get(j);
-                int rowSet = (vec.setNumbers != null && rowIdx < vec.setNumbers.length) 
+                int rowSet = (vec.setNumbers != null && rowIdx < vec.setNumbers.length)
                     ? vec.setNumbers[rowIdx] : 0;
-                int rowSeq = (vec.seqNumbers != null && rowIdx < vec.seqNumbers.length) 
+                int rowSeq = (vec.seqNumbers != null && rowIdx < vec.seqNumbers.length)
                     ? vec.seqNumbers[rowIdx] : 0;
                 // Count steps in this set (skip seq=0 as they're combinational)
                 if (rowSet == testSet && rowSeq != 0) {
@@ -166,22 +171,22 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
                   break; // End of this set
                 }
               }
-              com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+              com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
                   "=== Starting sequential test execution (Set {}) ===", testSet);
-              com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+              com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
                   "Total steps in this sequence: {}", sequenceStepCount);
             }
           }
         } else {
           // Same set (sequence) - don't reset, preserve state
           shouldReset = false;
-          
+
           if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
-            com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+            com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
                 "--- Continuing in Set {} (Seq {}, no reset) ---", testSet, testSeq);
           }
         }
-        
+
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
           // Log inputs before execution
           StringBuilder inputStr = new StringBuilder("Running set ").append(testSet)
@@ -201,9 +206,9 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           }
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, inputStr.toString());
         }
-        
+
         tester.test(i, shouldReset);
-        
+
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
           // Log outputs after execution
           com.cburch.logisim.circuit.CircuitState state = proj.getCircuitState();
@@ -228,12 +233,12 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, outputStr.toString());
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, "Test {}: PASS", sortedIdx + 1);
         }
-        
+
         numPass++;
       } catch (FailException e) {
         System.out.println();
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
-          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
               "Test {}: FAIL - {}", sortedIdx + 1, e.getMessage());
         }
         System.err.println(S.get("testFailed", Integer.toString(sortedIdx + 1)));
@@ -242,7 +247,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
       } catch (TestException e) {
         System.out.println();
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
-          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
               "Test {}: FAIL - {}", sortedIdx + 1, e.getMessage());
         }
         System.err.println(S.get("testFailed", (sortedIdx + 1) + " " + e.getMessage()));
@@ -268,7 +273,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   void matchPins() throws TestException {
     int n = vector.columnName.length;
     pin = new Instance[n];
-    CircuitState state = CircuitState.createRootState(this.project, this.circuit);
+    CircuitState state = circuitState; //CircuitState.createRootState(this.project, this.circuit);
 
     for (int i = 0; i < n; i++) {
       String columnName = vector.columnName[i];
@@ -309,33 +314,33 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     for (int i = 0; i < vector.data.size(); i++) {
       sortedIndices.add(i);
     }
-    
+
     // Sort by set first, then by sequence
     sortedIndices.sort((a, b) -> {
       int setA = (vector.setNumbers != null && a < vector.setNumbers.length) ? vector.setNumbers[a] : 0;
       int setB = (vector.setNumbers != null && b < vector.setNumbers.length) ? vector.setNumbers[b] : 0;
       int seqA = (vector.seqNumbers != null && a < vector.seqNumbers.length) ? vector.seqNumbers[a] : 0;
       int seqB = (vector.seqNumbers != null && b < vector.seqNumbers.length) ? vector.seqNumbers[b] : 0;
-      
+
       // First compare by set
       int setCompare = Integer.compare(setA, setB);
       if (setCompare != 0) return setCompare;
-      
+
       // Then compare by sequence
       int seqCompare = Integer.compare(seqA, seqB);
       if (seqCompare != 0) return seqCompare;
-      
+
       // If set and seq are the same, maintain original order (by index)
       return Integer.compare(a, b);
     });
-    
+
     int currentSet = -1; // Track current set (sequence ID)
     boolean shouldReset = true;
-    
+
     // Execute tests in sorted order
     for (int sortedIdx = 0; sortedIdx < sortedIndices.size() && !canceled; sortedIdx++) {
       int i = sortedIndices.get(sortedIdx);
-      
+
       while (paused) {
         if (canceled) return;
         try {
@@ -343,44 +348,44 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
         } catch (InterruptedException ignored) {
         }
       }
-      
+
       // Determine set number (sequence ID) for this test
       int testSet = 0;
       if (vector.setNumbers != null && i < vector.setNumbers.length) {
         testSet = vector.setNumbers[i];
       }
-      
+
       // Determine sequence number (step number within set) for this test
       int testSeq = 0;
       if (vector.seqNumbers != null && i < vector.seqNumbers.length) {
         testSeq = vector.seqNumbers[i];
       }
-      
+
       // Determine if we should reset
       // Reset if: starting a new set (sequence ID), or test is combinational (seq == 0)
       if (testSeq == 0 || testSet != currentSet) {
         shouldReset = true;
         currentSet = testSet;
-        
+
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
           if (testSeq == 0) {
-            com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+            com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
                 "=== Starting combinational test (Set {}, Seq {}) ===", testSet, testSeq);
           } else {
-            com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+            com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
                 "=== Starting sequential test execution (Set {}) ===", testSet);
           }
         }
       } else {
         // Same set (sequence) - don't reset, preserve state
         shouldReset = false;
-        
+
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
-          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
               "--- Continuing in Set {} (Seq {}, no reset) ---", testSet, testSeq);
         }
       }
-      
+
       if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
         // Log inputs before execution
         StringBuilder inputStr = new StringBuilder("Running set ").append(testSet)
@@ -400,13 +405,13 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
         }
         com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, inputStr.toString());
       }
-      
+
       try {
         test(i, shouldReset);
-        
+
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
           // Log outputs after execution
-          com.cburch.logisim.circuit.CircuitState state = project.getCircuitState();
+          com.cburch.logisim.circuit.CircuitState state = circuitState;
           StringBuilder outputStr = new StringBuilder("Output result: ");
           for (int j = 0; j < pin.length; j++) {
             if (!com.cburch.logisim.std.wiring.Pin.FACTORY.isInputPin(pin[j])) {
@@ -428,11 +433,11 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, outputStr.toString());
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, "Test {}: PASS", sortedIdx + 1);
         }
-        
+
         canceled = canceled || !model.setResult(vector, i, null);
       } catch (TestException e) {
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
-          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, 
+          com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
               "Test {}: FAIL - {}", sortedIdx + 1, e.getMessage());
         }
         canceled = canceled || !model.setResult(vector, i, e);
@@ -446,6 +451,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   }
 
   private void test(int idx, boolean resetState) throws TestException {
-    circuit.doTestVector(project, pin, vector.data.get(idx), resetState, vector, idx);
+    circuit.doTestVector(circuitState, pin, vector.data.get(idx), resetState, vector, idx);
   }
 }

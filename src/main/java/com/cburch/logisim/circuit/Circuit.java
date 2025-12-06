@@ -27,6 +27,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.TestException;
+import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -463,31 +464,20 @@ public class Circuit {
   }
 
   /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   *
-   * @deprecated Use {@link #doTestVector(Project, Instance[], Value[], boolean, TestVector, int)} instead
-   */
-  @Deprecated
-  public void doTestVector(Project project, Instance[] pin, Value[] val) throws TestException {
-    doTestVector(project, pin, val, true, null, -1);
-  }
-
-  /**
    * Execute a test vector with optional reset control and special value handling.
    *
-   * @param project The project containing the circuit
-   * @param pin Array of pin instances
-   * @param val Array of values to drive/expect
+   * @param state      The project containing the circuit
+   * @param pin        Array of pin instances
+   * @param val        Array of values to drive/expect
    * @param resetState If true, reset circuit state before test; if false, maintain state
-   * @param vector The test vector (can be null for backward compatibility)
-   * @param rowIndex The row index in the test vector (used for don't-care/floating checks)
+   * @param vector     The test vector (can be null for backward compatibility)
+   * @param rowIndex   The row index in the test vector (used for don't-care/floating checks)
    * @throws TestException if test fails
    */
-  public void doTestVector(Project project, Instance[] pin, Value[] val, boolean resetState, 
-      com.cburch.logisim.data.TestVector vector, int rowIndex) throws TestException {
-    final var state = project.getCircuitState();
+  public static void doTestVector(CircuitState state, Instance[] pin, Value[] val, boolean resetState,
+                                  TestVector vector, int rowIndex) throws TestException {
     final var prop = state.getPropagator();
-    prop.setPropagatorThread(Thread.currentThread());
+    //prop.setPropagatorThread(Thread.currentThread());
     if (resetState) {
       state.reset();
     }
@@ -506,9 +496,6 @@ public class Circuit {
       }
     }
 
-
-    // Propagate until stable
-    
     try {
       prop.propagate();
     } catch (Throwable thr) {
@@ -529,12 +516,12 @@ public class Circuit {
       if (Pin.FACTORY.isInputPin(pin[i])) continue;
 
       final var v = Pin.FACTORY.getValue(pinState);
-      
+
       // Check for don't care - always pass
       if (vector != null && rowIndex >= 0 && vector.isDontCare(rowIndex, i)) {
         continue; // Skip comparison for don't care values
       }
-      
+
       // Check for floating - expect UNKNOWN
       if (vector != null && rowIndex >= 0 && vector.isFloating(rowIndex, i)) {
         if (!Value.UNKNOWN.equals(v)) {
@@ -546,7 +533,7 @@ public class Circuit {
         }
         continue;
       }
-      
+
       // Normal value comparison
       if (!val[i].compatible(v)) {
         if (err == null) {
@@ -556,7 +543,7 @@ public class Circuit {
         }
       }
     }
-    prop.setPropagatorThread(null);
+    //prop.setPropagatorThread(null);
 
     if (err != null) {
       throw err;

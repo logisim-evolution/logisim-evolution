@@ -30,7 +30,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test for D-Latch test vector execution.
- * 
+ *
  * This test verifies that sequential test vectors work correctly for
  * stateful circuits like a D-Latch, where the output depends on previous
  * state as well as current inputs.
@@ -57,7 +57,7 @@ public class DLatchTestVectorTest {
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
-    
+
     // Verify parsing
     // Note: <seq> is metadata column, not included in columnName
     // Only actual pin columns are in columnName
@@ -66,10 +66,10 @@ public class DLatchTestVectorTest {
     assertEquals("write", vector.columnName[1]);
     assertEquals("Q", vector.columnName[2]);
     assertEquals("NQ", vector.columnName[3]);
-    
+
     // Verify we have 5 test rows
     assertEquals(5, vector.data.size());
-    
+
     // Verify sequence numbers
     assertNotNull(vector.seqNumbers);
     assertEquals(5, vector.seqNumbers.length);
@@ -78,7 +78,7 @@ public class DLatchTestVectorTest {
     assertEquals(3, vector.seqNumbers[2]);
     assertEquals(4, vector.seqNumbers[3]);
     assertEquals(5, vector.seqNumbers[4]);
-    
+
     // Verify set numbers (should default to 0 when not specified)
     // Since there's no <set> column, setNumbers should be empty array
     // But the code should handle this by defaulting to set=0
@@ -88,7 +88,7 @@ public class DLatchTestVectorTest {
         assertEquals(0, vector.setNumbers[i], "Row " + i + " should default to set=0");
       }
     }
-    
+
     // Verify test data values
     // Note: data array only contains pin values, not metadata columns
     // Column indices: 0=data, 1=write, 2=Q, 3=NQ
@@ -97,25 +97,25 @@ public class DLatchTestVectorTest {
     assertEquals(0L, vector.data.get(0)[1].toLongValue()); // write
     assertEquals(0L, vector.data.get(0)[2].toLongValue()); // Q
     assertEquals(1L, vector.data.get(0)[3].toLongValue()); // NQ
-    
+
     // Row 1: seq=2, data=1, write=0, Q=0, NQ=1 (write=0, so Q should stay 0)
     assertEquals(1L, vector.data.get(1)[0].toLongValue()); // data
     assertEquals(0L, vector.data.get(1)[1].toLongValue()); // write
     assertEquals(0L, vector.data.get(1)[2].toLongValue()); // Q
     assertEquals(1L, vector.data.get(1)[3].toLongValue()); // NQ
-    
+
     // Row 2: seq=3, data=1, write=1, Q=1, NQ=0 (write=1, so Q should become 1)
     assertEquals(1L, vector.data.get(2)[0].toLongValue()); // data
     assertEquals(1L, vector.data.get(2)[1].toLongValue()); // write
     assertEquals(1L, vector.data.get(2)[2].toLongValue()); // Q
     assertEquals(0L, vector.data.get(2)[3].toLongValue()); // NQ
-    
+
     // Row 3: seq=4, data=0, write=0, Q=1, NQ=0 (write=0, so Q should stay 1)
     assertEquals(0L, vector.data.get(3)[0].toLongValue()); // data
     assertEquals(0L, vector.data.get(3)[1].toLongValue()); // write
     assertEquals(1L, vector.data.get(3)[2].toLongValue()); // Q
     assertEquals(0L, vector.data.get(3)[3].toLongValue()); // NQ
-    
+
     // Row 4: seq=5, data=0, write=1, Q=0, NQ=1 (write=1, so Q should become 0)
     assertEquals(0L, vector.data.get(4)[0].toLongValue()); // data
     assertEquals(1L, vector.data.get(4)[1].toLongValue()); // write
@@ -140,14 +140,14 @@ public class DLatchTestVectorTest {
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
-    
+
     // Verify set numbers
     assertNotNull(vector.setNumbers);
     assertEquals(5, vector.setNumbers.length);
     for (int i = 0; i < 5; i++) {
       assertEquals(1, vector.setNumbers[i], "Row " + i + " should have set=1");
     }
-    
+
     // Verify sequence numbers
     assertNotNull(vector.seqNumbers);
     assertEquals(5, vector.seqNumbers.length);
@@ -251,30 +251,31 @@ public class DLatchTestVectorTest {
         circuitXml.getBytes(StandardCharsets.UTF_8));
     LogisimFile logisimFile = LogisimFile.load(xmlStream, loader);
     assertNotNull(logisimFile, "Circuit should load successfully");
-    
+
     Circuit circuit = logisimFile.getCircuit("DLatch");
     assertNotNull(circuit, "DLatch circuit should exist");
-    
+
     // Create project
     Project project = new Project(logisimFile);
     project.setCurrentCircuit(circuit);
-    
+
     // Execute test vector using the same method CLI uses
     // This will actually run the tests and throw exceptions on failure
     TestVector vector = new TestVector(testFile.getAbsolutePath());
-    
+
     // Match pins manually (same logic as TestThread.matchPins)
-    com.cburch.logisim.instance.Instance[] pins = 
+    com.cburch.logisim.instance.Instance[] pins =
         new com.cburch.logisim.instance.Instance[vector.columnName.length];
-    com.cburch.logisim.circuit.CircuitState tempState = 
+    com.cburch.logisim.circuit.CircuitState tempState =
         com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit);
-    
+    tempState.getPropagator().setPropagatorThread(Thread.currentThread());
+
     for (int i = 0; i < vector.columnName.length; i++) {
       String columnName = vector.columnName[i];
       boolean found = false;
       for (Component comp : circuit.getNonWires()) {
         if (!(comp.getFactory() instanceof com.cburch.logisim.std.wiring.Pin)) continue;
-        com.cburch.logisim.instance.Instance inst = 
+        com.cburch.logisim.instance.Instance inst =
             com.cburch.logisim.instance.Instance.getInstanceFor(comp);
         com.cburch.logisim.instance.InstanceState pinState = tempState.getInstanceState(comp);
         String label = pinState.getAttributeValue(StdAttr.LABEL);
@@ -285,10 +286,10 @@ public class DLatchTestVectorTest {
       }
       assertTrue(found, "Pin " + columnName + " should be found in circuit");
     }
-    
+
     // Execute tests in sequence (same order and logic as TestThread.doTestVector)
     int currentSet = -1;
-    
+
     for (int i = 0; i < vector.data.size(); i++) {
       // Determine set and seq (same logic as TestThread.doTestVector)
       int testSet = 0;
@@ -299,23 +300,22 @@ public class DLatchTestVectorTest {
       if (vector.seqNumbers != null && i < vector.seqNumbers.length) {
         testSeq = vector.seqNumbers[i];
       }
-      
+
       // Determine if we should reset (same logic as TestThread.doTestVector)
       boolean shouldReset = (testSeq == 0 || testSet != currentSet);
       if (shouldReset) {
         currentSet = testSet;
       }
-      
+
       // Execute the test using Circuit.doTestVector - this will throw TestException if it fails
       // This is the SAME method that CLI, GUI, and the test all use
       try {
-        circuit.doTestVector(project, pins, vector.data.get(i), shouldReset, vector, i);
+        circuit.doTestVector(tempState, pins, vector.data.get(i), shouldReset, vector, i);
       } catch (com.cburch.logisim.data.TestException e) {
         throw new AssertionError(
-            String.format("Test %d (seq %d, set %d) failed: %s", 
+            String.format("Test %d (seq %d, set %d) failed: %s",
                 i + 1, testSeq, testSet, e.getMessage()), e);
       }
     }
   }
 }
-
