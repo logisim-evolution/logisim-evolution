@@ -13,6 +13,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.circuit.CircuitWires.BusConnection;
 import com.cburch.logisim.util.Cache;
 import java.awt.Color;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public final class Value {
@@ -585,6 +586,28 @@ public final class Value {
     if (error != 0) return -1L;
     if (unknown != 0) return -1L;
     return value;
+  }
+
+  public BigInteger toBigInteger(boolean unsigned) {
+    var mask = (width == 64 ? -1L : ~(-1L << width));
+    long value = this.value & mask;
+    if (unsigned) {
+      return new BigInteger(
+        1,
+        new byte[] {
+                (byte) ((value >> 56) & 0xFFL),
+                (byte) ((value >> 48) & 0xFFL),
+                (byte) ((value >> 40) & 0xFFL),
+                (byte) ((value >> 32) & 0xFFL),
+                (byte) ((value >> 24) & 0xFFL),
+                (byte) ((value >> 16) & 0xFFL),
+                (byte) ((value >> 8 ) & 0xFFL),
+                (byte) ((value      ) & 0xFFL)
+        }
+      );
+    }
+    if ((value >> (width - 1)) != 0) value |= ~mask;
+    return BigInteger.valueOf(value);
   }
 
   public float toFloatValue() {

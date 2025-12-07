@@ -45,9 +45,9 @@ public class Divider extends InstanceFactory {
     int w = width.getWidth();
     if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
-      BigInteger uu = Multiplier.extend(w, upper.toLongValue(), unsigned);
-      BigInteger aa = Multiplier.extend(w, a.toLongValue(), unsigned);
-      BigInteger bb = Multiplier.extend(w, b.toLongValue(), unsigned);
+      BigInteger uu = upper.toBigInteger(unsigned);
+      BigInteger aa = a.toBigInteger(unsigned);
+      BigInteger bb = b.toBigInteger(unsigned);
 
       BigInteger num = uu.shiftLeft(w).or(aa);
       BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
