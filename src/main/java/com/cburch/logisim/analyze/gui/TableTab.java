@@ -36,21 +36,29 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private class MyListener implements TruthTableListener, LocaleListener {
@@ -86,15 +94,19 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   private static final long serialVersionUID = 1L;
+  private static final double ZOOM_FACTOR_STEP = 0.1;
+  private static final double MIN_ZOOM = 1.0;
+  private static final double MAX_ZOOM = 5.0;
 
-  private final Font headFont;
-  private final Font bodyFont;
-  private final int headerPadding;
-  private final int headerVertSep;
-  private final int headerHorizSep;
-  private final int defaultCellPadding;
-  private final int defaultCellWidth;
-  private final int defaultCellHeight;
+  private Font headFont;
+  private Font bodyFont;
+  private int headerPadding;
+  private int headerVertSep;
+  private int headerHorizSep;
+  private int defaultCellPadding;
+  private int defaultCellWidth;
+  private int defaultCellHeight;
+  private double zoomFactor = 1.0;
 
   private final MyListener myListener = new MyListener();
   private final TruthTable table;
@@ -249,6 +261,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private final SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
   private final TightButton expand = new TightButton(S.get("tableExpand"));
   private final TightButton compact = new TightButton(S.get("tableCompact"));
+  private final JButton zoomIn = new JButton(new com.cburch.logisim.gui.icons.ZoomIcon(com.cburch.logisim.gui.icons.ZoomIcon.ZOOMIN));
+  private final JButton zoomOut = new JButton(new com.cburch.logisim.gui.icons.ZoomIcon(com.cburch.logisim.gui.icons.ZoomIcon.ZOOMOUT));
   private final JLabel count = new JLabel(S.get("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
   private static class TightButton extends JButton {
@@ -286,15 +300,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   public TableTab(TruthTable table) {
     this.table = table;
-    final var myFont = new Font("Serif", Font.PLAIN, 14);
-    headFont = AppPreferences.getScaledFont(myFont).deriveFont(Font.BOLD);
-    bodyFont = AppPreferences.getScaledFont(myFont);
-    headerPadding = AppPreferences.getScaled(10);
-    headerVertSep = AppPreferences.getScaled(4);
-    headerHorizSep = AppPreferences.getScaled(4);
-    defaultCellPadding = AppPreferences.getScaled(12);
-    defaultCellWidth = AppPreferences.getScaled(12);
-    defaultCellHeight = AppPreferences.getScaled(16);
+    updateScale();
     header = new TableHeader();
     body = new TableBody();
     bodyPane =
@@ -311,6 +317,22 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           }
         });
     bodyPane.setVerticalScrollBar(getVerticalScrollBar());
+    
+    // Handle zooming with Ctrl + Mouse Wheel
+    bodyPane.addMouseWheelListener(e -> {
+      if (e.isControlDown()) {
+        if (e.getWheelRotation() < 0) {
+          zoomIn();
+        } else {
+          zoomOut();
+        }
+        e.consume();
+      } else {
+        // Forward to vertical scrollbar if Ctrl is not down (normal scrolling)
+        bodyPane.dispatchEvent(SwingUtilities.convertMouseEvent(bodyPane, e, bodyPane.getParent()));
+      }
+    });
+
     headerPane =
         new JScrollPane(
             header,
@@ -343,11 +365,23 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     toolbar.add(zero);
     toolbar.add(compact);
     toolbar.add(expand);
+    toolbar.add(zoomOut);
+    toolbar.add(zoomIn);
+    
     one.setActionCommand("1");
     zero.setActionCommand("0");
     dontcare.setActionCommand("x");
     compact.setActionCommand("compact");
     expand.setActionCommand("expand");
+    
+    zoomIn.addActionListener(e -> zoomIn());
+    zoomOut.addActionListener(e -> zoomOut());
+    // Basic styling for zoom buttons
+    zoomIn.setMargin(new Insets(2, 2, 2, 2));
+    zoomOut.setMargin(new Insets(2, 2, 2, 2));
+    zoomIn.setToolTipText(S.get("zoomIn") + " (Ctrl + Plus)");
+    zoomOut.setToolTipText(S.get("zoomOut") + " (Ctrl + Minus)");
+
 
     expand.setEnabled(getRowCount() < table.getRowCount());
     count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
@@ -401,10 +435,93 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             gbl.setConstraints(headerPane, gbc);
             invalidate();
             repaint();
+            
+            setupKeyBindings();
           }
         });
     editHandler.computeEnabled();
     LocaleManager.addLocaleListener(myListener);
+  }
+  
+  private void setupKeyBindings() {
+      InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+      ActionMap actionMap = getActionMap();
+
+      // Zoom In (Ctrl + '+')
+      KeyStroke ctrlPlus = KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke ctrlAdd = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_DOWN_MASK);
+      inputMap.put(ctrlPlus, "zoomIn");
+      inputMap.put(ctrlAdd, "zoomIn");
+      actionMap.put("zoomIn", new AbstractAction() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              zoomIn();
+          }
+      });
+
+      // Zoom Out (Ctrl + '-')
+      KeyStroke ctrlMinus = KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke ctrlSubtract = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, KeyEvent.CTRL_DOWN_MASK);
+      inputMap.put(ctrlMinus, "zoomOut");
+      inputMap.put(ctrlSubtract, "zoomOut");
+      actionMap.put("zoomOut", new AbstractAction() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              zoomOut();
+          }
+      });
+      
+      // Reset Zoom (Ctrl + 0)
+      KeyStroke ctrlZero = KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_DOWN_MASK);
+      KeyStroke ctrlNumpadZero = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, KeyEvent.CTRL_DOWN_MASK);
+      inputMap.put(ctrlZero, "zoomReset");
+      inputMap.put(ctrlNumpadZero, "zoomReset");
+      actionMap.put("zoomReset", new AbstractAction() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              zoomReset();
+          }
+      });
+  }
+  
+  private void updateScale() {
+    final var baseSize = 18.0f;
+    final var scaledSize = (float) (AppPreferences.getScaled(baseSize) * zoomFactor);
+    final var myFont = new Font("Serif", Font.PLAIN, (int) scaledSize);
+    headFont = myFont.deriveFont(Font.BOLD);
+    bodyFont = myFont;
+    headerPadding = (int)(AppPreferences.getScaled(10) * zoomFactor);
+    headerVertSep = (int)(AppPreferences.getScaled(4) * zoomFactor);
+    headerHorizSep = (int)(AppPreferences.getScaled(4) * zoomFactor);
+    defaultCellPadding = (int)(AppPreferences.getScaled(15) * zoomFactor);
+    defaultCellWidth = (int)(AppPreferences.getScaled(15) * zoomFactor);
+    defaultCellHeight = (int)(AppPreferences.getScaled(22) * zoomFactor);
+  }
+  
+  private void refreshTable() {
+      updateScale();
+      computePreferredSize();
+      repaint();
+      revalidate();
+  }
+
+  private void zoomReset() {
+      zoomFactor = 1.0;
+      refreshTable();
+  }
+  
+  private void zoomIn() {
+    if (zoomFactor < MAX_ZOOM) {
+      zoomFactor += ZOOM_FACTOR_STEP;
+      refreshTable();
+    }
+  }
+
+  private void zoomOut() {
+    if (zoomFactor > MIN_ZOOM) {
+      zoomFactor -= ZOOM_FACTOR_STEP;
+      refreshTable();
+    }
   }
 
   public JPanel getBody() {
