@@ -40,48 +40,40 @@ public class FpClassificator extends InstanceFactory {
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
-  private static final int NEG_INF = 1;
-  private static final int NEG_NORMAL = 2;
-  private static final int NEG_SUBNORMAL = 3;
-  private static final int NEG_ZERO = 4;
-  private static final int POS_ZERO = 5;
-  private static final int POS_SUBNORMAL = 6;
-  private static final int POS_NORMAL = 7;
-  private static final int POS_INF = 8;
+  private static final int NEGATIVE = 1;
+  private static final int ZERO = 2;
+  private static final int SUBNORMAL = 3;
+  private static final int NORMAL = 4;
+  private static final int INFINITE = 5;
+
 //private static final int SIGNALING_NAN = 9;
-  private static final int QUIET_NAN = 9;
+  private static final int QUIET_NAN = 6;
 
   public FpClassificator() {
     super(_ID, S.getter("fpClassificator"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
-    setOffsetBounds(Bounds.create(-40, -50, 40, 100));
+    setOffsetBounds(Bounds.create(-40, -40, 40, 80));
     setIcon(new ArithmeticIcon("\u2630 ",3));
 
-    final var ps = new Port[10];
+    final var ps = new Port[7];
     ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
 
-    ps[NEG_INF] = new Port(0, -40, Port.OUTPUT, 1);
-    ps[NEG_NORMAL] = new Port(0, -30, Port.OUTPUT, 1);
-    ps[NEG_SUBNORMAL] = new Port(0, -20, Port.OUTPUT, 1);
-    ps[NEG_ZERO] = new Port(0, -10, Port.OUTPUT, 1);
-    ps[POS_ZERO] = new Port(0, 0, Port.OUTPUT, 1);
-    ps[POS_SUBNORMAL] = new Port(0, 10, Port.OUTPUT, 1);
-    ps[POS_NORMAL] = new Port(0, 20, Port.OUTPUT, 1);
-    ps[POS_INF] = new Port(0, 30, Port.OUTPUT, 1);
+    ps[NEGATIVE] = new Port(0, -30, Port.OUTPUT, 1);
+    ps[ZERO] = new Port(0, -20, Port.OUTPUT, 1);
+    ps[SUBNORMAL] = new Port(0, -10, Port.OUTPUT, 1);
+    ps[NORMAL] = new Port(0, 0, Port.OUTPUT, 1);
+    ps[INFINITE] = new Port(0, 10, Port.OUTPUT, 1);
 //  ps[SIGNALING_NAN] = new Port(0, 20, Port.OUTPUT, 1);
-    ps[QUIET_NAN] = new Port(0, 40, Port.OUTPUT, 1);
+    ps[QUIET_NAN] = new Port(0, 30, Port.OUTPUT, 1);
 
     ps[IN0].setToolTip(S.getter("fpClassificatorInputTip"));
 
-    ps[NEG_INF].setToolTip(S.getter("fpClassificatorNegativeInfinityTip"));
-    ps[NEG_NORMAL].setToolTip(S.getter("fpClassificatorNegativeNormalTip"));
-    ps[NEG_SUBNORMAL].setToolTip(S.getter("fpClassificatorNegativeSubnormalTip"));
-    ps[NEG_ZERO].setToolTip(S.getter("fpClassificatorNegativeZeroTip"));
-    ps[POS_ZERO].setToolTip(S.getter("fpClassificatorPositiveZeroTip"));
-    ps[POS_SUBNORMAL].setToolTip(S.getter("fpClassificatorPositiveSubnormalTip"));
-    ps[POS_NORMAL].setToolTip(S.getter("fpClassificatorPositiveNormalTip"));
-    ps[POS_INF].setToolTip(S.getter("fpClassificatorPositiveInfinityTip"));
+    ps[NEGATIVE].setToolTip(S.getter("fpClassificatorNegativeTip"));
+    ps[ZERO].setToolTip(S.getter("fpClassificatorZeroTip"));
+    ps[SUBNORMAL].setToolTip(S.getter("fpClassificatorSubnormalTip"));
+    ps[NORMAL].setToolTip(S.getter("fpClassificatorNormalTip"));
+    ps[INFINITE].setToolTip(S.getter("fpClassificatorInfiniteTip"));
 //  ps[SIGNALING_NAN].setToolTip(S.getter("fpClassificatorSignalingNaNTip"));
     ps[QUIET_NAN].setToolTip(S.getter("fpClassificatorQuietNaNTip"));
 
@@ -107,14 +99,11 @@ public class FpClassificator extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawPort(IN0);
-    painter.drawPort(NEG_INF, "-\u221E", Direction.WEST);
-    painter.drawPort(NEG_NORMAL, "-N", Direction.WEST);
-    painter.drawPort(NEG_SUBNORMAL, "-SN", Direction.WEST);
-    painter.drawPort(NEG_ZERO, "-0", Direction.WEST);
-    painter.drawPort(POS_ZERO, "+0", Direction.WEST);
-    painter.drawPort(POS_SUBNORMAL, "+SN", Direction.WEST);
-    painter.drawPort(POS_NORMAL, "+N", Direction.WEST);
-    painter.drawPort(POS_INF, "+\u221E", Direction.WEST);
+    painter.drawPort(NEGATIVE, "-", Direction.WEST);
+    painter.drawPort(ZERO, "0", Direction.WEST);
+    painter.drawPort(SUBNORMAL, "SN", Direction.WEST);
+    painter.drawPort(NORMAL, "N", Direction.WEST);
+    painter.drawPort(INFINITE, "\u221E", Direction.WEST);
 //  painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
     painter.drawPort(QUIET_NAN, "NaN", Direction.WEST); //change to qNaN if sNaN is added
 
@@ -122,9 +111,9 @@ public class FpClassificator extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.drawLine(x - 35, y - 45, x - 35, y - 25);
-    g.drawLine(x - 35, y - 45, x - 25, y - 45);
+    g.drawLine(x - 35, y - 35, x - 35, y - 15);
     g.drawLine(x - 35, y - 35, x - 25, y - 35);
+    g.drawLine(x - 35, y - 25, x - 25, y - 25);
     GraphicsUtil.switchToWidth(g, 1);
   }
 
@@ -136,12 +125,7 @@ public class FpClassificator extends InstanceFactory {
     // compute outputs
     final var a = state.getPortValue(IN0);
 
-    final var isNegative = switch (dataWidth.getWidth()) {
-      case 16 -> (a.toLongValue() & 0x8000) != 0;
-      case 32 -> (a.toLongValue() & 0x80000000) != 0;
-      case 64 -> (a.toLongValue() & 0x8000000000000000L) != 0;
-      default -> false;
-    };
+    final var isNegative = (a.toLongValue() & (1L << (dataWidth.getWidth() - 1))) != 0;
 
     final var isInfinite = switch (dataWidth.getWidth()) {
       case 16 -> Float.isInfinite(a.toFloatValueFromFP16());
@@ -201,17 +185,15 @@ public class FpClassificator extends InstanceFactory {
       case 64 -> Double.isNaN(a.toDoubleValue());
       default -> false;
     };
+
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
 
-    state.setPort(NEG_INF, isNegative && isInfinite ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(NEG_NORMAL, isNegative && isNormal ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(NEG_SUBNORMAL, isNegative && isSubnormal ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(NEG_ZERO, isNegative && isZero ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(POS_ZERO, !isNegative && isZero ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(POS_SUBNORMAL, !isNegative && isSubnormal ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(POS_NORMAL, !isNegative && isNormal ? Value.TRUE : Value.FALSE, delay);
-    state.setPort(POS_INF, !isNegative && isInfinite ? Value.TRUE : Value.FALSE, delay);
+    state.setPort(NEGATIVE, isNegative ? Value.TRUE : Value.FALSE, delay);
+    state.setPort(ZERO, isZero ? Value.TRUE : Value.FALSE, delay);
+    state.setPort(SUBNORMAL, isSubnormal ? Value.TRUE : Value.FALSE, delay);
+    state.setPort(NORMAL, isNormal ? Value.TRUE : Value.FALSE, delay);
+    state.setPort(INFINITE, isInfinite ? Value.TRUE : Value.FALSE, delay);
 //  state.setPort(SIGNALING_NAN, nan, delay);
     state.setPort(QUIET_NAN, isNaN ? Value.TRUE : Value.FALSE, delay);
   }

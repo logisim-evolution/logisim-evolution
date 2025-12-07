@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -30,75 +31,111 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpExponent extends InstanceFactory {
+public class FpExponentiator extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPExponent";
+  public static final String _ID = "FPExponentiator";
 
-  static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
-
+  static final AttributeOption POWER =
+      new AttributeOption("power", S.getter("fpExponentiatorPower"));
   static final AttributeOption EXP =
-      new AttributeOption("exp", S.getter("fpExponentExponent"));
+      new AttributeOption("exp", S.getter("fpExponentiatorExponent"));
   static final AttributeOption EXPM1 =
-      new AttributeOption("expm1", S.getter("fpExponentExponentMinusOne"));
+      new AttributeOption("expm1", S.getter("fpExponentiatorExponentMinusOne"));
   static final Attribute<AttributeOption> EXP_MODE =
       Attributes.forOption(
           "mode",
           S.getter("fpExponentModeAttr"),
           new AttributeOption[] {
+            POWER,
             EXP,
             EXPM1
           });
 
-  public FpExponent() {
-    super(_ID, S.getter("fpExponentComponent"));
+  static final int PER_DELAY = 1;
+  private static final int IN0 = 0;
+  private static final int OUT = 1;
+  private static final int ERR = 2;
+  private static final int IN1 = 3;
+
+  public FpExponentiator() {
+    super(_ID, S.getter("fpExponentiatorComponent"));
     setAttributes(
       new Attribute[] {StdAttr.FP_WIDTH, EXP_MODE},
-      new Object[] {BitWidth.create(32), EXP});
+      new Object[] {BitWidth.create(32), POWER});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("e\u02E3",2));
-
-    final var ps = new Port[3];
-    ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
-    ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("exponentInputTip"));
-    ps[OUT].setToolTip(S.getter("fpExponentOutputTip"));
-    ps[ERR].setToolTip(S.getter("fpErrorTip"));
-    setPorts(ps);
+    setIcon(new ArithmeticIcon("y\u02E3",2));
   }
 
+  @Override
+  protected void configureNewInstance(Instance instance) {
+    configurePorts(instance);
+    instance.addAttributeListener();
+  }
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == EXP_MODE) {
+      configurePorts(instance);
+    }
+  }
+  private void configurePorts(Instance instance) {
+    final var isSingleInput = instance.getAttributeValue(EXP_MODE) != POWER;
+    final Port[] ps;
+    if(isSingleInput) {
+      ps = new Port[3];
+
+      ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+
+    } else {
+      ps = new Port[4];
+
+      ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[IN1].setToolTip(S.getter("exponentiatorInputBTip"));
+    }
+    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
+    ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
+    ps[IN0].setToolTip(S.getter("exponentiatorInputATip"));
+    ps[OUT].setToolTip(S.getter("fpExponentiatorOutputTip"));
+    ps[ERR].setToolTip(S.getter("fpErrorTip"));
+
+    instance.setPorts(ps);
+  }
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-    painter.drawPort(IN0);
+
+    final var mode = painter.getAttributeValue(EXP_MODE);
+    if(mode == POWER) {
+      painter.drawPort(OUT,"y\u02E3",Direction.WEST);
+      g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
+      painter.drawPort(IN0);
+      painter.drawPort(IN1);
+    }
+    else {
+      if(mode == EXP){
+        painter.drawPort(OUT, "e\u02E3", Direction.WEST);
+      } else {
+        painter.drawPort(OUT, "e\u02E3-1", Direction.WEST);
+      }
+      g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
+      painter.drawPort(IN0);
+    }
+
     painter.drawPort(ERR);
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
     final var y = loc.getY();
-
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-
-    final var mode = painter.getAttributeValue(EXP_MODE);
-    if(mode == EXP){
-      painter.drawPort(OUT, "e\u02E3", Direction.WEST);
-    } else {
-      painter.drawPort(OUT, "e\u02E3-1", Direction.WEST);
-    }
-
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -114,6 +151,7 @@ public class FpExponent extends InstanceFactory {
     // compute outputs
     final var a = state.getPortValue(IN0);
 
+    final double out_val;
     final var a_val = switch (dataWidth.getWidth()) {
       case 16 -> a.toFloatValueFromFP16();
       case 32 -> a.toFloatValue();
@@ -121,7 +159,18 @@ public class FpExponent extends InstanceFactory {
       default -> Double.NaN;
     };
 
-    final var out_val = mode == EXP ? Math.exp(a_val) : Math.expm1(a_val);
+    if(mode == POWER) {
+      final var b = state.getPortValue(IN1);
+      final var b_val = switch (dataWidth.getWidth()) {
+        case 16 -> b.toFloatValueFromFP16();
+        case 32 -> b.toFloatValue();
+        case 64 -> b.toDoubleValue();
+        default -> Double.NaN;
+      };
+      out_val = Math.pow(a_val, b_val);
+    } else {
+      out_val = mode == EXP ? Math.exp(a_val) : Math.expm1(a_val);
+    }
 
     final var out = switch (dataWidth.getWidth()) {
       case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
@@ -129,6 +178,7 @@ public class FpExponent extends InstanceFactory {
       case 64 -> Value.createKnown(out_val);
       default -> Value.ERROR;
     };
+
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

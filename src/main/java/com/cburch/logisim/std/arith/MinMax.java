@@ -25,44 +25,41 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
-import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpMinMax extends InstanceFactory {
+public class MinMax extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPMinMax";
+  public static final String _ID = "MinMax";
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
   private static final int IN1 = 1;
   private static final int MIN = 2;
   private static final int MAX = 3;
-  private static final int ERR = 4;
-
-  public FpMinMax() {
+  public MinMax() {
     super(_ID, S.getter("fpMinMax"));
-    setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
-    setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
+    setAttributes(
+      new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
+      new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
+    setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("minmax",3));
 
-    final var ps = new Port[5];
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[MAX] = new Port(0, 10, Port.OUTPUT, StdAttr.FP_WIDTH);
-    ps[MIN] = new Port(0, -10, Port.OUTPUT, StdAttr.FP_WIDTH);
-    ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
+    final var ps = new Port[4];
+    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
+    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
+    ps[MAX] = new Port(0, 10, Port.OUTPUT, StdAttr.WIDTH);
+    ps[MIN] = new Port(0, -10, Port.OUTPUT, StdAttr.WIDTH);
     ps[IN0].setToolTip(S.getter("minMaxInputATip"));
     ps[IN1].setToolTip(S.getter("minMaxInputBTip"));
     ps[MIN].setToolTip(S.getter("minMaxMinimumTip"));
     ps[MAX].setToolTip(S.getter("minMaxMaximumTip"));
-    ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }
 
@@ -88,62 +85,37 @@ public class FpMinMax extends InstanceFactory {
     painter.drawPort(IN1);
     painter.drawPort(MIN, "Min", Direction.WEST);
     painter.drawPort(MAX, "Max", Direction.WEST);
-    painter.drawPort(ERR);
-
-    final var loc = painter.getLocation();
-    final var x = loc.getX();
-    final var y = loc.getY();
-    GraphicsUtil.switchToWidth(g, 2);
-    g.drawLine(x - 35, y - 15, x - 35, y + 5);
-    g.drawLine(x - 35, y - 15, x - 25, y - 15);
-    g.drawLine(x - 35, y - 5, x - 25, y - 5);
-    GraphicsUtil.switchToWidth(g, 1);
   }
 
   @Override
   public void propagate(InstanceState state) {
     // get attributes
-    final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
+    final var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+    final var unsigned = state.getAttributeValue(Comparator.MODE_ATTR) == Comparator.UNSIGNED_OPTION;
 
     // compute outputs
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
+    final Value min, max;
 
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
-    final var b_val = switch (dataWidth.getWidth()) {
-      case 16 -> b.toFloatValueFromFP16();
-      case 32 -> b.toFloatValue();
-      case 64 -> b.toDoubleValue();
-      default -> Double.NaN;
-    };
+    if(a.isFullyDefined() && b.isFullyDefined()) {
+      final var a_val = a.toBigInteger(unsigned) ;
+      final var b_val = b.toBigInteger(unsigned);
 
-    final var min_val = Math.min(a_val, b_val);
-    final var max_val = Math.max(a_val, b_val);
+      final var min_val = a_val.min(b_val).longValue();
+      final var max_val = a_val.max(b_val).longValue();
 
-    final var min = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) min_val));
-      case 32 -> Value.createKnown((float) min_val);
-      case 64 -> Value.createKnown(min_val);
-      default -> Value.ERROR;
-    };
-    final var max = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) max_val));
-      case 32 -> Value.createKnown((float) max_val);
-      case 64 -> Value.createKnown(max_val);
-      default -> Value.ERROR;
-    };
+      min = Value.createKnown(dataWidth.getWidth(), min_val);
+      max = Value.createKnown(dataWidth.getWidth(), max_val);
+    } else {
+      min = Value.createError(dataWidth);
+      max = Value.createError(dataWidth);
+    }
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
 
     state.setPort(MIN, min, delay);
     state.setPort(MAX, max, delay);
-    state.setPort(
-        ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
   }
 }
