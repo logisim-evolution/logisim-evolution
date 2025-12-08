@@ -240,7 +240,6 @@ public class Analyze {
           }
         }
       }
-      prop.setPropagatorThread(null);
     }
 
     model.setVariables(inputVars, outputVars);

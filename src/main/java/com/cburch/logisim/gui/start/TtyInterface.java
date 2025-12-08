@@ -342,7 +342,6 @@ public class TtyInterface {
 
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
-    prop.setPropagatorThread(null);
 
     if (args.getSaveFile() != null) {
       try {
@@ -450,7 +449,6 @@ public class TtyInterface {
       for (final var pin : pinList) {
         currValues.add(valueMap.get(pin));
       }
-      prop.setPropagatorThread(null);
       displayTableRow(needTableHeader, null, currValues, headers, formats, format);
       needTableHeader = false;
     }

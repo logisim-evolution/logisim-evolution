@@ -477,9 +477,8 @@ public class Circuit {
   public static void doTestVector(CircuitState state, Instance[] pin, Value[] val, boolean resetState,
                                   TestVector vector, int rowIndex) throws TestException {
     final var prop = state.getPropagator();
-    //prop.setPropagatorThread(Thread.currentThread());
     if (resetState) {
-      state.reset();
+      prop.reset();
     }
 
     for (var i = 0; i < pin.length; ++i) {
@@ -505,7 +504,6 @@ public class Circuit {
     }
 
     if (prop.isOscillating()) {
-      prop.setPropagatorThread(null);
       throw new TestException("oscillation detected");
     }
 
@@ -543,7 +541,6 @@ public class Circuit {
         }
       }
     }
-    //prop.setPropagatorThread(null);
 
     if (err != null) {
       throw err;
