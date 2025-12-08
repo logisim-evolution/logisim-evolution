@@ -55,6 +55,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -365,6 +366,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     toolbar.add(zero);
     toolbar.add(compact);
     toolbar.add(expand);
+    final var sep = new JSeparator(JSeparator.VERTICAL);
+    sep.setPreferredSize(new Dimension(3, 20));
+    toolbar.add(sep);
     toolbar.add(zoomOut);
     toolbar.add(zoomIn);
     
@@ -379,8 +383,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     // Basic styling for zoom buttons
     zoomIn.setMargin(new Insets(2, 2, 2, 2));
     zoomOut.setMargin(new Insets(2, 2, 2, 2));
-    zoomIn.setToolTipText(S.get("zoomIn") + " (Ctrl + Plus)");
-    zoomOut.setToolTipText(S.get("zoomOut") + " (Ctrl + Minus)");
+    zoomIn.setToolTipText(S.get("tableZoomIn") + " (Ctrl + Plus)");
+    zoomOut.setToolTipText(S.get("tableZoomOut") + " (Ctrl + Minus)");
 
 
     expand.setEnabled(getRowCount() < table.getRowCount());
