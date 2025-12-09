@@ -17,6 +17,7 @@ import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ZoomIcon;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.PrintHandler;
@@ -262,8 +263,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private final SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
   private final TightButton expand = new TightButton(S.get("tableExpand"));
   private final TightButton compact = new TightButton(S.get("tableCompact"));
-  private final JButton zoomIn = new JButton(new com.cburch.logisim.gui.icons.ZoomIcon(com.cburch.logisim.gui.icons.ZoomIcon.ZOOMIN));
-  private final JButton zoomOut = new JButton(new com.cburch.logisim.gui.icons.ZoomIcon(com.cburch.logisim.gui.icons.ZoomIcon.ZOOMOUT));
+  private final JButton zoomIn = new JButton(new ZoomIcon(ZoomIcon.ZOOMIN));
+  private final JButton zoomOut = new JButton(new ZoomIcon(ZoomIcon.ZOOMOUT));
   private final JLabel count = new JLabel(S.get("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
   private static class TightButton extends JButton {
@@ -448,44 +449,44 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
   
   private void setupKeyBindings() {
-      InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-      ActionMap actionMap = getActionMap();
+    InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    ActionMap actionMap = getActionMap();
 
-      // Zoom In (Ctrl + '+')
-      KeyStroke ctrlPlus = KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK);
-      KeyStroke ctrlAdd = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_DOWN_MASK);
-      inputMap.put(ctrlPlus, "zoomIn");
-      inputMap.put(ctrlAdd, "zoomIn");
-      actionMap.put("zoomIn", new AbstractAction() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-              zoomIn();
-          }
-      });
+    // Zoom In (Ctrl + '+')
+    KeyStroke ctrlPlus = KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke ctrlAdd = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_DOWN_MASK);
+    inputMap.put(ctrlPlus, "zoomIn");
+    inputMap.put(ctrlAdd, "zoomIn");
+    actionMap.put("zoomIn", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          zoomIn();
+      }
+    });
 
-      // Zoom Out (Ctrl + '-')
-      KeyStroke ctrlMinus = KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK);
-      KeyStroke ctrlSubtract = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, KeyEvent.CTRL_DOWN_MASK);
-      inputMap.put(ctrlMinus, "zoomOut");
-      inputMap.put(ctrlSubtract, "zoomOut");
-      actionMap.put("zoomOut", new AbstractAction() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-              zoomOut();
-          }
-      });
-      
-      // Reset Zoom (Ctrl + 0)
-      KeyStroke ctrlZero = KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_DOWN_MASK);
-      KeyStroke ctrlNumpadZero = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, KeyEvent.CTRL_DOWN_MASK);
-      inputMap.put(ctrlZero, "zoomReset");
-      inputMap.put(ctrlNumpadZero, "zoomReset");
-      actionMap.put("zoomReset", new AbstractAction() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-              zoomReset();
-          }
-      });
+    // Zoom Out (Ctrl + '-')
+    KeyStroke ctrlMinus = KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke ctrlSubtract = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, KeyEvent.CTRL_DOWN_MASK);
+    inputMap.put(ctrlMinus, "zoomOut");
+    inputMap.put(ctrlSubtract, "zoomOut");
+    actionMap.put("zoomOut", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          zoomOut();
+      }
+    });
+    
+    // Reset Zoom (Ctrl + 0)
+    KeyStroke ctrlZero = KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_DOWN_MASK);
+    KeyStroke ctrlNumpadZero = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, KeyEvent.CTRL_DOWN_MASK);
+    inputMap.put(ctrlZero, "zoomReset");
+    inputMap.put(ctrlNumpadZero, "zoomReset");
+    actionMap.put("zoomReset", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          zoomReset();
+      }
+    });
   }
   
   private void updateScale() {
@@ -494,24 +495,24 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     final var myFont = new Font("Serif", Font.PLAIN, (int) scaledSize);
     headFont = myFont.deriveFont(Font.BOLD);
     bodyFont = myFont;
-    headerPadding = (int)(AppPreferences.getScaled(10) * zoomFactor);
-    headerVertSep = (int)(AppPreferences.getScaled(4) * zoomFactor);
-    headerHorizSep = (int)(AppPreferences.getScaled(4) * zoomFactor);
-    defaultCellPadding = (int)(AppPreferences.getScaled(15) * zoomFactor);
-    defaultCellWidth = (int)(AppPreferences.getScaled(15) * zoomFactor);
-    defaultCellHeight = (int)(AppPreferences.getScaled(22) * zoomFactor);
+    headerPadding = (int) (AppPreferences.getScaled(10) * zoomFactor);
+    headerVertSep = (int) (AppPreferences.getScaled(4) * zoomFactor);
+    headerHorizSep = (int) (AppPreferences.getScaled(4) * zoomFactor);
+    defaultCellPadding = (int) (AppPreferences.getScaled(15) * zoomFactor);
+    defaultCellWidth = (int) (AppPreferences.getScaled(15) * zoomFactor);
+    defaultCellHeight = (int) (AppPreferences.getScaled(22) * zoomFactor);
   }
   
   private void refreshTable() {
-      updateScale();
-      computePreferredSize();
-      repaint();
-      revalidate();
+    updateScale();
+    computePreferredSize();
+    repaint();
+    revalidate();
   }
 
   private void zoomReset() {
-      zoomFactor = 1.0;
-      refreshTable();
+    zoomFactor = 1.0;
+    refreshTable();
   }
   
   private void zoomIn() {
