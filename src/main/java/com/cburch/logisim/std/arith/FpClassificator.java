@@ -101,8 +101,8 @@ public class FpClassificator extends InstanceFactory {
     painter.drawPort(IN0);
     painter.drawPort(NEGATIVE, "-", Direction.WEST);
     painter.drawPort(ZERO, "0", Direction.WEST);
-    painter.drawPort(SUBNORMAL, "SN", Direction.WEST);
-    painter.drawPort(NORMAL, "N", Direction.WEST);
+    painter.drawPort(SUBNORMAL, "sn", Direction.WEST);
+    painter.drawPort(NORMAL, "n", Direction.WEST);
     painter.drawPort(INFINITE, "\u221E", Direction.WEST);
 //  painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
     painter.drawPort(QUIET_NAN, "NaN", Direction.WEST); //change to qNaN if sNaN is added
@@ -128,6 +128,7 @@ public class FpClassificator extends InstanceFactory {
     final var isNegative = (a.toLongValue() & (1L << (dataWidth.getWidth() - 1))) != 0;
 
     final var isInfinite = switch (dataWidth.getWidth()) {
+      case 8 -> Float.isInfinite(a.toFloatValueFromFP8());
       case 16 -> Float.isInfinite(a.toFloatValueFromFP16());
       case 32 -> Float.isInfinite(a.toFloatValue());
       case 64 -> Double.isInfinite(a.toDoubleValue());
@@ -135,6 +136,10 @@ public class FpClassificator extends InstanceFactory {
     };
 
     final var isNormal = switch (dataWidth.getWidth()) {
+      case 8 -> {
+          int exponent = (int)((a.toLongValue() >>> 3) & 0xF);
+          yield exponent > 0 && exponent < 0xF;
+      }
       case 16 -> {
           int exponent = (int)((a.toLongValue() >>> 10) & 0x1F);
           yield exponent > 0 && exponent < 0x1F;
@@ -151,6 +156,12 @@ public class FpClassificator extends InstanceFactory {
     };
 
     final var isSubnormal = switch (dataWidth.getWidth()) {
+      case 8 -> {
+          long bits = a.toLongValue();
+          int exponent = (int)((bits >>> 3) & 0xF);
+          int fraction = (int)(bits & 0x7);
+          yield exponent == 0 && fraction != 0;
+      }
       case 16 -> {
           long bits = a.toLongValue();
           int exponent = (int)((bits >>> 10) & 0x1F);
@@ -173,6 +184,7 @@ public class FpClassificator extends InstanceFactory {
     };
 
     final var isZero = switch (dataWidth.getWidth()) {
+      case 8 -> a.toFloatValueFromFP8() == 0;
       case 16 -> a.toFloatValueFromFP16() == 0;
       case 32 -> a.toFloatValue() == 0;
       case 64 -> a.toDoubleValue() == 0;
@@ -180,6 +192,7 @@ public class FpClassificator extends InstanceFactory {
     };
 
     final var isNaN = switch (dataWidth.getWidth()) {
+      case 8 -> Float.isNaN(a.toFloatValueFromFP8());
       case 16 -> Float.isNaN(a.toFloatValueFromFP16());
       case 32 -> Float.isNaN(a.toFloatValue());
       case 64 -> Double.isNaN(a.toDoubleValue());

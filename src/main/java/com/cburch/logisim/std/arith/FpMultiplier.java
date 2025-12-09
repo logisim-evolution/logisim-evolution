@@ -18,6 +18,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -41,9 +42,9 @@ public class FpMultiplier extends InstanceFactory {
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
   private static final int IN1 = 1;
-  private static final int IN2 = 2;
-  private static final int OUT = 3;
-  private static final int ERR = 4;
+  private static final int OUT = 2;
+  private static final int ERR = 3;
+  private static final int IN2 = 4;
 
   static final AttributeOption MUL =
       new AttributeOption("multiply", S.getter("fpMultiplierMultiply"));
@@ -66,19 +67,39 @@ public class FpMultiplier extends InstanceFactory {
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u00d7"));
+  }
 
-    final var ps = new Port[5];
+  @Override
+  protected void configureNewInstance(Instance instance) {
+    configurePorts(instance);
+    instance.addAttributeListener();
+  }
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == MUL_MODE) {
+      configurePorts(instance);
+    }
+  }
+  private void configurePorts(Instance instance) {
+    final var isFMA = instance.getAttributeValue(MUL_MODE) == FMA;
+    final Port[] ps;
+    if(isFMA) {
+      ps = new Port[5];
+      ps[IN2] = new Port(-20, -20, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[IN2].setToolTip(S.getter("multiplierCarryInTip"));
+    }
+    else{
+      ps = new Port[4];
+    }
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[IN2] = new Port(-20, -20, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
     ps[IN0].setToolTip(S.getter("multiplierInputTip"));
     ps[IN1].setToolTip(S.getter("multiplierInputTip"));
-    ps[IN2].setToolTip(S.getter("multiplierCarryInTip"));
     ps[OUT].setToolTip(S.getter("fpMultiplierOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
-    setPorts(ps);
+    instance.setPorts(ps);
   }
 
   @Override
@@ -121,39 +142,19 @@ public class FpMultiplier extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
-    final var b_val = switch (dataWidth.getWidth()) {
-      case 16 -> b.toFloatValueFromFP16();
-      case 32 -> b.toFloatValue();
-      case 64 -> b.toDoubleValue();
-      default -> Double.NaN;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
+    final var b_val = b.toDoubleValueFromAnyFloat();
 
     final double out_val;
     if(mulMode == MUL){
       out_val = a_val * b_val;
     } else {
       final var c = state.getPortValue(IN2);
-      final var c_val = switch (dataWidth.getWidth()) {
-        case 16 -> c.toFloatValueFromFP16();
-        case 32 -> c.toFloatValue();
-        case 64 -> c.toDoubleValue();
-        default -> Double.NaN;
-      };
+      final var c_val = c.toDoubleValueFromAnyFloat();
       out_val = Math.fma(a_val, b_val, c_val);
     }
 
-    final var out = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
-      case 32 -> Value.createKnown((float) out_val);
-      case 64 -> Value.createKnown(out_val);
-      default -> Value.ERROR;
-    };
+    final var out = Value.createKnown(dataWidth, out_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

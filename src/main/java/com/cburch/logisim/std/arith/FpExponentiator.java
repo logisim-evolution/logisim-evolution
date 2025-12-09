@@ -152,32 +152,17 @@ public class FpExponentiator extends InstanceFactory {
     final var a = state.getPortValue(IN0);
 
     final double out_val;
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
 
     if(mode == POWER) {
       final var b = state.getPortValue(IN1);
-      final var b_val = switch (dataWidth.getWidth()) {
-        case 16 -> b.toFloatValueFromFP16();
-        case 32 -> b.toFloatValue();
-        case 64 -> b.toDoubleValue();
-        default -> Double.NaN;
-      };
+      final var b_val = b.toDoubleValueFromAnyFloat();
       out_val = Math.pow(a_val, b_val);
     } else {
       out_val = mode == EXP ? Math.exp(a_val) : Math.expm1(a_val);
     }
 
-    final var out = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
-      case 32 -> Value.createKnown((float) out_val);
-      case 64 -> Value.createKnown(out_val);
-      default -> Value.ERROR;
-    };
+    final var out = Value.createKnown(dataWidth, out_val);
 
 
     // propagate them

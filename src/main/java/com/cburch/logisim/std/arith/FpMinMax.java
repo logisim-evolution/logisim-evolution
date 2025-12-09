@@ -109,34 +109,14 @@ public class FpMinMax extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
-    final var b_val = switch (dataWidth.getWidth()) {
-      case 16 -> b.toFloatValueFromFP16();
-      case 32 -> b.toFloatValue();
-      case 64 -> b.toDoubleValue();
-      default -> Double.NaN;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
+    final var b_val = b.toDoubleValueFromAnyFloat();
 
     final var min_val = Math.min(a_val, b_val);
     final var max_val = Math.max(a_val, b_val);
 
-    final var min = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) min_val));
-      case 32 -> Value.createKnown((float) min_val);
-      case 64 -> Value.createKnown(min_val);
-      default -> Value.ERROR;
-    };
-    final var max = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) max_val));
-      case 32 -> Value.createKnown((float) max_val);
-      case 64 -> Value.createKnown(max_val);
-      default -> Value.ERROR;
-    };
+    final var min = Value.createKnown(dataWidth, min_val);
+    final var max = Value.createKnown(dataWidth, max_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

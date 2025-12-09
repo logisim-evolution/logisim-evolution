@@ -100,12 +100,7 @@ public class FpRound extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN);
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
 
     final double roundedValue;
     if (roundMode.getValue().equals("ceil")) roundedValue = Math.ceil(a_val);
@@ -114,12 +109,7 @@ public class FpRound extends InstanceFactory {
     else if (roundMode.getValue().equals("rint")) roundedValue = Math.rint(a_val);
     else roundedValue = (long) a_val;
 
-    final var out = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) roundedValue));
-      case 32 -> Value.createKnown((float)roundedValue);
-      case 64 -> Value.createKnown(roundedValue);
-      default -> Value.ERROR;
-    };
+    final var out = Value.createKnown(dataWidth, roundedValue);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

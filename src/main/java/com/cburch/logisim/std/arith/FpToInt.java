@@ -91,18 +91,12 @@ public class FpToInt extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     // get attributes
-    final var dataWidthIn = state.getAttributeValue(StdAttr.FP_WIDTH);
     final var dataWidthOut = state.getAttributeValue(StdAttr.WIDTH);
     final var roundMode = state.getAttributeValue(MODE_ATTRIBUTE);
 
     // compute outputs
     final var a = state.getPortValue(IN);
-    final var a_val = switch (dataWidthIn.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
 
     final long out_val;
 

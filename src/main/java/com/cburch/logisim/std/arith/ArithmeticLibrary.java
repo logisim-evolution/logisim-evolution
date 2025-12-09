@@ -52,6 +52,7 @@ public class ArithmeticLibrary extends Library {
     new FactoryDescription(FpMinMax.class, S.getter("fpMinMaxCamponent"), "minmax.gif"),
     new FactoryDescription(FpRound.class, S.getter("fpRound"), "round.gif"),
     new FactoryDescription(FpClassificator.class, S.getter("fpClassificator"), "fpclassificator.gif"),
+    new FactoryDescription(FpToFp.class, S.getter("fpToFpComponent")),
     new FactoryDescription(FpToInt.class, S.getter("fpToIntComponent")),
     new FactoryDescription(IntToFp.class, S.getter("intToFPComponent")),
   };
