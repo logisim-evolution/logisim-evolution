@@ -43,11 +43,18 @@ public class Main {
         FlatDarculaLaf.installLafInfo();
         FlatMacLightLaf.installLafInfo();
         FlatMacDarkLaf.installLafInfo();
-
+        
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put(
-            "ToolTip.font",
+        
+        // Apply global font preference
+        final var appFont = AppPreferences.APP_FONT.get();
+        if (appFont != null && !appFont.isBlank()) {
+          updateGlobalFont(appFont);
+        } else {
+          UIManager.put(
+              "ToolTip.font",
             new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        }
       }
     } catch (ClassNotFoundException
         | UnsupportedLookAndFeelException
@@ -78,5 +85,44 @@ public class Main {
 
   public static boolean hasGui() {
     return !headless;
+  }
+
+  /**
+   * Updates all UI defaults to use the specified font family.
+   * It ensures that the preferred font is applied across
+   * all Look and Feels (FlatLaf, Metal, Nimbus, etc.).
+   */
+  private static void updateGlobalFont(String appFont) {
+    try {
+      com.formdev.flatlaf.FlatLaf.setPreferredFontFamily(appFont);
+    } catch (Throwable ignored) {
+      // Ignore if FlatLaf is not available or fails
+    }
+
+    // This catches standard Swing themes (e.g., Metal, System)
+    final var defaults = UIManager.getDefaults();
+    final var keysEnumeration = defaults.keys();
+    final var keysList = new java.util.ArrayList<Object>();
+    while (keysEnumeration.hasMoreElements()) {
+      keysList.add(keysEnumeration.nextElement());
+    }
+
+    for (final var key : keysList) {
+      final var value = defaults.get(key);
+      if (value instanceof FontUIResource) {
+        final var originalFont = (Font) value;
+        // If the user selected a weighted font (e.g., Medium, Light), force PLAIN to avoid faux bolding.
+        // Otherwise (standard font), respect the component's original style (Bold vs Plain).
+        final var preferredStyle = AppPreferences.getPreferredFontStyle(appFont);
+        final var newStyle = (preferredStyle == Font.PLAIN) 
+            ? Font.PLAIN 
+            : originalFont.getStyle();
+            
+        defaults.put(key, new FontUIResource(appFont, newStyle, originalFont.getSize()));
+      }
+    }
+
+    UIManager.put("ToolTip.font", 
+        new FontUIResource(appFont, AppPreferences.getPreferredFontStyle(appFont), AppPreferences.getScaled(12)));
   }
 }
