@@ -42,24 +42,24 @@ public class DLatchTestVectorTest {
   @Test
   public void testDLatchSequentialExecution() throws IOException {
     // Create test vector file matching the D-Latch test case
-    // Note: This test vector has <iter> and <seq> but no <set> column
+    // Note: This test vector has <seq> but no <set> column
     // All tests default to set=0, and since seq != 0, they should be sequential
     File testFile = new File(tempDir, "dlatch_test.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("# Simple test for D-Latch\n");
-      writer.write("<iter> <seq> data write Q NQ\n");
-      writer.write("1      1     0    0     0 1\n");
-      writer.write("1      2     1    0     0 1\n");
-      writer.write("1      3     1    1     1 0\n");
-      writer.write("1      4     0    0     1 0\n");
-      writer.write("1      5     0    1     0 1\n");
+      writer.write("<seq> data write Q NQ\n");
+      writer.write("1     0    0     0 1\n");
+      writer.write("2     1    0     0 1\n");
+      writer.write("3     1    1     1 0\n");
+      writer.write("4     0    0     1 0\n");
+      writer.write("5     0    1     0 1\n");
     }
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
     
     // Verify parsing
-    // Note: <iter> and <seq> are metadata columns, not included in columnName
+    // Note: <seq> is metadata column, not included in columnName
     // Only actual pin columns are in columnName
     assertEquals(4, vector.columnName.length);
     assertEquals("data", vector.columnName[0]);
@@ -78,15 +78,6 @@ public class DLatchTestVectorTest {
     assertEquals(3, vector.seqNumbers[2]);
     assertEquals(4, vector.seqNumbers[3]);
     assertEquals(5, vector.seqNumbers[4]);
-    
-    // Verify iteration numbers
-    assertNotNull(vector.iterNumbers);
-    assertEquals(5, vector.iterNumbers.length);
-    assertEquals(1, vector.iterNumbers[0]);
-    assertEquals(1, vector.iterNumbers[1]);
-    assertEquals(1, vector.iterNumbers[2]);
-    assertEquals(1, vector.iterNumbers[3]);
-    assertEquals(1, vector.iterNumbers[4]);
     
     // Verify set numbers (should default to 0 when not specified)
     // Since there's no <set> column, setNumbers should be empty array
@@ -130,13 +121,6 @@ public class DLatchTestVectorTest {
     assertEquals(1L, vector.data.get(4)[1].toLongValue()); // write
     assertEquals(0L, vector.data.get(4)[2].toLongValue()); // Q
     assertEquals(1L, vector.data.get(4)[3].toLongValue()); // NQ
-    
-    // Verify getIterations() method
-    assertEquals(1, vector.getIterations(0));
-    assertEquals(1, vector.getIterations(1));
-    assertEquals(1, vector.getIterations(2));
-    assertEquals(1, vector.getIterations(3));
-    assertEquals(1, vector.getIterations(4));
   }
 
   @Test
@@ -146,12 +130,12 @@ public class DLatchTestVectorTest {
     File testFile = new File(tempDir, "dlatch_with_set.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("# D-Latch test with explicit set column\n");
-      writer.write("<set> <seq> <iter> data write Q NQ\n");
-      writer.write("1     1     1      0    0     0 1\n");
-      writer.write("1     2     1      1    0     0 1\n");
-      writer.write("1     3     1      1    1     1 0\n");
-      writer.write("1     4     1      0    0     1 0\n");
-      writer.write("1     5     1      0    1     0 1\n");
+      writer.write("<set> <seq> data write Q NQ\n");
+      writer.write("1     1     0    0     0 1\n");
+      writer.write("1     2     1    0     0 1\n");
+      writer.write("1     3     1    1     1 0\n");
+      writer.write("1     4     0    0     1 0\n");
+      writer.write("1     5     0    1     0 1\n");
     }
 
     TestVector vector = new TestVector(testFile);
@@ -253,12 +237,12 @@ public class DLatchTestVectorTest {
     File testFile = new File(tempDir, "dlatch_exec_test.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("# Simple test for D-Latch\n");
-      writer.write("<iter> <seq> data write Q NQ\n");
-      writer.write("100    1     0    0     0 1\n");
-      writer.write("100    2     1    0     0 1\n");
-      writer.write("100    3     1    1     1 0\n");
-      writer.write("100    4     0    0     1 0\n");
-      writer.write("100    5     0    1     0 1\n");
+      writer.write("<seq> data write Q NQ\n");
+      writer.write("1     0    0     0 1\n");
+      writer.write("2     1    0     0 1\n");
+      writer.write("3     1    1     1 0\n");
+      writer.write("4     0    0     1 0\n");
+      writer.write("5     0    1     0 1\n");
     }
 
     // Load circuit from XML

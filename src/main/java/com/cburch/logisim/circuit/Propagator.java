@@ -177,7 +177,6 @@ public class Propagator {
 
   /** Must be called from simulation thread */
   public boolean propagate(Simulator.ProgressListener propListener, Simulator.Event propEvent) {
-    moveNonSimThreadEvents();
     oscPoints.clear();
     root.processDirtyPoints();
     root.processDirtyComponents();
@@ -185,6 +184,7 @@ public class Propagator {
     final var oscThreshold = simLimit;
     final var logThreshold = 3 * oscThreshold / 4;
     var iters = 0;
+    moveNonSimThreadEvents();
     while (!toProcess.isEmpty()) {
       if (iters > 0 && propListener != null) {
         propListener.propagationInProgress(propEvent);
@@ -277,10 +277,10 @@ public class Propagator {
 
   /** Must be called from simulation thread */
   boolean step(PropagationPoints changedPoints) {
-    moveNonSimThreadEvents();
     oscPoints.clear();
     root.processDirtyPoints();
     root.processDirtyComponents();
+    moveNonSimThreadEvents();
 
     if (toProcess.isEmpty()) return false;
 

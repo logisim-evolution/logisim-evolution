@@ -20,8 +20,8 @@ plugins {
   id("com.github.ben-manes.versions") version "0.53.0"
   java
   application
-  id("com.gradleup.shadow") version "9.2.2"
-  id("org.sonarqube") version "7.1.0.6387"
+  id("com.gradleup.shadow") version "9.3.0"
+  id("org.sonarqube") version "7.2.0.6526"
 }
 
 repositories {
@@ -42,10 +42,10 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.17")
   implementation("org.slf4j:slf4j-simple:2.0.17")
-  implementation("com.formdev:flatlaf:3.6.2")
+  implementation("com.formdev:flatlaf:3.7")
   implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
-  implementation("org.apache.commons:commons-text:1.14.0")
+  implementation("org.apache.commons:commons-text:1.15.0")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
