@@ -73,23 +73,19 @@ The circuit state is preserved between steps in the same set. Tests default to s
 - **`<seq>`**: Defines the **step number** within a set - this determines the execution order of tests within the same set.
 Tests are executed in order of their `<seq>` value within each `<set>`.
 Tests with `<seq>` of 0 or missing are treated as combinational (circuit resets between tests, even if they share the same set).
-- **`<iter>`**: Defines the **number of propagation iterations** to run for this test.
-Each iteration triggers a full propagation cycle on the simulation thread. The `propagate()` method internally loops until stable,
-so each iteration handles all necessary propagation steps. Defaults to 1 if not specified.
-Use higher values (e.g., 2-5) for complex circuits that need multiple propagation cycles to fully settle.
 
 **Example of Sequential Test:**
 
 ```txt
 # Sequential test for a counter
-Clock Reset Count <set> <seq> <iter>
-0     0     0     1     1     1
-1     0     0     1     2     1
-0     0     1     1     3     1
-1     0     1     1     4     1
-0     0     2     1     5     1
-1     0     2     1     6     1
-0     1     0     2     1     1
+Clock Reset Count <set> <seq>
+0     0     0     1     1
+1     0     0     1     2
+0     0     1     1     3
+1     0     1     1     4
+0     0     2     1     5
+1     0     2     1     6
+0     1     0     2     1
 ```
 
 In this example:

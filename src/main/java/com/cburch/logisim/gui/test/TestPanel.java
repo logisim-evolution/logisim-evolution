@@ -56,16 +56,12 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     if (i == 0 || i == 1) return; // Button and status columns don't support radix changes
     TestVector vec = getModel().getVector();
     int offset = 2; // Button column (0) + status column (1)
-    // <set>, <seq>, and <iter> columns don't support radix changes
+    // <set>, <seq> columns don't support radix changes
     if (vec.setNumbers != null) {
       if (i == offset) return;
       offset++;
     }
     if (vec.seqNumbers != null) {
-      if (i == offset) return;
-      offset++;
-    }
-    if (vec.iterNumbers != null) {
       if (i == offset) return;
       offset++;
     }
@@ -84,10 +80,9 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     TestVector vec = getModel().getVector();
     if (vec == null) return 0;
     int count = vec.columnName.length + 2; // +1 for status column, +1 for button column
-    // Add columns for <set>, <seq>, and <iter> if they exist
+    // Add columns for <set>, <seq> if they exist
     if (vec.setNumbers != null) count++;
     if (vec.seqNumbers != null) count++;
-    if (vec.iterNumbers != null) count++;
     return count;
   }
 
@@ -107,11 +102,6 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       if (i == offset) return "<seq>";
       offset++;
     }
-    // Check if <iter> column exists
-    if (vec.iterNumbers != null) {
-      if (i == offset) return "<iter>";
-      offset++;
-    }
     // Regular pin columns
     return vec.columnName[i - offset];
   }
@@ -122,16 +112,12 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     if (i == 0) return 0; // Button column
     if (i == 1) return 0; // Status column
     int offset = 2; // Button column (0) + status column (1)
-    // <set>, <seq>, and <iter> columns are always decimal
+    // <set>, <seq> columns are always decimal
     if (vec.setNumbers != null) {
       if (i == offset) return 10;
       offset++;
     }
     if (vec.seqNumbers != null) {
-      if (i == offset) return 10;
-      offset++;
-    }
-    if (vec.iterNumbers != null) {
       if (i == offset) return 10;
       offset++;
     }
@@ -147,16 +133,12 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     if (i == 0) return null; // Button column
     if (i == 1) return null; // Status column
     int offset = 2; // Button column (0) + status column (1)
-    // <set>, <seq>, and <iter> columns have no width (they're metadata)
+    // <set>, <seq> columns have no width (they're metadata)
     if (vec.setNumbers != null) {
       if (i == offset) return null;
       offset++;
     }
     if (vec.seqNumbers != null) {
-      if (i == offset) return null;
-      offset++;
-    }
-    if (vec.iterNumbers != null) {
       if (i == offset) return null;
       offset++;
     }
@@ -191,12 +173,9 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     int setColumnOffset = vec.setNumbers != null ? 2 : -1;
     int seqColumnOffset = vec.seqNumbers != null
         ? (setColumnOffset >= 0 ? 3 : 2) : -1;
-    int iterColumnOffset = vec.iterNumbers != null 
-        ? (seqColumnOffset >= 0 ? seqColumnOffset + 1 : (setColumnOffset >= 0 ? 3 : 2)) : -1;
     int pinColumnStart = 2; // Button (0) + status (1)
     if (setColumnOffset >= 0) pinColumnStart++;
     if (seqColumnOffset >= 0) pinColumnStart++;
-    if (iterColumnOffset >= 0) pinColumnStart++;
 
     for (var i = firstRow; i < firstRow + numRows; i++) {
       final var row = model.sortedIndex(i);
@@ -270,15 +249,6 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
         String seqTooltip = seqValue == 0 ? "Combinational test (circuit reset)" : "Sequential test #" + seqValue;
         rowData[i - firstRow][colIndex] =
             new ValueTable.Cell(seqText, null, null, seqTooltip);
-        colIndex++;
-      }
-
-      // <iter> column
-      if (iterColumnOffset >= 0) {
-        int iterValue = vec.getIterations(row);
-        String iterTooltip = "Propagation iterations: " + iterValue;
-        rowData[i - firstRow][colIndex] =
-            new ValueTable.Cell(Integer.toString(iterValue), null, null, iterTooltip);
         colIndex++;
       }
 

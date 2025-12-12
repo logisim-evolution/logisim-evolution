@@ -45,7 +45,6 @@ public class TestVector {
     private StringTokenizer curLine;
     private int setColumnIndex = -1;
     private int seqColumnIndex = -1;
-    private int iterColumnIndex = -1;
 
     public TestVectorReader(BufferedReader in) throws IOException {
       this.in = in;
@@ -75,11 +74,10 @@ public class TestVector {
       final var localFloatingFlags = new ArrayList<boolean[]>();
       final var localSetNumbers = new ArrayList<Integer>();
       final var localSeqNumbers = new ArrayList<Integer>();
-      final var localIterNumbers = new ArrayList<Integer>();
       curLine = findNonemptyLine();
 
       while (curLine != null) {
-        parseData(localDontCareFlags, localFloatingFlags, localSetNumbers, localSeqNumbers, localIterNumbers);
+        parseData(localDontCareFlags, localFloatingFlags, localSetNumbers, localSeqNumbers);
         curLine = findNonemptyLine();
       }
       
@@ -92,10 +90,6 @@ public class TestVector {
       for (int i = 0; i < localSeqNumbers.size(); i++) {
         TestVector.this.seqNumbers[i] = localSeqNumbers.get(i);
       }
-      TestVector.this.iterNumbers = new int[localIterNumbers.size()];
-      for (int i = 0; i < localIterNumbers.size(); i++) {
-        TestVector.this.iterNumbers[i] = localIterNumbers.get(i);
-      }
       TestVector.this.dontCareFlags = localDontCareFlags;
       TestVector.this.floatingFlags = localFloatingFlags;
       
@@ -106,23 +100,18 @@ public class TestVector {
       if (TestVector.this.seqNumbers == null) {
         TestVector.this.seqNumbers = new int[0];
       }
-      if (TestVector.this.iterNumbers == null) {
-        TestVector.this.iterNumbers = new int[0];
-      }
     }
 
     private void parseData(
         List<boolean[]> localDontCareFlags,
         List<boolean[]> localFloatingFlags,
         List<Integer> localSetNumbers,
-        List<Integer> localSeqNumbers,
-        List<Integer> localIterNumbers) throws IOException {
+        List<Integer> localSeqNumbers) throws IOException {
       final var vals = new Value[columnName.length];
       final var dcFlags = new boolean[columnName.length];
       final var floatFlags = new boolean[columnName.length];
       int setValue = 0;
       int seqValue = 0;
-      int iterValue = 100; // Default to 100 iterations
       
       // Collect all tokens first
       final var tokens = new ArrayList<String>();
@@ -135,7 +124,7 @@ public class TestVector {
       for (int tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
         final var t = tokens.get(tokenIndex);
         
-        // Check if this position corresponds to set, seq, or iter column
+        // Check if this position corresponds to set, seq column
         if (setColumnIndex >= 0 && tokenIndex == setColumnIndex) {
           try {
             setValue = Integer.parseInt(t);
@@ -149,17 +138,6 @@ public class TestVector {
             seqValue = Integer.parseInt(t);
           } catch (NumberFormatException e) {
             throw new IOException("Test Vector data format error: invalid seq value: " + t);
-          }
-          continue;
-        }
-        if (iterColumnIndex >= 0 && tokenIndex == iterColumnIndex) {
-          try {
-            iterValue = Integer.parseInt(t);
-            if (iterValue < 1) {
-              throw new IOException("Test Vector data format error: invalid iter value: " + t + " (must be >= 1)");
-            }
-          } catch (NumberFormatException e) {
-            throw new IOException("Test Vector data format error: invalid iter value: " + t);
           }
           continue;
         }
@@ -214,7 +192,6 @@ public class TestVector {
       localFloatingFlags.add(floatFlags);
       localSetNumbers.add(setValue);
       localSeqNumbers.add(seqValue);
-      localIterNumbers.add(iterValue);
     }
 
     private void parseHeader() throws IOException {
@@ -234,10 +211,6 @@ public class TestVector {
         }
         if ("<SEQ>".equals(tUpper)) {
           seqColumnIndex = i;
-          continue;
-        }
-        if ("<ITER>".equals(tUpper)) {
-          iterColumnIndex = i;
           continue;
         }
         
@@ -285,7 +258,6 @@ public class TestVector {
   public List<Value[]> data;
   public int[] setNumbers;
   public int[] seqNumbers;
-  public int[] iterNumbers;
   private List<boolean[]> dontCareFlags;
   private List<boolean[]> floatingFlags;
 
@@ -334,19 +306,5 @@ public class TestVector {
       return false;
     }
     return flags[columnIndex];
-  }
-
-  /**
-   * Get the number of propagation iterations for a given row.
-   * Defaults to 1 if not specified.
-   *
-   * @param rowIndex The row index (0-based)
-   * @return The number of iterations (defaults to 1)
-   */
-  public int getIterations(int rowIndex) {
-    if (iterNumbers == null || rowIndex < 0 || rowIndex >= iterNumbers.length) {
-      return 100; // Default to 100 iterations
-    }
-    return iterNumbers[rowIndex];
   }
 }

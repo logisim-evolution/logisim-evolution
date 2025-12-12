@@ -41,7 +41,7 @@ public class TestVectorDocsSampleTest {
   @Test
   public void actualtestDocsSampleExecution() throws IOException {
     // Create test vector file matching the D-Latch test case
-    // Note: This test vector has <iter> and <seq> but no <set> column
+    // Note: This test vector has <seq> but no <set> column
     // All tests default to set=0, and since seq != 0, they should be sequential
     
 
@@ -320,7 +320,7 @@ public class TestVectorDocsSampleTest {
         </project>
         """;
 
-    // Create test vector file - no <iter> column, will use default of 100 iterations
+    // Create test vector file - no <seq> column
     File testFile = new File(tempDir, "docsSample_exec_test.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]\n");

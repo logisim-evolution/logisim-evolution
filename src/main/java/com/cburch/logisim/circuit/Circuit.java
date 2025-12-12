@@ -507,24 +507,9 @@ public class Circuit {
     final var prop = state.getPropagator();
 
     // Propagate until stable
-    // Use the iteration count from the test vector (or default to 1)
-    // The <iter> value controls the maximum number of propagation cycles
-    int iterations = (vector != null && rowIndex >= 0) ? vector.getIterations(rowIndex) : 1;
     
-    // Call prop.propagate() directly until stable or max iterations reached
-    // prop.propagate() processes all pending events until the circuit is stable
-    // It returns true if it did any propagation work, false if there was nothing to do
-    // We loop until it returns false (stable) or we hit max iterations
     try {
-      for (int iter = 0; iter < iterations; iter++) {
-        boolean propagated = prop.propagate();
-        if (prop.isOscillating()) throw new TestException("oscillation detected");
-        // If propagate() returns false, the circuit is already stable (no events to process)
-        // If it returns true, it did work but might need more propagation cycles
-        // We continue looping to ensure all propagation completes
-        // Break early only if we've done at least one propagation and now it's stable
-        if (iter > 0 && !propagated) break; // Circuit is stable after initial propagation
-      }
+      prop.propagate();
     } catch (Throwable thr) {
       // propagate() might fail if not on simulation thread
       // This shouldn't happen in normal operation, but handle gracefully
