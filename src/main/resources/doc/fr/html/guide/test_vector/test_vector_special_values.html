@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>Valeurs spéciales</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Valeurs spéciales</h1>
+
+<p>Le format Vecteur de test prend en charge deux valeurs spéciales pour des tests plus flexibles :</p>
+
+<ul>
+<li><strong>&lt;DC&gt;</strong> (Peu importe) : Lorsqu'elle est utilisée pour une broche de sortie, cette valeur
+passe toujours quelle que soit la sortie réelle. C'est utile lorsque vous ne vous souciez pas
+de certaines sorties pendant un test. Insensible à la casse (<code>&lt;dc&gt;</code> fonctionne aussi).</li>
+<li><strong>&lt;float&gt;</strong> : Lorsqu'elle est utilisée pour une broche d'entrée, cela applique une valeur
+flottante (haute impédance). Lorsqu'elle est utilisée pour une broche de sortie, cela attend que la sortie soit
+flottante (valeur INCONNUE). Insensible à la casse (<code>&lt;FLOAT&gt;</code> fonctionne aussi).</li>
+</ul>
+
+<p>Voici un exemple utilisant des valeurs spéciales :</p>
+<pre class="code">
+# Test avec valeurs peu importe et flottantes
+Input   Enable Output  &lt;set&gt; &lt;seq&gt;
+1       1      &lt;DC&gt;    0     0
+&lt;float&gt; 0      &lt;float&gt; 0     0
+</pre>
+
+<p>Dans le premier test, la sortie est marquée comme peu importe, donc toute valeur de sortie
+passera. Dans le deuxième test, l'entrée est flottante et la sortie est attendue
+être flottante également.</p>
+
+<p>
+	<b>Précédent :</b> <a href="test_vector_file_format.html">Format de fichier vecteur de test</a> | <b>Suivant :</b> <a href="test_vector_sequential.html">Test séquentiel</a>.
+</p>
+
+</body>
+</html>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="ru">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="ru">
+	<title>Специальные значения</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Специальные значения</h1>
+
+<p>Формат тестовых векторов поддерживает два специальных значения для более гибкого тестирования:</p>
+
+<ul>
+<li><strong>&lt;DC&gt;</strong> (Безразлично): При использовании для выходного контакта это значение
+всегда проходит независимо от фактического выхода. Это полезно, когда вам не важно
+определённое значение выхода во время теста. Регистр не учитывается (<code>&lt;dc&gt;</code> также работает).</li>
+<li><strong>&lt;float&gt;</strong>: При использовании для входного контакта это подаёт плавающее
+(высокоомное) значение. При использовании для выходного контакта это ожидает, что выход будет
+плавающим (неизвестное значение). Регистр не учитывается (<code>&lt;FLOAT&gt;</code> также работает).</li>
+</ul>
+
+<p>Вот пример использования специальных значений:</p>
+<pre class="code">
+# Тест с безразличными и плавающими значениями
+Input   Enable Output  &lt;set&gt; &lt;seq&gt;
+1       1      &lt;DC&gt;    0     0
+&lt;float&gt; 0      &lt;float&gt; 0     0
+</pre>
+
+<p>В первом тесте выход помечен как безразличный, поэтому любое выходное значение
+пройдёт проверку. Во втором тесте вход плавающий, и выход также ожидается
+плавающим.</p>
+
+<p>
+	<b>Предыдущий:</b> <a href="test_vector_file_format.html">Формат файла тестовых векторов</a> | <b>Следующий:</b> <a href="test_vector_sequential.html">Последовательное тестирование</a>.
+</p>
+
+</body>
+</html>
+

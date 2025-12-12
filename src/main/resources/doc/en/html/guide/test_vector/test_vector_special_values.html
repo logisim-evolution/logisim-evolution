@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>Special Values</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Special Values</h1>
+
+<p>The Test Vector format supports two special values for more flexible testing:</p>
+
+<ul>
+<li><strong>&lt;DC&gt;</strong> (Don't Care): When used for an output pin, this value
+always passes regardless of the actual output. This is useful when you don't care
+about certain outputs during a test. Case-insensitive (<code>&lt;dc&gt;</code> also works).</li>
+<li><strong>&lt;float&gt;</strong>: When used for an input pin, this drives a floating
+(high-impedance) value. When used for an output pin, this expects the output to be
+floating (UNKNOWN value). Case-insensitive (<code>&lt;FLOAT&gt;</code> also works).</li>
+</ul>
+
+<p>Here is an example using special values:</p>
+<pre class="code">
+# Test with don't care and floating values
+Input   Enable Output  &lt;set&gt; &lt;seq&gt;
+1       1      &lt;DC&gt;    0     0
+&lt;float&gt; 0      &lt;float&gt; 0     0
+</pre>
+
+<p>In the first test, the output is marked as don't care, so any output value
+will pass. In the second test, the input is floating and the output is expected
+to be floating as well.</p>
+
+<p>
+	<b>Previous:</b> <a href="test_vector_file_format.html">Test Vector File Format</a> | <b>Next:</b> <a href="test_vector_sequential.html">Sequential Testing</a>.
+</p>
+
+</body>
+</html>
+

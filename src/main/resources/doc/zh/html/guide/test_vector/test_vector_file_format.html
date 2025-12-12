@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="zh">
+	<title>测试向量文件格式</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>测试向量文件格式</h1>
+
+<p>以下是测试向量文件的示例：</p>
+<pre class="code">
+# add32 的测试向量
+A[8]      B[8]      C[8]      Cin Cout
+0000_0000 0000_0000 0000_0000 0   0
+-2        0x05      3         0   0
+0         0o3       3         0   0
+</pre>
+
+<p>首先，文件格式很简单。标题行匹配电路的输入/输出引脚。其下是要测试的值。</p>
+
+<p>第一个非空白、非注释行列出了每个电路输入引脚的名称及其位宽（如果 > 1），用空格分隔。</p>
+
+<p>初学者经常困惑的一点是，只要位宽不是 1 位，就必须在标题中指定位宽。</p>
+<p>注意：位宽不一定等于值中的字符数。例如，13 的 4 位值可以表示为 1101、00001101、0x0d、0o15、15 或 0b1101 等。</p>
+
+<p>空白行将被忽略。'#' 字符后的任何内容都是注释。第一个非空白、非注释行列出了每个电路输入引脚的名称及其宽度（如果 &gt; 1），用空格分隔。
+</p>
+
+<p>其余行列出用空格分隔的每个值。值可以是十六进制、八进制、二进制或有符号十进制。十六进制值必须带有 '0x' 前缀。八进制值必须带有 '0o' 前缀。二进制和十进制通过位数来区分：二进制值必须始终具有与列宽度完全相同的位数；十进制值必须始终更少，不应有前导零，并且可以有负号。</p>
+
+<p>为了提高可读性，您可以在数值中的任何位置使用下划线（<code>_</code>）。解析时下划线将被忽略。示例：
+<code>0x0000_1111</code>、<code>0o1234_5670</code>、<code>1111_0000</code>、
+<code>1_234</code> 或 <code>-5_000</code>。</p>
+
+<p>对于十六进制、八进制和二进制值，'x' 数字指定四个、三个或一个"无关"位。因此，值 101xx 是一个五位二进制值，最后两位未指定，而 0x1ax5 是一个具有四个未指定位的十六进制值。这种"无关"位不能用于十进制表示法。</p>
+
+<p>
+	<b>上一页：</b> <a href="test_vector_window.html">测试向量窗口</a> | <b>下一页：</b> <a href="test_vector_special_values.html">特殊值</a>。
+</p>
+
+</body>
+</html>
+

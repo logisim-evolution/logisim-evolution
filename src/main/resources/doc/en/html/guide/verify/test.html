@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="fr">
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
@@ -7,109 +7,40 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
-      Fenêtre Vecteur de test
+      Test Vector Window
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
+    <!-- redirect to the new test vector section after 5 seconds -->
+    <script type="text/javascript">
+      // This method will only display text in a webview that supports javascript and 
+      // will be invisible in a webview that does not support javascript
+      function redirect() {
+        var countdownElement = document.getElementById("redirect");
+        // For compatibility with old webviews, we will just fire 5 timeouts to redirect
+        countdownElement.textContent = "Attempting to redirect in 5 seconds...";
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 4 seconds...";
+        }, 1000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 3 seconds...";
+        }, 2000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 2 seconds...";
+        }, 3000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 1 second...";
+        }, 4000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect now...";
+          window.location.href = "../test_vector/index.html";
+        }, 5000);
+      }
+    </script>
   </head>
-  <body>
+  <body onload="redirect()">
     <div class="maindiv">
-      <h1>
-        Fenêtre Vecteur de test
-      </h1>
-      <p>
-        Depuis la fenêtre Vecteur de test vous pouvez charger un vecteur de test à partir d'un fichier et Logisim lancera des tests sur le circuit actuel. Il n'y a qu'une seule fenêtre de vecteur de test pour le projet et la table changera pour refléter le circuit simulé dans la fenêtre du projet. Notez cependant que le module vecteur de test exécute une copie séparée du simulateur de circuit et n'interfère donc pas avec la simulation dans la fenêtre du projet et n'est pas influencé par cette simulation.
-      </p>
-      <p>
-        Pour l'exemple, nous allons tester le circuit ci-dessous. Ce circuit donne les résultats de cinq fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une porte AND.
-      </p>
-      <p align="center">
-        <img class="notscal" src="../../../../img-guide/vector-test.png" alt="#########">
-      </p>
-      <p>
-        Le fichier de test ressemble à ceci.
-      </p>
-      <blockquote>
-        <pre>A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
-0 0 1 1 0 0 0 00
-0 1 0 1 1 1 0 01
-1 0 0 1 1 1 0 10
-1 1 0 0 0 1 1 11
-</pre>
-      </blockquote>
-      <p>
-        Pour lancer le test, sélectionnez le menu <b class="menu">|&nbsp; Simulation &nbsp;|</b>→<b class="menu">|&nbsp; Vecteur de test &nbsp;|</b> puis utilisez le bouton <b class="button">"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat.
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/vector-result.png" alt="#########">
-      </p>
-      <p>
-        Toute sortie incorrecte sera signalée en rouge. Les lignes avec des sorties incorrectes sont triées en haut de la fenêtre.
-      </p>
-      <p>
-        Le format de fichier des vecteurs est simple. La première ligne contient les entêtes de colonnes qui correspondent au nom des signaux. Si la largeur de bit est plus grande que 1 alors il est nécessaire de le spécifier entre des crochets. Exemple <tt>C[8]</tt>. Les données de chaque situation de test sont dans les lignes suivantes. Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire.
-      </p>
-      <p>
-        Les lignes restantes répertorient chaque valeur séparée par un espace ou une tabulation. Les valeurs peuvent être en hexadécimales, octal, binaire ou décimal signé. Les valeurs hexadécimal doivent avoir le préfixe <b><tt>"0x"</tt></b>. Les valeurs octales doivent avoir le préfixe <b><tt>"0o"</tt></b>. Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales ne doivent pas avoir de zéro en tête et peuvent avoir un signe négatif.
-      </p>
-      <p>
-        Voici un exemple de fichier vectoriel de test:
-      </p>
-      <blockquote>
-        <pre>#test vector for adder 4bit 
-A[4] B[4] O[4] C_in C_out 
-0000 0000 0000 0 0 
-0000 0000 0001 1 0 
-0xf 0xf 0000 1 0 
-</pre>
-      </blockquote>
-      <p>
-        Selon la représentation des valeurs hexadécimales, octales ou binaires, la lettre minuscule <tt>"x"</tt> permet de spécifier quatre, trois ou un bits «sans importance». Par exemple a valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec deux fois quatre bits non spécifiés. De tels jokers ne peuvent pas être utilisés en notation décimale.
-      </p>
-      <p>
-        <strong>Ligne de commande:</strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit:
-      </p>
-      <blockquote>
-        <div class="forcode">
-          <tt>java -jar logisim-evolution.jar -testvector &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</tt>
-        </div>
-      </blockquote>
-      <p>
-        Le résultat d'un test réussi sera dans la sortie standard (stdout) celui-ci par exemple
-      </p>
-      <blockquote>
-        <pre>Loading test vector "testv1b.txt" ...
-Execution 4 vecteurs ...
-1 
-2 
-3 
-4 
-
-Réussit: 4, Erreur: 0
-          </pre>
-      </blockquote>et en cas d'échec
-      <blockquote>
-        <pre>Loading test vector "testv1a.txt" ...
-Exécution 4 vecteurs ...
-1 
-2 
-3 
-
-  ob = 0 (expected 1)
-4 
-
-  ob = 1 (expected 0)
-
-Réussit: 2, Erreur: 2
-          </pre>
-      </blockquote>Note: Dans la sortie erreur (stderr) on lira ceci :
-      <blockquote>
-        <pre>Error on test vector 3:
-Error on test vector 4:
-       </pre>
-      </blockquote>
-      <p>
-        <b>Suite:</b> <a href="../index.html">User's Guide</a>.
-      </p>
+      <span style="font-size: 3em;">This content has been moved to it's own <a href="../test_vector/index.html">Test Vector Section</a> page.</span>
     </div>
+    <div><h2 id="redirect">&nbsp;</h2></div>
   </body>
 </html>
