@@ -40,33 +40,33 @@ public class FpExponentiator extends InstanceFactory {
    */
   public static final String _ID = "FPExponentiator";
 
-  static final AttributeOption POWER =
-      new AttributeOption("power", S.getter("fpExponentiatorPower"));
+  static final AttributeOption ARB =
+      new AttributeOption("arb", S.getter("fpExponentiatorModeArbitrary"));
   static final AttributeOption EXP =
-      new AttributeOption("exp", S.getter("fpExponentiatorExponent"));
+      new AttributeOption("exp", S.getter("fpExponentiatorModeExponent"));
   static final AttributeOption EXPM1 =
-      new AttributeOption("expm1", S.getter("fpExponentiatorExponentMinusOne"));
+      new AttributeOption("expm1", S.getter("fpExponentiatorModeExponentMinusOne"));
   static final Attribute<AttributeOption> EXP_MODE =
       Attributes.forOption(
           "mode",
-          S.getter("fpExponentModeAttr"),
+          S.getter("fpExponentiatorMode"),
           new AttributeOption[] {
-            POWER,
+            ARB,
             EXP,
             EXPM1
           });
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
+  private static final int EXPO = 0;
   private static final int OUT = 1;
   private static final int ERR = 2;
-  private static final int IN1 = 3;
+  private static final int BASE = 3;
 
   public FpExponentiator() {
     super(_ID, S.getter("fpExponentiatorComponent"));
     setAttributes(
       new Attribute[] {StdAttr.FP_WIDTH, EXP_MODE},
-      new Object[] {BitWidth.create(32), POWER});
+      new Object[] {BitWidth.create(32), ARB});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("y\u02E3",2));
@@ -84,23 +84,23 @@ public class FpExponentiator extends InstanceFactory {
     }
   }
   private void configurePorts(Instance instance) {
-    final var isSingleInput = instance.getAttributeValue(EXP_MODE) != POWER;
+    final var isSingleInput = instance.getAttributeValue(EXP_MODE) != ARB;
     final Port[] ps;
     if(isSingleInput) {
       ps = new Port[3];
 
-      ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[EXPO] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
 
     } else {
       ps = new Port[4];
 
-      ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-      ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-      ps[IN1].setToolTip(S.getter("exponentiatorInputBTip"));
+      ps[EXPO] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[BASE] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[BASE].setToolTip(S.getter("exponentiatorBaseTip"));
     }
+    ps[EXPO].setToolTip(S.getter("exponentiatorExponentTip"));
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("exponentiatorInputATip"));
     ps[OUT].setToolTip(S.getter("fpExponentiatorOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
 
@@ -113,11 +113,11 @@ public class FpExponentiator extends InstanceFactory {
     painter.drawBounds();
 
     final var mode = painter.getAttributeValue(EXP_MODE);
-    if(mode == POWER) {
+    if(mode == ARB) {
       painter.drawPort(OUT,"y\u02E3",Direction.WEST);
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-      painter.drawPort(IN0);
-      painter.drawPort(IN1);
+      painter.drawPort(BASE);
+      painter.drawPort(EXPO);
     }
     else {
       if(mode == EXP){
@@ -126,7 +126,7 @@ public class FpExponentiator extends InstanceFactory {
         painter.drawPort(OUT, "e\u02E3-1", Direction.WEST);
       }
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-      painter.drawPort(IN0);
+      painter.drawPort(EXPO);
     }
 
     painter.drawPort(ERR);
@@ -149,17 +149,17 @@ public class FpExponentiator extends InstanceFactory {
     final var mode = state.getAttributeValue(EXP_MODE);
 
     // compute outputs
-    final var a = state.getPortValue(IN0);
+    final var expo = state.getPortValue(EXPO);
 
     final double out_val;
-    final var a_val = a.toDoubleValueFromAnyFloat();
+    final var expo_val = expo.toDoubleValueFromAnyFloat();
 
-    if(mode == POWER) {
-      final var b = state.getPortValue(IN1);
-      final var b_val = b.toDoubleValueFromAnyFloat();
-      out_val = Math.pow(a_val, b_val);
+    if(mode == ARB) {
+      final var base = state.getPortValue(BASE);
+      final var base_val = base.toDoubleValueFromAnyFloat();
+      out_val = Math.pow(base_val, expo_val);
     } else {
-      out_val = mode == EXP ? Math.exp(a_val) : Math.expm1(a_val);
+      out_val = mode == EXP ? Math.exp(expo_val) : Math.expm1(expo_val);
     }
 
     final var out = Value.createKnown(dataWidth, out_val);

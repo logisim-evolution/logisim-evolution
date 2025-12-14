@@ -47,13 +47,13 @@ public class FpToFp extends InstanceFactory {
   Attribute<BitWidth> FP_WIDTH_IN =
       Attributes.forOption(
           "fpwidthin",
-          S.getter("fpToFpDataWidthInAttr"),
+          S.getter("fpToFpDataWidthIn"),
           new BitWidth[] {BitWidth.create(8), BitWidth.create(16), BitWidth.create(32),
             BitWidth.create(64)});
   Attribute<BitWidth> FP_WIDTH_OUT =
       Attributes.forOption(
           "fpwidthout",
-          S.getter("fpToFpDataWidthOutAttr"),
+          S.getter("fpToFpDataWidthOut"),
           new BitWidth[] {BitWidth.create(8), BitWidth.create(16), BitWidth.create(32),
             BitWidth.create(64)});
 

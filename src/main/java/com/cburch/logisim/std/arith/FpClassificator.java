@@ -39,7 +39,7 @@ public class FpClassificator extends InstanceFactory {
   public static final String _ID = "FPClassificator";
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
+  private static final int IN = 0;
   private static final int NEGATIVE = 1;
   private static final int ZERO = 2;
   private static final int SUBNORMAL = 3;
@@ -50,14 +50,14 @@ public class FpClassificator extends InstanceFactory {
   private static final int QUIET_NAN = 6;
 
   public FpClassificator() {
-    super(_ID, S.getter("fpClassificator"));
+    super(_ID, S.getter("fpClassificatorComponent"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -40, 40, 80));
     setIcon(new ArithmeticIcon("\u2630 ",3));
 
     final var ps = new Port[7];
-    ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+    ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
 
     ps[NEGATIVE] = new Port(0, -30, Port.OUTPUT, 1);
     ps[ZERO] = new Port(0, -20, Port.OUTPUT, 1);
@@ -67,7 +67,7 @@ public class FpClassificator extends InstanceFactory {
 //  ps[SIGNALING_NAN] = new Port(0, 20, Port.OUTPUT, 1);
     ps[QUIET_NAN] = new Port(0, 30, Port.OUTPUT, 1);
 
-    ps[IN0].setToolTip(S.getter("fpClassificatorInputTip"));
+    ps[IN].setToolTip(S.getter("fpClassificatorInputTip"));
 
     ps[NEGATIVE].setToolTip(S.getter("fpClassificatorNegativeTip"));
     ps[ZERO].setToolTip(S.getter("fpClassificatorZeroTip"));
@@ -75,7 +75,7 @@ public class FpClassificator extends InstanceFactory {
     ps[NORMAL].setToolTip(S.getter("fpClassificatorNormalTip"));
     ps[INFINITE].setToolTip(S.getter("fpClassificatorInfiniteTip"));
 //  ps[SIGNALING_NAN].setToolTip(S.getter("fpClassificatorSignalingNaNTip"));
-    ps[QUIET_NAN].setToolTip(S.getter("fpClassificatorQuietNaNTip"));
+    ps[QUIET_NAN].setToolTip(S.getter("fpClassificatorNaNTip"));
 
     setPorts(ps);
   }
@@ -98,7 +98,7 @@ public class FpClassificator extends InstanceFactory {
     final var g = painter.getGraphics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    painter.drawPort(IN0);
+    painter.drawPort(IN);
     painter.drawPort(NEGATIVE, "-", Direction.WEST);
     painter.drawPort(ZERO, "0", Direction.WEST);
     painter.drawPort(SUBNORMAL, "sn", Direction.WEST);
@@ -123,7 +123,7 @@ public class FpClassificator extends InstanceFactory {
     final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
 
     // compute outputs
-    final var a = state.getPortValue(IN0);
+    final var a = state.getPortValue(IN);
 
     final var isNegative = (a.toLongValue() & (1L << (dataWidth.getWidth() - 1))) != 0;
 

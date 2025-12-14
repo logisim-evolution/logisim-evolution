@@ -52,8 +52,8 @@ public class FpSquareRoot extends InstanceFactory {
     ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("squareRootInputTip"));
-    ps[OUT].setToolTip(S.getter("fpSquareRootOutputTip"));
+    ps[IN0].setToolTip(S.getter("fpSquareRootInputTip"));
+    ps[OUT].setToolTip(S.getter("squareRootOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }

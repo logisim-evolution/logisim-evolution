@@ -43,7 +43,7 @@ public class MinMax extends InstanceFactory {
   private static final int MIN = 2;
   private static final int MAX = 3;
   public MinMax() {
-    super(_ID, S.getter("fpMinMax"));
+    super(_ID, S.getter("minMaxComponent"));
     setAttributes(
       new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
       new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
@@ -56,8 +56,8 @@ public class MinMax extends InstanceFactory {
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
     ps[MAX] = new Port(0, 10, Port.OUTPUT, StdAttr.WIDTH);
     ps[MIN] = new Port(0, -10, Port.OUTPUT, StdAttr.WIDTH);
-    ps[IN0].setToolTip(S.getter("minMaxInputATip"));
-    ps[IN1].setToolTip(S.getter("minMaxInputBTip"));
+    ps[IN0].setToolTip(S.getter("minMaxInputTip"));
+    ps[IN1].setToolTip(S.getter("minMaxInputTip"));
     ps[MIN].setToolTip(S.getter("minMaxMinimumTip"));
     ps[MAX].setToolTip(S.getter("minMaxMaximumTip"));
     setPorts(ps);

@@ -78,12 +78,12 @@ public class SquareRoot extends InstanceFactory {
 
     Port[] ps = new Port[4];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);
-    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
     ps[UPPER] = new Port(-20, -20, Port.INPUT, StdAttr.WIDTH);
+    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
     ps[REM] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
-    ps[IN].setToolTip(S.getter("squareRootInputTip"));
+    ps[IN].setToolTip(S.getter("squareRootRadicandLowerTip"));
+    ps[UPPER].setToolTip(S.getter("squareRootRadicandUpperTip"));
     ps[OUT].setToolTip(S.getter("squareRootOutputTip"));
-    ps[UPPER].setToolTip(S.getter("squareRootUpperInputTip"));
     ps[REM].setToolTip(S.getter("squareRootRemainderTip"));
     setPorts(ps);
   }

@@ -47,13 +47,13 @@ public class FpMultiplier extends InstanceFactory {
   private static final int IN2 = 4;
 
   static final AttributeOption MUL =
-      new AttributeOption("multiply", S.getter("fpMultiplierMultiply"));
+      new AttributeOption("multiply", S.getter("fpMultiplierModeMultiply"));
   static final AttributeOption FMA =
-      new AttributeOption("fusedMultiplyAdd", S.getter("fpMultiplierFusedMultiplyAdd"));
+      new AttributeOption("fusedMultiplyAdd", S.getter("fpMultiplierModeFusedMultiplyAdd"));
   static final Attribute<AttributeOption> MUL_MODE =
       Attributes.forOption(
           "multiplyMode",
-          S.getter("fpMultiplierMultiplyMode"),
+          S.getter("fpMultiplierMode"),
           new AttributeOption[] {
             MUL,
             FMA

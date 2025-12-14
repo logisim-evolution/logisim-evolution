@@ -54,7 +54,7 @@ public class FpAbsolute extends InstanceFactory {
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
     ps[IN0].setToolTip(S.getter("absoluteInputTip"));
-    ps[OUT].setToolTip(S.getter("fpAbsoluteOutputTip"));
+    ps[OUT].setToolTip(S.getter("absoluteOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }

@@ -41,17 +41,17 @@ public class FpLogarithm extends InstanceFactory {
   public static final String _ID = "FPLogarithm";
 
   static final AttributeOption LOGXY =
-      new AttributeOption("logxy", S.getter("fpLogarithmArbitraryBase"));
+      new AttributeOption("logxy", S.getter("fpLogarithmModeArbitraryBase"));
   static final AttributeOption LOG1P =
-      new AttributeOption("log1p", S.getter("fpLogarithmNaturalLogPlusOne"));
+      new AttributeOption("log1p", S.getter("fpLogarithmModeNaturalLogPlusOne"));
   static final AttributeOption LOG =
-      new AttributeOption("log", S.getter("fpLogarithmNaturalLog"));
+      new AttributeOption("log", S.getter("fpLogarithmModeNaturalLog"));
   static final AttributeOption LOG10 =
-      new AttributeOption("log10", S.getter("fpLogarithmLog10"));
+      new AttributeOption("log10", S.getter("fpLogarithmModeLog10"));
   static final Attribute<AttributeOption> LOG_MODE =
       Attributes.forOption(
           "mode",
-          S.getter("fpExponentModeAttr"),
+          S.getter("fpExponentMode"),
           new AttributeOption[] {
             LOGXY,
             LOG,
@@ -60,10 +60,10 @@ public class FpLogarithm extends InstanceFactory {
           });
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
+  private static final int ALOG = 0;
   private static final int OUT = 1;
   private static final int ERR = 2;
-  private static final int IN1 = 3;
+  private static final int BASE = 3;
 
   public FpLogarithm() {
     super(_ID, S.getter("fpLogarithmComponent"));
@@ -92,19 +92,19 @@ public class FpLogarithm extends InstanceFactory {
     if(isSingleInput) {
       ps = new Port[3];
 
-      ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[ALOG] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
 
     } else {
       ps = new Port[4];
 
-      ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-      ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-      ps[IN1].setToolTip(S.getter("logarithmInputBTip"));
+      ps[ALOG] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[BASE] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[BASE].setToolTip(S.getter("logarithmBaseTip"));
     }
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("logarithmInputATip"));
-    ps[OUT].setToolTip(S.getter("fpLogarithmOutputTip"));
+    ps[ALOG].setToolTip(S.getter("logarithmAntiLogarithmTip"));
+    ps[OUT].setToolTip(S.getter("logarithmOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
 
     instance.setPorts(ps);
@@ -119,8 +119,8 @@ public class FpLogarithm extends InstanceFactory {
     if(mode == LOGXY) {
       painter.drawPort(OUT,"log\u1D67x",Direction.WEST);
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-      painter.drawPort(IN0);
-      painter.drawPort(IN1);
+      painter.drawPort(ALOG);
+      painter.drawPort(BASE);
     } else {
       if(mode == LOG) {
         painter.drawPort(OUT, "log", Direction.WEST);
@@ -131,7 +131,7 @@ public class FpLogarithm extends InstanceFactory {
       }
 
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-      painter.drawPort(IN0);
+      painter.drawPort(ALOG);
     }
 
     painter.drawPort(ERR);
@@ -154,13 +154,13 @@ public class FpLogarithm extends InstanceFactory {
     final var mode = state.getAttributeValue(LOG_MODE);
 
     // compute outputs
-    final var a = state.getPortValue(IN0);
+    final var a = state.getPortValue(ALOG);
 
     final double out_val;
     final var a_val = a.toDoubleValueFromAnyFloat();
 
     if(mode == LOGXY) {
-      final var b = state.getPortValue(IN1);
+      final var b = state.getPortValue(BASE);
       final var b_val = b.toDoubleValueFromAnyFloat();
       out_val = Math.log(a_val) / Math.log(b_val);
     } else if(mode == LOG) {

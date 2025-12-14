@@ -46,7 +46,7 @@ public class FpMinMax extends InstanceFactory {
   private static final int ERR = 4;
 
   public FpMinMax() {
-    super(_ID, S.getter("fpMinMax"));
+    super(_ID, S.getter("fpMinMaxComponent"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -58,8 +58,8 @@ public class FpMinMax extends InstanceFactory {
     ps[MAX] = new Port(0, 10, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[MIN] = new Port(0, -10, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("minMaxInputATip"));
-    ps[IN1].setToolTip(S.getter("minMaxInputBTip"));
+    ps[IN0].setToolTip(S.getter("minMaxInputTip"));
+    ps[IN1].setToolTip(S.getter("minMaxInputTip"));
     ps[MIN].setToolTip(S.getter("minMaxMinimumTip"));
     ps[MAX].setToolTip(S.getter("minMaxMaximumTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));

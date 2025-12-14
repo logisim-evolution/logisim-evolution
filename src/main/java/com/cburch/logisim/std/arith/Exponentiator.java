@@ -63,10 +63,10 @@ public class Exponentiator extends InstanceFactory {
   }
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int C_OUT = 3;
+  private static final int BASE = 0;
+  private static final int EXP = 1;
+  private static final int LOW_OUT = 2;
+  private static final int UPP_OUT = 3;
 
   public Exponentiator() {
     super(_ID, S.getter("exponentiatorComponent"));
@@ -78,14 +78,14 @@ public class Exponentiator extends InstanceFactory {
     setIcon(new ArithmeticIcon("y\u02E3",2));
 
     final var ps = new Port[4];
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
-    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-    ps[C_OUT] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
-    ps[IN0].setToolTip(S.getter("exponentiatorInputATip"));
-    ps[IN1].setToolTip(S.getter("exponentiatorInputBTip"));
-    ps[OUT].setToolTip(S.getter("exponentiatorOutputTip"));
-    ps[C_OUT].setToolTip(S.getter("exponentiatorOutputTip"));
+    ps[BASE] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
+    ps[EXP] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
+    ps[LOW_OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+    ps[UPP_OUT] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
+    ps[BASE].setToolTip(S.getter("exponentiatorBaseTip"));
+    ps[EXP].setToolTip(S.getter("exponentiatorExponentTip"));
+    ps[LOW_OUT].setToolTip(S.getter("exponentiatorLowerOutputTip"));
+    ps[UPP_OUT].setToolTip(S.getter("exponentiatorUpperOutputTip"));
     setPorts(ps);
   }
 
@@ -94,11 +94,11 @@ public class Exponentiator extends InstanceFactory {
     final var g = painter.getGraphics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    painter.drawPort(OUT,"y\u02E3",Direction.WEST);
+    painter.drawPort(LOW_OUT,"y\u02E3",Direction.WEST);
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-    painter.drawPort(C_OUT, S.get("dividerUpperInput"), Direction.SOUTH);
-    painter.drawPort(IN0);
-    painter.drawPort(IN1);
+    painter.drawPort(UPP_OUT, S.get("dividerUpperInput"), Direction.SOUTH);
+    painter.drawPort(BASE);
+    painter.drawPort(EXP);
   }
 
   @Override
@@ -109,14 +109,14 @@ public class Exponentiator extends InstanceFactory {
           state.getAttributeValue(Comparator.MODE_ATTR) == Comparator.UNSIGNED_OPTION;
 
     // compute outputs
-    final var a = state.getPortValue(IN0);
-    final var b = state.getPortValue(IN1);
+    final var a = state.getPortValue(BASE);
+    final var b = state.getPortValue(EXP);
 
     final var results = computePower(dataWidth, a, b, unsigned);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
-    state.setPort(OUT, Value.createKnown(dataWidth, results[0].toLongValue()), delay);
-    state.setPort(C_OUT, Value.createKnown(dataWidth, results[1].toLongValue()), delay);
+    state.setPort(LOW_OUT, Value.createKnown(dataWidth, results[0].toLongValue()), delay);
+    state.setPort(UPP_OUT, Value.createKnown(dataWidth, results[1].toLongValue()), delay);
   }
 }
