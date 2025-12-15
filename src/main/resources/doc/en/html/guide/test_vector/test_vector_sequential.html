@@ -85,7 +85,7 @@ A B C Out     &lt;set&gt; &lt;seq&gt;
 <li>The first three tests are combinational (seq=0), so the circuit resets
 between each test, even though they share set 0.</li>
 <li>The next three tests all have set 0 with seq values 1-3, so they form one sequence
-that runs in order without reset between each other only resetting before the test run.</li>
+that runs in order without reset between each other only resetting before the first test in the set runs.</li>
 <li>The last test has set 1 seq 1&2, so it starts a new sequence and the circuit resets before it runs but not between tests in the set.</li>
 <li>The sixth test uses <code>&lt;DC&gt;</code> for the output, so any output value passes.</li>
 <li>The last test uses <code>&lt;float&gt;</code> for the output, expecting a floating value.</li>
