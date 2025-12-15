@@ -352,8 +352,7 @@ public class TestVectorDocsSampleTest {
     com.cburch.logisim.instance.Instance[] pins =
         new com.cburch.logisim.instance.Instance[vector.columnName.length];
     com.cburch.logisim.circuit.CircuitState tempState =
-        com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit);
-    tempState.getPropagator().setPropagatorThread(Thread.currentThread());
+        com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit, Thread.currentThread());
 
     for (int i = 0; i < vector.columnName.length; i++) {
       String columnName = vector.columnName[i];
@@ -630,8 +629,7 @@ public class TestVectorDocsSampleTest {
     com.cburch.logisim.instance.Instance[] pins =
         new com.cburch.logisim.instance.Instance[vector.columnName.length];
     com.cburch.logisim.circuit.CircuitState tempState =
-        com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit);
-    tempState.getPropagator().setPropagatorThread(Thread.currentThread());
+        com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit, Thread.currentThread());
 
     for (int i = 0; i < vector.columnName.length; i++) {
       String columnName = vector.columnName[i];

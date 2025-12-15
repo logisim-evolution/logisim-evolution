@@ -317,7 +317,7 @@ public class TtyInterface {
       return;
     }
 
-    CircuitState circState = CircuitState.createRootState(proj, circuit);
+    CircuitState circState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
 
     // we load the ram before first propagation
     // so the first propagation emits correct values
@@ -337,7 +337,6 @@ public class TtyInterface {
     // we have to do our initial propagation before the simulation starts -
     // it's necessary to populate the circuit with substates.
     final var prop = circState.getPropagator();
-    prop.setPropagatorThread(Thread.currentThread()); // We do not use the simulator
     prop.propagate();
 
     final var ttyFormat = args.getTtyFormat();
@@ -411,9 +410,8 @@ public class TtyInterface {
     final var valueMap = new HashMap<Instance, Value>();
     for (var i = 0; i < rowCount; i++) {
       valueMap.clear();
-      final var circuitState = CircuitState.createRootState(proj, circuit);
+      final var circuitState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
       final var prop = circuitState.getPropagator();
-      prop.setPropagatorThread(Thread.currentThread()); // We do not use the simulator
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();

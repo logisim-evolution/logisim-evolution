@@ -27,6 +27,7 @@ import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -215,12 +216,16 @@ public class CircuitState implements InstanceData {
   private static int lastId = 0;
   private final int id = lastId++;
 
-  public CircuitState(Project proj, Circuit circuit, Propagator prop) {
+  public CircuitState(Project proj, Circuit circuit, Propagator prop, Thread thread) {
     this.proj = proj;
     this.circuit = circuit;
-    this.base = prop != null ? prop : new Propagator(this);
+    this.base = prop != null ? prop : new Propagator(this, thread != null ? thread : proj.getSimulator().simThread);
     circuit.addCircuitListener(myCircuitListener);
     markAllComponentsDirty();
+  }
+
+  public CircuitState(Project proj, Circuit circuit, Propagator prop) {
+    this(proj, circuit, prop, null);
   }
 
   @Override
@@ -229,15 +234,23 @@ public class CircuitState implements InstanceData {
   }
 
   public static CircuitState createRootState(Project proj, Circuit circuit) {
-    return new CircuitState(proj, circuit, null /* make new Propagator */);
+    return new CircuitState(proj, circuit, null /* make new Propagator */, null);
   }
 
-  public CircuitState cloneAsNewRootState() {
-    final var ret = new CircuitState(proj, circuit, null);
+  public static CircuitState createRootState(Project proj, Circuit circuit, Thread thread) {
+    return new CircuitState(proj, circuit, null /* make new Propagator */, thread);
+  }
+
+  public CircuitState cloneAsNewRootState(Thread thread) {
+    final var ret = new CircuitState(proj, circuit, null, thread);
     ret.copyFrom(this);
     ret.parentComp = null;
     ret.parentState = null;
     return ret;
+  }
+
+  public CircuitState cloneAsNewRootState() {
+    return cloneAsNewRootState(null);
   }
 
   private void copyFrom(CircuitState src) {

@@ -43,8 +43,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     this.project = model.getProject();
     this.circuit = model.getCircuit();
-    this.circuitState = project.getCircuitState().cloneAsNewRootState();
-    this.circuitState.getPropagator().setPropagatorThread(this);
+    this.circuitState = project.getCircuitState().cloneAsNewRootState(this);
     this.vector = model.getVector();
 
     matchPins();
@@ -57,8 +56,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     super("TestThread-Project");
     this.project = proj;
     this.circuit = circuit;
-    this.circuitState = project.getCircuitState().cloneAsNewRootState();
-    this.circuitState.getPropagator().setPropagatorThread(this);
+    this.circuitState = project.getCircuitState().cloneAsNewRootState(this);
     this.vector = vec;
 
     matchPins();
