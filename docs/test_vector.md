@@ -11,6 +11,23 @@ The Test Vector module runs a separate copy of the circuit simulator, so it does
 Any incorrect outputs will be flagged in red. Hover the mouse over the red box to see what the output should have been,
 according to the test vector. Rows with incorrect outputs are sorted to the top of the window.
 
+### Interactive Test Execution
+
+Each row in the Test Vector window has a button in the first column that allows you to manually execute individual tests:
+
+- **"Set" button** (for combinational tests): Clicking this button executes a single combinational test. The circuit is reset, 
+  the test inputs are applied, and outputs are verified. Only the clicked row is highlighted in green to indicate it was executed.
+
+- **"Go" button** (for sequential tests): Clicking this button executes all sequential steps up to and including the target step.
+  The circuit state is reset, then steps 1, 2, ..., up to the target step are executed in sequence with propagation between each step.
+  All executed sequential steps are highlighted in green to show the execution path. Combinational tests (seq=0) in the same set are not executed or highlighted.
+
+**Highlighting behavior:**
+- When a combinational test is executed, only that single row is highlighted in green.
+- When a sequential test is executed, all sequential steps (seq > 0) up to and including the target step are highlighted in green.
+- Combinational tests (seq = 0) are never highlighted when executing sequential tests, even if they're in the same set.
+- Highlighting is cleared when a new vector file is loaded.
+
 ## Basic File Format
 
 The file format is simple. You can use the Logging module (with "Include Header Line" selected in the file output tab) to get started,

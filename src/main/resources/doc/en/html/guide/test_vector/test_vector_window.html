@@ -58,6 +58,28 @@ window.</p>
 since in most cases the Logging module outputs the same format as used
 by the Test Vector module.</p>
 
+<h2>Interactive Test Execution</h2>
+
+<p>Each row in the Test Vector window has a button in the first column that allows you to manually execute individual tests:</p>
+
+<ul>
+<li><b>"Set" button</b> (for combinational tests): Clicking this button executes a single combinational test. 
+The circuit is reset, the test inputs are applied, and outputs are verified. Only the clicked row is highlighted 
+in green to indicate it was executed.</li>
+
+<li><b>"Go" button</b> (for sequential tests): Clicking this button executes all sequential steps up to and including 
+the target step. The circuit state is reset, then steps 1, 2, ..., up to the target step are executed in sequence 
+with propagation between each step. All executed sequential steps are highlighted in green to show the execution path. 
+Combinational tests (seq=0) in the same set are not executed or highlighted.</li>
+</ul>
+
+<p><b>Highlighting behavior:</b></p>
+<ul>
+<li>When a combinational test is executed, only that single row is highlighted in green.</li>
+<li>When a sequential test is executed, all sequential steps (seq &gt; 0) up to and including the target step are highlighted in green.</li>
+<li>Combinational tests (seq = 0) are never highlighted when executing sequential tests, even if they're in the same set because they are not executed.</li>
+</ul>
+
 <p>
 	<b>Previous:</b> <a href="index.html">Test Vectors</a> | <b>Next:</b> <a href="test_vector_file_format.html">Test Vector File Format</a>.
 </p>
