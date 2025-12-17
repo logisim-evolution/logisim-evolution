@@ -30,6 +30,7 @@ public abstract class AbstractTool extends CanvasTool {
       new RoundRectangleTool(attrs),
       new OvalTool(attrs),
       new PolyTool(true, attrs),
+      new ImageTool(attrs),
     };
   }
 
