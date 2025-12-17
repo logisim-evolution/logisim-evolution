@@ -213,7 +213,68 @@
         <tbody>
           <tr>
             <td align="center"><b>G</b> (shown as <b>G5</b>)</td>
-            <td><var>ct</var> (Count Enable)</td>
+            <td><var>ct</var> (Count Enable)</td><!-- TRANSLATION NEEDED: Please translate this section from English -->
+<h2>Logisim-evolution Appearance (IEEE/IEC Standard)</h2>
+<p>
+  When the <b>Appearance</b> attribute is set to <b>Logisim-evolution</b>,
+  the counter uses standard IEC/IEEE graphical symbols (IEC 617-12 and IEEE Std 91-1984).
+  This appearance includes additional control pins and mode indicators:
+</p>
+
+<center>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Label</th>
+        <th>Function</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td align="center"><b>G</b> (or <b>G5</b>)</td>
+        <td>Count Enable</td>
+        <td>When high (1), counting is enabled. When low (0), the count is held regardless of clock pulses.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M1</b></td>
+        <td>[load]</td>
+        <td>Load mode control. Activates loading from the Data input.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M2</b></td>
+        <td>[count]</td>
+        <td>Count mode control. Activates counting operation.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M3</b></td>
+        <td>[up]</td>
+        <td>Up-count control. Selects increment mode.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M4</b></td>
+        <td>[down]</td>
+        <td>Down-count control. Selects decrement mode.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>2,3,5+/C6</b></td>
+        <td>Clock+</td>
+        <td>Clock input for specific mode combinations (with count enable active).</td>
+      </tr>
+      <tr>
+        <td align="center"><b>2,4,5-</b></td>
+        <td>Clock-</td>
+        <td>Alternative clock input path for different operational modes.</td>
+      </tr>
+    </tbody>
+  </table>
+</center>
+
+<p>
+  <b>Note:</b> The Logisim-evolution appearance may show duplicate clock and carry pins.
+  These represent different operational modes of the counter according to the IEC/IEEE standard.
+  The functionality is identical to the Classic appearance; only the graphical representation differs.
+</p>
             <td>Count Enable. When high (1), counting is enabled. When low (0), the count is held.</td>
           </tr>
           <tr>
