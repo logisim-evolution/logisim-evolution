@@ -428,6 +428,30 @@ public class AppPreferences {
             getScaled(IconSize, scale), getScaled(IconSize, scale), Image.SCALE_SMOOTH));
   }
 
+  /**
+   * Determines the appropriate font style (PLAIN or BOLD) for the given font.
+   *
+   * This is a heuristic to prevent "faux bold" rendering artifacts. Fonts with explicit 
+   * weights (e.g. Medium, Light) are typically standalone faces. Applying the BOLD style 
+   * to them forces synthetic bolding, which degrades rendering quality ("smearing").
+   *
+   * This method returns Font.PLAIN for such weighted fonts to ensure crisp rendering,
+   * while preserving Font.BOLD for standard fonts to maintain typical emphasis.
+   *
+   * @param fontName The name of the font family.
+   * @return Font.PLAIN if the font name suggests a specific weight, otherwise Font.BOLD.
+   */
+  public static int getPreferredFontStyle(String fontName) {
+    String font = fontName.toLowerCase();
+    if (font.contains("medium") || font.contains("light") 
+        || font.contains("thin") || font.contains("regular")
+        || font.contains("semibold") || font.contains("extrabold")) {
+      return Font.PLAIN;
+    }
+    return Font.BOLD;
+  }
+
+
   public static void updateRecentFile(File file) {
     recentProjects.updateRecent(file);
   }
@@ -541,6 +565,9 @@ public class AppPreferences {
 
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
+
+  public static final PrefMonitor<String> APP_FONT =
+      create(new PrefMonitorString("AppFont", ""));
 
   // default grid colors
   public static final int DEFAULT_CANVAS_BG_COLOR = 0xFFFFFFFF;
