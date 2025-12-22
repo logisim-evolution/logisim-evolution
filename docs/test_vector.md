@@ -13,20 +13,36 @@ according to the test vector. Rows with incorrect outputs are sorted to the top 
 
 ### Interactive Test Execution
 
-Each row in the Test Vector window has a button in the first column that allows you to manually execute individual tests:
+Each row in the Test Vector window has two buttons that allow you to manually interact with individual tests:
 
-- **"Set" button** (for combinational tests): Clicking this button executes a single combinational test. The circuit is reset, 
-  the test inputs are applied, and outputs are verified. Only the clicked row is highlighted in green to indicate it was executed.
+- **"Show" button** (first column): This button previews the circuit state without checking outputs.
+  - **Combinational tests (seq=0)**: Resets the circuit, sets the input values, and propagates signals.
+    Only the clicked row is highlighted in green to show it was executed.
+  - **Sequential tests (seq>0)**: Resets the circuit, then runs all prior sequential steps in the set
+    (from seq 1 up to the target step), propagating after each step. All executed sequential steps are highlighted
+    in green to show the execution path. Combinational tests (seq=0) in the same set are not executed or highlighted.
 
-- **"Go" button** (for sequential tests): Clicking this button executes all sequential steps up to and including the target step.
-  The circuit state is reset, then steps 1, 2, ..., up to the target step are executed in sequence with propagation between each step.
-  All executed sequential steps are highlighted in green to show the execution path. Combinational tests (seq=0) in the same set are not executed or highlighted.
+  The Show button does not verify outputs against expected values - it only shows what the circuit state would be.
+
+- **"Set" button** (second column): This button sets input values and may execute tests.
+  - **Combinational tests (seq=0)**: Executes a full test - resets the circuit, applies the test inputs,
+    verifies outputs against expected values, and updates the test results. Only the clicked row is highlighted
+    in green to indicate it was executed.
+  - **Sequential tests (seq>0)**: Does NOT reset the circuit and does NOT run any other tests.
+    Simply sets the input values for that single step only, then propagates signals. Only the clicked row is
+    highlighted in green. This allows you to manually step through a sequence by setting individual step values
+    without resetting or running previous steps.
 
 **Highlighting behavior:**
-- When a combinational test is executed, only that single row is highlighted in green.
-- When a sequential test is executed, all sequential steps (seq > 0) up to and including the target step are highlighted in green.
-- Combinational tests (seq = 0) are never highlighted when executing sequential tests, even if they're in the same set.
-- Highlighting is cleared when a new vector file is loaded.
+
+- When the Show button is clicked on a combinational test, only that single row is highlighted in green.
+- When the Show button is clicked on a sequential test, all sequential steps (seq > 0) up to and including
+  the target step are highlighted in green.
+- When the Set button is clicked, only the clicked row is highlighted in green, regardless of whether it's
+  combinational or sequential.
+- Combinational tests (seq = 0) are never highlighted when executing sequential tests with the Show button,
+  even if they're in the same set, because they are not executed.
+- Highlighting is cleared when a new vector file is loaded or when the circuit simulator is reset.
 
 ## Basic File Format
 

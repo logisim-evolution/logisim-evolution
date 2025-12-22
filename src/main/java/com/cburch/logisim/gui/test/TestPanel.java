@@ -21,6 +21,7 @@ import com.cburch.logisim.proj.Project;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.InputEvent;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,9 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   private final ValueTable table;
   private final MyListener myListener = new MyListener();
   
-  // Track which rows' buttons are currently active (green) - all executed steps
+  // Track which rows' Show buttons are currently active (green)
+  private java.util.Set<Integer> activeShowRows = new java.util.HashSet<>();
+  // Track which rows' Set buttons are currently active (green)
   private java.util.Set<Integer> activeSetRows = new java.util.HashSet<>();
   // Store the pin values when Set is clicked, to detect changes
   private com.cburch.logisim.data.Value[] storedPinValues = null;
@@ -53,9 +56,9 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
 
   @Override
   public void changeColumnValueRadix(int i) {
-    if (i == 0 || i == 1) return; // Button and status columns don't support radix changes
+    if (i == 0 || i == 1 || i == 2) return; // Show button, Set button, and status columns don't support radix changes
     TestVector vec = getModel().getVector();
-    int offset = 2; // Button column (0) + status column (1)
+    int offset = 3; // all excluded columns: Show button column + Set button column + status column
     // <set>, <seq> columns don't support radix changes
     if (vec.setNumbers != null) {
       if (i == offset) return;
@@ -79,7 +82,7 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   public int getColumnCount() {
     TestVector vec = getModel().getVector();
     if (vec == null) return 0;
-    int count = vec.columnName.length + 2; // +1 for status column, +1 for button column
+    int count = vec.columnName.length + 3; // +1 for status column, +2 for Show and Set button columns
     // Add columns for <set>, <seq> if they exist
     if (vec.setNumbers != null) count++;
     if (vec.seqNumbers != null) count++;
@@ -89,9 +92,10 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   @Override
   public String getColumnName(int i) {
     TestVector vec = getModel().getVector();
-    if (i == 0) return ""; // Button column - no header
-    if (i == 1) return S.get("statusHeader");
-    int offset = 2; // Button column (0) + status column (1)
+    if (i == 0) return ""; // Show button column - no header
+    if (i == 1) return ""; // Set button column - no header
+    if (i == 2) return S.get("statusHeader");
+    int offset = 3; // Show button (0) + Set button (1) + status column (2)
     // Check if <set> column exists
     if (vec.setNumbers != null) {
       if (i == offset) return "<set>";
@@ -109,9 +113,10 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   @Override
   public int getColumnValueRadix(int i) {
     TestVector vec = getModel().getVector();
-    if (i == 0) return 0; // Button column
-    if (i == 1) return 0; // Status column
-    int offset = 2; // Button column (0) + status column (1)
+    if (i == 0) return 0; // Show button column
+    if (i == 1) return 0; // Set button column
+    if (i == 2) return 0; // Status column
+    int offset = 3; // Show button (0) + Set button (1) + status column (2)
     // <set>, <seq> columns are always decimal
     if (vec.setNumbers != null) {
       if (i == offset) return 10;
@@ -130,9 +135,10 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   @Override
   public BitWidth getColumnValueWidth(int i) {
     TestVector vec = getModel().getVector();
-    if (i == 0) return null; // Button column
-    if (i == 1) return null; // Status column
-    int offset = 2; // Button column (0) + status column (1)
+    if (i == 0) return null; // Show button column
+    if (i == 1) return null; // Set button column
+    if (i == 2) return null; // Status column
+    int offset = 3; // Show button (0) + Set button (1) + status column (2)
     // <set>, <seq> columns have no width (they're metadata)
     if (vec.setNumbers != null) {
       if (i == offset) return null;
@@ -169,13 +175,14 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     final var passMsg = S.get("passStatus");
     final var failMsg = S.get("failStatus");
     
-    // Determine column offsets (accounting for button column at 0 and status column at 1)
-    int setColumnOffset = vec.setNumbers != null ? 2 : -1;
+    // Determine column offsets (accounting for Show button (0), Set button (1), and status column (2))
+    int setColumnOffset = vec.setNumbers != null ? 3 : -1;
     int seqColumnOffset = vec.seqNumbers != null
-        ? (setColumnOffset >= 0 ? 3 : 2) : -1;
-    int pinColumnStart = 2; // Button (0) + status (1)
+        ? (setColumnOffset >= 0 ? 4 : 3) : -1;
+    int pinColumnStart = 3; // Show button (0) + Set button (1) + status (2)
     if (setColumnOffset >= 0) pinColumnStart++;
     if (seqColumnOffset >= 0) pinColumnStart++;
+
 
     for (var i = firstRow; i < firstRow + numRows; i++) {
       final var row = model.sortedIndex(i);
@@ -199,36 +206,25 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
         status = failed ? failMsg : passMsg;
       }
 
-      // Button column (column 0)
-      // Check if this is a sequential test with previous steps
-      int buttonSeqValue = (vec.seqNumbers != null && row < vec.seqNumbers.length) ? vec.seqNumbers[row] : 0;
-      int buttonSetValue = (vec.setNumbers != null && row < vec.setNumbers.length) ? vec.setNumbers[row] : 0;
-      String buttonText = (buttonSeqValue > 0) ? "Go" : "Set";
-      String buttonTooltip = (buttonSeqValue > 0) ? "Run the sequence of steps for this test and stop on this step" : "Set the pin values of this test";
-      if (buttonSeqValue > 0) {
-        // Check if there are other steps in the same set before this one
-        boolean hasPreviousSteps = false;
-        for (int checkRow = 0; checkRow < row; checkRow++) {
-          int otherSet = (vec.setNumbers != null && checkRow < vec.setNumbers.length) ? vec.setNumbers[checkRow] : 0;
-          int otherSeq = (vec.seqNumbers != null && checkRow < vec.seqNumbers.length) ? vec.seqNumbers[checkRow] : 0;
-          if (otherSet == buttonSetValue && otherSeq > 0 && otherSeq < buttonSeqValue) {
-            hasPreviousSteps = true;
-            break;
-          }
-        }
-      }
-      // Use green background if this row was executed, otherwise light blue
-      Color buttonBg = activeSetRows.contains(row) 
+      // Show button column (column 0)
+      Color showButtonBg = activeShowRows.contains(row) 
           ? activeButtonColor 
-          : inactiveButtonColor; // Light blue
+          : inactiveButtonColor;
       rowData[i - firstRow][0] =
-          new ValueTable.Cell(buttonText, buttonBg, null, buttonTooltip);
+          new ValueTable.Cell("Show", showButtonBg, null, "Show the pin values for this test step");
       
-      // Status column (column 1)
+      // Set button column (column 1)
+      Color setButtonBg = activeSetRows.contains(row) 
+          ? activeButtonColor 
+          : inactiveButtonColor;
       rowData[i - firstRow][1] =
+          new ValueTable.Cell("Set", setButtonBg, null, "Set the pin values of this test");
+      
+      // Status column (column 2)
+      rowData[i - firstRow][2] =
           new ValueTable.Cell(status, rowmsg != null ? failColor : null, null, rowmsg);
 
-      int colIndex = 2;
+      int colIndex = 3;
       
       // <set> column
       if (setColumnOffset >= 0) {
@@ -300,18 +296,20 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       }
     }
     // Reset active rows when model changes
-    activeSetRows.clear();
-    storedPinValues = null;
-    table.setModel(newModel == null ? null : this);
+      activeShowRows.clear();
+      activeSetRows.clear();
+      storedPinValues = null;
+      table.setModel(newModel == null ? null : this);
   }
+  
   
   @Override
   public boolean isButtonColumn(int col) {
-    return col == 0; // Button column is always column 0
+    return col == 0 || col == 1; // Show button (0) and Set button (1) are button columns
   }
   
   @Override
-  public void handleButtonClick(int displayRow) {
+  public void handleButtonClick(int displayRow, int col, int modifiersEx) {
     Model model = getModel();
     if (model == null) return;
     TestVector vec = model.getVector();
@@ -324,13 +322,23 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     int seqValue = (vec.seqNumbers != null && fileRow < vec.seqNumbers.length) 
         ? vec.seqNumbers[fileRow] : 0;
     
+    // Check if menu shortcut key (Ctrl/Cmd) is pressed - if so, don't reset
+    int menuMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+    boolean resetFirst = (modifiersEx & menuMask) == 0;
+    
     try {
-      if (seqValue == 0) {
-        // Combinational test - "Set" button
-        executeSetButton(fileRow);
-      } else {
-        // Set button - just sets pin values
-        executeGoButton(fileRow, seqValue);
+      if (col == 0) {
+        // Show button clicked
+        if (seqValue > 0) {
+          // Sequential test - show values without executing
+          executeShowButton(fileRow, seqValue, resetFirst);
+        } else {
+          // Combinational test - just show values
+          executeShowButton(fileRow, 0, resetFirst);
+        }
+      } else if (col == 1) {
+        // Set button clicked - execute the test
+        executeGoButton(fileRow, seqValue, resetFirst);
       }
     } catch (TestException e) {
       // Show error dialog
@@ -342,93 +350,8 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     }
   }
   
-  private void executeSetButton(int fileRow) throws TestException {
-    Model model = getModel();
-    TestVector vec = model.getVector();
-    Project project = model.getProject();
-    com.cburch.logisim.circuit.Circuit circuit = model.getCircuit();
-    
-    // Get pins
-    com.cburch.logisim.instance.Instance[] pins = getPinsForVector(vec, circuit, project);
-    if (pins == null) {
-      throw new TestException("Could not match pins to test vector columns");
-    }
-    
-    // Get set number for debug output
-    int setNum = 0;
-    if (vec.setNumbers != null && fileRow < vec.setNumbers.length) {
-      setNum = vec.setNumbers[fileRow];
-    }
-    
-    if (Debug.isLevel(Debug.Level.DEBUG)) {
-      Debug.log(Debug.Level.DEBUG, "=== Starting combinational test (Set button) ===");
-      Debug.log(Debug.Level.DEBUG, "Set: {}, Row: {}", setNum, fileRow);
-      
-      // Log inputs
-      StringBuilder inputStr = new StringBuilder("Setting inputs: ");
-      for (int j = 0; j < pins.length; j++) {
-        if (com.cburch.logisim.std.wiring.Pin.FACTORY.isInputPin(pins[j])) {
-          String pinName = vec.columnName[j];
-          Value val = vec.data.get(fileRow)[j];
-          if (vec.isFloating(fileRow, j)) {
-            inputStr.append(pinName).append("=<float> ");
-          } else {
-            inputStr.append(pinName).append("=").append(val.toDisplayString()).append(" ");
-          }
-        }
-      }
-      Debug.log(Debug.Level.DEBUG, inputStr.toString());
-    }
-    
-    // Execute test and capture result
-    TestException result = null;
-    try {
-      // Reset circuit and apply test values (this also checks outputs)
-      circuit.doTestVector(project, pins, vec.data.get(fileRow), true, vec, fileRow);
-      
-      if (Debug.isLevel(Debug.Level.DEBUG)) {
-        // Log outputs after execution
-        com.cburch.logisim.circuit.CircuitState state = project.getCircuitState();
-        StringBuilder outputStr = new StringBuilder("Output result: ");
-        for (int j = 0; j < pins.length; j++) {
-          if (!com.cburch.logisim.std.wiring.Pin.FACTORY.isInputPin(pins[j])) {
-            String pinName = vec.columnName[j];
-            com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
-            Value actualValue = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
-            Value expectedValue = vec.data.get(fileRow)[j];
-            outputStr.append(pinName).append("=").append(actualValue.toDisplayString());
-            if (vec.isDontCare(fileRow, j)) {
-              outputStr.append("(<DC>) ");
-            } else if (vec.isFloating(fileRow, j)) {
-              outputStr.append("(<float>) ");
-            } else {
-              boolean matches = expectedValue.compatible(actualValue);
-              outputStr.append(matches ? "(OK) " : "(FAIL) ");
-            }
-          }
-        }
-        Debug.log(Debug.Level.DEBUG, outputStr.toString());
-        Debug.log(Debug.Level.DEBUG, "=== Final result: PASS ===");
-      }
-    } catch (TestException e) {
-      result = e;
-      if (Debug.isLevel(Debug.Level.DEBUG)) {
-        Debug.log(Debug.Level.DEBUG, "=== Final result: FAIL - {} ===", e.getMessage());
-      }
-      throw e; // Re-throw to show error dialog
-    } finally {
-      // Mark only this combinational row as active (will show green button)
-      activeSetRows.clear();
-      activeSetRows.add(fileRow);
-      
-      // Update the result and refresh display
-      model.updateResult(vec, fileRow, result);
-      // The updateResult method will trigger fireTestResultsChanged() which calls table.dataChanged()
-    }
-  }
-  
-  private void executeGoButton(int targetFileRow, int targetSeq) throws TestException {
-    // Step through each sequence step from 1 to targetSeq, setting values and propagating
+  private void executeShowButton(int targetFileRow, int targetSeq, boolean resetFirst) throws TestException {
+    // "Show" button - just set pin values without executing/checking the test
     Model model = getModel();
     TestVector vec = model.getVector();
     Project project = model.getProject();
@@ -441,7 +364,57 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       throw new TestException("Could not match pins to test vector columns");
     }
 
-    // Get the target set number
+    // Handle combinational tests (targetSeq == 0)
+    if (targetSeq == 0) {
+      // Combinational test - just set values for this single row
+      if (resetFirst) {
+        state.reset();
+      }
+      
+      // Set input pin values
+      for (int j = 0; j < pins.length; j++) {
+        if (com.cburch.logisim.std.wiring.Pin.FACTORY.isInputPin(pins[j])) {
+          com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+          com.cburch.logisim.data.Value driveValue = vec.data.get(targetFileRow)[j];
+          if (vec.isFloating(targetFileRow, j)) {
+            driveValue = com.cburch.logisim.data.Value.UNKNOWN;
+          }
+          com.cburch.logisim.std.wiring.Pin.FACTORY.driveInputPin(pinState, driveValue);
+          state.markComponentAsDirty(pins[j].getComponent());
+        }
+      }
+      
+      // Propagate
+      com.cburch.logisim.circuit.Propagator prop = state.getPropagator();
+      prop.propagate();
+      
+      if (prop.isOscillating()) {
+        throw new TestException("Oscillation detected");
+      }
+      
+      // Store pin values
+      storedPinValues = new com.cburch.logisim.data.Value[pins.length];
+      for (int j = 0; j < pins.length; j++) {
+        com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+        storedPinValues[j] = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
+      }
+      
+      // Mark this row as active for Show button (highlight all previous + this one)
+      activeShowRows.clear();
+      activeShowRows.add(targetFileRow);
+      // Update Set button highlight to match current state
+      activeSetRows.clear();
+      activeSetRows.add(targetFileRow);
+      capturedInitialState = false;
+      
+      table.dataChanged();
+      table.repaint();
+      project.repaintCanvas();
+      project.getSimulator().nudge();
+      return;
+    }
+
+    // Sequential test - Get the target set number
     int targetSet = 0;
     if (vec.setNumbers != null && targetFileRow < vec.setNumbers.length) {
       targetSet = vec.setNumbers[targetFileRow];
@@ -466,10 +439,12 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       return Integer.compare(seqA, seqB);
     });
 
-    // Reset circuit state before starting the sequence
-    state.reset();
+    // Reset circuit state before starting the sequence (if requested)
+    if (resetFirst) {
+      state.reset();
+    }
 
-    // Execute each step in sequence
+    // Execute each step in sequence (just set values and propagate, don't check outputs)
     for (int stepRow : stepsToExecute) {
       // Set input pin values for this step
       for (int j = 0; j < pins.length; j++) {
@@ -502,9 +477,14 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       storedPinValues[j] = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
     }
     
-    // Mark all executed steps as active (will show green buttons)
+    // Mark all executed steps as active for Show button (will show green buttons)
+    activeShowRows.clear();
+    activeShowRows.addAll(stepsToExecute);
+    // Update Set button highlight to match current state (the last step shown)
     activeSetRows.clear();
-    activeSetRows.addAll(stepsToExecute);
+    if (!stepsToExecute.isEmpty()) {
+      activeSetRows.add(stepsToExecute.get(stepsToExecute.size() - 1));
+    }
     capturedInitialState = false; // Reset flag so we capture state after first propagation
     
     // Refresh the table to show the green button immediately
@@ -516,7 +496,91 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
 
     // Request a nudge to make sure the sim thread resumes
     project.getSimulator().nudge();
+  }
+  
+  private void executeGoButton(int targetFileRow, int targetSeq, boolean resetFirst) throws TestException {
+    Model model = getModel();
+    TestVector vec = model.getVector();
+    Project project = model.getProject();
+    com.cburch.logisim.circuit.Circuit circuit = model.getCircuit();
+    com.cburch.logisim.circuit.CircuitState state = project.getCircuitState();
 
+    // Get pins once
+    com.cburch.logisim.instance.Instance[] pins = getPinsForVector(vec, circuit, project);
+    if (pins == null) {
+      throw new TestException("Could not match pins to test vector columns");
+    }
+
+    // Handle combinational tests (targetSeq == 0)
+    if (targetSeq == 0) {
+      // Combinational test - execute single test using doTestVector
+      TestException result = null;
+      try {
+        // Reset circuit and apply test values (this also checks outputs)
+        circuit.doTestVector(project, pins, vec.data.get(targetFileRow), resetFirst, vec, targetFileRow);
+      } catch (TestException e) {
+        result = e;
+        throw e; // Re-throw to show error dialog
+      } finally {
+        // Mark only this combinational row as active for Set button (will show green button)
+        activeShowRows.clear(); // Clear Show button highlights
+        activeSetRows.clear();
+        activeSetRows.add(targetFileRow);
+        
+        // Update the result and refresh display
+        model.updateResult(vec, targetFileRow, result);
+        // The updateResult method will trigger fireTestResultsChanged() which calls table.dataChanged()
+      }
+      return;
+    }
+
+    // Sequential test - Set button: only set this one step (don't run sequence)
+    // Just set the pin values for this single row without running previous steps
+    
+    // Set input pin values for this step only
+    for (int j = 0; j < pins.length; j++) {
+      if (com.cburch.logisim.std.wiring.Pin.FACTORY.isInputPin(pins[j])) {
+        com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+        com.cburch.logisim.data.Value driveValue = vec.data.get(targetFileRow)[j];
+        if (vec.isFloating(targetFileRow, j)) {
+          driveValue = com.cburch.logisim.data.Value.UNKNOWN;
+        }
+        com.cburch.logisim.std.wiring.Pin.FACTORY.driveInputPin(pinState, driveValue);
+        // Mark the pin component as dirty so it gets processed during propagation
+        state.markComponentAsDirty(pins[j].getComponent());
+      }
+    }
+
+    // Propagate after setting values
+    com.cburch.logisim.circuit.Propagator prop = state.getPropagator();
+    prop.propagate();
+    
+    if (prop.isOscillating()) {
+      throw new TestException("Oscillation detected at sequence step " + targetSeq);
+    }
+    
+    // Store the pin values after setting
+    storedPinValues = new com.cburch.logisim.data.Value[pins.length];
+    for (int j = 0; j < pins.length; j++) {
+      com.cburch.logisim.instance.InstanceState pinState = state.getInstanceState(pins[j]);
+      storedPinValues[j] = com.cburch.logisim.std.wiring.Pin.FACTORY.getValue(pinState);
+    }
+    
+    // Mark only this row as active for Set button (will show green button)
+    activeShowRows.clear(); // Clear Show button highlights
+    activeSetRows.clear();
+    activeSetRows.add(targetFileRow);
+    capturedInitialState = false;
+    
+    // Refresh the table to show the green button immediately
+    table.dataChanged();
+    table.repaint();
+    
+    // Trigger a repaint of the circuit canvas so the changes are visible immediately
+    project.repaintCanvas();
+
+    // Request a nudge to make sure the sim thread resumes
+    project.getSimulator().nudge();
   }
   
   // Track if we've captured the initial state after setting values
@@ -576,6 +640,7 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     
     // If values changed, reset the active rows
     if (valuesChanged) {
+      activeShowRows.clear();
       activeSetRows.clear();
       storedPinValues = null;
       capturedInitialState = false;
@@ -589,6 +654,7 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
   @Override
   public void simulatorReset(com.cburch.logisim.circuit.Simulator.Event e) {
     // Reset active rows when simulator is reset
+    activeShowRows.clear();
     activeSetRows.clear();
     storedPinValues = null;
     capturedInitialState = false;
@@ -668,6 +734,7 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
     @Override
     public void vectorChanged() {
       // Clear active rows when vector changes (e.g., new file loaded)
+      activeShowRows.clear();
       activeSetRows.clear();
       storedPinValues = null;
       capturedInitialState = false;
