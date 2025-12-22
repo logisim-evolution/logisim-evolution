@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>La fenêtre Vecteur de test</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+	<div class="maindiv">
+
+<h1>La fenêtre Vecteur de test</h1>
+
+<p>La fenêtre Vecteur de test est similaire à l'onglet Tableau de la fenêtre
+Journalisation. Vous pouvez charger un vecteur de test depuis un fichier, et Logisim commencera
+à exécuter des tests sur le circuit actuel. Comme la fenêtre de journalisation, il
+n'y a qu'une seule fenêtre de vecteur de test pour le projet, et le tableau
+changera pour refléter le circuit qui est simulé dans la fenêtre
+du projet. Notez cependant que le module Vecteur de test exécute une copie
+séparée du simulateur de circuit, et n'interfère donc pas avec, et n'est
+pas influencé par, la simulation dans la fenêtre du projet.</p>
+
+<p>Pour l'exemple, nous testerons le circuit ci-dessous. Ce circuit donne les résultats de cinq fonctions logiques à partir de deux entrées. Il contient une erreur car la porte NAND du bas devrait être une porte AND.</p>
+
+<p align="center">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="Circuit d'exemple avec cinq fonctions logiques">
+</p>
+
+<p>Le fichier de vecteur de test ressemble à ceci :</p>
+
+<blockquote>
+	<pre class="code">
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10  
+1 1 0 0 0 1 1 11  
+</pre>
+</blockquote>
+
+<p>Pour exécuter le test, sélectionnez le menu <b class="menu">|&nbsp; Simuler &nbsp;|</b>→<b class="menu">|&nbsp; Vecteur de test &nbsp;|</b> puis utilisez le bouton <b class="button">Charger le vecteur</b>. Sélectionnez le fichier de vecteur que vous avez créé. La simulation est exécutée immédiatement et un tableau est affiché avec le résultat.</p>
+
+<p align="center">
+	<img src="../../../img-guide/vector-result.png" alt="Fenêtre Vecteur de test affichant les résultats avec les erreurs signalées en rouge">
+</p>
+
+<p>Toutes les sorties incorrectes seront signalées en rouge. Survolez la boîte rouge
+avec la souris pour voir ce que la sortie aurait dû être, selon le
+vecteur de test. Les lignes avec des sorties incorrectes sont triées en haut de la
+fenêtre.</p>
+
+<p>Le format de fichier est simple. Vous pouvez utiliser le module Journalisation (avec
+"Inclure la ligne d'en-tête" sélectionné dans l'onglet de sortie de fichier) pour commencer,
+car dans la plupart des cas, le module Journalisation produit le même format que celui utilisé
+par le module Vecteur de test.</p>
+
+<p>
+	<b>Précédent :</b> <a href="index.html">Vecteurs de test</a> | <b>Suivant :</b> <a href="test_vector_file_format.html">Format de fichier vecteur de test</a>.
+</p>
+	</div>
+</body>
+</html>
+

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="de">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="de">
+	<title>Testvektor-Dateiformat</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Testvektor-Dateiformat</h1>
+
+<p>Hier ist eine Beispiel-Testvektor-Datei:</p>
+<pre class="code">
+# my test vector for add32
+A[8]      B[8]      C[8]      Cin Cout
+0000_0000 0000_0000 0000_0000 0   0
+-2        0x05      3         0   0
+0         0o3       3         0   0
+</pre>
+
+<p>Vor allem anderen ist das Dateiformat einfach. Die Kopfzeilen entsprechen den Ein-/Ausgangspins der Schaltung. Darunter stehen die zu testenden Werte.</p>
+
+<p>Die erste nicht-leere, nicht-kommentierte Zeile listet den Namen jedes Eingangspins der Schaltung und seine Bitbreite (wenn > 1), durch Leerzeichen getrennt.</p>
+
+<p>Eine Sache, die Anfänger oft verwirrt, ist, dass die Bitbreite im Header angegeben werden muss, wenn sie nicht 1 Bit beträgt.</p>
+<p>HINWEIS: Die Bitbreite entspricht nicht unbedingt der Anzahl der Zeichen im Wert. Zum Beispiel kann ein 4-Bit-Wert von 13 als 1101, 00001101, 0x0d, 0o15, 15 oder 0b1101 usw. dargestellt werden.</p>
+
+<p>Leere Zeilen werden ignoriert. Alles nach einem '#'-Zeichen ist ein
+Kommentar. Die erste nicht-leere, nicht-kommentierte Zeile listet den Namen jedes
+Eingangspins der Schaltung und seine Breite (wenn &gt; 1), durch Leerzeichen getrennt.
+</p>
+
+<p>Die verbleibenden Zeilen listen jeden Wert durch Leerzeichen getrennt auf. Die
+Werte können hexadezimal, oktal, binär oder vorzeichenbehaftet dezimal sein. Hexadezimale Werte
+müssen das Präfix '0x' haben. Oktale Werte müssen das Präfix '0o' haben.
+Binär und dezimal werden
+anhand der Anzahl der Ziffern unterschieden: Binärwerte müssen immer
+genau so viele Ziffern haben wie die Breite der Spalte; Dezimalwerte müssen
+immer weniger haben, sollten keine führenden Nullen haben und können ein
+negatives Vorzeichen haben.</p>
+
+<p>Zur Verbesserung der Lesbarkeit können Sie Unterstriche (<code>_</code>) überall
+in numerischen Werten verwenden. Unterstriche werden beim Parsen ignoriert. Beispiele:
+<code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>,
+<code>1_234</code> oder <code>-5_000</code>.</p>
+
+<p>Für hexadezimale, oktale und binäre Werte gibt eine Ziffer 'x' vier,
+drei oder ein "Don't-Care"-Bit an. Der Wert 101xx ist also ein fünf Bit
+binärer Wert, bei dem die letzten beiden Bits nicht spezifiziert sind, und 0x1ax5 ist ein hexadezimaler
+Wert mit vier nicht spezifizierten Bits. Solche "Don't-Care"-Werte können nicht in
+dezimaler Notation verwendet werden.</p>
+
+<p>
+	<b>Zurück:</b> <a href="test_vector_window.html">Testvektor-Fenster</a> | <b>Weiter:</b> <a href="test_vector_special_values.html">Spezielle Werte</a>.
+</p>
+
+</body>
+</html>
+

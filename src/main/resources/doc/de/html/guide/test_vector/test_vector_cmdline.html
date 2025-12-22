@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>Command Line Usage</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Command Line Usage</h1>
+
+<p>To facilitate automated testing, the test vector feature can be run from the command line:</p>
+
+<blockquote>
+<div class="forcode">
+<tt>logisim --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<p>Or using the JAR file:</p>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<h2>Arguments</h2>
+
+<ul>
+<li><strong>&lt;circuit_name&gt;</strong>: The name of the circuit to test (must match a circuit in the project file)</li>
+<li><strong>&lt;test_vector_file&gt;</strong>: Path to the test vector file (e.g., <code>TestsDLatch.txt</code>)</li>
+<li><strong>&lt;project.circ&gt;</strong>: Path to the Logisim project file containing the circuit</li>
+</ul>
+
+<h2>Example</h2>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector dlatch TestsRegisterFile.txt /home/user/Computer.circ</tt>
+</div>
+</blockquote>
+
+<h2>What the Command Does</h2>
+
+<p>The command will:</p>
+
+<ol>
+<li>Load the specified circuit from the project file</li>
+<li>Load and parse the test vector file</li>
+<li>Run all tests (respecting sequential execution rules)</li>
+<li>Print results showing passed and failed tests</li>
+<li>Exit with status code 0 on success, non-zero on failure</li>
+</ol>
+
+<h2>Command Output Examples</h2>
+
+<p>The result of a successful test will be sent to standard output (stdout), for example:</p>
+
+	<pre class="code">
+Loading test vector "testv1b.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+4 
+
+Passed : 4, Failed : 0
+</pre>
+
+<p>And in case of failure:</p>
+
+	<pre class="code">
+Loading test vector "testv1a.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+
+  ob = 0 (expected 1)
+4 
+
+  ob = 1 (expected 0)
+
+Passed : 2, Failed : 2
+</pre>
+
+<p><strong>Note:</strong> In the error output (stderr) you will read:</p>
+
+	<pre class="code">
+Error on test vector 3:
+Error on test vector 4:
+</pre>
+
+<p>
+	<b>Previous:</b> <a href="test_vector_sequential.html">Sequential Testing</a> | <b>Next:</b> <a href="test_vector_tips.html">Tips and Best Practices</a>.
+</p>
+
+</body>
+</html>
+
