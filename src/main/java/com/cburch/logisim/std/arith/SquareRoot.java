@@ -32,33 +32,29 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.math.BigInteger;
 
-public class Divider extends InstanceFactory {
+public class SquareRoot extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "Divider";
+  public static final String _ID = "SquareRoot";
 
-  static Value[] computeResult(BitWidth width, Value a, Value b, Value upper, boolean unsigned) {
+  static Value[] computeResult(BitWidth width, Value a, Value upper) {
     int w = width.getWidth();
     if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
-    if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
-      BigInteger uu = upper.toBigInteger(unsigned);
-      BigInteger aa = a.toBigInteger(unsigned);
-      BigInteger bb = b.toBigInteger(unsigned);
+    if (a.isFullyDefined() && upper.isFullyDefined()) {
+      BigInteger uu = upper.toBigInteger(true);
+      BigInteger aa = a.toBigInteger(true);
 
       BigInteger num = uu.shiftLeft(w).or(aa);
-      BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
 
-      BigInteger[] res = num.divideAndRemainder(den);
-      long mask = w == 64 ? 0 : (-1L) << w;
-      mask ^= 0xFFFFFFFFFFFFFFFFL;
-      long result = res[0].and(BigInteger.valueOf(mask)).longValue();
-      long rem = res[1].and(BigInteger.valueOf(mask)).longValue();
+      BigInteger[] res = num.sqrtAndRemainder();
+      long result = res[0].longValue();
+      long rem = res[1].longValue();
       return new Value[] {Value.createKnown(width, result), Value.createKnown(width, rem)};
-    } else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue()) {
+    } else if (a.isErrorValue() || upper.isErrorValue()) {
       return new Value[] {Value.createError(width), Value.createError(width)};
     } else {
       return new Value[] {Value.createUnknown(width), Value.createUnknown(width)};
@@ -66,32 +62,29 @@ public class Divider extends InstanceFactory {
   }
 
   static final int PER_DELAY = 1;
-  public static final int IN0 = 0;
-  public static final int IN1 = 1;
-  public static final int OUT = 2;
-  public static final int UPPER = 3;
-  public static final int REM = 4;
+  public static final int IN = 0;
+  public static final int OUT = 1;
+  public static final int UPPER = 2;
+  public static final int REM = 3;
 
-  public Divider() {
-    super(_ID, S.getter("dividerComponent"));
+  public SquareRoot() {
+    super(_ID, S.getter("squareRootComponent"));
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
-        new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
+        new Attribute[] {StdAttr.WIDTH},
+        new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u00f7"));
+    setIcon(new ArithmeticIcon("\u221A"));
 
-    Port[] ps = new Port[5];
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
-    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+    Port[] ps = new Port[4];
+    ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);
     ps[UPPER] = new Port(-20, -20, Port.INPUT, StdAttr.WIDTH);
+    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
     ps[REM] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
-    ps[IN0].setToolTip(S.getter("dividerDividendLowerTip"));
-    ps[IN1].setToolTip(S.getter("dividerDivisorTip"));
-    ps[OUT].setToolTip(S.getter("dividerOutputTip"));
-    ps[UPPER].setToolTip(S.getter("dividerDividendUpperTip"));
-    ps[REM].setToolTip(S.getter("dividerRemainderTip"));
+    ps[IN].setToolTip(S.getter("squareRootRadicandLowerTip"));
+    ps[UPPER].setToolTip(S.getter("squareRootRadicandUpperTip"));
+    ps[OUT].setToolTip(S.getter("squareRootOutputTip"));
+    ps[REM].setToolTip(S.getter("squareRootRemainderTip"));
     setPorts(ps);
   }
 
@@ -111,8 +104,7 @@ public class Divider extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-    painter.drawPort(IN0);
-    painter.drawPort(IN1);
+    painter.drawPort(IN);
     painter.drawPort(OUT);
     painter.drawPort(UPPER, S.get("dividerUpperInput"), Direction.NORTH);
     painter.drawPort(REM, S.get("dividerRemainderOutput"), Direction.SOUTH);
@@ -122,9 +114,9 @@ public class Divider extends InstanceFactory {
     int y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.fillOval(x - 12, y - 7, 4, 4);
-    g.drawLine(x - 15, y, x - 5, y);
-    g.fillOval(x - 12, y + 3, 4, 4);
+    g.drawLine(x - 15, y, x - 12, y + 5);
+    g.drawLine(x - 12, y + 5, x - 9, y - 5);
+    g.drawLine(x - 9, y - 5, x - 5, y - 5);
     GraphicsUtil.switchToWidth(g, 1);
   }
 
@@ -132,14 +124,11 @@ public class Divider extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    boolean unsigned =
-        state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
 
     // compute outputs
-    Value a = state.getPortValue(IN0);
-    Value b = state.getPortValue(IN1);
+    Value a = state.getPortValue(IN);
     Value upper = state.getPortValue(UPPER);
-    Value[] outs = computeResult(dataWidth, a, b, upper, unsigned);
+    Value[] outs = computeResult(dataWidth, a, upper);
 
     // propagate them
     int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2) * PER_DELAY;

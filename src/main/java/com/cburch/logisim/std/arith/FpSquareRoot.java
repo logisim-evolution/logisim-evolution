@@ -12,13 +12,10 @@ package com.cburch.logisim.std.arith;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
-import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -30,75 +27,35 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpMultiplier extends InstanceFactory {
+public class FpSquareRoot extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPMultiplier";
+  public static final String _ID = "FPSquareRoot";
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
-  private static final int IN2 = 4;
+  private static final int OUT = 1;
+  private static final int ERR = 2;
 
-  static final AttributeOption MUL =
-      new AttributeOption("multiply", S.getter("fpMultiplierModeMultiply"));
-  static final AttributeOption FMA =
-      new AttributeOption("fusedMultiplyAdd", S.getter("fpMultiplierModeFusedMultiplyAdd"));
-  static final Attribute<AttributeOption> MUL_MODE =
-      Attributes.forOption(
-          "multiplyMode",
-          S.getter("fpMultiplierMode"),
-          new AttributeOption[] {
-            MUL,
-            FMA
-          });
-
-  public FpMultiplier() {
-    super(_ID, S.getter("fpMultiplierComponent"));
-    setAttributes(
-      new Attribute[] {StdAttr.FP_WIDTH, MUL_MODE},
-      new Object[] {BitWidth.create(32), MUL});
+  public FpSquareRoot() {
+    super(_ID, S.getter("fpSquareRootComponent"));
+    setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u00d7"));
-  }
+    setIcon(new ArithmeticIcon("\u221A"));
 
-  @Override
-  protected void configureNewInstance(Instance instance) {
-    configurePorts(instance);
-    instance.addAttributeListener();
-  }
-  @Override
-  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == MUL_MODE) {
-      configurePorts(instance);
-    }
-  }
-  private void configurePorts(Instance instance) {
-    final var isFMA = instance.getAttributeValue(MUL_MODE) == FMA;
-    final Port[] ps;
-    if (isFMA) {
-      ps = new Port[5];
-      ps[IN2] = new Port(-20, -20, Port.INPUT, StdAttr.FP_WIDTH);
-      ps[IN2].setToolTip(S.getter("multiplierCarryInTip"));
-    } else {
-      ps = new Port[4];
-    }
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+    final var ps = new Port[3];
+    ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("multiplierInputTip"));
-    ps[IN1].setToolTip(S.getter("multiplierInputTip"));
-    ps[OUT].setToolTip(S.getter("fpMultiplierOutputTip"));
+    ps[IN0].setToolTip(S.getter("fpSquareRootInputTip"));
+    ps[OUT].setToolTip(S.getter("squareRootOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
-    instance.setPorts(ps);
+    setPorts(ps);
   }
 
   @Override
@@ -108,22 +65,17 @@ public class FpMultiplier extends InstanceFactory {
     painter.drawBounds();
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
-    painter.drawPort(IN1);
     painter.drawPort(OUT);
     painter.drawPort(ERR);
-
-    final var mulMode = painter.getAttributeValue(MUL_MODE);
-    if (mulMode == FMA) {
-      painter.drawPort(IN2);
-    }
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawLine(x - 15, y - 5, x - 5, y + 5);
-    g.drawLine(x - 15, y + 5, x - 5, y - 5);
+    g.drawLine(x - 15, y, x - 12, y + 5);
+    g.drawLine(x - 12, y + 5, x - 9, y - 5);
+    g.drawLine(x - 9, y - 5, x - 5, y - 5);
 
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
@@ -135,23 +87,13 @@ public class FpMultiplier extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
-    final var mulMode = state.getAttributeValue(MUL_MODE);
 
     // compute outputs
     final var a = state.getPortValue(IN0);
-    final var b = state.getPortValue(IN1);
 
     final var a_val = a.toDoubleValueFromAnyFloat();
-    final var b_val = b.toDoubleValueFromAnyFloat();
 
-    final double out_val;
-    if (mulMode == MUL) {
-      out_val = a_val * b_val;
-    } else {
-      final var c = state.getPortValue(IN2);
-      final var c_val = c.toDoubleValueFromAnyFloat();
-      out_val = Math.fma(a_val, b_val, c_val);
-    }
+    final var out_val = Math.sqrt(a_val);
 
     final var out = Value.createKnown(dataWidth, out_val);
 
