@@ -49,7 +49,7 @@ public class MinMax extends InstanceFactory {
       new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("minmax",3));
+    setIcon(new ArithmeticIcon("minmax", 3));
 
     final var ps = new Port[4];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
@@ -98,8 +98,8 @@ public class MinMax extends InstanceFactory {
     final var b = state.getPortValue(IN1);
     final Value min, max;
 
-    if(a.isFullyDefined() && b.isFullyDefined()) {
-      final var a_val = a.toBigInteger(unsigned) ;
+    if (a.isFullyDefined() && b.isFullyDefined()) {
+      final var a_val = a.toBigInteger(unsigned);
       final var b_val = b.toBigInteger(unsigned);
 
       final var min_val = a_val.min(b_val).longValue();

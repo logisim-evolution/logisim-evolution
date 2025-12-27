@@ -610,16 +610,16 @@ public final class Value {
     if (unsigned) {
       return new BigInteger(
         1,
-        new byte[] {
-                (byte) ((value >> 56) & 0xFFL),
-                (byte) ((value >> 48) & 0xFFL),
-                (byte) ((value >> 40) & 0xFFL),
-                (byte) ((value >> 32) & 0xFFL),
-                (byte) ((value >> 24) & 0xFFL),
-                (byte) ((value >> 16) & 0xFFL),
-                (byte) ((value >> 8 ) & 0xFFL),
-                (byte) ((value      ) & 0xFFL)
-        }
+          new byte[] {
+            (byte) ((value >> 56) & 0xFFL),
+            (byte) ((value >> 48) & 0xFFL),
+            (byte) ((value >> 40) & 0xFFL),
+            (byte) ((value >> 32) & 0xFFL),
+            (byte) ((value >> 24) & 0xFFL),
+            (byte) ((value >> 16) & 0xFFL),
+            (byte) ((value >> 8) & 0xFFL),
+            (byte) ((value) & 0xFFL)
+          }
       );
     }
     if ((value >> (width - 1)) != 0) value |= ~mask;
@@ -646,7 +646,7 @@ public final class Value {
     return MiniFloat.miniFloat143ToFloat((byte) value);
   }
 
-  public double toDoubleValueFromAnyFloat(){
+  public double toDoubleValueFromAnyFloat() {
     return switch (width) {
       case 8 -> toFloatValueFromFP8();
       case 16 -> toFloatValueFromFP16();

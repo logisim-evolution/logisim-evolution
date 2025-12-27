@@ -69,7 +69,7 @@ public class FpExponentiator extends InstanceFactory {
       new Object[] {BitWidth.create(32), ARB});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("y\u02E3",2));
+    setIcon(new ArithmeticIcon("y\u02E3", 2));
   }
 
   @Override
@@ -86,7 +86,7 @@ public class FpExponentiator extends InstanceFactory {
   private void configurePorts(Instance instance) {
     final var isSingleInput = instance.getAttributeValue(EXP_MODE) != ARB;
     final Port[] ps;
-    if(isSingleInput) {
+    if (isSingleInput) {
       ps = new Port[3];
 
       ps[EXPO] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
@@ -113,14 +113,13 @@ public class FpExponentiator extends InstanceFactory {
     painter.drawBounds();
 
     final var mode = painter.getAttributeValue(EXP_MODE);
-    if(mode == ARB) {
-      painter.drawPort(OUT,"y\u02E3",Direction.WEST);
+    if (mode == ARB) {
+      painter.drawPort(OUT, "y\u02E3", Direction.WEST);
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
       painter.drawPort(BASE);
       painter.drawPort(EXPO);
-    }
-    else {
-      if(mode == EXP){
+    } else {
+      if (mode == EXP) {
         painter.drawPort(OUT, "e\u02E3", Direction.WEST);
       } else {
         painter.drawPort(OUT, "e\u02E3-1", Direction.WEST);
@@ -154,7 +153,7 @@ public class FpExponentiator extends InstanceFactory {
     final double out_val;
     final var expo_val = expo.toDoubleValueFromAnyFloat();
 
-    if(mode == ARB) {
+    if (mode == ARB) {
       final var base = state.getPortValue(BASE);
       final var base_val = base.toDoubleValueFromAnyFloat();
       out_val = Math.pow(base_val, expo_val);

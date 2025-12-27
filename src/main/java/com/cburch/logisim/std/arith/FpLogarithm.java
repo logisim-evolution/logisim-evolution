@@ -72,7 +72,7 @@ public class FpLogarithm extends InstanceFactory {
       new Object[] {BitWidth.create(32), LOGXY});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("Log",3));
+    setIcon(new ArithmeticIcon("Log", 3));
   }
 
   @Override
@@ -89,7 +89,7 @@ public class FpLogarithm extends InstanceFactory {
   private void configurePorts(Instance instance) {
     final var isSingleInput = instance.getAttributeValue(LOG_MODE) != LOGXY;
     final Port[] ps;
-    if(isSingleInput) {
+    if (isSingleInput) {
       ps = new Port[3];
 
       ps[ALOG] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
@@ -116,13 +116,13 @@ public class FpLogarithm extends InstanceFactory {
     painter.drawBounds();
 
     final var mode = painter.getAttributeValue(LOG_MODE);
-    if(mode == LOGXY) {
-      painter.drawPort(OUT,"log\u1D67x",Direction.WEST);
+    if (mode == LOGXY) {
+      painter.drawPort(OUT, "log\u1D67x", Direction.WEST);
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
       painter.drawPort(ALOG);
       painter.drawPort(BASE);
     } else {
-      if(mode == LOG) {
+      if (mode == LOG) {
         painter.drawPort(OUT, "log", Direction.WEST);
       } else if (mode == LOG10) {
         painter.drawPort(OUT, "log\u2081\u2080", Direction.WEST);
@@ -159,13 +159,13 @@ public class FpLogarithm extends InstanceFactory {
     final double out_val;
     final var a_val = a.toDoubleValueFromAnyFloat();
 
-    if(mode == LOGXY) {
+    if (mode == LOGXY) {
       final var b = state.getPortValue(BASE);
       final var b_val = b.toDoubleValueFromAnyFloat();
       out_val = Math.log(a_val) / Math.log(b_val);
-    } else if(mode == LOG) {
+    } else if (mode == LOG) {
       out_val = Math.log(a_val);
-    } else if(mode == LOG10) {
+    } else if (mode == LOG10) {
       out_val = Math.log10(a_val);
     } else {
       out_val = Math.log1p(a_val);

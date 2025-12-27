@@ -69,7 +69,7 @@ public class FpTrigonometry extends InstanceFactory {
       new Object[] {BitWidth.create(32), TRIG});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u25B3",3));
+    setIcon(new ArithmeticIcon("\u25B3", 3));
 
     final Port[] ps = new Port[5];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
@@ -95,18 +95,18 @@ public class FpTrigonometry extends InstanceFactory {
     painter.drawPort(ERR);
 
     final var mode = painter.getAttributeValue(TRIG_MODE);
-    if(mode == TRIG) {
-      painter.drawPort(SIN,"sin", Direction.WEST);
-      painter.drawPort(TAN,"tan", Direction.WEST);
-      painter.drawPort(COS,"cos", Direction.WEST);
-    } else if(mode == ARC) {
-      painter.drawPort(SIN,"asin", Direction.WEST);
-      painter.drawPort(TAN,"atan", Direction.WEST);
-      painter.drawPort(COS,"acos", Direction.WEST);
+    if (mode == TRIG) {
+      painter.drawPort(SIN, "sin", Direction.WEST);
+      painter.drawPort(TAN, "tan", Direction.WEST);
+      painter.drawPort(COS, "cos", Direction.WEST);
+    } else if (mode == ARC) {
+      painter.drawPort(SIN, "asin", Direction.WEST);
+      painter.drawPort(TAN, "atan", Direction.WEST);
+      painter.drawPort(COS, "acos", Direction.WEST);
     } else {
-      painter.drawPort(SIN,"sinh", Direction.WEST);
-      painter.drawPort(TAN,"tanh", Direction.WEST);
-      painter.drawPort(COS,"cosh", Direction.WEST);
+      painter.drawPort(SIN, "sinh", Direction.WEST);
+      painter.drawPort(TAN, "tanh", Direction.WEST);
+      painter.drawPort(COS, "cosh", Direction.WEST);
     }
 
     final var loc = painter.getLocation();
@@ -135,11 +135,11 @@ public class FpTrigonometry extends InstanceFactory {
     final double tan_val;
     final double cos_val;
 
-    if(mode == TRIG) {
+    if (mode == TRIG) {
       sin_val = Math.sin(a_val);
       tan_val = Math.tan(a_val);
       cos_val = Math.cos(a_val);
-    } else if(mode == ARC) {
+    } else if (mode == ARC) {
       sin_val = Math.asin(a_val);
       tan_val = Math.atan(a_val);
       cos_val = Math.acos(a_val);

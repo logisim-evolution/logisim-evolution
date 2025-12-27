@@ -44,7 +44,7 @@ public class Absolute extends InstanceFactory {
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("abs",3));
+    setIcon(new ArithmeticIcon("abs", 3));
 
     final var ps = new Port[3];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);

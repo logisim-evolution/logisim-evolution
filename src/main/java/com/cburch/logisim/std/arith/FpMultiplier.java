@@ -83,12 +83,11 @@ public class FpMultiplier extends InstanceFactory {
   private void configurePorts(Instance instance) {
     final var isFMA = instance.getAttributeValue(MUL_MODE) == FMA;
     final Port[] ps;
-    if(isFMA) {
+    if (isFMA) {
       ps = new Port[5];
       ps[IN2] = new Port(-20, -20, Port.INPUT, StdAttr.FP_WIDTH);
       ps[IN2].setToolTip(S.getter("multiplierCarryInTip"));
-    }
-    else{
+    } else {
       ps = new Port[4];
     }
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
@@ -114,7 +113,7 @@ public class FpMultiplier extends InstanceFactory {
     painter.drawPort(ERR);
 
     final var mulMode = painter.getAttributeValue(MUL_MODE);
-    if(mulMode == FMA){
+    if (mulMode == FMA) {
       painter.drawPort(IN2);
     }
 
@@ -146,7 +145,7 @@ public class FpMultiplier extends InstanceFactory {
     final var b_val = b.toDoubleValueFromAnyFloat();
 
     final double out_val;
-    if(mulMode == MUL){
+    if (mulMode == MUL) {
       out_val = a_val * b_val;
     } else {
       final var c = state.getPortValue(IN2);

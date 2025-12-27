@@ -44,7 +44,7 @@ public class FpToInt extends InstanceFactory {
       new AttributeOption("floor", "floor", S.getter("floorOption"));
   public static final AttributeOption ROUND_OPTION =
       new AttributeOption("round", "round", S.getter("roundOption"));
-    public static final AttributeOption RINT_OPTION =
+  public static final AttributeOption RINT_OPTION =
       new AttributeOption("rint", "rint", S.getter("rintOption"));
   public static final AttributeOption TRUNCATE_OPTION =
       new AttributeOption("truncate", "truncate", S.getter("truncateOption"));
@@ -103,7 +103,7 @@ public class FpToInt extends InstanceFactory {
     if (roundMode.getValue().equals("ceil")) out_val = (long) Math.ceil(a_val);
     else if (roundMode.getValue().equals("floor")) out_val = (long) Math.floor(a_val);
     else if (roundMode.getValue().equals("round")) out_val = Math.round(a_val);
-    else if (roundMode.getValue().equals("rint")) out_val = (long)Math.rint(a_val);
+    else if (roundMode.getValue().equals("rint")) out_val = (long) Math.rint(a_val);
     else out_val = (long) a_val;
 
     final var out = Value.createKnown(dataWidthOut, out_val);

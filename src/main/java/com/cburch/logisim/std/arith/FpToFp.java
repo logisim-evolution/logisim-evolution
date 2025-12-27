@@ -101,20 +101,20 @@ public class FpToFp extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 2);
     var font = g.getFont().deriveFont(20f);
     GraphicsUtil.drawText(g, font, "\u2192", x - 20, y, GraphicsUtil.H_CENTER,
-      GraphicsUtil.V_CENTER_OVERALL);
+        GraphicsUtil.V_CENTER_OVERALL);
     GraphicsUtil.switchToWidth(g, 1);
 
     final var inputWidth = painter.getAttributeValue(FP_WIDTH_IN);
     final var outputWidth = painter.getAttributeValue(FP_WIDTH_OUT);
 
-    final String inputChar = switch(inputWidth.getWidth()){
+    final String inputChar = switch (inputWidth.getWidth()) {
       case 8 -> "M";
       case 16 -> "H";
       case 32 -> "F";
       case 64 -> "D";
       default -> "E";
     };
-    final String outputChar = switch(outputWidth.getWidth()){
+    final String outputChar = switch (outputWidth.getWidth()) {
       case 8 -> "M";
       case 16 -> "H";
       case 32 -> "F";
