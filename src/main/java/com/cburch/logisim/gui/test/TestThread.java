@@ -15,6 +15,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.TestException;
@@ -26,13 +27,16 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
 
+import java.util.ArrayList;
+
 public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
   private final Project project;
   private final Circuit circuit;
   private final CircuitState circuitState;
   private final TestVector vector;
-  private Instance[] pin;
+  private final TestVectorEvaluator evaluator;
+  private final Instance[] pin;
   private Model model;
   private boolean canceled = false;
   private boolean paused = false;
@@ -45,9 +49,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     this.circuit = model.getCircuit();
     this.circuitState = project.getCircuitState().cloneAsNewRootState(this);
     this.vector = model.getVector();
-
-    matchPins();
-
+    this.evaluator = new TestVectorEvaluator(circuitState, vector);
+    pin = this.evaluator.getPins();
     model.getCircuit().addCircuitListener(this);
   }
 
@@ -56,10 +59,10 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     super("TestThread-Project");
     this.project = proj;
     this.circuit = circuit;
-    this.circuitState = project.getCircuitState().cloneAsNewRootState(this);
+    this.circuitState = CircuitState.createRootState(this.project, this.circuit, this);
     this.vector = vec;
-
-    matchPins();
+    evaluator = new TestVectorEvaluator(circuitState, vector);
+    pin = evaluator.getPins();
   }
 
   // used only for automated testing via command line arguments
@@ -268,6 +271,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     else model.clearResults();
   }
 
+  /*
   void matchPins() throws TestException {
     int n = vector.columnName.length;
     pin = new Instance[n];
@@ -296,6 +300,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
         throw new TestException("test vector column '" + columnName + "' has no matching pin");
     }
   }
+  */
 
   @Override
   public void run() {
@@ -306,9 +311,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     }
   }
 
-  private void executeSequentialTests() {
-    // Create sorted list of test indices: by set first, then sequence
-    java.util.ArrayList<Integer> sortedIndices = new java.util.ArrayList<>();
+  private ArrayList<Integer> buildSortedIndices(TestVector vector) {
+    ArrayList<Integer> sortedIndices = new ArrayList<>();
     for (int i = 0; i < vector.data.size(); i++) {
       sortedIndices.add(i);
     }
@@ -331,6 +335,29 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
       // If set and seq are the same, maintain original order (by index)
       return Integer.compare(a, b);
     });
+    return sortedIndices;
+  }
+
+  private void executeSequentialTests() {
+    // Create sorted list of test indices: by set first, then sequence
+    ArrayList<Integer> sortedIndices = buildSortedIndices(vector);
+
+    evaluator.setSteps(sortedIndices);
+    evaluator.setCheckResults(true);
+    evaluator.setLineReportAction((row, exception) -> {
+      canceled = canceled || !model.setResult(vector, row, exception);
+      if (canceled) evaluator.setCanceled(canceled);
+    });
+    try {
+      evaluator.evaluate();
+    } catch (TestException ex) {
+      System.out.println("We failed to evaluate the test");
+    }
+    return;
+  }
+
+  void unusedMethod() {
+    ArrayList<Integer> sortedIndices = new ArrayList<Integer>(); // added to stop errors
 
     int currentSet = -1; // Track current set (sequence ID)
     boolean shouldReset = true;
@@ -432,7 +459,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG, "Test {}: PASS", sortedIdx + 1);
         }
 
-        canceled = canceled || !model.setResult(vector, i, null);
+        // canceled = canceled || !model.setResult(vector, i, null);
       } catch (TestException e) {
         if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
@@ -449,6 +476,12 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   }
 
   private void test(int idx, boolean resetState) throws TestException {
-    circuit.doTestVector(circuitState, pin, vector.data.get(idx), resetState, vector, idx);
+    //circuit.doTestVector(circuitState, pin, vector.data.get(idx), resetState, vector, idx);
+    final var steps = new ArrayList<Integer>();
+    steps.add(idx);
+    evaluator.setSteps(steps);
+    evaluator.setAllowReset(resetState);
+    evaluator.setCheckResults(true);
+    evaluator.evaluate();
   }
 }

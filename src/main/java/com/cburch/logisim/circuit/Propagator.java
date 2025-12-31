@@ -181,7 +181,7 @@ public class Propagator {
   /** Must be called from propagation thread */
   public boolean propagate(Simulator.ProgressListener propListener, Simulator.Event propEvent) {
     if (Thread.currentThread() != propagatorThread) {
-      // throw new RuntimeException("Propagate called with incorrect thread");
+      throw new RuntimeException("Propagate called with incorrect thread");
     }
     oscPoints.clear();
     root.processDirtyPoints();
@@ -218,7 +218,7 @@ public class Propagator {
   /** Must be called by the propagation thread */
   void reset() {
     if (Thread.currentThread() != propagatorThread) {
-      // throw new RuntimeException("Reset called with incorrect thread");
+      throw new RuntimeException("Reset called with incorrect thread");
     }
     halfClockCycles = 0;
     toProcess.clear();
