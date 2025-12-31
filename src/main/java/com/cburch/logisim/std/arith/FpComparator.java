@@ -113,18 +113,8 @@ public class FpComparator extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
-    final var b_val = switch (dataWidth.getWidth()) {
-      case 16 -> b.toFloatValueFromFP16();
-      case 32 -> b.toFloatValue();
-      case 64 -> b.toDoubleValue();
-      default -> Double.NaN;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
+    final var b_val = b.toDoubleValueFromAnyFloat();
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
