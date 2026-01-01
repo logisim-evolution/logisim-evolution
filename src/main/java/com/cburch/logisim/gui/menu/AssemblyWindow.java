@@ -214,9 +214,10 @@ public class AssemblyWindow
     entry.clear();
     while (iter.hasNext()) {
       final var comp = iter.next();
-      if (comp.getFactory().getName().equals("Register")) {
-        if (!comp.getAttributeSet().getValue(StdAttr.LABEL).equals("")) {
-          entry.put(comp.getAttributeSet().getValue(StdAttr.LABEL), comp);
+      final var as = comp.getAttributeSet();
+      if (as.containsAttribute(Register.ATTR_SHOW_IN_TAB) && as.getValue(Register.ATTR_SHOW_IN_TAB)) {
+        if (!as.getValue(StdAttr.LABEL).isEmpty()) {
+          entry.put(as.getValue(StdAttr.LABEL), comp);
         }
       }
     }

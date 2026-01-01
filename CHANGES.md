@@ -9,7 +9,9 @@
     * Added "Clear Undo/Redo History" menu item with confirmation dialog.
     * Limited undo and redo history to a maximum of 64 actions.
     * Retained standard single-step undo and redo functionality via menu item.
-  * Counter component state can now be displayed in "State" tab alongside registers.
+  * Enhanced Counter component:
+    * Counter state can now be displayed in "State" tab alongside registers.
+    * Counter state can now drive "Assembly viewer" address.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables
