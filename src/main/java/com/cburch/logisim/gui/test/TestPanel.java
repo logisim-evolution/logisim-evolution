@@ -427,11 +427,6 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
     // Refresh the table to show the green button
     table.dataChanged();
     table.repaint();
-
-    // Trigger a repaint of the circuit canvas so the changes are visible immediately
-    getModel().getProject().repaintCanvas();
-
-    getModel().getProject().getSimulator().nudge();
   }
 
   private void executeGoButton(int targetFileRow, int targetSeq, boolean resetFirst) throws TestException {

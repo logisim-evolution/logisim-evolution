@@ -136,6 +136,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     evaluator.setSteps(sortedIndices);
     evaluator.setCheckResults(true);
     evaluator.setLineReportAction((row, exception) -> {
+      System.out.print((row + 1) + " \r");
       if (exception != null) {
         System.out.println();
         System.err.println(S.get("testFailed", Integer.toString(row + 1)));
@@ -144,12 +145,13 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     });
     try {
       numFail = evaluator.evaluate();
+      int numPass = sortedIndices.size() - numFail;
+      System.out.println();
+      System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
     } catch (TestException ex) {
-      // The Oscillating TestException is converted to a FailException in lineReporting, so this shouldn't happen.
+      System.out.println();
+      System.err.println(S.get("testFailed", ex.getMessage()));
     }
-    int numPass = sortedIndices.size() - numFail;
-    System.out.println();
-    System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
     return 0;
   }
 

@@ -489,6 +489,7 @@ public class Simulator {
       if (requestedTestVector != null) {
         try {
           requestedTestVector.evaluate();
+          propagated = true;
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();

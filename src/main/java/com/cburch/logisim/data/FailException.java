@@ -23,18 +23,24 @@ public class FailException extends TestException {
   private final Value computed;
   private final ArrayList<FailException> more = new ArrayList<>();
 
-  public FailException(int column, String columnName, Value expected, Value computed) {
+  public FailException(int column, String columnName, Value expected, Value computed, String msg) {
     super(
         columnName
             + " = "
             + computed.toDisplayString(2)
             + " (expected "
             + expected.toDisplayString(2)
-            + ")");
+            + ") "
+            + msg);
     this.column = column;
     this.expected = expected;
     this.computed = computed;
   }
+
+  public FailException(int column, String columnName, Value expected, Value computed) {
+    this(column, columnName, expected, computed, "");
+  }
+
 
   public FailException add(FailException another) {
     more.add(another);

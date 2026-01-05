@@ -15,9 +15,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class TestVectorEvaluator {
-  CircuitState state;
-  TestVector vector;
-  Instance[] pins;
+  final CircuitState state;
+  final TestVector vector;
+  final Instance[] pins;
   volatile java.util.ArrayList<Integer> stepsToExecute = null;
   volatile boolean allowReset;
   volatile boolean checkResults = false;
@@ -28,6 +28,9 @@ public class TestVectorEvaluator {
   public TestVectorEvaluator(CircuitState state, TestVector vector, ArrayList<Integer> steps,
                              boolean allowReset, boolean checkResults, BiConsumer<Integer, FailException> lineReportAction,
                              Consumer<Instance[]> callback) throws TestException {
+    if (state == null || vector == null) {
+      throw new TestException("TestVectorEvaluation requires non-null state and vector.");
+    }
     this.state = state;
     this.vector = vector;
     this.stepsToExecute = steps;
@@ -110,33 +113,29 @@ public class TestVectorEvaluator {
       // Reset circuit state before starting the sequence (if requested)
       if (allowReset && shouldReset) {
         prop.reset();
-      }
-
-      // Set input pin values for this step
-      for (int j = 0; j < pins.length; j++) {
-        if (Pin.FACTORY.isInputPin(pins[j])) {
-          InstanceState pinState = state.getInstanceState(pins[j]);
-          Value driveValue = vector.data.get(stepRow)[j];
-          if (vector.isFloating(stepRow, j)) {
-            driveValue = com.cburch.logisim.data.Value.UNKNOWN;
-          }
-          Pin.FACTORY.driveInputPin(pinState, driveValue);
-          // Mark the pin component as dirty so it gets processed during propagation
-          state.markComponentAsDirty(pins[j].getComponent());
-        }
-      }
-
-      // Propagate after setting values for this step
-      if (!prop.isOscillating()) {
         prop.propagate();
       }
 
-      if (prop.isOscillating() && !(checkResults && vector != null)) {
-        throw new TestException("Oscillation detected at sequence step "
-            + (vector.seqNumbers != null && stepRow < vector.seqNumbers.length ? vector.seqNumbers[stepRow] : 0));
+      if (!prop.isOscillating()) {
+        // Set input pin values for this step
+        for (int j = 0; j < pins.length; j++) {
+          if (Pin.FACTORY.isInputPin(pins[j])) {
+            InstanceState pinState = state.getInstanceState(pins[j]);
+            Value driveValue = vector.data.get(stepRow)[j];
+            if (vector.isFloating(stepRow, j)) {
+              driveValue = com.cburch.logisim.data.Value.UNKNOWN;
+            }
+            Pin.FACTORY.driveInputPin(pinState, driveValue);
+            // Mark the pin component as dirty so it gets processed during propagation
+            state.markComponentAsDirty(pins[j].getComponent());
+          }
+        }
+
+        // Propagate after setting values for this step
+        prop.propagate();
       }
 
-      if (checkResults && vector != null) {
+      if (checkResults) {
         final var val = vector.data.get(stepRow);
         FailException err = null;
 
@@ -148,14 +147,15 @@ public class TestVectorEvaluator {
 
           final var v = Pin.FACTORY.getValue(pinState);
 
-          if (prop.isOscillating()) { // Report oscillating circuit outputs as ERROR.
-            FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.ERROR, v);
-            err = err == null ? fe : err.add(fe);
-          }
-
           // Check for don't care - always pass
           if (stepRow >= 0 && vector.isDontCare(stepRow, i)) {
             continue; // Skip comparison for don't care values
+          }
+
+          if (prop.isOscillating()) { // Report oscillating circuit outputs as ERROR.
+            FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], Value.ERROR,
+                " oscillation detected");
+            err = err == null ? fe : err.add(fe);
           }
 
           // Check for floating - expect UNKNOWN
