@@ -36,10 +36,11 @@ public class FailException extends TestException {
     this.computed = computed;
   }
 
-  public void add(FailException another) {
+  public FailException add(FailException another) {
     more.add(another);
     more.addAll(another.getMore());
     another.clearMore();
+    return this;
   }
 
   public int getColumn() {

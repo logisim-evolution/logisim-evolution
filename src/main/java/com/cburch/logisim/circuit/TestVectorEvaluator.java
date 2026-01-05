@@ -75,8 +75,9 @@ public class TestVectorEvaluator {
     lineReportAction = reportAction;
   }
 
-  public void evaluate() throws TestException {
+  public int evaluate() throws TestException {
     Propagator prop = state.getPropagator();
+    int numFails = 0;
     int currentSet = -1; // Track current set (sequence ID)
     canceled = false;
 
@@ -126,9 +127,11 @@ public class TestVectorEvaluator {
       }
 
       // Propagate after setting values for this step
-      prop.propagate();
+      if (!prop.isOscillating()) {
+        prop.propagate();
+      }
 
-      if (prop.isOscillating()) {
+      if (prop.isOscillating() && !(checkResults && vector != null)) {
         throw new TestException("Oscillation detected at sequence step "
             + (vector.seqNumbers != null && stepRow < vector.seqNumbers.length ? vector.seqNumbers[stepRow] : 0));
       }
@@ -145,6 +148,11 @@ public class TestVectorEvaluator {
 
           final var v = Pin.FACTORY.getValue(pinState);
 
+          if (prop.isOscillating()) { // Report oscillating circuit outputs as ERROR.
+            FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.ERROR, v);
+            err = err == null ? fe : err.add(fe);
+          }
+
           // Check for don't care - always pass
           if (stepRow >= 0 && vector.isDontCare(stepRow, i)) {
             continue; // Skip comparison for don't care values
@@ -153,25 +161,22 @@ public class TestVectorEvaluator {
           // Check for floating - expect UNKNOWN
           if (stepRow >= 0 && vector.isFloating(stepRow, i)) {
             if (!Value.UNKNOWN.equals(v)) {
-              if (err == null) {
-                err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v);
-              } else {
-                err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v));
-              }
+              FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v);
+              err = err == null ? fe : err.add(fe);
             }
             continue;
           }
 
           // Normal value comparison
           if (!val[i].compatible(v)) {
-            if (err == null) {
-              err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
-            } else {
-              err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
-            }
+            FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
+            err = err == null ? fe : err.add(fe);
           }
         }
 
+        if (err != null) {
+          numFails++;
+        }
         if (lineReportAction != null) {
           lineReportAction.accept(stepRow, err);
         } else {
@@ -185,6 +190,7 @@ public class TestVectorEvaluator {
     if (callback != null) {
       callback.accept(pins);
     }
+    return numFails;
   }
 
   public static Instance[] getPinsForVector(TestVector vec, CircuitState state) throws TestException {

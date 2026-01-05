@@ -47,7 +47,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     this.project = model.getProject();
     this.circuit = model.getCircuit();
-    this.circuitState = project.getCircuitState().cloneAsNewRootState(this);
+    this.circuitState = CircuitState.createRootState(this.project, this.circuit, this);
     this.vector = model.getVector();
     this.evaluator = new TestVectorEvaluator(circuitState, vector);
     pin = this.evaluator.getPins();
@@ -59,10 +59,37 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     super("TestThread-Project");
     this.project = proj;
     this.circuit = circuit;
-    this.circuitState = CircuitState.createRootState(this.project, this.circuit, this);
+    this.circuitState = CircuitState.createRootState(this.project, this.circuit, Thread.currentThread());
     this.vector = vec;
     evaluator = new TestVectorEvaluator(circuitState, vector);
     pin = evaluator.getPins();
+  }
+
+  private static ArrayList<Integer> buildSortedIndices(TestVector vector) {
+    ArrayList<Integer> sortedIndices = new ArrayList<>();
+    for (int i = 0; i < vector.data.size(); i++) {
+      sortedIndices.add(i);
+    }
+
+    // Sort by set first, then by sequence
+    sortedIndices.sort((a, b) -> {
+      int setA = (vector.setNumbers != null && a < vector.setNumbers.length) ? vector.setNumbers[a] : 0;
+      int setB = (vector.setNumbers != null && b < vector.setNumbers.length) ? vector.setNumbers[b] : 0;
+      int seqA = (vector.seqNumbers != null && a < vector.seqNumbers.length) ? vector.seqNumbers[a] : 0;
+      int seqB = (vector.seqNumbers != null && b < vector.seqNumbers.length) ? vector.seqNumbers[b] : 0;
+
+      // First compare by set
+      int setCompare = Integer.compare(setA, setB);
+      if (setCompare != 0) return setCompare;
+
+      // Then compare by sequence
+      int seqCompare = Integer.compare(seqA, seqB);
+      if (seqCompare != 0) return seqCompare;
+
+      // If set and seq are the same, maintain original order (by index)
+      return Integer.compare(a, b);
+    });
+    return sortedIndices;
   }
 
   // used only for automated testing via command line arguments
@@ -83,10 +110,14 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
       System.err.println(S.get("testSetupFailed", e.getMessage()));
       return -1;
     }
+    return tester.doTestVector(vectorname);
+  }
 
-    System.out.println(S.get("testRunning", Integer.toString(vec.data.size())));
+  public int doTestVector(String vectorname) {
 
-    if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
+    System.out.println(S.get("testRunning", Integer.toString(vector.data.size())));
+
+    /*if (com.cburch.logisim.util.Debug.isLevel(com.cburch.logisim.util.Debug.Level.DEBUG)) {
       // Debug: Show all sequence numbers in file order
       com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
           "=== Test Vector Sequence Analysis ===");
@@ -97,37 +128,33 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
             "Row {}: set={}, seq={}", i, setNum, seqNum);
       }
     }
+     */
 
     // Create sorted list of test indices: by set first, then sequence
-    java.util.ArrayList<Integer> sortedIndices = new java.util.ArrayList<>();
-    for (int i = 0; i < vec.data.size(); i++) {
-      sortedIndices.add(i);
-    }
-
-    // Sort by set first, then by sequence
-    sortedIndices.sort((a, b) -> {
-      int setA = (vec.setNumbers != null && a < vec.setNumbers.length) ? vec.setNumbers[a] : 0;
-      int setB = (vec.setNumbers != null && b < vec.setNumbers.length) ? vec.setNumbers[b] : 0;
-      int seqA = (vec.seqNumbers != null && a < vec.seqNumbers.length) ? vec.seqNumbers[a] : 0;
-      int seqB = (vec.seqNumbers != null && b < vec.seqNumbers.length) ? vec.seqNumbers[b] : 0;
-
-      // First compare by set
-      int setCompare = Integer.compare(setA, setB);
-      if (setCompare != 0) return setCompare;
-
-      // Then compare by sequence
-      int seqCompare = Integer.compare(seqA, seqB);
-      if (seqCompare != 0) return seqCompare;
-
-      // If set and seq are the same, maintain original order (by index)
-      return Integer.compare(a, b);
-    });
-
-    int numPass = 0;
+    ArrayList<Integer> sortedIndices = buildSortedIndices(vector);
     int numFail = 0;
-    int currentSet = -1; // Track current set (sequence ID)
-    boolean shouldReset = true;
+    evaluator.setSteps(sortedIndices);
+    evaluator.setCheckResults(true);
+    evaluator.setLineReportAction((row, exception) -> {
+      if (exception != null) {
+        System.out.println();
+        System.err.println(S.get("testFailed", Integer.toString(row + 1)));
+        for (FailException e1 : exception.getAll()) System.out.println("  " + e1.getMessage());
+      }
+    });
+    try {
+      numFail = evaluator.evaluate();
+    } catch (TestException ex) {
+      // The Oscillating TestException is converted to a FailException in lineReporting, so this shouldn't happen.
+    }
+    int numPass = sortedIndices.size() - numFail;
+    System.out.println();
+    System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
+    return 0;
+  }
 
+  /*
+  void unusedMethod() {
     // Execute tests in sorted order
     for (int sortedIdx = 0; sortedIdx < sortedIndices.size(); sortedIdx++) {
       int i = sortedIndices.get(sortedIdx);
@@ -259,6 +286,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
     return 0;
   }
+  */
 
   public void cancel() {
     canceled = true;
@@ -311,33 +339,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     }
   }
 
-  private ArrayList<Integer> buildSortedIndices(TestVector vector) {
-    ArrayList<Integer> sortedIndices = new ArrayList<>();
-    for (int i = 0; i < vector.data.size(); i++) {
-      sortedIndices.add(i);
-    }
-
-    // Sort by set first, then by sequence
-    sortedIndices.sort((a, b) -> {
-      int setA = (vector.setNumbers != null && a < vector.setNumbers.length) ? vector.setNumbers[a] : 0;
-      int setB = (vector.setNumbers != null && b < vector.setNumbers.length) ? vector.setNumbers[b] : 0;
-      int seqA = (vector.seqNumbers != null && a < vector.seqNumbers.length) ? vector.seqNumbers[a] : 0;
-      int seqB = (vector.seqNumbers != null && b < vector.seqNumbers.length) ? vector.seqNumbers[b] : 0;
-
-      // First compare by set
-      int setCompare = Integer.compare(setA, setB);
-      if (setCompare != 0) return setCompare;
-
-      // Then compare by sequence
-      int seqCompare = Integer.compare(seqA, seqB);
-      if (seqCompare != 0) return seqCompare;
-
-      // If set and seq are the same, maintain original order (by index)
-      return Integer.compare(a, b);
-    });
-    return sortedIndices;
-  }
-
   private void executeSequentialTests() {
     // Create sorted list of test indices: by set first, then sequence
     ArrayList<Integer> sortedIndices = buildSortedIndices(vector);
@@ -353,7 +354,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     } catch (TestException ex) {
       System.out.println("We failed to evaluate the test");
     }
-    return;
   }
 
   void unusedMethod() {
