@@ -99,11 +99,20 @@ public class MinMax extends InstanceFactory {
     final Value min, max;
 
     if (a.isFullyDefined() && b.isFullyDefined()) {
-      final var a_val = a.toBigInteger(unsigned);
-      final var b_val = b.toBigInteger(unsigned);
 
-      final var min_val = a_val.min(b_val).longValue();
-      final var max_val = a_val.max(b_val).longValue();
+      final long min_val, max_val;
+
+      if (unsigned) {
+        final long a_val = a.toLongValue();
+        final long b_val = b.toLongValue();
+        min_val = Long.compareUnsigned(a_val, b_val) < 0 ? a_val : b_val;
+        max_val = Long.compareUnsigned(a_val, b_val) > 0 ? a_val : b_val;
+      } else {
+        final long a_val = a.toSignExtendedLongValue();
+        final long b_val = b.toSignExtendedLongValue();
+        min_val = Math.min(a_val, b_val);
+        max_val = Math.max(a_val, b_val);
+      }
 
       min = Value.createKnown(dataWidth.getWidth(), min_val);
       max = Value.createKnown(dataWidth.getWidth(), max_val);

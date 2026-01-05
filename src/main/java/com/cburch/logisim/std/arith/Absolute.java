@@ -76,10 +76,10 @@ public class Absolute extends InstanceFactory {
     Value in = state.getPortValue(IN);
     final Value out, overflow;
     if (in.isFullyDefined()) {
-      var result = in.toBigInteger(false).abs().longValue();
+      var val = in.toSignExtendedLongValue();
+      var result = val < 0 ? -val : val;
       out = Value.createKnown(in.getBitWidth(), result);
-      System.out.println(result);
-      overflow = result == 1 << (dataWidth.getWidth() - 1) ? Value.TRUE : Value.FALSE;
+      overflow = out.toSignExtendedLongValue() < 0 ? Value.TRUE : Value.FALSE;
     } else {
       Value[] bits = in.getAll();
       Value fill = Value.FALSE;

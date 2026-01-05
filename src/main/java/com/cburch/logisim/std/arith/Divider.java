@@ -43,8 +43,32 @@ public class Divider extends InstanceFactory {
 
   static Value[] computeResult(BitWidth width, Value a, Value b, Value upper, boolean unsigned) {
     int w = width.getWidth();
-    if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
+    boolean hasUpper = !(upper == Value.NIL || upper.isUnknown());
+    if (!hasUpper) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
+      if (w <= 32) {
+        long bb = b.toSignExtendedLongValue();
+        long num;
+        if (hasUpper) {
+          long low = a.toLongValue();
+          long upp = (upper.toSignExtendedLongValue() << w);
+          num = (upp) | low;
+        } else {
+          num = a.toSignExtendedLongValue();
+        }
+        long den = bb == 0 ? 1 : bb;
+
+        long res, rem;
+        if (unsigned) {
+          res = Long.divideUnsigned(num, den);
+          rem = Long.remainderUnsigned(num, den);
+        } else {
+          res = num / den;
+          rem = num % den;
+        }
+
+        return new Value[] {Value.createKnown(width, res), Value.createKnown(width, rem)};
+      }
       BigInteger uu = upper.toBigInteger(unsigned);
       BigInteger aa = a.toBigInteger(unsigned);
       BigInteger bb = b.toBigInteger(unsigned);
@@ -53,10 +77,8 @@ public class Divider extends InstanceFactory {
       BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
 
       BigInteger[] res = num.divideAndRemainder(den);
-      long mask = w == 64 ? 0 : (-1L) << w;
-      mask ^= 0xFFFFFFFFFFFFFFFFL;
-      long result = res[0].and(BigInteger.valueOf(mask)).longValue();
-      long rem = res[1].and(BigInteger.valueOf(mask)).longValue();
+      long result = res[0].longValue();
+      long rem = res[1].longValue();
       return new Value[] {Value.createKnown(width, result), Value.createKnown(width, rem)};
     } else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue()) {
       return new Value[] {Value.createError(width), Value.createError(width)};

@@ -604,6 +604,13 @@ public final class Value {
     return value;
   }
 
+  public long toSignExtendedLongValue() {
+    if (error != 0) return -1L;
+    if (unknown != 0) return -1L;
+    final var shift = 64 - width;
+    return value << shift >> shift;
+  }
+
   public BigInteger toBigInteger(boolean unsigned) {
     var mask = (width == 64 ? -1L : ~(-1L << width));
     long value = this.value & mask;

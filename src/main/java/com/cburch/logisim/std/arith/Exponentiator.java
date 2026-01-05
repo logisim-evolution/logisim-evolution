@@ -39,11 +39,33 @@ public class Exponentiator extends InstanceFactory {
 
   public static final String _ID = "Exponentiator";
 
+  static long pow(long base, long exponent) {
+    if (exponent < 0) return 0L;
+    long result = 1L, b = base, e = exponent;
+    while (e != 0) {
+      if ((e & 1L) != 0) result *= b;
+      e >>>= 1;
+      if (e != 0) b *= b;
+    }
+    return result;
+  }
+
   static Value[] computePower(BitWidth width, Value a, Value b, boolean unsigned) {
     int w = width.getWidth();
     if (a.isFullyDefined() && b.isFullyDefined()) {
       if (a.toLongValue() == 1) {
         return new Value[] {Value.createKnown(width, 1), Value.createKnown(width, 0)};
+      }
+      if (w <= 32 && !unsigned) {
+        var aa = a.toSignExtendedLongValue();
+        var bb = b.toSignExtendedLongValue();
+
+        var rr = pow(aa, bb);
+
+        var lo = rr & ((1L << w) - 1);
+        var hi = rr >> w;
+
+        return new Value[] {Value.createKnown(width, lo), Value.createKnown(width, hi)};
       }
 
       BigInteger aa = a.toBigInteger(unsigned);

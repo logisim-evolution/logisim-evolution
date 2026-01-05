@@ -45,6 +45,22 @@ public class Multiplier extends InstanceFactory {
     int w = width.getWidth();
     if (c_in == Value.NIL || c_in.isUnknown()) c_in = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
+      if (w <= 32) {
+        long rr;
+        if (unsigned) {
+          var aa = a.toLongValue();
+          var bb = b.toLongValue();
+          var cc = c_in.toLongValue();
+          rr = aa * bb + cc;
+        } else {
+          var aa = a.toSignExtendedLongValue();
+          var bb = b.toSignExtendedLongValue();
+          var cc = c_in.toSignExtendedLongValue();
+
+          rr = aa * bb + cc;
+        }
+        return new Value[] {Value.createKnown(width, rr), Value.createKnown(width,  rr >> w)};
+      }
       BigInteger aa = a.toBigInteger(unsigned);
       BigInteger bb = b.toBigInteger(unsigned);
       BigInteger cc = c_in.toBigInteger(unsigned);

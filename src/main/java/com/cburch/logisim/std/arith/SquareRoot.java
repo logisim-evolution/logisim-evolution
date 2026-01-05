@@ -45,6 +45,15 @@ public class SquareRoot extends InstanceFactory {
     int w = width.getWidth();
     if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && upper.isFullyDefined()) {
+      //Math.sqrt() uses double so we only have 53 bit precision(26 + 26 = 52).
+      if (w <= 26) {
+        long num = (upper.toLongValue() << w) | a.toLongValue();
+
+        long root = (long) Math.sqrt(num);
+        long rem = num - root * root;
+
+        return new Value[] {Value.createKnown(width, root), Value.createKnown(width, rem)};
+      }
       BigInteger uu = upper.toBigInteger(true);
       BigInteger aa = a.toBigInteger(true);
 

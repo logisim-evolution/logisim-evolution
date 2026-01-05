@@ -26,7 +26,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 
 import java.awt.Color;
-import java.math.BigInteger;
 
 public class IntToFp extends InstanceFactory {
   /**
@@ -41,15 +40,6 @@ public class IntToFp extends InstanceFactory {
   private static final int IN = 0;
   private static final int OUT = 1;
   private static final int ERR = 2;
-
-  static BigInteger extend(int w, long v, boolean unsigned) {
-    long mask = w == 64 ? 0 : (-1L) << w;
-    mask ^= 0xFFFFFFFFFFFFFFFFL;
-    long value = v & mask;
-    if (!unsigned && (value >> (w - 1)) != 0) value |= ~mask;
-    if (unsigned) return new BigInteger(Long.toUnsignedString(value));
-    return new BigInteger(Long.toString(value));
-  }
 
   public IntToFp() {
     super(_ID, S.getter("intToFPComponent"));
@@ -90,7 +80,7 @@ public class IntToFp extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN);
-    final var a_val = extend(dataWidthIn.getWidth(), a.toLongValue(), unsigned);
+    final var a_val = a.toBigInteger(unsigned);
 
     final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
     final var out = Value.createKnown(dataWidthOut, out_val);
