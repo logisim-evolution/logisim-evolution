@@ -135,23 +135,18 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     int numFail = 0;
     evaluator.setSteps(sortedIndices);
     evaluator.setCheckResults(true);
-    evaluator.setLineReportAction((row, exception) -> {
+    evaluator.setLineReportAction((row, report) -> {
       System.out.print((row + 1) + " \r");
-      if (exception != null) {
+      if (report != null && !report.isEmpty()) {
         System.out.println();
         System.err.println(S.get("testFailed", Integer.toString(row + 1)));
-        for (FailException e1 : exception.getAll()) System.out.println("  " + e1.getMessage());
+        for (final var e1 : report) System.out.println("  " + e1);
       }
     });
-    try {
-      numFail = evaluator.evaluate();
-      int numPass = sortedIndices.size() - numFail;
-      System.out.println();
-      System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
-    } catch (TestException ex) {
-      System.out.println();
-      System.err.println(S.get("testFailed", ex.getMessage()));
-    }
+    numFail = evaluator.evaluate();
+    int numPass = sortedIndices.size() - numFail;
+    System.out.println();
+    System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
     return 0;
   }
 
@@ -347,15 +342,11 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     evaluator.setSteps(sortedIndices);
     evaluator.setCheckResults(true);
-    evaluator.setLineReportAction((row, exception) -> {
-      canceled = canceled || !model.setResult(vector, row, exception);
+    evaluator.setLineReportAction((row, report) -> {
+      canceled = canceled || !model.setResult(vector, row, report);
       if (canceled) evaluator.setCanceled(canceled);
     });
-    try {
-      evaluator.evaluate();
-    } catch (TestException ex) {
-      System.out.println("We failed to evaluate the test");
-    }
+    evaluator.evaluate();
   }
 
   void unusedMethod() {
@@ -467,7 +458,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           com.cburch.logisim.util.Debug.log(com.cburch.logisim.util.Debug.Level.DEBUG,
               "Test {}: FAIL - {}", sortedIdx + 1, e.getMessage());
         }
-        canceled = canceled || !model.setResult(vector, i, e);
+        // canceled = canceled || !model.setResult(vector, i, e);
       }
       Thread.yield();
     }

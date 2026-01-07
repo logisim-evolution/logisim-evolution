@@ -176,7 +176,7 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   @Override
   public void getRowData(int firstRow, int numRows, ValueTable.Cell[][] rowData) {
     Model model = getModel();
-    TestException[] results = model.getResults();
+    ArrayList<TestVectorEvaluator.LineReport>[] results = model.getResults();
     var numPass = model.getPass();
     var numFail = model.getFail();
     final var vec = model.getVector();
@@ -203,16 +203,13 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
       var failed = false;
       if (row < numPass + numFail) {
         final var err = results[row];
-        if (err instanceof FailException failEx) {
+        if (err != null) { // err instanceof FailException failEx) {
           failed = true;
-          for (final var e : failEx.getAll()) {
-            var col = e.getColumn();
-            msg[col] = S.get("expectedValueMessage", e.getExpected().toDisplayString(getColumnValueRadix(pinColumnStart + col)));
-            altdata[col] = e.getComputed();
+          for (final var e : err) {
+            var col = e.column();
+            msg[col] = S.get("expectedValueMessage", e.expected().toDisplayString(getColumnValueRadix(pinColumnStart + col)));
+            altdata[col] = e.computed();
           }
-        } else if (err != null) {
-          failed = true;
-          rowmsg = err.getMessage();
         }
         status = failed ? failMsg : passMsg;
       }

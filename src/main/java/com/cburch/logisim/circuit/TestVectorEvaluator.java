@@ -9,6 +9,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
@@ -22,11 +23,20 @@ public class TestVectorEvaluator {
   volatile boolean allowReset;
   volatile boolean checkResults = false;
   boolean canceled = false;
-  BiConsumer<Integer, FailException> lineReportAction;
+  BiConsumer<Integer, ArrayList<LineReport>> lineReportAction;
   Consumer<Instance[]> callback;
 
+  public record LineReport(int column, String columnName, Value expected, Value computed, boolean oscillating) {
+
+    @Override
+    public @NotNull String toString() {
+      return columnName + " = " + computed.toDisplayString(2) + " (expected " + expected.toDisplayString(2) + ") "
+          + (oscillating ? " oscillating" : "");
+    }
+  }
+
   public TestVectorEvaluator(CircuitState state, TestVector vector, ArrayList<Integer> steps,
-                             boolean allowReset, boolean checkResults, BiConsumer<Integer, FailException> lineReportAction,
+                             boolean allowReset, boolean checkResults, BiConsumer<Integer, ArrayList<LineReport>> lineReportAction,
                              Consumer<Instance[]> callback) throws TestException {
     if (state == null || vector == null) {
       throw new TestException("TestVectorEvaluation requires non-null state and vector.");
@@ -74,22 +84,22 @@ public class TestVectorEvaluator {
     checkResults = check;
   }
 
-  public void setLineReportAction(BiConsumer<Integer, FailException> reportAction) {
+  public void setLineReportAction(BiConsumer<Integer, ArrayList<LineReport>> reportAction) {
     lineReportAction = reportAction;
   }
 
-  public int evaluate() throws TestException {
+  public int evaluate() {
     Propagator prop = state.getPropagator();
     int numFails = 0;
     int currentSet = -1; // Track current set (sequence ID)
     canceled = false;
 
-    // Execute each step in sequence (just set values and propagate, don't check outputs)
     final var stepsToExecute = this.stepsToExecute;
     for (int stepRow : stepsToExecute) {
       if (canceled) {
         break;
       }
+      if (stepRow < 0 || stepRow >= vector.data.size()) continue; // shouldn't happen.
 
       // Determine set number (sequence ID) for this test
       int testSet = 0;
@@ -137,56 +147,35 @@ public class TestVectorEvaluator {
 
       if (checkResults) {
         final var val = vector.data.get(stepRow);
-        FailException err = null;
+        ArrayList<LineReport> report = new ArrayList<LineReport>();
 
+        // Compare pins with expected values
         for (var i = 0; i < pins.length; i++) {
           final var pinState = state.getInstanceState(pins[i]);
-          if (Pin.FACTORY.isInputPin(pins[i])) {
-            continue;
-          }
-
-          final var v = Pin.FACTORY.getValue(pinState);
-
-          // Check for don't care - always pass
-          if (stepRow >= 0 && vector.isDontCare(stepRow, i)) {
-            continue; // Skip comparison for don't care values
-          }
-
-          if (prop.isOscillating()) { // Report oscillating circuit outputs as ERROR.
-            FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], Value.ERROR,
-                " oscillation detected");
-            err = err == null ? fe : err.add(fe);
-          }
-
-          // Check for floating - expect UNKNOWN
-          if (stepRow >= 0 && vector.isFloating(stepRow, i)) {
-            if (!Value.UNKNOWN.equals(v)) {
-              FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v);
-              err = err == null ? fe : err.add(fe);
+          if (!Pin.FACTORY.isInputPin(pins[i])) { // Don't look at input pins
+            final var v = Pin.FACTORY.getValue(pinState);
+            if (!vector.isDontCare(stepRow, i)) { // Skip comparison for don't care values
+              if (prop.isOscillating()) { // Report oscillating circuit outputs as ERROR.
+                report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], Value.ERROR, true));
+              } else if (vector.isFloating(stepRow, i)) { // Check for floating - expect UNKNOWN
+                if (!v.isUnknown()) {
+                  report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v, false));
+                }
+              } else if (!val[i].compatible(v)) { // Normal value comparison
+                report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v, false));
+              }
             }
-            continue;
-          }
-
-          // Normal value comparison
-          if (!val[i].compatible(v)) {
-            FailException fe = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
-            err = err == null ? fe : err.add(fe);
           }
         }
 
-        if (err != null) {
+        if (!report.isEmpty()) {
           numFails++;
         }
         if (lineReportAction != null) {
-          lineReportAction.accept(stepRow, err);
-        } else {
-          if (err != null) {
-            throw err;
-          }
+          lineReportAction.accept(stepRow, report);
         }
       }
     }
-
     if (callback != null) {
       callback.accept(pins);
     }

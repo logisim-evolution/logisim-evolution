@@ -30,7 +30,7 @@ public class FailException extends TestException {
             + computed.toDisplayString(2)
             + " (expected "
             + expected.toDisplayString(2)
-            + ") "
+            + ")"
             + msg);
     this.column = column;
     this.expected = expected;
