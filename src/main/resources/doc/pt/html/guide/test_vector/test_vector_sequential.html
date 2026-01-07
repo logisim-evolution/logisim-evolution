@@ -19,7 +19,7 @@
 o circuito é reiniciado antes de cada teste, garantindo que cada teste seja independente.</p>
 
 <p>Para circuitos sequenciais, você pode especificar sequências de teste usando as colunas especiais
-de cabeçalho <code>&lt;set&gt;</code>, <code>&lt;seq&gt;</code>, e <code>&lt;iter&gt;</code>:</p>
+de cabeçalho <code>&lt;set&gt;</code> e <code>&lt;seq&gt;</code>:</p>
 
 <ul>
 <li><strong>&lt;set&gt;</strong>: Define o <strong>ID da sequência</strong> - testes com o mesmo número de conjunto
@@ -30,24 +30,19 @@ a ordem de execução dos testes dentro do mesmo conjunto. Os testes são execut
 valores <code>&lt;seq&gt;</code> dentro de cada <code>&lt;set&gt;</code>. Testes com <code>&lt;seq&gt;</code> de 0
 ou ausente são tratados como combinacionais (o circuito reinicia entre testes, mesmo que compartilhem
 o mesmo conjunto).</li>
-<li><strong>&lt;iter&gt;</strong>: Define o <strong>número de iterações de propagação</strong> para executar neste teste.
-Cada iteração aciona um ciclo completo de propagação no thread de simulação. O
-método <code>propagate()</code> internamente faz loop até estabilizar, então cada iteração trata de todas as etapas
-de propagação necessárias. Padrão é 1 se não especificado. Use valores mais altos (por exemplo, 2-5) para circuitos
-complexos que precisam de múltiplos ciclos de propagação para se estabilizarem completamente.</li>
 </ul>
 
 <p>Aqui está um exemplo de um vetor de teste sequencial:</p>
 <pre class="code">
 # Teste sequencial para um contador
-Clock Reset Count &lt;set&gt; &lt;seq&gt; &lt;iter&gt;
-0     0     0     1     1     1
-1     0     0     1     2     1
-0     0     1     1     3     1
-1     0     1     1     4     1
-0     0     2     1     5     1
-1     0     2     1     6     1
-0     1     0     2     1     1
+Clock Reset Count &lt;set&gt; &lt;seq&gt;
+0     0     0     1     1
+1     0     0     1     2
+0     0     1     1     3
+1     0     1     1     4
+0     0     2     1     5
+1     0     2     1     6
+0     1     0     2     1
 </pre>
 
 <p>Neste exemplo, os primeiros seis testes têm <code>&lt;set&gt; 1</code> com valores <code>&lt;seq&gt;</code>

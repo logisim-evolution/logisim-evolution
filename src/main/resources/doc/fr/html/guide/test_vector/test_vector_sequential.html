@@ -19,7 +19,7 @@
 le circuit est réinitialisé avant chaque test, garantissant que chaque test est indépendant.</p>
 
 <p>Pour les circuits séquentiels, vous pouvez spécifier des séquences de test en utilisant les colonnes d'en-tête spéciales
-<code>&lt;set&gt;</code>, <code>&lt;seq&gt;</code>, et <code>&lt;iter&gt;</code> :</p>
+<code>&lt;set&gt;</code> et <code>&lt;seq&gt;</code> :</p>
 
 <ul>
 <li><strong>&lt;set&gt;</strong> : Définit l'<strong>identifiant de séquence</strong> - les tests avec le même numéro de set
@@ -30,24 +30,19 @@ l'ordre d'exécution des tests dans le même set. Les tests sont exécutés dans
 valeur <code>&lt;seq&gt;</code> dans chaque <code>&lt;set&gt;</code>. Les tests avec <code>&lt;seq&gt;</code> de 0
 ou manquant sont traités comme combinatoires (le circuit se réinitialise entre les tests, même s'ils partagent
 le même set).</li>
-<li><strong>&lt;iter&gt;</strong> : Définit le <strong>nombre d'itérations de propagation</strong> à exécuter pour ce test.
-Chaque itération déclenche un cycle de propagation complet sur le thread de simulation. La
-méthode <code>propagate()</code> boucle en interne jusqu'à stabilisation, donc chaque itération gère toutes les étapes
-de propagation nécessaires. Par défaut à 1 s'il n'est pas spécifié. Utilisez des valeurs plus élevées (par exemple, 2-5) pour les circuits
-complexes qui ont besoin de plusieurs cycles de propagation pour se stabiliser complètement.</li>
 </ul>
 
 <p>Voici un exemple de vecteur de test séquentiel :</p>
 <pre class="code">
 # Test séquentiel pour un compteur
-Clock Reset Count &lt;set&gt; &lt;seq&gt; &lt;iter&gt;
-0     0     0     1     1     1
-1     0     0     1     2     1
-0     0     1     1     3     1
-1     0     1     1     4     1
-0     0     2     1     5     1
-1     0     2     1     6     1
-0     1     0     2     1     1
+Clock Reset Count &lt;set&gt; &lt;seq&gt;
+0     0     0     1     1
+1     0     0     1     2
+0     0     1     1     3
+1     0     1     1     4
+0     0     2     1     5
+1     0     2     1     6
+0     1     0     2     1
 </pre>
 
 <p>Dans cet exemple, les six premiers tests ont tous <code>&lt;set&gt; 1</code> avec des valeurs <code>&lt;seq&gt;</code>

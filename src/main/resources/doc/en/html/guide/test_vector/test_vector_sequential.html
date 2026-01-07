@@ -19,7 +19,7 @@
 the circuit is reset before each test, ensuring each test is independent.</p>
 
 <p>For sequential circuits, you can specify test sequences using the special
-<code>&lt;set&gt;</code>, <code>&lt;seq&gt;</code>, and <code>&lt;iter&gt;</code> header columns:</p>
+<code>&lt;set&gt;</code> and <code>&lt;seq&gt;</code> header columns:</p>
 
 <ul>
 <li><strong>&lt;set&gt;</strong>: Defines the <strong>sequence ID</strong> - tests with the same set number
@@ -30,24 +30,19 @@ the execution order of tests within the same set. Tests are executed in order of
 <code>&lt;seq&gt;</code> value within each <code>&lt;set&gt;</code>. Tests with <code>&lt;seq&gt;</code> of 0
 or missing are treated as combinational (circuit resets between tests, even if they share
 the same set).</li>
-<li><strong>&lt;iter&gt;</strong>: Defines the <strong>number of propagation iterations</strong> to run for this test.
-Each iteration triggers a full propagation cycle on the simulation thread. The
-<code>propagate()</code> method internally loops until stable, so each iteration handles all necessary
-propagation steps. Defaults to 1 if not specified. Use higher values (e.g., 2-5) for complex
-circuits that need multiple propagation cycles to fully settle.</li>
 </ul>
 
 <p>Here is an example of a sequential test vector:</p>
 <pre class="code">
 # Sequential test for a counter
-Clock Reset Count &lt;set&gt; &lt;seq&gt; &lt;iter&gt;
-0     0     0     1     1     1
-1     0     0     1     2     1
-0     0     1     1     3     1
-1     0     1     1     4     1
-0     0     2     1     5     1
-1     0     2     1     6     1
-0     1     0     2     1     1
+Clock Reset Count &lt;set&gt; &lt;seq&gt;
+0     0     0     1     1
+1     0     0     1     2
+0     0     1     1     3
+1     0     1     1     4
+0     0     2     1     5
+1     0     2     1     6
+0     1     0     2     1
 </pre>
 
 <p>In this example, the first six tests all have <code>&lt;set&gt; 1</code> with <code>&lt;seq&gt;</code>
