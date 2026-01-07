@@ -266,20 +266,14 @@ public class DLatchTestVectorTest {
 
     CircuitState tempState = CircuitState.createRootState(project, circuit, Thread.currentThread());
 
-    ArrayList<Integer> steps = new ArrayList<>();
-    for (int i = 0; i < vector.data.size(); i++) {
-      steps.add(i);
-    }
-
     TestVectorEvaluator evaluator;
     try {
-      evaluator = new TestVectorEvaluator(tempState, vector, steps);
+      evaluator = new TestVectorEvaluator(tempState, vector);
     } catch (TestException e) {
       throw new AssertionError("Failed to construct evaluator: " + e);
     }
 
-    evaluator.setCheckResults(true);
-    evaluator.setLineReportAction((row, report) -> {
+    evaluator.evaluate((row, report) -> {
       if (report == null || report.isEmpty()) {
         // All good.
       } else {

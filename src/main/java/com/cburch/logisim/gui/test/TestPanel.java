@@ -17,7 +17,6 @@ import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
@@ -439,7 +438,7 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
     activeSetRows.clear();
     activeSetRows.add(targetFileRow);
 
-    TestVectorEvaluator evaluator = new TestVectorEvaluator(state, vec, stepsToExecute, simReset, false, null,
+    TestVectorEvaluator evaluator = new TestVectorEvaluator(state, vec, stepsToExecute, simReset,
         pins -> {
           setStoredPinValues(state, pins);
           SwingUtilities.invokeLater(this::finishShowTestVector);

@@ -372,20 +372,14 @@ public class TestVectorDocsSampleTest {
     int numPass = 0;
     int numFail = 0;
 
-    ArrayList<Integer> steps = new ArrayList<>();
-    for (int i = 0; i < vector.data.size(); i++) {
-      steps.add(i);
-    }
-
     TestVectorEvaluator evaluator;
     try {
-      evaluator = new TestVectorEvaluator(tempState, vector, steps);
+      evaluator = new TestVectorEvaluator(tempState, vector);
     } catch (TestException e) {
       throw new AssertionError("Failed to construct evaluator: " + e);
     }
 
-    evaluator.setCheckResults(true);
-    evaluator.setLineReportAction((row, report) -> {
+    final var passFail = evaluator.evaluate((row, report) -> {
       if (report == null || report.isEmpty()) {
       } else {
         // Verify errors match expected
@@ -401,12 +395,10 @@ public class TestVectorDocsSampleTest {
         }
       }
     });
-    numFail = evaluator.evaluate();
-    numPass = steps.size() - numFail;
 
     // Verify all tests failed as expected
-    assertEquals(0, numPass, "Expected 0 tests to pass");
-    assertEquals(4, numFail, "Expected 4 tests to fail");
+    assertEquals(0, passFail[0], "Expected 0 tests to pass");
+    assertEquals(4, passFail[1], "Expected 4 tests to fail");
   }
 
   @Test
@@ -591,8 +583,6 @@ public class TestVectorDocsSampleTest {
     CircuitState tempState = CircuitState.createRootState(project, circuit, Thread.currentThread());
 
     // Execute tests - with the corrected circuit, all tests should pass
-    int numPass = 0;
-    int numFail = 0;
 
     ArrayList<Integer> steps = new ArrayList<>();
     for (int i = 0; i < vector.data.size(); i++) {
@@ -606,8 +596,7 @@ public class TestVectorDocsSampleTest {
       throw new AssertionError("Failed to construct evaluator: " + e);
     }
 
-    evaluator.setCheckResults(true);
-    evaluator.setLineReportAction((row, report) -> {
+    final var passFail = evaluator.evaluate((row, report) -> {
       if (report == null || report.isEmpty()) {
         // All good.
       } else {
@@ -622,12 +611,10 @@ public class TestVectorDocsSampleTest {
                 row + 1, errorDetails.toString()));
       }
     });
-    numFail = evaluator.evaluate();
-    numPass = steps.size() - numFail;
 
     // Verify all tests passed as expected
-    assertEquals(4, numPass, "Expected 4 tests to pass with the corrected circuit");
-    assertEquals(0, numFail, "Expected 0 tests to fail with the corrected circuit");
+    assertEquals(4, passFail[0], "Expected 4 tests to pass with the corrected circuit");
+    assertEquals(0, passFail[1], "Expected 0 tests to fail with the corrected circuit");
   }
 
 }

@@ -1,7 +1,6 @@
 package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
@@ -9,7 +8,6 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
@@ -19,9 +17,8 @@ public class TestVectorEvaluator {
   final CircuitState state;
   final TestVector vector;
   final Instance[] pins;
-  volatile java.util.ArrayList<Integer> stepsToExecute = null;
-  volatile boolean allowReset;
-  volatile boolean checkResults = false;
+  ArrayList<Integer> stepsToExecute = null;
+  boolean allowReset;
   boolean canceled = false;
   BiConsumer<Integer, ArrayList<LineReport>> lineReportAction;
   Consumer<Instance[]> callback;
@@ -29,39 +26,36 @@ public class TestVectorEvaluator {
   public record LineReport(int column, String columnName, Value expected, Value computed, boolean oscillating) {
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
       return columnName + " = " + computed.toDisplayString(2) + " (expected " + expected.toDisplayString(2) + ")"
           + (oscillating ? " oscillating" : "");
     }
   }
 
   public TestVectorEvaluator(CircuitState state, TestVector vector, ArrayList<Integer> steps,
-                             boolean allowReset, boolean checkResults, BiConsumer<Integer, ArrayList<LineReport>> lineReportAction,
-                             Consumer<Instance[]> callback) throws TestException {
+                             boolean allowReset, Consumer<Instance[]> callback) throws TestException {
     if (state == null || vector == null) {
       throw new TestException("TestVectorEvaluation requires non-null state and vector.");
     }
     this.state = state;
     this.vector = vector;
-    this.stepsToExecute = steps;
+    this.stepsToExecute = steps == null ? buildSortedIndices() : steps;
     this.allowReset = allowReset;
-    this.checkResults = checkResults;
-    this.lineReportAction = lineReportAction;
     this.callback = callback;
     pins = getPinsForVector(vector, state);
   }
 
   public TestVectorEvaluator(CircuitState state, TestVector vector, ArrayList<Integer> steps,
                              Consumer<Instance[]> callback) throws TestException {
-    this(state, vector, steps, true, false, null, callback);
+    this(state, vector, steps, true, callback);
   }
 
   public TestVectorEvaluator(CircuitState state, TestVector vector, ArrayList<Integer> steps) throws TestException {
-    this(state, vector, steps, true, false, null, null);
+    this(state, vector, steps, true, null);
   }
 
   public TestVectorEvaluator(CircuitState state, TestVector vector) throws TestException {
-    this(state, vector, null, true, false, null, null);
+    this(state, vector, null, true, null);
   }
 
   public Instance[] getPins() {
@@ -80,22 +74,49 @@ public class TestVectorEvaluator {
     this.canceled = canceled;
   }
 
-  public void setCheckResults(boolean check) {
-    checkResults = check;
+  public ArrayList<Integer> buildSortedIndices() {
+    ArrayList<Integer> sortedIndices = new ArrayList<>();
+    for (int i = 0; i < vector.data.size(); i++) {
+      sortedIndices.add(i);
+    }
+
+    // Sort by set first, then by sequence
+    sortedIndices.sort((a, b) -> {
+      int setA = (vector.setNumbers != null && a < vector.setNumbers.length) ? vector.setNumbers[a] : 0;
+      int setB = (vector.setNumbers != null && b < vector.setNumbers.length) ? vector.setNumbers[b] : 0;
+      int seqA = (vector.seqNumbers != null && a < vector.seqNumbers.length) ? vector.seqNumbers[a] : 0;
+      int seqB = (vector.seqNumbers != null && b < vector.seqNumbers.length) ? vector.seqNumbers[b] : 0;
+
+      // First compare by set
+      int setCompare = Integer.compare(setA, setB);
+      if (setCompare != 0) return setCompare;
+
+      // Then compare by sequence
+      int seqCompare = Integer.compare(seqA, seqB);
+      if (seqCompare != 0) return seqCompare;
+
+      // If set and seq are the same, maintain original order (by index)
+      return Integer.compare(a, b);
+    });
+    return sortedIndices;
   }
 
-  public void setLineReportAction(BiConsumer<Integer, ArrayList<LineReport>> reportAction) {
-    lineReportAction = reportAction;
+  public int[] evaluate() {
+    return evaluate(stepsToExecute, null);
   }
 
-  public int evaluate() {
+  public int[] evaluate(BiConsumer<Integer, ArrayList<LineReport>> lineReportAction) {
+    return evaluate(stepsToExecute, lineReportAction);
+  }
+
+  public int[] evaluate(ArrayList<Integer> stepsToDo, BiConsumer<Integer, ArrayList<LineReport>> lineReportAction) {
     Propagator prop = state.getPropagator();
+    int numPass = 0;
     int numFails = 0;
     int currentSet = -1; // Track current set (sequence ID)
     canceled = false;
 
-    final var stepsToExecute = this.stepsToExecute;
-    for (int stepRow : stepsToExecute) {
+    for (int stepRow : stepsToDo) {
       if (canceled) {
         break;
       }
@@ -145,7 +166,7 @@ public class TestVectorEvaluator {
         prop.propagate();
       }
 
-      if (checkResults) {
+      if (lineReportAction != null) {
         final var val = vector.data.get(stepRow);
         ArrayList<LineReport> report = new ArrayList<LineReport>();
 
@@ -159,7 +180,8 @@ public class TestVectorEvaluator {
                 report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], Value.ERROR, true));
               } else if (vector.isFloating(stepRow, i)) { // Check for floating - expect UNKNOWN
                 if (!v.isUnknown()) {
-                  report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v, false));
+                  report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL),
+                      Value.createUnknown(v.getBitWidth()), v, false));
                 }
               } else if (!val[i].compatible(v)) { // Normal value comparison
                 report.add(new LineReport(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v, false));
@@ -168,18 +190,18 @@ public class TestVectorEvaluator {
           }
         }
 
-        if (!report.isEmpty()) {
+        if (report.isEmpty()) {
+          numPass++;
+        } else {
           numFails++;
         }
-        if (lineReportAction != null) {
-          lineReportAction.accept(stepRow, report);
-        }
+        lineReportAction.accept(stepRow, report);
       }
     }
     if (callback != null) {
       callback.accept(pins);
     }
-    return numFails;
+    return new int[] {numPass, numFails};
   }
 
   public static Instance[] getPinsForVector(TestVector vec, CircuitState state) throws TestException {

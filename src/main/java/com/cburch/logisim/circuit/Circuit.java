@@ -24,10 +24,7 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.TestException;
-import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -460,90 +457,6 @@ public class Circuit {
       if (ts.isTimeOut()) {
         return false;
       }
-    }
-  }
-
-  /**
-   * Execute a test vector with optional reset control and special value handling.
-   *
-   * @param state      The project containing the circuit
-   * @param pin        Array of pin instances
-   * @param val        Array of values to drive/expect
-   * @param resetState If true, reset circuit state before test; if false, maintain state
-   * @param vector     The test vector (can be null for backward compatibility)
-   * @param rowIndex   The row index in the test vector (used for don't-care/floating checks)
-   * @throws TestException if test fails
-   */
-  public static void doTestVector(CircuitState state, Instance[] pin, Value[] val, boolean resetState,
-                                  TestVector vector, int rowIndex) throws TestException {
-    final var prop = state.getPropagator();
-    if (resetState) {
-      prop.reset();
-    }
-
-    for (var i = 0; i < pin.length; ++i) {
-      if (Pin.FACTORY.isInputPin(pin[i])) {
-        final var pinState = state.getReusableInstanceState(pin[i]);
-        // Handle floating input - drive UNKNOWN if value is marked as floating
-        Value driveValue = val[i];
-        if (vector != null && rowIndex >= 0 && vector.isFloating(rowIndex, i)) {
-          driveValue = Value.UNKNOWN;
-        }
-        Pin.FACTORY.driveInputPin(pinState, driveValue);
-        // Mark the pin component as dirty so it gets processed during propagation
-        state.markComponentAsDirty(pin[i].getComponent());
-      }
-    }
-
-    try {
-      prop.propagate();
-    } catch (Throwable thr) {
-      // propagate() might fail if not on simulation thread
-      // This shouldn't happen in normal operation, but handle gracefully
-      throw new TestException("propagation failed: " + thr.getMessage());
-    }
-
-    if (prop.isOscillating()) {
-      throw new TestException("oscillation detected");
-    }
-
-    FailException err = null;
-
-    for (var i = 0; i < pin.length; i++) {
-      final var pinState = state.getInstanceState(pin[i]);
-      if (Pin.FACTORY.isInputPin(pin[i])) continue;
-
-      final var v = Pin.FACTORY.getValue(pinState);
-
-      // Check for don't care - always pass
-      if (vector != null && rowIndex >= 0 && vector.isDontCare(rowIndex, i)) {
-        continue; // Skip comparison for don't care values
-      }
-
-      // Check for floating - expect UNKNOWN
-      if (vector != null && rowIndex >= 0 && vector.isFloating(rowIndex, i)) {
-        if (!Value.UNKNOWN.equals(v)) {
-          if (err == null) {
-            err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v);
-          } else {
-            err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), Value.UNKNOWN, v));
-          }
-        }
-        continue;
-      }
-
-      // Normal value comparison
-      if (!val[i].compatible(v)) {
-        if (err == null) {
-          err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
-        } else {
-          err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
-        }
-      }
-    }
-
-    if (err != null) {
-      throw err;
     }
   }
 
