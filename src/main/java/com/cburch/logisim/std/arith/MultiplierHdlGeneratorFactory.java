@@ -9,6 +9,10 @@
 
 package com.cburch.logisim.std.arith;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
@@ -26,12 +30,19 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private static final String UNSIGNED_STRING = "unsignedMultiplier";
   private static final int UNSIGNED_ID = -3;
 
+  public static final Map<AttributeOption, Integer> SIGNED_MAP = new HashMap<>() {{
+      put(Multiplier.UNSIGNED_OPTION, 0);
+      put(Multiplier.SIGNED_UNSIGNED_OPTION, 1);
+      put(Multiplier.SIGNED_OPTION, 2);
+    }};
+
+
   public MultiplierHdlGeneratorFactory() {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(CALC_BITS_STRING, CALC_BITS_ID, HdlParameters.MAP_MULTIPLY, 2)
-        .add(UNSIGNED_STRING, UNSIGNED_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHdlGeneratorFactory.SIGNED_MAP);
+        .add(UNSIGNED_STRING, UNSIGNED_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Multiplier.MODE_ATTR, SIGNED_MAP);
     myWires
         .addWire("s_multResult", CALC_BITS_ID)
         .addWire("s_extendedcarryIn", CALC_BITS_ID)
@@ -54,11 +65,15 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents.empty().addVhdlKeywords().add("""
           s_multResult <= std_logic_vector(unsigned(inputA)*unsigned(inputB))
                               {{when}} {{unsigned}}= 1 {{else}}
+                           std_logic_vector(signed(inputA)*unsigned(inputB));
+                              {{when}} {{unsigned}}= 2 {{else}}
                            std_logic_vector(signed(inputA)*signed(inputB));
-          s_extendedcarryIn({{calcBits}}-1 {{downto}} {{nrOfBits}}) <= ({{others}} => '0') {{when}} {{unsigned}} = 1 {{else}} ({{others}} => carryIn({{nrOfBits}}-1));
+          s_extendedcarryIn({{calcBits}}-1 {{downto}} {{nrOfBits}}) <= ({{others}} => '0') {{when}} {{unsigned}} = 1 or {{unsigned}} = 2 {{else}} ({{others}} => carryIn({{nrOfBits}}-1));
           s_extendedcarryIn({{nrOfBits}}-1 {{downto}} 0) <= carryIn;
           s_newResult  <= std_logic_vector(unsigned(s_multResult) + unsigned(s_extendedcarryIn))
                               {{when}} {{unsigned}}= 1 {{else}}
+                           std_logic_vector(signed(s_multResult) + unsigned(s_extendedcarryIn));
+                              {{when}} {{unsigned}}= 2 {{else}}
                            std_logic_vector(signed(s_multResult) + signed(s_extendedcarryIn));
           multHigh     <= s_newResult({{calcBits}}-1 {{downto}} {{nrOfBits}});
           multLow      <= s_newResult({{nrOfBits}}-1 {{downto}} 0);
@@ -79,6 +94,12 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                        s_carryIn[{{calcBits}}-1:{{nrOfBits}}] = 0;
                        s_multUnsigned = $unsigned(inputA) * $unsigned(inputB);
                        s_intermediateResult = $unsigned(s_multUnsigned) + $unsigned(s_carryIn);
+                     end
+                  else if ({{unsigned}}== 2)
+                     begin
+                       s_carryIn[{{calcBits}}-1:{{nrOfBits}}] = 0;
+                       s_multUnsigned = $signed(inputA) * $unsigned(inputB);
+                       s_intermediateResult = $signed(s_multUnsigned) + $signed(s_carryIn);
                      end
                   else
                     begin

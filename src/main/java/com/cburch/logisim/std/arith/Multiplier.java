@@ -12,6 +12,8 @@ package com.cburch.logisim.std.arith;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -41,6 +43,18 @@ public class Multiplier extends InstanceFactory {
    */
   public static final String _ID = "Multiplier";
 
+  public static final AttributeOption SIGNED_OPTION =
+      new AttributeOption("twosComplement", "twosComplement", S.getter("twosComplementOption"));
+  public static final AttributeOption SIGNED_UNSIGNED_OPTION =
+      new AttributeOption("signedUnsigned", "signedUnsigned", S.getter("signedUnsignedOption"));
+  public static final AttributeOption UNSIGNED_OPTION =
+      new AttributeOption("unsigned", "unsigned", S.getter("unsignedOption"));
+  public static final Attribute<AttributeOption> MODE_ATTR =
+      Attributes.forOption(
+          "mode",
+          S.getter("comparatorType"),
+          new AttributeOption[] {SIGNED_OPTION, SIGNED_UNSIGNED_OPTION, UNSIGNED_OPTION});
+
   static BigInteger extend(int w, long v, boolean unsigned) {
     long mask = w == 64 ? 0 : (-1L) << w;
     mask ^= 0xFFFFFFFFFFFFFFFFL;
@@ -50,13 +64,13 @@ public class Multiplier extends InstanceFactory {
     return new BigInteger(Long.toString(value));
   }
 
-  static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsigned) {
+  static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsignedA, boolean unsignedB) {
     int w = width.getWidth();
     if (c_in == Value.NIL || c_in.isUnknown()) c_in = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-      BigInteger aa = extend(w, a.toLongValue(), unsigned);
-      BigInteger bb = extend(w, b.toLongValue(), unsigned);
-      BigInteger cc = extend(w, c_in.toLongValue(), unsigned);
+      BigInteger aa = extend(w, a.toLongValue(), unsignedA);
+      BigInteger bb = extend(w, b.toLongValue(), unsignedB);
+      BigInteger cc = extend(w, c_in.toLongValue(), unsignedA && unsignedB);
       BigInteger rr = aa.multiply(bb).add(cc);
       long mask = w == 64 ? 0 : (-1L) << w;
       mask ^= 0xFFFFFFFFFFFFFFFFL;
@@ -81,9 +95,9 @@ public class Multiplier extends InstanceFactory {
       int error = Math.min(Math.min(aErr, bErr), cErr);
 
       // fixme: this is probably wrong, but the inputs were bad anyway
-      BigInteger aa = extend(w, ax, unsigned);
-      BigInteger bb = extend(w, bx, unsigned);
-      BigInteger cc = extend(w, cx, unsigned);
+      BigInteger aa = extend(w, ax, unsignedA);
+      BigInteger bb = extend(w, bx, unsignedB);
+      BigInteger cc = extend(w, cx, unsignedA && unsignedB);
       BigInteger rr = aa.multiply(bb).add(cc);
       long ret = rr.longValue();
 
@@ -137,8 +151,8 @@ public class Multiplier extends InstanceFactory {
   public Multiplier() {
     super(_ID, S.getter("multiplierComponent"), new MultiplierHdlGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
-        new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
+        new Attribute[] {StdAttr.WIDTH, Multiplier.MODE_ATTR},
+        new Object[] {BitWidth.create(8), Multiplier.UNSIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u00d7"));
@@ -164,7 +178,7 @@ public class Multiplier extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == Comparator.MODE_ATTR) instance.fireInvalidated();
+    if (attr == Multiplier.MODE_ATTR) instance.fireInvalidated();
   }
 
   @Override
@@ -193,14 +207,16 @@ public class Multiplier extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    boolean unsigned =
-        state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
+    boolean unsignedA =
+        state.getAttributeValue(Multiplier.MODE_ATTR).equals(Multiplier.UNSIGNED_OPTION);
+    boolean unsignedB =
+        !state.getAttributeValue(Multiplier.MODE_ATTR).equals(Multiplier.SIGNED_OPTION);    
 
     // compute outputs
     Value a = state.getPortValue(IN0);
     Value b = state.getPortValue(IN1);
     Value c_in = state.getPortValue(C_IN);
-    Value[] outs = computeProduct(dataWidth, a, b, c_in, unsigned);
+    Value[] outs = computeProduct(dataWidth, a, b, c_in, unsignedA, unsignedB);
 
     // propagate them
     int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2) * PER_DELAY;
