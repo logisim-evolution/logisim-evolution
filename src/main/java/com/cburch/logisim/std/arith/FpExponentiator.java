@@ -16,6 +16,7 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -30,43 +31,45 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpMultiplier extends InstanceFactory {
+public class FpExponentiator extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPMultiplier";
+  public static final String _ID = "FPExponentiator";
 
-  static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
-  private static final int IN2 = 4;
-
-  static final AttributeOption MUL =
-      new AttributeOption("multiply", S.getter("fpMultiplierModeMultiply"));
-  static final AttributeOption FMA =
-      new AttributeOption("fusedMultiplyAdd", S.getter("fpMultiplierModeFusedMultiplyAdd"));
-  static final Attribute<AttributeOption> MUL_MODE =
+  static final AttributeOption ARB =
+      new AttributeOption("arb", S.getter("fpExponentiatorModeArbitrary"));
+  static final AttributeOption EXP =
+      new AttributeOption("exp", S.getter("fpExponentiatorModeExponent"));
+  static final AttributeOption EXPM1 =
+      new AttributeOption("expm1", S.getter("fpExponentiatorModeExponentMinusOne"));
+  static final Attribute<AttributeOption> EXP_MODE =
       Attributes.forOption(
-          "multiplyMode",
-          S.getter("fpMultiplierMode"),
+          "mode",
+          S.getter("fpExponentiatorMode"),
           new AttributeOption[] {
-            MUL,
-            FMA
+            ARB,
+            EXP,
+            EXPM1
           });
 
-  public FpMultiplier() {
-    super(_ID, S.getter("fpMultiplierComponent"));
+  static final int PER_DELAY = 1;
+  private static final int EXPO = 0;
+  private static final int OUT = 1;
+  private static final int ERR = 2;
+  private static final int BASE = 3;
+
+  public FpExponentiator() {
+    super(_ID, S.getter("fpExponentiatorComponent"));
     setAttributes(
-      new Attribute[] {StdAttr.FP_WIDTH, MUL_MODE},
-      new Object[] {BitWidth.create(32), MUL});
+      new Attribute[] {StdAttr.FP_WIDTH, EXP_MODE},
+      new Object[] {BitWidth.create(32), ARB});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u00d7"));
+    setIcon(new ArithmeticIcon("y\u02E3", 2));
   }
 
   @Override
@@ -76,55 +79,62 @@ public class FpMultiplier extends InstanceFactory {
   }
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == MUL_MODE) {
+    if (attr == EXP_MODE) {
       configurePorts(instance);
     }
   }
   private void configurePorts(Instance instance) {
-    final var isFMA = instance.getAttributeValue(MUL_MODE) == FMA;
+    final var isSingleInput = instance.getAttributeValue(EXP_MODE) != ARB;
     final Port[] ps;
-    if (isFMA) {
-      ps = new Port[5];
-      ps[IN2] = new Port(-20, -20, Port.INPUT, StdAttr.FP_WIDTH);
-      ps[IN2].setToolTip(S.getter("multiplierCarryInTip"));
+    if (isSingleInput) {
+      ps = new Port[3];
+
+      ps[EXPO] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+
     } else {
       ps = new Port[4];
+
+      ps[EXPO] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[BASE] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
+      ps[BASE].setToolTip(S.getter("exponentiatorBaseTip"));
     }
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+    ps[EXPO].setToolTip(S.getter("exponentiatorExponentTip"));
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("multiplierInputTip"));
-    ps[IN1].setToolTip(S.getter("multiplierInputTip"));
-    ps[OUT].setToolTip(S.getter("fpMultiplierOutputTip"));
+    ps[OUT].setToolTip(S.getter("fpExponentiatorOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
+
     instance.setPorts(ps);
   }
-
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-    painter.drawPort(IN0);
-    painter.drawPort(IN1);
-    painter.drawPort(OUT);
-    painter.drawPort(ERR);
 
-    final var mulMode = painter.getAttributeValue(MUL_MODE);
-    if (mulMode == FMA) {
-      painter.drawPort(IN2);
+    final var mode = painter.getAttributeValue(EXP_MODE);
+    if (mode == ARB) {
+      painter.drawPort(OUT, "y\u02E3", Direction.WEST);
+      g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
+      painter.drawPort(BASE);
+      painter.drawPort(EXPO);
+    } else {
+      if (mode == EXP) {
+        painter.drawPort(OUT, "e\u02E3", Direction.WEST);
+      } else {
+        painter.drawPort(OUT, "e\u02E3-1", Direction.WEST);
+      }
+      g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
+      painter.drawPort(EXPO);
     }
+
+    painter.drawPort(ERR);
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawLine(x - 15, y - 5, x - 5, y + 5);
-    g.drawLine(x - 15, y + 5, x - 5, y - 5);
-
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -135,25 +145,24 @@ public class FpMultiplier extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
-    final var mulMode = state.getAttributeValue(MUL_MODE);
+    final var mode = state.getAttributeValue(EXP_MODE);
 
     // compute outputs
-    final var a = state.getPortValue(IN0);
-    final var b = state.getPortValue(IN1);
-
-    final var a_val = a.toDoubleValueFromAnyFloat();
-    final var b_val = b.toDoubleValueFromAnyFloat();
+    final var expo = state.getPortValue(EXPO);
 
     final double out_val;
-    if (mulMode == MUL) {
-      out_val = a_val * b_val;
+    final var expo_val = expo.toDoubleValueFromAnyFloat();
+
+    if (mode == ARB) {
+      final var base = state.getPortValue(BASE);
+      final var base_val = base.toDoubleValueFromAnyFloat();
+      out_val = Math.pow(base_val, expo_val);
     } else {
-      final var c = state.getPortValue(IN2);
-      final var c_val = c.toDoubleValueFromAnyFloat();
-      out_val = Math.fma(a_val, b_val, c_val);
+      out_val = mode == EXP ? Math.exp(expo_val) : Math.expm1(expo_val);
     }
 
     final var out = Value.createKnown(dataWidth, out_val);
+
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
