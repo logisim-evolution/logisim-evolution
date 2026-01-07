@@ -296,10 +296,10 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       }
     }
     // Reset active rows when model changes
-      activeShowRows.clear();
-      activeSetRows.clear();
-      storedPinValues = null;
-      table.setModel(newModel == null ? null : this);
+    activeShowRows.clear();
+    activeSetRows.clear();
+    storedPinValues = null;
+    table.setModel(newModel == null ? null : this);
   }
   
   
@@ -465,8 +465,8 @@ class TestPanel extends JPanel implements ValueTable.Model, com.cburch.logisim.c
       prop.propagate();
       
       if (prop.isOscillating()) {
-        throw new TestException("Oscillation detected at sequence step " + 
-            (vec.seqNumbers != null && stepRow < vec.seqNumbers.length ? vec.seqNumbers[stepRow] : 0));
+        throw new TestException("Oscillation detected at sequence step " 
+            + (vec.seqNumbers != null && stepRow < vec.seqNumbers.length ? vec.seqNumbers[stepRow] : 0));
       }
     }
     
