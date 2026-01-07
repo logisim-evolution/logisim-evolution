@@ -11,20 +11,20 @@ package com.cburch.logisim.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.gui.test.TestThread;
 import com.cburch.logisim.proj.Project;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,7 +37,8 @@ import org.junit.jupiter.api.io.TempDir;
  */
 public class DLatchTestVectorTest {
 
-  @TempDir File tempDir;
+  @TempDir
+  File tempDir;
 
   @Test
   public void testDLatchSequentialExecution() throws IOException {
@@ -263,58 +264,34 @@ public class DLatchTestVectorTest {
     // This will actually run the tests and throw exceptions on failure
     TestVector vector = new TestVector(testFile.getAbsolutePath());
 
-    // Match pins manually (same logic as TestThread.matchPins)
-    com.cburch.logisim.instance.Instance[] pins =
-        new com.cburch.logisim.instance.Instance[vector.columnName.length];
-    com.cburch.logisim.circuit.CircuitState tempState =
-        com.cburch.logisim.circuit.CircuitState.createRootState(project, circuit, Thread.currentThread());
+    CircuitState tempState = CircuitState.createRootState(project, circuit, Thread.currentThread());
 
-    for (int i = 0; i < vector.columnName.length; i++) {
-      String columnName = vector.columnName[i];
-      boolean found = false;
-      for (Component comp : circuit.getNonWires()) {
-        if (!(comp.getFactory() instanceof com.cburch.logisim.std.wiring.Pin)) continue;
-        com.cburch.logisim.instance.Instance inst =
-            com.cburch.logisim.instance.Instance.getInstanceFor(comp);
-        com.cburch.logisim.instance.InstanceState pinState = tempState.getInstanceState(comp);
-        String label = pinState.getAttributeValue(StdAttr.LABEL);
-        if (label == null || !label.equals(columnName)) continue;
-        pins[i] = inst;
-        found = true;
-        break;
-      }
-      assertTrue(found, "Pin " + columnName + " should be found in circuit");
-    }
-
-    // Execute tests in sequence (same order and logic as TestThread.doTestVector)
-    int currentSet = -1;
-
+    ArrayList<Integer> steps = new ArrayList<>();
     for (int i = 0; i < vector.data.size(); i++) {
-      // Determine set and seq (same logic as TestThread.doTestVector)
-      int testSet = 0;
-      if (vector.setNumbers != null && i < vector.setNumbers.length) {
-        testSet = vector.setNumbers[i];
-      }
-      int testSeq = 0;
-      if (vector.seqNumbers != null && i < vector.seqNumbers.length) {
-        testSeq = vector.seqNumbers[i];
-      }
-
-      // Determine if we should reset (same logic as TestThread.doTestVector)
-      boolean shouldReset = (testSeq == 0 || testSet != currentSet);
-      if (shouldReset) {
-        currentSet = testSet;
-      }
-
-      // Execute the test using Circuit.doTestVector - this will throw TestException if it fails
-      // This is the SAME method that CLI, GUI, and the test all use
-      try {
-        circuit.doTestVector(tempState, pins, vector.data.get(i), shouldReset, vector, i);
-      } catch (com.cburch.logisim.data.TestException e) {
-        throw new AssertionError(
-            String.format("Test %d (seq %d, set %d) failed: %s",
-                i + 1, testSeq, testSet, e.getMessage()), e);
-      }
+      steps.add(i);
     }
+
+    TestVectorEvaluator evaluator;
+    try {
+      evaluator = new TestVectorEvaluator(tempState, vector, steps);
+    } catch (TestException e) {
+      throw new AssertionError("Failed to construct evaluator: " + e);
+    }
+
+    evaluator.setCheckResults(true);
+    evaluator.setLineReportAction((row, report) -> {
+      if (report == null || report.isEmpty()) {
+        // All good.
+      } else {
+        // Test failed - collect error details
+        StringBuilder errorDetails = new StringBuilder();
+        errorDetails.append(String.format("Test %d failed:\n", row + 1));
+        for (final var fail : report) {
+          errorDetails.append(String.format("  %s\n", fail.toString()));
+        }
+        throw new AssertionError(
+            String.format("Test %d failed unexpectedly with the corrected circuit:\n", row + 1));
+      }
+    });
   }
 }

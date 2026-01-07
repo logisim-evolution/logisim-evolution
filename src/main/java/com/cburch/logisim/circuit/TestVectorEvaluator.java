@@ -30,7 +30,7 @@ public class TestVectorEvaluator {
 
     @Override
     public @NotNull String toString() {
-      return columnName + " = " + computed.toDisplayString(2) + " (expected " + expected.toDisplayString(2) + ") "
+      return columnName + " = " + computed.toDisplayString(2) + " (expected " + expected.toDisplayString(2) + ")"
           + (oscillating ? " oscillating" : "");
     }
   }
