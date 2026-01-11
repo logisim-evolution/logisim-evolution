@@ -38,24 +38,7 @@ public class ArithmeticLibrary extends Library {
     new FactoryDescription(MinMax.class, S.getter("minMaxComponent"), "minmax.gif"),
     new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
     new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
-    new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
-    new FactoryDescription(FpAdder.class, S.getter("fpAdderComponent"), "adder.gif"),
-    new FactoryDescription(FpSubtractor.class, S.getter("fpSubtractorComponent"), "subtractor.gif"),
-    new FactoryDescription(FpMultiplier.class, S.getter("fpMultiplierComponent"), "multiplier.gif"),
-    new FactoryDescription(FpDivider.class, S.getter("fpDividerComponent"), "divider.gif"),
-    new FactoryDescription(FpNegator.class, S.getter("fpNegatorComponent"), "negator.gif"),
-    new FactoryDescription(FpExponentiator.class, S.getter("fpExponentiatorComponent"), "exponentiator.gif"),
-    new FactoryDescription(FpLogarithm.class, S.getter("fpLogarithmComponent"), "logarithm.gif"),
-    new FactoryDescription(FpSquareRoot.class, S.getter("fpSquareRootComponent"), "squareroot.gif"),
-    new FactoryDescription(FpAbsolute.class, S.getter("fpAbsoluteComponent"), "absolute.gif"),
-    new FactoryDescription(FpComparator.class, S.getter("fpComparatorComponent"), "comparator.gif"),
-    new FactoryDescription(FpMinMax.class, S.getter("fpMinMaxComponent"), "minmax.gif"),
-    new FactoryDescription(FpRound.class, S.getter("fpRoundComponent"), "round.gif"),
-    new FactoryDescription(FpTrigonometry.class, S.getter("fpTrigonometryComponent"), "trigonometry.gif"),
-    new FactoryDescription(FpClassificator.class, S.getter("fpClassificatorComponent"), "fpclassificator.gif"),
-    new FactoryDescription(FpToFp.class, S.getter("fpToFpComponent")),
-    new FactoryDescription(FpToInt.class, S.getter("fpToIntComponent")),
-    new FactoryDescription(IntToFp.class, S.getter("intToFPComponent")),
+    new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif")
   };
 
   private List<Tool> tools = null;

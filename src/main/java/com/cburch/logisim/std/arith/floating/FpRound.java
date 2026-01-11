@@ -7,13 +7,14 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.arith.floating;
 
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -27,39 +28,35 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpDivider extends InstanceFactory {
+public class FpRound extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPDivider";
+  public static final String _ID = "FPRound";
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT1 = 2;
-  private static final int OUT2 = 3;
-  private static final int ERR = 4;
+  private static final int IN = 0;
+  private static final int OUT = 1;
+  private static final int ERR = 2;
 
-  public FpDivider() {
-    super(_ID, S.getter("fpDividerComponent"));
-    setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
+  public FpRound() {
+    super(_ID, S.getter("fpRoundComponent"));
+    setAttributes(
+        new Attribute[] {StdAttr.FP_WIDTH, FpToInt.MODE_ATTRIBUTE},
+        new Object[] {BitWidth.create(32), FpToInt.ROUND_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u00f7"));
+    setIcon(new ArithmeticIcon("\u230A\u2309", 2));
 
-    final var ps = new Port[5];
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[OUT1] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
-    ps[OUT2] = new Port(-10, 20, Port.OUTPUT, StdAttr.FP_WIDTH);
+    final var ps = new Port[3];
+    ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("fpDividerDividendTip"));
-    ps[IN1].setToolTip(S.getter("dividerDivisorTip"));
-    ps[OUT1].setToolTip(S.getter("dividerOutputTip"));
-    ps[OUT2].setToolTip(S.getter("dividerRemainderTip"));
+    ps[IN].setToolTip(S.getter("fpRoundInputTip"));
+    ps[OUT].setToolTip(S.getter("fpRoundOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }
@@ -67,53 +64,56 @@ public class FpDivider extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    final var roundMode = painter.getAttributeValue(FpToInt.MODE_ATTRIBUTE);
+
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
-    painter.drawPort(IN0);
-    painter.drawPort(IN1);
-    painter.drawPort(OUT1);
-    painter.drawPort(OUT2);
-    painter.drawPort(ERR);
+    painter.drawPort(IN);
+
+    if (roundMode.getValue().equals("ceil"))
+      painter.drawPort(OUT, "\u2308x\u2309", Direction.WEST);
+    else if (roundMode.getValue().equals("floor"))
+       painter.drawPort(OUT, "\u230Ax\u230B", Direction.WEST);
+    else if (roundMode.getValue().equals("round"))
+       painter.drawPort(OUT, "\u27E6x\u27E7", Direction.WEST);
+    else if (roundMode.getValue().equals("rint"))
+       painter.drawPort(OUT, "\u27E6x\u27E7*", Direction.WEST);
+    else painter.drawPort(OUT, "Trunc", Direction.WEST);
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.fillOval(x - 12, y - 7, 4, 4);
-    g.drawLine(x - 15, y, x - 5, y);
-    g.fillOval(x - 12, y + 3, 4, 4);
-
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
     GraphicsUtil.switchToWidth(g, 1);
+
+    painter.drawPort(ERR);
   }
 
   @Override
   public void propagate(InstanceState state) {
     // get attributes
     final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
+    final var roundMode = state.getAttributeValue(FpToInt.MODE_ATTRIBUTE);
 
     // compute outputs
-    final var a = state.getPortValue(IN0);
-    final var b = state.getPortValue(IN1);
-
+    final var a = state.getPortValue(IN);
     final var a_val = a.toDoubleValueFromAnyFloat();
-    final var b_val = b.toDoubleValueFromAnyFloat();
 
-    final var out_val = a_val / b_val;
-    final var out = Value.createKnown(dataWidth, out_val);
+    final double roundedValue;
+    if (roundMode.getValue().equals("ceil")) roundedValue = Math.ceil(a_val);
+    else if (roundMode.getValue().equals("floor")) roundedValue = Math.floor(a_val);
+    else if (roundMode.getValue().equals("round")) roundedValue = Math.round(a_val);
+    else if (roundMode.getValue().equals("rint")) roundedValue = Math.rint(a_val);
+    else roundedValue = (long) a_val;
 
-    final var rem_val =  Math.IEEEremainder(a_val, b_val);
-    final var rem = Value.createKnown(dataWidth, rem_val);
-
+    final var out = Value.createKnown(dataWidth, roundedValue);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
-    state.setPort(OUT1, out, delay);
-    state.setPort(OUT2, rem, delay);
-    state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(out_val) ? 1 : 0), delay);
+    state.setPort(OUT, out, delay);
+    state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(a_val) ? 1 : 0), delay);
   }
 }

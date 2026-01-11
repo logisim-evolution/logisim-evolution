@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.arith.floating;
 
 import static com.cburch.logisim.std.Strings.S;
 
@@ -29,39 +29,42 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpMinMax extends InstanceFactory {
+public class FpComparator extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPMinMax";
+  public static final String _ID = "FPComparator";
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
   private static final int IN1 = 1;
-  private static final int MIN = 2;
-  private static final int MAX = 3;
-  private static final int ERR = 4;
+  private static final int GT = 2;
+  private static final int EQ = 3;
+  private static final int LT = 4;
+  private static final int ERR = 5;
 
-  public FpMinMax() {
-    super(_ID, S.getter("fpMinMaxComponent"));
+  public FpComparator() {
+    super(_ID, S.getter("fpComparatorComponent"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("minmax", 3));
+    setIcon(new ArithmeticIcon("\u2276"));
 
-    final var ps = new Port[5];
+    final var ps = new Port[6];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[MAX] = new Port(0, 10, Port.OUTPUT, StdAttr.FP_WIDTH);
-    ps[MIN] = new Port(0, -10, Port.OUTPUT, StdAttr.FP_WIDTH);
+    ps[GT] = new Port(0, -10, Port.OUTPUT, 1);
+    ps[EQ] = new Port(0, 0, Port.OUTPUT, 1);
+    ps[LT] = new Port(0, 10, Port.OUTPUT, 1);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("minMaxInputTip"));
-    ps[IN1].setToolTip(S.getter("minMaxInputTip"));
-    ps[MIN].setToolTip(S.getter("minMaxMinimumTip"));
-    ps[MAX].setToolTip(S.getter("minMaxMaximumTip"));
+    ps[IN0].setToolTip(S.getter("comparatorInputATip"));
+    ps[IN1].setToolTip(S.getter("comparatorInputBTip"));
+    ps[GT].setToolTip(S.getter("comparatorGreaterTip"));
+    ps[EQ].setToolTip(S.getter("comparatorEqualTip"));
+    ps[LT].setToolTip(S.getter("comparatorLessTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }
@@ -86,8 +89,9 @@ public class FpMinMax extends InstanceFactory {
     painter.drawBounds();
     painter.drawPort(IN0);
     painter.drawPort(IN1);
-    painter.drawPort(MIN, "Min", Direction.WEST);
-    painter.drawPort(MAX, "Max", Direction.WEST);
+    painter.drawPort(GT, ">", Direction.WEST);
+    painter.drawPort(EQ, "=", Direction.WEST);
+    painter.drawPort(LT, "<", Direction.WEST);
     painter.drawPort(ERR);
 
     final var loc = painter.getLocation();
@@ -112,17 +116,11 @@ public class FpMinMax extends InstanceFactory {
     final var a_val = a.toDoubleValueFromAnyFloat();
     final var b_val = b.toDoubleValueFromAnyFloat();
 
-    final var min_val = Math.min(a_val, b_val);
-    final var max_val = Math.max(a_val, b_val);
-
-    final var min = Value.createKnown(dataWidth, min_val);
-    final var max = Value.createKnown(dataWidth, max_val);
-
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
-
-    state.setPort(MIN, min, delay);
-    state.setPort(MAX, max, delay);
+    state.setPort(GT, Value.createKnown(1, a_val > b_val ? 1 : 0), delay);
+    state.setPort(EQ, Value.createKnown(1, a_val == b_val ? 1 : 0), delay);
+    state.setPort(LT, Value.createKnown(1, a_val < b_val ? 1 : 0), delay);
     state.setPort(
         ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
   }

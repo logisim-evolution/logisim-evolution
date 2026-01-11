@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.arith.floating;
 
 import static com.cburch.logisim.std.Strings.S;
 
@@ -27,33 +27,36 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpSquareRoot extends InstanceFactory {
+public class FpSubtractor extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPSquareRoot";
+  public static final String _ID = "FPSubtractor";
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
+  private static final int IN1 = 1;
+  private static final int OUT = 2;
+  private static final int ERR = 3;
 
-  public FpSquareRoot() {
-    super(_ID, S.getter("fpSquareRootComponent"));
+  public FpSubtractor() {
+    super(_ID, S.getter("fpSubtractorComponent"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u221A"));
+    setIcon(new ArithmeticIcon("-"));
 
-    final var ps = new Port[3];
-    ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
+    final var ps = new Port[4];
+    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
+    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("fpSquareRootInputTip"));
-    ps[OUT].setToolTip(S.getter("squareRootOutputTip"));
+    ps[IN0].setToolTip(S.getter("subtractorMinuendTip"));
+    ps[IN1].setToolTip(S.getter("subtractorSubtrahendTip"));
+    ps[OUT].setToolTip(S.getter("subtractorOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }
@@ -65,6 +68,7 @@ public class FpSquareRoot extends InstanceFactory {
     painter.drawBounds();
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
+    painter.drawPort(IN1);
     painter.drawPort(OUT);
     painter.drawPort(ERR);
 
@@ -73,9 +77,7 @@ public class FpSquareRoot extends InstanceFactory {
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawLine(x - 15, y, x - 12, y + 5);
-    g.drawLine(x - 12, y + 5, x - 9, y - 5);
-    g.drawLine(x - 9, y - 5, x - 5, y - 5);
+    g.drawLine(x - 15, y, x - 5, y);
 
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
@@ -90,11 +92,12 @@ public class FpSquareRoot extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN0);
+    final var b = state.getPortValue(IN1);
 
     final var a_val = a.toDoubleValueFromAnyFloat();
+    final var b_val = b.toDoubleValueFromAnyFloat();
 
-    final var out_val = Math.sqrt(a_val);
-
+    final var out_val = a_val - b_val;
     final var out = Value.createKnown(dataWidth, out_val);
 
     // propagate them

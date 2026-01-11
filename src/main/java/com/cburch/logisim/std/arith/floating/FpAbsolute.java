@@ -7,13 +7,14 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.arith.floating;
 
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -27,36 +28,33 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpAdder extends InstanceFactory {
+public class FpAbsolute extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPAdder";
+  public static final String _ID = "FPAbsolute";
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
+  private static final int OUT = 1;
+  private static final int ERR = 2;
 
-  public FpAdder() {
-    super(_ID, S.getter("fpAdderComponent"));
+  public FpAbsolute() {
+    super(_ID, S.getter("fpAbsoluteComponent"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("+"));
+    setIcon(new ArithmeticIcon("abs", 3));
 
-    final var ps = new Port[4];
-    ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
+    final var ps = new Port[3];
+    ps[IN0] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("adderInputTip"));
-    ps[IN1].setToolTip(S.getter("adderInputTip"));
-    ps[OUT].setToolTip(S.getter("fpAdderOutputTip"));
+    ps[IN0].setToolTip(S.getter("absoluteInputTip"));
+    ps[OUT].setToolTip(S.getter("absoluteOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
   }
@@ -68,18 +66,16 @@ public class FpAdder extends InstanceFactory {
     painter.drawBounds();
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
-    painter.drawPort(IN1);
-    painter.drawPort(OUT);
     painter.drawPort(ERR);
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
     final var y = loc.getY();
+
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawLine(x - 15, y, x - 5, y);
-    g.drawLine(x - 10, y - 5, x - 10, y + 5);
 
+    painter.drawPort(OUT, "Abs", Direction.WEST);
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -93,12 +89,11 @@ public class FpAdder extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN0);
-    final var b = state.getPortValue(IN1);
 
     final var a_val = a.toDoubleValueFromAnyFloat();
-    final var b_val = b.toDoubleValueFromAnyFloat();
 
-    final var out_val = a_val + b_val;
+    final var out_val = Math.abs(a_val);
+
     final var out = Value.createKnown(dataWidth, out_val);
 
     // propagate them
