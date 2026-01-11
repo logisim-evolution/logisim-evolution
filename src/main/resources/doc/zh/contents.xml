@@ -6,23 +6,23 @@
   "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
 <!--  <tocitem image="toplevelfolder" target="top" text="Logisim References">-->
-	<tocitem image="toplevelfolder" target="top" text="Logisim-evolution参考资料">
+	<tocitem image="toplevelfolder" target="top" text="Logisim-evolution 参考资料">
 <!--	<tocitem target="guide" text="Guide to Being a Logisim User">-->
-		<tocitem target="guide" text="Logisim-evolution用户指南">
+		<tocitem target="guide" text="Logisim-evolution 用户指南">
 <!--		<tocitem target="tutorial" text="Beginner's tutorial">-->
 			<tocitem target="tutorial" text="初学者教程">
 <!--			<tocitem target="tutorial_orient" text="Step 0: Orienting yourself" />-->
-				<tocitem target="tutorial_orient" text="第0步：整体概览" />
+				<tocitem target="tutorial_orient" text="步骤 0：熟悉环境" />
 <!--			<tocitem target="tutorial_gates" text="Step 1: Adding gates" />-->
-				<tocitem target="tutorial_gates" text="第1步：添加门" />
+				<tocitem target="tutorial_gates" text="步骤 1：添加逻辑门" />
 <!--			<tocitem target="tutorial_wires" text="Step 2: Adding wires" />-->
-				<tocitem target="tutorial_wires" text="第2步：添加导线" />
+				<tocitem target="tutorial_wires" text="步骤 2：添加导线" />
 <!--			<tocitem target="tutorial_text" text="Step 3: Adding text" />-->
-				<tocitem target="tutorial_text" text="第3步：添加文本" />
+				<tocitem target="tutorial_text" text="步骤 3：添加文本" />
 <!--			<tocitem target="tutorial_test" text="Step 4: Testing your circuit" />-->
-				<tocitem target="tutorial_test" text="第4步：测试你的电路" />
+				<tocitem target="tutorial_test" text="步骤 4：测试你的电路" />
 <!--			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>-->
-				<tocitem target="tutorial_step" text="第5步：单步模式"/>
+				<tocitem target="tutorial_step" text="步骤 5：单步模式"/>
 			</tocitem>
 <!--		<tocitem target="gui" text="The graphical interfaces">-->
 			<tocitem target="gui" text="图形界面">
@@ -31,7 +31,7 @@
 <!--				<tocitem target="gui_menu" text="The menus"/>-->
 				<tocitem target="gui_menu" text="菜单"/>
 <!--				<tocitem target="gui_explore" text="The explorer pane" />-->
-				<tocitem target="gui_explore" text="资源管理器窗口" />
+				<tocitem target="gui_explore" text="资源管理器面板" />
 <!--				<tocitem target="gui_toolsbar" text="The tools bars"/>-->
 				<tocitem target="gui_toolsbar" text="工具栏"/>
 <!--				<tocitem target="gui-attribut" text="The attribute table" />-->
@@ -48,7 +48,7 @@
 <!--			<tocitem target="subcirc_using" text="Using subcircuits" />-->
 				<tocitem target="subcirc_using" text="使用子电路" />
 <!--			<tocitem target="subcirc_appear" text="Selecting the appearance of a subcircuit " />-->
-				<tocitem target="subcirc_appear" text="编辑子电路的外观 " />
+				<tocitem target="subcirc_appear" text="选择子电路的外观 " />
 
 <!--			<tocitem target="subcirc_personalise" text="Customize the appearance"/>-->
 				<tocitem target="subcirc_personalise" text="自定义外观"/>
@@ -56,14 +56,14 @@
 <!--			<tocitem target="subcirc_debug" text="Debugging subcircuits" />-->
 				<tocitem target="subcirc_debug" text="调试子电路" />
 <!--				<tocitem target="subcirc_library" text="Logisim libraries" />-->
-				<tocitem target="subcirc_library" text="Logisim-evolution库" />
+				<tocitem target="subcirc_library" text="Logisim-evolution 库" />
 				<tocitem target="dynamic_components" text="动态组件" />
 			</tocitem>
 <!--		<tocitem target="features" text="Additional features">-->
 			<tocitem target="features" text="附加功能">
 
 <!--			<tocitem target="features_creating" text="Creating bundles" />-->
-				<tocitem target="features_creating" text="创建捆绑包" />
+				<tocitem target="features_creating" text="创建总线" />
 
 				<!-- <tocitem target="features_splitting" text="Splitters" /> -->
 				<tocitem target="features_splitting" text="分线器" />
@@ -73,38 +73,38 @@
 			<tocitem target="features_colors" text="导线颜色" />
 
 			<!-- <tocitem target="features_autolabel" text="Self-numbered labels " /> -->
-			<tocitem target="features_autolabel" text="自编号标签" />
+			<tocitem target="features_autolabel" text="自动编号标签" />
 
 			<!-- <tocitem target="features_matrix" text="Placing components in a matrix" /> -->
-			<tocitem target="features_matrix" text="将组件放置在矩阵中" />
+			<tocitem target="features_matrix" text="矩阵方式放置元件" />
 
 		</tocitem>
 		<!-- <tocitem target="mem_guide" text="Memory components"> -->
-		<tocitem target="mem_guide" text="内存组件">
+		<tocitem target="mem_guide" text="存储器组件">
+			<!-- <tocitem target="mem_poke" text="Memory poke" /> -->
+			<tocitem target="mem_poke" text="手形工具" />
 			<!-- <tocitem target="mem_hex" text="Editeur hexadécimal" />			 -->
 			<tocitem target="mem_hex" text="十六进制编辑器" />	
 			<!-- <tocitem target="mem_menu" text="Pop-up menus and files" /> -->
 			<tocitem target="mem_menu" text="弹出菜单和文件" />
 			<!-- <tocitem target="mem_filetabel" text="Memory file panel"/> -->
-			<tocitem target="mem_filetabel" text="内存文件面板"/>
-			<!-- <tocitem target="mem_poke" text="Memory poke" /> -->
-			<tocitem target="mem_poke" text="记忆戳" />
+			<tocitem target="mem_filetabel" text="存储器文件面板"/>
 			<!-- <tocitem target="mem_v2raw" text="File v2raw" /> -->
-			<tocitem target="mem_v2raw" text="文件 v2raw" />
+			<tocitem target="mem_v2raw" text="v2raw 文件" />
 			<!-- <tocitem target="mem_v3word" text="File v3word"/> -->
-			<tocitem target="mem_v3word" text="文件 v3word"/>
+			<tocitem target="mem_v3word" text="v3word 文件"/>
 			<!-- <tocitem target="mem_v3byte" text="File v3byte"/> -->
-			<tocitem target="mem_v3byte" text="文件v3字节"/>
+			<tocitem target="mem_v3byte" text="v3byte 文件"/>
 			<!-- <tocitem target="mem_binary" text="File binary"/> -->
-			<tocitem target="mem_binary" text="文件二进制"/>
+			<tocitem target="mem_binary" text="二进制文件"/>
 			<!-- <tocitem target="mem_ascii" text="File ASCII"/> -->
-			<tocitem target="mem_ascii" text="文件 ASCII"/>
+			<tocitem target="mem_ascii" text="ASCII 文件"/>
 		</tocitem>
 		<!-- <tocitem target="analyze" text="Combinational analysis"> -->
-		<tocitem target="analyze" text="组合分析">
+		<tocitem target="analyze" text="组合逻辑分析">
 
 			<!-- <tocitem target="analyze_open" text="Opening Combinational Analysis" /> -->
-			<tocitem target="analyze_open" text="开放组合分析" />
+			<tocitem target="analyze_open" text="打开组合逻辑分析" />
 			<!-- <tocitem target="analyze_table" text="Editing the truth table" /> -->
 			<tocitem target="analyze_table" text="编辑真值表" />
 			<!-- <tocitem target="analyze_expr" text="Creating expressions" /> -->
@@ -112,7 +112,7 @@
 			<!-- <tocitem target="analyze_gen" text="Generating a circuit" /> -->
 			<tocitem target="analyze_gen" text="生成电路" />
 			<!-- <tocitem target="analyze_expimp" text="Buttons Export / Import Table "/> -->
-			<tocitem target="analyze_expimp" text="按钮导出/导入表"/>
+			<tocitem target="analyze_expimp" text="导出 / 导入表格按钮"/>
 		</tocitem>
 		<!-- <tocitem target="log" text="Logging"> -->
 		<tocitem target="log" text="日志">
@@ -134,7 +134,7 @@
 			<!-- <tocitem target="verify_multi" text="Testing multiple files" /> -->
 			<tocitem target="verify_multi" text="测试多个文件" />
 			<!-- <tocitem target="verify_test" text="Test Vectors" /> -->
-			<tocitem target="verify_test" text="测试载体" />
+			<tocitem target="verify_test" text="测试向量" />
 
 		</tocitem>
 		<!-- <tocitem target="menu" text="Menu reference"> -->
@@ -150,27 +150,27 @@
 			<tocitem target="menu_project" text="项目菜单" />
 
 			<!-- <tocitem target="menu_simulate" text="The Simulate menu" /> -->
-			<tocitem target="menu_simulate" text="模拟菜单" />
+			<tocitem target="menu_simulate" text="仿真菜单" />
 			<!-- <tocitem target="menu_winhelp" text="The Window and Help menus" /> -->
-			<tocitem target="menu_winhelp" text="窗口和帮助菜单" />
+			<tocitem target="menu_winhelp" text="窗口与帮助菜单" />
 
 			<!-- <tocitem target="menu_exportab" text="Export Image"/> -->
 			<tocitem target="menu_exportab" text="导出图片"/>
 
 			<!-- <tocitem target="menu_printertab" text="Printing "/> -->
-			<tocitem target="menu_printertab" text="印刷 "/>
+			<tocitem target="menu_printertab" text="打印"/>
 
 			<!-- <tocitem target="menu_assembly" text="Assembly viewer"/> -->
-			<tocitem target="menu_assembly" text="装配查看器"/>
+			<tocitem target="menu_assembly" text="汇编查看器"/>
 
 		</tocitem>
 		<!-- <tocitem target="prefs" text="Application preferences"> -->
-		<tocitem target="prefs" text="应用偏好">
+		<tocitem target="prefs" text="应用程序首选项">
 			<!-- <tocitem target="prefs_template" text="The Template tab" /> -->
 			<tocitem target="prefs_template" text="模板选项卡" />
 
 			<!-- <tocitem target="prefs_intl" text="The International tab" /> -->
-			<tocitem target="prefs_intl" text="国际选项卡" />
+			<tocitem target="prefs_intl" text="国际化选项卡" />
 
 			<!-- <tocitem target="prefs_window" text="The Window tab" /> -->
 			<tocitem target="prefs_window" text="窗口选项卡" />
@@ -180,7 +180,7 @@
 
 <!--	<tocitem target="prefs_simulation" text="The  simulation tab"/> -->
 			<!-- <tocitem target="prefs_exp" text="The Experimental tab" /> -->
-			<tocitem target="prefs_exp" text="实验选项卡" />
+			<tocitem target="prefs_exp" text="实验性选项卡" />
 
 <!--	<tocitem target="prefs_sofware" text="The Sofware tab"/> -->
 <!--	<tocitem target="prefs_fpga" text="The FPGA Commander settings tab"/> -->
@@ -192,7 +192,7 @@
 		<tocitem target="opts" text="项目选项">
 
 			<!-- <tocitem target="opts_simulate" text="The Simulation tab" /> -->
-			<tocitem target="opts_simulate" text="模拟选项卡" />
+			<tocitem target="opts_simulate" text="仿真选项卡" />
 
 			<!-- <tocitem target="opts_toolbar" text="The Toolbar tab" /> -->
 			<tocitem target="opts_toolbar" text="工具栏选项卡" />
@@ -202,16 +202,16 @@
 
 		</tocitem>
 		<!-- <tocitem target="prop" text="Value propagation"> -->
-		<tocitem target="prop" text="值传播">
+		<tocitem target="prop" text="数值传播">
 
 			<!-- <tocitem target="prop_delays" text="Gate delays" /> -->
 			<tocitem target="prop_delays" text="门延迟" />
 
 			<!-- <tocitem target="prop_oscillate" text="Oscillation errors" /> -->
-			<tocitem target="prop_oscillate" text="振荡误差" />
+			<tocitem target="prop_oscillate" text="振荡错误" />
 
 			<!-- <tocitem target="prop_shortcome" text="Shortcomings" /> -->
-			<tocitem target="prop_shortcome" text="缺点" />
+			<tocitem target="prop_shortcome" text="局限性" />
 
 		</tocitem>
 		<tocitem target="hdl-ip" text="HDL IP">
@@ -229,13 +229,13 @@
 
 		</tocitem>
 		<!-- <tocitem target="jar" text="JAR libraries"> -->
-		<tocitem target="jar" text="JAR库">
+		<tocitem target="jar" text="JAR 库">
 
 			<!-- <tocitem target="jar_incr" text="Gray Code Incrementer" /> -->
-			<tocitem target="jar_incr" text="格雷码增量器" />
+			<tocitem target="jar_incr" text="格雷码加一器" />
 
 			<!-- <tocitem target="jar_library" text="Library Class" /> -->
-			<tocitem target="jar_library" text="图书馆课" />
+			<tocitem target="jar_library" text="库类" />
 
 			<!-- <tocitem target="jar_simpctr" text="Simple Gray Code Counter" /> -->
 			<tocitem target="jar_simpctr" text="简单格雷码计数器" />
@@ -248,7 +248,7 @@
 
 		</tocitem>
 		<!-- <tocitem target="about" text="About the program"> -->
-		<tocitem target="about" text="关于该计划">
+		<tocitem target="about" text="关于本程序">
 
 			<!-- <tocitem target="about_gpl" text="GNU General Public License" /> -->
 			<tocitem target="about_gpl" text="GNU 通用公共许可证" />
@@ -258,7 +258,7 @@
 	</tocitem>
 	
 	<!-- <tocitem target="libs" text="Library Reference"> -->
-	<tocitem target="libs" text="电路元件库参考手册">
+	<tocitem target="libs" text="库参考手册">
 
 		<!-- <tocitem target="wiring" text="Wiring library"> -->
 		<tocitem target="wiring" text="线路">
@@ -281,7 +281,7 @@
 			<tocitem target="wiring_clock" text="时钟" image="icon_clock" />
 			<!-- <tocitem target="wiring_por" text="Power On Reset" image="icon_por" /> -->
 
-			<tocitem target="wiring_por" text="开启复位" image="icon_por" />
+			<tocitem target="wiring_por" text="上电复位" image="icon_por" />
 			<!-- <tocitem target="wiring_constant" text="Constant" image="icon_constant" /> -->
 			<tocitem target="wiring_constant" text="常量" image="icon_constant" />
 
@@ -289,7 +289,7 @@
 			<tocitem target="wiring_const01" text="电源/接地" image="icon_const01" />
 
 			<!-- <tocitem target="wiring_notconnect" text="Do not connect" image="icon_notconnect" /> -->
-			<tocitem target="wiring_notconnect" text="请勿连接" image="icon_notconnect" />
+			<tocitem target="wiring_notconnect" text="不连接" image="icon_notconnect" />
 
 			<!-- <tocitem target="wiring_transist" text="Transistor" image="icon_transist" /> -->
 			<tocitem target="wiring_transist" text="晶体管" image="icon_transist" />
@@ -311,16 +311,16 @@
 			<tocitem target="gates_buffer" text="缓冲器" image="icon_buffer" />
 
 			<!-- <tocitem target="gates_basic" text="AND/OR/NAND/NOR Gate" image="icon_basic" /> -->
-			<tocitem target="gates_basic" text="与门、或门、与非门、或非门" image="icon_basic" />
+			<tocitem target="gates_basic" text="与/或/与非/或非门" image="icon_basic" />
 
 			<!-- <tocitem target="gates_xor" text="XOR/XNOR/Even/Odd Gate" image="icon_xor" /> -->
-			<tocitem target="gates_xor" text="异或门、同或门、奇校验、偶校验" image="icon_xor" />
+			<tocitem target="gates_xor" text="异或/同或门、奇/偶校验门" image="icon_xor" />
 
 			<!-- <tocitem target="gates_controlled" text="Controlled Buffer/Inverter" image="icon_controlled" /> -->
-			<tocitem target="gates_controlled" text="受控缓冲器、受控逆变器" image="icon_controlled" />
+			<tocitem target="gates_controlled" text="受控缓冲器/反相器" image="icon_controlled" />
 
 			<!-- <tocitem target="gates_PLA" text="Programmable logic array" image="icon_pla" /> -->
-			<tocitem target="gates_PLA" text="PLA(可编程逻辑阵列)" image="icon_pla" />
+			<tocitem target="gates_PLA" text="PLA（可编程逻辑阵列）" image="icon_pla" />
 		</tocitem>
 		<!-- <tocitem target="plexers" text="Plexers library"> -->
 		<tocitem target="plexers" text="复用器">
@@ -329,7 +329,7 @@
 			<tocitem target="plexers_mux" text="多路复用器" image="icon_mux" />
 
 			<!-- <tocitem target="plexers_demux" text="Demultiplexer" image="icon_demux" /> -->
-			<tocitem target="plexers_demux" text="多路分离器" image="icon_demux" />
+			<tocitem target="plexers_demux" text="多路解复用器" image="icon_demux" />
 
 			<!-- <tocitem target="plexers_decoder" text="Decoder" image="icon_decoder" /> -->
 			<tocitem target="plexers_decoder" text="译码器" image="icon_decoder" />
@@ -356,7 +356,7 @@
 			<!-- <tocitem target="arith_divider" text="Divider" image="icon_divider" /> -->
 			<tocitem target="arith_divider" text="除法器" image="icon_divider" />
 			<!-- <tocitem target="arith_negator" text="Negator" image="icon_negator" /> -->
-			<tocitem target="arith_negator" text="求补器" image="icon_negator" />
+			<tocitem target="arith_negator" text="求负器" image="icon_negator" />
 
 			<!-- <tocitem target="arith_comparator" text="Comparator" image="icon_comparator" /> -->
 			<tocitem target="arith_comparator" text="比较器" image="icon_comparator" />
@@ -365,14 +365,14 @@
 			<tocitem target="arith_shifter" text="移位器" image="icon_shifter" />
 
 			<!-- <tocitem target="arith_bitadder" text="Bit Adder" image="icon_bitadder" /> -->
-			<tocitem target="arith_bitadder" text="位加法器" image="icon_bitadder" />
+			<tocitem target="arith_bitadder" text="位计数器" image="icon_bitadder" />
 
 			<!-- <tocitem target="arith_bitfinder" text="Bit Finder" image="icon_bitfinder" /> -->
-			<tocitem target="arith_bitfinder" text="位查询器" image="icon_bitfinder" />
+			<tocitem target="arith_bitfinder" text="位查找器" image="icon_bitfinder" />
 
 		</tocitem>
 		<!-- <tocitem target="mem" text="Memory library"> -->
-		<tocitem target="mem" text="存储库">
+		<tocitem target="mem" text="存储器">
 
 			<!-- <tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" /> -->
 			<tocitem target="mem_flipflops" text="D/T/J-K/S-R 触发器" image="icon_flipflops" />
@@ -387,7 +387,7 @@
 			<tocitem target="mem_shiftreg" text="移位寄存器" image="icon_shiftreg" />
 
 			<!-- <tocitem target="mem_random" text="Random" image="icon_random" /> -->
-			<tocitem target="mem_random" text="随机生成器" image="icon_random" />
+			<tocitem target="mem_random" text="随机数发生器" image="icon_random" />
 
 			<!-- <tocitem target="mem_ram" text="RAM" image="icon_ram" /> -->
 			<tocitem target="mem_ram" text="RAM" image="icon_ram" />
@@ -404,7 +404,7 @@
 			<tocitem target="io_DIP" text="拨码开关" image="icon_dipswitch" />
 
 			<!-- <tocitem target="io_joystick" text="Joystick" image="icon_joystick" /> -->
-			<tocitem target="io_joystick" text="操纵杆" image="icon_joystick" />
+			<tocitem target="io_joystick" text="摇杆" image="icon_joystick" />
 
 			<!-- <tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" /> -->
 			<tocitem target="io_keyboard" text="键盘" image="icon_keyboard" />
@@ -413,27 +413,27 @@
 			<tocitem target="io_led" text="LED" image="icon_led" />
 
 			<!-- <tocitem target="io_ledRGB" text="LED RGB" image="icon_rgbled" /> -->
-			<tocitem target="io_ledRGB" text="LED条" image="icon_rgbled" />
+			<tocitem target="io_ledRGB" text="RGB LED" image="icon_rgbled" />
 
 			<!-- <tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" /> -->
-			<tocitem target="io_7seg" text="7段数码管" image="icon_7seg" />
+			<tocitem target="io_7seg" text="7 段数码管" image="icon_7seg" />
 
 			<!-- <tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" /> -->
-			<tocitem target="io_hexdig" text="十六进制数码显示" image="icon_hexdig" />
+			<tocitem target="io_hexdig" text="16 进制数码显示" image="icon_hexdig" />
 
 			<!-- <tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" /> -->
-			<tocitem target="io_dotmat" text="LED矩阵" image="icon_dotmat" />
+			<tocitem target="io_dotmat" text="LED 矩阵" image="icon_dotmat" />
 
-			<tocitem target="io_tty" text="TTY" image="icon_tty" />
+			<tocitem target="io_tty" text="TTY 终端" image="icon_tty" />
 
      		<!-- <tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" /> -->
-			<!-- <tocitem target="io_Port_IO" text="端口IO" image="icon_Port_IO" /> -->
+			<tocitem target="io_Port_IO" text="端口 IO" image="icon_Port_IO" />
 
 			<!-- <tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" /> -->
-			<!-- <tocitem target="io_Repetar" text="Reptar本地总线" image="icon_repetar" /> -->
+			<tocitem target="io_Repetar" text="Reptar 本地总线" image="icon_repetar" />
 
 			<!-- <tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" /> -->
-			<!-- <tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" /> -->
+			<tocitem target="io_videorgb" text="RGB 显示" image="icon_videorgb" />
 
 	
 		</tocitem>
