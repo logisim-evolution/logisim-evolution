@@ -26,7 +26,11 @@ import com.cburch.logisim.std.wiring.Pin;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
@@ -47,13 +51,15 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   private final TestFrame testFrame;
   private final ValueTable table;
   private final MyListener myListener = new MyListener();
+  ComponentAdapter componentAdapter = null;
+  private boolean simulatorListening = false;
 
   // Track which rows' Show buttons are currently active (green)
-  private Set<Integer> activeShowRows = new HashSet<>();
+  private final Set<Integer> activeShowRows = new HashSet<>();
   // Track which rows' Set buttons are currently active (green)
-  private Set<Integer> activeSetRows = new HashSet<>();
+  private final Set<Integer> activeSetRows = new HashSet<>();
 
-  // Store the pin values when Set is clicked, to detect changes
+  // Store the pin values when Show or Set is clicked, to detect changes. Used by simulation thread.
   private volatile com.cburch.logisim.data.Value[] storedPinValues = null;
 
   public TestPanel(TestFrame frame) {
@@ -62,6 +68,7 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
     setLayout(new BorderLayout());
     add(table);
     modelChanged(null, getModel());
+    setComponentAdapter();
   }
 
   @Override
@@ -293,18 +300,43 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
       // Remove simulator listener from old project
       if (oldModel.getProject() != null) {
         oldModel.getProject().getSimulator().removeSimulatorListener(this);
+        simulatorListening = false;
       }
     }
     if (newModel != null) {
       newModel.addModelListener(myListener);
       // Add simulator listener to new project
-      if (newModel.getProject() != null) {
+      if (newModel.getProject() != null && !simulatorListening && testFrame.isShowing()) {
         newModel.getProject().getSimulator().addSimulatorListener(this);
+        simulatorListening = true;
       }
     }
     // Reset active rows when model changes
     resetActiveRows();
     table.setModel(newModel == null ? null : this);
+  }
+
+  private void setComponentAdapter() {
+    if (getModel() != null && componentAdapter == null) {
+      componentAdapter = new ComponentAdapter() {
+        @Override
+        public void componentShown(ComponentEvent e) {
+          if (getModel() != null && !simulatorListening) {
+            getModel().getProject().getSimulator().addSimulatorListener(TestPanel.this);
+            simulatorListening = true;
+          }
+        }
+
+        @Override
+        public void componentHidden(ComponentEvent e) {
+          if (getModel() != null) {
+            getModel().getProject().getSimulator().removeSimulatorListener(TestPanel.this);
+            simulatorListening = false;
+          }
+        }
+      };
+      testFrame.addComponentListener(componentAdapter);
+    }
   }
 
   private void resetActiveRows() {
@@ -490,8 +522,8 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   }
 
   private void resetActiveRowsAndNotifyTableChanged() {
-    resetActiveRows();
     SwingUtilities.invokeLater(() -> {
+      resetActiveRows();
       table.dataChanged();
     });
   }
