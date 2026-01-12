@@ -355,6 +355,7 @@
 
 			<!-- <tocitem target="arith_divider" text="Divider" image="icon_divider" /> -->
 			<tocitem target="arith_divider" text="除法器" image="icon_divider" />
+
 			<!-- <tocitem target="arith_negator" text="Negator" image="icon_negator" /> -->
 			<tocitem target="arith_negator" text="求负器" image="icon_negator" />
 
