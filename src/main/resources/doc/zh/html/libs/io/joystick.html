@@ -1,159 +1,115 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Joystick -->
-   操纵杆
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <!-- <img class="iconlibs" src="../../../../icons/6464/joystick.png" alt="#########" width="32" height="32" align="middle"> <em>Joystick</em> -->
-    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/joystick.png" width="32"/>
-    <em>
-     操纵杆
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Input/Output</a> -->
-       <a href="index.html">
-        输入/输出
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.2.0
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/joystick.png" width="64"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- The user can drag the red knob within the rounded-square area, and the outputs update to indicate the knob's current <var>x</var>- and <var>y</var>-coordinates. This is meant to emulate the joysticks known from the days of classical arcade games. -->
-    用户可以在圆角方形区域内拖动红色旋钮，输出会更新以指示旋钮的当前 x 和 y 坐标。 这是为了模仿经典街机游戏时代已知的操纵杆。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <dl>
-    <dt>
-     <!-- West edge, north pin (output, bit width matches Bit Width attribute) -->
-     西边，北针（输出，位宽与位宽属性匹配）
-    </dt>
-    <dd>
-     <!-- Indicates knob's <var>x</var>-coordinate, to be interpreted as an unsigned integer whose value will never be 0. Thus, a value of 1 represents the far left, and the maximum value for the bit width indicates the far right. When the knob is at rest (in the center), the value has the bit pattern 10...00. -->
-     指示旋钮的 x 坐标，被解释为无符号整数，其值永远不会为 0。因此，值 1 表示最左侧，位宽的最大值表示最右侧 。 当旋钮处于静止状态（位于中心）时，该值的位模式为 10...00。
-    </dd>
-    <dt>
-     <!-- West edge, south pin (output, bit width matches Bit Width attribute) -->
-     西边，南引脚（输出，位宽与位宽属性匹配）
-    </dt>
-    <dd>
-     <!-- Indicates knob's <var>y</var>-coordinate, whose value ranges as with the <var>x</var>-coordinate pin. When the knob is pulled to the top, this output's value is 1, and when the knob is pulled to the bottom, the output is the maximum value for the bit width selected. -->
-     指示旋钮的
-     <var>
-      y
-     </var>
-     坐标，其值范围与
-     <var>
-      x
-     </var>
-     坐标引脚相同。 当旋钮拉到顶部时，该输出值为 1，当旋钮拉到底部时，输出为所选位宽的最大值。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, Alt-2 through Alt-5 alter its <q>Bit Width</q> attribute. -->
-    当选择或添加组件时，Alt-2 到 Alt-5 会更改其
-    <q>
-     位宽度
-    </q>
-    属性。
-   </p>
-   <dl>
-    <dt>
-     <!-- Bit Width -->
-     位宽
-    </dt>
-    <dd>
-     <!-- The number of bits used to indicate each of the knob's coordinates. -->
-     用于指示每个旋钮坐标的位数。
-    </dd>
-    <dt>
-     <!-- Color -->
-     颜色
-    </dt>
-    <dd>
-     <!-- The knob's color as it is drawn on the screen. -->
-     旋钮在屏幕上绘制时的颜色。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- Pressing the mouse button while within the joystick area moves the knob to that location and updates the outputs. Dragging the mouse continues to move the knob and update the outputs, keeping the knob within the joystick's area. Releasing the mouse button reverts the knob back to its rest position. -->
-    在操纵杆区域内按下鼠标按钮将旋钮移动到该位置并更新输出。 拖动鼠标继续移动旋钮并更新输出，使旋钮保持在操纵杆的区域内。 释放鼠标按钮会将旋钮恢复到其静止位置。
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <p>
-    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      摇杆
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/joystick.png" alt="#########" width="32" height="32" align="middle"> <em>摇杆</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">输入/输出</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.2.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/joystick.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        用户可以在圆角方形区域内拖动红色摇杆帽（旋钮），输出会随之更新，用于表示摇杆帽当前的 <var>x</var> 与 <var>y</var> 坐标。该组件可以模拟经典街机游戏时代常见的摇杆。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          西侧边缘，上方引脚（输出，位宽与<q>位宽</q>属性一致）
+        </dt>
+        <dd>
+          表示摇杆帽的 <var>x</var> 坐标。该输出应被解释为一个无符号整数，其取值永远不会为 0：因此，数值 1 表示最左侧，而该位宽所能表示的最大值表示最右侧。当摇杆处于静止（中心）位置时，其输出位模式为 10...00。
+        </dd>
+
+        <dt>
+          西侧边缘，下方引脚（输出，位宽与<q>位宽</q>属性一致）
+        </dt>
+        <dd>
+          表示摇杆帽的 <var>y</var> 坐标，其取值范围与 <var>x</var> 坐标引脚类似。当摇杆被拉到最上方时，该输出值为 1；当摇杆被拉到最下方时，该输出为所选位宽对应的最大值。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，可通过 Alt-2 到 Alt-5 快捷键修改其 <q>位宽</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          位宽
+        </dt>
+        <dd>
+          用于表示摇杆帽各坐标值所使用的位数。
+        </dd>
+
+        <dt>
+          颜色
+        </dt>
+        <dd>
+          摇杆帽在屏幕上绘制时使用的颜色。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        在摇杆区域内按下鼠标按钮，会将摇杆帽移动到该位置并更新输出。拖动鼠标会持续移动摇杆帽并更新输出，同时保证摇杆帽始终保持在摇杆区域内。松开鼠标按钮后，摇杆帽会恢复到静止位置。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
 </html>

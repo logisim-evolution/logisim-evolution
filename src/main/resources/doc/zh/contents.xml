@@ -401,8 +401,8 @@
 			<!-- <tocitem target="io_button" text="Button" image="icon_button" /> -->
 			<tocitem target="io_button" text="按钮" image="icon_button" />
 
-			<!-- <tocitem target="io_DIP" text="DIP Switch" image="icon_dipswitch" /> -->
-			<tocitem target="io_DIP" text="拨码开关" image="icon_dipswitch" />
+			<!-- <tocitem target="io_dip" text="DIP Switch" image="icon_dipswitch" /> -->
+			<tocitem target="io_dip" text="拨码开关" image="icon_dipswitch" />
 
 			<!-- <tocitem target="io_joystick" text="Joystick" image="icon_joystick" /> -->
 			<tocitem target="io_joystick" text="摇杆" image="icon_joystick" />
@@ -413,8 +413,8 @@
 			<!-- <tocitem target="io_led" text="LED" image="icon_led" /> -->
 			<tocitem target="io_led" text="LED" image="icon_led" />
 
-			<!-- <tocitem target="io_ledRGB" text="LED RGB" image="icon_rgbled" /> -->
-			<tocitem target="io_ledRGB" text="RGB LED" image="icon_rgbled" />
+			<!-- <tocitem target="io_rgbled" text="LED RGB" image="icon_rgbled" /> -->
+			<tocitem target="io_rgbled" text="RGB LED" image="icon_rgbled" />
 
 			<!-- <tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" /> -->
 			<tocitem target="io_7seg" text="7 段数码管" image="icon_7seg" />
