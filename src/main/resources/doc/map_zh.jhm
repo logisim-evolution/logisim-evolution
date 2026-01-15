@@ -154,9 +154,11 @@
 	<mapID target="mem_rom"             url="zh/html/libs/mem/rom.html" />
 	<mapID target="io"                  url="zh/html/libs/io/index.html" />
 	<mapID target="io_button"           url="zh/html/libs/io/button.html" />
+	<mapID target="io_dip"              url="zh/html/libs/io/dipswitch.html" />
 	<mapID target="io_joystick"         url="zh/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="zh/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="zh/html/libs/io/led.html" />
+	<mapID target="io_rgbled"           url="zh/html/libs/io/rgbled.html" />
 	<mapID target="io_7seg"             url="zh/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="zh/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="zh/html/libs/io/dotmat.html" />
