@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>Format de fichier vecteur de test</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Format de fichier vecteur de test</h1>
+
+<p>Voici un exemple de fichier de vecteur de test :</p>
+<pre class="code">
+# mon vecteur de test pour add32
+A[8]      B[8]      C[8]      Cin Cout
+0000_0000 0000_0000 0000_0000 0   0
+-2        0x05      3         0   0
+0         0o3       3         0   0
+</pre>
+
+<p>Avant tout, le format de fichier est simple. Les en-têtes correspondent aux broches d'entrée/sortie du circuit. En dessous se trouvent les valeurs à tester.</p>
+
+<p>La première ligne non vide et non commentaire liste le nom de chaque broche d'entrée du circuit et sa largeur en bits (si > 1), séparés par des espaces.</p>
+
+<p>Une chose qui déroute souvent les débutants est que la largeur en bits doit être spécifiée dans l'en-tête chaque fois qu'elle n'est pas de 1 bit.</p>
+<p>NOTE : La largeur en bits n'est pas nécessairement la même que le nombre de caractères dans la valeur. Par exemple, une valeur de 4 bits de 13 peut être représentée comme 1101, 00001101, 0x0d, 0o15, 15, ou 0b1101, etc.</p>
+
+<p>Les lignes vides sont ignorées. Tout ce qui suit un caractère '#' est un
+commentaire. La première ligne non vide et non commentaire liste le nom de chaque
+broche d'entrée du circuit et sa largeur (si &gt; 1), séparés par des espaces.
+</p>
+
+<p>Les lignes restantes listent chaque valeur séparée par des espaces. Les
+valeurs peuvent être en hexadécimal, octal, binaire ou décimal signé. Les valeurs hexadécimales
+doivent avoir le préfixe '0x'. Les valeurs octales doivent avoir le préfixe '0o'.
+Le binaire et le décimal sont
+distingués par le nombre de chiffres : les valeurs binaires doivent toujours avoir
+exactement autant de chiffres que la largeur de la colonne ; les valeurs décimales doivent
+toujours en avoir moins, ne doivent pas avoir de zéros en tête, et peuvent avoir un
+signe négatif.</p>
+
+<p>Pour améliorer la lisibilité, vous pouvez utiliser des underscores (<code>_</code>) n'importe où
+dans les valeurs numériques. Les underscores sont ignorés lors de l'analyse. Exemples :
+<code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>,
+<code>1_234</code>, ou <code>-5_000</code>.</p>
+
+<p>Pour les valeurs hexadécimales, octales et binaires, un chiffre 'x' spécifie quatre,
+trois ou un bit "peu importe". Ainsi, la valeur 101xx est une valeur binaire de cinq bits,
+avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale
+avec quatre bits non spécifiés. De tels "peu importe" ne peuvent pas être utilisés
+en notation décimale.</p>
+
+<p>
+	<b>Précédent :</b> <a href="test_vector_window.html">Fenêtre Vecteur de test</a> | <b>Suivant :</b> <a href="test_vector_special_values.html">Valeurs spéciales</a>.
+</p>
+
+</body>
+</html>
+

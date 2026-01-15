@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="pt">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="pt">
+	<title>Testes Sequenciais</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Testes Sequenciais</h1>
+
+<p>A funcionalidade de Vetor de Teste suporta tanto testes de circuitos <strong>combinacionais</strong> quanto
+<strong>sequenciais</strong>. Por padrão, os testes são combinacionais:
+o circuito é reiniciado antes de cada teste, garantindo que cada teste seja independente.</p>
+
+<p>Para circuitos sequenciais, você pode especificar sequências de teste usando as colunas especiais
+de cabeçalho <code>&lt;set&gt;</code> e <code>&lt;seq&gt;</code>:</p>
+
+<ul>
+<li><strong>&lt;set&gt;</strong>: Define o <strong>ID da sequência</strong> - testes com o mesmo número de conjunto
+pertencem à mesma sequência e são executados juntos. O estado do circuito é preservado entre etapas
+no mesmo conjunto. Os testes padrão são o conjunto 0 se não especificado.</li>
+<li><strong>&lt;seq&gt;</strong>: Define o <strong>número da etapa</strong> dentro de um conjunto - isso determina
+a ordem de execução dos testes dentro do mesmo conjunto. Os testes são executados na ordem de seus
+valores <code>&lt;seq&gt;</code> dentro de cada <code>&lt;set&gt;</code>. Testes com <code>&lt;seq&gt;</code> de 0
+ou ausente são tratados como combinacionais (o circuito reinicia entre testes, mesmo que compartilhem
+o mesmo conjunto).</li>
+</ul>
+
+<p>Aqui está um exemplo de um vetor de teste sequencial:</p>
+<pre class="code">
+# Teste sequencial para um contador
+Clock Reset Count &lt;set&gt; &lt;seq&gt;
+0     0     0     1     1
+1     0     0     1     2
+0     0     1     1     3
+1     0     1     1     4
+0     0     2     1     5
+1     0     2     1     6
+0     1     0     2     1
+</pre>
+
+<p>Neste exemplo, os primeiros seis testes têm <code>&lt;set&gt; 1</code> com valores <code>&lt;seq&gt;</code>
+1-6, então eles formam uma sequência que é executada em ordem (seq 1, depois 2, depois 3, etc.)
+sem reiniciar entre etapas. O último teste tem <code>&lt;set&gt; 2</code>, então ele inicia
+uma nova sequência e o circuito é reiniciado antes de ser executado.</p>
+
+<h2>Regras de Execução de Sequência</h2>
+
+<ul>
+<li>Testes com o mesmo número <code>&lt;set&gt;</code> pertencem à mesma sequência</li>
+<li>Dentro de cada conjunto, os testes são executados na ordem de seus valores <code>&lt;seq&gt;</code> (seq 1, depois 2, depois 3, etc.)</li>
+<li>O estado do circuito é mantido entre testes no mesmo conjunto (mesmo ID de sequência)</li>
+<li>O circuito é reiniciado ao iniciar um novo conjunto (número <code>&lt;set&gt;</code> diferente)</li>
+<li>Testes com <code>&lt;seq&gt;</code> = 0 ou ausente são sempre combinacionais (reinício entre testes, mesmo dentro do mesmo conjunto)</li>
+</ul>
+
+<h2>Exemplo Completo</h2>
+
+<p>Aqui está um exemplo completo combinando todas as funcionalidades:</p>
+<pre class="code">
+# Testes combinacionais e sequenciais mistos
+A B C Out     &lt;set&gt; &lt;seq&gt;
+0 0 0 0       0     0
+0 0 1 1       0     0
+1 1 0 1       0     0
+0 1 0 0       0     1
+1 1 1 1       0     1
+0 0 0 &lt;DC&gt;    0     1
+1 0 1 &lt;float&gt; 0     2
+</pre>
+
+<p>Neste exemplo:
+<ul>
+<li>Os primeiros três testes são combinacionais (seq=0), então o circuito reinicia
+entre cada teste, mesmo que compartilhem o conjunto 0.</li>
+<li>Os próximos três testes têm o conjunto 1 com valores seq 1-3, então eles formam uma sequência
+que é executada em ordem sem reinício.</li>
+<li>O último teste tem o conjunto 2, então ele inicia uma nova sequência e o circuito reinicia antes de ser executado.</li>
+<li>O sexto teste usa <code>&lt;DC&gt;</code> para a saída, então qualquer valor de saída passa.</li>
+<li>O último teste usa <code>&lt;float&gt;</code> para a saída, esperando um valor flutuante.</li>
+</ul>
+</p>
+
+<p>
+	<b>Anterior:</b> <a href="test_vector_special_values.html">Valores Especiais</a> | <b>Próximo:</b> <a href="test_vector_cmdline.html">Uso da Linha de Comando</a>.
+</p>
+
+</body>
+</html>
+
