@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-21T06:18:42.262000000">
+    <meta name="changed" content="2026-01-14T16:20:12.432000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
-      RAM&lt;
+      RAM
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
@@ -20,7 +20,7 @@
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <b>Library:</b>
             </td>
             <td>
               <a href="index.html">Memory</a>
@@ -28,7 +28,7 @@
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <b>Introduction:</b>
             </td>
             <td>
               2.0 Beta 1
@@ -36,10 +36,33 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <b>Appearance:</b>
             </td>
             <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/ram.png" alt="#########"  width="64" height="64">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      Logisim-evolution
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                      Classic Logisim
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img src="../../../../img-libs/ram.png" alt="Appearance of RAM (Logisim-evolution)" width="160">
+                    </td>
+                    <td>&nbsp;
+                    </td>
+                    <td>
+                      <img src="../../../../img-libs/ramlc.png" alt="Appearance of RAM (Classic Logisim)" width="160">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
         </tbody>
@@ -48,145 +71,462 @@
         Behavior
       </h2>
       <p>
-        The RAM component, easily the most complex component in Logisim's built-in libraries, stores up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to to 32 bits (specified in the Data Bit Width attribute). The circuit can load and store values in RAM. Also, the user can modify individual values interactively via the Poke Tool, or the user can modify the entire contents via the Menu Tool.
+        The RAM component, easily the most complex component in Logisim's built-in libraries, stores up to 16,777,216 values (specified in the <b class="propertie">Address Bit Width</b> attribute), each of which can include up to 32 bits (specified in the <b class="propertie">Data Bit Width</b> attribute). The circuit can load and store values in RAM. Also, the user can modify individual values interactively via the <b class="propertie">"Poke"</b> (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="Icon of Poke tool">) Tool, or the user can modify the entire contents via the
+        contextual menu. See <a href="../../guide/mem/index.html">Memory components</a> in <em>User's Guide</em> for more details.
       </p>
       <p>
-        Current values are displayed in the component. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in inverse text (white on black).
+        Current values are displayed in the component. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in highlighted (white on black).
       </p>
       <p>
-        The RAM component supports three different interfaces, depending on the Data Interface attribute.
+        The RAM component supports different interfaces, depending on the following attributes: <b class="propertie">Asynchronous read:</b>, <b class="propertie">Data bus implementation</b>, and <b class="propertie">Enables:</b>.
+      </p>
+      <p>
+        The <b class="propertie">Data bus implementation</b> property allows you to modify the architecture of the data bus, either an omnidirectional <var>Input</var> and <var>Data</var> bus, or a bidirectional <var>Data</var> bus.
       </p>
       <dl>
         <dt>
-          One synchronous load/store port (default)
+          The default setting is a separate load and read bus with synchronous control.
         </dt>
         <dd>
           <p>
-            The component includes a single port on its east side that serves for both loading and storing data. Which it performs depends on the input labeled <em>ld</em>: 1 (or floating) indicates to load the data at the address designated on the component's west side, and 0 indicates to store the data given on the port. To transmit data into and out of the component, you will need to use a Controlled Buffer component, as illustrated below.
-          </p>
-          <center>
-            <img src="../../../../img-libs/ramdemo.png" alt="#########">
-          </center>
-        </dd>
-        <dt>
-          One asynchronous load/store port
-        </dt>
-        <dd>
-          <p>
-            This is the same as above, except that there is no clock. The value found on the data bus is stored into memory whenever the <em>ld</em> input is 0. If, while the <em>ld</em> input is 0, the address or data changes, then an additional store occurs. This option is meant to more closely approximate the interface of many available random-access memories.
+            A loading port controlled by the <var>Output enable</var> signal. A read port driven by the <var>Write enable</var> signal. Loading and reading are synchronized by the clock according to the trigger mode defined by the <b class="propertie">Trigger</b> property. If both command lines are set to <b class="unov">1</b>, then reading takes place after writing. This process can be reversed by modifying the <b class="propertie">Read behavior</b> property.
           </p>
         </dd>
         <dt>
-          Separate load and store ports
+          Asynchronous reading and activation of reading per byte.
         </dt>
         <dd>
           <p>
-            Two data ports are provided - one on the west side for storing data, and another on the east side for loading data. This option removes the necessity of dealing with the Controlled Buffer and so it is easier to use.
+            If the <b class="propertie">Enables</b> property is set to <b class="vprop">Use byte enables</b> and the Asynchronous read property is set to <b class="vprop">Yes</b>, only the state of the <var>Output enable</var> signal triggers the appearance of data on the output bus. Loading is carried out in the same way as before.
           </p>
         </dd>
+        <dt>
+          Asynchronous Read and Use line enable.
+        </dt>
         <dd>
-          <h2>
-            Pins
-          </h2>
-          <dl>
-            <dt>
-              <var>A</var> on west edge (input, bit width matches Address Bit Width attribute)
-            </dt>
-            <dd>
-              Selects which of the values in memory is currently being accessed by the circuit.
-            </dd>
-            <dt>
-              <var>D</var> on west edge (input, bit width matches Data Bit Width attribute)
-            </dt>
-            <dd>
-              This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When a store is requested (via the clock changing from 0 to 1 while <em>sel</em> and <em>str</em> are both 1 or floating), the value found at this port is stored into memory at the currently selected address.
-            </dd>
-            <dt>
-              <var>D</var> on east edge (input/output or output, bit width matches Data Bit Width attribute)
-            </dt>
-            <dd>
-              If <var>sel</var> and <var>ld</var> are 1 or floating, then the RAM component emits the value found at the currently selected address on this port. If there is a single load/store port, the value read from this port is stored whenever a store is requested.
-            </dd>
-            <dt>
-              <var>str</var> on south edge (input, bit width 1)
-            </dt>
-            <dd>
-              Store: This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When it is 1 or floating, a clock pulse will result in storing the data found on the west edge into memory (provided the <var>sel</var> input is also 1 or floating).
-            </dd>
-            <dt>
-              <var>sel</var> on south edge (input, bit width 1)
-            </dt>
-            <dd>
-              Chip select: This input enables or disables the entire RAM module, based on whether the value is 1/floating or 0. The input is meant primarily for situations where you have multiple RAM units, only one of which would be enabled at any time.
-            </dd>
-            <dt>
-              triangle on south edge (input, bit width 1)
-            </dt>
-            <dd>
-              Clock input: This is absent when the Data Interface attribute's value is "One asynchronous load/store port." In other circumstances, when <var>ld</var> is 0, and this input rises from 0 to 1 (and <var>sel</var> is 1/undefined and <var>clr</var> is 0), then the value at the currently selected address changes to whatever value is at the <var>D</var> pin. As long as the clock input remains 0 or 1, though, the <var>D</var> value will not be stored into memory.
-            </dd>
-            <dt>
-              <var>ld</var> on south edge (input, bit width 1)
-            </dt>
-            <dd>
-              Load: Selects whether the RAM should emit (on <var>D</var>) the value at the current address (<var>A</var>). This output behavior is enabled if <var>out</var> is 1 or undefined; if <var>out</var> is 0, then no value is pushed onto <var>D</var> - but if there is a combined load/store port, stores will be enabled.
-            </dd>
-            <dt>
-              <var>clr</var> on south edge (input, bit width 1)
-            </dt>
-            <dd>
-              Clear: When this is 1, all values in memory are pinned to 0, no matter what the other inputs are.
-            </dd>
-          </dl>
-          <h2>
-            Attributes
-          </h2>
           <p>
-            When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute.
+            If the <b class="propertie">Enables</b> property is <b class="vprop">Use line enables</b>, and the <b class="propertie">Line size</b> property is <b class="vprop">Single</b>, then the data will be immediately present on the output bus as soon as the address is changed. Loading is carried out in the same way as before.
           </p>
-          <dl>
-            <dt>
-              Address Bit Width
-            </dt>
-            <dd>
-              The bit width of the address bits. The number of values stored in RAM is 2<sup><var>addrBitWidth</var></sup>.
-            </dd>
-            <dt>
-              Data Bit Width
-            </dt>
-            <dd>
-              The bit width of each individual value in memory.
-            </dd>
-            <dt>
-              Data Interface
-            </dt>
-            <dd>
-              Configures which of the three interfaces are used for communicating data into and out of the component.
-            </dd>
-          </dl>
-          <h2>
-            Poke Tool Behavior
-          </h2>
+        </dd>
+        <dt>
+          Synchronous Read and Use line enable. Several lines.
+        </dt>
+        <dd>
           <p>
-            See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>.
-          </p>
-          <h2>
-            Text Tool Behavior
-          </h2>
-          <p>
-            None.
-          </p>
-          <h2>
-            Menu Tool Behavior
-          </h2>
-          <p>
-            See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>.
-          </p>
-          <p>
-            <a href="../index.html">Back to <em>Library Reference</em></a>
+            If the <b class="propertie">Enables</b> property is <b class="vprop">Use line enables</b> , and the <b class="propertie">Line size</b> property is different from <b class="vprop">Single</b> then the data will be immediately present on the output bus as soon as the address is changed. For loading, additional signals LE1..LE7 allow selection of active data lines. The clock trigger mode is defined by the Trigger <b class="propertie">Trigger</b> property.
           </p>
         </dd>
       </dl>
+      <p>
+        There are other more subtle settings, so please read the pin and property descriptions below for more details.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <div class="attliste">
+        <dl>
+          <dt class="lib">
+            <var>Clear</var>
+          </dt>
+          <dd>
+            Input: This pin is only present if the <b class="propertie">Use clear pin</b> property is set to <b class="vprop">Yes</b>. When this is <b class="unov">1</b>, all values in memory are set to <b class="zerov">0</b>, no matter what the other inputs are.
+          </dd>
+          <dt class="lib">
+            <var>Address</var>
+          </dt>
+          <dd>
+            Input bus: Selects which of the values in memory is currently being accessed by the circuit.
+          </dd>
+          <dt class="lib">
+            <var>Write enable</var>
+          </dt>
+          <dd>
+            Input: When activated, it authorizes data storage at the position defined by the value present on the Address bus. Depending on the values of the <b class="propertie">Trigger</b> property, it is active at <b class="unov">1</b> on the <b class="vprop">Rising Edge/Lowering Edge</b> values when synchronized by the clock signal. It is active at <b class="unov">1</b> on the <b class="vprop">High Level</b> value and at <b class="zerov">0</b> on the <b class="vprop">Low Level</b> value independently of the clock signal.
+            <p>
+              Below you can see a table showing the different cases of memory write triggering according to the state of the various component properties.
+            </p>
+            <center>
+              <br>
+              <table class="truthtable">
+                <caption>
+                  Writing trigger modes
+                </caption>
+                <tbody>
+                  <tr>
+                    <th class="tspace1">
+                      Property <b class="propertie">Trigger</b>
+                    </th>
+                    <th class="tspace">
+                      Signal Clock
+                    </th>
+                    <th class="tspace">
+                      Signal Write enable
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      Rising Edge
+                    </td>
+                    <td>
+                      ↑
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Falling Edge
+                    </td>
+                    <td>
+                      ↓
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      High Level
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Low Level
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      0
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </center>
+          </dd>
+          <dt class="lib">
+            <var>Output enable</var>
+          </dt>
+          <dd>
+            When active, it enables data transmission from the position defined by the value present on the Address bus.
+            <p>
+              Below you can see a table showing the different cases of reading from memory to the output port, depending on the state of the various component properties.
+            </p>
+            <center>
+              <br>
+              <table class="truthtable">
+                <caption>
+                  Reading trigger mode
+                </caption>
+                <tbody>
+                  <tr>
+                    <th class="tspace1">
+                      Enables
+                    </th>
+                    <th class="tspace1">
+                      Property <b class="propertie">Trigger</b>
+                    </th>
+                    <th class="tspace1">
+                      Property <b class="propertie">Asynchronous read</b>
+                    </th>
+                    <th class="tspace">
+                      Signal Clock
+                    </th>
+                    <th class="tspace">
+                      Signal Output enable
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      Use byte enables
+                    </td>
+                    <td>
+                      Rising edge
+                    </td>
+                    <td>
+                      No
+                    </td>
+                    <td>
+                      ↑
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Use byte enables
+                    </td>
+                    <td>
+                      Falling edge
+                    </td>
+                    <td>
+                      No
+                    </td>
+                    <td>
+                      ↓
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Use byte enables
+                    </td>
+                    <td>
+                      High level
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Use byte enables
+                    </td>
+                    <td>
+                      Low level
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Use byte enables
+                    </td>
+                    <td>
+                      No effect
+                    </td>
+                    <td>
+                      Yes
+                    </td>
+                    <td>
+                      No effect
+                    </td>
+                    <td>
+                      1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Use line enables
+                    </td>
+                    <td>
+                      No effect
+                    </td>
+                    <td>
+                      --
+                    </td>
+                    <td>
+                      No effect
+                    </td>
+                    <td>
+                      --
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </center>
+          </dd>
+          <dt class="lib">
+            <var>Clock (C1 or E1)</var>
+          </dt>
+          <dd>
+            Input: This pin is only present if the <b class="propertie">Trigger</b> property is set to <b class="vprop">Rising edge/Falling edge</b>, and in all other cases if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b>. When triggered, the memory will either save or present the data. The triggering mode is defined by the parameters of the <b class="propertie">Trigger</b> property.<br>
+            Look at the two tables above.
+          </dd>
+          <dt class="lib">
+            <var>LE0</var> to <var>LE7</var>
+          </dt>
+          <dd>
+            Input: These pins are only present if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b>. Their number (2,4,8) depends on the <b class="vprop">Line size</b> property. Each pin activates one of the input lines.
+          </dd>
+          <dt class="lib">
+            <var>Input</var>
+          </dt>
+          <dd>
+            Input bus: This bus is only present if the <b class="propertie">Data bus implementation</b> property is set to <b class="vprop">Separate data bus for read and write</b>. It receives the data that will be written to memory at the position specified by the value of the address pins when the trigger is triggered. See tables above.
+          </dd>
+          <dt class="lib">
+            <var>Input0</var> à <var>Input7</var>
+          </dt>
+          <dd>
+            Input bus: These pins are only present if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b> and the property <b class="propertie">Line size</b> is different from <b class="vprop">Single</b>. Their function is the same as the Input bus, with the difference that Input0 points to Address, Input1 points to Address + 1, and so on. Each input line has an associated enable signal LE0..LE7.
+          </dd>
+          <dt class="lib">
+            <var>Data</var>
+          </dt>
+          <dd>
+            Output bus: This bus is only present if the <b class="propertie">Data bus implementation</b> property is set to <b class="vprop">Separate data bus for read and write</b>. It transmits the data to be read at the position specified by the value of the address pins on triggering. See tables above.
+          </dd>
+          <dt class="lib">
+            <var>Data0</var> to <var>Data7</var>
+          </dt>
+          <dd>
+            Output bus: These buses are only present if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b> and the <b class="propertie">Line size</b> property is other than <b class="vprop">Single</b>. Their function is the same as the Data output, with this difference: Data0 transmits data from the memory position specified by the address pin value, Data1 transmits address + 1, Data2 transmits address + 2 and so on.<br>
+            The <b class="propertie">Allow misaligned?</b> property determines whether an error is generated when the address is not aligned to a multiple of the line number.<br>
+            <br>
+            <center>
+              <img class="appearancelibs" src="../../../../img-libs/memoryline.gif" alt="#########">
+            </center>
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter its <b class="propertie">Address Bit Width</b> attribute, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bit Width</b> attribute.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt class="lib">
+            Address Bit Width
+          </dt>
+          <dd>
+            Number of address bits. The number of values stored in RAM is 2<sup><var>Address Bit Width</var></sup>.
+          </dd>
+          <dt class="lib">
+            Data Bit Width
+          </dt>
+          <dd>
+            The data width in bits of each individual value in memory.
+          </dd>
+          <dt class="lib">
+            Enables
+          </dt>
+          <dd>
+            Determines how data is presented to the component. <b class="vprop">Use byte enables</b>: a single data bus is present.<br>
+            <b class="vprop">Use line enables</b>:one or more data lines make up the data bus. Each has its own selection signal. The Number of lines property lets you define the number of lines (1,2,4,8).
+          </dd>
+          <dt class="lib">
+            Ram type
+          </dt>
+          <dd>
+            Determines how the memory content is modified when the simulation is restarted:<br>
+            <b class="vprop">Non Volatile</b> memory contents are not modified.<br>
+            <b class="vprop">Volatile</b>; RAM contents reset to zero or randomly ( according to <a href="../../guide/opts/opts-simulate.html">Simulation tab</a> project options).
+          </dd>
+          <dt class="lib">
+            Use clear pin
+          </dt>
+          <dd>
+            Determines whether the <var>Clear</var> pin is present or not. If this pin is set to <b class="unov">1</b>, the memory content is asynchronously set to <b class="zerov">0</b>, and other commands have no effect.
+          </dd>
+          <dt class="lib">
+            Line size
+          </dt>
+          <dd>
+            This property is only present if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b>. Determines the number of data lines present at input and output 1,2,4 or 8. Each line is driven on loading by its own signal (LE0..LE7). Line 0 points to address 1, line 1 to address+1 and so on.
+          </dd>
+          <dt class="lib">
+            Allow misaligned?
+          </dt>
+          <dd>
+            This property is only present if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b>. Determines whether data lines can interact with all memory addresses, or whether data lines are aligned with memory positions that are multiples of their number. For example, if you have two lines, the first line is linked to address + 0, the second to address + 1, and your addressing can only receive values that are multiples of 2, otherwise the outputs will be in error (<b class="evalue">E</b>). See figure under Data0..Data7.
+          </dd>
+          <dt class="lib">
+            Trigger
+          </dt>
+          <dd>
+            Configures how the clock input is interpreted. Values :<br>
+            <b class="vprop">Rising edge</b> indicates that the counter should update its value at the instant when the clock rises from <b class="zerov">0</b> to <b class="unov">1</b>.<br>
+            <b class="vprop">Falling edge</b> value indicates that it should update at the instant the clock falls from <b class="unov">1</b> to <b class="zerov">0</b>.<br>
+            <b class="vprop">High level</b> indicates that the memory should update continuously when the load input is at <b class="unov">1</b>.<br>
+            <b class="vprop">Low level</b> indicates that it should update continuously when the load input is <b class="zerov">0</b>.
+          </dd>
+          <dt class="lib">
+            Asynchronous read:
+          </dt>
+          <dd>
+            Determines whether the clock signal is involved in the memory read process.<br>
+            <b class="vprop">Yes</b> means that only the load signal triggers reading.<br>
+            <b class="vprop">No</b>, reading will be triggered by the load signal and an edge of the clock signal.
+          </dd>
+          <dt class="lib">
+            Read behavior
+          </dt>
+          <dd>
+            Determines component behavior if read and write are enabled at the same time.<br>
+            <b class="vprop">Read after write</b>: The data in the memory cell pointed to by <b class="vprop">Address</b> will then be written, read and transmitted to the output.<br>
+            <b class="vprop">Write after read</b>: The data of the memory cell pointed to by <b class="vprop">Address</b> will be transmitted to the output, then the value of the memory cell will be modified by the incoming data.
+          </dd>
+          <dt class="lib">
+            Data bus implementation
+          </dt>
+          <dd>
+            Determines the architecture of the data bus. Values:<br>
+            <b class="vprop">One bidirectional data bus</b>: A bus is present for data input and output. Controlled buffers must be used to manage data flow.<br>
+            <b class="vprop">Separate data bus for read and write</b>: Two buses are present, one for input and one for output.
+          </dd>
+          <dt class="lib">
+            Label
+          </dt>
+          <dd>
+            The text within the label associated with the component.
+          </dd>
+          <dt class="lib">
+            Label Font
+          </dt>
+          <dd>
+            The font with which to render the label.
+          </dd>
+          <dt class="lib">
+            Label Visible
+          </dt>
+          <dd>
+            If the label is visible or not.
+          </dd>
+          <dt class="lib">
+            Appearance
+          </dt>
+          <dd>
+            <b class="vprop">Logisim-HolyCross / Logsim-Evolution</b>: New presentation of flip-flops in the IEC way. <b class="vprop">Classic Logisim</b>: Presents flipflops as the legacy of Logisim style.
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Menu Tool Behavior
+      </h2>
+      <p>
+        See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>.
+      </p>
+      <p>
+        <b>Back to</b> <a href="../index.html#hlibmem">Library Reference</a>
+      </p>
     </div>
   </body>
 </html>
