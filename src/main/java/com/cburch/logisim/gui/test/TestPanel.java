@@ -22,13 +22,12 @@ import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.log.ValueTable;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -60,7 +59,8 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   private final Set<Integer> activeSetRows = new HashSet<>();
 
   // Store the pin values when Show or Set is clicked, to detect changes. Used by simulation thread.
-  private volatile com.cburch.logisim.data.Value[] storedPinValues = null;
+  private com.cburch.logisim.data.Value[] storedPinValues = null;
+  private TestVectorEvaluator propagationEvaluator = null;
 
   public TestPanel(TestFrame frame) {
     this.testFrame = frame;
@@ -388,8 +388,6 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   }
 
   private void executeShowButton(int targetFileRow, int targetSeq, boolean resetFirst) throws TestException {
-    // "Show" button - just set pin values without executing/checking the test
-
     Model model = getModel();
     TestVector vec = model.getVector();
     Project project = model.getProject();
@@ -434,20 +432,25 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
       activeSetRows.add(stepsToExecute.get(stepsToExecute.size() - 1));
     }
 
-    TestVectorEvaluator evaluator = new TestVectorEvaluator(state, vec, stepsToExecute, pins -> {
-      setStoredPinValues(state, pins);
+    final var sim = project.getSimulator();
+    TestVectorEvaluator evaluator = new TestVectorEvaluator(state, vec, stepsToExecute, tve -> {
+      setStoredPinValues(state, tve);
       SwingUtilities.invokeLater(this::finishShowTestVector);
     });
-    project.getSimulator().showTestVector(evaluator);
+    evaluator.setPropagateOnLast(sim.isAutoPropagating());
+    sim.showTestVector(evaluator);
   }
 
-  private void setStoredPinValues(CircuitState state, Instance[] pins) {
+  private void setStoredPinValues(CircuitState state, TestVectorEvaluator evaluator) {
     // Store the pin values after all steps are executed
+    Instance[] pins = evaluator.getPins();
     final var storedPinValues = new Value[pins.length];
     for (int j = 0; j < pins.length; j++) {
-      InstanceState pinState = state.getInstanceState(pins[j]);
-      storedPinValues[j] = Pin.FACTORY.getValue(pinState);
+      final var isPin = pins[j].getFactory() instanceof Pin;
+      InstanceState instanceState = state.getInstanceState(pins[j]);
+      storedPinValues[j] = isPin ? Pin.FACTORY.getValue(instanceState) : Clock.FACTORY.getValue(instanceState);
     }
+    propagationEvaluator = evaluator;
     this.storedPinValues = storedPinValues;
   }
 
@@ -470,41 +473,41 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
     activeSetRows.clear();
     activeSetRows.add(targetFileRow);
 
-    TestVectorEvaluator evaluator = new TestVectorEvaluator(state, vec, stepsToExecute, simReset,
-        pins -> {
-          setStoredPinValues(state, pins);
-          SwingUtilities.invokeLater(this::finishShowTestVector);
-        });
-    project.getSimulator().showTestVector(evaluator);
+    final var sim = project.getSimulator();
+    TestVectorEvaluator evaluator = new TestVectorEvaluator(state, vec, stepsToExecute, tve -> {
+      setStoredPinValues(state, tve);
+      SwingUtilities.invokeLater(this::finishShowTestVector);
+    });
+    evaluator.setAllowReset(simReset);
+    evaluator.setPropagateOnLast(sim.isAutoPropagating());
+    sim.showTestVector(evaluator);
   }
 
   @Override
   public void propagationCompleted(Simulator.Event e) {
     Model model = getModel();
     // Check if we have active rows and stored pin values
-    if (model == null || activeSetRows.isEmpty() || storedPinValues == null) {
+    if (model == null || activeSetRows.isEmpty() || storedPinValues == null || propagationEvaluator == null) {
+      storedPinValues = null;
+      propagationEvaluator = null;
       return;
     }
-
-    TestVector vec = model.getVector();
     CircuitState state = model.getProject().getCircuitState();
-
-    Instance[] pins;
-    try {
-      pins = TestVectorEvaluator.getPinsForVector(vec, state);
-    } catch (TestException ex) {
-      // CircuitState pins don't match TextVector pins
-      resetActiveRowsAndNotifyTableChanged();
-      return;
-    }
+    Instance[] pins = propagationEvaluator.getPins();
 
     // Check if any pin values have changed
     for (int j = 0; j < pins.length; j++) {
-      InstanceState pinState = state.getInstanceState(pins[j]);
-      Value currentValue = Pin.FACTORY.getValue(pinState);
-
-      // Compare with stored value
-      if (storedPinValues[j] == null || !currentValue.equals(storedPinValues[j])) {
+      final var isPin = pins[j].getFactory() instanceof Pin;
+      Value currentValue = null;
+      try {
+        InstanceState instanceState = state.getInstanceState(pins[j]);
+        currentValue = isPin ? Pin.FACTORY.getValue(instanceState) : Clock.FACTORY.getValue(instanceState);
+      } catch (Exception ex) {
+        // state has been modified. Leave currentValue as null.
+      }
+      if (storedPinValues[j] == null || currentValue == null || !currentValue.equals(storedPinValues[j])) {
+        storedPinValues = null;
+        propagationEvaluator = null;
         resetActiveRowsAndNotifyTableChanged();
         break;
       }

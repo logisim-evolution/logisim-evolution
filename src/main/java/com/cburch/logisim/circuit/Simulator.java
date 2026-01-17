@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.hex.Test;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.TestVector;
@@ -135,7 +136,7 @@ public class Simulator {
     private Condition simStateUpdated = simStateLock.newCondition();
     // NOTE: These variables must only be accessed with lock held.
     private Propagator propagator = null;
-    private TestVectorEvaluator requestedTestVector = null;
+    private ArrayList<TestVectorEvaluator> requestedTestVectors = null;
     private boolean autoPropagating = true;
     private boolean autoTicking = false;
     private double autoTickFreq = 1.0; // Hz
@@ -356,7 +357,10 @@ public class Simulator {
     void requestShowTestVector(TestVectorEvaluator evaluator) {
       simStateLock.lock();
       try {
-        requestedTestVector = evaluator;
+        if (requestedTestVectors == null) {
+          requestedTestVectors = new ArrayList<TestVectorEvaluator>();
+        }
+        requestedTestVectors.add(evaluator);
         if (Thread.currentThread() != this) {
           simStateUpdated.signalAll();
         }
@@ -380,6 +384,7 @@ public class Simulator {
     private boolean loop() {
 
       Propagator prop = null;
+      ArrayList<TestVectorEvaluator> testVectors = null;
       var doReset = false;
       var doNudge = false;
       var doTick = false;
@@ -400,7 +405,9 @@ public class Simulator {
           prop = propagator;
           now = System.nanoTime();
 
-          if (requestedTestVector != null) {
+          if (requestedTestVectors != null) {
+            testVectors = requestedTestVectors;
+            requestedTestVectors = null;
             ready = true;
           } else if (resetRequested) {
             resetRequested = false;
@@ -486,15 +493,15 @@ public class Simulator {
       var propagated = false;
       var hasClocks = true;
 
-      if (requestedTestVector != null) {
+      if (testVectors != null  && !testVectors.isEmpty()) {
         try {
-          requestedTestVector.evaluate();
+          for (final var evaluator : testVectors) {
+            evaluator.evaluate();
+          }
           propagated = true;
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();
-        } finally {
-          requestedTestVector = null;
         }
       }
 

@@ -21,8 +21,6 @@ import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.UniquelyNamedThread;
 
-import java.util.ArrayList;
-
 public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
   private final Project project;
