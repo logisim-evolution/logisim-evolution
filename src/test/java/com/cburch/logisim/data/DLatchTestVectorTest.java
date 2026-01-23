@@ -48,12 +48,12 @@ public class DLatchTestVectorTest {
     File testFile = new File(tempDir, "dlatch_test.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("# Simple test for D-Latch\n");
-      writer.write("<seq> data write Q NQ\n");
-      writer.write("1     0    0     0 1\n");
-      writer.write("2     1    0     0 1\n");
-      writer.write("3     1    1     1 0\n");
-      writer.write("4     0    0     1 0\n");
-      writer.write("5     0    1     0 1\n");
+      writer.write("<set> <seq> data write Q NQ\n");
+      writer.write("2     1     0    0     0 1\n");
+      writer.write("2     2     1    0     0 1\n");
+      writer.write("2     3     1    1     1 0\n");
+      writer.write("2     4     0    0     1 0\n");
+      writer.write("2     5     0    1     0 1\n");
     }
 
     TestVector vector = new TestVector(testFile);
@@ -80,13 +80,10 @@ public class DLatchTestVectorTest {
     assertEquals(4, vector.seqNumbers[3]);
     assertEquals(5, vector.seqNumbers[4]);
 
-    // Verify set numbers (should default to 0 when not specified)
-    // Since there's no <set> column, setNumbers should be empty array
-    // But the code should handle this by defaulting to set=0
+    // Verify set numbers are 2
     if (vector.setNumbers != null && vector.setNumbers.length > 0) {
-      // If setNumbers exists, all should be 0 (default)
       for (int i = 0; i < vector.setNumbers.length; i++) {
-        assertEquals(0, vector.setNumbers[i], "Row " + i + " should default to set=0");
+        assertEquals(2, vector.setNumbers[i], "Row " + i + " should default to set=0");
       }
     }
 
@@ -238,12 +235,12 @@ public class DLatchTestVectorTest {
     File testFile = new File(tempDir, "dlatch_exec_test.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("# Simple test for D-Latch\n");
-      writer.write("<seq> data write Q NQ\n");
-      writer.write("1     0    0     0 1\n");
-      writer.write("2     1    0     0 1\n");
-      writer.write("3     1    1     1 0\n");
-      writer.write("4     0    0     1 0\n");
-      writer.write("5     0    1     0 1\n");
+      writer.write("<set> <seq> data write Q NQ\n");
+      writer.write("1     1     0    0     0 1\n");
+      writer.write("1     2     1    0     0 1\n");
+      writer.write("1     3     1    1     1 0\n");
+      writer.write("1     4     0    0     1 0\n");
+      writer.write("1     5     0    1     0 1\n");
     }
 
     // Load circuit from XML

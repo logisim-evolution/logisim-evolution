@@ -50,27 +50,33 @@ public class TestVectorTest {
     File testFile = new File(tempDir, "sequential.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("A B C <set> <seq>\n");
-      writer.write("0 1 0 0 1\n");
-      writer.write("1 0 1 0 1\n");
+      writer.write("0 1 0 0 0\n");
+      writer.write("1 0 1 1 1\n");
       writer.write("0 0 0 1 2\n");
+      writer.write("1 0 1 2 1\n");
+      writer.write("0 0 0 2 3\n");
     }
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
     assertEquals(3, vector.columnName.length); // <set> and <seq> are not pin columns
-    assertEquals(3, vector.data.size());
-    
+    assertEquals(5, vector.data.size());
+
     // Verify set and seq arrays exist and have correct values
     assertNotNull(vector.setNumbers);
     assertNotNull(vector.seqNumbers);
-    assertEquals(3, vector.setNumbers.length);
-    assertEquals(3, vector.seqNumbers.length);
+    assertEquals(5, vector.setNumbers.length);
+    assertEquals(5, vector.seqNumbers.length);
     assertEquals(0, vector.setNumbers[0]);
-    assertEquals(1, vector.seqNumbers[0]);
-    assertEquals(0, vector.setNumbers[1]);
+    assertEquals(0, vector.seqNumbers[0]);
+    assertEquals(1, vector.setNumbers[1]);
     assertEquals(1, vector.seqNumbers[1]);
     assertEquals(1, vector.setNumbers[2]);
     assertEquals(2, vector.seqNumbers[2]);
+    assertEquals(2, vector.setNumbers[3]);
+    assertEquals(1, vector.seqNumbers[3]);
+    assertEquals(2, vector.setNumbers[4]);
+    assertEquals(3, vector.seqNumbers[4]);
   }
 
   @Test
@@ -79,16 +85,16 @@ public class TestVectorTest {
     File testFile = new File(tempDir, "set_only.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("A B <set>\n");
-      writer.write("0 1 5\n");
-      writer.write("1 0 5\n");
+      writer.write("0 1 0\n");
+      writer.write("1 0 0\n");
     }
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
     assertEquals(2, vector.columnName.length);
     assertEquals(2, vector.setNumbers.length);
-    assertEquals(5, vector.setNumbers[0]);
-    assertEquals(5, vector.setNumbers[1]);
+    assertEquals(0, vector.setNumbers[0]);
+    assertEquals(0, vector.setNumbers[1]);
     // seqNumbers should default to 0
     assertNotNull(vector.seqNumbers);
     assertEquals(2, vector.seqNumbers.length);
@@ -102,16 +108,16 @@ public class TestVectorTest {
     File testFile = new File(tempDir, "seq_only.txt");
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("A B <seq>\n");
-      writer.write("0 1 3\n");
-      writer.write("1 0 3\n");
+      writer.write("0 1 0\n");
+      writer.write("1 0 0\n");
     }
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
     assertEquals(2, vector.columnName.length);
     assertEquals(2, vector.seqNumbers.length);
-    assertEquals(3, vector.seqNumbers[0]);
-    assertEquals(3, vector.seqNumbers[1]);
+    assertEquals(0, vector.seqNumbers[0]);
+    assertEquals(0, vector.seqNumbers[1]);
     // setNumbers should default to 0
     assertNotNull(vector.setNumbers);
     assertEquals(2, vector.setNumbers.length);
@@ -126,14 +132,14 @@ public class TestVectorTest {
     try (FileWriter writer = new FileWriter(testFile)) {
       writer.write("A B <set> <seq>\n");
       writer.write("0 1\n"); // Missing set and seq values
-      writer.write("1 0 2\n"); // Missing seq value
+      writer.write("1 0 0\n"); // Missing seq value
     }
 
     TestVector vector = new TestVector(testFile);
     assertNotNull(vector);
     assertEquals(0, vector.setNumbers[0]);
     assertEquals(0, vector.seqNumbers[0]);
-    assertEquals(2, vector.setNumbers[1]);
+    assertEquals(0, vector.setNumbers[1]);
     assertEquals(0, vector.seqNumbers[1]);
   }
 
@@ -355,7 +361,7 @@ public class TestVectorTest {
     IOException exception = assertThrows(IOException.class, () -> {
       new TestVector(testFile);
     });
-    
+
     String message = exception.getMessage();
     assertTrue(message.contains("Too many bits"), "Error should mention 'Too many bits'");
     assertTrue(message.contains("expected 1 bit"), "Error should mention expected bit width");
@@ -377,166 +383,12 @@ public class TestVectorTest {
     IOException exception = assertThrows(IOException.class, () -> {
       new TestVector(testFile);
     });
-    
+
     String message = exception.getMessage();
     assertTrue(message.contains("Too many bits"), "Error should mention 'Too many bits'");
     assertTrue(message.contains("expected 2 bits"), "Error should mention expected bit width");
     assertTrue(message.contains("did you mean"), "Error should suggest correction");
     assertTrue(message.contains("dataWrite[8]"), "Error should include column name in suggestion");
     assertTrue(message.contains("Remember that 0b means binary and each binary digit is 1 bit"), "Error should include column name in suggestion");
-  }
-
-  @Test
-  public void testExecutionOrderBySetAndSequence() throws IOException {
-    // Create a test vector with tests in non-sorted order
-    // We'll verify they execute in sorted order (set first, then sequence)
-    File testFile = new File(tempDir, "execution_order.txt");
-    try (FileWriter writer = new FileWriter(testFile)) {
-      writer.write("<set> <seq> A[1] B[1]\n");
-      // Set 1, Seq 2
-      writer.write("1 2 0 0\n");
-      // Set 0, Seq 1
-      writer.write("0 1 0 0\n");
-      // Set 1, Seq 1
-      writer.write("1 1 0 0\n");
-      // Set 0, Seq 2
-      writer.write("0 2 0 0\n");
-      // Set 0, Seq 0 (combinational)
-      writer.write("0 0 0 0\n");
-      // Set 1, Seq 0 (combinational)
-      writer.write("1 0 0 0\n");
-    }
-
-    TestVector vector = new TestVector(testFile);
-    assertNotNull(vector);
-    assertEquals(6, vector.data.size());
-    
-    // Verify set and seq numbers are parsed correctly
-    assertNotNull(vector.setNumbers);
-    assertNotNull(vector.seqNumbers);
-    assertEquals(6, vector.setNumbers.length);
-    assertEquals(6, vector.seqNumbers.length);
-    
-    // Expected execution order: sorted by set first, then sequence
-    // Set 0: seq 0, seq 1, seq 2
-    // Set 1: seq 0, seq 1, seq 2
-    // File order: [1,2], [0,1], [1,1], [0,2], [0,0], [1,0]
-    // Sorted order: [0,0], [0,1], [0,2], [1,0], [1,1], [1,2]
-    // File indices: 4, 1, 3, 5, 2, 0
-    
-    int[] expectedOrder = {4, 1, 3, 5, 2, 0}; // File indices in sorted order
-    
-    // Verify the set and seq values match expected order
-    for (int i = 0; i < expectedOrder.length; i++) {
-      int fileIndex = expectedOrder[i];
-      int expectedSet = (i < 3) ? 0 : 1; // First 3 are set 0, last 3 are set 1
-      int expectedSeq = (i % 3); // Within each set: 0, 1, 2
-      
-      assertEquals(expectedSet, vector.setNumbers[fileIndex], 
-          "Set number at file index " + fileIndex + " should be " + expectedSet);
-      assertEquals(expectedSeq, vector.seqNumbers[fileIndex],
-          "Seq number at file index " + fileIndex + " should be " + expectedSeq);
-    }
-    
-    // Verify that when we sort by set then seq, we get the expected order
-    java.util.ArrayList<Integer> indices = new java.util.ArrayList<>();
-    for (int i = 0; i < vector.data.size(); i++) {
-      indices.add(i);
-    }
-    
-    indices.sort((a, b) -> {
-      int setA = vector.setNumbers[a];
-      int setB = vector.setNumbers[b];
-      int seqA = vector.seqNumbers[a];
-      int seqB = vector.seqNumbers[b];
-      
-      int setCompare = Integer.compare(setA, setB);
-      if (setCompare != 0) return setCompare;
-      return Integer.compare(seqA, seqB);
-    });
-    
-    // Verify sorted order matches expected
-    for (int i = 0; i < expectedOrder.length; i++) {
-      assertEquals(expectedOrder[i], indices.get(i).intValue(),
-          "Sorted index " + i + " should be file index " + expectedOrder[i]);
-    }
-  }
-
-  @Test
-  public void testSequentialStatePreservation() throws IOException {
-    // This test verifies that circuit state is preserved between sequential tests
-    // and reset between different sequences. We test this by checking the resetState
-    // parameter logic in the test execution flow.
-    
-    // Create a test vector with sequential tests that would require state preservation
-    File testFile = new File(tempDir, "state_preservation.txt");
-    try (FileWriter writer = new FileWriter(testFile)) {
-      writer.write("Clock Reset Count <set> <seq>\n");
-      // Sequence 1 (set=1): Three tests that should maintain state
-      writer.write("0 0 0 1 1\n");  // Initial state
-      writer.write("1 0 0 1 2\n"); // Clock tick - state should be preserved from previous
-      writer.write("0 0 1 1 3\n");  // Check count incremented - state preserved
-      // Sequence 2 (set=2): New sequence - should reset
-      writer.write("0 0 0 2 1\n");  // Should reset, count back to 0
-      writer.write("1 0 0 2 2\n");  // Clock tick
-      writer.write("0 0 1 2 3\n");  // Check count incremented
-      // Combinational test (seq=0): Should reset
-      writer.write("0 0 0 0 0\n");  // Should reset
-    }
-
-    TestVector vector = new TestVector(testFile);
-    assertNotNull(vector);
-    assertEquals(7, vector.data.size());
-    
-    // Verify set and seq numbers (in file order, before sorting)
-    assertNotNull(vector.setNumbers);
-    assertNotNull(vector.seqNumbers);
-    assertEquals(7, vector.setNumbers.length);
-    assertEquals(7, vector.seqNumbers.length);
-    // File order: set 1,1,1,2,2,2,0 and seq 1,2,3,1,2,3,0
-    assertEquals(1, vector.setNumbers[0]);
-    assertEquals(1, vector.setNumbers[1]);
-    assertEquals(1, vector.setNumbers[2]);
-    assertEquals(2, vector.setNumbers[3]);
-    assertEquals(2, vector.setNumbers[4]);
-    assertEquals(2, vector.setNumbers[5]);
-    assertEquals(0, vector.setNumbers[6]);
-    assertEquals(1, vector.seqNumbers[0]);
-    assertEquals(2, vector.seqNumbers[1]);
-    assertEquals(3, vector.seqNumbers[2]);
-    assertEquals(1, vector.seqNumbers[3]);
-    assertEquals(2, vector.seqNumbers[4]);
-    assertEquals(3, vector.seqNumbers[5]);
-    assertEquals(0, vector.seqNumbers[6]); // Last one is combinational (seq=0)
-    
-    // Verify the reset logic: 
-    // - Tests 0, 1, 2 are all set=1, so only test 0 should reset
-    // - Test 3 starts set=2, so it should reset
-    // - Tests 3, 4, 5 are set=2, so only test 3 should reset
-    // - Test 6 is seq=0, so it should reset
-    
-    // Simulate the reset logic that TestThread uses (based on set, not seq)
-    int currentSet = -1;
-    boolean[] shouldReset = new boolean[7];
-    
-    for (int i = 0; i < vector.data.size(); i++) {
-      int testSet = vector.setNumbers[i];
-      int testSeq = vector.seqNumbers[i];
-      if (testSeq == 0 || testSet != currentSet) {
-        shouldReset[i] = true;
-        currentSet = testSet;
-      } else {
-        shouldReset[i] = false;
-      }
-    }
-    
-    // Verify reset flags (in file order)
-    assertTrue(shouldReset[0], "First test in set 1 should reset");
-    assertFalse(shouldReset[1], "Second test in set 1 should NOT reset (state preserved)");
-    assertFalse(shouldReset[2], "Third test in set 1 should NOT reset (state preserved)");
-    assertTrue(shouldReset[3], "First test in set 2 should reset");
-    assertFalse(shouldReset[4], "Second test in set 2 should NOT reset (state preserved)");
-    assertFalse(shouldReset[5], "Third test in set 2 should NOT reset (state preserved)");
-    assertTrue(shouldReset[6], "Combinational test (seq=0) should reset");
   }
 }

@@ -80,7 +80,30 @@ public class TestVector {
         parseData(localDontCareFlags, localFloatingFlags, localSetNumbers, localSeqNumbers);
         curLine = findNonemptyLine();
       }
-      
+
+      // Verify set and sequence order.
+      int lastSet = 0;
+      int lastSeq = 0;
+      for (int i = 0; i < localSetNumbers.size(); i++) {
+        final var thisSet = localSetNumbers.get(i);
+        final var thisSeq = localSeqNumbers.get(i);
+        if (thisSet < lastSet) {
+          throw new IOException("<Set> numbers out of order: " + lastSet + " before " + thisSet);
+        }
+        if (thisSet == lastSet && (thisSet > 0 && thisSeq <= lastSeq)) {
+          throw new IOException("<Seq> numbers out of order: " + lastSeq + " before " + thisSeq
+              + " in set " + thisSet);
+        }
+        if (thisSet == 0 && thisSeq != 0) {
+          throw new IOException("<Set> is 0 but <Seq> is " + thisSeq + ", not 0");
+        }
+        if (thisSet != 0 && thisSeq == 0) {
+          throw new IOException("<Set> is " + thisSet + " which not 0 but <Seq> is 0");
+        }
+        lastSet = thisSet;
+        lastSeq = thisSeq;
+      }
+
       // Convert lists to arrays
       TestVector.this.setNumbers = new int[localSetNumbers.size()];
       for (int i = 0; i < localSetNumbers.size(); i++) {
@@ -92,14 +115,7 @@ public class TestVector {
       }
       TestVector.this.dontCareFlags = localDontCareFlags;
       TestVector.this.floatingFlags = localFloatingFlags;
-      
-      // Initialize to empty arrays if no data (backward compatibility)
-      if (TestVector.this.setNumbers == null) {
-        TestVector.this.setNumbers = new int[0];
-      }
-      if (TestVector.this.seqNumbers == null) {
-        TestVector.this.seqNumbers = new int[0];
-      }
+
     }
 
     private void parseData(
@@ -112,18 +128,18 @@ public class TestVector {
       final var floatFlags = new boolean[columnName.length];
       int setValue = 0;
       int seqValue = 0;
-      
+
       // Collect all tokens first
       final var tokens = new ArrayList<String>();
       while (curLine.hasMoreTokens()) {
         tokens.add(curLine.nextToken());
       }
-      
+
       // Map tokens to columns based on original header positions
       int pinIndex = 0;
       for (int tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
         final var t = tokens.get(tokenIndex);
-        
+
         // Check if this position corresponds to set, seq column
         if (setColumnIndex >= 0 && tokenIndex == setColumnIndex) {
           try {
@@ -141,12 +157,12 @@ public class TestVector {
           }
           continue;
         }
-        
+
         // This is a pin column
         if (pinIndex >= columnName.length) {
           throw new IOException("Test Vector data format error: too many values");
         }
-        
+
         // Check for special values
         final var tUpper = t.toUpperCase();
         if ("<DC>".equals(tUpper)) {
@@ -154,7 +170,7 @@ public class TestVector {
           vals[pinIndex] = Value.UNKNOWN; // Placeholder, won't be compared
         } else if ("<FLOAT>".equals(tUpper)) {
           floatFlags[pinIndex] = true;
-          vals[pinIndex] = Value.UNKNOWN;
+          vals[pinIndex] = Value.createUnknown(columnWidth[pinIndex]);
         } else {
           try {
             vals[pinIndex] = Value.fromLogString(columnWidth[pinIndex], t);
@@ -174,7 +190,7 @@ public class TestVector {
             throw new IOException("Test Vector data format error: " + errorMsg);
           }
         }
-        
+
         if (TestVector.this.data.isEmpty()) {
           if (!dcFlags[pinIndex] && !floatFlags[pinIndex]) {
             columnRadix[pinIndex] = Value.radixOfLogString(columnWidth[pinIndex], t);
@@ -182,11 +198,11 @@ public class TestVector {
         }
         pinIndex++;
       }
-      
+
       if (pinIndex < columnName.length) {
         throw new IOException("Test Vector data format error: not enough values");
       }
-      
+
       TestVector.this.data.add(vals);
       localDontCareFlags.add(dcFlags);
       localFloatingFlags.add(floatFlags);
@@ -203,7 +219,7 @@ public class TestVector {
       for (var i = 0; i < n; i++) {
         final var t = (String) curLine.nextElement();
         final var tUpper = t.toUpperCase();
-        
+
         // Check for special columns
         if ("<SET>".equals(tUpper)) {
           setColumnIndex = i;
@@ -213,7 +229,7 @@ public class TestVector {
           seqColumnIndex = i;
           continue;
         }
-        
+
         // Regular pin column
         int s = t.indexOf('[');
         if (s < 0) {
@@ -239,7 +255,7 @@ public class TestVector {
           tempColumnRadix.add(2);
         }
       }
-      
+
       // Convert lists to arrays
       columnName = tempColumnName.toArray(new String[0]);
       columnWidth = tempColumnWidth.toArray(new BitWidth[0]);
@@ -306,5 +322,23 @@ public class TestVector {
       return false;
     }
     return flags[columnIndex];
+  }
+
+  public String specialColumnEntry(int i) {
+    if (floatingFlags != null) {
+      for (int row = 0; row < floatingFlags.size(); row++) {
+        if (isFloating(row, i)) {
+          return "<FLOAT>";
+        }
+      }
+    }
+    if (dontCareFlags != null) {
+      for (int row = 0; row < dontCareFlags.size(); row++) {
+        if (isDontCare(row, i)) {
+          return "<DC>";
+        }
+      }
+    }
+    return null;
   }
 }

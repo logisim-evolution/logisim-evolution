@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 /** Evaluates the given TestVector using the requested steps on the given root CircuitState, state. */
 public class TestVectorEvaluator {
   final CircuitState state;
@@ -28,15 +30,16 @@ public class TestVectorEvaluator {
   public record LineReport(int column, String columnName, Value expected, Value computed, boolean oscillating) {
     @Override
     public String toString() {
-      return columnName + " = " + computed.toDisplayString(2) + " (expected " + expected.toDisplayString(2) + ")"
-          + (oscillating ? " oscillating" : "");
+      return String.format("%s = %s (%s %s)%s", columnName, computed.toDisplayString(2), S.get("tveExpected"),
+          expected.toDisplayString(2), (oscillating ? (" " + S.get("tveOscillating")) : "")
+      );
     }
   }
 
   public TestVectorEvaluator(CircuitState state, TestVector vector, ArrayList<Integer> steps,
                              Consumer<TestVectorEvaluator> callback) throws TestException {
     if (state == null || vector == null) {
-      throw new TestException("TestVectorEvaluation requires non-null state and vector.");
+      throw new TestException(S.get("tveRequiresNonNull"));
     }
     this.state = state;
     this.vector = vector;
@@ -78,25 +81,6 @@ public class TestVectorEvaluator {
     for (int i = 0; i < vector.data.size(); i++) {
       sortedIndices.add(i);
     }
-
-    // Sort by set first, then by sequence
-    sortedIndices.sort((a, b) -> {
-      int setA = (vector.setNumbers != null && a < vector.setNumbers.length) ? vector.setNumbers[a] : 0;
-      int setB = (vector.setNumbers != null && b < vector.setNumbers.length) ? vector.setNumbers[b] : 0;
-      int seqA = (vector.seqNumbers != null && a < vector.seqNumbers.length) ? vector.seqNumbers[a] : 0;
-      int seqB = (vector.seqNumbers != null && b < vector.seqNumbers.length) ? vector.seqNumbers[b] : 0;
-
-      // First compare by set
-      int setCompare = Integer.compare(setA, setB);
-      if (setCompare != 0) return setCompare;
-
-      // Then compare by sequence
-      int seqCompare = Integer.compare(seqA, seqB);
-      if (seqCompare != 0) return seqCompare;
-
-      // If set and seq are the same, maintain original order (by index)
-      return Integer.compare(a, b);
-    });
     return sortedIndices;
   }
 
@@ -119,7 +103,8 @@ public class TestVectorEvaluator {
     Propagator prop = state.getPropagator();
     int numPass = 0;
     int numFails = 0;
-    int currentSet = -1; // Track current set (sequence ID)
+    int currentSet = -1; // Track current set.
+    int currentSeq = 0; // Track current sequence.
     canceled = false;
 
     for (int stepRow : stepsToDo) {
@@ -128,24 +113,12 @@ public class TestVectorEvaluator {
       }
       if (stepRow < 0 || stepRow >= vector.data.size()) continue; // shouldn't happen.
 
-      // Determine set number (sequence ID) for this test
-      int testSet = 0;
-      if (vector.setNumbers != null && stepRow < vector.setNumbers.length) {
-        testSet = vector.setNumbers[stepRow];
-      }
-
-      // Determine sequence number (step number within set) for this test
-      int testSeq = 0;
-      if (vector.seqNumbers != null && stepRow < vector.seqNumbers.length) {
-        testSeq = vector.seqNumbers[stepRow];
-      }
-
-      // Determine if we should reset
-      // Reset if: starting a new set (sequence ID), or test is combinational (seq == 0)
-      boolean shouldReset = (testSeq == 0 || testSet != currentSet);
-      if (shouldReset) {
-        currentSet = testSet;
-      }
+      // Reset if: starting a new set or test is combinational (seq == 0)
+      final int testSet = vector.setNumbers[stepRow];
+      final int testSeq = vector.seqNumbers[stepRow];
+      final boolean shouldReset = (testSeq == 0 || currentSeq == 0 || testSet != currentSet);
+      currentSet = testSet;
+      currentSeq = testSeq;
 
       // Reset circuit state before starting the sequence (if requested)
       if (allowReset && shouldReset) {
@@ -163,13 +136,13 @@ public class TestVectorEvaluator {
         for (int j = 0; j < pins.length; j++) {
           if (pins[j].getFactory() instanceof Pin && Pin.FACTORY.isInputPin(pins[j])) {
             InstanceState pinState = state.getInstanceState(pins[j]);
+            final var oldValue = Pin.FACTORY.getValue(pinState);
             Value driveValue = vector.data.get(stepRow)[j];
-            if (vector.isFloating(stepRow, j)) {
-              driveValue = com.cburch.logisim.data.Value.UNKNOWN;
+            if (!driveValue.equals(oldValue)) {
+              Pin.FACTORY.driveInputPin(pinState, driveValue);
+              // Mark the pin component as dirty so it gets processed during propagation
+              state.markComponentAsDirty(pins[j].getComponent());
             }
-            Pin.FACTORY.driveInputPin(pinState, driveValue);
-            // Mark the pin component as dirty so it gets processed during propagation
-            state.markComponentAsDirty(pins[j].getComponent());
           }
         }
 
@@ -195,7 +168,7 @@ public class TestVectorEvaluator {
                 report.add(new LineReport(i, vector.columnName[i], val[i], Value.ERROR, true));
               } else if (vector.isFloating(stepRow, i)) { // Check for floating - expect UNKNOWN
                 if (!v.isUnknown()) {
-                  report.add(new LineReport(i, vector.columnName[i], Value.createUnknown(v.getBitWidth()), v, false));
+                  report.add(new LineReport(i, vector.columnName[i], val[i], v, false));
                 }
               } else if (!val[i].compatible(v)) { // Normal value comparison
                 report.add(new LineReport(i, vector.columnName[i], val[i], v, false));
@@ -238,10 +211,10 @@ public class TestVectorEvaluator {
           final var instanceState = state.getInstanceState(comp);
           final var label = instanceState.getAttributeValue(StdAttr.LABEL);
           if (factory instanceof Clock) {
-            if (columnName.equals(label) || ((label == null || label.isEmpty()) && columnName.equals("<clk>"))) {
+            if (columnName.equals(label)
+                || ((label == null || label.isEmpty()) && columnName.equalsIgnoreCase("<clk>"))) {
               if (vec.columnWidth[i].getWidth() != 1) {
-                throw new TestException("test vector column '" + columnName
-                    + "' has width " + vec.columnWidth[i] + ", but clock has width 1");
+                throw new TestException(S.get("tveClockWidthMismatch", columnName, vec.columnWidth[i].getWidth()));
               }
               pins[i] = inst;
               break;
@@ -249,8 +222,8 @@ public class TestVectorEvaluator {
           } else { // Pin
             if (columnName.equals(label)) {
               if (Pin.FACTORY.getWidth(inst).getWidth() != vec.columnWidth[i].getWidth()) {
-                throw new TestException("test vector column '" + columnName + "' has width " + vec.columnWidth[i]
-                    + ", but pin has width " + Pin.FACTORY.getWidth(inst));
+                throw new TestException(S.get("tveWidthMismatch", columnName, vec.columnWidth[i].getWidth(),
+                    Pin.FACTORY.getWidth(inst).getWidth()));
               }
               pins[i] = inst;
               break;
@@ -259,7 +232,7 @@ public class TestVectorEvaluator {
         }
       }
       if (pins[i] == null) {
-        throw new TestException("test vector column '" + columnName + "' has no matching pin");
+        throw new TestException(S.get("tveColumnNoPin", columnName));
       }
     }
     return pins;

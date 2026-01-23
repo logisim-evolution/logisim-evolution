@@ -57,6 +57,7 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   private final Set<Integer> activeShowRows = new HashSet<>();
   // Track which rows' Set buttons are currently active (green)
   private final Set<Integer> activeSetRows = new HashSet<>();
+  private final String [] specialHeaders = {"", "", S.get("statusHeader"), "<set>", "<seq>"};
 
   // Store the pin values when Show or Set is clicked, to detect changes. Used by simulation thread.
   private com.cburch.logisim.data.Value[] storedPinValues = null;
@@ -72,21 +73,18 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   }
 
   @Override
-  public void changeColumnValueRadix(int i) {
-    if (i == 0 || i == 1 || i == 2) return; // Show button, Set button, and status columns don't support radix changes
+  public String specialColumnEntry(int i) {
+    if (i < specialHeaders.length) return null; // special columns are handled separately.
     TestVector vec = getModel().getVector();
-    int offset = 3; // all excluded columns: Show button column + Set button column + status column
-    // <set>, <seq> columns don't support radix changes
-    if (vec.setNumbers != null) {
-      if (i == offset) return;
-      offset++;
-    }
-    if (vec.seqNumbers != null) {
-      if (i == offset) return;
-      offset++;
-    }
+    return vec.specialColumnEntry(i - specialHeaders.length);
+  }
+
+  @Override
+  public void changeColumnValueRadix(int i) {
+    if (i < specialHeaders.length) return; // special columns have no radix.
+    TestVector vec = getModel().getVector();
     // Regular pin columns
-    int pinIndex = i - offset;
+    int pinIndex = i - specialHeaders.length;
     switch (vec.columnRadix[pinIndex]) {
       case 2 -> vec.columnRadix[pinIndex] = 10;
       case 10 -> vec.columnRadix[pinIndex] = 16;
@@ -98,75 +96,31 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   @Override
   public int getColumnCount() {
     TestVector vec = getModel().getVector();
-    if (vec == null) return 0;
-    int count = vec.columnName.length + 3; // +1 for status column, +2 for Show and Set button columns
-    // Add columns for <set>, <seq> if they exist
-    if (vec.setNumbers != null) count++;
-    if (vec.seqNumbers != null) count++;
-    return count;
+    return vec == null ? 0 : vec.columnName.length + specialHeaders.length;
   }
 
   @Override
   public String getColumnName(int i) {
+    if (i < specialHeaders.length) return specialHeaders[i];
     TestVector vec = getModel().getVector();
-    if (i == 0) return ""; // Show button column - no header
-    if (i == 1) return ""; // Set button column - no header
-    if (i == 2) return S.get("statusHeader");
-    int offset = 3; // Show button (0) + Set button (1) + status column (2)
-    // Check if <set> column exists
-    if (vec.setNumbers != null) {
-      if (i == offset) return "<set>";
-      offset++;
-    }
-    // Check if <seq> column exists
-    if (vec.seqNumbers != null) {
-      if (i == offset) return "<seq>";
-      offset++;
-    }
-    // Regular pin columns
-    return vec.columnName[i - offset];
+    return vec.columnName[i - specialHeaders.length];
   }
 
   @Override
   public int getColumnValueRadix(int i) {
+    if (i < 3) return 0; // first three have no radix.
+    if (i < specialHeaders.length) return 10; // <set> and <seq> are displayed in decimal.
     TestVector vec = getModel().getVector();
-    if (i == 0) return 0; // Show button column
-    if (i == 1) return 0; // Set button column
-    if (i == 2) return 0; // Status column
-    int offset = 3; // Show button (0) + Set button (1) + status column (2)
-    // <set>, <seq> columns are always decimal
-    if (vec.setNumbers != null) {
-      if (i == offset) return 10;
-      offset++;
-    }
-    if (vec.seqNumbers != null) {
-      if (i == offset) return 10;
-      offset++;
-    }
-    // Regular pin columns
-    return vec.columnRadix[i - offset];
+    return vec.columnRadix[i - specialHeaders.length];
   }
 
   // ValueTable.Model implementation
 
   @Override
   public BitWidth getColumnValueWidth(int i) {
+    if (i < specialHeaders.length) return null;
     TestVector vec = getModel().getVector();
-    if (i == 0) return null; // Show button column
-    if (i == 1) return null; // Set button column
-    if (i == 2) return null; // Status column
-    int offset = 3; // Show button (0) + Set button (1) + status column (2)
-    // <set>, <seq> columns have no width (they're metadata)
-    if (vec.setNumbers != null) {
-      if (i == offset) return null;
-      offset++;
-    }
-    if (vec.seqNumbers != null) {
-      if (i == offset) return null;
-      offset++;
-    }
-    // Regular pin columns
-    return vec.columnWidth[i - offset];
+    return vec.columnWidth[i - specialHeaders.length];
   }
 
   Model getModel() {
@@ -192,17 +146,10 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
     final var passMsg = S.get("passStatus");
     final var failMsg = S.get("failStatus");
 
-    // Determine column offsets (accounting for Show button (0), Set button (1), and status column (2))
-    int setColumnOffset = vec.setNumbers != null ? 3 : -1;
-    int seqColumnOffset = vec.seqNumbers != null
-        ? (setColumnOffset >= 0 ? 4 : 3) : -1;
-    int pinColumnStart = 3; // Show button (0) + Set button (1) + status (2)
-    if (setColumnOffset >= 0) pinColumnStart++;
-    if (seqColumnOffset >= 0) pinColumnStart++;
+    final int pinColumnStart = specialHeaders.length;
 
-
-    for (var i = firstRow; i < firstRow + numRows; i++) {
-      final var row = model.sortedIndex(i);
+    for (var outRow = 0; outRow < numRows; outRow++) {
+      final var row = model.sortedIndex(outRow + firstRow);
       final var data = vec.data.get(row);
       String rowmsg = null;
       String status = null;
@@ -221,45 +168,29 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
       }
 
       // Show button column (column 0)
-      Color showButtonBg = activeShowRows.contains(row)
-          ? activeButtonColor
-          : inactiveButtonColor;
-      rowData[i - firstRow][0] =
-          new ValueTable.Cell("Show", showButtonBg, null, "Show the pin values for this test step");
+      Color showButtonBg = activeShowRows.contains(row) ? activeButtonColor : inactiveButtonColor;
+      rowData[outRow][0] = new ValueTable.Cell("Show", showButtonBg, null, S.get("toolTipShow"));
 
       // Set button column (column 1)
-      Color setButtonBg = activeSetRows.contains(row)
-          ? activeButtonColor
-          : inactiveButtonColor;
-      rowData[i - firstRow][1] =
-          new ValueTable.Cell("Set", setButtonBg, null, "Set the pin values of this test");
+      Color setButtonBg = activeSetRows.contains(row) ? activeButtonColor : inactiveButtonColor;
+      rowData[outRow][1] = new ValueTable.Cell("Set", setButtonBg, null, S.get("toolTipSet"));
 
       // Status column (column 2)
-      rowData[i - firstRow][2] =
-          new ValueTable.Cell(status, rowmsg != null ? failColor : null, null, rowmsg);
+      rowData[outRow][2] = new ValueTable.Cell(status, rowmsg != null ? failColor : null, null, rowmsg);
 
-      int colIndex = 3;
+      // <set> column (column 3)
+      int setValue = vec.setNumbers[row];
+      rowData[outRow][3] = new ValueTable.Cell(Integer.toString(setValue), null, null, "Set: " + setValue);
 
-      // <set> column
-      if (setColumnOffset >= 0) {
-        int setValue = vec.setNumbers[row];
-        rowData[i - firstRow][colIndex] =
-            new ValueTable.Cell(Integer.toString(setValue), null, null, "Set: " + setValue);
-        colIndex++;
-      }
-
-      // <seq> column
-      if (seqColumnOffset >= 0) {
-        int seqValue = vec.seqNumbers[row];
-        String seqText = seqValue == 0 ? "comb" : Integer.toString(seqValue);
-        String seqTooltip = seqValue == 0 ? "Combinational test (circuit reset)" : "Sequential test #" + seqValue;
-        rowData[i - firstRow][colIndex] =
-            new ValueTable.Cell(seqText, null, null, seqTooltip);
-        colIndex++;
-      }
+      // <seq> column (column 4)
+      int seqValue = vec.seqNumbers[row];
+      String seqText = seqValue == 0 ? "comb" : Integer.toString(seqValue);
+      String seqTooltip = seqValue == 0 ? S.get("toolTipCombinational") : S.get("toolTipSequential", "" + seqValue);
+      rowData[outRow][4] = new ValueTable.Cell(seqText, null, null, seqTooltip);
 
       // Pin columns
       for (var col = 0; col < columns; col++) {
+        int colIndex = col + specialHeaders.length;
         String tooltip = msg[col];
         String displayText;
         Color bgColor = msg[col] != null ? failColor : null;
@@ -267,25 +198,23 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
         // Check for special values first
         if (vec.isDontCare(row, col)) {
           displayText = "<DC>";
-          tooltip = (tooltip != null ? tooltip + " | " : "") + "Don't Care (<DC>)";
+          tooltip = (tooltip != null ? tooltip + " | " : "") + S.get("toolTipDontCare", displayText);
         } else if (vec.isFloating(row, col)) {
-          displayText = "<float>";
-          tooltip = (tooltip != null ? tooltip + " | " : "") + "Floating (<float>)";
+          if (altdata[col] != null) {
+            displayText = altdata[col].toDisplayString(getColumnValueRadix(pinColumnStart + col));
+          } else {
+            displayText = "<float>";
+            tooltip = (tooltip != null ? tooltip + " | " : "") + S.get("toolTipFloating", displayText);
+          }
         } else {
           // Regular value - show computed value if there's an error, otherwise show expected
           Value displayValue = altdata[col] != null ? altdata[col] : data[col];
           displayText = displayValue.toDisplayString(getColumnValueRadix(pinColumnStart + col));
         }
 
-        rowData[i - firstRow][colIndex] =
-            new ValueTable.Cell(
-                displayText,
-                bgColor,
-                null,
-                tooltip);
+        rowData[outRow][colIndex] = new ValueTable.Cell(displayText, bgColor, null, tooltip);
         msg[col] = null;
         altdata[col] = null;
-        colIndex++;
       }
     }
   }
@@ -355,6 +284,12 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
   public void handleButtonClick(int displayRow, int col, int modifiersEx) {
     Model model = getModel();
     if (model == null) return;
+    if (model.getProject().getSimulator().isAutoTicking()) {
+      JOptionPane.showMessageDialog(this,
+          S.get("testButtonWhileTickingMessage"), S.get("testButtonWhileTickingTitle"),
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    }
     TestVector vec = model.getVector();
     if (vec == null) return;
 
@@ -381,8 +316,7 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
       // Show error dialog
       JOptionPane.showMessageDialog(
           this,
-          e.getMessage(),
-          "Test Execution Error",
+          e.getMessage(), S.get("testExecutionErrorTitle"),
           JOptionPane.ERROR_MESSAGE);
     }
   }
@@ -393,6 +327,9 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
     Project project = model.getProject();
     CircuitState state = project.getCircuitState();
 
+    if (vec.setNumbers == null || targetFileRow >= vec.setNumbers.length) {
+      return;
+    }
     final var stepsToExecute = new ArrayList<Integer>();
 
     // Handle combinational tests (targetSeq == 0)
@@ -400,15 +337,12 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
       stepsToExecute.add(targetFileRow);
     } else {
       // Sequential test - Get the target set number
-      int targetSet = 0;
-      if (vec.setNumbers != null && targetFileRow < vec.setNumbers.length) {
-        targetSet = vec.setNumbers[targetFileRow];
-      }
+      int targetSet = vec.setNumbers[targetFileRow];
 
       // Find all rows in the same set with sequence numbers from 1 to targetSeq (inclusive)
       for (int row = 0; row < vec.data.size(); row++) {
-        int rowSet = (vec.setNumbers != null && row < vec.setNumbers.length) ? vec.setNumbers[row] : 0;
-        int rowSeq = (vec.seqNumbers != null && row < vec.seqNumbers.length) ? vec.seqNumbers[row] : 0;
+        int rowSet = vec.setNumbers[row];
+        int rowSeq = vec.seqNumbers[row];
 
         // Include rows with same set and sequence from 1 to targetSeq
         if (rowSet == targetSet && rowSeq > 0 && rowSeq <= targetSeq) {
@@ -419,8 +353,8 @@ public class TestPanel extends JPanel implements ValueTable.Model, Simulator.Lis
 
     // Sort by sequence number to execute in order
     stepsToExecute.sort((a, b) -> {
-      int seqA = (vec.seqNumbers != null && a < vec.seqNumbers.length) ? vec.seqNumbers[a] : 0;
-      int seqB = (vec.seqNumbers != null && b < vec.seqNumbers.length) ? vec.seqNumbers[b] : 0;
+      int seqA = vec.seqNumbers[a];
+      int seqB = vec.seqNumbers[b];
       return Integer.compare(seqA, seqB);
     });
     // Mark all executed steps as active for Show button (will show green buttons)
