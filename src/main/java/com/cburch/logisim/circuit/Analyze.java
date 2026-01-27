@@ -24,6 +24,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -341,6 +342,7 @@ public class Analyze {
         }
       } else if (comp.getFactory() instanceof Pin) { // pins are handled elsewhere
       } else if (comp.getFactory() instanceof SplitterFactory) { // splitters are handled elsewhere
+      } else if (comp.getFactory() instanceof Text) { // can safely ignore
       } else {
         throw new AnalyzeException.CannotHandle(comp.getFactory().getDisplayName());
       }
