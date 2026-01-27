@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="pt">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="pt">
+	<title>A janela de Vetor de Teste</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+	<div class="maindiv">
+
+<h1>A janela de Vetor de Teste</h1>
+
+<p>A janela de Vetor de Teste é similar à aba Tabela da janela de
+Registro. Você pode carregar um vetor de teste de um arquivo, e o Logisim começará
+a executar testes no circuito atual. Como a janela de registro, existe
+apenas uma janela de vetor de teste para o projeto, e a tabela será
+alterada para refletir qual circuito está sendo simulado na janela do
+projeto. Note, no entanto, que o módulo de Vetor de Teste executa uma cópia
+separada do simulador de circuitos, e portanto não interfere, e não é
+influenciado pela simulação na janela do projeto.</p>
+
+<p>Para o exemplo, testaremos o circuito abaixo. Este circuito fornece os resultados de cinco funções lógicas a partir de duas entradas. Ele contém um erro porque a porta NAND inferior deveria ser uma porta AND.</p>
+
+<p align="center">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="Circuito de exemplo com cinco funções lógicas">
+</p>
+
+<p>O arquivo de vetor de teste se parece com isto:</p>
+
+<blockquote>
+	<pre class="code">
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10  
+1 1 0 0 0 1 1 11  
+</pre>
+</blockquote>
+
+<p>Para executar o teste, selecione o menu <b class="menu">|&nbsp; Simular &nbsp;|</b>→<b class="menu">|&nbsp; Vetor de teste &nbsp;|</b> então use o botão <b class="button">Carregar Vetor</b>. Selecione o arquivo de vetor que você construiu. A simulação é executada imediatamente e uma tabela é exibida com o resultado.</p>
+
+<p align="center">
+	<img src="../../../img-guide/vector-result.png" alt="Janela de Vetor de Teste mostrando resultados com erros marcados em vermelho">
+</p>
+
+<p>Qualquer saída incorreta será marcada em vermelho. Passe o mouse sobre
+a caixa vermelha para ver qual deveria ter sido a saída, de acordo com o
+vetor de teste. Linhas com saídas incorretas são classificadas no topo da
+janela.</p>
+
+<p>O formato do arquivo é simples. Você pode usar o módulo de Registro (com
+"Incluir Linha de Cabeçalho" selecionado na aba de saída de arquivo) para começar,
+já que na maioria dos casos o módulo de Registro produz o mesmo formato usado
+pelo módulo de Vetor de Teste.</p>
+
+<p>
+	<b>Anterior:</b> <a href="index.html">Vetores de Teste</a> | <b>Próximo:</b> <a href="test_vector_file_format.html">Formato de Arquivo de Vetor de Teste</a>.
+</p>
+	</div>
+</body>
+</html>
+

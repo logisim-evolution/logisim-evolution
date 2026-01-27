@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="de">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="de">
+	<title>Das Testvektor-Fenster</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+	<div class="maindiv">
+
+<h1>Das Testvektor-Fenster</h1>
+
+<p>Das Testvektor-Fenster ähnelt dem Tabellen-Tab des Protokollierungsfensters. Sie können einen Testvektor aus einer Datei laden, und Logisim beginnt mit der Ausführung von Tests an der aktuellen Schaltung. Wie beim Protokollierungsfenster gibt es nur ein Testvektor-Fenster für das Projekt, und die Tabelle ändert sich, um die Schaltung widerzuspiegeln, die im Projektfenster simuliert wird. Beachten Sie jedoch, dass das Testvektor-Modul eine separate Kopie des Schaltungssimulators ausführt und daher die Simulation im Projektfenster nicht beeinträchtigt und auch nicht von ihr beeinflusst wird.</p>
+
+<p>Für das Beispiel werden wir die untenstehende Schaltung testen. Diese Schaltung liefert die Ergebnisse von fünf Logikfunktionen aus zwei Eingängen. Sie enthält einen Fehler, da das untere NAND-Gatter ein AND-Gatter sein sollte.</p>
+
+<p align="center">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="Beispielschaltung mit fünf Logikfunktionen">
+</p>
+
+<p>Die Testvektor-Datei sieht so aus:</p>
+
+<blockquote>
+	<pre class="code">
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10  
+1 1 0 0 0 1 1 11  
+</pre>
+</blockquote>
+
+<p>Um den Test auszuführen, wählen Sie das Menü <b class="menu">|&nbsp; Simulieren &nbsp;|</b>→<b class="menu">|&nbsp; Testvektor &nbsp;|</b> und verwenden Sie dann die Schaltfläche <b class="button">Vektor laden</b>. Wählen Sie die von Ihnen erstellte Vektordatei aus. Die Simulation wird sofort ausgeführt und eine Tabelle mit dem Ergebnis angezeigt.</p>
+
+<p align="center">
+	<img src="../../../img-guide/vector-result.png" alt="Testvektor-Fenster mit Ergebnissen, Fehler sind rot markiert">
+</p>
+
+<p>Alle falschen Ausgaben werden rot markiert. Fahren Sie mit der Maus über das rote Feld, um zu sehen, was die Ausgabe laut Testvektor hätte sein sollen. Zeilen mit falschen Ausgaben werden oben im Fenster sortiert.</p>
+
+<p>Das Dateiformat ist einfach. Sie können das Protokollierungsmodul verwenden (mit "Kopfzeile einschließen" im Dateiausgabe-Tab ausgewählt), um zu beginnen, da das Protokollierungsmodul in den meisten Fällen dasselbe Format ausgibt wie das Testvektor-Modul.</p>
+
+<p>
+	<b>Zurück:</b> <a href="index.html">Testvektoren</a> | <b>Weiter:</b> <a href="test_vector_file_format.html">Testvektor-Dateiformat</a>.
+</p>
+	</div>
+</body>
+</html>
+

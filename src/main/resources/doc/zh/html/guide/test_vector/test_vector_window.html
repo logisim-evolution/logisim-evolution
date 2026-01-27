@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="zh">
+	<title>测试向量窗口</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+	<div class="maindiv">
+
+<h1>测试向量窗口</h1>
+
+<p>测试向量窗口类似于日志窗口的表格选项卡。您可以从文件加载测试向量，Logisim 将开始对当前电路运行测试。与日志窗口一样，项目中只有一个测试向量窗口，表格将更改以反映项目窗口中正在模拟的电路。但请注意，测试向量模块运行电路模拟器的独立副本，因此不会干扰项目窗口中的模拟，也不会受其影响。</p>
+
+<p>在示例中，我们将测试下面的电路。该电路从两个输入给出五个逻辑函数的结果。它包含一个错误，因为底部的 NAND 门应该是 AND 门。</p>
+
+<p align="center">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="包含五个逻辑函数的示例电路">
+</p>
+
+<p>测试向量文件如下所示：</p>
+
+<blockquote>
+	<pre class="code">
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10  
+1 1 0 0 0 1 1 11  
+</pre>
+</blockquote>
+
+<p>要运行测试，请选择菜单 <b class="menu">|&nbsp; 模拟 &nbsp;|</b>→<b class="menu">|&nbsp; 测试向量 &nbsp;|</b>，然后使用 <b class="button">加载向量</b> 按钮。选择您构建的向量文件。模拟立即执行，并显示一个包含结果的表格。</p>
+
+<p align="center">
+	<img src="../../../img-guide/vector-result.png" alt="测试向量窗口显示结果，错误以红色标记">
+</p>
+
+<p>任何不正确的输出都将以红色标记。将鼠标悬停在红色框上以查看根据测试向量应该输出的值。包含不正确输出的行将排序到窗口顶部。</p>
+
+<p>文件格式很简单。您可以使用日志模块（在文件输出选项卡中选择"包含标题行"）来开始，因为在大多数情况下，日志模块输出的格式与测试向量模块使用的格式相同。</p>
+
+<p>
+	<b>上一页：</b> <a href="index.html">测试向量</a> | <b>下一页：</b> <a href="test_vector_file_format.html">测试向量文件格式</a>。
+</p>
+	</div>
+</body>
+</html>
+

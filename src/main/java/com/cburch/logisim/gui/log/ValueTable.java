@@ -93,6 +93,10 @@ public class ValueTable extends JPanel {
 
       if (g == null) {
         cellHeight = 16;
+        // Initialize column widths with default values
+        for (var i = 0; i < columns; i++) {
+          columnWidth[i] = 24;
+        }
         cellsWidth = 24 * columns;
       } else {
         final var headerMetric = g.getFontMetrics(HEAD_FONT);
@@ -112,6 +116,12 @@ public class ValueTable extends JPanel {
                     w, (radix == 2 ? 0 : (radix == 10 ? (1 << (w.getWidth() - 1)) : w.getMask())));
             final var label = val.toDisplayString(radix);
             cellWidth = Math.max(cellWidth, bodyMetric.stringWidth(label));
+          }
+          
+          // For button columns, ensure width is at least as wide as button text
+          if (model.isButtonColumn(i)) {
+            // Button columns typically have "Show" or "Set" text, ensure adequate width
+            cellWidth = Math.max(cellWidth, bodyMetric.stringWidth(" Show "));
           }
 
           columnWidth[i] = cellWidth;
@@ -141,15 +151,29 @@ public class ValueTable extends JPanel {
   }
 
   int findColumn(int x, int width) {
+    if (columnWidth == null || model == null) {
+      computePreferredSize();
+    }
+    
     var left = Math.max(0, (width - tableWidth) / 2);
-    if (x < left + COLUMN_SEP || x >= left + tableWidth) return -1;
-    left += COLUMN_SEP;
+    if (x < left || x >= left + tableWidth) return -1;
+    
+    var currentX = left + COLUMN_SEP;
     final var columns = model.getColumnCount();
+
+    if (columnWidth == null || columnWidth.length < columns) {
+      computePreferredSize();
+    }
 
     for (var i = 0; i < columns; i++) {
       final var cellWidth = columnWidth[i];
-      if (x >= left && x < left + cellWidth) return i;
-      left += cellWidth + COLUMN_SEP;
+      final var nextX = currentX + cellWidth + COLUMN_SEP;
+      
+      if (x >= currentX && x < nextX) {
+        return i;
+      }
+      
+      currentX = nextX;
     }
     return -1;
   }
@@ -227,6 +251,34 @@ public class ValueTable extends JPanel {
     int getRowCount();
 
     void getRowData(int firstRow, int rowCount, Cell[][] rowData);
+    
+    // Optional method for handling row button clicks
+    // Returns true if the column is a button column that should handle clicks
+    default boolean isButtonColumn(int col) {
+      return false;
+    }
+    
+    // Called when a button in the button column is clicked
+    // row is the display row index (after sorting)
+    // col is the column index of the button that was clicked
+    // modifiersEx is the extended modifiers from the mouse event (can check for Shift, Ctrl, etc.)
+    default void handleButtonClick(int row, int col, int modifiersEx) {
+      // Default: call the old method for backward compatibility
+      handleButtonClick(row, modifiersEx);
+    }
+    
+    // Called when a button in the button column is clicked (deprecated, use handleButtonClick(int, int, int) instead)
+    @Deprecated
+    default void handleButtonClick(int row, int modifiersEx) {
+      // Default: do nothing (ignore modifiers for backward compatibility)
+    }
+    
+    // Called when a button in the button column is clicked (deprecated, use handleButtonClick(int, int) instead)
+    @Deprecated
+    @SuppressWarnings("unused")
+    default void handleButtonClick(int row) {
+      // Default: do nothing (deprecated method, use handleButtonClick(int, int) instead)
+    }
   }
 
   public static class Cell {
@@ -247,6 +299,47 @@ public class ValueTable extends JPanel {
   private class TableBody extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    TableBody() {
+      setFocusable(true);
+      setRequestFocusEnabled(true);
+      addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          if (model == null) return;
+          
+          // Get the viewport to convert coordinates if needed
+          java.awt.Point viewPos = scrollPane.getViewport().getViewPosition();
+          int x = e.getX(); // X is relative to TableBody panel, no adjustment needed
+          int y = e.getY() + viewPos.y; // Adjust Y for vertical scroll position
+          
+          // Refresh data to ensure rowStart is current
+          refreshData(y, y + cellHeight);
+          
+          int col = findColumn(x, getSize().width);
+          if (col < 0) return;
+          
+          // Check if this is a button column
+          if (model.isButtonColumn(col)) {
+            // Calculate row from Y coordinate (now adjusted for scroll)
+            if (y < 0) return;
+            
+            // Calculate absolute row from adjusted Y
+            int absoluteRow = y / cellHeight;
+            
+            // Check if row is within bounds
+            if (absoluteRow >= 0 && absoluteRow < model.getRowCount()) {
+              model.handleButtonClick(absoluteRow, col, e.getModifiersEx());
+              repaint(); // Refresh display after button click
+            }
+            return;
+          }
+          
+          // Otherwise, handle radix change for other columns
+          if (col >= 0) model.changeColumnValueRadix(col);
+        }
+      });
+    }
 
     @Override
     public String getToolTipText(MouseEvent event) {
@@ -397,6 +490,7 @@ public class ValueTable extends JPanel {
     class MyListener extends java.awt.event.MouseAdapter {
       @Override
       public void mouseClicked(MouseEvent e) {
+        // X coordinate is relative to TableHeader panel
         final var col = model == null ? -1 : findColumn(e.getX(), getSize().width);
         if (col >= 0) model.changeColumnValueRadix(col);
       }
