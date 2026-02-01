@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html lang="zh">
 <head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<META name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
 	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
 	<META http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -30,8 +30,8 @@
 A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
 0 0 1 1 0 0 0 00
 0 1 0 1 1 1 0 01
-1 0 0 1 1 1 0 10  
-1 1 0 0 0 1 1 11  
+1 0 0 1 1 1 0 10
+1 1 0 0 0 1 1 11
 </pre>
 </blockquote>
 
@@ -45,10 +45,48 @@ A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
 
 <p>文件格式很简单。您可以使用日志模块（在文件输出选项卡中选择"包含标题行"）来开始，因为在大多数情况下，日志模块输出的格式与测试向量模块使用的格式相同。</p>
 
+<h2>Interactive Test Execution</h2>
+
+<p>Each row in the Test Vector window has two buttons that allow you to manually interact with individual tests:</p>
+
+<ul>
+<li><b>"Show" button</b> (first column): This button previews the circuit state without checking outputs.
+<ul>
+<li><b>Combinational tests (seq=0)</b>: Resets the circuit, sets the input values, and propagates signals.
+Only the clicked row is highlighted in green to show it was executed.</li>
+<li><b>Sequential tests (seq&gt;0)</b>: Resets the circuit, then runs all prior sequential steps in the set
+(from seq 1 up to the target step), propagating after each step. All executed sequential steps are highlighted
+in green to show the execution path.</li>
+</ul>
+The Show button does not verify outputs against expected values - it only shows what the circuit state would be.</li>
+
+<li><b>"Set" button</b> (second column): This button sets input values and may execute tests.
+<ul>
+<li><b>Combinational tests (seq=0)</b>: Resets the circuit, applies the test inputs, then propagates signals. Only the clicked row is highlighted in green to indicate it was executed.</li>
+<li><b>Sequential tests (seq&gt;0)</b>: Does NOT reset the circuit and does NOT run any other tests.
+Simply sets the input values for that single step only, then propagates signals. Only the clicked row is
+highlighted in green. This allows you to manually step through a sequence by setting individual step values
+without resetting or running previous steps.</li>
+</ul>
+</li>
+
+<li>For either button, if you turn off Auto-Propagation in the Simulation menu, it will not propagate the last step in the sequence (or the only step in the combinational test), stopping after setting the input pins. This allows you to single-step the circuit through the propagation of that line.
+</li>
+</ul>
+
+<p><b>Highlighting behavior:</b></p>
+<ul>
+<li>When the Show button is clicked on a combinational test, only that single row is highlighted in green.</li>
+<li>When the Show button is clicked on a sequential test, all sequential steps (seq &gt; 0) up to and including
+the target step are highlighted in green.</li>
+<li>When the Set button is clicked, only the clicked row is highlighted in green, regardless of whether it's
+combinational or sequential.</li>
+<li>Highlighting is cleared when a new vector file is loaded or when the circuit simulator is reset.</li>
+</ul>
+
 <p>
 	<b>上一页：</b> <a href="index.html">测试向量</a> | <b>下一页：</b> <a href="test_vector_file_format.html">测试向量文件格式</a>。
 </p>
 	</div>
 </body>
 </html>
-

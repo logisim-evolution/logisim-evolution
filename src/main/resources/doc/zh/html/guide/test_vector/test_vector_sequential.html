@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html lang="zh">
 <head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<META name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
 	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
 	<META http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -40,40 +40,75 @@ Clock Reset Count &lt;set&gt; &lt;seq&gt;
 <p>在此示例中，前六个测试都具有 <code>&lt;set&gt; 1</code> 和 <code>&lt;seq&gt;</code>
 值 1-6，因此它们形成一个按顺序运行的序列（seq 1，然后是 2，然后是 3，等等），步骤之间不重置。最后一个测试具有 <code>&lt;set&gt; 2</code>，因此它开始一个新序列，并在运行前重置电路。</p>
 
+<p>Note also that <code>Clock</code> could be an input pin here. But it could also be a labeled clock component (see below).</p>
+
 <h2>序列执行规则</h2>
 
 <ul>
-<li>具有相同 <code>&lt;set&gt;</code> 编号的测试属于同一序列</li>
+<li>具有相同 <code>&lt;set&gt;</code> (&gt; 0) 编号的测试属于同一序列</li>
 <li>在每个集合内，测试按其 <code>&lt;seq&gt;</code> 值顺序执行（seq 1，然后是 2，然后是 3，等等）</li>
-<li>同一集合（相同序列 ID）中的测试之间会保持电路状态</li>
+<li>The circuit state is maintained between tests in the same set (same set ID)</li>
 <li>开始新集合（不同的 <code>&lt;set&gt;</code> 编号）时会重置电路</li>
-<li><code>&lt;seq&gt;</code> = 0 或缺失的测试始终是组合的（测试之间重置，即使在同一集合内）</li>
+<li>Tests with <code>&lt;seq&gt;</code> = 0 or missing must also have <code>&lt;set&gt;</code> = 0 or missing and are always combinational (reset between tests)</li>
 </ul>
+
+<h2>Using the Clock</h2>
+
+<p>In a sequential test, the first step begins with a reset. In every step after the first, it begins with a simulation tick. Any Clock components in the simulation will be updated by that tick and their signals will be propagated along with any input pin values for that step. You may add a column to the test to show the ticks. The column will be checked against the clock in the circuit as if it were an output pin to verify it describes the clocks behavior. Here is an example for a simple positive edge-triggered D flip-flop test with a standard clock:</p>
+
+<pre class="code">
+&lt;clk&gt; D Q NotQ  &lt;set&gt; &lt;seq&gt;
+  0   0 0   1     1     1
+  1   0 0   1     1     2
+  0   1 0   1     1     3
+  1   1 1   0     1     4
+  0   1 1   0     1     5
+  1   1 1   0     1     6
+  0   0 1   0     1     7
+</pre>
+
+<p>The <code>&lt;clk&gt;</code> header is a special name for an unlabeled clock component. You may also label the clock and use the label as the column header (see earlier example).</p>
+
+<p>We recommend that when using a Clock, you should not change the values of memory inputs during the same step that the clock makes a triggering transition. Doing so may allow an input signal to reach the component at near the same time as the clock signal giving surprising behavior. In the example above, the D input does not change in steps with a rising edge of the clock.</p>
 
 <h2>完整示例</h2>
 
 <p>以下是结合所有功能的完整示例：</p>
 <pre class="code">
-# 混合组合和时序测试
-A B C Out     &lt;set&gt; &lt;seq&gt;
-0 0 0 0       0     0
-0 0 1 1       0     0
-1 1 0 1       0     0
-0 1 0 0       0     1
-1 1 1 1       0     1
-0 0 0 &lt;DC&gt;    0     1
-1 0 1 &lt;float&gt; 0     2
+# Mixed combinational and sequential tests
+A B C Out     &lt;clk&gt; &lt;set&gt; &lt;seq&gt;
+0 0 0 0       0     0     0
+0 0 1 1       0     0     0
+1 1 0 1       0     1     1
+0 1 0 0       1     1     2
+1 1 1 1       0     1     3
+0 0 0 &lt;DC&gt;    0     2     1
+1 0 1 &lt;float&gt; 1     2     2
 </pre>
 
-<p>在此示例中：
+<p>In this example:</p>
 <ul>
-<li>前三个测试是组合的（seq=0），因此每个测试之间都会重置电路，即使它们共享集合 0。</li>
-<li>接下来的三个测试都具有集合 1 和 seq 值 1-3，因此它们形成一个按顺序运行而不重置的序列。</li>
-<li>最后一个测试具有集合 2，因此它开始一个新序列，并在运行前重置电路。</li>
-<li>第六个测试对输出使用 <code>&lt;DC&gt;</code>，因此任何输出值都会通过。</li>
-<li>最后一个测试对输出使用 <code>&lt;float&gt;</code>，期望一个浮空值。</li>
+<li>Notice how the clock resets to 0 in each line that does a reset.</li>
+<li>The first two tests are combinational (seq=0), so the circuit resets
+between each test, even though they share set 0.</li>
+<li>The next three tests all have set 1 with seq values 1-3, so they form one sequence
+that runs in order without reset between each other only resetting before the first test in the set runs.</li>
+<li>The last test has set 2 seq 1&2, so it starts a new sequence and the circuit resets before it runs but not between tests in the set.</li>
+<li>The sixth test uses <code>&lt;DC&gt;</code> for the output, so any output value passes.</li>
+<li>The last test uses <code>&lt;float&gt;</code> for the output, expecting a floating value.</li>
 </ul>
-</p>
+
+<p> Thus the execution might look like this:</p>
+<ol>
+<li>Reset, set A=0, B=0, C=0 and check that Out==0 and clk=0</li>
+<li>Reset, set A=0, B=0, C=1 and check that Out==1 and clk=0</li>
+<li>Reset, set A=1, B=1, C=0 and check that Out==1 and clk=0</li>
+<li>Tick, set A=0, B=1, C=0 and check that Out==0 and clk=1</li>
+<li>Tick, set A=1, B=1, C=1 and check that Out==1 and clk=0</li>
+<li>Reset, set A=0, B=0, C=0 and not check Out but clk=0</li>
+<li>Tick, set A=1, B=0, C=1 and check that Out is floating (in Logisim this is notated as U) and clk=1</li>
+<li>Test Vector is complete</li>
+</ol>
 
 <p>
 	<b>上一页：</b> <a href="test_vector_special_values.html">特殊值</a> | <b>下一页：</b> <a href="test_vector_cmdline.html">命令行用法</a>。
@@ -81,4 +116,3 @@ A B C Out     &lt;set&gt; &lt;seq&gt;
 
 </body>
 </html>
-

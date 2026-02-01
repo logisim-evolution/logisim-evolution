@@ -3,6 +3,13 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Bug fixes:
+    * Fixed more synchronization issues with simulation tree and propagator.
+    * Fixed INOUT port issue in TTL74245.
+    * Fixed several other minor issues.
+  * Enhanced TestVector for sequential circuits. See user's guide for details.
+  * Enhanced Video resolution choices.
+  * Allow more components to show in State (register) tab.
   * Enhanced Undo and Redo functionality:
     * Added "Undo History" dropdown menu to view and select specific undo actions.
     * Added "Redo History" dropdown menu to view and select specific redo actions.
