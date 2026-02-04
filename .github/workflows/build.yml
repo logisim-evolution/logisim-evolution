@@ -36,11 +36,12 @@ jobs:
       with:
         filters: |
           src:
-            - 'src/**/*.flex'
             - 'src/**/*.java'
             - 'src/**/*.properties'
             - '*.gradle*'
             - 'gradle.properties'
+            - 'gradle/**/*.properties'
+            - 'build.gradle.kts'
 
     - name: "WILL BUILD STEP BE RUN?"
       run: |
