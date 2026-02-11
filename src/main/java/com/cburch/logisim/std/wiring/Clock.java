@@ -147,6 +147,11 @@ public class Clock extends InstanceFactory {
     return dirty;
   }
 
+  public Value getValue(InstanceState inst) {
+    final var instance = (ClockState) inst.getData();
+    return instance.sending;
+  }
+
   public static final Attribute<Integer> ATTR_HIGH =
       new DurationAttribute("highDuration", S.getter("clockHighAttr"), 1, Integer.MAX_VALUE, true);
 
@@ -249,7 +254,7 @@ public class Clock extends InstanceFactory {
     g.setColor(Value.TRUE.getColor());
     g.fillOval(pinx, piny, 3, 3);
   }
-  
+
   private void paintNewShape(
       InstancePainter painter,
       int x,
@@ -329,7 +334,7 @@ public class Clock extends InstanceFactory {
     final var newAppear = painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE).equals(ProbeAttributes.APPEAR_EVOLUTION_NEW);
     final var dir = painter.getAttributeValue(StdAttr.FACING);
     GraphicsUtil.switchToWidth(g, 2);
-    final var shapeColor = new Color(AppPreferences.COMPONENT_COLOR.get()); 
+    final var shapeColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     g.setColor(shapeColor);
     if (newAppear) {
       paintNewShape(painter, x, y, width, height, dir, false);

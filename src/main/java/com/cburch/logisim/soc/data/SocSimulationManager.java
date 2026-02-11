@@ -19,7 +19,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
 import com.cburch.logisim.util.StringUtil;
@@ -230,7 +229,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
 
   public InstanceState getState(Component comp) {
     if (state == null) return null;
-    return new InstanceStateImpl(state, comp);
+    return state.getInstanceState(comp);
   }
 
   @Override

@@ -81,6 +81,7 @@ public class ValueTable extends JPanel {
     final var oldTableWidth = tableWidth;
     final var oldTableHeight = tableHeight;
     final var columns = model == null ? 0 : model.getColumnCount();
+    final int default_width = 24;
 
     if (columnWidth == null || columnWidth.length < columns) columnWidth = new int[columns];
 
@@ -95,9 +96,9 @@ public class ValueTable extends JPanel {
         cellHeight = 16;
         // Initialize column widths with default values
         for (var i = 0; i < columns; i++) {
-          columnWidth[i] = 24;
+          columnWidth[i] = default_width;
         }
-        cellsWidth = 24 * columns;
+        cellsWidth = default_width * columns;
       } else {
         final var headerMetric = g.getFontMetrics(HEAD_FONT);
         final var bodyMetric = g.getFontMetrics(BODY_FONT);
@@ -107,17 +108,22 @@ public class ValueTable extends JPanel {
           // column should be at least as wide as 24, as header, and
           // as formatted value
           final var header = model.getColumnName(i);
-          var cellWidth = Math.max(24, headerMetric.stringWidth(header));
+          var cellWidth = Math.max(default_width, headerMetric.stringWidth(header));
           final var w = model.getColumnValueWidth(i);
 
           if (w != null) {
             final var val =
                 Value.createKnown(
-                    w, (radix == 2 ? 0 : (radix == 10 ? (1 << (w.getWidth() - 1)) : w.getMask())));
+                    w, (radix == 2 ? 0 : (radix == 10 ? (1L << (w.getWidth() - 1)) : w.getMask())));
             final var label = val.toDisplayString(radix);
             cellWidth = Math.max(cellWidth, bodyMetric.stringWidth(label));
           }
-          
+
+          final var special = model.specialColumnEntry(i);
+          if (special != null) {
+            cellWidth = Math.max(cellWidth, bodyMetric.stringWidth(special));
+          }
+
           // For button columns, ensure width is at least as wide as button text
           if (model.isButtonColumn(i)) {
             // Button columns typically have "Show" or "Set" text, ensure adequate width
@@ -154,10 +160,10 @@ public class ValueTable extends JPanel {
     if (columnWidth == null || model == null) {
       computePreferredSize();
     }
-    
+
     var left = Math.max(0, (width - tableWidth) / 2);
     if (x < left || x >= left + tableWidth) return -1;
-    
+
     var currentX = left + COLUMN_SEP;
     final var columns = model.getColumnCount();
 
@@ -168,11 +174,11 @@ public class ValueTable extends JPanel {
     for (var i = 0; i < columns; i++) {
       final var cellWidth = columnWidth[i];
       final var nextX = currentX + cellWidth + COLUMN_SEP;
-      
+
       if (x >= currentX && x < nextX) {
         return i;
       }
-      
+
       currentX = nextX;
     }
     return -1;
@@ -251,13 +257,15 @@ public class ValueTable extends JPanel {
     int getRowCount();
 
     void getRowData(int firstRow, int rowCount, Cell[][] rowData);
-    
+
     // Optional method for handling row button clicks
     // Returns true if the column is a button column that should handle clicks
     default boolean isButtonColumn(int col) {
       return false;
     }
-    
+
+    String specialColumnEntry(int i);
+
     // Called when a button in the button column is clicked
     // row is the display row index (after sorting)
     // col is the column index of the button that was clicked
@@ -266,13 +274,13 @@ public class ValueTable extends JPanel {
       // Default: call the old method for backward compatibility
       handleButtonClick(row, modifiersEx);
     }
-    
+
     // Called when a button in the button column is clicked (deprecated, use handleButtonClick(int, int, int) instead)
     @Deprecated
     default void handleButtonClick(int row, int modifiersEx) {
       // Default: do nothing (ignore modifiers for backward compatibility)
     }
-    
+
     // Called when a button in the button column is clicked (deprecated, use handleButtonClick(int, int) instead)
     @Deprecated
     @SuppressWarnings("unused")
@@ -307,26 +315,26 @@ public class ValueTable extends JPanel {
         @Override
         public void mouseClicked(MouseEvent e) {
           if (model == null) return;
-          
+
           // Get the viewport to convert coordinates if needed
           java.awt.Point viewPos = scrollPane.getViewport().getViewPosition();
           int x = e.getX(); // X is relative to TableBody panel, no adjustment needed
           int y = e.getY() + viewPos.y; // Adjust Y for vertical scroll position
-          
+
           // Refresh data to ensure rowStart is current
           refreshData(y, y + cellHeight);
-          
+
           int col = findColumn(x, getSize().width);
           if (col < 0) return;
-          
+
           // Check if this is a button column
           if (model.isButtonColumn(col)) {
             // Calculate row from Y coordinate (now adjusted for scroll)
             if (y < 0) return;
-            
+
             // Calculate absolute row from adjusted Y
             int absoluteRow = y / cellHeight;
-            
+
             // Check if row is within bounds
             if (absoluteRow >= 0 && absoluteRow < model.getRowCount()) {
               model.handleButtonClick(absoluteRow, col, e.getModifiersEx());
@@ -334,7 +342,7 @@ public class ValueTable extends JPanel {
             }
             return;
           }
-          
+
           // Otherwise, handle radix change for other columns
           if (col >= 0) model.changeColumnValueRadix(col);
         }

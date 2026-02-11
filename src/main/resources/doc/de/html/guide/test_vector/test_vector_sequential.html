@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html lang="de">
 <head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<META name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
 	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
 	<META http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -50,42 +50,75 @@ Clock Reset Count &lt;set&gt; &lt;seq&gt;
 ohne Zurücksetzen zwischen den Schritten. Der letzte Test hat <code>&lt;set&gt; 2</code>, sodass er eine
 neue Sequenz startet und die Schaltung vor der Ausführung zurückgesetzt wird.</p>
 
+<p>Note also that <code>Clock</code> could be an input pin here. But it could also be a labeled clock component (see below).</p>
+
 <h2>Sequenz-Ausführungsregeln</h2>
 
 <ul>
-<li>Tests mit derselben <code>&lt;set&gt;</code>-Nummer gehören zur gleichen Sequenz</li>
+<li>Tests mit derselben <code>&lt;set&gt;</code>-Nummer (&gt; 0) gehören zur gleichen Sequenz</li>
 <li>Innerhalb jedes Sets werden Tests in der Reihenfolge ihres <code>&lt;seq&gt;</code>-Werts ausgeführt (seq 1, dann 2, dann 3, usw.)</li>
-<li>Der Schaltungszustand wird zwischen Tests im gleichen Set (gleiche Sequenz-ID) erhalten</li>
+<li>Der Schaltungszustand wird zwischen Tests im gleichen Set (gleiche Set-ID) erhalten</li>
 <li>Die Schaltung wird zurückgesetzt, wenn ein neues Set gestartet wird (andere <code>&lt;set&gt;</code>-Nummer)</li>
-<li>Tests mit <code>&lt;seq&gt;</code> = 0 oder fehlend sind immer kombinatorisch (Zurücksetzen zwischen Tests, auch innerhalb desselben Sets)</li>
+<li>Tests with <code>&lt;seq&gt;</code> = 0 or missing must also have <code>&lt;set&gt;</code> = 0 or missing and are always combinational (reset between tests)</li>
 </ul>
+
+<h2>Using the Clock</h2>
+
+<p>In a sequential test, the first step begins with a reset. In every step after the first, it begins with a simulation tick. Any Clock components in the simulation will be updated by that tick and their signals will be propagated along with any input pin values for that step. You may add a column to the test to show the ticks. The column will be checked against the clock in the circuit as if it were an output pin to verify it describes the clocks behavior. Here is an example for a simple positive edge-triggered D flip-flop test with a standard clock:</p>
+
+<pre class="code">
+&lt;clk&gt; D Q NotQ  &lt;set&gt; &lt;seq&gt;
+  0   0 0   1     1     1
+  1   0 0   1     1     2
+  0   1 0   1     1     3
+  1   1 1   0     1     4
+  0   1 1   0     1     5
+  1   1 1   0     1     6
+  0   0 1   0     1     7
+</pre>
+
+<p>The <code>&lt;clk&gt;</code> header is a special name for an unlabeled clock component. You may also label the clock and use the label as the column header (see earlier example).</p>
+
+<p>We recommend that when using a Clock, you should not change the values of memory inputs during the same step that the clock makes a triggering transition. Doing so may allow an input signal to reach the component at near the same time as the clock signal giving surprising behavior. In the example above, the D input does not change in steps with a rising edge of the clock.</p>
 
 <h2>Vollständiges Beispiel</h2>
 
 <p>Hier ist ein vollständiges Beispiel, das alle Funktionen kombiniert:</p>
 <pre class="code">
 # Mixed combinational and sequential tests
-A B C Out     &lt;set&gt; &lt;seq&gt;
-0 0 0 0       0     0
-0 0 1 1       0     0
-1 1 0 1       0     0
-0 1 0 0       0     1
-1 1 1 1       0     1
-0 0 0 &lt;DC&gt;    0     1
-1 0 1 &lt;float&gt; 0     2
+A B C Out     &lt;clk&gt; &lt;set&gt; &lt;seq&gt;
+0 0 0 0       0     0     0
+0 0 1 1       0     0     0
+1 1 0 1       0     1     1
+0 1 0 0       1     1     2
+1 1 1 1       0     1     3
+0 0 0 &lt;DC&gt;    0     2     1
+1 0 1 &lt;float&gt; 1     2     2
 </pre>
 
-<p>In diesem Beispiel:
+<p>In diesem Beispiel:</p>
 <ul>
-<li>Die ersten drei Tests sind kombinatorisch (seq=0), sodass die Schaltung zwischen
-jedem Test zurückgesetzt wird, obwohl sie Set 0 teilen.</li>
-<li>Die nächsten drei Tests haben alle Set 1 mit seq-Werten 1-3, sodass sie eine Sequenz bilden,
-die in Reihenfolge ohne Zurücksetzen läuft.</li>
-<li>Der letzte Test hat Set 2, sodass er eine neue Sequenz startet und die Schaltung vor der Ausführung zurückgesetzt wird.</li>
-<li>Der sechste Test verwendet <code>&lt;DC&gt;</code> für die Ausgabe, sodass jeder Ausgabewert besteht.</li>
-<li>Der letzte Test verwendet <code>&lt;float&gt;</code> für die Ausgabe und erwartet einen schwebenden Wert.</li>
+<li>Notice how the clock resets to 0 in each line that does a reset.</li>
+<li>The first two tests are combinational (seq=0), so the circuit resets
+between each test, even though they share set 0.</li>
+<li>The next three tests all have set 1 with seq values 1-3, so they form one sequence
+that runs in order without reset between each other only resetting before the first test in the set runs.</li>
+<li>The last test has set 2 seq 1&2, so it starts a new sequence and the circuit resets before it runs but not between tests in the set.</li>
+<li>The sixth test uses <code>&lt;DC&gt;</code> for the output, so any output value passes.</li>
+<li>The last test uses <code>&lt;float&gt;</code> for the output, expecting a floating value.</li>
 </ul>
-</p>
+
+<p> Thus the execution might look like this:</p>
+<ol>
+<li>Reset, set A=0, B=0, C=0 and check that Out==0 and clk=0</li>
+<li>Reset, set A=0, B=0, C=1 and check that Out==1 and clk=0</li>
+<li>Reset, set A=1, B=1, C=0 and check that Out==1 and clk=0</li>
+<li>Tick, set A=0, B=1, C=0 and check that Out==0 and clk=1</li>
+<li>Tick, set A=1, B=1, C=1 and check that Out==1 and clk=0</li>
+<li>Reset, set A=0, B=0, C=0 and not check Out but clk=0</li>
+<li>Tick, set A=1, B=0, C=1 and check that Out is floating (in Logisim this is notated as U) and clk=1</li>
+<li>Test Vector is complete</li>
+</ol>
 
 <p>
 	<b>Zurück:</b> <a href="test_vector_special_values.html">Spezielle Werte</a> | <b>Weiter:</b> <a href="test_vector_cmdline.html">Kommandozeilen-Verwendung</a>.
@@ -93,4 +126,3 @@ die in Reihenfolge ohne Zurücksetzen läuft.</li>
 
 </body>
 </html>
-
