@@ -26,7 +26,7 @@ public class DualRamState extends MemState implements AttributeListener {
   private ClockState clockState0;
   private ClockState clockState1;
 
-  private long currentAddress1 = -1;
+  private MemState stateB;
 
   DualRamState(Instance parent, MemContents contents, MemListener listener) {
     super(contents);
@@ -36,10 +36,16 @@ public class DualRamState extends MemState implements AttributeListener {
     this.clockState0 = new ClockState();
     this.clockState1 = new ClockState();
 
+    this.stateB = new MemState(contents);
+
     if (parent != null) {
       parent.getAttributeSet().addAttributeListener(this);
     }
     contents.addHexModelListener(listener);
+  }
+
+  public MemState getPortBState() {
+    return stateB;
   }
 
   @Override
@@ -56,8 +62,7 @@ public class DualRamState extends MemState implements AttributeListener {
     ret.parent = null;
     ret.clockState0 = this.clockState0.clone();
     ret.clockState1 = this.clockState1.clone();
-    ret.currentAddress1 = this.currentAddress1;
-    ret.getContents().addHexModelListener(listener);
+    ret.stateB = this.stateB.clone();
     return ret;
   }
 
@@ -82,18 +87,33 @@ public class DualRamState extends MemState implements AttributeListener {
     }
   }
 
+  @Override
+  public long getAddressAt(int x, int y) {
+    long addrA = super.getAddressAt(x, y);
+    if (addrA != -1)
+      return addrA;
+    return stateB.getAddressAt(x, y);
+  }
+
   public long getCurrent(int portIndex) {
     if (portIndex == 0) {
       return super.getCurrent();
     }
-    return currentAddress1;
+    return stateB.getCurrent();
   }
 
   public void setCurrent(int portIndex, long val) {
     if (portIndex == 0) {
       super.setCurrent(val);
     } else {
-      currentAddress1 = val;
+      stateB.setCurrent(val);
     }
+  }
+
+  public void scrollToShow(int portIndex, long addr) {
+    if (portIndex == 0)
+      super.scrollToShow(addr);
+    else
+      stateB.scrollToShow(addr);
   }
 }

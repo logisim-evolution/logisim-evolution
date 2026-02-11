@@ -285,16 +285,18 @@ public class DualRamAppearance {
     if (painter.getShowState()) {
       MemState memState = (MemState) inst.getData(painter.getCircuitState());
       if (memState instanceof DualRamState) {
-        DualRamState state = (DualRamState) memState;
-        int highlightCount = getNrToHighlight(attrs);
+        DualRamState stateA = (DualRamState) memState;
+        MemState stateB = stateA.getPortBState();
 
+        int highlightCount = getNrToHighlight(attrs);
         int totalHeight = bds.getHeight() - 20;
         int halfHeight = totalHeight / 2;
 
-        long addrA = state.getCurrent(0);
-        state.setCurrent(0, addrA);
-        state.scrollToShow(addrA);
-        state.paint(
+        long addrA = stateA.getCurrent(0);
+        stateA.setCurrent(addrA);
+        stateA.scrollToShow(addrA);
+
+        stateA.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
@@ -304,28 +306,16 @@ public class DualRamAppearance {
             halfHeight,
             highlightCount);
 
-        long addrB = state.getCurrent(1);
-        state.setCurrent(0, addrB);
-        state.scrollToShow(addrB);
+        long addrB = stateA.getCurrent(1);
+        stateB.setCurrent(addrB);
+        stateB.scrollToShow(addrB);
 
-        state.paint(
+        stateB.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
             30,
             15 + halfHeight,
-            bds.getWidth() - 60,
-            halfHeight,
-            highlightCount);
-
-        state.setCurrent(0, addrA);
-        state.scrollToShow(addrA);
-        state.paint(
-            painter.getGraphics(),
-            bds.getX(),
-            bds.getY(),
-            30,
-            15,
             bds.getWidth() - 60,
             halfHeight,
             highlightCount);
@@ -358,22 +348,23 @@ public class DualRamAppearance {
         type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
             + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
         bds.getX() + (Mem.SymbolWidth / 2) + 20, bds.getY() + 6);
+
     /* draw the contents */
     if (painter.getShowState()) {
       final var memState = inst.getData(painter.getCircuitState());
 
       if (memState instanceof DualRamState) {
-        DualRamState state = (DualRamState) memState;
+        DualRamState stateA = (DualRamState) memState;
+        MemState stateB = stateA.getPortBState();
         int highlightCount = getNrToHighlight(attrs);
-
         int totalAvailHeight = bds.getHeight() - 10 - getControlHeight(attrs);
         int boxHeight = (totalAvailHeight / 2) - 5;
 
-        long addrA = state.getCurrent(0);
+        long addrA = stateA.getCurrent(0);
+        stateA.setCurrent(addrA);
+        stateA.scrollToShow(addrA);
 
-        state.setCurrent(0, addrA);
-        state.scrollToShow(addrA);
-        state.paint(
+        stateA.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
@@ -383,10 +374,11 @@ public class DualRamAppearance {
             boxHeight,
             highlightCount);
 
-        long addrB = state.getCurrent(1);
-        state.setCurrent(0, addrB);
-        state.scrollToShow(addrB);
-        state.paint(
+        long addrB = stateA.getCurrent(1);
+        stateB.setCurrent(addrB);
+        stateB.scrollToShow(addrB);
+
+        stateB.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
@@ -396,17 +388,8 @@ public class DualRamAppearance {
             boxHeight,
             highlightCount);
 
-        state.setCurrent(0, addrA);
-        state.scrollToShow(addrA);
-        state.paint(
-            painter.getGraphics(),
-            bds.getX(),
-            bds.getY(),
-            50,
-            getControlHeight(attrs) + 5,
-            bds.getWidth() - 100,
-            boxHeight,
-            highlightCount);
+        stateA.setCurrent(addrA);
+        stateA.scrollToShow(addrA);
       }
     }
   }
