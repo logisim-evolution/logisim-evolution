@@ -423,6 +423,7 @@ public class DualRamAppearance {
       if (!async)
         result += 10;
       result += (getNrLEPorts(attrs) / 2) * 10;
+      result += (getNrBEPorts(attrs) / 2) * 10;
     }
     return result * 2;
   }
@@ -693,19 +694,25 @@ public class DualRamAppearance {
 
   private static Port getBEPort(int portIndex, AttributeSet attrs) {
     final var nrBEs = getNrBEPorts(attrs);
-    if (nrBEs == 0 || portIndex < 0 || portIndex >= nrBEs)
+    if (nrBEs == 0 || portIndex < 0)
+      return null;
+    if (portIndex >= nrBEs)
       return null;
 
+    final boolean isClassic = classicAppearance(attrs);
+    final boolean useByteEnables = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES);
     int offsetB = getControlHeight(attrs) / 2 - 10;
     int splitIndex = nrBEs / 2;
-
     int leOffset = (getNrLEPorts(attrs) / 2) * 10;
-
     int relativeIndex = portIndex % splitIndex;
-    var ypos = 60 + leOffset + (splitIndex - relativeIndex - 1) * 10;
+    var ypos = 80 + leOffset + (splitIndex - relativeIndex - 1) * 10;
 
-    if (portIndex >= splitIndex)
-      ypos += offsetB;
+    if (!isClassic) {
+      if (portIndex >= splitIndex)
+        ypos += offsetB;
+    } else if (portIndex >= splitIndex && useByteEnables) {
+      ypos += getClassicPortBoffset(attrs);
+    }
 
     final var result = new Port(0, ypos, Port.INPUT, 1);
     switch (portIndex % 4) {
