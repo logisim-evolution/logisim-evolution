@@ -33,21 +33,25 @@ public class DualRamAppearance {
     int rawOffset = totalHeight / 2;
     return ((rawOffset + 5) / 10) * 10;
   }
-  
+
   public static int getNrAddrPorts(AttributeSet attrs) {
     return 2;
   }
 
   public static int getNrDataInPorts(AttributeSet attrs) {
-    if (!seperatedBus(attrs)) return 0;
+    if (!seperatedBus(attrs))
+      return 0;
     return getNrDataOutPorts(attrs);
   }
 
   public static int getNrDataOutPorts(AttributeSet attrs) {
     if (!attrs.containsAttribute(Mem.ENABLES_ATTR) || attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 4;
-      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 8;
-      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 16;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL))
+        return 4;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD))
+        return 8;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO))
+        return 16;
     }
     return 2;
   }
@@ -57,7 +61,8 @@ public class DualRamAppearance {
   }
 
   public static int getNrOEPorts(AttributeSet attrs) {
-    if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
+    if (!attrs.containsAttribute(Mem.ENABLES_ATTR))
+      return 0;
     if (!seperatedBus(attrs) || (seperatedBus(attrs) && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES)))
       return 2;
     else
@@ -65,7 +70,8 @@ public class DualRamAppearance {
   }
 
   public static int getNrWEPorts(AttributeSet attrs) {
-    if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
+    if (!attrs.containsAttribute(Mem.ENABLES_ATTR))
+      return 0;
     return 2;
   }
 
@@ -80,7 +86,8 @@ public class DualRamAppearance {
   }
 
   public static int getNrLEPorts(AttributeSet attrs) {
-    if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
+    if (!attrs.containsAttribute(Mem.ENABLES_ATTR))
+      return 0;
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL))
         return 4;
@@ -93,14 +100,15 @@ public class DualRamAppearance {
   }
 
   public static int getNrBEPorts(AttributeSet attrs) {
-    if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
+    if (!attrs.containsAttribute(Mem.ENABLES_ATTR))
+      return 0;
     final var async = !synchronous(attrs);
 
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES)
         && attrs.containsAttribute(DualRamAttributes.ATTR_ByteEnables)
         && attrs.getValue(DualRamAttributes.ATTR_ByteEnables).equals(DualRamAttributes.BUS_WITH_BYTEENABLES)
         && !async) {
-      
+
       final var nrBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
       int countPerPort = (nrBits < 9) ? 0 : (nrBits + 7) >> 3;
       return countPerPort * 2;
@@ -116,16 +124,18 @@ public class DualRamAppearance {
 
   public static int getNrOfPorts(AttributeSet attrs) {
     return getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs) + getNrWEPorts(attrs)
-            + getNrClkPorts(attrs) + getNrLEPorts(attrs) + getNrBEPorts(attrs) + getNrClrPorts(attrs);
+        + getNrClkPorts(attrs) + getNrLEPorts(attrs) + getNrBEPorts(attrs) + getNrClrPorts(attrs);
   }
 
   public static int getAddrIndex(int portIndex, AttributeSet attrs) {
-    if (portIndex < 2) return portIndex; 
+    if (portIndex < 2)
+      return portIndex;
     return -1;
   }
 
   public static int getDataInIndex(int portIndex, AttributeSet attrs) {
-    if (!seperatedBus(attrs)) return getDataOutIndex(portIndex, attrs);
+    if (!seperatedBus(attrs))
+      return getDataOutIndex(portIndex, attrs);
     int portOffset = getNrAddrPorts(attrs) + getNrDataOutPorts(attrs);
     return getDataOffset(portOffset, portIndex, attrs);
   }
@@ -138,50 +148,61 @@ public class DualRamAppearance {
   public static int getOEIndex(int portIndex, AttributeSet attrs) {
     int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs);
     int nrOEs = getNrOEPorts(attrs);
-    if (nrOEs == 0 || portIndex < 0) return -1;
-    if (portIndex < nrOEs) return portOffset + portIndex;
+    if (nrOEs == 0 || portIndex < 0)
+      return -1;
+    if (portIndex < nrOEs)
+      return portOffset + portIndex;
     return -1;
   }
 
   public static int getWEIndex(int portIndex, AttributeSet attrs) {
     int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs);
     int nrWEs = getNrWEPorts(attrs);
-    if (nrWEs == 0 || portIndex < 0) return -1;
-    if (portIndex < nrWEs) return portOffset + portIndex;
+    if (nrWEs == 0 || portIndex < 0)
+      return -1;
+    if (portIndex < nrWEs)
+      return portOffset + portIndex;
     return -1;
   }
 
   public static int getClkIndex(int portIndex, AttributeSet attrs) {
     int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs) + getNrWEPorts(attrs);
     if (getNrClkPorts(attrs) == 0 || portIndex < 0 || portIndex >= getNrClkPorts(attrs)) {
-        return -1;
+      return -1;
     }
     return portOffset + portIndex;
   }
 
   public static int getLEIndex(int portIndex, AttributeSet attrs) {
-    int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs) + getNrWEPorts(attrs) + getNrClkPorts(attrs);
+    int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs) + getNrWEPorts(attrs)
+        + getNrClkPorts(attrs);
     int nrLEs = getNrLEPorts(attrs);
-    if (nrLEs == 0 || portIndex < 0) return -1;
-    if (portIndex < nrLEs) return portOffset + portIndex;
+    if (nrLEs == 0 || portIndex < 0)
+      return -1;
+    if (portIndex < nrLEs)
+      return portOffset + portIndex;
     return -1;
   }
 
   public static int getBEIndex(int portIndex, AttributeSet attrs) {
     int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs) + getNrWEPorts(attrs)
-                      + getNrClkPorts(attrs) + getNrLEPorts(attrs);
+        + getNrClkPorts(attrs) + getNrLEPorts(attrs);
     int nrBEs = getNrBEPorts(attrs);
-    if (nrBEs == 0 || portIndex < 0) return -1;
-    if (portIndex < nrBEs) return portOffset + portIndex;
+    if (nrBEs == 0 || portIndex < 0)
+      return -1;
+    if (portIndex < nrBEs)
+      return portOffset + portIndex;
     return -1;
   }
 
   public static int getClrIndex(int portIndex, AttributeSet attrs) {
     int portOffset = getNrAddrPorts(attrs) + getNrDataPorts(attrs) + getNrOEPorts(attrs) + getNrWEPorts(attrs)
-                    + getNrClkPorts(attrs) + getNrLEPorts(attrs) + getNrBEPorts(attrs);
+        + getNrClkPorts(attrs) + getNrLEPorts(attrs) + getNrBEPorts(attrs);
     int nrClrs = getNrClrPorts(attrs);
-    if (nrClrs == 0 || portIndex < 0) return -1;
-    if (portIndex < nrClrs) return portOffset + portIndex;
+    if (nrClrs == 0 || portIndex < 0)
+      return -1;
+    if (portIndex < nrClrs)
+      return portOffset + portIndex;
     return -1;
   }
 
@@ -212,19 +233,19 @@ public class DualRamAppearance {
   private static int getExtraHeight(AttributeSet attrs) {
     int portsLen = (getNrLEPorts(attrs) + 1) * 10;
     if (classicAppearance(attrs)) {
-        return Math.max(70, portsLen);
+      return Math.max(70, portsLen);
     } else {
-        int dataLen = attrs.getValue(Mem.DATA_ATTR).getWidth() * 40;
-        return Math.max(dataLen, portsLen);
+      int dataLen = attrs.getValue(Mem.DATA_ATTR).getWidth() * 40;
+      return Math.max(dataLen, portsLen);
     }
-}
+  }
 
   public static Bounds getBounds(AttributeSet attrs) {
     int xoffset = (seperatedBus(attrs)) ? 40 : 50;
     int widthOffset = classicAppearance(attrs) ? 40 : xoffset;
-    int len = getExtraHeight(attrs); 
+    int len = getExtraHeight(attrs);
     int totalHeight = getControlHeight(attrs) + len;
-    return Bounds.create(0, 0, Mem.SymbolWidth + widthOffset, totalHeight); 
+    return Bounds.create(0, 0, Mem.SymbolWidth + widthOffset, totalHeight);
   }
 
   public static boolean classicAppearance(AttributeSet attrs) {
@@ -237,7 +258,7 @@ public class DualRamAppearance {
     final var bds = painter.getBounds();
     final var inst = painter.getInstance();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    
+
     /* draw label */
     final var Label = painter.getAttributeValue(StdAttr.LABEL);
     if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
@@ -246,68 +267,68 @@ public class DualRamAppearance {
       GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
       g.setFont(font);
     }
-    
+
     /* draw body */
     painter.drawBounds();
-    
+
     /* draw connections */
     drawConnections(inst, attrs, painter);
-    
+
     /* draw the size */
-    final var type = "Dual Port RAM "; 
+    final var type = "Dual Port RAM ";
     GraphicsUtil.drawCenteredText(g,
-            type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
-                + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
-            bds.getX() + (Mem.SymbolWidth / 2) + 20,
-            bds.getY() + 6);
-    /* draw the contents */            
+        type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
+            + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
+        bds.getX() + (Mem.SymbolWidth / 2) + 20,
+        bds.getY() + 6);
+    /* draw the contents */
     if (painter.getShowState()) {
       MemState memState = (MemState) inst.getData(painter.getCircuitState());
       if (memState instanceof DualRamState) {
-          DualRamState state = (DualRamState) memState;
-          int highlightCount = getNrToHighlight(attrs);
+        DualRamState state = (DualRamState) memState;
+        int highlightCount = getNrToHighlight(attrs);
 
-          int totalHeight = bds.getHeight() - 20; 
-          int halfHeight = totalHeight / 2;
-          
-          long addrA = state.getCurrent(0);
-          state.setCurrent(0, addrA); 
-          state.scrollToShow(addrA);
-          state.paint(
-            painter.getGraphics(),
-            bds.getX(),
-            bds.getY(),
-            30, 
-            15, 
-            bds.getWidth() - 60,
-            halfHeight,
-            highlightCount); 
+        int totalHeight = bds.getHeight() - 20;
+        int halfHeight = totalHeight / 2;
 
-          long addrB = state.getCurrent(1);
-          state.setCurrent(0, addrB); 
-          state.scrollToShow(addrB);
-          
-          state.paint(
+        long addrA = state.getCurrent(0);
+        state.setCurrent(0, addrA);
+        state.scrollToShow(addrA);
+        state.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
-            30, 
-            15 + halfHeight, 
+            30,
+            15,
             bds.getWidth() - 60,
             halfHeight,
-            highlightCount); 
-            
-          state.setCurrent(0, addrA); 
-          state.scrollToShow(addrA);
-          state.paint(
+            highlightCount);
+
+        long addrB = state.getCurrent(1);
+        state.setCurrent(0, addrB);
+        state.scrollToShow(addrB);
+
+        state.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
-            30, 
-            15, 
+            30,
+            15 + halfHeight,
             bds.getWidth() - 60,
             halfHeight,
-            highlightCount); 
+            highlightCount);
+
+        state.setCurrent(0, addrA);
+        state.scrollToShow(addrA);
+        state.paint(
+            painter.getGraphics(),
+            bds.getX(),
+            bds.getY(),
+            30,
+            15,
+            bds.getWidth() - 60,
+            halfHeight,
+            highlightCount);
       }
     }
   }
@@ -334,55 +355,55 @@ public class DualRamAppearance {
     /* draw the size */
     final var type = "Dual Port RAM ";
     GraphicsUtil.drawCenteredText(g,
-            type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
-                + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
-            bds.getX() + (Mem.SymbolWidth / 2) + 20, bds.getY() + 6);
+        type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
+            + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
+        bds.getX() + (Mem.SymbolWidth / 2) + 20, bds.getY() + 6);
     /* draw the contents */
-   if (painter.getShowState()) {
+    if (painter.getShowState()) {
       final var memState = inst.getData(painter.getCircuitState());
-      
+
       if (memState instanceof DualRamState) {
-         DualRamState state = (DualRamState) memState;
-         int highlightCount = getNrToHighlight(attrs);
+        DualRamState state = (DualRamState) memState;
+        int highlightCount = getNrToHighlight(attrs);
 
-         int totalAvailHeight = bds.getHeight() - 10 - getControlHeight(attrs);
-         int boxHeight = (totalAvailHeight / 2) - 5;
-         
-         long addrA = state.getCurrent(0);
-         
-         state.setCurrent(0, addrA); 
-         state.scrollToShow(addrA);
-         state.paint(
+        int totalAvailHeight = bds.getHeight() - 10 - getControlHeight(attrs);
+        int boxHeight = (totalAvailHeight / 2) - 5;
+
+        long addrA = state.getCurrent(0);
+
+        state.setCurrent(0, addrA);
+        state.scrollToShow(addrA);
+        state.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
             50,
-            getControlHeight(attrs) + 5, 
+            getControlHeight(attrs) + 5,
             bds.getWidth() - 100,
             boxHeight,
             highlightCount);
 
-         long addrB = state.getCurrent(1);
-         state.setCurrent(0, addrB); 
-         state.scrollToShow(addrB);
-         state.paint(
+        long addrB = state.getCurrent(1);
+        state.setCurrent(0, addrB);
+        state.scrollToShow(addrB);
+        state.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
             50,
-            getControlHeight(attrs) + 5 + boxHeight + 10, 
+            getControlHeight(attrs) + 5 + boxHeight + 10,
             bds.getWidth() - 100,
             boxHeight,
             highlightCount);
-          
-         state.setCurrent(0, addrA); 
-         state.scrollToShow(addrA);
-         state.paint(
+
+        state.setCurrent(0, addrA);
+        state.scrollToShow(addrA);
+        state.paint(
             painter.getGraphics(),
             bds.getX(),
             bds.getY(),
             50,
-            getControlHeight(attrs) + 5, 
+            getControlHeight(attrs) + 5,
             bds.getWidth() - 100,
             boxHeight,
             highlightCount);
@@ -393,12 +414,14 @@ public class DualRamAppearance {
   public static int getControlHeight(AttributeSet attrs) {
     var result = 60;
     if (attrs.containsAttribute(Mem.ENABLES_ATTR) && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-      if (!classicAppearance(attrs)) result += 30;
+      if (!classicAppearance(attrs))
+        result += 30;
       result += (getNrLEPorts(attrs) / 2) * 10;
     } else if (attrs.containsAttribute(StdAttr.TRIGGER)) {
       final var async = !synchronous(attrs);
       result += 20;
-      if (!async) result += 10;
+      if (!async)
+        result += 10;
       result += (getNrLEPorts(attrs) / 2) * 10;
     }
     return result * 2;
@@ -408,47 +431,52 @@ public class DualRamAppearance {
   private static int getNrToHighlight(AttributeSet attrs) {
     if (attrs.containsAttribute(Mem.ENABLES_ATTR) && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES))
       return 1;
-    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
-    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
-    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL))
+      return 2;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD))
+      return 4;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO))
+      return 8;
     return 1;
   }
 
   private static int getDataOffset(int portOffset, int portIndex, AttributeSet attrs) {
-    boolean checkLines = !attrs.containsAttribute(Mem.ENABLES_ATTR) 
-                         || attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
-    
+    boolean checkLines = !attrs.containsAttribute(Mem.ENABLES_ATTR)
+        || attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
+
     if (checkLines && portIndex < getNrDataOutPorts(attrs)) {
-         return portOffset + portIndex;
+      return portOffset + portIndex;
     }
-    
-    if (portIndex == 0) return portOffset;
-    if (portIndex == 1) return portOffset + 1;
-    
+
+    if (portIndex == 0)
+      return portOffset;
+    if (portIndex == 1)
+      return portOffset + 1;
+
     return -1;
   }
 
   private static Port getAddrPort(int portIndex, AttributeSet attrs) {
-    final var nrAddrs = getNrAddrPorts(attrs); 
-    if (nrAddrs == 0 || portIndex < 0 || portIndex >= nrAddrs) return null;
+    final var nrAddrs = getNrAddrPorts(attrs);
+    if (nrAddrs == 0 || portIndex < 0 || portIndex >= nrAddrs)
+      return null;
 
     var totalHeight = getControlHeight(attrs);
     var singleRamHeight = totalHeight / 2;
-    
+
     var ypos = 0;
     final var classic = classicAppearance(attrs);
 
     if (!classic) {
-        int offsetB = singleRamHeight - 10;
-        ypos = (portIndex == 0) ? 20 : 20 + offsetB;
-    } 
-    else {
-        int splitIndex = nrAddrs / 2;
-        ypos = 10; 
-        if (portIndex >= splitIndex) 
-            ypos += getClassicPortBoffset(attrs);
+      int offsetB = singleRamHeight - 10;
+      ypos = (portIndex == 0) ? 20 : 20 + offsetB;
+    } else {
+      int splitIndex = nrAddrs / 2;
+      ypos = 10;
+      if (portIndex >= splitIndex)
+        ypos += getClassicPortBoffset(attrs);
     }
-    
+
     final var result = new Port(0, ypos, Port.INPUT, attrs.getValue(Mem.ADDR_ATTR));
     result.setToolTip(S.getter("memAddrTip"));
     return result;
@@ -456,60 +484,75 @@ public class DualRamAppearance {
 
   private static Port getDataInPort(int portIndex, AttributeSet attrs) {
     final var nrDins = getNrDataInPorts(attrs);
-    if (nrDins == 0 || portIndex < 0 || portIndex >= nrDins) return null;
-    
+    if (nrDins == 0 || portIndex < 0 || portIndex >= nrDins)
+      return null;
+
     var totalHeight = getControlHeight(attrs);
-    int split = nrDins / 2; 
+    int split = nrDins / 2;
     boolean isClassic = classicAppearance(attrs);
 
     var ypos = isClassic ? (totalHeight / 2) : totalHeight;
 
     final var bits = attrs.getValue(Mem.DATA_ATTR);
-    if (!isClassic && bits.getWidth() == 1) ypos += 10;
+    if (!isClassic && bits.getWidth() == 1)
+      ypos += 10;
 
     ypos += (portIndex % split) * 10;
 
     if (portIndex >= split) {
-        ypos += isClassic ? getClassicPortBoffset(attrs) : (bits.getWidth() * 20);
-    }  
-    
+      ypos += isClassic ? getClassicPortBoffset(attrs) : (bits.getWidth() * 20);
+    }
+
     final var result = new Port(0, ypos, Port.INPUT, bits);
-    
+
     switch (portIndex) {
       case 0:
-        if (nrDins == 1) result.setToolTip(S.getter("ramInTip"));
-        else result.setToolTip(S.getter("ramInTip0"));
+        if (nrDins == 1)
+          result.setToolTip(S.getter("ramInTip"));
+        else
+          result.setToolTip(S.getter("ramInTip0"));
         break;
-      case 1: result.setToolTip(S.getter("ramInTip1")); break;
-      case 2: result.setToolTip(S.getter("ramInTip2")); break;
-      case 3: result.setToolTip(S.getter("ramInTip3")); break;
+      case 1:
+        result.setToolTip(S.getter("ramInTip1"));
+        break;
+      case 2:
+        result.setToolTip(S.getter("ramInTip2"));
+        break;
+      case 3:
+        result.setToolTip(S.getter("ramInTip3"));
+        break;
     }
     return result;
   }
 
   private static Port getDataOutPort(int portIndex, AttributeSet attrs, int xpos) {
     final var nrDouts = getNrDataOutPorts(attrs);
-    if (nrDouts == 0 || portIndex < 0 || portIndex >= nrDouts) return null;
+    if (nrDouts == 0 || portIndex < 0 || portIndex >= nrDouts)
+      return null;
     final var totalHeight = getControlHeight(attrs);
     final int splitIndex = nrDouts / 2;
     final boolean isClassic = classicAppearance(attrs);
     final var bits = attrs.getValue(Mem.DATA_ATTR);
 
-    var portType = (!seperatedBus(attrs) && attrs.containsAttribute(Mem.ENABLES_ATTR)) 
-                  ? Port.INOUT : Port.OUTPUT;
+    var portType = (!seperatedBus(attrs) && attrs.containsAttribute(Mem.ENABLES_ATTR))
+        ? Port.INOUT
+        : Port.OUTPUT;
 
     var ypos = isClassic ? (totalHeight / 2) : totalHeight;
-    if (!isClassic && bits.getWidth() == 1) ypos += 10;
+    if (!isClassic && bits.getWidth() == 1)
+      ypos += 10;
     ypos += (portIndex % splitIndex) * 10;
     if (portIndex >= splitIndex) {
-        ypos += isClassic ? getClassicPortBoffset(attrs) : (bits.getWidth() * 20);
+      ypos += isClassic ? getClassicPortBoffset(attrs) : (bits.getWidth() * 20);
     }
 
     final var result = new Port(xpos, ypos, portType, bits);
     switch (portIndex) {
       case 0:
-        if (nrDouts == 1) result.setToolTip(S.getter("memDataTip"));
-        else result.setToolTip(S.getter("memDataTip0"));
+        if (nrDouts == 1)
+          result.setToolTip(S.getter("memDataTip"));
+        else
+          result.setToolTip(S.getter("memDataTip0"));
         break;
       case 1:
         result.setToolTip(S.getter("memDataTip1"));
@@ -528,21 +571,22 @@ public class DualRamAppearance {
 
   private static Port getOEPort(int portIndex, AttributeSet attrs) {
     final var nrOEs = getNrOEPorts(attrs);
-    if (nrOEs == 0 || portIndex < 0 || portIndex >= nrOEs) return null;
-    
+    if (nrOEs == 0 || portIndex < 0 || portIndex >= nrOEs)
+      return null;
+
     final var totalHeight = getControlHeight(attrs);
     final int splitIndex = nrOEs / 2;
     final boolean isClassic = classicAppearance(attrs);
-    
+
     var ypos = isClassic ? 60 : 70;
     if (isClassic && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-        ypos = 20;
+      ypos = 20;
     }
     if (!isClassic) {
-        if (portIndex > 0) ypos += (totalHeight / 2) - 10;
-    } 
-    else if (portIndex >= splitIndex) {
-        ypos = getClassicPortBoffset(attrs) + 60;
+      if (portIndex > 0)
+        ypos += (totalHeight / 2) - 10;
+    } else if (portIndex >= splitIndex) {
+      ypos = getClassicPortBoffset(attrs) + 60;
     }
 
     final var result = new Port(0, ypos, Port.INPUT, 1);
@@ -552,7 +596,8 @@ public class DualRamAppearance {
 
   private static Port getWEPort(int portIndex, AttributeSet attrs) {
     final var nrWEs = getNrWEPorts(attrs);
-    if (nrWEs == 0 || portIndex < 0 || portIndex >= nrWEs) return null;
+    if (nrWEs == 0 || portIndex < 0 || portIndex >= nrWEs)
+      return null;
 
     final var totalHeight = getControlHeight(attrs);
     final int splitIndex = nrWEs / 2;
@@ -560,14 +605,14 @@ public class DualRamAppearance {
 
     var ypos = isClassic ? 50 : 60;
     if (isClassic && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-        ypos = 30;
+      ypos = 30;
     }
 
     if (!isClassic) {
-        if (portIndex > 0) ypos += (totalHeight / 2) - 10;
-    } 
-    else if (portIndex >= splitIndex) {
-        ypos += getClassicPortBoffset(attrs);
+      if (portIndex > 0)
+        ypos += (totalHeight / 2) - 10;
+    } else if (portIndex >= splitIndex) {
+      ypos += getClassicPortBoffset(attrs);
     }
 
     final var result = new Port(0, ypos, Port.INPUT, 1);
@@ -577,7 +622,8 @@ public class DualRamAppearance {
 
   private static Port getClkPort(int portIndex, AttributeSet attrs) {
     final var nrClks = getNrClkPorts(attrs);
-    if (nrClks <= 0 || portIndex < 0 || portIndex >= nrClks) return null;
+    if (nrClks <= 0 || portIndex < 0 || portIndex >= nrClks)
+      return null;
 
     final var totalHeight = getControlHeight(attrs);
     final int splitIndex = nrClks / 2;
@@ -589,16 +635,16 @@ public class DualRamAppearance {
 
     var ypos = 0;
     if (!isClassic) {
-        ypos = 80 + (nrLEs / 2 * 10) + (nrBEs / 2 * 10);
+      ypos = 80 + (nrLEs / 2 * 10) + (nrBEs / 2 * 10);
     } else {
-        ypos = useLineEnables ? 40 + (nrLEs * 5) + (nrBEs * 5) : 70;
+      ypos = useLineEnables ? 40 + (nrLEs * 5) + (nrBEs * 5) : 70;
     }
 
     if (!isClassic) {
-        if (portIndex >= splitIndex) ypos += (totalHeight / 2) - 10;
-    } 
-    else if (portIndex >= splitIndex) {
-        ypos += getClassicPortBoffset(attrs);
+      if (portIndex >= splitIndex)
+        ypos += (totalHeight / 2) - 10;
+    } else if (portIndex >= splitIndex) {
+      ypos += getClassicPortBoffset(attrs);
     }
 
     final var result = new Port(0, ypos, Port.INPUT, 1);
@@ -608,7 +654,8 @@ public class DualRamAppearance {
 
   private static Port getLEPort(int portIndex, AttributeSet attrs) {
     final var nrLEs = getNrLEPorts(attrs);
-    if (nrLEs == 0 || portIndex < 0 || portIndex >= nrLEs) return null;
+    if (nrLEs == 0 || portIndex < 0 || portIndex >= nrLEs)
+      return null;
 
     final var totalHeight = getControlHeight(attrs);
     final int splitIndex = nrLEs / 2;
@@ -617,18 +664,18 @@ public class DualRamAppearance {
 
     var ypos = 80;
     if (isClassic && useLineEnables) {
-        ypos = 40;
+      ypos = 40;
     }
 
     if (splitIndex > 0) {
-         ypos += (portIndex % splitIndex) * 10;
+      ypos += (portIndex % splitIndex) * 10;
     }
 
     if (!isClassic) {
-        if (portIndex >= splitIndex) ypos += (totalHeight / 2) - 10;
-    } 
-    else if (portIndex >= splitIndex && useLineEnables) {
-        ypos += getClassicPortBoffset(attrs);
+      if (portIndex >= splitIndex)
+        ypos += (totalHeight / 2) - 10;
+    } else if (portIndex >= splitIndex && useLineEnables) {
+      ypos += getClassicPortBoffset(attrs);
     }
 
     final var result = new Port(0, ypos, Port.INPUT, 1);
@@ -638,38 +685,43 @@ public class DualRamAppearance {
       case 1 -> result.setToolTip(S.getter("ramLETip1"));
       case 2 -> result.setToolTip(S.getter("ramLETip2"));
       case 3 -> result.setToolTip(S.getter("ramLETip3"));
-      default -> { } // none
+      default -> {
+      } // none
     }
     return result;
   }
 
   private static Port getBEPort(int portIndex, AttributeSet attrs) {
     final var nrBEs = getNrBEPorts(attrs);
-    if (nrBEs == 0 || portIndex < 0 || portIndex >= nrBEs) return null;
-    
+    if (nrBEs == 0 || portIndex < 0 || portIndex >= nrBEs)
+      return null;
+
     int offsetB = getControlHeight(attrs) / 2 - 10;
     int splitIndex = nrBEs / 2;
-    
-    int leOffset = (getNrLEPorts(attrs) / 2) * 10; 
-    
+
+    int leOffset = (getNrLEPorts(attrs) / 2) * 10;
+
     int relativeIndex = portIndex % splitIndex;
     var ypos = 60 + leOffset + (splitIndex - relativeIndex - 1) * 10;
 
-    if (portIndex >= splitIndex) ypos += offsetB;
+    if (portIndex >= splitIndex)
+      ypos += offsetB;
 
     final var result = new Port(0, ypos, Port.INPUT, 1);
-    switch (portIndex % 4) { 
+    switch (portIndex % 4) {
       case 0 -> result.setToolTip(S.getter("ramByteEnableTip0"));
       case 1 -> result.setToolTip(S.getter("ramByteEnableTip1"));
       case 2 -> result.setToolTip(S.getter("ramByteEnableTip2"));
       case 3 -> result.setToolTip(S.getter("ramByteEnableTip3"));
-      default -> { }
+      default -> {
+      }
     }
     return result;
   }
 
   private static Port getClrPort(int portIndex, AttributeSet attrs) {
-    if (getNrClrPorts(attrs) == 0 || portIndex != 0) return null;
+    if (getNrClrPorts(attrs) == 0 || portIndex != 0)
+      return null;
     final var result = new Port(40, 0, Port.INPUT, 1);
     result.setToolTip(S.getter("ramClrPin"));
     return result;
@@ -695,7 +747,7 @@ public class DualRamAppearance {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var nrOfDataPorts = Math.max(getNrDataInPorts(attrs), getNrDataOutPorts(attrs));
     int inputSplit = getNrDataInPorts(attrs) / 2;
-   
+
     /* Draw data input connections */
     for (var i = 0; i < getNrDataInPorts(attrs); i++) {
       label = !classic ? "" : getNrDataInPorts(attrs) == 1 ? "D" : "D" + i;
@@ -738,7 +790,8 @@ public class DualRamAppearance {
             g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
             for (var j = 0; j < nrOfBits; j++) {
               g.drawPolyline(xpos, ypos, 3);
-              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT, GraphicsUtil.V_BASELINE);
+              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT,
+                  GraphicsUtil.V_BASELINE);
               ypos[0] += 20;
               ypos[1] += 20;
               ypos[2] += 20;
@@ -756,8 +809,8 @@ public class DualRamAppearance {
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
-    
-    /* Draw data output connections (& in/out)*/
+
+    /* Draw data output connections (& in/out) */
     int outputSplit = getNrDataOutPorts(attrs) / 2;
 
     /* Draw data output connections */
@@ -783,14 +836,15 @@ public class DualRamAppearance {
           } else {
             g.drawLine(x, y, x - 20, y);
           }
-          if (!seperate && i == 0) drawBidir(g, x - 20, y);
+          if (!seperate && i == 0)
+            drawBidir(g, x - 20, y);
           g.setStroke(new BasicStroke(4));
         } else {
           if (i != 0 && i != outputSplit) {
-             if (i == 3 && nrOfBits == 2)
-                g.drawLine(loc.getX(), loc.getY(), loc.getX() - 4, loc.getY() - 4);
-             else
-                g.drawLine(loc.getX(), loc.getY(), loc.getX() - 4, loc.getY() + 4);
+            if (i == 3 && nrOfBits == 2)
+              g.drawLine(loc.getX(), loc.getY(), loc.getX() - 4, loc.getY() - 4);
+            else
+              g.drawLine(loc.getX(), loc.getY(), loc.getX() - 4, loc.getY() + 4);
           } else {
             final var xpos = new int[3];
             final var ypos = new int[3];
@@ -804,8 +858,10 @@ public class DualRamAppearance {
             g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
             for (var j = 0; j < nrOfBits; j++) {
               g.drawPolyline(xpos, ypos, 3);
-              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
-              if (!seperate) drawBidir(g, xpos[2], ypos[2]);
+              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT,
+                  GraphicsUtil.V_BASELINE);
+              if (!seperate)
+                drawBidir(g, xpos[2], ypos[2]);
               ypos[0] += 20;
               ypos[1] += 20;
               ypos[2] += 20;
@@ -826,7 +882,7 @@ public class DualRamAppearance {
     // ... (rest of the draw connections: Addr, OE, WE, Clk, LE, BE, Clr)
     // Same as original, no changes needed below this point for drawing logic
     // EXCEPT I will just paste the rest to ensure you have the full file.
-    
+
     for (var i = 0; i < getNrAddrPorts(attrs); i++) {
       label = !classic ? "" : getNrAddrPorts(attrs) == 1 ? "A" : "A" + i;
       int idx = getAddrIndex(i, attrs);
@@ -864,7 +920,7 @@ public class DualRamAppearance {
 
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.setStroke(new BasicStroke(2));
-    
+
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
       label = !classic ? "" : getNrOEPorts(attrs) == 1 ? "OE" : "OE" + i;
       final var idx = getOEIndex(i, attrs);
@@ -896,7 +952,8 @@ public class DualRamAppearance {
           g.drawOval(loc.getX() + 12, loc.getY() - 4, 8, 8);
         }
         g.drawLine(loc.getX(), loc.getY(), loc.getX() + xend, loc.getY());
-        if (synchronous(attrs)) painter.drawClockSymbol(loc.getX() + 20, loc.getY());
+        if (synchronous(attrs))
+          painter.drawClockSymbol(loc.getX() + 20, loc.getY());
         painter.drawPort(idx);
       } else {
         if (synchronous(attrs))
@@ -949,7 +1006,7 @@ public class DualRamAppearance {
     GraphicsUtil.switchToWidth(g, 2);
     g.drawPolyline(xpos, ypos, 8);
 
-    /* draw address text*/
+    /* draw address text */
     for (var i = 0; i < getNrAddrPorts(attrs); i++) {
       final var idx = getAddrIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -957,7 +1014,7 @@ public class DualRamAppearance {
     }
 
     var cidx = 1;
-    /* draw clock port text*/
+    /* draw clock port text */
     for (var i = 0; i < getNrClkPorts(attrs); i++) {
       final var idx = getClkIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -966,7 +1023,7 @@ public class DualRamAppearance {
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
 
-    /* draw output enable text*/
+    /* draw output enable text */
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
       final var idx = getOEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -1007,100 +1064,107 @@ public class DualRamAppearance {
   private static void drawDataBlocks(Instance inst, AttributeSet attrs, InstancePainter painter) {
     final var g = (Graphics2D) painter.getGraphics().create();
     final var x = painter.getBounds().getX() + 20;
-    
+
     final var base_y = painter.getBounds().getY() + getControlHeight(attrs);
-    
+
     final var width = Mem.SymbolWidth;
     final var height = 20;
     g.setFont(g.getFont().deriveFont(9.0f));
-    
+
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    final var async = !synchronous(attrs) || (attrs.containsAttribute(Mem.ASYNC_READ) && attrs.getValue(Mem.ASYNC_READ));
+    final var async = !synchronous(attrs)
+        || (attrs.containsAttribute(Mem.ASYNC_READ) && attrs.getValue(Mem.ASYNC_READ));
     final var drawDin = attrs.containsAttribute(DualRamAttributes.ATTR_DBUS);
     final var seperate = seperatedBus(attrs) || !drawDin;
 
     for (int p = 0; p < 2; p++) {
-        var y = base_y;
-        if (p == 1) y += (nrOfBits * 20);
-        String label = "A" + (p + 1);
-        final var doutLabel = new StringBuilder();
-        final var dinLabel = new StringBuilder();
-        doutLabel.append(label);
-        dinLabel.append(label);
-        
-        var cidx = 1; 
+      var y = base_y;
+      if (p == 1)
+        y += (nrOfBits * 20);
+      String label = "A" + (p + 1);
+      final var doutLabel = new StringBuilder();
+      final var dinLabel = new StringBuilder();
+      doutLabel.append(label);
+      dinLabel.append(label);
 
-        // Clocks Loop
-        for (var i = 0; i < getNrClkPorts(attrs); i++) {
-            if (i == p) { 
-                if (!async) doutLabel.append(",").append(cidx);
-                dinLabel.append(",").append(cidx);
-            }
-            cidx++;
+      var cidx = 1;
+
+      // Clocks Loop
+      for (var i = 0; i < getNrClkPorts(attrs); i++) {
+        if (i == p) {
+          if (!async)
+            doutLabel.append(",").append(cidx);
+          dinLabel.append(",").append(cidx);
+        }
+        cidx++;
+      }
+
+      // OE Loop
+      for (var i = 0; i < getNrOEPorts(attrs); i++) {
+        if (i == p)
+          doutLabel.append(",").append(cidx);
+        cidx++;
+      }
+
+      // WE Loop
+      for (var i = 0; i < getNrWEPorts(attrs); i++) {
+        if (i == p)
+          dinLabel.append(",").append(cidx);
+        cidx++;
+      }
+
+      // LE Loop
+      final var totalLE = getNrLEPorts(attrs);
+      for (var i = 0; i < totalLE; i++) {
+        boolean belongs = (p == 0 && i < totalLE / 2) || (p == 1 && i >= totalLE / 2);
+        if (belongs)
+          dinLabel.append(",").append(cidx);
+        cidx++;
+      }
+
+      final var appendBE = getNrBEPorts(attrs) > 0;
+      int beBaseIdx = cidx;
+      cidx += getNrBEPorts(attrs);
+
+      final var DLabel = seperate ? "" : "D";
+
+      for (var i = 0; i < nrOfBits; i++) {
+        g.setStroke(new BasicStroke(2));
+        g.drawRect(x, y, width, height);
+        g.setStroke(new BasicStroke(1));
+
+        GraphicsUtil.drawText(g, doutLabel.toString(), x - (seperate ? 3 : 10) + Mem.SymbolWidth,
+            y + (seperate ? 10 : 5), GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
+
+        if (!seperate) {
+          final var xpos = new int[3];
+          final var ypos = new int[3];
+          xpos[0] = x - 8 + Mem.SymbolWidth;
+          xpos[1] = x - 5 + Mem.SymbolWidth;
+          xpos[2] = x - 2 + Mem.SymbolWidth;
+          ypos[0] = ypos[2] = y + 5;
+          ypos[1] = y + 8;
+          g.drawPolygon(xpos, ypos, 3);
         }
 
-        // OE Loop
-        for (var i = 0; i < getNrOEPorts(attrs); i++) {
-            if (i == p) doutLabel.append(",").append(cidx); 
-            cidx++;
+        var BEIndex = "";
+        if (appendBE) {
+          int localBE = i >> 3;
+          int globalBE = (p == 0) ? localBE : (getNrBEPorts(attrs) / 2 + localBE);
+          BEIndex = "," + (beBaseIdx + globalBE);
         }
 
-        // WE Loop
-        for (var i = 0; i < getNrWEPorts(attrs); i++) {
-            if (i == p) dinLabel.append(",").append(cidx); 
-            cidx++;
-        }
-
-        // LE Loop
-        final var totalLE = getNrLEPorts(attrs);
-        for (var i = 0; i < totalLE; i++) {
-            boolean belongs = (p == 0 && i < totalLE/2) || (p == 1 && i >= totalLE/2);
-            if (belongs) dinLabel.append(",").append(cidx);
-            cidx++;
-        }
-
-        final var appendBE = getNrBEPorts(attrs) > 0;
-        int beBaseIdx = cidx; 
-        cidx += getNrBEPorts(attrs);
-
-        final var DLabel = seperate ? "" : "D";
-
-        for (var i = 0; i < nrOfBits; i++) {
-            g.setStroke(new BasicStroke(2));
-            g.drawRect(x, y, width, height);
-            g.setStroke(new BasicStroke(1));
-            
-            GraphicsUtil.drawText(g, doutLabel.toString(), x - (seperate ? 3 : 10) + Mem.SymbolWidth, y + (seperate ? 10 : 5), GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
-            
-            if (!seperate) {
-                final var xpos = new int[3];
-                final var ypos = new int[3];
-                xpos[0] = x - 8 + Mem.SymbolWidth;
-                xpos[1] = x - 5 + Mem.SymbolWidth;
-                xpos[2] = x - 2 + Mem.SymbolWidth;
-                ypos[0] = ypos[2] = y + 5;
-                ypos[1] = y + 8;
-                g.drawPolygon(xpos, ypos, 3);
-            }
-            
-            var BEIndex = "";
-            if (appendBE) {
-                int localBE = i >> 3;
-                int globalBE = (p == 0) ? localBE : (getNrBEPorts(attrs)/2 + localBE);
-                BEIndex = "," + (beBaseIdx + globalBE);
-            }
-            
-            if (drawDin)
-                GraphicsUtil.drawText(
-                    g,
-                    dinLabel + BEIndex + DLabel,
-                    x + (seperate ? 3 : Mem.SymbolWidth - 3),
-                    y + (seperate ? 10 : 13),
-                    seperate ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT,
-                    GraphicsUtil.V_CENTER);
-            y += 20;
-        }
-    } 
+        if (drawDin)
+          GraphicsUtil.drawText(
+              g,
+              dinLabel + BEIndex + DLabel,
+              x + (seperate ? 3 : Mem.SymbolWidth - 3),
+              y + (seperate ? 10 : 13),
+              seperate ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT,
+              GraphicsUtil.V_CENTER);
+        y += 20;
+      }
+    }
     g.dispose();
   }
 
@@ -1136,8 +1200,8 @@ public class DualRamAppearance {
         ypos + 30,
         GraphicsUtil.H_LEFT,
         GraphicsUtil.V_CENTER);
-    String label = (portIndex == 0) ? "1" : "2";    
-    GraphicsUtil.drawText(g,"A" + label, xpos + 50, ypos + 20, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    String label = (portIndex == 0) ? "1" : "2";
+    GraphicsUtil.drawText(g, "A" + label, xpos + 50, ypos + 20, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     g.drawLine(xpos + 40, ypos + 5, xpos + 45, ypos + 10);
     g.drawLine(xpos + 45, ypos + 10, xpos + 45, ypos + 17);
     g.drawLine(xpos + 45, ypos + 17, xpos + 48, ypos + 20);

@@ -23,19 +23,19 @@ public class DualRamState extends MemState implements AttributeListener {
 
   private Instance parent;
   private final MemListener listener;
-  private ClockState clockState0; 
+  private ClockState clockState0;
   private ClockState clockState1;
 
   private long currentAddress1 = -1;
 
-  DualRamState(Instance parent, MemContents contents, MemListener listener) { 
+  DualRamState(Instance parent, MemContents contents, MemListener listener) {
     super(contents);
     this.parent = parent;
     this.listener = listener;
-    
+
     this.clockState0 = new ClockState();
     this.clockState1 = new ClockState();
-    
+
     if (parent != null) {
       parent.getAttributeSet().addAttributeListener(this);
     }
@@ -50,7 +50,7 @@ public class DualRamState extends MemState implements AttributeListener {
     getContents().setDimensions(addrBits.getWidth(), dataBits.getWidth());
   }
 
- @Override
+  @Override
   public DualRamState clone() {
     DualRamState ret = (DualRamState) super.clone();
     ret.parent = null;
@@ -63,9 +63,9 @@ public class DualRamState extends MemState implements AttributeListener {
 
   public boolean setClock(int portIndex, Value newClock, Object trigger) {
     if (portIndex == 0) {
-        return clockState0.updateClock(newClock, trigger);
+      return clockState0.updateClock(newClock, trigger);
     } else {
-        return clockState1.updateClock(newClock, trigger);
+      return clockState1.updateClock(newClock, trigger);
     }
   }
 
@@ -83,17 +83,17 @@ public class DualRamState extends MemState implements AttributeListener {
   }
 
   public long getCurrent(int portIndex) {
-      if (portIndex == 0) {
-          return super.getCurrent(); 
-      }
-      return currentAddress1; 
+    if (portIndex == 0) {
+      return super.getCurrent();
+    }
+    return currentAddress1;
   }
-  
+
   public void setCurrent(int portIndex, long val) {
-      if (portIndex == 0) {
-          super.setCurrent(val);
-      } else {
-          currentAddress1 = val;
-      }
+    if (portIndex == 0) {
+      super.setCurrent(val);
+    } else {
+      currentAddress1 = val;
+    }
   }
 }
