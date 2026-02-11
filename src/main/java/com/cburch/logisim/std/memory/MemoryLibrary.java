@@ -27,7 +27,7 @@ public class MemoryLibrary extends Library {
 
   protected static final int DELAY = 5;
 
-  private static final FactoryDescription[] DESCRIPTIONS = {
+ private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(DFlipFlop.class, S.getter("dFlipFlopComponent"), "dFlipFlop.gif"),
     new FactoryDescription(TFlipFlop.class, S.getter("tFlipFlopComponent"), "tFlipFlop.gif"),
     new FactoryDescription(JKFlipFlop.class, S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif"),
@@ -38,6 +38,8 @@ public class MemoryLibrary extends Library {
     new FactoryDescription(Random.class, S.getter("randomComponent"), "random.gif"),
     new FactoryDescription(Ram.class, S.getter("ramComponent"), "ram.gif"),
     new FactoryDescription(Rom.class, S.getter("romComponent"), "rom.gif"),
+
+    new FactoryDescription(DualRam.class, S.getter("dualRamComponent"), "D-ram.gif"),
   };
 
   private List<Tool> tools = null;
