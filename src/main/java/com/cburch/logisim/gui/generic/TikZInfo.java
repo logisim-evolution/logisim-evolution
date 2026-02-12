@@ -404,6 +404,11 @@ public class TikZInfo implements Cloneable {
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     svg.setAttribute("version", "1.1");
     svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+    // Specifying only a viewBox is not sufficient.
+    // Many interactive SVG renderers (such as web browsers) will only allow zooming
+    // to work as expected if the width and height attributes are populated.
+    svg.setAttribute("width", Integer.toString(width));
+    svg.setAttribute("height", Integer.toString(height));
     svgInfo.appendChild(svg);
     for (final var obj : contents) obj.getSvgCommand(svgInfo, svg);
     final var tranFactory = TransformerFactory.newInstance();
