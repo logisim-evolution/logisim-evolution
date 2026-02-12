@@ -632,8 +632,7 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       if (points.isEmpty()) {
-        content.append(start.x).append(",").append(start.y).append(" ").append(end.x).append(",")
-            .append(end.y);
+        content.append(start.x).append(",").append(start.y).append(" ").append(end.x).append(",").append(end.y);
       } else {
         var first = true;
         for (final var point : points) {
@@ -743,7 +742,7 @@ public class TikZInfo implements Cloneable {
       for (final var point : myPath) {
         content.append(point.getSvgPath());
       }
-      ne.setAttribute("d", content.toString());
+      ne.setAttribute("d", content.toString().strip());
     }
 
     @Override
@@ -860,16 +859,15 @@ public class TikZInfo implements Cloneable {
         if (closePath) {
           contents.append(" Z");
         } else if (startPoint != null) {
-          contents.append(" M").append(startPoint.getX()).append(",").append(startPoint.getY());
+          contents.append(" M").append(getBarePoint(startPoint));
         } else {
           if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append(" L").append(endPoint.getX()).append(",").append(endPoint.getY());
+            contents.append(" L").append(getBarePoint(endPoint));
           } else {
             final var singlePoint = (controlPoint2 == null) ? controlPoint1 : controlPoint2;
-            contents.append(" C").append(controlPoint1.getX()).append(",")
-                .append(controlPoint1.getY());
-            contents.append(" ").append(singlePoint.getX()).append(",").append(singlePoint.getY());
-            contents.append(" ").append(endPoint.getX()).append(",").append(endPoint.getY());
+            contents.append(" C").append(getBarePoint(controlPoint1));
+            contents.append(" ").append(getBarePoint(singlePoint));
+            contents.append(" ").append(getBarePoint(endPoint));
           }
         }
         return contents.toString();
@@ -963,8 +961,8 @@ public class TikZInfo implements Cloneable {
         final double xMid = Math.min(start.getX(), end.getX()) + (width / 2.0);
         final double yMid = Math.min(start.getY(), end.getY()) + (height / 2.0);
         contents.append(", shift={").append(quickPointTrim(xMid, yMid)).append("}, ");
-        contents.append("x radius=").append(xRadius).append(", ");
-        contents.append("y radius=").append(yRadius).append("]");
+        contents.append("x radius=").append(rounded(xRadius)).append(", ");
+        contents.append("y radius=").append(rounded(yRadius)).append("]");
         if (xRadius >= xHalf) {
           //This if check could be a "==" due to the normalization in addRoundedRectangle(),
           //but I'm using a ">=" here just in case of floating-point funny business.
@@ -1004,8 +1002,8 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       if (rad != null) {
-        ne.setAttribute("rx", Double.toString(rad.getX()));
-        ne.setAttribute("ry", Double.toString(rad.getY()));
+        ne.setAttribute("rx", rounded(rad.getX()));
+        ne.setAttribute("ry", rounded(rad.getY()));
       }
       final var xpos = Math.min(end.x, start.x);
       final var bwidth = Math.abs(end.x - start.x);
@@ -1071,16 +1069,18 @@ public class TikZInfo implements Cloneable {
       contents.append("]");
       contents.append(getPoint(start));
       if (circular) {
-        contents.append("circle (").append(radX).append(");");
+        contents.append("circle (").append(rounded(radX)).append(");");
       } else {
-        contents.append("ellipse (").append(radX).append(" and ").append(radY).append(");");
+        contents.append("ellipse (").append(rounded(radX)).append(" and ").append(rounded(radY)).append(");");
       }
       return contents.toString();
     }
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final var circular = radX == radY;
+      final double localRadX = Math.abs(radX);
+      final double localRadY = Math.abs(radY);
+      final boolean circular = localRadX == localRadY;
       final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
@@ -1091,18 +1091,16 @@ public class TikZInfo implements Cloneable {
       if (!circular && rotation != 0) {
         //Circles look the same when rotated in any orientation.
         //Therefore, only apply rotation handling for non-circular ellipses.
-        ne.setAttribute(
-            "transform",
-            "translate(" + start.getX() + " " + start.getY() + ") rotate(" + this.rotation + ")");
+        ne.setAttribute("transform", "translate(" + rounded(start.getX()) + " " + rounded(start.getY()) + ") rotate(" + rotation + ")");
       } else {
-        ne.setAttribute("cx", Double.toString(start.getX()));
-        ne.setAttribute("cy", Double.toString(start.getY()));
+        ne.setAttribute("cx", rounded(start.getX()));
+        ne.setAttribute("cy", rounded(start.getY()));
       }
       if (circular) {
-        ne.setAttribute("r", Double.toString(Math.abs(radX)));
+        ne.setAttribute("r", rounded(localRadX));
       } else {
-        ne.setAttribute("rx", Double.toString(Math.abs(radX)));
-        ne.setAttribute("ry", Double.toString(Math.abs(radY)));
+        ne.setAttribute("rx", rounded(localRadX));
+        ne.setAttribute("ry", rounded(localRadY));
       }
     }
   }
@@ -1169,11 +1167,9 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color);
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-      contents.append("] ");
-      contents.append("(").append(rounded(startPos.getX())).append(",")
-          .append(rounded(startPos.getY())).append(")");
-      contents.append(" arc (").append(startAngle).append(":").append(stopAngle).append(":")
-          .append(radX).append(" and ").append(radY).append(" );");
+      contents.append("]").append(getPoint(startPos));
+      contents.append("arc (").append(rounded(startAngle)).append(":").append(rounded(stopAngle)).append(":")
+          .append(rounded(radX)).append(" and ").append(rounded(radY)).append(" );");
       return contents.toString();
     }
 
@@ -1186,11 +1182,13 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
-      String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
-      String content = "M" + startPos.getX() + "," + startPos.getY()
-          + " A" + radX + "," + radY + " " + this.startAngle
-          + info + stopPos.getX() + "," + stopPos.getY();
-      ne.setAttribute("d", content);
+      final String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
+      StringBuilder content = new StringBuilder();
+      content.append("M").append(getBarePoint(startPos));
+      content.append(" A").append(rounded(radX)).append(",").append(rounded(radY));
+      content.append(" ").append(rounded(startAngle)).append(info);
+      content.append(getBarePoint(stopPos));
+      ne.setAttribute("d", content.toString());
     }
   }
 
@@ -1310,7 +1308,7 @@ public class TikZInfo implements Cloneable {
       if (isFontItalic) content.append("\\fontshape{it}");
       content.append("\\selectfont\\node[inner sep=0, outer sep=0, ").append(color)
           .append(", anchor=base west");
-      if (rotation != 0) content.append(", rotate=").append(this.rotation);
+      if (rotation != 0) content.append(", rotate=").append(rounded(rotation));
       content.append("] at ").append(getPoint(location)).append(" {");
       if (name != null)
         if (name.isEmpty()) return "";
@@ -1332,18 +1330,9 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("font-size", Integer.toString(fontSize));
       if (isFontBold) ne.setAttribute("font-weight", "bold");
       if (isFontItalic) ne.setAttribute("font-style", "italic");
-      if (this.rotation != 0)
-        ne.setAttribute(
-            "transform",
-            "rotate("
-                + -this.rotation
-                + ","
-                + location.getX()
-                + ","
-                + location.getY()
-                + ")");
-      ne.setAttribute("x", Double.toString(location.getX()));
-      ne.setAttribute("y", Double.toString(location.getY()));
+      if (rotation != 0) ne.setAttribute("transform", "rotate(" + rounded(-rotation) + "," + getBarePoint(location) + ")");
+      ne.setAttribute("x", rounded(location.getX()));
+      ne.setAttribute("y", rounded(location.getY()));
       ne.setAttribute("fill", "rgb(" + customColors.get(color) + ")");
       if (name != null) {
         ne.setTextContent(name);
