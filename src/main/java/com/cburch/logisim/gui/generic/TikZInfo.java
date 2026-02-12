@@ -66,12 +66,27 @@ public class TikZInfo implements Cloneable {
     setColor(Color.BLACK);
   }
 
-  public static double rounded(double v) {
-    return ((double) Math.round(v * 1000.0)) / 1000.0;
+  public static String rounded(double v) {
+    final String str = Double.toString(((double) Math.round(v * 10000.0)) / 10000.0);
+    final int limit = str.lastIndexOf('.');
+    int cursor = str.length() - 1;
+    while (cursor >= limit) {
+      final char c = str.charAt(cursor);
+      if ((c == '0') || (c == '.')) {
+        cursor--;
+      } else {
+        break;
+      }
+    }
+    return str.substring(0, cursor + 1);
+  }
+
+  public static String getBarePoint(Point2D p) {
+    return rounded(p.getX()) + "," + rounded(p.getY());
   }
 
   public static String getPoint(Point2D p) {
-    return " (" + rounded(p.getX()) + "," + rounded(p.getY()) + ") ";
+    return " (" + getBarePoint(p) + ") ";
   }
 
   @Override
@@ -614,7 +629,7 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       if (points.isEmpty()) {
         content.append(start.x).append(",").append(start.y).append(" ").append(end.x).append(",")
@@ -719,10 +734,10 @@ public class TikZInfo implements Cloneable {
       final var ne = root.createElement("path");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       final var content = new StringBuilder();
       for (final var point : myPath) {
@@ -983,10 +998,10 @@ public class TikZInfo implements Cloneable {
       final var ne = root.createElement("rect");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       if (rad != null) {
         ne.setAttribute("rx", Double.toString(rad.getX()));
@@ -1069,10 +1084,10 @@ public class TikZInfo implements Cloneable {
       final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       if (!circular && rotation != 0) {
         //Circles look the same when rotated in any orientation.
         //Therefore, only apply rotation handling for non-circular ellipses.
@@ -1167,10 +1182,10 @@ public class TikZInfo implements Cloneable {
       final var ne = root.createElement("path");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
       String content = "M" + startPos.getX() + "," + startPos.getY()
           + " A" + radX + "," + radY + " " + this.startAngle
