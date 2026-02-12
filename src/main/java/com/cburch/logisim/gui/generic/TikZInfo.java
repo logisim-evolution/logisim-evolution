@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HexFormat;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -47,6 +48,7 @@ public class TikZInfo implements Cloneable {
   private Color drawColor;
   private Color backColor;
   private ArrayList<DrawObject> contents = new ArrayList<>();
+  private HexFormat hf = HexFormat.of().withUpperCase();
   private HashMap<String, String> customColors = new HashMap<>();
   private ArrayList<String> usedFonts = new ArrayList<>();
   private int fontIndex;
@@ -112,19 +114,8 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getColorName(Color c) {
-    String custName =
-        "custcol_"
-            + Integer.toString(c.getRed(), 16)
-            + "_"
-            + Integer.toString(c.getGreen(), 16)
-            + "_"
-            + Integer.toString(c.getBlue(), 16);
-    String rgbCol =
-        c.getRed()
-            + ", "
-            + c.getGreen()
-            + ", "
-            + c.getBlue();
+    final String rgbCol = hf.toHexDigits(c.getRGB()).substring(2);
+    final String custName = "custcol_" + rgbCol;
     customColors.put(custName, rgbCol);
     return custName;
   }
@@ -380,13 +371,8 @@ public class TikZInfo implements Cloneable {
 
   private String getColorDefinitions() {
     final var content = new StringBuilder();
-    for (final var key : customColors.keySet()) {
-      content
-          .append("\\definecolor{")
-          .append(key)
-          .append("}{RGB}{")
-          .append(customColors.get(key))
-          .append("}\n");
+    for (final var entry : customColors.entrySet()) {
+      content.append("\\definecolor{").append(entry.getKey()).append("}{HTML}{").append(entry.getValue()).append("}\n");
     }
     return content.toString();
   }
@@ -626,8 +612,8 @@ public class TikZInfo implements Cloneable {
       final var content = new StringBuilder();
       final var ne = root.createElement(close ? "polygon" : "polyline");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
@@ -732,9 +718,9 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("path");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
       if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
@@ -995,9 +981,9 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("rect");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
       if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
@@ -1083,9 +1069,9 @@ public class TikZInfo implements Cloneable {
       final boolean circular = localRadX == localRadY;
       final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
       if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       if (!circular && rotation != 0) {
@@ -1177,9 +1163,9 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("path");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
       if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       final String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
@@ -1333,7 +1319,7 @@ public class TikZInfo implements Cloneable {
       if (rotation != 0) ne.setAttribute("transform", "rotate(" + rounded(-rotation) + "," + getBarePoint(location) + ")");
       ne.setAttribute("x", rounded(location.getX()));
       ne.setAttribute("y", rounded(location.getY()));
-      ne.setAttribute("fill", "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", "#" + customColors.get(color));
       if (name != null) {
         ne.setTextContent(name);
         if (!name.isEmpty()) e.appendChild(ne);
