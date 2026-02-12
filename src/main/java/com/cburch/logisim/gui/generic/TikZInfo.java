@@ -1312,7 +1312,16 @@ public class TikZInfo implements Cloneable {
     @Override
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("text");
-      ne.setAttribute("font-family", usedFonts.get(TikZInfo.this.fontIndex));
+      final String guessFont = usedFonts.get(fontIndex);
+      //Substitute Java system fonts with official CSS default font names,
+      //so that SVG renderers will actually pick the correct category of font.
+      final String correctFont = switch (guessFont) {
+        case Font.MONOSPACED -> "monospace";
+        case Font.SANS_SERIF -> "sans-serif";
+        case Font.SERIF -> "serif";
+        default -> guessFont;
+      };
+      ne.setAttribute("font-family", correctFont);
       ne.setAttribute("font-size", Integer.toString(fontSize));
       if (isFontBold) ne.setAttribute("font-weight", "bold");
       if (isFontItalic) ne.setAttribute("font-style", "italic");
