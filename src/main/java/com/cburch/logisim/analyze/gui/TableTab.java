@@ -319,7 +319,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           }
         });
     bodyPane.setVerticalScrollBar(getVerticalScrollBar());
-    
+
     // Handle zooming with Ctrl + Mouse Wheel
     bodyPane.addMouseWheelListener(e -> {
       if (e.isControlDown()) {
@@ -329,10 +329,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           zoomOut();
         }
         e.consume();
-      } else {
-        // Forward to vertical scrollbar if Ctrl is not down (normal scrolling)
-        bodyPane.dispatchEvent(SwingUtilities.convertMouseEvent(bodyPane, e, bodyPane.getParent()));
       }
+      // Return without consuming for normal scroll action.
     });
 
     headerPane =
@@ -372,13 +370,13 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     toolbar.add(sep);
     toolbar.add(zoomOut);
     toolbar.add(zoomIn);
-    
+
     one.setActionCommand("1");
     zero.setActionCommand("0");
     dontcare.setActionCommand("x");
     compact.setActionCommand("compact");
     expand.setActionCommand("expand");
-    
+
     zoomIn.addActionListener(e -> zoomIn());
     zoomOut.addActionListener(e -> zoomOut());
     // Basic styling for zoom buttons
@@ -440,14 +438,14 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             gbl.setConstraints(headerPane, gbc);
             invalidate();
             repaint();
-            
+
             setupKeyBindings();
           }
         });
     editHandler.computeEnabled();
     LocaleManager.addLocaleListener(myListener);
   }
-  
+
   private void setupKeyBindings() {
     InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
     ActionMap actionMap = getActionMap();
@@ -475,7 +473,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           zoomOut();
       }
     });
-    
+
     // Reset Zoom (Ctrl + 0)
     KeyStroke ctrlZero = KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_DOWN_MASK);
     KeyStroke ctrlNumpadZero = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, KeyEvent.CTRL_DOWN_MASK);
@@ -488,7 +486,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       }
     });
   }
-  
+
   private void updateScale() {
     final var baseSize = 18.0f;
     final var scaledSize = (float) (AppPreferences.getScaled(baseSize) * zoomFactor);
@@ -502,7 +500,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     defaultCellWidth = (int) (AppPreferences.getScaled(15) * zoomFactor);
     defaultCellHeight = (int) (AppPreferences.getScaled(22) * zoomFactor);
   }
-  
+
   private void refreshTable() {
     updateScale();
     computePreferredSize();
@@ -514,7 +512,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     zoomFactor = 1.0;
     refreshTable();
   }
-  
+
   private void zoomIn() {
     if (zoomFactor < MAX_ZOOM) {
       zoomFactor += ZOOM_FACTOR_STEP;
