@@ -332,6 +332,11 @@ public class TikZInfo implements Cloneable {
         if (redundant) l.remove();
       }
     }
+    for (DrawObject obj : contents) {
+      if (obj instanceof TikZLine line) {
+        line.removeUselessPoints();
+      }
+    }
   }
 
   private String getCharRepresentation(int i) {
@@ -583,6 +588,38 @@ public class TikZInfo implements Cloneable {
       return true;
     }
 
+    public void removeUselessPoints() {
+      if (points.isEmpty()) return;
+      if (close) points.add(points.getFirst());
+      int cursor = 1;
+      while (cursor < (points.size() - 1)) {
+        final var prev = points.get(cursor - 1);
+        final var cur = points.get(cursor);
+        final var next = points.get(cursor + 1);
+        final boolean horiz_match = (prev.x == cur.x) && (cur.x == next.x);
+        final boolean vert_match = (prev.y == cur.y) && (cur.y == next.y);
+        if (horiz_match || vert_match) {
+          points.remove(cursor);
+        } else {
+          cursor++;
+        }
+      }
+      if (close) points.removeLast();
+      if (points.size() == 2) {
+        start = points.get(0);
+        end = points.get(1);
+        points.clear();
+      }
+    }
+
+    private String intPointSVG(Point p) {
+      return Integer.toString(p.x) + "," + Integer.toString(p.y);
+    }
+
+    private String intPointTikZ(Point p) {
+      return " (" + intPointSVG(p) + ") ";
+    }
+
     @Override
     public String getTikZCommand() {
       final var contents = new StringBuilder();
@@ -592,15 +629,29 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color).append("]");
       if (points.isEmpty()) {
-        contents.append(getPoint(start));
-        contents.append("--");
-        contents.append(getPoint(end));
+        contents.append(intPointTikZ(start)).append("--").append(intPointTikZ(end));
       } else {
-        var first = true;
-        for (final var point : points) {
-          if (first) first = false;
-          else contents.append("--");
-          contents.append(getPoint(point));
+        contents.append(intPointTikZ(points.get(0)));
+        int cursor = 1;
+        while (cursor < (points.size() - 1)) {
+          final var prev = points.get(cursor - 1);
+          final var cur = points.get(cursor);
+          final var next = points.get(cursor + 1);
+          if ((prev.y == cur.y) && (cur.x == next.x)) {
+            contents.append("-|").append(intPointTikZ(next));
+            cursor += 2;
+          } else if ((prev.x == cur.x) && (cur.y == next.y)) {
+            contents.append("|-").append(intPointTikZ(next));
+            cursor += 2;
+          } else {
+            contents.append("--").append(intPointTikZ(cur));
+            cursor++;
+          }
+        }
+        while (cursor < points.size()) {
+          final var cur = points.get(cursor);
+          contents.append("--").append(intPointTikZ(cur));
+          cursor++;
         }
       }
       if (close) {
@@ -614,25 +665,39 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final var content = new StringBuilder();
-      final var ne = root.createElement(close ? "polygon" : "polyline");
+      final var ne = root.createElement("path");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
       ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
+      final var content = new StringBuilder();
       if (points.isEmpty()) {
-        content.append(start.x).append(",").append(start.y).append(" ").append(end.x).append(",").append(end.y);
+        content.append("M").append(intPointSVG(start));
+        if (start.y == end.y) {
+          content.append(" H").append(end.x);
+        } else if (start.x == end.x) {
+          content.append(" V").append(end.y);
+        } else {
+          content.append(" L").append(intPointSVG(end));
+        }
       } else {
-        var first = true;
-        for (final var point : points) {
-          if (first) first = false;
-          else content.append(" ");
-          content.append(point.x).append(",").append(point.y);
+        content.append("M").append(intPointSVG(points.get(0)));
+        for (int i = 1; i < points.size(); i++) {
+          final Point prev = points.get(i - 1);
+          final Point cur = points.get(i);
+          if (prev.y == cur.y) {
+            content.append(" H").append(cur.x);
+          } else if (prev.x == cur.x) {
+            content.append(" V").append(cur.y);
+          } else {
+            content.append(" L").append(intPointSVG(cur));
+          }
         }
       }
-      ne.setAttribute("points", content.toString());
+      if (close) content.append(" Z");
+      ne.setAttribute("d", content.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -656,7 +721,7 @@ public class TikZInfo implements Cloneable {
     private final boolean filled;
 
     public TikZBezier(Shape s, boolean filled) {
-      this.transform = new AffineTransform(myTransformer);
+      this.transform = new AffineTransform(getAffineTransform());
       this.shape = s;
       this.filled = filled;
       this.color = getDrawColorString();
@@ -665,7 +730,7 @@ public class TikZInfo implements Cloneable {
     }
 
     public TikZBezier(Point2D orig, Shape s, boolean filled) {
-      this.transform = new AffineTransform(myTransformer);
+      this.transform = new AffineTransform(getAffineTransform());
       this.transform.concatenate(AffineTransform.getTranslateInstance(orig.getX(), orig.getY()));
       this.shape = s;
       this.filled = filled;
