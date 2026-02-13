@@ -651,57 +651,27 @@ public class TikZInfo implements Cloneable {
   }
 
   private class TikZBezier extends AbstratctTikZ {
-    private final ArrayList<BezierInfo> myPath = new ArrayList<>();
-
-    public TikZBezier() {}
+    private final Shape shape;
+    private AffineTransform transform;
+    private final boolean filled;
 
     public TikZBezier(Shape s, boolean filled) {
-      final var p = new Point2D.Double();
-      p.setLocation(0, 0);
-      create(p, s, filled);
+      this.transform = new AffineTransform(myTransformer);
+      this.shape = s;
+      this.filled = filled;
+      this.color = getDrawColorString();
+      this.alpha = ((double) drawColor.getAlpha()) / 255.0;
+      this.strokeWidth = getStrokeWidth();
     }
 
     public TikZBezier(Point2D orig, Shape s, boolean filled) {
-      create(orig, s, filled);
-    }
-
-    private void create(Point2D origin, Shape s, boolean filled) {
+      this.transform = new AffineTransform(myTransformer);
+      this.transform.concatenate(AffineTransform.getTranslateInstance(orig.getX(), orig.getY()));
+      this.shape = s;
       this.filled = filled;
       this.color = getDrawColorString();
-      this.alpha = (double) drawColor.getAlpha() / 255.0;
+      this.alpha = ((double) drawColor.getAlpha()) / 255.0;
       this.strokeWidth = getStrokeWidth();
-      final var at = AffineTransform.getTranslateInstance(origin.getX(), origin.getY());
-      final var p = s.getPathIterator(at);
-      while (!p.isDone()) {
-        final var coords = new double[6];
-        final var type = p.currentSegment(coords);
-        if (type == PathIterator.SEG_MOVETO) {
-          final var current = new Point2D.Double();
-          current.setLocation(coords[0], coords[1]);
-          myPath.add(new BezierInfo(current, true, filled));
-        } else if (type == PathIterator.SEG_LINETO) {
-          final var next = new Point2D.Double();
-          next.setLocation(coords[0], coords[1]);
-          myPath.add(new BezierInfo(next, false, false));
-        } else if (type == PathIterator.SEG_CLOSE) {
-          myPath.add(new BezierInfo());
-        } else if (type == PathIterator.SEG_QUADTO) {
-          final var next = new Point2D.Double();
-          final var control = new Point2D.Double();
-          control.setLocation(coords[0], coords[1]);
-          next.setLocation(coords[2], coords[3]);
-          myPath.add(new BezierInfo(control, next));
-        } else if (type == PathIterator.SEG_CUBICTO) {
-          final var next = new Point2D.Double();
-          final var control1 = new Point2D.Double();
-          final var control2 = new Point2D.Double();
-          control1.setLocation(coords[0], coords[1]);
-          control2.setLocation(coords[2], coords[3]);
-          next.setLocation(coords[4], coords[5]);
-          myPath.add(new BezierInfo(control1, control2, next));
-        }
-        p.next();
-      }
     }
 
     @Override
@@ -711,11 +681,56 @@ public class TikZInfo implements Cloneable {
       contents.append(filled ? "\\fill " : "\\draw ").append("[line width=").append(rounded(width)).append("pt, ").append(color);
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
       contents.append("]");
-      for (final var point : myPath) {
-        contents.append(point.getTikZCommand());
+      final var p = shape.getPathIterator(transform);
+      final var coords = new double[6];
+      var firstPoint = new Point2D.Double(0.0, 0.0);
+      var lastPoint = new Point2D.Double(0.0, 0.0);
+      final double oneThird = 1.0 / 3.0;
+      final double twoThirds = 2.0 / 3.0;
+      while (!p.isDone()) {
+        switch (p.currentSegment(coords)) {
+          case PathIterator.SEG_CLOSE -> {
+            contents.append(" -- cycle");
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_MOVETO -> {
+            firstPoint = new Point2D.Double(coords[0], coords[1]);
+            contents.append(getPoint(firstPoint).stripTrailing());
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_LINETO -> {
+            final var nextPoint = new Point2D.Double(coords[0], coords[1]);
+            contents.append(" --").append(getPoint(nextPoint).stripTrailing());
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_QUADTO -> {
+            // I had to use the "degree elevation" formula here to fake
+            // the appearance of a quadratic curve using a cubic curve.
+            final var controlPointOne = new Point2D.Double(oneThird * lastPoint.getX() + twoThirds * coords[0], oneThird * lastPoint.getY() + twoThirds * coords[1]);
+            final var controlPointTwo = new Point2D.Double(twoThirds * coords[0] + oneThird * coords[2], twoThirds * coords[1] + oneThird * coords[3]);
+            final var nextPoint = new Point2D.Double(coords[2], coords[3]);
+            contents.append(" .. controls").append(getPoint(controlPointOne));
+            if (!controlPointOne.equals(controlPointTwo)) {
+              contents.append("and").append(getPoint(controlPointTwo));
+            }
+            contents.append("..").append(getPoint(nextPoint).stripTrailing());
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_CUBICTO -> {
+            final var controlPointOne = new Point2D.Double(coords[0], coords[1]);
+            final var controlPointTwo = new Point2D.Double(coords[2], coords[3]);
+            final var nextPoint = new Point2D.Double(coords[4], coords[5]);
+            contents.append(" .. controls").append(getPoint(controlPointOne));
+            if (!controlPointOne.equals(controlPointTwo)) {
+              contents.append("and").append(getPoint(controlPointTwo));
+            }
+            contents.append("..").append(getPoint(nextPoint).stripTrailing());
+            lastPoint = nextPoint;
+          }
+        }
+        p.next();
       }
-      //The output from BezierInfo::getTikZCommand() will always end in a space, so:
-      contents.setCharAt(contents.length() - 1, ';');
+      contents.append(';');
       return contents.toString();
     }
 
@@ -730,155 +745,101 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       final var content = new StringBuilder();
-      for (final var point : myPath) {
-        content.append(point.getSvgPath());
+      final var p = shape.getPathIterator(transform);
+      final var coords = new double[6];
+      var firstPoint = new Point2D.Double(0.0, 0.0);
+      var lastPoint = new Point2D.Double(0.0, 0.0);
+      while (!p.isDone()) {
+        switch (p.currentSegment(coords)) {
+          case PathIterator.SEG_CLOSE -> {
+            content.append(" Z");
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_MOVETO -> {
+            content.append(" M");
+            firstPoint = new Point2D.Double(coords[0], coords[1]);
+            content.append(getBarePoint(firstPoint));
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_LINETO -> {
+            final var nextPoint = new Point2D.Double(coords[0], coords[1]);
+            if (nextPoint.getY() == lastPoint.getY()) {
+              content.append(" H").append(rounded(nextPoint.getX()));
+            } else if (nextPoint.getX() == lastPoint.getX()) {
+              content.append(" V").append(rounded(nextPoint.getY()));
+            } else {
+              content.append(" L").append(getBarePoint(nextPoint));
+            }
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_QUADTO -> {
+            final var controlPoint = new Point2D.Double(coords[0], coords[1]);
+            final var nextPoint = new Point2D.Double(coords[2], coords[3]);
+            content.append(" Q").append(getBarePoint(controlPoint)).append(' ').append(getBarePoint(nextPoint));
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_CUBICTO -> {
+            final var controlPointOne = new Point2D.Double(coords[0], coords[1]);
+            final var controlPointTwo = new Point2D.Double(coords[2], coords[3]);
+            final var nextPoint = new Point2D.Double(coords[4], coords[5]);
+            content.append(" C").append(getBarePoint(controlPointOne))
+              .append(' ').append(getBarePoint(controlPointTwo))
+              .append(' ').append(getBarePoint(nextPoint));
+            lastPoint = nextPoint;
+          }
+        }
+        p.next();
       }
       ne.setAttribute("d", content.toString().strip());
     }
 
     @Override
     public boolean insideArea(int x, int y, int width, int height) {
-      var inside = true;
-      for (final var point : myPath) inside &= point.insideArea(x, y, width, height);
-      return inside;
+      final double x_min = (double) x;
+      final double y_min = (double) y;
+      final double x_max = x_min + ((double) width);
+      final double y_max = y_min + ((double) height);
+      final var p = shape.getPathIterator(transform);
+      final var coords = new double[6];
+      while (!p.isDone()) {
+        switch (p.currentSegment(coords)) {
+          case PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> {
+            if (coords[0] < x_min) return false;
+            if (coords[0] > x_max) return false;
+            if (coords[1] < y_min) return false;
+            if (coords[1] > y_max) return false;
+          }
+          case PathIterator.SEG_QUADTO -> {
+            if (coords[2] < x_min) return false;
+            if (coords[2] > x_max) return false;
+            if (coords[3] < y_min) return false;
+            if (coords[3] > y_max) return false;
+          }
+          case PathIterator.SEG_CUBICTO -> {
+            if (coords[4] < x_min) return false;
+            if (coords[4] > x_max) return false;
+            if (coords[5] < y_min) return false;
+            if (coords[5] > y_max) return false;
+          }
+        }
+        p.next();
+      }
+      return true;
     }
 
     @Override
     public DrawObject clone() {
-      final var newInst = new TikZBezier();
-      newInst.filled = filled;
+      final var newInst = new TikZBezier(shape, filled);
+      newInst.transform = transform;
       newInst.color = color;
       newInst.alpha = alpha;
       newInst.strokeWidth = strokeWidth;
-      for (final var point : myPath) newInst.myPath.add(point.clone());
       return newInst;
     }
 
     @Override
     public void move(int dx, int dy) {
-      for (final var point : myPath) point.move(dx, dy);
-    }
-
-    private class BezierInfo implements Cloneable {
-      private Point2D startPoint;
-      private Point2D controlPoint1;
-      private Point2D controlPoint2;
-      private Point2D endPoint;
-      private boolean closePath;
-
-      public BezierInfo() {
-        startPoint = controlPoint1 = controlPoint2 = endPoint = null;
-        closePath = true;
-      }
-
-      public BezierInfo(Point2D nextPoint, boolean startpoint, boolean filled) {
-        controlPoint1 = controlPoint2 = null;
-        if (startpoint) {
-          startPoint = nextPoint;
-          endPoint = null;
-        } else {
-          startPoint = null;
-          endPoint = nextPoint;
-        }
-        closePath = false;
-        scale();
-      }
-
-      public BezierInfo(Point2D controlPoint, Point2D nextPoint) {
-        startPoint = controlPoint2 = null;
-        controlPoint1 = controlPoint;
-        endPoint = nextPoint;
-        closePath = false;
-        scale();
-      }
-
-      public BezierInfo(Point2D controlPointa, Point2D controlPointb, Point2D nextPoint) {
-        startPoint = null;
-        controlPoint1 = controlPointa;
-        controlPoint2 = controlPointb;
-        endPoint = nextPoint;
-        closePath = false;
-        scale();
-      }
-
-      private void scale() {
-        if (startPoint != null) transform(startPoint, startPoint);
-        if (controlPoint1 != null) transform(controlPoint1, controlPoint1);
-        if (controlPoint2 != null) transform(controlPoint2, controlPoint2);
-        if (endPoint != null) transform(endPoint, endPoint);
-      }
-
-      @Override
-      public BezierInfo clone() {
-        final var newInst = new BezierInfo();
-        newInst.startPoint = startPoint;
-        newInst.controlPoint1 = controlPoint1;
-        newInst.controlPoint2 = controlPoint2;
-        newInst.endPoint = endPoint;
-        newInst.closePath = closePath;
-        return newInst;
-      }
-
-      public void move(int dx, int dy) {
-        final var at = AffineTransform.getTranslateInstance(dx, dy);
-        if (startPoint != null) at.transform(startPoint, startPoint);
-        if (controlPoint1 != null) at.transform(controlPoint1, controlPoint1);
-        if (controlPoint2 != null) at.transform(controlPoint2, controlPoint2);
-        if (endPoint != null) at.transform(endPoint, endPoint);
-      }
-
-      public String getTikZCommand() {
-        final var contents = new StringBuilder();
-        if (closePath) {
-          contents.append("-- cycle ");
-        } else if (startPoint != null) {
-          contents.append(getPoint(startPoint));
-        } else {
-          if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append("--").append(getPoint(endPoint));
-          } else {
-            contents.append(".. controls").append(getPoint(controlPoint1));
-            if (controlPoint2 != null) contents.append("and").append(getPoint(controlPoint2));
-            contents.append("..").append(getPoint(endPoint));
-          }
-        }
-        return contents.toString();
-      }
-
-      public String getSvgPath() {
-        final var contents = new StringBuilder();
-        if (closePath) {
-          contents.append(" Z");
-        } else if (startPoint != null) {
-          contents.append(" M").append(getBarePoint(startPoint));
-        } else {
-          if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append(" L").append(getBarePoint(endPoint));
-          } else {
-            final var singlePoint = (controlPoint2 == null) ? controlPoint1 : controlPoint2;
-            contents.append(" C").append(getBarePoint(controlPoint1));
-            contents.append(" ").append(getBarePoint(singlePoint));
-            contents.append(" ").append(getBarePoint(endPoint));
-          }
-        }
-        return contents.toString();
-      }
-
-      public boolean insideArea(int x, int y, int width, int height) {
-        if (closePath) return true;
-        var inside = true;
-        final var x2 = x + width;
-        final var y2 = y + height;
-        if (startPoint != null)
-          inside &=
-              (startPoint.getX() >= (double) x && startPoint.getX() <= x2)
-                  && (startPoint.getY() >= (double) y && startPoint.getY() <= y2);
-        if (endPoint != null)
-          inside &=
-              (endPoint.getX() >= (double) x && endPoint.getX() <= x2)
-                  && (endPoint.getY() >= (double) y && endPoint.getY() <= y2);
-        return inside;
-      }
+      transform.concatenate(AffineTransform.getTranslateInstance(dx, dy));
     }
   }
 
