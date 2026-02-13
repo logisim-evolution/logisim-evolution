@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2026-02-12T06:18:10.521000000">
+    <meta name="changed" content="2026-02-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Dual Port RAM
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/dualportram.png" alt="#########" width="32" height="32"> <em>Dual Port RAM</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Memory</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              ---
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/dualportram.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The Dual Port RAM component is an advanced variation of the standard RAM, capable of storing up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to 32 bits (specified in the Data Bit Width attribute).
+      </p>
+      <p>
+        Its defining feature is the inclusion of <strong>two fully independent access ports (Port A and Port B)</strong>. This architecture allows two separate circuits to read from or write to the memory simultaneously.
+      </p>
+      <p>
+        Current values are displayed in the component. Addresses are listed in gray to the left of the display area. A key feature is <strong>Independent View Control</strong>: users can scroll through Port A's view and Port B's view separately to monitor different memory regions.
+      </p>
+      <p>
+        The component supports different interfaces, depending on the Data Interface attribute.
+      </p>
+      <dl>
+        <dt>
+          Separate Data Bus (Default)
+        </dt>
+        <dd>
+          <p>
+            For each port (A and B), separate pins are provided for input (Din) and output (Dout). This option removes the necessity of dealing with Controlled Buffers and is easier to use for most dual-port applications.
+          </p>
+          <center>
+            <img src="../../../../img-libs/dualportramdemo1.png" alt="#########">
+          </center>
+        </dd>
+        <dt>
+          Bidirectional Data Bus
+        </dt>
+        <dd>
+          <p>
+            For each port, a single shared pin is used for both loading and storing data. This mimics real-world memory chips but typically requires a Controlled Buffer component to manage data direction, similar to the standard RAM wiring illustrated below.
+          </p>
+          <center>
+            <img src="../../../../img-libs/dualportramdemo2.png" alt="#########">
+          </center>
+        </dd>
+        <dd>
+          <h2>
+            Pins
+          </h2>
+          <p>
+            Since this is a Dual Port RAM, most pins are duplicated for Port 1 and Port 2.
+          </p>
+          <dl>
+            <dt>
+              <var>A1, A2</var> on west edge (input, bit width matches Address Bit Width)
+            </dt>
+            <dd>
+              Selects which of the values in memory is currently being accessed by Port 1 and Port 2 respectively.
+            </dd>
+            <dt>
+              <var>D1, D2</var> on west edge (input, bit width matches Data Bit Width)
+            </dt>
+            <dd>
+              The data input pins. Present if "Separate Data Bus" is selected. When a store is requested, the value at this port is stored into memory.
+            </dd>
+            <dt>
+              <var>D1, D2</var> on east edge (input/output or output, bit width matches Data Bit Width)
+            </dt>
+            <dd>
+              The data output pins. If <var>ld</var> is 1, the component emits the value at the current address. If "Bidirectional Data Bus" is selected, these pins also act as inputs for writing.
+            </dd>
+            <dt>
+              <var>str1, str2</var> on south edge (input, bit width 1)
+            </dt>
+            <dd>
+              Store (Write Enable): When 1 or floating, a clock pulse will result in storing the data into memory at the currently selected address for the respective port.
+            </dd>
+            <dt>
+              <var>ld1, ld2</var> on south edge (input, bit width 1)
+            </dt>
+            <dd>
+              Load (Output Enable): Selects whether the RAM should emit (on <var>D</var>) the value at the current address. If 0, the output is high-impedance.
+            </dd>
+            <dt>
+              <var>C1, C2</var> on south edge (input, bit width 1)
+            </dt>
+            <dd>
+              Clock inputs: Trigger the write operations. Writes usually happen on the rising edge.
+            </dd>
+            <dt>
+              <var>clr</var> on south edge (input, bit width 1)
+            </dt>
+            <dd>
+              Clear: (Optional) When this is 1, all values in memory are pinned to 0 immediately.
+            </dd>
+          </dl>
+          <h2>
+            Attributes
+          </h2>
+          <p>
+            When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute.
+          </p>
+          <dl>
+            <dt>
+              Address Bit Width
+            </dt>
+            <dd>
+              The bit width of the address bits. The number of values stored in RAM is 2<sup><var>addrBitWidth</var></sup>.
+            </dd>
+            <dt>
+              Data Bit Width
+            </dt>
+            <dd>
+              The bit width of each individual value in memory.
+            </dd>
+            <dt>
+              Data Interface
+            </dt>
+            <dd>
+              Configures whether to use Separate Data Buses (separate input/output pins) or Bidirectional Data Buses (shared pins).
+            </dd>
+            <dt>
+              Byte Enables
+            </dt>
+            <dd>
+              (Available when Data Bit Width >= 9). If enabled, adds extra input pins to control writing to specific bytes within a word.
+            </dd>
+            <dt>
+              Clear Pin
+            </dt>
+            <dd>
+              If enabled, adds an asynchronous Clear pin to reset memory contents.
+            </dd>
+          </dl>
+          <h2>
+            Poke Tool Behavior
+          </h2>
+          <p>
+            See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>. Clicking on a value within the component allows you to edit it. The tool intelligently detects whether you are clicking on Port A's view (top) or Port B's view (bottom).
+          </p>
+          <h2>
+            Text Tool Behavior
+          </h2>
+          <p>
+            None.
+          </p>
+          <h2>
+            Menu Tool Behavior
+          </h2>
+          <p>
+            See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>.
+          </p>
+          <p>
+            <a href="../index.html">Back to <em>Library Reference</em></a>
+          </p>
+        </dd>
+      </dl>
+    </div>
+  </body>
+</html>
