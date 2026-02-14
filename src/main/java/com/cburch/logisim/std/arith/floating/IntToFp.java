@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.arith.floating;
 
 import static com.cburch.logisim.std.Strings.S;
 
@@ -23,10 +23,10 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.arith.Comparator;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 
 import java.awt.Color;
-import java.math.BigInteger;
 
 public class IntToFp extends InstanceFactory {
   /**
@@ -41,15 +41,6 @@ public class IntToFp extends InstanceFactory {
   private static final int IN = 0;
   private static final int OUT = 1;
   private static final int ERR = 2;
-
-  static BigInteger extend(int w, long v, boolean unsigned) {
-    long mask = w == 64 ? 0 : (-1L) << w;
-    mask ^= 0xFFFFFFFFFFFFFFFFL;
-    long value = v & mask;
-    if (!unsigned && (value >> (w - 1)) != 0) value |= ~mask;
-    if (unsigned) return new BigInteger(Long.toUnsignedString(value));
-    return new BigInteger(Long.toString(value));
-  }
 
   public IntToFp() {
     super(_ID, S.getter("intToFPComponent"));
@@ -90,16 +81,10 @@ public class IntToFp extends InstanceFactory {
 
     // compute outputs
     final var a = state.getPortValue(IN);
-    final var a_val = extend(dataWidthIn.getWidth(), a.toLongValue(), unsigned);
+    final var a_val = a.toBigInteger(unsigned);
 
     final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
-    final var out = switch (dataWidthOut.getWidth()) {
-      // TODO: can replace Value.fp32Tofp16_raw(Float.floatToRawIntBits((float) out_val)) with Float.floatToFloat16((float) out_val) in Java 20 or later
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
-      case 32 -> Value.createKnown((float) out_val);
-      case 64 -> Value.createKnown(out_val);
-      default -> Value.ERROR;
-    };
+    final var out = Value.createKnown(dataWidthOut, out_val);
 
     // propagate them
     final var delay = (dataWidthIn.getWidth() + 2) * PER_DELAY;

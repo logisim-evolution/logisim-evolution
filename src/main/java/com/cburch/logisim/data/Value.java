@@ -12,7 +12,10 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.circuit.CircuitWires.BusConnection;
 import com.cburch.logisim.util.Cache;
+import com.cburch.logisim.util.MiniFloat;
+
 import java.awt.Color;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public final class Value {
@@ -107,6 +110,20 @@ public final class Value {
   /* Added to test */
   public static Value createKnown(int bits, long value) {
     return Value.create(bits, 0, 0, value);
+  }
+
+  public static Value createKnown(BitWidth bits, double value) {
+    return createKnown(bits.getWidth(), value);
+  }
+
+  public static Value createKnown(int bits, double value) {
+    return switch (bits) {
+      case 8 -> Value.createKnown(8, MiniFloat.floatToMiniFloat143((float) value));
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) value));
+      case 32 -> Value.createKnown((float) value);
+      case 64 -> Value.createKnown(value);
+      default -> Value.ERROR;
+    };
   }
 
   /**
@@ -651,6 +668,35 @@ public final class Value {
     return value;
   }
 
+  public long toSignExtendedLongValue() {
+    if (error != 0) return -1L;
+    if (unknown != 0) return -1L;
+    final var shift = 64 - width;
+    return value << shift >> shift;
+  }
+
+  public BigInteger toBigInteger(boolean unsigned) {
+    var mask = (width == 64 ? -1L : ~(-1L << width));
+    long value = this.value & mask;
+    if (unsigned) {
+      return new BigInteger(
+        1,
+          new byte[] {
+            (byte) ((value >> 56) & 0xFFL),
+            (byte) ((value >> 48) & 0xFFL),
+            (byte) ((value >> 40) & 0xFFL),
+            (byte) ((value >> 32) & 0xFFL),
+            (byte) ((value >> 24) & 0xFFL),
+            (byte) ((value >> 16) & 0xFFL),
+            (byte) ((value >> 8) & 0xFFL),
+            (byte) ((value) & 0xFFL)
+          }
+      );
+    }
+    if ((value >> (width - 1)) != 0) value |= ~mask;
+    return BigInteger.valueOf(value);
+  }
+
   public float toFloatValue() {
     if (error != 0 || unknown != 0 || width != 32) return Float.NaN;
     return Float.intBitsToFloat((int) value);
@@ -666,9 +712,25 @@ public final class Value {
     return Float.float16ToFloat((short) value);
   }
 
+  public float toFloatValueFromFP8() {
+    if (error != 0 || unknown != 0 || width != 8) return Float.NaN;
+    return MiniFloat.miniFloat143ToFloat((byte) value);
+  }
+
+  public double toDoubleValueFromAnyFloat() {
+    return switch (width) {
+      case 8 -> toFloatValueFromFP8();
+      case 16 -> toFloatValueFromFP16();
+      case 32 -> toFloatValue();
+      case 64 -> toDoubleValue();
+      default -> Double.NaN;
+    };
+  }
+
   public String toStringFromFloatValue() {
     return switch (getWidth()) {
-      case 16 -> String.format("%.4g", toFloatValueFromFP16());
+      case 8 -> Float.toString(toFloatValueFromFP8());
+      case 16 -> Float.toString(toFloatValueFromFP16());
       case 32 -> Float.toString(toFloatValue());
       case 64 -> Double.toString(toDoubleValue());
       default -> "NaN";
