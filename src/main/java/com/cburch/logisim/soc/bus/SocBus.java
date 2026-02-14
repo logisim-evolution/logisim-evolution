@@ -101,7 +101,7 @@ public class SocBus extends SocInstanceFactory {
     final var loc = painter.getLocation();
     final var font = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "SOC Bus Interconnect", loc.getX() + 320, loc.getY() + 10);
+    GraphicsUtil.drawCenteredText(g2, S.get("SocBusComponent"), loc.getX() + 320, loc.getY() + 10);
     g2.setFont(font);
     if (painter.isPrintView()) return;
     var socBusInfo = painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
