@@ -119,15 +119,19 @@ public class SocDma extends SocInstanceFactory {
       state.setData(data);
     }
 
+    // Sample clock once per propagate call so lastClock is always updated
+    Value clock = state.getPortValue(CLOCK_INDEX);
+
     // Reset handling
     if (state.getPortValue(RESET_INDEX) == Value.TRUE) {
       data.reset();
+      // Keep clock edge tracking in sync while reset is asserted
+      data.lastClock = clock;
       state.setPort(IRQ_INDEX, Value.FALSE, 1);
       return;
     }
 
     // Clock edge detection
-    Value clock = state.getPortValue(CLOCK_INDEX);
     if (data.lastClock == Value.FALSE && clock == Value.TRUE) {
       DmaState dmaState = state.getAttributeValue(DmaAttributes.DMA_STATE);
       dmaState.executeBurst(data, ((InstanceStateImpl) state).getCircuitState());

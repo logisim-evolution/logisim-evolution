@@ -200,6 +200,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
 
     int remaining = regs.length - regs.bytesDone;
     int wordsToTransfer = Math.min(burstSize, remaining / 4);
+    int wordsTransferred = 0;
 
     for (int i = 0; i < wordsToTransfer; i++) {
       int offset = regs.bytesDone + i * 4;
@@ -226,9 +227,11 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
           controlBus.getComponent());
       mgr.initializeTransaction(writeTrans, dstBusId, cState);
       if (writeTrans.hasError()) break;
+
+      wordsTransferred++;
     }
 
-    regs.bytesDone += wordsToTransfer * 4;
+    regs.bytesDone += wordsTransferred * 4;
 
     if (regs.bytesDone >= regs.length) {
       regs.busy = false;
