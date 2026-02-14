@@ -24,6 +24,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -193,7 +194,8 @@ public class Analyze {
     final var columns = new Entry[outputNames.size()][rowCount];
 
     for (var i = 0; i < rowCount; i++) {
-      final var circuitState = CircuitState.createRootState(proj, circuit);
+      final var circuitState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
+      final var prop = circuitState.getPropagator();
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
@@ -206,7 +208,6 @@ public class Analyze {
         Pin.FACTORY.driveInputPin(pinState, Value.create(v));
       }
 
-      final var prop = circuitState.getPropagator();
       prop.propagate();
       /*
        * TODO for the SimulatorPrototype class do { prop.step(); } while
@@ -341,6 +342,7 @@ public class Analyze {
         }
       } else if (comp.getFactory() instanceof Pin) { // pins are handled elsewhere
       } else if (comp.getFactory() instanceof SplitterFactory) { // splitters are handled elsewhere
+      } else if (comp.getFactory() instanceof Text) { // can safely ignore
       } else {
         throw new AnalyzeException.CannotHandle(comp.getFactory().getDisplayName());
       }

@@ -9,10 +9,13 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.hex.Test;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
+import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.log.ClockSource;
 import com.cburch.logisim.gui.log.ComponentSelector;
+import com.cburch.logisim.gui.test.TestPanel;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
@@ -133,6 +136,7 @@ public class Simulator {
     private Condition simStateUpdated = simStateLock.newCondition();
     // NOTE: These variables must only be accessed with lock held.
     private Propagator propagator = null;
+    private ArrayList<TestVectorEvaluator> requestedTestVectors = null;
     private boolean autoPropagating = true;
     private boolean autoTicking = false;
     private double autoTickFreq = 1.0; // Hz
@@ -350,6 +354,21 @@ public class Simulator {
       }
     }
 
+    void requestShowTestVector(TestVectorEvaluator evaluator) {
+      simStateLock.lock();
+      try {
+        if (requestedTestVectors == null) {
+          requestedTestVectors = new ArrayList<TestVectorEvaluator>();
+        }
+        requestedTestVectors.add(evaluator);
+        if (Thread.currentThread() != this) {
+          simStateUpdated.signalAll();
+        }
+      } finally {
+        simStateLock.unlock();
+      }
+    }
+
     void requestShutDown() {
       simStateLock.lock();
       try {
@@ -365,6 +384,7 @@ public class Simulator {
     private boolean loop() {
 
       Propagator prop = null;
+      ArrayList<TestVectorEvaluator> testVectors = null;
       var doReset = false;
       var doNudge = false;
       var doTick = false;
@@ -385,7 +405,11 @@ public class Simulator {
           prop = propagator;
           now = System.nanoTime();
 
-          if (resetRequested) {
+          if (requestedTestVectors != null) {
+            testVectors = requestedTestVectors;
+            requestedTestVectors = null;
+            ready = true;
+          } else if (resetRequested) {
             resetRequested = false;
             doReset = true;
             doProp = autoPropagating;
@@ -468,6 +492,18 @@ public class Simulator {
       var stepped = false;
       var propagated = false;
       var hasClocks = true;
+
+      if (testVectors != null  && !testVectors.isEmpty()) {
+        try {
+          for (final var evaluator : testVectors) {
+            evaluator.evaluate();
+          }
+          propagated = true;
+        } catch (Exception err) {
+          oops = true;
+          err.printStackTrace();
+        }
+      }
 
       if (doReset) {
         try {
@@ -775,12 +811,16 @@ public class Simulator {
 
   public void setTickFrequency(double freq) {
     if (simThread.setTickFrequency(freq)) {
-      final var propagator = simThread.getPropagatorUnsynchronized(); 
+      final var propagator = simThread.getPropagatorUnsynchronized();
       if (propagator != null) {
         propagator.getRootState().getCircuit().setTickFrequency(freq);
       }
       fireSimulatorStateChanged();
     }
+  }
+
+  public void showTestVector(TestVectorEvaluator evaluator) {
+    simThread.requestShowTestVector(evaluator);
   }
 
   public void step() {

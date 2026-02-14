@@ -306,15 +306,20 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     revalidate();
   }
 
-  public Rectangle getViewableRect() {
+  public Rectangle getViewableBaseRect() {
     Rectangle viewableBase;
-    Rectangle viewable;
     if (canvasPane != null) {
       viewableBase = canvasPane.getViewport().getViewRect();
     } else {
       final var bds = proj.getCurrentCircuit().getBounds();
       viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
     }
+    return viewableBase;
+  }
+
+  public Rectangle getViewableRect() {
+    Rectangle viewable;
+    Rectangle viewableBase = getViewableBaseRect();
     final var zoom = getZoomFactor();
     if (zoom == 1.0) {
       viewable = viewableBase;
@@ -681,16 +686,26 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   private void doZoom(Point mouseLocation, boolean zoomIn) {
     var zoomControl = proj.getFrame().getZoomControl();
+    final var oldView = getViewableBaseRect();
+    final var oldZoom = getZoomFactor();
     if (zoomIn) {
       zoomControl.zoomIn();
     } else {
       zoomControl.zoomOut();
     }
     if (mouseLocation != null) {
-      final var rect = getViewableRect();
-      final var zoom = proj.getFrame().getZoomModel().getZoomFactor();
-      setHorizontalScrollBar((int) ((mouseLocation.getX() - rect.width / 2) * zoom));
-      setVerticalScrollBar((int) ((mouseLocation.getY() - rect.height / 2) * zoom));
+      final var newZoom = getZoomFactor();
+
+      final var mouseInViewX = ((mouseLocation.x * oldZoom) - oldView.x) / oldView.width;
+      final var mouseInViewY = ((mouseLocation.y * oldZoom) - oldView.y) / oldView.height;
+
+      final var newView = getViewableBaseRect();
+      final var newViewOffsetX = (mouseLocation.x * newZoom) - (newView.width * mouseInViewX);
+      final var newViewOffsetY = (mouseLocation.y * newZoom) - (newView.height * mouseInViewY);
+
+      viewport.doLayout();
+      setHorizontalScrollBar((int) Math.round(newViewOffsetX));
+      setVerticalScrollBar((int) Math.round(newViewOffsetY));
     }
   }
 

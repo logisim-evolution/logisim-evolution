@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="pt">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="pt">
+	<title>Uso da Linha de Comando</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Uso da Linha de Comando</h1>
+
+<p>Para facilitar testes automatizados, a funcionalidade de vetor de teste pode ser executada a partir da linha de comando:</p>
+
+<blockquote>
+<div class="forcode">
+<tt>logisim --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<p>Ou usando o arquivo JAR:</p>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<h2>Argumentos</h2>
+
+<ul>
+<li><strong>&lt;circuit_name&gt;</strong>: O nome do circuito a ser testado (deve corresponder a um circuito no arquivo do projeto)</li>
+<li><strong>&lt;test_vector_file&gt;</strong>: Caminho para o arquivo de vetor de teste (por exemplo, <code>TestsDLatch.txt</code>)</li>
+<li><strong>&lt;project.circ&gt;</strong>: Caminho para o arquivo de projeto do Logisim contendo o circuito</li>
+</ul>
+
+<h2>Exemplo</h2>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector dlatch TestsRegisterFile.txt /home/user/Computer.circ</tt>
+</div>
+</blockquote>
+
+<h2>O que o Comando Faz</h2>
+
+<p>O comando irá:</p>
+
+<ol>
+<li>Carregar o circuito especificado do arquivo do projeto</li>
+<li>Carregar e analisar o arquivo de vetor de teste</li>
+<li>Executar todos os testes (respeitando as regras de execução sequencial)</li>
+<li>Imprimir resultados mostrando testes aprovados e falhados</li>
+<li>Sair com código de status 0 em caso de sucesso, diferente de zero em caso de falha</li>
+</ol>
+
+<h2>Exemplos de Saída do Comando</h2>
+
+<p>O resultado de um teste bem-sucedido será enviado para a saída padrão (stdout), por exemplo:</p>
+
+	<pre class="code">
+Carregando vetor de teste "testv1b.txt" ...
+Executando 4 vetores ...
+1 
+2 
+3 
+4 
+
+Aprovados : 4, Falhados : 0
+</pre>
+
+<p>E em caso de falha:</p>
+
+	<pre class="code">
+Carregando vetor de teste "testv1a.txt" ...
+Executando 4 vetores ...
+1 
+2 
+3 
+
+  ob = 0 (esperado 1)
+4 
+
+  ob = 1 (esperado 0)
+
+Aprovados : 2, Falhados : 2
+</pre>
+
+<p><strong>Nota:</strong> Na saída de erro (stderr) você lerá:</p>
+
+	<pre class="code">
+Erro no vetor de teste 3:
+Erro no vetor de teste 4:
+</pre>
+
+<p>
+	<b>Anterior:</b> <a href="test_vector_sequential.html">Testes Sequenciais</a> | <b>Próximo:</b> <a href="test_vector_tips.html">Dicas e Melhores Práticas</a>.
+</p>
+
+</body>
+</html>
+

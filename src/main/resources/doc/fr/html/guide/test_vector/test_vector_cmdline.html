@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>Utilisation en ligne de commande</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Utilisation en ligne de commande</h1>
+
+<p>Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée depuis la ligne de commande :</p>
+
+<blockquote>
+<div class="forcode">
+<tt>logisim --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<p>Ou en utilisant le fichier JAR :</p>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<h2>Arguments</h2>
+
+<ul>
+<li><strong>&lt;circuit_name&gt;</strong> : Le nom du circuit à tester (doit correspondre à un circuit dans le fichier projet)</li>
+<li><strong>&lt;test_vector_file&gt;</strong> : Chemin vers le fichier de vecteur de test (par exemple, <code>TestsDLatch.txt</code>)</li>
+<li><strong>&lt;project.circ&gt;</strong> : Chemin vers le fichier projet Logisim contenant le circuit</li>
+</ul>
+
+<h2>Exemple</h2>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector dlatch TestsRegisterFile.txt /home/user/Computer.circ</tt>
+</div>
+</blockquote>
+
+<h2>Ce que fait la commande</h2>
+
+<p>La commande va :</p>
+
+<ol>
+<li>Charger le circuit spécifié depuis le fichier projet</li>
+<li>Charger et analyser le fichier de vecteur de test</li>
+<li>Exécuter tous les tests (en respectant les règles d'exécution séquentielle)</li>
+<li>Afficher les résultats montrant les tests réussis et échoués</li>
+<li>Quitter avec le code de statut 0 en cas de succès, non-zéro en cas d'échec</li>
+</ol>
+
+<h2>Exemples de sortie de commande</h2>
+
+<p>Le résultat d'un test réussi sera envoyé à la sortie standard (stdout), par exemple :</p>
+
+	<pre class="code">
+Loading test vector "testv1b.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+4 
+
+Passed : 4, Failed : 0
+</pre>
+
+<p>Et en cas d'échec :</p>
+
+	<pre class="code">
+Loading test vector "testv1a.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+
+  ob = 0 (expected 1)
+4 
+
+  ob = 1 (expected 0)
+
+Passed : 2, Failed : 2
+</pre>
+
+<p><strong>Note :</strong> Dans la sortie d'erreur (stderr), vous lirez :</p>
+
+	<pre class="code">
+Error on test vector 3:
+Error on test vector 4:
+</pre>
+
+<p>
+	<b>Précédent :</b> <a href="test_vector_sequential.html">Test séquentiel</a> | <b>Suivant :</b> <a href="test_vector_tips.html">Conseils et bonnes pratiques</a>.
+</p>
+
+</body>
+</html>
+

@@ -34,6 +34,11 @@ public class Main {
    * @param args Optional arguments.
    */
   public static void main(String[] args) {
+    // To print debug log level information, run with:
+    //    java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug
+    // or uncomment next line
+    // System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+
     System.setProperty("apple.awt.application.name", BuildInfo.name);
     try {
       if (!GraphicsEnvironment.isHeadless()) {

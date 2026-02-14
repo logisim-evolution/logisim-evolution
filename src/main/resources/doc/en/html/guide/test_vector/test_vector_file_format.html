@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>Test Vector File Format</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Test Vector File Format</h1>
+
+<p>Here is an example test vector file:</p>
+<pre class="code">
+# my test vector for add32
+A[8]      B[8]      C[8]      Cin Cout
+0000_0000 0000_0000 0000_0000 0   0
+-2        0x05      3         0   0
+0         0o3       3         0   0
+</pre>
+
+<p>First and foremost, the file format is simple. Headers match the circuit's input/output pins. Under that are the values to test against.</p>
+
+<p>The first non-blank, non-comment line lists the name of each circuit input pin and its bit-width (if > 1), separated by whitespace.</p>
+
+<p>One thing that often confuses people starting out is that the bit-width must be specified in the header any time it is not 1 bit.</p>
+<p>NOTE: Bit width is not necessarily the same as the number of characters in the value. For example, a 4-bit value of 13 can be represented as 1101, 00001101, 0x0d, 0o15, 15, or 0b1101, etc.</p>
+
+<p>Blank lines are ignored.  Anything following a '#' character is a
+comment.  The first non-blank, non-comment line lists the name of each
+circuit input pin and its width (if &gt; 1), separated by whitespace.
+</p>
+
+<p>The remaining lines list each value separated by whitespace. The
+values can be in hex, octal, binary, or signed decimal. Hex values
+must have a '0x' prefix. Octal values must have a '0o' prefix.
+Binary and decimal are be
+distinguished by the number of digits: binary values must always have
+exactly as many digits as the width of the column; decimal values must
+always have fewer, should not have leading zeros, and may have a
+negative sign.</p>
+
+<p>For improved readability, you can use underscores (<code>_</code>) anywhere
+in numeric values. Underscores are ignored during parsing. Examples:
+<code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>,
+<code>1_234</code>, or <code>-5_000</code>.</p>
+
+<p>For hex, octal, and binary values, a digit of 'x' specifies four,
+three, or one "don't care" bits. So the value 101xx is a five bit
+binary value, with the last two bits unspecified, and 0x1ax5 is a hex
+value with four unspecified bits.  Such "don't cares" can not be used
+in decimal notation.</p>
+
+<p>
+	<b>Previous:</b> <a href="test_vector_window.html">Test Vector Window</a> | <b>Next:</b> <a href="test_vector_special_values.html">Special Values</a>.
+</p>
+
+</body>
+</html>
+

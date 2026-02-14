@@ -3,12 +3,25 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Bug fixes:
+    * Fixed more synchronization issues with simulation tree and propagator.
+    * Fixed INOUT port issue in TTL74245.
+    * Fixed several other minor issues.
+  * Enhanced TestVector for sequential circuits. See user's guide for details.
+  * Enhanced Video resolution choices.
+  * Allow more components to show in State (register) tab.
   * Enhanced Undo and Redo functionality:
     * Added "Undo History" dropdown menu to view and select specific undo actions.
     * Added "Redo History" dropdown menu to view and select specific redo actions.
     * Added "Clear Undo/Redo History" menu item with confirmation dialog.
     * Limited undo and redo history to a maximum of 64 actions.
     * Retained standard single-step undo and redo functionality via menu item.
+  * Enhanced Counter component:
+    * Counter state can now be displayed in "State" tab alongside registers.
+    * Counter state can now drive "Assembly viewer" address.
+  * Corrected appearance of OR gates in TikZ/SVG image exports.
+  * Corrected font choice for default fonts in SVG image exports.
+  * Reduced filesize of TikZ/SVG image exports.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables

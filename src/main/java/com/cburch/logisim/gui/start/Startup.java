@@ -447,15 +447,15 @@ public class Startup implements AWTEventListener {
    */
   public enum RC {
     /**
-     * Handler completed succesfuly. We can proceed with another argument.
+     * Handler completed successfully. We can proceed with another argument.
      */
     OK,
     /**
-     * Handler had some minor propblems, but it is recoverable, so parsing should keep going.
+     * Handler had some minor problems, but it is recoverable, so parsing should keep going.
      */
     WARN,
     /**
-     * Unrecoverable error occured while handling option. No fall back, must quit.
+     * Unrecoverable error occurred while handling option. No fall back, must quit.
      */
     QUIT
   }
@@ -465,7 +465,7 @@ public class Startup implements AWTEventListener {
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
     if (fmts.length > 0) {
-      // FIXME: why we support multiple TTY types in one invocation? fallback?
+      // We allow multiple options since one might wish, for example, "tty,speed"
       for (final var singleFmt : fmts) {
         final var val = switch (singleFmt.trim()) {
           case "table" -> TtyInterface.FORMAT_TABLE;
@@ -485,8 +485,8 @@ public class Startup implements AWTEventListener {
           return RC.QUIT;
         }
         startup.ttyFormat |= val;
-        return RC.OK;
       }
+      return RC.OK;
     }
     logger.error(S.get("ttyFormatError"));
     return RC.QUIT;
