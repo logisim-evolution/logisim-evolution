@@ -155,6 +155,15 @@ public class SocSimulationManager implements SocBusMasterInterface {
         }
       }
     }
+    // Also set the simulation manager on any additional SocBusInfo attributes
+    // (e.g. DMA source/destination bus connections that are master-only).
+    for (final var attr : c.getAttributeSet().getAttributes()) {
+      if (attr == SOC_BUS_SELECT) continue;
+      final var val = c.getAttributeSet().getValue(attr);
+      if (val instanceof SocBusInfo busInfo) {
+        busInfo.setSocSimulationManager(this, c);
+      }
+    }
     return true;
   }
 
