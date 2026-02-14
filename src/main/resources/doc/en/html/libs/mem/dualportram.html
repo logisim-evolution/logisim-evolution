@@ -113,6 +113,7 @@
             </dt>
             <dd>
               Store (Write Enable): When 1 or floating, a clock pulse will result in storing the data into memory at the currently selected address for the respective port.
+              <br><strong>Note:</strong> If both ports attempt to write to the same address simultaneously, <strong>Port B has priority</strong> (the value from Port B will be stored).
             </dd>
             <dt>
               <var>ld1, ld2</var> on south edge (input, bit width 1)
@@ -196,4 +197,5 @@
       </dl>
     </div>
   </body>
+
 </html>
