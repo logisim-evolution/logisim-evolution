@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2026-02-14T00:00:00.000000000">
+    <meta name="changed" content="2026-02-14T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      DMA engine
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        DMA engine
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">System On Chip components</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              3.9
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The DMA engine is a simple linear memory-copy DMA controller. It copies data from a
+        source address to a destination address in configurable bursts, driven by a clock signal.
+        This component is primarily intended to be used with the <a href="socvga.html">VGA screen</a>
+        component to efficiently copy image data into the VGA framebuffer, but it can be used for
+        any memory-to-memory transfer.
+      </p>
+      <p>
+        The DMA engine supports three independent bus connections: one for control register access
+        (the DMA acts as a slave on this bus), one for source reads (master-only), and one for
+        destination writes (master-only). This allows routing data transfers across different
+        SoC buses. If the source or destination bus is not explicitly configured, the control bus
+        is used as a fallback.
+      </p>
+      <h3>
+        Transfer operation
+      </h3>
+      <p>
+        A transfer is initiated by programming the source address, destination address, and length
+        registers, then writing the START bit in the control register. Once started, the DMA engine
+        copies <em>burst size</em> words (32-bit) per clock cycle until all bytes have been
+        transferred. At the end of the transfer the DONE status bit is set, and optionally an
+        interrupt is raised if IRQ_EN was set in the control register.
+      </p>
+      <p>
+        While a transfer is in progress (BUSY=1), writes to the SRC_ADDR, DST_ADDR, and LENGTH
+        registers are ignored.
+      </p>
+      <h3>
+        Performance
+      </h3>
+      <p>
+        With the default burst size of 16 words/tick, the DMA engine can transfer data roughly
+        80&times; faster than a CPU-driven memcpy loop (which requires ~5 clock cycles per word
+        due to instruction fetch, decode, and execute overhead).
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        On the west side of the DMA component:
+      </p>
+      <ul>
+        <li>
+          <strong><em>Reset</em></strong>: Active-high reset input. When asserted, all DMA
+          registers are cleared and any in-progress transfer is aborted.
+        </li>
+        <li>
+          <strong><em>Clock</em></strong>: Clock input. On each rising edge, the DMA engine
+          transfers up to <em>burst size</em> words if a transfer is in progress.
+        </li>
+      </ul>
+      <p>
+        On the east side of the DMA component:
+      </p>
+      <ul>
+        <li>
+          <strong><em>IRQ</em></strong>: Active-high interrupt output. Asserted when a transfer
+          completes and IRQ_EN is set in the CONTROL register. Cleared by writing 1 to the DONE
+          bit in the STATUS register.
+        </li>
+      </ul>
+      <h2>
+        MMIO Register Map
+      </h2>
+      <table border="1">
+        <tbody>
+          <tr>
+            <td style="text-align: center;"><strong>Offset</strong></td>
+            <td style="text-align: center;"><strong>Register</strong></td>
+            <td style="text-align: center;"><strong>Access</strong></td>
+            <td style="text-align: center;"><strong>Description</strong></td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x00</td>
+            <td>SRC_ADDR</td>
+            <td style="text-align: center;">R/W</td>
+            <td>Source address (must be word-aligned). Writes are ignored while BUSY.</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x04</td>
+            <td>DST_ADDR</td>
+            <td style="text-align: center;">R/W</td>
+            <td>Destination address (must be word-aligned). Writes are ignored while BUSY.</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x08</td>
+            <td>LENGTH</td>
+            <td style="text-align: center;">R/W</td>
+            <td>Transfer length in bytes (must be a multiple of 4). Writes are ignored while BUSY.</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x0C</td>
+            <td>CONTROL</td>
+            <td style="text-align: center;">R/W</td>
+            <td>
+              <strong>bit 0 (START)</strong>: Write 1 to start a new transfer (ignored if BUSY or LENGTH=0).<br>
+              <strong>bit 1 (IRQ_EN)</strong>: Set to enable interrupt on transfer completion.
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x10</td>
+            <td>STATUS</td>
+            <td style="text-align: center;">R/W1C</td>
+            <td>
+              <strong>bit 0 (BUSY)</strong>: Read-only. 1 while a transfer is in progress.<br>
+              <strong>bit 1 (DONE)</strong>: Write-1-to-clear. Set when a transfer has completed.
+              Writing 1 to this bit clears it and de-asserts the IRQ output.
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x14</td>
+            <td>BYTES_DONE</td>
+            <td style="text-align: center;">RO</td>
+            <td>Number of bytes transferred so far. Resets to 0 when a new transfer starts.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Attributes
+      </h2>
+      <ul>
+        <li>
+          <strong><em>Base address</em></strong>: The start address of the MMIO register region
+          (6 registers, 24 bytes total). Must be word-aligned.
+        </li>
+        <li>
+          <strong><em>Burst size</em></strong>: Number of 32-bit words transferred per clock tick.
+          Must be a power of 2 (1, 2, 4, 8, 16, 32, 64, 128, or 256). Default is 16.
+        </li>
+        <li>
+          <strong><em>Label</em></strong>: An optional label for the component.
+        </li>
+        <li>
+          <strong><em>Label font</em></strong>: Font used for the label.
+        </li>
+        <li>
+          <strong><em>Label visible</em></strong>: Whether the label is displayed.
+        </li>
+        <li>
+          <strong><em>Connected bus</em></strong>: The bus on which the DMA control registers are
+          accessible as a slave. Click to select a <a href="socbus.html">bus component</a>.
+        </li>
+        <li>
+          <strong><em>Source bus</em></strong>: The bus used for source (read) data transfers. If
+          not configured, the control bus is used. Click to select a bus.
+        </li>
+        <li>
+          <strong><em>Destination bus</em></strong>: The bus used for destination (write) data
+          transfers. If not configured, the control bus is used. Click to select a bus.
+        </li>
+      </ul>
+      <h2>
+        Usage with VGA screen
+      </h2>
+      <p>
+        To use the DMA engine to copy an image into the VGA framebuffer:
+      </p>
+      <ol>
+        <li>Place a <a href="socbus.html">SOC bus</a>, a <a href="socmemsimulator.html">Memory simulator</a>,
+          a <a href="socvga.html">VGA screen</a>, and the DMA engine on the same sheet.</li>
+        <li>Connect all components to the same bus (or configure separate source/destination buses
+          as needed).</li>
+        <li>Ensure the VGA component is registered as a sniffer on the bus that the DMA writes to,
+          so it can observe the writes and update the display in real time.</li>
+        <li>From your CPU program: write the source image address to SRC_ADDR (0x00), the VGA
+          buffer address to DST_ADDR (0x04), the transfer size to LENGTH (0x08), then write
+          START|IRQ_EN to CONTROL (0x0C) to begin the transfer.</li>
+        <li>Poll the STATUS register or wait for the IRQ to know when the transfer is complete.</li>
+      </ol>
+      <p>
+        <strong>Note:</strong> DMA write transactions are visible to bus sniffers (such as the
+        VGA component), so the VGA display updates in real time during a DMA transfer. DMA read
+        transactions are hidden from the bus trace to reduce noise.
+      </p>
+      <p>
+        <a href="index.html">Back to <em>SOC library</em></a>
+      </p>
+    </div>
+  </body>
+</html>
