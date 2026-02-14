@@ -303,7 +303,6 @@ public class AttrTable extends JPanel implements LocaleListener {
       }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Object getCellEditorValue() {
       // Returns the value contained in the editor.
@@ -317,7 +316,6 @@ public class AttrTable extends JPanel implements LocaleListener {
       }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int rowIndex, int columnIndex) {
       final var attrModel = tableModel.attrModel;

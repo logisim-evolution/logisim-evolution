@@ -43,6 +43,8 @@ public class TestVector {
   private class TestVectorReader {
     private final BufferedReader in;
     private StringTokenizer curLine;
+    private int setColumnIndex = -1;
+    private int seqColumnIndex = -1;
 
     public TestVectorReader(BufferedReader in) throws IOException {
       this.in = in;
@@ -67,53 +69,180 @@ public class TestVector {
       if (curLine == null) throw new IOException("TestVector format error: empty file");
 
       parseHeader();
-      data = new ArrayList<>();
+      TestVector.this.data = new ArrayList<>();
+      final var localDontCareFlags = new ArrayList<boolean[]>();
+      final var localFloatingFlags = new ArrayList<boolean[]>();
+      final var localSetNumbers = new ArrayList<Integer>();
+      final var localSeqNumbers = new ArrayList<Integer>();
       curLine = findNonemptyLine();
 
       while (curLine != null) {
-        parseData();
+        parseData(localDontCareFlags, localFloatingFlags, localSetNumbers, localSeqNumbers);
         curLine = findNonemptyLine();
       }
+
+      // Verify set and sequence order.
+      int lastSet = 0;
+      int lastSeq = 0;
+      for (int i = 0; i < localSetNumbers.size(); i++) {
+        final var thisSet = localSetNumbers.get(i);
+        final var thisSeq = localSeqNumbers.get(i);
+        if (thisSet < lastSet) {
+          throw new IOException("<Set> numbers out of order: " + lastSet + " before " + thisSet);
+        }
+        if (thisSet == lastSet && (thisSet > 0 && thisSeq <= lastSeq)) {
+          throw new IOException("<Seq> numbers out of order: " + lastSeq + " before " + thisSeq
+              + " in set " + thisSet);
+        }
+        if (thisSet == 0 && thisSeq != 0) {
+          throw new IOException("<Set> is 0 but <Seq> is " + thisSeq + ", not 0");
+        }
+        if (thisSet != 0 && thisSeq == 0) {
+          throw new IOException("<Set> is " + thisSet + " which not 0 but <Seq> is 0");
+        }
+        lastSet = thisSet;
+        lastSeq = thisSeq;
+      }
+
+      // Convert lists to arrays
+      TestVector.this.setNumbers = new int[localSetNumbers.size()];
+      for (int i = 0; i < localSetNumbers.size(); i++) {
+        TestVector.this.setNumbers[i] = localSetNumbers.get(i);
+      }
+      TestVector.this.seqNumbers = new int[localSeqNumbers.size()];
+      for (int i = 0; i < localSeqNumbers.size(); i++) {
+        TestVector.this.seqNumbers[i] = localSeqNumbers.get(i);
+      }
+      TestVector.this.dontCareFlags = localDontCareFlags;
+      TestVector.this.floatingFlags = localFloatingFlags;
+
     }
 
-    private void parseData() throws IOException {
+    private void parseData(
+        List<boolean[]> localDontCareFlags,
+        List<boolean[]> localFloatingFlags,
+        List<Integer> localSetNumbers,
+        List<Integer> localSeqNumbers) throws IOException {
       final var vals = new Value[columnName.length];
-      for (var i = 0; i < columnName.length; i++) {
-        final var t = curLine.nextToken();
+      final var dcFlags = new boolean[columnName.length];
+      final var floatFlags = new boolean[columnName.length];
+      int setValue = 0;
+      int seqValue = 0;
 
-        try {
-          vals[i] = Value.fromLogString(columnWidth[i], t);
-        } catch (Exception e) {
-          throw new IOException("Test Vector data format error: " + e.getMessage());
-        }
-        if (data.isEmpty()) columnRadix[i] = Value.radixOfLogString(columnWidth[i], t);
+      // Collect all tokens first
+      final var tokens = new ArrayList<String>();
+      while (curLine.hasMoreTokens()) {
+        tokens.add(curLine.nextToken());
       }
-      if (curLine.hasMoreTokens())
-        throw new IOException("Test Vector data format error: " + curLine.nextToken());
-      data.add(vals);
+
+      // Map tokens to columns based on original header positions
+      int pinIndex = 0;
+      for (int tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
+        final var t = tokens.get(tokenIndex);
+
+        // Check if this position corresponds to set, seq column
+        if (setColumnIndex >= 0 && tokenIndex == setColumnIndex) {
+          try {
+            setValue = Integer.parseInt(t);
+          } catch (NumberFormatException e) {
+            throw new IOException("Test Vector data format error: invalid set value: " + t);
+          }
+          continue;
+        }
+        if (seqColumnIndex >= 0 && tokenIndex == seqColumnIndex) {
+          try {
+            seqValue = Integer.parseInt(t);
+          } catch (NumberFormatException e) {
+            throw new IOException("Test Vector data format error: invalid seq value: " + t);
+          }
+          continue;
+        }
+
+        // This is a pin column
+        if (pinIndex >= columnName.length) {
+          throw new IOException("Test Vector data format error: too many values");
+        }
+
+        // Check for special values
+        final var tUpper = t.toUpperCase();
+        if ("<DC>".equals(tUpper)) {
+          dcFlags[pinIndex] = true;
+          vals[pinIndex] = Value.UNKNOWN; // Placeholder, won't be compared
+        } else if ("<FLOAT>".equals(tUpper)) {
+          floatFlags[pinIndex] = true;
+          vals[pinIndex] = Value.createUnknown(columnWidth[pinIndex]);
+        } else {
+          try {
+            vals[pinIndex] = Value.fromLogString(columnWidth[pinIndex], t);
+          } catch (Exception e) {
+            String errorMsg = e.getMessage();
+            // Enhance error message with column name if it's a "too many bits" error
+            if (errorMsg != null && errorMsg.contains("Too many bits") && errorMsg.contains("did you mean [")) {
+              // Extract the suggested bit width from the error message
+              int startIdx = errorMsg.indexOf("did you mean [");
+              int endIdx = errorMsg.indexOf("]", startIdx);
+              if (startIdx >= 0 && endIdx > startIdx) {
+                String bitWidthStr = errorMsg.substring(startIdx + "did you mean [".length(), endIdx);
+                // Replace with column name and suggested bit width
+                errorMsg = errorMsg.substring(0, startIdx) + "did you mean " + columnName[pinIndex] + "[" + bitWidthStr + "]?" + errorMsg.substring(endIdx + 1);
+              }
+            }
+            throw new IOException("Test Vector data format error: " + errorMsg);
+          }
+        }
+
+        if (TestVector.this.data.isEmpty()) {
+          if (!dcFlags[pinIndex] && !floatFlags[pinIndex]) {
+            columnRadix[pinIndex] = Value.radixOfLogString(columnWidth[pinIndex], t);
+          }
+        }
+        pinIndex++;
+      }
+
+      if (pinIndex < columnName.length) {
+        throw new IOException("Test Vector data format error: not enough values");
+      }
+
+      TestVector.this.data.add(vals);
+      localDontCareFlags.add(dcFlags);
+      localFloatingFlags.add(floatFlags);
+      localSetNumbers.add(setValue);
+      localSeqNumbers.add(seqValue);
     }
 
     private void parseHeader() throws IOException {
       final var n = curLine.countTokens();
-      columnName = new String[n];
-      columnWidth = new BitWidth[n];
-      columnRadix = new int[n];
+      final var tempColumnName = new ArrayList<String>();
+      final var tempColumnWidth = new ArrayList<BitWidth>();
+      final var tempColumnRadix = new ArrayList<Integer>();
 
       for (var i = 0; i < n; i++) {
-        columnRadix[i] = 2;
         final var t = (String) curLine.nextElement();
-        int s = t.indexOf('[');
+        final var tUpper = t.toUpperCase();
 
+        // Check for special columns
+        if ("<SET>".equals(tUpper)) {
+          setColumnIndex = i;
+          continue;
+        }
+        if ("<SEQ>".equals(tUpper)) {
+          seqColumnIndex = i;
+          continue;
+        }
+
+        // Regular pin column
+        int s = t.indexOf('[');
         if (s < 0) {
-          columnName[i] = t;
-          columnWidth[i] = BitWidth.ONE;
+          tempColumnName.add(t);
+          tempColumnWidth.add(BitWidth.ONE);
+          tempColumnRadix.add(2);
         } else {
           final var e = t.indexOf(']');
 
           if (e != t.length() - 1 || s == 0 || e == s + 1)
             throw new IOException("Test Vector header format error: bad spec: " + t);
 
-          columnName[i] = t.substring(0, s);
+          tempColumnName.add(t.substring(0, s));
           var w = 0;
           try {
             w = Integer.parseInt(t.substring(s + 1, e));
@@ -122,8 +251,17 @@ public class TestVector {
 
           if (w < 1 || w > 64)
             throw new IOException("Test Vector header format error: bad width: " + t);
-          columnWidth[i] = BitWidth.create(w);
+          tempColumnWidth.add(BitWidth.create(w));
+          tempColumnRadix.add(2);
         }
+      }
+
+      // Convert lists to arrays
+      columnName = tempColumnName.toArray(new String[0]);
+      columnWidth = tempColumnWidth.toArray(new BitWidth[0]);
+      columnRadix = new int[tempColumnRadix.size()];
+      for (int i = 0; i < tempColumnRadix.size(); i++) {
+        columnRadix[i] = tempColumnRadix.get(i);
       }
     }
   }
@@ -134,6 +272,10 @@ public class TestVector {
   public int[] columnRadix;
 
   public List<Value[]> data;
+  public int[] setNumbers;
+  public int[] seqNumbers;
+  private List<boolean[]> dontCareFlags;
+  private List<boolean[]> floatingFlags;
 
   public TestVector(File src) throws IOException {
     try (final var in = new BufferedReader(new FileReader(src))) {
@@ -144,5 +286,59 @@ public class TestVector {
 
   public TestVector(String filename) throws IOException {
     this(new File(filename));
+  }
+
+  /**
+   * Check if a value at the given row and column is marked as don't care.
+   *
+   * @param rowIndex The row index (0-based)
+   * @param columnIndex The column index (0-based)
+   * @return true if the value is don't care, false otherwise
+   */
+  public boolean isDontCare(int rowIndex, int columnIndex) {
+    if (dontCareFlags == null || rowIndex < 0 || rowIndex >= dontCareFlags.size()) {
+      return false;
+    }
+    final var flags = dontCareFlags.get(rowIndex);
+    if (flags == null || columnIndex < 0 || columnIndex >= flags.length) {
+      return false;
+    }
+    return flags[columnIndex];
+  }
+
+  /**
+   * Check if a value at the given row and column is marked as floating.
+   *
+   * @param rowIndex The row index (0-based)
+   * @param columnIndex The column index (0-based)
+   * @return true if the value is floating, false otherwise
+   */
+  public boolean isFloating(int rowIndex, int columnIndex) {
+    if (floatingFlags == null || rowIndex < 0 || rowIndex >= floatingFlags.size()) {
+      return false;
+    }
+    final var flags = floatingFlags.get(rowIndex);
+    if (flags == null || columnIndex < 0 || columnIndex >= flags.length) {
+      return false;
+    }
+    return flags[columnIndex];
+  }
+
+  public String specialColumnEntry(int i) {
+    if (floatingFlags != null) {
+      for (int row = 0; row < floatingFlags.size(); row++) {
+        if (isFloating(row, i)) {
+          return "<FLOAT>";
+        }
+      }
+    }
+    if (dontCareFlags != null) {
+      for (int row = 0; row < dontCareFlags.size(); row++) {
+        if (isDontCare(row, i)) {
+          return "<DC>";
+        }
+      }
+    }
+    return null;
   }
 }

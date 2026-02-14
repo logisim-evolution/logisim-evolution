@@ -46,7 +46,7 @@ public class ImplicantTest {
    * {@link com.cburch.logisim.analyze.model.Implicant#computeMinimal(int,
    * AnalyzerModel, String, javax.swing.JTextArea)}.
    *
-   * @param vars Names of the variables in Expression, seperated by commas
+   * @param vars Names of the variables in Expression, separated by commas
    * @param expr String representation of the Expression, must be parsable by
    *     {@link com.cburch.logisim.analyze.model.Parser#parse(String, AnalyzerModel)}
    * @param cost Amount of expected Implicants in the minimized Expression

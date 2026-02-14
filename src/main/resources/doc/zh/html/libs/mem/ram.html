@@ -3,11 +3,11 @@
  <head>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:25" name="changed" translator="gocpicnic"/>
+  <meta content="2026-01-12T09:31:25" name="changed" translator="gocpicnic"/>
   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
   <meta content="zh" http-equiv="Content-Language"/>
   <title>
-   RAM&lt;
+   RAM
   </title>
   <link href="../../style.css" rel="stylesheet" type="text/css"/>
  </head>
@@ -23,24 +23,21 @@
     <tbody>
      <tr>
       <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
+       <b>
         库:
-       </strong>
+       </b>
       </td>
       <td>
-       <!-- <a href="index.html">Memory</a> -->
        <a href="index.html">
-        存储
+        存储器
        </a>
       </td>
      </tr>
      <tr>
       <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
+       <b>
+        引入版本：
+       </b>
       </td>
       <td>
        2.0 Beta 1
@@ -48,329 +45,476 @@
      </tr>
      <tr>
       <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
+       <b>
+        外观：
+       </b>
       </td>
       <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ram.png" width="64"/>
+       <img alt="#########" class="appearancelibs" src="../../../../img-libs/ram.png"/>
       </td>
      </tr>
     </tbody>
    </table>
    <h2>
-    <!-- Behavior -->
     行为
    </h2>
    <p>
-    <!-- The RAM component, easily the most complex component in Logisim's built-in libraries, stores up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to to 32 bits (specified in the Data Bit Width attribute). The circuit can load and store values in RAM. Also, the user can modify individual values interactively via the Poke Tool, or the user can modify the entire contents via the Menu Tool. -->
-    RAM 组件无疑是 Logisim-evolution 内置库中最复杂的组件，最多可存储 16,777,216 个值（在“地址位宽”属性中指定），每个值最多可包含 32 位（在“数据位宽”属性中指定） 。 该电路可以在 RAM 中加载和存储值。 此外，用户可以通过 Poke 工具交互地修改单个值，或者用户可以通过菜单工具修改整个内容。
+    RAM 最多可存储 16,777,216 个数值（由<b class="property">地址位宽</b>属性指定），每个数值最多可包含 32 位（由<b class="property">数据位宽</b>属性指定）。电路可以从 RAM 读取并向其中写入数值。此外，用户既可以通过<b class="property">手形工具</b>（<img alt="#########" class="icontxt" src="../../../../icons/1616/toolpoke.png"/>）交互式地修改单个数值，也可以通过右键上下文菜单修改整个内容。更多信息请参见<em>用户指南</em>中的<a href="../../guide/mem/index.html">存储器组件</a>。
    </p>
    <p>
-    <!-- Current values are displayed in the component. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in inverse text (white on black). -->
-    当前值显示在元件中。 显示的地址以灰色列出在显示区域的左侧。 在内部，每个值都使用十六进制列出。 当前所选地址处的值将以反色文本（黑底白字）显示。
+    当前数值会显示在组件内部：显示区域左侧以灰色列出地址；内部每个数值以十六进制显示。当前选中地址对应的数值会以反色文字（黑底白字）显示。
    </p>
    <p>
-    <!-- The RAM component supports three different interfaces, depending on the Data Interface attribute. -->
-    RAM 组件支持三种不同的接口，具体取决于数据接口属性。
-   </p>
+    RAM 组件根据<b class="property">异步读取</b>、<b class="property">数据总线实现</b>和<b class="property">使能方式</b>等设置，支持四种不同的接口形式。
+   </p><b class="property">数据总线实现</b>属性允许修改数据总线的结构：可以是独立的单向输入总线与输出总线，或是双向的数据总线。
    <dl>
     <dt>
-     <!-- One synchronous load/store port (default) -->
-     1个同步加载/存储端口（默认）
+     默认设置为：读写分离总线 + 同步控制。
     </dt>
     <dd>
      <p>
-      <!-- The component includes a single port on its east side that serves for both loading and storing data. Which it performs depends on the input labeled <em>ld</em>: 1 (or floating) indicates to load the data at the address designated on the component's west side, and 0 indicates to store the data given on the port. To transmit data into and out of the component, you will need to use a Controlled Buffer component, as illustrated below. -->
-      该组件在其东侧有一个端口，用于加载和存储数据。 它执行的操作取决于标记为
-      <em>
-       ld
-      </em>
-      的输入：1（或浮动）表示将数据加载到组件西侧指定的地址，0表示存储端口上给定的数据。 要将数据传入和传出组件，您将需要使用受控缓冲区组件，如下所示。
-     </p>
-     <center>
-      <img alt="#########" src="../../../../img-libs/ramdemo.png"/>
-     </center>
-    </dd>
-    <dt>
-     <!-- One asynchronous load/store port -->
-     1个异步加载/存储端口
-    </dt>
-    <dd>
-     <p>
-      <!-- This is the same as above, except that there is no clock. The value found on the data bus is stored into memory whenever the <em>ld</em> input is 0. If, while the <em>ld</em> input is 0, the address or data changes, then an additional store occurs. This option is meant to more closely approximate the interface of many available random-access memories. -->
-      这与上面相同，只是没有时钟。 只要
-      <em>
-       ld
-      </em>
-      输入为 0，数据总线上找到的值就会存储到内存中。如果在
-      <em>
-       ld
-      </em>
-      输入为 0 时，地址或数据发生变化，则附加一个 发生存储。 此选项旨在更接近许多可用随机存取存储器的接口。
+      写入端口由<var>WE（或 Write enable）</var>信号控制；读取端口由<var>OE（或 Output enable）</var>信号驱动。读写操作通过时钟同步，其触发方式由<b class="property">触发方式</b>属性决定。若两条命令线同时为<b class="unov">1</b>，则先写后读；可通过修改<b class="property">读取行为</b>属性将其反转。
      </p>
     </dd>
     <dt>
-     <!-- Separate load and store ports -->
-     独立的装载和存储端口
+     异步读取，并支持按字节使能读取。
     </dt>
     <dd>
      <p>
-      <!-- Two data ports are provided - one on the west side for storing data, and another on the east side for loading data. This option removes the necessity of dealing with the Controlled Buffer and so it is easier to use. -->
-      提供两个数据端口，一个在西侧用于存储数据，另一个在东侧用于加载数据。 此选项消除了处理受控缓冲区的必要性，因此更易于使用。
+      若<b class="property">使能方式</b>属性设为<b class="vprop">使用字节使能</b>，且<b class="property">异步读取</b>属性设为<b class="vprop">是</b>，则只有<var>OE</var>信号的状态会触发数据出现在输出总线上；写入仍按上述方式进行。
      </p>
     </dd>
+    <dt>
+     异步读取，并使用行使能。
+    </dt>
     <dd>
-     <h2>
-      <!-- Pins -->
-      引脚
-     </h2>
-     <dl>
-      <dt>
-       <!-- <var>A</var> on west edge (input, bit width matches Address Bit Width attribute) -->
-       <var>
-        A
-       </var>
-       在西边（输入，位宽与地址位宽属性匹配）
-      </dt>
-      <dd>
-       <!-- Selects which of the values in memory is currently being accessed by the circuit. -->
-       选择电路当前正在访问存储器中的哪个值。
-      </dd>
-      <dt>
-       <!-- <var>D</var> on west edge (input, bit width matches Data Bit Width attribute) -->
-       <var>
-        D
-       </var>
-       在西边（输入，位宽与数据位宽属性匹配）
-      </dt>
-      <dd>
-       <!-- This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When a store is requested (via the clock changing from 0 to 1 while <em>sel</em> and <em>str</em> are both 1 or floating), the value found at this port is stored into memory at the currently selected address. -->
-       仅当为数据接口属性选择“单独的加载和存储端口”时，才会出现此输入。 当请求存储时（通过时钟从 0 变为 1，而
-       <em>
-        sel
-       </em>
-       和
-       <em>
-        str
-       </em>
-       均为 1 或浮动），在此端口找到的值将存储到内存中 当前选择的地址。
-      </dd>
-      <dt>
-       <var>
-        D
-       </var>
-       on east edge (input/output or output, bit width matches Data Bit Width attribute)
-      </dt>
-      <dd>
-       <!-- If <var>sel</var> and <var>ld</var> are 1 or floating, then the RAM component emits the value found at the currently selected address on this port. If there is a single load/store port, the value read from this port is stored whenever a store is requested. -->
-       如果
-       <var>
-        sel
-       </var>
-       和
-       <var>
-        ld
-       </var>
-       为1或浮动，则RAM组件发出在此端口上当前选定地址处找到的值。 如果只有一个加载/存储端口，则每当请求存储时，都会存储从此端口读取的值。
-      </dd>
-      <dt>
-       <!-- <var>str</var> on south edge (input, bit width 1) -->
-       <var>
-        str
-       </var>
-       位于南边缘（输入，位宽 1）
-      </dt>
-      <dd>
-       <!-- Store: This input is present only if "separate load and store ports" is selected for the Data Interface attribute. When it is 1 or floating, a clock pulse will result in storing the data found on the west edge into memory (provided the <var>sel</var> input is also 1 or floating). -->
-       存储：仅当为数据接口属性选择“单独的加载和存储端口”时，此输入才会出现。 当它为 1 或浮动时，时钟脉冲将导致将在西边沿找到的数据存储到内存中（假设
-       <var>
-        sel
-       </var>
-       输入也是 1 或浮动）。
-      </dd>
-      <dt>
-       <!-- <var>sel</var> on south edge (input, bit width 1) -->
-       <var>
-        sel
-       </var>
-       位于南边缘（输入，位宽 1）
-      </dt>
-      <dd>
-       <!-- Chip select: This input enables or disables the entire RAM module, based on whether the value is 1/floating or 0. The input is meant primarily for situations where you have multiple RAM units, only one of which would be enabled at any time. -->
-       芯片选择：该输入根据值是 1/浮点还是 0 来启用或禁用整个 RAM 模块。该输入主要用于具有多个 RAM 单元的情况，但任何时候只能启用其中一个。
-      </dd>
-      <dt>
-       <!-- triangle on south edge (input, bit width 1) -->
-       南边三角形（输入，位宽 1）
-      </dt>
-      <dd>
-       <!-- Clock input: This is absent when the Data Interface attribute's value is "One asynchronous load/store port." In other circumstances, when <var>ld</var> is 0, and this input rises from 0 to 1 (and <var>sel</var> is 1/undefined and <var>clr</var> is 0), then the value at the currently selected address changes to whatever value is at the <var>D</var> pin. As long as the clock input remains 0 or 1, though, the <var>D</var> value will not be stored into memory. -->
-       时钟输入：当数据接口属性的值为“一个异步加载/存储端口”时，时钟输入不存在。 在其他情况下，当
-       <var>
-        ld
-       </var>
-       为0时，该输入从0上升到1（并且
-       <var>
-        sel
-       </var>
-       为1/undefined且
-       <var>
-        clr
-       </var>
-       为0） ，则当前选定地址处的值将更改为
-       <var>
-        D
-       </var>
-       引脚处的任何值。 不过，只要时钟输入保持 0 或 1，
-       <var>
-        D
-       </var>
-       值就不会存储到内存中。
-      </dd>
-      <dt>
-       <!-- <var>ld</var> on south edge (input, bit width 1) -->
-       <var>
-        ld
-       </var>
-       位于南边缘（输入，位宽 1）
-      </dt>
-      <dd>
-       <!-- Load: Selects whether the RAM should emit (on <var>D</var>) the value at the current address (<var>A</var>). This output behavior is enabled if <var>out</var> is 1 or undefined; if <var>out</var> is 0, then no value is pushed onto <var>D</var> - but if there is a combined load/store port, stores will be enabled. -->
-       加载：选择 RAM 是否应发出（在
-       <var>
-        D
-       </var>
-       上）当前地址 (
-       <var>
-        A
-       </var>
-       ) 处的值。 如果
-       <var>
-        out
-       </var>
-       为 1 或未定义，则启用此输出行为； 如果
-       <var>
-        out
-       </var>
-       为 0，则不会将任何值推送到
-       <var>
-        D
-       </var>
-       - 但如果存在组合的加载/存储端口，则将启用存储。
-      </dd>
-      <dt>
-       <!-- <var>clr</var> on south edge (input, bit width 1) -->
-       <var>
-        clr
-       </var>
-       位于南边缘（输入，位宽 1）
-      </dt>
-      <dd>
-       <!-- Clear: When this is 1, all values in memory are pinned to 0, no matter what the other inputs are. -->
-       清除：当该值为 1 时，无论其他输入是什么，内存中的所有值都固定为 0。
-      </dd>
-     </dl>
-     <h2>
-      <!-- Attributes -->
-      属性
-     </h2>
      <p>
-      <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute. -->
-      当选择或添加组件时，数字“0”到“9”会更改其
-      <q>
-       地址位宽度
-      </q>
-      属性，而Alt-0到Alt-9会更改其
-      <q>
-       数据位宽度
-      </q>
-      属性 &gt; 属性。
+      若<b class="property">使能方式</b>属性为<b class="vprop">使用行使能</b>，且<b class="property">行大小</b>属性为<b class="vprop">单行</b>，那么只要地址改变，数据就会立即出现在输出总线上；写入仍按上述方式进行。
      </p>
-     <dl>
-      <dt>
-       <!-- Address Bit Width -->
-       地址位宽
-      </dt>
-      <dd>
-       <!-- The bit width of the address bits. The number of values stored in RAM is 2<sup><var>addrBitWidth</var></sup>. -->
-       地址位的位宽。 RAM 中存储的值数量为 2
-       <sup>
-        <var>
-         addrBitWidth
-        </var>
-       </sup>
-       。
-      </dd>
-      <dt>
-       <!-- Data Bit Width -->
-       数据位宽
-      </dt>
-      <dd>
-       <!-- The bit width of each individual value in memory. -->
-       内存中每个单独值的位宽度。
-      </dd>
-      <dt>
-       <!-- Data Interface -->
-       数据接口
-      </dt>
-      <dd>
-       <!-- Configures which of the three interfaces are used for communicating data into and out of the component. -->
-       配置三个接口中的哪一个用于将数据传入和传出组件。
-      </dd>
-     </dl>
-     <h2>
-      <!-- Poke Tool Behavior -->
-      Poke 工具行为
-     </h2>
+    </dd>
+    <dt>
+     同步读取，并使用行使能（多行）。
+    </dt>
+    <dd>
      <p>
-      <!-- See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>. -->
-      请参阅
-      <em>
-       用户指南
-      </em>
-      中的
-      <a href="../../guide/mem/mem-poke.html">
-       挖掘内存
-      </a>
-      。
-     </p>
-     <h2>
-      <!-- Text Tool Behavior -->
-      文本工具行为
-     </h2>
-     <p>
-      <!-- None. -->
-      无
-     </p>
-     <h2>
-      <!-- Menu Tool Behavior -->
-      菜单工具行为
-     </h2>
-     <p>
-      <!-- See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>. -->
-      请参阅
-      <em>
-       用户指南
-      </em>
-      中的
-      <a href="../../guide/mem/mem-menu.html">
-       弹出菜单和文件
-      </a>
-      。
-     </p>
-     <p>
-      <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-      <b>
-       返回
-      </b>
-      <a href="../index.html">
-       电路元件库参考手册
-      </a>
+      若<b class="property">使能方式</b>属性为<b class="vprop">使用行使能</b>，且<b class="property">行大小</b>属性不为<b class="vprop">单行</b>，那么只要地址改变，数据就会立即出现在输出总线上。对于写入，额外信号 LE1..LE7 用于选择处于激活状态的数据行。时钟触发模式由<b class="property">触发方式</b>属性配置。
      </p>
     </dd>
    </dl>
+   <p>
+    还有一些更细微的设置，请阅读下面对引脚与属性的说明以了解更多细节。
+   </p>
+   <h2>
+    引脚
+   </h2>
+   <p>
+    <b class="property">外观</b>属性为该组件提供两种不同的引脚布局。Logisim-evolution 将输入放在西侧、输出放在东侧；而此处按从上到下、从西到东的顺序列出引脚说明。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt class="lib">
+      <var>清除</var>
+     </dt>
+     <dd>
+      输入：仅当<b class="property">使用清除引脚</b>属性设为<b class="vprop">是</b>时才出现该引脚。当其为<b class="unov">是</b>时，无论其它输入如何，存储器中的所有数值都会被固定为<b class="zerov">0</b>。
+     </dd>
+     <dt class="lib">
+      <var>地址</var>
+     </dt>
+     <dd>
+      输入总线：选择电路当前要访问的存储单元地址。
+     </dd>
+     <dt class="lib">
+      <var>WE（或 Write enable）</var>
+     </dt>
+     <dd>
+      输入：使能后，允许将数据写入到地址总线上指定的位置。根据<b class="property">触发方式</b>属性的不同取值，在时钟同步时，它在<b class="vprop">上升沿/下降沿</b>模式下于<b class="unov">1</b>有效；在<b class="vprop">高电平</b>模式下为<b class="unov">1</b>有效；在<b class="vprop">低电平</b>模式下为<b class="zerov">0</b>有效（与时钟无关）。
+       <p>
+        下表展示了在不同属性设置下，存储器写入的触发条件。
+       </p>
+       <center>
+        <br/>
+        <table class="truthtable">
+         <caption>
+          写入触发模式
+         </caption>
+         <tbody>
+          <tr>
+           <th class="tspace1">
+            触发方式
+           </th>
+           <th class="tspace">
+            时钟信号
+           </th>
+           <th class="tspace">
+            WE 信号
+           </th>
+          </tr>
+          <tr>
+           <td>
+            下降沿
+           </td>
+           <td>
+            ↑
+           </td>
+           <td>
+            1
+           </td>
+          </tr>
+          <tr>
+           <td>
+            上升沿
+           </td>
+           <td>
+            ↓
+           </td>
+           <td>
+            1
+           </td>
+          </tr>
+          <tr>
+           <td>
+            高电平
+           </td>
+           <td>
+            --
+           </td>
+           <td>
+            1
+           </td>
+          </tr>
+          <tr>
+           <td>
+            低电平
+           </td>
+           <td>
+            --
+           </td>
+           <td>
+            0
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </center>
+     </dd>
+     <dt class="lib">
+      <var>OE（或 Output enable）</var>
+     </dt>
+     <dd>
+      输入：当 OE 为高电平时，地址总线上指定位置的数据将被送到输出总线。
+      <p>
+       下表展示了在不同属性设置下，从存储器读出数据到输出端口的触发条件。
+      </p>
+      <center>
+       <br/>
+       <table class="truthtable">
+        <caption>
+         读取触发模式
+        </caption>
+        <tbody>
+         <tr>
+          <th class="tspace1">
+           使能方式
+          </th>
+          <th class="tspace1">
+           触发方式
+          </th>
+          <th class="tspace1">
+           异步读取
+          </th>
+          <th class="tspace">
+           时钟信号
+          </th>
+          <th class="tspace">
+           OE 信号
+          </th>
+         </tr>
+         <tr>
+          <td>
+           使用字节使能
+          </td>
+          <td>
+           上升沿
+          </td>
+          <td>
+           否
+          </td>
+          <td>
+           ↑
+          </td>
+          <td>
+           1
+          </td>
+         </tr>
+         <tr>
+          <td>
+           使用字节使能
+          </td>
+          <td>
+           下降沿
+          </td>
+          <td>
+           否
+          </td>
+          <td>
+           ↓
+          </td>
+          <td>
+           1
+          </td>
+         </tr>
+         <tr>
+          <td>
+           使用字节使能
+          </td>
+          <td>
+           高电平
+          </td>
+          <td>
+           --
+          </td>
+          <td>
+           --
+          </td>
+          <td>
+           1
+          </td>
+         </tr>
+         <tr>
+          <td>
+           使用字节使能
+          </td>
+          <td>
+           低电平
+          </td>
+          <td>
+           --
+          </td>
+          <td>
+           --
+          </td>
+          <td>
+           1
+          </td>
+         </tr>
+         <tr>
+          <td>
+           使用字节使能
+          </td>
+          <td>
+           无影响
+          </td>
+          <td>
+           是
+          </td>
+          <td>
+           无影响
+          </td>
+          <td>
+           1
+          </td>
+         </tr>
+         <tr>
+          <td>
+           使用行使能
+          </td>
+          <td>
+           无影响
+          </td>
+          <td>
+           --
+          </td>
+          <td>
+           无影响
+          </td>
+          <td>
+           --
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </center>
+     </dd>
+     <dt class="lib">
+      <var>时钟（或 C1、E1）</var>
+     </dt>
+     <dd>
+      输入：仅当<b class="property">触发方式</b>属性设为<b class="vprop">上升沿/下降沿</b>时才出现该引脚；在其它触发方式下，若<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>，同样会出现该引脚。触发后，存储器会写入或读取数据。<br/>
+      参见上方两张表格。
+     </dd>
+     <dt class="lib">
+      <var>LE0</var> 到 <var>LE7</var>
+     </dt>
+     <dd>
+      输入：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>时才出现。引脚数量（2、4、8）取决于<b class="property">行大小</b>属性。每个引脚用于激活一条输入数据行。
+     </dd>
+     <dt class="lib">
+      <var>输入数据</var>
+     </dt>
+     <dd>
+      输入总线：仅当<b class="property">数据总线实现</b>属性设为<b class="vprop">读写分离的数据总线</b>时才出现。它接收要写入存储器的数据：当触发条件满足时，数据会写入由地址引脚值所指定的位置。参见上方表格。
+     </dd>
+     <dt class="lib">
+      <var>输入数据 0</var> 到 <var>输入数据 7</var>
+     </dt>
+     <dd>
+      输入总线：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>且<b class="property">行大小</b>不为<b class="vprop">单行</b>时才出现。其功能与输入数据总线相同，但区别在于：输入数据 0 指向地址总线对应的存储位置，输入数据 1 指向地址总线+1，输入数据 2 指向地址总线+2，依此类推。每条输入数据行都有对应的使能信号 LE0..LE7。
+     </dd>
+     <dt class="lib">
+      <var>输出数据</var>
+     </dt>
+     <dd>
+      输出总线：仅当<b class="property">数据总线实现</b>属性设为<b class="vprop">读写分离的数据总线</b>时才出现。该总线在触发条件满足时输出由地址引脚值所指定位置的数据。参见上方表格。
+     </dd>
+     <dt class="lib">
+      <var>输出数据 0</var> 到 <var>输出数据 7</var>
+     </dt>
+     <dd>
+      输出总线：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>且<b class="property">行大小</b>不为<b class="vprop">单行</b>时才出现。其功能与输出数据总线相同，但区别在于：输出数据 0 输出地址总线对应存储位置的数据，输出数据 1 输出地址总线+1，输出数据 2 输出地址总线+2，依此类推。<br/>
+      <b class="property">允许非对齐</b>属性用于决定：当地址未按“行数”的倍数对齐时，是否产生错误（<b class="evalue">E</b>）。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    属性
+   </h2>
+   <p>
+    当组件被选中或正在放置时，数字 <b class="tkeybd">0</b> 到 <b class="tkeybd">9</b> 可修改其<b class="property">地址位宽</b>属性，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其<b class="property">数据位宽</b>属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt class="lib">
+      地址位宽
+     </dt>
+     <dd>
+      地址位的数量。RAM 中可存储的数值数量为 2<sup><var>地址位宽</var></sup>。
+     </dd>
+     <dt class="lib">
+      数据位宽
+     </dt>
+     <dd>
+      存储器中每个数值的数据位宽（以 bit 为单位）。
+     </dd>
+     <dt class="lib">
+      使能方式
+     </dt>
+     <dd>
+      决定数据如何加载给组件。<b class="vprop">使用字节使能</b>：仅存在一条数据总线。<br/>
+      <b class="vprop">使用行使能</b>：数据总线由一条或多条数据行组成，每条数据行都有各自的选择信号。“行数”属性可定义数据行数量（1、2、4、8）。
+     </dd>
+     <dt class="lib">
+      RAM 类型
+     </dt>
+     <dd>
+      决定重新开始仿真时 RAM 内容如何变化：<br/>
+      <b class="vprop">非易失</b>：内存内容不变。<br/>
+      <b class="vprop">易失</b>：RAM 内容会清零或随机化（取决于项目选项中<a href="../../guide/opts/opts-simulate.html">仿真</a>选项卡的设置）。
+     </dd>
+     <dt class="lib">
+      使用清除引脚
+     </dt>
+     <dd>
+      决定是否显示<var>清除</var>引脚。若该引脚为<b class="unov">1</b>，则存储器内容会被异步置为<b class="zerov">0</b>，且其他命令无效。
+     </dd>
+     <dt class="lib">
+      行大小
+     </dt>
+     <dd>
+      仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>时才出现。用于确定输入与输出端存在的数据行数量：1、2、4 或 8。每条数据行在写入时由对应信号（LE0..LE7）驱动。第 0 行对应地址总线上的地址，第 1 行对应地址总线上的地址+1，依此类推。
+     </dd>
+     <dt class="lib">
+      允许非对齐
+     </dt>
+     <dd>
+      仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>时才出现。用于决定：数据行是否可以对应任意地址，还是必须与其数量的倍数地址对齐。例如，当有两行时，第 0 行对应地址总线上的地址+0，第 1 行对应地址总线上的地址+1，那么地址必须是 2 的倍数，否则输出将为错误（<b class="evalue">E</b>）。
+     </dd>
+     <dt class="lib">
+      触发方式
+     </dt>
+     <dd>
+      配置如何解释时钟输入。取值：<br/>
+      <b class="vprop">上升沿</b>：在时钟从<b class="zerov">0</b>上升到<b class="unov">1</b>的瞬间更新。<br/>
+      <b class="vprop">下降沿</b>：在时钟从<b class="unov">1</b>下降到<b class="zerov">0</b>的瞬间更新。<br/>
+      <b class="vprop">高电平</b>：当时钟输入为<b class="unov">1</b>时持续更新。<br/>
+      <b class="vprop">低电平</b>：当时钟输入为<b class="zerov">0</b>时持续更新。
+     </dd>
+     <dt class="lib">
+      异步读取
+     </dt>
+     <dd>
+      决定读存储器时是否涉及时钟信号。<br/>
+      <b class="vprop">是</b>：仅由 OE 信号触发读取。<br/>
+      <b class="vprop">否</b>：由 OE 信号与时钟信号的边沿共同触发读取。
+     </dd>
+     <dt class="lib">
+      读行为
+     </dt>
+     <dd>
+      决定读写同时使能时的行为。<br/>
+      <b class="vprop">先写后读</b>：先写入 Address 指向的存储单元，然后再读取并输出。<br/>
+      <b class="vprop">先读后写</b>：先输出 Address 指向的存储单元内容，然后再用输入数据改写该单元。
+     </dd>
+     <dt class="lib">
+      数据总线实现
+     </dt>
+     <dd>
+      决定数据总线的结构。取值：<br/>
+      <b class="vprop">一条双向的数据总线</b>：数据输入与输出共用同一总线，需要使用受控缓冲器管理数据流向。<br/>
+      <b class="vprop">读写分离的数据总线</b>：存在两条总线，一条用于输入，一条用于输出。
+     </dd>
+     <dt class="lib">
+      标签
+     </dt>
+     <dd>
+      与组件关联的标签内显示的文本。
+     </dd>
+     <dt class="lib">
+      标签字体
+     </dt>
+     <dd>
+      用于渲染标签的字体。
+     </dd>
+     <dt class="lib">
+      标签可见
+     </dt>
+     <dd>
+      标签是否可见。
+     </dd>
+     <dt class="lib">
+      外观
+     </dt>
+     <dd>
+      <b class="vprop">Logisim-HolyCross / Logsim-Evolutions</b>：以 IEC 方式的新外观。<b class="vprop">Classic Logisim</b>：以传统 Logisim 风格显示。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    参见<em>用户指南</em>中的<a href="../../guide/mem/mem-poke.html">点按存储器</a>。
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    无。
+   </p>
+   <h2>
+    菜单工具行为
+   </h2>
+   <p>
+    参见<em>用户指南</em>中的<a href="../../guide/mem/mem-menu.html">弹出菜单与文件</a>。
+   </p>
+   <p>
+    <b>
+     返回
+    </b>
+    <a href="../index.html#hlibmem">
+     库参考手册
+    </a>
+   </p>
   </div>
  </body>
 </html>

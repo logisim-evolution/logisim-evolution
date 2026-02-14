@@ -414,7 +414,7 @@ public class AnalyzerTexWriter {
           out.println("\\end{tabular}");
           out.println("\\end{center}");
           out.println(SUB_SECTION_SEP);
-          out.println("\\subsection{" + S.get("latexTruthTableComlete") + "}");
+          out.println("\\subsection{" + S.get("latexTruthTableComplete") + "}");
           out.println(truthTableHeader(model));
           out.println(getCompleteTruthTable(tt, model));
           out.println("\\end{tabular}");

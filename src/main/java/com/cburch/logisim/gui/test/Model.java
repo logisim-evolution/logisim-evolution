@@ -10,6 +10,7 @@
 package com.cburch.logisim.gui.test;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.proj.Project;
@@ -26,6 +27,7 @@ class Model {
   private final UpdateResultSort myUpdateResultSort = new UpdateResultSort();
   private final ArrayList<Integer> failed = new ArrayList<>();
   private final ArrayList<Integer> passed = new ArrayList<>();
+  private final ArrayList<Integer> sortedIndices = new ArrayList<>();
   private boolean selected = false;
   private boolean running;
   private boolean paused;
@@ -33,7 +35,7 @@ class Model {
   private int numPass = 0;
   private int numFail = 0;
   private TestVector vec = null;
-  private TestException[] results;
+  private ArrayList<TestVectorEvaluator.LineReport>[] results;
 
   public Model(Project proj, Circuit circuit) {
     listeners = new EventSourceWeakSupport<>();
@@ -90,7 +92,7 @@ class Model {
     return project;
   }
 
-  public TestException[] getResults() {
+  public ArrayList<TestVectorEvaluator.LineReport>[] getResults() {
     return results;
   }
 
@@ -98,14 +100,19 @@ class Model {
     return vec;
   }
 
+  @SuppressWarnings("unchecked")
   public synchronized void setVector(TestVector v) {
     stop();
     synchronized (this) {
       vec = v;
-      results = (v != null ? new TestException[v.data.size()] : null);
+      results = ((v != null) ? (new ArrayList[v.data.size()]) : null);
       numPass = numFail = 0;
       failed.clear();
       passed.clear();
+      sortedIndices.clear();
+      if (v != null) {
+        updateSortedIndices();
+      }
     }
     fireVectorChanged();
   }
@@ -140,12 +147,16 @@ class Model {
     listeners.remove(l);
   }
 
-  public boolean setResult(TestVector v, int idx, TestException err) {
+  public boolean setResult(TestVector v, int idx, ArrayList<TestVectorEvaluator.LineReport> report) {
     synchronized (this) {
       if (v != vec || idx < 0 || idx >= results.length || idx != numPass + numFail) return false;
-      results[idx] = err;
-      if (err == null) numPass++;
-      else numFail++;
+      if (report == null || report.isEmpty()) {
+        results[idx] = null;
+        numPass++;
+      } else {
+        results[idx] = report;
+        numFail++;
+      }
     }
     if (!SwingUtilities.isEventDispatchThread()) {
       SwingUtilities.invokeLater(myUpdateResultSort);
@@ -155,7 +166,53 @@ class Model {
     return true;
   }
 
+  public void updateResult(TestVector v, int idx, ArrayList<TestVectorEvaluator.LineReport> err) {
+    synchronized (this) {
+      if (v != vec || idx < 0 || idx >= results.length) return;
+      // Update the result, adjusting pass/fail counts if needed
+      ArrayList<TestVectorEvaluator.LineReport> oldResult = results[idx];
+      boolean wasCounted = (idx < numPass + numFail);
+
+      results[idx] = err;
+
+      if (wasCounted) {
+        // The old result was already counted, so adjust counts
+        if (oldResult == null && err != null) {
+          // Changed from pass to fail
+          numPass--;
+          numFail++;
+        } else if (oldResult != null && err == null) {
+          // Changed from fail to pass
+          numPass++;
+          numFail--;
+        }
+        // If both are null or both are non-null, counts don't change
+      } else {
+        // The old result was not counted, so add the new one
+        if (err == null) {
+          numPass++;
+        } else {
+          numFail++;
+        }
+      }
+    }
+    // Always update sorted indices and fire event, even for updates
+    if (!SwingUtilities.isEventDispatchThread()) {
+      SwingUtilities.invokeLater(() -> {
+        updateSortedIndices();
+        fireTestResultsChanged();
+      });
+    } else {
+      updateSortedIndices();
+      fireTestResultsChanged();
+    }
+  }
+
   public int sortedIndex(int i) {
+    if (i < sortedIndices.size()) {
+      return sortedIndices.get(i);
+    }
+    // Fallback: if sortedIndices not populated, use old behavior
     if (i < failed.size()) return failed.get(i);
     if (i < failed.size() + passed.size()) return passed.get(i - failed.size());
     return i;
@@ -192,7 +249,49 @@ class Model {
       if (results[i] == null) passed.add(i);
       else failed.add(i);
     }
+    updateSortedIndices();
     fireTestResultsChanged();
+  }
+
+  private void updateSortedIndices() {
+    if (vec == null) return;
+    sortedIndices.clear();
+
+    // Create list of all row indices
+    ArrayList<Integer> allIndices = new ArrayList<>();
+    for (int i = 0; i < vec.data.size(); i++) {
+      allIndices.add(i);
+    }
+
+    // Sort by set first, then by sequence, then by pass/fail status, then by original index
+    allIndices.sort((a, b) -> {
+      int setA = (vec.setNumbers != null && a < vec.setNumbers.length) ? vec.setNumbers[a] : 0;
+      int setB = (vec.setNumbers != null && b < vec.setNumbers.length) ? vec.setNumbers[b] : 0;
+      int seqA = (vec.seqNumbers != null && a < vec.seqNumbers.length) ? vec.seqNumbers[a] : 0;
+      int seqB = (vec.seqNumbers != null && b < vec.seqNumbers.length) ? vec.seqNumbers[b] : 0;
+
+      // First compare by set
+      int setCompare = Integer.compare(setA, setB);
+      if (setCompare != 0) return setCompare;
+
+      // Then compare by sequence
+      int seqCompare = Integer.compare(seqA, seqB);
+      if (seqCompare != 0) return seqCompare;
+
+      // Within same set/seq, show failed tests first (if results available)
+      if (results != null && a < results.length && b < results.length) {
+        boolean failedA = results[a] != null;
+        boolean failedB = results[b] != null;
+        if (failedA != failedB) {
+          return failedA ? -1 : 1; // failed comes first
+        }
+      }
+
+      // If set and seq are the same, maintain original order (by index)
+      return Integer.compare(a, b);
+    });
+
+    sortedIndices.addAll(allIndices);
   }
 
   private class UpdateResultSort implements Runnable {

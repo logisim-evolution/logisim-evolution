@@ -75,7 +75,7 @@ class LayoutOptions extends OptionsPanel {
     defaultAppearance =
         new PrefOptionList(
             AppPreferences.DefaultAppearance,
-            S.getter("layoutDefaultApearance"),
+            S.getter("layoutDefaultAppearance"),
             new PrefOption[] {
               new PrefOption(
                   StdAttr.APPEAR_CLASSIC.toString(), StdAttr.APPEAR_CLASSIC.getDisplayGetter()),

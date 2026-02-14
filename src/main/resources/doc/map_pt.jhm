@@ -47,6 +47,13 @@
     <mapID target="mem_v3byte"          url="pt/html/guide/mem/mem-v3byte.html"/> 
     <mapID target="mem_binary"          url="pt/html/guide/mem/mem-vbinary.html"/>
     <mapID target="mem_ascii"           url="pt/html/guide/mem/mem-vascii.html"/>
+	<mapID target="test_vector"         url="pt/html/guide/test_vector/index.html" />
+	<mapID target="test_vector_window"  url="pt/html/guide/test_vector/test_vector_window.html" />
+	<mapID target="test_vector_file_format" url="pt/html/guide/test_vector/test_vector_file_format.html" />
+	<mapID target="test_vector_special_values" url="pt/html/guide/test_vector/test_vector_special_values.html" />
+	<mapID target="test_vector_sequential" url="pt/html/guide/test_vector/test_vector_sequential.html" />
+	<mapID target="test_vector_cmdline" url="pt/html/guide/test_vector/test_vector_cmdline.html" />
+	<mapID target="test_vector_tips"    url="pt/html/guide/test_vector/test_vector_tips.html" />
 	<mapID target="analyze"             url="pt/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="pt/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="pt/html/guide/analyze/ana-table.html" />

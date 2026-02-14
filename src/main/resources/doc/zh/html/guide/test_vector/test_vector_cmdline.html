@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="zh">
+	<title>命令行用法</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>命令行用法</h1>
+
+<p>为了便于自动化测试，可以从命令行运行测试向量功能：</p>
+
+<blockquote>
+<div class="forcode">
+<tt>logisim --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<p>或使用 JAR 文件：</p>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<h2>参数</h2>
+
+<ul>
+<li><strong>&lt;circuit_name&gt;</strong>：要测试的电路名称（必须与项目文件中的电路匹配）</li>
+<li><strong>&lt;test_vector_file&gt;</strong>：测试向量文件的路径（例如，<code>TestsDLatch.txt</code>）</li>
+<li><strong>&lt;project.circ&gt;</strong>：包含电路的 Logisim 项目文件的路径</li>
+</ul>
+
+<h2>示例</h2>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector dlatch TestsRegisterFile.txt /home/user/Computer.circ</tt>
+</div>
+</blockquote>
+
+<h2>命令的作用</h2>
+
+<p>该命令将：</p>
+
+<ol>
+<li>从项目文件加载指定的电路</li>
+<li>加载并解析测试向量文件</li>
+<li>运行所有测试（遵循时序执行规则）</li>
+<li>打印显示通过和失败测试的结果</li>
+<li>成功时退出状态码为 0，失败时为非零</li>
+</ol>
+
+<h2>命令输出示例</h2>
+
+<p>成功测试的结果将发送到标准输出（stdout），例如：</p>
+
+	<pre class="code">
+Loading test vector "testv1b.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+4 
+
+Passed : 4, Failed : 0
+</pre>
+
+<p>如果失败：</p>
+
+	<pre class="code">
+Loading test vector "testv1a.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+
+  ob = 0 (expected 1)
+4 
+
+  ob = 1 (expected 0)
+
+Passed : 2, Failed : 2
+</pre>
+
+<p><strong>注意：</strong>在错误输出（stderr）中，您将看到：</p>
+
+	<pre class="code">
+Error on test vector 3:
+Error on test vector 4:
+</pre>
+
+<p>
+	<b>上一页：</b> <a href="test_vector_sequential.html">时序测试</a> | <b>下一页：</b> <a href="test_vector_tips.html">提示和最佳实践</a>。
+</p>
+
+</body>
+</html>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="pt">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="pt">
+	<title>Valores Especiais</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Valores Especiais</h1>
+
+<p>O formato de Vetor de Teste suporta dois valores especiais para testes mais flexíveis:</p>
+
+<ul>
+<li><strong>&lt;DC&gt;</strong> (Não Importa): Quando usado para um pino de saída, este valor
+sempre passa independentemente da saída real. Isso é útil quando você não se importa
+com certas saídas durante um teste. Não diferencia maiúsculas/minúsculas (<code>&lt;dc&gt;</code> também funciona).</li>
+<li><strong>&lt;float&gt;</strong>: Quando usado para um pino de entrada, isso aciona um valor
+flutuante (alta impedância). Quando usado para um pino de saída, isso espera que a saída seja
+flutuante (valor DESCONHECIDO). Não diferencia maiúsculas/minúsculas (<code>&lt;FLOAT&gt;</code> também funciona).</li>
+</ul>
+
+<p>Aqui está um exemplo usando valores especiais:</p>
+<pre class="code">
+# Teste com valores "não importa" e flutuantes
+Input   Enable Output  &lt;set&gt; &lt;seq&gt;
+1       1      &lt;DC&gt;    0     0
+&lt;float&gt; 0      &lt;float&gt; 0     0
+</pre>
+
+<p>No primeiro teste, a saída está marcada como "não importa", então qualquer valor de saída
+passará. No segundo teste, a entrada está flutuante e a saída é esperada
+ser flutuante também.</p>
+
+<p>
+	<b>Anterior:</b> <a href="test_vector_file_format.html">Formato de Arquivo de Vetor de Teste</a> | <b>Próximo:</b> <a href="test_vector_sequential.html">Testes Sequenciais</a>.
+</p>
+
+</body>
+</html>
+

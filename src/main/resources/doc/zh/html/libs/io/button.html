@@ -1,169 +1,138 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Button -->
-   按钮
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <!-- <img class="iconlibs" src="../../../../icons/6464/button.png" alt="#########" width="32" height="32" align="middle"> <em>Button</em> -->
-    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/button.png" width="32"/>
-    <em>
-     按钮
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Input/Output</a> -->
-       <a href="index.html">
-        输入/输出
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.1.3
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/button.png" width="64"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- Outputs 0 normally; but when the user is pressing the the button using the Poke Tool, the output is 1. -->
-    正常输出0； 但是当用户使用 Poke Tool 按下按钮时，输出为 1。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <p>
-    <!-- A button has only one pin, a 1-bit output, which is 0 except when the user is pressing the button using the Poke Tool, when it is 1. -->
-    一个按钮只有一个引脚，即 1 位输出，除了用户使用 Poke Tool 按下按钮时为 1 之外，该引脚为 0。
-   </p>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, the arrow keys alter its <q>Facing</q> attribute. -->
-    当选择或添加组件时，箭头键会更改其
-    <q>
-     方向
-    </q>
-    属性。
-   </p>
-   <dl>
-    <dt>
-     <!-- Facing -->
-     方向
-    </dt>
-    <dd>
-     <!-- The location of the output pin relative to the component. -->
-     输出引脚相对于组件的位置。
-    </dd>
-    <dt>
-     <!-- Color -->
-     颜色
-    </dt>
-    <dd>
-     <!-- The color with which to display the button. -->
-     显示按钮的颜色。
-    </dd>
-    <dt>
-     <!-- Label -->
-     标签
-    </dt>
-    <dd>
-     <!-- The text within the label associated with the component. -->
-     与组件关联的标签内的文本。
-    </dd>
-    <dt>
-     <!-- Label Location -->
-     标签位置
-    </dt>
-    <dd>
-     <!-- The location of the label relative to the component. -->
-     标签相对于组件的位置。
-    </dd>
-    <dt>
-     <!-- Label Font -->
-     标签字体
-    </dt>
-    <dd>
-     <!-- The font with which to render the label. -->
-     用于呈现标签的字体。
-    </dd>
-    <dt>
-     <!-- Label Color -->
-     标签颜色
-    </dt>
-    <dd>
-     <!-- The color with which to draw the label. -->
-     绘制标签的颜色。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- When the mouse button is pressed, the component's output will be 1. Upon releasing the mouse button, the output reverts back to 0. -->
-    当按下鼠标按钮时，组件的输出将为 1。释放鼠标按钮时，输出将恢复为 0。
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- Allows the label associated with the component to be edited. -->
-    允许编辑与组件关联的标签。
-   </p>
-   <p>
-    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      按钮
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/button.png" alt="#########" width="32" height="32" align="middle"> <em>按钮</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">输入/输出</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.1.3
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/button.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        使用<q>手形工具</q>按下或弹起时，输出不同的值，具体取决于<q>逻辑电平</q>属性。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <p>
+        按钮只有一个引脚，为 1 位输出端口：根据<q>逻辑电平</q>属性，按下时输出为 1 或 0，弹起时输出相反的值。
+      </p>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，可使用方向键修改其 <q>朝向</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          朝向
+        </dt>
+        <dd>
+          输出引脚相对于组件的位置。
+        </dd>
+
+        <dt>
+          颜色
+        </dt>
+        <dd>
+          按钮的显示颜色。
+        </dd>
+
+        <dt>
+          逻辑电平
+        </dt>
+        <dd>
+          确定何时输出高电平：按下时高电平或松开时高电平。
+        </dd>
+
+        <dt>
+          标签
+        </dt>
+        <dd>
+          与该组件关联的标签文本。
+        </dd>
+
+        <dt>
+          标签位置
+        </dt>
+        <dd>
+          标签相对于组件的位置。
+        </dd>
+
+        <dt>
+          标签字体
+        </dt>
+        <dd>
+          用于绘制标签文本的字体。
+        </dd>
+
+        <dt>
+          标签颜色
+        </dt>
+        <dd>
+          绘制标签文本所使用的颜色。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        按下按钮时，组件输出为 1；松开按钮后，输出恢复为 0。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        可用于编辑与该组件关联的标签文本。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
 </html>

@@ -45,6 +45,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Arrays;
 import java.util.LinkedList;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
@@ -54,10 +55,10 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
   private static final Integer[] implementedSprs = {
       0xF11, 0xF12, 0xF13, 0xF14, 0x300, 0x301, 0x304, 0x305,
-      0x341, 0x342, 0x343, 0x344, 0x7B0, 0x7B1, 0x7A0, 0x7A1, 0x7A2, 0x7A4};
+      0x340, 0x341, 0x342, 0x343, 0x344, 0x7B0, 0x7B1, 0x7A0, 0x7A1, 0x7A2, 0x7A4};
   public static final String[] implementedSprNames = {
       "MVENDORID", "MARCHID", "MIMPID", "MHARTID", "MSTATUS", "MISA", "MIE", "MTVEC",
-      "MEPC", "MCAUSE", "MTVAL", "MIP", "DCSR", "DPC", "TSELECT", "TDATA1", "TDATA2",
+      "MSCRATCH", "MEPC", "MCAUSE", "MTVAL", "MIP", "DCSR", "DPC", "TSELECT", "TDATA1", "TDATA2",
       "TINFO" };
 
   public class ProcessorState extends JPanel
@@ -66,9 +67,32 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
           ComponentDataGuiProvider,
           BaseWindowListenerContract,
           SocUpStateInterface {
+    private static final int CSR_MSTATUS = 0x300;
+    private static final int CSR_MIE = 0x304;
+    private static final int CSR_MTVEC = 0x305;
+    private static final int CSR_MEPC = 0x341;
+    private static final int CSR_MCAUSE = 0x342;
+    private static final int CSR_MIP = 0x344;
+
+    private static final int IDX_MSTATUS = RV32imState.getSprArrayIndex(CSR_MSTATUS);
+    private static final int IDX_MIE = RV32imState.getSprArrayIndex(CSR_MIE);
+    private static final int IDX_MTVEC = RV32imState.getSprArrayIndex(CSR_MTVEC);
+    private static final int IDX_MEPC = RV32imState.getSprArrayIndex(CSR_MEPC);
+    private static final int IDX_MCAUSE = RV32imState.getSprArrayIndex(CSR_MCAUSE);
+    private static final int IDX_MIP = RV32imState.getSprArrayIndex(CSR_MIP);
+
+    private static final int MSTATUS_MIE = 1 << 3;
+    private static final int MSTATUS_MPIE = 1 << 7;
+
+    private static final int MIE_MEIE = 1 << 11;
+    private static final int MIP_MEIP = 1 << 11;
+
+    private static final int MCAUSE_INTERRUPT = 1 << 31;
+    private static final int MCAUSE_MACHINE_EXTERNAL_INTERRUPT = 11;
+
     private static final long serialVersionUID = 1L;
     private final int[] registers;
-    private final int[] csrs; // TODO: for the moment the csrs are just dummy to allow for nios 5 simulation
+    private final int[] csrs;
     private final Boolean[] registers_valid;
     private int pc;
     private int lastRegisterWritten = -1;
@@ -82,7 +106,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     private final BreakpointPanel bPanel;
 
     public ProcessorState(Instance inst) {
-      csrs = new int[17];
+      csrs = new int[implementedSprs.length];
       registers = new int[32];
       registers_valid = new Boolean[32];
       instrTrace = new LinkedList<>();
@@ -129,9 +153,8 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       for (var i = 0; i < 31; i++) {
         registers_valid[i] = false;
       }
-      for (var i = 0; i < 17; i++) {
-        csrs[i] = 0;
-      }
+      Arrays.fill(csrs, 0);
+      // mtvec remains 0 until firmware initializes it
       lastRegisterWritten = -1;
       instrTrace.clear();
       if (visible) repaint();
@@ -218,8 +241,56 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       csrs[index] = value;
     }
 
+    public void setMachineExternalInterruptPending(boolean pending) {
+      if (IDX_MIP < 0) return;
+      if (pending) {
+        csrs[IDX_MIP] |= MIP_MEIP;
+      } else {
+        csrs[IDX_MIP] &= ~MIP_MEIP;
+      }
+    }
+
+    private boolean isMachineExternalInterruptEnabled() {
+      if (IDX_MSTATUS < 0 || IDX_MIE < 0 || IDX_MIP < 0) return false;
+      final var mstatus = csrs[IDX_MSTATUS];
+      final var mie = csrs[IDX_MIE];
+      final var mip = csrs[IDX_MIP];
+      return (mstatus & MSTATUS_MIE) != 0 && (mie & MIE_MEIE) != 0 && (mip & MIP_MEIP) != 0;
+    }
+
+    private void takeMachineExternalInterrupt() {
+      if (IDX_MEPC >= 0) csrs[IDX_MEPC] = pc;
+      if (IDX_MCAUSE >= 0)
+        csrs[IDX_MCAUSE] = MCAUSE_INTERRUPT | MCAUSE_MACHINE_EXTERNAL_INTERRUPT;
+
+      if (IDX_MSTATUS >= 0) {
+        int mstatus = csrs[IDX_MSTATUS];
+        final boolean mieSet = (mstatus & MSTATUS_MIE) != 0;
+        if (mieSet) mstatus |= MSTATUS_MPIE;
+        else mstatus &= ~MSTATUS_MPIE;
+        mstatus &= ~MSTATUS_MIE;
+        csrs[IDX_MSTATUS] = mstatus;
+      }
+
+      int handler = (IDX_MTVEC >= 0) ? csrs[IDX_MTVEC] : 0;
+      pc = handler;
+    }
+
+    public void machineReturn() {
+      if (IDX_MSTATUS >= 0) {
+        int mstatus = csrs[IDX_MSTATUS];
+        final boolean mpieSet = (mstatus & MSTATUS_MPIE) != 0;
+        if (mpieSet) mstatus |= MSTATUS_MIE;
+        else mstatus &= ~MSTATUS_MIE;
+        mstatus |= MSTATUS_MPIE;
+        csrs[IDX_MSTATUS] = mstatus;
+      }
+      if (IDX_MEPC >= 0) pc = csrs[IDX_MEPC];
+      if (visible) repaint();
+    }
+
     public void interrupt() {
-      pc = exceptionVector;
+      pc = (IDX_MTVEC >= 0) ? csrs[IDX_MTVEC] : 0;
     }
 
     public Component getMasterComponent() {
@@ -241,7 +312,8 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
           return;
         }
       }
-      /* TODO: check interrupts */
+      /* Check interrupts */
+      if (isMachineExternalInterruptEnabled()) takeMachineExternalInterrupt();
       /* fetch an instruction */
       final var trans =
           new SocBusTransaction(
@@ -412,7 +484,6 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
 
   private int resetVector;
-  private int exceptionVector;
   private int nrOfIrqs;
   private String label;
   private final SocBusInfo attachedBus;
@@ -442,7 +513,6 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
   public RV32imState() {
     resetVector = 0;
-    exceptionVector = 0x14;
     nrOfIrqs = 0;
     label = "";
     attachedBus = new SocBusInfo("");
@@ -450,7 +520,6 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
   public void copyInto(RV32imState dest) {
     dest.resetVector = resetVector;
-    dest.exceptionVector = exceptionVector;
     dest.nrOfIrqs = nrOfIrqs;
     dest.label = label;
     dest.attachedBus.setBusId(attachedBus.getBusId());
@@ -478,15 +547,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     return resetVector;
   }
 
-  public boolean setExceptionVector(int value) {
-    if (exceptionVector == value) return false;
-    exceptionVector = value;
-    return true;
-  }
-
-  public Integer getExceptionVector() {
-    return exceptionVector;
-  }
+  
 
   public boolean setNrOfIrqs(int value) {
     if (nrOfIrqs == value) return false;
@@ -588,44 +649,26 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     }
     return 0;
   }
-  
+
   public static boolean isSprImplemented(int index) {
-    var contained = false;
-    for (var i = 0; i < implementedSprs.length; i++) {
-      if (implementedSprs[i].equals(index)) {
-        contained = true;
-      }
-    }
-    return contained;
+    return getSprArrayIndex(index) != -1;
   }
     
   public static int getSprArrayIndex(int index) {
-    if (isSprImplemented(index)) {
-      for (var i = 0; i < implementedSprs.length; i++) {
-        if (implementedSprs[i].equals(index)) {
-          return i;
-        }
-      }
-    }
-    return -1;
+    return Arrays.asList(implementedSprs).indexOf(index);
   }
     
   public static int getSprArrayIndex(String name) {
-    var index = -1;
-    for (var i = 0; i < implementedSprNames.length; i++) {
-      if (implementedSprNames[i].equals(name.toUpperCase())) {
-        index = i;
-      }
-    }
-    return index;
+    return Arrays.asList(implementedSprNames).indexOf(name.toUpperCase());
   }
       
   public static String getSprName(int index) {
-    return isSprImplemented(index)
-          ? implementedSprNames[getSprArrayIndex(index)].toLowerCase()
+    int sprIndex = getSprArrayIndex(index);
+    return sprIndex != -1
+          ? implementedSprNames[sprIndex].toLowerCase()
           : String.format("0x%03X", index);
   }
-    
+
   public static int getSprValue(int index) {
     return (index < 0 || index >= implementedSprs.length) 
           ? -1

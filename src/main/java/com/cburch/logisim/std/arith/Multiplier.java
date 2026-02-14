@@ -41,49 +41,51 @@ public class Multiplier extends InstanceFactory {
    */
   public static final String _ID = "Multiplier";
 
-  static BigInteger extend(int w, long v, boolean unsigned) {
-    long mask = w == 64 ? 0 : (-1L) << w;
-    mask ^= 0xFFFFFFFFFFFFFFFFL;
-    long value = v & mask;
-    if (!unsigned && (value >> (w - 1)) != 0) value |= ~mask;
-    if (unsigned) return new BigInteger(Long.toUnsignedString(value));
-    return new BigInteger(Long.toString(value));
-  }
-
   static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsigned) {
     int w = width.getWidth();
     if (c_in == Value.NIL || c_in.isUnknown()) c_in = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-      BigInteger aa = extend(w, a.toLongValue(), unsigned);
-      BigInteger bb = extend(w, b.toLongValue(), unsigned);
-      BigInteger cc = extend(w, c_in.toLongValue(), unsigned);
+      if (w <= 32) {
+        long rr;
+        if (unsigned) {
+          var aa = a.toLongValue();
+          var bb = b.toLongValue();
+          var cc = c_in.toLongValue();
+          rr = aa * bb + cc;
+        } else {
+          var aa = a.toSignExtendedLongValue();
+          var bb = b.toSignExtendedLongValue();
+          var cc = c_in.toSignExtendedLongValue();
+
+          rr = aa * bb + cc;
+        }
+        return new Value[] {Value.createKnown(width, rr), Value.createKnown(width,  rr >> w)};
+      }
+      BigInteger aa = a.toBigInteger(unsigned);
+      BigInteger bb = b.toBigInteger(unsigned);
+      BigInteger cc = c_in.toBigInteger(unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
-      long mask = w == 64 ? 0 : (-1L) << w;
-      mask ^= 0xFFFFFFFFFFFFFFFFL;
-      long lo = rr.and(BigInteger.valueOf(mask)).longValue();
-      long hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).longValue();
+
+      long lo = rr.longValue();
+      long hi = rr.shiftRight(w).longValue();
       return new Value[] {Value.createKnown(width, lo), Value.createKnown(width, hi)};
     } else {
       Value[] avals = a.getAll();
-      int aOk = findUnknown(avals);
-      int aErr = findError(avals);
-      int ax = getKnown(avals);
+      int aUnkIndex = findUnknown(avals);
+      int aErrIndex = findError(avals);
       Value[] bvals = b.getAll();
-      int bOk = findUnknown(bvals);
-      int bErr = findError(bvals);
-      int bx = getKnown(bvals);
+      int bUnkIndex = findUnknown(bvals);
+      int bErrorIndex = findError(bvals);
       Value[] cvals = c_in.getAll();
-      int cOk = findUnknown(cvals);
-      int cErr = findError(cvals);
-      int cx = getKnown(cvals);
+      int cUnkIndex = findUnknown(cvals);
+      int cErrIndex = findError(cvals);
 
-      int known = Math.min(Math.min(aOk, bOk), cOk);
-      int error = Math.min(Math.min(aErr, bErr), cErr);
+      int known = Math.min(Math.min(aUnkIndex, bUnkIndex), cUnkIndex);
+      int error = Math.min(Math.min(aErrIndex, bErrorIndex), cErrIndex);
 
-      // fixme: this is probably wrong, but the inputs were bad anyway
-      BigInteger aa = extend(w, ax, unsigned);
-      BigInteger bb = extend(w, bx, unsigned);
-      BigInteger cc = extend(w, cx, unsigned);
+      BigInteger aa = a.toBigInteger(unsigned);
+      BigInteger bb = b.toBigInteger(unsigned);
+      BigInteger cc = c_in.toBigInteger(unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
       long ret = rr.longValue();
 
@@ -115,16 +117,6 @@ public class Multiplier extends InstanceFactory {
       if (!vals[i].isFullyDefined()) return i;
     }
     return vals.length;
-  }
-
-  private static int getKnown(Value[] vals) {
-    int ret = 0;
-    for (int i = 0; i < vals.length; i++) {
-      int val = (int) vals[i].toLongValue();
-      if (val < 0) return ret;
-      ret |= val << i;
-    }
-    return ret;
   }
 
   static final int PER_DELAY = 1;

@@ -12,7 +12,10 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.circuit.CircuitWires.BusConnection;
 import com.cburch.logisim.util.Cache;
+import com.cburch.logisim.util.MiniFloat;
+
 import java.awt.Color;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public final class Value {
@@ -109,18 +112,45 @@ public final class Value {
     return Value.create(bits, 0, 0, value);
   }
 
+  public static Value createKnown(BitWidth bits, double value) {
+    return createKnown(bits.getWidth(), value);
+  }
+
+  public static Value createKnown(int bits, double value) {
+    return switch (bits) {
+      case 8 -> Value.createKnown(8, MiniFloat.floatToMiniFloat143((float) value));
+      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) value));
+      case 32 -> Value.createKnown((float) value);
+      case 64 -> Value.createKnown(value);
+      default -> Value.ERROR;
+    };
+  }
+
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   public static Value fromLogString(BitWidth width, String t) throws Exception {
-    final var radix = radixOfLogString(width, t);
+    // Strip underscores from the string for readability (e.g., 0x0000_1111 -> 0x00001111)
+    // This must be done before radix detection since radixOfLogString uses length
+    final var sb = new StringBuilder(t.length());
+    for (int i = 0; i < t.length(); i++) {
+      final var c = t.charAt(i);
+      if (c != '_') {
+        sb.append(c);
+      }
+    }
+    final var cleaned = sb.toString();
+    
+    final var radix = radixOfLogString(width, cleaned);
     int offset;
 
-    if (radix == 16 || radix == 8) offset = 2;
-    else if (radix == 10 && t.startsWith("-")) offset = 1;
+    if (radix == 16 && cleaned.startsWith("0x")) offset = 2;
+    else if (radix == 8 && cleaned.startsWith("0o")) offset = 2;
+    else if (radix == 2 && cleaned.startsWith("0b")) offset = 2;
+    else if (radix == 10 && cleaned.startsWith("-")) offset = 1;
     else offset = 0;
 
-    int n = t.length();
+    int n = cleaned.length();
 
     if (n <= offset) throw new Exception("expected digits");
 
@@ -129,7 +159,7 @@ public final class Value {
     long unknown = 0;
 
     for (var i = offset; i < n; i++) {
-      final var c = t.charAt(i);
+      final var c = cleaned.charAt(i);
       int d;
 
       if (c == 'x' && radix != 10) d = -1;
@@ -138,10 +168,10 @@ public final class Value {
       else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
       else
         throw new Exception(
-            "Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+            "Unexpected character '" + cleaned.charAt(i) + "' in \"" + t + "\"");
 
       if (d >= radix)
-        throw new Exception("Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+        throw new Exception("Unexpected character '" + cleaned.charAt(i) + "' in \"" + t + "\"");
 
       value *= radix;
       unknown *= radix;
@@ -154,13 +184,63 @@ public final class Value {
         else value += d;
       }
     }
-    if (radix == 10 && t.charAt(0) == '-') value = -value;
+    if (radix == 10 && cleaned.charAt(0) == '-') {
+      value = -value;
+    }
 
+    // Check bit width - for signed values, check the range instead of bit shift
     if (w == 64) {
-      if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0)
-        throw new Exception("Too many bits in \"" + t + "\"");
+      if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0) {
+        int actualBits = 64 - Long.numberOfLeadingZeros(value & 0x7FFFFFFFFFFFFFFFL);
+        throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
+            + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : ""));
+      }
     } else {
-      if ((value >> w) != 0) throw new Exception("Too many bits in \"" + t + "\"");
+      // For signed decimal, check if value fits in w-bit signed range
+      if (radix == 10) {
+        long maxPositive = (1L << (w - 1)) - 1;
+        long minNegative = -(1L << (w - 1));
+        if (value > maxPositive || value < minNegative) {
+          // Calculate actual bits needed (for absolute value)
+          long absValue = value < 0 ? -value : value;
+          int actualBits = absValue == 0 ? 1 : 64 - Long.numberOfLeadingZeros(absValue) + 1; // +1 for sign bit
+          throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
+              + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : ""));
+        }
+        // Mask to width for signed values (two's complement representation)
+        long mask = (1L << w) - 1;
+        value &= mask;
+      } else {
+        // For unsigned (hex, octal, binary), use bit shift check
+        if ((value >> w) != 0) {
+          // Calculate actual bits needed
+          int actualBits = value == 0 ? 1 : 64 - Long.numberOfLeadingZeros(value);
+          String reminder = "";
+          
+          // For hex values, suggest based on number of hex digits * 4 (each hex digit = 4 bits)
+          if (radix == 16 && cleaned.length() > 2) {
+            int hexDigits = cleaned.length() - 2; // Subtract "0x" prefix
+            // Use hex digits * 4 as the suggested bit width (each hex digit = 4 bits)
+            actualBits = hexDigits * 4;
+            reminder = " Remember that 0x means hex and each hex digit is 4 bits";
+          } else if (radix == 2 && cleaned.length() > 0) {
+            // For binary values, suggest based on number of binary digits (each binary digit = 1 bit)
+            int binaryDigits = cleaned.length() - (cleaned.startsWith("0b") ? 2 : 0); // Subtract "0b" prefix if present
+            // Use binary digits as the suggested bit width (each binary digit = 1 bit)
+            actualBits = binaryDigits;
+            reminder = " Remember that 0b means binary and each binary digit is 1 bit";
+          } else if (radix == 8 && cleaned.length() > 2) {
+            // For octal values, suggest based on number of octal digits * 3 (each octal digit = 3 bits)
+            int octalDigits = cleaned.length() - 2; // Subtract "0o" prefix
+            // Use octal digits * 3 as the suggested bit width (each octal digit = 3 bits)
+            actualBits = octalDigits * 3;
+            reminder = " Remember that 0o means octal and each octal digit is 3 bits";
+          }
+          
+          throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
+              + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : "") + reminder);
+        }
+      }
     }
 
     unknown &= ((1L << w) - 1);
@@ -170,6 +250,7 @@ public final class Value {
   public static int radixOfLogString(BitWidth width, String t) {
     if (t.startsWith("0x")) return 16;
     if (t.startsWith("0o")) return 8;
+    if (t.startsWith("0b")) return 2;
     if (t.length() == width.getWidth()) return 2;
 
     return 10;
@@ -587,6 +668,35 @@ public final class Value {
     return value;
   }
 
+  public long toSignExtendedLongValue() {
+    if (error != 0) return -1L;
+    if (unknown != 0) return -1L;
+    final var shift = 64 - width;
+    return value << shift >> shift;
+  }
+
+  public BigInteger toBigInteger(boolean unsigned) {
+    var mask = (width == 64 ? -1L : ~(-1L << width));
+    long value = this.value & mask;
+    if (unsigned) {
+      return new BigInteger(
+        1,
+          new byte[] {
+            (byte) ((value >> 56) & 0xFFL),
+            (byte) ((value >> 48) & 0xFFL),
+            (byte) ((value >> 40) & 0xFFL),
+            (byte) ((value >> 32) & 0xFFL),
+            (byte) ((value >> 24) & 0xFFL),
+            (byte) ((value >> 16) & 0xFFL),
+            (byte) ((value >> 8) & 0xFFL),
+            (byte) ((value) & 0xFFL)
+          }
+      );
+    }
+    if ((value >> (width - 1)) != 0) value |= ~mask;
+    return BigInteger.valueOf(value);
+  }
+
   public float toFloatValue() {
     if (error != 0 || unknown != 0 || width != 32) return Float.NaN;
     return Float.intBitsToFloat((int) value);
@@ -602,9 +712,25 @@ public final class Value {
     return Float.float16ToFloat((short) value);
   }
 
+  public float toFloatValueFromFP8() {
+    if (error != 0 || unknown != 0 || width != 8) return Float.NaN;
+    return MiniFloat.miniFloat143ToFloat((byte) value);
+  }
+
+  public double toDoubleValueFromAnyFloat() {
+    return switch (width) {
+      case 8 -> toFloatValueFromFP8();
+      case 16 -> toFloatValueFromFP16();
+      case 32 -> toFloatValue();
+      case 64 -> toDoubleValue();
+      default -> Double.NaN;
+    };
+  }
+
   public String toStringFromFloatValue() {
     return switch (getWidth()) {
-      case 16 -> String.format("%.4g", toFloatValueFromFP16());
+      case 8 -> Float.toString(toFloatValueFromFP8());
+      case 16 -> Float.toString(toFloatValueFromFP16());
       case 32 -> Float.toString(toFloatValue());
       case 64 -> Double.toString(toDoubleValue());
       default -> "NaN";

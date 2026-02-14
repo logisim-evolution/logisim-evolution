@@ -52,16 +52,16 @@ changes that were made.
 
 ## External reads ##
 
-* [Here](http://reds-data.heig-vd.ch/logisim-evolution/IntroToLogisimEnglish.pdf) you can find a tutorial (French
-  version [here](http://reds-data.heig-vd.ch/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim.
+* Here is a tutorial [Intro to Logisim in English](http://reds-data.heig-vd.ch/logisim-evolution/IntroToLogisimEnglish.pdf) or
+  [Intro to Logisim in French](http://reds-data.heig-vd.ch/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim.
   The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it
   in a store -- but the descriptions should be good enough to be used for another generic board.
 * Another good reference is [this book](https://github.com/grself/CIS221_Text/raw/master/dl.pdf), the
   accompanying [lab manual](https://github.com/grself/CIS221_Lab_Manual/raw/master/dl_lab.pdf),
   and [YouTube channel](http://bit.ly/2KLMcoc), where basic electronics is explained with the help of Logisim.
 * Some circuit examples, ranging from simple combinational and sequential logic to advanced datapaths, that are useful
-  for teaching and learning computer organization topics can be found
-  [here](https://github.com/mkayaalp/computer-organization-logisim).
+  for teaching and learning computer organization topics can be found here:
+  [Computer Organization in Logisim](https://github.com/mkayaalp/computer-organization-logisim).
 
 ## Legacy support ##
 

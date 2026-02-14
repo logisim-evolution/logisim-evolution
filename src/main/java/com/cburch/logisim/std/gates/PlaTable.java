@@ -213,7 +213,7 @@ public class PlaTable {
     protected boolean canParse(String line) {
       final var io = inputsOutputs(line);
 
-      return io.matches("[01]+\\s+[01]+");
+      return io.matches("[01x]+\\s+[01]+");
     }
   }
 

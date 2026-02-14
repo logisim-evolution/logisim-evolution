@@ -1,190 +1,142 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Keyboard -->
-   键盘
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <!-- <img class="iconlibs" src="../../../../icons/6464/keyboard.png" alt="#########" width="32" height="32" align="middle"> <em>Keyboard</em> -->
-    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/keyboard.png" width="32"/>
-    <em>
-     键盘
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        Library:
-       </strong>
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Input/Output</a> -->
-       <a href="index.html">
-        输入/输出
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.2.0
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibslarge" height="64" src="../../../../img-libs/keyboard.png" width="128"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- This component allows the circuit to read keys typed from the keyboard - as long as the keys are representable in the 7-bit ASCII code. After clicking the component using the poke tool, the user can type characters, which accumulate in a buffer. At all times, the ASCII value for the leftmost character in the buffer is sent out the rightmost output. When the clock input is triggered, the leftmost character disappears from the buffer and the new leftmost character is sent on the rightmost output. -->
-    该组件允许电路读取从键盘键入的键 - 只要这些键可以用 7 位 ASCII 代码表示。 使用 poke 工具单击组件后，用户可以键入字符，这些字符会累积在缓冲区中。 在任何时候，缓冲区中最左边字符的 ASCII 值都会从最右边的输出发送出去。 当时钟输入被触发时，最左边的字符从缓冲区消失，新的最左边的字符在最右边的输出上发送。
-   </p>
-   <p>
-    <!-- The supported characters for the buffer include all the printable ASCII characters, as well as space, newline, backspace, and control-L. In addition, the left-arrow and right-arrow keys move the cursor within the buffer, and the delete key deletes the character to the right of the cursor (if any). -->
-    缓冲区支持的字符包括所有可打印的 ASCII 字符，以及空格、换行符、退格键和 control-L。 此外，左箭头键和右箭头键可在缓冲区内移动光标，而删除键可删除光标右侧的字符（如果有）。
-   </p>
-   <p>
-    <!-- The component is asynchronous in the sense that when the buffer is empty and the user types a character, that character is sent immediately as an output, without any wait for a clock pulse. -->
-    该组件是异步的，因为当缓冲区为空且用户键入字符时，该字符将立即作为输出发送，无需等待时钟脉冲。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <dl>
-    <dt>
-     <!-- West edge, marked by a triangle (input, bit width 1) -->
-     西边，用三角形标记（输入，位宽1）
-    </dt>
-    <dd>
-     <!-- Clock - when triggered while the read-enable pin isn't 0, the leftmost character from the buffer is deleted, and the outputs are updated to reflect the buffer's new status. -->
-     时钟 - 当读使能引脚不为 0 时触发，缓冲区最左边的字符将被删除，并且输出将更新以反映缓冲区的新状态。
-    </dd>
-    <dt>
-     <!-- South edge, leftmost pin (input, bit width 1) -->
-     南边缘，最左边的引脚（输入，位宽 1）
-    </dt>
-    <dd>
-     <!-- Read Enable - when 1 (or floating or error), a clock edge will consume the leftmost character from the buffer. The clock input is ignored when Read Enable is 0. -->
-     读取启用 - 当为 1（或浮动或错误）时，时钟沿将消耗缓冲区中最左边的字符。 当读使能为 0 时，时钟输入被忽略。
-    </dd>
-    <dt>
-     <!-- South edge, second pin from left (input, bit width 1) -->
-     南边缘，左起第二个引脚（输入，位宽 1）
-    </dt>
-    <dd>
-     <!-- Clear - when 1, the buffer is emptied and does not accept further characters. -->
-     清除 - 当为 1 时，缓冲区被清空并且不接受更多字符。
-    </dd>
-    <dt>
-     <!-- South edge, second pin from right (output, bit width 1) -->
-     南边缘，右数第二个引脚（输出，位宽 1）
-    </dt>
-    <dd>
-     <!-- Available - this is 1 when the buffer contains at least one character and 0 when the buffer is empty. -->
-     可用 - 当缓冲区包含至少一个字符时为 1，当缓冲区为空时为 0。
-    </dd>
-    <dt>
-     <!-- South edge, rightmost pin (output, bit width 7) -->
-     南边缘，最右边的引脚（输出，位宽 7）
-    </dt>
-    <dd>
-     <!-- Data - the 7-bit ASCII code for the leftmost character in the buffer, or 0 if the buffer is empty. -->
-     数据 - 缓冲区中最左边字符的 7 位 ASCII 代码，如果缓冲区为空，则为 0。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <dl>
-    <dt>
-     <!-- Buffer Length -->
-     缓冲区长度
-    </dt>
-    <dd>
-     <!-- The number of characters that the buffer can hold at once. -->
-     缓冲区一次可以容纳的字符数。
-    </dd>
-    <dt>
-     <!-- Trigger -->
-     触发器
-    </dt>
-    <dd>
-     <!-- If the value is <q>Rising Edge,</q> then when the clock input changes from 0 to 1, the leftmost character is consumed (when enabled by the Read Enable input). If it is <q>Falling Edge,</q>, then this happens when the clock input changes from 1 to 0. -->
-     如果该值为
-     <q>
-      上升沿
-     </q>
-     ，则当时钟输入从0变为1时，最左边的字符被消耗（当由读使能输入使能时）。 如果是
-     <q>
-      下降沿
-     </q>
-     ，则当时钟输入从1变为0时会发生这种情况。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- Pressing the mouse button into the component gives keyboard focus to the component, and a vertical-bar cursor will be displayed. -->
-    将鼠标按钮按入组件即可将键盘焦点赋予该组件，并且将显示垂直条光标。
-   </p>
-   <p>
-    <!-- Each character typed will then be inserted into the buffer, as long as the buffer hasn't reached its capacity and the character is one of those that the component supports: the printable characters within the 7-bit ASCII code, as well as space, backspace, newline, and control-L. Additionally, the user may type the left-arrow and right-arrow keys to change the location of the cursor within the buffer, and the user may type the delete key to delete the buffer character (if any) just to the right of the cursor. -->
-    然后，只要缓冲区未达到其容量，并且该字符是该组件支持的字符之一，则输入的每个字符都将被插入到缓冲区中：7 位 ASCII 代码中的可打印字符以及空格， 退格键、换行符和 Control-L。 此外，用户可以键入左箭头和右箭头键来更改缓冲区内光标的位置，并且用户可以键入删除键来删除光标右侧的缓冲区字符（如果有） 。
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <p>
-    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      键盘
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/keyboard.png" alt="#########" width="32" height="32" align="middle"> <em>键盘</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">输入/输出</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.2.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibslarge" src="../../../../img-libs/keyboard.png" alt="#########" width="128" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        该组件允许电路读取用户从键盘输入字符（字符必须能用 7 位 ASCII 码表示）。使用<q>手形工具</q>单击该组件后，用户即可输入字符；输入的字符会累积到一个缓冲区中。在任意时刻，缓冲区最左侧字符的 ASCII 值都会从最右侧输出端输出。当时钟输入被触发时，缓冲区最左侧字符会从缓冲区移除，随后新的最左侧字符会从最右侧输出端输出。
+      </p>
+      <p>
+        缓冲区支持的字符包括所有可打印 ASCII 字符，以及空格、换行、退格和 Ctrl-L。另外，按下左方向键与右方向键可在缓冲区内移动光标；按下 Delete 键会删除光标右侧的字符（若存在）。
+      </p>
+      <p>
+        该组件在一定意义上是异步的：当缓冲区为空且用户输入一个字符时，该字符会立即作为输出送出，而无需等待时钟脉冲。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          西侧边缘，以三角形标识（输入，位宽为 1）
+        </dt>
+        <dd>
+          时钟：当 <q>读使能</q> 引脚不为 0 且该输入被触发时，缓冲区最左侧字符会被删除，输出将更新以反映缓冲区的新状态。
+        </dd>
+
+        <dt>
+          南侧边缘，最左侧引脚（输入，位宽为 1）
+        </dt>
+        <dd>
+          读使能：当该输入为 1（或悬空或错误值）时，一个时钟沿将会消耗缓冲区最左侧字符；当读使能为 0 时，时钟输入会被忽略。
+        </dd>
+
+        <dt>
+          南侧边缘，从左数第 2 个引脚（输入，位宽为 1）
+        </dt>
+        <dd>
+          清空：当为 1 时，缓冲区会被清空，并且不再接受后续输入的字符。
+        </dd>
+
+        <dt>
+          南侧边缘，从右数第 2 个引脚（输出，位宽为 1）
+        </dt>
+        <dd>
+          可用：当缓冲区至少包含 1 个字符时为 1；当缓冲区为空时为 0。
+        </dd>
+
+        <dt>
+          南侧边缘，最右侧引脚（输出，位宽为 7）
+        </dt>
+        <dd>
+          数据：输出缓冲区最左侧字符的 7 位 ASCII 码；若缓冲区为空，则输出 0。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <dl>
+        <dt>
+          缓冲区长度
+        </dt>
+        <dd>
+          缓冲区一次可容纳的字符数量。
+        </dd>
+
+        <dt>
+          触发方式
+        </dt>
+        <dd>
+          若为 <q>上升沿</q>，则当时钟输入从 0 变为 1 时（且读使能允许），会消耗缓冲区最左侧字符；若为 <q>下降沿</q>，则在时钟输入从 1 变为 0 时发生该操作。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        在组件上按下鼠标按钮可使该组件获得键盘焦点，并显示一个竖线光标。
+      </p>
+      <p>
+        此后输入的每个字符都会被插入到缓冲区中，前提是缓冲区未达到容量上限，且该字符属于组件支持的范围：7 位 ASCII 码内的可打印字符，以及空格、退格、换行与 Ctrl-L。此外，用户可通过左/右方向键改变光标在缓冲区中的位置，并可通过 Delete 键删除光标右侧的缓冲区字符（若存在）。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
 </html>

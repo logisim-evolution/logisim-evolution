@@ -49,6 +49,14 @@
 			<tocitem target="mem_binary" text="File binary"/>
 			<tocitem target="mem_ascii" text="File ASCII"/>
 		</tocitem>
+		<tocitem target="test_vector" text="Test Vectors">
+			<tocitem target="test_vector_window" text="Test Vector Window" />
+			<tocitem target="test_vector_file_format" text="Test Vector File Format" />
+			<tocitem target="test_vector_special_values" text="Special Values" />
+			<tocitem target="test_vector_sequential" text="Sequential Testing" />
+			<tocitem target="test_vector_cmdline" text="Command Line Usage" />
+			<tocitem target="test_vector_tips" text="Tips and Best Practices" />
+		</tocitem>
 		<tocitem target="analyze" text="Combinational analysis">
 			<tocitem target="analyze_open" text="Opening Combinational Analysis" />
 			<tocitem target="analyze_table" text="Editing the truth table" />

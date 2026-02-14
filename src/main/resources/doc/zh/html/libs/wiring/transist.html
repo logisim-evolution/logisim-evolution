@@ -1,888 +1,429 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Transistor -->
-   晶体管
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/trans0.png" width="32"/>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/trans1.png" width="32"/>
-    <!-- <em>Transistor</em> -->
-    <em>
-     晶体管
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Wiring</a> -->
-       <a href="index.html">
-        线路
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.7.0
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <table>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      晶体管
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" width="32" height="32"> 
+		<em> 晶体管</em>
+      </h1>
+      <table>
         <tbody>
-         <tr>
-          <th>
-           P-type
-          </th>
-          <th>
-          </th>
-          <th>
-           N-type
-          </th>
-         </tr>
-         <tr>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans0.png" width="64"/>
-          </td>
-          <td>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans1.png" width="64"/>
-          </td>
-         </tr>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">线路</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.7.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+				  <tr>
+				    <th>P 型</th>
+					<th></th>
+					<th>N 型</th>
+				  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                    </td>
+					<td>&nbsp;</td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
         </tbody>
-       </table>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- A transistor has two inputs, called <b>gate</b> and <b>source</b>, and one output, called <b>drain</b>. When diagrammed, the <b>source</b> input and <b>drain</b> output are drawn connected by a plate; Logisim draws an arrowhead to indicate the direction of flow from input to output. The <b>gate</b> input is drawn connected to a plate that is parallel to the plate connecting <b>source</b> to <b>drain</b>.</p> -->
-    晶体管有两个输入，称为
-    <b>
-     栅极
-    </b>
-    和
-    <b>
-     源极
-    </b>
-    ，以及一个输出，称为
-    <b>
-     漏极
-    </b>
-    。 绘制图表时，
-    <b>
-     源极
-    </b>
-    输入和
-    <b>
-     漏极
-    </b>
-    输出通过极板连接； Logisim-evolution 绘制箭头来指示从输入到输出的流向。
-    <b>
-     栅极
-    </b>
-    输入被绘制为连接到一个板，该板与连接
-    <b>
-     源极
-    </b>
-    到
-    <b>
-     漏极
-    </b>
-    的板平行。
-   </p>
-   <center>
-    <table>
-     <tbody>
-      <tr>
-       <td>
-       </td>
-       <td align="center">
-        <em>
-         gate
-        </em>
-       </td>
-       <td>
-       </td>
-       <td>
-       </td>
-       <td>
-       </td>
-       <td align="center">
-        <em>
-         gate
-        </em>
-       </td>
-       <td>
-       </td>
-      </tr>
-      <tr>
-       <td valign="bottom">
-        <em>
-         source
-        </em>
-       </td>
-       <td align="center" valign="middle">
-        <img alt="#########" src="../../../../img-libs/trans1.png"/>
-       </td>
-       <td valign="bottom">
-        <em>
-         drain
-        </em>
-       </td>
-       <td>
-       </td>
-       <td valign="bottom">
-        <em>
-         source
-        </em>
-       </td>
-       <td align="center" valign="middle">
-        <img alt="#########" src="../../../../img-libs/trans0.png"/>
-       </td>
-       <td valign="bottom">
-        <em>
-         drain
-        </em>
-       </td>
-      </tr>
-      <tr>
-       <td>
-       </td>
-       <td align="center">
-        <b>
-         N-Type
-        </b>
-       </td>
-       <td>
-       </td>
-       <td>
-       </td>
-       <td>
-       </td>
-       <td align="center">
-        <b>
-         P-Type
-        </b>
-       </td>
-       <td>
-       </td>
-      </tr>
-     </tbody>
-    </table>
-   </center>
-   <!-- <p>	Logisim supports two types of transistors, with slightly different behaviors described below; the P-type transistor is indicated by a circle connecting the <b>gate</b> input to its plate, while the N-type transistor has no such circle. -->
-   <p>
-    Logisim-evolution 支持两种类型的晶体管，其行为略有不同，如下所述； P 型晶体管由连接
-    <b>
-     栅极
-    </b>
-    输入与其极板的圆圈表示，而 N 型晶体管则没有这样的圆圈。
-   </p>
-   <p>
-    <!-- Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle) transmits when <b>gate</b> is 1. The behavior is summarized by the following tables. -->
-    根据
-    <b>
-     gate
-    </b>
-    处找到的值，
-    <b>
-     source
-    </b>
-    处的值可能会传输到
-    <b>
-     drain
-    </b>
-    ； 或者可能没有来自
-    <b>
-     源
-    </b>
-    的连接，因此
-    <b>
-     漏极
-    </b>
-    保持浮动。 发送或断开的决定取决于晶体管的类型： P 型晶体管（用
-    <b>
-     gate
-    </b>
-    线上的圆圈表示）在
-    <b>
-     gate
-    </b>
-    为 0 时发送，而 N 型晶体管（没有这样的圆圈）在
-    <b>
-     gate
-    </b>
-    为 1 时传输。下表总结了该行为。
-   </p>
-   <center>
-    <table class="encapsul">
-     <tbody>
-      <tr>
-       <th colspan="3">
-        P-type
-       </th>
-       <td>
-       </td>
-       <th colspan="3">
-        N-Type
-       </th>
-      </tr>
-      <tr>
-       <td>
-       </td>
-       <td class="center">
-        G
-       </td>
-       <td>
-       </td>
-       <td>
-       </td>
-       <td>
-       </td>
-       <td class="center">
-        G
-       </td>
-       <td>
-       </td>
-      </tr>
-      <tr>
-       <td class="right">
-        S
-       </td>
-       <td>
-        <p align="center">
-         <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans0.png" width="64"/>
-        </p>
-       </td>
-       <td class="left">
-        D
-       </td>
-       <td>
-       </td>
-       <td class="right">
-        S
-       </td>
-       <td>
-        <p align="center">
-         <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans1.png" width="64"/>
-        </p>
-       </td>
-       <td class="left">
-        D
-       </td>
-      </tr>
-      <tr>
-       <td colspan="3">
-        <table class="truthtable">
-         <tbody>
-          <tr>
-           <th>
-           </th>
-           <th colspan="5">
-            Gate
-           </th>
-          </tr>
-          <tr>
-           <th rowspan="6">
-            Source
-           </th>
-          </tr>
-          <tr>
-           <td class="tzerov">
-           </td>
-           <td class="tzerov">
-            0
-           </td>
-           <td class="tunov">
-            1
-           </td>
-           <td class="tuvalue">
-            U
-           </td>
-           <td class="tevalue">
-            E
-           </td>
-          </tr>
-          <tr>
-           <td class="tzerov">
-            0
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="evalue">
-            E
-           </td>
-           <td class="evalue">
-            E
-           </td>
-          </tr>
-          <tr>
-           <td class="tunov">
-            1
-           </td>
-           <td class="unov">
-            1
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="evalue">
-            E
-           </td>
-           <td class="evalue">
-            E
-           </td>
-          </tr>
-          <tr>
-           <td class="tuvalue">
-            U
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-          </tr>
-          <tr>
-           <td class="tevalue">
-            E
-           </td>
-           <td class="evalue">
-            E
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-           <td class="evalue">
-            E
-           </td>
-           <td class="evalue">
-            E
-           </td>
-          </tr>
-         </tbody>
-        </table>
-       </td>
-       <td>
-        <td colspan="3">
-         <table class="truthtable">
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        晶体管有两个输入端：<b>栅极</b>（gate）与 <b>源极</b>（source），以及一个输出端：<b>漏极</b>（drain）。
+        图示中，<b>源极</b> 与 <b>漏极</b> 之间用一块“极板”连接；Logisim-evolution 用箭头表示从输入到输出的传输方向。
+        <b>栅极</b> 则连接到一块与源漏极板平行的极板。
+      </p>
+      <center>
+        <table>
           <tbody>
-           <tr>
-            <th>
-            </th>
-            <th colspan="5">
-             Gate
-            </th>
-           </tr>
-           <tr>
-            <th rowspan="6">
-             Source
-            </th>
-           </tr>
-           <tr>
-            <td class="tzerov">
-            </td>
-            <td class="tzerov">
-             0
-            </td>
-            <td class="tunov">
-             1
-            </td>
-            <td class="tuvalue">
-             U
-            </td>
-            <td class="tevalue">
-             E
-            </td>
-           </tr>
-           <tr>
-            <td class="tzerov">
-             0
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="zerov">
-             0
-            </td>
-            <td class="evalue">
-             E
-            </td>
-            <td class="evalue">
-             E
-            </td>
-           </tr>
-           <tr>
-            <td class="tunov">
-             1
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="evalue">
-             E
-            </td>
-            <td class="evalue">
-             E
-            </td>
-           </tr>
-           <tr>
-            <td class="tuvalue">
-             U
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-           </tr>
-           <tr>
-            <td class="tevalue">
-             E
-            </td>
-            <td class="uvalue">
-             U
-            </td>
-            <td class="evalue">
-             E
-            </td>
-            <td class="evalue">
-             E
-            </td>
-            <td class="evalue">
-             E
-            </td>
-           </tr>
+            <tr>
+              <td></td>
+              <td align="center"><em>gate</em></td>
+              <td></td>
+              <td>&nbsp; &nbsp;</td>
+              <td></td>
+              <td align="center"><em>gate</em></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td valign="bottom"><em>source</em></td>
+              <td valign="middle" align="center">
+                <img src="../../../../img-libs/trans1.png" alt="#########">
+              </td>
+              <td valign="bottom"><em>drain</em></td>
+              <td></td>
+              <td valign="bottom"><em>source</em></td>
+              <td valign="middle" align="center">
+                <img src="../../../../img-libs/trans0.png" alt="#########">
+              </td>
+              <td valign="bottom"><em>drain</em></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td align="center"><b>N 型</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td align="center"><b>P 型</b></td>
+              <td></td>
+            </tr>
           </tbody>
-         </table>
-        </td>
-       </td>
-      </tr>
-     </tbody>
-    </table>
-   </center>
-   <p>
-    <!-- Or in summarized form: -->
-    或者总结形式：
-   </p>
-   <center>
-    <table class="encapsul">
-     <tbody>
-      <tr>
-       <td>
-        <table>
-         <thead>
-          <tr>
-           <th colspan="2">
-            P-type
-           </th>
-          </tr>
-          <tr>
-           <td colspan="2">
-            <p align="center">
-             <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans0.png" width="64"/>
-            </p>
-           </td>
-          </tr>
-         </thead>
-         <tbody>
-          <tr>
-           <th class="tspace">
-            Gate
-           </th>
-           <th class="tspace">
-            Drain
-           </th>
-          </tr>
-          <tr>
-           <td class="zerov">
-            0
-           </td>
-           <td class="space">
-            Source
-           </td>
-          </tr>
-          <tr>
-           <td class="unov">
-            1
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-          </tr>
-          <tr>
-           <td class="space">
-            <b class="uvalue">
-             U
-            </b>
-            /
-            <b class="evalue">
-             E
-            </b>
-           </td>
-           <td class="space">
-            *
-           </td>
-          </tr>
-         </tbody>
         </table>
-       </td>
-       <td width="60px">
-       </td>
-       <td>
-        <table>
-         <thead>
+	  </center>
+
+      <p>
+        Logisim-evolution 支持两种晶体管，行为略有不同。P 型晶体管在 <b>栅极</b> 线上带有一个小圆圈；N 型则没有。
+      </p>
+      <p>
+        晶体管是否将 <b>源极</b> 的值传到 <b>漏极</b>，取决于 <b>栅极</b> 的值；若不传输，则 <b>漏极</b> 悬空。
+        具体规则与晶体管类型有关：P 型（栅极线上有圆圈）在 <b>栅极</b> 为 0 时导通；N 型（无圆圈）在 <b>栅极</b> 为 1 时导通。下表总结了其行为。
+      </p>
+
+	  <center>
+      <table class="encapsul">
+        <tbody>
+		  <tr>
+		   <th colspan="3">P 型</th>
+		   <td></td>
+		   <th colspan="3">N 型</th>
+		  </tr>
+		  <tr>
+		   <td></td>
+		   <td class="center">G</td>
+		   <td></td>
+		   <td></td>
+		   <td></td>
+		   <td class="center">G</td>
+		   <td></td>
+		  </tr>
+		  <tr>
+		   <td class="right">S</td>
+		   <td>
+		     <p align="center">
+		       <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+		     </p>
+		   </td>
+		   <td class="left">D</td>
+		   <td></td>
+		   <td class="right">S</td>
+		   <td>
+		     <p align="center">
+		       <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+		     </p>
+		   </td>
+		   <td class="left">D</td>
+		  </tr>
           <tr>
-           <th colspan="2">
-            <b>
-             N-type
-            </b>
-           </th>
+            <td colspan="3">
+              <table class="truthtable">
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan="5">栅极</th>
+                  </tr>
+                  <tr>
+                    <th rowspan="6">源极</th>
+                  </tr>
+                  <tr>
+                    <td class="tzerov"></td>
+                    <td class="tzerov">0</td>
+                    <td class="tunov">1</td>
+                    <td class="tuvalue">U</td>
+                    <td class="tevalue">E</td>
+                  </tr>
+                  <tr>
+                    <td class="tzerov">0</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                  </tr>
+                  <tr>
+                    <td class="tunov">1</td>
+                    <td class="unov">1</td>
+                    <td class="uvalue">U</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                  </tr>
+                  <tr>
+                    <td class="tuvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                  </tr>
+                  <tr>
+                    <td class="tevalue">E</td>
+                    <td class="evalue">E</td>
+                    <td class="uvalue">U</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td colspan="3">
+              <table class="truthtable">
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan="5">栅极</th>
+                  </tr>
+                  <tr>
+                    <th rowspan="6">源极</th>
+                  </tr>
+                  <tr>
+                    <td class="tzerov"></td>
+                    <td class="tzerov">0</td>
+                    <td class="tunov">1</td>
+                    <td class="tuvalue">U</td>
+                    <td class="tevalue">E</td>
+                  </tr>
+                  <tr>
+                    <td class="tzerov">0</td>
+                    <td class="uvalue">U</td>
+                    <td class="zerov">0</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                  </tr>
+                  <tr>
+                    <td class="tunov">1</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                  </tr>
+                  <tr>
+                    <td class="tuvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                    <td class="uvalue">U</td>
+                  </tr>
+                  <tr>
+                    <td class="tevalue">E</td>
+                    <td class="uvalue">U</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                    <td class="evalue">E</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
           </tr>
-          <tr>
-           <td colspan="2">
-            <p align="center">
-             <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/trans1.png" width="64"/>
-            </p>
-           </td>
-          </tr>
-         </thead>
-         <tbody>
-          <tr>
-           <th class="tspace">
-            Gate
-           </th>
-           <th class="tspace">
-            Drain
-           </th>
-          </tr>
-          <tr>
-           <td class="zerov">
-            0
-           </td>
-           <td class="uvalue">
-            U
-           </td>
-          </tr>
-          <tr>
-           <td class="unov">
-            1
-           </td>
-           <td align="center">
-            Source
-           </td>
-          </tr>
-          <tr>
-           <td class="space">
-            <b class="uvalue">
-             U
-            </b>
-            /
-            <b class="evalue">
-             E
-            </b>
-           </td>
-           <td class="space">
-            *
-           </td>
-          </tr>
-         </tbody>
+        </tbody>
+      </table>
+	  </center>
+
+      <p>
+        简表如下：
+      </p>
+      <center>
+        <table class="encapsul">
+          <tbody>
+            <tr>
+              <td>
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="2">P 型</th>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+					    <p align="center">
+                          <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                        </p>
+					  </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th class="tspace">栅极</th>
+                      <th class="tspace">漏极</th>
+                    </tr>
+                    <tr>
+                      <td class="zerov">0</td>
+                      <td class="space">源极</td>
+                    </tr>
+                    <tr>
+                      <td class="unov">1</td>
+                      <td class="uvalue">U</td>
+                    </tr>
+                    <tr>
+                      <td class="space"><b class="uvalue">U</b>/<b class="evalue">E</b></td>
+                      <td class="space">*</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td width="60px"></td>
+              <td>
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="2"><b>N 型</b></th>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+					    <p align="center">
+                          <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                        </p>
+					  </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th class="tspace">栅极</th>
+                      <th class="tspace">漏极</th>
+                    </tr>
+                    <tr>
+                      <td class="zerov">0</td>
+                      <td class="uvalue">U</td>
+                    </tr>
+                    <tr>
+                      <td class="unov">1</td>
+                      <td align="center">源极</td>
+                    </tr>
+                    <tr>
+                      <td class="space"><b class="uvalue">U</b>/<b class="evalue">E</b></td>
+                      <td class="space">*</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
         </table>
-       </td>
-      </tr>
-     </tbody>
-    </table>
-    <p>
-     <!-- * If source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>. -->
-     * 如果源为
-     <b class="uvalue">
-      U
-     </b>
-     ，则漏为
-     <b class="uvalue">
-      U
-     </b>
-     ； 否则流失是
-     <b class="evalue">
-      E
-     </b>
-     。
-    </p>
-   </center>
-   <p>
-    <!-- <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p> -->
-    <b class="note">
-     注意：
-    </b>
-    由于 Logisim-evolution 使用标记
-    <b class="uvalue">
-     U
-    </b>
-    （高阻抗/未定义）和
-    <b class="evalue">
-     E
-    </b>
-    （错误）我在插图中使用了相同的内容，而不是其他文档中更常见的 Z（高阻抗）和 X（错误）
-   </p>
-   <p>
-    <!-- If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits. -->
-    如果
-    <b class="property">
-     数据位
-    </b>
-    属性大于1，则
-    <b>
-     门
-    </b>
-    输入仍然是单个位，但其值同时应用于每个
-    <b>
-     源
-    </b>
-    输入的位。
-   </p>
-   <p>
-    <!-- An N-type transistor behaves very similarly to a <a href="../gates/controlled.html">Controlled Buffer</a>. The primary difference is that a transistor is meant for more basic circuit designs. -->
-    N 型晶体管的行为与
-    <a href="../gates/controlled.html">
-     受控缓冲器
-    </a>
-    非常相似。 主要区别在于晶体管适用于更基本的电路设计。
-   </p>
-   <h2>
-    <!-- Pins (assuming component faces east, gate line top/left) -->
-    引脚（假设元件朝东，栅极线顶部/左侧）
-   </h2>
-   <dl>
-    <dt>
-     <!-- West edge (input, bit width matches Data Bits attribute) -->
-     西边（输入，位宽与数据位属性匹配）
-    </dt>
-    <dd>
-     <!-- The component's <b>source</b> input that will transmit to the output if triggered by the <b>gate</b> input. -->
-     如果由
-     <b>
-      门
-     </b>
-     输入触发，元件的
-     <b>
-      源
-     </b>
-     输入将传输到输出。
-    </dd>
-    <dt>
-     <!-- North edge (input, bit width 1) -->
-     北边（输入，位宽1）
-    </dt>
-    <dd>
-     <!-- The component's <b>gate</b> input. For P-type transistors, the transistor will transmit if the <b>gate</b> value is <b class="zerov">0</b>; for N-type transistors, this will trigger the transistor if the <b>gate</b> value is <b class="unov">1</b>. -->
-     元件的
-     <b>
-      门
-     </b>
-     输入。 对于P型晶体管，如果
-     <b>
-      gate
-     </b>
-     值为
-     <b class="zerov">
-      0
-     </b>
-     ，则晶体管将传输； 对于 N 型晶体管，如果
-     <b>
-      gate
-     </b>
-     值为
-     <b class="unov">
-      1
-     </b>
-     ，这将触发晶体管。
-    </dd>
-    <dt>
-     <!-- East edge (output, bit width matches Data Bits attribute) -->
-     东边（输出，位宽与数据位属性匹配）
-    </dt>
-    <dd>
-     <!-- The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output will be an error value (<b class="evalue">E</b>). -->
-     元件的输出，如果由
-     <b>
-      gate
-     </b>
-     输入指示，则将与
-     <b>
-      source
-     </b>
-     输入匹配，或者如果
-     <b>
-      gate
-     </b>
-     输入为负，则将浮动 什么表示否定。 如果
-     <b>
-      gate
-     </b>
-     是浮动值 (
-     <b class="uvalue">
-      U
-     </b>
-     ) 或错误错误值 (
-     <b class="evalue">
-      E
-     </b>
-     ) 值，则 输出将是一个错误值 (
-     <b class="evalue">
-      E
-     </b>
-     )。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    选择或添加元件时，
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    到
-    <b class="tkeybd">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性和箭头键更改其
-    <b class="propertie">
-     方向
-    </b>
-    属性。
-   </p>
-   <div class="attliste">
-    <dl>
-     <dt>
-      <!-- <b class="propertie">Type</b> -->
-      <b class="propertie">
-       类型
-      </b>
-     </dt>
-     <dd>
-      <!-- Determines whether the transistor is P-type or N-type. -->
-      确定晶体管是 P 型还是 N 型。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Facing</b> -->
-      <b class="propertie">
-       方向
-      </b>
-     </dt>
-     <dd>
-      <!-- The direction of the component (its output relative to its input). -->
-      元件的方向（其输出相对于其输入）。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Gate Location</b> -->
-      <b class="propertie">
-       门位置
-      </b>
-     </dt>
-     <dd>
-      <!-- The location of the gate input. -->
-      门输入的位置。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Data Bits</b> -->
-      <b class="propertie">
-       数据位
-      </b>
-     </dt>
-     <dd>
-      <!-- The bit width of the component's inputs and outputs. -->
-      元件输入和输出的位宽度。
-     </dd>
-    </dl>
-   </div>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库手册
-    </a>
-   </p>
-  </div>
- </body>
+        <p>
+          * 若源极为 <b class="uvalue">U</b>，则漏极为 <b class="uvalue">U</b>；否则漏极为 <b class="evalue">E</b>。
+        </p>
+      </center>
+
+      <p>
+        <b class="note">注意：</b>由于 Logisim-evolution 使用 <b class="uvalue">U</b>（高阻/未定义）与 <b class="evalue">E</b>（错误）作为标记，因此本文也沿用这两个符号，而不是其它文档中更常见的 Z（高阻）与 X（错误）。
+      </p>
+      <p>
+        若 <b class="propertie">数据位宽</b> 大于 1，则 <b>栅极</b> 输入仍为 1 位，但其取值会同时作用于 <b>源极</b> 输入的每一位。
+      </p>
+      <p>
+        N 型晶体管的行为与 <a href="../gates/controlled.html">受控缓冲器</a> 非常相似；主要区别在于晶体管更偏向于基础电路设计。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东，栅极在顶部）
+      </h2>
+      <dl>
+        <dt>
+          西侧（输入，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          组件的 <b>源极</b> 输入：当 <b>栅极</b> 触发导通时，会传到输出端。
+        </dd>
+        <dt>
+          北侧（输入，位宽为 1）
+        </dt>
+        <dd>
+          组件的 <b>栅极</b> 输入。对 P 型晶体管，当 <b>栅极</b> 为 <b class="zerov">0</b> 时导通；对 N 型晶体管，当 <b>栅极</b> 为 <b class="unov">1</b> 时导通。
+        </dd>
+        <dt>
+          东侧（输出，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          组件输出：当 <b>栅极</b> 指示导通时，输出等于 <b>源极</b>；否则输出悬空。
+          若 <b>栅极</b> 为悬空（<b class="uvalue">U</b>）或错误值（<b class="evalue">E</b>），则输出为错误值（<b class="evalue">E</b>）。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <b class="propertie">数据位宽</b> 属性，方向键可修改 <b class="propertie">朝向</b> 属性。
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">类型</b>
+        </dt>
+        <dd>
+          指定晶体管为 P 型或 N 型。
+        </dd>
+        <dt>
+          <b class="propertie">朝向</b>
+        </dt>
+        <dd>
+          输出相对于输入的位置。
+        </dd>
+        <dt>
+          <b class="propertie">选择端位置</b>
+        </dt>
+        <dd>
+          栅极输入的位置。
+        </dd>
+        <dt>
+          <b class="propertie">数据位宽</b>
+        </dt>
+        <dd>
+          组件输入/输出的位宽。
+        </dd>
+      </dl>
+	  </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
 </html>

@@ -1,240 +1,156 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Clock -->
-   时钟
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/clock.png" width="32"/>
-    <em>
-     Clock
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Wiring</a> -->
-       <a href="index.html">
-        线路
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.0 Beta 13 (in Base library, moved to Wiring in 2.7.0)
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/clock.png" width="64"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- The clock toggles its output value on a regular schedule as long as ticks are enabled via the  option <b class="menu">Auto-tick enabled</b> of <a href="../../guide/menu/simulate.html">Simulate menu</a>. (Ticks are disabled by default.) A "tick" is Logisim's unit of time; the speed at which ticks occur can be selected from the submenu<b class="menu">Tick Frequency</b> of the <b class="menu">Simulate</b>	menu. -->
-    只要通过
-    <a href="../../guide/menu/simulate.html">
-     模拟菜单
-    </a>
-    启用时钟，时钟就会定期其输出值 。 （默认情况下禁用时钟。）“时钟”是 Logisim 的时间单位； 可以从
-    <b class="menu">
-     模拟
-    </b>
-    菜单的子菜单
-    <b class="menu">
-     时钟滴答频率
-    </b>
-    中选择滴答发生的速度。
-   </p>
-   <!-- <p>The clock's cycle can be configured using its <b class="propertie">High Duration</b> and <b class="propertie">Low Duration attributes</b>.</p> <p>In the <a href="../../guide/tutorial/tutor-step.html">step-by-step mode</a> the clocks advance by one tick with each keystroke. 	  </p> -->
-   <p>
-    可以使用其
-    <b class="propertie">
-     高持续时间
-    </b>
-    和
-    <b class="propertie">
-     低持续时间属性
-    </b>
-    来配置时钟周期。
-   </p>
-   <p>
-    在
-    <a href="../../guide/tutorial/tutor-step.html">
-     分步模式
-    </a>
-    每次点击时钟都会前进一格。
-   </p>
-   <p>
-    <!-- <b class="note">Note</b> that Logisim's simulation of clocks is quite unrealistic: In real circuits, multiple clocks will drift from one another and will never move in lockstep. But in Logisim, all clocks experience ticks at the same rate. -->
-    <b class="note">
-     请注意
-    </b>
-    Logisim-evolution 对时钟的模拟是理想状态的：在实际电路中，多个时钟会相互漂移，并且永远不会同步移动。 但在 Logisim-evolution 中，所有时钟都以相同的速率经历滴答声。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <p>
-    <!-- A clock has only one pin, an output with a bit width of 1, whose value will represent the current value of the clock. The location of this pin is specified in the <b class="propertie">Facing</b> attribute.<br> The clock's value will toggle on its schedule whenever ticks are enabled, and it will advance by one tick each time it is clicked with the Poke tool. -->
-    时钟只有一个引脚，一个位宽为1的输出，其值将代表时钟的当前值。 此引脚的位置在
-    <b class="propertie">
-     方向
-    </b>
-    属性中指定。
-    <br/>
-    每当启用时钟时，时钟的值都会按其时间表切换，并且每次都会前进一个刻度。
-   </p>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    当选择或添加组件时，箭头键会更改其
-    <b class="propertie">
-     方向
-    </b>
-    属性。
-   </p>
-   <div class="attliste">
-    <dl>
-     <dt>
-      <!-- <b class="propertie">Facing</b> -->
-      <b class="propertie">
-       方向
-      </b>
-     </dt>
-     <dd>
-      <!-- The side of the component where its output pin should be. -->
-      元件输出引脚所在的一侧。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">High Duration</b> -->
-      <b class="propertie">
-       高持续时间
-      </b>
-     </dt>
-     <dd>
-      <!-- The length of time within each cycle that the clock's output should be 1. -->
-      每个周期内时钟输出应为 1 的时间长度。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Low Duration</b> -->
-      <b class="propertie">
-       持续时间短
-      </b>
-     </dt>
-     <dd>
-      <!-- The length of time within each cycle that the clock's output should be 0. -->
-      每个周期内时钟输出应为 0 的时间长度。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Phase Offset</b> -->
-      <b class="propertie">
-       相位偏移
-      </b>
-     </dt>
-     <dd>
-      <!-- The phase Offset in tick of the clock. Below are two identical clock, one of which (in gray) has a phase shift of 1 tick.<br> -->
-      时钟滴答声中的相位偏移。 下面是两个相同的时钟，其中一个（灰色）的相移为 1 个刻度。
-      <br/>
-      <center>
-       <img alt="#########" src="../../../../img-libs/clockshift.png"/>
-      </center>
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Label</b> -->
-      <b class="propertie">
-       标签
-      </b>
-     </dt>
-     <dd>
-      <!-- The text within the label associated with the clock component. -->
-      与时钟组件关联的标签内的文本。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Label Location</b> -->
-      <b class="propertie">
-       标签位置
-      </b>
-     </dt>
-     <dd>
-      <!-- The location of the label relative to the component. -->
-      标签相对于元件的位置。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Label Font</b> -->
-      <b class="propertie">
-       标签字体
-      </b>
-     </dt>
-     <dd>
-      <!-- The font with which to render the label. -->
-      用于呈现标签的字体。
-     </dd>
-    </dl>
-   </div>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- By clicking on a clock component, you advance all the clocks by one tick. -->
-    通过单击时钟元件，您可以将所有时钟前进一格。
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- Allows the label associated with the component to be edited. -->
-    允许编辑与元件关联的标签。
-   </p>
-   <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      时钟
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/clock.png" alt="#########" width="32" height="32"> 
+        <em> 时钟</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>所属库：</strong>
+            </td>
+            <td>
+              <a href="index.html">线路</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 13（最初位于基础库，在 2.7.0 中移动到线路库）
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/clock.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        只要在 <a href="../../guide/menu/simulate.html">仿真菜单</a> 中启用了
+        <b class="menu">启用自动节拍</b> 选项，时钟就会周期性地切换其输出值。
+        节拍（tick）是 Logisim-evolution 的时间单位；节拍发生的速度可以在
+        <b class="menu">仿真</b> 菜单的
+        <b class="menu">自动节拍频率</b> 子菜单中进行设置。
+      </p>
+      <p>
+        时钟的周期可以通过其
+        <b class="propertie">高电平持续时间</b>
+        和
+        <b class="propertie">低电平持续时间</b>
+        属性进行配置。
+      </p>
+      <p>
+        <b class="note">注意</b>：Logisim-evolution 对时钟的模拟并不真实。
+        在真实电路中，多个时钟之间会产生漂移，且永远不会完全同步；
+        而在 Logisim-evolution 中，所有时钟都以相同的节拍速率运行。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        时钟只有一个引脚，即位宽为 1 的输出引脚，其值表示当前的时钟状态。
+        该引脚的位置由
+        <b class="propertie">朝向</b>
+        属性决定。<br>
+        当自动节拍启用时，时钟会按照其设定的周期切换输出；
+        每当使用<strong>手形工具</strong>点击一次时钟时，它也会前进一个节拍。
+      </p>
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，可以使用方向键改变其
+        <b class="propertie">朝向</b>
+        属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            引脚相对于组件中心的位置方向。
+          </dd>
+          <dt>
+            <b class="propertie">高电平持续时间</b>
+          </dt>
+          <dd>
+            在每个周期中，时钟输出为 1 的持续节拍数量。
+          </dd>
+          <dt>
+            <b class="propertie">低电平持续时间</b>
+          </dt>
+          <dd>
+            在每个周期中，时钟输出为 0 的持续节拍数量。
+          </dd>
+          <dt>
+            <b class="propertie">相位偏移</b>
+          </dt>
+          <dd>
+            时钟的相位偏移量（以节拍为单位）。
+            下图展示了两个完全相同的时钟，其中一个（灰色）具有 1 个节拍的相位偏移。<br>
+            <center>
+              <img src="../../../../img-libs/clockshift.png" alt="#########">
+            </center>
+          </dd>
+          <dt>
+            <b class="propertie">标签</b>
+          </dt>
+          <dd>
+            与时钟组件关联的标签文本内容。
+          </dd>
+          <dt>
+            <b class="propertie">标签位置</b>
+          </dt>
+          <dd>
+            标签相对于组件的位置。
+          </dd>
+          <dt>
+            <b class="propertie">标签字体</b>
+          </dt>
+          <dd>
+            用于渲染标签的字体。
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        点击任意一个时钟组件，会使所有时钟前进一个节拍。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        允许编辑与该组件关联的标签文本。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
 </html>

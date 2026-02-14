@@ -27,7 +27,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes in monitored locations"
@@ -36,11 +36,12 @@ jobs:
       with:
         filters: |
           src:
-            - 'src/**/*.flex'
             - 'src/**/*.java'
             - 'src/**/*.properties'
             - '*.gradle*'
             - 'gradle.properties'
+            - 'gradle/**/*.properties'
+            - 'build.gradle.kts'
 
     - name: "WILL BUILD STEP BE RUN?"
       run: |
@@ -61,20 +62,20 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
       uses: actions/setup-java@v5
       with:
         java-version: ${{ env.JDK_VERSION }}
         distribution: ${{ env.JDK_DISTRO }}
     - name: Cache SonarCloud packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Cache Gradle packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}

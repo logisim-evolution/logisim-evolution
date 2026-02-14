@@ -1,0 +1,24 @@
+/* We would use em values but that may not be compatible with old webviews thus we will just precalculate based on the default font size in ../style.css */
+/* Default Font Size: 12px */
+/* Approximate width of 1 character: 8px */
+
+/* Base: console-style block code anywhere */
+pre {
+  font-family: monospace;
+  line-height: 1.5;
+  white-space: pre;
+
+/* Actually apply the console-style to the code block */
+  background-color: #111;
+  color: #eee;
+  padding: 0 8px; /* 1em*/
+  overflow-x: auto;
+  margin: 0 0 0 16px; /* add 2em margin to the left of the code block */
+
+/* Ensure block behaviour for code within pre */
+  display: block;
+  font-style: normal;   /* belt-and-braces */
+
+/* Add a bar along the left side of the code block */
+  border-left: 7px solid #777;
+}

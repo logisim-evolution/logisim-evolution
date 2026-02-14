@@ -51,7 +51,7 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
   public static final String _ID = "Rv32im";
 
   public Rv32imRiscV() {
-    super(_ID, S.getter("Rv32imComponent"), SOC_MASTER);
+    super(_ID, S.getter("Rv32imComponent"), SOC_MASTER | SOC_SLAVE);
     setIcon(new ArithmeticIcon("uP", 2));
     setOffsetBounds(Bounds.create(0, 0, 640, 640));
     setInstancePoker(CpuDrawSupport.SimStatePoker.class);
@@ -108,7 +108,7 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
     if (attr == RV32imAttributes.NR_OF_IRQS) {
       updatePorts(instance);
     }
-    if (attr == SocSimulationManager.SOC_BUS_SELECT) {
+    if (attr == SocSimulationManager.SOC_BUS_SELECT || attr == RV32imAttributes.RV32IM_PLIC_BASE_ADDRESS) {
       instance.fireInvalidated();
     }
     super.instanceAttributeChanged(instance, attr);
@@ -161,12 +161,19 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
       state.setData(data);
     }
     if (state.getPortValue(0) == Value.TRUE) data.reset();
-    else data.setClock(state.getPortValue(1), ((InstanceStateImpl) state).getCircuitState());
+    else {
+      final var plic = state.getAttributeValue(RV32imAttributes.RV32IM_PLIC_STATE);
+      if (plic != null) {
+        plic.updateFromIrqPorts(state);
+        data.setMachineExternalInterruptPending(plic.isMachineExternalInterruptPending());
+      }
+      data.setClock(state.getPortValue(1), ((InstanceStateImpl) state).getCircuitState());
+    }
   }
 
   @Override
   public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) {
-    return null;
+    return attrs.getValue(RV32imAttributes.RV32IM_PLIC_STATE);
   }
 
   @Override

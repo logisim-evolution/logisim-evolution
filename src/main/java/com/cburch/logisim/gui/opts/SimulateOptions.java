@@ -143,7 +143,6 @@ class SimulateOptions extends OptionsPanel {
       ComboOption.setSelected(gateUndefined, val);
     }
 
-    @SuppressWarnings("rawtypes")
     private void loadSimLimit(Integer val) {
       final var value = val;
       final var model = simLimit.getModel();

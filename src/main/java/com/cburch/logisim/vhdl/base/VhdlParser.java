@@ -162,6 +162,7 @@ public class VhdlParser {
   private static final Pattern GENERICS = regex("generic");
   private static final Pattern GENERIC = regex("(\\w+(?: , \\w+)*) : (\\w+)");
   private static final Pattern DVALUE = regex(":= (\\w+)");
+  private static final Pattern UNIT = regex("(\\w+)");
 
   private final List<PortDescription> inputs;
   private final List<PortDescription> outputs;
@@ -287,7 +288,7 @@ public class VhdlParser {
     if (!input.next(OPENLIST)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
     parsePort(input);
     while (input.next(SEMICOLON)) parsePort(input);
-    if (!input.next(DONELIST)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+    if (!input.next(DONELIST)) throw new IllegalVhdlContentException(S.get("portDeclarationException") + " before " + input.remaining());
     return true;
   }
 
@@ -301,7 +302,8 @@ public class VhdlParser {
     var type = input.match().group(2).trim();
     if (!type.equalsIgnoreCase("integer")
         && !type.equalsIgnoreCase("natural")
-        && !type.equalsIgnoreCase("positive")) {
+        && !type.equalsIgnoreCase("positive")
+        && !type.equalsIgnoreCase("time")) {
       throw new IllegalVhdlContentException(S.get("genericTypeException") + ": " + type);
     }
     type = type.toLowerCase();
@@ -318,6 +320,22 @@ public class VhdlParser {
       }
       if (type.equals("natural") && dval < 0 || type.equals("positive") && dval < 1)
         throw new IllegalVhdlContentException(S.get("genericValueException") + ": " + dval);
+    }
+    if (type.equalsIgnoreCase("time")) {
+      if (input.next(UNIT)) {
+        String s = input.match().group(1);
+        if (s.equals("fs")) {
+          // default base unit, femtoseconds
+        } else if (s.equals("ps")) {
+          dval *= 1000;
+        } else if (s.equals("ns")) {
+          dval *= 1000000;
+        } else if (s.equals("us")) {
+          dval *= 1000000000;
+        } else {
+          throw new IllegalVhdlContentException("Unrecognized time unit: " + dval);
+        }
+      }
     }
 
     for (final var name : names.split("\\s*,\\s*")) {

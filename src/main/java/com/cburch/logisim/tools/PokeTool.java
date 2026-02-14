@@ -80,8 +80,8 @@ public class PokeTool extends Tool {
       if (radix2 != null && v.getWidth() > 1) {
         vStr += " / " + radix2.toString(v);
       }
-
-      if (v.getWidth() == 32 || v.getWidth() == 64) {
+      final var w = v.getWidth();
+      if (w == 8 || w == 16 || w == 32 || w == 64) {
         vStr += " / " + RadixOption.RADIX_FLOAT.toString(v);
       }
       final var fm = g.getFontMetrics();
