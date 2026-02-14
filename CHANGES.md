@@ -22,6 +22,7 @@
   * Corrected appearance of OR gates in TikZ/SVG image exports.
   * Corrected font choice for default fonts in SVG image exports.
   * Reduced filesize of TikZ/SVG image exports.
+  * Added DMA copy engine component (SocDma) in the System On Chip library.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables
