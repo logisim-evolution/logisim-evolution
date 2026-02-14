@@ -19,6 +19,9 @@
   * Enhanced Counter component:
     * Counter state can now be displayed in "State" tab alongside registers.
     * Counter state can now drive "Assembly viewer" address.
+  * Corrected appearance of OR gates in TikZ/SVG image exports.
+  * Corrected font choice for default fonts in SVG image exports.
+  * Reduced filesize of TikZ/SVG image exports.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables

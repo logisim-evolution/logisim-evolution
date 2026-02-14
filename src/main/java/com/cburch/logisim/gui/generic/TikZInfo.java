@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HexFormat;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -47,6 +48,7 @@ public class TikZInfo implements Cloneable {
   private Color drawColor;
   private Color backColor;
   private ArrayList<DrawObject> contents = new ArrayList<>();
+  private HexFormat hf = HexFormat.of().withUpperCase();
   private HashMap<String, String> customColors = new HashMap<>();
   private ArrayList<String> usedFonts = new ArrayList<>();
   private int fontIndex;
@@ -66,12 +68,27 @@ public class TikZInfo implements Cloneable {
     setColor(Color.BLACK);
   }
 
-  public static double rounded(double v) {
-    return ((double) Math.round(v * 1000.0)) / 1000.0;
+  public static String rounded(double v) {
+    final String str = Double.toString(((double) Math.round(v * 10000.0)) / 10000.0);
+    final int limit = str.lastIndexOf('.');
+    int cursor = str.length() - 1;
+    while (cursor >= limit) {
+      final char c = str.charAt(cursor);
+      if ((c == '0') || (c == '.')) {
+        cursor--;
+      } else {
+        break;
+      }
+    }
+    return str.substring(0, cursor + 1);
+  }
+
+  public static String getBarePoint(Point2D p) {
+    return rounded(p.getX()) + "," + rounded(p.getY());
   }
 
   public static String getPoint(Point2D p) {
-    return " (" + rounded(p.getX()) + "," + rounded(p.getY()) + ") ";
+    return " (" + getBarePoint(p) + ") ";
   }
 
   @Override
@@ -97,19 +114,8 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getColorName(Color c) {
-    String custName =
-        "custcol_"
-            + Integer.toString(c.getRed(), 16)
-            + "_"
-            + Integer.toString(c.getGreen(), 16)
-            + "_"
-            + Integer.toString(c.getBlue(), 16);
-    String rgbCol =
-        c.getRed()
-            + ", "
-            + c.getGreen()
-            + ", "
-            + c.getBlue();
+    final String rgbCol = hf.toHexDigits(c.getRGB()).substring(2);
+    final String custName = "custcol_" + rgbCol;
     customColors.put(custName, rgbCol);
     return custName;
   }
@@ -326,6 +332,11 @@ public class TikZInfo implements Cloneable {
         if (redundant) l.remove();
       }
     }
+    for (DrawObject obj : contents) {
+      if (obj instanceof TikZLine line) {
+        line.removeUselessPoints();
+      }
+    }
   }
 
   private String getCharRepresentation(int i) {
@@ -365,13 +376,8 @@ public class TikZInfo implements Cloneable {
 
   private String getColorDefinitions() {
     final var content = new StringBuilder();
-    for (final var key : customColors.keySet()) {
-      content
-          .append("\\definecolor{")
-          .append(key)
-          .append("}{RGB}{")
-          .append(customColors.get(key))
-          .append("}\n");
+    for (final var entry : customColors.entrySet()) {
+      content.append("\\definecolor{").append(entry.getKey()).append("}{HTML}{").append(entry.getValue()).append("}\n");
     }
     return content.toString();
   }
@@ -403,6 +409,11 @@ public class TikZInfo implements Cloneable {
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     svg.setAttribute("version", "1.1");
     svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+    // Specifying only a viewBox is not sufficient.
+    // Many interactive SVG renderers (such as web browsers) will only allow zooming
+    // to work as expected if the width and height attributes are populated.
+    svg.setAttribute("width", Integer.toString(width));
+    svg.setAttribute("height", Integer.toString(height));
     svgInfo.appendChild(svg);
     for (final var obj : contents) obj.getSvgCommand(svgInfo, svg);
     final var tranFactory = TransformerFactory.newInstance();
@@ -577,6 +588,38 @@ public class TikZInfo implements Cloneable {
       return true;
     }
 
+    public void removeUselessPoints() {
+      if (points.isEmpty()) return;
+      if (close) points.add(points.getFirst());
+      int cursor = 1;
+      while (cursor < (points.size() - 1)) {
+        final var prev = points.get(cursor - 1);
+        final var cur = points.get(cursor);
+        final var next = points.get(cursor + 1);
+        final boolean horiz_match = (prev.x == cur.x) && (cur.x == next.x);
+        final boolean vert_match = (prev.y == cur.y) && (cur.y == next.y);
+        if (horiz_match || vert_match) {
+          points.remove(cursor);
+        } else {
+          cursor++;
+        }
+      }
+      if (close) points.removeLast();
+      if (points.size() == 2) {
+        start = points.get(0);
+        end = points.get(1);
+        points.clear();
+      }
+    }
+
+    private String intPointSVG(Point p) {
+      return Integer.toString(p.x) + "," + Integer.toString(p.y);
+    }
+
+    private String intPointTikZ(Point p) {
+      return " (" + intPointSVG(p) + ") ";
+    }
+
     @Override
     public String getTikZCommand() {
       final var contents = new StringBuilder();
@@ -586,15 +629,29 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color).append("]");
       if (points.isEmpty()) {
-        contents.append(getPoint(start));
-        contents.append("--");
-        contents.append(getPoint(end));
+        contents.append(intPointTikZ(start)).append("--").append(intPointTikZ(end));
       } else {
-        var first = true;
-        for (final var point : points) {
-          if (first) first = false;
-          else contents.append("--");
-          contents.append(getPoint(point));
+        contents.append(intPointTikZ(points.get(0)));
+        int cursor = 1;
+        while (cursor < (points.size() - 1)) {
+          final var prev = points.get(cursor - 1);
+          final var cur = points.get(cursor);
+          final var next = points.get(cursor + 1);
+          if ((prev.y == cur.y) && (cur.x == next.x)) {
+            contents.append("-|").append(intPointTikZ(next));
+            cursor += 2;
+          } else if ((prev.x == cur.x) && (cur.y == next.y)) {
+            contents.append("|-").append(intPointTikZ(next));
+            cursor += 2;
+          } else {
+            contents.append("--").append(intPointTikZ(cur));
+            cursor++;
+          }
+        }
+        while (cursor < points.size()) {
+          final var cur = points.get(cursor);
+          contents.append("--").append(intPointTikZ(cur));
+          cursor++;
         }
       }
       if (close) {
@@ -608,26 +665,39 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final var content = new StringBuilder();
-      final var ne = root.createElement(close ? "polygon" : "polyline");
+      final var ne = root.createElement("path");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
+      final var content = new StringBuilder();
       if (points.isEmpty()) {
-        content.append(start.x).append(",").append(start.y).append(" ").append(end.x).append(",")
-            .append(end.y);
+        content.append("M").append(intPointSVG(start));
+        if (start.y == end.y) {
+          content.append(" H").append(end.x);
+        } else if (start.x == end.x) {
+          content.append(" V").append(end.y);
+        } else {
+          content.append(" L").append(intPointSVG(end));
+        }
       } else {
-        var first = true;
-        for (final var point : points) {
-          if (first) first = false;
-          else content.append(" ");
-          content.append(point.x).append(",").append(point.y);
+        content.append("M").append(intPointSVG(points.get(0)));
+        for (int i = 1; i < points.size(); i++) {
+          final Point prev = points.get(i - 1);
+          final Point cur = points.get(i);
+          if (prev.y == cur.y) {
+            content.append(" H").append(cur.x);
+          } else if (prev.x == cur.x) {
+            content.append(" V").append(cur.y);
+          } else {
+            content.append(" L").append(intPointSVG(cur));
+          }
         }
       }
-      ne.setAttribute("points", content.toString());
+      if (close) content.append(" Z");
+      ne.setAttribute("d", content.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -646,57 +716,27 @@ public class TikZInfo implements Cloneable {
   }
 
   private class TikZBezier extends AbstratctTikZ {
-    private final ArrayList<BezierInfo> myPath = new ArrayList<>();
-
-    public TikZBezier() {}
+    private final Shape shape;
+    private AffineTransform transform;
+    private final boolean filled;
 
     public TikZBezier(Shape s, boolean filled) {
-      final var p = new Point2D.Double();
-      p.setLocation(0, 0);
-      create(p, s, filled);
+      this.transform = new AffineTransform(getAffineTransform());
+      this.shape = s;
+      this.filled = filled;
+      this.color = getDrawColorString();
+      this.alpha = ((double) drawColor.getAlpha()) / 255.0;
+      this.strokeWidth = getStrokeWidth();
     }
 
     public TikZBezier(Point2D orig, Shape s, boolean filled) {
-      create(orig, s, filled);
-    }
-
-    private void create(Point2D origin, Shape s, boolean filled) {
+      this.transform = new AffineTransform(getAffineTransform());
+      this.transform.concatenate(AffineTransform.getTranslateInstance(orig.getX(), orig.getY()));
+      this.shape = s;
       this.filled = filled;
       this.color = getDrawColorString();
-      this.alpha = (double) drawColor.getAlpha() / 255.0;
+      this.alpha = ((double) drawColor.getAlpha()) / 255.0;
       this.strokeWidth = getStrokeWidth();
-      final var at = AffineTransform.getTranslateInstance(origin.getX(), origin.getY());
-      final var p = s.getPathIterator(at);
-      while (!p.isDone()) {
-        final var coords = new double[6];
-        final var type = p.currentSegment(coords);
-        if (type == PathIterator.SEG_MOVETO) {
-          final var current = new Point2D.Double();
-          current.setLocation(coords[0], coords[1]);
-          myPath.add(new BezierInfo(current, true, filled));
-        } else if (type == PathIterator.SEG_LINETO) {
-          final var next = new Point2D.Double();
-          next.setLocation(coords[0], coords[1]);
-          myPath.add(new BezierInfo(next, false, false));
-        } else if (type == PathIterator.SEG_CLOSE) {
-          myPath.add(new BezierInfo());
-        } else if (type == PathIterator.SEG_QUADTO) {
-          final var next = new Point2D.Double();
-          final var control = new Point2D.Double();
-          control.setLocation(coords[0], coords[1]);
-          next.setLocation(coords[2], coords[3]);
-          myPath.add(new BezierInfo(control, next));
-        } else if (type == PathIterator.SEG_CUBICTO) {
-          final var next = new Point2D.Double();
-          final var control1 = new Point2D.Double();
-          final var control2 = new Point2D.Double();
-          control1.setLocation(coords[0], coords[1]);
-          control2.setLocation(coords[2], coords[3]);
-          next.setLocation(coords[4], coords[5]);
-          myPath.add(new BezierInfo(control1, control2, next));
-        }
-        p.next();
-      }
     }
 
     @Override
@@ -706,11 +746,56 @@ public class TikZInfo implements Cloneable {
       contents.append(filled ? "\\fill " : "\\draw ").append("[line width=").append(rounded(width)).append("pt, ").append(color);
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
       contents.append("]");
-      for (final var point : myPath) {
-        contents.append(point.getTikZCommand());
+      final var p = shape.getPathIterator(transform);
+      final var coords = new double[6];
+      var firstPoint = new Point2D.Double(0.0, 0.0);
+      var lastPoint = new Point2D.Double(0.0, 0.0);
+      final double oneThird = 1.0 / 3.0;
+      final double twoThirds = 2.0 / 3.0;
+      while (!p.isDone()) {
+        switch (p.currentSegment(coords)) {
+          case PathIterator.SEG_CLOSE -> {
+            contents.append(" -- cycle");
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_MOVETO -> {
+            firstPoint = new Point2D.Double(coords[0], coords[1]);
+            contents.append(getPoint(firstPoint).stripTrailing());
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_LINETO -> {
+            final var nextPoint = new Point2D.Double(coords[0], coords[1]);
+            contents.append(" --").append(getPoint(nextPoint).stripTrailing());
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_QUADTO -> {
+            // I had to use the "degree elevation" formula here to fake
+            // the appearance of a quadratic curve using a cubic curve.
+            final var controlPointOne = new Point2D.Double(oneThird * lastPoint.getX() + twoThirds * coords[0], oneThird * lastPoint.getY() + twoThirds * coords[1]);
+            final var controlPointTwo = new Point2D.Double(twoThirds * coords[0] + oneThird * coords[2], twoThirds * coords[1] + oneThird * coords[3]);
+            final var nextPoint = new Point2D.Double(coords[2], coords[3]);
+            contents.append(" .. controls").append(getPoint(controlPointOne));
+            if (!controlPointOne.equals(controlPointTwo)) {
+              contents.append("and").append(getPoint(controlPointTwo));
+            }
+            contents.append("..").append(getPoint(nextPoint).stripTrailing());
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_CUBICTO -> {
+            final var controlPointOne = new Point2D.Double(coords[0], coords[1]);
+            final var controlPointTwo = new Point2D.Double(coords[2], coords[3]);
+            final var nextPoint = new Point2D.Double(coords[4], coords[5]);
+            contents.append(" .. controls").append(getPoint(controlPointOne));
+            if (!controlPointOne.equals(controlPointTwo)) {
+              contents.append("and").append(getPoint(controlPointTwo));
+            }
+            contents.append("..").append(getPoint(nextPoint).stripTrailing());
+            lastPoint = nextPoint;
+          }
+        }
+        p.next();
       }
-      //The output from BezierInfo::getTikZCommand() will always end in a space, so:
-      contents.setCharAt(contents.length() - 1, ';');
+      contents.append(';');
       return contents.toString();
     }
 
@@ -718,163 +803,108 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("path");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       final var content = new StringBuilder();
-      for (final var point : myPath) {
-        content.append(point.getSvgPath());
+      final var p = shape.getPathIterator(transform);
+      final var coords = new double[6];
+      var firstPoint = new Point2D.Double(0.0, 0.0);
+      var lastPoint = new Point2D.Double(0.0, 0.0);
+      while (!p.isDone()) {
+        switch (p.currentSegment(coords)) {
+          case PathIterator.SEG_CLOSE -> {
+            content.append(" Z");
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_MOVETO -> {
+            content.append(" M");
+            firstPoint = new Point2D.Double(coords[0], coords[1]);
+            content.append(getBarePoint(firstPoint));
+            lastPoint = firstPoint;
+          }
+          case PathIterator.SEG_LINETO -> {
+            final var nextPoint = new Point2D.Double(coords[0], coords[1]);
+            if (nextPoint.getY() == lastPoint.getY()) {
+              content.append(" H").append(rounded(nextPoint.getX()));
+            } else if (nextPoint.getX() == lastPoint.getX()) {
+              content.append(" V").append(rounded(nextPoint.getY()));
+            } else {
+              content.append(" L").append(getBarePoint(nextPoint));
+            }
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_QUADTO -> {
+            final var controlPoint = new Point2D.Double(coords[0], coords[1]);
+            final var nextPoint = new Point2D.Double(coords[2], coords[3]);
+            content.append(" Q").append(getBarePoint(controlPoint)).append(' ').append(getBarePoint(nextPoint));
+            lastPoint = nextPoint;
+          }
+          case PathIterator.SEG_CUBICTO -> {
+            final var controlPointOne = new Point2D.Double(coords[0], coords[1]);
+            final var controlPointTwo = new Point2D.Double(coords[2], coords[3]);
+            final var nextPoint = new Point2D.Double(coords[4], coords[5]);
+            content.append(" C").append(getBarePoint(controlPointOne))
+              .append(' ').append(getBarePoint(controlPointTwo))
+              .append(' ').append(getBarePoint(nextPoint));
+            lastPoint = nextPoint;
+          }
+        }
+        p.next();
       }
-      ne.setAttribute("d", content.toString());
+      ne.setAttribute("d", content.toString().strip());
     }
 
     @Override
     public boolean insideArea(int x, int y, int width, int height) {
-      var inside = true;
-      for (final var point : myPath) inside &= point.insideArea(x, y, width, height);
-      return inside;
+      final double x_min = (double) x;
+      final double y_min = (double) y;
+      final double x_max = x_min + ((double) width);
+      final double y_max = y_min + ((double) height);
+      final var p = shape.getPathIterator(transform);
+      final var coords = new double[6];
+      while (!p.isDone()) {
+        switch (p.currentSegment(coords)) {
+          case PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> {
+            if (coords[0] < x_min) return false;
+            if (coords[0] > x_max) return false;
+            if (coords[1] < y_min) return false;
+            if (coords[1] > y_max) return false;
+          }
+          case PathIterator.SEG_QUADTO -> {
+            if (coords[2] < x_min) return false;
+            if (coords[2] > x_max) return false;
+            if (coords[3] < y_min) return false;
+            if (coords[3] > y_max) return false;
+          }
+          case PathIterator.SEG_CUBICTO -> {
+            if (coords[4] < x_min) return false;
+            if (coords[4] > x_max) return false;
+            if (coords[5] < y_min) return false;
+            if (coords[5] > y_max) return false;
+          }
+        }
+        p.next();
+      }
+      return true;
     }
 
     @Override
     public DrawObject clone() {
-      final var newInst = new TikZBezier();
-      newInst.filled = filled;
+      final var newInst = new TikZBezier(shape, filled);
+      newInst.transform = transform;
       newInst.color = color;
       newInst.alpha = alpha;
       newInst.strokeWidth = strokeWidth;
-      for (final var point : myPath) newInst.myPath.add(point.clone());
       return newInst;
     }
 
     @Override
     public void move(int dx, int dy) {
-      for (final var point : myPath) point.move(dx, dy);
-    }
-
-    private class BezierInfo implements Cloneable {
-      private Point2D startPoint;
-      private Point2D controlPoint1;
-      private Point2D controlPoint2;
-      private Point2D endPoint;
-      private boolean closePath;
-
-      public BezierInfo() {
-        startPoint = controlPoint1 = controlPoint2 = endPoint = null;
-        closePath = true;
-      }
-
-      public BezierInfo(Point2D nextPoint, boolean startpoint, boolean filled) {
-        controlPoint1 = controlPoint2 = null;
-        if (startpoint) {
-          startPoint = nextPoint;
-          endPoint = null;
-        } else {
-          startPoint = null;
-          endPoint = nextPoint;
-        }
-        closePath = false;
-        scale();
-      }
-
-      public BezierInfo(Point2D controlPoint, Point2D nextPoint) {
-        startPoint = controlPoint2 = null;
-        controlPoint1 = controlPoint;
-        endPoint = nextPoint;
-        closePath = false;
-        scale();
-      }
-
-      public BezierInfo(Point2D controlPointa, Point2D controlPointb, Point2D nextPoint) {
-        startPoint = null;
-        controlPoint1 = controlPointa;
-        controlPoint2 = controlPointb;
-        endPoint = nextPoint;
-        closePath = false;
-        scale();
-      }
-
-      private void scale() {
-        if (startPoint != null) transform(startPoint, startPoint);
-        if (controlPoint1 != null) transform(controlPoint1, controlPoint1);
-        if (controlPoint2 != null) transform(controlPoint2, controlPoint2);
-        if (endPoint != null) transform(endPoint, endPoint);
-      }
-
-      @Override
-      public BezierInfo clone() {
-        final var newInst = new BezierInfo();
-        newInst.startPoint = startPoint;
-        newInst.controlPoint1 = controlPoint1;
-        newInst.controlPoint2 = controlPoint2;
-        newInst.endPoint = endPoint;
-        newInst.closePath = closePath;
-        return newInst;
-      }
-
-      public void move(int dx, int dy) {
-        final var at = AffineTransform.getTranslateInstance(dx, dy);
-        if (startPoint != null) at.transform(startPoint, startPoint);
-        if (controlPoint1 != null) at.transform(controlPoint1, controlPoint1);
-        if (controlPoint2 != null) at.transform(controlPoint2, controlPoint2);
-        if (endPoint != null) at.transform(endPoint, endPoint);
-      }
-
-      public String getTikZCommand() {
-        final var contents = new StringBuilder();
-        if (closePath) {
-          contents.append("-- cycle ");
-        } else if (startPoint != null) {
-          contents.append(getPoint(startPoint));
-        } else {
-          if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append("--").append(getPoint(endPoint));
-          } else {
-            contents.append(".. controls").append(getPoint(controlPoint1));
-            if (controlPoint2 != null) contents.append("and").append(getPoint(controlPoint2));
-            contents.append("..").append(getPoint(endPoint));
-          }
-        }
-        return contents.toString();
-      }
-
-      public String getSvgPath() {
-        final var contents = new StringBuilder();
-        if (closePath) {
-          contents.append(" Z");
-        } else if (startPoint != null) {
-          contents.append(" M").append(startPoint.getX()).append(",").append(startPoint.getY());
-        } else {
-          if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append(" L").append(endPoint.getX()).append(",").append(endPoint.getY());
-          } else {
-            final var singlePoint = (controlPoint2 == null) ? controlPoint1 : controlPoint2;
-            contents.append(" C").append(controlPoint1.getX()).append(",")
-                .append(controlPoint1.getY());
-            contents.append(" ").append(singlePoint.getX()).append(",").append(singlePoint.getY());
-            contents.append(" ").append(endPoint.getX()).append(",").append(endPoint.getY());
-          }
-        }
-        return contents.toString();
-      }
-
-      public boolean insideArea(int x, int y, int width, int height) {
-        if (closePath) return true;
-        var inside = true;
-        final var x2 = x + width;
-        final var y2 = y + height;
-        if (startPoint != null)
-          inside &=
-              (startPoint.getX() >= (double) x && startPoint.getX() <= x2)
-                  && (startPoint.getY() >= (double) y && startPoint.getY() <= y2);
-        if (endPoint != null)
-          inside &=
-              (endPoint.getX() >= (double) x && endPoint.getX() <= x2)
-                  && (endPoint.getY() >= (double) y && endPoint.getY() <= y2);
-        return inside;
-      }
+      transform.concatenate(AffineTransform.getTranslateInstance(dx, dy));
     }
   }
 
@@ -948,8 +978,8 @@ public class TikZInfo implements Cloneable {
         final double xMid = Math.min(start.getX(), end.getX()) + (width / 2.0);
         final double yMid = Math.min(start.getY(), end.getY()) + (height / 2.0);
         contents.append(", shift={").append(quickPointTrim(xMid, yMid)).append("}, ");
-        contents.append("x radius=").append(xRadius).append(", ");
-        contents.append("y radius=").append(yRadius).append("]");
+        contents.append("x radius=").append(rounded(xRadius)).append(", ");
+        contents.append("y radius=").append(rounded(yRadius)).append("]");
         if (xRadius >= xHalf) {
           //This if check could be a "==" due to the normalization in addRoundedRectangle(),
           //but I'm using a ">=" here just in case of floating-point funny business.
@@ -982,15 +1012,15 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("rect");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       ne.setAttribute("stroke-linecap", "square");
       if (rad != null) {
-        ne.setAttribute("rx", Double.toString(rad.getX()));
-        ne.setAttribute("ry", Double.toString(rad.getY()));
+        ne.setAttribute("rx", rounded(rad.getX()));
+        ne.setAttribute("ry", rounded(rad.getY()));
       }
       final var xpos = Math.min(end.x, start.x);
       final var bwidth = Math.abs(end.x - start.x);
@@ -1056,38 +1086,38 @@ public class TikZInfo implements Cloneable {
       contents.append("]");
       contents.append(getPoint(start));
       if (circular) {
-        contents.append("circle (").append(radX).append(");");
+        contents.append("circle (").append(rounded(radX)).append(");");
       } else {
-        contents.append("ellipse (").append(radX).append(" and ").append(radY).append(");");
+        contents.append("ellipse (").append(rounded(radX)).append(" and ").append(rounded(radY)).append(");");
       }
       return contents.toString();
     }
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      final var circular = radX == radY;
+      final double localRadX = Math.abs(radX);
+      final double localRadY = Math.abs(radY);
+      final boolean circular = localRadX == localRadY;
       final var ne = circular ? root.createElement("circle") : root.createElement("ellipse");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-width", rounded(width));
       if (!circular && rotation != 0) {
         //Circles look the same when rotated in any orientation.
         //Therefore, only apply rotation handling for non-circular ellipses.
-        ne.setAttribute(
-            "transform",
-            "translate(" + start.getX() + " " + start.getY() + ") rotate(" + this.rotation + ")");
+        ne.setAttribute("transform", "translate(" + rounded(start.getX()) + " " + rounded(start.getY()) + ") rotate(" + rotation + ")");
       } else {
-        ne.setAttribute("cx", Double.toString(start.getX()));
-        ne.setAttribute("cy", Double.toString(start.getY()));
+        ne.setAttribute("cx", rounded(start.getX()));
+        ne.setAttribute("cy", rounded(start.getY()));
       }
       if (circular) {
-        ne.setAttribute("r", Double.toString(Math.abs(radX)));
+        ne.setAttribute("r", rounded(localRadX));
       } else {
-        ne.setAttribute("rx", Double.toString(Math.abs(radX)));
-        ne.setAttribute("ry", Double.toString(Math.abs(radY)));
+        ne.setAttribute("rx", rounded(localRadX));
+        ne.setAttribute("ry", rounded(localRadY));
       }
     }
   }
@@ -1154,11 +1184,9 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color);
       if (filled && alpha != 1.0) contents.append(", fill opacity=").append(rounded(alpha));
-      contents.append("] ");
-      contents.append("(").append(rounded(startPos.getX())).append(",")
-          .append(rounded(startPos.getY())).append(")");
-      contents.append(" arc (").append(startAngle).append(":").append(stopAngle).append(":")
-          .append(radX).append(" and ").append(radY).append(" );");
+      contents.append("]").append(getPoint(startPos));
+      contents.append("arc (").append(rounded(startAngle)).append(":").append(rounded(stopAngle)).append(":")
+          .append(rounded(radX)).append(" and ").append(rounded(radY)).append(" );");
       return contents.toString();
     }
 
@@ -1166,16 +1194,18 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("path");
       e.appendChild(ne);
-      ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
-      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
-      ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
+      ne.setAttribute("fill", filled ? "#" + customColors.get(color) : "none");
+      if (filled && alpha != 1.0) ne.setAttribute("fill-opacity", rounded(alpha));
+      ne.setAttribute("stroke", filled ? "none" : "#" + customColors.get(color));
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
-      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
-      String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
-      String content = "M" + startPos.getX() + "," + startPos.getY()
-          + " A" + radX + "," + radY + " " + this.startAngle
-          + info + stopPos.getX() + "," + stopPos.getY();
-      ne.setAttribute("d", content);
+      ne.setAttribute("stroke-width", rounded(width));
+      final String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
+      StringBuilder content = new StringBuilder();
+      content.append("M").append(getBarePoint(startPos));
+      content.append(" A").append(rounded(radX)).append(",").append(rounded(radY));
+      content.append(" ").append(rounded(startAngle)).append(info);
+      content.append(getBarePoint(stopPos));
+      ne.setAttribute("d", content.toString());
     }
   }
 
@@ -1295,7 +1325,7 @@ public class TikZInfo implements Cloneable {
       if (isFontItalic) content.append("\\fontshape{it}");
       content.append("\\selectfont\\node[inner sep=0, outer sep=0, ").append(color)
           .append(", anchor=base west");
-      if (rotation != 0) content.append(", rotate=").append(this.rotation);
+      if (rotation != 0) content.append(", rotate=").append(rounded(rotation));
       content.append("] at ").append(getPoint(location)).append(" {");
       if (name != null)
         if (name.isEmpty()) return "";
@@ -1313,23 +1343,23 @@ public class TikZInfo implements Cloneable {
     @Override
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("text");
-      ne.setAttribute("font-family", usedFonts.get(TikZInfo.this.fontIndex));
+      final String guessFont = usedFonts.get(fontIndex);
+      //Substitute Java system fonts with official CSS default font names,
+      //so that SVG renderers will actually pick the correct category of font.
+      final String correctFont = switch (guessFont) {
+        case Font.MONOSPACED -> "monospace";
+        case Font.SANS_SERIF -> "sans-serif";
+        case Font.SERIF -> "serif";
+        default -> guessFont;
+      };
+      ne.setAttribute("font-family", correctFont);
       ne.setAttribute("font-size", Integer.toString(fontSize));
       if (isFontBold) ne.setAttribute("font-weight", "bold");
       if (isFontItalic) ne.setAttribute("font-style", "italic");
-      if (this.rotation != 0)
-        ne.setAttribute(
-            "transform",
-            "rotate("
-                + -this.rotation
-                + ","
-                + location.getX()
-                + ","
-                + location.getY()
-                + ")");
-      ne.setAttribute("x", Double.toString(location.getX()));
-      ne.setAttribute("y", Double.toString(location.getY()));
-      ne.setAttribute("fill", "rgb(" + customColors.get(color) + ")");
+      if (rotation != 0) ne.setAttribute("transform", "rotate(" + rounded(-rotation) + "," + getBarePoint(location) + ")");
+      ne.setAttribute("x", rounded(location.getX()));
+      ne.setAttribute("y", rounded(location.getY()));
+      ne.setAttribute("fill", "#" + customColors.get(color));
       if (name != null) {
         ne.setTextContent(name);
         if (!name.isEmpty()) e.appendChild(ne);
