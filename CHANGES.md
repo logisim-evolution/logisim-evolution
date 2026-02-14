@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Increased number of components which may be displayed on custom circut appearences and increased
+    options for existing ones.
   * Bug fixes:
     * Fixed more synchronization issues with simulation tree and propagator.
     * Fixed INOUT port issue in TTL74245.
