@@ -24,9 +24,7 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -459,51 +457,6 @@ public class Circuit {
       if (ts.isTimeOut()) {
         return false;
       }
-    }
-  }
-
-  /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   */
-  public void doTestVector(Project project, Instance[] pin, Value[] val) throws TestException {
-    final var state = project.getCircuitState();
-    state.reset();
-
-    for (var i = 0; i < pin.length; ++i) {
-      if (Pin.FACTORY.isInputPin(pin[i])) {
-        final var pinState = state.getInstanceState(pin[i]);
-        Pin.FACTORY.driveInputPin(pinState, val[i]);
-      }
-    }
-
-    final var prop = state.getPropagator();
-
-    try {
-      prop.propagate();
-    } catch (Throwable thr) {
-      thr.printStackTrace();
-    }
-
-    if (prop.isOscillating()) throw new TestException("oscillation detected");
-
-    FailException err = null;
-
-    for (var i = 0; i < pin.length; i++) {
-      final var pinState = state.getInstanceState(pin[i]);
-      if (Pin.FACTORY.isInputPin(pin[i])) continue;
-
-      final var v = Pin.FACTORY.getValue(pinState);
-      if (!val[i].compatible(v)) {
-        if (err == null) {
-          err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
-        } else {
-          err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
-        }
-      }
-    }
-
-    if (err != null) {
-      throw err;
     }
   }
 

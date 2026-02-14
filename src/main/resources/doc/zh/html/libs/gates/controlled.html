@@ -1,467 +1,317 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Controlled Buffer/Inverter -->
-   受控缓冲器/反相器
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/anscontrolledbuffer.png" width="32"/>
-       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/anscontrolledinverter.png" width="32"/>
-       <br/>
-       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ieccontrolledbuffer.png" width="32"/>
-       <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ieccontrolledinverter.png" width="32"/>
-      </td>
-      <td valign="center">
-       <h1>
-        <!-- <em>Controlled Buffer/Inverter</em> -->
-        <em>
-         受控缓冲器/反相器
-        </em>
-       </h1>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Gates</a> -->
-       <a href="index.html">
-        门
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.0 Beta 1
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <table>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      受控缓冲器/反相器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+	   <table>
         <tbody>
-         <tr>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/anscontrolledbuffer.png" width="64"/>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/anscontrolledinverter.png" width="64"/>
-          </td>
-         </tr>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/anscontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/anscontrolledinverter.png" alt="#########" height="32" width="32"><br>
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledinverter.png" alt="#########" height="32" width="32">
+            </td>
+            <td valign="center">
+              <h1>
+                <em>受控缓冲器/反相器</em>
+              </h1>
+            </td>
+          </tr>
         </tbody>
-       </table>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- The controlled buffer and inverter often called <em>three-state buffers/inverters</em>, each have a one-bit "control" input pin on the south side. The value at this control pin affects how the component behaves: -->
-    受控缓冲器和反相器通常称为
-    <em>
-     三态缓冲器/反相器
-    </em>
-    ，每个在南侧都有一个一位“控制”输入引脚。 该控制引脚的值会影响元件的行为：
-   </p>
-   <ul>
-    <!-- <li>When the value on this pin is <b class="unov">1</b> then the component behaves just like the respective component a <a href="buffer.html">buffer</a> or a <a href="not.html">inverter</a> (NOT gate). -->
-    <li>
-     当该引脚上的值为
-     <b class="unov">
-      1
-     </b>
-     时，该元件的行为就像相应的组件 a
-     <a href="buffer.html">
-      buffer
-     </a>
-     或
-     <a href="not.html">
-      逆变器
-     </a>
-     （非门）。
-    </li>
-    <!-- <li>When the value is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>) the component's output is floating (<b class="uvalue">U</b>). -->
-    <li>
-     当值为
-     <b class="zerov">
-      0
-     </b>
-     或浮动 (
-     <b class="uvalue">
-      U
-     </b>
-     ) 时，元件的输出为浮动 (
-     <b class="uvalue">
-      U
-     </b>
-     ）。
-    </li>
-    <!-- <li>When the value is an error value (<b class="evalue">E</b>) (such as would occur when two conflicting values are being fed into the input) then the output is also an error value (<b class="evalue">E</b>). -->
-    <li>
-     当该值是错误值 (
-     <b class="evalue">
-      E
-     </b>
-     ) 时（例如当两个冲突的值被输入到输入中时会发生），则输出也是一个错误值 (
-     <b class="evalue">
-      E
-     </b>
-     )。
-    </li>
-   </ul>
-   <p>
-    <center>
-     <table>
-      <tbody>
-       <tr>
-        <th class="tspace" colspan="2">
-         Inputs
-        </th>
-        <th class="tspace" colspan="2">
-         Outputs
-        </th>
-       </tr>
-       <tr>
-        <th class="tspace">
-         In
-        </th>
-        <th class="tspace">
-         En.
-        </th>
-        <th class="tspace">
-         Buf.
-        </th>
-        <th class="tspace">
-         Inv.
-        </th>
-       </tr>
-       <tr>
-        <td class="tspace">
-         All
-        </td>
-        <td class="tzerov">
-         0
-        </td>
-        <td class="uvalue">
-         U
-        </td>
-        <td class="uvalue">
-         U
-        </td>
-       </tr>
-       <tr>
-        <td class="tspace">
-         All
-        </td>
-        <td class="tuvalue">
-         U
-        </td>
-        <td class="uvalue">
-         U
-        </td>
-        <td class="uvalue">
-         U
-        </td>
-       </tr>
-       <tr>
-        <td class="tzerov">
-         0
-        </td>
-        <td class="tunov">
-         1
-        </td>
-        <td class="zerov">
-         0
-        </td>
-        <td class="unov">
-         1
-        </td>
-       </tr>
-       <tr>
-        <td class="tunov">
-         1
-        </td>
-        <td class="tunov">
-         1
-        </td>
-        <td class="unov">
-         1
-        </td>
-        <td class="zerov">
-         0
-        </td>
-       </tr>
-       <tr>
-        <td class="tspace">
-         <b class="uvalue">
-          U
-         </b>
-        </td>
-        <td class="tunov">
-         1
-        </td>
-        <td class="uvalue">
-         U
-        </td>
-        <td class="evalue">
-         E
-        </td>
-       </tr>
-       <tr>
-        <td class="tspace">
-         <b class="evalue">
-          E
-         </b>
-        </td>
-        <td class="tunov">
-         1
-        </td>
-        <td class="evalue">
-         E
-        </td>
-        <td class="evalue">
-         E
-        </td>
-       </tr>
-       <tr>
-        <td class="tspace">
-         All
-        </td>
-        <td class="tspace">
-         <b class="evalue">
-          E
-         </b>
-        </td>
-        <td class="evalue">
-         E
-        </td>
-        <td class="evalue">
-         E
-        </td>
-       </tr>
-      </tbody>
-     </table>
-    </center>
-   </p>
-   <p>
-    <!-- Controlled buffers can be useful when you have a wire (often called a <em>bus</em>) whose value should match the output of one of several components. By placing a controlled buffer between each component output and the bus, you can control whether that component's output is fed onto the bus or not. -->
-    当您有一条线路（通常称为
-    <em>
-     总线
-    </em>
-    ），其值应与多个元件之一的输出相匹配时，受控缓冲区会很有用。 通过在每个元件输出和总线之间放置一个受控缓冲区，您可以控制该元件的输出是否馈送到总线上。
-   </p>
-   <h2>
-    <!-- Pins (assuming component faces east, control line right-handed) -->
-    引脚（假设元件朝东，控制线为右手）
-   </h2>
-   <div class="attliste">
-    <dl>
-     <dt class="lib">
-      <!-- West edge: -->
-      西边：
-     </dt>
-     <dd>
-      <!-- The component input that will be used to compute the output if the control input is <b class="unov">1</b>. Bit width matches  <b class="propertie">Data Bits</b> attribute. -->
-      如果控制输入为
-      <b class="unov">
-       1
-      </b>
-      ，则将用于计算输出的元件输入。 位宽度与
-      <b class="propertie">
-       数据位
-      </b>
-      属性匹配。
-     </dd>
-     <dt class="lib">
-      <!-- South edge: -->
-      南边：
-      <dd>
-       <!-- The component's control input. Bit width 1. -->
-       元件的控制输入。 位宽 1。
-      </dd>
-      <dt class="lib">
-       <!-- East edge: -->
-       东边：
-      </dt>
-      <dd>
-       <!-- The component's output, which will be floating (<b class="uvalue">U</b>) if the control input is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>), the error value (<b class="evalue">E</b>) if the control input is the error value (<b class="evalue">E</b>), and will be computed based on the west-side input if the control input is <b class="unov">1</b>.  Bit width matches  <b class="propertie">Data Bits</b> attribute. -->
-       元件的输出，如果控制输入为
-       <b class="zerov">
-        0
-       </b>
-       ，则该输出将为浮动 (
-       <b class="uvalue">
-        U
-       </b>
-       ) 或浮动 (
-       <b class="uvalue">
-        U
-       </b>
-       )，如果控制输入是错误值 (
-       <b class="evalue">
-        E
-       </b>
-       )，则为错误值 (
-       <b class="evalue">
-        E
-       </b>
-       ) ，如果控制输入为
-       <b class="unov">
-        1
-       </b>
-       ，则将根据西侧输入进行计算。 位宽度与
-       <b class="propertie">
-        数据位
-       </b>
-       属性匹配。
-      </dd>
-     </dt>
-    </dl>
-   </div>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits </b>attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    当选择或添加组件时，
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    到
-    <b class="tkeybd">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据 位
-    </b>
-    属性和箭头键更改其
-    <b class="propertie">
-     方向
-    </b>
-    属性。
-   </p>
-   <div class="attliste">
-    <dl>
-     <dt class="lib">
-      <!-- Facing -->
-      方向
-     </dt>
-     <dd>
-      <!-- The direction of the component, its output relative to input. -->
-      元件的方向，其输出相对于输入。
-     </dd>
-     <dt class="lib">
-      <!-- Data Bits -->
-      数据位
-     </dt>
-     <dd>
-      <!-- The bit width of the component's inputs and outputs. -->
-      元件输入和输出的位宽。
-     </dd>
-     <dt class="lib">
-      <!-- Gate Size -->
-      门大小
-     </dt>
-     <dd>
-      <!-- (Controlled inverter only) Determines whether to draw a larger or a smaller version of the component. -->
-      （仅限受控逆变器）确定是否绘制较大或较小版本的组件。
-     </dd>
-     <dt class="lib">
-      <!-- Control Line Location -->
-      控制线位置
-     </dt>
-     <dd>
-      <!-- The location of the control line, imagining we are facing the output from the input: If the component faces east and is <q>right-handed,</q> the control line is to the south; but if it is <q>left-handed,</q> the control line is to the north. -->
-      控制线的位置，假设我们面对输入的输出：如果元件朝东并且是
-      <q>
-       右手，则控制线在南； 但如果是
-       <q>
-        左撇子
-       </q>
-       ，控制线就在北边。
-      </q>
-     </dd>
-     <dt class="lib">
-      <!-- Label -->
-      标签
-     </dt>
-     <dd>
-      <!-- The text within the label associated with the gate. -->
-      与门关联的标签内的文本。
-     </dd>
-     <dt class="lib">
-      <!-- Label Font -->
-      标签字体
-     </dt>
-     <dd>
-      <!-- The font with which to render the label. -->
-      与门关联的标签内的文本。
-     </dd>
-    </dl>
-   </div>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- Allows the label associated with the gate to be edited. -->
-    允许编辑与门关联的标签。
-   </p>
-   <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">逻辑门</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+			<td valign="top">
+              <table>
+                <tbody>
+				  <tr>
+				     <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anscontrolledbuffer.png" alt="#########" height="64" width="64">
+                    </td>
+					<td>
+                      <img class="appearancelibs" src="../../../../img-libs/anscontrolledinverter.png" alt="#########" height="64" width="64">
+                    </td>
+				  </tr>
+                </tbody>
+              </table>
+			  </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        受控缓冲器与受控反相器常被称为 <em>三态缓冲器/反相器</em>。它们在南侧各有一个 1 位控制输入端，其值决定组件行为：
+      </p>
+      <ul>
+        <li>
+          当该引脚为 <b class="unov">1</b> 时，组件分别等同于 <a href="buffer.html">缓冲器</a> 或 <a href="not.html">反相器</a>（非门）。
+        </li>
+        <li>
+          当该引脚为 <b class="zerov">0</b> 或悬空（<b class="uvalue">U</b>）时，组件输出悬空（<b class="uvalue">U</b>）。
+        </li>
+        <li>
+          当该引脚为错误值（<b class="evalue">E</b>）（例如输入端出现冲突）时，输出也为错误值（<b class="evalue">E</b>）。
+        </li>
+      </ul>
+
+	  <p>
+	  <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace" colspan="2">
+                输入
+              </th>
+              <th class="tspace" colspan="2">
+                输出
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+                输入
+              </th>
+              <th class="tspace">
+                控制
+              </th>
+              <th class="tspace">
+                缓冲器
+              </th>
+              <th class="tspace">
+                反相器
+              </th>
+            </tr>
+            <tr>
+              <td class="tspace">
+                全部
+              </td>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                全部
+              </td>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                <b class="uvalue">U</b>
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                <b class="evalue">E</b>
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                全部
+              </td>
+              <td class="tspace">
+                <b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  </p>
+
+      <p>
+        如果希望导线（或称作总线）的值来自多个组件中的某一个时，可以使用受控缓冲器：
+        在每个组件输出与总线之间放置一个受控缓冲器，就可以通过控制端决定该组件是否把输出送到总线上。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东，控制线位置为右侧）
+      </h2>
+	  <div class="attliste">
+      <dl>
+        <dt class="lib">
+          西侧：
+        </dt>
+        <dd>
+          组件输入端：当控制端为 <b class="unov">1</b> 时，用于计算输出。位宽与 <b class="propertie">数据位宽</b> 一致。
+        </dd>
+        <dt class="lib">
+          南侧：
+        </dt>
+        <dd>
+          组件控制输入端。位宽为 1。
+        </dd>
+        <dt class="lib">
+          东侧：
+        </dt>
+        <dd>
+          组件输出端：当控制端为 <b class="zerov">0</b> 或悬空（<b class="uvalue">U</b>）时，输出悬空（<b class="uvalue">U</b>）；
+          当控制端为错误值（<b class="evalue">E</b>）时，输出为错误值（<b class="evalue">E</b>）；
+          当控制端为 <b class="unov">1</b> 时，输出由西侧输入计算得到。位宽与 <b class="propertie">数据位宽</b> 一致。
+        </dd>
+      </dl>
+	  </div>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <b class="propertie">数据位宽</b> 属性，方向键可修改 <b class="propertie">朝向</b> 属性。
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt class="lib">
+          朝向
+        </dt>
+        <dd>
+          输出相对于输入的位置。
+        </dd>
+        <dt class="lib">
+          数据位宽
+        </dt>
+        <dd>
+          组件输入与输出的位宽。
+        </dd>
+        <dt class="lib">
+          门尺寸
+        </dt>
+        <dd>
+          （仅受控反相器）决定绘制大号或小号外形。
+        </dd>
+        <dt class="lib">
+          控制线位置
+        </dt>
+        <dd>
+          控制线所在位置：若组件朝东且设置为“右侧”，则控制线在下方（南侧）；若设置为“左侧”，则控制线在上方（北侧）。
+        </dd>
+        <dt class="lib">
+          标签
+        </dt>
+        <dd>
+          与该逻辑门关联的标签文本。
+        </dd>
+        <dt class="lib">
+          标签字体
+        </dt>
+        <dd>
+          标签的显示字体。
+        </dd>
+      </dl>
+	  </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        可编辑该逻辑门的标签。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
 </html>

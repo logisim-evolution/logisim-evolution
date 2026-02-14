@@ -20,8 +20,8 @@ plugins {
   id("com.github.ben-manes.versions") version "0.53.0"
   java
   application
-  id("com.gradleup.shadow") version "9.3.0"
-  id("org.sonarqube") version "7.2.0.6526"
+  id("com.gradleup.shadow") version "9.3.1"
+  id("org.sonarqube") version "7.2.2.6593"
 }
 
 repositories {
@@ -35,7 +35,7 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
+  implementation("com.fifesoft:rsyntaxtextarea:3.6.1")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
@@ -51,9 +51,9 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:6.0.1"))
-  testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.20.0")
+  testImplementation(platform("org.junit:junit-bom:6.0.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.21.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -879,7 +879,7 @@ tasks {
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
     // Checkstyle version to use
-    toolVersion = "12.1.2"
+    toolVersion = "10.3.4"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
@@ -887,6 +887,9 @@ tasks {
       it.name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
+    
+    configProperties["org.checkstyle.google.suppressionfilter.config"] =
+        "$projectDir/checkstyle-suppressions.xml"
 
     // FIXME: There should be cleaner way of using custom suppression config with built-in style.
     // https://stackoverflow.com/a/64703619/1235698

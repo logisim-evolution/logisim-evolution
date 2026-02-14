@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="de">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="de">
+	<title>Spezielle Werte</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Spezielle Werte</h1>
+
+<p>Das Testvektor-Format unterstützt zwei spezielle Werte für flexibleres Testen:</p>
+
+<ul>
+<li><strong>&lt;DC&gt;</strong> (Don't Care): Wenn für einen Ausgangspin verwendet, besteht dieser Wert
+immer, unabhängig von der tatsächlichen Ausgabe. Dies ist nützlich, wenn Sie sich während eines Tests
+nicht um bestimmte Ausgaben kümmern. Groß-/Kleinschreibung wird ignoriert (<code>&lt;dc&gt;</code> funktioniert auch).</li>
+<li><strong>&lt;float&gt;</strong>: Wenn für einen Eingangspin verwendet, treibt dies einen schwebenden
+(hochohmigen) Wert an. Wenn für einen Ausgangspin verwendet, erwartet dies, dass die Ausgabe
+schwebend ist (UNBEKANNTER Wert). Groß-/Kleinschreibung wird ignoriert (<code>&lt;FLOAT&gt;</code> funktioniert auch).</li>
+</ul>
+
+<p>Hier ist ein Beispiel mit speziellen Werten:</p>
+<pre class="code">
+# Test with don't care and floating values
+Input   Enable Output  &lt;set&gt; &lt;seq&gt;
+1       1      &lt;DC&gt;    0     0
+&lt;float&gt; 0      &lt;float&gt; 0     0
+</pre>
+
+<p>Im ersten Test ist die Ausgabe als "Don't Care" markiert, sodass jeder Ausgabewert
+besteht. Im zweiten Test ist der Eingang schwebend und die Ausgabe wird ebenfalls
+als schwebend erwartet.</p>
+
+<p>
+	<b>Zurück:</b> <a href="test_vector_file_format.html">Testvektor-Dateiformat</a> | <b>Weiter:</b> <a href="test_vector_sequential.html">Sequenzielle Tests</a>.
+</p>
+
+</body>
+</html>
+

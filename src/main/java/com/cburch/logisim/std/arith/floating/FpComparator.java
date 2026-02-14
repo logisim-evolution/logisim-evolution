@@ -7,15 +7,17 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.arith.floating;
 
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -27,38 +29,57 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.Color;
 
-public class FpSubtractor extends InstanceFactory {
+public class FpComparator extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
    *
    * <p>Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "FPSubtractor";
+  public static final String _ID = "FPComparator";
 
   static final int PER_DELAY = 1;
   private static final int IN0 = 0;
   private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
+  private static final int GT = 2;
+  private static final int EQ = 3;
+  private static final int LT = 4;
+  private static final int ERR = 5;
 
-  public FpSubtractor() {
-    super(_ID, S.getter("fpSubtractorComponent"));
+  public FpComparator() {
+    super(_ID, S.getter("fpComparatorComponent"));
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("-"));
+    setIcon(new ArithmeticIcon("\u2276"));
 
-    final var ps = new Port[4];
+    final var ps = new Port[6];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
+    ps[GT] = new Port(0, -10, Port.OUTPUT, 1);
+    ps[EQ] = new Port(0, 0, Port.OUTPUT, 1);
+    ps[LT] = new Port(0, 10, Port.OUTPUT, 1);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
-    ps[IN0].setToolTip(S.getter("subtractorMinuendTip"));
-    ps[IN1].setToolTip(S.getter("subtractorSubtrahendTip"));
-    ps[OUT].setToolTip(S.getter("subtractorOutputTip"));
+    ps[IN0].setToolTip(S.getter("comparatorInputATip"));
+    ps[IN1].setToolTip(S.getter("comparatorInputBTip"));
+    ps[GT].setToolTip(S.getter("comparatorGreaterTip"));
+    ps[EQ].setToolTip(S.getter("comparatorEqualTip"));
+    ps[LT].setToolTip(S.getter("comparatorLessTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
+  }
+
+  //
+  // methods for instances
+  //
+  @Override
+  protected void configureNewInstance(Instance instance) {
+    instance.addAttributeListener();
+  }
+
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    instance.fireInvalidated();
   }
 
   @Override
@@ -66,19 +87,17 @@ public class FpSubtractor extends InstanceFactory {
     final var g = painter.getGraphics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
-    painter.drawPort(OUT);
+    painter.drawPort(GT, ">", Direction.WEST);
+    painter.drawPort(EQ, "=", Direction.WEST);
+    painter.drawPort(LT, "<", Direction.WEST);
     painter.drawPort(ERR);
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawLine(x - 15, y, x - 5, y);
-
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);
@@ -94,30 +113,15 @@ public class FpSubtractor extends InstanceFactory {
     final var a = state.getPortValue(IN0);
     final var b = state.getPortValue(IN1);
 
-    final var a_val = switch (dataWidth.getWidth()) {
-      case 16 -> a.toFloatValueFromFP16();
-      case 32 -> a.toFloatValue();
-      case 64 -> a.toDoubleValue();
-      default -> Double.NaN;
-    };
-    final var b_val = switch (dataWidth.getWidth()) {
-      case 16 -> b.toFloatValueFromFP16();
-      case 32 -> b.toFloatValue();
-      case 64 -> b.toDoubleValue();
-      default -> Double.NaN;
-    };
-
-    final var out_val = a_val - b_val;
-    final var out = switch (dataWidth.getWidth()) {
-      case 16 -> Value.createKnown(16, Float.floatToFloat16((float) out_val));
-      case 32 -> Value.createKnown((float) out_val);
-      case 64 -> Value.createKnown(out_val);
-      default -> Value.ERROR;
-    };
+    final var a_val = a.toDoubleValueFromAnyFloat();
+    final var b_val = b.toDoubleValueFromAnyFloat();
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
-    state.setPort(OUT, out, delay);
-    state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(out_val) ? 1 : 0), delay);
+    state.setPort(GT, Value.createKnown(1, a_val > b_val ? 1 : 0), delay);
+    state.setPort(EQ, Value.createKnown(1, a_val == b_val ? 1 : 0), delay);
+    state.setPort(LT, Value.createKnown(1, a_val < b_val ? 1 : 0), delay);
+    state.setPort(
+        ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
   }
 }
