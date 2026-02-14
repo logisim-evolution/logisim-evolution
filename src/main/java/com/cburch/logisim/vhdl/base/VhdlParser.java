@@ -303,8 +303,7 @@ public class VhdlParser {
     if (!type.equalsIgnoreCase("integer")
         && !type.equalsIgnoreCase("natural")
         && !type.equalsIgnoreCase("positive")
-        && !type.equalsIgnoreCase("time")
-      ) {
+        && !type.equalsIgnoreCase("time")) {
       throw new IllegalVhdlContentException(S.get("genericTypeException") + ": " + type);
     }
     type = type.toLowerCase();
@@ -327,30 +326,13 @@ public class VhdlParser {
         String s = input.match().group(1);
         if (s.equals("fs")) {
           // default base unit, femtoseconds
-        }
-        else if (s.equals("ps")) {
+        } else if (s.equals("ps")) {
           dval *= 1000;
-        }
-        else if (s.equals("ns")) {
+        } else if (s.equals("ns")) {
           dval *= 1000000;
-        }
-        else if (s.equals("us")) {
+        } else if (s.equals("us")) {
           dval *= 1000000000;
-        }
-        // these will overflow unless dval type is changed from int to long or larger
-        // else if (s.equals("ms")) {
-        //   dval *= 1000000000000;
-        // }
-        // else if (s.equals("sec")) {
-        //   dval *= 1000000000000000;
-        // }
-        // else if (s.equals("min")) {
-        //   dval *= 60000000000000000;
-        // }
-        // else if (s.equals("hr")) {
-        //   dval *= 3600000000000000000;
-        // }
-        else {
+        } else {
           throw new IllegalVhdlContentException("Unrecognized time unit: " + dval);
         }
       }
