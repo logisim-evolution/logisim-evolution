@@ -183,7 +183,7 @@ public class DmaAttributes extends AbstractAttributeSet {
 
   public static final Attribute<Integer> BURST_SIZE = new BurstSizeAttribute();
 
-  /** Bus for MMIO control register access (DMA is a slave on this bus). */
+  // Bus for MMIO control register access (DMA is a slave on this bus).
   // Uses the standard SOC_BUS_SELECT for slave registration.
 
   /** Bus used for source (read) DMA transfers (master-only). */
