@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>Test séquentiel</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Test séquentiel</h1>
+
+<p>La fonctionnalité Vecteur de test prend en charge les tests de circuits <strong>combinatoires</strong> et
+<strong>séquentiels</strong>. Par défaut, les tests sont combinatoires :
+le circuit est réinitialisé avant chaque test, garantissant que chaque test est indépendant.</p>
+
+<p>Pour les circuits séquentiels, vous pouvez spécifier des séquences de test en utilisant les colonnes d'en-tête spéciales
+<code>&lt;set&gt;</code> et <code>&lt;seq&gt;</code> :</p>
+
+<ul>
+<li><strong>&lt;set&gt;</strong> : Définit l'<strong>identifiant de séquence</strong> - les tests avec le même numéro de set
+appartiennent à la même séquence et s'exécutent ensemble. L'état du circuit est préservé entre les étapes
+dans le même set. Les tests sont par défaut dans le set 0 s'il n'est pas spécifié.</li>
+<li><strong>&lt;seq&gt;</strong> : Définit le <strong>numéro d'étape</strong> dans un set - cela détermine
+l'ordre d'exécution des tests dans le même set. Les tests sont exécutés dans l'ordre de leur
+valeur <code>&lt;seq&gt;</code> dans chaque <code>&lt;set&gt;</code>. Les tests avec <code>&lt;seq&gt;</code> de 0
+ou manquant sont traités comme combinatoires (le circuit se réinitialise entre les tests, même s'ils partagent
+le même set).</li>
+</ul>
+
+<p>Voici un exemple de vecteur de test séquentiel :</p>
+<pre class="code">
+# Test séquentiel pour un compteur
+Clock Reset Count &lt;set&gt; &lt;seq&gt;
+0     0     0     1     1
+1     0     0     1     2
+0     0     1     1     3
+1     0     1     1     4
+0     0     2     1     5
+1     0     2     1     6
+0     1     0     2     1
+</pre>
+
+<p>Dans cet exemple, les six premiers tests ont tous <code>&lt;set&gt; 1</code> avec des valeurs <code>&lt;seq&gt;</code>
+1-6, donc ils forment une séquence qui s'exécute dans l'ordre (seq 1, puis 2, puis 3, etc.)
+sans réinitialisation entre les étapes. Le dernier test a <code>&lt;set&gt; 2</code>, donc il démarre
+une nouvelle séquence et le circuit est réinitialisé avant son exécution.</p>
+
+<p>Note also that <code>Clock</code> could be an input pin here. But it could also be a labeled clock component (see below).</p>
+
+<h2>Règles d'exécution de séquence</h2>
+
+<ul>
+<li>Les tests avec le même numéro <code>&lt;set&gt;</code> (&gt; 0) appartiennent à la même séquence</li>
+<li>Dans chaque set, les tests sont exécutés dans l'ordre de leur valeur <code>&lt;seq&gt;</code> (seq 1, puis 2, puis 3, etc.)</li>
+<li>L'état du circuit est maintenu entre les tests dans le même set (même identifiant de set)</li>
+<li>Le circuit est réinitialisé lors du démarrage d'un nouveau set (numéro <code>&lt;set&gt;</code> différent)</li>
+<li>Tests with <code>&lt;seq&gt;</code> = 0 or missing must also have <code>&lt;set&gt;</code> = 0 or missing and are always combinational (reset between tests)</li>
+</ul>
+
+<h2>Exemple complet</h2>
+
+<p>Voici un exemple complet combinant toutes les fonctionnalités :</p>
+<pre class="code">
+&lt;clk&gt; D Q NotQ  &lt;set&gt; &lt;seq&gt;
+  0   0 0   1     1     1
+  1   0 0   1     1     2
+  0   1 0   1     1     3
+  1   1 1   0     1     4
+  0   1 1   0     1     5
+  1   1 1   0     1     6
+  0   0 1   0     1     7
+</pre>
+
+<p>Dans cet exemple :
+<ul>
+<li>Les trois premiers tests sont combinatoires (seq=0), donc le circuit se réinitialise
+entre chaque test, même s'ils partagent le set 0.</li>
+<li>Les trois tests suivants ont tous le set 1 avec des valeurs seq 1-3, donc ils forment une séquence
+qui s'exécute dans l'ordre sans réinitialisation.</li>
+<li>Le dernier test a le set 2, donc il démarre une nouvelle séquence et le circuit se réinitialise avant son exécution.</li>
+<li>Le sixième test utilise <code>&lt;DC&gt;</code> pour la sortie, donc toute valeur de sortie passe.</li>
+<li>Le dernier test utilise <code>&lt;float&gt;</code> pour la sortie, attendant une valeur flottante.</li>
+</ul>
+</p>
+
+<h2>Using the Clock</h2>
+
+<p>In a sequential test, the first step begins with a reset. In every step after the first, it begins with a simulation tick. Any Clock components in the simulation will be updated by that tick and their signals will be propagated along with any input pin values for that step. You may add a column to the test to show the ticks. The column will be checked against the clock in the circuit as if it were an output pin to verify it describes the clocks behavior. Here is an example for a simple positive edge-triggered D flip-flop test with a standard clock:</p>
+
+<pre class="code">
+&lt;clk&gt; D Q NotQ  &lt;set&gt; &lt;seq&gt;
+  0   0 0   1     1     1
+  1   0 0   1     1     2
+  0   1 0   1     1     3
+  1   1 1   0     1     4
+  0   1 1   0     1     5
+  1   1 1   0     1     6
+  0   0 1   0     1     7
+</pre>
+
+<p>The <code>&lt;clk&gt;</code> header is a special name for an unlabeled clock component. You may also label the clock and use the label as the column header (see earlier example).</p>
+
+<p>We recommend that when using a Clock, you should not change the values of memory inputs during the same step that the clock makes a triggering transition. Doing so may allow an input signal to reach the component at near the same time as the clock signal giving surprising behavior. In the example above, the D input does not change in steps with a rising edge of the clock.</p>
+
+<h2>Complete Example</h2>
+
+<p>Here is a complete example combining all features:</p>
+<pre class="code">
+# Mixed combinational and sequential tests
+A B C Out     &lt;clk&gt; &lt;set&gt; &lt;seq&gt;
+0 0 0 0       0     0     0
+0 0 1 1       0     0     0
+1 1 0 1       0     1     1
+0 1 0 0       1     1     2
+1 1 1 1       0     1     3
+0 0 0 &lt;DC&gt;    0     2     1
+1 0 1 &lt;float&gt; 1     2     2
+</pre>
+
+<p>In this example:</p>
+<ul>
+<li>Notice how the clock resets to 0 in each line that does a reset.</li>
+<li>The first two tests are combinational (seq=0), so the circuit resets
+between each test, even though they share set 0.</li>
+<li>The next three tests all have set 1 with seq values 1-3, so they form one sequence
+that runs in order without reset between each other only resetting before the first test in the set runs.</li>
+<li>The last test has set 2 seq 1&2, so it starts a new sequence and the circuit resets before it runs but not between tests in the set.</li>
+<li>The sixth test uses <code>&lt;DC&gt;</code> for the output, so any output value passes.</li>
+<li>The last test uses <code>&lt;float&gt;</code> for the output, expecting a floating value.</li>
+</ul>
+
+<p> Thus the execution might look like this:</p>
+<ol>
+<li>Reset, set A=0, B=0, C=0 and check that Out==0 and clk=0</li>
+<li>Reset, set A=0, B=0, C=1 and check that Out==1 and clk=0</li>
+<li>Reset, set A=1, B=1, C=0 and check that Out==1 and clk=0</li>
+<li>Tick, set A=0, B=1, C=0 and check that Out==0 and clk=1</li>
+<li>Tick, set A=1, B=1, C=1 and check that Out==1 and clk=0</li>
+<li>Reset, set A=0, B=0, C=0 and not check Out but clk=0</li>
+<li>Tick, set A=1, B=0, C=1 and check that Out is floating (in Logisim this is notated as U) and clk=1</li>
+<li>Test Vector is complete</li>
+</ol>
+
+<p>
+	<b>Précédent :</b> <a href="test_vector_special_values.html">Valeurs spéciales</a> | <b>Suivant :</b> <a href="test_vector_cmdline.html">Utilisation en ligne de commande</a>.
+</p>
+
+</body>
+</html>

@@ -20,8 +20,8 @@ plugins {
   id("com.github.ben-manes.versions") version "0.53.0"
   java
   application
-  id("com.gradleup.shadow") version "9.2.2"
-  id("org.sonarqube") version "7.0.1.6134"
+  id("com.gradleup.shadow") version "9.3.1"
+  id("org.sonarqube") version "7.2.2.6593"
 }
 
 repositories {
@@ -35,25 +35,25 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
+  implementation("com.fifesoft:rsyntaxtextarea:3.6.1")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.17")
   implementation("org.slf4j:slf4j-simple:2.0.17")
-  implementation("com.formdev:flatlaf:3.6.2")
-  implementation("commons-cli:commons-cli:1.10.0")
+  implementation("com.formdev:flatlaf:3.7")
+  implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
-  implementation("org.apache.commons:commons-text:1.14.0")
+  implementation("org.apache.commons:commons-text:1.15.0")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:6.0.0"))
-  testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.20.0")
+  testImplementation(platform("org.junit:junit-bom:6.0.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.21.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -504,7 +504,7 @@ tasks.register("createMsi") {
     val fromFile = "${targetDir}/${projectName}-${version}.msi"
     val toFile = "${targetDir}/${projectName}-${version}-${osArch}.msi"
     func.copyFile(fromFile, toFile)
-    File("${targetDir}/${fromFile}").delete()
+    File(fromFile).delete()
     func.verifyFileExists(outputFile);
   }
 }
@@ -664,8 +664,8 @@ tasks.register("createDmg") {
   val osArch = ext.get(OS_ARCH) as String
   val projectName = project.name
   val jPackage = ext.get(JPACKAGE) as String
-  val appVersion = "${ext.get(APP_VERSION) as String}-${osArch}"
-  val destination = ext.get(TARGET_DIR) as String
+  val appVersion = ext.get(APP_VERSION_SHORT) as String
+  val targetDir = ext.get(TARGET_DIR) as String
   val outputFile = "${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg"
 
   inputs.dir(appDirName)
@@ -682,13 +682,16 @@ tasks.register("createDmg") {
         jPackage,
         "--app-image", appDirName,
         "--name", projectName,
-        // We can pass full version here, even if contains suffix part too.
-        // We also append the architecture to add it to the package name.
+        // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
         "--app-version", appVersion,
-        "--dest", destination,
+        "--dest", targetDir,
         "--type", "dmg",
       )
     func.runCommand(params, "Error while creating the DMG package")
+    val fromFile = "${targetDir}/${projectName}-${appVersion}.dmg"
+    val toFile = "${outputFile}"
+    func.copyFile(fromFile, toFile)
+    File(fromFile).delete()
     func.verifyFileExists(outputFile);
   }
 }
@@ -876,7 +879,7 @@ tasks {
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
     // Checkstyle version to use
-    toolVersion = "12.0.1"
+    toolVersion = "10.3.4"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
@@ -884,6 +887,9 @@ tasks {
       it.name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
+    
+    configProperties["org.checkstyle.google.suppressionfilter.config"] =
+        "$projectDir/checkstyle-suppressions.xml"
 
     // FIXME: There should be cleaner way of using custom suppression config with built-in style.
     // https://stackoverflow.com/a/64703619/1235698

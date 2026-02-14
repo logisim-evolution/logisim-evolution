@@ -1,195 +1,133 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Power / Grounde -->
-   电源/接地
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/power.png" width="32"/>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ground.png" width="32"/>
-    <!-- <em>Power / Grounde</em> -->
-    <em>
-     电源/接地
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Wiring</a> -->
-       <a href="index.html">
-        线路
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.7.0
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <table>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T11:27:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      电源 / 接地
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/power.png" alt="#########" width="32" height="32"> 
+        <img class="iconlibs" src="../../../../icons/6464/ground.png" alt="#########" width="32" height="32"> 
+        <em>电源 / 接地</em>
+      </h1>
+      <table>
         <tbody>
-         <tr>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/power.png" width="64"/>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ground.png" width="64"/>
-          </td>
-         </tr>
+          <tr>
+            <td>
+              <strong>所属库：</strong>
+            </td>
+            <td>
+              <a href="index.html">线路</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.7.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/power.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ground.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
         </tbody>
-       </table>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    Behavior
-   </h2>
-   <p>
-    <!-- Emits a single logical value onto a wire. For the power element,(<img class="intxt" src="../../../../icons/1616/power.png" alt="#########">) indicated by a triangle , this value will be <b class="unov">1</b> (or, if the Data Bits attribute is greater than 1, an all-1's value). For a ground element,(<img class="intxt" src="../../../../icons/1616/ground.png" alt="#########">) indicated by an arrow of three decreasing-length, horizontal lines, this value will be <b class="zerov">0</b> (or, if the Data Bits attribute is more than 1, an all-0's value). -->
-    将单个逻辑值发送到线路上。 对于 power 元素，(
-    <img alt="#########" class="intxt" src="../../../../icons/1616/power.png"/>
-    ）由三角形 表示，该值将为
-    <b class="unov">
-     1
-    </b>
-    （或者，如果数据位属性大于 1，则为全 1 的值）。 对于地面元素，(
-    <img alt="#########" class="intxt" src="../../../../icons/1616/ground.png"/>
-    ）由三个长度递减的水平线箭头指示，该值将为
-    <b class="zerov">
-     0
-    </b>
-    （或者，如果数据位属性大于 1，则为全 0 的值） 。
-   </p>
-   <p>
-    <!-- The same functionality can be achieved by using the more versatile <a href="constant.html">Constant</a> component. The only reason to prefer ground and power is that they are commonly-used electronic symbols. -->
-    使用更通用的
-    <a href="constant.html">
-     Constant
-    </a>
-    组件可以实现相同的功能。 更喜欢接地和电源的唯一原因是它们是常用的电子符号。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <p>
-    <!-- Each component has only one pin, an output whose bit-width matches the Data Bits attribute. The component constantly outputs the same value on this pin: for a ground component, the output is an all-0 value, and for a power component, the output is an all-1 value. -->
-    每个元件只有一个引脚，即位宽与数据位属性匹配的输出。 该元件在此引脚上不断输出相同的值：对于接地元件，输出为全 0 值，对于功率组件，输出为全 1 值。
-   </p>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. Quick use of the keys allows the entry of larger values for example <b class="tkeybd">Alt-0</b>ALT-1 ALT-2</b> gives 12. The arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    选择或添加元件时，
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    到
-    <b class="tkeybd">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性。 快速使用按键可以输入更大的值，例如
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    ALT-1 ALT-2
-    给出12。箭头键改变其
-    <b class='“propertie"'>
-     方向
-    </b>
-    属性。
-   </p>
-   <div class="attliste">
-    <dl>
-     <dt>
-      <!-- <b class="propertie">Facing</b> -->
-      <b class="propertie">
-       方向
-      </b>
-     </dt>
-     <dd>
-      <!-- The direction of the <q>point</q> of the component's arrow, opposite from the location of its pin. -->
-      元件箭头
-      <q>
-       点
-      </q>
-      的方向，与其引脚位置相反。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Data Bits</b> -->
-      <b class="propertie">
-       数据位
-      </b>
-     </dt>
-     <dd>
-      <!-- The bit width of the value placed onto the wire. -->
-      放置到线路上的值的位宽度。
-     </dd>
-    </dl>
-   </div>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        向线路输出一个固定的逻辑值。
+        对于电源元件（<img class="intxt" src="../../../../icons/1616/power.png" alt="#########">，以三角形表示），
+        该值为 <b class="unov">1</b>
+        （如果 <b class="propertie">数据位宽</b> 属性大于 1，则输出全 1 的值）。
+        对于接地元件（<img class="intxt" src="../../../../icons/1616/ground.png" alt="#########">，
+        以三条逐渐变短的水平线箭头表示），
+        该值为 <b class="zerov">0</b>
+        （如果 <b class="propertie">数据位宽</b> 属性大于 1，则输出全 0 的值）。
+      </p>
+      <p>
+        使用功能更灵活的 <a href="constant.html">常量</a> 组件也可以实现相同的功能。
+        选择电源和接地组件的唯一原因是它们是电子电路中常见且直观的符号。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        每个组件只有一个引脚，这是一个输出引脚，其位宽与
+        <b class="propertie">数据位宽</b>
+        属性一致。
+        该组件会在此引脚上持续输出同一个值：
+        对于接地组件，输出始终为全 0；
+        对于电源组件，输出始终为全 1。
+      </p>
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，
+        可以使用 <b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b>
+        来修改其 <b class="propertie">数据位宽</b> 属性。
+        快速连续按键可以输入更大的数值，
+        例如依次按下 <b class="tkeybd">Alt-0</b>、<b class="tkeybd">Alt-1</b>、<b class="tkeybd">Alt-2</b>
+        将得到数值 12。
+        方向键用于修改其 <b class="propertie">朝向</b> 属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            组件箭头“尖端”的方向，该方向与其引脚所在的位置相反。
+          </dd>
+          <dt>
+            <b class="propertie">数据位宽</b>
+          </dt>
+          <dd>
+            输出到线路上的数值的位宽。
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
 </html>

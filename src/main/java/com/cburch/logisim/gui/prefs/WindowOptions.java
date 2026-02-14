@@ -16,9 +16,12 @@ import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -57,14 +60,21 @@ class WindowOptions extends OptionsPanel {
   private final ZoomSlider zoomValue;
   private final JButton zoomAutoButton;
   private final JLabel lookfeelLabel;
+  private final JLabel appFontLabel;
+  private final JLabel restartWarning;
+  private final JLabel restartWarningSpacer;
   private final JLabel zoomLabel;
   private final JLabel importantA;
   private final JTextArea importantB;
   private final JPanel previewContainer;
   private final JComboBox<String> lookAndFeel;
+  private final JComboBox<String> appFont;
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private JPanel previewPanel;
   private int index = 0;
+  
+  private String initialAppFont;
+  private String initialLookAndFeel;
 
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
@@ -168,23 +178,48 @@ class WindowOptions extends OptionsPanel {
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
 
-    var index = 0;
+    // Initialize components before adding
     lookAndFeel = new JComboBox<>();
-    lookAndFeel.setSize(50, 20);
-
     lookAndFeelInfos = UIManager.getInstalledLookAndFeels();
-    for (final var info : lookAndFeelInfos) {
-      lookAndFeel.insertItemAt(info.getName(), index);
-      if (info.getClassName().equals(AppPreferences.LookAndFeel.get())) {
-        lookAndFeel.setSelectedIndex(index);
-        this.index = index;
+    initialLookAndFeel = AppPreferences.LookAndFeel.get();
+    for (var i = 0; i < lookAndFeelInfos.length; i++) {
+      lookAndFeel.addItem(lookAndFeelInfos[i].getName());
+      if (lookAndFeelInfos[i].getClassName().equals(initialLookAndFeel)) {
+        lookAndFeel.setSelectedIndex(index = i);
       }
-      index++;
     }
+    
+    appFont = new JComboBox<>();
+    appFont.addItem(S.get("windowAppFontDefault"));
+    for (String f : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
+      appFont.addItem(f);
+    }
+    initialAppFont = AppPreferences.APP_FONT.get();
+    appFont.setSelectedItem((initialAppFont == null || initialAppFont.isEmpty()) 
+        ? S.get("windowAppFontDefault") : initialAppFont);
+        
+    appFontLabel = new JLabel(S.get("windowAppFont"));
+
+    // Add components
     lookfeelLabel = new JLabel(S.get("windowToolbarLookandfeel"));
     panel.add(lookfeelLabel);
     panel.add(lookAndFeel);
     lookAndFeel.addActionListener(listener);
+
+    panel.add(appFontLabel);
+    panel.add(appFont);
+    appFont.addActionListener(listener);
+
+    restartWarning = new CollapsibleLabel(S.get("windowRestartWarning"));
+    restartWarning.setFont(restartWarning.getFont().deriveFont(Font.ITALIC));
+    restartWarning.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
+    restartWarning.setVisible(false);
+    
+    restartWarningSpacer = new CollapsibleLabel(" ");
+    restartWarningSpacer.setVisible(false);
+
+    panel.add(restartWarningSpacer);
+    panel.add(restartWarning);
 
     final var previewLabel = new JLabel(S.get("windowToolbarPreview"));
     panel.add(previewLabel);
@@ -243,6 +278,8 @@ class WindowOptions extends OptionsPanel {
     toolbarPlacement.localeChanged();
     zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
+    appFontLabel.setText(S.get("windowAppFont"));
+    restartWarning.setText(S.get("windowRestartWarning"));
     importantA.setText(S.get("windowToolbarPleaserestart"));
     importantB.setText(S.get("windowToolbarImportant"));
     resetWindowLayoutButton.setText(S.get("windowToolbarReset"));
@@ -274,11 +311,17 @@ class WindowOptions extends OptionsPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       if (e.getSource().equals(lookAndFeel)) {
-        if (lookAndFeel.getSelectedIndex() != index) {
-          index = lookAndFeel.getSelectedIndex();
+        int newIndex = lookAndFeel.getSelectedIndex();
+        if (newIndex != index && newIndex >= 0 && newIndex < lookAndFeelInfos.length) {
+          index = newIndex;
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
           initThemePreviewer();
         }
+        checkRestartWarning();
+      } else if (e.getSource().equals(appFont)) {
+        String val = (String) appFont.getSelectedItem();
+        AppPreferences.APP_FONT.set(S.get("windowAppFontDefault").equals(val) ? "" : val);
+        checkRestartWarning();
       } else if (e.getActionCommand().equals(cmdResetWindowLayout)) {
         AppPreferences.resetWindow();
         final var nowOpen = Projects.getOpenProjects();
@@ -300,6 +343,27 @@ class WindowOptions extends OptionsPanel {
         AppPreferences.getPrefs().remove(AppPreferences.SCALE_FACTOR.getIdentifier());
         zoomValue.setValue((int) (tmp * 100));
       }
+    }
+
+    private void checkRestartWarning() {
+      boolean show = !Objects.equals(AppPreferences.APP_FONT.get(), initialAppFont)
+          || !Objects.equals(AppPreferences.LookAndFeel.get(), initialLookAndFeel);
+      restartWarning.setVisible(show);
+      restartWarningSpacer.setVisible(show);
+    }
+  }
+
+  private static class CollapsibleLabel extends JLabel {
+    public CollapsibleLabel(String text) {
+      super(text);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+      if (!isVisible()) {
+        return new Dimension(0, 0);
+      }
+      return super.getPreferredSize();
     }
   }
 }

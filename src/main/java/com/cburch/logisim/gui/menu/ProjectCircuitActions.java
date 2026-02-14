@@ -237,7 +237,14 @@ public class ProjectCircuitActions {
           S.get("circuitRemoveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
     } else {
-      proj.doAction(LogisimFileActions.removeCircuit(circuit));
+      int result = OptionPane.showConfirmDialog(
+          proj.getFrame(),
+          S.get("circuitRemoveConfirm"),
+          S.get("circuitRemoveConfirmTitle"),
+          OptionPane.YES_NO_OPTION);
+      if (result == OptionPane.YES_OPTION) {
+        proj.doAction(LogisimFileActions.removeCircuit(circuit));
+      }
     }
   }
 
@@ -249,7 +256,14 @@ public class ProjectCircuitActions {
           S.get("circuitRemoveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
     } else {
-      proj.doAction(LogisimFileActions.removeVhdl(vhdl));
+      int result = OptionPane.showConfirmDialog(
+          proj.getFrame(),
+          S.get("circuitRemoveConfirm"),
+          S.get("circuitRemoveConfirmTitle"),
+          OptionPane.YES_NO_OPTION);
+      if (result == OptionPane.YES_OPTION) {
+        proj.doAction(LogisimFileActions.removeVhdl(vhdl));
+      }
     }
   }
 

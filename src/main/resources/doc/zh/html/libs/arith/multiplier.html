@@ -3,12 +3,12 @@
  <head>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
   <meta content="zh" http-equiv="Content-Language"/>
   <title>
    <!-- Multiplier -->
-   乘数
+   乘法器
   </title>
   <link href="../../style.css" rel="stylesheet" type="text/css"/>
  </head>
@@ -18,30 +18,27 @@
     <!-- <img  class="iconlibs" src="../../../../icons/6464/multiplier.png" alt="#########" width="32" height="32" align="middle"> <em>Multiplier</em> -->
     <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/multiplier.png" width="32"/>
     <em>
-     乘数
+     乘法器
     </em>
    </h1>
    <table>
     <tbody>
      <tr>
       <td>
-       <!-- <strong>Library:</strong> -->
        <strong>
         库:
        </strong>
       </td>
       <td>
-       <!-- <a href="index.html">Arithmetic</a> -->
        <a href="index.html">
-        算术
+        运算器
        </a>
       </td>
      </tr>
      <tr>
       <td>
-       <!-- <strong>Introduced:</strong> -->
        <strong>
-        介绍:
+        引入版本：
        </strong>
       </td>
       <td>
@@ -50,9 +47,8 @@
      </tr>
      <tr>
       <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
        <strong>
-        外观符号:
+        外观：
        </strong>
       </td>
       <td valign="top">
@@ -62,145 +58,85 @@
     </tbody>
    </table>
    <h2>
-    <!-- Behavior -->
     行为
    </h2>
    <p>
-    <!-- This component multiplies two values coming in via the west inputs and outputs the product on the east output. The component is designed so that it can be cascaded with other multipliers to multiply a multiplicand with more bits than is possible with a single multiplier: The carry-in input provides a multi-bit value to be added into the product (if it is specified), and a carry-out output provides the upper half of the product result, which can be fed into another multiplier. -->
-    该元件将通过西边输入传入的两个值相乘，并在东边输出上输出乘积。 该组件的设计使其可以与其他乘法器级联，以将被乘数与单个乘法器可能的位数相乘：进位输入提供要添加到乘积中的多位值（如果指定） ），进位输出提供乘积结果的上半部分，可以将其输入另一个乘法器。
+    该组件将西侧输入的两个数值相乘，并在东侧输出乘积。它支持级联，以处理位宽超过单个乘法器所能支持范围的被乘数：进位输入提供一个可加到乘积中的多位数值（若已指定），进位输出则给出乘积结果的高半部分，可作为输入送入下一级乘法器。
    </p>
    <p>
-    <!-- If the multiplicand, the multiplier, or the carry-in input contain some floating bits or some error bits, then the component will perform a partial multiplication. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits. Note that if the carry-in input is completely floating, then it will be assumed to be all-zeroes. -->
-    如果被乘数、乘法器或进位输入包含一些浮动位或一些错误位，则该组件将执行部分乘法。 也就是说，它将计算尽可能多的低位。 但在浮动或错误位之上，结果将具有浮动或错误位。 请注意，如果进位输入完全浮动，则将假定其为全零。
+    若被乘数、乘数或进位输入包含悬空位或错误位，则组件会进行部分相乘：尽可能计算低位结果；在出现悬空/错误位之上的更高位，结果将相应变为悬空位或错误位。注意：若进位输入的所有位均为未知（即完全悬空），则按全 0 处理。
    </p>
    <h2>
-    <!-- Pins -->
     引脚
    </h2>
    <dl>
     <dt>
-     <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
-     西边，北端（输入，位宽与数据位属性匹配）
+     西侧上端（输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- The multiplicand (that is, the first of the two numbers to multiply). -->
-     被乘数（即要相乘的两个数字中的第一个）。
+     乘数之一。
     </dd>
     <dt>
-     <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
-     西边，南端（输入，位宽与数据位属性匹配）
+     西侧下端（输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- The multiplier (that is, the second of the two numbers to multiply). -->
-     乘数（即要相乘的两个数字中的第二个）。
+     另一个乘数。
     </dd>
     <dt>
-     <!-- North edge, labeled <var>c in</var> (input, bit width matches Data Bits attribute) -->
-     北边，标记为
-     <var>
-      c in
-     </var>
-     （输入，位宽与数据位属性匹配）
+     北侧（标记为 <var>c in</var>，输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- A carry value to add into the product. If all bits of the value are unknown (i.e., floating), then they are assumed to be 0. -->
-     添加到产品中的持有价值。 如果值的所有位都是未知的（即浮动的），则假定它们为 0。
+     加到乘积中的进位值。若该值的所有位均为未知（即悬空），则按 0 处理。
     </dd>
     <dt>
-     <!-- East edge (output, bit width matches Data Bits attribute) -->
-     东边（输出，位宽与数据位属性匹配）
+     东侧（输出，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- The lower <var>dataBits</var> bits of the product of the two values coming in the west edge, plus the <var>c</var><sub><var>in</var></sub> value. -->
-     来自西边缘的两个值的乘积的低
-     <var>
-      dataBits
-     </var>
-     位加上
-     <var>
-      c
-     </var>
-     <sub>
-      <var>
-       in
-      </var>
-     </sub>
-     值 。
+     西侧两个输入相乘后，再加上 <var>c</var><sub><var>in</var></sub> 的结果的低 <var>数据位宽</var> 位。
     </dd>
     <dt>
-     <!-- South edge, labeled <var>c out</var> (output, bit width matches Data Bits attribute) -->
-     南边缘，标记为
-     <var>
-      c out
-     </var>
-     （输出，位宽与数据位属性匹配）
+     南侧（标记为 <var>c out</var>，输出，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- The upper <var>dataBits</var> bits of the product. -->
-     产品的高
-     <var>
-      dataBits
-     </var>
-     位。
+     乘积的高 <var>数据位宽</var> 位。
     </dd>
    </dl>
    <h2>
-    <!-- Attributes -->
     属性
    </h2>
    <p>
-    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
    </p>
-   选择或添加组件时，
-   <b class="keybind">
-    Alt-0
-   </b>
-   到
-   <b class="keybind">
-    Alt-9
-   </b>
-   会更改其
-   <b class="propertie">
-    数据位
-   </b>
-   属性。
    <div class="attliste">
     <dl>
      <dt>
-      <!-- <b class="propertie">Data Bits</b> -->
       <b class="propertie">
-       数据位
+       数据位宽
       </b>
      </dt>
      <dd>
-      <!-- The bit width of the values to be multiplied and of the result. -->
-      要相乘的值和结果的位宽。
+      乘数及输出结果的位宽。
      </dd>
     </dl>
    </div>
    <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
+    手形工具行为
    </h2>
    <p>
-    <!-- None. -->
     无
    </p>
    <h2>
-    <!-- Text Tool Behavior -->
     文本工具行为
    </h2>
    <p>
-    <!-- None. -->
     无
    </p>
    <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
     <b>
      返回
     </b>
     <a href="../index.html">
-     电路元件库参考手册
+     库参考手册
     </a>
    </p>
   </div>
