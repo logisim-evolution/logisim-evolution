@@ -202,6 +202,8 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     int wordsToTransfer = Math.min(burstSize, remaining / 4);
     int wordsTransferred = 0;
 
+    // some sinks may only accept one word at a time,
+    // so we need to iterate the burst transfer word by word in one cycle
     for (int i = 0; i < wordsToTransfer; i++) {
       int offset = regs.bytesDone + i * 4;
 
@@ -285,6 +287,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     if (!canHandleTransaction(trans)) return;
     trans.setTransactionResponder(controlBus.getComponent());
 
+    // MMIO control registers only support word access
     if (trans.getAccessType() != SocBusTransaction.WORD_ACCESS) {
       trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
       return;
@@ -295,7 +298,10 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     int regOffset = (int) (addr - start);
 
     DmaRegState regs = getRegPropagateState();
-    if (regs == null) return;
+    if (regs == null) {
+      trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
+      return;
+    }
 
     switch (regOffset) {
       case SRC_ADDR_REG -> handleSrcAddrReg(trans, regs);
