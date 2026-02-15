@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+
+* v4.1.0 (2026-02-15)
   * Increased number of components which may be displayed on custom circuit appearances and increased
     options for existing ones.
   * Bug fixes:
