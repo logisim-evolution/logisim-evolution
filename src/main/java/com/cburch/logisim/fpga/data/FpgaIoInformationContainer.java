@@ -529,7 +529,8 @@ public class FpgaIoInformationContainer implements Cloneable {
         final var attrSet = doc.createAttribute(BoardWriterClass.INPUT_SET_STRING);
         final var sb = new StringBuilder();
         var first = true;
-        for (var i = 0; i < nrOfPins; i++)
+        final var realNumberOfPins = (nrOfExternalPins == 0) ? nrOfPins : nrOfExternalPins;
+        for (var i = 0; i < realNumberOfPins; i++)
           if (myInputPins.contains(i)) {
             if (first) first = false;
             else sb.append(",");
@@ -542,7 +543,8 @@ public class FpgaIoInformationContainer implements Cloneable {
         final var attrSet = doc.createAttribute(BoardWriterClass.OUTPUT_SET_STRING);
         final var sb = new StringBuilder();
         var first = true;
-        for (var i = 0; i < nrOfPins; i++)
+        final var realNumberOfPins = (nrOfExternalPins == 0) ? nrOfPins : nrOfExternalPins;
+        for (var i = 0; i < realNumberOfPins; i++)
           if (myOutputPins.contains(i)) {
             if (first) first = false;
             else sb.append(",");
@@ -555,7 +557,8 @@ public class FpgaIoInformationContainer implements Cloneable {
         final var attrSet = doc.createAttribute(BoardWriterClass.IO_SET_STRING);
         final var sb = new StringBuilder();
         var first = true;
-        for (var i = 0; i < nrOfPins; i++)
+        final var realNumberOfPins = (nrOfExternalPins == 0) ? nrOfPins : nrOfExternalPins;
+        for (var i = 0; i < realNumberOfPins; i++)
           if (myIoPins.contains(i)) {
             if (first) first = false;
             else sb.append(",");

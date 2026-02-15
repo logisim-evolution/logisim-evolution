@@ -26,6 +26,7 @@
   * Reduced filesize of TikZ/SVG image exports.
   * Enhanced SoC component labels.
   * Enhanced Chinese localization.
+  * Added DMA copy engine component (SocDma) in the System On Chip library.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables
