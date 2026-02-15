@@ -3,7 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Increased number of components which may be displayed on custom circut appearences and increased
+  * Increased number of components which may be displayed on custom circuit appearances and increased
     options for existing ones.
   * Bug fixes:
     * Fixed more synchronization issues with simulation tree and propagator.
@@ -24,6 +24,8 @@
   * Corrected appearance of OR gates in TikZ/SVG image exports.
   * Corrected font choice for default fonts in SVG image exports.
   * Reduced filesize of TikZ/SVG image exports.
+  * Enhanced SoC component labels.
+  * Enhanced Chinese localization.
   * Added DMA copy engine component (SocDma) in the System On Chip library.
 
 * v4.0.0 (2025-09-07)
