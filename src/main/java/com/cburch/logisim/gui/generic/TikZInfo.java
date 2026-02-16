@@ -623,6 +623,7 @@ public class TikZInfo implements Cloneable {
       if (points.isEmpty()) {
         contents.append(intPointTikZ(start)).append("--").append(intPointTikZ(end));
       } else {
+        if (close) points.add(points.getFirst());
         contents.append(intPointTikZ(points.get(0)));
         int cursor = 1;
         while (cursor < (points.size() - 1)) {
@@ -645,14 +646,13 @@ public class TikZInfo implements Cloneable {
           contents.append("--").append(intPointTikZ(cur));
           cursor++;
         }
+        if (close) points.removeLast();
       }
       if (close) {
-        contents.append("-- cycle;");
-      } else {
-        //This is necessary to eliminate space between last point and final semicolon.
-        contents.setCharAt(contents.length() - 1, ';');
+        final String almost = contents.toString();
+        return almost.substring(0, almost.lastIndexOf('(')) + "cycle;";
       }
-      return contents.toString();
+      return contents.toString().stripTrailing() + ';';
     }
 
     @Override
