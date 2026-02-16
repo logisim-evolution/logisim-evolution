@@ -352,32 +352,18 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getFontDefinition(int i) {
-    final var content = new StringBuilder();
-    var replaced = false;
-    content
-        .append("\\def\\logisimfont")
-        .append(getCharRepresentation(i))
-        .append("#1{\\fontfamily{");
-    var fontName = usedFonts.get(i);
-    if (fontName.contains("SansSerif")) {
-      replaced = true;
-      fontName = "cmr";
-    } else if (fontName.contains("Monospaced")) {
-      replaced = true;
-      fontName = "cmtt";
-    } else if (fontName.contains("Courier")) {
-      replaced = true;
-      fontName = "pcr";
-    }
-    content.append(fontName);
-    content.append("}{#1}}");
-    if (replaced)
-      content
-          .append(" % Replaced by logisim, original font was \"")
-          .append(usedFonts.get(i))
-          .append("\"");
-    content.append("\n");
-    return content.toString();
+    final StringBuilder sb = new StringBuilder();
+    sb.append("\\def\\logisimfont").append(getCharRepresentation(i)).append("#1{");
+    final String familyName = usedFonts.get(i);
+    final String fontCommand = switch (familyName) {
+      case Font.MONOSPACED -> "\\texttt{#1}";
+      case Font.SANS_SERIF -> "\\textsf{#1}";
+      case Font.SERIF -> "\\textrm{#1}";
+      default -> "\\fontfamily{" + familyName + "}{#1}";
+    };
+    sb.append(fontCommand);
+    sb.append("}\n");
+    return sb.toString();
   }
 
   private String getColorDefinitions() {
