@@ -895,7 +895,7 @@ public class TikZInfo implements Cloneable {
     @Override
     public DrawObject clone() {
       final var newInst = new TikZBezier(shape, filled);
-      newInst.transform = transform;
+      newInst.transform = new AffineTransform(transform);
       newInst.color = color;
       newInst.alpha = alpha;
       newInst.strokeWidth = strokeWidth;
