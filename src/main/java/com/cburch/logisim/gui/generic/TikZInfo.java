@@ -1318,7 +1318,7 @@ public class TikZInfo implements Cloneable {
       content.append("\\selectfont\\node[inner sep=0, outer sep=0, ").append(color)
           .append(", anchor=base west");
       if (rotation != 0) content.append(", rotate=").append(rounded(rotation));
-      content.append("] at ").append(getPoint(location)).append(" {");
+      content.append("] at").append(getPoint(location)).append("{");
       if (name != null)
         if (name.isEmpty()) return "";
         else
