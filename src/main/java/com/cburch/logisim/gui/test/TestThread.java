@@ -38,7 +38,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     this.project = model.getProject();
     this.circuit = model.getCircuit();
-    this.circuitState = CircuitState.createRootState(this.project, this.circuit, this);
+    this.circuitState = this.project.getCircuitState().cloneAsNewRootState(this);
     this.vector = model.getVector();
     this.evaluator = new TestVectorEvaluator(circuitState, vector);
     model.getCircuit().addCircuitListener(this);
