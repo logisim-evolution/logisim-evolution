@@ -530,11 +530,11 @@ public class TikZInfo implements Cloneable {
     }
 
     public Point getStartPoint() {
-      return points.isEmpty() ? start : points.get(0);
+      return points.isEmpty() ? start : points.getFirst();
     }
 
     public Point getEndPoint() {
-      return points.isEmpty() ? end : points.get(points.size() - 1);
+      return points.isEmpty() ? end : points.getLast();
     }
 
     public boolean canMerge(TikZLine l) {
@@ -588,9 +588,11 @@ public class TikZInfo implements Cloneable {
         final var prev = points.get(cursor - 1);
         final var cur = points.get(cursor);
         final var next = points.get(cursor + 1);
-        final boolean horiz_match = (prev.x == cur.x) && (cur.x == next.x);
-        final boolean vert_match = (prev.y == cur.y) && (cur.y == next.y);
-        if (horiz_match || vert_match) {
+        final boolean horiz_sequence = ((prev.x <= cur.x) && (cur.x <= next.x)) || ((prev.x >= cur.x) && (cur.x >= next.x));
+        final boolean vert_sequence = ((prev.y <= cur.y) && (cur.y <= next.y)) || ((prev.y >= cur.y) && (cur.y >= next.y));
+        final boolean horizontally_aligned = horiz_sequence && (prev.y == cur.y) && (cur.y == next.y);
+        final boolean vertically_aligned = vert_sequence && (prev.x == cur.x) && (cur.x == next.x);
+        if (horizontally_aligned || vertically_aligned) {
           points.remove(cursor);
         } else {
           cursor++;
@@ -622,9 +624,11 @@ public class TikZInfo implements Cloneable {
       contents.append(rounded(width)).append("pt, ").append(color).append("]");
       if (points.isEmpty()) {
         contents.append(intPointTikZ(start)).append("--").append(intPointTikZ(end));
+        if (close) return contents.append("-- cycle;").toString();
+        return contents.toString().stripTrailing() + ';';
       } else {
         if (close) points.add(points.getFirst());
-        contents.append(intPointTikZ(points.get(0)));
+        contents.append(intPointTikZ(points.getFirst()));
         int cursor = 1;
         while (cursor < (points.size() - 1)) {
           final var prev = points.get(cursor - 1);
@@ -646,13 +650,13 @@ public class TikZInfo implements Cloneable {
           contents.append("--").append(intPointTikZ(cur));
           cursor++;
         }
-        if (close) points.removeLast();
+        if (close) {
+          points.removeLast();
+          final String almost = contents.toString();
+          return almost.substring(0, almost.lastIndexOf('(')) + "cycle;";
+        }
+        return contents.toString().stripTrailing() + ';';
       }
-      if (close) {
-        final String almost = contents.toString();
-        return almost.substring(0, almost.lastIndexOf('(')) + "cycle;";
-      }
-      return contents.toString().stripTrailing() + ';';
     }
 
     @Override
@@ -675,7 +679,7 @@ public class TikZInfo implements Cloneable {
           content.append(" L").append(intPointSVG(end));
         }
       } else {
-        content.append("M").append(intPointSVG(points.get(0)));
+        content.append("M").append(intPointSVG(points.getFirst()));
         for (int i = 1; i < points.size(); i++) {
           final Point prev = points.get(i - 1);
           final Point cur = points.get(i);

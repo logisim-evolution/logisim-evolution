@@ -247,8 +247,14 @@ public class Button extends InstanceFactory {
       g.setColor(color);
       g.fillRect(x, y, w - DEPTH, h - DEPTH);
       g.setColor(baseColor);
-      g.drawRect(x, y, w - DEPTH, h - DEPTH);
-      g.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
+      g.drawPolygon(xp, yp, xp.length);
+      final int farX = x + w - DEPTH;
+      final int farY = y + h - DEPTH;
+      xp = new int[] {farX, farX, x, farX};
+      yp = new int[] {y, farY, farY, farY};
+      g.drawPolygon(xp, yp, xp.length);
+      xp = new int[] {farX, x + w};
+      yp = new int[] {farY, y + h};
       g.drawPolygon(xp, yp, xp.length);
     }
 
