@@ -291,27 +291,41 @@ public class TikZInfo implements Cloneable {
   }
 
   private void optimize() {
-    final var l = contents.listIterator();
-    while (l.hasNext()) {
-      final var obj = l.next();
+    // A numeric index iteration was chosen purposely here.
+    // I'm avoiding the for-each construct to prevent Java from
+    // generating an internal Iterator object, which could
+    // malfunction when we remove later items from the list.
+    int index = 0;
+    while (index < contents.size()) {
+      final var obj = contents.get(index);
       if (obj instanceof TikZLine lineA) {
-        var merged = false;
-        for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
-          final var n = contents.get(i);
-          if (n instanceof TikZLine lineB) {
-            if (lineB.canMerge(lineA)) {
-              merged = lineB.merge(lineA);
-              if (merged) break;
+        // We must loop this part of the process now, because
+        // it could be possible to merge multiple times.
+        while (true) {
+          boolean merged = false;
+          int i = index + 1;
+          for (; i < contents.size(); i++) {
+            final var n = contents.get(i);
+            if (n instanceof TikZLine lineB) {
+              if (lineA.canMerge(lineB)) {
+                merged = lineA.merge(lineB);
+                if (merged) break;
+              }
             }
           }
+          if (merged) {
+            contents.remove(i);
+          } else {
+            break;
+          }
         }
-        if (merged) l.remove();
+        index++;
       } else if (obj.getClass() == TikZEllipse.class) {
         //This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
         final var ovalA = (TikZEllipse) obj;
         final var circular = ovalA.radX == ovalA.radY;
         var redundant = false;
-        for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
+        for (int i = index + 1; i < contents.size(); i++) {
           final var n = contents.get(i);
           if (n.getClass() == TikZEllipse.class) {
             final var ovalB = (TikZEllipse) n;
@@ -329,7 +343,13 @@ public class TikZInfo implements Cloneable {
             }
           }
         }
-        if (redundant) l.remove();
+        if (redundant) {
+          contents.remove(index);
+        } else {
+          index++;
+        }
+      } else {
+        index++;
       }
     }
     for (DrawObject obj : contents) {
@@ -340,38 +360,30 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getCharRepresentation(int i) {
-    final var repeat = i / 26;
-    final var charId = i % 26;
-    return String.valueOf((char) (charId + 'A')).repeat(repeat + 1);
+    int num = i + 1;
+    StringBuilder sb = new StringBuilder();
+    while (num > 0) {
+      num--;
+      final int c = (num % 26) + 'A';
+      sb.append((char) c);
+      num /= 26;
+    }
+    return sb.reverse().toString();
   }
 
   private String getFontDefinition(int i) {
-    final var content = new StringBuilder();
-    var replaced = false;
-    content
-        .append("\\def\\logisimfont")
-        .append(getCharRepresentation(i))
-        .append("#1{\\fontfamily{");
-    var fontName = usedFonts.get(i);
-    if (fontName.contains("SansSerif")) {
-      replaced = true;
-      fontName = "cmr";
-    } else if (fontName.contains("Monospaced")) {
-      replaced = true;
-      fontName = "cmtt";
-    } else if (fontName.contains("Courier")) {
-      replaced = true;
-      fontName = "pcr";
-    }
-    content.append(fontName);
-    content.append("}{#1}}");
-    if (replaced)
-      content
-          .append(" % Replaced by logisim, original font was \"")
-          .append(usedFonts.get(i))
-          .append("\"");
-    content.append("\n");
-    return content.toString();
+    final StringBuilder sb = new StringBuilder();
+    sb.append("\\def\\logisimfont").append(getCharRepresentation(i)).append("#1{");
+    final String familyName = usedFonts.get(i);
+    final String fontCommand = switch (familyName) {
+      case Font.MONOSPACED -> "\\texttt{#1}";
+      case Font.SANS_SERIF -> "\\textsf{#1}";
+      case Font.SERIF -> "\\textrm{#1}";
+      default -> "\\fontfamily{" + familyName + "}{#1}";
+    };
+    sb.append(fontCommand);
+    sb.append("}\n");
+    return sb.toString();
   }
 
   private String getColorDefinitions() {
@@ -538,11 +550,11 @@ public class TikZInfo implements Cloneable {
     }
 
     public Point getStartPoint() {
-      return points.isEmpty() ? start : points.get(0);
+      return points.isEmpty() ? start : points.getFirst();
     }
 
     public Point getEndPoint() {
-      return points.isEmpty() ? end : points.get(points.size() - 1);
+      return points.isEmpty() ? end : points.getLast();
     }
 
     public boolean canMerge(TikZLine l) {
@@ -596,9 +608,11 @@ public class TikZInfo implements Cloneable {
         final var prev = points.get(cursor - 1);
         final var cur = points.get(cursor);
         final var next = points.get(cursor + 1);
-        final boolean horiz_match = (prev.x == cur.x) && (cur.x == next.x);
-        final boolean vert_match = (prev.y == cur.y) && (cur.y == next.y);
-        if (horiz_match || vert_match) {
+        final boolean horiz_sequence = ((prev.x <= cur.x) && (cur.x <= next.x)) || ((prev.x >= cur.x) && (cur.x >= next.x));
+        final boolean vert_sequence = ((prev.y <= cur.y) && (cur.y <= next.y)) || ((prev.y >= cur.y) && (cur.y >= next.y));
+        final boolean horizontally_aligned = horiz_sequence && (prev.y == cur.y) && (cur.y == next.y);
+        final boolean vertically_aligned = vert_sequence && (prev.x == cur.x) && (cur.x == next.x);
+        if (horizontally_aligned || vertically_aligned) {
           points.remove(cursor);
         } else {
           cursor++;
@@ -630,8 +644,11 @@ public class TikZInfo implements Cloneable {
       contents.append(rounded(width)).append("pt, ").append(color).append("]");
       if (points.isEmpty()) {
         contents.append(intPointTikZ(start)).append("--").append(intPointTikZ(end));
+        if (close) return contents.append("-- cycle;").toString();
+        return contents.toString().stripTrailing() + ';';
       } else {
-        contents.append(intPointTikZ(points.get(0)));
+        if (close) points.add(points.getFirst());
+        contents.append(intPointTikZ(points.getFirst()));
         int cursor = 1;
         while (cursor < (points.size() - 1)) {
           final var prev = points.get(cursor - 1);
@@ -653,14 +670,13 @@ public class TikZInfo implements Cloneable {
           contents.append("--").append(intPointTikZ(cur));
           cursor++;
         }
+        if (close) {
+          points.removeLast();
+          final String almost = contents.toString();
+          return almost.substring(0, almost.lastIndexOf('(')) + "cycle;";
+        }
+        return contents.toString().stripTrailing() + ';';
       }
-      if (close) {
-        contents.append("-- cycle;");
-      } else {
-        //This is necessary to eliminate space between last point and final semicolon.
-        contents.setCharAt(contents.length() - 1, ';');
-      }
-      return contents.toString();
     }
 
     @Override
@@ -683,7 +699,7 @@ public class TikZInfo implements Cloneable {
           content.append(" L").append(intPointSVG(end));
         }
       } else {
-        content.append("M").append(intPointSVG(points.get(0)));
+        content.append("M").append(intPointSVG(points.getFirst()));
         for (int i = 1; i < points.size(); i++) {
           final Point prev = points.get(i - 1);
           final Point cur = points.get(i);
@@ -895,7 +911,7 @@ public class TikZInfo implements Cloneable {
     @Override
     public DrawObject clone() {
       final var newInst = new TikZBezier(shape, filled);
-      newInst.transform = transform;
+      newInst.transform = new AffineTransform(transform);
       newInst.color = color;
       newInst.alpha = alpha;
       newInst.strokeWidth = strokeWidth;
@@ -1326,7 +1342,7 @@ public class TikZInfo implements Cloneable {
       content.append("\\selectfont\\node[inner sep=0, outer sep=0, ").append(color)
           .append(", anchor=base west");
       if (rotation != 0) content.append(", rotate=").append(rounded(rotation));
-      content.append("] at ").append(getPoint(location)).append(" {");
+      content.append("] at").append(getPoint(location)).append("{");
       if (name != null)
         if (name.isEmpty()) return "";
         else
