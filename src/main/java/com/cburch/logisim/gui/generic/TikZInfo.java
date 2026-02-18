@@ -291,27 +291,41 @@ public class TikZInfo implements Cloneable {
   }
 
   private void optimize() {
-    final var l = contents.listIterator();
-    while (l.hasNext()) {
-      final var obj = l.next();
+    // A numeric index iteration was chosen purposely here.
+    // I'm avoiding the for-each construct to prevent Java from
+    // generating an internal Iterator object, which could
+    // malfunction when we remove later items from the list.
+    int index = 0;
+    while (index < contents.size()) {
+      final var obj = contents.get(index);
       if (obj instanceof TikZLine lineA) {
-        var merged = false;
-        for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
-          final var n = contents.get(i);
-          if (n instanceof TikZLine lineB) {
-            if (lineB.canMerge(lineA)) {
-              merged = lineB.merge(lineA);
-              if (merged) break;
+        // We must loop this part of the process now, because
+        // it could be possible to merge multiple times.
+        while (true) {
+          boolean merged = false;
+          int i = index + 1;
+          for (; i < contents.size(); i++) {
+            final var n = contents.get(i);
+            if (n instanceof TikZLine lineB) {
+              if (lineA.canMerge(lineB)) {
+                merged = lineA.merge(lineB);
+                if (merged) break;
+              }
             }
           }
+          if (merged) {
+            contents.remove(i);
+          } else {
+            break;
+          }
         }
-        if (merged) l.remove();
+        index++;
       } else if (obj.getClass() == TikZEllipse.class) {
         //This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
         final var ovalA = (TikZEllipse) obj;
         final var circular = ovalA.radX == ovalA.radY;
         var redundant = false;
-        for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
+        for (int i = index + 1; i < contents.size(); i++) {
           final var n = contents.get(i);
           if (n.getClass() == TikZEllipse.class) {
             final var ovalB = (TikZEllipse) n;
@@ -329,7 +343,13 @@ public class TikZInfo implements Cloneable {
             }
           }
         }
-        if (redundant) l.remove();
+        if (redundant) {
+          contents.remove(index);
+        } else {
+          index++;
+        }
+      } else {
+        index++;
       }
     }
     for (DrawObject obj : contents) {

@@ -252,8 +252,8 @@ public class Button extends InstanceFactory {
       // The following two draws are supposed to be polygons, not polylines.
       // This is not a mistake, but rather a graphical trick which leverages
       // the implicit miter limit to produce lines that look like they have
-      // "butt" style line ends, even though they are drawn with a system
-      // that produces only "square" style line ends.
+      // "butt" style line caps, even though they are drawn with a system
+      // that produces only "square" style line caps.
       final int farX = x + w - DEPTH;
       final int farY = y + h - DEPTH;
       xp = new int[] {farX, farX, x, farX};
