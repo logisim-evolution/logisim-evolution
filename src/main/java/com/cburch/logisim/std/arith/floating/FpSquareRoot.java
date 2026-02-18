@@ -73,9 +73,9 @@ public class FpSquareRoot extends InstanceFactory {
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    g.drawLine(x - 15, y, x - 12, y + 5);
-    g.drawLine(x - 12, y + 5, x - 9, y - 5);
-    g.drawLine(x - 9, y - 5, x - 5, y - 5);
+    int[] xPoints = {x - 15, x - 12, x - 9, x - 5};
+    int[] yPoints = {y, y + 5, y - 5, y - 5};
+    g.drawPolyline(xPoints, yPoints, xPoints.length);
 
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
