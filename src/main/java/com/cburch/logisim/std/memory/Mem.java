@@ -68,7 +68,7 @@ public abstract class Mem extends InstanceFactory {
 
   public static final int SymbolWidth = 200;
   public static final Attribute<BitWidth> ADDR_ATTR =
-      Attributes.forBitWidth("addrWidth", S.getter("ramAddrWidthAttr"), 2, 24);
+      Attributes.forBitWidth("addrWidth", S.getter("ramAddrWidthAttr"), 2, 32);
 
   public static final Attribute<BitWidth> DATA_ATTR =
       Attributes.forBitWidth("dataWidth", S.getter("ramDataWidthAttr"));
@@ -126,7 +126,7 @@ public abstract class Mem extends InstanceFactory {
     setInstancePoker(MemPoker.class);
     setKeyConfigurator(
         JoinedConfigurator.create(
-            new BitWidthConfigurator(ADDR_ATTR, 2, 24, 0), new BitWidthConfigurator(DATA_ATTR)));
+            new BitWidthConfigurator(ADDR_ATTR, 2, 32, 0), new BitWidthConfigurator(DATA_ATTR)));
 
     setOffsetBounds(Bounds.create(-140, -40, 140, 80));
   }
