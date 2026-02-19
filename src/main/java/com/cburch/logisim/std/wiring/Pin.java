@@ -84,8 +84,8 @@ public class Pin extends InstanceFactory {
     final InstanceState state;
     final RadixOption radix;
     final boolean tristate;
-    private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
-    private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
+    private static final Color VALID_COLOR = new Color(0x20, 0xc4, 0x20);
+    private static final Color INVALID_COLOR = new Color(0xff, 0x5e, 0x5e);
     final JButton ok;
     final JButton cancel;
 
@@ -237,8 +237,8 @@ public class Pin extends InstanceFactory {
     final PinState pinState;
     final InstanceState state;
     final boolean tristate;
-    private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
-    private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
+    private static final Color VALID_COLOR = new Color(0x20, 0xc4, 0x20);
+    private static final Color INVALID_COLOR = new Color(0xff, 0x5e, 0x5e);
     final JButton ok;
     final JButton cancel;
 
@@ -324,7 +324,7 @@ public class Pin extends InstanceFactory {
       add(text, gbc);
 
       pack();
-    }
+    } 
 
     public void accept() {
       final var s = text.getText();
@@ -361,6 +361,138 @@ public class Pin extends InstanceFactory {
           || s.equalsIgnoreCase("+inf")
           || s.equalsIgnoreCase("-inf")) return true;
 
+      try {
+        Double.parseDouble(s);
+        return true;
+      } catch (NumberFormatException e) {
+        return false;
+      }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        accept();
+      } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        setVisible(false);
+      }
+    }
+  }
+
+  private static class EditQ1616 extends JDialog implements BaseKeyListenerContract, LocaleListener {
+    private final JFormattedTextField text;
+    private final int bitWidth;
+    final PinState pinState;
+    final InstanceState state;
+    final boolean tristate;
+    private static final Color VALID_COLOR = new Color(0x20, 0xc4, 0x20);
+    private static final Color INVALID_COLOR = new Color(0xff, 0x5e, 0x5e);
+    final JButton ok;
+    final JButton cancel;
+
+    @Override
+    public void localeChanged() {
+      setTitle("Enter Q16.16 Value");
+      ok.setText(S.get("PinOkay"));
+      cancel.setText(S.get("PinCancel"));
+    }
+
+    public EditQ1616(InstanceState state) {
+      super();
+      this.state = state;
+      pinState = getState(state);
+      final var value = pinState.intendedValue;
+      bitWidth = value.getWidth();
+      final var attrs = (PinAttributes) state.getAttributeSet();
+      tristate = attrs.behavior == TRISTATE;
+
+      setTitle("Enter Q16.16 Value");
+      final var gbc = new GridBagConstraints();
+      ok = new JButton(S.get("PinOkay"));
+      cancel = new JButton(S.get("PinCancel"));
+
+      ok.addActionListener(e -> accept());
+      cancel.addActionListener(e -> EditQ1616.this.setVisible(false));
+
+      addWindowFocusListener(
+          new BaseWindowFocusListenerContract() {
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+              EditQ1616.this.setVisible(false);
+            }
+          });
+
+      setLayout(new GridBagLayout());
+
+      text = new JFormattedTextField();
+      text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
+      text.setColumns(11);
+      text.setText(RadixOption.RADIX_Q1616.toString(value));
+      text.selectAll();
+
+      text.getDocument()
+          .addDocumentListener(
+              new BaseDocumentListenerContract() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                  final var s = text.getText();
+                  if (isEditValid(s)) {
+                    text.setBackground(VALID_COLOR);
+                    ok.setEnabled(true);
+                  } else {
+                    text.setBackground(INVALID_COLOR);
+                    ok.setEnabled(false);
+                  }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                  insertUpdate(e);
+                }
+              });
+
+      gbc.gridx = 0;
+      gbc.gridy = 1;
+      add(cancel, gbc);
+      gbc.gridx = 1;
+      gbc.gridy = 1;
+      add(ok, gbc);
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.insets = new Insets(8, 4, 8, 4);
+      text.addKeyListener(this);
+      text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+      text.setBackground(VALID_COLOR);
+      add(text, gbc);
+
+      pack();
+    }
+
+    public void accept() {
+      final var s = text.getText();
+      if (isEditValid(s)) {
+        try {
+          double val = Double.parseDouble(s);
+          int bits = (int) Math.round(val * 65536.0);
+          pinState.intendedValue = Value.createKnown(BitWidth.create(bitWidth), bits);
+          state.fireInvalidated();
+        } catch (Exception ignored) {
+          // Do nothing
+        }
+        setVisible(false);
+      }
+    }
+
+    boolean isEditValid(String s) {
+      if (s == null) {
+        return false;
+      }
+      s = s.trim();
+      if (s.equals("")) {
+        return false;
+      }
       try {
         Double.parseDouble(s);
         return true;
@@ -575,6 +707,10 @@ public class Pin extends InstanceFactory {
         final var dialog = new EditFloat(state);
         dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
         dialog.setVisible(true);
+      } else if (radix == RadixOption.RADIX_Q1616) {
+        EditQ1616 dialog = new EditQ1616(state);
+        dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
+        dialog.setVisible(true);
       } else {
         int bit = getBit(state, e);
         if (bit == bitPressed && bit >= 0) {
@@ -594,6 +730,7 @@ public class Pin extends InstanceFactory {
     public void keyTyped(InstanceState state, KeyEvent e) {
       char ch = e.getKeyChar();
       RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
+      if (radix == RadixOption.RADIX_Q1616) return;
       if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED) return;
       int r = (radix == RadixOption.RADIX_16 ? 4 : (radix == RadixOption.RADIX_8 ? 3 : 1));
       BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
@@ -609,6 +746,7 @@ public class Pin extends InstanceFactory {
       if (bitCaret < 0) return;
       BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
       RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+      if (radix == RadixOption.RADIX_Q1616) return;
       if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED) return;
       int r = (radix == RadixOption.RADIX_16 ? 4 : (radix == RadixOption.RADIX_8 ? 3 : 1));
       if (width.getWidth() <= r) return;

@@ -77,7 +77,7 @@ public abstract class RadixOption extends AttributeOption {
         case 14, 15, 16 -> 5; // 8K..64K-1
         case 17, 18, 19 -> 6; // 64K..512K-1
         case 20, 21, 22, 23 -> 7; // 512K..8M-1
-        case 24, 25, 26 -> 8; // 8M..64M-1
+        case 24, 25, 26 -> 8; // 8M..64M-
         case 27, 28, 29 -> 9; // 64M..512M-1
         case 30, 31, 32, 33 -> 10; // 512M..8G-1
         case 34, 35, 36 -> 11; // 8G..64G-1
@@ -200,6 +200,44 @@ public abstract class RadixOption extends AttributeOption {
     }
   }
 
+  private static class RadixQ1616 extends RadixOption {
+    private RadixQ1616() {
+      super("q16.16", S.getter("radixQ1616"));
+    }
+
+    @Override
+    public int getMaxLength(BitWidth width) {
+      return switch (width.getWidth()) {
+        case 0 -> 1;
+        case 1, 2, 3, 4 -> 2;
+        case 5, 6, 7 -> 3;
+        case 8, 9, 10 -> 4;
+        case 11, 12, 13, 14 -> 5;
+        case 15, 16, 17 -> 6;
+        case 18, 19, 20 -> 7;
+        case 21, 22, 23, 24 -> 8;
+        case 25, 26, 27 -> 9;
+        case 28, 29, 30 -> 10;
+        case 31, 32, 33, 34 -> 11;
+        default -> 20;
+      };
+    }
+
+    @Override
+    public String toString(Value value) {
+      if (value == null || !value.isFullyDefined()) return "Q??";
+      long bits = value.toLongValue();
+      int signedBits = (int) bits;
+      double fixedValue = (double) signedBits / 65536.0;
+      return String.format("%.6f", fixedValue);
+    }
+
+    @Override
+    public String getIndexChar() {
+      return "q";
+    }
+  }
+
   public static RadixOption decode(String value) {
     for (final var opt : OPTIONS) {
       if (value.equals(opt.saveName)) {
@@ -220,8 +258,10 @@ public abstract class RadixOption extends AttributeOption {
 
   public static final RadixOption RADIX_FLOAT = new RadixFloat();
 
+  public static final RadixOption RADIX_Q1616 = new RadixQ1616();
+
   public static final RadixOption[] OPTIONS = {
-    RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16, RADIX_FLOAT
+    RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16, RADIX_FLOAT, RADIX_Q1616
   };
 
   public static final Attribute<RadixOption> ATTRIBUTE = Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
