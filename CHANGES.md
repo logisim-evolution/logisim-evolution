@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added Real-Time Clock component.
   * Enhanced Undo and Redo functionality:
     * Added "Undo History" dropdown menu to view and select specific undo actions.
     * Added "Redo History" dropdown menu to view and select specific redo actions.
