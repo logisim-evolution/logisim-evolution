@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added Real-Time Clock component.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.
     * Corrected disjoint corners on Square Root arithmetic components.
