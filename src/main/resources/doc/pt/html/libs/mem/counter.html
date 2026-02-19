@@ -6,7 +6,8 @@
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" src="../../../../icons/counter.gif" width="32" height="32">
+<h1><img align="center" src="../../../../icons/6464/counter.png" width="32" height="32">
+    
 <em>Contador</em></h1>
 
 <p><table>
@@ -106,6 +107,69 @@ efeito. </dd>
 
 </dl>
 
+</dl>
+
+<h2>Aparência Logisim-evolution (Padrão IEEE/IEC)</h2>
+<p>
+  Quando o atributo <b>Aparência</b> estiver definido como <b>Logisim-evolution</b>,
+  o contador utilizará símbolos gráficos padrão IEC/IEEE (IEC 617-12 e IEEE Std 91-1984).
+  Esta aparência inclui pinos de controle adicionais e indicadores de modo:
+</p>
+
+<center>
+  <table>
+    <thead>
+      <tr>
+        <th>Símbolo</th>
+        <th>Rótulo</th>
+        <th>Função</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td align="center"><b>G</b> (ou <b>G5</b>)</td>
+        <td>Habilitação da Contagem</td>
+        <td>Quando em nível alto (1), a contagem está habilitada. Quando em nível baixo (0), a contagem é mantida independentemente dos pulsos de clock.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M1</b></td>
+        <td>[load]</td>
+        <td>Controle do modo de carregamento. Ativa o carregamento a partir da entrada de Dados.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M2</b></td>
+        <td>[count]</td>
+        <td>Controle do modo de contagem. Ativa a operação de contagem.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M3</b></td>
+        <td>[up]</td>
+        <td>Controle de contagem crescente. Seleciona o modo de incremento.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>M4</b></td>
+        <td>[down]</td>
+        <td>Controle de contagem decrescente. Seleciona o modo de decremento.</td>
+      </tr>
+      <tr>
+        <td align="center"><b>2,3,5+/C6</b></td>
+        <td>Clock+</td>
+        <td>Entrada de clock para combinações específicas de modo (com habilitação de contagem ativa).</td>
+      </tr>
+      <tr>
+        <td align="center"><b>2,4,5-</b></td>
+        <td>Clock-</td>
+        <td>Caminho alternativo de entrada de clock para diferentes modos operacionais.</td>
+      </tr>
+    </tbody>
+  </table>
+</center>
+
+<p>
+  <b>Nota:</b> A aparência Logisim-evolution pode mostrar pinos de clock e <i>carry</i> duplicados.
+  Estes representam diferentes modos operacionais do contador de acordo com o padrão IEC/IEEE.
+  A funcionalidade é idêntica à aparência Clássica; apenas a representação gráfica difere.
+</p>
 
 <h2>Atributos</h2>
 

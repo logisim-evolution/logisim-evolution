@@ -15,23 +15,19 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.FailException;
+import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
-import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
   private final Project project;
   private final Circuit circuit;
+  private final CircuitState circuitState;
   private final TestVector vector;
-  private Instance[] pin;
+  private final TestVectorEvaluator evaluator;
   private Model model;
   private boolean canceled = false;
   private boolean paused = false;
@@ -42,10 +38,9 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     this.project = model.getProject();
     this.circuit = model.getCircuit();
+    this.circuitState = this.project.getCircuitState().cloneAsNewRootState(this);
     this.vector = model.getVector();
-
-    matchPins();
-
+    this.evaluator = new TestVectorEvaluator(circuitState, vector);
     model.getCircuit().addCircuitListener(this);
   }
 
@@ -54,9 +49,9 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     super("TestThread-Project");
     this.project = proj;
     this.circuit = circuit;
+    this.circuitState = CircuitState.createRootState(this.project, this.circuit, Thread.currentThread());
     this.vector = vec;
-
-    matchPins();
+    evaluator = new TestVectorEvaluator(circuitState, vector);
   }
 
   // used only for automated testing via command line arguments
@@ -77,30 +72,22 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
       System.err.println(S.get("testSetupFailed", e.getMessage()));
       return -1;
     }
+    return tester.doTestVector();
+  }
 
-    System.out.println(S.get("testRunning", Integer.toString(vec.data.size())));
-
-    int numPass = 0;
-    int numFail = 0;
-    for (int i = 0; i < vec.data.size(); i++) {
-      try {
-        System.out.print((i + 1) + " \r");
-        tester.test(i);
-        numPass++;
-      } catch (FailException e) {
+  public int doTestVector() {
+    System.out.println(S.get("testRunning", Integer.toString(vector.data.size())));
+    final var passFail = evaluator.evaluate((row, report) -> {
+      System.out.print((row + 1) + " \r");
+      if (report != null && !report.isEmpty()) {
         System.out.println();
-        System.err.println(S.get("testFailed", Integer.toString(i + 1)));
-        for (FailException e1 : e.getAll()) System.out.println("  " + e1.getMessage());
-        numFail++;
-      } catch (TestException e) {
-        System.out.println();
-        System.err.println(S.get("testFailed", (i + 1) + " " + e.getMessage()));
-        numFail++;
+        System.err.println(S.get("testFailed", Integer.toString(row + 1)));
+        for (final var e1 : report) System.out.println("  " + e1);
       }
-    }
+    });
     System.out.println();
-    System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
-    return 0;
+    System.out.println(S.get("testResults", Integer.toString(passFail[0]), Integer.toString(passFail[1])));
+    return passFail[1];
   }
 
   public void cancel() {
@@ -114,64 +101,23 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     else model.clearResults();
   }
 
-  void matchPins() throws TestException {
-    int n = vector.columnName.length;
-    pin = new Instance[n];
-    CircuitState state = CircuitState.createRootState(this.project, this.circuit);
-
-    for (int i = 0; i < n; i++) {
-      String columnName = vector.columnName[i];
-      for (Component comp : circuit.getNonWires()) {
-        if (!(comp.getFactory() instanceof Pin)) continue;
-        Instance inst = Instance.getInstanceFor(comp);
-        InstanceState pinState = state.getInstanceState(comp);
-        String label = pinState.getAttributeValue(StdAttr.LABEL);
-        if (label == null || !label.equals(columnName)) continue;
-        if (Pin.FACTORY.getWidth(inst).getWidth() != vector.columnWidth[i].getWidth())
-          throw new TestException(
-              "test vector column '"
-                  + columnName
-                  + "' has width "
-                  + vector.columnWidth[i]
-                  + ", but pin has width "
-                  + Pin.FACTORY.getWidth(inst));
-        pin[i] = inst;
-        break;
-      }
-      if (pin[i] == null)
-        throw new TestException("test vector column '" + columnName + "' has no matching pin");
-    }
-  }
-
   @Override
   public void run() {
     try {
-      for (int i = 0; i < vector.data.size() && !canceled; i++) {
-        while (paused) {
-          if (canceled) return;
-          try {
-            Thread.sleep(1000);
-          } catch (InterruptedException ignored) {
-          }
-        }
-        try {
-          test(i);
-          canceled = canceled || !model.setResult(vector, i, null);
-        } catch (TestException e) {
-          canceled = canceled || !model.setResult(vector, i, e);
-        }
-        Thread.yield();
-      }
+      executeSequentialTests();
     } finally {
       model.stop();
     }
   }
 
-  public void setPaused(boolean paused) {
-    this.paused = paused;
+  private void executeSequentialTests() {
+    evaluator.evaluate((row, report) -> {
+      canceled = canceled || !model.setResult(vector, row, report);
+      if (canceled) evaluator.setCanceled(canceled);
+    });
   }
 
-  private void test(int idx) throws TestException {
-    circuit.doTestVector(project, pin, vector.data.get(idx));
+  public void setPaused(boolean paused) {
+    this.paused = paused;
   }
 }

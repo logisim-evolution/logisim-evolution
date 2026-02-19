@@ -93,6 +93,15 @@ public abstract class DynamicElement extends AbstractCanvasObject {
       return s.toString();
     }
 
+    /*
+     * equivalent to .leaf().getAttributeSet().getValue(...)
+     */
+    public <V> V leafGetAttributeValue(Attribute<V> attr) {
+      // FOR-REVIEW: is it better to call .leaf() here?
+      return elt[elt.length - 1].getAttributeSet().getValue(attr);
+
+    }
+
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {
       if (!s.startsWith("/")) throw new IllegalArgumentException("Bad path: " + s);
       final var parts = s.substring(1).split("(?<!\\\\)/");

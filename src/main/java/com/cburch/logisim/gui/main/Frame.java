@@ -151,7 +151,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     toolbox = new Toolbox(project, this, menuListener);
     simExplorer = new SimulationExplorer(project, menuListener);
     bottomTab = new JTabbedPane();
-    bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
+    var fontName = "Dialog";
+    final var appFont = AppPreferences.APP_FONT.get();
+    if (appFont != null && !appFont.isBlank()) {
+      fontName = appFont;
+    }
+    
+    var fontStyle = AppPreferences.getPreferredFontStyle(fontName);
+    bottomTab.setFont(AppPreferences.getScaledFont(new Font(fontName, fontStyle, 9)));
     bottomTab.add(attrTable = new AttrTable(this));
     regTabContent = new RegTabContent(this);
     bottomTab.add(regTabContent);
@@ -176,7 +183,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     simPanel.add(simExplorer, BorderLayout.CENTER);
 
     topTab = new JTabbedPane();
-    topTab.setFont(new Font("Dialog", Font.BOLD, 9));
+    topTab.setFont(new Font(fontName, fontStyle, 9));
     topTab.add(explPanel);
     topTab.add(simPanel);
 

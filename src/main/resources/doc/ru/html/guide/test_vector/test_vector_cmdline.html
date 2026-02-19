@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="ru">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="ru">
+	<title>Использование из командной строки</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Использование из командной строки</h1>
+
+<p>Для облегчения автоматизированного тестирования функция тестовых векторов может быть запущена из командной строки:</p>
+
+<blockquote>
+<div class="forcode">
+<tt>logisim --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<p>Или используя JAR файл:</p>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector &lt;circuit_name&gt; &lt;test_vector_file&gt; &lt;project.circ&gt;</tt>
+</div>
+</blockquote>
+
+<h2>Аргументы</h2>
+
+<ul>
+<li><strong>&lt;circuit_name&gt;</strong>: Имя схемы для тестирования (должно совпадать с именем схемы в файле проекта)</li>
+<li><strong>&lt;test_vector_file&gt;</strong>: Путь к файлу тестового вектора (например, <code>TestsDLatch.txt</code>)</li>
+<li><strong>&lt;project.circ&gt;</strong>: Путь к файлу проекта Logisim, содержащему схему</li>
+</ul>
+
+<h2>Пример</h2>
+
+<blockquote>
+<div class="forcode">
+<tt>java -jar logisim-evolution.jar --test-vector dlatch TestsRegisterFile.txt /home/user/Computer.circ</tt>
+</div>
+</blockquote>
+
+<h2>Что делает команда</h2>
+
+<p>Команда выполнит:</p>
+
+<ol>
+<li>Загрузку указанной схемы из файла проекта</li>
+<li>Загрузку и разбор файла тестового вектора</li>
+<li>Запуск всех тестов (с учётом правил последовательного выполнения)</li>
+<li>Вывод результатов, показывающих пройденные и проваленные тесты</li>
+<li>Завершение с кодом статуса 0 при успехе, ненулевым при неудаче</li>
+</ol>
+
+<h2>Примеры вывода команды</h2>
+
+<p>Результат успешного теста будет отправлен в стандартный вывод (stdout), например:</p>
+
+	<pre class="code">
+Loading test vector "testv1b.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+4 
+
+Passed : 4, Failed : 0
+</pre>
+
+<p>А в случае неудачи:</p>
+
+	<pre class="code">
+Loading test vector "testv1a.txt" ...
+Running 4 vectors ...
+1 
+2 
+3 
+
+  ob = 0 (expected 1)
+4 
+
+  ob = 1 (expected 0)
+
+Passed : 2, Failed : 2
+</pre>
+
+<p><strong>Примечание:</strong> В выводе ошибок (stderr) вы прочитаете:</p>
+
+	<pre class="code">
+Error on test vector 3:
+Error on test vector 4:
+</pre>
+
+<p>
+	<b>Предыдущий:</b> <a href="test_vector_sequential.html">Последовательное тестирование</a> | <b>Следующий:</b> <a href="test_vector_tips.html">Советы и лучшие практики</a>.
+</p>
+
+</body>
+</html>
+

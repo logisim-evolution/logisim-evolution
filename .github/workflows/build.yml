@@ -36,11 +36,12 @@ jobs:
       with:
         filters: |
           src:
-            - 'src/**/*.flex'
             - 'src/**/*.java'
             - 'src/**/*.properties'
             - '*.gradle*'
             - 'gradle.properties'
+            - 'gradle/**/*.properties'
+            - 'build.gradle.kts'
 
     - name: "WILL BUILD STEP BE RUN?"
       run: |
@@ -68,13 +69,13 @@ jobs:
         java-version: ${{ env.JDK_VERSION }}
         distribution: ${{ env.JDK_DISTRO }}
     - name: Cache SonarCloud packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Cache Gradle packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
