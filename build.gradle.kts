@@ -21,7 +21,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.53.0"
   java
   application
-  id("com.gradleup.shadow") version "9.3.1"
+  id("com.gradleup.shadow") version "9.3.2"
   id("org.sonarqube") version "7.2.2.6593"
 }
 
