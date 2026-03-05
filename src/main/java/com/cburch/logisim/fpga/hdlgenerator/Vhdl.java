@@ -108,6 +108,10 @@ public class Vhdl {
     "while",
     "with",
     "xnor",
+    "endcase",   
+    "endgenerate", 
+    "endif",      
+    "endprocess",  
     "xor"
   };
 
@@ -121,11 +125,17 @@ public class Vhdl {
   }
 
   public static String getVhdlKeyword(String keyword) {
-    final var spaceStrippedKeyword = keyword.replace(" ", "").toLowerCase();
-    if (VHDL_KEYWORDS.contains(spaceStrippedKeyword))
-      return AppPreferences.VhdlKeywordsUpperCase.get()
-          ? keyword.toUpperCase()
-          : keyword.toLowerCase();
-    throw new IllegalArgumentException("An unknown VHDL keyword was passed!");
-  }
+	    // Force the conversion to use ROOT locale (standard English ASCII)
+	    final var spaceStrippedKeyword = keyword.replace(" ", "").toLowerCase(java.util.Locale.ROOT);
+
+	    if (VHDL_KEYWORDS.contains(spaceStrippedKeyword)) {
+	      return AppPreferences.VhdlKeywordsUpperCase.get()
+	          ? keyword.toUpperCase(java.util.Locale.ROOT)
+	          : keyword.toLowerCase(java.util.Locale.ROOT);
+	    }
+
+	    // This was very obscure
+	    System.err.println("FAILED ON: " + spaceStrippedKeyword); 
+	    throw new IllegalArgumentException("An unknown VHDL keyword was passed: " + keyword);
+	  }
 }
