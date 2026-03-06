@@ -47,34 +47,26 @@ public class Divider extends InstanceFactory {
     if (!hasUpper) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
       if (w <= 32) {
-        long bb = b.toSignExtendedLongValue();
-        long num;
-        if (hasUpper) {
-          long low = a.toLongValue();
-          long upp = (upper.toSignExtendedLongValue() << w);
-          num = (upp) | low;
-        } else {
-          num = a.toSignExtendedLongValue();
-        }
-        long den = bb == 0 ? 1 : bb;
-
-        long res, rem;
         if (unsigned) {
-          res = Long.divideUnsigned(num, den);
-          rem = Long.remainderUnsigned(num, den);
+          long bb = b.toLongValue();
+          long den = bb == 0 ? 1 : bb;
+          long num = hasUpper ? (upper.toLongValue() << w) | a.toLongValue() : a.toLongValue();
+          long res = Long.divideUnsigned(num, den);
+          long rem = Long.remainderUnsigned(num, den);
+          return new Value[] {Value.createKnown(width, res), Value.createKnown(width, rem)};
         } else {
-          res = num / den;
-          rem = num % den;
+          long bb = b.toSignExtendedLongValue();
+          long den = bb == 0 ? 1 : bb;
+          long num = hasUpper ? (upper.toSignExtendedLongValue() << w) | a.toLongValue() : a.toSignExtendedLongValue();
+          long res = num / den;
+          long rem = num % den;
+          return new Value[] {Value.createKnown(width, res), Value.createKnown(width, rem)};
         }
-
-        return new Value[] {Value.createKnown(width, res), Value.createKnown(width, rem)};
       }
-      BigInteger uu = upper.toBigInteger(unsigned);
-      BigInteger aa = a.toBigInteger(unsigned);
       BigInteger bb = b.toBigInteger(unsigned);
-
-      BigInteger num = uu.shiftLeft(w).or(aa);
-      BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
+      BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.ONE : bb;
+      BigInteger num = hasUpper ? upper.toBigInteger(unsigned).shiftLeft(w).or(a.toBigInteger(true))
+          : a.toBigInteger(unsigned);
 
       BigInteger[] res = num.divideAndRemainder(den);
       long result = res[0].longValue();
