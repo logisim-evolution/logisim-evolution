@@ -132,7 +132,7 @@ public abstract class PrintHandler implements Printable {
                     : ff == filters[2] ? ExportImage.FORMAT_JPG
                     : ff == filters[3] ? ExportImage.FORMAT_TIKZ
                     : ff == filters[4] ? ExportImage.FORMAT_SVG
-                    : ff == filters[5] ? ExportImage.FORMAT_WAVEDROM: ExportImage.FORMAT_SVG);
+                    : ff == filters[5] ? ExportImage.FORMAT_WAVEDROM : ExportImage.FORMAT_SVG);
     exportImage(dest, fmt);
   }
 
