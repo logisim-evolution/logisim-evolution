@@ -146,7 +146,6 @@ public class CanvasPanZoomHelper {
   }
 
   public boolean processMouseEvent(MouseEvent e, double unscaledX, double unscaledY) {
-    // 1. Handle Auto-Center Button Clicks
     if (e.getButton() == MouseEvent.BUTTON1 && zoomButtonVisible) {
       if (autoZoomButtonClicked(canvasPane.getViewport().getSize(), unscaledX, unscaledY)) {
         if (e.getID() == MouseEvent.MOUSE_PRESSED) {
@@ -169,7 +168,6 @@ public class CanvasPanZoomHelper {
       canvasTarget.repaint();
     }
 
-    // Panning Anchors
     if (e.getButton() == MouseEvent.BUTTON2 || javax.swing.SwingUtilities.isMiddleMouseButton(e)) {
       if (e.getID() == MouseEvent.MOUSE_PRESSED) {
         isPanning = true;
