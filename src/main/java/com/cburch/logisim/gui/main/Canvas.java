@@ -188,27 +188,12 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   public void center() {
     final var g = getGraphics();
     final var bounds = (g != null)
-        ? proj.getCurrentCircuit().getBounds(getGraphics())
+        ? proj.getCurrentCircuit().getBounds(g)
         : proj.getCurrentCircuit().getBounds();
-    if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
-      setScrollBar(0, 0);
-      return;
-    }
-    final var xpos =
-        (int)
-            (Math.round(
-                bounds.getX() * getZoomFactor()
-                    - (canvasPane.getViewport().getSize().getWidth()
-                            - bounds.getWidth() * getZoomFactor())
-                        / 2));
-    final var ypos =
-        (int)
-            (Math.round(
-                bounds.getY() * getZoomFactor()
-                    - (canvasPane.getViewport().getSize().getHeight()
-                            - bounds.getHeight() * getZoomFactor())
-                        / 2));
-    setScrollBar(xpos, ypos);
+
+    Point centerPos = panZoomHelper.getCenterScrollPosition(
+          bounds, canvasPane.getViewport().getSize(), getZoomFactor());
+    setScrollBar(centerPos.x, centerPos.y);
   }
 
   public void closeCanvas() {

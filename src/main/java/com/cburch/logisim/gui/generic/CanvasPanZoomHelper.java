@@ -15,6 +15,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -143,6 +144,19 @@ public class CanvasPanZoomHelper {
       
       g.setColor(oldColor);
     }
+  }
+
+  public Point getCenterScrollPosition(Bounds bounds, Dimension viewportSize, double zoomFactor) {
+    if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
+      return new Point(0, 0);
+    }
+    
+    int xPos = (int) Math.round(bounds.getX() * zoomFactor 
+                 - (viewportSize.getWidth() - bounds.getWidth() * zoomFactor) / 2);
+    int yPos = (int) Math.round(bounds.getY() * zoomFactor 
+                 - (viewportSize.getHeight() - bounds.getHeight() * zoomFactor) / 2);
+                 
+    return new Point(xPos, yPos);
   }
 
   public boolean processMouseEvent(MouseEvent e, double unscaledX, double unscaledY) {

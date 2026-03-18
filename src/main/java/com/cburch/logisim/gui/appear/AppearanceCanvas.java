@@ -33,6 +33,7 @@ import com.cburch.logisim.proj.Project;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -81,19 +82,13 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void center() {
-    if (circuitState == null || canvasPane == null) return;
     Bounds bounds = circuitState.getCircuit().getAppearance().getAbsoluteBounds();
-    if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
-      canvasPane.getHorizontalScrollBar().setValue(0);
-      canvasPane.getVerticalScrollBar().setValue(0);
-      return;
-    }
 
-    int xPos = (int) Math.round(bounds.getX() * getZoomFactor() - (canvasPane.getViewport().getSize().getWidth() - bounds.getWidth() * getZoomFactor()) / 2);
-    int yPos = (int) Math.round(bounds.getY() * getZoomFactor() - (canvasPane.getViewport().getSize().getHeight() - bounds.getHeight() * getZoomFactor()) / 2);
-
-    canvasPane.getHorizontalScrollBar().setValue(xPos);
-    canvasPane.getVerticalScrollBar().setValue(yPos);
+    Point centerPos = panZoomHelper.getCenterScrollPosition(
+        bounds, canvasPane.getViewport().getSize(), getZoomFactor());
+        
+    canvasPane.getHorizontalScrollBar().setValue(centerPos.x);
+    canvasPane.getVerticalScrollBar().setValue(centerPos.y);
   }
 
   private Bounds getDrawingBounds() {
