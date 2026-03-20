@@ -82,7 +82,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void center() {
-    Bounds bounds = circuitState.getCircuit().getAppearance().getAbsoluteBounds();
+    Bounds bounds = getDrawingBounds();
 
     Point centerPos = panZoomHelper.getCenterScrollPosition(
         bounds, canvasPane.getViewport().getSize(), getZoomFactor());

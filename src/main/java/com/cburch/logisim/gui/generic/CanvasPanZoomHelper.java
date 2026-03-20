@@ -20,6 +20,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 public class CanvasPanZoomHelper {
 
@@ -182,7 +183,7 @@ public class CanvasPanZoomHelper {
       canvasTarget.repaint();
     }
 
-    if (e.getButton() == MouseEvent.BUTTON2 || javax.swing.SwingUtilities.isMiddleMouseButton(e)) {
+    if (e.getButton() == MouseEvent.BUTTON2 || SwingUtilities.isMiddleMouseButton(e)) {
       if (e.getID() == MouseEvent.MOUSE_PRESSED) {
         isPanning = true;
         panStartX = e.getXOnScreen();
