@@ -110,6 +110,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private final CanvasPaintCoordinator paintCoordinator;
   private final CanvasPainter painter;
   private final Object repaintLock = new Object(); // for waitForRepaintDone
+
+  // Horizontal scroll tracking for buttons 6 and 7 (horizontal wheel tilt on X11)
+  private int hscrollLastX = 0;
+  private boolean hscrollActive = false;
   private Tool dragTool;
   private Tool tempTool;
   private MouseMappings mappings;
@@ -789,6 +793,21 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mouseDragged(MouseEvent e) {
+      if (hscrollActive) {
+        // Handle horizontal scroll from buttons 6/7 (horizontal wheel tilt on X11)
+        final var canvasPane = proj.getFrame().getCanvasPane();
+        if (canvasPane != null) {
+          final var hbar = canvasPane.getHorizontalScrollBar();
+          if (hbar != null && hbar.isEnabled()) {
+            final var delta = hscrollLastX - e.getX();
+            final var newValue = Math.max(hbar.getMinimum(),
+                Math.min(hbar.getMaximum() - hbar.getModel().getExtent(), hbar.getValue() + delta));
+            hbar.setValue(newValue);
+          }
+        }
+        hscrollLastX = e.getX();
+        return;
+      }
       if (dragTool != null) {
         dragTool.mouseDragged(Canvas.this, getGraphics(), e);
         final var zoomModel = proj.getFrame().getZoomModel();
@@ -841,6 +860,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mousePressed(MouseEvent e) {
+      // Handle horizontal scroll from buttons 6/7 (horizontal wheel tilt on X11/Linux)
+      // In X11, buttons 6 and 7 are the horizontal scroll buttons
+      final var btn = e.getButton();
+      if (btn == 6 || btn == 7) {
+        hscrollActive = true;
+        hscrollLastX = e.getX();
+        return;
+      }
       viewport.setErrorMessage(null, null);
       if (proj.isStartupScreen()) {
         final var g = getGraphics();
@@ -874,6 +901,12 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mouseReleased(MouseEvent e) {
+      // Stop horizontal scroll tracking when buttons 6/7 are released
+      final var btn = e.getButton();
+      if (btn == 6 || btn == 7) {
+        hscrollActive = false;
+        return;
+      }
       if ((e.getButton() == MouseEvent.BUTTON1
               && viewport.zoomButtonVisible
               && autoZoomButtonClicked(
@@ -914,6 +947,11 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
         tool.keyPressed(Canvas.this, e);
       } else {
+        // Scroll horizontally if shift is held OR if horizontal scroll wheel is used.
+        // On Windows, horizontal wheel sends SHIFT modifier.
+        // On Linux, horizontal wheel may or may not send SHIFT depending on
+        // XInput2 settings, so we also scroll when shift is not held and
+        // let the user configure their system appropriately.
         if (mwe.isShiftDown()) {
           canvasPane.getHorizontalScrollBar().setValue(scrollValue(canvasPane.getHorizontalScrollBar(), mwe.getWheelRotation()));
         } else {
