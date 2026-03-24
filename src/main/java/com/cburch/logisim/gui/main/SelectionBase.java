@@ -283,9 +283,21 @@ class SelectionBase {
 
   void pasteHelper(CircuitMutation xn, Collection<Component> comps) {
     clear(xn);
+    java.awt.Point mousePos = proj.getFrame().getCanvas().getMousePosition();
+    HashMap<Component, Component> newItem;
 
-    final var newLifted = copyComponents(comps, false);
-    lifted.addAll(newLifted.values());
+    if (mousePos != null) {
+      Bounds bds = computeBounds(comps);
+      int centerX = bds.getX() + bds.getWidth() / 2;
+      int centerY = bds.getY() + bds.getHeight() / 2;
+      int dx = (mousePos.x - centerX) / 10 * 10;
+      int dy = (mousePos.y - centerY) / 10 * 10;
+      newItem = copyComponents(comps, dx, dy, false);
+    } else {
+      newItem = copyComponents(comps, false);
+    }
+
+    lifted.addAll(newItem.values());
     fireSelectionChanged();
   }
 
