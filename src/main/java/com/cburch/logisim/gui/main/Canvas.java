@@ -841,13 +841,23 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mousePressed(MouseEvent e) {
+      int button = e.getButton();
+      if (button >= 4 && button <= 7) {
+        if (canvasPane != null) {
+          final var bar = canvasPane.getHorizontalScrollBar();
+          int direction = (button == 4 || button == 6) ? -1 : 1;
+          int scrollAmount = bar.getUnitIncrement() * 10 * direction;
+          bar.setValue(bar.getValue() + scrollAmount);
+        }
+        return;
+      }
+
       viewport.setErrorMessage(null, null);
       if (proj.isStartupScreen()) {
         final var g = getGraphics();
         final var bounds = (g != null)
               ? proj.getCurrentCircuit().getBounds(getGraphics())
               : proj.getCurrentCircuit().getBounds();
-        // set the project as dirty only if it contains something
         if (bounds.getHeight() != 0 || bounds.getWidth() != 0) proj.setStartupScreen(false);
       }
       if (e.getButton() == MouseEvent.BUTTON1
