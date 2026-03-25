@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.gui.appear;
 
-import com.cburch.logisim.gui.generic.CanvasPanZoomHelper;
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.actions.ModelReorderAction;
 import com.cburch.draw.canvas.ActionDispatcher;
@@ -29,11 +28,9 @@ import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CanvasPaneContents;
 import com.cburch.logisim.gui.generic.GridPainter;
 import com.cburch.logisim.proj.Project;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -55,7 +52,6 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
   private LayoutPopupManager popupManager;
-  private CanvasPanZoomHelper panZoomHelper;
 
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
@@ -82,59 +78,28 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void center() {
-    Bounds bounds = getDrawingBounds();
-
-    Point centerPos = panZoomHelper.getCenterScrollPosition(
-        bounds, canvasPane.getViewport().getSize(), getZoomFactor());
-        
-    canvasPane.getHorizontalScrollBar().setValue(centerPos.x);
-    canvasPane.getVerticalScrollBar().setValue(centerPos.y);
-  }
-
-  private Bounds getDrawingBounds() {
-    CanvasModel model = getModel();
-    if (model == null) return Bounds.create(0, 0, 50, 50);
-
-    int minX = Integer.MAX_VALUE;
-    int minY = Integer.MAX_VALUE;
-    int maxX = Integer.MIN_VALUE;
-    int maxY = Integer.MIN_VALUE;
-    boolean found = false;
-
-    for (CanvasObject o : model.getObjectsFromBottom()) {
-      Bounds b = o.getBounds();
-      if (b.getX() < minX) minX = b.getX();
-      if (b.getY() < minY) minY = b.getY();
-      if (b.getX() + b.getWidth() > maxX) maxX = b.getX() + b.getWidth();
-      if (b.getY() + b.getHeight() > maxY) maxY = b.getY() + b.getHeight();
-      found = true;
-    }
-
-    if (!found) return Bounds.create(0, 0, 50, 50);
-    return Bounds.create(minX, minY, maxX - minX, maxY - minY);
+    // do nothing
   }
 
   private void computeSize(boolean immediate) {
     hidePopup();
-    Bounds bounds = getDrawingBounds();
 
-    int width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
-    int height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
-
-    if (canvasPane != null && canvasPane.getViewport() != null) {
-      width += canvasPane.getViewport().getWidth();
-      height += canvasPane.getViewport().getHeight();
-    }
-
+    final var circState = circuitState;
+    Bounds bounds =
+        (circState == null)
+            ? Bounds.create(0, 0, 50, 50)
+            : circState.getCircuit().getAppearance().getAbsoluteBounds();
+    final var width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
+    final var height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
     Dimension dim =
-            (canvasPane == null)
-                    ? new Dimension(width, height)
-                    : canvasPane.supportPreferredSize(width, height);
+        (canvasPane == null)
+            ? new Dimension(width, height)
+            : canvasPane.supportPreferredSize(width, height);
     if (!immediate) {
       final var old = oldPreferredSize;
       if (old != null
-              && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
-              && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
+          && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
+          && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
         return;
       }
     }
@@ -261,36 +226,16 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     }
     super.paintForeground(gfxScaled);
     gfxScaled.dispose();
-
-    Rectangle vis = getVisibleRect();
-    Graphics gVis = g.create();
-    gVis.translate(vis.x, vis.y);
-
-    Bounds bds = getDrawingBounds();
-    Rectangle viewableBase = canvasPane.getViewport().getViewRect();
-
-    panZoomHelper.drawZoomAndArrows(gVis, vis.getSize(), bds, viewableBase, zoom);
-    gVis.dispose();
   }
 
   @Override
   protected void processMouseEvent(MouseEvent e) {
-    Rectangle visRect = getVisibleRect();
-    double unscaledX = e.getX() - visRect.x;
-    double unscaledY = e.getY() - visRect.y;
-
-    if (panZoomHelper.processMouseEvent(e, unscaledX, unscaledY)) {
-      return;
-    }
     repairEvent(e, grid.getZoomFactor());
     super.processMouseEvent(e);
   }
 
   @Override
   protected void processMouseMotionEvent(MouseEvent e) {
-    if (panZoomHelper.processMouseMotionEvent(e)) {
-      return;
-    }
     repairEvent(e, grid.getZoomFactor());
     super.processMouseMotionEvent(e);
   }
@@ -331,7 +276,6 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     canvasPane = value;
     computeSize(true);
     popupManager = new LayoutPopupManager(value, this);
-    panZoomHelper = new CanvasPanZoomHelper(this, canvasPane, this::center);
   }
 
   public void setCircuit(Project proj, CircuitState circuitState) {
