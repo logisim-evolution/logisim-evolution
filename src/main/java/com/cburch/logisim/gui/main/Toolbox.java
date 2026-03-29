@@ -15,23 +15,42 @@ import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Tool;
 import java.awt.BorderLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 class Toolbox extends JPanel {
   private static final long serialVersionUID = 1L;
   private final ProjectExplorer toolbox;
+  private final JTextField searchField;
 
   Toolbox(Project proj, Frame frame, MenuListener menu) {
     super(new BorderLayout());
 
     final var toolbarModel = new ToolboxToolbarModel(frame, menu);
     final var toolbar = new Toolbar(toolbarModel);
-    add(toolbar, BorderLayout.NORTH);
+
+    searchField = new JTextField();
+    searchField.setToolTipText("Filter components...");
+
+    final var northPanel = new JPanel();
+    northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+    northPanel.add(toolbar);
+    northPanel.add(searchField);
+    add(northPanel, BorderLayout.NORTH);
 
     toolbox = new ProjectExplorer(proj, false);
     toolbox.setListener(new ToolboxManip(proj, toolbox));
     add(new JScrollPane(toolbox), BorderLayout.CENTER);
+
+    searchField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override public void insertUpdate(DocumentEvent e)  { toolbox.setFilter(searchField.getText()); }
+      @Override public void removeUpdate(DocumentEvent e)  { toolbox.setFilter(searchField.getText()); }
+      @Override public void changedUpdate(DocumentEvent e) { toolbox.setFilter(searchField.getText()); }
+    });
 
     toolbarModel.menuEnableChanged(menu);
   }
@@ -44,3 +63,4 @@ class Toolbox extends JPanel {
     toolbox.updateStructure();
   }
 }
+
