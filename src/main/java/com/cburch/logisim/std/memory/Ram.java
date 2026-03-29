@@ -176,10 +176,6 @@ public class Ram extends Mem {
     return RamAppearance.getBounds(attrs);
   }
 
-  public MemContents getContents(InstanceState ramState) {
-    return getState(ramState).getContents();
-  }
-
   @Override
   MemState getState(Instance instance, CircuitState state) {
     return getState(state.getInstanceState(instance));

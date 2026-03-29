@@ -107,7 +107,7 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
     gfx.translate(loc.getX(), loc.getY());
     Font f = gfx.getFont();
     gfx.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(gfx, "SOC VGA", bds.getWidth() / 2, 10);
+    GraphicsUtil.drawCenteredText(gfx, S.get("SocVgaComponent"), bds.getWidth() / 2, 10);
     gfx.setFont(f);
     painter
         .getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)

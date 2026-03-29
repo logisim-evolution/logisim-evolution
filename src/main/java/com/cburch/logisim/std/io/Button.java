@@ -247,8 +247,20 @@ public class Button extends InstanceFactory {
       g.setColor(color);
       g.fillRect(x, y, w - DEPTH, h - DEPTH);
       g.setColor(baseColor);
-      g.drawRect(x, y, w - DEPTH, h - DEPTH);
-      g.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
+      g.drawPolygon(xp, yp, xp.length);
+
+      // The following two draws are supposed to be polygons, not polylines.
+      // This is not a mistake, but rather a graphical trick which leverages
+      // the implicit miter limit to produce lines that look like they have
+      // "butt" style line caps, even though they are drawn with a system
+      // that produces only "square" style line caps.
+      final int farX = x + w - DEPTH;
+      final int farY = y + h - DEPTH;
+      xp = new int[] {farX, farX, x, farX};
+      yp = new int[] {y, farY, farY, farY};
+      g.drawPolygon(xp, yp, xp.length);
+      xp = new int[] {farX, x + w};
+      yp = new int[] {farY, y + h};
       g.drawPolygon(xp, yp, xp.length);
     }
 

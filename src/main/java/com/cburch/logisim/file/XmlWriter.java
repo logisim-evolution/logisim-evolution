@@ -79,7 +79,7 @@ final class XmlWriter {
     this(file, doc, loader, outFilePath, null, false);
   }
 
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, 
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath,
       String mainCircFile, boolean recursiveCall) {
     this.file = file;
     this.doc = doc;
@@ -119,7 +119,7 @@ final class XmlWriter {
   }
 
   private static int stringCompare(String stringA, String stringB) {
-    if (stringA == null) return -1;
+    if (stringA == null) return stringB == null ? 0 : -1;
     if (stringB == null) return 1;
     return stringA.compareTo(stringB);
   }
@@ -416,7 +416,7 @@ final class XmlWriter {
             } else {
               writeLogisimFileToZip(zipFile, origFile, newFile);
             }
-            desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, isRecursiveCall 
+            desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, isRecursiveCall
                 ? LineBuffer.format(".{{1}}{{2}}", File.separator, filename)
                 : LineBuffer.format(".{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename));
           }
@@ -558,7 +558,7 @@ final class XmlWriter {
     }
     fileReader.close();
   }
-  
+
   private void writeLogisimFileToZip(ZipOutputStream zipFile, String inputFileName, String outputFileName) throws IOException, LoadFailedException {
     final var newLoader = new Loader(null);
     newLoader.setZipFile(zipFile);

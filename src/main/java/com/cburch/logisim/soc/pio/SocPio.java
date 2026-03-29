@@ -189,7 +189,7 @@ public class SocPio extends SocInstanceFactory {
     paintPins(painter, g2, loc);
     final var f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "SOC parallel IO", loc.getX() + 210, loc.getY() + 50);
+    GraphicsUtil.drawCenteredText(g2, S.get("SocPioComponent"), loc.getX() + 210, loc.getY() + 50);
     g2.setFont(f);
     if (painter.isPrintView()) return;
     painter

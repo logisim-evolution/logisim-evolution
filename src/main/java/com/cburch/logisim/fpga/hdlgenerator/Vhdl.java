@@ -1,12 +1,13 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
+/** Logisim-evolution VHDL keyword manager. */
 public class Vhdl {
 
   private static final String[] RESERVED_VHDL_WORDS = {
@@ -35,6 +36,10 @@ public class Vhdl {
     "else",
     "elsif",
     "end",
+    "endcase",
+    "endgenerate",
+    "endif",
+    "endprocess",
     "entity",
     "exit",
     "file",
@@ -114,18 +119,27 @@ public class Vhdl {
   public static final List<String> VHDL_KEYWORDS = Arrays.asList(RESERVED_VHDL_WORDS);
 
   public static Set<String> getVhdlKeywords() {
-    final var keywords = new TreeSet<String>();
-    for (final var keyword : VHDL_KEYWORDS)
-      keywords.add(AppPreferences.VhdlKeywordsUpperCase.get() ? keyword.toUpperCase() : keyword);
+    final Set<String> keywords = new TreeSet<>();
+    for (final String keyword : VHDL_KEYWORDS) {
+      keywords.add(
+          AppPreferences.VhdlKeywordsUpperCase.get()
+              ? keyword.toUpperCase(Locale.ROOT)
+              : keyword.toLowerCase(Locale.ROOT)); // IMPORTANT!
+      
+    }
     return keywords;
   }
 
   public static String getVhdlKeyword(String keyword) {
-    final var spaceStrippedKeyword = keyword.replace(" ", "").toLowerCase();
-    if (VHDL_KEYWORDS.contains(spaceStrippedKeyword))
+    final String spaceStrippedKeyword = keyword.replace(" ", "").toLowerCase(Locale.ROOT);
+
+    if (VHDL_KEYWORDS.contains(spaceStrippedKeyword)) {
       return AppPreferences.VhdlKeywordsUpperCase.get()
-          ? keyword.toUpperCase()
-          : keyword.toLowerCase();
-    throw new IllegalArgumentException("An unknown VHDL keyword was passed!");
+          ? keyword.toUpperCase(Locale.ROOT)
+          : keyword.toLowerCase(Locale.ROOT);
+    }
+
+    System.err.println("FAILED ON: " + spaceStrippedKeyword);
+    throw new IllegalArgumentException("An unknown VHDL keyword was passed: " + keyword);
   }
 }

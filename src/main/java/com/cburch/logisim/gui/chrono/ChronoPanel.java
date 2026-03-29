@@ -36,6 +36,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -394,6 +398,84 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
           g.translate(l.width + 3, HEADER_HEIGHT);
           rightPanel.print(g);
           g.translate(-(l.width + 3), -HEADER_HEIGHT);
+        }
+
+        @Override
+        public void exportWaveDrom(File dest) {
+          try (PrintWriter writer = new PrintWriter(dest, StandardCharsets.UTF_8)) {
+            writer.println("{");
+            writer.println("  \"signal\": [");
+
+            final var t0 = model.getStartTime();
+            final var t1 = model.getEndTime();
+            final var timeScale = model.getTimeScale();
+            final var numSignals = model.getSignalCount();
+
+            for (int i = 0; i < numSignals; i++) {
+              final var signal = model.getSignal(i);
+              writer.print("    { \"name\": \"" + signal.info.getDisplayName() + "\", \"wave\": \"");
+
+              final var cur = signal.new Iterator(t0);
+              final var wave = new StringBuilder();
+              final var dataList = new ArrayList<String>();
+
+              String lastWChar = "";
+              String lastValStr = "";
+
+              for (long t = t0; t <= t1; t += timeScale) {
+
+                while (cur.value != null && (cur.time + cur.duration <= t)) {
+                  if (!cur.advance()) break;
+                }
+
+                final var v = (cur.value != null) ? cur.getFormattedValue() : "x";
+                String wChar;
+                String wData = null;
+
+                if (v.contains("E") || v.contains("x") || v.contains("U")) {
+                  wChar = "x";
+                } else if (v.equals(signal.getFormattedMinValue())) {
+                  wChar = "0";
+                } else if (v.equals(signal.getFormattedMaxValue())) {
+                  wChar = "1";
+                } else {
+                  wChar = "2";
+                  wData = v;
+                }
+
+                if (wChar.equals(lastWChar) && v.equals(lastValStr)) {
+                  wave.append(".");
+                } else {
+                  wave.append(wChar);
+                  if (wData != null) dataList.add(wData);
+                  lastWChar = wChar;
+                  lastValStr = v;
+                }
+              }
+
+              writer.print(wave.toString() + "\"");
+
+              if (!dataList.isEmpty()) {
+                writer.print(", \"data\": [");
+                for (int d = 0; d < dataList.size(); d++) {
+                  writer.print("\"" + dataList.get(d) + "\"");
+                  if (d < dataList.size() - 1) writer.print(", ");
+                }
+                writer.print("]");
+              }
+
+              if (i < numSignals - 1) {
+                writer.println(" },");
+              } else {
+                writer.println(" }");
+              }
+            }
+
+            writer.println("  ]");
+            writer.println("}");
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
 
         @Override

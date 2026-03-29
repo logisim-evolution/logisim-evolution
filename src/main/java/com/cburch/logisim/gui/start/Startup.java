@@ -100,7 +100,11 @@ public class Startup implements AWTEventListener {
   private String circuitToTest = null;
   private boolean exitAfterStartup = false;
   private boolean showSplash;
-  private File loadFile;
+
+  /* File contains the data that should be loaded into a RAM/ROM with a label matching the String
+     (if no label is provided, File is loaded into every RAM/ROM) */
+  private final HashMap<String, File> memoryLoadFiles = new HashMap<>();
+
   private File saveFile;
   private int ttyFormat = 0;
   // from other sources
@@ -326,7 +330,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
-    addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
+    addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
     addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
@@ -428,7 +432,7 @@ public class Startup implements AWTEventListener {
       logger.error(S.get("ttyNeedsFileError"));
       return null;
     }
-    if (startup.loadFile != null && !startup.isTty) {
+    if (!startup.memoryLoadFiles.isEmpty() && !startup.isTty) {
       logger.error(S.get("loadNeedsTtyError"));
       return null;
     }
@@ -506,13 +510,26 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgLoad(Startup startup, Option opt) {
-    if (startup.loadFile != null) {
-      logger.error(S.get("loadMultipleError"));
-      // FIXME: shouldn't we quit here? -> RC.QUIT;
-      return RC.WARN;
+    final var optArgs = opt.getValues();
+
+    if (optArgs == null) {
+      logger.error(S.get("argLoadInvalidArguments"));
+      return RC.QUIT;
     }
-    final var fileName = opt.getValue();
-    startup.loadFile = new File(fileName);
+
+    final var argsCnt = optArgs.length;
+    if (argsCnt < 1 || argsCnt > 2) {
+      logger.error(S.get("argLoadInvalidArguments"));
+      return RC.QUIT;
+    }
+
+    final var label = argsCnt == 1 ? "" : optArgs[1];
+    if (startup.memoryLoadFiles.containsKey(label)) {
+      logger.error(S.get("argLoadDuplicateLabel", label));
+      return RC.QUIT;
+    }
+    startup.memoryLoadFiles.put(label, new File(optArgs[0]));
+
     return RC.OK;
   }
 
@@ -795,8 +812,8 @@ public class Startup implements AWTEventListener {
     return filesToOpen;
   }
 
-  File getLoadFile() {
-    return loadFile;
+  HashMap<String, File> getMemoryLoadFiles() {
+    return memoryLoadFiles;
   }
 
   File getSaveFile() {

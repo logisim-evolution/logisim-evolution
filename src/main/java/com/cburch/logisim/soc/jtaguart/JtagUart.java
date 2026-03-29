@@ -125,7 +125,7 @@ public class JtagUart extends SocInstanceFactory {
     GraphicsUtil.drawCenteredText(g2, "TTY", loc.getX() + 175, loc.getY() + 10);
     Font f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "Jtag Uart", loc.getX() + 250, loc.getY() + 10);
+    GraphicsUtil.drawCenteredText(g2, S.get("SocJtagUartComponent"), loc.getX() + 250, loc.getY() + 10);
     g2.setFont(f);
     if (painter.isPrintView()) return;
     painter

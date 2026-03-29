@@ -21,6 +21,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.generated.BuildInfo;
@@ -54,16 +55,29 @@ import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.Timer;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -229,9 +243,144 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     mainPanel.addChangeListener(myProjectListener);
     AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myProjectListener);
     placeToolbar();
+    installFileDropTargets();
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+  }
+
+  private final class FileDropTargetListener extends DropTargetAdapter {
+    @Override
+    public void dragEnter(DropTargetDragEvent event) {
+      if (supportsFileDrop(event.getCurrentDataFlavors())) {
+        event.acceptDrag(DnDConstants.ACTION_COPY);
+      } else {
+        event.rejectDrag();
+      }
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent event) {
+      if (supportsFileDrop(event.getCurrentDataFlavors())) {
+        event.acceptDrag(DnDConstants.ACTION_COPY);
+      } else {
+        event.rejectDrag();
+      }
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent event) {
+      if (!supportsFileDrop(event.getCurrentDataFlavors())) {
+        event.rejectDrop();
+        return;
+      }
+
+      var success = false;
+      event.acceptDrop(DnDConstants.ACTION_COPY);
+      try {
+        final var transferable = event.getTransferable();
+        final var droppedData = transferable.getTransferData(DataFlavor.javaFileListFlavor);
+        if (droppedData instanceof List<?> files) {
+          success = openDroppedFiles(files);
+        }
+      } catch (Exception ex) {
+        success = false;
+      }
+      event.dropComplete(success);
+    }
+  }
+
+  private void installFileDropTargets() {
+    final var listener = new FileDropTargetListener();
+    final Set<java.awt.Component> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    installFileDropTarget(this, listener, seen);
+    installFileDropTarget(getJMenuBar(), listener, seen);
+    installFileDropTarget(getRootPane(), listener, seen);
+    installFileDropTarget(getLayeredPane(), listener, seen);
+    installFileDropTarget(getContentPane(), listener, seen);
+  }
+
+  private void installFileDropTarget(
+      java.awt.Component component, FileDropTargetListener listener, Set<java.awt.Component> seen) {
+    if (component == null || !seen.add(component)) {
+      return;
+    }
+
+    new DropTarget(component, DnDConstants.ACTION_COPY, listener, true);
+    if (component instanceof Container container) {
+      for (final var child : container.getComponents()) {
+        installFileDropTarget(child, listener, seen);
+      }
+    }
+  }
+
+  private boolean openDroppedFiles(List<?> droppedFiles) {
+    var openedAny = false;
+    for (final var item : droppedFiles) {
+      if (!(item instanceof File file)) {
+        continue;
+      }
+
+      if (!isProjectFile(file) && !confirmOpenNonProjectFile(file)) {
+        continue;
+      }
+
+      openedAny |= openDroppedFile(file);
+    }
+    return openedAny;
+  }
+
+  private boolean openDroppedFile(File file) {
+    final var shouldReuseCurrent = shouldOpenDropInCurrentWindow();
+    final var previousStartupScreen = project.isStartupScreen();
+    if (shouldReuseCurrent && !previousStartupScreen) {
+      project.setStartupScreen(true);
+    }
+
+    final var openedProject = ProjectActions.doOpen(this, project, file);
+    if (shouldReuseCurrent && openedProject != project) {
+      project.setStartupScreen(previousStartupScreen);
+    }
+    return openedProject != null;
+  }
+
+  private boolean shouldOpenDropInCurrentWindow() {
+    final var loader = project.getLogisimFile().getLoader();
+    final var currentCircuit = project.getCurrentCircuit();
+    return loader != null
+        && loader.getMainFile() == null
+        && !project.isFileDirty()
+        && currentCircuit != null
+        && currentCircuit.getBounds().getWidth() == 0
+        && currentCircuit.getBounds().getHeight() == 0;
+  }
+
+  private boolean confirmOpenNonProjectFile(File file) {
+    final var message =
+        S.get("dragOpenNonProjectMessage", file.getAbsolutePath(), Loader.LOGISIM_EXTENSION);
+    final var result =
+        OptionPane.showConfirmDialog(
+            this,
+            message,
+            S.get("dragOpenNonProjectTitle"),
+            OptionPane.YES_NO_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    return result == OptionPane.YES_OPTION;
+  }
+
+  private boolean isProjectFile(File file) {
+    final var name = file.getName().toLowerCase(Locale.ROOT);
+    return name.endsWith(Loader.LOGISIM_EXTENSION);
+  }
+
+  private boolean supportsFileDrop(DataFlavor[] flavors) {
+    for (final var flavor : flavors) {
+      if (DataFlavor.javaFileListFlavor.equals(flavor)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public RegTabContent getRegTabContent() {

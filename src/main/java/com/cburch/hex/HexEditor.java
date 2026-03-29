@@ -37,7 +37,6 @@ public class HexEditor extends JComponent implements Scrollable {
     this.highlighter = new Highlighter(this);
 
     setOpaque(true);
-    setBackground(Color.WHITE);
     if (model != null) model.addHexModelListener(listener);
 
     measures.recompute();

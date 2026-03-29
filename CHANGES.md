@@ -3,7 +3,17 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Increased number of components which may be displayed on custom circut appearences and increased
+  * Added support for opening project files by dragging them into the application window.
+  * Added ability to load multiple RAM or ROM memories from the command line
+  * Added Real-Time Clock component.
+  * Improved drawing appearance:
+    * Corrected font choice for default fonts in TikZ image exports.
+    * Corrected disjoint corners on Square Root arithmetic components.
+    * Corrected disjoint corners on unpressed Button components.
+    * Reduced line reordering errors in TikZ/SVG image exports.
+
+* v4.1.0 (2026-02-15)
+  * Increased number of components which may be displayed on custom circuit appearances and increased
     options for existing ones.
   * Bug fixes:
     * Fixed more synchronization issues with simulation tree and propagator.
@@ -24,6 +34,8 @@
   * Corrected appearance of OR gates in TikZ/SVG image exports.
   * Corrected font choice for default fonts in SVG image exports.
   * Reduced filesize of TikZ/SVG image exports.
+  * Enhanced SoC component labels.
+  * Enhanced Chinese localization.
   * Added DMA copy engine component (SocDma) in the System On Chip library.
 
 * v4.0.0 (2025-09-07)

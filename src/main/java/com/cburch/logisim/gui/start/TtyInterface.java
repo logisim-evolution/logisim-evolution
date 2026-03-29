@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
+import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
@@ -36,8 +37,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,21 +211,29 @@ public class TtyInterface {
     }
   }
 
-  private static boolean loadRam(CircuitState circState, File loadFile) throws IOException {
-    if (loadFile == null) return false;
-
-    var found = false;
+  private static HashSet<String> loadMemories(CircuitState circState, HashMap<String, File> memToLoad) throws IOException {
+    final var found = new HashSet<String>();
     for (final var comp : circState.getCircuit().getNonWires()) {
-      if (comp.getFactory() instanceof Ram ramFactory) {
-        final var ramState = circState.getInstanceState(comp);
-        final var m = ramFactory.getContents(ramState);
-        HexFile.open(m, loadFile);
-        found = true;
+      if (comp.getFactory() instanceof Mem memFactory) {
+        final var memLabel = comp.getAttributeSet().getValue(StdAttr.LABEL);
+        var key = memLabel == null ? "" : memLabel; // use no-label key if no label was found
+        var loadFile = memToLoad.get(key);
+        if (loadFile == null) {
+          key = "";
+          loadFile = memToLoad.get(key); // use no-label file if no file for components label
+        }
+        if (loadFile != null) {
+          final var memState = circState.getInstanceState(comp);
+          final var m = memFactory.getContents(memState);
+          HexFile.open(m, loadFile);
+          circState.markComponentAsDirty(comp);
+          found.add(key);
+        }
       }
     }
 
     for (final var sub : circState.getSubstates()) {
-      found |= loadRam(sub, loadFile);
+      found.addAll(loadMemories(sub, memToLoad));
     }
     return found;
   }
@@ -318,26 +329,25 @@ public class TtyInterface {
     }
 
     CircuitState circState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
+    final var prop = circState.getPropagator();
+    prop.propagate(); // adds the substates so we can search them.
 
-    // we load the ram before first propagation
-    // so the first propagation emits correct values
-    if (args.getLoadFile() != null) {
+    final var memoriesToLoad = args.getMemoryLoadFiles();
+    if (!memoriesToLoad.isEmpty()) {
       try {
-        final var loaded = loadRam(circState, args.getLoadFile());
-        if (!loaded) {
-          logger.error("{}", S.get("loadNoRamError"));
+        final var loaded = loadMemories(circState, memoriesToLoad);
+        if (loaded.size() != memoriesToLoad.size()) {
+          final var keys = memoriesToLoad.keySet();
+          keys.removeAll(loaded);
+          logger.error("{}", S.get("loadNoRamError", keys));
           System.exit(-1);
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("loadIoError"), e.toString());
         System.exit(-1);
       }
+      prop.propagate(); // propagate memory values before running simulation.
     }
-
-    // we have to do our initial propagation before the simulation starts -
-    // it's necessary to populate the circuit with substates.
-    final var prop = circState.getPropagator();
-    prop.propagate();
 
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);

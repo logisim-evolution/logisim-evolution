@@ -130,7 +130,7 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
     }
     final var f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "RISC V IM simulator", loc.getX() + 320, loc.getY() + 630);
+    GraphicsUtil.drawCenteredText(g2, S.get("Rv32imComponent"), loc.getX() + 320, loc.getY() + 630);
     g2.setFont(f);
     if (painter.isPrintView()) return;
     painter

@@ -58,6 +58,7 @@ public class ExportImage {
   public static final int FORMAT_JPG = 2;
   public static final int FORMAT_TIKZ = 3;
   public static final int FORMAT_SVG = 4;
+  public static final int FORMAT_WAVEDROM = 5;
   static final Logger logger = LoggerFactory.getLogger(ExportImage.class);
 
   private static final int SLIDER_DIVISIONS = 6;
@@ -80,6 +81,8 @@ public class ExportImage {
         return new ImageFileFilter(fmt, S.getter("exportTikZFilter"), new String[] {"tex"});
       case FORMAT_SVG:
         return new ImageFileFilter(fmt, S.getter("exportSvgFilter"), new String[] {"svg"});
+      case FORMAT_WAVEDROM:
+        return new ImageFileFilter(fmt, S.getter("exportWaveDromFilter"), new String[] {"json"});
       default:
         logger.error("Unexpected image format; aborted!");
         return null;

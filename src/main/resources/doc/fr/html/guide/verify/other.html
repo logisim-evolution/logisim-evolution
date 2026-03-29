@@ -16,31 +16,28 @@
       <h1>
         Autres options de vérifications
       </h1>
-      <p>
-        Il y a quelques options supplémentaires liées à l'exécution en ligne de commande.
-      </p>
       <h2>
-        Le paramètre en ligne de commande <tt>-load</tt>
+        The <tt>--load</tt> command-line parameter
       </h2>
       <p>
-        Un circuit plus complexe pourrait inclure un composant RAM qui doit être chargé avec un programme pour que le circuit fonctionne. Vous pouvez spécifier un fichier image mémoire sur la ligne de commande, qui sera chargé dans tout composant RAM du circuit avant que la simulation ne commence. Cela fonctionne uniquement avec l'exécution en ligne de commande.
+        A more complex circuit might include RAM or ROM components that need to be loaded with a program or data in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM or ROM components in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.)
       </p>
       <blockquote>
 	  <div class=forcode>
-        <tt>java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt</tt>
-	  </div> 
+        <tt>java -jar logisim-filename.jar cpu.circ --tty table --load ram-image.txt --load rom-image.txt myRom </tt>
+		</div>
       </blockquote>
       <p>
-        L'ordre des paramètres n'est pas important (sauf que le paramètre <tt>table</tt> doit être immédiatement après <tt>-tty</tt> et le nom de fichier de l'image mémoire doit être immédiatement après <tt>-load</tt> ). Le fichier image de la mémoire doit se trouver dans <a href="../mem/mem-menu.html">le format d'image mémoire de Logisim</a> .
+        The <tt>--tty</tt> parameters (see below) must be immediately after <tt>--tty</tt>, and the memory image's filename must be immediately after <tt>--load</tt>). The filename may be followed by the label of the memory component that should be loaded. There may be as many <tt>--load</tt> options as you need. The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>.
       </p>
       <p>
-        Logisim recherche la RAM de manière récursive, donc cela fonctionnera toujours si la RAM est imbriquée dans un sous-circuit. Cependant, il n'y a aucun moyen de distinguer différents composants de la RAM: Logisim tentera de charger le même fichier dans chaque mémoire vive qu'il peut trouver.
+        Logisim searches for memory recursively, so this will still work if the memory is nested within a subcircuit. Logisim will attempt to load the same file into every RAM or ROM that it can find with a matching label. If no label is provided, the same file is loaded into every RAM or ROM component other than those with labels matching other <tt>--load</tt> options. In the example above, the <tt>ram-image.txt</tt> is loaded into every RAM and ROM component in the simulation tree other than those that have the label <tt>myRom</tt>. All RAM and ROM components that have the label <tt>myRom</tt> will be loaded from the <tt>rom-image.txt</tt> file. The order of the <tt>--load</tt> options does not matter.
       </p>
       <h2>
-        Le paramètre en ligne de commande <tt>-tty</tt>
+        Le paramètre en ligne de commande <tt>--tty</tt>
       </h2>
       <p>
-        Dans nos exemples, nous avons toujours utilisé la commande <tt><b>-tty&nbsp;table</b></tt> pour indiquer qu'une table de valeurs de sortie doit être affichée. Vous pouvez personnaliser le comportement autrement en répertoriant une ou plusieurs options séparées par des virgules. Par exemple, vous pouvez écrire <tt><b>-tty&nbsp;table,halt,speed</b></tt> et le programme exécutera les trois comportements répertoriés ci-dessous. (L'ordre dans lequel ils sont répertoriés n'a pas d'importance.)
+        Dans nos exemples, nous avons toujours utilisé la commande <tt><b>--tty&nbsp;table</b></tt> pour indiquer qu'une table de valeurs de sortie doit être affichée. Vous pouvez personnaliser le comportement autrement en répertoriant une ou plusieurs options séparées par des virgules. Par exemple, vous pouvez écrire <tt><b>--tty&nbsp;table,halt,speed</b></tt> et le programme exécutera les trois comportements répertoriés ci-dessous. (L'ordre dans lequel ils sont répertoriés n'a pas d'importance.)
       </p>
       <dl>
         <dt>
@@ -56,7 +53,7 @@
         </dt>
         <dd>
           <p>
-            Si vous utilisez <tt>speed</tt> en conjonction avec <tt>-tty</tt>, après avoir terminé la simulation, Logisim affichera les mesures résumées de la rapidité de simulation du circuit, telles que:
+            Si vous utilisez <tt>speed</tt> en conjonction avec <tt>--tty</tt>, après avoir terminé la simulation, Logisim affichera les mesures résumées de la rapidité de simulation du circuit, telles que:
           </p>
           <blockquote>
             <tt>714 Hz (509 ticks in 712 milliseconds)</tt>
@@ -109,7 +106,7 @@
           <p>
             <b>Suite:</b> <a href="multi.html">Tester de multiples fichiers</a>.
           </p>
-        
+
     </div>
   </body>
 </html>
