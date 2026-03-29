@@ -292,6 +292,14 @@ class SelectionBase {
       int centerY = bds.getY() + bds.getHeight() / 2;
       int dx = (mousePos.x - centerX) / 10 * 10;
       int dy = (mousePos.y - centerY) / 10 * 10;
+      int newX = bds.getX() + dx;
+      int newY = bds.getY() + dy;
+      if (newX < 0) {
+        dx = dx - newX;
+      }
+      if (newY < 0) {
+        dy = dy - newY;
+      }
       newItem = copyComponents(comps, dx, dy, false);
     } else {
       newItem = copyComponents(comps, false);
