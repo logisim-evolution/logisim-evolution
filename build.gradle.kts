@@ -900,3 +900,13 @@ tasks {
     source = fileTree("src/test/java")
   }
 }
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        html.required.set(true)
+        xml.required.set(false)
+        csv.required.set(false)
+    }
+}

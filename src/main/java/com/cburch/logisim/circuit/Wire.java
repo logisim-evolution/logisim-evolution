@@ -53,7 +53,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   /** Stroke width when drawing wires. */
-  public static final int WIDTH = 3;
+  public static final int WIDTH = 4;
 
   public static final int WIDTH_BUS = 4;
   public static final int HIGHLIGHTED_WIDTH = 4;
@@ -141,7 +141,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
     final var state = context.getCircuitState();
     final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, WIDTH);
-    g.setColor(state.getValue(e0).getColor());
+    g.setColor(new Color(255, 87, 180));//turn wires pink
     g.drawLine(e0.getX(), e0.getY(), e1.getX(), e1.getY());
   }
 

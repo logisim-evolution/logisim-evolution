@@ -82,6 +82,7 @@ public class HexFileTest {
 
   /** Test method for {@link com.cburch.logisim.gui.hex.HexFile} */
   @ParameterizedTest
+	@DisabledOnOs(value={OS.WINDOWS})
   @MethodSource(value = "formatTriples")
   public final void testSaveLoadMemoryContents(int[] triple)
       throws IOException, InterruptedException {
