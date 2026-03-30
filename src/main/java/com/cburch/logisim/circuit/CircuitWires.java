@@ -851,7 +851,7 @@ public class CircuitWires {
     final var showState = context.getShowState();
     final var state = context.getCircuitState();
     final var g = (Graphics2D) context.getGraphics();
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(255, 87, 180));//change black wires into pink wires
     GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     final var highlighted = context.getHighlightedWires();
 
@@ -866,7 +866,7 @@ public class CircuitWires {
         if (!wb.isValid()) {
           g.setColor(Value.widthErrorColor);
         } else if (!showState) {
-          g.setColor(Color.BLACK);
+          g.setColor(new Color(255, 87, 180));//change black wires into pink wires
         } else if (!isValid) {
           g.setColor(Value.nilColor);
         } else {
@@ -938,9 +938,9 @@ public class CircuitWires {
           if (!wb.isValid()) {
             g.setColor(Value.widthErrorColor);
           } else if (showState) {
-            g.setColor(!isValid ? Value.nilColor : getBusValue(state, s).getColor());
+            g.setColor(new Color(255, 87, 180));//change black wires into pink wires
           } else {
-            g.setColor(Color.BLACK);
+            g.setColor(new Color(255, 87, 180));//change black wires into pink wires
           }
           if (highlighted.containsWire(wire)) {
             GraphicsUtil.switchToWidth(g, Wire.WIDTH + 2);
@@ -970,7 +970,7 @@ public class CircuitWires {
               } else if (showState) {
                 g.setColor(!isValid ? Value.nilColor : getBusValue(state, loc).getColor());
               } else {
-                g.setColor(Color.BLACK);
+                g.setColor(new Color(255, 87, 180));//change black wires into pink wires
               }
               var radius = highlighted.containsLocation(loc)
                       ? (wireBundle.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH)

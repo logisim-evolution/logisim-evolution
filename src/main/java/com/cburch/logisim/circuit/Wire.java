@@ -141,7 +141,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
     final var state = context.getCircuitState();
     final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, WIDTH);
-    g.setColor(state.getValue(e0).getColor());
+    g.setColor(new Color(255, 87, 180));//turn wires pink
     g.drawLine(e0.getX(), e0.getY(), e1.getX(), e1.getY());
   }
 
