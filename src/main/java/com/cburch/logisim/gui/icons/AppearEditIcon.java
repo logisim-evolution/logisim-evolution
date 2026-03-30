@@ -21,13 +21,15 @@ public class AppearEditIcon extends BaseIcon {
   private final int[] body = {0, 13, 13, 0, 15, 2, 2, 15};
   private final int[] extendedtip = {0, 13, 1, 12, 3, 15, 2, 15};
   private final int[] cleantip = {12, 1, 13, 0, 15, 2, 14, 3};
+  public static final Color TIP_COLOR = Color.GREEN;
+
 
   @Override
   protected void paintIcon(Graphics2D g2) {
     final var g = (Graphics2D) g2.create();
     SubcircuitFactory.paintClasicIcon(g);
     g.dispose();
-    g2.setColor(Color.MAGENTA);
+    g2.setColor(TIP_COLOR);
     var path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(tip[0]), AppPreferences.getScaled(tip[1]));
     for (int i = 2; i < tip.length; i += 2) {
