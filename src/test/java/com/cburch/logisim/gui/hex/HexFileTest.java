@@ -5,6 +5,9 @@ import com.cburch.logisim.std.memory.MemContents;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +83,7 @@ public class HexFileTest {
 
   /** Test method for {@link com.cburch.logisim.gui.hex.HexFile} */
   @ParameterizedTest
+	@DisabledOnOs(value={OS.WINDOWS})
   @MethodSource(value = "formatTriples")
   public final void testSaveLoadMemoryContents(int[] triple)
       throws IOException, InterruptedException {

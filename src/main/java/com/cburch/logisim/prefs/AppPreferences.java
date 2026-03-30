@@ -543,8 +543,8 @@ public class AppPreferences {
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
   // default grid colors
-  public static final int DEFAULT_CANVAS_BG_COLOR = 0xFFFFFFFF;
-  public static final int DEFAULT_GRID_BG_COLOR = 0xFFFFFFFF;
+  public static final int DEFAULT_CANVAS_BG_COLOR = 0xFF3C3C3C;
+  public static final int DEFAULT_GRID_BG_COLOR = 0xFF3C3C3C;
   public static final int DEFAULT_GRID_DOT_COLOR = 0xFF777777;
   public static final int DEFAULT_ZOOMED_DOT_COLOR = 0xFFCCCCCC;
   public static final int DEFAULT_COMPONENT_COLOR = 0x00000000;

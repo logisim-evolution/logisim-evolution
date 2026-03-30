@@ -19,7 +19,7 @@ public class JoystickIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    g2.setColor(Color.BLUE.darker().darker());
+    g2.setColor(Color.GREEN.darker().darker());
     final int[] xpos = {0, scale(6), scale(4), scale(2)};
     final int[] ypos = {scale(13), scale(13), scale(15), scale(15)};
     g2.fillPolygon(xpos, ypos, 4);
@@ -38,10 +38,10 @@ public class JoystickIcon extends BaseIcon {
     xtop -= scale(2);
     ytop -= scale(2);
     g2.setStroke(new BasicStroke(scale(1)));
-    g2.setColor(Color.RED);
+    g2.setColor(Color.BLUE);
     g2.fillOval(xtop, ytop, scale(4), scale(4));
     g2.drawOval(xtop, ytop, scale(4), scale(4));
-    g2.setColor(Color.BLUE);
+    g2.setColor(Color.GRAY);
     g2.fillRoundRect(0, scale(10), scale(16), scale(4), scale(2), scale(2));
     g2.drawRoundRect(0, scale(10), scale(16), scale(4), scale(2), scale(2));
   }
