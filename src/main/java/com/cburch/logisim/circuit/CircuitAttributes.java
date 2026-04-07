@@ -217,7 +217,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
           NAME_ATTR,
           CIRCUIT_LABEL_ATTR,
           CIRCUIT_LABEL_FACING_ATTR,
-          CIRCUIT_LABEL_FONT_ATTR);
+          CIRCUIT_LABEL_FONT_ATTR,
+          APPEARANCE_ATTR);
 
   private final Circuit source;
   private Instance subcircInstance;
