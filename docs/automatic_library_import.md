@@ -4,9 +4,14 @@ Logisim Evolution supports loading custom libraries at startup, contained in Log
 
 To do this, create a directory named `logisim-defaults` in either:
 
-- The same directory as the `.jar` file which is executing Logisim
+- The same directory as the `.jar` file which is executing Logisim. When using a packaged installer,
+  this is inside an `app` subdirectory of the installation folder. For example:
+  - Windows: `C:\Program Files\logisim-evolution\app`
+  - Linux: `/opt/logisim-evolution/lib/app`
+  - macOS: inside the `.app` bundle at `logisim-evolution.app/Contents/app`
+
   ![Where the logisim-defaults folder goes, if executing from a JAR file.](img/logisim-defaults-jar.png)
-- Inside `/build/classes/java/`, if running from Gradle. ![Where the logisim-defaults folder goes, if running from Gradle.](img/logisim-defaults-build.png)
+- Inside `build/classes/java/main/`, if running from Gradle. ![Where the logisim-defaults folder goes, if running from Gradle.](img/logisim-defaults-build.png)
 
 Inside the `logisim-defaults`folder should be any `.circ` files which you would like to load automatically at startup.
 **Every circuit must have a unique name, and must not be called
