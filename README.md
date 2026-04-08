@@ -37,9 +37,18 @@ Project highlights:
 * supports [multiple languages](docs/docs.md#translations),
 * and more!
 
+Quick overview:
+
+* Create, simulate, and debug digital circuits in one place.
+* Explore signal timing with the chronogram view.
+* Work with built-in components or load your own libraries.
+* Export or share projects using standard file formats.
+
 [![Logisim-evolution](docs/img/logisim-evolution-01-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-02-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-03-small.png)](docs/pics.md)
+
+Image gallery: the three thumbnails above link to a larger set of screenshots in `docs/pics.md`.
 
 ---
 
@@ -47,6 +56,13 @@ Project highlights:
 
 `Logisim-evolution` is a Java application; therefore, it can run on any operating system supporting the Java runtime enviroment.
 It requires [Java 21 (or newer)](https://adoptium.net/temurin/releases/).
+
+Accessibility notes:
+
+* If you use a screen reader, the `docs/` pages are plain Markdown and generally read well in linear order.
+* If you prefer larger text or higher contrast, use your OS display settings or Java accessibility options.
+* Keyboard navigation is supported throughout the app; consult the in-app help for shortcuts.
+* The image gallery uses thumbnails that link to full-size images for better visibility.
 
 ---
 
@@ -73,6 +89,12 @@ The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-
 is also available and can be run on any system with a supported Java runtime installed.
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/logisim-evolution)
+
+Download tips:
+
+* Prefer the platform-specific installer for the easiest setup.
+* Use the JAR if you already have Java 21+ installed and want a portable option.
+* If you are unsure which build to choose, start with the latest release on the downloads page.
 
 ---
 
