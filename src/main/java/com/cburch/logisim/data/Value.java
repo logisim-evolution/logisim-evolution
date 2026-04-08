@@ -9,17 +9,26 @@
 
 package com.cburch.logisim.data;
 
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.circuit.CircuitWires.BusConnection;
-import com.cburch.logisim.util.Cache;
-import com.cburch.logisim.util.MiniFloat;
-
 import java.awt.Color;
 import java.math.BigInteger;
 import java.util.Arrays;
+import com.cburch.logisim.circuit.CircuitWires.BusConnection;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.Cache;
+import com.cburch.logisim.util.MiniFloat;
 
 public final class Value {
 
+  /**
+   * Creates a new wire value or retrieves it from the cache if it already exists.
+   * Handles values up to MAX_WIDTH bits by using long arrays.
+   *
+   * @param width the number of bits in this value (0 to MAX_WIDTH)
+   * @param error bitmask indicating which bits are in error state
+   * @param unknown bitmask indicating which bits are unknown
+   * @param value the actual bit values
+   * @return a cached Value instance or a new Value if not in cache
+   */
   private static Value create(int width, long error, long unknown, long value) {
     if (width == 0) {
       return Value.NIL;
@@ -28,8 +37,8 @@ public final class Value {
       else if ((unknown & 1) != 0) return Value.UNKNOWN;
       else if ((value & 1) != 0) return Value.TRUE;
       else return Value.FALSE;
-    } else {
-      final var mask = (width == 64 ? -1L : ~(-1L << width));
+    } else if (width <= 64) {
+      final var mask = generateMask(width);
       error = error & mask;
       unknown = unknown & mask & ~error;
       value = value & mask & ~unknown & ~error;
@@ -38,10 +47,91 @@ public final class Value {
       Object cached = cache.get(hashCode);
       if (cached != null) {
         Value val = (Value) cached;
-        if (val.value == value
+        if (val.width == width
+            && val.value[0] == value
+            && val.error[0] == error
+            && val.unknown[0] == unknown) return val;
+      }
+      final var ret = new Value(width, error, unknown, value);
+      cache.put(hashCode, ret);
+      return ret;
+    } else {
+      final var arraySize = (width + 63) / 64;
+      final var remainingBits = width % 64;
+      final var mask = generateMask(remainingBits);
+
+      var errorArray = new long[arraySize];
+      var unknownArray = new long[arraySize];
+      var valueArray = new long[arraySize];
+
+      Arrays.fill(errorArray, error < 0 ? -1 : 0);
+      Arrays.fill(unknownArray, unknown < 0 ? -1 : 0);
+      Arrays.fill(valueArray, value < 0 ? -1 : 0);
+
+      error = error & mask;
+      unknown = unknown & mask & ~error;
+      value = value & mask & ~unknown & ~error;
+
+      errorArray[arraySize - 1] = error;
+      unknownArray[arraySize - 1] = unknown;
+      valueArray[arraySize - 1] = value;
+
+      final var hashCode = Value.hashcode(width, errorArray, unknownArray, valueArray);
+      Object cached = cache.get(hashCode);
+      if (cached != null) {
+        Value val = (Value) cached;
+        if (val.width == width
+            && Arrays.equals(val.value, valueArray)
+            && Arrays.equals(val.error, errorArray)
+            && Arrays.equals(val.unknown, unknownArray)) return val;
+      }
+      final var ret = new Value(width, errorArray, unknownArray, valueArray);
+      cache.put(hashCode, ret);
+      return ret;
+    }
+  }
+
+  /**
+   * Creates a new wire value or retrieves it from the cache if it already exists.
+   * Handles values up to MAX_WIDTH bits by using long arrays.<br>
+   * If any of the input arrays have less bits in total than the width, they will
+   * be padded with zeroes to the desired length, and if the array size exceeds
+   * the width, it will be truncated.
+   *
+   * @param width the number of bits in this value (0 to MAX_WIDTH)
+   * @param error bitmask indicating which bits are in error state
+   * @param unknown bitmask indicating which bits are unknown
+   * @param value the actual bit values
+   * @return a cached Value instance or a new Value if not in cache
+   */
+  private static Value create(int width, long[] error, long[] unknown, long[] value) {
+    if (width <= 64){
+      return Value.create(width, error[0], unknown[0], value[0]);
+    } else {
+      final int expectedLength = (width + 63) / 64;
+      if(error.length < expectedLength) {
+        error = Arrays.copyOf(error, expectedLength);
+      }
+      if(unknown.length < expectedLength) {
+        unknown = Arrays.copyOf(unknown, expectedLength);
+      }
+      if(value.length < expectedLength) {
+        value = Arrays.copyOf(value, expectedLength);
+      }
+
+      final var mask = generateMask(width);
+      error[error.length - 1] = error[error.length - 1] & mask;
+      unknown[unknown.length - 1] = unknown[unknown.length - 1] & mask & ~error[error.length - 1];
+      value[value.length - 1] = value[value.length - 1] & mask & ~unknown[unknown.length - 1] & ~error[error.length - 1];
+
+      final var hashCode = Value.hashcode(width, error, unknown, value);
+      Object cached = cache.get(hashCode);
+      if (cached != null) {
+        Value val = (Value) cached;
+        if (Arrays.equals(val.value, value)
             && val.width == width
-            && val.error == error
-            && val.unknown == unknown) return val;
+            && Arrays.equals(val.error, error)
+            && Arrays.equals(val.unknown, unknown)) return val;
       }
       final var ret = new Value(width, error, unknown, value);
       cache.put(hashCode, ret);
@@ -54,7 +144,24 @@ public final class Value {
     Object obj = cache.get(hashCode);
     if (obj != null) {
       Value val = (Value) obj;
-      if (val.value == value && val.width == width && val.error == error && val.unknown == unknown) {
+      if (val.value[0] == value && val.width == width && val.error[0] == error && val.unknown[0] == unknown) {
+        return val;
+      }
+    }
+    Value ret = new Value(width, error, unknown, value);
+    cache.put(hashCode, ret);
+    return ret;
+  }
+
+  public static Value create_unsafe(int width, long[] error, long[] unknown, long[] value) {
+    int hashCode = Value.hashcode(width, error, unknown, value);
+    Object obj = cache.get(hashCode);
+    if (obj != null) {
+      Value val = (Value) obj;
+      if (Arrays.equals(val.value, value)
+        && val.width == width
+        && Arrays.equals(val.error, error)
+        && Arrays.equals(val.unknown, unknown)) {
         return val;
       }
     }
@@ -69,19 +176,26 @@ public final class Value {
     if (values.length > MAX_WIDTH) {
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
     }
-
     final var width = values.length;
-    long value = 0;
-    long unknown = 0;
-    long error = 0;
-    for (var i = 0; i < values.length; i++) {
-      long mask = 1L << i;
-      if (values[i] == TRUE) value |= mask;
-      else if (values[i] == FALSE) /* do nothing */ ;
-      else if (values[i] == UNKNOWN) unknown |= mask;
-      else if (values[i] == ERROR) error |= mask;
-      else {
-        throw new RuntimeException("unrecognized value " + values[i]);
+    final var arraySize = (width + 63) / 64;
+    final var remainingBits = width % 64;
+
+    long[] value = new long[arraySize];
+    long[] unknown = new long[arraySize];
+    long[] error = new long[arraySize];
+
+    for(int j = 0; j < arraySize; j++) {
+      int bitsInThisChunk = (j == arraySize - 1 && remainingBits != 0) ? remainingBits : 64;
+      for (var i = 0; i < bitsInThisChunk; i++) {
+        var index = j * 64 + i;
+        long mask = 1L << i;
+        if (values[index] == TRUE) value[j] |= mask;
+        else if (values[index] == FALSE) /* do nothing */ ;
+        else if (values[index] == UNKNOWN) unknown[j] |= mask;
+        else if (values[index] == ERROR) error[j] |= mask;
+        else {
+          throw new RuntimeException("unrecognized value " + values[index]);
+        }
       }
     }
     return Value.create(width, error, unknown, value);
@@ -97,6 +211,24 @@ public final class Value {
 
   public static Value createKnown(BitWidth bits, long value) {
     return Value.create(bits.getWidth(), 0, 0, value);
+  }
+
+  public static Value createKnown(BitWidth bits, BigInteger value) {
+    int width = bits.getWidth();
+    if (width <= 64) {
+      return Value.create(width, 0, 0, value.longValue());
+    }
+
+    int arraySize = (width + 63) / 64;
+    long[] longArray = new long[arraySize];
+
+    BigInteger mask = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
+    for (int i = 0; i < arraySize; i++) {
+        longArray[i] = value.and(mask).longValue();
+        value = value.shiftRight(64);
+    }
+
+    return Value.create(width, new long[longArray.length], new long[longArray.length], longArray);
   }
 
   public static Value createKnown(float value) {
@@ -140,7 +272,7 @@ public final class Value {
       }
     }
     final var cleaned = sb.toString();
-    
+
     final var radix = radixOfLogString(width, cleaned);
     int offset;
 
@@ -216,7 +348,7 @@ public final class Value {
           // Calculate actual bits needed
           int actualBits = value == 0 ? 1 : 64 - Long.numberOfLeadingZeros(value);
           String reminder = "";
-          
+
           // For hex values, suggest based on number of hex digits * 4 (each hex digit = 4 bits)
           if (radix == 16 && cleaned.length() > 2) {
             int hexDigits = cleaned.length() - 2; // Subtract "0x" prefix
@@ -236,7 +368,7 @@ public final class Value {
             actualBits = octalDigits * 3;
             reminder = " Remember that 0o means octal and each octal digit is 3 bits";
           }
-          
+
           throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
               + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : "") + reminder);
         }
@@ -273,11 +405,29 @@ public final class Value {
     }
   }
 
+  private static long generateMask(int bitWidth) {
+    return ((bitWidth % 64) == 0 ? -1L : ~(-1L << bitWidth));
+  }
+
   private static int hashcode(int width, long error, long unknown, long value) {
     var hashCode = width;
     hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
     hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
     hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
+    return hashCode;
+  }
+
+  private static int hashcode(int width, long[] error, long[] unknown, long[] value) {
+    var hashCode = width;
+    for (int i = 0; i < error.length; i++) {
+      hashCode = 31 * hashCode + (int) (error[i] ^ (error[i] >>> 32));
+    }
+    for (int i = 0; i < unknown.length; i++) {
+      hashCode = 31 * hashCode + (int) (unknown[i] ^ (unknown[i] >>> 32));
+    }
+    for (int i = 0; i < value.length; i++) {
+      hashCode = 31 * hashCode + (int) (value[i] ^ (value[i] >>> 32));
+    }
     return hashCode;
   }
 
@@ -291,7 +441,7 @@ public final class Value {
   public static final Value UNKNOWN = new Value(1, 0, 1, 0);
   public static final Value ERROR = new Value(1, 1, 0, 0);
   public static final Value NIL = new Value(0, 0, 0, 0);
-  public static final int MAX_WIDTH = 64;
+  public static final int MAX_WIDTH = 2048;
 
   public static Color falseColor = new Color(AppPreferences.FALSE_COLOR.get());
   public static Color trueColor = new Color(AppPreferences.TRUE_COLOR.get());
@@ -310,14 +460,19 @@ public final class Value {
 
   private final int width;
 
-  private final long error;
-  private final long unknown;
-  private final long value;
+  private final long[] error;
+  private final long[] unknown;
+  private final long[] value;
 
   private Value(int width, long error, long unknown, long value) {
     // To ensure that the one-bit values are unique, this should be called
-    // only
-    // for the one-bit values and by the private create method
+    // only for the one-bit values and by the private create method
+    this.width = width;
+    this.error = new long[]{error};
+    this.unknown = new long[]{unknown};
+    this.value = new long[]{value};
+  }
+  private Value(int width, long[] error, long[] unknown, long[] value) {
     this.width = width;
     this.error = error;
     this.unknown = unknown;
@@ -326,20 +481,50 @@ public final class Value {
 
   public Value and(Value other) {
     if (other == null) return this;
+
     if (this.width == 1 && other.width == 1) {
-      if (this == FALSE || other == FALSE) return FALSE;
-      if (this == TRUE && other == TRUE) return TRUE;
-      return ERROR;
-    } else {
-      long false0 = ~this.value & ~this.error & ~this.unknown;
-      long false1 = ~other.value & ~other.error & ~other.unknown;
+        if (this == FALSE || other == FALSE) return FALSE;
+        if (this == TRUE && other == TRUE) return TRUE;
+        return ERROR;
+    } else if (this.width <= 64 && other.width <= 64){
+      long false0 = ~this.value[0] & ~this.error[0] & ~this.unknown[0];
+      long false1 = ~other.value[0] & ~other.error[0] & ~other.unknown[0];
       long falses = false0 | false1;
       return Value.create(
           Math.max(this.width, other.width),
-          (this.error | other.error | this.unknown | other.unknown) & ~falses,
+          (this.error[0] | other.error[0] | this.unknown[0] | other.unknown[0]) & ~falses,
           0,
-          this.value & other.value);
+          this.value[0] & other.value[0]);
     }
+
+    int maxWidth = Math.max(this.width, other.width);
+    int len = (maxWidth + 63) >>> 6;
+
+    long[] resultValue = new long[len];
+    long[] resultError = new long[len];
+    long[] resultUnknown = new long[len];
+
+    for (int i = 0; i < len; i++) {
+        long thisValue = (i < this.value.length) ? this.value[i] : 0L;
+        long thisError = (i < this.error.length) ? this.error[i] : 0L;
+        long thisUnknown = (i < this.unknown.length) ? this.unknown[i] : 0L;
+
+        long otherValue = (i < other.value.length) ? other.value[i] : 0L;
+        long otherError = (i < other.error.length) ? other.error[i] : 0L;
+        long otherUnknown = (i < other.unknown.length) ? other.unknown[i] : 0L;
+
+        long false0 = ~thisValue & ~thisError & ~thisUnknown;
+        long false1 = ~otherValue & ~otherError & ~otherUnknown;
+        long falses = false0 | false1;
+
+        resultValue[i] = thisValue & otherValue;
+
+        resultError[i] = (thisError | otherError | thisUnknown | otherUnknown) & ~falses;
+
+        resultUnknown[i] = 0L;
+    }
+
+    return Value.create(maxWidth, resultError, resultUnknown, resultValue);
   }
 
   public Value controls(Value other) { // e.g. tristate buffer
@@ -354,12 +539,12 @@ public final class Value {
     } else if (this.width != other.width) {
       return Value.create(other.width, -1, 0, 0);
     } else {
-      long enabled = (this.value | this.unknown) & ~this.error;
-      long disabled = ~this.value & ~this.unknown & ~this.error;
+      long enabled = (this.value[0] | this.unknown[0] ) & ~this.error[0] ;
+      long disabled = ~this.value[0] & ~this.unknown[0] & ~this.error[0] ;
       return Value.create(other.width,
-          (this.error | (other.error & ~disabled)),
-          (disabled | other.unknown),
-          (enabled & other.value));
+          (this.error[0] | (other.error[0] & ~disabled)),
+          (disabled | other.unknown[0]),
+          (enabled & other.value[0]));
     }
   }
 
@@ -373,42 +558,82 @@ public final class Value {
       if (other == UNKNOWN) return this;
       return ERROR;
     } else if (this.width == other.width) {
-      long disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
-      return Value.create(
-          width,
-          this.error | other.error | disagree,
-          this.unknown & other.unknown,
-          this.value | other.value);
+      var newError = new long[error.length];
+      var newUnknown = new long[unknown.length];
+      var newValue = new long[value.length];
+      for (int i = 0; i < this.value.length; i++) {
+        long disagree = (this.value[i] ^ other.value[i]) & ~(this.unknown[i] | other.unknown[i]);
+        newError[i] = this.error[i] | other.error[i] | disagree;
+        newUnknown[i] = this.unknown[i] & other.unknown[i];
+        newValue[i] = this.value[i] | other.value[i];
+      }
+      return Value.create(width, newError, newUnknown, newValue);
     } else {
-      long thisKnown = ~this.unknown & (this.width == 64 ? -1 : ~(-1 << this.width));
-      long otherKnown = ~other.unknown & (other.width == 64 ? -1 : ~(-1 << other.width));
-      long disagree = (this.value ^ other.value) & thisKnown & otherKnown;
-      return Value.create(
-          Math.max(this.width, other.width),
-          this.error | other.error | disagree,
-          ~thisKnown & ~otherKnown,
-          this.value | other.value);
+      final int maxLen = Math.max(this.value.length, other.value.length);
+      var newError = new long[maxLen];
+      var newUnknown = new long[maxLen];
+      var newValue = new long[maxLen];
+
+      int i;
+      int minLen = Math.min(error.length, other.error.length);
+      for (i = 0; i < minLen - 1; i++) {
+        long thisKnown = ~this.unknown[i];
+        long otherKnown = ~other.unknown[i];
+        long disagree = (this.value[i] ^ other.value[i]) & thisKnown & otherKnown;
+
+        newError[i] = this.error[i] | other.error[i] | disagree;
+        newUnknown[i] = ~thisKnown & ~otherKnown;
+        newValue[i] = this.value[i] | other.value[i];
+      }
+
+      long mask = generateMask(width);
+      long thisKnown = ~this.unknown[i] & mask;
+      long otherKnown = ~other.unknown[i] & mask;
+      long disagree = (this.value[i] ^ other.value[i]) & thisKnown & otherKnown;
+
+      newError[i] = (this.error[i] | other.error[i] | disagree) & mask;
+      newUnknown[i] = (~thisKnown & ~otherKnown) & mask;
+      newValue[i] = (this.value[i] | other.value[i]) & mask;
+
+      i++;
+
+      if(this.error.length > other.error.length){
+        for (; i < this.error.length; i++) {
+          newError[i] = this.error[i];
+          newUnknown[i] = this.unknown[i];
+          newValue[i] = this.value[i];
+        }
+      } else {
+        for (; i < other.error.length; i++) {
+          newError[i] = other.error[i];
+          newUnknown[i] = other.unknown[i];
+          newValue[i] = other.value[i];
+        }
+      }
+      return Value.create(width, newError, newUnknown, newValue);
     }
   }
 
-  public static Value combineLikeWidths(int width, BusConnection[] vals) { // all widths must match
-    int n = vals.length;
+  public static Value combineLikeWidths(int width, BusConnection[] connections) { // all widths must match
+    int n = connections.length;
     for (int i = 0; i < n; i++) {
-      Value v = vals[i].drivenValue;
-      if (v != null && v != NIL) {
-        long error = v.error;
-        long unknown = v.unknown;
-        long value = v.value;
+      Value drivenValue = connections[i].drivenValue;
+      if (drivenValue != null && drivenValue != NIL) {
+        long[] error = Arrays.copyOf(drivenValue.error, drivenValue.error.length);
+        long[] unknown = Arrays.copyOf(drivenValue.unknown, drivenValue.unknown.length);
+        long[] value = Arrays.copyOf(drivenValue.value, drivenValue.value.length);
         for (int j = i + 1; j < n; j++) {
-          v = vals[j].drivenValue;
-          if (v == null || v == NIL) continue;
-          if (v.width != width) {
+          drivenValue = connections[j].drivenValue;
+          if (drivenValue == null || drivenValue == NIL) continue;
+          if (drivenValue.width != width) {
             throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in Value.combineLikeWidths");
           }
-          long disagree = (value ^ v.value) & ~(unknown | v.unknown);
-          error |= v.error | disagree;
-          unknown &= v.unknown;
-          value |= v.value;
+          for(int k = 0; k < value.length; k++){
+            long disagree = (value[k] ^ drivenValue.value[k]) & ~(unknown[k] | drivenValue.unknown[k]);
+            error[k] |= drivenValue.error[k] | disagree;
+            unknown[k] &= drivenValue.unknown[k];
+            value[k] |= drivenValue.value[k];
+          }
         }
         return Value.create(width, error, unknown, value);
       }
@@ -417,49 +642,85 @@ public final class Value {
   }
 
   /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   * Determines whether this Value is compatible with another Value.
+   *
+   * Compatibility requirements:<br>
+   * - widths must be equal.<br>
+   * - error state must be equal.<br>
+   * - for every known bit, this bit must match the corresponding bit in other.value.<br>
+   * - for every unknown bit in this value, other may have unknown or any concrete value.<br><br>
+   *
+   * Original version from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   *
+   * @param other the Value to compare against
+   * @return true if the values are compatible, false otherwise
+   *
    */
   public boolean compatible(Value other) {
-    // where this has a value, other must have same value
-    // where this has unknown, other can have unknown or any value
-    // where this has error, other must have error
-    return (this.width == other.width
-        && this.error == other.error
-        && this.value == (other.value & ~this.unknown)
-        && this.unknown == (other.unknown | this.unknown));
+    if(this.width != other.width) return false;
+
+    var valueToTest = new long[value.length];
+    var unknownToTest = new long[unknown.length];
+
+   for (int i = 0; i < value.length; i++) {
+    valueToTest[i] = other.value[i] & ~this.unknown[i];
+    unknownToTest[i] = other.unknown[i] | this.unknown[i];
+   }
+
+    return Arrays.equals(this.error, other.error)
+        && Arrays.equals(this.value, valueToTest)
+        && Arrays.equals(this.unknown, unknownToTest);
   }
 
   @Override
   public boolean equals(Object otherObj) {
     return (otherObj instanceof Value other)
            ? this.width == other.width
-              && this.error == other.error
-              && this.unknown == other.unknown
-              && this.value == other.value
+              && Arrays.equals(this.error, other.error)
+              && Arrays.equals(this.unknown, other.unknown)
+              && Arrays.equals(this.value, other.value)
            : false;
   }
 
   public Value extendWidth(int newWidth, Value others) {
     if (width == newWidth) return this;
-    long maskInverse = (width == 64 ? 0 : (-1L << width));
+    if (newWidth < width) return Value.create(newWidth, error, unknown, value);
+
     if (others == Value.ERROR) {
-      return Value.create(newWidth, error | maskInverse, unknown, value);
+      return Value.create(newWidth, extendWithOnes(error, newWidth), unknown, value);
     } else if (others == Value.FALSE) {
       return Value.create(newWidth, error, unknown, value);
     } else if (others == Value.TRUE) {
-      return Value.create(newWidth, error, unknown, value | maskInverse);
+      return Value.create(newWidth, error, unknown, extendWithOnes(value, newWidth));
     } else {
-      return Value.create(newWidth, error, unknown | maskInverse, value);
+      return Value.create(newWidth, error, extendWithOnes(unknown, newWidth), value);
     }
   }
 
+  private long[] extendWithOnes(long[] array, int newWidth){
+      var newLength = (newWidth + 63) / 64;
+      var arrayExtended = Arrays.copyOf(array, newLength);
+      var maskInverse = ~generateMask(width);
+      arrayExtended[array.length - 1] |= maskInverse;
+      for (int i = array.length; i < newLength; i++) {
+        arrayExtended[i] = -1L;
+      }
+      return arrayExtended;
+  }
+
   public Value get(int which) {
-    if (which < 0 || which >= width) return ERROR;
-    long mask = 1L << which;
-    if ((error & mask) != 0) return ERROR;
-    else if ((unknown & mask) != 0) return UNKNOWN;
-    else if ((value & mask) != 0) return TRUE;
-    else return FALSE;
+    try {
+      if (which < 0 || which >= width) return ERROR;
+      int whichBit = which % 64;
+      int whichIndex = which / 64;
+      long mask = 1L << whichBit;
+      if ((error[whichIndex] & mask) != 0) return ERROR;
+      else if ((unknown[whichIndex] & mask) != 0) return UNKNOWN;
+      else if ((value[whichIndex] & mask) != 0) return TRUE;
+      else return FALSE;
+    } catch (Exception e) {
+      return ERROR;
+    }
   }
 
   public Value[] getAll() {
@@ -475,17 +736,16 @@ public final class Value {
   }
 
   public Color getColor() {
-    if (error != 0) {
-      return errorColor;
-    } else if (width == 0) {
-      return nilColor;
-    } else if (width == 1) {
-      if (this == UNKNOWN) return unknownColor;
-      else if (this == TRUE) return trueColor;
-      else return falseColor;
-    } else {
-      return multiColor;
+    for (int i = 0; i < error.length; i++) {
+      if(error[i] != 0) return errorColor;
     }
+    if (width == 0) return nilColor;
+    if (width == 1) {
+      if (this == UNKNOWN) return unknownColor;
+      if (this == TRUE) return trueColor;
+      return falseColor;
+    }
+    return multiColor;
   }
 
   public int getWidth() {
@@ -494,23 +754,53 @@ public final class Value {
 
   @Override
   public int hashCode() {
+    if (width <= 64) {
+      return Value.hashcode(width, error[0], unknown[0], value[0]);
+    }
     return Value.hashcode(width, error, unknown, value);
   }
 
+  /**
+   * @return true if the value contains any error bits.
+   */
   public boolean isErrorValue() {
-    return error != 0;
+    if(width <= 64) return error[0] != 0;
+    long errors = 0;
+    for(int i = 0; i < error.length; i++){
+      errors |= error[i];
+    }
+    return errors != 0;
   }
 
   public boolean isFullyDefined() {
-    return width > 0 && error == 0 && unknown == 0;
+    if(width <= 0) return false;
+    if(width <= 64) return error[0] == 0 && unknown[0] == 0;
+
+    long errors = 0;
+    long unknowns = 0;
+    for(int i = 0; i < error.length; i++){
+      errors |= error[i];
+    }
+    for(int i = 0; i < unknown.length; i++){
+      unknowns |= unknown[i];
+    }
+    return errors == 0 && unknowns == 0;
   }
 
+  /**
+   * @return true if the value has no errors and is fully unknown.
+   */
   public boolean isUnknown() {
-    if (width == 64) {
-      return error == 0 && unknown == -1L;
-    } else {
-      return error == 0 && unknown == ((1L << width) - 1);
+    if(width < 64){
+      return error[0] == 0 && unknown[0] == ((1L << width) - 1);
+    } else if (width == 64) {
+      return error[0] == 0 && unknown[0] == -1L;
     }
+    int i;
+    for(i = 0; i < unknown.length - 1; i++){
+      if(error[i] != 0 || unknown[i] != -1L) return false;
+    }
+    return error[i] == 0 && unknown[i] == generateMask(width);
   }
 
   public Value not() {
@@ -518,9 +808,16 @@ public final class Value {
       if (this == TRUE) return FALSE;
       if (this == FALSE) return TRUE;
       return ERROR;
-    } else {
-      return Value.create(this.width, this.error | this.unknown, 0, ~this.value);
+    } else if (width <= 64) {
+      return Value.create(width, error[0] | unknown[0], 0, ~value[0]);
     }
+    var newError = new long[error.length];
+    var newValue = new long[value.length];
+    for (int i = 0; i < newError.length; i++) {
+      newError[i] = error[i] | unknown[i];
+      newValue[i] = ~value[i];
+    }
+    return Value.create(width, newError, new long[0], newValue);
   }
 
   public Value or(Value other) {
@@ -529,16 +826,41 @@ public final class Value {
       if (this == TRUE || other == TRUE) return TRUE;
       if (this == FALSE && other == FALSE) return FALSE;
       return ERROR;
-    } else {
-      long true0 = this.value & ~this.error & ~this.unknown;
-      long true1 = other.value & ~other.error & ~other.unknown;
+    } else if(this.width <= 64 && other.width  <= 64) {
+      long true0 = this.value[0] & ~this.error[0] & ~this.unknown[0];
+      long true1 = other.value[0] & ~other.error[0] & ~other.unknown[0];
       long trues = true0 | true1;
       return Value.create(
           Math.max(this.width, other.width),
-          (this.error | other.error | this.unknown | other.unknown) & ~trues,
+          (this.error[0] | other.error[0] | this.unknown[0] | other.unknown[0]) & ~trues,
           0,
-          this.value | other.value);
+          this.value[0] | other.value[0]);
     }
+
+    var newError = new long[Math.max(error.length, other.error.length)];
+    var newValue = new long[Math.max(value.length, other.value.length)];
+
+    int i;
+    for (i = 0; i < Math.min(error.length, other.error.length); i++) {
+      long true0 = this.value[i] & ~this.error[i] & ~this.unknown[i];
+      long true1 = other.value[i] & ~other.error[i] & ~other.unknown[i];
+      long trues = true0 | true1;
+      newError[i] = (this.error[i] | other.error[i] | this.unknown[i] | other.unknown[i]) & ~trues;
+      newValue[i] = this.value[i] | other.value[i];
+    }
+    if(this.error.length > other.error.length){
+      for (; i < this.error.length; i++) {
+        newError[i] = this.error[i] | this.unknown[i];
+        newValue[i] = this.value[i];
+      }
+    } else {
+      for (; i < other.error.length; i++) {
+        newError[i] = other.error[i] | other.unknown[i];
+        newValue[i] = other.value[i];
+      }
+    }
+
+    return Value.create(Math.max(this.width, other.width), newError, new long[0], newValue);
   }
 
   public Value set(int which, Value val) {
@@ -548,13 +870,27 @@ public final class Value {
       throw new RuntimeException("Attempt to set outside value's width");
     } else if (width == 1) {
       return val;
-    } else {
+    } else if (which < 64){
       long mask = ~(1L << which);
       return Value.create(
           this.width,
-          (this.error & mask) | (val.error << which),
-          (this.unknown & mask) | (val.unknown << which),
-          (this.value & mask) | (val.value << which));
+          (this.error[0] & mask) | (val.error[0] << which),
+          (this.unknown[0] & mask) | (val.unknown[0] << which),
+          (this.value[0] & mask) | (val.value[0] << which));
+    } else {
+      int index = which / 64;
+      int bit = which % 64;
+      long mask = ~(1L << bit);
+
+      long[] newError = Arrays.copyOf(this.error, this.error.length);
+      long[] newUnknown = Arrays.copyOf(this.unknown, this.unknown.length);
+      long[] newValue = Arrays.copyOf(this.value, this.value.length);
+
+      newError[index] = (newError[index] & mask) | (val.error[0] << bit);
+      newUnknown[index] = (newUnknown[index] & mask) | (val.unknown[0] << bit);
+      newValue[index] = (newValue[index] & mask) | (val.value[0] << bit);
+
+      return Value.create(this.width, newError, newUnknown, newValue);
     }
   }
 
@@ -563,9 +899,9 @@ public final class Value {
       case 0:
         return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return Character.toString(ERRORCHAR);
-        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
-        else if (value != 0) return Character.toString(TRUECHAR);
+        if (error[0] != 0) return Character.toString(ERRORCHAR);
+        else if (unknown[0] != 0) return Character.toString(UNKNOWNCHAR);
+        else if (value[0] != 0) return Character.toString(TRUECHAR);
         else return Character.toString(FALSECHAR);
       default:
         final var ret = new StringBuilder();
@@ -581,19 +917,24 @@ public final class Value {
     if (isErrorValue()) return Character.toString(ERRORCHAR);
     if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
 
-    // Keep only valid bits, zeroing bits above value width.
-    long mask = (-1L) >>> (Long.SIZE - width);
-    long val = toLongValue() & mask;
+    if (width <= 64) {
+      // Keep only valid bits, zeroing bits above value width.
+      long mask = (-1L) >>> (Long.SIZE - width);
+      long val = toLongValue() & mask;
 
-    if (signed) {
-      // Copy sign bit into upper bits.
-      boolean isNegative = (val >> (width - 1)) != 0;
-      if (isNegative) {
-        val |= ~mask;
+      if (signed) {
+        // Copy sign bit into upper bits.
+        boolean isNegative = (val >> (width - 1)) != 0;
+        if (isNegative) {
+          val |= ~mask;
+        }
+        return Long.toString(val);
+      } else {
+        return Long.toUnsignedString(val);
       }
-      return Long.toString(val);
     } else {
-      return Long.toUnsignedString(val);
+      BigInteger val = toBigInteger(!signed);
+      return val.toString();
     }
   }
 
@@ -602,9 +943,9 @@ public final class Value {
       case 0:
         return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return Character.toString(ERRORCHAR);
-        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
-        else if (value != 0) return Character.toString(TRUECHAR);
+        if (error[0] != 0) return Character.toString(ERRORCHAR);
+        else if (unknown[0] != 0) return Character.toString(UNKNOWNCHAR);
+        else if (value[0] != 0) return Character.toString(TRUECHAR);
         else return Character.toString(FALSECHAR);
       default:
         final var ret = new StringBuilder();
@@ -663,58 +1004,63 @@ public final class Value {
   }
 
   public long toLongValue() {
-    if (error != 0) return -1L;
-    if (unknown != 0) return -1L;
-    return value;
+    if (error[0] != 0) return -1L;
+    if (unknown[0] != 0) return -1L;
+    return value[0];
   }
 
   public long toSignExtendedLongValue() {
-    if (error != 0) return -1L;
-    if (unknown != 0) return -1L;
+    if (error[0] != 0) return -1L;
+    if (unknown[0] != 0) return -1L;
     final var shift = 64 - width;
-    return value << shift >> shift;
+    return value[0] << shift >> shift;
   }
 
-  public BigInteger toBigInteger(boolean unsigned) {
-    var mask = (width == 64 ? -1L : ~(-1L << width));
-    long value = this.value & mask;
-    if (unsigned) {
-      return new BigInteger(
-        1,
-          new byte[] {
-            (byte) ((value >> 56) & 0xFFL),
-            (byte) ((value >> 48) & 0xFFL),
-            (byte) ((value >> 40) & 0xFFL),
-            (byte) ((value >> 32) & 0xFFL),
-            (byte) ((value >> 24) & 0xFFL),
-            (byte) ((value >> 16) & 0xFFL),
-            (byte) ((value >> 8) & 0xFFL),
-            (byte) ((value) & 0xFFL)
-          }
-      );
+public BigInteger toBigInteger(boolean unsigned) {
+    if (width == 0) return BigInteger.ZERO;
+
+    int byteLength = (width + 7) / 8;
+    byte[] magnitude = new byte[byteLength];
+
+    int byteIndex = byteLength;
+    for (int longIndex = 0; longIndex < value.length; longIndex++) {
+      long word = value[longIndex];
+      int bytesInWord = (longIndex == value.length - 1) ? ((width + 7) / 8) - (longIndex * 8) : 8;
+      for (int b = 0; b < bytesInWord; b++) {
+        magnitude[--byteIndex] = (byte) (word >>> (8 * b));
+      }
     }
-    if ((value >> (width - 1)) != 0) value |= ~mask;
-    return BigInteger.valueOf(value);
-  }
+
+    if (!unsigned) {
+      boolean negative = (value[value.length - 1] < 0);
+      if (negative) {
+        for (int i = 0; i < byteIndex; i++) {
+          magnitude[i] = (byte) 0xFF;
+        }
+      }
+    }
+
+    return unsigned ? new BigInteger(1, magnitude) : new BigInteger(magnitude);
+}
 
   public float toFloatValue() {
-    if (error != 0 || unknown != 0 || width != 32) return Float.NaN;
-    return Float.intBitsToFloat((int) value);
+    if (error[0] != 0 || unknown[0] != 0 || width != 32) return Float.NaN;
+    return Float.intBitsToFloat((int) value[0]);
   }
 
   public double toDoubleValue() {
-    if (error != 0 || unknown != 0 || width != 64) return Double.NaN;
-    return Double.longBitsToDouble(value);
+    if (error[0] != 0 || unknown[0] != 0 || width != 64) return Double.NaN;
+    return Double.longBitsToDouble(value[0]);
   }
 
   public float toFloatValueFromFP16() {
-    if (error != 0 || unknown != 0 || width != 16) return Float.NaN;
-    return Float.float16ToFloat((short) value);
+    if (error[0] != 0 || unknown[0] != 0 || width != 16) return Float.NaN;
+    return Float.float16ToFloat((short) value[0]);
   }
 
   public float toFloatValueFromFP8() {
-    if (error != 0 || unknown != 0 || width != 8) return Float.NaN;
-    return MiniFloat.miniFloat143ToFloat((byte) value);
+    if (error[0] != 0 || unknown[0] != 0 || width != 8) return Float.NaN;
+    return MiniFloat.miniFloat143ToFloat((byte) value[0]);
   }
 
   public double toDoubleValueFromAnyFloat() {
@@ -773,9 +1119,9 @@ public final class Value {
       case 0:
         return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return Character.toString(ERRORCHAR);
-        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
-        else if (value != 0) return Character.toString(TRUECHAR);
+        if (error[0] != 0) return Character.toString(ERRORCHAR);
+        else if (unknown[0] != 0) return Character.toString(UNKNOWNCHAR);
+        else if (value[0] != 0) return Character.toString(TRUECHAR);
         else return Character.toString(FALSECHAR);
       default:
         final var ret = new StringBuilder();
@@ -795,13 +1141,36 @@ public final class Value {
       if (this == NIL || other == NIL) return ERROR;
       if ((this == TRUE) == (other == TRUE)) return FALSE;
       return TRUE;
-    } else {
+    }
+    if(this.width <= 64 && other.width <= 64) {
       return Value.create(
           Math.max(this.width, other.width),
-          this.error | other.error | this.unknown | other.unknown,
+          this.error[0] | other.error[0] | this.unknown[0] | other.unknown[0],
           0,
-          this.value ^ other.value);
+          this.value[0] ^ other.value[0]);
     }
+
+    var newError = new long[Math.max(error.length, other.error.length)];
+    var newValue = new long[Math.max(value.length, other.value.length)];
+
+    int i;
+    for (i = 0; i < Math.min(error.length, other.error.length); i++) {
+      newError[i] = this.error[i] | other.error[i] | this.unknown[i] | other.unknown[i];
+      newValue[i] = this.value[i] ^ other.value[i];
+    }
+    if(this.error.length > other.error.length){
+      for (; i < this.error.length; i++) {
+        newError[i] = this.error[i] | this.unknown[i];
+        newValue[i] = this.value[i];
+      }
+    } else {
+      for (; i < other.error.length; i++) {
+        newError[i] = other.error[i] | other.unknown[i];
+        newValue[i] = other.value[i];
+      }
+    }
+
+    return Value.create(Math.max(this.width, other.width), newError, new long[0], newValue);
   }
 
   public static boolean equal(Value a, Value b) {
@@ -816,22 +1185,46 @@ public final class Value {
 
   public Value pullTowardsBits(Value other) {
     // wherever this is unknown, use other's value for that bit instead
-    if (width <= 0 || unknown == 0 || other.width <= 0) return this;
-    long e = error | (unknown & other.error);
-    long v = value | (unknown & other.value);
-    long u = unknown & (other.unknown | (other.width == 64 ? 0 : (-1L << other.width)));
+    if (width <= 0 || Arrays.equals(unknown, new long[unknown.length]) || other.width <= 0) return this;
+    var e = new long[error.length];
+    var v = new long[error.length];
+    var u = new long[error.length];
+
+    int i;
+    for (i = 0; i < error.length - 1; i++) {
+      e[i] = error[i] | (unknown[i] & other.error[i]);
+      v[i] = value[i] | (unknown[i] & other.value[i]);
+      u[i] = unknown[i] & (other.unknown[i]);
+    }
+
+    e[i] = error[i] | (unknown[i] & other.error[i]);
+    v[i] = value[i] | (unknown[i] & other.value[i]);
+    u[i] = unknown[i] & (other.unknown[i] | ~generateMask(other.width));
+
     return Value.create(width, e, u, v);
   }
 
   public Value pullEachBitTowards(Value bit) {
     // wherever this is unknown, use bit instead
-    if (width <= 0 || unknown == 0 || bit.width <= 0) return this;
+    if (width <= 0 || Arrays.equals(unknown, new long[unknown.length]) || bit.width <= 0) return this;
     if (bit == ERROR) {
-      return Value.create(width, error | unknown, 0, value);
+      var newError = new long[unknown.length];
+      for (int i = 0; i < newError.length; i++) {
+        newError[i] = error[i] | unknown[i];
+      }
+      return Value.create(width, newError, new long[unknown.length], value);
     } else if (bit == TRUE) {
-      return Value.create(width, error, 0, value | unknown);
+      var newValue = new long[unknown.length];
+      for (int i = 0; i < newValue.length; i++) {
+        newValue[i] = value[i] | unknown[i];
+      }
+      return Value.create(width, error, new long[unknown.length], newValue);
     } else if (bit == FALSE) {
-      return Value.create(width, error, 0, value | 0);
+      var newValue = new long[unknown.length];
+      for (int i = 0; i < newValue.length; i++) {
+        newValue[i] = value[i] & ~unknown[i];
+      }
+      return Value.create(width, error, new long[unknown.length], newValue);
     } else if (bit == UNKNOWN) {
       return this;
     } else {

@@ -125,7 +125,9 @@ public class Pin extends InstanceFactory {
 
       text = new JFormattedTextField();
       text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
-      text.setColumns(11);
+      var maxValue = (BigInteger.ONE).shiftLeft(bitWidth).subtract(BigInteger.ONE);
+      int columns = Math.max(10, maxValue.toString().length() + 1);
+      text.setColumns(columns);
       text.setText(value.toDecimalString(radix == RadixOption.RADIX_10_SIGNED));
       text.selectAll();
 
@@ -151,12 +153,6 @@ public class Pin extends InstanceFactory {
               });
 
       gbc.gridx = 0;
-      gbc.gridy = 1;
-      add(cancel, gbc);
-      gbc.gridx = 1;
-      gbc.gridy = 1;
-      add(ok, gbc);
-      gbc.gridx = 0;
       gbc.gridy = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.anchor = GridBagConstraints.BASELINE;
@@ -165,6 +161,16 @@ public class Pin extends InstanceFactory {
       text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
       text.setBackground(VALID_COLOR);
       add(text, gbc);
+
+      javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
+      buttonPanel.add(cancel);
+      buttonPanel.add(ok);
+      gbc.gridx = 0;
+      gbc.gridy = 1;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.anchor = GridBagConstraints.EAST;
+      gbc.insets = new Insets(0, 4, 8, 4);
+      add(buttonPanel, gbc);
 
       pack();
     }
@@ -182,11 +188,11 @@ public class Pin extends InstanceFactory {
             BigInteger n = new BigInteger(s);
             BigInteger signedMax = new BigInteger("1").shiftLeft(bitWidth - 1);
             if (radix == RadixOption.RADIX_10_SIGNED || n.compareTo(signedMax) < 0) {
-              newVal = Value.createKnown(BitWidth.create(bitWidth), n.longValue());
+              newVal = Value.createKnown(BitWidth.create(bitWidth), n);
             } else {
               BigInteger max = new BigInteger("1").shiftLeft(bitWidth);
               BigInteger newValue = n.subtract(max);
-              newVal = Value.createKnown(BitWidth.create(bitWidth), newValue.longValue());
+              newVal = Value.createKnown(BitWidth.create(bitWidth), newValue);
             }
           } catch (NumberFormatException exception) {
             return;
@@ -459,15 +465,16 @@ public class Pin extends InstanceFactory {
       } else {
         Bounds bds = state.getInstance().getBounds();
         int i, j;
+        int maxx = ((width.getWidth() + 63) / 64) * 8;
         if (state.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
             == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
           i = getColumn(state, e, r == 1);
           j = getRow(state, e);
         } else {
           i = (bds.getX() + bds.getWidth() - e.getX() - (r == 1 ? 0 : 4)) / (r == 1 ? 10 : 8);
-          j = (bds.getY() + bds.getHeight() - e.getY() - 2) / 14;
+          j = (bds.getY() + bds.getHeight() - e.getY() - 2) / 20;
         }
-        int bit = (r == 1) ? 8 * j + i : i * r;
+        int bit = (r == 1) ? maxx * j + i : i * r;
         if (bit < 0 || bit >= width.getWidth()) {
           return -1;
         } else {
@@ -617,6 +624,7 @@ public class Pin extends InstanceFactory {
       g.setColor(Color.RED);
       int y = bds.getY() + bds.getHeight();
       int x = bds.getX() + bds.getWidth();
+      int maxx = ((width.getWidth() + 63) / 64) * 8;
       if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
           == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
         Direction dir = painter.getAttributeValue(StdAttr.FACING);
@@ -625,8 +633,8 @@ public class Pin extends InstanceFactory {
         int bheight = distance - 1;
         if (dir == Direction.EAST || dir == Direction.WEST) {
           int offset = dir == Direction.EAST ? 20 : 10;
-          x -= offset + distance * (radix == RadixOption.RADIX_2 ? bitCaret % 8 : bitCaret / r);
-          y -= radix == RadixOption.RADIX_2 ? 20 * (bitCaret / 8) : 0;
+          x -= offset + distance * (radix == RadixOption.RADIX_2 ? bitCaret % maxx : bitCaret / r);
+          y -= radix == RadixOption.RADIX_2 ? 20 * (bitCaret / maxx) : 0;
           bwidth = distance - 1;
           bheight = 15;
           x -= bwidth;
@@ -635,23 +643,23 @@ public class Pin extends InstanceFactory {
           y =
               bds.getY()
                   + 21
-                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % 8 : bitCaret / r);
-          x -= 18 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / 8) : 0);
+                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % maxx : bitCaret / r);
+          x -= 18 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / maxx) : 0);
         } else {
           y -=
               19
                   + distance
-                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % 8 : bitCaret / r);
-          x = bds.getX() + 3 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / 8) : 0);
+                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % maxx : bitCaret / r);
+          x = bds.getX() + 3 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / maxx) : 0);
         }
         g.drawRect(x, y, bwidth, bheight);
       } else {
         if (radix == RadixOption.RADIX_2) {
-          x -= 2 + 10 * (bitCaret % 8);
-          y -= 2 + 14 * (bitCaret / 8);
+          x -= 1 + 10 * (bitCaret % maxx);
+          y -= 2 + 20 * (bitCaret / maxx);
         } else {
-          x -= 4 + DIGIT_WIDTH * (bitCaret / r);
-          y -= 4;
+          x -= 1 + DIGIT_WIDTH * (bitCaret / r);
+          y -= 2;
         }
         GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(x - 6, y, x, y);
@@ -882,6 +890,7 @@ public class Pin extends InstanceFactory {
         int cx = x0;
         int cy = height / 2 - 12;
         int cur = 0;
+        int maxx = ((wid + 63) / 64) * 8;
         for (int k = 0; k < wid; k++) {
           if (radix == RadixOption.RADIX_2 && !isOutput) {
             g.setColor(value.get(k).getColor());
@@ -891,7 +900,7 @@ public class Pin extends InstanceFactory {
           GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
           if (radix == RadixOption.RADIX_2 && !isOutput) g.setColor(baseColor);
           ++cur;
-          if (cur == 8) {
+          if (cur >= maxx) {
             cur = 0;
             cx = x0;
             cy -= 20;
