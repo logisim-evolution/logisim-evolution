@@ -44,6 +44,26 @@ Quick overview:
 * Work with built-in components or load your own libraries.
 * Export or share projects using standard file formats.
 
+Beginner-friendly map:
+
+| What you want to do | Where to start |
+| --- | --- |
+| Build your first circuit | `File → New` then add gates from the library on the left |
+| See the circuit run | Use the play controls to simulate the circuit |
+| Watch signals over time | Open the chronogram view |
+| Learn what a component does | Select it and read its properties panel |
+| Explore more examples | Check the screenshots and docs links below |
+
+Common terms (quick definitions):
+
+| Term | Plain-language meaning |
+| --- | --- |
+| Gate | A basic building block like AND, OR, NOT |
+| Wire | The connection that carries a signal |
+| Signal | A value that is either 0 or 1 |
+| Chronogram | A timeline view of signals changing |
+| Library | A group of components you can use |
+
 [![Logisim-evolution](docs/img/logisim-evolution-01-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-02-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-03-small.png)](docs/pics.md)
@@ -63,6 +83,16 @@ Accessibility notes:
 * If you prefer larger text or higher contrast, use your OS display settings or Java accessibility options.
 * Keyboard navigation is supported throughout the app; consult the in-app help for shortcuts.
 * The image gallery uses thumbnails that link to full-size images for better visibility.
+
+Getting started checklist:
+
+| Step | What you do | What you should see |
+| --- | --- | --- |
+| 1 | Create a new project | An empty workspace |
+| 2 | Place two inputs and an AND gate | Three components on the canvas |
+| 3 | Wire them together | Lines connecting inputs to the gate |
+| 4 | Add an output | A lamp or probe on the right |
+| 5 | Toggle inputs | Output changes from 0 to 1 |
 
 ---
 
@@ -95,6 +125,19 @@ Download tips:
 * Prefer the platform-specific installer for the easiest setup.
 * Use the JAR if you already have Java 21+ installed and want a portable option.
 * If you are unsure which build to choose, start with the latest release on the downloads page.
+
+Which download should I pick?
+
+| You are on | Pick this | Notes |
+| --- | --- | --- |
+| Windows (Intel/AMD) | `logisim-evolution-<version>-amd64.msi` | Standard installer |
+| Windows (ARM) | `logisim-evolution-<version>-aarch64.msi` | For ARM devices |
+| macOS (Apple Silicon) | `logisim-evolution-<version>-aarch64.dmg` | For M-series Macs |
+| macOS (Intel) | `logisim-evolution-<version>-x86_64.dmg` | Also runs via Rosetta |
+| Linux (Debian/Ubuntu) | `logisim-evolution_<version>-1_amd64.deb` | Debian package |
+| Linux (Fedora/Redhat) | `logisim-evolution-<version>-1.x86_64.rpm` | RPM package |
+| Linux (Snap) | `logisim-evolution-<version>_amd64.snap` | Snap store build |
+| Any OS with Java | `logisim-evolution-<version>-all.jar` | Portable option |
 
 ---
 
