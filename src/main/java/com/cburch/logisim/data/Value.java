@@ -213,6 +213,24 @@ public final class Value {
     return Value.create(bits.getWidth(), 0, 0, value);
   }
 
+  public static Value createKnown(BitWidth bits, BigInteger value) {
+    int width = bits.getWidth();
+    if (width <= 64) {
+      return Value.create(width, 0, 0, value.longValue());
+    }
+
+    int arraySize = (width + 63) / 64;
+    long[] longArray = new long[arraySize];
+
+    BigInteger mask = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
+    for (int i = 0; i < arraySize; i++) {
+        longArray[i] = value.and(mask).longValue();
+        value = value.shiftRight(64);
+    }
+
+    return Value.create(width, new long[longArray.length], new long[longArray.length], longArray);
+  }
+
   public static Value createKnown(float value) {
     return Value.create(32, 0, 0, Float.floatToIntBits(value));
   }
@@ -899,19 +917,24 @@ public final class Value {
     if (isErrorValue()) return Character.toString(ERRORCHAR);
     if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
 
-    // Keep only valid bits, zeroing bits above value width.
-    long mask = (-1L) >>> (Long.SIZE - width);
-    long val = toLongValue() & mask;
+    if (width <= 64) {
+      // Keep only valid bits, zeroing bits above value width.
+      long mask = (-1L) >>> (Long.SIZE - width);
+      long val = toLongValue() & mask;
 
-    if (signed) {
-      // Copy sign bit into upper bits.
-      boolean isNegative = (val >> (width - 1)) != 0;
-      if (isNegative) {
-        val |= ~mask;
+      if (signed) {
+        // Copy sign bit into upper bits.
+        boolean isNegative = (val >> (width - 1)) != 0;
+        if (isNegative) {
+          val |= ~mask;
+        }
+        return Long.toString(val);
+      } else {
+        return Long.toUnsignedString(val);
       }
-      return Long.toString(val);
     } else {
-      return Long.toUnsignedString(val);
+      BigInteger val = toBigInteger(!signed);
+      return val.toString();
     }
   }
 
@@ -993,22 +1016,32 @@ public final class Value {
     return value[0] << shift >> shift;
   }
 
-  public BigInteger toBigInteger(boolean unsigned) {
+public BigInteger toBigInteger(boolean unsigned) {
     if (width == 0) return BigInteger.ZERO;
-    final var expectedLength = (width + 7) / 8;
-    byte[] magnitude = new byte[expectedLength];
-    int byteIndex = 0;
-    for (int longIndex = this.value.length - 1; longIndex >= 0; longIndex--) {
-      long longValue = this.value[longIndex];
-      int bytesInThisLong = (longIndex == this.value.length - 1) ? ((width % 64 + 7) / 8) : 8;
-      for (int b = bytesInThisLong - 1; b >= 0; b--) {
-        int shift = b * 8;
-        magnitude[byteIndex++] = (byte) ((longValue >> shift) & 0xFF);
+
+    int byteLength = (width + 7) / 8;
+    byte[] magnitude = new byte[byteLength];
+
+    int byteIndex = byteLength;
+    for (int longIndex = 0; longIndex < value.length; longIndex++) {
+      long word = value[longIndex];
+      int bytesInWord = (longIndex == value.length - 1) ? ((width + 7) / 8) - (longIndex * 8) : 8;
+      for (int b = 0; b < bytesInWord; b++) {
+        magnitude[--byteIndex] = (byte) (word >>> (8 * b));
       }
     }
-    if (unsigned) return new BigInteger(1, magnitude);
-    return new BigInteger(magnitude);
-  }
+
+    if (!unsigned) {
+      boolean negative = (value[value.length - 1] < 0);
+      if (negative) {
+        for (int i = 0; i < byteIndex; i++) {
+          magnitude[i] = (byte) 0xFF;
+        }
+      }
+    }
+
+    return unsigned ? new BigInteger(1, magnitude) : new BigInteger(magnitude);
+}
 
   public float toFloatValue() {
     if (error[0] != 0 || unknown[0] != 0 || width != 32) return Float.NaN;

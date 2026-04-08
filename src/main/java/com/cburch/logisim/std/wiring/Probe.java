@@ -90,12 +90,11 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
             : radix.getMaxLength(width);
     int bwidth, bheight, x, y;
     if (radix == RadixOption.RADIX_2) {
-      int maxBitsPerRow = 8;
-      int maxRows = 8;
+      int maxBitsPerRow = ((len + 63) / 64) * 8;
       int rows = len / maxBitsPerRow;
       if (len > rows * maxBitsPerRow) rows++;
       bwidth = (len < 2) ? 20 : (len >= maxBitsPerRow) ? maxBitsPerRow * 10 : len * 10;
-      bheight = (rows < 2) ? 20 : (rows >= maxRows) ? maxRows * 20 : rows * 20;
+      bheight = (rows < 2) ? 20 : rows * 20;
     } else {
       if (len < 2) bwidth = 20;
       else bwidth = len * Pin.DIGIT_WIDTH;
@@ -166,21 +165,31 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
       int cx = x0;
       int cy = bds.getY() + bds.getHeight() - 10;
       int cur = 0;
+      int maxx = ((wid + 63) / 64) * 8;
       for (int k = 0; k < wid; k++) {
         GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
         ++cur;
-        if (cur == 8) {
+        if (cur == maxx) {
           cur = 0;
           cx = x0;
-          cy -= 14;
+          cy -= 20;
         } else {
           cx -= 10;
         }
       }
     } else {
       String text = radix.toString(value);
-      GraphicsUtil.drawCenteredText(
-          g, text, bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2 - 2);
+      int cx = bds.getX() + bds.getWidth() - 1;
+      for (int k = text.length() - 1; k >= 0; k--) {
+        GraphicsUtil.drawText(
+            g,
+            text.substring(k, k + 1),
+            cx,
+            bds.getY() + bds.getHeight() / 2 - 1,
+            GraphicsUtil.H_RIGHT,
+            GraphicsUtil.H_CENTER);
+        cx -= Pin.DIGIT_WIDTH;
+      }
     }
   }
 
@@ -243,10 +252,11 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
       int cx = x0;
       int cy = bds.getY() + bds.getHeight() - yoffset;
       int cur = 0;
+      int maxx = ((wid + 63) / 64) * 8;
       for (int k = 0; k < wid; k++) {
         GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
         ++cur;
-        if (cur == 8) {
+        if (cur == maxx) {
           cur = 0;
           cx = x0;
           cy -= 20;
