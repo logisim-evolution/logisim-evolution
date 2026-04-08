@@ -37,32 +37,34 @@ Project highlights:
 * supports [multiple languages](docs/docs.md#translations),
 * and more!
 
-Quick overview:
+Getting started (no experience needed):
 
-* Create, simulate, and debug digital circuits in one place.
-* Explore signal timing with the chronogram view.
-* Work with built-in components or load your own libraries.
-* Export or share projects using standard file formats.
+Step-by-step first circuit:
 
-Beginner-friendly map:
+| Step | What you do | Why it matters |
+| --- | --- | --- |
+| 1 | `File → New` | Start a clean project |
+| 2 | Place two `Input` components and one `AND` gate | Create a simple logic function |
+| 3 | Add a `Probe` or `Lamp` as the output | Make the result visible |
+| 4 | Use the wiring tool to connect inputs → gate → output | Build the circuit path |
+| 5 | Toggle the inputs | Observe how logic affects the output |
+| 6 | Save the project | Keep your work for later |
 
-| What you want to do | Where to start |
+Key ideas in plain language:
+
+| Concept | What it means in practice |
 | --- | --- |
-| Build your first circuit | `File → New` then add gates from the library on the left |
-| See the circuit run | Use the play controls to simulate the circuit |
-| Watch signals over time | Open the chronogram view |
-| Learn what a component does | Select it and read its properties panel |
-| Explore more examples | Check the screenshots and docs links below |
+| Component | A building block you place on the canvas |
+| Wire | The path that carries a 0 or 1 between components |
+| Signal | The 0/1 value traveling on a wire |
+| Subcircuit | A reusable group of components you define |
+| Library | A collection of components you can add to a project |
 
-Common terms (quick definitions):
+If you get stuck:
 
-| Term | Plain-language meaning |
-| --- | --- |
-| Gate | A basic building block like AND, OR, NOT |
-| Wire | The connection that carries a signal |
-| Signal | A value that is either 0 or 1 |
-| Chronogram | A timeline view of signals changing |
-| Library | A group of components you can use |
+* Click a component and read its properties panel.
+* Use `Edit → Undo` to step back safely.
+* Check the screenshots and docs links below for examples.
 
 [![Logisim-evolution](docs/img/logisim-evolution-01-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-02-small.png)](docs/pics.md)
@@ -84,15 +86,13 @@ Accessibility notes:
 * Keyboard navigation is supported throughout the app; consult the in-app help for shortcuts.
 * The image gallery uses thumbnails that link to full-size images for better visibility.
 
-Getting started checklist:
+Accessibility quick setup:
 
-| Step | What you do | What you should see |
-| --- | --- | --- |
-| 1 | Create a new project | An empty workspace |
-| 2 | Place two inputs and an AND gate | Three components on the canvas |
-| 3 | Wire them together | Lines connecting inputs to the gate |
-| 4 | Add an output | A lamp or probe on the right |
-| 5 | Toggle inputs | Output changes from 0 to 1 |
+| Need | Tip |
+| --- | --- |
+| Larger text | Increase OS scaling or Java UI scaling |
+| High contrast | Enable high-contrast mode in your OS |
+| Keyboard-only use | Rely on menus and in-app shortcuts |
 
 ---
 
@@ -119,12 +119,6 @@ The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-
 is also available and can be run on any system with a supported Java runtime installed.
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/logisim-evolution)
-
-Download tips:
-
-* Prefer the platform-specific installer for the easiest setup.
-* Use the JAR if you already have Java 21+ installed and want a portable option.
-* If you are unsure which build to choose, start with the latest release on the downloads page.
 
 Which download should I pick?
 
