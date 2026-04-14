@@ -43,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -115,6 +116,17 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     // abbreviated with an ellipsis, even when they fit into the window.
     final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
     model.fireStructureChanged();
+  }
+
+  public void setFilter(String filter) {
+    ((ProjectExplorerModel) getModel()).setFilter(filter);
+    if (filter != null && !filter.trim().isEmpty()) {
+      SwingUtilities.invokeLater(() -> {
+        for (int i = 0; i < getRowCount(); i++) {
+          expandRow(i);
+        }
+      });
+    }
   }
 
   public void setHaloedTool(Tool t) {
