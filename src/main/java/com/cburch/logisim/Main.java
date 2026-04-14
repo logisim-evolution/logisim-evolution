@@ -59,6 +59,13 @@ public class Main {
           UIManager.put(
               "ToolTip.font",
             new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+          UIManager.put(
+              "Tree.font",
+            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+          // don't need this
+          // UIManager.put(
+          //     "Label.font",
+          //   new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
         }
       }
     } catch (ClassNotFoundException
