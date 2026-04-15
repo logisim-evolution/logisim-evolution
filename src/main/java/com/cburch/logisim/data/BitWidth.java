@@ -12,6 +12,7 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Component;
+import java.math.BigInteger;
 
 public class BitWidth implements Comparable<BitWidth> {
   static class Attribute extends com.cburch.logisim.data.Attribute<BitWidth> {
@@ -124,8 +125,15 @@ public class BitWidth implements Comparable<BitWidth> {
 
   public long getMask() {
     if (width == 0) return 0;
-    else if (width == MAXWIDTH) return -1L;
-    else return (1L << width) - 1;
+    if (width == 64) return -1L;
+    if (width < 64) return (1L << width) - 1;
+    return -1L;
+  }
+
+  public BigInteger getBigIntegerMask() {
+    if (width == 0) return BigInteger.ZERO;
+    if (width == 1) return BigInteger.ONE;
+    return BigInteger.ONE.shiftLeft(width).subtract(BigInteger.ONE);
   }
 
   public int getWidth() {

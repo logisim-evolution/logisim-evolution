@@ -16,6 +16,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +35,7 @@ class PinAttributes extends ProbeAttributes {
   BitWidth width = BitWidth.ONE;
   AttributeOption type = Pin.INPUT;
   AttributeOption behavior = Pin.SIMPLE;
-  Long initialValue = 0L;
+  Value initialValue = Value.NIL;
 
   public PinAttributes() { }
 
@@ -56,7 +57,7 @@ class PinAttributes extends ProbeAttributes {
     if (attr == Pin.ATTR_TYPE) return (V) type;
     if (attr == Pin.ATTR_BEHAVIOR) return (V) behavior;
     if (attr == PROBEAPPEARANCE) return (V) appearance;
-    if (attr == Pin.ATTR_INITIAL) return (V) initialValue;
+    if (attr == Pin.ATTR_INITIAL) return (V) initialValue.toBigInteger(true);
     return super.getValue(attr);
   }
 
@@ -108,9 +109,7 @@ class PinAttributes extends ProbeAttributes {
       } else super.setValue(attr, value);
       return;
     } else if (attr == Pin.ATTR_INITIAL) {
-      final var newInitial = (Long) value;
-      if (newInitial == initialValue) return;
-      initialValue = newInitial;
+      this.initialValue = Value.createKnown(width, (BigInteger) value);
     } else {
       super.setValue(attr, value);
       return;

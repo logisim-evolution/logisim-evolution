@@ -9,34 +9,26 @@
 
 package com.cburch.logisim.std.wiring;
 
+import java.math.BigInteger;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.tools.key.LongConfigurator;
+import com.cburch.logisim.tools.key.BigIntegerConfigurator;
 
-class ConstantConfigurator extends LongConfigurator {
+class ConstantConfigurator extends BigIntegerConfigurator {
   public ConstantConfigurator() {
-    super(Constant.ATTR_VALUE, 0, 0, 0, 16);
+    super(Constant.ATTR_VALUE, BigInteger.ZERO, BigInteger.ZERO, 0, 16);
   }
 
   @Override
-  public long getMaximumValue(AttributeSet attrs) {
+  public BigInteger getMaximumValue(AttributeSet attrs) {
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    long ret = width.getMask();
-    if (ret >= 0) {
-      return ret;
-    } else {
-      return Long.MAX_VALUE;
-    }
+    return width.getBigIntegerMask();
   }
 
   @Override
-  public long getMinimumValue(AttributeSet attrs) {
-    BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    if (width.getWidth() < 64) {
-      return 0;
-    } else {
-      return Long.MIN_VALUE;
-    }
+  public BigInteger getMinimumValue(AttributeSet attrs) {
+    return BigInteger.ZERO;
   }
 }

@@ -97,11 +97,10 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
       bheight = (rows < 2) ? 20 : rows * 20;
     } else {
       if (len < 2) bwidth = 20;
-      else bwidth = len * Pin.DIGIT_WIDTH;
+      else bwidth = len * Pin.DIGIT_WIDTH + 4;
       bheight = 20;
     }
-    if (NewLayout) bwidth += (len == 1) ? 20 : 25;
-    bwidth = ((bwidth + 9) / 10) * 10;
+    bwidth += NewLayout ? 20 : 0;
     if (dir == Direction.EAST) {
       x = -bwidth;
       y = -(bheight / 2);
@@ -163,13 +162,13 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
         x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
       }
       int cx = x0;
-      int cy = bds.getY() + bds.getHeight() - 10;
+      int cy = bds.getY() + bds.getHeight() - 13;
       int cur = 0;
-      int maxx = ((wid + 63) / 64) * 8;
+      int columnCount = ((wid + 63) / 64) * 8;
       for (int k = 0; k < wid; k++) {
         GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
         ++cur;
-        if (cur == maxx) {
+        if (cur == columnCount) {
           cur = 0;
           cx = x0;
           cy -= 20;
@@ -179,15 +178,13 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
       }
     } else {
       String text = radix.toString(value);
-      int cx = bds.getX() + bds.getWidth() - 1;
+      int cx = bds.getX() + (text.length() > 1 ? (bds.getWidth() - 6) : (bds.getWidth() / 2));
       for (int k = text.length() - 1; k >= 0; k--) {
-        GraphicsUtil.drawText(
+        GraphicsUtil.drawCenteredText(
             g,
             text.substring(k, k + 1),
             cx,
-            bds.getY() + bds.getHeight() / 2 - 1,
-            GraphicsUtil.H_RIGHT,
-            GraphicsUtil.H_CENTER);
+            bds.getY() + bds.getHeight() / 2 - 3);
         cx -= Pin.DIGIT_WIDTH;
       }
     }
@@ -252,11 +249,11 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
       int cx = x0;
       int cy = bds.getY() + bds.getHeight() - yoffset;
       int cur = 0;
-      int maxx = ((wid + 63) / 64) * 8;
+      int columnCount = ((wid + 63) / 64) * 8;
       for (int k = 0; k < wid; k++) {
         GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
         ++cur;
-        if (cur == maxx) {
+        if (cur == columnCount) {
           cur = 0;
           cx = x0;
           cy -= 20;

@@ -465,7 +465,7 @@ public class Pin extends InstanceFactory {
       } else {
         Bounds bds = state.getInstance().getBounds();
         int i, j;
-        int maxx = ((width.getWidth() + 63) / 64) * 8;
+        int columnCount = ((width.getWidth() + 63) / 64) * 8;
         if (state.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
             == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
           i = getColumn(state, e, r == 1);
@@ -474,7 +474,7 @@ public class Pin extends InstanceFactory {
           i = (bds.getX() + bds.getWidth() - e.getX() - (r == 1 ? 0 : 4)) / (r == 1 ? 10 : 8);
           j = (bds.getY() + bds.getHeight() - e.getY() - 2) / 20;
         }
-        int bit = (r == 1) ? maxx * j + i : i * r;
+        int bit = (r == 1) ? columnCount * j + i : i * r;
         if (bit < 0 || bit >= width.getWidth()) {
           return -1;
         } else {
@@ -624,7 +624,7 @@ public class Pin extends InstanceFactory {
       g.setColor(Color.RED);
       int y = bds.getY() + bds.getHeight();
       int x = bds.getX() + bds.getWidth();
-      int maxx = ((width.getWidth() + 63) / 64) * 8;
+      int columnCount = ((width.getWidth() + 63) / 64) * 8;
       if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
           == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
         Direction dir = painter.getAttributeValue(StdAttr.FACING);
@@ -633,8 +633,8 @@ public class Pin extends InstanceFactory {
         int bheight = distance - 1;
         if (dir == Direction.EAST || dir == Direction.WEST) {
           int offset = dir == Direction.EAST ? 20 : 10;
-          x -= offset + distance * (radix == RadixOption.RADIX_2 ? bitCaret % maxx : bitCaret / r);
-          y -= radix == RadixOption.RADIX_2 ? 20 * (bitCaret / maxx) : 0;
+          x -= offset + distance * (radix == RadixOption.RADIX_2 ? bitCaret % columnCount : bitCaret / r);
+          y -= radix == RadixOption.RADIX_2 ? 20 * (bitCaret / columnCount) : 0;
           bwidth = distance - 1;
           bheight = 15;
           x -= bwidth;
@@ -643,20 +643,20 @@ public class Pin extends InstanceFactory {
           y =
               bds.getY()
                   + 21
-                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % maxx : bitCaret / r);
-          x -= 18 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / maxx) : 0);
+                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % columnCount : bitCaret / r);
+          x -= 18 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / columnCount) : 0);
         } else {
           y -=
               19
                   + distance
-                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % maxx : bitCaret / r);
-          x = bds.getX() + 3 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / maxx) : 0);
+                  + distance * (radix == RadixOption.RADIX_2 ? bitCaret % columnCount : bitCaret / r);
+          x = bds.getX() + 3 + (radix == RadixOption.RADIX_2 ? 20 * (bitCaret / columnCount) : 0);
         }
         g.drawRect(x, y, bwidth, bheight);
       } else {
         if (radix == RadixOption.RADIX_2) {
-          x -= 1 + 10 * (bitCaret % maxx);
-          y -= 2 + 20 * (bitCaret / maxx);
+          x -= 1 + 10 * (bitCaret % columnCount);
+          y -= 2 + 20 * (bitCaret / columnCount);
         } else {
           x -= 1 + DIGIT_WIDTH * (bitCaret / r);
           y -= 2;
@@ -690,7 +690,7 @@ public class Pin extends InstanceFactory {
       var initialValue = attrs.getValue(ATTR_INITIAL);
       final var newValue = attrs.behavior == TRISTATE
           ? Value.createUnknown(width)
-          : Value.createKnown(width.getWidth(), initialValue);
+          : Value.createKnown(width, initialValue);
       ret = new PinState();
       ret.foundValue = ret.intendedValue = newValue;
       state.setData(ret);
@@ -723,8 +723,8 @@ public class Pin extends InstanceFactory {
   public static final Attribute<AttributeOption> ATTR_BEHAVIOR =
       Attributes.forOption("behavior", S.getter("pinBehaviorAttr"),
           new AttributeOption[] { SIMPLE, TRISTATE, PULL_DOWN, PULL_UP });
-  public static final Attribute<Long> ATTR_INITIAL =
-      Attributes.forHexLong("initial", S.getter("pinResetValue"));;
+  public static final Attribute<BigInteger> ATTR_INITIAL =
+      Attributes.forHexBigInteger("initial", S.getter("pinResetValue"));;
 
   public static final Pin FACTORY = new Pin();
   private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
@@ -890,7 +890,7 @@ public class Pin extends InstanceFactory {
         int cx = x0;
         int cy = height / 2 - 12;
         int cur = 0;
-        int maxx = ((wid + 63) / 64) * 8;
+        int columnCount = ((wid + 63) / 64) * 8;
         for (int k = 0; k < wid; k++) {
           if (radix == RadixOption.RADIX_2 && !isOutput) {
             g.setColor(value.get(k).getColor());
@@ -900,7 +900,7 @@ public class Pin extends InstanceFactory {
           GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
           if (radix == RadixOption.RADIX_2 && !isOutput) g.setColor(baseColor);
           ++cur;
-          if (cur >= maxx) {
+          if (cur >= columnCount) {
             cur = 0;
             cx = x0;
             cy -= 20;
@@ -938,7 +938,7 @@ public class Pin extends InstanceFactory {
     Direction dir = attrs.getValue(StdAttr.FACING);
     Graphics g = painter.getGraphics();
     if (!NewShape) {
-      g.drawRect(x + 1, y + 1, width - 1, height - 1);
+      g.drawRect(x, y, width, height);
       if (!isGhost) {
         if (!painter.getShowState()) {
           g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
@@ -1062,9 +1062,9 @@ public class Pin extends InstanceFactory {
       g2.translate(-xpos, -ypos);
     } else {
       if (!isBus) {
-        g.drawOval(x + 1, y + 1, width - 1, height - 1);
+        g.drawOval(x, y, width, height);
       } else {
-        g.drawRoundRect(x + 1, y + 1, width - 1, height - 1, 6, 6);
+        g.drawRoundRect(x, y, width, height, 6, 6);
       }
       if (!isGhost) {
         if (!painter.getShowState()) {
@@ -1196,10 +1196,10 @@ public class Pin extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (IsOutput) {
       drawOutputShape(
-          painter, x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1, found.getColor(), false);
+          painter, x, y, bds.getWidth(), bds.getHeight(), found.getColor(), false);
     } else {
       drawInputShape(
-          painter, x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1, found.getColor(), false);
+          painter, x, y, bds.getWidth(), bds.getHeight(), found.getColor(), false);
     }
     painter.drawLabel();
     painter.drawPorts();
