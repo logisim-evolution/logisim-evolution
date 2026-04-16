@@ -147,7 +147,7 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public String toString(Value value) {
-      return value.toStringFromFloatValue();
+      return value.toFloatString();
     }
 
     @Override

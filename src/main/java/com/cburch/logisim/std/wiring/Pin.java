@@ -284,7 +284,7 @@ public class Pin extends InstanceFactory {
       text = new JFormattedTextField();
       text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
       text.setColumns(11);
-      text.setText(value.toStringFromFloatValue());
+      text.setText(value.toFloatString());
       text.selectAll();
 
       text.getDocument()
