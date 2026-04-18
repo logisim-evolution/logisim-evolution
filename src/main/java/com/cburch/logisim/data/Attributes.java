@@ -216,7 +216,7 @@ public class Attributes {
           return Integer.parseInt("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          if(value.startsWith("o")) value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Integer.parseInt("-" + value, 8);
         } else {
           return Integer.parseInt("-" + value, 10);
@@ -230,7 +230,7 @@ public class Attributes {
           return Integer.parseUnsignedInt(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          if(value.startsWith("o")) value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Integer.parseUnsignedInt(value, 8);
         } else {
           return Integer.parseUnsignedInt(value, 10);
@@ -268,7 +268,7 @@ public class Attributes {
           return Long.parseLong("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          if(value.startsWith("o")) value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Long.parseLong("-" + value, 8);
         } else {
           return Long.parseLong("-" + value, 10);
@@ -282,7 +282,7 @@ public class Attributes {
           return Long.parseUnsignedLong(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          if(value.startsWith("o")) value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Long.parseUnsignedLong(value, 8);
         } else {
           return Long.parseUnsignedLong(value, 10);
@@ -325,7 +325,7 @@ public class Attributes {
         bigInt = new BigInteger(value, 2);
       } else if (value.startsWith("0") && value.length() > 1) {
         value = value.substring(1);
-        if(value.startsWith("o")) value = value.substring(1);
+        if (value.startsWith("o")) value = value.substring(1);
         bigInt = new BigInteger(value, 8);
       } else {
         bigInt = new BigInteger(value, 10);

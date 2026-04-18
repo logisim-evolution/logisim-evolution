@@ -346,7 +346,7 @@ public class Pin extends InstanceFactory {
           else if (s.equalsIgnoreCase("-inf")) val = Double.NEGATIVE_INFINITY;
           else if (s.equalsIgnoreCase("nan")) val = Double.NaN;
           else val = Double.parseDouble(s);
-          newVal = Value.createKnown(bitWidth, val);
+          newVal = Value.createKnown(BitWidth.create(bitWidth), val);
         }
         setVisible(false);
         pinState.intendedValue = newVal;

@@ -63,7 +63,7 @@ public abstract class BigNumericConfigurator<V> implements KeyConfigurator, Clon
     return minValue;
   }
 
-   @Override
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
     if (event.getType() == KeyConfigurationEvent.KEY_TYPED) {
       final var e = event.getKeyEvent();

@@ -47,7 +47,7 @@ public abstract class Value {
       final var hashCode = LongValue.hashcode(width, error, unknown, value);
       Object cached = cache.get(hashCode);
       if (cached != null && cached instanceof LongValue val) {
-        if(val.equals(width, error, unknown, value)) return val;
+        if (val.equals(width, error, unknown, value)) return val;
       }
       final var ret = new LongValue(width, error, unknown, value);
       cache.put(hashCode, ret);
@@ -76,7 +76,7 @@ public abstract class Value {
       final var hashCode = LongArrayValue.hashcode(width, errorArray, unknownArray, valueArray);
       Object cached = cache.get(hashCode);
       if (cached != null && cached instanceof LongArrayValue val) {
-        if(val.equals(width, errorArray, unknownArray, valueArray)) return val;
+        if (val.equals(width, errorArray, unknownArray, valueArray)) return val;
       }
       final var ret = new LongArrayValue(width, errorArray, unknownArray, valueArray);
       cache.put(hashCode, ret);
@@ -99,17 +99,17 @@ public abstract class Value {
    * @return a cached Value instance or a new Value if not in cache
    */
   protected static Value create(int width, long[] error, long[] unknown, long[] value) {
-    if (width <= 64){
+    if (width <= 64) {
       return Value.create(width, error[0], unknown[0], value[0]);
     } else {
       final int expectedLength = (width + 63) / 64;
-      if(error.length < expectedLength) {
+      if (error.length < expectedLength) {
         error = Arrays.copyOf(error, expectedLength);
       }
-      if(unknown.length < expectedLength) {
+      if (unknown.length < expectedLength) {
         unknown = Arrays.copyOf(unknown, expectedLength);
       }
-      if(value.length < expectedLength) {
+      if (value.length < expectedLength) {
         value = Arrays.copyOf(value, expectedLength);
       }
 
@@ -121,7 +121,7 @@ public abstract class Value {
       final var hashCode = LongArrayValue.hashcode(width, error, unknown, value);
       Object cached = cache.get(hashCode);
       if (cached != null && cached instanceof LongArrayValue val) {
-        if(val.equals(width, error, unknown, value)) return val;
+        if (val.equals(width, error, unknown, value)) return val;
       }
       final var ret = new LongArrayValue(width, error, unknown, value);
       cache.put(hashCode, ret);
@@ -131,9 +131,10 @@ public abstract class Value {
 
   /**
    * Creates a new wire value or retrieves it from the cache if it already exists.
-   *
-   * This method should only be used for bitwidths <= 64 and > 1
-   * Otherwise it will return invalid or non-unique 1 bit LongValues.
+   * <br><br>
+   * This method should only be used for bitwidths <= 64 and > 1<br>
+   * Otherwise it will return invalid or non-unique 1 bit LongValues.<br>
+   * Values should also be masked on bits above the width.
    *
    * @param width the number of bits in this value
    * @param error bitmask indicating which bits are in error state
@@ -145,7 +146,7 @@ public abstract class Value {
     final var hashCode = LongValue.hashcode(width, error, unknown, value);
     Object cached = cache.get(hashCode);
     if (cached != null && cached instanceof LongValue val) {
-      if(val.equals(width, error, unknown, value)) return val;
+      if (val.equals(width, error, unknown, value)) return val;
     }
     Value ret = new LongValue(width, error, unknown, value);
     cache.put(hashCode, ret);
@@ -154,9 +155,10 @@ public abstract class Value {
 
   /**
    * Creates a new wire value or retrieves it from the cache if it already exists.
-   *
-   * This method should only be used for bitwidths > 64
-   * Otherwise it will return invalid LongArrayValues.
+   * <br><br>
+   * This method should only be used for bitwidths > 64<br>
+   * Otherwise it will return invalid LongArrayValues.<br>
+   * Values should also be masked on bits above the width.
    *
    * @param width the number of bits in this value
    * @param error bitmask indicating which bits are in error state
@@ -168,7 +170,7 @@ public abstract class Value {
     final var hashCode = LongArrayValue.hashcode(width, error, unknown, value);
     Object cached = cache.get(hashCode);
     if (cached != null && cached instanceof LongArrayValue val) {
-      if(val.equals(width, error, unknown, value)) return val;
+      if (val.equals(width, error, unknown, value)) return val;
     }
     Value ret = new LongArrayValue(width, error, unknown, value);
     cache.put(hashCode, ret);
@@ -189,77 +191,115 @@ public abstract class Value {
     long[] unknown = new long[arraySize];
     long[] error = new long[arraySize];
 
-    for(int j = 0; j < arraySize; j++) {
+    int bit = 0;
+    for (int j = 0; j < arraySize; j++) {
       int bitsInThisChunk = (j == arraySize - 1 && remainingBits != 0) ? remainingBits : 64;
       for (var i = 0; i < bitsInThisChunk; i++) {
-        var index = j * 64 + i;
         long mask = 1L << i;
-        if (values[index] == TRUE) value[j] |= mask;
-        else if (values[index] == FALSE) /* do nothing */ ;
-        else if (values[index] == UNKNOWN) unknown[j] |= mask;
-        else if (values[index] == ERROR) error[j] |= mask;
+        if (values[bit] == TRUE) value[j] |= mask;
+        else if (values[bit] == FALSE) /* do nothing */ ;
+        else if (values[bit] == UNKNOWN) unknown[j] |= mask;
+        else if (values[bit] == ERROR) error[j] |= mask;
         else {
-          throw new RuntimeException("unrecognized value " + values[index]);
+          throw new RuntimeException("unrecognized value " + values[bit]);
         }
+        bit++;
       }
     }
     return Value.create(width, error, unknown, value);
   }
 
-  public static Value createError(BitWidth bits) {
-    return Value.create(bits.getWidth(), -1, 0, 0);
+  /**
+   * Creates a new Value of the specified width where all bits are set to Error.
+   *
+   * @param width The desired bit width of the Value.
+   * @return A Value of the given width with every bit marked as an error.
+   */
+  public static Value createError(BitWidth width) {
+    return Value.create(width.getWidth(), -1, 0, 0);
   }
 
-  public static Value createUnknown(BitWidth bits) {
-    return Value.create(bits.getWidth(), 0, -1, 0);
+  /**
+   * Creates a new Value of the specified width where all bits are set to Unknown.
+   *
+   * @param width The desired bit width of the Value.
+   * @return A Value of the given width with every bit marked as an unknown.
+   */
+  public static Value createUnknown(BitWidth width) {
+    return Value.create(width.getWidth(), 0, -1, 0);
   }
 
-  public static Value createKnown(BitWidth bits, long value) {
-    return Value.create(bits.getWidth(), 0, 0, value);
+  /**
+   * Creates a new Value of the specified width and value.<br>
+   * If the bitwidth is greater than 64, the long value is sign
+   * extended to the other bits.
+   *
+   * @param width The desired bit width of the Value.
+   * @param value The long that will be stored in the Value.
+   * @return A Value of the given width and value.
+   */
+  public static Value createKnown(BitWidth width, long value) {
+    return Value.create(width.getWidth(), 0, 0, value);
   }
 
-  public static Value createKnown(BitWidth bits, BigInteger value) {
-    int width = bits.getWidth();
-    if (width <= 64) {
-      return Value.create(width, 0, 0, value.longValue());
+  /**
+   * Creates a new Value of the specified width and value.<br>
+   * If the bitwidth is greater than 64, the long value is sign
+   * extended to the other bits.
+   *
+   * @param width The desired width of the Value.
+   * @param value The long that will be stored in the Value.
+   * @return A Value of the given width and value.
+   */
+  public static Value createKnown(int width, long value) {
+    return Value.create(width, 0, 0, value);
+  }
+
+  /**
+   * Creates a new Value of the specified width and value.<br>
+   *
+   * @param width The desired width of the Value.
+   * @param value The number that will be stored in the Value.
+   * @return A Value of the given width and value.
+   */
+  public static Value createKnown(BitWidth width, BigInteger value) {
+    int w = width.getWidth();
+    if (w <= 64) {
+      return Value.create(w, 0, 0, value.longValue());
     }
 
-    int arraySize = (width + 63) / 64;
+    int arraySize = (w + 63) / 64;
     long[] longArray = new long[arraySize];
 
     BigInteger mask = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
     for (int i = 0; i < arraySize; i++) {
-        longArray[i] = value.and(mask).longValue();
-        value = value.shiftRight(64);
+      longArray[i] = value.and(mask).longValue();
+      value = value.shiftRight(64);
     }
 
-    return Value.create(width, new long[longArray.length], new long[longArray.length], longArray);
+    return Value.create(w, new long[longArray.length], new long[longArray.length], longArray);
   }
 
-  public static Value createKnown(float value) {
-    return Value.create(32, 0, 0, Float.floatToIntBits(value));
-  }
-
-  public static Value createKnown(double value) {
-    return Value.create(64, 0, 0, Double.doubleToLongBits(value));
-  }
-
-  /* Added to test */
-  public static Value createKnown(int bits, long value) {
-    return Value.create(bits, 0, 0, value);
-  }
-
-  public static Value createKnown(BitWidth bits, double value) {
-    return createKnown(bits.getWidth(), value);
-  }
-
-  public static Value createKnown(int bits, double value) {
-    return switch (bits) {
+  /**
+   * Creates a new Value of the specified width from a floating-point input.
+   * <p>
+   * The input floating-point is internally converted into its bit representation,
+   * stored in a long, according to the selected width. Supported widths are
+   * 8, 16, 32, and 64 bits. Any other width will produce an error Value of
+   * the specified width.
+   *
+   * @param width The desired bit width of the Value.
+   * @param value The floating-point value to be converted and stored.
+   * @return A Value of the given width containing the converted representation,
+   *     or an error Value if the width is unsupported.
+   */
+  public static Value createKnown(BitWidth width, double value) {
+    return switch (width.getWidth()) {
       case 8 -> Value.createKnown(8, MiniFloat.floatToMiniFloat143((float) value));
       case 16 -> Value.createKnown(16, Float.floatToFloat16((float) value));
-      case 32 -> Value.createKnown((float) value);
-      case 64 -> Value.createKnown(value);
-      default -> Value.ERROR;
+      case 32 -> Value.create(32, 0, 0, Float.floatToIntBits((float) value));
+      case 64 -> Value.create(64, 0, 0, Double.doubleToLongBits(value));
+      default -> createError(width);
     };
   }
 
@@ -268,7 +308,7 @@ public abstract class Value {
     for (int i = 0; i < n; i++) {
       Value drivenValue = connections[i].drivenValue;
       if (drivenValue != null && drivenValue != NIL) {
-        if(drivenValue instanceof LongArrayValue v) {
+        if (drivenValue instanceof LongArrayValue v) {
           long[] error = Arrays.copyOf(v.error, v.error.length);
           long[] unknown = Arrays.copyOf(v.unknown, v.unknown.length);
           long[] value = Arrays.copyOf(v.value, v.value.length);
@@ -311,23 +351,32 @@ public abstract class Value {
     return Value.createUnknown(BitWidth.create(width));
   }
 
-  public static Value repeat(Value base, int bits) {
+  /**
+   * Creates a new Value of the specified width by replicating a single-bit base Value
+   * across all bits of the result.
+   *
+   * @param base  The base Value to replicate. This must be a 1-bit Value.
+   * @param width The desired width of the new Value.
+   * @return A Value of the given width, with every bit set to the base Value.
+   */
+  public static Value repeat(Value base, int width) {
     if (base.getWidth() != 1) {
       throw new IllegalArgumentException("first parameter must be one bit");
     }
-    if (bits == 1) {
+    if (width == 1) {
       return base;
     } else {
-      final var ret = new Value[bits];
+      final var ret = new Value[width];
       Arrays.fill(ret, base);
       return create(ret);
     }
   }
 
-  final protected static long generateMask(int bitWidth) {
     return ((bitWidth % 64) == 0 ? -1L : ~(-1L << bitWidth));
+  protected static final long generateMask(int bitWidth) {
   }
-  final protected long[] extendWithOnes(long[] array, int newWidth){
+
+  protected final long[] extendWithOnes(long[] array, int newWidth) {
     var newLength = (newWidth + 63) / 64;
     var arrayExtended = Arrays.copyOf(array, newLength);
     var maskInverse = ~generateMask(width);
@@ -349,8 +398,6 @@ public abstract class Value {
   public static final Value ERROR = LongValue.ERROR;
   public static final Value NIL = LongValue.NIL;
 
-  public static final int MAX_WIDTH = 2048;
-
   public static Color falseColor = new Color(AppPreferences.FALSE_COLOR.get());
   public static Color trueColor = new Color(AppPreferences.TRUE_COLOR.get());
   public static Color unknownColor = new Color(AppPreferences.UNKNOWN_COLOR.get());
@@ -366,9 +413,11 @@ public abstract class Value {
 
   private static final Cache cache = new Cache();
 
+  public static final int MAX_WIDTH = 2048;
+
   protected final int width;
 
-  protected Value(int width){
+  protected Value(int width) {
     this.width = width;
   }
 
@@ -382,17 +431,17 @@ public abstract class Value {
     return false;
   }
 
-  final public BitWidth getBitWidth() {
+  public final BitWidth getBitWidth() {
     return BitWidth.create(width);
   }
 
-  final public int getWidth() {
+  public final int getWidth() {
     return width;
   }
 
   public Color getColor() {
     if (width == 0) return nilColor;
-    if(isErrorValue()) return errorColor;
+    if (isErrorValue()) return errorColor;
     if (width == 1) {
       if (this == UNKNOWN) return unknownColor;
       if (this == TRUE) return trueColor;
@@ -409,17 +458,17 @@ public abstract class Value {
   public abstract boolean equals(Object otherObj);
 
   /**
-   * @return true if the value contains any error bits.
+   * @return true if the value contains ANY error bits.
    */
   public abstract boolean isErrorValue();
 
   /**
-   * @return true if the value contains no error or unknown bits.
+   * @return true if the value contains NO error or unknown bits.
    */
   public abstract boolean isFullyDefined();
 
   /**
-   * @return true if the value has no errors and is fully unknown.
+   * @return true if the value has NO errors and is fully unknown.
    */
   public abstract boolean isUnknown();
 

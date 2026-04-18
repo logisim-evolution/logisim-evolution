@@ -342,7 +342,7 @@ public class TestVector {
     return null;
   }
 
-    /**
+  /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   private static Value fromLogString(BitWidth width, String t) throws Exception {

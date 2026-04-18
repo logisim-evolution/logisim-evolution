@@ -167,10 +167,8 @@ public final class LongValue extends Value {
           (this.error | otherL.error | this.unknown | otherL.unknown) & ~trues,
           0,
           this.value | otherL.value);
-    } else if (other instanceof LongArrayValue otherL) {
-      return otherL.or(this);
     }
-    return ERROR;
+    return other.or(this);
   }
 
   @Override
@@ -229,7 +227,7 @@ public final class LongValue extends Value {
           this.error | otherL.error | disagree,
           this.unknown & otherL.unknown,
           this.value | otherL.value);
-    } else if (other instanceof LongValue otherL){
+    } else if (other instanceof LongValue otherL) {
       long thisKnown = ~this.unknown & (this.width == 64 ? -1 : ~(-1 << this.width));
       long otherKnown = ~otherL.unknown & (otherL.width == 64 ? -1 : ~(-1 << otherL.width));
       long disagree = (this.value ^ otherL.value) & thisKnown & otherKnown;
@@ -270,9 +268,9 @@ public final class LongValue extends Value {
     // wherever this is unknown, use other's value for that bit instead
     if (width <= 0 || unknown == 0 || other.width <= 0) return this;
 
-    if(other.width > 64) {
+    if (other.width > 64) {
       Value[] otherBits = new Value[64];
-      for(int i = 0; i < 64; i++) {
+      for (int i = 0; i < 64; i++) {
         otherBits[i] = other.get(i);
       }
       other = create(otherBits);
@@ -307,7 +305,7 @@ public final class LongValue extends Value {
     if (width == newWidth) return this;
     if (newWidth < width) return Value.create(newWidth, error, unknown, value);
 
-    if(newWidth <= 64) {
+    if (newWidth <= 64) {
       long maskInverse = ~generateMask(width);
       if (others == Value.ERROR) {
         return Value.create(newWidth, error | maskInverse, unknown, value);

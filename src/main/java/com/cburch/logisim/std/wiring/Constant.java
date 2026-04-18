@@ -259,7 +259,7 @@ public class Constant extends InstanceFactory {
     painter.drawPorts();
   }
 
-  public static void paintValue(InstancePainter p, Graphics g, Bounds bds, Value v, Location loc){
+  public static void paintValue(InstancePainter p, Graphics g, Bounds bds, Value v, Location loc) {
     int y = loc.getY() + bds.getY() + bds.getHeight() / 2 - 3;
     if (v.getWidth() == 1) {
       int x = loc.getX() + bds.getX() + bds.getWidth() / 2;
@@ -271,7 +271,7 @@ public class Constant extends InstanceFactory {
       g.setFont(DEFAULT_FONT);
       String text = RadixOption.RADIX_16.toString(v);
       int cx = loc.getX() + bds.getX()
-        + (v.getWidth() < 5 ? (bds.getWidth() / 2) : (bds.getWidth() - 6));
+          + (v.getWidth() < 5 ? (bds.getWidth() / 2) : (bds.getWidth() - 6));
       for (int k = text.length() - 1; k >= 0; k--) {
         GraphicsUtil.drawCenteredText(g, text.substring(k, k + 1), cx, y);
         cx -= Pin.DIGIT_WIDTH;

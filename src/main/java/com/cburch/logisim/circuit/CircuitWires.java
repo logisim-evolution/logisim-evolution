@@ -357,7 +357,7 @@ public class CircuitWires {
         return busVal;
       }
 
-      if(width <= 64) {
+      if (width <= 64) {
         long error = 0, unknown = 0, value = 0;
         for (var i = 0; i < width; i++) {
           long mask = 1L << i;

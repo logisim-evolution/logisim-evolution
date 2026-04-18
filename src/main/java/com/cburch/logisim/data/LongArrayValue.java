@@ -25,7 +25,7 @@ public final class LongArrayValue extends Value {
 
   /** Should only be instantiated from Value.
    */
-  LongArrayValue(int width, long error[], long unknown[], long value[]) {
+  LongArrayValue(int width, long[] error, long[] unknown, long[] value) {
     // To ensure that the one-bit values are unique, this should be called
     // only by the protected create methods
     super(width);
@@ -63,7 +63,7 @@ public final class LongArrayValue extends Value {
            : false;
   }
 
-  public boolean equals(int width, long[] error, long unknown[], long value[]) {
+  public boolean equals(int width, long[] error, long[] unknown, long[] value) {
     return this.width == width
         && Arrays.equals(this.value, value)
         && Arrays.equals(this.error, error)
@@ -72,9 +72,9 @@ public final class LongArrayValue extends Value {
 
   @Override
   public boolean isErrorValue() {
-    if(width <= 64) return error[0] != 0;
+    if (width <= 64) return error[0] != 0;
     long errors = 0;
-    for(int i = 0; i < error.length; i++){
+    for (int i = 0; i < error.length; i++) {
       errors |= error[i];
     }
     return errors != 0;
@@ -82,15 +82,15 @@ public final class LongArrayValue extends Value {
 
   @Override
   public boolean isFullyDefined() {
-    if(width <= 0) return false;
-    if(width <= 64) return error[0] == 0 && unknown[0] == 0;
+    if (width <= 0) return false;
+    if (width <= 64) return error[0] == 0 && unknown[0] == 0;
 
     long errors = 0;
     long unknowns = 0;
-    for(int i = 0; i < error.length; i++){
+    for (int i = 0; i < error.length; i++) {
       errors |= error[i];
     }
-    for(int i = 0; i < unknown.length; i++){
+    for (int i = 0; i < unknown.length; i++) {
       unknowns |= unknown[i];
     }
     return errors == 0 && unknowns == 0;
@@ -98,21 +98,21 @@ public final class LongArrayValue extends Value {
 
   @Override
   public boolean isUnknown() {
-    if(width < 64){
+    if (width < 64) {
       return error[0] == 0 && unknown[0] == ((1L << width) - 1);
     } else if (width == 64) {
       return error[0] == 0 && unknown[0] == -1L;
     }
     int i;
-    for(i = 0; i < unknown.length - 1; i++){
-      if(error[i] != 0 || unknown[i] != -1L) return false;
+    for (i = 0; i < unknown.length - 1; i++) {
+      if (error[i] != 0 || unknown[i] != -1L) return false;
     }
     return error[i] == 0 && unknown[i] == generateMask(width);
   }
 
   @Override
   public boolean compatible(Value other) {
-    if(this.width != other.width) return false;
+    if (this.width != other.width) return false;
 
     var valueToTest = new long[value.length];
     var unknownToTest = new long[unknown.length];
@@ -165,7 +165,6 @@ public final class LongArrayValue extends Value {
     return ret;
   }
 
-
   @Override
   public Value not() {
     var newError = new long[error.length];
@@ -187,7 +186,7 @@ public final class LongArrayValue extends Value {
     long[] resultValue = new long[len];
     long[] resultError = new long[len];
 
-    if(other instanceof LongValue otherL) {
+    if (other instanceof LongValue otherL) {
       long false0 = ~this.value[0] & ~this.error[0] & ~this.unknown[0];
       long false1 = ~otherL.value & ~otherL.error & ~otherL.unknown;
       long falses = false0 | false1;
@@ -225,7 +224,7 @@ public final class LongArrayValue extends Value {
     var resultError = new long[len];
     var resultValue = new long[len];
 
-    if(other instanceof LongValue otherL) {
+    if (other instanceof LongValue otherL) {
       resultValue = Arrays.copyOf(this.value, len);
       resultError =  Arrays.copyOf(this.error, len);
 
@@ -266,7 +265,7 @@ public final class LongArrayValue extends Value {
     var resultError = new long[len];
     var resultValue = new long[len];
 
-    if(other instanceof LongValue otherL) {
+    if (other instanceof LongValue otherL) {
       resultValue = Arrays.copyOf(this.value, len);
       resultError =  Arrays.copyOf(this.error, len);
 
@@ -334,7 +333,7 @@ public final class LongArrayValue extends Value {
         newValue[i] = this.value[i] | otherL.value[i];
       }
       return Value.create(width, newError, newUnknown, newValue);
-    } else if(other instanceof LongValue) {
+    } else if (other instanceof LongValue) {
       other = other.extendWidth(this.width, UNKNOWN);
     }
 
@@ -367,7 +366,7 @@ public final class LongArrayValue extends Value {
 
     i++;
 
-    if(this.error.length > otherL.error.length){
+    if (this.error.length > otherL.error.length) {
       for (; i < this.error.length; i++) {
         newError[i] = this.error[i];
         newUnknown[i] = this.unknown[i];
@@ -398,8 +397,8 @@ public final class LongArrayValue extends Value {
     } else {
       //TODO implement support for bitwidths > 64
       LongArrayValue otherL = (LongArrayValue) other;
-      long enabled = (this.value[0] | this.unknown[0] ) & ~this.error[0] ;
-      long disabled = ~this.value[0] & ~this.unknown[0] & ~this.error[0] ;
+      long enabled = (this.value[0] | this.unknown[0]) & ~this.error[0];
+      long disabled = ~this.value[0] & ~this.unknown[0] & ~this.error[0];
       return Value.create(other.width,
           (this.error[0] | (otherL.error[0] & ~disabled)),
           (disabled | otherL.unknown[0]),
@@ -416,7 +415,7 @@ public final class LongArrayValue extends Value {
     var u = new long[error.length];
 
     int i;
-    if(other instanceof LongValue otherL){
+    if (other instanceof LongValue otherL) {
       for (i = 0; i < error.length; i++) {
         long otherError = (i == 0) ? otherL.error : 0L;
         long otherValue = (i == 0) ? otherL.value : 0L;
@@ -615,28 +614,28 @@ public final class LongArrayValue extends Value {
 
   @Override
   public BigInteger toBigInteger(boolean unsigned) {
-      int byteLength = (width + 7) / 8;
-      byte[] magnitude = new byte[byteLength];
+    int byteLength = (width + 7) / 8;
+    byte[] magnitude = new byte[byteLength];
 
-      int byteIndex = byteLength;
-      for (int longIndex = 0; longIndex < value.length; longIndex++) {
-        long word = value[longIndex];
-        int bytesInWord = (longIndex == value.length - 1) ? ((width + 7) / 8) - (longIndex * 8) : 8;
-        for (int b = 0; b < bytesInWord; b++) {
-          magnitude[--byteIndex] = (byte) (word >>> (8 * b));
+    int byteIndex = byteLength;
+    for (int longIndex = 0; longIndex < value.length; longIndex++) {
+      long word = value[longIndex];
+      int bytesInWord = (longIndex == value.length - 1) ? ((width + 7) / 8) - (longIndex * 8) : 8;
+      for (int b = 0; b < bytesInWord; b++) {
+        magnitude[--byteIndex] = (byte) (word >>> (8 * b));
+      }
+    }
+
+    if (!unsigned) {
+      boolean negative = (value[value.length - 1] < 0);
+      if (negative) {
+        for (int i = 0; i < byteIndex; i++) {
+          magnitude[i] = (byte) 0xFF;
         }
       }
+    }
 
-      if (!unsigned) {
-        boolean negative = (value[value.length - 1] < 0);
-        if (negative) {
-          for (int i = 0; i < byteIndex; i++) {
-            magnitude[i] = (byte) 0xFF;
-          }
-        }
-      }
-
-      return unsigned ? new BigInteger(1, magnitude) : new BigInteger(magnitude);
+    return unsigned ? new BigInteger(1, magnitude) : new BigInteger(magnitude);
   }
 
   @Override

@@ -298,7 +298,7 @@ public class Hdl {
     for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
       hexValue.append(hexDigits[hexIndex]);
     }
-    for(int bit = 0; bit < nrSingleBits; bit++) {
+    for (int bit = 0; bit < nrSingleBits; bit++) {
       singleBits.append(shiftValue.testBit(nrSingleBits) ? "1" : "0");
     }
     // first case, we have to concatinate
