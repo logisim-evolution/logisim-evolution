@@ -61,8 +61,8 @@ public final class LongValue extends Value {
   }
 
   public boolean equals(int width, long error, long unknown, long value) {
-    return this.width == width
-        && this.value == value
+    return this.value == value
+        && this.width == width
         && this.error == error
         && this.unknown == unknown;
   }
@@ -462,19 +462,10 @@ public final class LongValue extends Value {
     if (isErrorValue()) return Character.toString(ERRORCHAR);
     if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
 
-    // Keep only valid bits, zeroing bits above value width.
-    long mask = (-1L) >>> (Long.SIZE - width);
-    long val = toLongValue() & mask;
-
     if (signed) {
-      // Copy sign bit into upper bits.
-      boolean isNegative = (val >> (width - 1)) != 0;
-      if (isNegative) {
-        val |= ~mask;
-      }
-      return Long.toString(val);
+      return Long.toString(toSignExtendedLongValue());
     } else {
-      return Long.toUnsignedString(val);
+      return Long.toUnsignedString(toLongValue());
     }
   }
 

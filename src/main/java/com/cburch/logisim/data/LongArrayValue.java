@@ -160,7 +160,6 @@ public final class LongArrayValue extends Value {
         mask <<= 1L;
         bit++;
       }
-      ret[i] = get(i);
     }
     return ret;
   }

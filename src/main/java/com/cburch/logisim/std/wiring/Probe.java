@@ -88,6 +88,7 @@ public class Probe extends InstanceFactory implements DynamicElementProvider {
         radix == null || radix == RadixOption.RADIX_2
             ? width.getWidth()
             : radix.getMaxLength(width);
+    len = Math.max(1, len);
     int bwidth, bheight, x, y;
     if (radix == RadixOption.RADIX_2) {
       int maxBitsPerRow = ((len + 63) / 64) * 8;

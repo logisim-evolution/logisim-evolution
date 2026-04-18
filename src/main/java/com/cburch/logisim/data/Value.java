@@ -180,6 +180,22 @@ public abstract class Value {
   public static Value create(Value[] values) {
     if (values.length == 0) return NIL;
     if (values.length == 1) return values[0];
+    if (values.length <= 64) {
+      long value = 0;
+      long unknown = 0;
+      long error = 0;
+      for (var i = 0; i < values.length; i++) {
+        long mask = 1L << i;
+        if (values[i] == TRUE) value |= mask;
+        else if (values[i] == FALSE) /* do nothing */ ;
+        else if (values[i] == UNKNOWN) unknown |= mask;
+        else if (values[i] == ERROR) error |= mask;
+        else {
+          throw new RuntimeException("unrecognized value " + values[i]);
+        }
+      }
+      return Value.create(values.length, error, unknown, value);
+    }
     if (values.length > MAX_WIDTH) {
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
     }
@@ -319,7 +335,7 @@ public abstract class Value {
               throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in Value.combineLikeWidths");
             }
             v = (LongArrayValue) drivenValue;
-            for(int k = 0; k < value.length; k++){
+            for (int k = 0; k < value.length && k < v.value.length; k++) {
               long disagree = (value[k] ^ v.value[k]) & ~(unknown[k] | v.unknown[k]);
               error[k] |= v.error[k] | disagree;
               unknown[k] &= v.unknown[k];
@@ -372,8 +388,9 @@ public abstract class Value {
     }
   }
 
-    return ((bitWidth % 64) == 0 ? -1L : ~(-1L << bitWidth));
+
   protected static final long generateMask(int bitWidth) {
+    return ((bitWidth & 63) == 0 ? -1L : ~(-1L << bitWidth));
   }
 
   protected final long[] extendWithOnes(long[] array, int newWidth) {

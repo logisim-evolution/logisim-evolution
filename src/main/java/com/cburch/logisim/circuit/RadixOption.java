@@ -20,13 +20,36 @@ import com.cburch.logisim.util.StringGetter;
 
 public abstract class RadixOption extends AttributeOption {
   private static class Radix10Signed extends RadixOption {
+    private static double LOG10_2 = 0.3010299956639812;
     private Radix10Signed() {
       super("10signed", S.getter("radix10Signed"));
     }
 
     @Override
     public int getMaxLength(BitWidth width) {
-      return (int) Math.floor((width.getWidth() - 1) * Math.log10(2)) + 2;
+      return switch (width.getWidth()) {
+        case 0 -> 1;
+        case 1, 2, 3, 4 -> 2; // 1..8
+        case 5, 6, 7 -> 3; // 16..64
+        case 8, 9, 10 -> 4; // 128..512
+        case 11, 12, 13, 14 -> 5; // 1K..8K
+        case 15, 16, 17 -> 6; // 16K..64K
+        case 18, 19, 20 -> 7; // 128K..512K
+        case 21, 22, 23, 24 -> 8; // 1M..8M
+        case 25, 26, 27 -> 9; // 16M..64M
+        case 28, 29, 30 -> 10; // 128M..512M
+        case 31, 32, 33, 34 -> 11; // 1G..8G
+        case 35, 36, 37 -> 12; // 16G..64G
+        case 38, 39, 40 -> 13; // 128G..512G
+        case 41, 42, 43, 44 -> 14; // 1T..8T
+        case 45, 46, 47 -> 15; // 16T..64T
+        case 48, 49, 50 -> 16; // 128..512T
+        case 51, 52, 53, 54 -> 17; // 1P..8P
+        case 55, 56, 57 -> 18; // 16P..64P
+        case 58, 59, 60 -> 19; // 128P..512P
+        case 61, 62, 63, 64 -> 20; // 1E..4E
+        default -> (int) ((width.getWidth() - 1) * LOG10_2) + 2;
+      };
     }
 
     @Override
@@ -41,13 +64,36 @@ public abstract class RadixOption extends AttributeOption {
   }
 
   private static class Radix10Unsigned extends RadixOption {
+    private static double LOG10_2 = 0.3010299956639812;
     private Radix10Unsigned() {
       super("10unsigned", S.getter("radix10Unsigned"));
     }
 
     @Override
     public int getMaxLength(BitWidth width) {
-      return (int) Math.floor(width.getWidth() * Math.log10(2)) + 1;
+      return switch (width.getWidth()) {
+        case 0, 1, 2, 3 -> 1; // 0..7
+        case 4, 5, 6 -> 2; // 8..63
+        case 7, 8, 9 -> 3; // 64..511
+        case 10, 11, 12, 13 -> 4; // 512..8K-1
+        case 14, 15, 16 -> 5; // 8K..64K-1
+        case 17, 18, 19 -> 6; // 64K..512K-1
+        case 20, 21, 22, 23 -> 7; // 512K..8M-1
+        case 24, 25, 26 -> 8; // 8M..64M-1
+        case 27, 28, 29 -> 9; // 64M..512M-1
+        case 30, 31, 32, 33 -> 10; // 512M..8G-1
+        case 34, 35, 36 -> 11; // 8G..64G-1
+        case 37, 38, 39 -> 12; // 64G..512G-1
+        case 40, 41, 42, 43 -> 13; // 512G..8T-1
+        case 44, 45, 46 -> 14; // 8T..64T-1
+        case 47, 48, 49 -> 15; // 64T..512T-1
+        case 50, 51, 52, 53 -> 16; // 512T..8P-1
+        case 54, 55, 56 -> 17; // 8P..64P-1
+        case 57, 58, 59 -> 18; // 64P..512P-1
+        case 60, 61, 62, 63 -> 19; // 512P..8E-1
+        case 64 -> 20; // 8E..16E-1
+        default -> (int) (width.getWidth() * LOG10_2) + 1;
+      };
     }
 
     @Override
