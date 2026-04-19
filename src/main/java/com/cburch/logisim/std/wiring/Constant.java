@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.circuit.ExpressionComputer;
+import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -34,6 +35,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +72,7 @@ public class Constant extends InstanceFactory {
     public <V> V getValue(Attribute<V> attr) {
       if (attr == StdAttr.FACING) return (V) facing;
       if (attr == StdAttr.WIDTH) return (V) width;
-      if (attr == ATTR_VALUE) return (V) Long.valueOf(value.toLongValue());
+      if (attr == ATTR_VALUE) return (V) value.toBigInteger(true);
       return null;
     }
 
@@ -83,8 +85,7 @@ public class Constant extends InstanceFactory {
         this.value =
             this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
       } else if (attr == ATTR_VALUE) {
-        long val = (Long) value;
-        this.value = Value.createKnown(width, val);
+        this.value = Value.createKnown(width, (BigInteger) value);
       } else {
         throw new IllegalArgumentException("unknown attribute " + attr);
       }
@@ -121,13 +122,13 @@ public class Constant extends InstanceFactory {
 
   private static class ConstantHdlGeneratorFactory extends AbstractConstantHdlGeneratorFactory {
     @Override
-    public long getConstant(AttributeSet attrs) {
+    public BigInteger getConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
     }
   }
 
-  public static final Attribute<Long> ATTR_VALUE =
-      Attributes.forHexLong("value", S.getter("constantValueAttr"));
+  public static final Attribute<BigInteger> ATTR_VALUE =
+      Attributes.forHexBigInteger("value", S.getter("constantValueAttr"));
 
   public static final InstanceFactory FACTORY = new Constant();
 
@@ -166,8 +167,8 @@ public class Constant extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    int chars = (width.getWidth() + 3) / 4;
-    int w = 7 + 7 * chars;
+    int w = Probe.getOffsetBounds(facing, width, RadixOption.RADIX_16, false, true)
+        .getWidth();
     if (facing == Direction.EAST) return Bounds.create(-w, -8, w, 16);
     else if (facing == Direction.WEST) return Bounds.create(0, -8, w, 16);
     else if (facing == Direction.SOUTH) return Bounds.create(-w / 2, -16, w, 16);
@@ -189,16 +190,21 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    long v = painter.getAttributeValue(ATTR_VALUE);
-    String vStr = Long.toHexString(v);
     Bounds bds = getOffsetBounds(painter.getAttributeSet());
+    BigInteger v = painter.getAttributeValue(ATTR_VALUE);
+    var width = painter.getAttributeValue(StdAttr.WIDTH);
 
     Graphics g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.fillOval(-2, -2, 4, 4);
     g.setFont(DEFAULT_FONT);
-    GraphicsUtil.drawCenteredText(
-        g, vStr, bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2 - 2);
+
+    paintValue(
+        painter,
+        g,
+        bds,
+        Value.createKnown(width, v),
+        Location.create(0, 0, false));
   }
 
   //
@@ -223,7 +229,7 @@ public class Constant extends InstanceFactory {
 
     Graphics g = painter.getGraphics();
     if (w == 1) {
-      long v = painter.getAttributeValue(ATTR_VALUE);
+      var v = painter.getAttributeValue(ATTR_VALUE).longValue();
       Value val = v == 1L ? Value.TRUE : Value.FALSE;
       g.setColor(val.getColor());
       GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
@@ -236,9 +242,9 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Bounds bds = painter.getOffsetBounds();
+    Bounds bds = getOffsetBounds(painter.getAttributeSet());
     BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    long longValue = painter.getAttributeValue(ATTR_VALUE);
+    BigInteger longValue = painter.getAttributeValue(ATTR_VALUE);
     Value v = Value.createKnown(width, longValue);
     Location loc = painter.getLocation();
     int x = loc.getX();
@@ -247,32 +253,36 @@ public class Constant extends InstanceFactory {
     Graphics g = painter.getGraphics();
     if (painter.shouldDrawColor()) {
       g.setColor(BACKGROUND_COLOR);
-      g.fillRect(x + bds.getX(), y + bds.getY(), bds.getWidth(), bds.getHeight());
+      g.fillRect(x + bds.getX(), y + bds.getY() - 2, bds.getWidth(), bds.getHeight() + 4);
     }
+    paintValue(painter, g, bds, v, loc);
+    painter.drawPorts();
+  }
+
+  public static void paintValue(InstancePainter p, Graphics g, Bounds bds, Value v, Location loc) {
+    int y = loc.getY() + bds.getY() + bds.getHeight() / 2 - 3;
     if (v.getWidth() == 1) {
-      if (painter.shouldDrawColor()) g.setColor(v.getColor());
+      int x = loc.getX() + bds.getX() + bds.getWidth() / 2;
+      if (p.shouldDrawColor()) g.setColor(v.getColor());
       g.setFont(DEFAULT_FONT);
-      GraphicsUtil.drawCenteredText(
-          g,
-          v.toString(),
-          x + bds.getX() + bds.getWidth() / 2,
-          y + bds.getY() + bds.getHeight() / 2 - 2);
+      GraphicsUtil.drawCenteredText(g, v.toString(), x, y);
     } else {
       g.setColor(Color.BLACK);
       g.setFont(DEFAULT_FONT);
-      GraphicsUtil.drawCenteredText(
-          g,
-          v.toHexString(),
-          x + bds.getX() + bds.getWidth() / 2,
-          y + bds.getY() + bds.getHeight() / 2 - 2);
+      String text = RadixOption.RADIX_16.toString(v);
+      int cx = loc.getX() + bds.getX()
+          + (v.getWidth() < 5 ? (bds.getWidth() / 2) : (bds.getWidth() - 6));
+      for (int k = text.length() - 1; k >= 0; k--) {
+        GraphicsUtil.drawCenteredText(g, text.substring(k, k + 1), cx, y);
+        cx -= Pin.DIGIT_WIDTH;
+      }
     }
-    painter.drawPorts();
   }
 
   @Override
   public void propagate(InstanceState state) {
     BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-    long value = state.getAttributeValue(ATTR_VALUE);
+    BigInteger value = state.getAttributeValue(ATTR_VALUE);
     state.setPort(0, Value.createKnown(width, value), 1);
   }
 
