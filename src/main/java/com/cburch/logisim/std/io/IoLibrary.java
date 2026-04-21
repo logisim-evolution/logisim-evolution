@@ -44,6 +44,7 @@ public class IoLibrary extends Library {
   static final Color DEFAULT_BACKGROUND = new Color(255, 255, 255, 0);
 
   private static final FactoryDescription[] DESCRIPTIONS = {
+    new FactoryDescription(Keypad.class, S.getter("keypadComponent"), "button.gif"),
     new FactoryDescription(Button.class, S.getter("buttonComponent"), "button.gif"),
     new FactoryDescription(DipSwitch.class, S.getter("dipswitchComponent"), "dipswitch.gif"),
     new FactoryDescription(Joystick.class, S.getter("joystickComponent"), "joystick.gif"),
