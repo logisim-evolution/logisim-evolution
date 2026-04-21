@@ -85,7 +85,8 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_GIF),
       ExportImage.getFilter(ExportImage.FORMAT_JPG),
       ExportImage.getFilter(ExportImage.FORMAT_TIKZ),
-      ExportImage.getFilter(ExportImage.FORMAT_SVG)
+      ExportImage.getFilter(ExportImage.FORMAT_SVG),
+      ExportImage.getFilter(ExportImage.FORMAT_WAVEDROM)
     };
     final var chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
@@ -111,7 +112,9 @@ public abstract class PrintHandler implements Printable {
       else if (ff == filters[1]) dest = new File(dest + ".gif");
       else if (ff == filters[2]) dest = new File(dest + ".jpg");
       else if (ff == filters[3]) dest = new File(dest + ".tex");
-      else dest = new File(dest + ".svg");
+      else if (ff == filters[4]) dest = new File(dest + ".svg");
+      else if (ff == filters[5]) dest = new File(dest + ".json");
+
     }
     setLastExported(dest);
     if (dest.exists()) {
@@ -124,13 +127,12 @@ public abstract class PrintHandler implements Printable {
       if (confirm != OptionPane.YES_OPTION) return;
     }
     final var fmt =
-        (ff == filters[0]
-            ? ExportImage.FORMAT_PNG
-            : ff == filters[1]
-                ? ExportImage.FORMAT_GIF
-                : ff == filters[2]
-                    ? ExportImage.FORMAT_JPG
-                    : ff == filters[2] ? ExportImage.FORMAT_TIKZ : ExportImage.FORMAT_SVG);
+            (ff == filters[0] ? ExportImage.FORMAT_PNG
+                    : ff == filters[1] ? ExportImage.FORMAT_GIF
+                    : ff == filters[2] ? ExportImage.FORMAT_JPG
+                    : ff == filters[3] ? ExportImage.FORMAT_TIKZ
+                    : ff == filters[4] ? ExportImage.FORMAT_SVG
+                    : ff == filters[5] ? ExportImage.FORMAT_WAVEDROM : ExportImage.FORMAT_SVG);
     exportImage(dest, fmt);
   }
 
@@ -140,7 +142,10 @@ public abstract class PrintHandler implements Printable {
       showErr("couldNotCreateImage");
       return;
     }
-
+    if (fmt == ExportImage.FORMAT_WAVEDROM) {
+      exportWaveDrom(dest);
+      return;
+    }
     final var img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     final var base = (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) ? new TikZWriter() : img.getGraphics();
     final var gr = base.create();
@@ -176,6 +181,14 @@ public abstract class PrintHandler implements Printable {
     } finally {
       gr.dispose();
     }
+  }
+
+  public void exportWaveDrom(File dest) {
+    OptionPane.showMessageDialog(
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+            "WaveDrom export is only supported for Timing Diagrams.",
+            "Unsupported Format",
+            OptionPane.WARNING_MESSAGE);
   }
 
   public abstract Dimension getExportImageSize();

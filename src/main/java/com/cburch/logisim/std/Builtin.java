@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.soc.Soc;
 import com.cburch.logisim.std.arith.ArithmeticLibrary;
+import com.cburch.logisim.std.arith.floating.FPArithmeticLibrary;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.bfh.BfhLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
@@ -49,6 +50,7 @@ public class Builtin extends Library {
             new WiringLibrary(),
             new PlexersLibrary(),
             new ArithmeticLibrary(),
+            new FPArithmeticLibrary(),
             new MemoryLibrary(),
             new IoLibrary(),
             new TtlLibrary(),

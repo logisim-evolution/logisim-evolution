@@ -46,7 +46,6 @@ public class BitWidth implements Comparable<BitWidth> {
       }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Component getCellEditor(BitWidth value) {
       // there are too many dropdown options, so use the default editor

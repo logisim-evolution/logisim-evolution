@@ -43,20 +43,34 @@ public class Divider extends InstanceFactory {
 
   static Value[] computeResult(BitWidth width, Value a, Value b, Value upper, boolean unsigned) {
     int w = width.getWidth();
-    if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
+    boolean hasUpper = !(upper == Value.NIL || upper.isUnknown());
+    if (!hasUpper) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
-      BigInteger uu = Multiplier.extend(w, upper.toLongValue(), unsigned);
-      BigInteger aa = Multiplier.extend(w, a.toLongValue(), unsigned);
-      BigInteger bb = Multiplier.extend(w, b.toLongValue(), unsigned);
-
-      BigInteger num = uu.shiftLeft(w).or(aa);
-      BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
+      if (w <= 32) {
+        if (unsigned) {
+          long bb = b.toLongValue();
+          long den = bb == 0 ? 1 : bb;
+          long num = hasUpper ? (upper.toLongValue() << w) | a.toLongValue() : a.toLongValue();
+          long res = Long.divideUnsigned(num, den);
+          long rem = Long.remainderUnsigned(num, den);
+          return new Value[] {Value.createKnown(width, res), Value.createKnown(width, rem)};
+        } else {
+          long bb = b.toSignExtendedLongValue();
+          long den = bb == 0 ? 1 : bb;
+          long num = hasUpper ? (upper.toSignExtendedLongValue() << w) | a.toLongValue() : a.toSignExtendedLongValue();
+          long res = num / den;
+          long rem = num % den;
+          return new Value[] {Value.createKnown(width, res), Value.createKnown(width, rem)};
+        }
+      }
+      BigInteger bb = b.toBigInteger(unsigned);
+      BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.ONE : bb;
+      BigInteger num = hasUpper ? upper.toBigInteger(unsigned).shiftLeft(w).or(a.toBigInteger(true))
+          : a.toBigInteger(unsigned);
 
       BigInteger[] res = num.divideAndRemainder(den);
-      long mask = w == 64 ? 0 : (-1L) << w;
-      mask ^= 0xFFFFFFFFFFFFFFFFL;
-      long result = res[0].and(BigInteger.valueOf(mask)).longValue();
-      long rem = res[1].and(BigInteger.valueOf(mask)).longValue();
+      long result = res[0].longValue();
+      long rem = res[1].longValue();
       return new Value[] {Value.createKnown(width, result), Value.createKnown(width, rem)};
     } else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue()) {
       return new Value[] {Value.createError(width), Value.createError(width)};

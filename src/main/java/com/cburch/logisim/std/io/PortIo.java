@@ -163,8 +163,20 @@ public class PortIo extends InstanceFactory {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       final var loc = state.getInstance().getLocation();
-      final var cx = e.getX() - loc.getX() - 7 + 2;
-      final var cy = e.getY() - loc.getY() - 25 + 2;
+      final var facing = state.getAttributeValue(StdAttr.FACING);
+      var cx = e.getX() - loc.getX(); // Move to component location.
+      var cy = e.getY() - loc.getY();
+      if (facing == Direction.NORTH || facing == Direction.SOUTH) { // Rotate quarter circle.
+        final var tmpX = cx;
+        cx = -cy;
+        cy = tmpX;
+      }
+      if (facing == Direction.WEST || facing == Direction.SOUTH) { // Rotate half circle.
+        cx = -cx;
+        cy = -cy;
+      }
+      cx = cx - 7 + 2; // Move to start of matrix.
+      cy = cy - 25 + 2;
       if (cx < 0 || cy < 0) return;
       final var i = cx / 10;
       final var j = cy / 10;

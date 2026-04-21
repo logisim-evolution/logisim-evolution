@@ -19,7 +19,6 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.IOException;

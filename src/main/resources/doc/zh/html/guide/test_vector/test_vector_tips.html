@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="zh">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="zh">
+	<title>提示和最佳实践</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>提示和最佳实践</h1>
+
+<p>以下是一些有效使用测试向量功能的提示：</p>
+
+<ol>
+    <li><strong>在标题中使用位宽</strong>：在标题中指定每个输入/输出引脚的位宽，即使是 1 位。这对于多位值是必需的。</li>
+    <li><strong>使用下划线提高可读性</strong>：您可以在数值中的任何位置使用下划线（<code>_</code>）。解析时下划线将被忽略。示例：<code>0x0000_1111</code>、<code>0o1234_5670</code>、<code>1111_0000</code>、<code>1_234</code> 或 <code>-5_000</code>。</li>
+    <li><strong>在值和标题之间使用空格进行对齐</strong>：对齐值和标题的起始位置可以提高可读性，并更容易识别值和标题。如果不这样做，很容易混淆哪个值属于哪个标题，从而在测试失败但电路似乎正常工作时会感到困惑。</li>
+    <li><strong>对有状态电路使用序列</strong>：如果您的电路具有存储器（触发器、寄存器、计数器），请使用时序测试来验证状态转换。</li>
+    <li><strong>使用无关值进行部分验证</strong>：测试复杂电路时，对当前未验证的输出使用 <code>&lt;DC&gt;</code>。</li>
+    <li><strong>使用浮空进行三态测试</strong>：使用 <code>&lt;float&gt;</code> 测试具有三态输出或高阻抗状态的电路。</li>
+    <li><strong>使用集合组织</strong>：使用 <code>&lt;set&gt;</code> 列将相关测试分组为序列。具有相同 <code>&lt;set&gt;</code> 编号的测试按 <code>&lt;seq&gt;</code> 顺序一起运行，步骤之间保持电路状态。</li>
+    <li><strong>混合组合和时序</strong>：您可以在同一文件中混合组合测试（seq=0）和时序测试。</li>
+</ol>
+
+<h2>向后兼容性</h2>
+
+<p>所有现有的测试向量文件无需修改即可继续工作。新功能是可选的：</p>
+
+<ul>
+    <li>如果不存在 <code>&lt;set&gt;</code> 和 <code>&lt;seq&gt;</code> 列，所有测试都是组合的（默认行为）</li>
+    <li>如果不使用特殊值 <code>&lt;DC&gt;</code> 和 <code>&lt;float&gt;</code>，则应用正常值比较</li>
+    <li>完全支持原始文件格式</li>
+</ul>
+
+<p>
+	<b>上一页：</b> <a href="test_vector_cmdline.html">命令行用法</a> | <b>下一页：</b> <a href="index.html">测试向量</a>。
+</p>
+
+</body>
+</html>
+

@@ -54,7 +54,6 @@ public class SplitterAttributes extends AbstractAttributeSet {
       return true;
     }
 
-    @SuppressWarnings({"rawtypes"})
     @Override
     public java.awt.Component getCellEditor(Integer value) {
       final var index = value;

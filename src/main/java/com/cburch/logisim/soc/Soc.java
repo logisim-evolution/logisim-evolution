@@ -12,6 +12,7 @@ package com.cburch.logisim.soc;
 import static com.cburch.logisim.soc.Strings.S;
 
 import com.cburch.logisim.soc.bus.SocBus;
+import com.cburch.logisim.soc.dma.SocDma;
 import com.cburch.logisim.soc.jtaguart.JtagUart;
 import com.cburch.logisim.soc.memory.SocMemory;
 import com.cburch.logisim.soc.nios2.Nios2;
@@ -40,6 +41,7 @@ public class Soc extends Library {
     new FactoryDescription(SocMemory.class, S.getter("SocMemoryComponent")),
     new FactoryDescription(SocPio.class, S.getter("SocPioComponent")),
     new FactoryDescription(SocVga.class, S.getter("SocVgaComponent")),
+    new FactoryDescription(SocDma.class, S.getter("SocDmaComponent")),
     new FactoryDescription(JtagUart.class, S.getter("SocJtagUartComponent")),
   };
 

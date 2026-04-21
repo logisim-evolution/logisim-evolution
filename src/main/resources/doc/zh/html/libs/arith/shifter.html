@@ -3,7 +3,7 @@
  <head>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
   <meta content="zh" http-equiv="Content-Language"/>
   <title>
@@ -25,23 +25,20 @@
     <tbody>
      <tr>
       <td>
-       <!-- <strong>Library:</strong> -->
        <strong>
         库:
        </strong>
       </td>
       <td>
-       <!-- <a href="index.html">Arithmetic</a> -->
        <a href="index.html">
-        算术
+        运算器
        </a>
       </td>
      </tr>
      <tr>
       <td>
-       <!-- <strong>Introduced:</strong> -->
        <strong>
-        介绍:
+        引入版本：
        </strong>
       </td>
       <td>
@@ -50,9 +47,8 @@
      </tr>
      <tr>
       <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
        <strong>
-        外观符号:
+        外观：
        </strong>
       </td>
       <td valign="top">
@@ -62,231 +58,98 @@
     </tbody>
    </table>
    <h2>
-    <!-- Behavior -->
     行为
    </h2>
    <p>
-    <!-- This component includes two inputs, <var>data</var> and <var>dist</var>, and it has one output, which is the result of shifting <var>data</var> by <var>dist</var> places. Both <var>data</var> and output have the same number of bits in them. The component supports the following shift types: -->
-    该组件包含两个输入：
-    <var>
-     data
-    </var>
-    和
-    <var>
-     dist
-    </var>
-    ，并且它有一个输出，这是将
-    <var>
-     data
-    </var>
-    移位
-    <var>
-     dist&lt; 的结果 /var&gt; 地方。
-     <var>
-      data
-     </var>
-     和输出都具有相同的位数。 该组件支持以下班次类型：
-    </var>
+    该组件包含两个输入：<var>data</var> 与 <var>dist</var>，以及一个输出端。输出结果为将 <var>data</var> 按 <var>dist</var> 指定的位数进行移位后的值。<var>data</var> 与输出具有相同的位宽。组件支持以下几种移位类型：
    </p>
    <ul>
-    <!-- <li>Logical Left: All bits in <var>data</var> are shifted up <var>dist</var> places, with the bottom <var>dist</var> places filled with 0's. For example, 11001011 logically shifted left twice is 00101100. (The top two ones are lost.) -->
     <li>
-     逻辑左：
-     <var>
-      data
-     </var>
-     中的所有位都向上移动
-     <var>
-      dist
-     </var>
-     位，底部
-     <var>
-      dist
-     </var>
-     位用0填充。 例如，11001011逻辑左移两次是00101100。（前两个丢失。）
+     逻辑左移：将 <var>data</var> 中的所有位向高位方向移动 <var>dist</var> 位，低位补 0。例如，11001011 逻辑左移 2 位得到 00101100（最高两位被丢弃）。
     </li>
-    <!-- <li>Logical Right: All bits in <var>data</var> are shifted down <var>dist</var> places, with the upper <var>dist</var> places filled with 0's. For example, 11001011 logically shifted right twice is 00110010. (The bottom two ones are lost.) -->
     <li>
-     逻辑右：
-     <var>
-      data
-     </var>
-     中的所有位都向下移动
-     <var>
-      dist
-     </var>
-     位，上面的
-     <var>
-      dist
-     </var>
-     位用0填充。 例如，11001011逻辑右移两次是00110010。（下面的两个丢失。）
+     逻辑右移：将 <var>data</var> 中的所有位向低位方向移动 <var>dist</var> 位，高位补 0。例如，11001011 逻辑右移 2 位得到 00110010（最低两位被丢弃）。
     </li>
-    <!-- <li>Arithmetic Right: All bits in <var>data</var> are shifted down <var>dist</var> places, with the upper <var>dist</var> places filled with repetitions of whatever the uppermost bit in <var>data</var>. For example, 11001011 arithmetically shifted right twice is 11110010. -->
     <li>
-     算术右移：
-     <var>
-      data
-     </var>
-     中的所有位都向下移动
-     <var>
-      dist
-     </var>
-     位，上面的
-     <var>
-      dist
-     </var>
-     位用最高位的重复填充 在
-     <var>
-      数据
-     </var>
-     中。 例如，11001011算术右移两次为11110010。
+     算术右移：将 <var>data</var> 中的所有位向低位方向移动 <var>dist</var> 位，高位用原最高位的值进行填充。例如，11001011 算术右移 2 位得到 11110010。
     </li>
-    <!-- <li>Rotate Left: All bits in <var>data</var> are shifted up <var>dist</var> places, with the top <var>dist</var> places wrapped around into the bottom. For example, 11001011 rotated left twice is 00101111. -->
     <li>
-     向左旋转：
-     <var>
-      data
-     </var>
-     中的所有位都向上移动
-     <var>
-      dist
-     </var>
-     位，顶部的
-     <var>
-      dist
-     </var>
-     位环绕到底部。 例如，11001011向左旋转两次是00101111。
+     循环左移：将 <var>data</var> 中的所有位向高位方向移动 <var>dist</var> 位，移出的高位重新回绕到低位。例如，11001011 循环左移 2 位得到 00101111。
     </li>
-    <!-- <li>Rotate Right: All bits in <var>data</var> are shifted down <var>dist</var> places, with the bottom <var>dist</var> places wrapped around into the top. For example, 11001011 rotated right twice is 11110010. -->
     <li>
-     向右循环：
-     <var>
-      data
-     </var>
-     中的所有位都向下移动
-     <var>
-      dist
-     </var>
-     位置，底部的
-     <var>
-      dist
-     </var>
-     位置环绕到顶部。 例如，11001011向右旋转两次是11110010。
+     循环右移：将 <var>data</var> 中的所有位向低位方向移动 <var>dist</var> 位，移出的低位重新回绕到高位。例如，11001011 循环右移 2 位得到 11110010。
     </li>
    </ul>
    <p>
-    <!-- Note that if <var>dist</var> contains any floating or error inputs, then the output is composed entirely of error values, since there is no way to guess how far to shift the input. -->
-    请注意，如果
-    <var>
-     dist
-    </var>
-    包含任何浮动或错误输入，则输出完全由错误值组成，因为无法猜测将输入移动多远。
+    注意：如果 <var>dist</var> 输入中包含悬空位或错误位，则由于无法确定移位距离，输出将全部为错误值。
    </p>
    <h2>
-    <!-- Pins -->
     引脚
    </h2>
    <dl>
     <dt>
-     <!-- West edge, north end (input, bit width matches the Data Bits attribute) -->
-     西边、北端（输入，位宽与数据位属性匹配）
+     西侧上端（输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- The value to be shifted. -->
-     要移动的值。
+     需要进行移位操作的数据输入 <var>data</var>。
     </dd>
     <dt>
-     <!-- West edge, south end (input, bit width is computed as below) -->
-     西边，南端（输入，位宽计算如下）
+     西侧下端（输入，位宽按规则计算）
     </dt>
     <dd>
-     <!-- The number of bits by which to shift the <var>data</var> input. This input should have as many bits as is the minimum number to indicate any shift distance from 0 up to one less than Data Bits; that is, it should be the ceiling of the base-2 logarithm of Data Bits. For example, if Data Bits were 8, this input would require 3 bits; but if it were 9, it would require 4 bits. -->
-     <var>
-      data
-     </var>
-     输入移位的位数。 该输入应具有与指示从 0 到比数据位少 1 的任何移位距离的最小数量一样多的位； 也就是说，它应该是数据位的以2为底的对数的上限。 例如，如果数据位为 8，则该输入将需要 3 位； 但如果是 9，则需要 4 位。
+     移位距离输入 <var>dist</var>，表示对 <var>data</var> 进行移位的位数。该输入的位宽应为能表示从 0 到“数据位宽减 1”的最小位数，即 ⌈log₂(数据位宽)⌉。例如，当数据位宽为 8 时，需要 3 位；当为 9 时，需要 4 位。
     </dd>
     <dt>
-     <!-- East edge (output, bit width matches the Data Bits attribute) -->
-     东边（输出，位宽与数据位属性匹配）
+     东侧（输出，位宽与“数据位宽”一致）
     </dt>
     <dd>
-     <!-- The result of shifting the input value by the input distance. -->
-     将输入值移动输入距离的结果。
+     按指定移位类型和移位距离得到的结果。
     </dd>
    </dl>
    <h2>
-    <!-- Attributes -->
     属性
    </h2>
    <p>
-    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
-    选择或添加组件时，
-    <b class="keybind">
-     Alt-0
-    </b>
-    到
-    <b class="keybind">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性。
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
    </p>
    <div class="attliste">
     <dl>
      <dt>
-      <!-- <b class="propertie">Data Bits</b>Data Bits</b> -->
-      <b class="property">
-       数据位
+      <b class="propertie">
+       数据位宽
       </b>
-      数据位
      </dt>
      <dd>
-      <!-- The bit width of the <var>data</var> input and of the output. -->
-      <var>
-       data
-      </var>
-      输入和输出的位宽。
+      <var>data</var> 输入端及输出端的位宽。
      </dd>
      <dt>
-      <!-- <b class="propertie">Data Bits</b>Shift Type</b> -->
-      <b class="property">
-       数据位
+      <b class="propertie">
+       移位类型
       </b>
-      移位类型
      </dt>
      <dd>
-      <!-- One of the five possible shift types as outlined above (Logical Left, Logical Right, Arithmetic Right, Rotate Left, Rotate Right). -->
-      如上所述的五种可能的移位类型之一（逻辑左移、逻辑右移、算术右移、左旋转、右旋转）。
+      指定移位方式，可选：逻辑左移、逻辑右移、算术右移、循环左移或循环右移。
      </dd>
     </dl>
    </div>
    <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
+    手形工具行为
    </h2>
    <p>
-    <!-- None. -->
     无
    </p>
    <h2>
-    <!-- Text Tool Behavior -->
     文本工具行为
    </h2>
    <p>
-    <!-- None. -->
     无
    </p>
    <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
     <b>
      返回
     </b>
     <a href="../index.html">
-     电路元件库参考手册
+     库参考手册
     </a>
    </p>
   </div>

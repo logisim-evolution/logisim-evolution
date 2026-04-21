@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="ru">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="ru">
+	<title>Окно тестовых векторов</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+	<div class="maindiv">
+
+<h1>Окно тестовых векторов</h1>
+
+<p>Окно тестовых векторов похоже на вкладку "Таблица" окна журналирования.
+Вы можете загрузить тестовый вектор из файла, и Logisim начнёт
+запускать тесты на текущей схеме. Как и окно журналирования, для проекта
+существует только одно окно тестовых векторов, и таблица будет
+меняться в зависимости от того, какая схема симулируется в окне
+проекта. Однако обратите внимание, что модуль тестовых векторов запускает
+отдельную копию симулятора схем, поэтому он не мешает и не
+зависит от симуляции в окне проекта.</p>
+
+<p>В качестве примера мы протестируем схему ниже. Эта схема выдаёт результаты пяти логических функций из двух входов. Она содержит ошибку, потому что нижний элемент NAND должен быть элементом AND.</p>
+
+<p align="center">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="Пример схемы с пятью логическими функциями">
+</p>
+
+<p>Файл тестового вектора выглядит так:</p>
+
+<blockquote>
+	<pre class="code">
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10
+1 1 0 0 0 1 1 11
+</pre>
+</blockquote>
+
+<p>Чтобы запустить тест, выберите меню <b class="menu">|&nbsp; Симуляция &nbsp;|</b>→<b class="menu">|&nbsp; Тестовый вектор &nbsp;|</b>, затем используйте кнопку <b class="button">Загрузить вектор</b>. Выберите созданный вами файл вектора. Симуляция выполняется немедленно, и отображается таблица с результатом.</p>
+
+<p align="center">
+	<img src="../../../img-guide/vector-result.png" alt="Окно тестовых векторов, показывающее результаты с ошибками, отмеченными красным цветом">
+</p>
+
+<p>Любые неверные выходы будут отмечены красным цветом. Наведите курсор мыши на
+красное поле, чтобы увидеть, каким должен был быть выход согласно
+тестовому вектору. Строки с неверными выходами сортируются в начало
+окна.</p>
+
+<p>Формат файла простой. Вы можете использовать модуль журналирования (с
+выбранной опцией "Включить строку заголовка" во вкладке вывода файла) для начала работы,
+поскольку в большинстве случаев модуль журналирования выводит тот же формат, что используется
+модулем тестовых векторов.</p>
+
+<h2>Interactive Test Execution</h2>
+
+<p>Each row in the Test Vector window has two buttons that allow you to manually interact with individual tests:</p>
+
+<ul>
+<li><b>"Show" button</b> (first column): This button previews the circuit state without checking outputs.
+<ul>
+<li><b>Combinational tests (seq=0)</b>: Resets the circuit, sets the input values, and propagates signals.
+Only the clicked row is highlighted in green to show it was executed.</li>
+<li><b>Sequential tests (seq&gt;0)</b>: Resets the circuit, then runs all prior sequential steps in the set
+(from seq 1 up to the target step), propagating after each step. All executed sequential steps are highlighted
+in green to show the execution path.</li>
+</ul>
+The Show button does not verify outputs against expected values - it only shows what the circuit state would be.</li>
+
+<li><b>"Set" button</b> (second column): This button sets input values and may execute tests.
+<ul>
+<li><b>Combinational tests (seq=0)</b>: Resets the circuit, applies the test inputs, then propagates signals. Only the clicked row is highlighted in green to indicate it was executed.</li>
+<li><b>Sequential tests (seq&gt;0)</b>: Does NOT reset the circuit and does NOT run any other tests.
+Simply sets the input values for that single step only, then propagates signals. Only the clicked row is
+highlighted in green. This allows you to manually step through a sequence by setting individual step values
+without resetting or running previous steps.</li>
+</ul>
+</li>
+
+<li>For either button, if you turn off Auto-Propagation in the Simulation menu, it will not propagate the last step in the sequence (or the only step in the combinational test), stopping after setting the input pins. This allows you to single-step the circuit through the propagation of that line.
+</li>
+</ul>
+
+<p><b>Highlighting behavior:</b></p>
+<ul>
+<li>When the Show button is clicked on a combinational test, only that single row is highlighted in green.</li>
+<li>When the Show button is clicked on a sequential test, all sequential steps (seq &gt; 0) up to and including
+the target step are highlighted in green.</li>
+<li>When the Set button is clicked, only the clicked row is highlighted in green, regardless of whether it's
+combinational or sequential.</li>
+<li>Highlighting is cleared when a new vector file is loaded or when the circuit simulator is reset.</li>
+</ul>
+
+<p>
+	<b>Предыдущий:</b> <a href="index.html">Тестовые векторы</a> | <b>Следующий:</b> <a href="test_vector_file_format.html">Формат файла тестовых векторов</a>.
+</p>
+	</div>
+</body>
+</html>

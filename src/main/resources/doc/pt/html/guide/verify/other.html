@@ -14,55 +14,48 @@
 
 <h1>Outras opções para verificação</h1>
 
-<p> Existem algumas opções adicionais relacionadas com a execução pela linha de comandos. 
+<p> Existem algumas opções adicionais relacionadas com a execução pela linha de comandos.
 </p>
 
-<h2> O parâmetro <tt> -load </tt> na linha de comando </h2>
+      <h2>
+        The <tt>--load</tt> command-line parameter
+      </h2>
+      <p>
+        A more complex circuit might include RAM or ROM components that need to be loaded with a program or data in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM or ROM components in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.)
+      </p>
+      <blockquote>
+	  <div class=forcode>
+        <tt>java -jar logisim-filename.jar cpu.circ --tty table --load ram-image.txt --load rom-image.txt myRom </tt>
+		</div>
+      </blockquote>
+      <p>
+        The <tt>--tty</tt> parameters (see below) must be immediately after <tt>--tty</tt>, and the memory image's filename must be immediately after <tt>--load</tt>). The filename may be followed by the label of the memory component that should be loaded. There may be as many <tt>--load</tt> options as you need. The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>.
+      </p>
+      <p>
+        Logisim searches for memory recursively, so this will still work if the memory is nested within a subcircuit. Logisim will attempt to load the same file into every RAM or ROM that it can find with a matching label. If no label is provided, the same file is loaded into every RAM or ROM component other than those with labels matching other <tt>--load</tt> options. In the example above, the <tt>ram-image.txt</tt> is loaded into every RAM and ROM component in the simulation tree other than those that have the label <tt>myRom</tt>. All RAM and ROM components that have the label <tt>myRom</tt> will be loaded from the <tt>rom-image.txt</tt> file. The order of the <tt>--load</tt> options does not matter.
+      </p>
 
-<p> Um circuito mais complexo poderá incluir um componente de memória RAM que precisará
-ser carregado com um programa para que o circuito possa usá-lo.
-Você poderá especificar um arquivo de imagem da memória na linha de comando, 
-que será carregado em qualquer componente de RAM no circuito antes da simulação começar.
-(Isso não funcionará quando se carregar a interface gráfica - só servirá para a
-execução de linha de comando.)
-</p>
+<h2> Opções para o parâmetro <tt>--tty </tt> </h2>
 
-<blockquote><tt>java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt</tt></blockquote>
-
-<p> A ordem dos parâmetros não é importante (exceto para o parâmetro <tt> table </tt>
-que deverá ser imediatamente após <tt>-tty </tt>, e o nome do arquivo de imagem da 
-memória que deverá ser logo após <tt>-load </tt>).
-O arquivo de imagem deverá estar no <a href="../mem/mem-menu.html"> formato de imagem da
-memória do Logisim </a>. 
-</p>
-
-<p> O Logisim pesquisará pela RAM recursivamente, de modo que esse continuará a
-funcionar mesmo se a RAM estiver embutida em um subcircuito.
-Não há maneira alguma, no entanto, de distinguir diferentes componentes do tipo RAM:
-o Logisim irá tentar carregar o mesmo arquivo em todas as RAMs que puder encontrar.
-</p>
-
-<h2> Opções para o parâmetro <tt>-tty </tt> </h2>
-
-<p> Em nossos exemplos até agora, sempre usamos tabela <q><tt>-tty&nbsp;table</tt></q>
+<p> Em nossos exemplos até agora, sempre usamos tabela <q><tt>--tty&nbsp;table</tt></q>
 para indicar que uma tabela de valores de saída deverá ser exibida. Você poderá
 personalizar o comportamento de outras formas, listando uma ou mais opções,
 separados por vírgulas. Por exemplo, você poderá escrever
-<q><tt>-tty&nbsp;table,halt,speed</tt></q>,
+<q><tt>--tty&nbsp;table,halt,speed</tt></q>,
 e o programa irá executar todas os três comportamentos listados abaixo.
-(A ordem em que estão listados não importa.) 
+(A ordem em que estão listados não importa.)
 </p>
 
 <dl>
 
 <dt> <tt> halt </tt> </dt>
-<dd> <p> Após a simulação terminar, aparecerá uma mensagem de uma linha 
+<dd> <p> Após a simulação terminar, aparecerá uma mensagem de uma linha
 explicando porque a simulação terminou. Condições de erro - como uma oscilação detectada -
-serão exibidas em qualquer caso. 
+serão exibidas em qualquer caso.
 </p> </dd>
 
 <dt> <tt> speed </tt> </dt>
-<dd> <p> Se você usar essa opção em conjunto com <q> <tt>-tty </tt> </q>,
+<dd> <p> Se você usar essa opção em conjunto com <q> <tt>--tty </tt> </q>,
 em seguida, depois que completar a simulação o Logisim irá exibir um resumo de
 quão rápido o circuito foi simulado, tal como:
 </p>
@@ -70,15 +63,15 @@ quão rápido o circuito foi simulado, tal como:
 <blockquote><tt>714 Hz (509 ticks in 712 milliseconds)</tt></blockquote>
 
 <p> Observar que a exibição de informações durante a simulação
-fará a simulação ser muito mais lento. Como apenas uma comparação, 
+fará a simulação ser muito mais lento. Como apenas uma comparação,
 para o mesmo circuito e imagem funcionou acima de 714 Hz com a opção <tt> speed </tt>
-e apenas a 490 Hz com a opção <tt>table</tt> também. 
+e apenas a 490 Hz com a opção <tt>table</tt> também.
 </p> </dd>
 
 <dt> <tt> statistics </tt> </dt>
 <dd> <p> Mostrar uma tabela delimitada por tabulações contendo dados estatísticos
-sobre os componentes utilizados pelo circuito <q> principal </q> no projeto. 
-A tabela inclui quatro colunas: 
+sobre os componentes utilizados pelo circuito <q> principal </q> no projeto.
+A tabela inclui quatro colunas:
 </p>
 <ul>
 <li> Exclusiva: O número de vezes que o componente aparecer na hierarquia do circuito,
@@ -91,11 +84,11 @@ onde contamos cada subcircuito quantas vezes ele aparecer na hierarquia. </li>
 <p> A distinção entre <q> exclusiva </q> e <q> recursiva </q> também está explicada
 na seção <q> <a href="../menu/project.html"> menu de Projeto </a> </q>.
 Se o arquivo utilizar circuitos de uma biblioteca carregada do Logisim,
-os componentes serão considerado <q> caixas pretas </q>: o conteúdo dos circuitos 
+os componentes serão considerado <q> caixas pretas </q>: o conteúdo dos circuitos
 da biblioteca não serão incluídos na contagem exclusiva ou recursiva. </p>
 
 <p> (Esse recurso pode ser útil para os instrutores que peçam aos alunos para criar
-projetos com um subconjunto de bibliotecas de Logisim.) 
+projetos com um subconjunto de bibliotecas de Logisim.)
 </p> </dd>
 
 <dt> <tt> table </tt> </dt>
@@ -103,10 +96,10 @@ projetos com um subconjunto de bibliotecas de Logisim.)
 
 <dt> <tt> tty </tt> </dt>
 <dd> <p> Quaisquer componentes TTY enviarão suas saída para a tela (saída padrão),
-e todas as informações digitadas no teclado serão enviadas para todos os 
+e todas as informações digitadas no teclado serão enviadas para todos os
 equivalentes no circuito.
 Esses componentes serão incluídos, mesmo que sejam profundamente aninhados
-à hierarquia do subcircuito. 
+à hierarquia do subcircuito.
 </p> </dd>
 
 <p><strong>Próximo:</strong>&nbsp;<a href="multi.html">Testar múltiplos arquivos</a>.</p>

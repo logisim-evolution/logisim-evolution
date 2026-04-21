@@ -45,6 +45,7 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -339,12 +340,7 @@ public class Pin extends InstanceFactory {
           else if (s.equalsIgnoreCase("-inf")) val = Double.NEGATIVE_INFINITY;
           else if (s.equalsIgnoreCase("nan")) val = Double.NaN;
           else val = Double.parseDouble(s);
-          newVal = switch (bitWidth) {
-            case 16 -> Value.createKnown(16, Float.floatToFloat16((float) val));
-            case 32 -> Value.createKnown((float) val);
-            case 64 -> Value.createKnown(val);
-            default -> Value.ERROR;
-          };
+          newVal = Value.createKnown(bitWidth, val);
         }
         setVisible(false);
         pinState.intendedValue = newVal;

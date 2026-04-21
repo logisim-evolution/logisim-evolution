@@ -172,6 +172,10 @@ public abstract class Mem extends InstanceFactory {
     return size + labels[pass];
   }
 
+  public MemContents getContents(InstanceState ramState) {
+    return getState(ramState).getContents();
+  }
+
   abstract MemState getState(Instance instance, CircuitState state);
 
   abstract MemState getState(InstanceState state);

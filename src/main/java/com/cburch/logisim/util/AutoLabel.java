@@ -229,7 +229,7 @@ public class AutoLabel {
     var newLabel = oldLabel;
     while (!correct) {
       newLabel = (String)
-          OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
+          OptionPane.showInputDialog(circ.getProject().getFrame(), S.get("editLabelQuestion") + " " + componentName,
               S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
         if (Circuit.isCorrectLabel(circ.getName(),

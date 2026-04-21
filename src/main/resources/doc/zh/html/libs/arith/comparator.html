@@ -3,7 +3,7 @@
  <head>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
   <meta content="zh" http-equiv="Content-Language"/>
   <title>
@@ -33,7 +33,7 @@
       <td>
        <!-- <a href="index.html">Arithmetic</a> -->
        <a href="index.html">
-        算术
+        运算器
        </a>
       </td>
      </tr>
@@ -41,7 +41,7 @@
       <td>
        <!-- <strong>Introduced:</strong> -->
        <strong>
-        介绍:
+        引入版本：
        </strong>
       </td>
       <td>
@@ -52,7 +52,7 @@
       <td valign="top">
        <!-- <strong>Appearance:</strong> -->
        <strong>
-        外观符号:
+        外观：
        </strong>
       </td>
       <td valign="top">
@@ -67,11 +67,11 @@
    </h2>
    <p>
     <!-- Compares two values, either as unsigned values or as two's-complement values, depending on the Numeric Type attribute. Normally, one of the outputs will be 1, and the other two outputs will be 0. -->
-    比较两个值，无论是无符号值还是补码值，具体取决于数字类型属性。 通常，其中一个输出为 1，另外两个输出为 0。
+    比较两个数值：按无符号数还是按补码进行比较，取决于“数值类型”属性。通常，三个输出中会有一个为 1，其余两个为 0。
    </p>
    <p>
     <!-- The comparison is performed starting at the most significant bits in each number and descending downward in parallel until a location is found where the two values disagree. If, however, an error value or a floating value is encountered during this descent, then all outputs will match that error or floating value. -->
-    从每个数字中的最高有效位开始并并行向下执行比较，直到找到两个值不一致的位置。 然而，如果在下降过程中遇到错误值或浮动值，则所有输出都将与该错误或浮动值匹配。
+    比较从两数的最高有效位开始，并行向低位逐位检查，直到发现两者不一致为止。但若在此过程中遇到错误值或悬空值，则所有输出都会变为相同的错误值或悬空值。
    </p>
    <h2>
     <!-- Pins -->
@@ -80,55 +80,43 @@
    <dl>
     <dt>
      <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
-     西边，北端（输入，位宽与数据位属性匹配）
+     西侧上端（输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
      <!-- The first of the two values to be compared. -->
-     要比较的两个值中的第一个值。
+     参与比较的第一个数值。
     </dd>
     <dt>
      <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
-     西边，南端（输入，位宽与数据位属性匹配）
+     西侧下端（输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
      <!-- The second of the two values to be compared. -->
-     要比较的两个值中的第二个值。
+     参与比较的第二个数值。
     </dd>
     <dt>
      <!-- East edge, labeled <tt>&gt;</tt> (output, bit width 1) -->
-     东边，标记为
-     <tt>
-      &gt;
-     </tt>
-     （输出，位宽1）
+     东侧（标记为 <tt>&gt;</tt>，输出，位宽 1）
     </dt>
     <dd>
      <!-- 1 if the first input is greater than the second input, 0 if the first input is less than or equal the second input. -->
-     如果第一个输入大于第二个输入，则为 1；如果第一个输入小于或等于第二个输入，则为 0。
+     若第一个输入大于第二个输入，则为 1；若第一个输入小于或等于第二个输入，则为 0。
     </dd>
     <dt>
      <!-- East edge, labeled <tt>=</tt> (output, bit width 1) -->
-     东边，标记为
-     <tt>
-      =
-     </tt>
-     （输出，位宽1）
+     东侧（标记为 <tt>=</tt>，输出，位宽 1）
     </dt>
     <dd>
      <!-- 1 if the first input equals the second input, 0 if the first input is not equal the second input. -->
-     如果第一个输入等于第二个输入，则为 1；如果第一个输入不等于第二个输入，则为 0。
+     若两个输入相等，则为 1；若不相等，则为 0。
     </dd>
     <dt>
      <!-- East edge, labeled <tt>&lt;</tt> (output, bit width 1) -->
-     东边，标记为
-     <tt>
-      &lt;
-     </tt>
-     （输出，位宽 1）
+     东侧（标记为 <tt>&lt;</tt>，输出，位宽 1）
     </dt>
     <dd>
      <!-- 1 if the first input is less than the second input, 0 if the first input is greater than or equal the second input. -->
-     如果第一个输入小于第二个输入，则为 1；如果第一个输入大于或等于第二个输入，则为 0。
+     若第一个输入小于第二个输入，则为 1；若第一个输入大于或等于第二个输入，则为 0。
     </dd>
    </dl>
    <h2>
@@ -137,37 +125,35 @@
    </h2>
    <p>
     <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
-    选择或添加元件时，
-    <b class="keybind">
-     Alt-0
-    </b>
-    到
-    <b class="keybind">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性。
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
    </p>
    <div class="attliste">
     <dl>
      <dt>
       <!-- <b class="propertie">Data Bits</b> -->
       <b class="propertie">
-       数据位
+       数据位宽
       </b>
      </dt>
      <dd>
       <!-- The bit width of the component's inputs. -->
-      元件输入的位宽度。
+      组件输入的位宽。
+     </dd>
+    </dl>
+    <dl>
+     <dt>
+      <b class="propertie">
+       数值类型
+      </b>
+     </dt>
+     <dd>
+      组件输入的数值类型。可选值包括：补码和无符号。
      </dd>
     </dl>
    </div>
    <h2>
     <!-- Poke Tool Behavior -->
-    Poke 工具行为
+    手形工具行为
    </h2>
    <p>
     <!-- None. -->
@@ -187,7 +173,7 @@
      返回
     </b>
     <a href="../index.html">
-     电路元件库参考手册
+     库参考手册
     </a>
    </p>
   </div>

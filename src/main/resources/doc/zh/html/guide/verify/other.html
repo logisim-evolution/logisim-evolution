@@ -22,67 +22,42 @@
     <!-- There are a some additional options related to command-line execution. -->
     还有一些与命令行执行相关的附加选项。
    </p>
+      <h2>
+        The <tt>--load</tt> command-line parameter
+      </h2>
+      <p>
+        A more complex circuit might include RAM or ROM components that need to be loaded with a program or data in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM or ROM components in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.)
+      </p>
+      <blockquote>
+	  <div class=forcode>
+        <tt>java -jar logisim-filename.jar cpu.circ --tty table --load ram-image.txt --load rom-image.txt myRom </tt>
+		</div>
+      </blockquote>
+      <p>
+        The <tt>--tty</tt> parameters (see below) must be immediately after <tt>--tty</tt>, and the memory image's filename must be immediately after <tt>--load</tt>). The filename may be followed by the label of the memory component that should be loaded. There may be as many <tt>--load</tt> options as you need. The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>.
+      </p>
+      <p>
+        Logisim searches for memory recursively, so this will still work if the memory is nested within a subcircuit. Logisim will attempt to load the same file into every RAM or ROM that it can find with a matching label. If no label is provided, the same file is loaded into every RAM or ROM component other than those with labels matching other <tt>--load</tt> options. In the example above, the <tt>ram-image.txt</tt> is loaded into every RAM and ROM component in the simulation tree other than those that have the label <tt>myRom</tt>. All RAM and ROM components that have the label <tt>myRom</tt> will be loaded from the <tt>rom-image.txt</tt> file. The order of the <tt>--load</tt> options does not matter.
+      </p>
    <h2>
-    <!-- The <tt>-load</tt> command-line parameter -->
+    <!-- Options for the <tt>--tty</tt> parameter -->
     <tt>
-     -load
-    </tt>
-    命令行参数
-   </h2>
-   <p>
-    <!-- A more complex circuit might include a RAM component that needs to be loaded with a program in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM component in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.) -->
-    更复杂的电路可能包括需要加载程序才能使电路执行任何操作的 RAM 组件。 您可以在命令行指定一个内存映像文件，该文件将在仿真开始之前加载到电路中的任何 RAM 组件中。 （这在加载 GUI 时不起作用 - 它仅适用于命令行执行。）
-   </p>
-   <blockquote>
-    <div class="forcode">
-     <tt>
-      java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt
-     </tt>
-    </div>
-   </blockquote>
-   <p>
-    <!-- The order of the parameters is not important (except the <tt>table</tt> parameter must be immediately after <tt>-tty</tt>, and the memory image's filename must be immediately after <tt>-load</tt>). The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>. -->
-    参数的顺序并不重要（除了
-    <tt>
-     table
-    </tt>
-    参数必须紧接在
-    <tt>
-     -tty
-    </tt>
-    之后，并且内存映像的文件名必须紧接在
-    <tt>
-     -load
-    </tt>
-    之后 tt&gt;）。 内存映像文件应采用
-    <a href="../mem/mem-menu.html">
-     Logisim 的内存映像格式
-    </a>
-    。
-   </p>
-   <p>
-    <!-- Logisim searches for RAM recursively, so this will still work if RAM is nested within a subcircuit. There is no way, though, to distinguish different RAM components: Logisim will attempt to load the same file into every RAM that it can find. -->
-    Logisim-evolution 递归地搜索 RAM，因此如果 RAM 嵌套在子电路中，这仍然有效。 但是，无法区分不同的 RAM 组件：Logisim-evolution 将尝试将相同的文件加载到它能找到的每个 RAM 中。
-   </p>
-   <h2>
-    <!-- Options for the <tt>-tty</tt> parameter -->
-    <tt>
-     -tty
+     --tty
     </tt>
     参数的选项
    </h2>
    <p>
-    <!-- In our examples thus far, we've always used <tt><b>-tty&nbsp;table</b></tt> to indicate that a table of output values should be displayed. You can customize the behavior in other ways by listing one or more options, separated by commas. For instance, you might write <q><tt>-tty&nbsp;table,halt,speed</tt></q>, and the program will perform all three behaviors listed below. (The order in which they are listed does not matter.) -->
+    <!-- In our examples thus far, we've always used <tt><b>--tty&nbsp;table</b></tt> to indicate that a table of output values should be displayed. You can customize the behavior in other ways by listing one or more options, separated by commas. For instance, you might write <q><tt>--tty&nbsp;table,halt,speed</tt></q>, and the program will perform all three behaviors listed below. (The order in which they are listed does not matter.) -->
     到目前为止，在我们的示例中，我们始终使用
     <tt>
      <b>
-      -tty table
+      --tty table
      </b>
     </tt>
     来指示应显示输出值表。 您可以通过列出一个或多个选项（以逗号分隔）以其他方式自定义行为。 例如，您可以编写
     <q>
      <tt>
-      -tty table,halt,speed
+      --tty table,halt,speed
      </tt>
     </q>
     ，程序将执行下面列出的所有三种行为。 （它们列出的顺序并不重要。）
@@ -106,14 +81,14 @@
     </dt>
     <dd>
      <p>
-      <!-- If you use <tt>speed</tt> in conjunction with <tt>-tty</tt>, then after completing the simulation Logisim will display a summary of how quickly the circuit was simulated, such as: -->
+      <!-- If you use <tt>speed</tt> in conjunction with <tt>--tty</tt>, then after completing the simulation Logisim will display a summary of how quickly the circuit was simulated, such as: -->
       如果将
       <tt>
        speed
       </tt>
       与
       <tt>
-       -tty
+       --tty
       </tt>
       结合使用，则在完成仿真后 Logisim 将显示电路仿真速度的摘要，例如：
      </p>

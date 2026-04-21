@@ -1,236 +1,137 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:25" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   ROM
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/rom.png" width="32"/>
-    <em>
-     ROM
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Memory</a> -->
-       <a href="index.html">
-        存储
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.1.0
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/rom.png" width="64"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- The ROM component stores up to 16,777,216 values (specified in the Address Bit Width attribute), each of which can include up to to 32 bits (specified in the Data Bit Width attribute). A circuit can access the current values in ROM, but it cannot change them. The user can modify individual values interactively via the Poke Tool, or the user can modify the entire contents via the Menu Tool. -->
-    ROM 组件最多可存储 16,777,216 个值（在地址位宽度属性中指定），每个值最多可包含 32 位（在数据位宽度属性中指定）。 电路可以访问 ROM 中的当前值，但不能更改它们。 用户可以通过 Poke 工具交互地修改单个值，或者用户可以通过菜单工具修改整个内容。
-   </p>
-   <p>
-    <!-- Unlike the RAM component, the ROM component's current contents are stored as an attribute of the component. Thus, if a circuit containing a ROM component is used twice, then both ROM components will hold the same values. Also because of this behavior, the current ROM contents are stored in files created by Logisim. -->
-    与 RAM 组件不同，ROM 组件的当前内容存储为组件的属性。 因此，如果包含 ROM 组件的电路被使用两次，则两个 ROM 组件将保持相同的值。 也由于此行为，当前 ROM 内容存储在 Logisim 创建的文件中。
-   </p>
-   <p>
-    <!-- Current values are displayed in the component. Addresses displayed are listed in gray to the left of the display area. Inside, each value is listed using hexadecimal. The value at the currently selected address will be displayed in inverse text (white on black). -->
-    当前值显示在组件中。 显示的地址以灰色列出在显示区域的左侧。 在内部，每个值都使用十六进制列出。 当前所选地址处的值将以反色文本（黑底白字）显示。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <dl>
-    <dt>
-     <!-- <var>A</var> on west edge (input, bit width matches Address Bit Width attribute) -->
-     <var>
-      A
-     </var>
-     在西边（输入，位宽与地址位宽属性匹配）
-    </dt>
-    <dd>
-     <!-- Selects which of the values are currently being accessed by the circuit. -->
-     选择电路当前正在访问哪些值。
-    </dd>
-    <dt>
-     <!-- <var>D</var> on east edge (input/output, bit width matches Data Bit Width attribute) -->
-     <var>
-      D
-     </var>
-     在东边（输入/输出，位宽与数据位宽属性匹配）
-    </dt>
-    <dd>
-     <!-- Outputs the value at the currently selected address at the <var>D</var> pin if <var>sel</var> is 1 or floating. If <var>sel</var> is 0, then <var>D</var> will be floating. -->
-     如果
-     <var>
-      sel
-     </var>
-     为1或浮动，则输出
-     <var>
-      D
-     </var>
-     引脚上当前选定地址的值。 如果
-     <var>
-      sel
-     </var>
-     为0，则
-     <var>
-      D
-     </var>
-     将为浮动。
-    </dd>
-    <dt>
-     <!-- <var>sel</var> on south edge (input, bit width 1) -->
-     <var>
-      sel
-     </var>
-     位于南边缘（输入，位宽 1）
-    </dt>
-    <dd>
-     <!-- If you have just one ROM module, ignore this input. If you have multiple ROM modules in parallel, you can use this input to enable or disable the entire ROM module, based on whether the value is 1 or 0. In other words, when this is 0, no value is emitted on the <var>D</var> output. -->
-     如果您只有一个 ROM 模块，请忽略此输入。 如果并行有多个 ROM 模块，则可以使用此输入根据该值是 1 还是 0 来启用或禁用整个 ROM 模块。换句话说，当该值为 0 时，
-     <var 上不会发出任何值。="">
-      D
-     </var>
-     输出。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Address Bit Width</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute. -->
-    当选择或添加组件时，数字“0”到“9”会更改其
-    <q>
-     地址位宽度
-    </q>
-    属性，而Alt-0到Alt-9会更改其
-    <q>
-     数据位宽度
-    </q>
-    属性 &gt; 属性。
-   </p>
-   <dl>
-    <dt>
-     <!-- Address Bit Width -->
-     地址位宽
-    </dt>
-    <dd>
-     <!-- The bit width of the address bits. The number of values stored in ROM is 2<sup><var>addrBitWidth</var></sup>. -->
-     地址位的位宽。 ROM 中存储的值的数量为 2
-     <sup>
-      <var>
-       addrBitWidth
-      </var>
-     </sup>
-     。
-    </dd>
-    <dt>
-     <!-- Data Bit Width -->
-     数据位宽
-    </dt>
-    <dd>
-     <!-- The bit width of each individual value in memory. -->
-     内存中每个单独值的位宽度。
-    </dd>
-    <dt>
-     <!-- Contents -->
-     内容
-    </dt>
-    <dd>
-     <!-- Stores the contents of memory. -->
-     存储内存的内容。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- See <a href="../../guide/mem/mem-poke.html">poking memory</a> in the <em>User's Guide</em>. -->
-    请参阅
-    <em>
-     用户指南
-    </em>
-    中的
-    <a href="../../guide/mem/mem-poke.html">
-     内存
-    </a>
-    。
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <h2>
-    <!-- Menu Tool Behavior -->
-    菜单工具行为
-   </h2>
-   <p>
-    <!-- See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a> in the <em>User's Guide</em>. -->
-    请参阅
-    <em>
-     用户指南
-    </em>
-    中的
-    <a href="../../guide/mem/mem-menu.html">
-     弹出菜单和文件
-    </a>
-    。
-   </p>
-   <p>
-    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      ROM
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/rom.png" alt="#########" width="32" height="32"> <em>ROM</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">存储器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.1.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/rom.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        ROM 组件用于存储最多 16,777,216 个数值（由 <q>地址位宽</q> 属性指定），每个数值最多可包含 32 位（由 <q>数据位宽</q> 属性指定）。电路可以读取 ROM 中当前存储的数值，但不能通过电路逻辑对其进行修改。用户可以使用 <q>手形工具</q> 交互式地修改单个存储单元的值，也可以通过 <q>菜单工具</q> 一次性修改整个 ROM 的内容。
+      </p>
+      <p>
+        与 RAM 组件不同，ROM 组件的当前内容是作为组件自身的一个属性来存储的。因此，如果同一个电路中使用了多个相同的 ROM 组件，那么这些 ROM 组件将包含完全相同的内容。正因为如此，ROM 的当前内容会被保存在 Logisim-evolution 创建的电路文件中。
+      </p>
+      <p>
+        当前存储的数值会显示在组件内部。显示区域左侧以灰色列出各个地址；在显示区域内，每个存储值均以十六进制形式显示。当前选中地址对应的数值将以反色显示（白字黑底）。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          西侧边缘，标记为 <var>A</var>（输入，位宽与<q>地址位宽</q>属性一致）
+        </dt>
+        <dd>
+          用于选择当前电路正在访问的存储地址。
+        </dd>
+
+        <dt>
+          东侧边缘，标记为 <var>D</var>（输出，位宽与<q>数据位宽</q>属性一致）
+        </dt>
+        <dd>
+          在 <var>D</var> 引脚上输出当前所选地址处存储的值。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 0–9 可修改其 <q>地址位宽</q> 属性，Alt-0 到 Alt-9 可修改其 <q>数据位宽</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          地址位宽
+        </dt>
+        <dd>
+          地址信号的位宽。ROM 中可存储的数值数量为 2<sup><var>地址位宽</var></sup>。
+        </dd>
+
+        <dt>
+          数据位宽
+        </dt>
+        <dd>
+          存储器中每个数值的位宽。
+        </dd>
+
+        <dt>
+          内容
+        </dt>
+        <dd>
+          存储器中的具体内容。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        参见《<em>用户指南</em>》中的
+        <a href="../../guide/mem/mem-poke.html">内存内容修改</a>。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <h2>
+        菜单工具行为
+      </h2>
+      <p>
+        参见《<em>用户指南</em>》中的
+        <a href="../../guide/mem/mem-menu.html">弹出菜单与文件</a>。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
 </html>

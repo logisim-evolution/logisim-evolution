@@ -1,245 +1,157 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Demultiplexer -->
-   解复用器
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <!-- <img class="iconlibs" src="../../../../icons/6464/demultiplexer.png" alt="#########" height="32" width="32"> <em>Demultiplexer</em> -->
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/demultiplexer.png" width="32"/>
-    <em>
-     解复用器
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Plexers</a> -->
-       <a href="index.html">
-        复用器
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.0 Beta 11
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/demux.png" width="64"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- Copies the input on the west edge onto exactly one of the outputs on the east edge; which of these outputs is specified via the current value received through the input on the south edge. I find it useful to think of a demultiplexer as analogous to a railroad switch, controlled by the select input. -->
-    将西边的输入复制到东边的输出之一； 这些输出中的哪一个是通过南边缘输入接收到的当前值指定的。 我发现将解复用器视为类似于铁路开关，由选择输入控制是有用的。
-   </p>
-   <p>
-    <!-- (Incidentally, some authorities spell this <em>demultiplex<strong>o</strong>r</em>, but <em>demultiplex<strong>e</strong>r</em> is the predominant spelling.) -->
-    （顺便说一句，一些权威机构将其拼写为
-    <em>
-     deplex
-     <strong>
-      o
-     </strong>
-     r
-    </em>
-    ，但
-    <em>
-     deplex
-     <strong>
-      e
-     </strong>
-     r
-    </em>
-    是主要拼写。）
-   </p>
-   <h2>
-    <!-- Pins (assuming component faces east, select is bottom/left) -->
-    引脚（假设元件朝东，选择底部/左侧）
-   </h2>
-   <dl>
-    <dt>
-     <!-- West edge (input, bit width matches Data Bits attribute) -->
-     西边（输入，位宽与数据位属性匹配）
-    </dt>
-    <dd>
-     <!-- The value to be routed to one of the outputs on the east edge. -->
-     要路由到东边缘的输出之一的值。
-    </dd>
-    <dt>
-     <!-- East edge, variable number (outputs, bit width matches Data Bits attribute) -->
-     东边，可变数量（输出，位宽与数据位属性匹配）
-    </dt>
-    <dd>
-     <!-- The outputs are numbered starting with 0 on the north. An output will match the west input if its number matches the value currently received through the select input on the south; otherwise, its value will be either all-zeroes or all-floating, depending on the value of the Three-State? attribute. If the select input contains any unspecified bits, then all outputs are floating. -->
-     输出的编号从北边的 0 开始。 如果输出的编号与当前通过南边的选择输入接收到的值匹配，则输出将与西边的输入匹配； 否则，其值将是全零或全浮点，具体取决于三态的值？ 属性。 如果选择输入包含任何未指定的位，则所有输出都是浮动的。
-    </dd>
-    <dt>
-     <!-- South edge, left side (input, bit width 1) -->
-     南边，左侧（输入，位宽1）
-    </dt>
-    <dd>
-     <!-- Enable: When 0, all outputs consist of all floating bits, regardless of the data and select inputs. -->
-     启用：为 0 时，所有输出均包含所有浮动位，无论数据和选择输入如何。
-    </dd>
-    <dt>
-     <!-- South edge, right side indicated by gray circle (input, bit width matches Select Bits attribute) -->
-     南边，灰色圆圈表示的右侧（输入，位宽与 Select Bits 属性匹配）
-    </dt>
-    <dd>
-     <!-- Select input: The value of this input determines to which output on the east edge to route the value received on the west edge. -->
-     选择输入：此输入的值确定将西边缘接收的值路由到东边缘的哪个输出。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, the digits '1' through '4' alter its <q>Select Bits</q> attribute, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, and the arrow keys alter its <q>Facing</q> attribute. -->
-    当选择或添加元件时，数字“1”到“4”会更改其
-    <q>
-     选择位
-    </q>
-    属性，Alt-0到Alt-9会更改其
-    <q>
-     数据位
-    </q>
-    属性 ，方向键更改其
-    <q>
-     方向
-    </q>
-    属性。
-   </p>
-   <dl>
-    <dt>
-     <!-- Facing -->
-     方向
-    </dt>
-    <dd>
-     <!-- The direction of the component (specifying which side has the outputs). -->
-     元件的方向（指定哪一侧有输出）。
-    </dd>
-    <dt>
-     <!-- Select Location -->
-     选择位置
-    </dt>
-    <dd>
-     <!-- The location of the select and enable lines relative to the component. -->
-     选择线和启用线相对于元件的位置。
-    </dd>
-    <dt>
-     <!-- Select Bits -->
-     选择位
-    </dt>
-    <dd>
-     <!-- The bit width of the component's select input on its south edge. The number of outputs for the demultiplexer will be 2<sup><var>selectBits</var></sup>. -->
-     元件南边缘的选择输入的位宽度。 解复用器的输出数量将为 2
-     <sup>
-      <var>
-       selectBits
-      </var>
-     </sup>
-     。
-    </dd>
-    <dt>
-     <!-- Data Bits -->
-     数据位
-    </dt>
-    <dd>
-     <!-- The bit width of the data being routed through the demultiplexer. -->
-     通过解复用器路由的数据的位宽度。
-    </dd>
-    <dt>
-     <!-- Three-state? -->
-     三态？
-    </dt>
-    <dd>
-     <!-- Specifies whether the unselected outputs should be floating (Yes) or zero (No). -->
-     指定未选择的输出应该浮动（是）还是零（否）。
-    </dd>
-    <dt>
-     <!-- Disabled Output -->
-     禁用输出
-    </dt>
-    <dd>
-     <!-- Specifies what each bit of the outputs should be when the component is disabled (i.e., when the enable pin is 0). Options include zero and floating; in the latter case, the outputs are effectively disconnected from any other ports. -->
-     指定当元件被禁用时（即，当启用引脚为 0 时）输出的每一位应该是什么。 选项包括零和浮动； 在后一种情况下，输出实际上与任何其他端口断开。
-    </dd>
-    <dt>
-     <!-- Include Enable? -->
-     包括启用吗？
-    </dt>
-    <dd>
-     <!-- The component has an enable input when this attribute is <q>yes.</q> The attribute is primarily for supporting circuits built using older versions of Logisim that did not provide an enable input. -->
-     当该属性为
-     <q>
-      yes
-     </q>
-     时，该元件具有启用输入。该属性主要用于支持使用不提供启用输入的旧版本 Logisim-evolution 构建的电路。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <p>
-    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库参考手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      多路解复用器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/demultiplexer.png" alt="#########" height="32" width="32"> <em> 解复用器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">多路解复用器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 11
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/demux.png" alt="#########" height="64" width="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        将西侧输入复制到东侧众多输出中的某一路；南侧选择输入的取值决定了输出到哪一路。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东，选择端在下方偏左）
+      </h2>
+      <dl>
+        <dt>
+          西侧（输入，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          要被送往东侧某一路输出的数值。
+        </dd>
+        <dt>
+          东侧（输出，数量可变，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          输出端从北侧开始编号为 0。若某一路编号与南侧选择输入的值相同，则该路输出等于西侧输入；
+          否则其输出为全 0 或全高阻，取决于 <b class="propertie">三态</b> 属性。
+          若选择输入中包含任意未指定位，则所有输出均为高阻。
+        </dd>
+        <dt>
+          南侧左端（输入，位宽 1）
+        </dt>
+        <dd>
+          使能：为 0 时，无论数据与选择输入为何值，所有输出均为高阻。
+        </dd>
+        <dt>
+          南侧右端（灰色圆点标记处，输入，位宽与“选择位数”一致）
+        </dt>
+        <dd>
+          选择输入：该输入的值决定把西侧输入送到东侧的哪一路输出。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 <b class="tkeybd">1</b>–<b class="tkeybd">4</b> 可修改 <q>选择位数</q>，
+        <b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <q>数据位宽</q>，
+        方向键可修改 <q>朝向</q>。
+      </p>
+      <dl>
+        <dt>
+          朝向
+        </dt>
+        <dd>
+          组件方向（决定哪一侧为输出端）。
+        </dd>
+        <dt>
+          选择端位置
+        </dt>
+        <dd>
+          选择线与使能线相对于组件的位置。
+        </dd>
+        <dt>
+          选择位数
+        </dt>
+        <dd>
+          南侧选择输入的位宽。解复用器输出数量为 2<sup><var>选择位数</var></sup>。
+        </dd>
+        <dt>
+          数据位宽
+        </dt>
+        <dd>
+          通过解复用器被路由的数据位宽。
+        </dd>
+        <dt>
+          三态
+        </dt>
+        <dd>
+          指定未选中的输出应为高阻（对应：是）还是 0（对应：否）。
+        </dd>
+        <dt>
+          禁用时输出
+        </dt>
+        <dd>
+          使能端为 0 时，各输出位应呈现的值。可选项包括 0 和高阻；若选择高阻，则输出等同于与其它端口断开连接。
+        </dd>
+        <dt>
+          启用使能
+        </dt>
+        <dd>
+          当该属性为 <q>是</q> 时，组件带有使能输入端。该属性主要用于兼容旧版 Logisim（当时没有提供使能输入）的电路。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
 </html>

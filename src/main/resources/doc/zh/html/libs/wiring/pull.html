@@ -1,193 +1,130 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Pull Resistor -->
-   上/下拉电阻
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/anspull.png" width="32"/>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecpull.png" width="32"/>
-    <!-- <em> Pull Resistor</em> -->
-    <em>
-     上/下拉电阻
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Wiring</a> -->
-       <a href="index.html">
-        线路
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.5.0 (in Base library, moved to Wiring in 2.7.0)
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <table>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      上/下拉电阻
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
+		<em> 上/下拉电阻</em>
+      </h1>
+      <table>
         <tbody>
-         <tr>
-          <th colspan="2">
-           ANSI:
-          </th>
-          <th colspan="2">
-           IEC:
-          </th>
-         </tr>
-         <tr>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/anspull0.png" width="64"/>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/anspull1.png" width="64"/>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/iecpull0.png" width="64"/>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/iecpull1.png" width="64"/>
-          </td>
-         </tr>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">线路</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.5.0（在基础库中引入，2.7.0 中移至布线库）
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                     <th colspan="2">
+                      ANSI：
+                    </th>
+                    <th colspan="2">
+                      IEC：
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
         </tbody>
-       </table>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- When connected to a point, this component has an effect only when the value at that point is the floating value (<b class="uvalue">U</b>). In this case, the resistor pulls the wire to which it is connected toward the value indicated in its <b class="propertie">Pull Direction</b> attribute. -->
-    当连接到一个点时，仅当该点的值为动态值（
-    <b class="uvalue">
-     U
-    </b>
-    ）时，该元件才起作用。 在这种情况下，电阻器会将与其连接的电线拉向其
-    <b class="propertie">
-     拉力方向
-    </b>
-    属性中指示的值。
-   </p>
-   <p>
-    <!-- If it is connected to a multiple-bit value, then each bit in the value that is floating is pulled in the direction specified, while the bits that are not floating are left unchanged. -->
-    如果它连接到多位值，则动态值中的每个位都会按指定的方向拉动，而不浮动的位则保持不变。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <p>
-    <!-- The resistor has just one pin, which is an output and has a bit width that is derived from whichever component it is connected. -->
-    该电阻器只有一个引脚，该引脚是输出端，其位宽源自其所连接的任何组件。
-   </p>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    当选择或添加元件时，箭头键会更改其
-    <b class="propertie">
-     方向
-    </b>
-    属性。
-   </p>
-   <dl>
-    <div class="attliste">
-     <dt>
-      <!-- <b class="propertie">Facing</b> -->
-      <b class="propertie">
-       方向
-      </b>
-     </dt>
-     <dd>
-      <!-- The direction in which the component's pin lies from component's center. -->
-      元件引脚距元件中心的方向。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Pull Direction</b> -->
-      <b class="propertie">
-       拉动方向
-      </b>
-     </dt>
-     <dd>
-      <!-- Specifies the value to which a floating value should be pulled. This could be <b class="zerov">0</b>, <b class="unov">1</b>, or the error value (<b class="evalue">E</b>). -->
-      指定应将动态值拉至的值。 这可能是
-      <b class="zerov">
-       0
-      </b>
-      、
-      <b class="unov">
-       1
-      </b>
-      或错误值 (
-      <b class="evalue">
-       E
-      </b>
-      ) 。
-     </dd>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        当连接到某个节点时，只有在该节点的值为悬空值（<b class="uvalue">U</b>）时，该组件才会生效。此时，电阻会根据其 <b class="propertie">方向</b> 属性，将所连接的导线拉向指定的值。
+      </p>
+      <p>
+        如果连接的是多位信号，则其中处于悬空状态的各个位会按指定方向被拉动，而非悬空的位保持不变。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        该电阻只有一个引脚，为输出端，其位宽由所连接的组件自动决定。
+      </p>
+      <h2>
+        属性
+      </h2>
+
+      <p>
+        当组件被选中或正在放置时，可使用方向键改变其 <b class="propertie">朝向</b> 属性。
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+           <b class="propertie">朝向</b>
+        </dt>
+        <dd>
+          引脚相对于组件中心的位置方向。
+        </dd>
+        <dt>
+           <b class="propertie">方向</b>
+        </dt>
+        <dd>
+          指定悬空值应被拉到的目标值，可以是 <b class="zerov">0</b>、<b class="unov">1</b>，或 <b class="evalue">错误</b>。
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+
     </div>
-   </dl>
-  </div>
-  <h2>
-   <!-- Poke Tool Behavior -->
-   Poke 工具行为
-  </h2>
-  <p>
-   <!-- None. -->
-   无
-  </p>
-  <h2>
-   <!-- Text Tool Behavior -->
-   文本工具行为
-  </h2>
-  <p>
-   <!-- None. -->
-   无
-  </p>
-  <p>
-   <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-   <b>
-    返回
-   </b>
-   <a href="../index.html">
-    电路元件库参考手册
-   </a>
-  </p>
- </body>
+  </body>
 </html>

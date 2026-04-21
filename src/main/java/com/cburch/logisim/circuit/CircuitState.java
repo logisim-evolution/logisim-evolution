@@ -27,6 +27,7 @@ import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -215,12 +216,16 @@ public class CircuitState implements InstanceData {
   private static int lastId = 0;
   private final int id = lastId++;
 
-  public CircuitState(Project proj, Circuit circuit, Propagator prop) {
+  public CircuitState(Project proj, Circuit circuit, Propagator prop, Thread thread) {
     this.proj = proj;
     this.circuit = circuit;
-    this.base = prop != null ? prop : new Propagator(this);
+    this.base = prop != null ? prop : new Propagator(this, thread != null ? thread : proj.getSimulator().simThread);
     circuit.addCircuitListener(myCircuitListener);
     markAllComponentsDirty();
+  }
+
+  public CircuitState(Project proj, Circuit circuit, Propagator prop) {
+    this(proj, circuit, prop, null);
   }
 
   @Override
@@ -229,15 +234,23 @@ public class CircuitState implements InstanceData {
   }
 
   public static CircuitState createRootState(Project proj, Circuit circuit) {
-    return new CircuitState(proj, circuit, null /* make new Propagator */);
+    return new CircuitState(proj, circuit, null /* make new Propagator */, null);
   }
 
-  public CircuitState cloneAsNewRootState() {
-    final var ret = new CircuitState(proj, circuit, null);
+  public static CircuitState createRootState(Project proj, Circuit circuit, Thread thread) {
+    return new CircuitState(proj, circuit, null /* make new Propagator */, thread);
+  }
+
+  public CircuitState cloneAsNewRootState(Thread thread) {
+    final var ret = new CircuitState(proj, circuit, null, thread);
     ret.copyFrom(this);
     ret.parentComp = null;
     ret.parentState = null;
     return ret;
+  }
+
+  public CircuitState cloneAsNewRootState() {
+    return cloneAsNewRootState(null);
   }
 
   private void copyFrom(CircuitState src) {
@@ -312,9 +325,26 @@ public class CircuitState implements InstanceData {
     return componentData.get(comp);
   }
 
-  private InstanceStateImpl reusableInstanceState = new InstanceStateImpl(this, null);
+  private final InstanceStateImpl reusableInstanceState = new InstanceStateImpl(this, null);
 
   public InstanceState getInstanceState(Component comp) {
+    final var factory = comp.getFactory();
+    if (factory instanceof InstanceFactory) {
+      if (comp != ((InstanceComponent) comp).getInstance().getComponent()) {
+        throw new IllegalStateException("instanceComponent.getInstance().getComponent() is wrong");
+      }
+      return new InstanceStateImpl(this, comp);
+    }
+    throw new RuntimeException("getInstanceState requires instance component");
+  }
+
+  public InstanceState getInstanceState(Instance instance) {
+    return new InstanceStateImpl(this, instance.getComponent());
+  }
+
+  /** This method returns a reused object. It should only be called using the propagate thread
+   *  and with care that there is no conflict with other uses. */
+  public InstanceState getReusableInstanceState(Component comp) {
     final var factory = comp.getFactory();
     if (factory instanceof InstanceFactory) {
       if (comp != ((InstanceComponent) comp).getInstance().getComponent()) {
@@ -323,16 +353,14 @@ public class CircuitState implements InstanceData {
       reusableInstanceState.repurpose(this, comp);
       return reusableInstanceState;
     }
-    throw new RuntimeException("getInstanceState requires instance component");
+    throw new RuntimeException("getInstanceState() requires instance component");
   }
 
-  public InstanceState getInstanceState(Instance instance) {
-    final var factory = instance.getFactory();
-    if (factory instanceof InstanceFactory) {
-      reusableInstanceState.repurpose(this, instance.getComponent());
-      return reusableInstanceState;
-    }
-    throw new RuntimeException("getInstanceState() requires instance component");
+  /** This method returns a reused object. It should only be called using the propagate thread
+   *  and with care that there is no conflict with other uses. */
+  public InstanceState getReusableInstanceState(Instance instance) {
+    reusableInstanceState.repurpose(this, instance.getComponent());
+    return reusableInstanceState;
   }
 
   public CircuitState getParentState() {
@@ -698,7 +726,7 @@ public class CircuitState implements InstanceData {
         return false;
       }
       if (ticks >= 0) {
-        final var state = getInstanceState(instance);
+        final var state = getReusableInstanceState(instance); // OK as we are in the clock update
         final var vOld = pin.getValue(state);
         final var vNew = ticks % 2 == 0 ? Value.FALSE : Value.TRUE;
         if (!vNew.equals(vOld)) {

@@ -1,579 +1,273 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Transmission Gate -->
-   传输门
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <!-- <img class="iconlibs" src="../../../../icons/6464/transmis.png" alt="#########" width="32" height="32"> <em>Transmission Gate</em> -->
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/transmis.png" width="32"/>
-    <em>
-     传输门
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Wiring</a> -->
-       <a href="index.html">
-        线路
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.7.0
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/transmis.png" width="64"/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- A transmission gate has three inputs, called <em>source</em>, <em>n-gate</em>, and <em>p-gate</em>; and it has one output, called <em>drain</em>. When diagrammed, the <em>source</em> input and <em>drain</em> output are drawn connected by two plates; Logisim draws an arrowhead to indicate the direction of flow from input to output. The two <em>gate</em> inputs are drawn as lines connected to plates parallel to each of the plates connecting <em>source</em> to <em>drain</em>. The <em>p-gate</em> input's line has a circle, while the <em>n-gate</em> input's line does not. -->
-    传输门有三个输入，称为
-    <em>
-     源
-    </em>
-    、
-    <em>
-     n-门
-    </em>
-    和
-    <em>
-     p-门
-    </em>
-    ； 它有一个输出，称为“drain”。 绘制图表时，源极输入和漏极输出由两个板连接； Logisim-evolution 绘制箭头来指示从输入到输出的流向。 两个
-    <em>
-     栅极
-    </em>
-    输入被绘制为连接到板的线，该线与连接
-    <em>
-     源极
-    </em>
-    和
-    <em>
-     漏极
-    </em>
-    的每个板平行。
-    <em>
-     p-gate
-    </em>
-    输入的线有一个圆圈，而
-    <em>
-     n-gate
-    </em>
-    输入的线没有。
-   </p>
-   <center>
-    <table>
-     <tbody>
-      <tr>
-       <td>
-       </td>
-       <td align="center">
-        <em>
-         p-gate
-        </em>
-       </td>
-       <td>
-       </td>
-      </tr>
-      <tr>
-       <td valign="middle">
-        <em>
-         source
-        </em>
-       </td>
-       <td align="center" valign="middle">
-        <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/transmis.png" width="64"/>
-       </td>
-       <td valign="middle">
-        <em>
-         drain
-        </em>
-       </td>
-      </tr>
-      <tr>
-       <td>
-       </td>
-       <td align="center">
-        <em>
-         n-gate
-        </em>
-       </td>
-       <td>
-       </td>
-      </tr>
-     </tbody>
-    </table>
-   </center>
-   <p>
-    <!-- The transmission gate is simply the combination of two complementary transistors. Indeed, the same behavior can be achieved in Logisim by using just one transistor. However, designers sometimes prefer to use matched pairs of transistors due to electrical issues with draining voltage that is more complex than Logisim attempts to simulate. -->
-    传输门只是两个互补晶体管的组合。 事实上，在 Logisim-evolution 中仅使用一个晶体管就可以实现相同的行为。 然而，由于漏电压的电气问题比 Logisim-evolution 尝试模拟的更复杂，设计人员有时更喜欢使用匹配的晶体管对。
-   </p>
-   <p>
-    <!-- The values at <em>n-gate</em> and <em>p-gate</em> are expected to be opposite to each other. If <em>p-gate</em> is 0 while <em>n-gate</em> is 1, then the value found at <em>source</em> is transmitted to <em>drain</em>. If <em>p-gate</em> is 1 while <em>p-gate</em> is 0, then the connection is broken, so the value at <em>drain</em> is left floating. In all other cases, <em>drain</em> receives an error output — unless <em>source</em> is floating, in which case <em>drain</em> is floating as well. This behavior is summarized by the following table. -->
-    <em>
-     n-gate
-    </em>
-    和
-    <em>
-     p-gate
-    </em>
-    处的值预计彼此相反。 如果
-    <em>
-     p-gate
-    </em>
-    为0而
-    <em>
-     n-gate
-    </em>
-    为1，则在
-    <em>
-     源
-    </em>
-    处找到的值将传输到
-    <em>
-     漏极
-    </em>
-    &gt;。 如果
-    <em>
-     p-gate
-    </em>
-    为1而
-    <em>
-     p-gate
-    </em>
-    为0，则连接断开，因此
-    <em>
-     drain
-    </em>
-    处的值保持浮动。 在所有其他情况下，
-    <em>
-     drain
-    </em>
-    都会收到错误输出 - 除非
-    <em>
-     source
-    </em>
-    浮动，在这种情况下
-    <em>
-     drain
-    </em>
-    也会浮动。 下表总结了此行为。
-   </p>
-   <center>
-    <table>
-     <tbody>
-      <tr>
-       <th class="tspace">
-        p-gate
-       </th>
-       <th class="tspace">
-        n-gate
-       </th>
-       <th class="tspace">
-        drain
-       </th>
-      </tr>
-      <tr>
-       <td class="zerov">
-        0
-       </td>
-       <td class="zerov">
-        0
-       </td>
-       <td class="space">
-        *
-       </td>
-      </tr>
-      <tr>
-       <td class="zerov">
-        0
-       </td>
-       <td class="unov">
-        1
-       </td>
-       <td align="center">
-        source
-       </td>
-      </tr>
-      <tr>
-       <td class="unov">
-        1
-       </td>
-       <td class="zerov">
-        0
-       </td>
-       <td class="uvalue">
-        U
-       </td>
-      </tr>
-      <tr>
-       <td class="unov">
-        1
-       </td>
-       <td class="unov">
-        1
-       </td>
-       <td class="space">
-        *
-       </td>
-      </tr>
-      <tr>
-       <td class="space">
-        <b class="uvalue">
-         U
-        </b>
-        /
-        <b class="evalue">
-         E
-        </b>
-       </td>
-       <td class="space">
-        all
-       </td>
-       <td class="space">
-        *
-       </td>
-      </tr>
-      <tr>
-       <td class="space">
-        all
-       </td>
-       <td class="space">
-        <b class="uvalue">
-         U
-        </b>
-        /
-        <b class="evalue">
-         E
-        </b>
-       </td>
-       <td class="space">
-        *
-       </td>
-      </tr>
-     </tbody>
-    </table>
-   </center>
-   <p>
-    <!-- * If <em>source</em> is  High impedance (<b class="uvalue">U</b>), <em>drain</em> is High impedance (<b class="uvalue">U</b>) otherwise <em>drain</em> is in error (<b class="evalue">E</b>). -->
-    * 如果
-    <em>
-     源极
-    </em>
-    为高阻抗(
-    <b class="uvalue">
-     U
-    </b>
-    )，
-    <em>
-     漏极
-    </em>
-    为高阻抗(
-    <b class="uvalue">
-     U
-    </b>
-    ），否则
-    <em>
-     drain
-    </em>
-    就会出错（
-    <b class="evalue">
-     E
-    </b>
-    ）。
-   </p>
-   <p>
-    <!-- <b class="note">Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (High impedance) and <b class="evalue">E</b> (Error) I used the same in the illustrations rather than the more common Z (High impedance) and X (Error) in other documents  -->
-    <b class="note">
-     注意：
-    </b>
-    由于 Logisim-evolution 使用标记
-    <b class="uvalue">
-     U
-    </b>
-    （高阻抗）和
-    <b class="evalue">
-     E
-    </b>
-    （错误）我在插图中使用了相同的内容，而不是其他文档中更常见的 Z（高阻抗）和 X（错误）
-   </p>
-   <p>
-    <!-- If the Data Bits attribute is more than 1, each <em>gate</em> input is still a single bit, but the <em>gate</em> values are applied simultaneously to each of the <em>source</em> input's bits. -->
-    如果数据位属性大于 1，则每个
-    <em>
-     门
-    </em>
-    输入仍然是单个位，但
-    <em>
-     门
-    </em>
-    值会同时应用于每个
-    <em>
-     源
-    </em>
-    em&gt; 输入的位。
-   </p>
-   <h2>
-    <!-- Pins -->
-    引脚
-   </h2>
-   <!-- <p>This component has four pins, three are inputs <q>Source</q>,<q>P-gate</q>,<q>N-gate</q> one is an output <q>Drain</q> which you can see in the figure above. -->
-   <p>
-    该组件有四个引脚，三个是输入
-    <q>
-     源极
-    </q>
-    ，
-    <q>
-     P-gate
-    </q>
-    ，
-    <q>
-     N-gate
-    </q>
-    一个是输出
-    <q>
-     漏极
-    </q>
-    您可以在上图中看到。
-   </p>
-   <dl>
-    <dt>
-     <!-- West edge : The source -->
-     西边：源头
-    </dt>
-    <dd>
-     <!-- The component's <em>source</em> input that will transmit to the output if triggered by the <em>p-gate</em> and <em>n-gate</em> inputs. Bit width matches  <b class="propertie">Data Bits</b> attribute. -->
-     如果由
-     <em>
-      p 门
-     </em>
-     和
-     <em>
-      n 门
-     </em>
-     输入触发，组件的
-     <em>
-      源
-     </em>
-     输入将传输到输出。 位宽度与
-     <b class="propertie">
-      数据位
-     </b>
-     属性匹配。
-    </dd>
-    <dt>
-     <!-- North edge : p-gate -->
-     北边：p门
-    </dt>
-    <dd>
-     <!-- The component's <em>p-gate</em> input, controls the transmission. Normally, opposite control values are applied to these inputs. The bit width is always 1. -->
-     该元件的
-     <em>
-      p-gate
-     </em>
-     输入控制传输。 通常，相反的控制值应用于这些输入。 位宽始终为 1。
-    </dd>
-    <dt>
-     <!-- South edge : n-gate -->
-     南边缘：n 门
-    </dt>
-    <dd>
-     <!-- The component's <em>n-gate</em> input, controls the transmission. Normally, opposite control values are applied to these inputs. The bit width is always 1. -->
-     该元件的
-     <em>
-      n-gate
-     </em>
-     输入控制传输。 通常，相反的控制值应用于这些输入。 位宽始终为 1。
-    </dd>
-    <dt>
-     <!-- East edge : The drain -->
-     东边：排水沟
-    </dt>
-    <dd>
-     <!-- The component's output, which will match the <em>source</em> input if <em>p-gate</em> is <b class="zerov">0</b> and <em>n-gate</em> is <b class="unov">1</b>, or it will be floating (<b class="uvalue">U</b>) if <em>p-gate</em> is <b class="unov">1</b> and <em>n-gate</em> is <b class="zerov">0</b>. For all other values on <em>p-gate</em> and <em>n-gate</em>, the output is an error value (<b class="evalue">E</b>). Bit width matches  <b class="propertie">Data Bits</b> attribute. -->
-     如果
-     <em>
-      p-gate
-     </em>
-     为
-     <b class="zerov">
-      0
-     </b>
-     且
-     <em>
-      n-gate
-     </em>
-     ，则元件的输出将与
-     <em>
-      源
-     </em>
-     输入匹配是
-     <b class="unov">
-      1
-     </b>
-     ，或者如果
-     <em>
-      p-gate
-     </em>
-     是浮动的 (
-     <b class="uvalue">
-      U
-     </b>
-     )
-     <b class="unov">
-      1
-     </b>
-     且
-     <em>
-      n 门
-     </em>
-     为
-     <b class="zerov">
-      0
-     </b>
-     。 对于
-     <em>
-      p-gate
-     </em>
-     和
-     <em>
-      n-gate
-     </em>
-     上的所有其他值，输出为错误值 (
-     <b class="evalue">
-      E
-     </b>
-     )。 位宽度与
-     <b class="propertie">
-      数据位
-     </b>
-     属性匹配。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    选择或添加元件时，
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    到
-    <b class="tkeybd">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性和箭头键更改其
-    <b class="propertie">
-     方向
-    </b>
-    属性。
-   </p>
-   <div class="attliste">
-    <dl>
-     <dt>
-      <!-- <b class="propertie">Facing</b> -->
-      <b class="propertie">
-       方向
-      </b>
-     </dt>
-     <dd>
-      <!-- The direction of the component (its output relative to its input). -->
-      元件的方向（其输出相对于其输入）。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Gate Location</b> -->
-      <b class="propertie">
-       门位置
-      </b>
-     </dt>
-     <dd>
-      <!-- The location of the gate input. -->
-      门输入的位置。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Data Bits</b> -->
-      <b class="propertie">
-       数据位
-      </b>
-     </dt>
-     <dd>
-      <!-- The bit width of the component's inputs and outputs. -->
-      元件输入和输出的位宽度。
-     </dd>
-    </dl>
-   </div>
-   <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <h2>
-    <!-- Text Tool Behavior -->
-    文本工具行为
-   </h2>
-   <p>
-    <!-- None. -->
-    无
-   </p>
-   <p>
-    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-    <b>
-     返回
-    </b>
-    <a href="../index.html">
-     电路元件库手册
-    </a>
-   </p>
-  </div>
- </body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      传输门
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/transmis.png" alt="#########" width="32" height="32"> <em> 传输门</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">线路</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.7.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        传输门有三个输入端：<em>源极</em>（source）、<em>N 栅</em>（n-gate）与 <em>P 栅</em>（p-gate）；以及一个输出端：<em>漏极</em>（drain）。
+        图示中，<em>源极</em> 与 <em>漏极</em> 之间用两块极板连接；Logisim-evolution 用箭头表示从输入到输出的传输方向。
+        两个 <em>栅</em> 输入端分别连接到与源漏极板平行的极板：<em>P 栅</em> 线上带圆圈，<em>N 栅</em> 线上不带圆圈。
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td align="center">
+                <em>p-gate</em>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td valign="middle">
+                <em>source</em>
+              </td>
+              <td valign="middle" align="center">
+                <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" width="64" height="64">
+              </td>
+              <td valign="middle">
+                <em>drain</em>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td align="center">
+                <em>n-gate</em>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+
+      <p>
+        传输门本质上是两只互补晶体管的组合。实际上，在 Logisim-evolution 里只用一只晶体管也能实现同样的逻辑行为。
+        但在真实电路中，由于传输电压衰减等电气效应较复杂（Logisim-evolution 并不模拟这些细节），设计者有时更倾向使用成对匹配的晶体管。
+      </p>
+      <p>
+        <em>N 栅</em> 与 <em>P 栅</em> 的值通常应互为相反。
+        当 <em>P 栅</em> 为 0 且 <em>N 栅</em> 为 1 时，<em>源极</em> 的值会传到 <em>漏极</em>；
+        当 <em>P 栅</em> 为 1 且 <em>N 栅</em> 为 0 时，连接断开，<em>漏极</em> 悬空。
+        其它情况下，<em>漏极</em> 输出错误值，除非 <em>源极</em> 本身悬空，此时 <em>漏极</em> 也悬空。下表为其汇总。
+      </p>
+
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace">
+                P 栅
+              </th>
+              <th class="tspace">
+                N 栅
+              </th>
+              <th class="tspace">
+                漏极
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td align="center">
+                源极
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td class="space">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="space">
+                全部
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td class="space">
+                全部
+              </td>
+              <td class="space">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        * 若 <em>源极</em> 为高阻（<b class="uvalue">U</b>），则 <em>漏极</em> 为高阻（<b class="uvalue">U</b>）；否则 <em>漏极</em> 为错误（<b class="evalue">E</b>）。
+      </p>
+      <p>
+        <b class="note">注意：</b>由于 Logisim-evolution 使用 <b class="uvalue">U</b>（高阻）与 <b class="evalue">E</b>（错误）作为标记，因此本文也沿用这两个符号，而不是其它文档中更常见的 Z（高阻）与 X（错误）。
+      </p>
+      <p>
+        若 <b class="propertie">数据位宽</b> 大于 1，则两个 <em>栅</em> 输入仍为 1 位，但其取值会同时作用于 <em>源极</em> 输入的每一位。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+	  <p>
+        该组件共有 4 个引脚：3 个输入（<q>源极</q>、<q>P 栅</q>、<q>N 栅</q>）和 1 个输出（<q>漏极</q>），见上图。
+	  </p>
+      <dl>
+        <dt>
+          西侧：源极
+        </dt>
+        <dd>
+          组件的 <em>源极</em> 输入：当 <em>P 栅</em> 与 <em>N 栅</em> 满足导通条件时，会传到输出端。位宽与 <b class="propertie">数据位宽</b> 一致。
+        </dd>
+        <dt>
+          北侧：P 栅
+        </dt>
+        <dd>
+          组件的 <em>P 栅</em> 输入，用于控制传输。通常与 <em>N 栅</em> 取相反值。位宽恒为 1。
+        </dd>
+        <dt>
+          南侧：N 栅
+        </dt>
+        <dd>
+          组件的 <em>N 栅</em> 输入，用于控制传输。通常与 <em>P 栅</em> 取相反值。位宽恒为 1。
+        </dd>
+        <dt>
+          东侧：漏极
+        </dt>
+        <dd>
+          组件输出：当 <em>P 栅</em> 为 <b class="zerov">0</b> 且 <em>N 栅</em> 为 <b class="unov">1</b> 时，输出等于 <em>源极</em>；
+          当 <em>P 栅</em> 为 <b class="unov">1</b> 且 <em>N 栅</em> 为 <b class="zerov">0</b> 时，输出悬空（<b class="uvalue">U</b>）。
+          其它情况下输出为错误值（<b class="evalue">E</b>）。位宽与 <b class="propertie">数据位宽</b> 一致。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <b class="propertie">数据位宽</b> 属性，方向键可修改 <b class="propertie">朝向</b> 属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            输出相对于输入的位置。
+          </dd>
+          <dt>
+            <b class="propertie">选择端位置</b>
+          </dt>
+          <dd>
+            栅极输入的位置。
+          </dd>
+          <dt>
+            <b class="propertie">数据位宽</b>
+          </dt>
+          <dd>
+            组件输入/输出的位宽。
+          </dd>
+        </dl>
+      </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
 </html>

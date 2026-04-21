@@ -19,14 +19,15 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
+import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.LedBarIcon;
-
-import static com.cburch.logisim.std.Strings.S;
 
 /** LED cluster */
 public class LedBar extends DotMatrixBase {
@@ -101,6 +102,11 @@ public class LedBar extends DotMatrixBase {
   @Override
   public AttributeOption getAttributeItemSelect() {
     return INPUT_SELECT;
+  }
+  
+  @Override
+  public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path p) {
+    return new LedBarShape(x, y, p);
   }
 
   /* ****************************************************************** */

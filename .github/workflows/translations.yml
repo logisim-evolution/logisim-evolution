@@ -25,11 +25,11 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://github.com/marketplace/actions/paths-changes-filter
       - name: "Looking for modified files..."
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |

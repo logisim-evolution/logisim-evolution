@@ -49,6 +49,13 @@
     <mapID target="mem_v3byte"          url="zh/html/guide/mem/mem-v3byte.html"/> 
     <mapID target="mem_binary"          url="zh/html/guide/mem/mem-vbinary.html"/>
     <mapID target="mem_ascii"           url="zh/html/guide/mem/mem-vascii.html"/>
+	<mapID target="test_vector"         url="zh/html/guide/test_vector/index.html" />
+	<mapID target="test_vector_window"  url="zh/html/guide/test_vector/test_vector_window.html" />
+	<mapID target="test_vector_file_format" url="zh/html/guide/test_vector/test_vector_file_format.html" />
+	<mapID target="test_vector_special_values" url="zh/html/guide/test_vector/test_vector_special_values.html" />
+	<mapID target="test_vector_sequential" url="zh/html/guide/test_vector/test_vector_sequential.html" />
+	<mapID target="test_vector_cmdline" url="zh/html/guide/test_vector/test_vector_cmdline.html" />
+	<mapID target="test_vector_tips"    url="zh/html/guide/test_vector/test_vector_tips.html" />
 	<mapID target="analyze"             url="zh/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="zh/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="zh/html/guide/analyze/ana-table.html" />
@@ -154,9 +161,11 @@
 	<mapID target="mem_rom"             url="zh/html/libs/mem/rom.html" />
 	<mapID target="io"                  url="zh/html/libs/io/index.html" />
 	<mapID target="io_button"           url="zh/html/libs/io/button.html" />
+	<mapID target="io_dip"              url="zh/html/libs/io/dipswitch.html" />
 	<mapID target="io_joystick"         url="zh/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="zh/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="zh/html/libs/io/led.html" />
+	<mapID target="io_rgbled"           url="zh/html/libs/io/rgbled.html" />
 	<mapID target="io_7seg"             url="zh/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="zh/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="zh/html/libs/io/dotmat.html" />
