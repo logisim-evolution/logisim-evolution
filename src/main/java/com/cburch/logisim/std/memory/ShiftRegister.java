@@ -528,4 +528,12 @@ public class ShiftRegister extends InstanceFactory {
   public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
+    final var extension = (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) ? "Classic" : "Evolution";
+    return String.format("SHIFTREG_%d_%s", nrOfStages, extension);
+  }
+
 }
