@@ -127,9 +127,9 @@ public class GateAttributes extends AbstractAttributeSet {
     } else if (attr instanceof NegateAttribute negAttr) {
       final var index = negAttr.index;
       if ((Boolean) value) {
-        negated |= 1 << index;
+        negated |= 1L << index;
       } else {
-        negated &= ~(1 << index);
+        negated &= ~(1L << index);
       }
     } else {
       throw new IllegalArgumentException("unrecognized argument");

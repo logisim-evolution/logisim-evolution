@@ -30,6 +30,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public class Shifter extends InstanceFactory {
@@ -162,65 +163,97 @@ public class Shifter extends InstanceFactory {
   public void propagate(InstanceState state) {
     // compute output
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    int bits = dataWidth == null ? 32 : dataWidth.getWidth();
-    Value vx = state.getPortValue(IN0);
-    Value vd = state.getPortValue(IN1);
-    Value vy; // y will by x shifted by d
-    if (vd.isFullyDefined() && vx.getWidth() == bits) {
-      int d = (int) vd.toLongValue();
-      Object shift = state.getAttributeValue(ATTR_SHIFT);
-      if (d == 0) {
-        vy = vx;
-      } else if (vx.isFullyDefined()) {
-        long x = vx.toLongValue();
-        long y;
-        if (shift == SHIFT_LOGICAL_RIGHT) {
-          y = x >>> d;
-        } else if (shift == SHIFT_ARITHMETIC_RIGHT) {
-          if (d >= bits) d = bits - 1;
-          y = x >> d | ((x << (64 - bits)) >> (64 - bits + d));
-        } else if (shift == SHIFT_ROLL_RIGHT) {
-          if (d >= bits) d -= bits;
-          y = (x >>> d) | (x << (bits - d));
-        } else if (shift == SHIFT_ROLL_LEFT) {
-          if (d >= bits) d -= bits;
-          y = (x << d) | (x >>> (bits - d));
-        } else { // SHIFT_LOGICAL_LEFT
-          y = x << d;
+    int width = dataWidth == null ? 32 : dataWidth.getWidth();
+
+    Value input = state.getPortValue(IN0);
+    Value shift = state.getPortValue(IN1);
+    Value output;
+
+    if (shift.isFullyDefined() && input.getWidth() == width) {
+      int s = (int) shift.toLongValue();
+      var shiftType = state.getAttributeValue(ATTR_SHIFT);
+      if (s == 0) {
+        output = input;
+      } else if (input.isFullyDefined()) {
+        if(width <= 64) {
+          long in = input.toLongValue();
+          long out;
+          if (shiftType == SHIFT_LOGICAL_RIGHT) {
+            out = in >>> s;
+          } else if (shiftType == SHIFT_ARITHMETIC_RIGHT) {
+            if (s >= width) s = width - 1;
+            out = in >> s | ((in << (64 - width)) >> (64 - width + s));
+          } else if (shiftType == SHIFT_ROLL_RIGHT) {
+            if (s >= width) s -= width;
+            out = (in >>> s) | (in << (width - s));
+          } else if (shiftType == SHIFT_ROLL_LEFT) {
+            if (s >= width) s -= width;
+            out = (in << s) | (in >>> (width - s));
+          } else { // SHIFT_LOGICAL_LEFT
+            out = in << s;
+          }
+          output = Value.createKnown(dataWidth, out);
+        } else {
+          BigInteger in = input.toBigInteger(true);
+          BigInteger out;
+          if (shiftType == SHIFT_LOGICAL_RIGHT) {
+            out = in.shiftRight(s);
+            if (in.signum() < 0) {
+                BigInteger mask = BigInteger.ONE.shiftLeft(width).subtract(BigInteger.ONE);
+                out = out.and(mask);
+            }
+          } else if (shiftType == SHIFT_ARITHMETIC_RIGHT) {
+            if (s >= width) s = width - 1;
+            out = in.shiftRight(s);
+          } else if (shiftType == SHIFT_ROLL_RIGHT) {
+            s %= width; // normalize shift
+            BigInteger mask = BigInteger.ONE.shiftLeft(width).subtract(BigInteger.ONE);
+            BigInteger right = in.shiftRight(s);
+            BigInteger left = in.shiftLeft(width - s).and(mask);
+            out = right.or(left);
+          } else if (shiftType == SHIFT_ROLL_LEFT) {
+            s %= width;
+            BigInteger mask = BigInteger.ONE.shiftLeft(width).subtract(BigInteger.ONE);
+            BigInteger right = in.shiftRight(width - s);
+            BigInteger left = in.shiftLeft(s).and(mask);
+            out = right.or(left);
+          } else { // SHIFT_LOGICAL_LEFT
+            out = in.shiftLeft(s);
+          }
+          output = Value.createKnown(dataWidth, out);
         }
-        vy = Value.createKnown(dataWidth, y);
       } else {
-        Value[] x = vx.getAll();
-        Value[] y = new Value[bits];
-        if (shift == SHIFT_LOGICAL_RIGHT) {
-          if (d >= bits) d = bits;
-          System.arraycopy(x, d, y, 0, bits - d);
-          Arrays.fill(y, bits - d, bits, Value.FALSE);
-        } else if (shift == SHIFT_ARITHMETIC_RIGHT) {
-          if (d >= bits) d = bits;
-          System.arraycopy(x, d, y, 0, x.length - d);
-          Arrays.fill(y, bits - d, y.length, x[bits - 1]);
-        } else if (shift == SHIFT_ROLL_RIGHT) {
-          if (d >= bits) d -= bits;
-          System.arraycopy(x, d, y, 0, bits - d);
-          System.arraycopy(x, 0, y, bits - d, d);
-        } else if (shift == SHIFT_ROLL_LEFT) {
-          if (d >= bits) d -= bits;
-          System.arraycopy(x, x.length - d, y, 0, d);
-          System.arraycopy(x, 0, y, d, bits - d);
+        Value[] in = input.getAll();
+        Value[] out = new Value[width];
+        if (shiftType == SHIFT_LOGICAL_RIGHT) {
+          if (s >= width) s = width;
+          System.arraycopy(in, s, out, 0, width - s);
+          Arrays.fill(out, width - s, width, Value.FALSE);
+        } else if (shiftType == SHIFT_ARITHMETIC_RIGHT) {
+          if (s >= width) s = width;
+          System.arraycopy(in, s, out, 0, in.length - s);
+          Arrays.fill(out, width - s, out.length, in[width - 1]);
+        } else if (shiftType == SHIFT_ROLL_RIGHT) {
+          if (s >= width) s -= width;
+          System.arraycopy(in, s, out, 0, width - s);
+          System.arraycopy(in, 0, out, width - s, s);
+        } else if (shiftType == SHIFT_ROLL_LEFT) {
+          if (s >= width) s -= width;
+          System.arraycopy(in, in.length - s, out, 0, s);
+          System.arraycopy(in, 0, out, s, width - s);
         } else { // SHIFT_LOGICAL_LEFT
-          if (d >= bits) d = bits;
-          Arrays.fill(y, 0, d, Value.FALSE);
-          System.arraycopy(x, 0, y, d, bits - d);
+          if (s >= width) s = width;
+          Arrays.fill(out, 0, s, Value.FALSE);
+          System.arraycopy(in, 0, out, s, width - s);
         }
-        vy = Value.create(y);
+        output = Value.create(out);
       }
     } else {
-      vy = Value.createError(dataWidth);
+      output = Value.createError(dataWidth);
     }
 
     // propagate them
     int delay = dataWidth.getWidth() * (3 * Adder.PER_DELAY);
-    state.setPort(OUT, vy, delay);
+    state.setPort(OUT, output, delay);
   }
 }

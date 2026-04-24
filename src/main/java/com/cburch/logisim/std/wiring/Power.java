@@ -29,6 +29,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
+import java.math.BigInteger;
 
 public class Power extends InstanceFactory {
   /**
@@ -41,13 +42,8 @@ public class Power extends InstanceFactory {
 
   private static class PowerHdlGeneratorFactory extends AbstractConstantHdlGeneratorFactory {
     @Override
-    public long getConstant(AttributeSet attrs) {
-      long ConstantValue = 0;
-      for (int bit = 0; bit < attrs.getValue(StdAttr.WIDTH).getWidth(); bit++) {
-        ConstantValue <<= 1;
-        ConstantValue |= 1;
-      }
-      return ConstantValue;
+    public BigInteger getConstant(AttributeSet attrs) {
+      return attrs.getValue(StdAttr.WIDTH).getBigIntegerMask();
     }
   }
 

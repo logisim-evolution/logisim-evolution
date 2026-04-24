@@ -60,9 +60,7 @@ public class SquareRoot extends InstanceFactory {
       BigInteger num = uu.shiftLeft(w).or(aa);
 
       BigInteger[] res = num.sqrtAndRemainder();
-      long result = res[0].longValue();
-      long rem = res[1].longValue();
-      return new Value[] {Value.createKnown(width, result), Value.createKnown(width, rem)};
+      return new Value[] {Value.createKnown(width, res[0]), Value.createKnown(width, res[1])};
     } else if (a.isErrorValue() || upper.isErrorValue()) {
       return new Value[] {Value.createError(width), Value.createError(width)};
     } else {

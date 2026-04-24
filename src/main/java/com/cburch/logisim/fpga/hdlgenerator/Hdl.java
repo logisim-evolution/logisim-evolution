@@ -17,6 +17,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LineBuffer;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -279,24 +280,26 @@ public class Hdl {
   }
 
   public static String getConstantVector(long value, int nrOfBits) {
+    return getConstantVector(BigInteger.valueOf(value), nrOfBits);
+  }
+
+  public static String getConstantVector(BigInteger value, int nrOfBits) {
     final var nrHexDigits = nrOfBits / 4;
     final var nrSingleBits = nrOfBits % 4;
     final var hexDigits = new String[nrHexDigits];
     final var singleBits = new StringBuilder();
     var shiftValue = value;
     for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
-      var hexValue = shiftValue & 0xFL;
-      shiftValue >>= 4L;
+      var hexValue = shiftValue.and(BigInteger.valueOf(0xF));
+      shiftValue = shiftValue.shiftRight(4);
       hexDigits[hexIndex] = String.format("%1X", hexValue);
     }
     final var hexValue = new StringBuilder();
     for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
       hexValue.append(hexDigits[hexIndex]);
     }
-    var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
-    while (mask > 0) {
-      singleBits.append((shiftValue & mask) == 0 ? "0" : "1");
-      mask >>= 1L;
+    for (int bit = 0; bit < nrSingleBits; bit++) {
+      singleBits.append(shiftValue.testBit(nrSingleBits) ? "1" : "0");
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {

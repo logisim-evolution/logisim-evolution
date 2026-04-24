@@ -20,6 +20,7 @@ import com.cburch.logisim.util.StringGetter;
 
 public abstract class RadixOption extends AttributeOption {
   private static class Radix10Signed extends RadixOption {
+    private static double LOG10_2 = 0.3010299956639812;
     private Radix10Signed() {
       super("10signed", S.getter("radix10Signed"));
     }
@@ -47,7 +48,7 @@ public abstract class RadixOption extends AttributeOption {
         case 55, 56, 57 -> 18; // 16P..64P
         case 58, 59, 60 -> 19; // 128P..512P
         case 61, 62, 63, 64 -> 20; // 1E..4E
-        default -> throw new AssertionError("unexpected bit width: " + width);
+        default -> (int) ((width.getWidth() - 1) * LOG10_2) + 2;
       };
     }
 
@@ -63,6 +64,7 @@ public abstract class RadixOption extends AttributeOption {
   }
 
   private static class Radix10Unsigned extends RadixOption {
+    private static double LOG10_2 = 0.3010299956639812;
     private Radix10Unsigned() {
       super("10unsigned", S.getter("radix10Unsigned"));
     }
@@ -90,7 +92,7 @@ public abstract class RadixOption extends AttributeOption {
         case 57, 58, 59 -> 18; // 64P..512P-1
         case 60, 61, 62, 63 -> 19; // 512P..8E-1
         case 64 -> 20; // 8E..16E-1
-        default -> throw new AssertionError("unexpected bit width: " + width);
+        default -> (int) (width.getWidth() * LOG10_2) + 1;
       };
     }
 
@@ -191,7 +193,7 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public String toString(Value value) {
-      return value.toStringFromFloatValue();
+      return value.toFloatString();
     }
 
     @Override
