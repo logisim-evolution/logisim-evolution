@@ -25,7 +25,7 @@ public class Location implements Comparable<Location> {
     final var hashCode = 31 * xRounded + yRounded;
     final var ret = cache.get(hashCode);
     if (ret != null) {
-      final var loc = (Location) ret;
+      final var loc = ret;
       if (loc.x == xRounded && loc.y == yRounded) return loc;
     }
     final var loc = new Location(hashCode, xRounded, yRounded, hasToSnap);
@@ -57,7 +57,7 @@ public class Location implements Comparable<Location> {
     return Location.create(x, y, true);
   }
 
-  private static final Cache cache = new Cache();
+  private static final Cache<Location> cache = new Cache<>(Location.class);
   private final int hashCode;
   public final int x;
   public final int y;

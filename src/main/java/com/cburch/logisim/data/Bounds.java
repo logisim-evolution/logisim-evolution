@@ -19,9 +19,9 @@ import java.awt.Rectangle;
 public class Bounds {
   public static Bounds create(int x, int y, int wid, int ht) {
     final var hashCode = 13 * (31 * (31 * x + y) + wid) + ht;
-    Object cached = cache.get(hashCode);
+    Bounds cached = cache.get(hashCode);
     if (cached != null) {
-      final var bds = (Bounds) cached;
+      final var bds = cached;
       if (bds.x == x && bds.y == y && bds.wid == wid && bds.ht == ht) return bds;
     }
     final var ret = new Bounds(x, y, wid, ht);
@@ -39,7 +39,7 @@ public class Bounds {
 
   public static final Bounds EMPTY_BOUNDS = new Bounds(0, 0, 0, 0);
 
-  private static final Cache cache = new Cache();
+  private static final Cache<Bounds> cache = new Cache<>(Bounds.class);
 
   private final int x;
   private final int y;

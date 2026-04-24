@@ -49,7 +49,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   public static Wire create(Location e0, Location e1) {
-    return (Wire) cache.get(new Wire(e0, e1));
+    return cache.get(new Wire(e0, e1));
   }
 
   /** Stroke width when drawing wires. */
@@ -68,7 +68,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 
   private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(DIR_ATTR, LEN_ATTR);
 
-  private static final Cache cache = new Cache();
+  private static final Cache<Wire> cache = new Cache<>(Wire.class);
 
   final Location e0;
   final Location e1;

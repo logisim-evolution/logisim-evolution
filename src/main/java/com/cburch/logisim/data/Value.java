@@ -45,9 +45,9 @@ public abstract class Value {
       value = value & mask & ~unknown & ~error;
 
       final var hashCode = LongValue.hashcode(width, error, unknown, value);
-      Object cached = cache.get(hashCode);
-      if (cached != null && cached instanceof LongValue val) {
-        if (val.equals(width, error, unknown, value)) return val;
+      Value cached = cache.get(hashCode);
+      if (cached instanceof LongValue val) {
+        if (val.equals(width, error, unknown, value)) return cached;
       }
       final var ret = new LongValue(width, error, unknown, value);
       cache.put(hashCode, ret);
@@ -74,9 +74,10 @@ public abstract class Value {
       valueArray[arraySize - 1] = value;
 
       final var hashCode = LongArrayValue.hashcode(width, errorArray, unknownArray, valueArray);
-      Object cached = cache.get(hashCode);
-      if (cached != null && cached instanceof LongArrayValue val) {
-        if (val.equals(width, errorArray, unknownArray, valueArray)) return val;
+      Value cached = cache.get(hashCode);
+      if (cached instanceof LongArrayValue val) {
+        if (val.equals(width, errorArray, unknownArray, valueArray))
+          return cached;
       }
       final var ret = new LongArrayValue(width, errorArray, unknownArray, valueArray);
       cache.put(hashCode, ret);
@@ -119,9 +120,9 @@ public abstract class Value {
       value[value.length - 1] = value[value.length - 1] & mask & ~unknown[unknown.length - 1] & ~error[error.length - 1];
 
       final var hashCode = LongArrayValue.hashcode(width, error, unknown, value);
-      Object cached = cache.get(hashCode);
-      if (cached != null && cached instanceof LongArrayValue val) {
-        if (val.equals(width, error, unknown, value)) return val;
+      Value cached = cache.get(hashCode);
+      if (cached instanceof LongArrayValue val) {
+        if (val.equals(width, error, unknown, value)) return cached;
       }
       final var ret = new LongArrayValue(width, error, unknown, value);
       cache.put(hashCode, ret);
@@ -144,9 +145,9 @@ public abstract class Value {
    */
   public static Value create_unsafe(int width, long error, long unknown, long value) {
     final var hashCode = LongValue.hashcode(width, error, unknown, value);
-    Object cached = cache.get(hashCode);
-    if (cached != null && cached instanceof LongValue val) {
-      if (val.equals(width, error, unknown, value)) return val;
+    Value cached = cache.get(hashCode);
+    if (cached instanceof LongValue val) {
+      if (val.equals(width, error, unknown, value)) return cached;
     }
     Value ret = new LongValue(width, error, unknown, value);
     cache.put(hashCode, ret);
@@ -168,9 +169,9 @@ public abstract class Value {
    */
   public static Value create_unsafe(int width, long[] error, long[] unknown, long[] value) {
     final var hashCode = LongArrayValue.hashcode(width, error, unknown, value);
-    Object cached = cache.get(hashCode);
-    if (cached != null && cached instanceof LongArrayValue val) {
-      if (val.equals(width, error, unknown, value)) return val;
+    Value cached = cache.get(hashCode);
+    if (cached instanceof LongArrayValue val) {
+      if (val.equals(width, error, unknown, value)) return cached;
     }
     Value ret = new LongArrayValue(width, error, unknown, value);
     cache.put(hashCode, ret);
@@ -428,7 +429,7 @@ public abstract class Value {
   public static Color widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
   public static Color clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
 
-  private static final Cache cache = new Cache();
+  private static final Cache<Value> cache = new Cache<>(Value.class);
 
   public static final int MAX_WIDTH = 2048;
 
