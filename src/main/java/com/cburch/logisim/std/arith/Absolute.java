@@ -25,6 +25,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
+import java.math.BigInteger;
 
 public class Absolute extends InstanceFactory {
   /**
@@ -76,10 +77,17 @@ public class Absolute extends InstanceFactory {
     Value in = state.getPortValue(IN);
     final Value out, overflow;
     if (in.isFullyDefined()) {
-      var val = in.toSignExtendedLongValue();
-      var result = val < 0 ? -val : val;
-      out = Value.createKnown(in.getBitWidth(), result);
-      overflow = out.toSignExtendedLongValue() < 0 ? Value.TRUE : Value.FALSE;
+      if (dataWidth.getWidth() <= 64) {
+        var val = in.toSignExtendedLongValue();
+        var result = val < 0 ? -val : val;
+        out = Value.createKnown(in.getBitWidth(), result);
+        overflow = out.toSignExtendedLongValue() < 0 ? Value.TRUE : Value.FALSE;
+      } else {
+        var result = in.toBigInteger(false).abs();
+        out = Value.createKnown(in.getBitWidth(), result);
+        overflow = out.toBigInteger(false).compareTo(BigInteger.ZERO) < 0 ?
+            Value.TRUE : Value.FALSE;
+      }
     } else {
       Value[] bits = in.getAll();
       Value fill = Value.FALSE;

@@ -27,6 +27,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 
 import java.awt.Color;
+import java.math.BigInteger;
 
 public class MinMax extends InstanceFactory {
   /**
@@ -99,23 +100,29 @@ public class MinMax extends InstanceFactory {
     final Value min, max;
 
     if (a.isFullyDefined() && b.isFullyDefined()) {
+      if (dataWidth.getWidth() <= 64) {
+        final long min_val, max_val;
+        if (unsigned) {
+          final long a_val = a.toLongValue();
+          final long b_val = b.toLongValue();
+          min_val = Long.compareUnsigned(a_val, b_val) < 0 ? a_val : b_val;
+          max_val = Long.compareUnsigned(a_val, b_val) > 0 ? a_val : b_val;
+        } else {
+          final long a_val = a.toSignExtendedLongValue();
+          final long b_val = b.toSignExtendedLongValue();
+          min_val = Math.min(a_val, b_val);
+          max_val = Math.max(a_val, b_val);
+        }
 
-      final long min_val, max_val;
-
-      if (unsigned) {
-        final long a_val = a.toLongValue();
-        final long b_val = b.toLongValue();
-        min_val = Long.compareUnsigned(a_val, b_val) < 0 ? a_val : b_val;
-        max_val = Long.compareUnsigned(a_val, b_val) > 0 ? a_val : b_val;
+        min = Value.createKnown(dataWidth.getWidth(), min_val);
+        max = Value.createKnown(dataWidth.getWidth(), max_val);
       } else {
-        final long a_val = a.toSignExtendedLongValue();
-        final long b_val = b.toSignExtendedLongValue();
-        min_val = Math.min(a_val, b_val);
-        max_val = Math.max(a_val, b_val);
-      }
+        final BigInteger a_val = a.toBigInteger(unsigned);
+        final BigInteger b_val = b.toBigInteger(unsigned);
 
-      min = Value.createKnown(dataWidth.getWidth(), min_val);
-      max = Value.createKnown(dataWidth.getWidth(), max_val);
+        min = Value.createKnown(dataWidth, a_val.min(b_val));
+        max = Value.createKnown(dataWidth, a_val.max(b_val));
+      }
     } else {
       min = Value.createError(dataWidth);
       max = Value.createError(dataWidth);

@@ -325,7 +325,25 @@ public abstract class Value {
     for (int i = 0; i < n; i++) {
       Value drivenValue = connections[i].drivenValue;
       if (drivenValue != null && drivenValue != NIL) {
-        if (drivenValue instanceof LongArrayValue v) {
+        if (drivenValue instanceof LongValue v) {
+          long error = v.error;
+          long unknown = v.unknown;
+          long value = v.value;
+          for (int j = i + 1; j < n; j++) {
+            drivenValue = connections[j].drivenValue;
+            if (drivenValue == null || drivenValue == NIL) continue;
+            if (drivenValue.width != width) {
+              throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in LongValue.combineLikeWidths_unsafe");
+            }
+            v = (LongValue) drivenValue;
+            long disagree = (value ^ v.value) & ~(unknown | v.unknown);
+            error |= v.error | disagree;
+            unknown &= v.unknown;
+            value |= v.value;
+          }
+          return Value.create(width, error, unknown, value);
+        } else {
+          LongArrayValue v = (LongArrayValue) drivenValue;
           long[] error = Arrays.copyOf(v.error, v.error.length);
           long[] unknown = Arrays.copyOf(v.unknown, v.unknown.length);
           long[] value = Arrays.copyOf(v.value, v.value.length);
@@ -342,24 +360,6 @@ public abstract class Value {
               unknown[k] &= v.unknown[k];
               value[k] |= v.value[k];
             }
-          }
-          return Value.create(width, error, unknown, value);
-        } else {
-          LongValue v = (LongValue) drivenValue;
-          long error = v.error;
-          long unknown = v.unknown;
-          long value = v.value;
-          for (int j = i + 1; j < n; j++) {
-            drivenValue = connections[j].drivenValue;
-            if (drivenValue == null || drivenValue == NIL) continue;
-            if (drivenValue.width != width) {
-              throw new IllegalArgumentException("INTERNAL ERROR: mismatched widths in LongValue.combineLikeWidths_unsafe");
-            }
-            v = (LongValue) drivenValue;
-            long disagree = (value ^ v.value) & ~(unknown | v.unknown);
-            error |= v.error | disagree;
-            unknown &= v.unknown;
-            value |= v.value;
           }
           return Value.create(width, error, unknown, value);
         }

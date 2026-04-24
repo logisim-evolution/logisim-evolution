@@ -125,8 +125,7 @@ public class Pin extends InstanceFactory {
 
       text = new JFormattedTextField();
       text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
-      var maxValue = (BigInteger.ONE).shiftLeft(bitWidth).subtract(BigInteger.ONE);
-      int columns = Math.max(10, maxValue.toString().length() + 1);
+      int columns = Math.clamp(radix.getMaxLength(value.getBitWidth()),11,128);
       text.setColumns(columns);
       text.setText(value.toDecimalString(radix == RadixOption.RADIX_10_SIGNED));
       text.selectAll();

@@ -36,15 +36,9 @@ public final class LongArrayValue extends Value {
 
   public static int hashcode(int width, long[] error, long[] unknown, long[] value) {
     var hashCode = width;
-    for (int i = 0; i < error.length; i++) {
-      hashCode = 31 * hashCode + (int) (error[i] ^ (error[i] >>> 32));
-    }
-    for (int i = 0; i < unknown.length; i++) {
-      hashCode = 31 * hashCode + (int) (unknown[i] ^ (unknown[i] >>> 32));
-    }
-    for (int i = 0; i < value.length; i++) {
-      hashCode = 31 * hashCode + (int) (value[i] ^ (value[i] >>> 32));
-    }
+    hashCode = 31 * hashCode + Arrays.hashCode(error);
+    hashCode = 31 * hashCode + Arrays.hashCode(unknown);
+    hashCode = 31 * hashCode + Arrays.hashCode(value);
     return hashCode;
   }
 
@@ -72,7 +66,6 @@ public final class LongArrayValue extends Value {
 
   @Override
   public boolean isErrorValue() {
-    if (width <= 64) return error[0] != 0;
     long errors = 0;
     for (int i = 0; i < error.length; i++) {
       errors |= error[i];
@@ -82,9 +75,6 @@ public final class LongArrayValue extends Value {
 
   @Override
   public boolean isFullyDefined() {
-    if (width <= 0) return false;
-    if (width <= 64) return error[0] == 0 && unknown[0] == 0;
-
     long errors = 0;
     long unknowns = 0;
     for (int i = 0; i < error.length; i++) {
@@ -98,11 +88,6 @@ public final class LongArrayValue extends Value {
 
   @Override
   public boolean isUnknown() {
-    if (width < 64) {
-      return error[0] == 0 && unknown[0] == ((1L << width) - 1);
-    } else if (width == 64) {
-      return error[0] == 0 && unknown[0] == -1L;
-    }
     int i;
     for (i = 0; i < unknown.length - 1; i++) {
       if (error[i] != 0 || unknown[i] != -1L) return false;
@@ -217,6 +202,7 @@ public final class LongArrayValue extends Value {
 
   @Override
   public Value or(Value other) {
+    if (other == null) return this;
     int maxWidth = Math.max(this.width, other.width);
     int len = (maxWidth + 63) / 64;
 
@@ -258,6 +244,7 @@ public final class LongArrayValue extends Value {
 
   @Override
   public Value xor(Value other) {
+    if (other == null) return this;
     int maxWidth = Math.max(this.width, other.width);
     int len = (maxWidth + 63) / 64;
 
@@ -488,12 +475,7 @@ public final class LongArrayValue extends Value {
 
   @Override
   public String toString() {
-    final var ret = new StringBuilder();
-    for (var i = width - 1; i >= 0; i--) {
-      ret.append(get(i).toString());
-      if (i % 4 == 0 && i != 0) ret.append(" ");
-    }
-    return ret.toString();
+    return toDisplayString();
   }
 
   @Override
@@ -518,8 +500,7 @@ public final class LongArrayValue extends Value {
       default:
         if (isErrorValue()) return Character.toString(ERRORCHAR);
         if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
-        //TODO implement custom radix sizes properly for bitwidths > 64
-        return Long.toString(toLongValue(), radix);
+        return toBigInteger(true).toString(radix);
     }
   }
 
@@ -599,8 +580,7 @@ public final class LongArrayValue extends Value {
 
   @Override
   public long toLongValue() {
-    if (error[0] != 0) return -1L;
-    if (unknown[0] != 0) return -1L;
+    if(!isFullyDefined()) return -1;
     return value[0];
   }
 
@@ -616,25 +596,22 @@ public final class LongArrayValue extends Value {
     int byteLength = (width + 7) / 8;
     byte[] magnitude = new byte[byteLength];
 
-    int byteIndex = byteLength;
+    int byteIndex = byteLength - 1;
+    int remaining = byteLength;
+
     for (int longIndex = 0; longIndex < value.length; longIndex++) {
-      long word = value[longIndex];
-      int bytesInWord = (longIndex == value.length - 1) ? ((width + 7) / 8) - (longIndex * 8) : 8;
-      for (int b = 0; b < bytesInWord; b++) {
-        magnitude[--byteIndex] = (byte) (word >>> (8 * b));
+      for (int b = 0; b < Math.min(8, remaining); b++) {
+        magnitude[byteIndex] = (byte) (value[longIndex] >>> (8 * b));
+        byteIndex--;
       }
+      remaining -= 8;
     }
 
-    if (!unsigned) {
-      boolean negative = (value[value.length - 1] < 0);
-      if (negative) {
-        for (int i = 0; i < byteIndex; i++) {
-          magnitude[i] = (byte) 0xFF;
-        }
-      }
-    }
+    if (unsigned) return new BigInteger(1, magnitude);
 
-    return unsigned ? new BigInteger(1, magnitude) : new BigInteger(magnitude);
+    final var shift = 32 - (width % 8);
+    magnitude[0] = (byte) ((magnitude[0] << shift) >> shift);
+    return new BigInteger(magnitude);
   }
 
   @Override
