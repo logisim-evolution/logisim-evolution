@@ -1052,8 +1052,8 @@ tasks {
 
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
-    // Checkstyle version to use
-    toolVersion = "10.3.4"
+    // Checkstyle version to use. Should match version in checkstyle workflow.
+    toolVersion = "13.9.0"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
