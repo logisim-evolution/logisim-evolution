@@ -28,6 +28,7 @@ class Model {
   private final ArrayList<Integer> failed = new ArrayList<>();
   private final ArrayList<Integer> passed = new ArrayList<>();
   private final ArrayList<Integer> sortedIndices = new ArrayList<>();
+  private final ArrayList<Integer> allIndices = new ArrayList<>();
   private boolean selected = false;
   private boolean running;
   private boolean paused;
@@ -105,6 +106,7 @@ class Model {
     stop();
     synchronized (this) {
       vec = v;
+      updateAllIndices();
       results = ((v != null) ? (new ArrayList[v.data.size()]) : null);
       numPass = numFail = 0;
       failed.clear();
@@ -253,16 +255,18 @@ class Model {
     fireTestResultsChanged();
   }
 
-  private void updateSortedIndices() {
-    if (vec == null) return;
-    sortedIndices.clear();
-
+  // Call when vec is modified
+  private void updateAllIndices() {
     // Create list of all row indices
-    ArrayList<Integer> allIndices = new ArrayList<>();
+    allIndices.clear();
     for (int i = 0; i < vec.data.size(); i++) {
       allIndices.add(i);
     }
+  }
 
+  private void updateSortedIndices() {
+    if (vec == null) return;
+    sortedIndices.clear();
     // Sort by set first, then by sequence, then by pass/fail status, then by original index
     allIndices.sort((a, b) -> {
       int setA = (vec.setNumbers != null && a < vec.setNumbers.length) ? vec.setNumbers[a] : 0;
