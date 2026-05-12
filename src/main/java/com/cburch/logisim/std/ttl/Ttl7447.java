@@ -9,8 +9,10 @@
 
 package com.cburch.logisim.std.ttl;
 
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.std.plexers.PlexersLibrary;
 
 public class Ttl7447 extends AbstractTtlGate {
   /**
@@ -40,8 +42,10 @@ public class Ttl7447 extends AbstractTtlGate {
     super(
         _ID,
         (byte) 16,
-        new byte[] {9, 10, 11, 12, 13, 14, 15},
-        new String[] {"B", "C", "LT", "BI", "RBI", "D", "A", "e", "d", "c", "b", "a", "g", "f"},
+        new byte[] {9, 10, 11, 12, 13, 14, 15}, // Inputs
+        new byte[] {}, // Unused
+        new byte[] {4}, // Input/Output
+        new String[] {"B", "C", "LT", "BI/RBO", "RBI", "D", "A", "e", "d", "c", "b", "a", "g", "f"},
         new Ttl7447HdlGenerator());
   }
 
@@ -53,9 +57,11 @@ public class Ttl7447 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
+    var inputValue = DisplayDecoder.getdecval(state, false, 0, PORT_INDEX_A, PORT_INDEX_B, PORT_INDEX_C, PORT_INDEX_D);
+    final var blankZero = state.getPortValue(PORT_INDEX_RBI) == Value.FALSE && inputValue == 0;
     DisplayDecoder.computeDisplayDecoderOutputs(
         state,
-        DisplayDecoder.getdecval(state, false, 0, PORT_INDEX_A, PORT_INDEX_B, PORT_INDEX_C, PORT_INDEX_D),
+        inputValue,
         PORT_INDEX_QA,
         PORT_INDEX_QB,
         PORT_INDEX_QC,
@@ -66,5 +72,9 @@ public class Ttl7447 extends AbstractTtlGate {
         PORT_INDEX_LT,
         PORT_INDEX_BI,
         PORT_INDEX_RBI);
+    if (state.isPortConnected(PORT_INDEX_BI)) {
+      final var value = (blankZero && state.getPortValue(PORT_INDEX_LT) != Value.FALSE) ? Value.FALSE : Value.UNKNOWN;
+      state.setPort(PORT_INDEX_BI, value, PlexersLibrary.DELAY);
+    }
   }
 }
