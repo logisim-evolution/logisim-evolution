@@ -24,7 +24,7 @@
      <tr>
       <td>
        <b>
-        库:
+        库：
        </b>
       </td>
       <td>
@@ -66,7 +66,10 @@
    </p>
    <p>
     RAM 组件根据<b class="property">异步读取</b>、<b class="property">数据总线实现</b>和<b class="property">使能方式</b>等设置，支持四种不同的接口形式。
-   </p><b class="property">数据总线实现</b>属性允许修改数据总线的结构：可以是独立的单向输入总线与输出总线，或是双向的数据总线。
+   </p>
+   <p>
+    <b class="property">数据总线实现</b>属性用于配置数据总线结构：可以使用独立的输入数据总线与输出数据总线，也可以使用一条双向数据总线。
+   </p>
    <dl>
     <dt>
      默认设置为：读写分离总线 + 同步控制。
@@ -93,7 +96,7 @@
      </p>
     </dd>
     <dt>
-     同步读取，并使用行使能（多行）。
+     使用行使能（多行）。
     </dt>
     <dd>
      <p>
@@ -116,7 +119,7 @@
       <var>清除</var>
      </dt>
      <dd>
-      输入：仅当<b class="property">使用清除引脚</b>属性设为<b class="vprop">是</b>时才出现该引脚。当其为<b class="unov">是</b>时，无论其它输入如何，存储器中的所有数值都会被固定为<b class="zerov">0</b>。
+      输入：仅当<b class="property">使用清除引脚</b>属性设为<b class="vprop">是</b>时才出现该引脚。当该引脚为 <b class="unov">1</b> 时，无论其他输入如何，存储器中的所有数值都会被固定为 <b class="zerov">0</b>。
      </dd>
      <dt class="lib">
       <var>地址</var>
@@ -152,7 +155,7 @@
           </tr>
           <tr>
            <td>
-            下降沿
+            上升沿
            </td>
            <td>
             ↑
@@ -163,7 +166,7 @@
           </tr>
           <tr>
            <td>
-            上升沿
+            下降沿
            </td>
            <td>
             ↓
@@ -340,7 +343,7 @@
       <var>时钟（或 C1、E1）</var>
      </dt>
      <dd>
-      输入：仅当<b class="property">触发方式</b>属性设为<b class="vprop">上升沿/下降沿</b>时才出现该引脚；在其它触发方式下，若<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>，同样会出现该引脚。触发后，存储器会写入或读取数据。<br/>
+      输入：仅当<b class="property">触发方式</b>属性设为<b class="vprop">上升沿/下降沿</b>时才出现该引脚；在其他触发方式下，若<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>，同样会出现该引脚。触发后，存储器会写入或读取数据。<br/>
       参见上方两张表格。
      </dd>
      <dt class="lib">
@@ -359,7 +362,7 @@
       <var>输入数据 0</var> 到 <var>输入数据 7</var>
      </dt>
      <dd>
-      输入总线：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>且<b class="property">行大小</b>不为<b class="vprop">单行</b>时才出现。其功能与输入数据总线相同，但区别在于：输入数据 0 指向地址总线对应的存储位置，输入数据 1 指向地址总线+1，输入数据 2 指向地址总线+2，依此类推。每条输入数据行都有对应的使能信号 LE0..LE7。
+      输入总线：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>且<b class="property">行大小</b>不为<b class="vprop">单行</b>时才出现。其功能与输入数据总线相同，但区别在于：输入数据 0 指向地址总线对应的存储位置，输入数据 1 指向地址总线 + 1，输入数据 2 指向地址总线 + 2，依此类推。每条输入数据行都有对应的使能信号 LE0..LE7。
      </dd>
      <dt class="lib">
       <var>输出数据</var>
@@ -371,8 +374,8 @@
       <var>输出数据 0</var> 到 <var>输出数据 7</var>
      </dt>
      <dd>
-      输出总线：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>且<b class="property">行大小</b>不为<b class="vprop">单行</b>时才出现。其功能与输出数据总线相同，但区别在于：输出数据 0 输出地址总线对应存储位置的数据，输出数据 1 输出地址总线+1，输出数据 2 输出地址总线+2，依此类推。<br/>
-      <b class="property">允许非对齐</b>属性用于决定：当地址未按“行数”的倍数对齐时，是否产生错误（<b class="evalue">E</b>）。
+      输出总线：仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>且<b class="property">行大小</b>不为<b class="vprop">单行</b>时才出现。其功能与输出数据总线相同，但区别在于：输出数据 0 输出地址总线对应存储位置的数据，输出数据 1 输出地址总线 + 1，输出数据 2 输出地址总线 + 2，依此类推。<br/>
+      <b class="property">允许未对齐</b>属性用于决定：当地址未按“行数”的倍数对齐时，是否产生错误（<b class="evalue">E</b>）。
      </dd>
     </dl>
    </div>
@@ -408,7 +411,7 @@
      </dt>
      <dd>
       决定重新开始仿真时 RAM 内容如何变化：<br/>
-      <b class="vprop">非易失</b>：内存内容不变。<br/>
+      <b class="vprop">非易失</b>：存储器内容不变。<br/>
       <b class="vprop">易失</b>：RAM 内容会清零或随机化（取决于项目选项中<a href="../../guide/opts/opts-simulate.html">仿真</a>选项卡的设置）。
      </dd>
      <dt class="lib">
@@ -424,7 +427,7 @@
       仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>时才出现。用于确定输入与输出端存在的数据行数量：1、2、4 或 8。每条数据行在写入时由对应信号（LE0..LE7）驱动。第 0 行对应地址总线上的地址，第 1 行对应地址总线上的地址+1，依此类推。
      </dd>
      <dt class="lib">
-      允许非对齐
+      允许未对齐
      </dt>
      <dd>
       仅当<b class="property">使能方式</b>属性设为<b class="vprop">使用行使能</b>时才出现。用于决定：数据行是否可以对应任意地址，还是必须与其数量的倍数地址对齐。例如，当有两行时，第 0 行对应地址总线上的地址+0，第 1 行对应地址总线上的地址+1，那么地址必须是 2 的倍数，否则输出将为错误（<b class="evalue">E</b>）。
@@ -448,12 +451,12 @@
       <b class="vprop">否</b>：由 OE 信号与时钟信号的边沿共同触发读取。
      </dd>
      <dt class="lib">
-      读行为
+      读取行为
      </dt>
      <dd>
       决定读写同时使能时的行为。<br/>
-      <b class="vprop">先写后读</b>：先写入 Address 指向的存储单元，然后再读取并输出。<br/>
-      <b class="vprop">先读后写</b>：先输出 Address 指向的存储单元内容，然后再用输入数据改写该单元。
+      <b class="vprop">先写后读</b>：先写入地址指向的存储单元，然后再读取并输出该单元的新内容。<br/>
+      <b class="vprop">先读后写</b>：先输出地址指向的存储单元内容，然后再用输入数据改写该单元。
      </dd>
      <dt class="lib">
       数据总线实现
@@ -485,7 +488,7 @@
       外观
      </dt>
      <dd>
-      <b class="vprop">Logisim-HolyCross / Logsim-Evolutions</b>：以 IEC 方式的新外观。<b class="vprop">Classic Logisim</b>：以传统 Logisim 风格显示。
+      <b class="vprop">Logisim-HolyCross / Logisim-evolution</b>：以 IEC 风格显示 RAM。<b class="vprop">Classic Logisim</b>：以传统 Logisim 风格显示 RAM。
      </dd>
     </dl>
    </div>
