@@ -23,13 +23,13 @@
               <img src="../../../img-guide/gui-0-explor.png" alt="#########">
             </td>
             <td valign="top">
-              导航面板有两个功能。它可以以 <a href="../subcirc/sub-debug.html">模拟</a>视图显示正在模拟的电路，或者像这里一样显示列表顶部的电路和下方由文件夹图标表示的库。这些库包含您可以在项目中使用的工具。
+              资源管理器窗格有两个功能。它可以在<a href="../subcirc/sub-debug.html">仿真</a>视图中显示正在仿真的电路，也可以像这里一样，在列表上方显示电路、下方显示以文件夹图标表示的库。这些库包含您可以在项目中使用的工具。
             </td>
           </tr>
         </tbody>
       </table>
       <p>
-        要访问库的组件，只需通过 <b class="tkeybd">双击</b>对应的文件夹或 <b class="tkeybd">单击</b>小三角键来打开库，然后通过 <b class="tkeybd">右键单击</b>工具来选择该工具。然后将鼠标光标移动到画布上，工具的虚线轮廓将跟随鼠标光标，直到您在表面最后一次单击将其放置到所选位置。
+        要访问库中的组件，只需通过 <b class="tkeybd">双击</b>对应的文件夹或 <b class="tkeybd">单击</b>小三角来打开库，然后 <b class="tkeybd">单击</b>所需工具。随后将鼠标光标移动到画布上，工具的虚线轮廓会跟随鼠标光标，直到您在画布上单击并将其放置到所选位置。
       </p>
       <p>
         下面，我已经打开了“门”库，并从中选择了与非门工具。您可以看到 Logisim 现在已准备好将与非门添加到电路中。
@@ -67,7 +67,7 @@
           <b>TTL：</b> 经典的 74 系列 TTL 组件，采用 DIL 封装。
         </li>
         <li>
-          <b>TCL：</b> 我目前还没有为其编写文档。
+          <b>TCL：</b>目前暂无文档。
         </li>
         <li>
           <b>HDL-IP：</b>目前暂无文档。
@@ -94,7 +94,7 @@
           <strong>内置库</strong> 是随 Logisim 分发的库。这些库在 <a href="../../libs/index.html">库参考</a> 中有文档说明。
         </li>
         <li>
-          <strong>Logisim 库</strong> 是在 Logisim 内部构建并保存为 Logisim 项目到磁盘的项目。您可以在单个项目中开发一组电路（如本指南的 <a href="../subcirc/index.html">子电路</a> 部分所述），然后将这组电路作为库用于其他项目。
+          <strong>Logisim 库</strong> 是在 Logisim 中构建、并以 Logisim 项目文件保存到磁盘的库。您可以在单个项目中开发一组电路（如本指南的 <a href="../subcirc/index.html">子电路</a> 部分所述），然后将这组电路作为库用于其他项目。
         </li>
         <li>
           <strong>JAR 库</strong> 是用 Java 开发但不随 Logisim 分发的库。您可以下载他人编写的 JAR 库，也可以按照本指南的 <a href="../jar/index.html">JAR 库</a> 部分自行编写。开发 JAR 库比开发 Logisim 库困难得多，但组件可以更加复杂，包括属性、与用户交互等功能。内置库（除 <b class="propertie">Base</b> 以外）使用与 JAR 库相同的 API 编写，因此很好地展示了 JAR 库可以支持的功能范围。
@@ -110,10 +110,10 @@
         <img class="notscal" src="../../../img-guide/gui-2-remlib.png" alt="#########">
       </p>
       <p>
-        也可以通过在被禁用的库上 <b class="tkeybd">左键单击</b> 来实现这一点。
+        也可以通过在要卸载的库上 <b class="tkeybd">左键单击</b> 来完成此操作。
       </p>
       <p>
-        顺便说一下，从技术上讲，库包含的是工具，而不是组件。因此，在 Base 库中，您会找到 <b class="propertie">手形</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">）、<b class="propertie">编辑</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">），以及其他不直接对应单个组件的工具。不过，大多数库只包含用于添加单个组件的工具。
+        顺便说一下，从技术上讲，库包含的是工具，而不是组件。因此，在 Base 库中，您会找到 <b class="propertie">手形</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">）、<b class="propertie">选择</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">），以及其他不直接对应单个组件的工具。不过，大多数库只包含用于添加单个组件的工具。
 
       </p>
       <p>
