@@ -48,15 +48,18 @@
         行为
       </h2>
       <p>
-        该组件将来自西侧输入的两个值相除，并在东侧输出上输出商。该组件设计为可与其他除法器级联，以支持比单个除法器更多位的被除数：上侧输入提供被除数的高<var>dataBits</var>位（如果指定），而<var>rem</var>位提供余数，可作为<var>upper</var>输入馈入另一个除法器。
+        该组件将来自西侧输入的两个值相除，并在东侧输出商。它可以与其他除法器级联，以支持超过单个除法器位宽的被除数：上侧输入提供被除数的高 <var>dataBits</var> 位（如果指定），而 <var>rem</var> 输出提供余数，可作为另一个除法器的 <var>upper</var> 输入。
       </p>
       <p>
-        如果除数为0，则不执行除法（即假定除数为1）。
+        如果除数为 0，则不执行除法（即假定除数为 1）。
       </p>
       <p>
-        除法器本质上执行无符号除法。也就是说，余数始终在0到<var>divisor</var>-1之间。商始终为整数，因此
+        除法器本质上执行无符号除法。也就是说，余数始终在 0 到 <var>divisor</var>-1 之间。商始终为整数，因此
       </p>
-      <center> <var>quotient</var> * <var>divisor</var> + <var>remainder</var> = <var>dividend</var> 。</center>然而，如果<var>quotient</var>无法容纳在<var>dataBits</var>位中，则仅报告低<var>dataBits</var>位。该组件不提供任何访问高<var>dataBits</var>位的方法。
+      <center> <var>quotient</var> * <var>divisor</var> + <var>remainder</var> = <var>dividend</var>。</center>
+      <p>
+        然而，如果 <var>quotient</var> 无法容纳在 <var>dataBits</var> 位中，则仅报告低 <var>dataBits</var> 位。该组件不提供访问高 <var>dataBits</var> 位的方法。
+      </p>
       <p>
         如果任一操作数包含某些浮空位或错误位，则组件的输出将完全为浮空值或完全为错误值。
       </p>
@@ -65,31 +68,31 @@
       </h2>
       <dl>
         <dt>
-          西侧边缘，北端（输入，位宽与数据位宽属性匹配）
+          西侧边缘，北端（输入，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
-          被除数的低<var>dataBits</var>位（即除法的第一个操作数）。
+          被除数的低 <var>dataBits</var> 位（即除法的第一个操作数）。
         </dd>
         <dt>
-          西侧边缘，南端（输入，位宽与数据位宽属性匹配）
+          西侧边缘，南端（输入，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
           除数（即除法的第二个操作数）
         </dd>
         <dt>
-          北侧边缘，标记为<var>upper</var>（输入，位宽与数据位宽属性匹配）
+          北侧边缘，标记为 <var>upper</var>（输入，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
-          被除数的高<var>dataBits</var>位（即除法的第一个操作数）。
+          被除数的高 <var>dataBits</var> 位（即除法的第一个操作数）。
         </dd>
         <dt>
-          东边（输出，位宽与数据位宽属性匹配）
+          东侧（输出，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
-          商的低<var>dataBits</var>位，如上所述。
+          商的低 <var>dataBits</var> 位，如上所述。
         </dd>
         <dt>
-          南边，标记为<var>rem</var>（输出，位宽与数据位宽属性匹配）
+          南侧，标记为 <var>rem</var>（输出，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
           除法的余数。该值始终介于 0 与 <var>divisor</var>-1 之间。
@@ -99,7 +102,7 @@
         属性
       </h2>
       <p>
-        当组件被选中或正在添加时，<b class="tkeybd">Alt-0</b> 至 <b class="tkeybd">Alt-9</b> 可更改其<b class="propertie">数据位宽</b>属性。
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 至 <b class="tkeybd">Alt-9</b> 可更改其 <b class="propertie">数据位宽</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>

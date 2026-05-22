@@ -7,14 +7,14 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="zh">
     <title>
-      取反器
+      求负器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> <em>取反器</em>
+        <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> <em>求负器</em>
       </h1>
       <table>
         <tbody>
@@ -48,33 +48,33 @@
         行为
       </h2>
       <p>
-        计算输入的二进制补码取反。该取反操作通过保留最低位1及其以下的所有低位，并对高于该位的所有位取反来完成。
+        计算输入在补码表示下的相反数。该求负操作会保留最低位 1 及其以下的所有低位，并对高于该位的所有位取反。
       </p>
       <p>
-        如果要取反的值恰好是最小负值，则其取反结果（无法用二进制补码形式表示）仍为最小负值。
+        如果要求负的值恰好是最小负值，则其相反数无法用同样位宽的补码表示；此时输出仍为该最小负值。
       </p>
       <h2>
         引脚
       </h2>
       <dl>
         <dt>
-          西侧边（输入，位宽与数据位宽属性匹配）
+          西侧（输入，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
-          要取反的值。
+          要求负的值。
         </dd>
         <dt>
-          东侧边，标有 -<var>x</var>（输出，位宽与数据位宽属性匹配）
+          东侧，标有 -<var>x</var>（输出，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
-          输入的取反结果。但如果输入恰好是<var>dataBits</var>位所能表示的最小负值，则输出与输入相同。
+          输入的相反数。但如果输入恰好是 <var>dataBits</var> 位所能表示的最小负值，则输出与输入相同。
         </dd>
       </dl>
       <h2>
         属性
       </h2>
       <p>
-        当组件被选中或正在添加时，<b class="tkeybd">Alt-0</b>至<b class="tkeybd">Alt-9</b>可更改其<b class="propertie">数据位宽</b>属性。
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 至 <b class="tkeybd">Alt-9</b> 可更改其 <b class="propertie">数据位宽</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>

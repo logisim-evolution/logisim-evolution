@@ -7,14 +7,14 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="zh">
     <title>
-      位加法器
+      位计数器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/bitadder.png" alt="#########" width="32" height="32" align="middle"> <em>位加法器</em>
+        <img class="iconlibs" src="../../../../icons/6464/bitadder.png" alt="#########" width="32" height="32" align="middle"> <em>位计数器</em>
       </h1>
       <table>
         <tbody>
@@ -48,33 +48,33 @@
         行为
       </h2>
       <p>
-        该组件确定其输入中有多少个1位，并在其输出上发出1位的总数。例如，给定8位输入10011101，输出将为5，因为输入中有五个1位（第一个、最后一个以及中间连续三个位）。
+        该组件统计其输入中有多少个位为 1，并在输出端给出 1 的总数。例如，给定 8 位输入 10011101，输出为 5，因为输入中有五个位为 1（第一个、最后一个以及中间连续三个位置）。
       </p>
       <p>
-        如果任何输入位是浮空或错误值，则输出将在对应于可能输出范围的输出位中包含错误位，具体取决于这些浮空/错误值是被计为零还是一。例如，如果14位输入为111x10110x1101，则输出必须至少为9（如果x被解释为零）且最多为11（如果它们被解释为一）。因此，输出将为10EE：高两位将为1和0，因为9到11之间的所有整数的高两位都是1和0，但低两位是EE，因为9到11之间的整数在这些位上会变化。
+        如果任何输入位是浮空或错误值，则输出会在受不确定输入影响的位置上包含错误位，具体取决于这些浮空/错误值被计为 0 还是 1。例如，如果 14 位输入为 111x10110x1101，则输出至少为 9（如果 x 被解释为 0），最多为 11（如果它们被解释为 1）。因此，输出为 10EE：高两位为 1 和 0，因为 9 到 11 之间所有整数的高两位都是 1 和 0；低两位为 EE，因为这些整数在低两位上会变化。
       </p>
       <h2>
         引脚
       </h2>
       <dl>
         <dt>
-          西侧边缘（输入，位宽与数据位宽属性匹配）
+          西侧边缘（输入，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
-          要统计其中 1 位个数的输入。输入数量取决于输入数量属性。
+          要统计其中 1 位个数的输入。输入数量取决于 <b class="propertie">输入数量</b> 属性。
         </dd>
         <dt>
           东侧边缘（输出，位宽按下文所述计算）
         </dt>
         <dd>
-          输入中为 1 的位数。输出的位宽是存储最大可能值所需的最小位数（该最大可能值为数据位宽属性与输入数量属性的乘积）。
+          输入中为 1 的位数。输出的位宽是存储最大可能值所需的最小位数；该最大可能值为 <b class="propertie">数据位宽</b> 属性与 <b class="propertie">输入数量</b> 属性的乘积。
         </dd>
       </dl>
       <h2>
         属性
       </h2>
       <p>
-        当组件被选中或添加时，数字键“0”到“9”可更改其<q>输入数量</q>属性，<b class="tkeybd">Alt-0</b>至<b class="tkeybd">Alt-9</b>可更改其<b class="propertie">数据位宽</b>属性。
+        当组件被选中或正在放置时，数字键 <b class="tkeybd">0</b> 到 <b class="tkeybd">9</b> 可更改其 <b class="propertie">输入数量</b> 属性，<b class="tkeybd">Alt-0</b> 至 <b class="tkeybd">Alt-9</b> 可更改其 <b class="propertie">数据位宽</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>

@@ -51,38 +51,38 @@
         此组件包含两个输入：<var>data</var> 和 <var>dist</var>，以及一个输出，该输出是将 <var>data</var> 移位 <var>dist</var> 位后的结果。<var>data</var> 和输出具有相同的位数。该组件支持以下移位类型：
       </p>
       <ul>
-        <li>逻辑左移：<var>data</var> 中的所有位上移 <var>dist</var> 位，低 <var>dist</var> 位用 0 填充。例如，11001011 逻辑左移两位后为 00101100。（高两位的 1 丢失。）
+        <li>逻辑左移：<var>data</var> 中的所有位向左移动 <var>dist</var> 位，低 <var>dist</var> 位用 0 填充。例如，11001011 逻辑左移两位后为 00101100。（高两位的 1 丢失。）
         </li>
-        <li>逻辑右移：<var>data</var> 中的所有位下移 <var>dist</var> 位，高 <var>dist</var> 位用 0 填充。例如，11001011 逻辑右移两位后为 00110010。（低两位的 1 丢失。）
+        <li>逻辑右移：<var>data</var> 中的所有位向右移动 <var>dist</var> 位，高 <var>dist</var> 位用 0 填充。例如，11001011 逻辑右移两位后为 00110010。（低两位的 1 丢失。）
         </li>
-        <li>算术右移：<var>data</var> 中的所有位下移 <var>dist</var> 位，高 <var>dist</var> 位用 <var>data</var> 中最高位的重复值填充。例如，11001011 算术右移两位后为 11110010。
+        <li>算术右移：<var>data</var> 中的所有位向右移动 <var>dist</var> 位，高 <var>dist</var> 位用 <var>data</var> 最高位的重复值填充。例如，11001011 算术右移两位后为 11110010。
         </li>
-        <li>循环左移：<var>data</var> 中的所有位上移 <var>dist</var> 位，高 <var>dist</var> 位回绕到低位。例如，11001011 循环左移两位后为 00101111。
+        <li>循环左移：<var>data</var> 中的所有位向左移动 <var>dist</var> 位，高 <var>dist</var> 位回绕到低位。例如，11001011 循环左移两位后为 00101111。
         </li>
-        <li>循环右移：<var>data</var> 中的所有位下移 <var>dist</var> 位，低 <var>dist</var> 位回绕到高位。例如，11001011 循环右移两位后为 11110010。
+        <li>循环右移：<var>data</var> 中的所有位向右移动 <var>dist</var> 位，低 <var>dist</var> 位回绕到高位。例如，11001011 循环右移两位后为 11110010。
         </li>
       </ul>
       <p>
-        请注意，如果<var>dist</var>包含任何浮空或错误输入，则输出将完全由错误值组成，因为无法猜测应将输入移位多远。
+        请注意，如果 <var>dist</var> 包含任何浮空或错误输入，则输出将完全由错误值组成，因为无法判断应将输入移位多远。
       </p>
       <h2>
         引脚
       </h2>
       <dl>
         <dt>
-          西边，北端（输入，位宽与数据位宽属性匹配）
+          西侧，北端（输入，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
           要移位的值。
         </dd>
         <dt>
-          西边，南端（输入，位宽按下文计算）
+          西侧，南端（输入，位宽按下文计算）
         </dt>
         <dd>
-          将<var>data</var>输入移位的位数。此输入应具有足够多的位数，以表示从0到比数据位宽小1的任何移位距离；也就是说，它应为数据位宽的以2为底的对数的上取整值。例如，如果数据位宽为8，则此输入需要3位；但如果为9，则需要4位。
+          将 <var>data</var> 输入移位的位数。此输入应具有足够多的位数，以表示从 0 到比数据位宽小 1 的任何移位距离；也就是说，它应为数据位宽以 2 为底的对数的上取整值。例如，如果数据位宽为 8，则此输入需要 3 位；如果为 9，则需要 4 位。
         </dd>
         <dt>
-          东边（输出，位宽与数据位宽属性匹配）
+          东侧（输出，位宽与 <b class="propertie">数据位宽</b> 属性一致）
         </dt>
         <dd>
           将输入值按输入距离移位后的结果。
@@ -92,18 +92,18 @@
         属性
       </h2>
       <p>
-        当组件被选中或添加时，<b class="tkeybd">Alt-0</b>至<b class="tkeybd">Alt-9</b>会更改其<b class="propertie">数据位宽</b>属性。
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 至 <b class="tkeybd">Alt-9</b> 会更改其 <b class="propertie">数据位宽</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">数据位宽</b>数据位宽
+          <b class="propertie">数据位宽</b>
         </dt>
         <dd>
-          <var>data</var>输入和输出的位宽。
+          <var>data</var> 输入和输出的位宽。
         </dd>
         <dt>
-          <b class="propertie">数据位宽</b>移位类型
+          <b class="propertie">移位类型</b>
         </dt>
         <dd>
           上述五种可能的移位类型之一（逻辑左移、逻辑右移、算术右移、循环左移、循环右移）。
