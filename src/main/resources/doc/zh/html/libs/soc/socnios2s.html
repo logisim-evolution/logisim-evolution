@@ -1,976 +1,677 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   nios2
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="nios2" class="iconlibs" src="../../../../icons/up.png" title="nios2 simulator"/>
-    Nios2 simulator
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <strong>
-        Library:
-       </strong>
-      </td>
-      <td>
-       <a href="index.html">
-        System On Chip components
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <strong>
-        Introduced:
-       </strong>
-      </td>
-      <td>
-       3.2
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <strong>
-        Appearance:
-       </strong>
-      </td>
-      <td valign="top">
-       <img alt="nios2" class="notscal" src="../../../../img-libs/nios2.png" title="nios2"/>
-       <br/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    Behavior
-   </h2>
-   <p>
-    The nios2 simulator is a complete ISA-simulator of Intel's nios2 soft core (except for the f-version). It can be used to show the execution of a program on an embedded system. Note that although the simulator executes one instruction per clock cycle, it is not a cycle accurate simulation as aspects like cache-stalls, data-dependency stalls, bus wait cycles, etc. are not taken into account in the simulation. It provides a functional simulation for showing SOC-design where the hardware is not yet available.
-   </p>
-   <h2>
-    Pins
-   </h2>
-   <p>
-    On the north side of the Nios2 simulation component you will find the custom-instruction interface signals where you can add your custom-instruction hardware/accelerators to be used in your simulations. Please refer to Intel's documentation on custom instructions with the nios2 on how to use them.
-   </p>
-   <p>
-    On the west side of the Nios2 simulation components following inputs are present:
-   </p>
-   <ul>
-    <li>
-     <strong>
-      <em>
-       Reset
-      </em>
-     </strong>
-     : This the reset input of the Nios2 simulation component that will reset asynchronously the Nios2 when at '1' and let the cpu run when at '0'.
-    </li>
-    <li>
-     <strong>
-      <em>
-       Clock
-      </em>
-     </strong>
-     : This is the clock input of the Nios2 simulator component. Each time a positive edge is seen on this input a new instruction will be fetched and executed.
-    </li>
-    <li>
-     <strong>
-      <em>
-       IRQ[0..31]
-      </em>
-     </strong>
-     : The Nios2 simulator provides up to 32 IRQ inputs (defined by the below described attribute IRQs). Each of these IRQ-inputs is active high. Please refer to Intel's documentation on IRQ-behavior on how to provide proper signals to these inputs.
-    </li>
-   </ul>
-   <h2>
-    Attributes
-   </h2>
-   <p>
-    The Nios2 simulation component provides following attributes:
-   </p>
-   <ul>
-    <li>
-     <strong>
-      <em>
-       Reset vector
-      </em>
-     </strong>
-     : This attribute specifies the memory address of the first instruction to be executed when the Reset pin is activated. In general the value specified here should be the address of the entry point of your program. Note that all addresses are 32-bit values.
-    </li>
-    <li>
-     <strong>
-      <em>
-       Exception vector
-      </em>
-     </strong>
-     : Upon detection of an IRQ (see IRQ-pins above), or an software exception instruction, the Nios2 simulator will start executing the program starting from this address. In general the value specified here should be the address of the exception handling routine in your program.
-    </li>
-    <li>
-     <strong>
-      <em>
-       Break vector
-      </em>
-     </strong>
-     : This attribute specifies the memory address of the break service routine which is executed upon detection of a break instruction.
-    </li>
-    <li>
-     <strong>
-      <em>
-       Number of IRQ lines
-      </em>
-     </strong>
-     : This attribute specifies how many external IRQ-pins are available. It's value can be within 0 (no IRQ lines) and 32 (maximum number of IRQ lines).
-    </li>
-    <li>
-     <strong>
-      <em>
-       State visible
-      </em>
-     </strong>
-     :When disabling the state by specifying No for this attribute the simulation speed can be improved (see the remark on simulation speed in the
-     <a href="index.html">
-      library description
-     </a>
-     ).
-    </li>
-    <li>
-     <em>
-      <strong>
-       Label
-      </strong>
-     </em>
-     : Here the label of the components can be specified. Note that the label is used in many places to reference to this component. In case the label is not defined the components will be referenced as "
-     <em>
-      Nios2s simulator @x,y
-     </em>
-     " where
-     <em>
-      x
-     </em>
-     and
-     <em>
-      y
-     </em>
-     are the absolute coordinates of the anchor of this component inside the sheet.
-    </li>
-    <li>
-     <em>
-      <strong>
-       Label font
-      </strong>
-     </em>
-     : With this attribute the font of the label can be specified.
-    </li>
-    <li>
-     <strong>
-      <em>
-       Label visible
-      </em>
-     </strong>
-     : With this attribute you can specify if the label is visible or not.
-    </li>
-    <li>
-     <em>
-      <strong>
-       Connected Bus
-      </strong>
-     </em>
-     : This attribute let's you connect the Nios2 simulator to a
-     <a href="socbus.html">
-      bus component
-     </a>
-     . For a successful simulation you have to connect your Nios2 simulator to such a component.
-    </li>
-   </ul>
-   <h2>
-    Visible components
-   </h2>
-   <p>
-    The Nios2 simulator has several state components that are visible when the
-    <em>
-     <strong>
-      State visible
-     </strong>
-    </em>
-    attribute is set to
-    <em>
-     <strong>
-      True
-     </strong>
-    </em>
-    . Most of these components can also be visualized in a separate window when the component is hidden in a sub-circuit (see super-component menu below). The different components are:
-   </p>
-   <ol>
-    <li>
-     The register file. The Nios2 processor contains 32 general purpose registers (r0..r31). The current values of these registers are shown on the left-top square marked by
-     <em>
-      <strong>
-       Register file
-      </strong>
-     </em>
-     . When a register value is shown by a sequence of question marks, it means that the value is unknown (normal start-up behavior of the processor). Each time a value is written to a register it will be highlighted in blue and the new value will be shown.
-    </li>
-    <li>
-     The program counter. The program counter (PC) hold the current address from which the next instruction will be fetched.
-    </li>
-    <li>
-     The status register. The status register (status) hold the current state of the Nios2 processor. For information on the status register please refer to Intel's documentation on the nios2 processor.
-    </li>
-    <li>
-     The exception status register. The exception status register (estatus) holds a copy of the status register when entering an exception. For information on the estatus register please refer to Intel's documentation on the nios2 processor.
-    </li>
-    <li>
-     The break status register. The break status register (bstatus) holds a copy of the status register when a break instruction is executed. For information on the bstatus register please refer to Intel's documentation on the nios2 processor.
-    </li>
-    <li>
-     The execution trace window. The execution trace window shows the last 21 instructions executed by the nios2 processor. The last instruction executed is shown on the top. The tace window provides three parts of information, namely:
-     <br/>
-     <ol>
-      <li>
-       The program counter value where the instruction was fetched.
-      </li>
-      <li>
-       The binary opcode of the fetched instruction.
-      </li>
-      <li>
-       The assembly mnemonic of the fetched instruction in case the fetched instruction has a correct binary opcode.
-      </li>
-     </ol>
-     This component will be updated at each instruction fetch.
-    </li>
-    <li>
-     The IRQ-status, irq-mask, and irq-pending display. In case at least one IRQ-input is selected by the
-     <strong>
-      <em>
-       Number of IRQ lines
-      </em>
-     </strong>
-     attribute, this component will be shown. For each of the IRQ-pins a square on the top of the component will indicate the current state of the IRQ-line. The square below will indicate the corresponding bit in the IRQ-mask register. Finally the square on the bottom will indicate if an unmasked IRQ is pending.
-     <em>
-      Note:
-     </em>
-     this component does not show the state of the global IRQ-enable bit which is present in the status register.
-    </li>
-    <li>
-     The connected bus indicator. To the bottom left of the component (shown above in red) is the indicator to which
-     <a href="socbus.html">
-      bus component
-     </a>
-     the nios2 is connected. In case the nios2 is connected to a
-     <a href="socbus.html">
-      bus component
-     </a>
-     , this indicator will turn green and shows the label of the connected bus. This bus indicator is not available in the separate window view and will not be hidden by the
-     <strong>
-      <em>
-       State visible
-      </em>
-     </strong>
-     attribute.
-    </li>
-    <li>
-     The simulation control component. To the right of the connected bus indicator you can find the simulation control component. This component is described in more details
-     <a href="socsimcontrol.html">
-      here
-     </a>
-     , and is available as dynamic element.
-    </li>
-   </ol>
-   <h2>
-    Dynamic elements
-   </h2>
-   <p>
-    The Nios2 simulation components provides the
-    <a href="socsimcontrol.html">
-     soc simulation controller
-    </a>
-    as
-    <a href="../../guide/subcirc/dynamic_components.html">
-     dynamic component
-    </a>
-    .
-   </p>
-   <h2>
-    Menu items
-   </h2>
-   <p>
-    Clicking with the right mouse button on the symbol of the Nios2 simulator will pop-up a menu. This menu is extended with three new menu items, namely:
-   </p>
-   <ol>
-    <li>
-     <em>
-      <strong>
-       Open assembler
-      </strong>
-     </em>
-     . Selecting this menu item will open the
-     <a href="assembler.html">
-      assembler
-     </a>
-     . The assembler provides the possibility to write your own assembly programs and run them on the Nios2.
-    </li>
-    <li>
-     <em>
-      <strong>
-       Read elf file
-      </strong>
-     </em>
-     . Selecting this menu item will open a file selection window in which you can read in an elf-file (executable) generated for a Nios2 processor by for example a gcc-cross compile tool chain. The executable contents of the elf-file will be loaded into memory, the reset vector of the Nios2 will be set to the entry-point of the loaded program, and the Nios2 simulator will be initialized to reset state. Note that loading an elf program will not modify the value of the
-     <em>
-      <strong>
-       Reset vector
-      </strong>
-     </em>
-     attribute.
-    </li>
-    <li>
-     <strong>
-      <em>
-       Show loaded program
-      </em>
-     </strong>
-     . This menu option is only present if an executable program has been loaded into memory, either by the assembler, or by reading an elf file. When selecting this menu item the
-     <a href="disassembler.html">
-      disassembler
-     </a>
-     will be shown.
-    </li>
-   </ol>
-   <h2>
-    Super circuit menu items
-   </h2>
-   <p>
-    When the Nios2 simulator is located in a sub-circuit, it will add four menu items to the menu of this sub-circuit, namely:
-   </p>
-   <ol>
-    <li>
-     <em>
-      <strong>
-       &lt;name&gt;: Open assembler
-      </strong>
-     </em>
-     . Selecting this menu item will open the
-     <a href="assembler.html">
-      assembler
-     </a>
-     . The assembler provides the possibility to write your own assembly programs and run them on the Nios2.
-    </li>
-    <li>
-     <em>
-      <strong>
-       &lt;name&gt;: Read elf file
-      </strong>
-     </em>
-     . Selecting this menu item will open a file selection window in which you can read in an elf-file (executable) generated for a Nios2 processor by for example a gcc-cross compile tool chain. The executable contents of the elf-file will be loaded into memory, the reset vector of the Nios2 will be set to the entry-point of the loaded program, and the Nios2 simulator will be initialized to reset state. Note that loading an elf program will not modify the value of the
-     <em>
-      <strong>
-       Reset vector
-      </strong>
-     </em>
-     attribute.
-    </li>
-    <li>
-     <em>
-      <strong>
-       &lt;name&gt;: Show CPU State
-      </strong>
-     </em>
-     . This menu item will open a new window showing the visible component 1 through 7 as described in the
-     <strong>
-      Visible components
-     </strong>
-     section.
-    </li>
-    <li>
-     <em>
-      <strong>
-       &lt;name&gt;: Show loaded program
-      </strong>
-     </em>
-     . This menu option is only present if an executable program has been loaded into memory, either by the assembler, or by reading an elf file. When selecting this menu item the
-     <a href="disassembler.html">
-      disassembler
-     </a>
-     will be shown.
-    </li>
-   </ol>
-   <p>
-    In the above menu items
-    <em>
-     <strong>
-      &lt;name&gt;
-     </strong>
-    </em>
-    is the label of the Nios2 simulator (see the
-    <em>
-     <strong>
-      Label
-     </strong>
-    </em>
-    attribute above). If no label name is given
-    <strong>
-     <em>
-      &lt;name&gt;
-     </em>
-    </strong>
-    is given by
-    <strong>
-     Nios2@x,y
-    </strong>
-    where
-    <strong>
-     x
-    </strong>
-    and
-    <strong>
-     y
-    </strong>
-    are the coordinates of the anchor position of the Nios2 Simulator in the sub-circuit.
-   </p>
-   <h2>
-    Supported instructions
-   </h2>
-   <table border="1" style="width: 854px;">
-    <tbody>
-     <tr>
-      <td colspan="6" rowspan="1">
-       <em>
-        Arithmetic and logical instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       and
-      </td>
-      <td style="text-align: center;">
-       or
-      </td>
-      <td style="text-align: center;">
-       xor
-      </td>
-      <td style="text-align: center;">
-       nor
-      </td>
-      <td style="text-align: center;">
-       sub
-      </td>
-      <td style="text-align: center;">
-       mul
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       div
-      </td>
-      <td style="text-align: center;">
-       divu
-      </td>
-      <td style="text-align: center;">
-       mulxss
-      </td>
-      <td style="text-align: center;">
-       mulxuu
-      </td>
-      <td style="text-align: center;">
-       mulxsu
-      </td>
-      <td style="text-align: center;">
-       andi
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       ori
-      </td>
-      <td style="text-align: center;">
-       xori
-      </td>
-      <td style="text-align: center;">
-       andhi
-      </td>
-      <td style="text-align: center;">
-       orhi
-      </td>
-      <td style="text-align: center;">
-       xorhi
-      </td>
-      <td style="text-align: center;">
-       addi
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       subi
-      </td>
-      <td style="text-align: center;">
-       muli
-      </td>
-      <td style="text-align: center;">
-       nop
-      </td>
-      <td style="text-align: center;">
-       mov
-      </td>
-      <td style="text-align: center;">
-       movhi
-      </td>
-      <td style="text-align: center;">
-       movi
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       movui
-      </td>
-      <td style="text-align: center;">
-       movia
-      </td>
-      <td colspan="4" rowspan="1" style="text-align: center;">
-       <br/>
-      </td>
-     </tr>
-     <tr align="left">
-      <td colspan="6" rowspan="1">
-       <em>
-        Comparison instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       cmpeq
-      </td>
-      <td style="text-align: center;">
-       cmpne
-      </td>
-      <td style="text-align: center;">
-       cmpge
-      </td>
-      <td style="text-align: center;">
-       cmpgeu
-      </td>
-      <td style="text-align: center;">
-       cmplt
-      </td>
-      <td style="text-align: center;">
-       cmpltu
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       cmpgt
-      </td>
-      <td style="text-align: center;">
-       cmpgtu
-      </td>
-      <td style="text-align: center;">
-       cmple
-      </td>
-      <td style="text-align: center;">
-       cmpleu
-      </td>
-      <td style="text-align: center;">
-       cmpeqi
-      </td>
-      <td style="text-align: center;">
-       cmpnei
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       cmpgei
-      </td>
-      <td style="text-align: center;">
-       cmpgeui
-      </td>
-      <td style="text-align: center;">
-       cmplti
-      </td>
-      <td style="text-align: center;">
-       cmpltui
-      </td>
-      <td style="text-align: center;">
-       cmpgti
-      </td>
-      <td style="text-align: center;">
-       cmpgtui
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       cmplei
-      </td>
-      <td style="text-align: center;">
-       cmpleui
-      </td>
-      <td colspan="4" rowspan="1" style="text-align: center;">
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td colspan="6" rowspan="1">
-       <em>
-        Custom instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       custom
-      </td>
-      <td colspan="5" rowspan="1">
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td colspan="6" rowspan="1">
-       <em>
-        Data transfer instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       ldw
-      </td>
-      <td style="text-align: center;">
-       ldh
-      </td>
-      <td style="text-align: center;">
-       ldhu
-      </td>
-      <td style="text-align: center;">
-       ldb
-      </td>
-      <td style="text-align: center;">
-       ldbu
-      </td>
-      <td style="text-align: center;">
-       ldwio
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       ldhio
-      </td>
-      <td style="text-align: center;">
-       ldhuio
-      </td>
-      <td style="text-align: center;">
-       ldbio
-      </td>
-      <td style="text-align: center;">
-       ldbuio
-      </td>
-      <td style="text-align: center;">
-       stw
-      </td>
-      <td style="text-align: center;">
-       sth
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       stb
-      </td>
-      <td style="text-align: center;">
-       stwio
-      </td>
-      <td style="text-align: center;">
-       sthio
-      </td>
-      <td style="text-align: center;">
-       stbio
-      </td>
-      <td colspan="2" rowspan="1" style="text-align: center;">
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td colspan="6" rowspan="1">
-       <em>
-        Other control instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       trap
-      </td>
-      <td style="text-align: center;">
-       eret
-      </td>
-      <td style="text-align: center;">
-       break
-      </td>
-      <td style="text-align: center;">
-       bret
-      </td>
-      <td style="text-align: center;">
-       rdctl
-      </td>
-      <td style="text-align: center;">
-       wrctl
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       flushd
-      </td>
-      <td style="text-align: center;">
-       flushda
-      </td>
-      <td style="text-align: center;">
-       flushi
-      </td>
-      <td style="text-align: center;">
-       initd
-      </td>
-      <td style="text-align: center;">
-       initda
-      </td>
-      <td style="text-align: center;">
-       initi
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       flushp
-      </td>
-      <td style="text-align: center;">
-       sync
-      </td>
-      <td colspan="4" rowspan="1" style="text-align: center;">
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td colspan="6" rowspan="1">
-       <em>
-        Program control instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="height: 19px; text-align: center;">
-       callr
-      </td>
-      <td style="text-align: center;">
-       ret
-      </td>
-      <td style="text-align: center;">
-       jmp
-      </td>
-      <td style="text-align: center;">
-       call
-      </td>
-      <td style="text-align: center;">
-       jmpi
-      </td>
-      <td style="text-align: center;">
-       br
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       bge
-      </td>
-      <td style="text-align: center;">
-       bgeu
-      </td>
-      <td style="text-align: center;">
-       blt
-      </td>
-      <td style="text-align: center;">
-       bltu
-      </td>
-      <td style="text-align: center;">
-       beq
-      </td>
-      <td style="text-align: center;">
-       bne
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       bgt
-      </td>
-      <td style="text-align: center;">
-       bgtu
-      </td>
-      <td style="text-align: center;">
-       ble
-      </td>
-      <td style="text-align: center;">
-       bleu
-      </td>
-      <td colspan="2" rowspan="1" style="text-align: center;">
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td colspan="6" rowspan="1">
-       <em>
-        Shift and rotate instructions
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       rol
-      </td>
-      <td style="text-align: center;">
-       ror
-      </td>
-      <td style="text-align: center;">
-       sll
-      </td>
-      <td style="text-align: center;">
-       sra
-      </td>
-      <td style="text-align: center;">
-       srl
-      </td>
-      <td style="text-align: center;">
-       roli
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       slli
-      </td>
-      <td style="text-align: center;">
-       srai
-      </td>
-      <td style="text-align: center;">
-       srli
-      </td>
-      <td colspan="3" rowspan="1" style="text-align: center;">
-       <br/>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    Implemented control registers
-   </h2>
-   <table border="1" style="width: 852px; height: 157px;">
-    <tbody>
-     <tr>
-      <td style="width: 111px; text-align: center;">
-       <strong>
-        Register
-       </strong>
-      </td>
-      <td style="text-align: center;">
-       <strong>
-        Name
-       </strong>
-      </td>
-      <td style="text-align: center;">
-       <strong>
-        Remarks
-       </strong>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       0
-      </td>
-      <td style="text-align: center;">
-       status
-      </td>
-      <td>
-       Only
-       <em>
-        RSIE
-       </em>
-       constant at 1 and
-       <em>
-        PIE
-       </em>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       1
-      </td>
-      <td style="text-align: center; width: 130.583px;">
-       estatus
-      </td>
-      <td style="width: 588.45px;">
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       2
-      </td>
-      <td style="text-align: center;">
-       bstatus
-      </td>
-      <td>
-       <br/>
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       3
-      </td>
-      <td style="text-align: center;">
-       ienable
-      </td>
-      <td>
-       Number of bits depends on
-       <strong>
-        <em>
-         Number of IRQ lines
-        </em>
-       </strong>
-       attribute.
-      </td>
-     </tr>
-     <tr>
-      <td style="text-align: center;">
-       4
-      </td>
-      <td style="text-align: center;">
-       ipending
-      </td>
-      <td>
-       Number of bits depends on
-       <strong>
-        <em>
-         Number of IRQ lines
-        </em>
-       </strong>
-       attribute.
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <p>
-    <a href="index.html">
-     Back to
-     <em>
-      SOC library
-     </em>
-    </a>
-   </p>
-  </div>
- </body>
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      nios2
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/todelete/up.png" alt="nios2" title="nios2 仿真器"> Nios2 仿真器
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">片上系统组件</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              3.2
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="notscal" src="../../../../img-libs/nios2.png" alt="nios2" title="nios2"><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        nios2 仿真器是 Intel nios2 软核（f 版本除外）的完整 ISA 仿真器。它可用于展示嵌入式系统上程序的执行过程。请注意，虽然仿真器每个时钟周期执行一条指令，但它并非周期精确仿真，因为缓存停顿、数据依赖停顿、总线等待周期等因素未纳入仿真。它提供功能仿真，用于展示硬件尚未就绪的 SOC 设计。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        在 Nios2 仿真组件的北侧，您会找到自定义指令接口信号，可在此添加自定义指令硬件/加速器用于仿真。关于如何使用它们，请参考 Intel 关于 nios2 自定义指令的文档。
+      </p>
+      <p>
+        在 Nios2 仿真组件的西侧，存在以下输入：
+      </p>
+      <ul>
+        <li>
+          <strong><em>复位</em></strong>：这是 Nios2 仿真组件的复位输入，当为“1”时将异步复位 Nios2，当为“0”时让 CPU 运行。
+        </li>
+        <li>
+          <strong><em>时钟</em></strong>：这是 Nios2 仿真器组件的时钟输入。每次在此输入上检测到上升沿时，将取指并执行一条新指令。
+        </li>
+        <li>
+          <strong><em>IRQ[0..31]</em></strong>：Nios2 仿真器提供最多 32 个 IRQ 输入（由下文描述的 IRQs 属性定义）。每个 IRQ 输入均为高电平有效。关于如何向这些输入提供正确信号，请参考 Intel 关于 IRQ 行为的文档。
+        </li>
+      </ul>
+      <h2>
+        属性
+      </h2>
+      <p>
+        Nios2 仿真组件提供以下属性：
+      </p>
+      <ul>
+        <li>
+          <strong><em>复位向量</em></strong>：此属性指定当复位引脚激活时要执行的第一条指令的存储器地址。通常，此处指定的值应为程序入口点的地址。请注意，所有地址均为 32 位值。
+        </li>
+        <li>
+          <strong><em>异常向量</em></strong>：当检测到 IRQ（见上文 IRQ 引脚）或软件异常指令时，Nios2 仿真器将从此地址开始执行程序。通常，此处指定的值应为程序中异常处理例程的地址。
+        </li>
+        <li>
+          <strong><em>断点向量</em></strong>：此属性指定断点服务例程的存储器地址，当检测到断点指令时执行该例程。
+        </li>
+        <li>
+          <strong><em>IRQ 线数量</em></strong>：此属性指定可用的外部 IRQ 引脚数量。其值可在 0（无 IRQ 线）到 32（最大 IRQ 线数）之间。
+        </li>
+        <li>
+          <strong><em>状态可见</em></strong>：当通过为此属性指定“否”来禁用状态显示时，可以提高仿真速度（请参阅<a href="index.html">库描述</a>中关于仿真速度的说明）。
+        </li>
+        <li>
+          <em><strong>标签</strong></em>：此处可指定组件的标签。请注意，标签在许多地方用于引用此组件。如果未定义标签，组件将被引用为“<em>Nios2s simulator @x,y</em>”，其中<em>x</em>和<em>y</em>是此组件锚点在图纸内的绝对坐标。
+        </li>
+        <li>
+          <em><strong>标签字体</strong></em>：通过此属性可指定标签的字体。
+        </li>
+        <li>
+          <strong><em>标签可见</em></strong>：通过此属性可指定标签是否可见。
+        </li>
+        <li>
+          <em><strong>连接的总线</strong></em>：此属性允许将 Nios2 仿真器连接到<a href="socbus.html">总线组件</a>。为了成功仿真，Nios2 仿真器必须连接到此类组件。
+        </li>
+      </ul>
+      <h2>
+        可见组件
+      </h2>
+      <p>
+        Nios2 仿真器具有多个状态组件，当<em><strong>状态可见</strong></em>属性设置为<em><strong>真</strong></em>时，这些组件可见。当组件隐藏在子电路中时，大多数这些组件也可在单独窗口中查看（请参阅下文的超级组件菜单）。不同的组件包括：
+      </p>
+      <ol>
+        <li>寄存器文件。Nios2 处理器包含 32 个通用寄存器（r0..r31）。这些寄存器的当前值显示在左上角标有 <em><strong>寄存器文件</strong></em> 的方框中。当寄存器值显示为一串问号时，表示该值未知（处理器的正常启动行为）。每次向寄存器写入值时，该值将以蓝色高亮显示，并显示新值。
+        </li>
+        <li>程序计数器。程序计数器（PC）保存当前地址，下一条指令将从该地址取出。
+        </li>
+        <li>状态寄存器。状态寄存器（status）保存 Nios2 处理器的当前状态。有关状态寄存器的信息，请参阅 Intel 关于 nios2 处理器的文档。
+        </li>
+        <li>异常状态寄存器。异常状态寄存器（estatus）在进入异常时保存状态寄存器的副本。有关 estatus 寄存器的信息，请参阅 Intel 关于 nios2 处理器的文档。
+        </li>
+        <li>断点状态寄存器。断点状态寄存器（bstatus）在执行断点指令时保存状态寄存器的副本。有关 bstatus 寄存器的信息，请参阅 Intel 关于 nios2 处理器的文档。
+        </li>
+        <li>执行跟踪窗口。执行跟踪窗口显示 nios2 处理器最近执行的 21 条指令。最后执行的指令显示在顶部。跟踪窗口提供三部分信息，即：<br>
+          <ol>
+            <li>取指时的程序计数器值。
+            </li>
+            <li>所取指令的二进制操作码。
+            </li>
+            <li>如果所取指令具有正确的二进制操作码，则显示该指令的汇编助记符。
+            </li>
+          </ol>该组件将在每次取指时更新。
+        </li>
+        <li>IRQ 状态、irq 屏蔽和 irq 待处理显示。如果通过 <strong><em>IRQ 线数量</em></strong> 属性选择了至少一个 IRQ 输入，则会显示此组件。对于每个 IRQ 引脚，组件顶部的一个方框将指示 IRQ 线的当前状态。下方的方框将指示 IRQ 屏蔽寄存器中的对应位。最底部的方框将指示是否有未屏蔽的 IRQ 待处理。<em>注意：</em> 此组件不显示状态寄存器中的全局 IRQ 使能位状态。
+        </li>
+        <li>连接总线指示器。在组件左下方（如上图红色所示）有一个指示器，显示 nios2 连接到哪个 <a href="socbus.html">总线组件</a>。如果 nios2 连接到 <a href="socbus.html">总线组件</a>，该指示器将变为绿色并显示所连接总线的标签。此总线指示器在独立窗口视图中不可用，并且不会被 <strong><em>状态可见</em></strong> 属性隐藏。
+        </li>
+        <li>仿真控制组件。在连接总线指示器的右侧，您可以找到仿真控制组件。该组件在 <a href="#socsimcontrol">此处</a> 有更详细的描述，并作为动态元素提供。
+        </li>
+      </ol>
+      <h2 id="socsimcontrol">
+        动态元素
+      </h2>
+      <p>
+        Nios2 仿真组件将 <a href="#socsimcontrol">soc 仿真控制器</a> 作为 <a href="../../guide/subcirc/dynamic_components.html">动态组件</a> 提供。
+      </p>
+      <h2>
+        菜单项
+      </h2>
+      <p>
+        在 Nios2 仿真器符号上单击鼠标右键将弹出一个菜单。该菜单扩展了三个新菜单项，即：
+      </p>
+      <ol>
+        <li>
+          <em><strong>打开汇编器</strong></em>。选择此菜单项将打开 <a href="assembler.html">汇编器</a>。汇编器允许您编写自己的汇编程序并在 Nios2 上运行。
+        </li>
+        <li>
+          <em><strong>读取 elf 文件</strong></em>。选择此菜单项将打开一个文件选择窗口，您可以在其中读取由例如 gcc 交叉编译工具链为 Nios2 处理器生成的 elf 文件（可执行文件）。elf 文件的可执行内容将被加载到存储器中，Nios2 的复位向量将设置为所加载程序的入口点，并且 Nios2 仿真器将初始化为复位状态。请注意，加载 elf 程序不会修改 <em><strong>复位向量</strong></em> 属性的值。
+        </li>
+        <li>
+          <strong><em>显示已加载程序</em></strong>。仅当可执行程序已加载到存储器中（通过汇编器或读取 elf 文件）时，此菜单选项才会出现。选择此菜单项将显示 <a href="disassembler.html">反汇编器</a>。
+        </li>
+      </ol>
+      <h2>
+        超级电路菜单项
+      </h2>
+      <p>
+        当 Nios2 仿真器位于子电路中时，它会向该子电路的菜单添加四个菜单项，即：
+      </p>
+      <ol>
+        <li>
+          <em><strong>&lt;name&gt;：打开汇编器</strong></em>。选择此菜单项将打开<a href="assembler.html">汇编器</a>。汇编器提供了编写自己的汇编程序并在 Nios2 上运行的可能性。
+        </li>
+        <li>
+          <em><strong>&lt;name&gt;：读取 elf 文件</strong></em>。选择此菜单项将打开一个文件选择窗口，您可以在其中读取由例如 gcc 交叉编译工具链为 Nios2 处理器生成的 elf 文件（可执行文件）。elf 文件的可执行内容将被加载到存储器中，Nios2 的重置向量将设置为已加载程序的入口点，并且 Nios2 仿真器将初始化为重置状态。请注意，加载 elf 程序不会修改<em><strong>重置向量</strong></em>属性的值。
+        </li>
+        <li>
+          <em><strong>&lt;name&gt;：显示 CPU 状态</strong></em>。此菜单项将打开一个新窗口，显示如<strong>可见组件</strong>部分所述的第 1 到第 7 个可见组件。
+        </li>
+        <li>
+          <em><strong>&lt;name&gt;：显示已加载的程序</strong></em>。仅当可执行程序已通过汇编器或读取 elf 文件加载到存储器中时，才会出现此菜单选项。选择此菜单项时，将显示<a href="disassembler.html">反汇编器</a>。
+        </li>
+      </ol>
+      <p>
+        在上述菜单项中，<em><strong>&lt;name&gt;</strong></em> 是 Nios2 仿真器的标签（参见上文的<em><strong>标签</strong></em>属性）。如果未给出标签名称，则<strong><em>&lt;name&gt;</em></strong> 由<strong>Nios2@x,y</strong>给出，其中<strong>x</strong>和<strong>y</strong>是 Nios2 仿真器在子电路中锚点位置的坐标。
+      </p>
+      <h2>
+        支持的指令
+      </h2>
+      <table style="width: 854px;" border="1">
+        <tbody>
+          <tr>
+            <td rowspan="1" colspan="6">
+              <em>算术和逻辑指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              and
+            </td>
+            <td style="text-align: center;">
+              or
+            </td>
+            <td style="text-align: center;">
+              xor
+            </td>
+            <td style="text-align: center;">
+              nor
+            </td>
+            <td style="text-align: center;">
+              sub
+            </td>
+            <td style="text-align: center;">
+              mul
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              div
+            </td>
+            <td style="text-align: center;">
+              divu
+            </td>
+            <td style="text-align: center;">
+              mulxss
+            </td>
+            <td style="text-align: center;">
+              mulxuu
+            </td>
+            <td style="text-align: center;">
+              mulxsu
+            </td>
+            <td style="text-align: center;">
+              andi
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              ori
+            </td>
+            <td style="text-align: center;">
+              xori
+            </td>
+            <td style="text-align: center;">
+              andhi
+            </td>
+            <td style="text-align: center;">
+              orhi
+            </td>
+            <td style="text-align: center;">
+              xorhi
+            </td>
+            <td style="text-align: center;">
+              addi
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              subi
+            </td>
+            <td style="text-align: center;">
+              muli
+            </td>
+            <td style="text-align: center;">
+              nop
+            </td>
+            <td style="text-align: center;">
+              mov
+            </td>
+            <td style="text-align: center;">
+              movhi
+            </td>
+            <td style="text-align: center;">
+              movi
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              movui
+            </td>
+            <td style="text-align: center;">
+              movia
+            </td>
+            <td style="text-align: center;" rowspan="1" colspan="4">
+              <br>
+            </td>
+          </tr>
+          <tr align="left">
+            <td rowspan="1" colspan="6">
+              <em>比较指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              cmpeq
+            </td>
+            <td style="text-align: center;">
+              cmpne
+            </td>
+            <td style="text-align: center;">
+              cmpge
+            </td>
+            <td style="text-align: center;">
+              cmpgeu
+            </td>
+            <td style="text-align: center;">
+              cmplt
+            </td>
+            <td style="text-align: center;">
+              cmpltu
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              cmpgt
+            </td>
+            <td style="text-align: center;">
+              cmpgtu
+            </td>
+            <td style="text-align: center;">
+              cmple
+            </td>
+            <td style="text-align: center;">
+              cmpleu
+            </td>
+            <td style="text-align: center;">
+              cmpeqi
+            </td>
+            <td style="text-align: center;">
+              cmpnei
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              cmpgei
+            </td>
+            <td style="text-align: center;">
+              cmpgeui
+            </td>
+            <td style="text-align: center;">
+              cmplti
+            </td>
+            <td style="text-align: center;">
+              cmpltui
+            </td>
+            <td style="text-align: center;">
+              cmpgti
+            </td>
+            <td style="text-align: center;">
+              cmpgtui
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              cmplei
+            </td>
+            <td style="text-align: center;">
+              cmpleui
+            </td>
+            <td style="text-align: center;" rowspan="1" colspan="4">
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="1" colspan="6">
+              <em>自定义指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              custom
+            </td>
+            <td rowspan="1" colspan="5">
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="1" colspan="6">
+              <em>数据传输指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              ldw
+            </td>
+            <td style="text-align: center;">
+              ldh
+            </td>
+            <td style="text-align: center;">
+              ldhu
+            </td>
+            <td style="text-align: center;">
+              ldb
+            </td>
+            <td style="text-align: center;">
+              ldbu
+            </td>
+            <td style="text-align: center;">
+              ldwio
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              ldhio
+            </td>
+            <td style="text-align: center;">
+              ldhuio
+            </td>
+            <td style="text-align: center;">
+              ldbio
+            </td>
+            <td style="text-align: center;">
+              ldbuio
+            </td>
+            <td style="text-align: center;">
+              stw
+            </td>
+            <td style="text-align: center;">
+              sth
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              stb
+            </td>
+            <td style="text-align: center;">
+              stwio
+            </td>
+            <td style="text-align: center;">
+              sthio
+            </td>
+            <td style="text-align: center;">
+              stbio
+            </td>
+            <td style="text-align: center;" rowspan="1" colspan="2">
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="1" colspan="6">
+              <em>其他控制指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              trap
+            </td>
+            <td style="text-align: center;">
+              eret
+            </td>
+            <td style="text-align: center;">
+              break
+            </td>
+            <td style="text-align: center;">
+              bret
+            </td>
+            <td style="text-align: center;">
+              rdctl
+            </td>
+            <td style="text-align: center;">
+              wrctl
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              flushd
+            </td>
+            <td style="text-align: center;">
+              flushda
+            </td>
+            <td style="text-align: center;">
+              flushi
+            </td>
+            <td style="text-align: center;">
+              initd
+            </td>
+            <td style="text-align: center;">
+              initda
+            </td>
+            <td style="text-align: center;">
+              initi
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              flushp
+            </td>
+            <td style="text-align: center;">
+              sync
+            </td>
+            <td style="text-align: center;" rowspan="1" colspan="4">
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="1" colspan="6">
+              <em>程序控制指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="height: 19px; text-align: center;">
+              callr
+            </td>
+            <td style="text-align: center;">
+              ret
+            </td>
+            <td style="text-align: center;">
+              jmp
+            </td>
+            <td style="text-align: center;">
+              call
+            </td>
+            <td style="text-align: center;">
+              jmpi
+            </td>
+            <td style="text-align: center;">
+              br
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              bge
+            </td>
+            <td style="text-align: center;">
+              bgeu
+            </td>
+            <td style="text-align: center;">
+              blt
+            </td>
+            <td style="text-align: center;">
+              bltu
+            </td>
+            <td style="text-align: center;">
+              beq
+            </td>
+            <td style="text-align: center;">
+              bne
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              bgt
+            </td>
+            <td style="text-align: center;">
+              bgtu
+            </td>
+            <td style="text-align: center;">
+              ble
+            </td>
+            <td style="text-align: center;">
+              bleu
+            </td>
+            <td style="text-align: center;" rowspan="1" colspan="2">
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="1" colspan="6">
+              <em>移位与循环指令</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              rol
+            </td>
+            <td style="text-align: center;">
+              ror
+            </td>
+            <td style="text-align: center;">
+              sll
+            </td>
+            <td style="text-align: center;">
+              sra
+            </td>
+            <td style="text-align: center;">
+              srl
+            </td>
+            <td style="text-align: center;">
+              roli
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              slli
+            </td>
+            <td style="text-align: center;">
+              srai
+            </td>
+            <td style="text-align: center;">
+              srli
+            </td>
+            <td style="text-align: center;" rowspan="1" colspan="3">
+              <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        已实现的控制寄存器
+      </h2>
+      <table style="width: 852px; height: 157px;" border="1">
+        <tbody>
+          <tr>
+            <td style="width: 111px; text-align: center;">
+              <strong>寄存器</strong>
+            </td>
+            <td style="text-align: center;">
+              <strong>名称</strong>
+            </td>
+            <td style="text-align: center;">
+              <strong>备注</strong>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              0
+            </td>
+            <td style="text-align: center;">
+              状态
+            </td>
+            <td>
+              仅 <em>RSIE</em> 恒为 1 和 <em>PIE</em>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              1
+            </td>
+            <td style="text-align: center; width: 130.583px;">
+              estatus
+            </td>
+            <td style="width: 588.45px;">
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              2
+            </td>
+            <td style="text-align: center;">
+              bstatus
+            </td>
+            <td>
+              <br>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              3
+            </td>
+            <td style="text-align: center;">
+              ienable
+            </td>
+            <td>
+              位数取决于 <strong><em>IRQ 线数量</em></strong> 属性。
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">
+              4
+            </td>
+            <td style="text-align: center;">
+              ipending
+            </td>
+            <td>
+              位数取决于 <strong><em>IRQ 线数量</em></strong> 属性。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <a href="index.html">返回 <em>SOC 库</em></a>
+      </p>
+    </div>
+  </body>
 </html>

@@ -1,255 +1,94 @@
-<html lang="zh">
- <head>
-  <title>
-   Edit Tool
-  </title>
- </head>
- <body bgcolor="FFFFFF">
-  <h1>
-   <img align="center" height="32" src="../../../../img-guide/toolselect.png" width="32"/>
-   <em>
-    Edit Tool
-   </em>
-  </h1>
-  <p>
-   <table>
-    <tr>
-     <td>
-      <strong>
-       Library:
-      </strong>
-     </td>
-     <td>
-      <a href="index.html">
-       Base
-      </a>
-     </td>
-    </tr>
-    <tr>
-     <td>
-      <strong>
-       Introduced:
-      </strong>
-     </td>
-     <td>
-      2.3.0
-     </td>
-    </tr>
-   </table>
-  </p>
-  <h2>
-   Behavior
-  </h2>
-  <p>
-   The Edit tool allows the user to rearrange existing components and to add
-wires. Exactly what the tool does depends on where the user presses the mouse
-on the canvas.
-  </p>
-  <ul>
-   <li>
-    <p>
-     When the mouse is over a wiring point for an existing component,
-or if it is atop a current wire, the Edit Tool will display a small green circle
-around the mouse's location. Pressing the button there initiates the addition of
-a new wire. But if the user doesn't drag the mouse far enough to initiate a
-wire before releasing the button, the press is treated as a mouse click, and so
-the wire is simply added into the current selection.
-    </p>
-    <p>
-     The bit width of an added wire is inferred from the components to which it
-is connected. If it is not attached to any components, the wire will be drawn
-gray to indicate that its bit width is unknown; if the components at the
-locations that the wire helps to connect disagree on the bit width, then the
-wire will be drawn orange to indicate the conflict, and the wire will in fact
-refuse to carry any values at all until the user resolves the conflict.
-    </p>
-    <p>
-     All wires in Logisim are either horizontal or vertical, never diagonal.
-    </p>
-    <p>
-     Wires are non-directional; that is, they carry values from
-either endpoint to the other. Indeed, a wire can carry values
-in both directions simultaneously: In the below example, a bit flows from the
-upper input at left through the center wire, then it circles back through the
-center wire, and then it circles forward again through the center wire before
-reaching the output at lower right.
-    </p>
-    <p align="center">
-     <img src="../../../../img-guide/bundles-splitter-2way.png"/>
-    </p>
-    <p>
-     A single drag of the mouse can create multiple wire segments. The
-precise process is a little confusing in its description; but it works
-quite intuitively in practice: If you request a particular wire segment
-using the Wiring Tool, that segment will be split apart wherever it hits
-a pin for an existing component, or wherever it hits the endpoint of an
-existing wire segment. Also, if an endpoint of any of the new wire
-segments hit somewhere in the middle of an existing wire, then that wire
-will be split into multiple segments itself.
-    </p>
-    <p>
-     You can also shorten or delete an existing wire segment by initiating a drag
-at the terminus of the segment and then drawing backwards across the segment.
-During the drag, the shortening is indicated by drawing a white line over of the
-portion of the wire that will be removed.
-    </p>
-    <p>
-     Some components draw short stubs to which wires can connect, such as the
-     <a href="../gates/basic.html">
-      OR gate
-     </a>
-     and
-     <a href="../gates/controlled.html">
-      controlled buffer
-     </a>
-     . Logisim will
-silently correct attempts to create wires that slightly overshoot the
-stub's end.
-    </p>
-   </li>
-   <li>
-    <p>
-     If, however, the user presses the Alt key at a point in the middle of
-the wire, then the green circle will disappear. A mouse press selects the wire,
-and a mouse drag moves it.
-    </p>
-   </li>
-   <li>
-    <p>
-     Pressing the mouse button while it is within a currently selected
-component begins a drag moving all elements of the selection.
-    </p>
-    <p>
-     By default, Logisim will compute a way to add new wires
-so that no existing connections are lost during the move.
-(Sometimes it will delete or shorten existing wires.)
-If you're performing a move where you do not want these changes to be made,
-you can press the shift key during the move.
-If you want to disable this behavior entirely,
-go to Project &gt; Options, select the Canvas tab,
-and uncheck the
-     <q>
-      Keep Connections When Moving
-     </q>
-     box;
-in this case, the connections are computed only when the shift key
-     <em>
-      is
-     </em>
-     down.
-    </p>
-    <p>
-     Dragging a selection can lead to unexpected behavior from wires: If
-you drag a selection including some wires on top of some other wires,
-all wires are merged, and the merged wires are placed into the
-selection.  As a result, if you drag the selection a second time, the
-wires previously at the location will not be left behind. This behavior
-is necessary to keep with the intuitive behavior of wires in Logisim, where
-wires never overlap. And
-it does not normally constitute a major problem: Logisim will draw the
-full selection in the midst of dropping, and you should not drop it
-until you are sure it is in the correct location.
-    </p>
-   </li>
-   <li>
-    <p>
-     Pressing the mouse within an unselected component (but not at one of 
-the component's wiring points) drops all components from the current selection
-and selects instead the component(s) containing the clicked location.
-    </p>
-   </li>
-   <li>
-    <p>
-     Shift-clicking the mouse within a component toggles that component's
-presence within the selection. If multiple components include the same
-location, all components' presence will be toggled.
-    </p>
-   </li>
-   <li>
-    <p>
-     Dragging the mouse starting at a location not contained within any 
-components drops all components from the current selection and
-initiates a rectangular selection.
-All component(s) contained by the rectangle will be placed into the
-selection.
-    </p>
-   </li>
-   <li>
-    <p>
-     Shift-dragging the mouse starting at a location not contained
-within any components initiates a rectangular selection.
-The presence in the selection of all component(s) contained by the
-rectangle will be toggled.
-    </p>
-   </li>
-   <li>
-    <p>
-     However, if the Alt key is pressed at a location not contained within
-any components, this initiates the addition of a new wire. A small green circle
-is drawn in such a circumstance to indicate this.
-    </p>
-   </li>
-  </ul>
-  <p>
-   After selecting the desired items in the selection, you can of course
-cut/copy/paste/delete/duplicate all the items via the
-   <a href="../../guide/menu/edit.html">
-    Edit menu
-   </a>
-   .
-  </p>
-  <p>
-   Some keys have an effect with the Edit Tool.
-  </p>
-  <ul>
-   <li>
-    <p>
-     The arrow keys change the Facing attribute for all components in the
-selection that have such an attribute.
-    </p>
-   </li>
-   <li>
-    <p>
-     The Delete and Backspace keys will delete everything in the selection
-from the circuit.
-    </p>
-   </li>
-   <li>
-    <p>
-     The Insert and MenuKey-D keys will create a duplicate of the currently
-selected components.
-    </p>
-   </li>
-  </ul>
-  <p>
-   Logisim's behavior when duplicating a selection or pasting the clipboard into
-a circuit is somewhat peculiar: It will not immediately place the components into the
-circuit; instead, the selection will be a collection of "ghosts," which
-will be dropped into the circuit as soon as they are either dragged to
-another location or removed from the selection. (This peculiar behavior
-is necessary because pasting will otherwise merge the wires of the
-selection into the current circuit at once, and the wires there
-previously will be dragged with the pasted clipboard if the user wants
-to move the pasted components somewhere else.)
-  </p>
-  <h2>
-   Attributes
-  </h2>
-  <p>
-   None. Selecting a component, though, will display its attributes.
-With multiple components selected, attributes shared by all are shown,
-blank if they have different values and otherwise with the value they
-all have in common. (Wires are ignored if there are any non-wires in
-the selection.) Changes to the attribute value affect all selected
-components.
-  </p>
-  <p>
-   <a href="../index.html">
-    Back to
-    <em>
-     Library Reference
-    </em>
-   </a>
-  </p>
- </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+<head>
+<title>编辑工具</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>
+<img align="center" src="../../../../img-guide/toolselect.png" width="32" height="32">
+<em>编辑工具</em>
+</h1>
+
+<p></p>
+<table>
+<tr>
+<td><strong>库：</strong></td>
+	<td><a href="index.html">基础</a></td>
+</tr>
+<tr>
+<td><strong>引入版本：</strong></td>
+	<td>2.3.0</td>
+</tr>
+</table>
+
+<h2>行为</h2>
+
+<p>编辑工具允许用户重新排列现有组件并添加导线。该工具的具体行为取决于用户在画布上按下鼠标的位置。</p>
+
+<ul>
+
+<li>
+<p>当鼠标悬停在现有组件的引脚上，或位于当前导线上方时，编辑工具会在鼠标位置周围显示一个绿色小圆圈。在该处按下按钮将开始添加新导线。但如果用户在释放按钮前未将鼠标拖动足够远以启动导线，则该按下操作将被视为鼠标单击，因此该导线仅会被添加到当前选择中。</p>
+
+<p>所添加导线的位宽根据其所连接的组件推断得出。如果导线未连接到任何组件，则导线将显示为灰色，表示其位宽未知；如果导线所连接的各组件在位宽上不一致，则导线将显示为橙色以指示冲突，并且该导线实际上将拒绝传输任何值，直到用户解决该冲突为止。</p>
+
+<p>Logisim 中的所有导线均为水平或垂直走向，绝无对角线。</p>
+
+<p>导线是无方向的；也就是说，它们可以从任一端点向另一端传输值。实际上，导线可以同时双向传输值：在下面的示例中，一个比特从左侧的上方输入流经中央导线，然后通过中央导线回流，接着再次通过中央导线向前流动，最终到达右下方的输出。</p>
+    <p align="center"><img src="../../../../img-guide/bundles-splitter-2way.png"></p>
+
+<p>一次鼠标拖动可以创建多个导线线段。其精确过程在描述上有些令人困惑，但在实践中却非常直观：如果您使用接线工具请求一条特定的导线线段，该线段将在遇到现有组件的引脚或现有导线线段的端点处被分割。此外，如果任何新导线线段的端点恰好落在现有导线的中间某处，那么该现有导线自身也将被分割成多个线段。</p>
+
+<p>您也可以通过在线段的端点处开始拖动，然后沿该线段向后绘制，来缩短或删除现有的导线线段。在拖动过程中，缩短操作通过在被移除的导线部分上绘制一条白线来指示。</p>
+
+<p>某些组件会绘制出可供导线连接的短截线，例如<a href="../gates/basic.html">或门</a>和<a href="../gates/controlled.html">受控缓冲器</a>。Logisim 会静默地纠正那些试图创建略微超出截线末端的导线的操作。</p>
+</li>
+
+<li><p>然而，如果用户在导线中间某点按下 Alt 键，绿色圆圈将消失。此时按下鼠标将选中该导线，拖动鼠标则会移动它。</p></li>
+
+<li>
+<p>在当前已选中的组件内部按下鼠标按钮，将开始拖动并移动选择中的所有元素。</p>
+
+<p>默认情况下，Logisim 会计算添加新导线的方式，以确保在移动过程中不会丢失任何现有连接。（有时它会删除或缩短现有导线。）如果您在执行移动时不希望进行这些更改，可以在移动过程中按下 Shift 键。如果您想完全禁用此行为，请转到项目 &gt; 选项，选择画布选项卡，并取消选中<q>移动时保持连接</q>框；在这种情况下，仅当按下 Shift 键<em>时</em>才会计算连接。</p>
+
+<p>拖动选择可能导致导线出现意外行为：如果您拖动一个包含某些导线的选择到其他一些导线上，所有导线将被合并，并且合并后的导线将被放入选择中。因此，如果您第二次拖动该选择，原先位于该位置的导线将不会被留下。这种行为对于保持 Logisim 中导线从不重叠的直观行为是必要的。并且这通常不会构成重大问题：Logisim 会在放置过程中绘制完整的选择，您应该在确认其位于正确位置后再放置。</p>
+</li>
+
+<li><p>在未选中的组件内部（但不在该组件的接线点上）按下鼠标，将取消当前选择中的所有组件，并改为选择包含单击位置的一个或多个组件。</p></li>
+
+<li><p>按住 Shift 键并在组件内部单击鼠标，将切换该组件是否属于当前选择。如果多个组件包含同一位置，则所有这些组件的选择状态都会被切换。</p></li>
+
+<li><p>从不在任何组件内的位置开始拖动鼠标，将取消当前选择中的所有组件，并启动矩形选择。矩形所包含的所有组件将被放入选择中。</p></li>
+
+<li><p>按住 Shift 键并从不在任何组件内的位置开始拖动鼠标，将启动矩形选择。矩形所包含的所有组件的选择状态都会被切换。</p></li>
+
+<li><p>但是，如果在不在任何组件内的位置按下 Alt 键，这将启动新导线的添加。在这种情况下会绘制一个绿色小圆圈来指示。</p></li>
+
+</ul>
+
+<p>在选择中选定所需项目后，您当然可以通过<a href="../../guide/menu/edit.html">编辑菜单</a>对所有项目进行剪切/复制/粘贴/删除/创建副本操作。</p>
+
+<p>某些按键在使用编辑工具时有效。</p>
+
+<ul>
+
+<li><p>方向键会更改选中所有具有朝向属性的组件的朝向属性。</p></li>
+
+<li><p>Delete 和 Backspace 键会从电路中删除选中的所有内容。</p></li>
+
+<li><p>Insert 和 MenuKey-D 键会创建当前选中组件的副本。</p></li>
+
+</ul>
+
+<p>Logisim 在复制选中内容或将剪贴板粘贴到电路中时的行为有些特殊：它不会立即将组件放入电路；相反，选中内容将是一组“幽灵”，一旦它们被拖到其他位置或从选中内容中移除，就会被放入电路。（这种特殊行为是必要的，因为粘贴操作否则会立即将选中内容的导线合并到当前电路中，并且如果用户想要将粘贴的组件移动到其他地方，之前存在的导线会随粘贴的剪贴板一起被拖动。）</p>
+
+<h2>属性</h2>
+
+<p>无。不过，选中一个组件会显示其属性。选中多个组件时，会显示所有组件共享的属性，如果属性值不同则显示为空白，否则显示它们共有的值。（如果选中内容中有非导线组件，则忽略导线。）对属性值的更改会影响所有选中的组件。</p>
+
+<p><a href="../index.html">返回<em>库参考</em></a></p>
+
+</body>
 </html>

@@ -1,562 +1,283 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   assembler
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    Introduction
-   </h1>
-   <p>
-    The build in assembler of logisim-evolution supports besides the instructions provided by the used processor several features as described in this help page.The assembler uses syntax highlighting and error detection. Furthermore it translates the instructions into byte-code that can be executed by the processor. Although the structure of the assembler would allow to write out an elf-file this feature is not yet implemented.
-   </p>
-   <h1>
-    Using the GUI
-   </h1>
-   <p>
-    When opening the assembler you are presented with a new window as shown below:
-   </p>
-   <p>
-    <img alt="assembler" src="../../../../img-guide/assembler_gui.png" title="The assembler gui"/>
-   </p>
-   <p>
-    The GUI consists of three components:
-   </p>
-   <ol>
-    <li>
-     The tool bar which is on top of the editing area.
-    </li>
-    <li>
-     The line indication bar with error indicators to the left of the editing area.
-    </li>
-    <li>
-     The editing area.
-    </li>
-   </ol>
-   <h2>
-    The toolbar
-   </h2>
-   <p>
-    The toolbar provides the main functions of the assembler by use of several icons:
-   </p>
-   <p>
-    <img alt="load" class="notscal" src="../../../../img-guide/assembler_load.png"/>
-    This icon activates the loading of an assembly file into the editing area. The load function can also be activated by the keyboard shortcut (Ctrl-L).
-   </p>
-   <p>
-    <img alt="save" class="notscal" src="../../../../img-guide/assembler_save.png" title="assembler save"/>
-    This icon activates the saving of the current contents in the editing area. The save function can also be activated by the keyboard shortcut (Ctrl-S).
-   </p>
-   <p>
-    <img alt="save as" class="notscal" src="../../../../img-guide/assembler_save_as.png"/>
-    This icon activates the save-as function of the current contents in the editing area. The save-as function has no keyboard shortcut.
-   </p>
-   <p>
-    <img alt="assemble" class="notscal" src="../../../../img-guide/assembler_assemble.png"/>
-    This icon activates the assemble function of the current contents in the editing area. The assemble function cal also be activated by the keyboard shortcut (ALT-A).
-   </p>
-   <p>
-    <img alt="previous error" class="notscal" src="../../../../img-guide/assembler_prev_error.png"/>
-    This icon jumps to an error detected before the current cursor position. This function is also available by the keyboard shortcut (Ctrl-P).
-   </p>
-   <p>
-    <img alt="next error" class="notscal" src="../../../../img-guide/assembler_next_error.png"/>
-    This icon jumps to an error detected after the current cursor position. This function is also available by the keyboard shortcut (Ctrl-N).
-   </p>
-   <p>
-    <img alt="run" class="notscal" src="../../../../img-guide/assembler_run.png"/>
-    This icon activated the assemble function and, when no errors are detected, loads the program into memory. The run function can also be activated by the keyboard shortcut (ALT-R).
-   </p>
-   <p>
-    <img alt="help" class="notscal" src="../../../../img-guide/assembler_help.png"/>
-    This icon show this help screen.
-   </p>
-   <p>
-    To the right of the toolbar the current line of the cursor and the total number of lines in the editing area are displayed. In case this indicator lights up yellow there are changes detected in the editing area.
-   </p>
-   <h2>
-    The line indicator bar
-   </h2>
-   <p>
-    The line indicator bar hold, besides the current line number, also the error indicator icons. Hovering over the error indicator bar will show (one of) the error(s) detected on the given line in the editing area.
-   </p>
-   <h2>
-    The editing area
-   </h2>
-   <p>
-    The editing area contains all the code you might want to use. In case your code contains errors (after activating the assemble or run function) the errors will be displayed by an error icon in the line indicator bar and a small red line underneath the text causing the problem. hovering over this text with the mouse will display the error cause. It is important to note that, when multiple errors are present in one line, only one will be displayed by the error marker in the line indicator bar. Furthermore, in case of calculations (like in line 17 in the above showed image) it might be that only the 8 is marked instead of the complete calculation.
-   </p>
-   <h1>
-    Using calculations
-   </h1>
-   <p>
-    The assembler supports two types of calculations:
-   </p>
-   <ol>
-    <li>
-     Program counter (PC) relative calculations
-    </li>
-    <li>
-     Absolute calculations
-    </li>
-   </ol>
-   <h2>
-    Program counter relative calculations
-   </h2>
-   <p>
-    In case an address is required relative to the current program counter these calculations can be performed by using the reserved register
-    <b>
-     pc
-    </b>
-    . Also the usage of labels and constants are allowed in these calculations.
-   </p>
-   <p>
-    Examples:
-    <b>
-     pc
-    </b>
-    +8 ,
-    <b>
-     pc
-    </b>
-    -0x40, mylabel-
-    <b>
-     pc
-    </b>
-    , etc.
-   </p>
-   <h2>
-    Absolute calculations
-   </h2>
-   <p>
-    In absolute calculations a constant value is calculated. To perform absolute calculations labels and constants are allowed.
-   </p>
-   <h2>
-    Calculation types
-   </h2>
-   <p>
-    Following calculation types are supported:
-   </p>
-   <ul>
-    <li>
-     + =&gt; Addition
-    </li>
-    <li>
-     - =&gt; Subtraction
-    </li>
-    <li>
-     * =&gt; Multiplication
-    </li>
-    <li>
-     / =&gt; Integer division
-    </li>
-    <li>
-     % =&gt; Integer remainder
-    </li>
-    <li>
-     &lt;&lt; =&gt; Shift left
-    </li>
-    <li>
-     &gt;&gt; =&gt; Shift right
-    </li>
-   </ul>
-   <em>
-    Note:
-   </em>
-   Currently the parentheses are not supported.
-   <br/>
-   <h2>
-    Calculation order
-   </h2>
-   <p>
-    <i>
-     <b>
-      Important:
-     </b>
-    </i>
-    For the moment the calculations are performed left-to-right independent of the hierarchy of the operator!
-   </p>
-   <p>
-    This means:
-   </p>
-   <p>
-    5+10*2 is calculated as (5+10)*2 = 30
-   </p>
-   <p>
-    10*2+5 is calculated as (10*2)+5 = 25
-   </p>
-   <p>
-    It is on the todo list to improve this poor calculation support.
-   </p>
-   <h1>
-    Using macros
-   </h1>
-   <p>
-    The build in assembler supports macros. The syntax for a macro is:
-   </p>
-   <p>
-    <strong>
-     .macro
-    </strong>
-    <em>
-     &lt;name&gt;
-    </em>
-    <em>
-     &lt;nr_of_variables&gt;
-    </em>
-   </p>
-   <p>
-    <em>
-     &lt;BODY&gt;
-    </em>
-   </p>
-   <p>
-    <strong>
-     .endm
-    </strong>
-   </p>
-   <p>
-    A macro definition needs two parameters:
-   </p>
-   <ol>
-    <li>
-     <em>
-      &lt;name&gt;
-     </em>
-     This parameter is the name of the macro to be used in the rest of your program.
-    </li>
-    <li>
-     <em>
-      &lt;nr_of_variables&gt;
-     </em>
-     This parameter specifies the number of variables that are used inside the macro. This parameter should be a positive integer value (e.g. 0,1,2,....)
-    </li>
-   </ol>
-   <h2>
-    Allowed constructs inside a macro
-   </h2>
-   <p>
-    Inside a macro you can use only instructions, labels, calculations, and calls to other macros. It is important to note that labels defined inside the &lt;BODY&gt; of a macro are local to the macro and cannot be referenced outside the macro.
-   </p>
-   <h2>
-    Using variables inside a macro
-   </h2>
-   <p>
-    If the parameter
-    <em>
-     &lt;nr_of_variables&gt;
-    </em>
-    is a number bigger than 0, the macro must be called with this number of values. Each of this values can be referenced inside a macro with the indicator @
-    <em>
-     &lt;x&gt;
-    </em>
-    where
-    <em>
-     &lt;x&gt;
-    </em>
-    is a number. Hence @1 references parameter 1, @2 parameter 2, etc.
-   </p>
-   <h2>
-    Using macro calls inside a macro
-   </h2>
-   <p>
-    Macros allow to call other macros, however there are two restrictions:
-   </p>
-   <ol>
-    <li>
-     A macro cannot call itself; recursive macros are not supported.
-    </li>
-    <li>
-     Two macros cannot call each other; circular calls are not supported.
-    </li>
-   </ol>
-   <h1>
-    Assembler directives
-   </h1>
-   <p>
-    There are several directives supported as described below.
-   </p>
-   <h2>
-    Labels
-   </h2>
-   <p>
-    Labels can be used by the syntax
-    <em>
-     &lt;name&gt;
-    </em>
-    <strong>
-     :
-    </strong>
-    The
-    <em>
-     &lt;name&gt;
-    </em>
-    must start with a letter and may contain letters (a..z;A..Z), numbers (0..9), and underscores (_). Note that labels specified inside a macro are local to the macro. All other labels are global (hence a global label can be referenced inside a macro).
-   </p>
-   <h2>
-    Named constants
-   </h2>
-   <p>
-    Named constants can be defined by the syntax
-    <strong>
-     .equ
-    </strong>
-    <em>
-     &lt;name&gt;
-    </em>
-    <em>
-     &lt;value&gt;
-    </em>
-    . The
-    <em>
-     &lt;name&gt;
-    </em>
-    parameter must start with a letter and may contain letters (a..z;A..Z), numbers (0..9), and underscores (_). The
-    <em>
-     &lt;value&gt;
-    </em>
-    field can contain a number or a calculation.
-   </p>
-   <h2>
-    Sections
-   </h2>
-   <p>
-    You can divide your program into sections by using
-    <strong>
-     .section
-    </strong>
-    <em>
-     &lt;name&gt;
-    </em>
-    . The
-    <em>
-     &lt;name&gt;
-    </em>
-    parameter must start with a letter and may contain letters (a..z;A..Z), numbers (0..9), and underscores (_). There are four predefined section names being
-    <strong>
-     .text
-    </strong>
-    ,
-    <strong>
-     .data
-    </strong>
-    ,
-    <strong>
-     .rodata
-    </strong>
-    ,
-    <strong>
-     .bss
-    </strong>
-    . These do not require the
-    <strong>
-     .section
-    </strong>
-    keyword in front of them.
-   </p>
-   <h2>
-    Remarks
-   </h2>
-   <p>
-    Remarks are supported by placing a
-    <strong>
-     #
-    </strong>
-    in front of them and extend until the end of the line. Multi line remarks can be realized by putting in front of each line the
-    <strong>
-     #
-    </strong>
-    .
-   </p>
-   <h2>
-    Strings
-   </h2>
-   <p>
-    Strings can be specified by
-    <strong>
-     .string "
-    </strong>
-    <em>
-     &lt;str&gt;
-    </em>
-    <strong>
-     "
-    </strong>
-    ,
-    <strong>
-     .ascii"
-    </strong>
-    <em>
-     &lt;str&gt;
-    </em>
-    <strong>
-     "
-    </strong>
-    , or
-    <strong>
-     .asciz"
-    </strong>
-    <em>
-     &lt;str&gt;
-    </em>
-    <strong>
-     "
-    </strong>
-    . The
-    <em>
-     &lt;str&gt;
-    </em>
-    can contain any contents and may be multiple lines. Following escape codes can be used:
-   </p>
-   <ol>
-    <li>
-     \n -&gt; insert a new-line character.
-    </li>
-    <li>
-     \" -&gt; insert a double quote.
-    </li>
-    <li>
-     \t -&gt; insert a tab-character.
-    </li>
-    <li>
-     \r -&gt; insert a carriage return character.
-    </li>
-    <li>
-     \f -&gt; insert a form feed.
-    </li>
-    <li>
-     \\ -&gt; insert a back slash.
-    </li>
-   </ol>
-   <p>
-    Both
-    <strong>
-     .string
-    </strong>
-    and
-    <strong>
-     .asciz
-    </strong>
-    will automatically insert a zero character at the end of the string.
-   </p>
-   <h2>
-    Memory addresses
-   </h2>
-   <p>
-    By default the assembler will start at memory address 0x00000000. To be able to change the current memory address the directive
-    <strong>
-     .org
-    </strong>
-    <em>
-     &lt;address&gt;
-    </em>
-    can be used, where the
-    <em>
-     &lt;address&gt;
-    </em>
-    is a value within a 32-bit address space.
-    <em>
-     Note:
-    </em>
-    only inter-section overlap will be checked by the assembler. If inside a section an address is specified that is already being occupied, the values are overwritten.
-   </p>
-   <h2>
-    Constants
-   </h2>
-   <p>
-    There are several ways to fill the memory with constant values. Besides from the byte-based way, all the others use a little-endian storage method, meaning that the least significant byte is stored at the lowest memory address, and the most significant byte at the highest memory address. The supported directives are:
-   </p>
-   <ol>
-    <li>
-     <strong>
-      .byte
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-     </em>
-     This directive stores the value(s) interpreted as bytes one after the other into memory.
-    </li>
-    <li>
-     <strong>
-      .half
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-      <br/>
-     </em>
-     <strong>
-      .2byte
-     </strong>
-     <em>
-      <em>
-       &lt;value1&gt;[,&lt;value2&gt;,...]
-       <br/>
-      </em>
-     </em>
-     <strong>
-      .short
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-     </em>
-     These directives store the value(s) interpreted as 16-bit values one after the other into memory.
-    </li>
-    <li>
-     <strong>
-      .word
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-      <br/>
-     </em>
-     <strong>
-      .4byte
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-      <br/>
-     </em>
-     <strong>
-      .long
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-     </em>
-     These directives store the value(s) interpreted as 32-bit values one after the other into memory.
-    </li>
-    <li>
-     <strong>
-      .dword
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-      <br/>
-     </em>
-     <strong>
-      .8byte
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-      <br/>
-     </em>
-     <strong>
-      .quad
-     </strong>
-     <em>
-      &lt;value1&gt;[,&lt;value2&gt;,...]
-     </em>
-     These directives store the value(s) interpreted as 64-bit values one after the other into memory.
-    </li>
-   </ol>
-  </div>
- </body>
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      汇编器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        简介
+      </h1>
+      <p>
+        Logisim-evolution 内置的汇编器除了支持所用处理器提供的指令外，还支持本帮助页面中描述的若干功能。汇编器使用语法高亮和错误检测。此外，它将指令翻译成处理器可执行的字节码。尽管汇编器的结构允许输出 elf 文件，但此功能尚未实现。
+      </p>
+      <h1>
+        使用 GUI
+      </h1>
+      <p>
+        打开汇编器时，会显示一个新窗口，如下所示：
+      </p>
+      <p>
+        <img src="../../../../img-guide/assembler_gui.png" alt="汇编器" title="汇编器图形界面">
+      </p>
+      <p>
+        该图形界面由三个部分组成：
+      </p>
+      <ol>
+        <li>位于编辑区域顶部的工具栏。
+        </li>
+        <li>编辑区域左侧带有错误指示器的行指示栏。
+        </li>
+        <li>编辑区域。
+        </li>
+      </ol>
+      <h2>
+        工具栏
+      </h2>
+      <p>
+        工具栏通过若干图标提供汇编器的主要功能：
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_load.png" alt="加载"> 此图标用于将汇编文件加载到编辑区域。加载功能也可通过键盘快捷键（Ctrl-L）激活。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_save.png" alt="保存" title="汇编器保存"> 此图标用于保存编辑区域中的当前内容。保存功能也可通过键盘快捷键（Ctrl-S）激活。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_save_as.png" alt="另存为"> 此图标用于将编辑区域中的当前内容另存为。另存为功能没有键盘快捷键。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_assemble.png" alt="汇编"> 此图标用于对编辑区域中的当前内容执行汇编功能。汇编功能也可通过键盘快捷键（ALT-A）激活。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_prev_error.png" alt="上一个错误"> 此图标跳转到当前光标位置之前检测到的错误。此功能也可通过键盘快捷键（Ctrl-P）使用。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_next_error.png" alt="下一个错误"> 此图标跳转到当前光标位置之后检测到的错误。此功能也可通过键盘快捷键（Ctrl-N）使用。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_run.png" alt="运行"> 此图标激活汇编功能，并在未检测到错误时将程序加载到存储器中。运行功能也可以通过键盘快捷键（ALT-R）激活。
+      </p>
+      <p>
+        <img class="notscal" src="../../../../img-guide/assembler_help.png" alt="帮助"> 此图标显示此帮助屏幕。
+      </p>
+      <p>
+        工具栏右侧显示光标当前行以及编辑区域的总行数。如果此指示器亮起黄色，则表示在编辑区域中检测到更改。
+      </p>
+      <h2>
+        行指示栏
+      </h2>
+      <p>
+        行指示栏除了显示当前行号外，还包含错误指示图标。将鼠标悬停在错误指示栏上会显示在编辑区域中给定行检测到的错误（之一）。
+      </p>
+      <h2>
+        编辑区域
+      </h2>
+      <p>
+        编辑区域包含您可能想要使用的所有代码。如果您的代码包含错误（在激活汇编或运行功能后），错误将通过行指示栏中的错误图标以及导致问题的文本下方的红色小线显示。将鼠标悬停在此文本上会显示错误原因。需要注意的是，当一行中存在多个错误时，行指示栏中的错误标记只会显示其中一个。此外，对于计算（如上图所示第17行），可能只标记了8而不是整个计算。
+      </p>
+      <h1>
+        使用计算
+      </h1>
+      <p>
+        汇编器支持两种类型的计算：
+      </p>
+      <ol>
+        <li>程序计数器（PC）相对计算
+        </li>
+        <li>绝对计算
+        </li>
+      </ol>
+      <h2>
+        程序计数器相对计算
+      </h2>
+      <p>
+        如果需要相对于当前程序计数器的地址，可以使用保留寄存器<b>pc</b>执行这些计算。在这些计算中也允许使用标签和常量。
+      </p>
+      <p>
+        示例：<b>pc</b>+8、<b>pc</b>-0x40、mylabel-<b>pc</b>等。
+      </p>
+      <h2>
+        绝对计算
+      </h2>
+      <p>
+        在绝对计算中，计算出一个常量值。要执行绝对计算，允许使用标签和常量。
+      </p>
+      <h2>
+        计算类型
+      </h2>
+      <p>
+        支持以下计算类型：
+      </p>
+      <ul>
+        <li>+ =&gt; 加法
+        </li>
+        <li>- =&gt; 减法
+        </li>
+        <li>* =&gt; 乘法
+        </li>
+        <li>/ =&gt; 整数除法
+        </li>
+        <li>% =&gt; 整数取余
+        </li>
+        <li>&lt;&lt; =&gt; 左移
+        </li>
+        <li>&gt;&gt; =&gt; 右移
+        </li>
+      </ul>
+<em>注意：</em> 当前不支持括号。<br>
+      <h2>
+        计算顺序
+      </h2>
+      <p>
+        <i><b>重要：</b></i> 目前计算按从左到右的顺序进行，与运算符的优先级无关！
+      </p>
+      <p>
+        这意味着：
+      </p>
+      <p>
+        5+10*2 的计算结果为 (5+10)*2 = 30
+      </p>
+      <p>
+        10*2+5 的计算结果为 (10*2)+5 = 25
+      </p>
+      <p>
+        改进这种简陋的计算支持已在待办列表中。
+      </p>
+      <h1>
+        使用宏
+      </h1>
+      <p>
+        内置汇编器支持宏。宏的语法如下：
+      </p>
+      <p>
+        <strong>.macro</strong> <em>&lt;名称&gt;</em> <em>&lt;变量数量&gt;</em>
+      </p>
+      <p>
+        <em>&lt;主体&gt;</em>
+      </p>
+      <p>
+        <strong>.endm</strong>
+      </p>
+      <p>
+        宏定义需要两个参数：
+      </p>
+      <ol>
+        <li>
+          <em>&lt;name&gt;</em> 此参数是将在程序其余部分使用的宏的名称。
+        </li>
+        <li>
+          <em>&lt;nr_of_variables&gt;</em> 此参数指定宏内部使用的变量数量。此参数应为正整数（例如 0、1、2……）。
+        </li>
+      </ol>
+      <h2>
+        宏内允许的构造
+      </h2>
+      <p>
+        在宏内部，只能使用指令、标签、计算以及对其他宏的调用。需要注意的是，在宏的 &lt;BODY&gt; 内部定义的标签是宏的局部标签，不能在宏外部引用。
+      </p>
+      <h2>
+        在宏内使用变量
+      </h2>
+      <p>
+        如果参数 <em>&lt;nr_of_variables&gt;</em> 是大于 0 的数字，则必须使用此数量的值来调用宏。每个值都可以在宏内部通过指示符 @<em>&lt;x&gt;</em> 引用，其中 <em>&lt;x&gt;</em> 是一个数字。因此 @1 引用参数 1，@2 引用参数 2，依此类推。
+      </p>
+      <h2>
+        在宏内使用宏调用
+      </h2>
+      <p>
+        宏允许调用其他宏，但有两个限制：
+      </p>
+      <ol>
+        <li>宏不能调用自身；不支持递归宏。
+        </li>
+        <li>两个宏不能相互调用；不支持循环调用。
+        </li>
+      </ol>
+      <h1>
+        汇编器指令
+      </h1>
+      <p>
+        支持以下几种指令，如下所述。
+      </p>
+      <h2>
+        标签
+      </h2>
+      <p>
+        标签可以使用语法 <em>&lt;name&gt;</em><strong>:</strong>。<em>&lt;name&gt;</em> 必须以字母开头，并且可以包含字母（a..z；A..Z）、数字（0..9）和下划线（_）。请注意，在宏内部指定的标签是宏的局部标签。所有其他标签都是全局的（因此全局标签可以在宏内部引用）。
+      </p>
+      <h2>
+        命名常量
+      </h2>
+      <p>
+        命名常量可以通过语法 <strong>.equ</strong> <em>&lt;name&gt;</em> <em>&lt;value&gt;</em> 定义。<em>&lt;name&gt;</em> 参数必须以字母开头，并且可以包含字母（a..z；A..Z）、数字（0..9）和下划线（_）。<em>&lt;value&gt;</em> 字段可以包含数字或计算。
+      </p>
+      <h2>
+        节
+      </h2>
+      <p>
+        您可以使用 <strong>.section</strong> <em>&lt;name&gt;</em> 将程序划分为多个节。<em>&lt;name&gt;</em> 参数必须以字母开头，并且可以包含字母（a..z；A..Z）、数字（0..9）和下划线（_）。有四个预定义的节名称：<strong>.text</strong>、<strong>.data</strong>、<strong>.rodata</strong>、<strong>.bss</strong>。这些不需要在前面加上 <strong>.section</strong> 关键字。
+      </p>
+      <h2>
+        注释
+      </h2>
+      <p>
+        注释可以通过在其前面放置 <strong>#</strong> 来支持，并一直延伸到行尾。多行注释可以通过在每行前面放置 <strong>#</strong> 来实现。
+      </p>
+      <h2>
+        字符串
+      </h2>
+      <p>
+        字符串可以通过 <strong>.string "</strong><em>&lt;str&gt;</em><strong>"</strong>、<strong>.ascii"</strong><em>&lt;str&gt;</em><strong>"</strong> 或 <strong>.asciz"</strong><em>&lt;str&gt;</em><strong>"</strong> 指定。<em>&lt;str&gt;</em> 可以包含任意内容，并且可以是多行。可以使用以下转义码：
+      </p>
+      <ol>
+        <li>\n -&gt; 插入换行符。
+        </li>
+        <li>\" -&gt; 插入双引号。
+        </li>
+        <li>\t -&gt; 插入制表符。
+        </li>
+        <li>\r -&gt; 插入回车符。
+        </li>
+        <li>\f -&gt; 插入换页符。
+        </li>
+        <li>\\ -&gt; 插入反斜杠。
+        </li>
+      </ol>
+      <p>
+        <strong>.string</strong> 和 <strong>.asciz</strong> 都会在字符串末尾自动插入一个零字符。
+      </p>
+      <h2>
+        存储器地址
+      </h2>
+      <p>
+        默认情况下，汇编器将从存储器地址 0x00000000 开始。要更改当前存储器地址，可以使用 <strong>.org</strong> <em>&lt;address&gt;</em> 指令，其中 <em>&lt;address&gt;</em> 是 32 位地址空间内的一个值。<em>注意：</em> 汇编器仅检查段间重叠。如果在段内指定的地址已被占用，则值将被覆盖。
+      </p>
+      <h2>
+        常量
+      </h2>
+      <p>
+        有多种方法可以用常量值填充存储器。除了基于字节的方式外，其他所有方式都使用小端存储方法，即最低有效字节存储在最低存储器地址，最高有效字节存储在最高存储器地址。支持的指令有：
+      </p>
+      <ol>
+        <li>
+          <strong>.byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> 该指令将值解释为字节，一个接一个地存储到存储器中。
+        </li>
+        <li>
+          <strong>.half</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.2byte</strong> <em><em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em></em> <strong>.short</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> 这些指令将值解释为 16 位值，一个接一个地存储到存储器中。</li>
+        <li>
+          <strong>.word</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.4byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.long</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> 这些指令将值解释为 32 位值，一个接一个地存储到存储器中。</li>
+        <li>
+          <strong>.dword</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.8byte</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]<br></em> <strong>.quad</strong> <em>&lt;value1&gt;[,&lt;value2&gt;,...]</em> 这些指令将值解释为 64 位值，一个接一个地存储到存储器中。</li>
+      </ol>
+    </div>
+  </body>
 </html>
