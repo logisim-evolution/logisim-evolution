@@ -92,9 +92,25 @@ python tools/zh_docs/doc_i18n.py translate --provider deepseek
 Useful options:
 
 ```powershell
-python tools/zh_docs/doc_i18n.py translate --provider deepseek --model deepseek-v4-pro --thinking disabled --batch-size 30 --limit 120
-python tools/zh_docs/doc_i18n.py translate --provider deepseek --model deepseek-v4-flash --thinking disabled --batch-size 30 --limit 120
-python tools/zh_docs/doc_i18n.py translate --provider deepseek --model deepseek-v4-pro --thinking enabled --reasoning-effort high --batch-size 10 --limit 30
+python tools/zh_docs/doc_i18n.py translate `
+  --provider deepseek `
+  --model deepseek-v4-pro `
+  --thinking disabled `
+  --batch-size 30 `
+  --limit 120
+python tools/zh_docs/doc_i18n.py translate `
+  --provider deepseek `
+  --model deepseek-v4-flash `
+  --thinking disabled `
+  --batch-size 30 `
+  --limit 120
+python tools/zh_docs/doc_i18n.py translate `
+  --provider deepseek `
+  --model deepseek-v4-pro `
+  --thinking enabled `
+  --reasoning-effort high `
+  --batch-size 10 `
+  --limit 30
 python tools/zh_docs/doc_i18n.py po-extract --files guide/gui/gui-attrcomp.html libs/wiring/pin.html
 python tools/zh_docs/doc_i18n.py po-to-jsonl
 ```
@@ -125,7 +141,10 @@ also includes the standard update path:
 
 ```powershell
 python tools/zh_docs/doc_i18n.py po-extract --sample --pot
-python tools/zh_docs/doc_i18n.py po-update --input-root build/zh-docs/pot --template-root previous-zh-po --output-root build/zh-docs/po
+python tools/zh_docs/doc_i18n.py po-update `
+  --input-root build/zh-docs/pot `
+  --template-root previous-zh-po `
+  --output-root build/zh-docs/po
 ```
 
 ## Design Notes
