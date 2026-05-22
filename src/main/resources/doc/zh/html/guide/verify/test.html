@@ -17,21 +17,21 @@
       function redirect() {
         var countdownElement = document.getElementById("redirect");
         // For compatibility with old webviews, we will just fire 5 timeouts to redirect
-        countdownElement.textContent = "Attempting to redirect in 5 seconds...";
+        countdownElement.textContent = "5 秒后尝试跳转...";
         setTimeout(function() {
-          countdownElement.textContent = "Attempting to redirect in 4 seconds...";
+          countdownElement.textContent = "4 秒后尝试跳转...";
         }, 1000);
         setTimeout(function() {
-          countdownElement.textContent = "Attempting to redirect in 3 seconds...";
+          countdownElement.textContent = "3 秒后尝试跳转...";
         }, 2000);
         setTimeout(function() {
-          countdownElement.textContent = "Attempting to redirect in 2 seconds...";
+          countdownElement.textContent = "2 秒后尝试跳转...";
         }, 3000);
         setTimeout(function() {
-          countdownElement.textContent = "Attempting to redirect in 1 second...";
+          countdownElement.textContent = "1 秒后尝试跳转...";
         }, 4000);
         setTimeout(function() {
-          countdownElement.textContent = "Attempting to redirect now...";
+          countdownElement.textContent = "正在尝试跳转...";
           window.location.href = "../test_vector/index.html";
         }, 5000);
       }
@@ -39,7 +39,7 @@
   </head>
   <body onload="redirect()">
     <div class="maindiv">
-      <span style="font-size: 3em;">此内容已移至其独立的<a href="../test_vector/index.html">测试向量章节</a>页面。</span>
+      <span style="font-size: 3em;">此内容已移至独立的<a href="../test_vector/index.html">测试向量章节</a>。</span>
     </div>
     <div><h2 id="redirect"> </h2></div>
   </body>

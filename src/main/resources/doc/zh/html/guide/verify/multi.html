@@ -23,7 +23,7 @@
         将比较功能构建到电路中
       </h2>
       <p>
-        一种方法是构建一个直接进行比较的测试电路。在测试文件中创建一个额外电路，其中包含参考解答电路。整体测试电路同时包含来自<tt><b>master.circ</b></tt>的子电路，以及位于嵌套电路中的待测解答子电路。将两者接成只有一个输出：只要两个子电路结果一致，该输出就为 1。
+        一种方法是构建一个直接进行比较的测试电路。在测试文件中创建一个额外电路，其中包含参考解答电路。整体测试电路同时包含来自 <tt><b>master.circ</b></tt> 的子电路，以及直接放在嵌套电路中的参考解答子电路。将两者接成只有一个输出：只要两个子电路结果一致，该输出就为 1。
       </p>
       <blockquote>
         <img src="../../../../img-guide/verify-adder-test2.png" alt="#########">
@@ -46,10 +46,10 @@
         </div>
       </blockquote>
       <p>
-        现在已经生成两个不同的输出文件，接着可以用专门的比较工具检查它们。在 Linux 或 macOS 下可使用<b>cmp</b>或<b>diff</b>命令行工具；在 Windows 下可使用<b>fc</b>或 WinMerge。
+        现在已经生成两个不同的输出文件，接着可以用专门的比较工具检查它们。在 Linux 或 macOS 下可使用 <b>cmp</b> 或 <b>diff</b> 命令行工具；在 Windows 下可使用 <b>fc</b> 或 WinMerge。
       </p>
       <p>
-        要处理多个待测文件，可以编写一个简单程序（例如 shell 脚本）遍历每个文件并比较输出。下面是在 Linux 的<b>bash</b>中执行此操作的一种写法：
+        要处理多个待测文件，可以编写一个简单程序（例如 shell 脚本）遍历每个文件并比较输出。下面是在 Linux 的 <b>bash</b> 中执行此操作的一种写法：
       </p>
       <blockquote>
         <tt>RUN_TEST="java -jar logisim-filename.jar adder-test.circ -tty table"<br>
