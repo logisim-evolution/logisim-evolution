@@ -7,24 +7,24 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="zh">
     <title>
-      v3.0 十六进制字纯文本
+      v3.0 十六进制字普通格式
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <h1>
-      v3.0 十六进制字纯文本
+      v3.0 十六进制字普通格式
     </h1>
     <div class="maindiv">
       <p>
-        此格式看起来很像 <a href="mem-v2raw.html">v2.0 raw</a>
+        此格式看起来很像 <a href="mem-v2raw.html">v2.0 raw</a>。
       </p>
 	  <p>
 	     数据字以十六进制表示，并由空格字符分隔。这对于数据的正确对齐很重要。
 	  </p>
 	    <blockquote>
         <pre>
-v3.0 hex words addressed
+v3.0 hex words plain
 000 00a 00a 00a fdd 077 fc0 008
 070 05a fe4 fcd 076 ff0 fec 067
 002 f85 f8b ffe 021 016 f9e fc6</pre>
@@ -37,20 +37,20 @@ v3.0 hex words addressed
 	    可以使用“#”符号在文件中添加注释。从“#”符号开始到行末的所有字符都会被 Logisim 忽略。双空格具有相同效果。 
 	  </p>
       <p>
-        无需在数据前指定 0x 前缀，但如果存在，它们将被直接忽略。 
+        无需在数据前指定 0x 前缀；如果存在，该前缀会被直接忽略。
       </p>
       <p>
         如果文件中的字大于存储器中的字，则最高有效位将被忽略。
       </p>
       <p>
-       如果文件数据集的长度小于存储器空间，则剩余单元将被初始化为 0，对于 RAM，根据<a href="../opts/index.html">项目选项</a>中的参数，初始化为 0 或随机值。 
+       如果文件中的数据长度小于存储器空间，则剩余单元对 ROM 初始化为 0；对 RAM 则根据<a href="../opts/index.html">项目选项</a>中的参数初始化为 0 或随机值。
       </p>
 	  
 	  <h1 id="addr">
         v3.0 十六进制字格式（带地址）
       </h1>
       <p>
-        此格式与前述格式相同，具有相同的特性。此外，在行首有地址指示。地址以十六进制给出，后跟字符<b>:</b>
+        此格式与前述格式相同，具有相同的特性。此外，行首可以给出地址。地址以十六进制给出，后跟字符<b>:</b>
       </p>
 	  <p>
 	    </p>
@@ -64,7 +64,7 @@ v3.0 hex words addressed
         </blockquote>
       
 	  <p>
-	 在此示例中，地址 0x10 处的 8 个字未指定。这些单元将被初始化为 0，对于 RAM，根据<a href="../opts/index.html">项目选项</a>中的参数，初始化为 0 或随机值。 
+	 在此示例中，地址 0x10 处的 8 个字未指定。这些单元对 ROM 初始化为 0；对 RAM 则根据<a href="../opts/index.html">项目选项</a>中的参数初始化为 0 或随机值。
 	  </p>
 	  <p>
 	    </p>

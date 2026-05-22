@@ -7,7 +7,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="zh">
     <title>
-      v3.0 hex byte plain
+      v3.0 十六进制字节普通格式
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
@@ -17,7 +17,7 @@
     </h1>
     <div class="maindiv">
       <p>
-        此文件结构与先前版本相同，第一行指示结构类型，后续行表示存储器中的位序列。它们采用 ASCII 格式，仅包含十六进制符号（两位数字），不带 0x 标记。 
+        此文件结构与先前版本相同，第一行指示结构类型，后续行表示存储器中的字节序列。它们采用 ASCII 格式，仅包含十六进制符号（两位数字），不带 0x 标记。
       </p>
       <blockquote>
         <pre>v3.0 hex bytes plain big-endian
@@ -33,10 +33,10 @@ a7eb2d655343913e6b7d39db17730c77
         可以使用“#”符号在文件中添加注释。以“#”符号开头的行会被忽略。
       </p>
       <p>
-        无需在数据前指定 0x 前缀，但如果存在，它们将被直接忽略。
+        无需在数据前指定 0x 前缀；如果存在，该前缀会被直接忽略。
       </p>
       <p>
-        如果文件的数据集长度小于存储器空间，则剩余单元对于 ROM 将初始化为 0，对于 RAM 将根据<a href="../opts/index.html">项目选项</a>中的参数初始化为 0 或随机值。
+        如果文件的数据集长度小于存储器空间，则剩余单元对 ROM 初始化为 0；对 RAM 则根据<a href="../opts/index.html">项目选项</a>中的参数初始化为 0 或随机值。
       </p>
 	   <p align="center">
         <img src="../../../../img-guide/membyteplainbe.png" alt="#########" height="348" width="480">
@@ -51,7 +51,7 @@ a7eb2d655343913e6b7d39db17730c77
     </h1>
     <div class="maindiv">
       <p>
-       此格式遵循与先前格式相同的规则。与读取方向不同，在小端模式下，从右向左读取。
+       此格式遵循与先前格式相同的规则。区别在于读取方向：在小端模式下，从右向左读取。
       </p>
       <blockquote>
         <pre>v3.0 hex bytes plain little-endian
@@ -70,13 +70,15 @@ a7eb2d655343913e6b7d39db17730c77
 <p align="center">
         <img class="notscal" src="../../../../img-guide/memelitle.png" alt="#########">
         </p>
-		相同的示例显示在组件中。
+      <p>
+		组件中的显示效果如下。
+      </p>
       
       <h1 id="addr">
         v3.0 十六进制字节格式（带地址大端）
       </h1>
       <p>
-        此格式与先前格式相同，但可以指定存储器字的地址或开始记录该行的数据。<br> 该地址为十六进制，后跟字符 <b>:</b>。
+        此格式与先前格式相同，但可以指定每一行数据写入的起始存储器字地址。<br> 该地址为十六进制，后跟字符 <b>:</b>。
       </p>
       <blockquote>
         <pre>v3.0 hex bytes addressed big-endian
@@ -85,7 +87,7 @@ a7eb2d655343913e6b7d39db17730c77
 30: 9863fec8a2d75d342e1f008090445578</pre>
       </blockquote>
       <p>
-        在此示例中，地址 0x10 处的 8 个字未指定。这些单元将初始化为 0，对于 RAM，将根据<a href="../opts/index.html">项目选项</a>中的参数初始化为 0 或随机值。
+        在此示例中，地址 0x10 处的 8 个字未指定。这些单元对 ROM 初始化为 0；对 RAM 则根据<a href="../opts/index.html">项目选项</a>中的参数初始化为 0 或随机值。
       </p>
       <p align="center">
         <img class="notscal" src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
@@ -94,7 +96,7 @@ a7eb2d655343913e6b7d39db17730c77
         v3.0 十六进制字节格式（带地址小端）
       </h1>
       <p>
-         此格式与先前格式相同，但可以指定存储器字的地址或开始记录该行的数据。 
+         此格式与先前格式相同，但可以指定每一行数据写入的起始存储器字地址。
       </p>
       <blockquote>
         <pre>v3.0 hex bytes addressed little-endian
