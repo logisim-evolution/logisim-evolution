@@ -32,7 +32,7 @@
         现在只需运行 Logisim，并依次替换每个待测文件。对于任何正确解答，唯一输出都应为“1”。
       </p>
       <h2>
-        使用重定向和shell脚本
+        使用重定向和 shell 脚本
       </h2>
       <p>
         如果熟悉命令行，可以编写 shell 脚本完成这项工作。这里使用重定向（&gt; 操作符）将每个电路的输出保存到文件中。例如，可以用以下两个命令分别收集参考电路和待测电路的输出。
@@ -56,7 +56,7 @@
         ${RUN_TEST} &gt; output-master.txt<br>
         for QUERY_FILE in query*.circ<br>
         do<br>
-          if ${RUN_TEST} -sub ^master.circ ${QUERY_FILE} | cmp -s output-master.txt<br>
+          if ${RUN_TEST} -sub master.circ ${QUERY_FILE} | cmp -s output-master.txt<br>
           then<br>
             echo "${QUERY_FILE} OK"<br>
           else<br>

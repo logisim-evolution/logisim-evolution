@@ -6,13 +6,13 @@
 	<meta name="changed" content="2018-10-23T06:18:42.262000000">
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta http-equiv="Content-Language" content="zh">
-	<title>顺序测试</title>
+	<title>时序测试</title>
 	<link rel="stylesheet" type="text/css" href="../../style.css">
 	<link rel="stylesheet" type="text/css" href="codefix.css">
 </head>
 <body>
 
-<h1>顺序测试</h1>
+<h1>时序测试</h1>
 
 <p>测试向量功能同时支持<strong>组合</strong>和<strong>时序</strong>电路测试。默认情况下，测试为组合测试：每次测试前电路都会重置，确保各测试相互独立。</p>
 
@@ -22,7 +22,7 @@
 <li>
 <strong>&lt;set&gt;</strong>：定义<strong>序列 ID</strong>——具有相同集合编号的测试属于同一序列并一起运行。同一集合中各步骤之间电路状态保持不变。若未指定，测试默认属于集合 0。</li>
 <li>
-<strong>&lt;seq&gt;</strong>：定义集合内的<strong>步骤编号</strong>——这决定了同一集合中测试的执行顺序。测试在每个<code>&lt;seq&gt;</code>内按其<code>&lt;set&gt;</code>值的顺序执行。<code>&lt;seq&gt;</code>为 0 或缺失的测试被视为组合测试（即使它们共享同一集合，测试之间电路也会重置）。</li>
+<strong>&lt;seq&gt;</strong>：定义集合内的<strong>步骤编号</strong>——这决定了同一集合中测试的执行顺序。同一<code>&lt;set&gt;</code>中的测试会按<code>&lt;seq&gt;</code>值的顺序执行。<code>&lt;seq&gt;</code>为 0 或缺失的测试被视为组合测试（即使它们共享同一集合，测试之间电路也会重置）。</li>
 </ul>
 
 <p>以下是一个时序测试向量的示例：</p>
@@ -38,7 +38,7 @@ Clock Reset Count &lt;set&gt; &lt;seq&gt;
 0     1     0     2     1
 </pre>
 
-<p>在此示例中，前六个测试的<code>&lt;set&gt; 1</code>且<code>&lt;seq&gt;</code>值为 1-6，因此它们构成一个按顺序运行的序列（先 seq 1，然后 2，然后 3，依此类推），步骤之间不重置。最后一个测试的<code>&lt;set&gt; 2</code>，因此它开始一个新序列，并在运行前重置电路。</p>
+<p>在此示例中，前六个测试的<code>&lt;set&gt;</code>为 1，<code>&lt;seq&gt;</code>值为 1 到 6，因此它们构成一个按顺序运行的序列（先 seq 1，然后 2，然后 3，依此类推），步骤之间不重置。最后一个测试的<code>&lt;set&gt;</code>为 2，因此它开始一个新序列，并在运行前重置电路。</p>
 
 <p>另请注意，<code>Clock</code>在此处可以是一个输入引脚。但它也可以是一个带标签的时钟组件（见下文）。</p>
 
@@ -91,7 +91,7 @@ A B C Out     &lt;clk&gt; &lt;set&gt; &lt;seq&gt;
 <li>请注意，在执行复位的每一行中，时钟如何复位为 0。</li>
 <li>前两个测试是组合的（seq=0），因此电路在每个测试之间复位，即使它们共享集合 0。</li>
 <li>接下来的三个测试都具有集合 1，seq 值为 1-3，因此它们形成一个序列，按顺序运行，彼此之间不复位，仅在该集合中的第一个测试运行之前复位。</li>
-<li>最后一个测试具有集合 2 seq 1&amp;2，因此它开始一个新序列，电路在运行之前复位，但不在该集合中的测试之间复位。</li>
+<li>最后两行测试属于集合 2，seq 值为 1 和 2，因此它们开始一个新序列；电路在该序列运行前复位，但不会在同一集合的两个测试之间复位。</li>
 <li>第六个测试对输出使用 <code>&lt;DC&gt;</code>，因此任何输出值都通过。</li>
 <li>最后一个测试对输出使用 <code>&lt;float&gt;</code>，期望一个浮空值。</li>
 </ul>

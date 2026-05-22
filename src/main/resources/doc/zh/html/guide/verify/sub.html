@@ -45,7 +45,7 @@
         </table>
       </blockquote>
       <p>
-        如图所示，主电路使用 Logisim 的内置加法器，而查询电路使用两个子电路，分别表示半加器和全加器（它们本身由简单门构成）。在这个示例中，查询电路有一个明显错误：半加器的<var>进位</var>没有连接到全加器。
+        如图所示，参考电路使用 Logisim 的内置加法器，而待测电路使用两个子电路，分别表示半加器和全加器（它们本身由简单门构成）。在这个示例中，待测电路有一个明显错误：半加器的<var>进位</var>没有连接到全加器。
       </p>
       <p>
         将测试电路构建到另一个文件<tt><b>test.circ</b></tt>中。在该文件里，通过<b class="menu">| 项目 |</b>→<b class="menu">| 加载库 |</b>→ <b class="menu">| Logisim 库 |</b>把<tt><b>master.circ</b></tt>作为 Logisim 库加载，并将其中的 2 位加法器作为子电路插入。直接执行这个电路即可得到参考解答的期望输出。
@@ -56,7 +56,7 @@
 		</div>
       </blockquote>
       <p>
-        但这里希望执行电路时加载<tt><b>query.circ</b></tt>，而不是<tt><b>master.circ</b></tt>。直接做法是打开 Logisim 并改为加载该库；也可以删除<tt><b>master.circ</b></tt>文件，并将<tt><b>query.circ</b></tt>重命名为<tt><b>master.circ</b></tt>。不过 Logisim 提供了方便的<b class="propertie"><tt>-sub</tt></b>选项，可以在当前会话中临时用一个文件替换另一个文件，而不会改动磁盘上的文件。
+        但这里希望执行电路时加载<tt><b>query.circ</b></tt>，而不是<tt><b>master.circ</b></tt>。一种做法是打开 Logisim 并改为加载该库；也可以删除<tt><b>master.circ</b></tt>文件，并将<tt><b>query.circ</b></tt>重命名为<tt><b>master.circ</b></tt>。不过 Logisim 提供了方便的<b class="propertie"><tt>-sub</tt></b>选项，可以在当前会话中临时用一个文件替换另一个文件，而不会改动磁盘上的文件。
       </p>
       <blockquote>
 	   <div class="forcode">
@@ -64,7 +64,7 @@
 		</div>
       </blockquote>
       <p>
-        输出如下所示；它与<a href="index.html">上一节</a>中的输出不同，因为测试电路中<tt><b>adder2</b></tt>所用的库已替换为包含错误的<tt><b>query.circ</b></tt>。
+        输出如下所示；它与<a href="index.html">上一节</a>中的输出不同，因为测试电路中<tt><b>Adder2</b></tt>所用的库已替换为包含错误的<tt><b>query.circ</b></tt>。
       </p>
       <blockquote>
         <pre>00      00      0E0
