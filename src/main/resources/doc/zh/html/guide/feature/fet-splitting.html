@@ -17,7 +17,7 @@
         分线器
       </h1>
       <p>
-        当处理多位数值时，通常需要将不同的位引向不同方向。接线库中的<b class="propertie">分线器</b>工具（<img class="intxt" src="../../../../img-guide/splitter1.png" alt="#########">）可以实现这一点。
+        当处理多位数值时，通常需要将不同的位引向不同方向。线路库中的<b class="propertie">分线器</b>工具（<img class="intxt" src="../../../../img-guide/splitter1.png" alt="#########">）可以实现这一点。
       </p>
       <p>
         例如，假设要构建一个电路，计算八位输入的两个半字节（高四位和低四位）的按位与。八位数值来自输入引脚，需要将其拆分为两个四位数值。下方电路使用分线器实现这一点：8 位输入进入分线器，分线器将它拆成两个 4 位值，然后送入与门，最后输出。
@@ -32,10 +32,10 @@
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
       </p>
       <p>
-        理解分线器的关键在于其属性。在下文中，术语<b>拆分端</b>指的是一侧的多条导线之一，而术语<b>数据总线</b>指的是另一侧的单条导线。
+        理解分线器的关键在于其属性。在下文中，术语<b>分支端</b>指的是一侧的多条导线之一，而术语<b>数据总线</b>指的是另一侧的单条导线。
       </p>
       <ul>
-        <li><b class="propertie">朝向</b>属性指定了拆分端相对于合并端的位置。
+        <li><b class="propertie">朝向</b>属性指定了分支端相对于合并端的位置。
           <div>
             <table>
               <tbody>
@@ -48,18 +48,18 @@
                     <img class="notscal" src="../../../../img-guide/splitter-right.png" align="middle" alt="#########">
                   </td>
                   <td>
-                    拆分端
+                    分支端
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </li>
-        <li><b class="propertie">扇出</b>属性指定了拆分端的数量。
+        <li><b class="propertie">分支数</b>属性指定了分支端的数量。
         </li>
         <li><b class="propertie">输入位宽</b>属性指定了合并端的位宽。
         </li>
-        <li><b class="propertie">外观</b>定义了拆分端相对于数据总线的绘制方式。<br>
+        <li><b class="propertie">外观</b>定义了分支端相对于数据总线的绘制方式。<br>
           <div class="twodiv">
             <table>
               <tbody>
@@ -73,10 +73,10 @@
                 </tr>
                 <tr>
                   <td>
-                    右
+                    右手型
                   </td>
                   <td>
-                    左
+                    左手型
                   </td>
                 </tr>
               </tbody>
@@ -98,21 +98,21 @@
                     居中
                   </td>
                   <td>
-                    旧式
+                    传统
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </li>
-        <li><b class="propertie">间距</b>指定了拆分端之间的间隔。
+        <li><b class="propertie">间距</b>指定了分支端之间的间隔。
         </li>
         <li>
-          <b class="propertie">位 <var>x</var></b> 属性定义了数据总线中的第 <b>x</b> 位对应到哪个拆分端。该属性可以修改，用于手动调整拆分端的顺序。如果多个位对应同一个拆分端（如上方的第一个示例），则相对顺序会与总线中的顺序相同。Logisim 的分线器不能将一个总线位连接到多个拆分端。
+          <b class="propertie">位 <var>x</var></b> 属性定义了数据总线中的第 <b>x</b> 位对应到哪个分支端。该属性可以修改，用于手动调整分支端的顺序。如果多个位对应同一个分支端（如上方的第一个示例），则相对顺序会与总线中的顺序相同。Logisim 的分线器不能将一个总线位连接到多个分支端。
         </li>
       </ul>
       <p>
-        请注意，对扇出或输入位宽属性的任何更改都会重置所有 <b class="propertie">位 <var>x</var></b> 属性，以便将合并值的位尽可能均匀地分配到各拆分端。
+        请注意，对分支数或输入位宽属性的任何更改都会重置所有 <b class="propertie">位 <var>x</var></b> 属性，以便将合并值的位尽可能均匀地分配到各分支端。
       </p>
       <p>
         <b>下一节：</b> <a href="fet-colors.html">导线颜色</a>。
