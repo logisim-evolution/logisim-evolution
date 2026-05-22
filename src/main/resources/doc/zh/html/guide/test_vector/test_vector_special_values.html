@@ -18,7 +18,7 @@
 
 <ul>
 <li>
-<strong>&lt;DC&gt;</strong>（无关项）：当用于输出引脚时，无论实际输出为何，此值始终通过。当您在测试中不关心某些输出时，这很有用。不区分大小写（<code>&lt;dc&gt;</code> 同样有效）。</li>
+<strong>&lt;DC&gt;</strong>（不关心值）：当用于输出引脚时，无论实际输出为何，此值始终通过。测试中不关心某些输出时，这很有用。不区分大小写（<code>&lt;dc&gt;</code> 同样有效）。</li>
 <li>
 <strong>&lt;float&gt;</strong>：当用于输入引脚时，驱动一个浮空（高阻）值。当用于输出引脚时，期望输出为浮空（未知值）。不区分大小写（<code>&lt;FLOAT&gt;</code> 同样有效）。</li>
 </ul>
@@ -31,7 +31,7 @@ Input   Enable Output  &lt;set&gt; &lt;seq&gt;
 &lt;float&gt; 0      &lt;float&gt; 0     0
 </pre>
 
-<p>在第一个测试中，输出标记为无关项，因此任何输出值都会通过。在第二个测试中，输入为浮空，输出也预期为浮空。</p>
+<p>在第一个测试中，输出被标记为不关心值，因此任何输出值都会通过。在第二个测试中，输入为浮空，期望输出也为浮空。</p>
 
 <p>
 	<b>上一节：</b> <a href="test_vector_file_format.html">测试向量文件格式</a> | <b>下一节：</b> <a href="test_vector_sequential.html">时序测试</a>。
