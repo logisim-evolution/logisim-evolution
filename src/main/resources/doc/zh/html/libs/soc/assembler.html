@@ -17,7 +17,7 @@
         简介
       </h1>
       <p>
-        Logisim-evolution 内置的汇编器除了支持所选处理器提供的指令外，还支持本帮助页面中描述的若干功能。汇编器使用语法高亮和错误检测。此外，它会将指令转换为处理器可执行的字节码。尽管汇编器的结构允许输出 ELF 文件，但此功能尚未实现。
+        Logisim-evolution 内置的汇编器除了支持所选处理器提供的指令外，还支持本帮助页面中描述的若干功能。汇编器提供语法高亮和错误检测，并会将指令转换为处理器可执行的机器码。尽管汇编器的结构允许输出 ELF 文件，但此功能尚未实现。
       </p>
       <h1>
         使用 GUI
@@ -100,7 +100,7 @@
         程序计数器相对计算
       </h2>
       <p>
-        如果需要相对于当前程序计数器的地址，可以使用保留寄存器<b>pc</b>执行这些计算。在这些计算中也允许使用标签和常量。
+        如果需要相对于当前程序计数器的地址，可以使用保留寄存器 <b>pc</b> 执行这些计算。在这些计算中也可以使用标签和常量。
       </p>
       <p>
         示例：<b>pc</b>+8、<b>pc</b>-0x40、mylabel-<b>pc</b>等。
@@ -109,7 +109,7 @@
         绝对计算
       </h2>
       <p>
-        在绝对计算中，计算出一个常量值。要执行绝对计算，允许使用标签和常量。
+        绝对计算会得到一个常量值。执行绝对计算时，可以使用标签和常量。
       </p>
       <h2>
         计算类型
@@ -224,7 +224,7 @@
         节
       </h2>
       <p>
-        您可以使用 <strong>.section</strong> <em>&lt;name&gt;</em> 将程序划分为多个节。<em>&lt;name&gt;</em> 参数必须以字母开头，并且可以包含字母（a..z；A..Z）、数字（0..9）和下划线（_）。有四个预定义的节名称：<strong>.text</strong>、<strong>.data</strong>、<strong>.rodata</strong>、<strong>.bss</strong>。这些不需要在前面加上 <strong>.section</strong> 关键字。
+        可以使用 <strong>.section</strong> <em>&lt;name&gt;</em> 将程序划分为多个节。<em>&lt;name&gt;</em> 参数必须以字母开头，并且可以包含字母（a..z；A..Z）、数字（0..9）和下划线（_）。有四个预定义的节名称：<strong>.text</strong>、<strong>.data</strong>、<strong>.rodata</strong>、<strong>.bss</strong>。这些节名称不需要在前面加上 <strong>.section</strong> 关键字。
       </p>
       <h2>
         注释
@@ -236,7 +236,7 @@
         字符串
       </h2>
       <p>
-        字符串可以通过 <strong>.string "</strong><em>&lt;str&gt;</em><strong>"</strong>、<strong>.ascii"</strong><em>&lt;str&gt;</em><strong>"</strong> 或 <strong>.asciz"</strong><em>&lt;str&gt;</em><strong>"</strong> 指定。<em>&lt;str&gt;</em> 可以包含任意内容，并且可以是多行。可以使用以下转义码：
+        可以通过 <strong>.string "</strong><em>&lt;str&gt;</em><strong>"</strong>、<strong>.ascii "</strong><em>&lt;str&gt;</em><strong>"</strong> 或 <strong>.asciz "</strong><em>&lt;str&gt;</em><strong>"</strong> 指定字符串。<em>&lt;str&gt;</em> 可以包含任意内容，并且可以跨越多行。可以使用以下转义码：
       </p>
       <ol>
         <li>\n -&gt; 插入换行符。

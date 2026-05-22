@@ -7,14 +7,14 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="zh">
     <title>
-      nios2
+      Nios2 仿真器
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/todelete/up.png" alt="nios2" title="nios2 仿真器"> Nios2 仿真器
+        <img class="iconlibs" src="../../../../icons/todelete/up.png" alt="nios2" title="Nios2 仿真器"> Nios2 仿真器
       </h1>
       <table>
         <tbody>
@@ -48,13 +48,13 @@
         行为
       </h2>
       <p>
-        nios2 仿真器是 Intel nios2 软核（f 版本除外）的完整 ISA 仿真器。它可用于展示嵌入式系统上程序的执行过程。请注意，虽然仿真器每个时钟周期执行一条指令，但它并非周期精确仿真，因为缓存停顿、数据依赖停顿、总线等待周期等因素未纳入仿真。它提供功能仿真，用于展示硬件尚未就绪的 SOC 设计。
+        Nios2 仿真器是 Intel Nios2 软核（f 版本除外）的完整 ISA 仿真器。它可用于展示嵌入式系统上程序的执行过程。请注意，虽然仿真器每个时钟周期执行一条指令，但它并非周期精确仿真，因为缓存停顿、数据依赖停顿、总线等待周期等因素未纳入仿真。它提供功能仿真，用于展示硬件尚未就绪的 SoC 设计。
       </p>
       <h2>
         引脚
       </h2>
       <p>
-        在 Nios2 仿真组件的北侧，您会找到自定义指令接口信号，可在此添加自定义指令硬件/加速器用于仿真。关于如何使用它们，请参考 Intel 关于 nios2 自定义指令的文档。
+        在 Nios2 仿真组件的北侧，可以看到自定义指令接口信号，可在此添加自定义指令硬件或加速器用于仿真。关于如何使用这些信号，请参考 Intel 关于 Nios2 自定义指令的文档。
       </p>
       <p>
         在 Nios2 仿真组件的西侧，存在以下输入：
@@ -64,10 +64,10 @@
           <strong><em>复位</em></strong>：这是 Nios2 仿真组件的复位输入，当为“1”时将异步复位 Nios2，当为“0”时让 CPU 运行。
         </li>
         <li>
-          <strong><em>时钟</em></strong>：这是 Nios2 仿真器组件的时钟输入。每次在此输入上检测到上升沿时，将取指并执行一条新指令。
+          <strong><em>时钟</em></strong>：这是 Nios2 仿真器组件的时钟输入。每次在此输入上检测到上升沿时，都会取指并执行一条新指令。
         </li>
         <li>
-          <strong><em>IRQ[0..31]</em></strong>：Nios2 仿真器提供最多 32 个 IRQ 输入（由下文描述的 IRQs 属性定义）。每个 IRQ 输入均为高电平有效。关于如何向这些输入提供正确信号，请参考 Intel 关于 IRQ 行为的文档。
+          <strong><em>IRQ[0..31]</em></strong>：Nios2 仿真器提供最多 32 个 IRQ 输入（由下文描述的 IRQ 线数量属性定义）。每个 IRQ 输入均为高电平有效。关于如何向这些输入提供正确信号，请参考 Intel 关于 IRQ 行为的文档。
         </li>
       </ul>
       <h2>
@@ -93,7 +93,7 @@
           <strong><em>状态可见</em></strong>：当通过为此属性指定“否”来禁用状态显示时，可以提高仿真速度（请参阅<a href="index.html">库描述</a>中关于仿真速度的说明）。
         </li>
         <li>
-          <em><strong>标签</strong></em>：此处可指定组件的标签。请注意，标签在许多地方用于引用此组件。如果未定义标签，组件将被引用为“<em>Nios2s simulator @x,y</em>”，其中<em>x</em>和<em>y</em>是此组件锚点在图纸内的绝对坐标。
+          <em><strong>标签</strong></em>：此处可指定组件的标签。请注意，标签会在多处用于引用此组件。如果未定义标签，组件将被引用为“<em>Nios2s simulator @x,y</em>”，其中<em>x</em>和<em>y</em>是此组件锚点在电路图内的绝对坐标。
         </li>
         <li>
           <em><strong>标签字体</strong></em>：通过此属性可指定标签的字体。
@@ -102,27 +102,27 @@
           <strong><em>标签可见</em></strong>：通过此属性可指定标签是否可见。
         </li>
         <li>
-          <em><strong>连接的总线</strong></em>：此属性允许将 Nios2 仿真器连接到<a href="socbus.html">总线组件</a>。为了成功仿真，Nios2 仿真器必须连接到此类组件。
+          <em><strong>连接总线</strong></em>：此属性用于将 Nios2 仿真器连接到<a href="socbus.html">总线组件</a>。要成功仿真，Nios2 仿真器必须连接到此类组件。
         </li>
       </ul>
       <h2>
         可见组件
       </h2>
       <p>
-        Nios2 仿真器具有多个状态组件，当<em><strong>状态可见</strong></em>属性设置为<em><strong>真</strong></em>时，这些组件可见。当组件隐藏在子电路中时，大多数这些组件也可在单独窗口中查看（请参阅下文的超级组件菜单）。不同的组件包括：
+        Nios2 仿真器具有多个状态组件，当<em><strong>状态可见</strong></em>属性设置为<em><strong>真</strong></em>时，这些组件可见。当组件位于子电路中时，大多数这些组件也可在单独窗口中查看（请参阅下文的上层电路菜单）。这些组件包括：
       </p>
       <ol>
         <li>寄存器文件。Nios2 处理器包含 32 个通用寄存器（r0..r31）。这些寄存器的当前值显示在左上角标有 <em><strong>寄存器文件</strong></em> 的方框中。当寄存器值显示为一串问号时，表示该值未知（处理器的正常启动行为）。每次向寄存器写入值时，该值将以蓝色高亮显示，并显示新值。
         </li>
         <li>程序计数器。程序计数器（PC）保存当前地址，下一条指令将从该地址取出。
         </li>
-        <li>状态寄存器。状态寄存器（status）保存 Nios2 处理器的当前状态。有关状态寄存器的信息，请参阅 Intel 关于 nios2 处理器的文档。
+        <li>状态寄存器。状态寄存器（status）保存 Nios2 处理器的当前状态。有关状态寄存器的信息，请参阅 Intel 关于 Nios2 处理器的文档。
         </li>
-        <li>异常状态寄存器。异常状态寄存器（estatus）在进入异常时保存状态寄存器的副本。有关 estatus 寄存器的信息，请参阅 Intel 关于 nios2 处理器的文档。
+        <li>异常状态寄存器。异常状态寄存器（estatus）在进入异常时保存状态寄存器的副本。有关 estatus 寄存器的信息，请参阅 Intel 关于 Nios2 处理器的文档。
         </li>
-        <li>断点状态寄存器。断点状态寄存器（bstatus）在执行断点指令时保存状态寄存器的副本。有关 bstatus 寄存器的信息，请参阅 Intel 关于 nios2 处理器的文档。
+        <li>断点状态寄存器。断点状态寄存器（bstatus）在执行断点指令时保存状态寄存器的副本。有关 bstatus 寄存器的信息，请参阅 Intel 关于 Nios2 处理器的文档。
         </li>
-        <li>执行跟踪窗口。执行跟踪窗口显示 nios2 处理器最近执行的 21 条指令。最后执行的指令显示在顶部。跟踪窗口提供三部分信息，即：<br>
+        <li>执行踪迹窗口。执行踪迹窗口显示 Nios2 处理器最近执行的 21 条指令。最后执行的指令显示在顶部。踪迹窗口提供三部分信息：<br>
           <ol>
             <li>取指时的程序计数器值。
             </li>
@@ -134,16 +134,16 @@
         </li>
         <li>IRQ 状态、irq 屏蔽和 irq 待处理显示。如果通过 <strong><em>IRQ 线数量</em></strong> 属性选择了至少一个 IRQ 输入，则会显示此组件。对于每个 IRQ 引脚，组件顶部的一个方框将指示 IRQ 线的当前状态。下方的方框将指示 IRQ 屏蔽寄存器中的对应位。最底部的方框将指示是否有未屏蔽的 IRQ 待处理。<em>注意：</em> 此组件不显示状态寄存器中的全局 IRQ 使能位状态。
         </li>
-        <li>连接总线指示器。在组件左下方（如上图红色所示）有一个指示器，显示 nios2 连接到哪个 <a href="socbus.html">总线组件</a>。如果 nios2 连接到 <a href="socbus.html">总线组件</a>，该指示器将变为绿色并显示所连接总线的标签。此总线指示器在独立窗口视图中不可用，并且不会被 <strong><em>状态可见</em></strong> 属性隐藏。
+        <li>连接总线指示器。在组件左下方（如上图红色所示）有一个指示器，显示 Nios2 连接到哪个 <a href="socbus.html">总线组件</a>。如果 Nios2 连接到 <a href="socbus.html">总线组件</a>，该指示器将变为绿色并显示所连接总线的标签。此总线指示器在独立窗口视图中不可用，并且不会被 <strong><em>状态可见</em></strong> 属性隐藏。
         </li>
-        <li>仿真控制组件。在连接总线指示器的右侧，您可以找到仿真控制组件。该组件在 <a href="#socsimcontrol">此处</a> 有更详细的描述，并作为动态元素提供。
+        <li>仿真控制组件。在连接总线指示器的右侧，可以看到仿真控制组件。下文会更详细描述该组件，并且它也可作为动态元素使用。
         </li>
       </ol>
       <h2 id="socsimcontrol">
         动态元素
       </h2>
       <p>
-        Nios2 仿真组件将 <a href="#socsimcontrol">soc 仿真控制器</a> 作为 <a href="../../guide/subcirc/dynamic_components.html">动态组件</a> 提供。
+        Nios2 仿真组件将 <a href="#socsimcontrol">SoC 仿真控制器</a> 作为 <a href="../../guide/subcirc/dynamic_components.html">动态组件</a> 提供。
       </p>
       <h2>
         菜单项
@@ -163,7 +163,7 @@
         </li>
       </ol>
       <h2>
-        超级电路菜单项
+        上层电路菜单项
       </h2>
       <p>
         当 Nios2 仿真器位于子电路中时，它会向该子电路的菜单添加四个菜单项，即：
@@ -670,7 +670,7 @@
         </tbody>
       </table>
       <p>
-        <a href="index.html">返回 <em>SOC 库</em></a>
+        <a href="index.html">返回 <em>SoC 库</em></a>
       </p>
     </div>
   </body>
