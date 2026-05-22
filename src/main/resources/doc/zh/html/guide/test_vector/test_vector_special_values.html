@@ -1,11 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="zh">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
 <head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
-	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
-	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
-	<META http-equiv="content-type" content="text/html; charset=UTF-8">
-	<META http-equiv="Content-Language" content="zh">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000">
+	<meta name="changed" content="2018-10-23T06:18:42.262000000">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Language" content="zh">
 	<title>特殊值</title>
 	<link rel="stylesheet" type="text/css" href="../../style.css">
 	<link rel="stylesheet" type="text/css" href="codefix.css">
@@ -14,27 +14,28 @@
 
 <h1>特殊值</h1>
 
-<p>测试向量格式支持两个特殊值，以实现更灵活的测试：</p>
+<p>测试向量格式支持两种特殊值，以实现更灵活的测试：</p>
 
 <ul>
-<li><strong>&lt;DC&gt;</strong>（无关）：当用于输出引脚时，无论实际输出如何，此值始终通过。当您在测试期间不关心某些输出时，这很有用。不区分大小写（<code>&lt;dc&gt;</code> 也可以）。</li>
-<li><strong>&lt;float&gt;</strong>：当用于输入引脚时，这会驱动一个浮空（高阻抗）值。当用于输出引脚时，这期望输出为浮空（UNKNOWN 值）。不区分大小写（<code>&lt;FLOAT&gt;</code> 也可以）。</li>
+<li>
+<strong>&lt;DC&gt;</strong>（无关项）：当用于输出引脚时，无论实际输出为何，此值始终通过。当您在测试中不关心某些输出时，这很有用。不区分大小写（<code>&lt;dc&gt;</code> 同样有效）。</li>
+<li>
+<strong>&lt;float&gt;</strong>：当用于输入引脚时，驱动一个浮空（高阻）值。当用于输出引脚时，期望输出为浮空（未知值）。不区分大小写（<code>&lt;FLOAT&gt;</code> 同样有效）。</li>
 </ul>
 
-<p>以下是使用特殊值的示例：</p>
+<p>以下是一个使用特殊值的示例：</p>
 <pre class="code">
-# 使用无关和浮空值的测试
+# Test with don't care and floating values
 Input   Enable Output  &lt;set&gt; &lt;seq&gt;
 1       1      &lt;DC&gt;    0     0
 &lt;float&gt; 0      &lt;float&gt; 0     0
 </pre>
 
-<p>在第一个测试中，输出被标记为无关，因此任何输出值都会通过。在第二个测试中，输入是浮空的，输出也期望是浮空的。</p>
+<p>在第一个测试中，输出标记为无关项，因此任何输出值都会通过。在第二个测试中，输入为浮空，输出也预期为浮空。</p>
 
 <p>
-	<b>上一页：</b> <a href="test_vector_file_format.html">测试向量文件格式</a> | <b>下一页：</b> <a href="test_vector_sequential.html">时序测试</a>。
+	<b>上一节：</b> <a href="test_vector_file_format.html">测试向量文件格式</a> | <b>下一节：</b> <a href="test_vector_sequential.html">顺序测试</a>。
 </p>
 
 </body>
 </html>
-
