@@ -23,25 +23,25 @@
               <img src="../../../img-guide/gui-0-explor.png" alt="#########">
             </td>
             <td valign="top">
-              资源管理器窗格有两个功能。它可以在<a href="../subcirc/sub-debug.html">仿真</a>视图中显示正在仿真的电路，也可以像这里一样，在列表上方显示电路、下方显示以文件夹图标表示的库。这些库包含您可以在项目中使用的工具。
+              资源管理器窗格有两个功能。它可以在<a href="../subcirc/sub-debug.html">仿真</a>视图中显示正在仿真的电路，也可以像这里一样，在列表上方显示电路、下方显示以文件夹图标表示的库。这些库包含项目中可用的工具。
             </td>
           </tr>
         </tbody>
       </table>
       <p>
-        要访问库中的组件，只需通过 <b class="tkeybd">双击</b>对应的文件夹或 <b class="tkeybd">单击</b>小三角来打开库，然后 <b class="tkeybd">单击</b>所需工具。随后将鼠标光标移动到画布上，工具的虚线轮廓会跟随鼠标光标，直到您在画布上单击并将其放置到所选位置。
+        要访问库中的组件，可以通过 <b class="tkeybd">双击</b>对应的文件夹或 <b class="tkeybd">单击</b>小三角来打开库，然后 <b class="tkeybd">单击</b>所需工具。随后将鼠标光标移动到画布上，工具的虚线轮廓会跟随鼠标光标，直到在画布上单击并将其放置到所选位置。
       </p>
       <p>
-        下面，我已经打开了“门”库，并从中选择了与非门工具。您可以看到 Logisim 现在已准备好将与非门添加到电路中。
+        下图中已经打开“门”库，并从中选择了与非门工具。此时 Logisim 已准备好将与非门添加到电路中。
       </p>
       <p align="center">
         <img src="../../../img-guide/gui-1-nand-select.png" alt="#########">
       </p>
       <p>
-        如果您浏览“门”库中的选项，您会发现我们之前不需要开发异或电路：它已内置于 Logisim 中。
+        浏览“门”库中的选项可以发现，前面其实不需要自行搭建异或电路：它已内置于 Logisim 中。
       </p>
       <p>
-        当您创建项目时，它会自动包含几个库：
+        创建项目时，项目会自动包含几个库：
       </p>
       <ul>
         <li>
@@ -87,33 +87,33 @@
 	    库
 	  </h2>
       <p>
-        Logisim 也允许您通过菜单 <b class="menu">| 项目 |</b> → <b class="menu">| 加载库 |</b>，或在项目资源管理器的根文件夹上 <b class="tkeybd">左键单击</b> 来添加更多库。您可以看到 Logisim 有三类库。
+        Logisim 也允许通过菜单 <b class="menu">| 项目 |</b> → <b class="menu">| 加载库 |</b>，或在项目资源管理器的根文件夹上打开上下文菜单来添加更多库。Logisim 有三类库。
       </p>
       <ul>
         <li>
           <strong>内置库</strong> 是随 Logisim 分发的库。这些库在 <a href="../../libs/index.html">库参考</a> 中有文档说明。
         </li>
         <li>
-          <strong>Logisim 库</strong> 是在 Logisim 中构建、并以 Logisim 项目文件保存到磁盘的库。您可以在单个项目中开发一组电路（如本指南的 <a href="../subcirc/index.html">子电路</a> 部分所述），然后将这组电路作为库用于其他项目。
+          <strong>Logisim 库</strong> 是在 Logisim 中构建、并以 Logisim 项目文件保存到磁盘的库。可以在单个项目中开发一组电路（如本指南的 <a href="../subcirc/index.html">子电路</a> 部分所述），然后将这组电路作为库用于其他项目。
         </li>
         <li>
-          <strong>JAR 库</strong> 是用 Java 开发但不随 Logisim 分发的库。您可以下载他人编写的 JAR 库，也可以按照本指南的 <a href="../jar/index.html">JAR 库</a> 部分自行编写。开发 JAR 库比开发 Logisim 库困难得多，但组件可以更加复杂，包括属性、与用户交互等功能。内置库（除 <b class="propertie">Base</b> 以外）使用与 JAR 库相同的 API 编写，因此很好地展示了 JAR 库可以支持的功能范围。
+          <strong>JAR 库</strong> 是用 Java 开发但不随 Logisim 分发的库。可以下载他人编写的 JAR 库，也可以按照本指南的 <a href="../jar/index.html">JAR 库</a> 部分自行编写。开发 JAR 库比开发 Logisim 库困难得多，但组件可以更加复杂，包括属性、与用户交互等功能。内置库（除 <b class="propertie">Base</b> 以外）使用与 JAR 库相同的 API 编写，因此很好地展示了 JAR 库可以支持的功能范围。
           <p>
-            有些 JAR 库在分发时不包含关于从哪个 Java 类开始的信息。加载此类 JAR 时，Logisim 会提示您输入类名。该类名应由向您分发 JAR 文件的人提供。
+            有些 JAR 库在分发时不包含关于从哪个 Java 类开始的信息。加载此类 JAR 时，Logisim 会提示输入类名。该类名应由 JAR 文件的分发者提供。
           </p>
         </li>
       </ul>
       <p>
-        要移除库，请选择菜单 <b class="menu">| 项目 |</b> → <b class="menu">| 卸载库… |</b>。如果某个库包含电路中正在使用的组件、工具栏中出现的组件，或已映射到鼠标按钮的组件，Logisim 会阻止您卸载该库。
+        要移除库，请选择菜单 <b class="menu">| 项目 |</b> → <b class="menu">| 卸载库… |</b>。如果某个库包含电路中正在使用的组件、工具栏中出现的组件，或已映射到鼠标按钮的组件，Logisim 会阻止卸载该库。
       </p>
       <p align="center">
         <img class="notscal" src="../../../img-guide/gui-2-remlib.png" alt="#########">
       </p>
       <p>
-        也可以通过在要卸载的库上 <b class="tkeybd">左键单击</b> 来完成此操作。
+        也可以在要卸载的库上打开上下文菜单来完成此操作。
       </p>
       <p>
-        顺便说一下，从技术上讲，库包含的是工具，而不是组件。因此，在 Base 库中，您会找到 <b class="propertie">手形</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">）、<b class="propertie">选择</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">），以及其他不直接对应单个组件的工具。不过，大多数库只包含用于添加单个组件的工具。
+        顺便说一下，从技术上讲，库包含的是工具，而不是组件。因此，在 Base 库中，可以看到 <b class="propertie">手形</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">）、<b class="propertie">选择</b> 工具（<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">），以及其他不直接对应单个组件的工具。不过，大多数库只包含用于添加单个组件的工具。
 
       </p>
       <p>
