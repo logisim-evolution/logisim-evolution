@@ -37,6 +37,7 @@ python tools/zh_docs/doc_i18n.py po-filter
 python tools/zh_docs/doc_i18n.py po-render
 python tools/zh_docs/doc_i18n.py lint --root build/zh-docs/po-preview/html
 python tools/zh_docs/doc_i18n.py lint --root src/main/resources/doc/zh/html --include guide/tutorial --fail-on-warnings
+python tools/zh_docs/doc_i18n.py check-javahelp --fail-on-warnings
 python tools/zh_docs/doc_i18n.py check-translations --input build/zh-docs/translations.jsonl
 ```
 
@@ -177,6 +178,11 @@ python tools/zh_docs/doc_i18n.py po-update --input-root build/zh-docs/pot --temp
 - Link lint also warns on suspicious whitespace in `href` and `src` values,
   because legacy pages have contained typos such as a space inside a relative
   path.
+- Link lint checks exact path casing, which matters once the documentation is
+  packaged into a JAR even if the local checkout is on Windows.
+- `check-javahelp` validates the JavaHelp map and table-of-contents targets
+  used by the in-application help viewer, including TOC icons and the default
+  `top`, `guide`, `tutorial`, and `libs` entry points.
 - English-ratio checks ignore expected technical tokens such as product names,
   keyboard shortcuts, all-caps acronyms, and version labels before warning.
 - Comments from the English source are not emitted by the renderer.

@@ -110,6 +110,7 @@
 	
 <!-- for testing and validation -->	
 	<mapID target="test_hmlcss"         url="zh/testhtml/index.html" />
+	<mapID target="Tests_for_doc"       url="zh/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
 
 <!-- Librairie -->
@@ -170,25 +171,25 @@
 	<mapID target="io_hexdig"           url="zh/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="zh/html/libs/io/dotmat.html" />
 	<mapID target="io_tty"              url="zh/html/libs/io/tty.html" />	
-    <mapID target="io_Port_IO"          url="zh/html/libs/io/Port_io.html" />	
-	<mapID target="io_Repetar"          url="zh/html/libs/io/repetar.html" />	
-	<mapID target="io_videorvb"         url="zh/html/libs/io/videorvb.html" />
+    <mapID target="io_Port_IO"          url="zh/html/libs/io/index.html#portio" />	
+	<mapID target="io_Repetar"          url="zh/html/libs/io/index.html#repetar" />	
+	<mapID target="io_videorgb"         url="zh/html/libs/io/index.html#rgbvideo" />
 	<mapID target="tcl"                 url="zh/html/libs/tcl/index.html" />
-    <mapID target="tcl_reds_console"    url="zh/html/libs/tcl/reds_console.html" />
-    <mapID target="tcl_generic"         url="zh/html/libs/tcl/generic.html" />
+    <mapID target="tcl_reds_console"    url="zh/html/libs/tcl/redsconsole.html" />
+    <mapID target="tcl_generic"         url="zh/html/libs/tcl/tclgeneric.html" />
     <mapID target="soc"                 url="zh/html/libs/soc/index.html" />
-    <mapID target="nios2_sim"           url="zh/html/libs/soc/nios2.html" />
+    <mapID target="nios2_sim"           url="zh/html/libs/soc/socnios2s.html" />
     <mapID target="socbus"              url="zh/html/libs/soc/socbus.html" />
     <mapID target="assembler"           url="zh/html/libs/soc/assembler.html" />
     <mapID target="disassembler"        url="zh/html/libs/soc/disassembler.html" />
-    <mapID target="socsimcontrol"       url="zh/html/libs/soc/socsimcontrol.html" />
+    <mapID target="socsimcontrol"       url="zh/html/libs/soc/index.html" />
 	
 <!-- Icon help tree -->
-	<mapID target="icon_poke"        url="icons/1616/poke.png" />
-	<mapID target="icon_edit"        url="icons/1616/select.png" />
-	<mapID target="icon_select"      url="icons/1616/select.png" />
-	<mapID target="icon_wiring"      url="icons/1616/wiring.png" />
-	<mapID target="icon_text"        url="icons/1616/text.png" />
+	<mapID target="icon_poke"        url="icons/1616/toolpoke.png" />
+	<mapID target="icon_edit"        url="icons/1616/toolselect.png" />
+	<mapID target="icon_select"      url="icons/1616/toolselect.png" />
+	<mapID target="icon_wiring"      url="icons/todelete/wiring.gif" />
+	<mapID target="icon_text"        url="icons/1616/tooltext.png" />
 	<mapID target="icon_menu"        url="icons/1616/menu.png" />
 	
 	<mapID target="icon_splitter"    url="icons/1616/splitter.png" />
@@ -260,7 +261,7 @@
 	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
 	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
 	<mapID target="icon_digitalscope"    url="icons/1616/digitalscope.png" />	
-	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
+	<mapID target="icon_pla2"        url="icons/1616/pla.png" />	
 	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
 	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		
 

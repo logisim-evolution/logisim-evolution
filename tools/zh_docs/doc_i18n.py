@@ -15,6 +15,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import xml.etree.ElementTree as ET
 from collections import Counter
 from dataclasses import asdict, dataclass
 from html.parser import HTMLParser
@@ -1059,7 +1060,8 @@ def command_lint(args: argparse.Namespace) -> int:
                 continue
             if should_skip_link(stripped_value):
                 continue
-            target = resolve_link_target(path, args.root, args.fallback_root, stripped_value)
+            target_candidate = unresolved_link_target(path, args.root, args.fallback_root, stripped_value)
+            target = target_candidate.resolve()
             if not target.exists():
                 formatted = f"{rel}: missing {attr} target {value}"
                 if args.ignore_inherited and source_link_target_missing(source_path, args.source_root, attr, value, stripped_value, source_raw):
@@ -1067,6 +1069,9 @@ def command_lint(args: argparse.Namespace) -> int:
                 else:
                     warnings.append(formatted)
                 continue
+            if not path_exists_exact(target_candidate):
+                formatted = f"{rel}: {attr} target case mismatch {value}"
+                warnings.append(formatted)
             fragment = link_fragment(stripped_value)
             if attr.lower() == "href" and fragment and target.suffix.lower() in {".html", ".htm"}:
                 anchors = html_anchors(target)
@@ -1080,6 +1085,56 @@ def command_lint(args: argparse.Namespace) -> int:
     print(f"warnings={len(warnings)}")
     if args.ignore_inherited:
         print(f"suppressed_inherited={len(suppressed)}")
+    for warning in warnings[: args.max_warnings]:
+        print(warning)
+    if args.fail_on_warnings and warnings:
+        return 1
+    return 0
+
+
+def command_check_javahelp(args: argparse.Namespace) -> int:
+    warnings = []
+    for lang in args.lang:
+        map_path = args.doc_root / f"map_{lang}.jhm"
+        contents_path = args.doc_root / lang / "contents.xml"
+        if not map_path.exists():
+            warnings.append(f"{repo_path(map_path)}: missing JavaHelp map")
+            continue
+        if not contents_path.exists():
+            warnings.append(f"{repo_path(contents_path)}: missing JavaHelp contents")
+            continue
+        map_ids = {}
+        for elem in ET.parse(map_path).iter("mapID"):
+            target = elem.attrib.get("target")
+            url = elem.attrib.get("url")
+            if target and url and target not in map_ids:
+                map_ids[target] = url
+        contents_targets = []
+        image_targets = []
+        for elem in ET.parse(contents_path).iter("tocitem"):
+            target = elem.attrib.get("target")
+            image = elem.attrib.get("image")
+            if target:
+                contents_targets.append(target)
+            if image:
+                image_targets.append(image)
+        for required in args.required_target:
+            if required not in contents_targets:
+                contents_targets.append(required)
+        for target in sorted(set(contents_targets)):
+            url = map_ids.get(target)
+            if not url:
+                warnings.append(f"{repo_path(contents_path)}: target {target!r} has no mapID in {map_path.name}")
+                continue
+            warnings.extend(javahelp_url_warnings(args.doc_root, map_path, target, url))
+        for target in sorted(set(image_targets)):
+            url = map_ids.get(target)
+            if not url:
+                warnings.append(f"{repo_path(contents_path)}: image target {target!r} has no mapID in {map_path.name}")
+                continue
+            warnings.extend(javahelp_url_warnings(args.doc_root, map_path, target, url))
+    print(f"checked_langs={len(args.lang)}")
+    print(f"warnings={len(warnings)}")
     for warning in warnings[: args.max_warnings]:
         print(warning)
     if args.fail_on_warnings and warnings:
@@ -1128,17 +1183,21 @@ def english_ratio(text: str, allowed_terms: Iterable[str]) -> float:
 
 
 def resolve_link_target(path: Path, root: Path, fallback_root: Path | None, value: str) -> Path:
+    return unresolved_link_target(path, root, fallback_root, value).resolve()
+
+
+def unresolved_link_target(path: Path, root: Path, fallback_root: Path | None, value: str) -> Path:
     link_path = link_path_without_fragment(value)
     if not link_path:
-        return path.resolve()
-    local_target = (path.parent / link_path).resolve()
+        return path
+    local_target = path.parent / link_path
     if local_target.exists() or fallback_root is None:
         return local_target
     try:
         rel_file = path.resolve().relative_to(root.resolve())
     except ValueError:
         return local_target
-    fallback_target = (fallback_root / rel_file.parent / link_path).resolve()
+    fallback_target = fallback_root / rel_file.parent / link_path
     return fallback_target if fallback_target.exists() else local_target
 
 
@@ -1159,6 +1218,43 @@ def html_anchors(path: Path) -> set[str]:
         for match in re.finditer(rf'\b{attr}=["\']([^"\']+)["\']', raw, flags=re.IGNORECASE):
             anchors.add(match.group(1))
     return anchors
+
+
+def javahelp_url_warnings(doc_root: Path, map_path: Path, target: str, url: str) -> list[str]:
+    warnings = []
+    path_part = link_path_without_fragment(url)
+    fragment = link_fragment(url)
+    target_path = doc_root / path_part
+    label = f"{repo_path(map_path)}: mapID {target!r}"
+    if not target_path.exists():
+        warnings.append(f"{label} points to missing file {url}")
+        return warnings
+    if not path_exists_exact(target_path):
+        warnings.append(f"{label} has path case mismatch {url}")
+    if fragment and target_path.suffix.lower() in {".html", ".htm"}:
+        anchors = html_anchors(target_path.resolve())
+        if fragment not in anchors:
+            warnings.append(f"{label} points to missing anchor {url}")
+    return warnings
+
+
+def path_exists_exact(path: Path) -> bool:
+    if not path.exists():
+        return False
+    absolute = Path(os.path.abspath(str(path)))
+    parts = absolute.parts
+    if not parts:
+        return True
+    current = Path(parts[0])
+    for part in parts[1:]:
+        try:
+            names = {child.name for child in current.iterdir()}
+        except OSError:
+            return False
+        if part not in names:
+            return False
+        current = current / part
+    return True
 
 
 def matching_source_path(path: Path, root: Path, source_root: Path | None) -> Path | None:
@@ -1499,6 +1595,19 @@ def build_parser() -> argparse.ArgumentParser:
     lint.add_argument("--max-warnings", type=int, default=50)
     lint.add_argument("--fail-on-warnings", action="store_true")
     lint.set_defaults(func=command_lint)
+
+    check_javahelp = sub.add_parser("check-javahelp", help="Validate JavaHelp TOC/map targets")
+    check_javahelp.add_argument("--doc-root", type=Path, default=REPO_ROOT / "src/main/resources/doc")
+    check_javahelp.add_argument("--lang", action="append", default=["en", "zh"], help="Language code to check; may be repeated")
+    check_javahelp.add_argument(
+        "--required-target",
+        action="append",
+        default=["top", "guide", "tutorial", "libs"],
+        help="Map target that must resolve even if it is not listed in contents.xml",
+    )
+    check_javahelp.add_argument("--max-warnings", type=int, default=80)
+    check_javahelp.add_argument("--fail-on-warnings", action="store_true")
+    check_javahelp.set_defaults(func=command_check_javahelp)
 
     check_translations = sub.add_parser("check-translations", help="QA checks for translation JSONL")
     check_translations.add_argument("--input", type=Path, default=DEFAULT_TRANSLATIONS)
