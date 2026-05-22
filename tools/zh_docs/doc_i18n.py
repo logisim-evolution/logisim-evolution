@@ -1021,6 +1021,8 @@ def command_lint(args: argparse.Namespace) -> int:
             warnings.append(f"{rel}: added security-sensitive markup {item} x{count}")
         if not re.search(r"<html[^>]*lang=[\"']zh[\"']", raw, flags=re.IGNORECASE):
             warnings.append(f"{rel}: html lang is not zh")
+        if not re.search(r"\bcharset\s*=\s*[\"']?utf-8\b", raw, flags=re.IGNORECASE):
+            warnings.append(f"{rel}: missing UTF-8 charset declaration")
         for match in re.finditer(
             r"<meta\b[^>]*http-equiv=[\"']Content-Language[\"'][^>]*>",
             raw,
