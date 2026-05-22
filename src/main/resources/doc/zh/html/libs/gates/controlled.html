@@ -37,7 +37,7 @@
               <strong>库：</strong>
             </td>
             <td>
-              <a href="index.html">门</a>
+              <a href="index.html">门电路</a>
             </td>
           </tr>
           <tr>
@@ -74,14 +74,14 @@
         行为
       </h2>
       <p>
-        受控缓冲器和反相器通常称为<em>三态缓冲器/反相器</em>，各自在南侧有一个一位的“控制”输入引脚。该控制引脚的值会影响组件的行为：
+        受控缓冲器和受控反相器通常称为<em>三态缓冲器/反相器</em>。二者各有一个 1 位“控制”输入引脚；在默认朝东且控制线位于右侧时，该引脚位于南侧。控制引脚的值会影响组件的行为：
       </p>
       <ul>
-        <li>当此引脚上的值为<b class="unov">1</b>时，组件的行为与相应的<a href="buffer.html">缓冲器</a>或<a href="not.html">反相器</a>（非门）完全相同。
+        <li>当此引脚上的值为 <b class="unov">1</b> 时，组件的行为与相应的<a href="buffer.html">缓冲器</a>或<a href="not.html">反相器</a>（非门）完全相同。
         </li>
-        <li>当值为<b class="zerov">0</b>或浮空（<b class="uvalue">U</b>）时，组件的输出为浮空（<b class="uvalue">U</b>）。
+        <li>当值为 <b class="zerov">0</b> 或浮空（<b class="uvalue">U</b>）时，组件的输出为浮空（<b class="uvalue">U</b>）。
         </li>
-        <li>当值为错误值（<b class="evalue">E</b>）时（例如当两个冲突的值被馈入输入时会发生这种情况），输出也是错误值（<b class="evalue">E</b>）。
+        <li>当值为错误值（<b class="evalue">E</b>）时（例如当两个冲突的值被送入输入端时会发生这种情况），输出也是错误值（<b class="evalue">E</b>）。
         </li>
       </ul>
 	  <p>
@@ -214,31 +214,31 @@
       </center>
 	  
       <p>
-        当您有一条导线（通常称为<em>总线</em>），其值应与多个组件之一的输出匹配时，受控缓冲器会很有用。通过在每个组件输出与总线之间放置一个受控缓冲器，您可以控制该组件的输出是否馈送到总线上。
+        当一条导线（通常称为<em>总线</em>）的值应当来自多个组件之一时，受控缓冲器会很有用。通过在每个组件输出与总线之间放置一个受控缓冲器，就可以控制该组件的输出是否送到总线上。
       </p>
       <h2>
-        引脚（假设组件朝东，控制线为右手方向）
+        引脚（假设组件朝东，控制线位于右侧）
       </h2>
 	  <div class="attliste">
       <dl>
         <dt class="lib">
-          西边：
+          西侧：
         </dt>
         <dd>
-          当控制输入为<b class="unov">1</b>时，用于计算输出的组件输入。位宽与<b class="propertie">数据位宽</b>属性匹配。
+          当控制输入为 <b class="unov">1</b> 时，用于计算输出的组件输入。位宽与 <b class="propertie">数据位宽</b> 属性一致。
         </dd>
         <dt class="lib">
-          南边：
+          南侧：
         
         </dt>
 <dd>
           组件的控制输入。位宽为 1。
         </dd>
         <dt class="lib">
-          东边：
+          东侧：
         </dt>
         <dd>
-          组件的输出，当控制输入为<b class="zerov">0</b>或浮空（<b class="uvalue">U</b>）时，输出为浮空（<b class="uvalue">U</b>）；当控制输入为错误值（<b class="evalue">E</b>）时，输出为错误值（<b class="evalue">E</b>）；当控制输入为<b class="unov">1</b>时，输出基于西边输入计算。位宽与<b class="propertie">数据位宽</b>属性匹配。
+          组件的输出。当控制输入为 <b class="zerov">0</b> 或浮空（<b class="uvalue">U</b>）时，输出为浮空（<b class="uvalue">U</b>）；当控制输入为错误值（<b class="evalue">E</b>）时，输出为错误值（<b class="evalue">E</b>）；当控制输入为 <b class="unov">1</b> 时，输出基于西侧输入计算。位宽与 <b class="propertie">数据位宽</b> 属性一致。
         </dd>
       </dl>
 	  </div>
@@ -246,7 +246,7 @@
         属性
       </h2>
       <p>
-        当组件被选中或正在添加时，<b class="tkeybd">Alt-0</b>至<b class="tkeybd">Alt-9</b>可更改其<b class="propertie">数据位宽</b>属性，方向键可更改其<b class="propertie">朝向</b>属性。
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 至 <b class="tkeybd">Alt-9</b> 可更改其 <b class="propertie">数据位宽</b> 属性，方向键可更改其 <b class="propertie">朝向</b> 属性。
       </p>
 	  <div class="attliste">
       <dl>
@@ -272,7 +272,7 @@
           控制线位置
         </dt>
         <dd>
-          控制线的位置，想象我们从输入面向输出：如果组件朝东且为<q>右手方向，</q>则控制线在南侧；但如果为<q>左手方向，</q>则控制线在北侧。
+          控制线的位置。可以想象从输入端朝输出端看：如果组件朝东且选择 <q>右侧</q>，控制线位于南侧；如果选择 <q>左侧</q>，控制线位于北侧。
         </dd>
         <dt class="lib">
           标签
@@ -298,7 +298,7 @@
         文本工具行为
       </h2>
       <p>
-        允许编辑与门关联的标签。
+        可编辑与门关联的标签。
       </p>
       <p>
         <b>返回</b><a href="../index.html">库参考</a>

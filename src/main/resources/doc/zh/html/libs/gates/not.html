@@ -69,7 +69,7 @@
         行为
       </h2>
       <p>
-        非门输出其接收到的输入的反码。数据在输出端的呈现方式由<b class="propertie">输出值</b>属性定义。非门的真值表如下所示。 
+        非门输出其接收到的输入的反相值。数据在输出端的呈现方式由 <b class="propertie">输出值</b> 属性定义。非门的真值表如下所示。
       </p>
       <center>
         <table class="encapsul">
@@ -88,10 +88,10 @@
                   0/1  
               </th>
               <th class="tspace">
-                0/浮动
+                0/高阻
               </th>
               <th class="tspace">
-                flt./1
+                高阻/1
               </th>
             </tr>
             <tr>
@@ -150,16 +150,16 @@
       </h2>
       <dl>
         <dt>
-          西边：
+          西侧：
         </dt>
         <dd>
-          组件的输入。位宽由<b class="propertie">数据位宽</b>属性决定。
+          组件的输入。位宽由 <b class="propertie">数据位宽</b> 属性决定。
         </dd>
         <dt>
-          东边：
+          东侧：
         </dt>
         <dd>
-          输出，其值为输入值的补码。位宽由<b class="propertie">数据位宽</b>属性决定。数据显示模式由<b class="propertie">输出值</b>属性定义。 
+          输出，其值为输入值的反相结果。位宽由 <b class="propertie">数据位宽</b> 属性决定。数据显示模式由 <b class="propertie">输出值</b> 属性定义。
         </dd>
       </dl>
       <h2>
@@ -192,7 +192,7 @@
             <b class="propertie">输出值</b>
           </dt>
           <dd>
-            指示如何将假和真结果转换为输出值。默认情况下，假由低电压（<b class="zerov">0</b>）表示，真由高电压（<b class="unov">1</b>）表示，但其中一个可以替换为高阻抗（<q>浮空</q> <b class="uvalue">U</b>）值。这允许线与和线或连接，如<a href="basic.html">与/或/与非/或非门文档</a>中所示。
+            指示如何将逻辑假和逻辑真转换为输出值。默认情况下，逻辑假由低电压（<b class="zerov">0</b>）表示，逻辑真由高电压（<b class="unov">1</b>）表示，但其中一个可以替换为高阻（<q>浮空</q> <b class="uvalue">U</b>）值。这样可以实现线与和线或连接，如<a href="basic.html">与/或/与非/或非门文档</a>中所示。
           </dd>
           <dt>
             <b class="propertie">标签</b>
@@ -218,7 +218,7 @@
         文本工具行为
       </h2>
       <p>
-        允许编辑与门关联的标签。
+        可编辑与门关联的标签。
       </p>
       <p>
         <b>返回</b> <a href="../index.html">库参考</a>
