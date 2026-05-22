@@ -1,0 +1,163 @@
+# Minimal glossary for the zh documentation rebuild.
+# The script reads the simple "term: translation" entries below without needing
+# a YAML dependency.
+terms:
+  Pin: 引脚
+  Pins: 引脚
+  pin: 引脚
+  pins: 引脚
+  Input pin: 输入引脚
+  Output pin: 输出引脚
+  Output?: 输出？
+  Input: 输入
+  Output: 输出
+  Type: 类型
+  Behavior: 行为
+  Appearance: 外观
+  Circuit: 电路
+  circuit: 电路
+  circuits: 电路
+  Simulation: 仿真
+  VHDL Entity: VHDL 实体
+  VHDL entity: VHDL 实体
+  VHDL entities: VHDL 实体
+  HDL IP: HDL IP
+  Questa Advanced Simulator: Questa Advanced Simulator
+  QuestaSim: QuestaSim
+  test bench: 测试平台
+  test benches: 测试平台
+  simulation: 仿真
+  simulator: 仿真器
+  Propagation: 传播
+  propagation: 传播
+  Oscillation: 振荡
+  oscillation: 振荡
+  delay: 延迟
+  delays: 延迟
+  gate delay: 门延迟
+  value: 值
+  values: 值
+  Wiring: 接线
+  Wire: 导线
+  Wires: 导线
+  wire: 导线
+  wires: 导线
+  Probe: 探针
+  Clock: 时钟
+  Subcircuit: 子电路
+  subcircuit: 子电路
+  subcircuits: 子电路
+  Data Bits: 数据位宽
+  Facing: 朝向
+  Fixed box size: 固定框大小
+  Attribute: 属性
+  Attributes: 属性
+  Component: 组件
+  Components: 组件
+  component: 组件
+  components: 组件
+  bundle: 线束
+  bundles: 线束
+  Splitter: 分线器
+  Splitters: 分线器
+  splitter: 分线器
+  Fan Out: 扇出
+  Bit Width In: 输入位宽
+  Self-numbered labels: 自编号标签
+  Wire colors: 导线颜色
+  Poke Tool: 手形工具
+  poke: 手形
+  Text Tool: 文本工具
+  Edit Tool: 编辑工具
+  Selection Tool: 选择工具
+  Library Reference: 库参考
+  User's Guide: 用户指南
+  Next: 下一节
+  Back: 返回
+  File: 文件
+  Edit: 编辑
+  Project: 项目
+  Simulate: 仿真
+  Window: 窗口
+  Help: 帮助
+  New: 新建
+  Open: 打开
+  Save: 保存
+  Save As: 另存为
+  Export Image: 导出图像
+  Print: 打印
+  Preferences: 首选项
+  Quit: 退出
+  Undo: 撤消
+  Redo: 重做
+  Cut: 剪切
+  Copy: 复制
+  Paste: 粘贴
+  Delete: 删除
+  Duplicate: 创建副本
+  Select All: 全选
+  Add Circuit: 添加电路
+  Add VHDL Entity: 添加 VHDL 实体
+  Load Library: 加载库
+  Unload Library: 卸载库
+  Set As Main Circuit: 设为主电路
+  Remove Circuit: 删除电路
+  Edit Circuit Layout: 编辑电路布局
+  Edit Circuit Appearance: 编辑电路外观
+  Analyze Circuit: 分析电路
+  Get Circuit Statistics: 获取电路统计
+  Options: 选项
+  Auto propagate: 自动传播
+  Single Step Propagation: 单步传播
+  Reset Simulation: 重置仿真
+  Auto Ticks Enabled: 启用自动节拍
+  Auto Tick Frequency: 自动节拍频率
+  Timing diagram: 时序图
+  Test Vector: 测试向量
+  Assembly viewer: 汇编查看器
+  Tutorial: 教程
+  About: 关于
+  Dynamic components: 动态组件
+  port: 端口
+  ports: 端口
+  Transistor: 晶体管
+  Transmission Gate: 传输门
+  gate: 栅极
+  source: 源极
+  drain: 漏极
+  toolbar: 工具栏
+  explorer pane: 资源管理器窗格
+  Application preferences: 应用程序首选项
+  Project options: 项目选项
+  Template: 模板
+  Memory: 存储器
+  memory: 存储器
+  RAM: RAM
+  ROM: ROM
+  Hex editor: 十六进制编辑器
+  hex editor: 十六进制编辑器
+  Pop-up menu: 弹出菜单
+  pop-up menu: 弹出菜单
+  file panel: 文件面板
+  big-endian: 大端
+  little-endian: 小端
+  byte: 字节
+  bytes: 字节
+  word: 字
+  words: 字
+  address: 地址
+  addressed: 带地址
+  ASCII: ASCII
+  binary: 二进制
+  register: 寄存器
+  registers: 寄存器
+  counter: 计数器
+  counters: 计数器
+  latch: 锁存器
+  Truth Table: 真值表
+  Expression: 表达式
+  Combinational analysis: 组合分析
+  Plexers: 多路复用器
+  Multiplexer: 多路复用器
+  Demultiplexer: 多路分配器
+  Decoder: 解码器
