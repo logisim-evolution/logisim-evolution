@@ -17,7 +17,7 @@
         TCL 库
       </h1>
       <p>
-        TCL 组件允许您拥有一个行为由 TCL 脚本定义的组件。
+        TCL 组件用于创建由 TCL 脚本定义行为的组件。
       </p>
       <table>
         <tbody>
@@ -43,13 +43,13 @@
         TCL 脚本规范
       </h2>
       <p>
-        TCL 脚本由 Logisim 在一个包装器中启动。
+        Logisim 会在一个包装器中运行 TCL 脚本。
       </p>
       <h3>
         包装器 API
       </h3>
       <p>
-        包装器提供一个与 Questasim/Modelsim API 兼容的 API 来运行仿真。仅提供少数几个函数：
+        包装器提供与 Questasim/Modelsim API 兼容的仿真接口。当前只支持少数函数：
       </p>
       <dl>
         <dt>
@@ -59,7 +59,7 @@
           获取缓冲信号值。返回值为包含信号二进制值的字符串。
         </dd>
         <dd>
-          &lt;signal&gt; 信号名称。如果包含信号路径（针对 Questasim），路径将被忽略（例如 <code>/top_sim/component2/Signal_2_i</code> 将变为 <code>Signal_2_i</code>）。
+          &lt;signal&gt; 为信号名称。如果其中包含信号路径（针对 Questasim），路径会被忽略（例如 <code>/top_sim/component2/Signal_2_i</code> 会变为 <code>Signal_2_i</code>）。
         </dd>
         <dd>
           <i>不支持单比特读取（例如 <code>examine Signal_2_i(3)</code>）。</i>
@@ -74,10 +74,10 @@
           设置缓冲信号值。
         </dd>
         <dd>
-          &lt;signal&gt; 信号名称。如果包含信号路径（针对 Questasim），路径将被忽略（例如 <code>/top_sim/component2/Signal_2_i</code> 将变为 <code>Signal_2_i</code>）。
+          &lt;signal&gt; 为信号名称。如果其中包含信号路径（针对 Questasim），路径会被忽略（例如 <code>/top_sim/component2/Signal_2_i</code> 会变为 <code>Signal_2_i</code>）。
         </dd>
         <dd>
-          &lt;value&gt; 二进制值的字符串。如果字符串不完整（缺少 MSB），将用 X 补齐（例如，将 10100 设置到 8 位信号时变为 XXX10100）。
+          &lt;value&gt; 为二进制字符串。如果字符串不完整（缺少 MSB），会用 X 补齐（例如，将 10100 设置到 8 位信号时会变为 XXX10100）。
         </dd>
         <dd>
           <br>
@@ -93,24 +93,24 @@
         包装器回调
       </h3>
       <p>
-        在每个仿真步骤中，包装器调用 <code>refresh {}</code> 回调。通常可以在此包装器中放置读取输入、计算输出、刷新 GUI 和设置输出所需的代码。
+        每个仿真步骤中，包装器都会调用 <code>refresh {}</code> 回调。通常可以在此回调中放置读取输入、计算输出、刷新 GUI 和设置输出所需的代码。
       </p>
       <p>
-        刷新回调中不允许包含 <code>run</code> 函数调用。如果这样做，将产生无限循环，因为 <code>run</code> 函数会执行一个仿真步骤，进而调用刷新回调。
+        刷新回调中不允许包含 <code>run</code> 函数调用。否则会产生无限循环，因为 <code>run</code> 函数会执行一个仿真步骤，进而再次调用刷新回调。
       </p>
 <code>refresh {} {<br></code>
       <dl>
         <dd>
-          <code># Read inputs with examine function</code>
+          <code># 使用 examine 函数读取输入</code>
         </dd>
         <dd>
-          <code># Compute some values</code>
+          <code># 计算所需的值</code>
         </dd>
         <dd>
-          <code># Refresh the UI</code>
+          <code># 刷新界面</code>
         </dd>
         <dd>
-          <code># Set the outputs with force function</code>
+          <code># 使用 force 函数设置输出</code>
         </dd>
         <dt>
           <code>}</code><br> <a href="../index.html">返回<em>库参考</em></a><br>
