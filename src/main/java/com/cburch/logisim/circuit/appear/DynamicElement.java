@@ -28,6 +28,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.UnmodifiableList;
@@ -232,6 +233,24 @@ public abstract class DynamicElement extends AbstractCanvasObject {
       obj = state.getData(path.elt[i]);
     }
     return obj;
+  }
+
+  protected InstanceState getInstanceState(CircuitState state) {
+    final var leafState = getLeafCircuitState(state);
+    return leafState == null ? null : leafState.getInstanceState(path.leaf());
+  }
+
+  private CircuitState getLeafCircuitState(CircuitState state) {
+    for (var i = 0; i < path.elt.length - 1; i++) {
+      final var obj = state.getData(path.elt[i]);
+      if (obj == null) return null;
+      if (!(obj instanceof CircuitState)) {
+        throw new IllegalStateException(
+            "Expecting CircuitState for path[" + i + "] " + path.elt[i] + "  but got: " + obj);
+      }
+      state = (CircuitState) obj;
+    }
+    return state;
   }
 
   protected InstanceComponent getComponent(CircuitState state) {

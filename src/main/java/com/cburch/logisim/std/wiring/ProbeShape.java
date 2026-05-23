@@ -95,7 +95,8 @@ public class ProbeShape extends DynamicElement {
     int w = bounds.getWidth();
     int h = bounds.getHeight();
     if (state != null) {
-      Value val = Probe.getValue(state.getInstanceState(path.leaf()));
+      final var probeState = getInstanceState(state);
+      Value val = probeState == null ? Value.NIL : Probe.getValue(probeState);
       if (val == null)
         val = Value.NIL;
       RadixOption radix = path.leaf().getAttributeSet().getValue(RadixOption.ATTRIBUTE);
