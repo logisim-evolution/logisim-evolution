@@ -578,6 +578,7 @@ public class AppPreferences {
   public static final int DEFAULT_COMPONENT_SECONDARY_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
+  public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
 
   // restores default grid colors
   public static void setDefaultGridColors() {
@@ -607,6 +608,8 @@ public class AppPreferences {
       create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
       create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+  public static final PrefMonitor<Integer> TEXT_TOOL_COLOR =
+      create(new PrefMonitorInt("textToolColor", DEFAULT_TEXT_TOOL_COLOR));
 
 
   // Layout preferences
