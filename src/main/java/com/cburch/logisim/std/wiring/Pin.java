@@ -48,6 +48,7 @@ import com.cburch.logisim.util.LocaleListener;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -75,6 +76,11 @@ public class Pin extends InstanceFactory {
    */
   public static final String _ID = "Pin";
 
+  private static Frame getOwnerFrame(InstanceState state) {
+    final var project = state.getProject();
+    return project == null ? null : project.getFrame();
+  }
+
   @SuppressWarnings("serial")
   private static class EditDecimal extends JDialog implements BaseKeyListenerContract, LocaleListener {
 
@@ -97,7 +103,7 @@ public class Pin extends InstanceFactory {
     }
 
     public EditDecimal(InstanceState state) {
-      super();
+      super(getOwnerFrame(state));
       this.state = state;
       radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
       pinState = getState(state);
@@ -250,7 +256,7 @@ public class Pin extends InstanceFactory {
     }
 
     public EditFloat(InstanceState state) {
-      super();
+      super(getOwnerFrame(state));
       this.state = state;
       pinState = getState(state);
       final var value = pinState.intendedValue;
