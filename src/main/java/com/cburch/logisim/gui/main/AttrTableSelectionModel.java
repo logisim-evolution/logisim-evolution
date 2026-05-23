@@ -122,7 +122,11 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   public void selectionChanged(final Event event) {
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {
-      frame.setAttrTableModel(this);
+      if (frame.getCanvas().getSelection().isEmpty()) {
+        frame.viewCircuitAttributes();
+      } else {
+        frame.setAttrTableModel(this);
+      }
     }
   }
 
