@@ -40,6 +40,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     super(frame.getCanvas().getSelection().getAttributeSet());
     this.project = project;
     this.frame = frame;
+    updateAttributeSet();
     frame.getCanvas().getSelection().addListener(this);
   }
 
@@ -120,14 +121,21 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   // Selection.Listener methods
   @Override
   public void selectionChanged(final Event event) {
+    updateAttributeSet();
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {
-      if (frame.getCanvas().getSelection().isEmpty()) {
-        frame.viewCircuitAttributes();
-      } else {
-        frame.setAttrTableModel(this);
-      }
+      frame.setAttrTableModel(this);
     }
+  }
+
+  void updateAttributeSet() {
+    final var canvas = frame.getCanvas();
+    final var circuit = canvas.getCircuit();
+    final var selection = canvas.getSelection();
+    setAttributeSet(
+        circuit != null && selection.isEmpty()
+            ? circuit.getStaticAttributes()
+            : selection.getAttributeSet());
   }
 
   @Override

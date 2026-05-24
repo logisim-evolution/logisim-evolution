@@ -798,11 +798,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (newAttrs == null) {
       viewCircuitAttributes();
     } else if (newAttrs instanceof SelectionAttributes) {
-      if (layoutCanvas.getSelection().isEmpty()) {
-        viewCircuitAttributes();
-      } else {
-        setAttrTableModel(attrTableSelectionModel);
-      }
+      attrTableSelectionModel.updateAttributeSet();
+      setAttrTableModel(attrTableSelectionModel);
     } else {
       setAttrTableModel(new AttrTableToolModel(project, newTool));
     }
