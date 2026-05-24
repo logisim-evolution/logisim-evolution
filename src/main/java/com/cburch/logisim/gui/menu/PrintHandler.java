@@ -102,20 +102,8 @@ public abstract class PrintHandler implements Printable {
             S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
     var dest = chooser.getSelectedFile();
-    FileFilter ff = null;
-    for (final var filter : filters) {
-      if (filter.accept(dest)) ff = filter;
-    }
-    if (ff == null) ff = chooser.getFileFilter();
-    if (!ff.accept(dest)) {
-      if (ff == filters[0]) dest = new File(dest + ".png");
-      else if (ff == filters[1]) dest = new File(dest + ".gif");
-      else if (ff == filters[2]) dest = new File(dest + ".jpg");
-      else if (ff == filters[3]) dest = new File(dest + ".tex");
-      else if (ff == filters[4]) dest = new File(dest + ".svg");
-      else if (ff == filters[5]) dest = new File(dest + ".json");
-
-    }
+    final var ff = chooseExportFilter(dest, chooser.getFileFilter(), filters);
+    dest = ensureFileExtension(dest, ff);
     setLastExported(dest);
     if (dest.exists()) {
       final var confirm =
@@ -126,14 +114,25 @@ public abstract class PrintHandler implements Printable {
               OptionPane.YES_NO_OPTION);
       if (confirm != OptionPane.YES_OPTION) return;
     }
-    final var fmt =
-            (ff == filters[0] ? ExportImage.FORMAT_PNG
-                    : ff == filters[1] ? ExportImage.FORMAT_GIF
-                    : ff == filters[2] ? ExportImage.FORMAT_JPG
-                    : ff == filters[3] ? ExportImage.FORMAT_TIKZ
-                    : ff == filters[4] ? ExportImage.FORMAT_SVG
-                    : ff == filters[5] ? ExportImage.FORMAT_WAVEDROM : ExportImage.FORMAT_SVG);
-    exportImage(dest, fmt);
+    exportImage(dest, ff.getType());
+  }
+
+  static ImageFileFilter chooseExportFilter(
+      File dest, FileFilter selectedFilter, ImageFileFilter[] filters) {
+    if (selectedFilter instanceof ImageFileFilter imageFileFilter) {
+      return imageFileFilter;
+    }
+    if (dest != null && !dest.isDirectory()) {
+      for (final var filter : filters) {
+        if (filter.accept(dest)) return filter;
+      }
+    }
+    return filters[0];
+  }
+
+  static File ensureFileExtension(File dest, ImageFileFilter filter) {
+    if (dest == null || (!dest.isDirectory() && filter.accept(dest))) return dest;
+    return new File(dest + filter.getDefaultExtension());
   }
 
   public void exportImage(File dest, int fmt) {

@@ -295,6 +295,14 @@ public class ExportImage {
     public String getDescription() {
       return desc.toString();
     }
+
+    public String getDefaultExtension() {
+      return extensions[0];
+    }
+
+    public int getType() {
+      return type;
+    }
   }
 
   private static class OptionsPanel extends JPanel implements ChangeListener {
