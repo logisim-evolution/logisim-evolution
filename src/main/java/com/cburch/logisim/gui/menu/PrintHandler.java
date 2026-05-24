@@ -15,7 +15,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
-import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Color;
 import java.awt.Component;
@@ -167,7 +166,7 @@ public abstract class PrintHandler implements Printable {
 
       try {
         switch (fmt) {
-          case ExportImage.FORMAT_GIF -> GifEncoder.toFile(img, dest, null);
+          case ExportImage.FORMAT_GIF -> ImageIO.write(img, "GIF", dest);
           case ExportImage.FORMAT_PNG -> ImageIO.write(img, "PNG", dest);
           case ExportImage.FORMAT_JPG -> ImageIO.write(img, "JPEG", dest);
           case ExportImage.FORMAT_TIKZ -> ((TikZWriter) g2d).writeFile(dest);
