@@ -205,7 +205,7 @@ public class TtyInterface {
   }
 
   static String formatTestVectorHeader(String pinName, int width) {
-    return String.format("%s[%d]", pinName, width);
+    return width == 1 ? pinName : String.format("%s[%d]", pinName, width);
   }
 
   private static String formatTestVectorHeader(String pinName, Instance pin) {

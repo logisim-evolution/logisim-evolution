@@ -24,7 +24,7 @@ public class TtyInterfaceTest {
 
   @Test
   public void testVectorHeaderIncludesBitWidth() {
-    assertEquals("a[1]", TtyInterface.formatTestVectorHeader("a", 1));
+    assertEquals("a", TtyInterface.formatTestVectorHeader("a", 1));
     assertEquals("x[4]", TtyInterface.formatTestVectorHeader("x", 4));
   }
 
