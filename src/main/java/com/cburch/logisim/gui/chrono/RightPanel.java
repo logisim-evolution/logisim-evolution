@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.gui.log.Model;
 import com.cburch.logisim.gui.log.Signal;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -575,9 +576,7 @@ public class RightPanel extends JPanel {
       }
     }
 
-    private void createOffscreen() {
-      buf = (BufferedImage) createImage(width, WAVE_HEIGHT);
-      final var g = buf.createGraphics();
+    private void drawWaveform(Graphics2D g) {
       g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
       g.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -591,15 +590,28 @@ public class RightPanel extends JPanel {
       g.fillRect(0, HIGH, width, LOW - HIGH);
       g.setColor(Color.BLACK);
       drawSignal(g, isBold, colors);
+    }
+
+    private void createOffscreen() {
+      buf = (BufferedImage) createImage(width, WAVE_HEIGHT);
+      final var g = buf.createGraphics();
+      drawWaveform(g);
       g.dispose();
     }
 
     public void paintWaveform(Graphics2D g) {
+      final var y = WAVE_HEIGHT * signal.idx;
+      if (g instanceof TikZWriter) {
+        final var gCopy = (Graphics2D) g.create();
+        gCopy.translate(0, y);
+        drawWaveform(gCopy);
+        gCopy.dispose();
+        return;
+      }
       if (buf == null) {
         // TODO: reallocating image each time seems silly
         createOffscreen();
       }
-      final var y = WAVE_HEIGHT * signal.idx;
       g.drawImage(buf, null, 0, y);
     }
 
