@@ -77,13 +77,13 @@ public class Random extends InstanceFactory {
 
     private long initSeed;
     private long curSeed;
-    private int value;
+    private long value;
     private long resetValue;
     private Value oldReset;
 
     public StateData(Object seed) {
       resetValue = this.initSeed = this.curSeed = getRandomSeed(seed);
-      this.value = (int) this.initSeed;
+      this.value = this.initSeed;
       oldReset = Value.UNKNOWN;
     }
 
@@ -97,7 +97,7 @@ public class Random extends InstanceFactory {
     public void reset(Object seed) {
       this.initSeed = resetValue;
       this.curSeed = resetValue;
-      this.value = (int) resetValue;
+      this.value = resetValue;
     }
 
     private long getRandomSeed(Object seed) {
@@ -118,7 +118,7 @@ public class Random extends InstanceFactory {
       long v = curSeed;
       v = (v * MULTIPLIER + ADDEND) & MASK;
       curSeed = v;
-      value = (int) (v >> 12);
+      value = v >> 12;
     }
   }
 
@@ -238,7 +238,7 @@ public class Random extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
   }
 
-  private void drawData(InstancePainter painter, int xpos, int ypos, int nrOfBits, int value) {
+  private void drawData(InstancePainter painter, int xpos, int ypos, int nrOfBits, long value) {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(xpos, ypos, 80, 20);
@@ -261,7 +261,7 @@ public class Random extends InstanceFactory {
     String a;
     String b = null;
     if (painter.getShowState()) {
-      int val = state == null ? 0 : state.value;
+      long val = state == null ? 0 : state.value;
       final var str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
