@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
 import com.cburch.logisim.util.StringGetter;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -24,6 +25,7 @@ import java.awt.print.Printable;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -93,6 +95,16 @@ class PrintHandlerTest {
     assertFalse(content.contains("\\begin{tikzpicture}"));
   }
 
+  @Test
+  void directGifExportWritesImagesWithMoreThan256Colors() throws Exception {
+    final var dest = tempDir.resolve("timing.gif").toFile();
+    new ManyColorPrintHandler().exportImage(dest, ExportImage.FORMAT_GIF);
+
+    assertTrue(dest.isFile());
+    assertTrue(dest.length() > 0);
+    assertEquals(20, ImageIO.read(dest).getWidth());
+  }
+
   private static ImageFileFilter[] imageFilters() {
     return new ImageFileFilter[] {
       new ImageFileFilter(ExportImage.FORMAT_PNG, getter("PNG"), new String[] {"png"}),
@@ -127,6 +139,18 @@ class PrintHandlerTest {
     @Override
     public void paintExportImage(BufferedImage img, Graphics2D g) {
       g.drawLine(1, 2, 18, 2);
+    }
+  }
+
+  private static class ManyColorPrintHandler extends TestPrintHandler {
+    @Override
+    public void paintExportImage(BufferedImage img, Graphics2D g) {
+      for (var y = 0; y < img.getHeight(); y++) {
+        for (var x = 0; x < img.getWidth(); x++) {
+          g.setColor(new Color((x * 13) & 0xFF, (y * 13) & 0xFF, (x * y) & 0xFF));
+          g.fillRect(x, y, 1, 1);
+        }
+      }
     }
   }
 }
