@@ -204,6 +204,14 @@ public class TtyInterface {
     }
   }
 
+  static String formatTestVectorHeader(String pinName, int width) {
+    return width == 1 ? pinName : String.format("%s[%d]", pinName, width);
+  }
+
+  private static String formatTestVectorHeader(String pinName, Instance pin) {
+    return formatTestVectorHeader(pinName, pin.getAttributeValue(StdAttr.WIDTH).getWidth());
+  }
+
   private static void ensureLineTerminated() {
     if (!lastIsNewline) {
       lastIsNewline = true;
@@ -399,7 +407,7 @@ public class TtyInterface {
       final var pin = entry.getKey();
       final var pinName = entry.getValue();
       if (Pin.FACTORY.isInputPin(pin)) {
-        headers.add(pinName);
+        headers.add(formatTestVectorHeader(pinName, pin));
         pinList.add(pin);
       }
     }
@@ -408,7 +416,7 @@ public class TtyInterface {
       final var pin = entry.getKey();
       final var pinName = entry.getValue();
       if (!Pin.FACTORY.isInputPin(pin)) {
-        headers.add(pinName);
+        headers.add(formatTestVectorHeader(pinName, pin));
         pinList.add(pin);
       }
     }
