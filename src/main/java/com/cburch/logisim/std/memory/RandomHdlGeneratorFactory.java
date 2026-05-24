@@ -168,9 +168,10 @@ public class RandomHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           makeOutput : {{process}}({{GlobalClock}}, s_reset, s_initSeed) {{is}}
           {{begin}}
              {{if}} (rising_edge({{GlobalClock}})) {{then}}
-                {{if}} (s_reset = '1') {{then}} s_outputReg <= s_initSeed( ({{nrOfBits}}-1) {{downto}} 0 );
+                {{if}} (s_reset = '1') {{then}}
+                   s_outputReg <= std_logic_vector(resize(unsigned(s_initSeed), {{nrOfBits}}));
                 {{elsif}} ({{ClockEnable}} = '1' {{and}} enable = '1') {{then}}
-                   s_outputReg <= s_currentSeed(({{nrOfBits}}+11) {{downto}} 12);
+                   s_outputReg <= std_logic_vector(resize(unsigned(s_currentSeed(47 {{downto}} 12)), {{nrOfBits}}));
                 {{end}} {{if}};
              {{end}} {{if}};
           {{end}} {{process}} makeOutput;
@@ -219,8 +220,8 @@ public class RandomHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
           always @(posedge {{GlobalClock}})
           begin
-             if (s_reset) s_outputReg <= s_initSeed[({{nrOfBits}}-1):0];
-             else if ({{ClockEnable}}&enable) s_outputReg <= s_currentSeed[({{nrOfBits}}+11):12];
+             if (s_reset) s_outputReg <= s_initSeed;
+             else if ({{ClockEnable}}&enable) s_outputReg <= s_currentSeed[47:12];
           end
           """);
     }
