@@ -129,7 +129,7 @@ public class CircuitState implements InstanceData {
         if (map == null) return;
         for (final var comp : map.getRemovals()) {
           final var compState = componentData.remove(comp);
-          if (compState != null) continue;
+          if (compState == null) continue;
           Class<?> compFactory = comp.getFactory().getClass();
           var found = false;
           for (final var repl : map.getReplacementsFor(comp)) {
