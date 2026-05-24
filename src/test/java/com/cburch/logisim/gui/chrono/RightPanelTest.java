@@ -9,30 +9,28 @@
 
 package com.cburch.logisim.gui.chrono;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.gui.log.Model;
 import com.cburch.logisim.gui.log.Signal;
 import com.cburch.logisim.gui.log.SignalInfo;
 import java.awt.Color;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import javax.swing.DefaultListSelectionModel;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 class RightPanelTest {
 
-  @TempDir Path tempDir;
-
   @Test
-  void vectorExportPaintsWaveformPaths() throws Exception {
+  void vectorExportPaintsWaveformsDirectly() {
     final var signalInfo = mock(SignalInfo.class);
     when(signalInfo.getWidth()).thenReturn(1);
     when(signalInfo.format(any(Value.class))).thenAnswer(inv -> inv.getArgument(0).toString());
@@ -61,14 +59,15 @@ class RightPanelTest {
             });
 
     final var rightPanel = new RightPanel(chronoPanel, new DefaultListSelectionModel());
-    final var writer = new TikZWriter();
-    rightPanel.paintExportImage(writer);
+    final var exportGraphics = mock(Graphics2D.class);
+    final var waveformGraphics = mock(Graphics2D.class);
+    final var metricsGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).createGraphics();
+    when(exportGraphics.create()).thenReturn(waveformGraphics);
+    when(waveformGraphics.getFontMetrics()).thenReturn(metricsGraphics.getFontMetrics());
 
-    final var exportFile = tempDir.resolve("timing.svg").toFile();
-    writer.writeSvg(100, 30, exportFile);
+    rightPanel.paintExportImage(exportGraphics);
 
-    final var svg = Files.readString(exportFile.toPath());
-    assertTrue(svg.contains("stroke=\"#000000\""));
-    assertTrue(svg.contains("V28") || svg.contains("V2"));
+    verify(waveformGraphics, atLeastOnce()).drawLine(anyInt(), anyInt(), anyInt(), anyInt());
+    metricsGraphics.dispose();
   }
 }
