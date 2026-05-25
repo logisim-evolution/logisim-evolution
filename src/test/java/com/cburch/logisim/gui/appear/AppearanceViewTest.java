@@ -9,8 +9,9 @@
 
 package com.cburch.logisim.gui.appear;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,6 +57,7 @@ class AppearanceViewTest {
     final var canvas = view.getCanvas();
     canvas.getSelection().setSelected(new Rectangle(0, 0, 10, 10), true);
     assertFalse(table.getAttrTableModel() instanceof AttrTableCircuitModel);
+    assertTrue(table.getAttrTableModel().getRowCount() > 1);
 
     canvas.getSelection().clearSelected();
     assertInstanceOf(AttrTableCircuitModel.class, table.getAttrTableModel());

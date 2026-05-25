@@ -11,6 +11,7 @@ package com.cburch.draw.gui;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.shapes.Rectangle;
@@ -35,7 +36,8 @@ class AttrTableDrawManagerTest {
     assertSame(emptySelectionModel, table.getAttrTableModel());
 
     canvas.getSelection().setSelected(new Rectangle(0, 0, 10, 10), true);
-    assertInstanceOf(AttrTableSelectionModel.class, table.getAttrTableModel());
+    final var selectionModel = assertInstanceOf(AttrTableSelectionModel.class, table.getAttrTableModel());
+    assertTrue(selectionModel.getRowCount() > 1);
 
     canvas.getSelection().clearSelected();
     assertSame(emptySelectionModel, table.getAttrTableModel());
