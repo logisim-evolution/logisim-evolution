@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.shapes.Rectangle;
 import com.cburch.draw.tools.DrawingAttributeSet;
+import com.cburch.draw.tools.RectangleTool;
 import com.cburch.draw.tools.SelectTool;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.AttrTableModel;
@@ -29,9 +30,10 @@ class AttrTableDrawManagerTest {
   void selectToolUsesFallbackModelOnlyForEmptySelections() {
     final var canvas = new Canvas();
     final var table = new AttrTable(null);
+    final var drawingAttrs = new DrawingAttributeSet();
     final var emptySelectionModel = new TestAttrTableModel();
 
-    new AttrTableDrawManager(canvas, table, new DrawingAttributeSet(), () -> emptySelectionModel);
+    new AttrTableDrawManager(canvas, table, drawingAttrs, () -> emptySelectionModel);
     canvas.setTool(new SelectTool());
     assertSame(emptySelectionModel, table.getAttrTableModel());
 
@@ -41,6 +43,31 @@ class AttrTableDrawManagerTest {
 
     canvas.getSelection().clearSelected();
     assertSame(emptySelectionModel, table.getAttrTableModel());
+  }
+
+  @Test
+  void drawingToolAttributesAreIndependentFromSelectionFallback() {
+    final var canvas = new Canvas();
+    final var table = new AttrTable(null);
+    final var drawingAttrs = new DrawingAttributeSet();
+    final var rectangleTool = new RectangleTool(drawingAttrs);
+    final var emptySelectionModel = new TestAttrTableModel();
+
+    new AttrTableDrawManager(canvas, table, drawingAttrs, () -> emptySelectionModel);
+
+    canvas.setTool(rectangleTool);
+    final var toolModel = assertInstanceOf(AttrTableToolModel.class, table.getAttrTableModel());
+    assertTrue(toolModel.getRowCount() > 1);
+
+    canvas.getSelection().setSelected(rectangleTool.createShape(0, 0, 10, 10), true);
+    assertSame(toolModel, table.getAttrTableModel());
+
+    canvas.setTool(new SelectTool());
+    assertSame(emptySelectionModel, table.getAttrTableModel());
+
+    canvas.getSelection().setSelected(rectangleTool.createShape(0, 0, 10, 10), true);
+    final var selectionModel = assertInstanceOf(AttrTableSelectionModel.class, table.getAttrTableModel());
+    assertTrue(selectionModel.getRowCount() > 1);
   }
 
   private static final class TestAttrTableModel implements AttrTableModel {
