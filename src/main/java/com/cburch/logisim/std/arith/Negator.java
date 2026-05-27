@@ -81,7 +81,11 @@ public class Negator extends InstanceFactory {
     Value in = state.getPortValue(IN);
     Value out;
     if (in.isFullyDefined()) {
-      out = Value.createKnown(in.getBitWidth(), -in.toLongValue());
+      if (dataWidth.getWidth() <= 64) {
+        out = Value.createKnown(in.getBitWidth(), -in.toLongValue());
+      } else {
+        out = Value.createKnown(in.getBitWidth(), in.toBigInteger(false).negate());
+      }
     } else {
       Value[] bits = in.getAll();
       Value fill = Value.FALSE;

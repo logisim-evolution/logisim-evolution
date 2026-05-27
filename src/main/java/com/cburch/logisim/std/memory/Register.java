@@ -82,7 +82,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       if (value.isFullyDefined()) g.setColor(Color.DARK_GRAY);
       else g.setColor(Color.YELLOW);
       var str = "";
-      if (value.isFullyDefined()) str = StringUtil.toHexString(nrOfBits, value.toLongValue());
+      if (value.isFullyDefined()) str = value.toHexString();
       else {
         for (int i = 0; i < len; i++) str = str.concat("?");
       }
@@ -150,8 +150,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     String a;
     String b = null;
     if (painter.getShowState()) {
-      long val = state == null ? 0 : state.value.toLongValue();
-      final var str = StringUtil.toHexString(width, val);
+      final var str = state == null ? "0" : state.value.toHexString();
       if (str.length() <= 4) {
         a = str;
       } else {

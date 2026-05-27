@@ -26,6 +26,7 @@ import com.cburch.logisim.std.wiring.Constant;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -306,7 +307,7 @@ public class CircuitBuilder {
       }
       final var factory = Constant.FACTORY;
       final var attrs = factory.createAttributeSet();
-      attrs.setValue(Constant.ATTR_VALUE, (long) value.getValue());
+      attrs.setValue(Constant.ATTR_VALUE, BigInteger.valueOf(value.getValue()));
       final var bds = factory.getOffsetBounds(attrs);
       return new Layout(bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
     }
@@ -477,10 +478,10 @@ public class CircuitBuilder {
       final var factory = parent.getFactory();
       if (factory instanceof AbstractGate gate) {
         final var val = gate.getIdentity();
-        final var valLong = val.toLongValue();
+        final var valBig = val.toBigInteger(true);
         final var loc = parent.getEnd(index).getLocation();
         final var attrs = Constant.FACTORY.createAttributeSet();
-        attrs.setValue(Constant.ATTR_VALUE, valLong);
+        attrs.setValue(Constant.ATTR_VALUE, valBig);
         result.add(Constant.FACTORY.createComponent(loc, attrs));
       }
     }
@@ -579,7 +580,7 @@ public class CircuitBuilder {
     if (!inputData.getInputLocs("0", false).ys.isEmpty()) {
       final var attrs = fact.createAttributeSet();
       attrs.setValue(StdAttr.FACING, Direction.SOUTH);
-      attrs.setValue(Constant.ATTR_VALUE, 0L);
+      attrs.setValue(Constant.ATTR_VALUE, BigInteger.ZERO);
       final var loc = Location.create(inputData.getSpineX("0", false), inputData.startY - 10, true);
       result.add(fact.createComponent(loc, attrs));
       inputData.registerConnection("0", loc, false);
@@ -588,7 +589,7 @@ public class CircuitBuilder {
     if (!inputData.getInputLocs("1", false).ys.isEmpty()) {
       final var attrs = fact.createAttributeSet();
       attrs.setValue(StdAttr.FACING, Direction.SOUTH);
-      attrs.setValue(Constant.ATTR_VALUE, 1L);
+      attrs.setValue(Constant.ATTR_VALUE, BigInteger.ONE);
       final var loc = Location.create(inputData.getSpineX("1", false), inputData.startY - 10, true);
       result.add(fact.createComponent(loc, attrs));
       inputData.registerConnection("1", loc, false);
