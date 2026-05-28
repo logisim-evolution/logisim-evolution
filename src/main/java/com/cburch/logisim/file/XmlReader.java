@@ -466,6 +466,19 @@ class XmlReader {
             final var vhdl = circElt.getTextContent();
             final var contents = VhdlContent.parse(name, vhdl, file);
             if (contents != null) {
+              if (circElt.hasAttribute("appearance")) {
+                try {
+                  contents.setAppearance(
+                      StdAttr.APPEARANCE.parse(circElt.getAttribute("appearance")));
+                } catch (NumberFormatException e) {
+                  addError(
+                      S.get(
+                          "attrValueInvalidError",
+                          circElt.getAttribute("appearance"),
+                          StdAttr.APPEARANCE.getName()),
+                      "vhdl." + name);
+                }
+              }
               file.addVhdlContent(contents);
             }
           }
