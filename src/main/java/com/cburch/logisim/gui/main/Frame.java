@@ -873,10 +873,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }
+          viewAttributes(project.getTool());
         } else if (event.getData() instanceof HdlModel model) {
           setHdlEditorView(model);
+          viewCircuitAttributes();
+        } else {
+          viewAttributes(project.getTool());
         }
-        viewAttributes(project.getTool());
         buildTitleString();
       } else if (action == ProjectEvent.ACTION_SET_TOOL) {
         if (attrTable == null) {
