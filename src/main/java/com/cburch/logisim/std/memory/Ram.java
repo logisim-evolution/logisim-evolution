@@ -277,7 +277,7 @@ public class Ram extends Mem {
       for (var i = 0; i < dataLines; i++) {
         if (dataLines > 1) {
           final var le = state.getPortValue(RamAppearance.getLEIndex(i, attrs));
-          if (le != null && le.equals(Value.FALSE))
+          if (!Value.TRUE.equals(le))
             continue;
         }
         long dataValue = state.getPortValue(RamAppearance.getDataInIndex(i, attrs)).toLongValue();
