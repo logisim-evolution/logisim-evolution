@@ -796,16 +796,21 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) return;
     }
     if (newAttrs == null) {
-      final var circ = project.getCurrentCircuit();
-      if (circ != null) {
-        setAttrTableModel(new AttrTableCircuitModel(project, circ));
-      } else if (force) {
-        setAttrTableModel(null);
-      }
+      viewCircuitAttributes();
     } else if (newAttrs instanceof SelectionAttributes) {
+      attrTableSelectionModel.updateAttributeSet();
       setAttrTableModel(attrTableSelectionModel);
     } else {
       setAttrTableModel(new AttrTableToolModel(project, newTool));
+    }
+  }
+
+  void viewCircuitAttributes() {
+    final var circ = project.getCurrentCircuit();
+    if (circ != null) {
+      setAttrTableModel(new AttrTableCircuitModel(project, circ));
+    } else {
+      setAttrTableModel(null);
     }
   }
 
