@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.gui.menu;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.contracts.BaseKeyListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.Circuit;
@@ -60,11 +62,14 @@ public class AssemblyWindow
   private final Preferences prefs;
   private final LFrame windows;
   private final JMenuBar winMenuBar;
+  private final JMenu fileMenu;
+  private final JMenu windowMenu;
   private final JCheckBoxMenuItem ontopItem;
   private final JMenuItem openFileItem;
   private final JMenuItem reloadFileItem;
   private final JMenuItem close;
-  private final JButton refresh = new JButton("Get Registers");
+  private final JButton refresh = new JButton();
+  private final JLabel registerLabel = new JLabel();
   private final JLabel status = new JLabel();
   private final JEditorPane document = new JEditorPane();
 
@@ -81,8 +86,8 @@ public class AssemblyWindow
     curCircuit = proj.getCurrentCircuit();
     curCircuitState = proj.getCircuitState();
     winMenuBar = new JMenuBar();
-    final var windowMenu = new JMenu("Window");
-    final var fileMenu = new JMenu("File");
+    windowMenu = new JMenu();
+    fileMenu = new JMenu();
     final var main = new JPanel(new BorderLayout());
     final var north = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
     /* LinePainter painter = new LinePainter(document); */
@@ -93,15 +98,15 @@ public class AssemblyWindow
     combo.setFocusable(false);
     refresh.addActionListener(this);
     refresh.setFocusable(false);
-    refresh.setToolTipText("Get register list of current displayed circuit.");
 
-    ontopItem = new JCheckBoxMenuItem("Set on top", true);
+    ontopItem = new JCheckBoxMenuItem();
+    ontopItem.setState(true);
     ontopItem.addActionListener(this);
-    openFileItem = new JMenuItem("Open lss file");
+    openFileItem = new JMenuItem();
     openFileItem.addActionListener(this);
-    reloadFileItem = new JMenuItem("Reload lss file");
+    reloadFileItem = new JMenuItem();
     reloadFileItem.addActionListener(this);
-    close = new JMenuItem("Close");
+    close = new JMenuItem();
     close.addActionListener(this);
     winMenuBar.add(fileMenu);
     winMenuBar.add(windowMenu);
@@ -113,7 +118,6 @@ public class AssemblyWindow
     fileMenu.add(close);
 
     windows = new LFrame.Dialog(null);
-    windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
     windows.setJMenuBar(winMenuBar);
     windows.toFront();
     windows.setAlwaysOnTop(true);
@@ -121,7 +125,7 @@ public class AssemblyWindow
     windows.addWindowListener(this);
     windows.addKeyListener(this);
 
-    north.add(new JLabel("Register: "));
+    north.add(registerLabel);
     north.add(combo);
     north.add(refresh);
 
@@ -141,6 +145,7 @@ public class AssemblyWindow
     windows.setLocation(prefs.getInt("X", 0), prefs.getInt("Y", 0));
     windows.setSize(
         prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
+    localeChanged();
   }
 
   @Override
@@ -160,7 +165,7 @@ public class AssemblyWindow
 
             @Override
             public String getDescription() {
-              return ".lss disassembly file";
+              return S.get("assemblyLssFileFilter");
             }
           };
       fileChooser.setFileFilter(ff);
@@ -173,11 +178,11 @@ public class AssemblyWindow
             status.setText("");
             document.setPage(file.toURI().toURL());
           } else {
-            status.setText("Wrong file selected !");
+            status.setText(S.get("assemblyWrongFileSelected"));
             file = null;
           }
         } catch (Exception ex) {
-          status.setText("Cannot open file !");
+          status.setText(S.get("assemblyCannotOpenFile"));
           file = null;
         }
       }
@@ -188,9 +193,9 @@ public class AssemblyWindow
       if (file != null) {
         try {
           document.setPage(file.toURI().toURL());
-          status.setText("File reloaded.");
+          status.setText(S.get("assemblyFileReloaded"));
         } catch (Exception ex) {
-          status.setText("Cannot open file !");
+          status.setText(S.get("assemblyCannotOpenFile"));
           file = null;
         }
       }
@@ -225,7 +230,7 @@ public class AssemblyWindow
     combo.removeAllItems();
 
     if (entry.isEmpty()) {
-      status.setText("No labeled registers found.");
+      status.setText(S.get("assemblyNoLabeledRegisters"));
       combo.setEnabled(false);
     } else {
       status.setText("");
@@ -249,6 +254,20 @@ public class AssemblyWindow
   public void setVisible(boolean bool) {
     fillCombo();
     windows.setVisible(bool);
+  }
+
+  public void localeChanged() {
+    fileMenu.setText(S.get("fileMenu"));
+    windowMenu.setText(S.get("assemblyWindowMenu"));
+    ontopItem.setText(S.get("assemblySetOnTop"));
+    openFileItem.setText(S.get("assemblyOpenLssFile"));
+    reloadFileItem.setText(S.get("assemblyReloadLssFile"));
+    close.setText(S.get("fileCloseItem"));
+    registerLabel.setText(S.get("assemblyRegisterLabel"));
+    refresh.setText(S.get("assemblyGetRegisters"));
+    refresh.setToolTipText(S.get("assemblyGetRegistersToolTip"));
+    windows.setTitle(
+        S.get("assemblyWindowTitle", proj.getLogisimFile().getDisplayName()));
   }
 
   @Override
@@ -327,7 +346,7 @@ public class AssemblyWindow
             ex.printStackTrace();
           }
         } else {
-          status.setText("Line (" + where + ") not found!");
+          status.setText(S.get("assemblyLineNotFound", where));
         }
       }
     }
