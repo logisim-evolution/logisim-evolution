@@ -305,6 +305,7 @@ final class XmlWriter {
     vhdl.aboutToSave();
     final var ret = doc.createElement("vhdl");
     ret.setAttribute("name", vhdl.getName());
+    ret.setAttribute("appearance", StdAttr.APPEARANCE.toStandardString(vhdl.getAppearance()));
     ret.setTextContent(vhdl.getContent());
     return ret;
   }

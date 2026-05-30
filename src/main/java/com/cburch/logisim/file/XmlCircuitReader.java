@@ -22,6 +22,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
@@ -29,6 +30,7 @@ import com.cburch.logisim.std.memory.RamAttributes;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -101,6 +103,9 @@ public class XmlCircuitReader extends CircuitTransaction {
       defaults = null;
     }
     reader.initAttributeSet(elt, attrs, defaults, isHolyCross, isEvolution);
+    if (source instanceof VhdlEntity vhdl) {
+      initLegacyVhdlAppearance(elt, reader, vhdl);
+    }
 
     // Create component if location known
     if (StringUtil.isNullOrEmpty(locStr)) {
@@ -110,6 +115,23 @@ public class XmlCircuitReader extends CircuitTransaction {
       return source.createComponent(Location.parse(locStr), attrs);
     } catch (NumberFormatException e) {
       throw new XmlReaderException(S.get("compLocInvalidError", source.getName(), locStr));
+    }
+  }
+
+  private static void initLegacyVhdlAppearance(
+      Element elt, XmlReader.ReadContext reader, VhdlEntity vhdl) {
+    for (final var attrElt : XmlIterator.forChildElements(elt, "a")) {
+      if (!StdAttr.APPEARANCE.getName().equals(attrElt.getAttribute("name"))) continue;
+      final var attrValue =
+          attrElt.hasAttribute("val") ? attrElt.getAttribute("val") : attrElt.getTextContent();
+      try {
+        vhdl.getContent().setAppearance(StdAttr.APPEARANCE.parse(attrValue));
+      } catch (NumberFormatException e) {
+        reader.addError(
+            S.get("attrValueInvalidError", attrValue, StdAttr.APPEARANCE.getName()),
+            "vhdl." + vhdl.getName());
+      }
+      return;
     }
   }
 

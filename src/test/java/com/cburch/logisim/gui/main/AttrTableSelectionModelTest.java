@@ -19,6 +19,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 import org.junit.jupiter.api.Test;
 
 class AttrTableSelectionModelTest {
@@ -50,6 +51,26 @@ class AttrTableSelectionModelTest {
     when(selection.isEmpty()).thenReturn(true);
     model.updateAttributeSet();
     assertSame(circuitAttrs, model.getAttributeSet());
+  }
+
+  @Test
+  void usesHdlAttributesWhenHdlEditorIsCurrent() {
+    final var project = mock(Project.class);
+    final var frame = mock(Frame.class);
+    final var canvas = mock(Canvas.class);
+    final var selection = mock(Selection.class);
+    final var selectionAttrs = attributeSet("selection");
+    final var hdl = VhdlContent.create("AttrTableHdlTest", null);
+
+    when(frame.getCanvas()).thenReturn(canvas);
+    when(canvas.getCircuit()).thenReturn(null);
+    when(canvas.getCurrentHdl()).thenReturn(hdl);
+    when(canvas.getSelection()).thenReturn(selection);
+    when(selection.getAttributeSet()).thenReturn(selectionAttrs);
+
+    final var model = new AttrTableSelectionModel(project, frame);
+
+    assertSame(hdl.getStaticAttributes(), model.getAttributeSet());
   }
 
   private static AttributeSet attributeSet(String label) {
