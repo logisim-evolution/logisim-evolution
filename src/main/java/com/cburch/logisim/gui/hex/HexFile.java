@@ -1800,7 +1800,7 @@ public class HexFile {
     void refresh() {
       String desc = chooser.getFileFilter().getDescription();
       String hdr = headerForFormat(desc);
-      preview.setText(hdr + saveToString(memContents, desc, -1));
+      preview.setText(hdr + saveToString(memContents, desc, MAX_PREVIEW_SIZE));
       preview.setCaretPosition(0);
     }
   }
