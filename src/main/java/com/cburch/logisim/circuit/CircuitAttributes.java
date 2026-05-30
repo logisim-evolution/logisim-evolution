@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.circuit;
 
-import static com.cburch.logisim.circuit.Strings.S;
-
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
@@ -33,6 +31,7 @@ import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import static com.cburch.logisim.circuit.Strings.S;
 
 public class CircuitAttributes extends AbstractAttributeSet {
 
@@ -217,7 +216,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
           NAME_ATTR,
           CIRCUIT_LABEL_ATTR,
           CIRCUIT_LABEL_FACING_ATTR,
-          CIRCUIT_LABEL_FONT_ATTR);
+          CIRCUIT_LABEL_FONT_ATTR,
+          APPEARANCE_ATTR);
 
   private final Circuit source;
   private Instance subcircInstance;
