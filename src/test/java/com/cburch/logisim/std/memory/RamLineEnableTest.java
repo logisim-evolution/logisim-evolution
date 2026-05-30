@@ -79,9 +79,10 @@ class RamLineEnableTest {
   }
 
   @Test
-  void ramOctoLineWithOnlyFirstLineUsedWritesMisalignedAddressLikeSingleLine() {
+  void ramOctoLineAllowMisalignedWritesOnlyTrueLineAtArbitraryAddress() {
     final var ram = new Ram();
     final var attrs = ramAttrs(Mem.OCTO);
+    attrs.setValue(Mem.ALLOW_MISALIGNED, true);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
     state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
@@ -94,7 +95,9 @@ class RamLineEnableTest {
     state.setPortValue(RamAppearance.getLEIndex(0, attrs), Value.TRUE);
     for (var i = 1; i < 8; i++) {
       state.setPortValue(RamAppearance.getDataInIndex(i, attrs), known(DATA_WIDTH, 0x70 + i));
-      state.setPortValue(RamAppearance.getLEIndex(i, attrs), Value.FALSE);
+      if (i < 4) {
+        state.setPortValue(RamAppearance.getLEIndex(i, attrs), Value.FALSE);
+      }
     }
 
     ram.propagate(state);
@@ -107,39 +110,24 @@ class RamLineEnableTest {
   }
 
   @Test
-  void ramOctoLineSparseHigherLineRequiresContainingAlignedBlockForWrite() {
+  void ramOctoLineDisallowedMisalignmentKeepsFixedLineAlignment() {
     final var ram = new Ram();
     final var attrs = ramAttrs(Mem.OCTO);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
     state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
 
+    state.connectPort(RamAppearance.getDataOutIndex(0, attrs));
     state.setPortValue(RamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
     state.setPortValue(RamAppearance.getWEIndex(0, attrs), Value.TRUE);
     state.setPortValue(RamAppearance.getClkIndex(0, attrs), Value.TRUE);
-    state.setPortValue(RamAppearance.getDataInIndex(2, attrs), known(DATA_WIDTH, 0x6C));
-    state.setPortValue(RamAppearance.getLEIndex(2, attrs), Value.TRUE);
+    state.setPortValue(RamAppearance.getDataInIndex(0, attrs), known(DATA_WIDTH, 0x6C));
+    state.setPortValue(RamAppearance.getLEIndex(0, attrs), Value.TRUE);
 
     ram.propagate(state);
 
-    assertEquals(0, contents.get(5));
-  }
-
-  @Test
-  void ramOctoLineSparseHigherOutputRequiresContainingAlignedBlockForRead() {
-    final var ram = new Ram();
-    final var attrs = ramAttrs(Mem.OCTO);
-    final var state = new TestInstanceState(ram, attrs);
-    final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
-    state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
-    contents.set(5, 0x6C);
-
-    state.connectPort(RamAppearance.getDataOutIndex(2, attrs));
-    state.setPortValue(RamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
-
-    ram.propagate(state);
-
-    assertEquals(Value.createError(DATA_WIDTH), state.getPortValue(RamAppearance.getDataOutIndex(2, attrs)));
+    assertEquals(0, contents.get(3));
+    assertEquals(Value.createError(DATA_WIDTH), state.getPortValue(RamAppearance.getDataOutIndex(0, attrs)));
   }
 
   @Test
@@ -153,32 +141,34 @@ class RamLineEnableTest {
   }
 
   @Test
-  void dualRamOctoLineWithOnlyFirstPortALineUsedWritesMisalignedAddressLikeSingleLine() {
+  void dualRamOctoLineAllowMisalignedWritesOnlyFirstPortALineAtArbitraryAddress() {
     verifyDualRamOctoLineFirstLineActsLikeSingleLine(0, 3, 0x6A);
   }
 
   @Test
-  void dualRamOctoLineWithOnlyFirstPortBLineUsedWritesMisalignedAddressLikeSingleLine() {
+  void dualRamOctoLineAllowMisalignedWritesOnlyFirstPortBLineAtArbitraryAddress() {
     verifyDualRamOctoLineFirstLineActsLikeSingleLine(1, 5, 0x7B);
   }
 
   @Test
-  void dualRamOctoLineSparseHigherLineRequiresContainingAlignedBlockForWrite() {
+  void dualRamOctoLineDisallowedMisalignmentKeepsFixedLineAlignment() {
     final var ram = new DualRam();
     final var attrs = dualRamAttrs(Mem.OCTO);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
     state.setData(new DualRamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
 
+    state.connectPort(DualRamAppearance.getDataOutIndex(0, attrs));
     state.setPortValue(DualRamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
     state.setPortValue(DualRamAppearance.getWEIndex(0, attrs), Value.TRUE);
     state.setPortValue(DualRamAppearance.getClkIndex(0, attrs), Value.TRUE);
-    state.setPortValue(DualRamAppearance.getDataInIndex(2, attrs), known(DATA_WIDTH, 0x7C));
-    state.setPortValue(DualRamAppearance.getLEIndex(2, attrs), Value.TRUE);
+    state.setPortValue(DualRamAppearance.getDataInIndex(0, attrs), known(DATA_WIDTH, 0x7C));
+    state.setPortValue(DualRamAppearance.getLEIndex(0, attrs), Value.TRUE);
 
     ram.propagate(state);
 
-    assertEquals(0, contents.get(5));
+    assertEquals(0, contents.get(3));
+    assertEquals(Value.createError(DATA_WIDTH), state.getPortValue(DualRamAppearance.getDataOutIndex(0, attrs)));
   }
 
   private static void verifyDualRamOctoLineWritesOnlyEnabledLine(int port, int baseAddress, int dataBase) {
@@ -213,6 +203,7 @@ class RamLineEnableTest {
   private static void verifyDualRamOctoLineFirstLineActsLikeSingleLine(int port, int address, int value) {
     final var ram = new DualRam();
     final var attrs = dualRamAttrs(Mem.OCTO);
+    attrs.setValue(Mem.ALLOW_MISALIGNED, true);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
     state.setData(new DualRamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
@@ -229,7 +220,9 @@ class RamLineEnableTest {
     for (var i = 1; i < dataLines; i++) {
       final var absIndex = baseLine + i;
       state.setPortValue(DualRamAppearance.getDataInIndex(absIndex, attrs), known(DATA_WIDTH, 0x20 + i));
-      state.setPortValue(DualRamAppearance.getLEIndex(absIndex, attrs), Value.FALSE);
+      if (i < 4) {
+        state.setPortValue(DualRamAppearance.getLEIndex(absIndex, attrs), Value.FALSE);
+      }
     }
 
     ram.propagate(state);
