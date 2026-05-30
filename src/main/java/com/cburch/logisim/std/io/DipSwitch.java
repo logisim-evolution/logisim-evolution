@@ -15,6 +15,7 @@ import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -125,7 +126,14 @@ public class DipSwitch extends InstanceFactory {
 
   public static final Attribute<BitWidth> ATTR_SIZE =
       Attributes.forBitWidth("number", S.getter("nrOfSwitch"), MIN_SWITCH, MAX_SWITCH);
+  
+  public static final AttributeOption OFF_GND   = new AttributeOption("GND",    S.getter("dipSwitchOffGnd"));
+  public static final AttributeOption OFF_HIGHZ  = new AttributeOption("HighZ",  S.getter("dipSwitchOffHighZ"));
 
+  public static final Attribute<AttributeOption> ATTR_OFF_VALUE =
+      Attributes.forOption("offValue", S.getter("dipSwitchOffValue"),
+          new AttributeOption[] { OFF_GND, OFF_HIGHZ });
+  
   public DipSwitch() {
     super(_ID, S.getter("DipSwitchComponent"), new AbstractSimpleIoHdlGeneratorFactory(true), true);
     var dipSize = 8;
@@ -138,6 +146,7 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.LABEL_COLOR,
           StdAttr.LABEL_VISIBILITY,
           ATTR_SIZE,
+          ATTR_OFF_VALUE,
           StdAttr.MAPINFO
         },
         new Object[] {
@@ -148,6 +157,7 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
           BitWidth.create(dipSize),
+          OFF_GND,
           new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null)
         });
     setFacingAttribute(StdAttr.FACING);
@@ -221,6 +231,8 @@ public class DipSwitch extends InstanceFactory {
       instance.recomputeBounds();
       updatePorts(instance);
       instance.computeLabelTextField(Instance.AVOID_LEFT);
+    } else if (attr == ATTR_OFF_VALUE) {
+      instance.fireInvalidated();
     }
   }
 
@@ -294,8 +306,10 @@ public class DipSwitch extends InstanceFactory {
       pins = new State(val, state.getAttributeValue(ATTR_SIZE).getWidth());
       state.setData(pins);
     }
+    final var offOption = state.getAttributeValue(ATTR_OFF_VALUE);
+    final var offValue  = OFF_HIGHZ.equals(offOption) ? Value.NIL : Value.FALSE;
     for (var i = 0; i < pins.size; i++) {
-      Value pinstate = (pins.isBitSet(i)) ? Value.TRUE : Value.FALSE;
+      Value pinstate = pins.isBitSet(i) ? Value.TRUE : offValue;
       state.setPort(i, pinstate, 1);
     }
   }
