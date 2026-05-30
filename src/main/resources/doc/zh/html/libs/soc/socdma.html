@@ -41,7 +41,7 @@
       </h2>
       <p>
         DMA 引擎是一个简单的线性内存拷贝控制器。它在时钟驱动下，以可配置的突发大小将数据从源地址拷贝到目标地址。
-        该组件主要用于配合 <a href="socvga.html">VGA 屏幕</a>组件，高效地将图像数据拷贝到 VGA 帧缓冲区，
+        该组件主要用于配合 <a href="index.html#socvga">VGA 屏幕</a>组件，高效地将图像数据拷贝到 VGA 帧缓冲区，
         但也可用于任何内存到内存的数据传输。
       </p>
       <p>
@@ -133,7 +133,7 @@
           <tr>
             <td style="text-align: center;">0x10</td>
             <td>STATUS</td>
-            <td style="text-align: center;">读/写1清除</td>
+            <td style="text-align: center;">读/写 1 清除</td>
             <td>
               <strong>bit 0 (BUSY)</strong>：只读。传输进行中为 1。<br>
               <strong>bit 1 (DONE)</strong>：写 1 清除。传输完成时置位。
@@ -169,16 +169,16 @@
           <strong><em>标签可见</em></strong>：标签是否显示。
         </li>
         <li>
-          <strong><em>已连接的总线</em></strong>：DMA 控制寄存器所在的总线（DMA 作为从设备）。
-          点击选择一个<a href="socbus.html">总线组件</a>。
+          <strong><em>连接总线</em></strong>：DMA 控制寄存器所在的总线（DMA 作为从设备）。
+          单击以选择一个<a href="socbus.html">总线组件</a>。
         </li>
         <li>
           <strong><em>源总线</em></strong>：用于源端（读）数据传输的总线。
-          未配置时使用控制总线。点击以选择总线。
+          未配置时使用控制总线。单击以选择总线。
         </li>
         <li>
           <strong><em>目标总线</em></strong>：用于目标端（写）数据传输的总线。
-          未配置时使用控制总线。点击以选择总线。
+          未配置时使用控制总线。单击以选择总线。
         </li>
       </ul>
       <h2>
@@ -188,8 +188,8 @@
         使用 DMA 引擎将图像拷贝到 VGA 帧缓冲区的步骤：
       </p>
       <ol>
-        <li>在同一电路上放置 <a href="socbus.html">SoC 总线</a>、<a href="socmemsimulator.html">内存仿真器</a>、
-          <a href="socvga.html">VGA 屏幕</a>和 DMA 引擎。</li>
+        <li>在同一电路图中放置 <a href="socbus.html">SoC 总线</a>、<a href="index.html#socmemsimulator">内存仿真器</a>、
+          <a href="index.html#socvga">VGA 屏幕</a>和 DMA 引擎。</li>
         <li>将所有组件连接到同一总线（或根据需要分别配置源/目标总线）。</li>
         <li>确保 VGA 组件在 DMA 写入的目标总线上注册为嗅探器（sniffer），以便实时观察写操作并更新显示。</li>
         <li>在 CPU 程序中：将源图像地址写入 SRC_ADDR (0x00)，将 VGA 缓冲区地址写入 DST_ADDR (0x04)，
@@ -198,7 +198,7 @@
       </ol>
       <p>
         <strong>注意：</strong>DMA 写事务对总线嗅探器（如 VGA 组件）可见，
-        因此在 DMA 传输期间 VGA 显示会实时更新。DMA 读事务则被隐藏，不会出现在总线踪迹中，以减少噪声。
+        因此在 DMA 传输期间 VGA 显示会实时更新。DMA 读事务则被隐藏，不会出现在总线事务踪迹中，以减少噪声。
       </p>
       <p>
         <a href="index.html">返回<em>片上系统组件库</em></a>

@@ -1,147 +1,66 @@
-<html lang="zh">
- <head>
-  <title>
-   Wiring Tool
-  </title>
- </head>
- <body bgcolor="FFFFFF">
-  <h1>
-   <img align="center" height="32" src="../../../../icons/wiring.gif" width="32"/>
-   <em>
-    Wiring Tool
-   </em>
-  </h1>
-  <p>
-   <table>
-    <tr>
-     <td>
-      <strong>
-       Library:
-      </strong>
-     </td>
-     <td>
-      <a href="index.html">
-       Base
-      </a>
-     </td>
-    </tr>
-    <tr>
-     <td>
-      <strong>
-       Introduced:
-      </strong>
-     </td>
-     <td>
-      2.0 Beta 1
-     </td>
-    </tr>
-   </table>
-  </p>
-  <h2>
-   Behavior
-  </h2>
-  <p>
-   The wiring tool is the tool for creating wire segments that carry
-values from one endpoint to another.  The bit width of these values can
-be anything; exactly which bit width is automatically inferred from the
-components to which the wires are ultimately attached.  If it is not
-attached to any components, the wire will be drawn gray to indicate that
-its bit width is unknown; if the components at the locations that the
-wire helps to connect disagree on the bit width, then the wire will be
-drawn orange to indicate the conflict, and the wire will in fact refuse
-to carry any values at all until the user resolves the conflict.
-  </p>
-  <p>
-   A single drag of the mouse can create multiple wire segments. The
-precise process is a little confusing in its description; but it works
-quite intuitively in practice: If you request a particular wire segment
-using the Wiring Tool, that segment will be split apart wherever it hits
-a pin for an existing component, or wherever it hits the endpoint of an
-existing wire segment. Also, if an endpoint of any of the new wire
-segments hit somewhere in the middle of an existing wire, then that wire
-will be split into multiple segments itself.
-  </p>
-  <p>
-   For some components that draw short stubs to which wires can connect
-(such as an
-   <a href="../gates/basic.html">
-    OR gate
-   </a>
-   or a
-   <a href="../gates/controlled.html">
-    controlled buffer
-   </a>
-   ), Logisim will
-silently correct attempts to create wires that slightly overshoot the
-stub's end.
-  </p>
-  <p>
-   You can also shorten an existing wire segment using the Wiring Tool,
-using a drag that starts or ends at a terminus of the segment, and that
-overlaps the existing segment.
-  </p>
-  <p>
-   All wires in Logisim are either horizontal or vertical.
-  </p>
-  <p>
-   Wires are also non-directional; that is, they carry values from
-either endpoint to the other. Indeed, a wire can carry values
-in both directions simultaneously; the center wire in the below example
-is doing this.
-  </p>
-  <p align="center">
-   <img height="44" src="../../../../img-guide/bundles-splitter-2way.png" width="191"/>
-  </p>
-  <h2>
-   Attributes
-  </h2>
-  <p>
-   The wiring tool does not itself have attributes, but the wires that
-it creates do.
-  </p>
-  <dl>
-   <dt>
-    Direction
-   </dt>
-   <dd>
-    Indicates whether the wire is horizontal or vertical.
-The value of this attribute cannot be changed.
-   </dd>
-   <dt>
-    Length
-   </dt>
-   <dd>
-    Indicates how many pixels long the wire is.
-The value of this attribute cannot be changed.
-   </dd>
-  </dl>
-  <h2>
-   Poke Tool Behavior
-  </h2>
-  <p>
-   When you click an existing wire segment using the Poke Tool, Logisim
-displays the current value traveling through that wire.
-The behavior is particularly useful for multi-bit wires, whose black
-color provide no visual feedback about what value the wire is
-carrying.
-  </p>
-  <p>
-   For multi-bit values, you can configure exactly how the value
-is displayed (in binary, decimal, or hexadecimal, for example) using
-the
-   <a href="../../guide/prefs/pref-layout.html">
-    Layout
-pane
-   </a>
-   of the Logisim Preferences dialog box.
-   <p>
-    <a href="../index.html">
-     Back to
-     <em>
-      Library Reference
-     </em>
-    </a>
-   </p>
-  </p>
- </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>布线工具</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>
+<img align="center" src="../../../../icons/todelete/wiring.gif" width="32" height="32">
+<em>布线工具</em>
+</h1>
+
+<p></p>
+<table>
+<tr>
+<td><strong>库：</strong></td>
+	<td><a href="index.html">基础</a></td>
+</tr>
+<tr>
+<td><strong>引入版本：</strong></td>
+	<td>2.0 Beta 1</td>
+</tr>
+</table>
+
+<h2>行为</h2>
+
+<p>布线工具用于创建导线线段，将值从一个端点传输到另一个端点。这些值的位宽可以是任意值；具体位宽会根据导线最终连接的组件自动推断。如果导线未连接到任何组件，则会以灰色绘制，表示其位宽未知；如果导线所连接位置的组件在位宽上不一致，则导线会以橙色绘制，表示存在冲突，并且该导线实际上会拒绝传输任何值，直到用户解决冲突为止。</p>
+
+<p>一次鼠标拖动可以创建多个导线线段。这个过程文字描述起来略显复杂，但实际操作很直观：如果使用布线工具绘制一条特定的导线线段，该线段会在碰到现有组件的引脚或现有导线线段的端点处被分割。此外，如果任何新导线线段的端点落在现有导线的中间某处，那么该导线也会被分割成多个线段。</p>
+
+<p>对于某些绘制了短引线以供导线连接的组件（例如<a href="../gates/basic.html">或门</a>或<a href="../gates/controlled.html">受控缓冲器</a>），Logisim 会自动纠正试图创建略微超出引线末端的导线的操作。</p>
+
+<p>也可以使用布线工具缩短现有的导线线段，方法是从线段的端点开始或结束拖动，并使其与现有线段重叠。</p>
+
+<p>Logisim 中的所有导线要么是水平的，要么是垂直的。</p>
+
+<p>导线也是无方向的；也就是说，它们可以从任一端点向另一端传输值。实际上，导线可以同时双向传输值；下面示例中的中间导线正是如此。</p>
+    <p align="center"><img src="../../../../img-guide/bundles-splitter-2way.png" width="191" height="44"></p>
+
+<h2>属性</h2>
+
+<p>布线工具本身没有属性，但它创建的导线具有属性。</p>
+
+<dl>
+
+<dt>方向</dt>
+<dd>指示导线是水平还是垂直。此属性的值无法更改。</dd>
+
+<dt>长度</dt>
+<dd>指示导线有多少像素长。此属性的值无法更改。</dd>
+
+</dl>
+
+<h2>手形工具行为</h2>
+
+<p>使用手形工具单击现有导线线段时，Logisim 会显示流经该导线的当前值。此行为对于多位导线特别有用，因为黑色导线本身无法显示其承载的具体值。</p>
+
+<p>对于多位值，可以使用 Logisim 首选项对话框的<a href="../../guide/prefs/pref-layout.html">布局选项卡</a>来精确配置值的显示方式（例如，以二进制、十进制或十六进制显示）。
+
+</p>
+<p><a href="../index.html">返回<em>库参考</em></a></p>
+
+</body>
 </html>

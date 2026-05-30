@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2026-02-12T06:18:10.521000000">
+    <meta name="changed" content="2026-02-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      双端口 RAM
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/dualportram.png" alt="#########" width="32" height="32"> <em>双端口 RAM</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">存储器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              ---
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/dualportram.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        双端口 RAM 组件是标准 RAM 的高级变体，最多可存储 16,777,216 个值（由地址位宽属性指定），每个值最多可包含 32 位（由数据位宽属性指定）。
+      </p>
+      <p>
+        其标志性特点是包含<strong>两个完全独立的访问端口（端口 A 和端口 B）</strong>。这种架构允许两个独立的电路同时读取或写入存储器。
+      </p>
+      <p>
+        当前值会显示在组件内部，地址以灰色列在显示区域左侧。该组件的一个关键特性是<strong>独立视图控制</strong>：用户可以分别滚动端口 A 和端口 B 的视图，以监视不同的存储器区域。
+      </p>
+      <p>
+        该组件支持不同的接口，具体取决于<q>数据接口</q>属性。
+      </p>
+      <dl>
+        <dt>
+          分离数据总线（默认）
+        </dt>
+        <dd>
+          <p>
+            对于每个端口（A 和 B），组件都会提供独立的输入引脚（Din）和输出引脚（Dout）。此选项不需要额外处理受控缓冲器，因此更适合大多数双端口应用。
+          </p>
+          <center>
+            <img src="../../../../img-libs/dualportramdemo1.png" alt="#########">
+          </center>
+        </dd>
+        <dt>
+          双向数据总线
+        </dt>
+        <dd>
+          <p>
+            对于每个端口，数据读取和写入共用同一个引脚。这种方式接近真实存储器芯片的接口，但通常需要使用受控缓冲器来管理数据方向，类似于下图所示的标准 RAM 接线。
+          </p>
+          <center>
+            <img src="../../../../img-libs/dualportramdemo2.png" alt="#########">
+          </center>
+        </dd>
+        <dd>
+          <h2>
+            引脚
+          </h2>
+          <p>
+            由于这是双端口 RAM，大多数引脚都会分别为端口 1 和端口 2 提供一份。
+          </p>
+          <dl>
+            <dt>
+              <var>A1、A2</var> 位于西侧边缘（输入，位宽与<q>地址位宽</q>属性一致）
+            </dt>
+            <dd>
+              分别选择端口 1 和端口 2 当前访问的存储地址。
+            </dd>
+            <dt>
+              <var>D1、D2</var> 位于西侧边缘（输入，位宽与<q>数据位宽</q>属性一致）
+            </dt>
+            <dd>
+              数据输入引脚。当选择“分离数据总线”时出现。发起写入时，对应端口上的值会被写入存储器。
+            </dd>
+            <dt>
+              <var>D1、D2</var> 位于东侧边缘（输入/输出或输出，位宽与<q>数据位宽</q>属性一致）
+            </dt>
+            <dd>
+              数据输出引脚。若 <var>ld</var> 为 1，组件会输出当前地址处的值。若选择“双向数据总线”，这些引脚也会作为写入时的输入。
+            </dd>
+            <dt>
+              <var>str1、str2</var> 位于南侧边缘（输入，位宽为 1）
+            </dt>
+            <dd>
+              存储（写使能）：当为 1 或浮空时，时钟脉冲会把数据写入对应端口当前所选的存储地址。<br><strong>注意：</strong>若两个端口同时尝试写入同一地址，<strong>端口 B 具有优先级</strong>（将写入来自端口 B 的值）。
+            </dd>
+            <dt>
+              <var>ld1、ld2</var> 位于南侧边缘（输入，位宽为 1）
+            </dt>
+            <dd>
+              加载（输出使能）：决定 RAM 是否在 <var>D</var> 上输出当前地址处的值。若为 0，输出为高阻态。
+            </dd>
+            <dt>
+              <var>C1、C2</var> 位于南侧边缘（输入，位宽为 1）
+            </dt>
+            <dd>
+              时钟输入：触发写操作。写入通常发生在上升沿。
+            </dd>
+            <dt>
+              <var>clr</var> 位于南侧边缘（输入，位宽为 1）
+            </dt>
+            <dd>
+              清零：（可选）当此引脚为 1 时，存储器中的所有值会立即固定为 0。
+            </dd>
+          </dl>
+          <h2>
+            属性
+          </h2>
+          <p>
+            当组件被选中或正在放置时，数字键 0 到 9 可修改其<q>地址位宽</q>属性，Alt-0 到 Alt-9 可修改其<q>数据位宽</q>属性。
+          </p>
+          <dl>
+            <dt>
+              地址位宽
+            </dt>
+            <dd>
+              地址信号的位宽。RAM 中可存储的值数量为 2<sup><var>地址位宽</var></sup>。
+            </dd>
+            <dt>
+              数据位宽
+            </dt>
+            <dd>
+              存储器中每个值的位宽。
+            </dd>
+            <dt>
+              数据接口
+            </dt>
+            <dd>
+              配置使用分离数据总线（独立的输入/输出引脚）还是双向数据总线（共享引脚）。
+            </dd>
+            <dt>
+              字节使能
+            </dt>
+            <dd>
+              当数据位宽大于等于 9 时可用。若启用，将添加额外的输入引脚，用于控制对字内特定字节的写入。
+            </dd>
+            <dt>
+              清除引脚
+            </dt>
+            <dd>
+              若启用，将添加一个异步清除引脚，用于重置存储器内容。
+            </dd>
+          </dl>
+          <h2>
+            手形工具行为
+          </h2>
+          <p>
+            参见<em>用户指南</em>中的<a href="../../guide/mem/mem-poke.html">使用手形工具编辑存储器</a>。单击组件内的某个值即可对其进行编辑；该工具会根据单击位置判断目标是端口 A 的视图（顶部）还是端口 B 的视图（底部）。
+          </p>
+          <h2>
+            文本工具行为
+          </h2>
+          <p>
+            无。
+          </p>
+          <h2>
+            菜单工具行为
+          </h2>
+          <p>
+            参见<em>用户指南</em>中的<a href="../../guide/mem/mem-menu.html">弹出菜单与文件</a>。
+          </p>
+          <p>
+            <a href="../index.html">返回<em>库参考</em></a>
+          </p>
+        </dd>
+      </dl>
+    </div>
+  </body>
+
+</html>

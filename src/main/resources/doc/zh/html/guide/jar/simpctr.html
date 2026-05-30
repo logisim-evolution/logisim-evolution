@@ -1,47 +1,31 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Simple Gray Code Counter -->
-   简单格雷码计数器
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="codediv">
-   <h1>
-    <!-- Simple Gray Code Counter -->
-    简单格雷码计数器
-   </h1>
-   <p>
-    <!-- Often we want components that aren't exclusively combinational in nature - that is, we want the component to have some memory. There is an important subtlety in defining such components: You can't have the component itself store the state, because an individual component can appear many times in the same circuit. It can't appear directly within a circuit multiple times, but it can appear multiple times if it appears in a subcircuit that is used several times. -->
-    通常我们想要的组件本质上不完全是组合的——也就是说，我们希望组件有一些内存。 定义此类组件有一个重要的微妙之处：您不能让组件本身存储状态，因为单个组件可以在同一电路中出现多次。 它不能直接在电路中多次出现，但如果它出现在多次使用的子电路中，则可以多次出现。
-   </p>
-   <p>
-    <!-- The solution is to create a new class for representing the object's current state, and to associate instances of this with the component through the parent circuit's state. In this example, which implements an edge-triggered 4-bit Gray code counter, we define a <code>CounterData</code> class to represent the counter's state, in addition to the <code>InstanceFactory</code> subclass as illustrated previously. The <code>CounterData</code> object remembers both the counter's current value, as well as the last clock input seen (to detect rising edges). -->
-    解决方案是创建一个新类来表示对象的当前状态，并通过父电路的状态将其实例与组件关联起来。 在此示例中，实现了边沿触发的 4 位格雷码计数器，除了如图所示的
-    <code>
-     InstanceFactory
-    </code>
-    子类之外，我们还定义了一个
-    <code>
-     CounterData
-    </code>
-    类来表示计数器的状态 之前。
-    <code>
-     CounterData
-    </code>
-    对象会记住计数器的当前值以及最后看到的时钟输入（以检测上升沿）。
-   </p>
-   <h2>
-    CounterData
-   </h2>
-   <pre>package com.cburch.gray;
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      简单格雷码计数器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="codediv">
+      <h1>
+        简单格雷码计数器
+      </h1>
+      <p>
+        有时组件并不完全是组合逻辑，也就是说，它需要保存某种状态。定义这类组件时有一个重要细节：不能把状态直接存储在组件对象本身，因为同一个组件对象会管理电路中出现的多个实例。某个实例不能直接在同一电路中出现多次，但如果它位于被多次使用的子电路中，就会间接出现多次。
+      </p>
+      <p>
+        解决方法是创建一个新类表示实例的当前状态，并通过父电路的状态把该状态对象与组件实例关联起来。在这个边沿触发的 4 位格雷码计数器示例中，除了前面介绍的 <code>InstanceFactory</code> 子类，还定义了 <code>CounterData</code> 类来表示计数器状态。<code>CounterData</code> 对象同时保存计数器的当前值和上一次看到的时钟输入，用于检测上升沿。
+      </p>
+      <h2>
+        CounterData
+      </h2>
+      <pre>package com.cburch.gray;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
@@ -107,10 +91,10 @@ class CounterData implements InstanceData, Cloneable {
     }
 }
 </pre>
-   <h2>
-    SimpleCounter
-   </h2>
-   <pre>package com.cburch.gray;
+      <h2>
+        SimpleCounter
+      </h2>
+      <pre>package com.cburch.gray;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -179,15 +163,9 @@ class SimpleGrayCounter extends InstanceFactory {
     }
 }
 </pre>
-   <p>
-    <b>
-     Next:
-    </b>
-    <a href="counter.html">
-     Gray Code Counter
-    </a>
-    .
-   </p>
-  </div>
- </body>
+      <p>
+        <b>下一节：</b> <a href="counter.html">格雷码计数器</a>。
+      </p>
+    </div>
+  </body>
 </html>

@@ -1,11 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html lang="zh">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
 <head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
-	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
-	<META http-equiv="content-type" content="text/html; charset=UTF-8">
-	<META http-equiv="Content-Language" content="zh">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2018-10-23T06:18:10.521000000">
+	<meta name="changed" content="2018-10-23T06:18:42.262000000">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Language" content="zh">
 	<title>测试向量窗口</title>
 	<link rel="stylesheet" type="text/css" href="../../style.css">
 	<link rel="stylesheet" type="text/css" href="codefix.css">
@@ -15,12 +15,12 @@
 
 <h1>测试向量窗口</h1>
 
-<p>测试向量窗口类似于日志窗口的表格选项卡。您可以从文件加载测试向量，Logisim 将开始对当前电路运行测试。与日志窗口一样，项目中只有一个测试向量窗口，表格将更改以反映项目窗口中正在模拟的电路。但请注意，测试向量模块运行电路模拟器的独立副本，因此不会干扰项目窗口中的模拟，也不会受其影响。</p>
+<p>测试向量窗口与日志窗口的“表格”选项卡类似。可以从文件加载测试向量，Logisim 随后会对当前电路运行测试。与日志窗口一样，项目中只有一个测试向量窗口，表格会随项目窗口中正在仿真的电路而变化。但请注意，测试向量模块运行的是独立的电路仿真实例，因此不会干扰项目窗口中的仿真，也不受其影响。</p>
 
-<p>在示例中，我们将测试下面的电路。该电路从两个输入给出五个逻辑函数的结果。它包含一个错误，因为底部的 NAND 门应该是 AND 门。</p>
+<p>作为示例，我们将测试下面的电路。该电路根据两个输入给出五个逻辑函数的结果。它包含一个错误，因为底部的与非门应为与门。</p>
 
 <p align="center">
-	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="包含五个逻辑函数的示例电路">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="具有五个逻辑函数的示例电路">
 </p>
 
 <p>测试向量文件如下所示：</p>
@@ -35,57 +35,55 @@ A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
 </pre>
 </blockquote>
 
-<p>要运行测试，请选择菜单 <b class="menu">|&nbsp; 模拟 &nbsp;|</b>→<b class="menu">|&nbsp; 测试向量 &nbsp;|</b>，然后使用 <b class="button">加载向量</b> 按钮。选择您构建的向量文件。模拟立即执行，并显示一个包含结果的表格。</p>
+<p>要运行测试，请选择菜单 <b class="menu">| 仿真 |</b>→<b class="menu">| 测试向量 |</b>，然后使用 <b class="button">加载向量</b> 按钮。选择已准备好的向量文件后，仿真会立即执行，并显示一个包含结果的表格。</p>
 
 <p align="center">
 	<img src="../../../img-guide/vector-result.png" alt="测试向量窗口显示结果，错误以红色标记">
 </p>
 
-<p>任何不正确的输出都将以红色标记。将鼠标悬停在红色框上以查看根据测试向量应该输出的值。包含不正确输出的行将排序到窗口顶部。</p>
+<p>任何与期望不符的输出都会以红色标记。将鼠标悬停在红色框上可查看测试向量中期望的输出值。包含错误输出的行会排到窗口顶部。</p>
 
-<p>文件格式很简单。您可以使用日志模块（在文件输出选项卡中选择"包含标题行"）来开始，因为在大多数情况下，日志模块输出的格式与测试向量模块使用的格式相同。</p>
+<p>文件格式很简单。可以使用日志模块（在文件输出选项卡中选择“包含标题行”）来入门，因为在大多数情况下，日志模块输出的格式与测试向量模块使用的格式相同。</p>
 
-<h2>Interactive Test Execution</h2>
+<h2>交互式测试执行</h2>
 
-<p>Each row in the Test Vector window has two buttons that allow you to manually interact with individual tests:</p>
+<p>测试向量窗口中的每一行都有两个按钮，可用于手动与各个测试交互：</p>
 
 <ul>
-<li><b>"Show" button</b> (first column): This button previews the circuit state without checking outputs.
+<li>
+<b>“Show”按钮</b>（第一列）：此按钮用于预览电路状态，而不检查输出。
 <ul>
-<li><b>Combinational tests (seq=0)</b>: Resets the circuit, sets the input values, and propagates signals.
-Only the clicked row is highlighted in green to show it was executed.</li>
-<li><b>Sequential tests (seq&gt;0)</b>: Resets the circuit, then runs all prior sequential steps in the set
-(from seq 1 up to the target step), propagating after each step. All executed sequential steps are highlighted
-in green to show the execution path.</li>
+<li>
+<b>组合测试（seq=0）</b>：重置电路，设置输入值，并传播信号。只有被点击的行以绿色高亮显示，表明它已执行。</li>
+<li>
+<b>时序测试（seq&gt;0）</b>：重置电路，然后运行同一 set 中所有先前的时序步骤（从 seq 1 到目标步骤），在每个步骤之后进行传播。所有已执行的时序步骤都以绿色高亮显示，以显示执行路径。</li>
 </ul>
-The Show button does not verify outputs against expected values - it only shows what the circuit state would be.</li>
+“Show”按钮不会根据期望值验证输出，只显示电路状态。</li>
 
-<li><b>"Set" button</b> (second column): This button sets input values and may execute tests.
+<li>
+<b>“Set”按钮</b>（第二列）：此按钮用于设置输入值，并可能执行测试。
 <ul>
-<li><b>Combinational tests (seq=0)</b>: Resets the circuit, applies the test inputs, then propagates signals. Only the clicked row is highlighted in green to indicate it was executed.</li>
-<li><b>Sequential tests (seq&gt;0)</b>: Does NOT reset the circuit and does NOT run any other tests.
-Simply sets the input values for that single step only, then propagates signals. Only the clicked row is
-highlighted in green. This allows you to manually step through a sequence by setting individual step values
-without resetting or running previous steps.</li>
+<li>
+<b>组合测试（seq=0）</b>：重置电路，应用测试输入，然后传播信号。只有被点击的行以绿色高亮显示，表明它已执行。</li>
+<li>
+<b>时序测试（seq&gt;0）</b>：不会重置电路，也不会运行任何其他测试。仅设置该步骤的输入值，然后传播信号。只有被点击的行会以绿色高亮显示。这样可以手动逐步执行序列，而无需重置或运行之前的步骤。</li>
 </ul>
 </li>
 
-<li>For either button, if you turn off Auto-Propagation in the Simulation menu, it will not propagate the last step in the sequence (or the only step in the combinational test), stopping after setting the input pins. This allows you to single-step the circuit through the propagation of that line.
+<li>对于任一按钮，如果在仿真菜单中关闭自动传播，则不会传播序列中的最后一步（或组合测试中的唯一步骤），而是在设置输入引脚后停止。这样可以对该行的传播过程进行单步观察。
 </li>
 </ul>
 
-<p><b>Highlighting behavior:</b></p>
+<p><b>高亮行为：</b></p>
 <ul>
-<li>When the Show button is clicked on a combinational test, only that single row is highlighted in green.</li>
-<li>When the Show button is clicked on a sequential test, all sequential steps (seq &gt; 0) up to and including
-the target step are highlighted in green.</li>
-<li>When the Set button is clicked, only the clicked row is highlighted in green, regardless of whether it's
-combinational or sequential.</li>
-<li>Highlighting is cleared when a new vector file is loaded or when the circuit simulator is reset.</li>
+<li>当在组合测试中点击 Show 按钮时，只有该单行以绿色高亮显示。</li>
+<li>当在时序测试中点击 Show 按钮时，所有时序步骤（seq &gt; 0）直到目标步骤（含目标步骤）都会以绿色高亮显示。</li>
+<li>当点击 Set 按钮时，只有被点击的行以绿色高亮显示，无论它是组合测试还是时序测试。</li>
+<li>当加载新的向量文件或重置电路仿真器时，高亮显示会被清除。</li>
 </ul>
 
 <p>
-	<b>上一页：</b> <a href="index.html">测试向量</a> | <b>下一页：</b> <a href="test_vector_file_format.html">测试向量文件格式</a>。
+	<b>上一节：</b> <a href="index.html">测试向量</a> | <b>下一节：</b> <a href="test_vector_file_format.html">测试向量文件格式</a>。
 </p>
 	</div>
 </body>

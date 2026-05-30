@@ -42,7 +42,7 @@
       <p>
         The DMA engine is a simple linear memory-copy DMA controller. It copies data from a
         source address to a destination address in configurable bursts, driven by a clock signal.
-        This component is primarily intended to be used with the <a href="socvga.html">VGA screen</a>
+        This component is primarily intended to be used with the <a href="index.html#socvga">VGA screen</a>
         component to efficiently copy image data into the VGA framebuffer, but it can be used for
         any memory-to-memory transfer.
       </p>
@@ -198,8 +198,8 @@
         To use the DMA engine to copy an image into the VGA framebuffer:
       </p>
       <ol>
-        <li>Place a <a href="socbus.html">SOC bus</a>, a <a href="socmemsimulator.html">Memory simulator</a>,
-          a <a href="socvga.html">VGA screen</a>, and the DMA engine on the same sheet.</li>
+        <li>Place a <a href="socbus.html">SOC bus</a>, a <a href="index.html#socmemsimulator">Memory simulator</a>,
+          a <a href="index.html#socvga">VGA screen</a>, and the DMA engine on the same sheet.</li>
         <li>Connect all components to the same bus (or configure separate source/destination buses
           as needed).</li>
         <li>Ensure the VGA component is registered as a sniffer on the bus that the DMA writes to,
