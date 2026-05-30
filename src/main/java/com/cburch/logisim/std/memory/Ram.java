@@ -311,7 +311,7 @@ public class Ram extends Mem {
         activeLines = i + 1;
       }
     }
-    return Math.max(1, activeLines);
+    return lineSpanForHighestUsedLine(activeLines, dataLines);
   }
 
   private static int getConnectedReadLines(InstanceState state, AttributeSet attrs, int dataLines) {
@@ -321,11 +321,19 @@ public class Ram extends Mem {
         connectedLines = i + 1;
       }
     }
-    return Math.max(1, connectedLines);
+    return lineSpanForHighestUsedLine(connectedLines, dataLines);
   }
 
   private static boolean misaligned(long addr, int dataLines, AttributeSet attrs) {
     return addr % dataLines != 0 && !attrs.getValue(ALLOW_MISALIGNED);
+  }
+
+  private static int lineSpanForHighestUsedLine(int usedLines, int dataLines) {
+    var lineSpan = 1;
+    while (lineSpan < usedLines && lineSpan < dataLines) {
+      lineSpan <<= 1;
+    }
+    return lineSpan;
   }
 
   private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {

@@ -107,6 +107,42 @@ class RamLineEnableTest {
   }
 
   @Test
+  void ramOctoLineSparseHigherLineRequiresContainingAlignedBlockForWrite() {
+    final var ram = new Ram();
+    final var attrs = ramAttrs(Mem.OCTO);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+    state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+
+    state.setPortValue(RamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
+    state.setPortValue(RamAppearance.getWEIndex(0, attrs), Value.TRUE);
+    state.setPortValue(RamAppearance.getClkIndex(0, attrs), Value.TRUE);
+    state.setPortValue(RamAppearance.getDataInIndex(2, attrs), known(DATA_WIDTH, 0x6C));
+    state.setPortValue(RamAppearance.getLEIndex(2, attrs), Value.TRUE);
+
+    ram.propagate(state);
+
+    assertEquals(0, contents.get(5));
+  }
+
+  @Test
+  void ramOctoLineSparseHigherOutputRequiresContainingAlignedBlockForRead() {
+    final var ram = new Ram();
+    final var attrs = ramAttrs(Mem.OCTO);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+    state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+    contents.set(5, 0x6C);
+
+    state.connectPort(RamAppearance.getDataOutIndex(2, attrs));
+    state.setPortValue(RamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
+
+    ram.propagate(state);
+
+    assertEquals(Value.createError(DATA_WIDTH), state.getPortValue(RamAppearance.getDataOutIndex(2, attrs)));
+  }
+
+  @Test
   void dualRamOctoLinePortAWritesOnlyLinesWithTrueLineEnable() {
     verifyDualRamOctoLineWritesOnlyEnabledLine(0, 0, 0x40);
   }
@@ -124,6 +160,25 @@ class RamLineEnableTest {
   @Test
   void dualRamOctoLineWithOnlyFirstPortBLineUsedWritesMisalignedAddressLikeSingleLine() {
     verifyDualRamOctoLineFirstLineActsLikeSingleLine(1, 5, 0x7B);
+  }
+
+  @Test
+  void dualRamOctoLineSparseHigherLineRequiresContainingAlignedBlockForWrite() {
+    final var ram = new DualRam();
+    final var attrs = dualRamAttrs(Mem.OCTO);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+    state.setData(new DualRamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+
+    state.setPortValue(DualRamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
+    state.setPortValue(DualRamAppearance.getWEIndex(0, attrs), Value.TRUE);
+    state.setPortValue(DualRamAppearance.getClkIndex(0, attrs), Value.TRUE);
+    state.setPortValue(DualRamAppearance.getDataInIndex(2, attrs), known(DATA_WIDTH, 0x7C));
+    state.setPortValue(DualRamAppearance.getLEIndex(2, attrs), Value.TRUE);
+
+    ram.propagate(state);
+
+    assertEquals(0, contents.get(5));
   }
 
   private static void verifyDualRamOctoLineWritesOnlyEnabledLine(int port, int baseAddress, int dataBase) {
