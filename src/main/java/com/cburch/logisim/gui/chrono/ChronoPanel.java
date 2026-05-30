@@ -37,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -51,6 +52,13 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import com.cburch.logisim.util.JFileChoosers;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class ChronoPanel extends LogPanel implements Model.Listener {
   private static final long serialVersionUID = 1L;
@@ -104,12 +112,19 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     gbc.gridx = 1;
     gbl.setConstraints(selButton, gbc);
     toolpanel.add(selButton);
+    // Create button "Export Data"
+    final var exportButton = new JButton("Export Data");
+    exportButton.setFont(exportButton.getFont().deriveFont(10.0f)); 
+    exportButton.addActionListener(e -> exportSimulationData());
+    gbc.gridx = 2; // The column in which this button will be displayed
+    gbl.setConstraints(exportButton, gbc);
+    toolpanel.add(exportButton);
     gbc.insets = insets;
 
     final var filler = Box.createHorizontalGlue();
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.weightx = 1.0;
-    gbc.gridx = 2;
+    gbc.gridx = 3;  
     gbl.setConstraints(filler, gbc);
     toolpanel.add(filler);
     add(toolpanel, BorderLayout.NORTH);
@@ -508,4 +523,94 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
           return Printable.PAGE_EXISTS;
         }
       };
+  
+public void exportSimulationData() {
+  // Create a window for users to navigate throught their computer files (file chooser) 
+  JFileChooser chooser = JFileChoosers.create();
+  chooser.setDialogTitle("Export Simulation Data");
+  chooser.setAcceptAllFileFilterUsed(false); // Restriction to .csv and .txt formats only
+  FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("Comma-Separated Values (*.csv)", "csv");
+  FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Tab-Separated Text (*.txt)", "txt");
+  chooser.addChoosableFileFilter(csvFilter);
+  chooser.addChoosableFileFilter(txtFilter);
+  chooser.setFileFilter(csvFilter); 
+
+  int returnVal = chooser.showSaveDialog(this);
+  if (returnVal != JFileChooser.APPROVE_OPTION) {
+    return; // When user clicks "Cancel" and does not continue the export process
+  }
+
+  File file = chooser.getSelectedFile();
+  FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) chooser.getFileFilter();
+  String extension = selectedFilter.getExtensions()[0]; // Either "csv" or "txt"
+  // Set delimiter based on chosen format
+  String delimiter = extension.equals("csv") ? "," : "\t";
+
+  // Automatically adding the correct suffix (".csv" or ".txt") if needed
+  if (!file.getName().toLowerCase().endsWith("." + extension)) {
+    file = new File(file.getAbsolutePath() + "." + extension);
+  }
+
+  try (BufferedWriter writer = new BufferedWriter(
+      new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+        
+    java.util.List<Signal> signalList = model.getSignals();
+    // There is nothing to export if no signals are selected
+    if (signalList.isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No signals available to export.", "Export Info", JOptionPane.INFORMATION_MESSAGE);
+      return;
+    }
+
+    // UTF-8 BOM for CSV files to be correctly read
+    if (extension.equals("csv")) {
+      writer.write('\ufeff');
+    }
+
+    // Headers
+    writer.write("Time");
+    for (Signal s : signalList) {
+      writer.write(delimiter + s.getName());
+    }
+    writer.newLine();
+
+    // Determine the total number of time steps from the first signal
+    long totalSamples = 0;
+    if (!signalList.isEmpty()) {
+      totalSamples = signalList.get(0).getEndTime(); 
+    }
+    if (totalSamples == 0) {
+      JOptionPane.showMessageDialog(this, "No simulation data recorded yet. Please enable simulation/ticking.", "Export Info", JOptionPane.INFORMATION_MESSAGE);
+      return;
+    }
+
+    // String history for compressing repeated rows so that the result file is not excessively heavy
+    String previousRowString = "";
+    for (long t = 0; t < totalSamples; t++) {
+      StringBuilder currentRowText = new StringBuilder();
+      for (Signal s : signalList) {
+        currentRowText.append(delimiter).append(s.getFormattedValue(t));
+      }
+            
+      String currentRowString = currentRowText.toString();
+
+      // Display this row only if values have changed  
+      if (t == 0 || !currentRowString.equals(previousRowString)) {
+        writer.write(Long.toString(t) + currentRowString);
+        writer.newLine();
+        previousRowString = currentRowString;  // Update history
+      }
+    }
+
+    JOptionPane.showMessageDialog(this, 
+      "Data exported successfully to " + file.getName(), 
+      "Export Successful", 
+      JOptionPane.INFORMATION_MESSAGE);
+
+  } catch (Exception ex) {
+    JOptionPane.showMessageDialog(this, 
+      "Error exporting data: " + ex.getMessage(), 
+      "Export Error", 
+      JOptionPane.ERROR_MESSAGE);
+  }
+}
 }
