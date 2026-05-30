@@ -280,9 +280,6 @@ public class DualRam extends Mem {
     final var totalLEs = DualRamAppearance.getNrLEPorts(attrs);
     final var dataLines = (totalLEs == 0) ? 1 : totalLEs / 2;
 
-    final var misaligned = addr % dataLines != 0;
-    final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
-
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
 
@@ -291,13 +288,15 @@ public class DualRam extends Mem {
     final var writeEnabled = triggered
         && (state.getPortValue(DualRamAppearance.getWEIndex(portIndex, attrs)) == Value.TRUE);
 
-    if (writeEnabled && goodAddr && !misalignError) {
+    final var writeMisalignError =
+        misaligned(addr, getActiveWriteLines(state, attrs, portIndex, dataLines), attrs);
+    if (writeEnabled && goodAddr && !writeMisalignError) {
       for (var i = 0; i < dataLines; i++) {
         int absIndex = (portIndex * dataLines) + i;
 
         if (dataLines > 1) {
           final var le = state.getPortValue(DualRamAppearance.getLEIndex(absIndex, attrs));
-          if (le != null && le.equals(Value.FALSE))
+          if (!Value.TRUE.equals(le))
             continue;
         }
         long dataValue = state.getPortValue(DualRamAppearance.getDataInIndex(absIndex, attrs)).toLongValue();
@@ -308,14 +307,16 @@ public class DualRam extends Mem {
     final var width = state.getAttributeValue(DATA_ATTR);
     final var outputEnabled = separate
         || !state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE);
+    final var readMisalignError =
+        misaligned(addr, getConnectedReadLines(state, attrs, portIndex, dataLines), attrs);
 
-    if (outputEnabled && goodAddr && !misalignError) {
+    if (outputEnabled && goodAddr && !readMisalignError) {
       for (var i = 0; i < dataLines; i++) {
         int absIndex = (portIndex * dataLines) + i;
         long val = myState.getContents().get(addr + i);
         state.setPort(DualRamAppearance.getDataOutIndex(absIndex, attrs), Value.createKnown(width, val), DELAY);
       }
-    } else if (outputEnabled && (errorValue || (goodAddr && misalignError))) {
+    } else if (outputEnabled && (errorValue || (goodAddr && readMisalignError))) {
       for (var i = 0; i < dataLines; i++) {
         int absIndex = (portIndex * dataLines) + i;
         state.setPort(DualRamAppearance.getDataOutIndex(absIndex, attrs), Value.createError(width), DELAY);
@@ -326,6 +327,42 @@ public class DualRam extends Mem {
         state.setPort(DualRamAppearance.getDataOutIndex(absIndex, attrs), Value.createUnknown(width), DELAY);
       }
     }
+  }
+
+  private static int getActiveWriteLines(
+      InstanceState state, AttributeSet attrs, int portIndex, int dataLines) {
+    var activeLines = 0;
+    for (var i = 0; i < dataLines; i++) {
+      final var absIndex = (portIndex * dataLines) + i;
+      if (Value.TRUE.equals(state.getPortValue(DualRamAppearance.getLEIndex(absIndex, attrs)))) {
+        activeLines = i + 1;
+      }
+    }
+    return lineSpanForHighestUsedLine(activeLines, dataLines);
+  }
+
+  private static int getConnectedReadLines(
+      InstanceState state, AttributeSet attrs, int portIndex, int dataLines) {
+    var connectedLines = 0;
+    for (var i = 0; i < dataLines; i++) {
+      final var absIndex = (portIndex * dataLines) + i;
+      if (state.isPortConnected(DualRamAppearance.getDataOutIndex(absIndex, attrs))) {
+        connectedLines = i + 1;
+      }
+    }
+    return lineSpanForHighestUsedLine(connectedLines, dataLines);
+  }
+
+  private static boolean misaligned(long addr, int dataLines, AttributeSet attrs) {
+    return addr % dataLines != 0 && !attrs.getValue(ALLOW_MISALIGNED);
+  }
+
+  private static int lineSpanForHighestUsedLine(int usedLines, int dataLines) {
+    var lineSpan = 1;
+    while (lineSpan < usedLines && lineSpan < dataLines) {
+      lineSpan <<= 1;
+    }
+    return lineSpan;
   }
 
   private void propagateByteEnables(InstanceState state, int portIndex, long addr, boolean goodAddr,

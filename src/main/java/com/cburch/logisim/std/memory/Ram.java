@@ -266,18 +266,18 @@ public class Ram extends Mem {
     final var separate = isSeparate(attrs);
 
     final var dataLines = Math.max(1, RamAppearance.getNrLEPorts(attrs));
-    final var misaligned = addr % dataLines != 0;
-    final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     final var triggered = myState.setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
     final var writeEnabled = triggered && (state.getPortValue(RamAppearance.getWEIndex(0, attrs)) == Value.TRUE);
-    if (writeEnabled && goodAddr && !misalignError) {
+    final var writeMisalignError =
+        misaligned(addr, getActiveWriteLines(state, attrs, dataLines), attrs);
+    if (writeEnabled && goodAddr && !writeMisalignError) {
       for (var i = 0; i < dataLines; i++) {
         if (dataLines > 1) {
           final var le = state.getPortValue(RamAppearance.getLEIndex(i, attrs));
-          if (le != null && le.equals(Value.FALSE))
+          if (!Value.TRUE.equals(le))
             continue;
         }
         long dataValue = state.getPortValue(RamAppearance.getDataInIndex(i, attrs)).toLongValue();
@@ -288,18 +288,52 @@ public class Ram extends Mem {
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
     final var outputEnabled = separate || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
-    if (outputEnabled && goodAddr && !misalignError) {
+    final var readMisalignError =
+        misaligned(addr, getConnectedReadLines(state, attrs, dataLines), attrs);
+    if (outputEnabled && goodAddr && !readMisalignError) {
       for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr + i);
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createKnown(width, val), DELAY);
       }
-    } else if (outputEnabled && (errorValue || (goodAddr && misalignError))) {
+    } else if (outputEnabled && (errorValue || (goodAddr && readMisalignError))) {
       for (var i = 0; i < dataLines; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createError(width), DELAY);
     } else {
       for (var i = 0; i < dataLines; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createUnknown(width), DELAY);
     }
+  }
+
+  private static int getActiveWriteLines(InstanceState state, AttributeSet attrs, int dataLines) {
+    var activeLines = 0;
+    for (var i = 0; i < dataLines; i++) {
+      if (Value.TRUE.equals(state.getPortValue(RamAppearance.getLEIndex(i, attrs)))) {
+        activeLines = i + 1;
+      }
+    }
+    return lineSpanForHighestUsedLine(activeLines, dataLines);
+  }
+
+  private static int getConnectedReadLines(InstanceState state, AttributeSet attrs, int dataLines) {
+    var connectedLines = 0;
+    for (var i = 0; i < dataLines; i++) {
+      if (state.isPortConnected(RamAppearance.getDataOutIndex(i, attrs))) {
+        connectedLines = i + 1;
+      }
+    }
+    return lineSpanForHighestUsedLine(connectedLines, dataLines);
+  }
+
+  private static boolean misaligned(long addr, int dataLines, AttributeSet attrs) {
+    return addr % dataLines != 0 && !attrs.getValue(ALLOW_MISALIGNED);
+  }
+
+  private static int lineSpanForHighestUsedLine(int usedLines, int dataLines) {
+    var lineSpan = 1;
+    while (lineSpan < usedLines && lineSpan < dataLines) {
+      lineSpan <<= 1;
+    }
+    return lineSpan;
   }
 
   private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
