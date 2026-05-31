@@ -32,7 +32,7 @@ public class Location implements Comparable<Location> {
     cache.put(hashCode, loc);
     return loc;
   }
-
+  
   public static Location parse(String value) {
     final var base = value;
 

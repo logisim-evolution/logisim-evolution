@@ -123,7 +123,7 @@ public abstract class Tool implements AttributeDefaultProvider {
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
     // no-op implementation
   }
-
+  
   public void paintIcon(ComponentDrawContext c, int x, int y) {
     // no-op implementation
   }

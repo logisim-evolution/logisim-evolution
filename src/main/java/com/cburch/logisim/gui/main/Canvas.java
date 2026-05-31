@@ -877,8 +877,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
             tempTool = proj.getTool();
             proj.setTool(dragTool);
           }
-        }
         completeAction();
+        }
       }
     }
 
@@ -911,6 +911,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       completeAction();
 
       viewport.zoomButtonColor = DEFAULT_ZOOM_BUTTON_COLOR;
+      
     }
 
     @Override

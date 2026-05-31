@@ -254,7 +254,7 @@ public class WiringTool extends Tool {
   @Override
   public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {
     if (exists) {
-      mouseDragged(canvas, g, e);
+      exists = false;
     } else {
       Canvas.snapToGrid(e);
       inCanvas = true;
@@ -266,7 +266,7 @@ public class WiringTool extends Tool {
       canvas.getProject().repaintCanvas();
     }
   }
-
+  
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     if (!canvas.getProject().getLogisimFile().contains(canvas.getCircuit())) {
@@ -274,11 +274,11 @@ public class WiringTool extends Tool {
       canvas.setErrorMessage(S.getter("cannotModifyError"));
       return;
     }
+    
     Canvas.snapToGrid(e);
     start = Location.create(e.getX(), e.getY(), true);
     cur = start;
     exists = true;
-    hasDragged = false;
 
     startShortening = !canvas.getCircuit().getWires(start).isEmpty();
     shortening = null;
@@ -299,6 +299,7 @@ public class WiringTool extends Tool {
     }
     if (hasDragged) {
       exists = false;
+      hasDragged = false;
       super.mouseReleased(canvas, g, e);
 
       final var wires = new ArrayList<Wire>(2);
@@ -321,6 +322,7 @@ public class WiringTool extends Tool {
         wire1 = checkForRepairs(canvas, wire1, cur);
         if (wire0.getLength() > 0) wires.add(wire0);
         if (wire1.getLength() > 0) wires.add(wire1);
+        
       }
       if (!wires.isEmpty()) {
         final var mutation = new CircuitMutation(canvas.getCircuit());
