@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Telnet
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/telnet.png" align="middle" alt="#########" height="32" width="32"> <em>Telnet</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Input/Output</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              4.0.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              A vertical rectangle labelled <q>Telnet</q>. The selected TCP port is displayed below the label.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The Telnet component opens a TCP server socket on the configured port. An external program can connect to this port using telnet, netcat, a browser, or any other TCP client. Bytes received from clients are stored in an internal buffer. Bytes sent by the circuit are written to the most recently connected client.
+      </p>
+      <p>
+        The component transfers one byte at a time. The <var>Available</var> output is 1 while the receive buffer contains at least one byte. When the <var>Read</var> input is 1, the oldest received byte appears on the <var>out</var> output if data is available. On the configured clock edge, the byte is removed from the receive buffer if <var>Read</var> is 1, and the byte on the <var>in</var> input is sent to the client if <var>Write</var> is 1.
+      </p>
+      <p>
+        If no client is connected, writes have no visible effect. If several Telnet components use the same port, they share the same server socket; normally a project should use at most one Telnet component for each TCP port.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          West edge, upper pin labelled <var>in</var> (input, bit width 8)
+        </dt>
+        <dd>
+          The byte to send to the connected TCP client.
+        </dd>
+        <dt>
+          East edge, upper pin labelled <var>out</var> (output, bit width 8)
+        </dt>
+        <dd>
+          The oldest byte received from a TCP client while <var>Read</var> is 1 and <var>Available</var> is 1. The output is unknown while <var>Read</var> is 0.
+        </dd>
+        <dt>
+          West edge, middle pin marked by triangle (input, bit width 1)
+        </dt>
+        <dd>
+          Clock - the configured clock edge performs the enabled read and write operations.
+        </dd>
+        <dt>
+          West edge, lower pin labelled <var>wr</var> (input, bit width 1)
+        </dt>
+        <dd>
+          Write - when 1, a clock edge sends the byte on the <var>in</var> input to the connected client.
+        </dd>
+        <dt>
+          East edge, lower pin labelled <var>rd</var> (input, bit width 1)
+        </dt>
+        <dd>
+          Read - when 1, the oldest received byte is driven on the <var>out</var> output and a clock edge removes that byte from the receive buffer.
+        </dd>
+        <dt>
+          East edge, middle pin labelled <var>av</var> (output, bit width 1)
+        </dt>
+        <dd>
+          Available - 1 when at least one received byte is waiting in the receive buffer.
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+      <dl>
+        <dt>
+          Use Telnet protocol
+        </dt>
+        <dd>
+          When enabled, the server performs basic Telnet option negotiation and ignores Telnet command sequences from the client. Leave this disabled for raw TCP clients such as netcat, simple scripts, and most browser examples.
+        </dd>
+        <dt>
+          Port
+        </dt>
+        <dd>
+          The TCP port on which the component listens. The default is 8000.
+        </dd>
+        <dt>
+          Buffer Length
+        </dt>
+        <dd>
+          The number of received bytes that can wait in the internal buffer.
+        </dd>
+        <dt>
+          Trigger
+        </dt>
+        <dd>
+          Determines whether the component performs enabled read and write operations on a rising or falling clock edge.
+        </dd>
+        <dt>
+          Label, Label Location, Label Font
+        </dt>
+        <dd>
+          Configure the optional component label.
+        </dd>
+      </dl>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <p>
+        <a href="../index.html">Back to <em>Library Reference</em></a>
+      </p>
+    </div>
+  </body>
+</html>
