@@ -73,6 +73,8 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   private JSplitPane splitPane;
   private JButton selButton;
 
+  private JButton exportButton;
+
   // listeners
 
   public ChronoPanel(LogFrame logFrame) {
@@ -112,7 +114,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     gbl.setConstraints(selButton, gbc);
     toolpanel.add(selButton);
     // Create button "Export Data"
-    final var exportButton = new JButton("Export Data");
+    exportButton = new JButton(S.get("ButtonExportData"));
     exportButton.setFont(exportButton.getFont().deriveFont(10.0f)); 
     exportButton.addActionListener(e -> exportSimulationData());
     gbc.gridx = 2; // The column in which this button will be displayed
@@ -205,6 +207,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   @Override
   public void localeChanged() {
     selButton.setText(S.get("addRemoveSignals"));
+    exportButton.setText(S.get("ButtonExportData"));
   }
   public LeftPanel getLeftPanel() {
     return leftPanel;
@@ -525,10 +528,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   public void exportSimulationData() {
     // Create a window for users to navigate throught their computer files (file chooser) 
     JFileChooser chooser = JFileChoosers.create();
-    chooser.setDialogTitle("Export Simulation Data");
     chooser.setAcceptAllFileFilterUsed(false); // Restriction to .csv and .txt formats only
-    FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("Comma-Separated Values (*.csv)", "csv");
-    FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Tab-Separated Text (*.txt)", "txt");
+    chooser.setDialogTitle(S.get("exportDialogTitle"));
+    FileNameExtensionFilter csvFilter = new FileNameExtensionFilter(S.get("exportFilterCsv"), "csv");
+    FileNameExtensionFilter txtFilter = new FileNameExtensionFilter(S.get("exportFilterTxt"), "txt");
     chooser.addChoosableFileFilter(csvFilter);
     chooser.addChoosableFileFilter(txtFilter);
     chooser.setFileFilter(csvFilter); 
@@ -555,7 +558,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
       java.util.List<Signal> signalList = model.getSignals();
       // There is nothing to export if no signals are selected
       if (signalList.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No signals available to export.", "Export Info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, S.get("exportNoSignals"), S.get("exportInfoTitle"), JOptionPane.INFORMATION_MESSAGE);
         return;
       }
 
@@ -577,7 +580,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
         totalSamples = signalList.get(0).getEndTime(); 
       }
       if (totalSamples == 0) {
-        JOptionPane.showMessageDialog(this, "No simulation data recorded yet. Please enable simulation/ticking.", "Export Info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, S.get("exportNoData"), S.get("exportInfoTitle"), JOptionPane.INFORMATION_MESSAGE);
         return;
       }
 
@@ -600,14 +603,14 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
       }
 
       JOptionPane.showMessageDialog(this, 
-          "Data exported successfully to " + file.getName(), 
-          "Export Successful", 
+          S.get("exportSuccessMessage", file.getName()),
+          S.get("exportSuccessTitle"),
           JOptionPane.INFORMATION_MESSAGE);
 
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, 
-          "Error exporting data: " + ex.getMessage(), 
-          "Export Error", 
+          S.get("exportErrorMessage", ex.getMessage()),
+          S.get("exportErrorTitle"),
           JOptionPane.ERROR_MESSAGE);
     }
   }
