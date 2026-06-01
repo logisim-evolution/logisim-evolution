@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     final var repl = new ReplacementMap();
     for (final var comp : comps) repl.remove(comp);
     getMap(circuit).append(repl);
+    DynamicElementProvider.repairDynamicElementPaths(circuit, repl);
 
     circuit.mutatorClear();
   }
@@ -93,6 +95,7 @@ class CircuitMutatorImpl implements CircuitMutator {
       final var repl = new ReplacementMap();
       repl.remove(comp);
       getMap(circuit).append(repl);
+      DynamicElementProvider.repairDynamicElementPaths(circuit, repl);
 
       circuit.mutatorRemove(comp);
     }
@@ -111,6 +114,7 @@ class CircuitMutatorImpl implements CircuitMutator {
 
       repl.freeze();
       getMap(circuit).append(repl);
+      DynamicElementProvider.repairDynamicElementPaths(circuit, repl);
 
       for (final var component : repl.getRemovals()) {
         circuit.mutatorRemove(component);
