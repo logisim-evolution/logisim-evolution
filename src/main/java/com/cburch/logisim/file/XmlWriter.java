@@ -258,7 +258,7 @@ final class XmlWriter {
   Library findLibrary(ComponentFactory source) {
     if (file.contains(source)) return file;
     for (final var lib : file.getLibraries()) {
-      if (lib.contains(source)) return lib;
+      if (libraryContains(lib, source)) return lib;
     }
     return null;
   }
@@ -389,7 +389,7 @@ final class XmlWriter {
       final var tools = lib.getTools();
       for (final var circuit : file.getCircuits()) {
         for (final var tool : circuit.getNonWires()) {
-          isUsed |= lib.contains(tool.getFactory());
+          isUsed |= libraryContains(lib, tool.getFactory());
         }
       }
       for (final var tool : file.getOptions().getToolbarData().getContents()) {
@@ -544,6 +544,17 @@ final class XmlWriter {
   boolean libraryContains(Library lib, Tool query) {
     for (final var tool : lib.getTools()) {
       if (tool.sharesSource(query)) return true;
+    }
+    for (final var sub : lib.getLibraries()) {
+      if (libraryContains(sub, query)) return true;
+    }
+    return false;
+  }
+
+  boolean libraryContains(Library lib, ComponentFactory query) {
+    if (lib.contains(query)) return true;
+    for (final var sub : lib.getLibraries()) {
+      if (libraryContains(sub, query)) return true;
     }
     return false;
   }

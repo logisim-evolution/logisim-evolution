@@ -321,9 +321,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
 
     private boolean isPathValid(TreePath path) {
-      return (path == null || path.getPathCount() > 3)
-          ? false
-          : path.getLastPathComponent() instanceof ProjectExplorerToolNode;
+      return path != null && path.getLastPathComponent() instanceof ProjectExplorerToolNode;
     }
 
     @Override

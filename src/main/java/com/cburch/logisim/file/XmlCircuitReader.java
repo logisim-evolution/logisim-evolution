@@ -82,7 +82,7 @@ public class XmlCircuitReader extends CircuitTransaction {
       throw new XmlReaderException(S.get("compUnknownError", "no-lib"));
     }
 
-    final var tool = lib.getTool(name);
+    final var tool = reader.findTool(lib, name);
     if (!(tool instanceof AddTool)) {
       final var msg =
           StringUtil.isNullOrEmpty(libName)
