@@ -2,6 +2,7 @@ package com.cburch.logisim.gui.hex;
 
 import com.cburch.logisim.std.memory.MemContents;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HexFileTest {
@@ -76,6 +78,18 @@ public class HexFileTest {
       }
     }
     return triples;
+  }
+
+  @Test
+  void savePreviewStringLimitsLargeMemories() {
+    final var memoryContents = MemContents.create(12, 8, false);
+    memoryContents.set(2048, 0xab);
+
+    final var preview = HexFile.saveToPreviewString(memoryContents, "v3.0 hex words addressed");
+
+    assertTrue(preview.contains("preview truncated after 1024 of 4096 words"));
+    assertFalse(preview.contains("0800:"));
+    assertFalse(preview.contains("ab"));
   }
 
   /** Test method for {@link com.cburch.logisim.gui.hex.HexFile} */
