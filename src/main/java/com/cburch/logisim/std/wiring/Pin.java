@@ -166,6 +166,10 @@ public class Pin extends InstanceFactory {
       gbc.gridy = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      gbc.weightx = 1.0;
+      gbc.ipadx = AppPreferences.getScaled(8);
+      gbc.ipady = AppPreferences.getScaled(4);
       gbc.insets = new Insets(8, 4, 8, 4);
       text.addKeyListener(this);
       text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -323,6 +327,10 @@ public class Pin extends InstanceFactory {
       gbc.gridy = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      gbc.weightx = 1.0;
+      gbc.ipadx = AppPreferences.getScaled(8);
+      gbc.ipady = AppPreferences.getScaled(4);
       gbc.insets = new Insets(8, 4, 8, 4);
       text.addKeyListener(this);
       text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
