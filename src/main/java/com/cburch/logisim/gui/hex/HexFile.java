@@ -359,9 +359,8 @@ public class HexFile {
     final var separator = preview.endsWith("\n") ? "" : "\n";
     return preview
         + separator
-        + String.format(
-            "... preview truncated after %d of %d words ...\n",
-            SAVE_PREVIEW_WORD_LIMIT, wordCount);
+        + S.get("hexSavePreviewTruncated", SAVE_PREVIEW_WORD_LIMIT, wordCount)
+        + "\n";
   }
 
   // No header is output. As a special, if desc is null, v2.0 raw will be used.

@@ -1,20 +1,19 @@
 package com.cburch.logisim.gui.hex;
 
+import static com.cburch.logisim.gui.Strings.S;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.cburch.logisim.std.memory.MemContents;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class HexFileTest {
 
@@ -87,7 +86,7 @@ public class HexFileTest {
 
     final var preview = HexFile.saveToPreviewString(memoryContents, "v3.0 hex words addressed");
 
-    assertTrue(preview.contains("preview truncated after 1024 of 4096 words"));
+    assertTrue(preview.contains(S.get("hexSavePreviewTruncated", 1024, 4096)));
     assertFalse(preview.contains("0800:"));
     assertFalse(preview.contains("ab"));
   }
