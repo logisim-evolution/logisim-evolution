@@ -356,21 +356,48 @@ public class CircuitWires {
         dirty = false;
         return busVal;
       }
-      long error = 0, unknown = 0, value = 0;
-      for (var i = 0; i < width; i++) {
-        long mask = 1L << i;
-        final var tv = threads[i].threadValue();
-        if (tv == Value.TRUE) {
-          value |= mask;
-        } else if (tv == Value.FALSE) {
-          ;
-        } else if (tv == Value.UNKNOWN) {
-          unknown |= mask;
-        } else {
-          error |= mask;
+
+      if (width <= 64) {
+        long error = 0, unknown = 0, value = 0;
+        for (var i = 0; i < width; i++) {
+          long mask = 1L << i;
+          final var tv = threads[i].threadValue();
+          if (tv == Value.TRUE) {
+            value |= mask;
+          } else if (tv == Value.FALSE) {
+            ;
+          } else if (tv == Value.UNKNOWN) {
+            unknown |= mask;
+          } else {
+            error |= mask;
+          }
         }
+        busVal = Value.create_unsafe(width, error, unknown, value);
+      } else {
+        int length = (width + 63) / 64;
+        var error = new long[length];
+        var unknown = new long[length];
+        var value = new long[length];
+        for (int longIndex = 0; longIndex < length; longIndex++) {
+          int bitsInThisLong = Math.min(64, width - longIndex * 64);
+          for (int i = 0; i < bitsInThisLong; i++) {
+            int threadIndex = longIndex * 64 + i;
+            long mask = 1L << i;
+            final var tv = threads[threadIndex].threadValue();
+            if (tv == Value.TRUE) {
+              value[longIndex] |= mask;
+            } else if (tv == Value.FALSE) {
+              ;
+            } else if (tv == Value.UNKNOWN) {
+              unknown[longIndex] |= mask;
+            } else {
+              error[longIndex] |= mask;
+            }
+          }
+        }
+        busVal = Value.create_unsafe(width, error, unknown, value);
       }
-      busVal = Value.create_unsafe(width, error, unknown, value);
+
       dirty = false;
       return busVal;
     }

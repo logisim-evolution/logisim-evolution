@@ -66,9 +66,8 @@ public class Multiplier extends InstanceFactory {
       BigInteger cc = c_in.toBigInteger(unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
 
-      long lo = rr.longValue();
-      long hi = rr.shiftRight(w).longValue();
-      return new Value[] {Value.createKnown(width, lo), Value.createKnown(width, hi)};
+      var hi = rr.shiftRight(w);
+      return new Value[] {Value.createKnown(width, rr), Value.createKnown(width, hi)};
     } else {
       Value[] avals = a.getAll();
       int aUnkIndex = findUnknown(avals);
@@ -87,12 +86,11 @@ public class Multiplier extends InstanceFactory {
       BigInteger bb = b.toBigInteger(unsigned);
       BigInteger cc = c_in.toBigInteger(unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
-      long ret = rr.longValue();
 
       Value[] bits = new Value[w];
       for (int i = 0; i < w; i++) {
         if (i < known) {
-          bits[i] = ((ret & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
+          bits[i] = rr.testBit(i) ? Value.TRUE : Value.FALSE;
         } else if (i < error) {
           bits[i] = Value.UNKNOWN;
         } else {

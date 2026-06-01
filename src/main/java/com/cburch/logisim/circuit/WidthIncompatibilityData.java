@@ -11,6 +11,8 @@ package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
+
 import java.util.ArrayList;
 
 public class WidthIncompatibilityData {
@@ -62,7 +64,7 @@ public class WidthIncompatibilityData {
   }
 
   public BitWidth getCommonBitWidth() {
-    final var hist = new int[65];
+    final var hist = new int[Value.MAX_WIDTH + 1];
     BitWidth maxwidth = null;
     var maxcount = 0;
     for (final var bw : widths) {

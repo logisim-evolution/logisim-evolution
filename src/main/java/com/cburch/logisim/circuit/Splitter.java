@@ -64,7 +64,7 @@ public class Splitter extends ManagedComponent
   }
 
   // basic data
-  byte[] bitThread; // how each bit maps to thread within end
+  short[] bitThread; // how each bit maps to thread within end
 
   // derived data
   CircuitWires.SplitterData wireData;
@@ -93,9 +93,9 @@ public class Splitter extends ManagedComponent
     final var bitEnd = attrs.bitEnd;
 
     // compute width of each end
-    bitThread = new byte[bitEnd.length];
-    final var endWidth = new byte[fanout + 1];
-    endWidth[0] = (byte) bitEnd.length;
+    bitThread = new short[bitEnd.length];
+    final var endWidth = new short[fanout + 1];
+    endWidth[0] = (short) bitEnd.length;
     for (var i = 0; i < bitEnd.length; i++) {
       final var thr = bitEnd[i];
       if (thr > 0) {
@@ -171,7 +171,7 @@ public class Splitter extends ManagedComponent
     }
   }
 
-  public byte[] getEndpoints() {
+  public short[] getEndpoints() {
     return ((SplitterAttributes) getAttributeSet()).bitEnd;
   }
 

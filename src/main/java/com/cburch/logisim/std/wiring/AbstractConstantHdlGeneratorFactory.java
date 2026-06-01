@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import java.math.BigInteger;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -18,8 +20,8 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
-  public long getConstant(AttributeSet attrs) {
-    return 0;
+  public BigInteger getConstant(AttributeSet attrs) {
+    return BigInteger.ZERO;
   }
 
   @Override
@@ -47,12 +49,10 @@ public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFact
           contents.add("");
         } else {
           /* we have to enumerate all bits */
-          var mask = 1L;
           var constValue = Hdl.zeroBit();
           for (var bit = 0; bit < nrOfBits; bit++) {
-            if ((mask & constantValue) != 0) constValue = Hdl.oneBit();
+            if (constantValue.testBit(bit)) constValue = Hdl.oneBit();
             else constValue = Hdl.zeroBit();
-            mask <<= 1;
             contents.add(
                 "{{assign}} {{1}} {{=}} {{2}};",
                 Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), constValue);

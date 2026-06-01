@@ -56,10 +56,17 @@ public class Adder extends InstanceFactory {
         final var cOut = (aLast && bLast) || (aLast && cInLast) || (bLast && cInLast);
         final var sum = valueA.toLongValue() + valueB.toLongValue() + cIn.toLongValue();
         return new Value[] {Value.createKnown(width, sum), cOut ? Value.TRUE : Value.FALSE};
-      } else {
+      } else if (w < 64) {
         final var sum = valueA.toLongValue() + valueB.toLongValue() + cIn.toLongValue();
         return new Value[] {
           Value.createKnown(width, sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE
+        };
+      } else {
+        final var sum = valueA.toBigInteger(true)
+            .add(valueB.toBigInteger(true))
+            .add(cIn.toBigInteger(true));
+        return new Value[] {
+          Value.createKnown(width, sum), sum.testBit(w) ? Value.TRUE : Value.FALSE
         };
       }
     } else {
@@ -159,7 +166,7 @@ public class Adder extends InstanceFactory {
     Value a = state.getPortValue(IN0);
     Value b = state.getPortValue(IN1);
     Value cIn = state.getPortValue(C_IN);
-    Value[] outs = Adder.computeSum(dataWidth, a, b, cIn);
+    Value[] outs = computeSum(dataWidth, a, b, cIn);
 
     // propagate them
     int delay = (dataWidth.getWidth() + 2) * PER_DELAY;

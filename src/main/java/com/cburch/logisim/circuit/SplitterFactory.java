@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.SplitterIcon;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
@@ -93,9 +94,9 @@ public class SplitterFactory extends AbstractComponentFactory {
           ParallelConfigurator.create(
               new BitWidthConfigurator(SplitterAttributes.ATTR_WIDTH),
               new IntegerConfigurator(
-                  SplitterAttributes.ATTR_FANOUT, 1, 64, InputEvent.ALT_DOWN_MASK));
+                  SplitterAttributes.ATTR_FANOUT, 1, Value.MAX_WIDTH, InputEvent.ALT_DOWN_MASK));
       return JoinedConfigurator.create(
-          new IntegerConfigurator(SplitterAttributes.ATTR_FANOUT, 1, 64, 0), altConfig);
+          new IntegerConfigurator(SplitterAttributes.ATTR_FANOUT, 1, Value.MAX_WIDTH, 0), altConfig);
     }
     return super.getFeature(key, attrs);
   }

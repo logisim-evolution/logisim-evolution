@@ -8,31 +8,33 @@
  */
 
 package com.cburch.logisim.util;
+import java.lang.reflect.Array;
 
 /**
  * Allows immutable objects to be cached in memory in order to reduce the creation of duplicate
  * objects.
  */
-public class Cache {
+public class Cache<T> {
   private final int mask;
-  private final Object[] data;
+  private final T[] data;
 
-  public Cache() {
-    this(8);
+  public Cache(Class<T> c) {
+    this(c, 8);
   }
 
-  public Cache(int logSize) {
+  public Cache(Class<T> c, int logSize) {
     if (logSize > 12) logSize = 12;
-
-    data = new Object[1 << logSize];
+    @SuppressWarnings("unchecked")
+    final T[] d = (T[]) Array.newInstance(c, 1 << logSize);
+    data = d;
     mask = data.length - 1;
   }
 
-  public Object get(int hashCode) {
+  public T get(int hashCode) {
     return data[hashCode & mask];
   }
 
-  public Object get(Object value) {
+  public T get(T value) {
     if (value == null) return null;
     int code = value.hashCode() & mask;
     final var ret = data[code];
@@ -44,7 +46,12 @@ public class Cache {
     }
   }
 
-  public void put(int hashCode, Object value) {
+  public void put(int hashCode, T value) {
     if (value != null) data[hashCode & mask] = value;
+  }
+
+
+  public void put(T value) {
+    if (value != null) data[value.hashCode() & mask] = value;
   }
 }

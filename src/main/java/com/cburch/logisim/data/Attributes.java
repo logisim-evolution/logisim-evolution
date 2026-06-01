@@ -21,6 +21,8 @@ import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.math.BigInteger;
+
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -214,6 +216,7 @@ public class Attributes {
           return Integer.parseInt("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Integer.parseInt("-" + value, 8);
         } else {
           return Integer.parseInt("-" + value, 10);
@@ -227,6 +230,7 @@ public class Attributes {
           return Integer.parseUnsignedInt(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Integer.parseUnsignedInt(value, 8);
         } else {
           return Integer.parseUnsignedInt(value, 10);
@@ -264,6 +268,7 @@ public class Attributes {
           return Long.parseLong("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Long.parseLong("-" + value, 8);
         } else {
           return Long.parseLong("-" + value, 10);
@@ -277,6 +282,7 @@ public class Attributes {
           return Long.parseUnsignedLong(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
+          if (value.startsWith("o")) value = value.substring(1);
           return Long.parseUnsignedLong(value, 8);
         } else {
           return Long.parseUnsignedLong(value, 10);
@@ -292,6 +298,54 @@ public class Attributes {
 
     @Override
     public String toStandardString(Long value) {
+      return toDisplayString(value);
+    }
+  }
+
+  private static class HexBigIntegerAttribute extends Attribute<BigInteger> {
+    private HexBigIntegerAttribute(String name, StringGetter disp) {
+      super(name, disp);
+    }
+
+    @Override
+    public BigInteger parse(String value) {
+      value = value.toLowerCase();
+      BigInteger bigInt;
+
+      boolean negative = value.startsWith("-");
+      if (negative) {
+        value = value.substring(1);
+      }
+
+      if (value.startsWith("0x")) {
+        value = value.substring(2);
+        bigInt = new BigInteger(value, 16);
+      } else if (value.startsWith("0b")) {
+        value = value.substring(2);
+        bigInt = new BigInteger(value, 2);
+      } else if (value.startsWith("0") && value.length() > 1) {
+        value = value.substring(1);
+        if (value.startsWith("o")) value = value.substring(1);
+        bigInt = new BigInteger(value, 8);
+      } else {
+        bigInt = new BigInteger(value, 10);
+      }
+
+      if (negative) {
+        bigInt = bigInt.negate();
+      }
+
+      return bigInt;
+    }
+
+
+    @Override
+    public String toDisplayString(BigInteger value) {
+      return "0x" + value.toString(16);
+    }
+
+    @Override
+    public String toStandardString(BigInteger value) {
       return toDisplayString(value);
     }
   }
@@ -530,6 +584,14 @@ public class Attributes {
 
   public static Attribute<Long> forHexLong(String name, StringGetter disp) {
     return new HexLongAttribute(name, disp);
+  }
+
+  public static Attribute<BigInteger> forHexBigInteger(String name) {
+    return forHexBigInteger(name, getter(name));
+  }
+
+  public static Attribute<BigInteger> forHexBigInteger(String name, StringGetter disp) {
+    return new HexBigIntegerAttribute(name, disp);
   }
 
   public static Attribute<Integer> forInteger(String name) {

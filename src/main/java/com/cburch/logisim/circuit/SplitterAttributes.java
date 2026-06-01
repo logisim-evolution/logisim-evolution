@@ -17,6 +17,7 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
@@ -125,11 +126,11 @@ public class SplitterAttributes extends AbstractAttributeSet {
     }
   }
 
-  static byte[] computeDistribution(int fanout, int bits, int order) {
-    final var ret = new byte[bits];
+  static short[] computeDistribution(int fanout, int bits, int order) {
+    final var ret = new short[bits];
     if (order >= 0) {
       if (fanout >= bits) {
-        for (var i = 0; i < bits; i++) ret[i] = (byte) (i + 1);
+        for (var i = 0; i < bits; i++) ret[i] = (short) (i + 1);
       } else {
         final var threads_per_end = bits / fanout;
         var endsWithExtra = bits % fanout;
@@ -144,13 +145,13 @@ public class SplitterAttributes extends AbstractAttributeSet {
               --endsWithExtra;
             }
           }
-          ret[i] = (byte) (1 + curEnd);
+          ret[i] = (short) (1 + curEnd);
           --leftInEnd;
         }
       }
     } else {
       if (fanout >= bits) {
-        for (int i = 0; i < bits; i++) ret[i] = (byte) (fanout - i);
+        for (int i = 0; i < bits; i++) ret[i] = (short) (fanout - i);
       } else {
         final var threads_per_end = bits / fanout;
         var endsWithExtra = bits % fanout;
@@ -165,7 +166,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
               --endsWithExtra;
             }
           }
-          ret[i] = (byte) (1 + curEnd);
+          ret[i] = (short) (1 + curEnd);
           --leftInEnd;
         }
       }
@@ -186,7 +187,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   public static final Attribute<BitWidth> ATTR_WIDTH = Attributes.forBitWidth("incoming", S.getter("splitterBitWidthAttr"));
 
-  public static final Attribute<Integer> ATTR_FANOUT = Attributes.forIntegerRange("fanout", S.getter("splitterFanOutAttr"), 1, 64);
+  public static final Attribute<Integer> ATTR_FANOUT = Attributes.forIntegerRange("fanout", S.getter("splitterFanOutAttr"), 1, Value.MAX_WIDTH);
 
   private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays.asList(StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING);
 
@@ -196,8 +197,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
   AttributeOption appear = APPEAR_LEFT;
   Direction facing = Direction.EAST;
   int spacing = 1;
-  byte fanout = 2; // number of ends this splits into
-  byte[] bitEnd = new byte[2]; // how each bit maps to an end (0 if nowhere);
+  short fanout = 2; // number of ends this splits into
+  short[] bitEnd = new short[2]; // how each bit maps to an end (0 if nowhere);
 
   // other values will be between 1 and fanout
   BitOutOption[] options = null;
@@ -332,17 +333,17 @@ public class SplitterAttributes extends AbstractAttributeSet {
       int newValue = (Integer) value;
       final var bits = bitEnd;
       for (var i = 0; i < bits.length; i++) {
-        if (bits[i] > newValue) bits[i] = (byte) newValue;
+        if (bits[i] > newValue) bits[i] = (short) newValue;
       }
-      if (fanout == (byte) newValue) return;
-      fanout = (byte) newValue;
+      if (fanout == (short) newValue) return;
+      fanout = (short) newValue;
       configureOptions();
       configureDefaults();
       parameters = null;
     } else if (attr == ATTR_WIDTH) {
       final var width = (BitWidth) value;
       if (bitEnd.length == width.getWidth()) return;
-      bitEnd = new byte[width.getWidth()];
+      bitEnd = new short[width.getWidth()];
       configureOptions();
       configureDefaults();
     } else if (attr == ATTR_SPACING) {
@@ -358,8 +359,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
     } else if (attr instanceof BitOutAttribute bitOutAttr) {
       int val = (value instanceof Integer) ? (Integer) value : ((BitOutOption) value).value + 1;
       if (val >= 0 && val <= fanout) {
-        if (bitEnd[bitOutAttr.which] == (byte) val) return;
-        bitEnd[bitOutAttr.which] = (byte) val;
+        if (bitEnd[bitOutAttr.which] == (short) val) return;
+        bitEnd[bitOutAttr.which] = (short) val;
       } else return;
     } else {
       throw new IllegalArgumentException("unknown attribute " + attr);

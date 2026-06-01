@@ -328,7 +328,7 @@ public class ShiftRegister extends InstanceFactory {
       String value;
       if (data_value.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
-        value = StringUtil.toHexString(nrOfBits, data_value.toLongValue());
+        value = data_value.toHexString();
       } else {
         g.setColor(Color.YELLOW);
         value = (data_value.isUnknown()) ? "?" : "!";
