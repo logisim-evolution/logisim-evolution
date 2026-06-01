@@ -192,7 +192,7 @@ public class XilinxDownload implements VendorDownload {
     if (!FileWriter.writeContents(vhdlListFile, contents.get())) return false;
 
     contents
-          .clear()
+          .clearBuffer()
           .add(
               "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
               ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME,
@@ -202,7 +202,7 @@ public class XilinxDownload implements VendorDownload {
 
     if (!FileWriter.writeContents(scriptFile, contents.get())) return false;
 
-    contents.clear();
+    contents.clearBuffer();
     contents.add("setmode -bscan");
 
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
