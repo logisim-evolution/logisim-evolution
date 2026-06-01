@@ -297,7 +297,7 @@
             </td>
 			<td>
 			  &nbsp;&nbsp;&nbsp;&nbsp;
-			</d>
+			</td>
             <td  colspan=3>
               <table class="truthtable">
                 <tbody>
@@ -440,7 +440,7 @@
                         0
                       </td>
                       <td class="space">
-                        Source
+                        Source, except <b class="zerov">0</b> becomes <b class="uvalue">U</b>
                       </td>
                     </tr>
                     <tr>
@@ -503,7 +503,7 @@
                         1
                       </td>
                       <td align="center">
-                        Source
+                        Source, except <b class="unov">1</b> becomes <b class="uvalue">U</b>
                       </td>
                     </tr>
                     <tr>
@@ -521,7 +521,7 @@
           </tbody>
         </table>
         <p>
-          * If source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>.
+          * When gate is <b class="uvalue">U</b> or <b class="evalue">E</b>, if source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>.
         </p>
       </center>
 	 <p>
@@ -552,7 +552,7 @@
           East edge (output, bit width matches Data Bits attribute)
         </dt>
         <dd>
-          The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output will be an error value (<b class="evalue">E</b>).
+          The component's output. If the <b>gate</b> input enables the transistor, the output follows the <b>source</b> input except for the transistor's masked value: a P-type transistor outputs <b class="uvalue">U</b> for source <b class="zerov">0</b>, and an N-type transistor outputs <b class="uvalue">U</b> for source <b class="unov">1</b>. If the <b>gate</b> input is defined but does not enable the transistor, the output is floating (<b class="uvalue">U</b>). If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error value (<b class="evalue">E</b>), then a floating source bit remains <b class="uvalue">U</b> and any other source bit becomes <b class="evalue">E</b>.
         </dd>
       </dl>
       <h2>
