@@ -296,9 +296,30 @@ public class XilinxDownload implements VendorDownload {
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
-    for (var key : LedArrayMap.keySet()) {
-      contents.add("NET \"" + LedArrayMap.get(key) + "\" LOC=\"" + key + "\";");
+    final var ledArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
+    for (var pin : ledArrayMap) {
+      temp.setLength(0);
+      temp.append("NET \"").append(pin.hdlSignal()).append("\" ");
+      temp.append("LOC = \"").append(pin.pinLocation()).append("\" ");
+      if (pin.pullBehavior() != PullBehaviors.UNKNOWN && pin.pullBehavior() != PullBehaviors.FLOAT) {
+        temp.append("| ")
+            .append(PullBehaviors.getConstrainedPullString(pin.pullBehavior()))
+            .append(" ");
+      }
+      if (pin.driveStrength() != DriveStrength.UNKNOWN
+          && pin.driveStrength() != DriveStrength.DEFAULT_STENGTH) {
+        temp.append("| DRIVE = ")
+            .append(DriveStrength.getConstrainedDriveStrength(pin.driveStrength()))
+            .append(" ");
+      }
+      if (pin.ioStandard() != IoStandards.UNKNOWN
+          && pin.ioStandard() != IoStandards.DEFAULT_STANDARD) {
+        temp.append("| IOSTANDARD = ")
+            .append(IoStandards.getConstraintedIoStandard(pin.ioStandard()))
+            .append(" ");
+      }
+      temp.append(";");
+      contents.add(temp.toString());
     }
     return contents;
   }
