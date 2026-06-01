@@ -22,8 +22,16 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
       Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_DIR);
-    var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
-    final var startIndex = componentInfo.getLocalBubbleInputStartId();
+    var nrOfPins =
+        componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
+    final int startIndex;
+    if (portType == PortIo.INPUT) {
+      startIndex = componentInfo.getLocalBubbleInputStartId();
+    } else if (portType == PortIo.OUTPUT) {
+      startIndex = componentInfo.getLocalBubbleOutputStartId();
+    } else {
+      startIndex = componentInfo.getLocalBubbleInOutStartId();
+    }
     final var endIndex = startIndex + nrOfPins - 1;
     if (portType == PortIo.INPUT) {
       if (nrOfPins == 1) {
