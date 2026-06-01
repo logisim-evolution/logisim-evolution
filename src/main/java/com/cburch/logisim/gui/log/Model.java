@@ -140,7 +140,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     }
 
     // set up initial signal values (after sorting)
-    final var duration = captureContinuous() ? gateDelay : timeScale;
+    final var duration = getInitialDuration();
     for (int i = 0; i < info.size(); i++) {
       final var item = info.get(i);
       signals.add(new Signal(i, item, item.fetchValue(circuitState), duration, 0, historyLimit));
@@ -333,6 +333,20 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     return isFine()
         || (mode == CLOCK_HIGH && curClockVal.equals(HI))
         || (mode == CLOCK_LOW && curClockVal.equals(LO));
+  }
+
+  private long getInitialDuration() {
+    if (mode >= CLOCKED) {
+      if (captureContinuous()) return gateDelay;
+      final var cc = ClockSource.getCycleInfo(clockSource);
+      if (mode == CLOCK_HIGH || mode == CLOCK_LOW) {
+        return (mode == CLOCK_HIGH ? cc.lo : cc.hi) * timeScale;
+      }
+      final var ticks =
+          (mode == CLOCK_DUAL) ? (curClockVal.equals(Value.FALSE) ? cc.lo : cc.hi) : cc.ticks;
+      return timeScale * ticks;
+    }
+    return mode == STEP ? timeScale : gateDelay;
   }
 
   public int getHistoryLimit() {
@@ -679,27 +693,10 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   public void simulatorReset() {
-    long duration;
     if (mode >= CLOCKED) {
       curClockVal = clockSource.fetchValue(circuitState);
-      final var cc = ClockSource.getCycleInfo(clockSource);
-      if (captureContinuous()) { // fine-grained, or active level-sensitive clock
-        duration = gateDelay;
-      } else if (mode == CLOCK_HIGH || mode == CLOCK_LOW) { // inactive level-sensitive
-        final var activeDuration = (mode == CLOCK_HIGH ? cc.hi : cc.lo) * timeScale;
-        final var stableDuration = (mode == CLOCK_HIGH ? cc.lo : cc.hi) * timeScale;
-        duration = isFine() ? gateDelay : stableDuration;
-      } else { // edge-triggered clock, fine or coarse
-        final var ticks =
-            (mode == CLOCK_DUAL) ? (curClockVal.equals(Value.FALSE) ? cc.lo : cc.hi) : cc.ticks;
-        final var stableDuration = timeScale * ticks;
-        duration = isFine() ? gateDelay : stableDuration;
-      }
-    } else if (mode == STEP) {
-      duration = timeScale;
-    } else { // mode == REAL
-      duration = gateDelay;
     }
+    long duration = getInitialDuration();
     if (mode == REAL) lastRealtimeUpdate = System.nanoTime();
     elapsedSinceTrigger = 0;
     for (final var s : signals) {
