@@ -256,8 +256,8 @@ public class AlteraDownload implements VendorDownload {
       }
     }
     final var ledArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
-    for (final var key : ledArrayMap.keySet())
-      contents.add("set_location_assignment {{1}} -to {{2}}", ledArrayMap.get(key), key);
+    for (final var pin : ledArrayMap)
+      contents.add("set_location_assignment {{1}} -to {{2}}", pin.pinLocation(), pin.hdlSignal());
     return contents.getWithIndent(4);
   }
 
