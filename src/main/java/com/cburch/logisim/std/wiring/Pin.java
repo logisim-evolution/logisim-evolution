@@ -1257,6 +1257,7 @@ public class Pin extends InstanceFactory {
   public void driveInputPin(InstanceState state, Value value) {
     PinAttributes attrs = (PinAttributes) state.getAttributeSet();
     PinState myState = getState(state);
+    if (value == Value.NIL) value = Value.createUnknown(attrs.width);
     // don't pull here -- instead, pull when displaying and propagating
     myState.intendedValue = value; // pull(attrs, value);
   }
