@@ -101,6 +101,7 @@
 	<mapID target="menu_edit"           url="zh/html/guide/menu/edit.html" />
 	<mapID target="menu_project"        url="zh/html/guide/menu/project.html" />
 	<mapID target="menu_simulate"       url="zh/html/guide/menu/simulate.html" />
+	<mapID target="menu_fpga"           url="en/html/guide/menu/fpga.html" />
 	<mapID target="menu_winhelp"        url="zh/html/guide/menu/winhelp.html" />
 	<mapID target="menu_exportab"       url="zh/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="zh/html/guide/menu/printertab.html" />

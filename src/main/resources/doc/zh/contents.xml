@@ -151,6 +151,8 @@
 
 			<!-- <tocitem target="menu_simulate" text="The Simulate menu" /> -->
 			<tocitem target="menu_simulate" text="仿真菜单" />
+			<!-- <tocitem target="menu_fpga" text="The FPGA menu" /> -->
+			<tocitem target="menu_fpga" text="FPGA 菜单" />
 			<!-- <tocitem target="menu_winhelp" text="The Window and Help menus" /> -->
 			<tocitem target="menu_winhelp" text="窗口与帮助菜单" />
 
