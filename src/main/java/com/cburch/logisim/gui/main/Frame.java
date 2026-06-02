@@ -96,6 +96,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
+  private static final double DEFAULT_VHDL_CONSOLE_SPLIT = 0.75;
+  private static final double MIN_VHDL_CONSOLE_SPLIT = 0.05;
+  private static final double MAX_VHDL_CONSOLE_SPLIT = 0.95;
   private final Timer timer = new Timer();
   private final Project project;
   private final MyProjectListener myProjectListener = new MyProjectListener();
@@ -729,7 +732,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     if (loc != null) AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
     if (leftRegion.getFraction() > 0) AppPreferences.WINDOW_LEFT_SPLIT.set(leftRegion.getFraction());
-    if (rightRegion.getFraction() < 1.0) AppPreferences.WINDOW_RIGHT_SPLIT.set(rightRegion.getFraction());
+    final var rightFraction = rightRegion.getFraction();
+    if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
+      AppPreferences.WINDOW_RIGHT_SPLIT.set(rightFraction);
+    }
     if (mainRegion.getFraction() > 0) AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
@@ -754,12 +760,31 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public void setVhdlSimulatorConsoleStatusVisible() {
+    lastFraction = sanitizeVhdlConsoleSplitFraction(lastFraction);
+    rightRegion.setFractionBounds(MIN_VHDL_CONSOLE_SPLIT, MAX_VHDL_CONSOLE_SPLIT);
     rightRegion.setFraction(lastFraction);
   }
 
   public void setVhdlSimulatorConsoleStatusInvisible() {
-    lastFraction = rightRegion.getFraction();
+    final var rightFraction = rightRegion.getFraction();
+    if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
+      lastFraction = rightFraction;
+    }
+    rightRegion.setFractionBounds(0.0, 1.0);
     rightRegion.setFraction(1);
+  }
+
+  static double sanitizeVhdlConsoleSplitFraction(Double fraction) {
+    if (fraction == null || !isUsableVhdlConsoleSplitFraction(fraction)) {
+      return DEFAULT_VHDL_CONSOLE_SPLIT;
+    }
+    return fraction;
+  }
+
+  static boolean isUsableVhdlConsoleSplitFraction(double fraction) {
+    return Double.isFinite(fraction)
+        && fraction >= MIN_VHDL_CONSOLE_SPLIT
+        && fraction <= MAX_VHDL_CONSOLE_SPLIT;
   }
 
   public HdlModel getHdlEditorView() {

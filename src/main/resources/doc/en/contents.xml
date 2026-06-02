@@ -79,6 +79,7 @@
 			<tocitem target="menu_edit" text="The Edit menu" />
 			<tocitem target="menu_project" text="The Project menu" />
 			<tocitem target="menu_simulate" text="The Simulate menu" />
+			<tocitem target="menu_fpga" text="The FPGA menu" />
 			<tocitem target="menu_winhelp" text="The Window and Help menus" />
 			<tocitem target="menu_exportab" text="Export Image"/>
 			<tocitem target="menu_printertab" text="Printing "/>
