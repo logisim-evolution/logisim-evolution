@@ -1,76 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   disassembler
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    Disassembler
-   </h1>
-   <p>
-    <img alt="disassembler" class="iconlibs" src="../../../../img-libs/disassembler.png" title="disassembler"/>
-    <br/>
-   </p>
-   <p>
-    The disassembler takes the program stored in memory and transforms it to a human readable contents. If available the disassembler uses the elf section headers to extract defined labels and sections. Otherwise it uses directly the information stored in memory to decode the information. The disassembler has some features that are described below.
-   </p>
-   <h2>
-    Automatic label detection
-   </h2>
-   <p>
-    Where possible the disassembler tries to automatically detect labels in your program. The detected labels will be called
-    <em>
-     <strong>
-      logisim_label_&lt;x&gt;
-     </strong>
-    </em>
-    where
-    <strong>
-     &lt;x&gt;
-    </strong>
-    is a number starting with 1. The labels are ordered from top to bottom, such that searching for a label is facilitated.
-   </p>
-   <h2>
-    Automatic program counter and opcode insertion
-   </h2>
-   <p>
-    After each line where an instruction is detected the disassembler will insert a remark containing the program counter (pc) value and the instruction's binary opcode.
-   </p>
-   <h2>
-    Break point support
-   </h2>
-   <p>
-    The disassembler supports breakpoints. Breakpoints can be set/cleared by either clicking in the left vertical bar next to the instruction, or by selecting a line and pressing the
-    <strong>
-     b
-    </strong>
-    or clicking on either the button
-    <em>
-     Add break point
-    </em>
-    or
-    <em>
-     Remove break point
-    </em>
-    .
-   </p>
-   <p>
-    The moment the cpu reaches a break point it will stop executing and the
-    <a href="socsimcontrol.html">
-     simulation state controller
-    </a>
-    will indicate a break point reached. The instruction next to the break point will not be executed. Finally upon reaching a break point the disassembler will automatically jump to the line at which the break point is encountered.
-    <br/>
-   </p>
-  </div>
- </body>
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      反汇编器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        反汇编器
+      </h1>
+      <p>
+        <img class="iconlibs" src="../../../../img-libs/disassembler.png" alt="反汇编器" title="反汇编器"><br>
+      </p>
+      <p>
+        反汇编器将存储器中存储的程序转换为人类可读的内容。如果可用，反汇编器会使用 ELF 节头来提取已定义的标签和节。否则，它直接使用存储器中存储的信息来解码信息。反汇编器具有以下描述的一些功能。
+      </p>
+      <h2>
+        自动标签检测
+      </h2>
+      <p>
+        在可能的情况下，反汇编器会尝试自动检测程序中的标签。检测到的标签将被称为 <em><strong>logisim_label_&lt;x&gt;</strong> </em>，其中 <strong>&lt;x&gt;</strong> 是从 1 开始的数字。标签从上到下排序，以便于搜索。
+      </p>
+      <h2>
+        自动程序计数器和操作码插入
+      </h2>
+      <p>
+        在检测到指令的每一行之后，反汇编器会插入一条注释，其中包含程序计数器（pc）值和指令的二进制操作码。
+      </p>
+      <h2>
+        断点支持
+      </h2>
+      <p>
+        反汇编器支持断点。可以通过单击指令旁边的左侧垂直条、选择一行并按下 <strong>b</strong>，或单击 <em>添加断点</em> / <em>移除断点</em> 按钮来设置或清除断点。
+      </p>
+      <p>
+        当 CPU 执行到断点时，它将停止执行，并且 <a href="socnios2s.html#socsimcontrol">仿真状态控制器</a> 将指示已到达断点。断点所在的指令不会被执行。最后，反汇编器会自动跳转到遇到断点的行。<br>
+      </p>
+    </div>
+  </body>
 </html>

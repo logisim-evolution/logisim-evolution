@@ -1,78 +1,56 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   Minimal requirements
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    Minimal requirements
-   </h1>
-   <h2>
-    Minimal requirements for a successful simulation
-   </h2>
-   <p>
-    To be able to perform a System On Chip (SOC) simulation you require to have in your sheet at least:
-   </p>
-   <ol>
-    <li>
-     One of the processors marked with the
-     <img alt="up" class="notscal" src="../../../../icons/up.png"/>
-     .
-    </li>
-    <li>
-     One bus marked with the
-     <img alt="socbus" class="notscal" src="../../../../icons/socbus.png"/>
-    </li>
-    <li>
-     One memory simulator marked with the
-     <img alt="socmem" class="notscal" src="../../../../icons/socmem.png"/>
-    </li>
-   </ol>
-   <p>
-    Furthermore, both the memory simulator and the processor need to be connected to the bus. This can be achieved by defining the
-    <em>
-     <strong>
-      Connected bus
-     </strong>
-    </em>
-    attribute of the respective components.
-   </p>
-   <h2>
-    Restrictions
-   </h2>
-   <p>
-    A SOC system can only be local on one sheet, meaning that a given bus component is only visible on the sheet it is placed. Building hierarchical systems is only possible when having the base system on one sheet and the extensions, for example VHDL-extentions or circuits, connected through the base system by means of input- and output pins.
-   </p>
-   <h2>
-    Simulation speed
-   </h2>
-   <p>
-    One has to realize that this library is intended to visualize what is going on in a SOC. Hence it provides in no way the means to perform (near) real-time simulations of your SOC. For this purpose more adequate systems are for example
-    <a href="https://www.qemu.org" target="_blank">
-     QEMU
-    </a>
-    .
-   </p>
-   <p>
-    On the test system with all parts of the system visible a maximum of 3 Hz tick-frequency was measured. Disabling some of the details for faster simulation improved the speed to 8 Hz. The best simulation speed can be achieved to use super-circuits with dynamic elements. Here the simulation speed went up to approx. 3kHz.
-   </p>
-   <p>
-    <a href="./index.html">
-     Back to
-     <em>
-      System On Chip components library
-     </em>
-    </a>
-   </p>
-  </div>
- </body>
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      最低要求
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+       最低要求
+      </h1>
+      <h2>
+        成功仿真所需的最低要求
+      </h2>
+      <p>
+        要执行片上系统（SoC）仿真，电路图中至少需要包含：
+      </p>
+      <ol>
+        <li>一个带有 <img class="notscal" src="../../../../icons/todelete/up.png" alt="up"> 标记的处理器。
+        </li>
+        <li>一条带有 <img class="notscal" src="../../../../icons/todelete/socbus.png" alt="socbus"> 标记的 SoC 总线。
+        </li>
+        <li>一个带有 <img class="notscal" src="../../../../icons/todelete/socmem.png" alt="socmem"> 标记的内存仿真器。
+        </li>
+      </ol>
+      <p>
+        此外，内存仿真器和处理器都需要连接到总线上。这可以通过设置相应组件的 <em><strong>连接总线</strong></em> 属性来实现。
+      </p>
+      <h2>
+        限制
+      </h2>
+      <p>
+        SoC 系统只能位于一张电路图中，这意味着给定的总线组件只在其所在的电路图中可见。构建层次化系统时，需要将基础系统放在同一张电路图中，而扩展部分（例如 VHDL 扩展或子电路）则通过输入引脚和输出引脚连接到基础系统。
+      </p>
+      <h2>
+        仿真速度
+      </h2>
+      <p>
+        需要注意的是，该库的目标是可视化 SoC 中发生的情况，并不适合对 SoC 进行接近实时的仿真。对于这类用途，更合适的系统包括 <a href="https://www.qemu.org" target="_blank">QEMU</a>。
+      </p>
+      <p>
+        在测试系统上，当系统的所有部分都可见时，测得的最大 tick 频率为 3 Hz。隐藏部分细节以加快仿真速度后，速度提高到 8 Hz。将动态元素放在上层电路中使用时，可获得最佳仿真速度，约为 3 kHz。
+      </p>
+      <p>
+        <a href="./index.html">返回<em>片上系统组件库</em></a>
+      </p>
+    </div>
+  </body>
 </html>

@@ -110,6 +110,7 @@
 	
 <!-- for testing and validation -->	
 	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
+	<mapID target="Tests_for_doc"       url="en/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
 
 <!-- Librairie -->
@@ -161,33 +162,35 @@
 	<mapID target="mem_rom"             url="en/html/libs/mem/rom.html" />
 	<mapID target="io"                  url="en/html/libs/io/index.html" />
 	<mapID target="io_button"           url="en/html/libs/io/button.html" />
+	<mapID target="io_DIP"              url="en/html/libs/io/dipswitch.html" />
 	<mapID target="io_joystick"         url="en/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="en/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="en/html/libs/io/led.html" />
+	<mapID target="io_ledRGB"           url="en/html/libs/io/rgbled.html" />
 	<mapID target="io_7seg"             url="en/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="en/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="en/html/libs/io/dotmat.html" />
 	<mapID target="io_tty"              url="en/html/libs/io/tty.html" />	
 	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
-    <mapID target="io_Port_IO"          url="en/html/libs/io/Port_io.html" />	
-	<mapID target="io_Repetar"          url="en/html/libs/io/repetar.html" />	
-	<mapID target="io_videorvb"         url="en/html/libs/io/videorvb.html" />
+    <mapID target="io_Port_IO"          url="en/html/libs/io/index.html#portio" />	
+	<mapID target="io_Repetar"          url="en/html/libs/io/index.html#repetar" />	
+	<mapID target="io_videorgb"         url="en/html/libs/io/index.html#rgbvideo" />
 	<mapID target="tcl"                 url="en/html/libs/tcl/index.html" />
-    <mapID target="tcl_reds_console"    url="en/html/libs/tcl/reds_console.html" />
-    <mapID target="tcl_generic"         url="en/html/libs/tcl/generic.html" />
+    <mapID target="tcl_reds_console"    url="en/html/libs/tcl/redsconsole.html" />
+    <mapID target="tcl_generic"         url="en/html/libs/tcl/tclgeneric.html" />
     <mapID target="soc"                 url="en/html/libs/soc/index.html" />
-    <mapID target="nios2_sim"           url="en/html/libs/soc/nios2.html" />
+    <mapID target="nios2_sim"           url="en/html/libs/soc/socnios2s.html" />
     <mapID target="socbus"              url="en/html/libs/soc/socbus.html" />
     <mapID target="assembler"           url="en/html/libs/soc/assembler.html" />
     <mapID target="disassembler"        url="en/html/libs/soc/disassembler.html" />
-    <mapID target="socsimcontrol"       url="en/html/libs/soc/socsimcontrol.html" />
+    <mapID target="socsimcontrol"       url="en/html/libs/soc/index.html" />
 	
 <!-- Icon help tree -->
-	<mapID target="icon_poke"        url="icons/1616/poke.png" />
-	<mapID target="icon_edit"        url="icons/1616/select.png" />
-	<mapID target="icon_select"      url="icons/1616/select.png" />
-	<mapID target="icon_wiring"      url="icons/1616/wiring.png" />
-	<mapID target="icon_text"        url="icons/1616/text.png" />
+	<mapID target="icon_poke"        url="icons/1616/toolpoke.png" />
+	<mapID target="icon_edit"        url="icons/1616/toolselect.png" />
+	<mapID target="icon_select"      url="icons/1616/toolselect.png" />
+	<mapID target="icon_wiring"      url="icons/todelete/wiring.gif" />
+	<mapID target="icon_text"        url="icons/1616/tooltext.png" />
 	<mapID target="icon_menu"        url="icons/1616/menu.png" />
 	
 	<mapID target="icon_splitter"    url="icons/1616/splitter.png" />
@@ -260,7 +263,7 @@
 	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
 	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
 	<mapID target="icon_digitalscope"    url="icons/1616/digitalscope.png" />	
-	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
+	<mapID target="icon_pla2"        url="icons/1616/pla.png" />	
 	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
 	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		
 

@@ -1,0 +1,6 @@
+guide/gui/gui-attrcomp.html
+guide/gui/gui-toolsbar.html
+libs/wiring/pin.html
+libs/base/poke.html
+guide/tutorial/tutor-gates.html
+

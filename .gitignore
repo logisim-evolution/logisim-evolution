@@ -292,3 +292,6 @@ gradle-app.setting
 
 # python代码
 *.py
+!tools/zh_docs/*.py
+__pycache__/
+*.py[cod]

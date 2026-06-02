@@ -1,153 +1,64 @@
-<html lang="zh">
- <head>
-  <title>
-   Select Tool
-  </title>
- </head>
- <body bgcolor="FFFFFF">
-  <h1>
-   <img align="center" height="32" src="../../../../img-guide/toolselect.png" width="32"/>
-   <em>
-    Select Tool
-   </em>
-  </h1>
-  <p>
-   <table>
-    <tr>
-     <td>
-      <strong>
-       Library:
-      </strong>
-     </td>
-     <td>
-      <a href="index.html">
-       Base
-      </a>
-     </td>
-    </tr>
-    <tr>
-     <td>
-      <strong>
-       Introduced:
-      </strong>
-     </td>
-     <td>
-      2.0 Beta 1
-     </td>
-    </tr>
-   </table>
-  </p>
-  <h2>
-   Behavior
-  </h2>
-  <p>
-   Allows individual components to be placed into the current selection.
-There are a number of actions possible with this tool.
-   <ul>
-    <li>
-     Pressing the mouse button while it is within a currently selected
-component begins a drag moving all components of the selection.
-    </li>
-   </ul>
-  </p>
-  <p>
-   By default, Logisim will compute a way to add new wires
-so that no existing connections are lost during the move.
-(Sometimes it will delete or shorten existing wires.)
-If you're performing a move where you do not want these changes to be made,
-you can press the shift key during the move.
-If you want to disable this behavior entirely,
-go to Project &gt; Options, select the Canvas tab,
-and uncheck the
-   <q>
-    Keep Connections When Moving
-   </q>
-   box;
-in this case, the connections are computed only when the shift key
-   <em>
-    is
-   </em>
-   down.
-  </p>
-  <p>
-   Dragging a selection can lead to unexpected behavior from wires: If
-you drag a selection including some wires on top of some other wires,
-all wires are merged, and the merged wires are placed into the
-selection.  As a result, if you drag the selection a second time, the
-wires previously at the location will not be left behind. This behavior
-is necessary to keep with the expected behavior of wires in Logisim. And
-it does not normally constitute a major problem: Logisim will draw the
-full selection in the midst of dropping, and you should not drop it
-until you are sure it is in the correct location.
-  </p>
-  <li>
-   Otherwise, clicking the mouse within a component drops all
-components from the current selection and selects instead the
-component(s) containing the clicked location.
-   <li>
-    Shift-clicking the mouse within a component toggles that component's
-presence within the selection. If multiple components include the same
-location, all components' presence will be toggled. None of this will
-happen, though, if shift-clicking is mapped to another tool instead (via
-the project options window's
-    <a href="../../guide/opts/opts-mouse.html">
-     Mouse
-tab
-    </a>
-    ).
-    <li>
-     Dragging the mouse starting at a location not contained within any 
-components drops all components from the current selection and
-initiates a rectangular selection.
-All component(s) contained by the rectangle will be placed into the
-selection.
-     <li>
-      Shift-dragging the mouse starting at a location not contained
-within any components initiates a rectangular selection.
-The presence in the selection of all component(s) contained by the
-rectangle will be toggled. This will not happen, though, if
-shift-clicking is mapped to another tool instead.
-      <p>
-       After selecting the desired items in the selection, you can of course
-cut/copy/paste/delete all the items via the
-       <a href="../../guide/menu/edit.html">
-        Edit menu
-       </a>
-       .
-      </p>
-      <p>
-       Logisim's behavior when pasting the clipboard into a circuit is
-somewhat peculiar: It will not immediately place the components into the
-circuit; instead, the selection will be a collection of "ghosts," which
-will be dropped into the circuit as soon as they are either dragged to
-another location or removed from the selection. (This peculiar behavior
-is necessary because pasting will otherwise merge the wires of the
-selection into the current circuit at once, and the wires there
-previously will be dragged with the pasted clipboard if the user wants
-to move the pasted components somewhere else.)
-      </p>
-      <h2>
-       Attributes
-      </h2>
-      <p>
-       None. Selecting a component, though, will display its attributes.
-With multiple components selected, attributes shared by all are shown,
-blank if they have different values and otherwise with the value they
-all have in common. (Wires are ignored if there are any non-wires in
-the selection.) Changes to the attribute value affect all selected
-components.
-      </p>
-      <p>
-       <a href="../index.html">
-        Back to
-        <em>
-         Library Reference
-        </em>
-       </a>
-      </p>
-     </li>
-    </li>
-   </li>
-  </li>
- </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>选择工具</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>
+<img align="center" src="../../../../img-guide/toolselect.png" width="32" height="32">
+<em>选择工具</em>
+</h1>
+
+<p></p>
+<table>
+<tr>
+<td><strong>库：</strong></td>
+	<td><a href="index.html">基础</a></td>
+</tr>
+<tr>
+<td><strong>引入版本：</strong></td>
+	<td>2.0 Beta 1</td>
+</tr>
+</table>
+
+<h2>行为</h2>
+
+<p>选择工具用于将单个组件加入当前选区。使用此工具可执行多种操作。
+</p>
+<ul>
+
+<li>在已选中的组件内按下鼠标按钮并拖动，将移动选择中的所有组件。
+
+<p>默认情况下，Logisim 会计算添加新导线的方式，以便移动过程中不丢失任何现有连接。（有时它会删除或缩短现有导线。）如果执行移动时不希望进行这些更改，可以在移动过程中按住 Shift 键。如果想完全禁用此行为，请转到项目 &gt; 选项，选择画布选项卡，并取消选中<q>移动时保持连接</q>框；在这种情况下，仅当按住 Shift 键<em>时</em>才会计算连接。</p>
+<p>拖动选区可能会导致导线出现非预期行为：如果将包含某些导线的选区拖动到其他导线上方，所有导线都会合并，并且合并后的导线会被加入选区。因此，如果再次拖动该选区，之前位于该位置的导线不会被留下。这种行为对于保持 Logisim 中导线的预期行为是必要的，而且通常不会造成严重问题：Logisim 会在放置过程中绘制完整的选区，先确认位置正确，再放置即可。</p>
+
+</li>
+<li>否则，在组件内单击鼠标会从当前选区中移除所有组件，并改为选择包含单击位置的组件。
+
+</li>
+<li>按住 Shift 键并在组件内单击鼠标，会切换该组件是否属于当前选区。如果多个组件包含同一位置，则所有这些组件的选择状态都会被切换。不过，如果通过项目选项窗口的<a href="../../guide/opts/opts-mouse.html">鼠标选项卡</a>将 Shift+单击映射到其他工具，则不会发生任何上述情况。
+
+</li>
+<li>从不包含任何组件的位置开始拖动鼠标，会从当前选区中移除所有组件，并开始框选。矩形包含的所有组件将被加入选区。
+
+</li>
+<li>按住 Shift 键并从不包含任何组件的位置开始拖动鼠标，会启动矩形选择。矩形包含的所有组件的选择状态都会被切换。不过，如果 Shift+单击被映射到其他工具，则不会发生此情况。
+
+</li>
+</ul>
+
+<p>在选区中选定所需项目后，可以通过<a href="../../guide/menu/edit.html">编辑菜单</a>剪切、复制、粘贴或删除这些项目。</p>
+
+<p>将剪贴板内容粘贴到电路中时，Logisim 的行为有些特殊：它不会立即将组件放入电路；相反，选区会变成一组“虚影”，当它们被拖到其他位置或从选区中移除时，才会被放入电路。（这种特殊行为是必要的；否则粘贴操作会立即将选区中的导线合并到当前电路中，而如果需要将粘贴的组件移到别处，之前已有的导线也会随剪贴板内容一起被拖动。）</p>
+
+<h2>属性</h2>
+
+<p>无。但选择一个组件会显示其属性。当选中多个组件时，会显示所有组件共有的属性；如果属性值不同则显示为空白，否则显示它们共同的值。（如果选区中有非导线组件，则忽略导线。）对属性值的更改会影响所有选中的组件。</p>
+
+<p><a href="../index.html">返回<em>库参考</em></a></p>
+
+</body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="zh">
+<html lang="zh" dir="ltr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
@@ -10,28 +10,28 @@
       测试向量窗口
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
-    <!-- redirect to the new test vector section after 5 seconds -->
+    
     <script type="text/javascript">
       // This method will only display text in a webview that supports javascript and 
       // will be invisible in a webview that does not support javascript
       function redirect() {
         var countdownElement = document.getElementById("redirect");
         // For compatibility with old webviews, we will just fire 5 timeouts to redirect
-        countdownElement.textContent = "将在 5 秒后重定向...";
+        countdownElement.textContent = "5 秒后尝试跳转...";
         setTimeout(function() {
-          countdownElement.textContent = "将在 4 秒后重定向...";
+          countdownElement.textContent = "4 秒后尝试跳转...";
         }, 1000);
         setTimeout(function() {
-          countdownElement.textContent = "将在 3 秒后重定向...";
+          countdownElement.textContent = "3 秒后尝试跳转...";
         }, 2000);
         setTimeout(function() {
-          countdownElement.textContent = "将在 2 秒后重定向...";
+          countdownElement.textContent = "2 秒后尝试跳转...";
         }, 3000);
         setTimeout(function() {
-          countdownElement.textContent = "将在 1 秒后重定向...";
+          countdownElement.textContent = "1 秒后尝试跳转...";
         }, 4000);
         setTimeout(function() {
-          countdownElement.textContent = "正在重定向...";
+          countdownElement.textContent = "正在尝试跳转...";
           window.location.href = "../test_vector/index.html";
         }, 5000);
       }
@@ -39,8 +39,8 @@
   </head>
   <body onload="redirect()">
     <div class="maindiv">
-      <span style="font-size: 3em;">此内容已移至其自己的 <a href="../test_vector/index.html">测试向量部分</a> 页面。</span>
+      <span style="font-size: 3em;">此内容已移至独立的<a href="../test_vector/index.html">测试向量章节</a>。</span>
     </div>
-    <div><h2 id="redirect">&nbsp;</h2></div>
+    <div><h2 id="redirect"> </h2></div>
   </body>
 </html>
