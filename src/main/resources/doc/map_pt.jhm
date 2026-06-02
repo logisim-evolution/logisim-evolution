@@ -166,9 +166,10 @@
 	<mapID target="io_7seg"             url="pt/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="pt/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="pt/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="pt/html/libs/io/tty.html" />	
-    <mapID target="io_Port_IO"          url="pt/html/libs/io/Port_io.html" />	
-	<mapID target="io_Repetar"          url="pt/html/libs/io/repetar.html" />	
+	<mapID target="io_tty"              url="pt/html/libs/io/tty.html" />
+	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+    <mapID target="io_Port_IO"          url="pt/html/libs/io/Port_io.html" />
+	<mapID target="io_Repetar"          url="pt/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="pt/html/libs/io/videorvb.html" />
 	<mapID target="tcl"                 url="pt/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="pt/html/libs/tcl/reds_console.html" />
@@ -244,6 +245,7 @@
 	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
+	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	
