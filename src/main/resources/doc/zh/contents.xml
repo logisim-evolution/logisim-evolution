@@ -429,6 +429,8 @@
 
 			<tocitem target="io_tty" text="TTY 终端" image="icon_tty" />
 
+			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
+
      		<!-- <tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" /> -->
 			<tocitem target="io_Port_IO" text="端口 IO" image="icon_Port_IO" />
 

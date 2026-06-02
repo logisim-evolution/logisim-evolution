@@ -179,6 +179,7 @@
 			<tocitem target="io_hexdig" image="icon_hexdig" text="Afficheur Hexadecimal"/>
 			<tocitem target="io_dotmat" image="icon_dotmat" text="Matrice de LED"/>
 			<tocitem target="io_tty" image="icon_tty" text="TTY"/>
+			<tocitem target="io_telnet" image="icon_telnet" text="Telnet"/>
 			<tocitem target="io_Port_IO" image="icon_Port_IO" text="Port I/O"  />
 			<tocitem target="io_Repetar"  image="icon_repetar" text="Reptar Local Bus"/>
 			<tocitem target="io_videorgb"  image="icon_videorgb" text="Afficheur Video RVB"/>
