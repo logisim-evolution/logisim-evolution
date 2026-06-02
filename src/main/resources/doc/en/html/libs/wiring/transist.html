@@ -421,7 +421,7 @@
                     <tr>
                       <td colspan="2">
 					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="P-type transistor symbol" width="64" height="64">
                       </p>
 					  </td>
                     </tr>
@@ -440,7 +440,7 @@
                         0
                       </td>
                       <td class="space">
-                        Source, except <b class="zerov">0</b> becomes <b class="uvalue">U</b>
+                        Source
                       </td>
                     </tr>
                     <tr>
@@ -476,7 +476,7 @@
                     <tr>
                       <td colspan="2">
 					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="N-type transistor symbol" width="64" height="64">
                       </p>
 					  </td>
                     </tr>
@@ -503,7 +503,7 @@
                         1
                       </td>
                       <td align="center">
-                        Source, except <b class="unov">1</b> becomes <b class="uvalue">U</b>
+                        Source
                       </td>
                     </tr>
                     <tr>
@@ -525,7 +525,7 @@
         </p>
       </center>
 	 <p>
-        <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p>
+        <b class=note>Note:</b> Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents.</p>
       <p>
         If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits.
       </p>
@@ -552,7 +552,7 @@
           East edge (output, bit width matches Data Bits attribute)
         </dt>
         <dd>
-          The component's output. If the <b>gate</b> input enables the transistor, the output follows the <b>source</b> input except for the transistor's masked value: a P-type transistor outputs <b class="uvalue">U</b> for source <b class="zerov">0</b>, and an N-type transistor outputs <b class="uvalue">U</b> for source <b class="unov">1</b>. If the <b>gate</b> input is defined but does not enable the transistor, the output is floating (<b class="uvalue">U</b>). If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error value (<b class="evalue">E</b>), then a floating source bit remains <b class="uvalue">U</b> and any other source bit becomes <b class="evalue">E</b>.
+          The component's drain output. If the <b>gate</b> input enables the transistor, the output follows the <b>source</b> input except for the transistor's masked value: a P-type transistor outputs <b class="uvalue">U</b> for source <b class="zerov">0</b>, and an N-type transistor outputs <b class="uvalue">U</b> for source <b class="unov">1</b>. If the <b>gate</b> input is defined but does not enable the transistor, the output is floating (<b class="uvalue">U</b>). If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error value (<b class="evalue">E</b>), then a floating source bit remains <b class="uvalue">U</b> and any other source bit becomes <b class="evalue">E</b>.
         </dd>
       </dl>
       <h2>
