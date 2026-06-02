@@ -20,7 +20,7 @@ public class MemContents implements Cloneable, HexModel {
     return new MemContents(addrBits, width, randomize);
   }
 
-  private static final int PAGE_SIZE_BITS = 12;
+  private static final int PAGE_SIZE_BITS = 14;
   private static final int PAGE_SIZE = 1 << PAGE_SIZE_BITS;
 
   private static final int PAGE_MASK = PAGE_SIZE - 1;
@@ -36,6 +36,7 @@ public class MemContents implements Cloneable, HexModel {
     listeners = null;
     setDimensions(addrBits, width);
     this.randomize = randomize;
+    condClear();
   }
 
   //
@@ -394,7 +395,7 @@ public class MemContents implements Cloneable, HexModel {
         sp++;
       }
     } while (count > 0); // (dp <= dstPageEnd || di <= dstEndOffs)
-    fireBytesChanged(0, 1 << addrBits, null); /* update my listeners */
+    fireBytesChanged(0, 1L << addrBits, null); /* update my listeners */
   }
 
   public void setDimensions(int addrBits, int width) {
