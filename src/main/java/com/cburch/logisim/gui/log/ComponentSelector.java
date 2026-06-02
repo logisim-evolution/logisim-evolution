@@ -20,6 +20,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -397,7 +398,7 @@ public class ComponentSelector extends JTable {
     // setAutoResizeMode(AUTO_RESIZE_OFF);
     setShowGrid(false);
     setFillsViewportHeight(true);
-    setDragEnabled(true);
+    if (!GraphicsEnvironment.isHeadless()) setDragEnabled(true);
     setDropMode(DropMode.ON_OR_INSERT); // ?
     setTransferHandler(new ComponentTransferHandler());
 

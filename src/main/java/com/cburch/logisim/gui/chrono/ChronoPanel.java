@@ -396,7 +396,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
           g.setClip(l.width + 3, HEADER_HEIGHT, r.width, l.height);
           g.translate(l.width + 3, HEADER_HEIGHT);
-          rightPanel.print(g);
+          rightPanel.paintExportImage(g);
           g.translate(-(l.width + 3), -HEADER_HEIGHT);
         }
 

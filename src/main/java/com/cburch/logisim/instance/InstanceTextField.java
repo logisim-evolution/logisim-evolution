@@ -31,6 +31,7 @@ import com.cburch.logisim.tools.TextEditable;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.Objects;
 
 public class InstanceTextField implements AttributeListener, TextFieldListener, TextEditable {
   private Canvas canvas;
@@ -91,6 +92,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public Action getCommitAction(Circuit circuit, String oldText, String newText) {
+    if (Objects.equals(oldText, newText)) return null;
+
     final var act = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
     act.set(comp, labelAttr, newText);
     return act;

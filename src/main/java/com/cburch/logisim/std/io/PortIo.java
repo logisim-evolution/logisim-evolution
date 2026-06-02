@@ -258,6 +258,7 @@ public class PortIo extends InstanceFactory {
         .setValue(
             StdAttr.MAPINFO,
             new ComponentMapInformationContainer(0, 0, dipSize, null, null, getLabels(dipSize)));
+    updateMapInfo(instance);
   }
 
   private void updatePorts(Instance instance) {
@@ -347,24 +348,7 @@ public class PortIo extends InstanceFactory {
       instance.recomputeBounds();
       updatePorts(instance);
       instance.computeLabelTextField(Instance.AVOID_BOTTOM);
-      ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
-      if (map != null) {
-        final var nrPins = instance.getAttributeValue(ATTR_SIZE).getWidth();
-        var inputs = 0;
-        var outputs = 0;
-        var ios = 0;
-        final var labels = getLabels(nrPins);
-        if (instance.getAttributeValue(ATTR_DIR) == INPUT) {
-          inputs = nrPins;
-        } else if (instance.getAttributeValue(ATTR_DIR) == OUTPUT) {
-          outputs = nrPins;
-        } else {
-          ios = nrPins;
-        }
-        map.setNrOfInports(inputs, labels);
-        map.setNrOfOutports(outputs, labels);
-        map.setNrOfInOutports(ios, labels);
-      }
+      updateMapInfo(instance);
       if (attr == ATTR_DIR) {
         // we have to reset simulatio, as otherwise strange things can happen.
         final var stateImpl = instance.getComponent().getInstanceStateImpl();
@@ -380,6 +364,26 @@ public class PortIo extends InstanceFactory {
         simulator.reset();
       }
     }
+  }
+
+  private static void updateMapInfo(Instance instance) {
+    ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
+    if (map == null) return;
+    final var nrPins = instance.getAttributeValue(ATTR_SIZE).getWidth();
+    var inputs = 0;
+    var outputs = 0;
+    var ios = 0;
+    final var labels = getLabels(nrPins);
+    if (instance.getAttributeValue(ATTR_DIR) == INPUT) {
+      inputs = nrPins;
+    } else if (instance.getAttributeValue(ATTR_DIR) == OUTPUT) {
+      outputs = nrPins;
+    } else {
+      ios = nrPins;
+    }
+    map.setNrOfInports(inputs, labels);
+    map.setNrOfOutports(outputs, labels);
+    map.setNrOfInOutports(ios, labels);
   }
 
   @Override

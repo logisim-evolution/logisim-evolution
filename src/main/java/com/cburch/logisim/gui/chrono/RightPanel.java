@@ -264,12 +264,20 @@ public class RightPanel extends JPanel {
   @Override
   public void paintComponent(Graphics graphics) {
     final var gfx = (Graphics2D) graphics;
+    paintPanel(gfx, getWidth(), getHeight(), false);
+  }
+
+  public void paintExportImage(Graphics2D gfx) {
+    paintPanel(gfx, width, height, true);
+  }
+
+  private void paintPanel(Graphics2D gfx, int paintWidth, int paintHeight, boolean export) {
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
     gfx.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     gfx.setColor(Color.WHITE);
-    gfx.fillRect(0, 0, getWidth(), getHeight()); // entire viewport, not just (width, height)
+    gfx.fillRect(0, 0, paintWidth, paintHeight); // entire viewport, not just (width, height)
     gfx.setColor(Color.BLACK);
     if (rows.isEmpty()) {
       final var f = gfx.getFont();
@@ -290,7 +298,10 @@ public class RightPanel extends JPanel {
       gfx.drawString("Oops! Chronogram is too large to display.", 15, 15);
       gfx.drawString("Try zooming out, or reset the simulation.", 15, 29);
     } else {
-      for (final var w : rows) w.paintWaveform(gfx);
+      for (final var w : rows) {
+        if (export) w.paintWaveformDirect(gfx);
+        else w.paintWaveform(gfx);
+      }
       paintCursor(gfx);
     }
   }
@@ -575,9 +586,7 @@ public class RightPanel extends JPanel {
       }
     }
 
-    private void createOffscreen() {
-      buf = (BufferedImage) createImage(width, WAVE_HEIGHT);
-      final var g = buf.createGraphics();
+    private void drawWaveform(Graphics2D g) {
       g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
       g.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -591,6 +600,12 @@ public class RightPanel extends JPanel {
       g.fillRect(0, HIGH, width, LOW - HIGH);
       g.setColor(Color.BLACK);
       drawSignal(g, isBold, colors);
+    }
+
+    private void createOffscreen() {
+      buf = (BufferedImage) createImage(width, WAVE_HEIGHT);
+      final var g = buf.createGraphics();
+      drawWaveform(g);
       g.dispose();
     }
 
@@ -601,6 +616,14 @@ public class RightPanel extends JPanel {
       }
       final var y = WAVE_HEIGHT * signal.idx;
       g.drawImage(buf, null, 0, y);
+    }
+
+    public void paintWaveformDirect(Graphics2D g) {
+      final var y = WAVE_HEIGHT * signal.idx;
+      final var gCopy = (Graphics2D) g.create();
+      gCopy.translate(0, y);
+      drawWaveform(gCopy);
+      gCopy.dispose();
     }
 
     public void flush() {
