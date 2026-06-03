@@ -318,7 +318,7 @@ public class Netlist {
       }
       // we check that all components that require a non zero label (annotation) have a label set
       if (comp.getFactory().requiresNonZeroLabel()) {
-        final var label = CorrectLabel.getCorrectLabel(comp.getAttributeSet().getValue(StdAttr.LABEL)).toUpperCase();
+        final var label = CorrectLabel.hdlLabelKey(comp.getAttributeSet().getValue(StdAttr.LABEL));
         final var componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
         if (label.isEmpty()) {
           drc.get(0).addMarkComponent(comp);
@@ -343,7 +343,7 @@ public class Netlist {
         }
         if (comp.getFactory() instanceof final SubcircuitFactory sub) {
           // Special care has to be taken for sub-circuits
-          if (label.equals(componentName.toUpperCase())) {
+          if (label.equals(CorrectLabel.hdlNameKey(componentName))) {
             drc.get(1).addMarkComponent(comp);
             drcStatus |= DRC_ERROR;
           }
