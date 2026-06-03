@@ -10,6 +10,7 @@
 package com.cburch.logisim.gui.appear;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -30,6 +31,8 @@ import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.main.AttrTableCircuitModel;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import java.awt.Dimension;
+import java.awt.event.MouseEvent;
 import org.junit.jupiter.api.Test;
 
 class AppearanceViewTest {
@@ -67,6 +70,26 @@ class AppearanceViewTest {
     assertTrue(table.getAttrTableModel().getRowCount() > 1);
   }
 
+  @Test
+  void middleButtonDragPansAppearanceCanvas() {
+    final var view = newAppearanceView();
+    final var canvas = (AppearanceCanvas) view.getCanvas();
+    final var pane = view.getCanvasPane();
+
+    canvas.setPreferredSize(new Dimension(1000, 1000));
+    pane.setSize(200, 200);
+    pane.doLayout();
+    pane.getHorizontalScrollBar().setValues(80, 20, 0, 1000);
+    pane.getVerticalScrollBar().setValues(90, 20, 0, 1000);
+
+    canvas.processMouseEvent(mouse(canvas, MouseEvent.MOUSE_PRESSED, 40, 40, MouseEvent.BUTTON2));
+    canvas.processMouseMotionEvent(
+        mouse(canvas, MouseEvent.MOUSE_DRAGGED, 10, 20, MouseEvent.BUTTON2));
+
+    assertEquals(110, pane.getHorizontalScrollBar().getValue());
+    assertEquals(110, pane.getVerticalScrollBar().getValue());
+  }
+
   private static AppearanceView newAppearanceView() {
     final var project = mock(Project.class);
     final var circuitState = mock(CircuitState.class);
@@ -89,5 +112,12 @@ class AppearanceViewTest {
 
   private static AttributeSet attributeSet(String label) {
     return AttributeSets.fixedSet(new Attribute<?>[] {StdAttr.LABEL}, new Object[] {label});
+  }
+
+  private static MouseEvent mouse(
+      AppearanceCanvas canvas, int id, int x, int y, int button) {
+    final var modifiers =
+        button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON2_DOWN_MASK : MouseEvent.BUTTON1_DOWN_MASK;
+    return new MouseEvent(canvas, id, 0, modifiers, x, y, x, y, 1, false, button);
   }
 }

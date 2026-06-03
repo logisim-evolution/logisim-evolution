@@ -52,6 +52,11 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
   private LayoutPopupManager popupManager;
+  private int panStartScreenX;
+  private int panStartScreenY;
+  private int panStartScrollX;
+  private int panStartScrollY;
+  private boolean middleButtonPanning;
 
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
@@ -230,12 +235,14 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   protected void processMouseEvent(MouseEvent e) {
+    if (handleMiddleButtonPanEvent(e)) return;
     repairEvent(e, grid.getZoomFactor());
     super.processMouseEvent(e);
   }
 
   @Override
   protected void processMouseMotionEvent(MouseEvent e) {
+    if (handleMiddleButtonPanMotion(e)) return;
     repairEvent(e, grid.getZoomFactor());
     super.processMouseMotionEvent(e);
   }
@@ -266,6 +273,40 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       final var newy = (int) Math.round(e.getY() / zoom);
       e.translatePoint(newx - oldx, newy - oldy);
     }
+  }
+
+  private boolean handleMiddleButtonPanEvent(MouseEvent e) {
+    if (e.getButton() == MouseEvent.BUTTON2 && e.getID() == MouseEvent.MOUSE_PRESSED) {
+      if (canvasPane != null) {
+        middleButtonPanning = true;
+        panStartScreenX = e.getXOnScreen();
+        panStartScreenY = e.getYOnScreen();
+        panStartScrollX = canvasPane.getHorizontalScrollBar().getValue();
+        panStartScrollY = canvasPane.getVerticalScrollBar().getValue();
+      }
+      e.consume();
+      return true;
+    }
+    if (e.getButton() == MouseEvent.BUTTON2 && e.getID() == MouseEvent.MOUSE_RELEASED) {
+      middleButtonPanning = false;
+      e.consume();
+      return true;
+    }
+    return false;
+  }
+
+  private boolean handleMiddleButtonPanMotion(MouseEvent e) {
+    if (!middleButtonPanning || (e.getModifiersEx() & MouseEvent.BUTTON2_DOWN_MASK) == 0) {
+      return false;
+    }
+    canvasPane
+        .getHorizontalScrollBar()
+        .setValue(panStartScrollX + panStartScreenX - e.getXOnScreen());
+    canvasPane
+        .getVerticalScrollBar()
+        .setValue(panStartScrollY + panStartScreenY - e.getYOnScreen());
+    e.consume();
+    return true;
   }
 
   //
