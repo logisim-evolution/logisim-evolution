@@ -13,11 +13,14 @@ import static com.cburch.logisim.util.Strings.S;
 
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,6 +38,7 @@ public final class Softwares {
   public static final int VSIM = 1;
   public static final int VMAP = 2;
   public static final int VLIB = 3;
+  private static final String MODELSIM_INI = "modelsim.ini";
 
   private Softwares() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
@@ -171,6 +175,7 @@ public final class Softwares {
     try {
       tmp = FileUtil.createTmpFile(vhdl, "tmp", ".vhd");
       final var tmpDir = new File(tmp.getParentFile().getCanonicalPath());
+      copyQuestaValidationConfig(tmpDir);
 
       if (!createWorkLibrary(tmpDir, questaPath, result)) {
         title.insert(0, S.get("questaLibraryErrorTitle"));
@@ -179,16 +184,7 @@ public final class Softwares {
         return ERROR;
       }
 
-      List<String> command = new ArrayList<>();
-      command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VCOM]);
-      command.add("-reportprogress");
-      command.add("300");
-      command.add("-93");
-      command.add("-work");
-      command.add("work");
-      command.add(tmp.getName());
-
-      final var questa = new ProcessBuilder(command);
+      final var questa = new ProcessBuilder(buildQuestaValidationCommand(questaPath, tmp));
       questa.directory(tmpDir);
       Process vcom = questa.start();
 
@@ -230,5 +226,29 @@ public final class Softwares {
     }
 
     return SUCCESS;
+  }
+
+  static List<String> buildQuestaValidationCommand(String questaPath, File vhdlFile) {
+    final var command = new ArrayList<String>();
+    command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VCOM]);
+    command.add("-reportprogress");
+    command.add("300");
+    command.add("-work");
+    command.add("work");
+    command.add(vhdlFile.getName());
+    return command;
+  }
+
+  static void copyQuestaValidationConfig(File tmpDir) throws IOException {
+    final var configResource =
+        Softwares.class.getResourceAsStream(VhdlSimConstants.SIM_RESOURCES_PATH + MODELSIM_INI);
+    if (configResource == null) throw new IOException("Cannot find " + MODELSIM_INI);
+
+    try (configResource) {
+      Files.copy(
+          configResource,
+          tmpDir.toPath().resolve(MODELSIM_INI),
+          StandardCopyOption.REPLACE_EXISTING);
+    }
   }
 }
