@@ -40,7 +40,7 @@ jobs:
         list-files: 'escape'
         filters: |
           src:
-            - 'src/**/*.java'
+            - added|modified: 'src/**/*.java'
 
     - name: "WILL JAVA LINT STEP BE RUN?"
       run: |
