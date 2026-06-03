@@ -328,7 +328,7 @@ public class HexFile {
         if (confirm != OptionPane.YES_OPTION) return;
       }
       try {
-        save(f, src, chooser.getFileFilter().getDescription());
+        save(f, src, formatDescriptionOf(chooser.getFileFilter()));
         if (mem != null) mem.setCurrentImage(instance, f);
       } catch (IOException e) {
         OptionPane.showMessageDialog(parent, e.getMessage(), S.get("ramSaveErrorTitle"), OptionPane.ERROR_MESSAGE);
@@ -385,18 +385,54 @@ public class HexFile {
     }
   }
 
-  private static FileFilter getFilter(String desc) {
-    return new FileFilter() {
-      @Override
-      public String getDescription() {
-        return desc;
-      }
+  static FileFilter getFilter(String desc) {
+    return new MemoryFileFilter(desc);
+  }
 
-      @Override
-      public boolean accept(File f) {
-        return true;
-      }
+  static String formatDescriptionOf(FileFilter filter) {
+    return filter instanceof MemoryFileFilter memoryFileFilter
+        ? memoryFileFilter.getFormatDescription()
+        : filter.getDescription();
+  }
+
+  private static String filterLabelFor(String desc) {
+    return switch (desc) {
+      case autoFormat -> S.get("hexFileFilterAny");
+      case "v3.0 hex words addressed" -> S.get("hexFileFilterV3HexWordsAddressed");
+      case "v3.0 hex words plain" -> S.get("hexFileFilterV3HexWordsPlain");
+      case "v3.0 hex bytes addressed big-endian" -> S.get("hexFileFilterV3HexBytesAddressedBigEndian");
+      case "v3.0 hex bytes addressed little-endian" -> S.get("hexFileFilterV3HexBytesAddressedLittleEndian");
+      case "v3.0 hex bytes plain big-endian" -> S.get("hexFileFilterV3HexBytesPlainBigEndian");
+      case "v3.0 hex bytes plain little-endian" -> S.get("hexFileFilterV3HexBytesPlainLittleEndian");
+      case "v2.0 raw (run-length-endcoded hex words)" -> S.get("hexFileFilterV2Raw");
+      case "Binary data big-endian" -> S.get("hexFileFilterBinaryBigEndian");
+      case "Binary data little-endian" -> S.get("hexFileFilterBinaryLittleEndian");
+      case "ASCII bytes, with escapes, big-endian" -> S.get("hexFileFilterAsciiEscapesBigEndian");
+      case "ASCII bytes, with escapes, little-endian" -> S.get("hexFileFilterAsciiEscapesLittleEndian");
+      default -> desc;
     };
+  }
+
+  private static class MemoryFileFilter extends FileFilter {
+    private final String formatDescription;
+
+    MemoryFileFilter(String formatDescription) {
+      this.formatDescription = formatDescription;
+    }
+
+    String getFormatDescription() {
+      return formatDescription;
+    }
+
+    @Override
+    public String getDescription() {
+      return filterLabelFor(formatDescription);
+    }
+
+    @Override
+    public boolean accept(File f) {
+      return true;
+    }
   }
 
   private static String headerForFormat(String desc) {
@@ -488,8 +524,8 @@ public class HexFile {
               "<html>"
                   + msg
                   + "<br><br>"
-                  + "Please select an appropriate file format to load"
-                  + " this file into memory:</html>");
+                  + S.get("hexFormatSelectPrompt")
+                  + "</html>");
       final var f = m.getFont();
       m.setFont(f.deriveFont(f.getStyle() & ~Font.BOLD));
       m.setAlignmentX(CENTER_ALIGNMENT);
@@ -508,14 +544,14 @@ public class HexFile {
       pos.gridy = 0;
       pos.gridx = 0;
       pos.gridwidth = 4;
-      raw = new JRadioButton("v2.0 raw", this.reader.tagged("radix", "raw"));
+      raw = new JRadioButton(S.get("hexFormatOptionRaw"), this.reader.tagged("radix", "raw"));
       grid.setConstraints(raw, pos);
       opts.add(raw);
 
       pos.gridy = 1;
       pos.gridx = 0;
       pos.gridwidth = 4;
-      hex = new JRadioButton("v3.0 hex", this.reader.tagged("radix", "hex"));
+      hex = new JRadioButton(S.get("hexFormatOptionHex"), this.reader.tagged("radix", "hex"));
       grid.setConstraints(hex, pos);
       opts.add(hex);
 
@@ -527,72 +563,75 @@ public class HexFile {
       opts.add(strut);
 
       pos.gridx = 1;
-      hexWords = new JCheckBox("words", this.reader.taggedOrUnset("size", "words"));
+      hexWords =
+          new JCheckBox(S.get("hexFormatOptionWords"), this.reader.taggedOrUnset("size", "words"));
       grid.setConstraints(hexWords, pos);
       opts.add(hexWords);
 
       pos.gridx = 2;
-      hexBytes = new JCheckBox("bytes", this.reader.tagged("size", "bytes"));
+      hexBytes = new JCheckBox(S.get("hexFormatOptionBytes"), this.reader.tagged("size", "bytes"));
       grid.setConstraints(hexBytes, pos);
       opts.add(hexBytes);
 
       pos.gridy = 3;
       pos.gridx = 1;
-      hexAuto = new JCheckBox("auto", !this.reader.tags.containsKey("style"));
+      hexAuto = new JCheckBox(S.get("hexFormatOptionAuto"), !this.reader.tags.containsKey("style"));
       grid.setConstraints(hexAuto, pos);
       opts.add(hexAuto);
       pos.gridx = 2;
-      hexAddr = new JCheckBox("addressed", this.reader.tagged("style", "addressed"));
+      hexAddr =
+          new JCheckBox(S.get("hexFormatOptionAddressed"), this.reader.tagged("style", "addressed"));
       grid.setConstraints(hexAddr, pos);
       opts.add(hexAddr);
       pos.gridx = 3;
-      hexPlain = new JCheckBox("plain", this.reader.tagged("style", "plain"));
+      hexPlain = new JCheckBox(S.get("hexFormatOptionPlain"), this.reader.tagged("style", "plain"));
       grid.setConstraints(hexPlain, pos);
       opts.add(hexPlain);
 
       pos.gridy = 4;
       pos.gridx = 1;
-      hexBig = new JCheckBox("big-endian", this.reader.bigEndian());
+      hexBig = new JCheckBox(S.get("hexFormatOptionBigEndian"), this.reader.bigEndian());
       grid.setConstraints(hexBig, pos);
       opts.add(hexBig);
       pos.gridx = 2;
-      hexLittle = new JCheckBox("little-endian", !this.reader.bigEndian());
+      hexLittle = new JCheckBox(S.get("hexFormatOptionLittleEndian"), !this.reader.bigEndian());
       grid.setConstraints(hexLittle, pos);
       opts.add(hexLittle);
 
       pos.gridy = 5;
       pos.gridx = 0;
       pos.gridwidth = 4;
-      bin = new JRadioButton("Binary", this.reader.taggedOrUnset("radix", "binary"));
+      bin =
+          new JRadioButton(S.get("hexFormatOptionBinary"), this.reader.taggedOrUnset("radix", "binary"));
       grid.setConstraints(bin, pos);
       opts.add(bin);
 
       pos.gridy = 6;
       pos.gridx = 1;
       pos.gridwidth = 1;
-      binBig = new JCheckBox("big-endian", this.reader.bigEndian());
+      binBig = new JCheckBox(S.get("hexFormatOptionBigEndian"), this.reader.bigEndian());
       grid.setConstraints(binBig, pos);
       opts.add(binBig);
       pos.gridx = 2;
-      binLittle = new JCheckBox("little-endian", !this.reader.bigEndian());
+      binLittle = new JCheckBox(S.get("hexFormatOptionLittleEndian"), !this.reader.bigEndian());
       grid.setConstraints(binLittle, pos);
       opts.add(binLittle);
 
       pos.gridy = 7;
       pos.gridx = 0;
       pos.gridwidth = 4;
-      asc = new JRadioButton("ASCII with C-style escapes", this.reader.tagged("radix", "ascii"));
+      asc = new JRadioButton(S.get("hexFormatOptionAsciiEscapes"), this.reader.tagged("radix", "ascii"));
       grid.setConstraints(asc, pos);
       opts.add(asc);
 
       pos.gridy = 8;
       pos.gridx = 1;
       pos.gridwidth = 1;
-      ascBig = new JCheckBox("big-endian", this.reader.bigEndian());
+      ascBig = new JCheckBox(S.get("hexFormatOptionBigEndian"), this.reader.bigEndian());
       grid.setConstraints(ascBig, pos);
       opts.add(ascBig);
       pos.gridx = 2;
-      ascLittle = new JCheckBox("little-endian", !this.reader.bigEndian());
+      ascLittle = new JCheckBox(S.get("hexFormatOptionLittleEndian"), !this.reader.bigEndian());
       grid.setConstraints(ascLittle, pos);
       opts.add(ascLittle);
 
@@ -623,7 +662,7 @@ public class HexFile {
       ae.add(ascBig);
       ae.add(ascLittle);
 
-      previewHdr = new JLabel("words...");
+      previewHdr = new JLabel(S.get("hexFormatPreviewWords"));
       previewMem = new JTextArea();
       previewMem.setEditable(false);
       previewMem.setFont(new Font("monospaced", Font.PLAIN, scaledTen));
@@ -632,7 +671,7 @@ public class HexFile {
       preview.add(previewHdr);
       preview.add(new JScrollPane(previewMem));
 
-      originalHdr = new JLabel(this.reader.in.byteLength() + " bytes");
+      originalHdr = new JLabel(S.get("hexFormatOriginalBytes", this.reader.in.byteLength()));
       originalTxt = new JTextArea();
       originalTxt.setEditable(false);
       originalTxt.setFont(new Font("monospaced", Font.PLAIN, scaledTen));
@@ -649,14 +688,14 @@ public class HexFile {
         var n = this.reader.in.readUtf8(buf, 0, 1024);
         var count = 0;
         if (n < 0) {
-          originalTxt.setText("(error reading data)");
+          originalTxt.setText(S.get("hexFormatErrorReadingData"));
         } else {
           final var b = new StringWriter();
           do {
             b.write(buf, 0, n);
             count += n;
             if (count >= MAX_PREVIEW_SIZE) {
-              b.write("..\n(rest of fole omitted)\n");
+              b.write(S.get("hexFormatPreviewOmitted"));
               break;
             }
             n = this.reader.in.readUtf8(buf, 0, 1024);
@@ -670,7 +709,7 @@ public class HexFile {
           var n = this.reader.in.readBytes(buf, 0, 1024);
           var count = 0;
           if (n < 0) {
-            originalTxt.setText("(error reading data)");
+            originalTxt.setText(S.get("hexFormatErrorReadingData"));
           } else {
             final var b = new StringWriter();
             OutputStreamBinarySanitizer sanitizer = new OutputStreamBinarySanitizer(b);
@@ -678,7 +717,7 @@ public class HexFile {
               sanitizer.write(buf, 0, n);
               count += n;
               if (count >= MAX_PREVIEW_SIZE) {
-                b.write("..\n(rest of fole omitted)\n");
+                b.write(S.get("hexFormatPreviewOmitted"));
                 break;
               }
               n = this.reader.in.readBytes(buf, 0, 1024);
@@ -688,7 +727,7 @@ public class HexFile {
             originalTxt.setText(b.toString());
           }
         } catch (Exception e2) {
-          originalTxt.setText("(error reading data)");
+          originalTxt.setText(S.get("hexFormatErrorReadingData"));
         }
       }
       originalTxt.setCaretPosition(0);
@@ -696,8 +735,8 @@ public class HexFile {
       tabs = new JTabbedPane();
       tabs.setBorder(BorderFactory.createEmptyBorder(0, scaledTen, 0, 0));
       tabs.setFont(new Font("Dialog", Font.BOLD, scaled(9)));
-      tabs.addTab("Decoded", preview);
-      tabs.addTab("Original", original);
+      tabs.addTab(S.get("hexFormatDecodedTab"), preview);
+      tabs.addTab(S.get("hexFormatOriginalTab"), original);
 
       final var split = new JPanel(new BorderLayout());
       final var optp = new JPanel();
@@ -765,14 +804,11 @@ public class HexFile {
     void setWarnings() {
       final var s = new StringWriter();
       if (reader.numWarnings == 0) {
-        s.write("No errors encountered decoding with this format.");
+        s.write(S.get("hexFormatNoErrors"));
       } else if (reader.numWarnings == 1) {
-        s.write("There was one error encountered decoding with this format:\n");
+        s.write(S.get("hexFormatOneError"));
       } else {
-        s.write(
-            "There were "
-                + reader.numWarnings
-                + " errors encountered decoding with this format:\n");
+        s.write(S.get("hexFormatManyErrors", reader.numWarnings));
       }
       s.write(reader.warnings.toString());
       warnings.setText(s.toString());
@@ -795,7 +831,7 @@ public class HexFile {
 
     void setPreview() {
       final var n = reader.decodedWordCount;
-      previewHdr.setText(String.format("decoded %d of %d words, %d bits each", n, reader.memEnd + 1, reader.memWidth));
+      previewHdr.setText(S.get("hexFormatDecodedStatus", n, reader.memEnd + 1, reader.memWidth));
       if (n > 0) previewMem.setText(saveToString(reader.dst, "v3.0 hex words addressed", n));
       else previewMem.setText("");
       previewMem.setCaretPosition(0);
@@ -1793,7 +1829,7 @@ public class HexFile {
       JTabbedPane tabs = new JTabbedPane();
       tabs.setBorder(BorderFactory.createEmptyBorder(0, scaled(8), 0, 0));
       tabs.setFont(new Font("Dialog", Font.BOLD, scaled(9)));
-      tabs.addTab("Preview", new JScrollPane(preview));
+      tabs.addTab(S.get("hexFormatPreviewTab"), new JScrollPane(preview));
       add(tabs, BorderLayout.CENTER);
 
       chooser.addPropertyChangeListener(this);
@@ -1811,7 +1847,7 @@ public class HexFile {
     }
 
     void refresh() {
-      String desc = chooser.getFileFilter().getDescription();
+      String desc = formatDescriptionOf(chooser.getFileFilter());
       String hdr = headerForFormat(desc);
       preview.setText(hdr + saveToPreviewString(memContents, desc));
       preview.setCaretPosition(0);
