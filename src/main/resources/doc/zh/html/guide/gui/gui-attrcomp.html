@@ -1,92 +1,54 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   Attributes of tools and components
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <p>
-    <!-- <b>Next:</b> <a href="tutor-wires.html">Step 0: Orienting yourself</a> -->
-    <b>
-     上一节:
-    </b>
-    <a href="gui-attribut.html">
-     属性表
-    </a>
-   </p>
-   <h1>
-    <!-- Attributes of tools and components -->
-    工具和组件的属性
-   </h1>
-   <p>
-    <!-- Every tool for adding components to a circuit also has a set of attributes, which are imparted to the components created by the tool, although the components' attributes may be changed later without affecting the tool's attributes. When you select a tool, Logisim will change the attribute table to display that tool's attributes. -->
-    用于将组件添加到电路的每个工具还具有一组属性，这些属性被赋予该工具创建的组件，尽管组件的属性稍后可能会更改而不会影响工具的属性。 当您选择一个工具时，Logisim-evolution 将更改属性表以显示该工具的属性。
-   </p>
-   <p>
-    <!-- For example, suppose we want to create smaller AND gates. Right now, each time we select the AND tool, it creates a large AND gate. But if we edit the Gate Size attribute just after selecting the tool (before placing its AND gate into the circuit), we'll be changing the attributes for the tool, so that future AND gates added using the tool would be narrow instead. -->
-    例如，假设我们想要创建更小的与门。 现在，每次我们选择 AND 工具时，它都会创建一个大的 AND 门。 但是，如果我们在选择工具后（在将其与门放入电路之前）编辑“门大小”属性，我们将更改该工具的属性，以便将来使用该工具添加的与门将会变窄。
-   </p>
-   <p align="center">
-    <img alt="#########" src="../../../img-guide/gui-4-and-narrow.png"/>
-   </p>
-   <p>
-    <!-- Now, we can delete the two existing AND gates and add two new AND gates in their place. This time, they will be narrow. (If you chose to reduce the number of inputs to 3, the AND gate would not have vertical extension on the left side. But you'd also have to rewire the circuit so that the wires hit the AND gate's left side.) -->
-    现在，我们可以删除两个现有的与门并在其位置添加两个新的与门。 这一次，它们将变得狭窄。 （如果您选择将输入数量减少到 3 个，则与门的左侧不会有垂直延伸。但是您还必须重新布线电路，以便导线到达与门的左侧。）
-   </p>
-   <p align="center">
-    <img alt="#########" src="../../../img-guide/gui-5-and-replace.png"/>
-   </p>
-   <p>
-    <!-- With some tools, the tool's icon reflects some of the attributes' values. One example of this is the Pin tool, whose icon faces the same way as its Facing attribute says. -->
-    对于某些工具，工具的图标反映了某些属性的值。 其中一个例子是“引脚”工具，其图标的朝向与其“Facing”属性所示的方向相同。
-   </p>
-   <p>
-    <!-- The tools in the toolbar each have a separate attribute set from the corresponding tools in the explorer pane. Thus, even though we changed the toolbar's AND tool to create narrow AND gates, the AND tool in the Gates library will still create wide AND gates unless you change its attributes too. -->
-    工具栏中的每个工具都具有与资源管理器窗格中相应工具不同的属性集。 因此，即使我们更改了工具栏的 AND 工具来创建窄 AND 门，Gates 库中的 AND 工具仍然会创建宽 AND 门，除非您也更改其属性。
-   </p>
-   <p>
-    <!-- In fact, the input pin and output pin tools in the default toolbar are both instances of the Wiring library's Pin tool, but the attribute sets are different. The icon for the Pin tool is drawn as a circle or a square depending on the value of its <b class=propertie>Output?</b> attribute. -->
-    事实上，默认工具栏中的输入引脚和输出引脚工具都是Wiring库的Pin工具的实例，但属性集不同。 Pin 工具的图标绘制为圆形或方形，具体取决于其
-    <b class="propertie">
-     Output?
-    </b>
-    属性的值。
-   </p>
-   <p align="center">
-    <img alt="#########" class="notscal" src="../../../../img-guide/gui-output.png"/>
-   </p>
-   <p>
-    <!-- Logisim provides a handy shortcut for changing the Facing attribute that controls the direction in which many components face: Typing an <b class="tkeybd">arrow key</b> while that tool is selected automatically changes the direction of the component. -->
-    Logisim-evolution 提供了一个方便的快捷方式来更改控制许多组件面向方向的 Facing 属性：在选择该工具时键入
-    <b class="tkeybd">
-     箭头键
-    </b>
-    会自动更改组件的方向。
-   </p>
-   <p>
-    <!-- <b>Next:</b> <a href="../index.html">User's Guide</a>. -->
-    <b>
-     返回:
-    </b>
-    <a href="./index.html">
-     图形界面
-    </a>
-    .
-   </p>
-   <p>
-   </p>
-   <p>
-   </p>
-   <p>
-   </p>
-  </div>
- </body>
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      工具和组件的属性
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        工具和组件的属性
+      </h1>
+      <p>
+        每个用于向电路添加组件的工具都有一组属性，这些属性会被赋予工具创建的组件；之后可以更改组件自身的属性，而不会影响工具的属性。选择一个工具时，Logisim 会更新属性表以显示该工具的属性。
+      </p>
+      <p>
+        例如，假设我们想要创建更小的与门。目前，每次选择与门工具时，它都会创建一个大的与门。但如果在选择工具后（在将该与门放置到电路之前）编辑门大小属性，我们将更改该工具的属性，这样后续使用该工具添加的与门将变为窄型。
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/gui-4-and-narrow.png" alt="#########">
+      </p>
+      <p>
+        现在，可以删除现有的两个与门，并在其位置添加两个新的与门。这次它们将是窄型的。（如果选择将输入数量减少到 3，与门左侧将不会有垂直延伸。但还需要重新布线，使导线恰好连接到与门的左侧。）
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/gui-5-and-replace.png" alt="#########">
+      </p>
+      <p>
+        对于某些工具，工具的图标会反映部分属性的值。其中一个例子是引脚工具，其图标朝向与其朝向属性所指示的方向相同。
+      </p>
+      <p>
+        工具栏中的每个工具都与资源管理器窗格中的对应工具有不同的属性集。因此，即使将工具栏的与门工具更改为创建窄型与门，门库中的与门工具仍会创建宽型与门，除非也更改其属性。
+      </p>
+      <p>
+        实际上，默认工具栏中的输入引脚和输出引脚工具都是线路库中引脚工具的实例，但属性集不同。引脚工具的图标会根据其<b class="propertie">类型</b>属性绘制为圆形或方形。
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/gui-output.png" alt="#########">
+      </p>
+      <p>
+        Logisim 提供了一个方便的快捷键来更改许多组件的朝向：选中相应工具后按一个<b class="tkeybd">方向键</b>，即可自动更改后续放置组件的方向。
+      </p>
+      <p>
+        <b>下一节：</b> <a href="../index.html">用户指南</a>。
+      </p>
+    </div>
+  </body>
 </html>
