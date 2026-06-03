@@ -308,7 +308,6 @@ public class Ram extends Mem {
   private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
-    final var separate = isSeparate(attrs);
     long oldMemValue = myState.getContents().get(myState.getCurrent());
     long newMemValue = oldMemValue;
     // perform writes
@@ -345,13 +344,10 @@ public class Ram extends Mem {
 
     Consumer<Value> setValue = (Value value) -> state.setPort(RamAppearance.getDataOutIndex(0, attrs), value, DELAY);
 
-    if (!separate && outputNotEnabled) {
-      /* put the bus in tri-state in case of a combined bus and no output enable */
+    if (outputNotEnabled) {
       setValue.accept(Value.createUnknown(dataBits));
       return;
     }
-    /* if the OE is not activated return */
-    if (outputNotEnabled) return;
 
     /* if the address is bogus set error value accordingly */
 
