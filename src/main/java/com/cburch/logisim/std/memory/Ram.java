@@ -49,10 +49,13 @@ public class Ram extends Mem {
       if (label.equals("")) {
         label = null;
       }
-      if (option instanceof Long) {
-        final var disp = S.get("ramComponent");
-        final var loc = state.getInstance().getLocation();
-        return (label == null) ? disp + loc + "[" + option + "]" : label + "[" + option + "]";
+      if (option instanceof Number) {
+        if (label == null) {
+          final var disp = S.get("ramComponent");
+          final var loc = state.getInstance().getLocation();
+          return disp + loc + "[" + option + "]";
+        }
+        return label + "[" + option + "]";
       } else {
         return label;
       }
@@ -84,9 +87,9 @@ public class Ram extends Mem {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Long addr) {
+      if (option instanceof Number addr) {
         final var memState = (MemState) state.getData();
-        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr));
+        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr.longValue()));
       } else {
         return Value.NIL;
       }

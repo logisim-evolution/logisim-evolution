@@ -11,8 +11,38 @@
     * Corrected disjoint corners on Square Root arithmetic components.
     * Corrected disjoint corners on unpressed Button components.
     * Reduced line reordering errors in TikZ/SVG image exports.
-  * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
-    line-enable inputs may need to connect those inputs explicitly.
+  * Improved Timing Diagram recording and exports:
+    * Corrected vector and GIF exports.
+    * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.
+  * Improved custom circuit appearance editing and dynamic appearance elements:
+    * Circuit attributes are shown when no item is selected.
+    * Dynamic elements preserve nested paths and can display nested Probe/Register values correctly.
+    * Corrected drag selection, selected-object attributes, and automatic switching to custom appearance.
+  * Improved memory and hex editor tools:
+    * Added a go-to-address control to the hex editor.
+    * Limited generated save previews for large memories.
+    * Corrected memory display layout in exported graphics.
+    * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
+      line-enable inputs may need to connect those inputs explicitly.
+  * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
+    ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Improved project editing stability:
+    * Moving components preserves component state.
+    * Floating subcircuit inputs now propagate floating values.
+    * Nested library tools resolve correctly.
+    * No-op text edits no longer create undo actions.
+  * Improved VHDL editing and simulation UI:
+    * VHDL entity appearance is configured through entity properties.
+    * VHDL code view no longer paints a circuit canvas without a circuit.
+    * VHDL simulator log split pane remains recoverable after being maximized.
+  * Improved command-line output and localization:
+    * Command-line help now honors the selected locale.
+    * TTY table output includes bit widths in headers.
+    * Localized the Assembly Viewer.
+  * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
+    libraries, wire values, transistor behavior, and unused-library save options.
+  * Added a default text-tool color preference and synchronized string-option preference updates.
+  * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)
   * Increased number of components which may be displayed on custom circuit appearances and increased

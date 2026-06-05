@@ -77,7 +77,15 @@ public class CircuitCustomAppearance extends Drawing {
 
   @Override
   public Collection<CanvasObject> getObjectsIn(Bounds bds) {
-    return parent.getObjectsIn(bds);
+    List<CanvasObject> ret = null;
+    for (final var shape : getObjectsFromBottom()) {
+      if (bds.contains(shape.getBounds())) {
+        if (ret == null) ret = new ArrayList<>();
+        ret.add(shape);
+      }
+    }
+
+    return (ret == null) ? Collections.emptyList() : ret;
   }
 
   @Override

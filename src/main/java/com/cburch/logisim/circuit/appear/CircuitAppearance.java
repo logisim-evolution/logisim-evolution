@@ -17,6 +17,7 @@ import com.cburch.draw.model.Drawing;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeOption;
@@ -438,6 +439,35 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
       suppressRecompute = oldSuppress;
     }
     fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+  }
+
+  public void repairDynamicElementPaths(ReplacementMap replacements) {
+    final var removals = replacements.getRemovals();
+    if (removals.isEmpty()) return;
+
+    var changed = false;
+    final var toRemove = new ArrayList<CanvasObject>();
+    for (final var obj : super.getObjectsFromBottom()) {
+      if (obj instanceof DynamicElement el && el.getPath().containsAny(removals)) {
+        if (el.getPath().replaceComponents(replacements)) {
+          changed = true;
+        } else {
+          toRemove.add(obj);
+        }
+      }
+    }
+
+    if (!toRemove.isEmpty()) {
+      var oldSuppress = suppressRecompute;
+      try {
+        suppressRecompute = true;
+        removeObjects(toRemove);
+      } finally {
+        suppressRecompute = oldSuppress;
+      }
+      changed = true;
+    }
+    if (changed) fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
   }
 
   void replaceAutomatically(List<AppearancePort> removes, List<AppearancePort> adds) {

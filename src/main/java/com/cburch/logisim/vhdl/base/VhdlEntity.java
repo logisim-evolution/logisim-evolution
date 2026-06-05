@@ -329,6 +329,14 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     icon.setInvalid(!content.isValid());
   }
 
+  @Override
+  public void appearanceChanged(HdlModel source) {
+    for (final var instance : myInstances) {
+      updatePorts(instance);
+      instance.fireInvalidated();
+    }
+  }
+
   private final WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
 
   public Collection<Circuit> getCircuitsUsingThis() {
