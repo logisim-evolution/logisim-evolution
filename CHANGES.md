@@ -11,6 +11,8 @@
     * Corrected disjoint corners on Square Root arithmetic components.
     * Corrected disjoint corners on unpressed Button components.
     * Reduced line reordering errors in TikZ/SVG image exports.
+  * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
+    line-enable inputs may need to connect those inputs explicitly.
 
 * v4.1.0 (2026-02-15)
   * Increased number of components which may be displayed on custom circuit appearances and increased
