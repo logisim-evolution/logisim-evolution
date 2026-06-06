@@ -14,8 +14,8 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" width="32" height="32"> 
-		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" width="32" height="32"> 
+        <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="P-type transistor icon" width="32" height="32">
+		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="N-type transistor icon" width="32" height="32">
 		<em>Transistor</em>
       </h1>
       <table>
@@ -53,12 +53,12 @@
 				  </tr>
                   <tr>
                     <td>
-                      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="P-type transistor symbol" width="64" height="64">
                     </td>
 					<td>&nbsp;
 					</td>
                     <td>
-                      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="N-type transistor symbol" width="64" height="64">
                     </td>
                   </tr>
                 </tbody>
@@ -95,7 +95,7 @@
                 <em>source</em>
               </td>
               <td valign="middle" align="center">
-                <img src="../../../../img-libs/trans1.png" alt="#########">
+                <img src="../../../../img-libs/trans1.png" alt="N-type transistor symbol">
               </td>
               <td valign="bottom">
                 <em>drain</em>
@@ -105,7 +105,7 @@
                 <em>source</em>
               </td>
               <td valign="middle" align="center">
-                <img src="../../../../img-libs/trans0.png" alt="#########">
+                <img src="../../../../img-libs/trans0.png" alt="P-type transistor symbol">
               </td>
               <td valign="bottom">
                 <em>drain</em>
@@ -173,7 +173,7 @@
 		   </td>
 		   <td>
 		   <p align="center">
-		      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+		      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="P-type transistor symbol" width="64" height="64">
 		   </p>
 		   </td>
 		    <td class="left">
@@ -186,7 +186,7 @@
 		   </td>
 		   <td>
 		   <p align="center">
-		      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+		      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="N-type transistor symbol" width="64" height="64">
 		   </p>
 		   </td>
 		    <td class="left">
@@ -297,7 +297,7 @@
             </td>
 			<td>
 			  &nbsp;&nbsp;&nbsp;&nbsp;
-			</d>
+			</td>
             <td  colspan=3>
               <table class="truthtable">
                 <tbody>
@@ -421,7 +421,7 @@
                     <tr>
                       <td colspan="2">
 					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="P-type transistor symbol" width="64" height="64">
                       </p>
 					  </td>
                     </tr>
@@ -476,7 +476,7 @@
                     <tr>
                       <td colspan="2">
 					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="N-type transistor symbol" width="64" height="64">
                       </p>
 					  </td>
                     </tr>
@@ -521,11 +521,11 @@
           </tbody>
         </table>
         <p>
-          * If source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>.
+          * When gate is <b class="uvalue">U</b> or <b class="evalue">E</b>, if source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>.
         </p>
       </center>
 	 <p>
-        <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p>
+        <b class=note>Note:</b> Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error), the illustrations use the same markers rather than the more common Z (high impedance) and X (Error) found in other documents.</p>
       <p>
         If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits.
       </p>
@@ -552,7 +552,7 @@
           East edge (output, bit width matches Data Bits attribute)
         </dt>
         <dd>
-          The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output will be an error value (<b class="evalue">E</b>).
+          The component's <b>drain</b> output. If the <b>gate</b> input enables the transistor, the output follows the <b>source</b> input except for the transistor's masked value: a P-type transistor outputs <b class="uvalue">U</b> for source <b class="zerov">0</b>, and an N-type transistor outputs <b class="uvalue">U</b> for source <b class="unov">1</b>. If the <b>gate</b> input is defined but does not enable the transistor, the output is floating (<b class="uvalue">U</b>). If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error value (<b class="evalue">E</b>), then a floating source bit remains <b class="uvalue">U</b> and any other source bit becomes <b class="evalue">E</b>.
         </dd>
       </dl>
       <h2>

@@ -71,6 +71,7 @@
 			<tocitem target="menu_edit" text="O menu Editar" />
 			<tocitem target="menu_project" text="O menu Projeto" />
 			<tocitem target="menu_simulate" text="O menu Simular" />
+			<tocitem target="menu_fpga" text="O menu FPGA" />
 			<tocitem target="menu_winhelp" text="Os menus Janela e Ajuda" />
 			<tocitem target="menu_exportab" text="Export Image"/>  
 			<tocitem target="menu_printertab" text="Printing "/>
@@ -178,6 +179,7 @@
 			<tocitem target="io_hexdig" text="Display hexadecimal" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="Matriz de LEDs" image="icon_dotmat" />
 			<tocitem target="io_tty" text="TTY" image="icon_tty" />
+			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
 			<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
 			<tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" />

@@ -100,6 +100,7 @@
 	<mapID target="menu_edit"           url="de/html/guide/menu/edit.html" />
 	<mapID target="menu_project"        url="de/html/guide/menu/project.html" />
 	<mapID target="menu_simulate"       url="de/html/guide/menu/simulate.html" />
+	<mapID target="menu_fpga"           url="en/html/guide/menu/fpga.html" />
 	<mapID target="menu_winhelp"        url="de/html/guide/menu/winhelp.html" />
 	<mapID target="menu_exportab"       url="de/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="de/html/guide/menu/printertab.html" />
@@ -167,9 +168,10 @@
 	<mapID target="io_7seg"             url="de/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="de/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="de/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="de/html/libs/io/tty.html" />	
-    <mapID target="io_Port_IO"          url="de/html/libs/io/Port_io.html" />	
-	<mapID target="io_Repetar"          url="de/html/libs/io/repetar.html" />	
+	<mapID target="io_tty"              url="de/html/libs/io/tty.html" />
+	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+    <mapID target="io_Port_IO"          url="de/html/libs/io/Port_io.html" />
+	<mapID target="io_Repetar"          url="de/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="de/html/libs/io/videorvb.html" />
 	<mapID target="tcl"                 url="de/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="de/html/libs/tcl/reds_console.html" />
@@ -245,6 +247,7 @@
 	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
+	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	

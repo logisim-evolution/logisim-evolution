@@ -396,7 +396,10 @@ public class SubcircuitFactory extends InstanceFactory {
       // Accounts for 10% speedup.
       final var pinState = subState.getReusableInstanceState(pin);
       if (Pin.FACTORY.isInputPin(pin)) {
-        final var newVal = stateInContext.getPortValue(i);
+        var newVal = stateInContext.getPortValue(i);
+        if (newVal == Value.NIL) {
+          newVal = Value.createUnknown(pin.getAttributeValue(StdAttr.WIDTH));
+        }
         final var oldVal = Pin.FACTORY.getValue(pinState);
         if (!newVal.equals(oldVal)) {
           Pin.FACTORY.driveInputPin(pinState, newVal);

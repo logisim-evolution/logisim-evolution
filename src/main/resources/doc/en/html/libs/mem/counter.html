@@ -56,27 +56,27 @@
             </thead>
             <tbody>
             <tr>
-                <td align="center">0 or Z</td>
+                <td align="center">not 1</td>
                 <td align="center">0</td>
-                <td align="center">X</td>
+                <td align="center">any</td>
                 <td>The counter remains unchanged.</td>
             </tr>
             <tr>
-                <td align="center">0 or Z</td>
-                <td align="center">1 or Z</td>
-                <td align="center">1 or Z</td>
+                <td align="center">not 1</td>
+                <td align="center">not 0</td>
+                <td align="center">not 0</td>
                 <td>The counter <b>increments</b>.</td>
             </tr>
             <tr>
-                <td align="center">0 or Z</td>
-                <td align="center">1 or Z</td>
+                <td align="center">not 1</td>
+                <td align="center">not 0</td>
                 <td align="center">0</td>
                 <td>The counter <b>decrements</b>.</td>
             </tr>
             <tr>
                 <td align="center">1</td>
-                <td align="center">X</td>
-                <td align="center">X</td>
+                <td align="center">any</td>
+                <td align="center">any</td>
                 <td>The counter <b>loads</b> the value found at the <var>D</var> input.</td>
             </tr>
             </tbody>
@@ -115,14 +115,14 @@
 
         <dt>West edge, lower pin labeled <var>ct</var> (input, bit width 1)</dt>
         <dd>
-            <b>Enable(ct) (shown as G5):</b> When this is 1 or unconnected, the counter increments or decrements on the clock trigger,
-            provided the <var>Load</var> input is 0.
+            <b>Enable(ct) (shown as G5):</b> When this is any value other than 0, the counter increments or decrements on the clock trigger,
+            provided the <var>Load</var> input is not 1.
         </dd>
 
         <dt>North edge, labeled <var>UD</var> (input, bit width 1)</dt>
         <dd>
-            <b>Up/Down (shown as M3/M4):</b> When 1 or Z, the counter counts up. When 0, it counts down.
-            This input dictates direction when <var>Load</var> is 0 and <var>Enable(ct)</var> is 1.
+            <b>Up/Down (shown as M3/M4):</b> When this is any value other than 0, the counter counts up. When 0, it counts down.
+            This input dictates direction when <var>Load</var> is not 1 and <var>Enable(ct)</var> is not 0.
         </dd>
 
         <dt>South edge, indicated with a triangle (input, bit width 1)</dt>

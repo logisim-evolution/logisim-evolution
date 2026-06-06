@@ -20,6 +20,7 @@ import com.cburch.draw.shapes.SvgCreator;
 import com.cburch.draw.shapes.SvgReader;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -35,6 +36,7 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.Collection;
 import java.util.List;
 import org.w3c.dom.Element;
 
@@ -76,8 +78,38 @@ public abstract class DynamicElement extends AbstractCanvasObject {
       return false;
     }
 
+    public boolean containsAny(Collection<? extends Component> comps) {
+      for (final var comp : comps) {
+        if (contains(comp)) return true;
+      }
+      return false;
+    }
+
     public InstanceComponent leaf() {
       return elt[elt.length - 1];
+    }
+
+    public boolean replaceComponents(ReplacementMap replacements) {
+      for (var i = 0; i < elt.length; i++) {
+        final var oldComponent = elt[i];
+        final var replacement = findReplacement(oldComponent, replacements.getReplacementsFor(oldComponent));
+        if (replacement == null) return false;
+        elt[i] = replacement;
+      }
+      return true;
+    }
+
+    private static InstanceComponent findReplacement(
+        InstanceComponent oldComponent, Collection<Component> candidates) {
+      if (candidates == null) return oldComponent;
+      for (final var candidate : candidates) {
+        if (candidate == oldComponent) return oldComponent;
+        if (candidate instanceof InstanceComponent instanceComponent
+            && candidate.getFactory() == oldComponent.getFactory()) {
+          return instanceComponent;
+        }
+      }
+      return null;
     }
 
     @Override

@@ -212,6 +212,7 @@ public class HexFile {
   //  |  ...                                  |  |  ...              |
   //  +---------------------------------------+  +-------------------+
   static final int MAX_PREVIEW_SIZE = 10 * 1024; // 10KB max size for displaying files
+  static final int SAVE_PREVIEW_WORD_LIMIT = 1024;
   private static final Logger logger = LoggerFactory.getLogger(HexFile.class);
   private static final String autoFormat = "Any data file (auto-detects format)";
   protected static final String[] formatDescriptions = {
@@ -348,6 +349,18 @@ public class HexFile {
 
   public static String saveToString(MemContents src) {
     return saveToString(src, null, -1);
+  }
+
+  static String saveToPreviewString(MemContents src, String desc) {
+    final var wordCount = src.getLastOffset() + 1;
+    final var preview = saveToString(src, desc, SAVE_PREVIEW_WORD_LIMIT);
+    if (wordCount <= SAVE_PREVIEW_WORD_LIMIT) return preview;
+
+    final var separator = preview.endsWith("\n") ? "" : "\n";
+    return preview
+        + separator
+        + S.get("hexSavePreviewTruncated", SAVE_PREVIEW_WORD_LIMIT, wordCount)
+        + "\n";
   }
 
   // No header is output. As a special, if desc is null, v2.0 raw will be used.
@@ -1800,7 +1813,7 @@ public class HexFile {
     void refresh() {
       String desc = chooser.getFileFilter().getDescription();
       String hdr = headerForFormat(desc);
-      preview.setText(hdr + saveToString(memContents, desc, -1));
+      preview.setText(hdr + saveToPreviewString(memContents, desc));
       preview.setCaretPosition(0);
     }
   }

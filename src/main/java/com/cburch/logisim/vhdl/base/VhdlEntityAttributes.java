@@ -13,7 +13,6 @@ import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
@@ -26,6 +25,52 @@ import java.util.HashMap;
 import java.util.List;
 
 public class VhdlEntityAttributes extends AbstractAttributeSet {
+  private static class VhdlContentAttributes extends AbstractAttributeSet {
+    private final VhdlContent content;
+
+    private VhdlContentAttributes(VhdlContent content) {
+      this.content = content;
+    }
+
+    @Override
+    protected void copyInto(AbstractAttributeSet dest) {
+      // VHDL content attributes are owned by the VhdlContent object.
+    }
+
+    @Override
+    public List<Attribute<?>> getAttributes() {
+      return STATIC_ATTRIBUTES;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <V> V getValue(Attribute<V> attr) {
+      if (attr == VhdlEntity.nameAttr) return (V) content.getName();
+      if (attr == StdAttr.APPEARANCE) return (V) content.getAppearance();
+      return null;
+    }
+
+    @Override
+    public <V> void setValue(Attribute<V> attr, V value) {
+      if (attr == VhdlEntity.nameAttr && value instanceof String name) {
+        final var oldName = content.getName();
+        if (oldName.equals(name) || !content.setName(name)) return;
+        @SuppressWarnings("unchecked")
+        final var oldValue = (V) oldName;
+        fireAttributeValueChanged(attr, value, oldValue);
+      } else if (attr == StdAttr.APPEARANCE
+          && (value == StdAttr.APPEAR_FPGA
+              || value == StdAttr.APPEAR_CLASSIC
+              || value == StdAttr.APPEAR_EVOLUTION)) {
+        final var oldAppearance = content.getAppearance();
+        if (oldAppearance.equals(value)) return;
+        content.setAppearance((AttributeOption) value);
+        @SuppressWarnings("unchecked")
+        final var oldValue = (V) oldAppearance;
+        fireAttributeValueChanged(attr, value, oldValue);
+      }
+    }
+  }
 
   public static class VhdlGenericAttribute extends Attribute<Integer> {
     final int start;
@@ -79,40 +124,11 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return new VhdlGenericAttribute("vhdl_" + name, disp, Integer.MIN_VALUE, Integer.MAX_VALUE, generic);
   }
 
-  private static final List<Attribute<?>> static_attributes =
-      Arrays.asList(
-          VhdlEntity.nameAttr,
-          StdAttr.LABEL,
-          StdAttr.LABEL_FONT,
-          StdAttr.LABEL_VISIBILITY,
-          StdAttr.FACING,
-          StdAttr.APPEARANCE,
-          VhdlSimConstants.SIM_NAME_ATTR);
+  private static final List<Attribute<?>> STATIC_ATTRIBUTES =
+      Arrays.asList(VhdlEntity.nameAttr, StdAttr.APPEARANCE);
 
   static AttributeSet createBaseAttrs(VhdlContent content) {
-    final var generic = content.getGenerics();
-    final var genericAttr = content.getGenericAttributes();
-    final var attrs = new Attribute<?>[7 + generic.length];
-    final var value = new Object[7 + generic.length];
-    attrs[0] = VhdlEntity.nameAttr;
-    value[0] = content.getName();
-    attrs[1] = StdAttr.LABEL;
-    value[1] = "";
-    attrs[2] = StdAttr.LABEL_FONT;
-    value[2] = StdAttr.DEFAULT_LABEL_FONT;
-    attrs[3] = StdAttr.LABEL_VISIBILITY;
-    value[3] = false;
-    attrs[4] = StdAttr.FACING;
-    value[4] = Direction.EAST;
-    attrs[5] = StdAttr.APPEARANCE;
-    value[5] = StdAttr.APPEAR_EVOLUTION;
-    attrs[6] = VhdlSimConstants.SIM_NAME_ATTR;
-    value[6] = "";
-    for (var i = 0; i < generic.length; i++) {
-      attrs[6 + i] = genericAttr.get(i);
-      value[6 + i] = generic[i].getDefaultValue();
-    }
-    return AttributeSets.fixedSet(attrs, value);
+    return new VhdlContentAttributes(content);
   }
 
   private VhdlContent content;
@@ -158,7 +174,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     instanceAttrs.add(StdAttr.LABEL_FONT);
     instanceAttrs.add(StdAttr.LABEL_VISIBILITY);
     instanceAttrs.add(StdAttr.FACING);
-    instanceAttrs.add(StdAttr.APPEARANCE);
     instanceAttrs.add(VhdlSimConstants.SIM_NAME_ATTR);
     instanceAttrs.addAll(genericAttrs);
     if (genericValues == null) genericValues = new HashMap<>();
