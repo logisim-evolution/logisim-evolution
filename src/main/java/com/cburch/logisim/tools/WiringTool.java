@@ -322,7 +322,6 @@ public class WiringTool extends Tool {
         wire1 = checkForRepairs(canvas, wire1, cur);
         if (wire0.getLength() > 0) wires.add(wire0);
         if (wire1.getLength() > 0) wires.add(wire1);
-        
       }
       if (!wires.isEmpty()) {
         final var mutation = new CircuitMutation(canvas.getCircuit());
