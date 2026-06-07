@@ -27,6 +27,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -140,9 +141,22 @@ public class Circuit {
       final var oldLabel = attrEvent.getOldValue() != null ? (String) attrEvent.getOldValue() : "";
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) attrEvent.getAttribute();
-      if (!isCorrectLabel(getName(), newLabel, comps, attrEvent.getSource(), e.getSource().getFactory(), true)) {
+      if (!isCorrectLabel(
+          getName(),
+          newLabel,
+          comps,
+          attrEvent.getSource(),
+          e.getSource().getFactory(),
+          labelIdentity(),
+          true)) {
         if (isCorrectLabel(
-            getName(), oldLabel, comps, attrEvent.getSource(), e.getSource().getFactory(), false)) {
+            getName(),
+            oldLabel,
+            comps,
+            attrEvent.getSource(),
+            e.getSource().getFactory(),
+            labelIdentity(),
+            false)) {
           attrEvent.getSource().setValue(lattr, oldLabel);
         } else {
           attrEvent.getSource().setValue(lattr, "");
@@ -158,6 +172,24 @@ public class Circuit {
       AttributeSet me,
       ComponentFactory myFactory,
       Boolean showDialog) {
+    return isCorrectLabel(
+        circuitName,
+        name,
+        components,
+        me,
+        myFactory,
+        CircuitLabelValidator.LabelIdentity.HDL_COMPATIBLE,
+        showDialog);
+  }
+
+  static boolean isCorrectLabel(
+      String circuitName,
+      String name,
+      Set<Component> components,
+      AttributeSet me,
+      ComponentFactory myFactory,
+      CircuitLabelValidator.LabelIdentity labelIdentity,
+      Boolean showDialog) {
     if (myFactory instanceof Tunnel) return true;
     if (circuitName != null
         && !circuitName.isEmpty()
@@ -169,7 +201,7 @@ public class Circuit {
       }
       return false;
     }
-    return !(isExistingLabel(name, me, components, showDialog)
+    return !(isExistingLabel(name, me, components, labelIdentity, showDialog)
         || isComponentName(name, components, showDialog));
   }
 
@@ -189,7 +221,12 @@ public class Circuit {
     return false;
   }
 
-  private static boolean isExistingLabel(String name, AttributeSet me, Set<Component> comps, Boolean showDialog) {
+  private static boolean isExistingLabel(
+      String name,
+      AttributeSet me,
+      Set<Component> comps,
+      CircuitLabelValidator.LabelIdentity labelIdentity,
+      Boolean showDialog) {
     if (name.isEmpty()) return false;
     for (final var comp : comps) {
       if (!comp.getAttributeSet().equals(me) && !(comp.getFactory() instanceof Tunnel)) {
@@ -197,7 +234,7 @@ public class Circuit {
             (comp.getAttributeSet().containsAttribute(StdAttr.LABEL))
                 ? comp.getAttributeSet().getValue(StdAttr.LABEL)
                 : "";
-        if (CircuitLabelValidator.labelsMatch(Label, name)) {
+        if (CircuitLabelValidator.labelsMatch(Label, name, labelIdentity)) {
           if (showDialog) {
             final var msg = S.get("UsedLabelNameError");
             OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
@@ -262,6 +299,17 @@ public class Circuit {
 
   public Project getProject() {
     return proj;
+  }
+
+  private CircuitLabelValidator.LabelIdentity labelIdentity() {
+    return requiresHdlCompatibleNames()
+        ? CircuitLabelValidator.LabelIdentity.HDL_COMPATIBLE
+        : CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE;
+  }
+
+  private boolean requiresHdlCompatibleNames() {
+    final Options options = logiFile == null ? null : logiFile.getOptions();
+    return options == null || options.requiresHdlCompatibleNames();
   }
 
   public SocSimulationManager getSocSimulationManager() {
@@ -781,17 +829,25 @@ public class Circuit {
       if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)
           && !(c.getFactory() instanceof Tunnel)) {
         final var labels = new HashSet<String>();
+        final var labelIdentity = labelIdentity();
         for (final var comp : comps) {
           if (comp.equals(c) || comp.getFactory() instanceof Tunnel) continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             final var label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            if (StringUtil.isNotEmpty(label)) labels.add(CircuitLabelValidator.labelKey(label));
+            if (StringUtil.isNotEmpty(label)) {
+              labels.add(CircuitLabelValidator.labelKey(label, labelIdentity));
+            }
           }
         }
-        /* we also have to check for the entity name */
-        if (getName() != null && !getName().isEmpty()) labels.add(CircuitLabelValidator.labelKey(getName()));
         final var label = c.getAttributeSet().getValue(StdAttr.LABEL);
-        if (StringUtil.isNotEmpty(label) && labels.contains(CircuitLabelValidator.labelKey(label))) {
+        final var collidesWithCircuitName =
+            StringUtil.isNotEmpty(label)
+                && getName() != null
+                && !getName().isEmpty()
+                && CircuitLabelValidator.labelsMatch(getName(), label);
+        if (StringUtil.isNotEmpty(label)
+            && (collidesWithCircuitName
+                || labels.contains(CircuitLabelValidator.labelKey(label, labelIdentity)))) {
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
         }
       }
