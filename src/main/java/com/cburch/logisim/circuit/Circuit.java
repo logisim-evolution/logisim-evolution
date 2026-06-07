@@ -161,7 +161,7 @@ public class Circuit {
     if (myFactory instanceof Tunnel) return true;
     if (circuitName != null
         && !circuitName.isEmpty()
-        && circuitName.equalsIgnoreCase(name)
+        && CircuitLabelValidator.labelsMatch(circuitName, name)
         && myFactory instanceof Pin) {
       if (showDialog) {
         final var msg = S.get("ComponentLabelEqualCircuitName");
@@ -176,7 +176,7 @@ public class Circuit {
   private static boolean isComponentName(String name, Set<Component> comps, Boolean showDialog) {
     if (name.isEmpty()) return false;
     for (final var comp : comps) {
-      if (comp.getFactory().getName().equalsIgnoreCase(name)) {
+      if (CircuitLabelValidator.labelsMatch(comp.getFactory().getName(), name)) {
         if (showDialog) {
           final var msg = S.get("ComponentLabelNameError");
           OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
@@ -197,7 +197,7 @@ public class Circuit {
             (comp.getAttributeSet().containsAttribute(StdAttr.LABEL))
                 ? comp.getAttributeSet().getValue(StdAttr.LABEL)
                 : "";
-        if (Label.equalsIgnoreCase(name)) {
+        if (CircuitLabelValidator.labelsMatch(Label, name)) {
           if (showDialog) {
             final var msg = S.get("UsedLabelNameError");
             OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
@@ -327,14 +327,14 @@ public class Circuit {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if (!label.isEmpty()) {
-          if (labelNames.contains(label.toUpperCase())) {
+          if (labelNames.contains(CircuitLabelValidator.labelKey(label))) {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
             // FIXME: hardcoded string
             Reporter.report.addSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
           } else {
-            labelNames.add(label.toUpperCase());
+            labelNames.add(CircuitLabelValidator.labelKey(label));
           }
         }
       }
@@ -785,13 +785,13 @@ public class Circuit {
           if (comp.equals(c) || comp.getFactory() instanceof Tunnel) continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             final var label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            if (StringUtil.isNotEmpty(label)) labels.add(label.toUpperCase());
+            if (StringUtil.isNotEmpty(label)) labels.add(CircuitLabelValidator.labelKey(label));
           }
         }
         /* we also have to check for the entity name */
-        if (getName() != null && !getName().isEmpty()) labels.add(getName());
+        if (getName() != null && !getName().isEmpty()) labels.add(CircuitLabelValidator.labelKey(getName()));
         final var label = c.getAttributeSet().getValue(StdAttr.LABEL);
-        if (StringUtil.isNotEmpty(label) && labels.contains(label.toUpperCase())) {
+        if (StringUtil.isNotEmpty(label) && labels.contains(CircuitLabelValidator.labelKey(label))) {
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
         }
       }
@@ -860,7 +860,7 @@ public class Circuit {
       final var attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var compLabel = attrs.getValue(StdAttr.LABEL);
-        if (label.equalsIgnoreCase(compLabel)) {
+        if (CircuitLabelValidator.labelsMatch(label, compLabel)) {
           attrs.setValue(StdAttr.LABEL, "");
           changed = true;
         }
