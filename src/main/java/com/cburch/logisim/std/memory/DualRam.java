@@ -299,7 +299,7 @@ public class DualRam extends Mem {
 
         if (dataLines > 1) {
           final var le = state.getPortValue(DualRamAppearance.getLEIndex(absIndex, attrs));
-          if (le != null && le.equals(Value.FALSE))
+          if (!Value.TRUE.equals(le))
             continue;
         }
         long dataValue = state.getPortValue(DualRamAppearance.getDataInIndex(absIndex, attrs)).toLongValue();
