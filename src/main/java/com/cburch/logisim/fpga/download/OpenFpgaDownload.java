@@ -201,10 +201,20 @@ public class OpenFpgaDownload  implements VendorDownload {
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
-    // TODO: add pull, drive and ioStandard
-    for (var key : LedArrayMap.keySet()) {
-      pinInfo.add("LOCATE COMP \"{{1}}\" SITE \"{{2}}\";", key, LedArrayMap.get(key));
+    final var ledArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
+    for (var pin : ledArrayMap) {
+      pinInfo.add("LOCATE COMP \"{{1}}\" SITE \"{{2}}\";", pin.hdlSignal(), pin.pinLocation());
+      final var pullString = PullBehaviors.getPullString(pin.pullBehavior());
+      final String pull = (pullString == null) ? " PULLMODE=NONE" :
+          LineBuffer.format(" PULLMODE={{1}}", pullString.toUpperCase());
+      final var ioTypeString = IoStandards.getIoString(pin.ioStandard());
+      final String ioType = (ioTypeString == null) ? "" :
+          LineBuffer.format(" IO_TYPE={{1}}", ioTypeString.toUpperCase());
+      final var driveString = DriveStrength.getDriveString(pin.driveStrength());
+      final String drive = (driveString == null) ? "" :
+          LineBuffer.format(" DRIVE={{1}}", driveString);
+      if (pullString != null || ioTypeString != null || driveString != null)
+        pinInfo.add("IOBUF PORT \"{{1}}\"{{2}}{{3}}{{4}};", pin.hdlSignal(), pull, ioType, drive);
     }
     return pinInfo.get();
   }

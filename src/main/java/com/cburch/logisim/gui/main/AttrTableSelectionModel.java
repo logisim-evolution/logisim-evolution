@@ -131,20 +131,28 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   void updateAttributeSet() {
     final var canvas = frame.getCanvas();
     final var circuit = canvas.getCircuit();
+    final var hdl = canvas.getCurrentHdl();
     final var selection = canvas.getSelection();
-    setAttributeSet(
-        circuit != null && selection.isEmpty()
-            ? circuit.getStaticAttributes()
-            : selection.getAttributeSet());
+    if (circuit != null && selection.isEmpty()) {
+      setAttributeSet(circuit.getStaticAttributes());
+    } else if (hdl instanceof VhdlContent vhdlContent) {
+      setAttributeSet(vhdlContent.getStaticAttributes());
+    } else {
+      setAttributeSet(selection.getAttributeSet());
+    }
   }
 
   @Override
   public void setValueRequested(final Attribute<Object> attr, final Object value) throws AttrTableSetException {
     final var selection = frame.getCanvas().getSelection();
     final var circuit = frame.getCanvas().getCircuit();
+    final var hdl = frame.getCanvas().getCurrentHdl();
     if (circuit != null && selection.isEmpty()) {
       final var circuitModel = new AttrTableCircuitModel(project, circuit);
       circuitModel.setValueRequested(attr, value);
+    } else if (hdl instanceof VhdlContent vhdlContent) {
+      final var hdlModel = new AttrTableHdlModel(project, vhdlContent);
+      hdlModel.setValueRequested(attr, value);
     } else {
       final var act = new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
       AutoLabel labeler = null;

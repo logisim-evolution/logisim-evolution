@@ -191,11 +191,23 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     setBits(contents.getLogLength(), contents.getWidth());
   }
 
-  private boolean windowChanged(int offsetX, int offsetY, int displayWidth, int displayHeight) {
+  private boolean displayMetricsChanged(Graphics g) {
+    final var fm = g.getFontMetrics(g.getFont());
+    final var addrBits = getAddrBits();
+    final var dataBits = contents.getWidth();
+    return charHeight != fm.getHeight()
+        || addrBlockSize != ((fm.stringWidth(StringUtil.toHexString(addrBits, 0)) + 9) / 10) * 10
+        || dataSize != fm.stringWidth(StringUtil.toHexString(dataBits, 0) + " ")
+        || spaceSize != fm.stringWidth(" ");
+  }
+
+  private boolean windowChanged(
+      Graphics g, int offsetX, int offsetY, int displayWidth, int displayHeight) {
     return displayWindow.getX() != offsetX
         || displayWindow.getY() != offsetY
         || displayWindow.getWidth() != displayWidth
-        || displayWindow.getHeight() != displayHeight;
+        || displayWindow.getHeight() != displayHeight
+        || displayMetricsChanged(g);
   }
 
   public void paint(
@@ -207,7 +219,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       int displayWidth,
       int displayHeight,
       int nrItemsToHighlight) {
-    if (recalculateParameters || windowChanged(offsetX, offsetY, displayWidth, displayHeight))
+    if (recalculateParameters || windowChanged(g, offsetX, offsetY, displayWidth, displayHeight))
       calculateDisplayParameters(g, offsetX, offsetY, displayWidth, displayHeight);
     final var blockHeight = nrOfLines * (charHeight + 2);
     final var totalNrOfEntries = (1 << getAddrBits());

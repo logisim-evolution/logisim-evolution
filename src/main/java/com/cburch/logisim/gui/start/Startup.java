@@ -318,6 +318,7 @@ public class Startup implements AWTEventListener {
    * @return Instance of Startup class.
    */
   public static Startup parseArgs(String[] args) {
+    preloadLocale(args);
 
     final var opts = new Options();
     addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
@@ -445,6 +446,21 @@ public class Startup implements AWTEventListener {
   }
 
   /* ********************************************************************************************* */
+
+  private static void preloadLocale(String[] args) {
+    for (var i = 0; i < args.length; i++) {
+      final var arg = args[i];
+      if (arg.equals("--" + ARG_LOCALE_LONG) || arg.equals("-" + ARG_LOCALE_SHORT)) {
+        if (i + 1 < args.length) {
+          trySetLocale(args[++i]);
+        }
+      } else if (arg.startsWith("--" + ARG_LOCALE_LONG + "=")) {
+        trySetLocale(arg.substring(ARG_LOCALE_LONG.length() + 3));
+      } else if (arg.startsWith("-" + ARG_LOCALE_SHORT) && arg.length() > 2) {
+        trySetLocale(arg.substring(2));
+      }
+    }
+  }
 
   /**
    * Supported return codes from command handlers;
@@ -768,14 +784,21 @@ public class Startup implements AWTEventListener {
 
   /* ********************************************************************************************* */
 
-  private static void setLocale(String lang) {
+  private static boolean trySetLocale(String lang) {
     final var opts = S.getLocaleOptions();
     for (final var locale : opts) {
       if (lang.equals(locale.toString())) {
         LocaleManager.setLocale(locale);
-        return;
+        return true;
       }
     }
+    return false;
+  }
+
+  private static void setLocale(String lang) {
+    if (trySetLocale(lang)) return;
+
+    final var opts = S.getLocaleOptions();
     logger.warn(S.get("invalidLocaleError"));
     logger.warn(S.get("invalidLocaleOptionsHeader"));
 

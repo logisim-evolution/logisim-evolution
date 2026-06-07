@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.proj.Project;
@@ -25,12 +27,14 @@ import org.junit.jupiter.api.Test;
 class CircuitStateTest {
 
   private static final class Fixture {
+    private final LogisimFile file;
+    private final Project project;
     private final Circuit circuit;
     private final CircuitState state;
 
     private Fixture() {
-      final var file = LogisimFile.createNew(new Loader(null), null);
-      final var project = new Project(file);
+      file = LogisimFile.createNew(new Loader(null), null);
+      project = new Project(file);
       circuit = file.getMainCircuit();
       circuit.setProject(project);
       project.setCurrentCircuit(circuit);
@@ -71,6 +75,39 @@ class CircuitStateTest {
 
     assertNull(fixture.state.getData(ram));
     assertNull(fixture.state.getData(pin));
+  }
+
+  @Test
+  void disconnectedSubcircuitInputPropagatesUnknownInsideSubcircuit() {
+    final var fixture = new Fixture();
+    final var child = new Circuit("child", fixture.file, fixture.project);
+    fixture.file.addCircuit(child);
+    final var input = Pin.FACTORY.createComponent(Location.create(100, 100, true), Pin.FACTORY.createAttributeSet());
+    final var outputAttrs = Pin.FACTORY.createAttributeSet();
+    outputAttrs.setValue(Pin.ATTR_TYPE, Pin.OUTPUT);
+    final var output = Pin.FACTORY.createComponent(Location.create(140, 100, true), outputAttrs);
+    add(child, input);
+    add(child, output);
+    add(child, Wire.create(input.getLocation(), output.getLocation()));
+
+    final var childInstance =
+        child
+            .getSubcircuitFactory()
+            .createComponent(Location.create(200, 100, true), child.getSubcircuitFactory().createAttributeSet());
+    add(fixture.circuit, childInstance);
+
+    final var state = CircuitState.createRootState(fixture.project, fixture.circuit, Thread.currentThread());
+    state.getPropagator().propagate();
+    state.getPropagator().propagate();
+    state.getPropagator().propagate();
+    state.getPropagator().propagate();
+
+    final var subState = child.getSubcircuitFactory().getSubstate(state, childInstance);
+    assertEquals(Value.UNKNOWN, subState.getValue(input.getLocation()));
+    assertEquals(Value.UNKNOWN, subState.getValue(output.getLocation()));
+    final var outputEnd =
+        childInstance.getEnds().stream().filter(EndData::isOutput).findFirst().orElseThrow();
+    assertEquals(Value.UNKNOWN, state.getValue(outputEnd.getLocation()));
   }
 
   private static void add(Circuit circuit, Component component) {

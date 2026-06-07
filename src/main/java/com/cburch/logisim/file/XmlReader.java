@@ -466,6 +466,19 @@ class XmlReader {
             final var vhdl = circElt.getTextContent();
             final var contents = VhdlContent.parse(name, vhdl, file);
             if (contents != null) {
+              if (circElt.hasAttribute("appearance")) {
+                try {
+                  contents.setAppearance(
+                      StdAttr.APPEARANCE.parse(circElt.getAttribute("appearance")));
+                } catch (NumberFormatException e) {
+                  addError(
+                      S.get(
+                          "attrValueInvalidError",
+                          circElt.getAttribute("appearance"),
+                          StdAttr.APPEARANCE.getName()),
+                      "vhdl." + name);
+                }
+              }
               file.addVhdlContent(contents);
             }
           }
@@ -544,13 +557,23 @@ class XmlReader {
       builder.execute();
     }
 
+    Tool findTool(Library lib, String name) {
+      final var tool = lib.getTool(name);
+      if (tool != null) return tool;
+      for (final var sub : lib.getLibraries()) {
+        final var ret = findTool(sub, name);
+        if (ret != null) return ret;
+      }
+      return null;
+    }
+
     Tool toTool(Element elt) throws XmlReaderException {
       final var lib = findLibrary(elt.getAttribute("lib"));
       final var name = elt.getAttribute("name");
       if (name == null || "".equals(name)) {
         throw new XmlReaderException(S.get("toolNameMissing"));
       }
-      final var tool = lib.getTool(name);
+      final var tool = findTool(lib, name);
       if (tool == null) {
         throw new XmlReaderException(S.get("toolNotFound"));
       }
