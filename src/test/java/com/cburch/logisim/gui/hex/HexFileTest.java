@@ -91,6 +91,14 @@ public class HexFileTest {
     assertFalse(preview.contains("ab"));
   }
 
+  @Test
+  void fileFiltersUseLocalizedLabelsWithoutChangingInternalFormats() {
+    final var filter = HexFile.getFilter("v3.0 hex words addressed");
+
+    assertEquals(S.get("hexFileFilterV3HexWordsAddressed"), filter.getDescription());
+    assertEquals("v3.0 hex words addressed", HexFile.formatDescriptionOf(filter));
+  }
+
   /** Test method for {@link com.cburch.logisim.gui.hex.HexFile} */
   @ParameterizedTest
   @MethodSource(value = "formatTriples")
