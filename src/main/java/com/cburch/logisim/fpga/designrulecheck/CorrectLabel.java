@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class CorrectLabel {
   public static String getCorrectLabel(String label) {
@@ -26,6 +27,14 @@ public class CorrectLabel {
     if (NUMBERS.contains(label.substring(0, 1))) result.append("L_");
     result.append(label.replace(" ", "_").replace("-", "_"));
     return result.toString();
+  }
+
+  public static String hdlLabelKey(String label) {
+    return hdlNameKey(getCorrectLabel(label));
+  }
+
+  public static String hdlNameKey(String hdlName) {
+    return hdlName.toUpperCase(Locale.ROOT);
   }
 
   public static boolean isCorrectLabel(String label, String errorIdentifierString) {
