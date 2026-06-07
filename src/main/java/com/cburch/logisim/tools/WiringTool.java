@@ -266,7 +266,7 @@ public class WiringTool extends Tool {
       canvas.getProject().repaintCanvas();
     }
   }
-  
+
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     if (!canvas.getProject().getLogisimFile().contains(canvas.getCircuit())) {
