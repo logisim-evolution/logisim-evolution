@@ -38,6 +38,7 @@ class SimulateOptions extends OptionsPanel {
 
   private final JCheckBox simRandomness = new JCheckBox();
   private final JCheckBox memUnknown = new JCheckBox();
+  private final JCheckBox hdlCompatibleNames = new JCheckBox();
   private final JLabel gateUndefinedLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -66,8 +67,11 @@ class SimulateOptions extends OptionsPanel {
     memUnknown.addActionListener(myListener);
     memUnknown.setSelected(AppPreferences.Memory_Startup_Unknown.get());
 
+    hdlCompatibleNames.addActionListener(myListener);
+
     setLayout(new TableLayout(1));
     add(memUnknown);
+    add(hdlCompatibleNames);
     add(simLimitPanel);
     add(gateUndefinedPanel);
     add(simRandomness);
@@ -77,6 +81,7 @@ class SimulateOptions extends OptionsPanel {
     myListener.loadSimLimit(attrs.getValue(Options.ATTR_SIM_LIMIT));
     myListener.loadGateUndefined(attrs.getValue(Options.ATTR_GATE_UNDEFINED));
     myListener.loadSimRandomness(attrs.getValue(Options.ATTR_SIM_RAND));
+    myListener.loadHdlCompatibleNames(attrs.getValue(Options.ATTR_HDL_COMPATIBLE_NAMES));
   }
 
   @Override
@@ -95,6 +100,7 @@ class SimulateOptions extends OptionsPanel {
     gateUndefinedLabel.setText(S.get("gateUndefined"));
     simRandomness.setText(S.get("simulateRandomness"));
     memUnknown.setText(S.get("MemoriesStartupUnknown"));
+    hdlCompatibleNames.setText(S.get("hdlCompatibleNames"));
   }
 
   private class MyListener implements ActionListener, AttributeListener {
@@ -123,6 +129,12 @@ class SimulateOptions extends OptionsPanel {
         AppPreferences.Memory_Startup_Unknown.set(memUnknown.isSelected());
         final var sim = getProject().getSimulator();
         if (sim != null) sim.reset();
+      } else if (source == hdlCompatibleNames) {
+        final var attrs = getOptions().getAttributeSet();
+        final var action =
+            OptionsActions.setAttribute(
+                attrs, Options.ATTR_HDL_COMPATIBLE_NAMES, hdlCompatibleNames.isSelected());
+        if (action != null) getProject().doAction(action);
       }
     }
 
@@ -136,6 +148,8 @@ class SimulateOptions extends OptionsPanel {
         loadSimRandomness((Integer) val);
       } else if (attr == Options.ATTR_GATE_UNDEFINED) {
         loadGateUndefined(val);
+      } else if (attr == Options.ATTR_HDL_COMPATIBLE_NAMES) {
+        loadHdlCompatibleNames((Boolean) val);
       }
     }
 
@@ -156,6 +170,10 @@ class SimulateOptions extends OptionsPanel {
 
     private void loadSimRandomness(Integer val) {
       simRandomness.setSelected(val > 0);
+    }
+
+    private void loadHdlCompatibleNames(Boolean val) {
+      hdlCompatibleNames.setSelected(val);
     }
   }
 }
