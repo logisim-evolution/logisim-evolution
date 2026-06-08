@@ -584,6 +584,11 @@ public class AppPreferences {
   public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
   public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
+  // dark mode default component colors
+  public static final int DARK_COMPONENT_COLOR = 0xFFFFFFFF;
+  public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
+  public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
+  public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
 
   // returns true if the given LookAndFeel class name indicates a dark theme
   public static boolean isDarkTheme(String lafClassName) {
@@ -598,21 +603,25 @@ public class AppPreferences {
       GRID_BG_COLOR.set(DARK_GRID_BG_COLOR);
       GRID_DOT_COLOR.set(DARK_GRID_DOT_COLOR);
       GRID_ZOOMED_DOT_COLOR.set(DARK_ZOOMED_DOT_COLOR);
+      COMPONENT_COLOR.set(DARK_COMPONENT_COLOR);
+      COMPONENT_SECONDARY_COLOR.set(DARK_COMPONENT_SECONDARY_COLOR);
+      COMPONENT_GHOST_COLOR.set(DARK_COMPONENT_GHOST_COLOR);
+      COMPONENT_ICON_COLOR.set(DARK_COMPONENT_ICON_COLOR);
     } else {
       CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
       GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
       GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
       GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
+      COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
+      COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
+      COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
+      COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
     }
   }
 
-  // restores default grid colors (theme-aware)
+  // restores default grid/component colors (theme-aware)
   public static void setDefaultGridColors() {
     applyThemeColors();
-    COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
-    COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
-    COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
-    COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
   }
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
