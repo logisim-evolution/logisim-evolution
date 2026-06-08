@@ -250,6 +250,15 @@ class WindowOptions extends OptionsPanel {
       for (final var win : Window.getWindows()) {
         SwingUtilities.updateComponentTreeUI(win);
       }
+      // Rebuild default circuit appearances to pick up new component colors
+      for (final var proj : Projects.getOpenProjects()) {
+        for (final var circuit : proj.getLogisimFile().getCircuits()) {
+          if (circuit.getAppearance().isDefaultAppearance()) {
+            circuit.getAppearance().recomputeDefaultAppearance();
+          }
+        }
+        proj.getFrame().repaint();
+      }
     } catch (IllegalAccessException
         | UnsupportedLookAndFeelException
         | InstantiationException

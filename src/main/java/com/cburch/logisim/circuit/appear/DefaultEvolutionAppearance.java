@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
@@ -135,7 +136,7 @@ public class DefaultEvolutionAppearance {
       int ldy,
       boolean isFixedSize) {
     int hAlign;
-    final var color = Color.DARK_GRAY;
+    final var color = new Color(AppPreferences.COMPONENT_COLOR.get());
     int ldX;
     for (final var pin : pins) {
       final var offset =
