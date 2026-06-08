@@ -19,6 +19,7 @@ import com.cburch.logisim.util.TableLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
@@ -30,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -242,23 +244,27 @@ class WindowOptions extends OptionsPanel {
     add(panel);
   }
 
-  private void initThemePreviewer() {
-    if (previewPanel != null) previewContainer.remove(previewPanel);
-    javax.swing.LookAndFeel previousLF = UIManager.getLookAndFeel();
+  private void applyLookAndFeelGlobally(String lafClassName) {
     try {
-      UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-      previewPanel = new JPanel();
-      previewPanel.add(new JButton("Preview"));
-      previewPanel.add(new JCheckBox("Preview"));
-      previewPanel.add(new JRadioButton("Preview"));
-      previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
-      previewContainer.add(previewPanel);
-      UIManager.setLookAndFeel(previousLF);
+      UIManager.setLookAndFeel(lafClassName);
+      for (final var win : Window.getWindows()) {
+        SwingUtilities.updateComponentTreeUI(win);
+      }
     } catch (IllegalAccessException
         | UnsupportedLookAndFeelException
         | InstantiationException
         | ClassNotFoundException ignored) {
     }
+  }
+
+  private void initThemePreviewer() {
+    if (previewPanel != null) previewContainer.remove(previewPanel);
+    previewPanel = new JPanel();
+    previewPanel.add(new JButton("Preview"));
+    previewPanel.add(new JCheckBox("Preview"));
+    previewPanel.add(new JRadioButton("Preview"));
+    previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
+    previewContainer.add(previewPanel);
     previewContainer.repaint();
     previewContainer.revalidate();
   }
@@ -320,6 +326,7 @@ class WindowOptions extends OptionsPanel {
           index = newIndex;
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
           AppPreferences.applyThemeColors();
+          applyLookAndFeelGlobally(lookAndFeelInfos[index].getClassName());
           initThemePreviewer();
         }
         checkRestartWarning();
