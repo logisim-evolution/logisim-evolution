@@ -589,6 +589,14 @@ public class AppPreferences {
   public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
   public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
   public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
+  // dark mode default signal colors
+  public static final int DARK_TRUE_COLOR = 0xFF00FF00;
+  public static final int DARK_FALSE_COLOR = 0xFF339933;
+  public static final int DARK_UNKNOWN_COLOR = 0xFF3399FF;
+  public static final int DARK_ERROR_COLOR = 0xFFFF4444;
+  public static final int DARK_NIL_COLOR = 0xFFBBBBBB;
+  public static final int DARK_BUS_COLOR = 0xFFFFFFFF;
+  public static final int DARK_STROKE_COLOR = 0xFFFF88FF;
 
   // returns true if the given LookAndFeel class name indicates a dark theme
   public static boolean isDarkTheme(String lafClassName) {
@@ -596,7 +604,7 @@ public class AppPreferences {
         lafClassName.contains("Dark") || lafClassName.contains("Darcula"));
   }
 
-  // applies theme-appropriate grid/component colors based on current LookAndFeel
+  // applies theme-appropriate grid/component/signal colors based on current LookAndFeel
   public static void applyThemeColors() {
     if (isDarkTheme(LookAndFeel.get())) {
       CANVAS_BG_COLOR.set(DARK_CANVAS_BG_COLOR);
@@ -607,6 +615,13 @@ public class AppPreferences {
       COMPONENT_SECONDARY_COLOR.set(DARK_COMPONENT_SECONDARY_COLOR);
       COMPONENT_GHOST_COLOR.set(DARK_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DARK_COMPONENT_ICON_COLOR);
+      TRUE_COLOR.set(DARK_TRUE_COLOR);
+      FALSE_COLOR.set(DARK_FALSE_COLOR);
+      UNKNOWN_COLOR.set(DARK_UNKNOWN_COLOR);
+      ERROR_COLOR.set(DARK_ERROR_COLOR);
+      NIL_COLOR.set(DARK_NIL_COLOR);
+      BUS_COLOR.set(DARK_BUS_COLOR);
+      STROKE_COLOR.set(DARK_STROKE_COLOR);
     } else {
       CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
       GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
@@ -616,6 +631,13 @@ public class AppPreferences {
       COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
       COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
+      TRUE_COLOR.set(0x0000D200);
+      FALSE_COLOR.set(0x00006400);
+      UNKNOWN_COLOR.set(0x002828FF);
+      ERROR_COLOR.set(0x00C00000);
+      NIL_COLOR.set(0x808080);
+      BUS_COLOR.set(0);
+      STROKE_COLOR.set(0xFF00FF);
     }
   }
 
