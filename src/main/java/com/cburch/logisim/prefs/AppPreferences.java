@@ -574,18 +574,41 @@ public class AppPreferences {
   public static final int DEFAULT_GRID_BG_COLOR = 0xFFFFFFFF;
   public static final int DEFAULT_GRID_DOT_COLOR = 0xFF777777;
   public static final int DEFAULT_ZOOMED_DOT_COLOR = 0xFFCCCCCC;
+  // dark mode default grid colors
+  public static final int DARK_CANVAS_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_GRID_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_GRID_DOT_COLOR = 0xFFAAAAAA;
+  public static final int DARK_ZOOMED_DOT_COLOR = 0xFF666666;
   public static final int DEFAULT_COMPONENT_COLOR = 0x00000000;
   public static final int DEFAULT_COMPONENT_SECONDARY_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
   public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
 
-  // restores default grid colors
+  // returns true if the given LookAndFeel class name indicates a dark theme
+  public static boolean isDarkTheme(String lafClassName) {
+    return lafClassName != null && (
+        lafClassName.contains("Dark") || lafClassName.contains("Darcula"));
+  }
+
+  // applies theme-appropriate grid/component colors based on current LookAndFeel
+  public static void applyThemeColors() {
+    if (isDarkTheme(LookAndFeel.get())) {
+      CANVAS_BG_COLOR.set(DARK_CANVAS_BG_COLOR);
+      GRID_BG_COLOR.set(DARK_GRID_BG_COLOR);
+      GRID_DOT_COLOR.set(DARK_GRID_DOT_COLOR);
+      GRID_ZOOMED_DOT_COLOR.set(DARK_ZOOMED_DOT_COLOR);
+    } else {
+      CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
+      GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
+      GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
+      GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
+    }
+  }
+
+  // restores default grid colors (theme-aware)
   public static void setDefaultGridColors() {
-    CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
-    GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
-    GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
-    GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
+    applyThemeColors();
     COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
     COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
     COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);

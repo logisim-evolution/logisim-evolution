@@ -319,6 +319,7 @@ class WindowOptions extends OptionsPanel {
         if (newIndex != index && newIndex >= 0 && newIndex < lookAndFeelInfos.length) {
           index = newIndex;
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
+          AppPreferences.applyThemeColors();
           initThemePreviewer();
         }
         checkRestartWarning();
