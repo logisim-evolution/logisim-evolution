@@ -45,7 +45,10 @@ public class ExpressionRenderData {
   private AttributedString[] lineStyled;
   private int[][] notStarts;
   private int[][] notStops;
-  private static final Color MARKCOLOR = Color.BLACK;
+  private Color markColor() {
+    return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+        ? Color.WHITE : Color.BLACK;
+  }
 
   private final Font expressionBaseFont;
   private final FontMetrics expressionBaseFontMetrics;
@@ -258,7 +261,7 @@ public class ExpressionRenderData {
     }
     for (Range m : marks) {
       if (m.stopIndex <= end)
-        as.addAttribute(TextAttribute.FOREGROUND, MARKCOLOR, m.startIndex, m.stopIndex);
+        as.addAttribute(TextAttribute.FOREGROUND, markColor(), m.startIndex, m.stopIndex);
     }
     return as;
   }
@@ -367,7 +370,7 @@ public class ExpressionRenderData {
         final var notY = y + lineY[i] - nd.depth * AppPreferences.getScaled(notSep);
         final var startX = x + notStarts[i][j];
         final var stopX = x + notStops[i][j];
-        if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex) g.setColor(MARKCOLOR);
+        if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex) g.setColor(markColor());
         GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(startX, notY, stopX, notY);
         GraphicsUtil.switchToWidth(g, 1);
