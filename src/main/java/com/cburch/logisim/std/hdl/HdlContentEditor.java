@@ -16,6 +16,7 @@ import com.cburch.hdl.HdlFile;
 import com.cburch.hdl.HdlModel;
 import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.JFileChoosers;
@@ -30,16 +31,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
@@ -152,6 +157,9 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 
   private static final String EXPORT_DIR = "hdl_export";
 
+  private static final String DARK_THEME = "/org/fife/ui/rsyntaxtextarea/themes/dark.xml";
+  private static final String LIGHT_THEME = "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
+
   private final FrameListener frameListener = new FrameListener();
   private final ModelListener modelListener = new ModelListener();
   private final EditorListener editorListener = new EditorListener();
@@ -231,6 +239,9 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(editorListener);
 
+    applyEditorTheme();
+    UIManager.addPropertyChangeListener(new ThemeChangeListener());
+
     final var sp = new RTextScrollPane(editor);
     sp.setFoldIndicatorEnabled(true);
 
@@ -247,6 +258,32 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
       size.width = Math.min(size.width, screen.width);
       size.height = Math.min(size.height, screen.height);
       setSize(size);
+    }
+  }
+
+  private void applyEditorTheme() {
+    if (editor == null) return;
+    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    final var themePath = isDark ? DARK_THEME : LIGHT_THEME;
+    try {
+      final var theme = Theme.load(getClass().getResourceAsStream(themePath));
+      theme.apply(editor);
+    } catch (Exception ignored) {
+      if (isDark) {
+        editor.setBackground(new java.awt.Color(0x2B2B2B));
+        editor.setForeground(new java.awt.Color(0xAAAAAA));
+        editor.setCurrentLineHighlightColor(new java.awt.Color(0x3A3A3A));
+        editor.setCaretColor(java.awt.Color.WHITE);
+      }
+    }
+  }
+
+  private class ThemeChangeListener implements PropertyChangeListener {
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+      if ("lookAndFeel".equals(evt.getPropertyName())) {
+        applyEditorTheme();
+      }
     }
   }
 

@@ -18,23 +18,29 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.util.AssemblerInterface;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -82,6 +88,32 @@ public class BreakpointPanel extends JPanel
     debugLines = new HashMap<>();
     localeChanged();
     LocaleManager.addLocaleListener(this);
+    applyAsmTheme();
+    UIManager.addPropertyChangeListener(this::onLookAndFeelChange);
+  }
+
+  private void applyAsmTheme() {
+    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    final var themePath = isDark
+        ? "/org/fife/ui/rsyntaxtextarea/themes/dark.xml"
+        : "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
+    try {
+      final var theme = Theme.load(getClass().getResourceAsStream(themePath));
+      theme.apply(asmWindow);
+    } catch (Exception ignored) {
+      if (isDark) {
+        asmWindow.setBackground(new Color(0x2B2B2B));
+        asmWindow.setForeground(new Color(0xAAAAAA));
+        asmWindow.setCurrentLineHighlightColor(new Color(0x3A3A3A));
+        asmWindow.setCaretColor(Color.WHITE);
+      }
+    }
+  }
+
+  private void onLookAndFeelChange(PropertyChangeEvent evt) {
+    if ("lookAndFeel".equals(evt.getPropertyName())) {
+      applyAsmTheme();
+    }
   }
 
   public void loadProgram(
