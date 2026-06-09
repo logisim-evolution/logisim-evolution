@@ -270,9 +270,9 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
       theme.apply(editor);
     } catch (Exception ignored) {
       if (isDark) {
-        editor.setBackground(new java.awt.Color(0x2B2B2B));
-        editor.setForeground(new java.awt.Color(0xAAAAAA));
-        editor.setCurrentLineHighlightColor(new java.awt.Color(0x3A3A3A));
+        editor.setBackground(new java.awt.Color(AppPreferences.DARK_RSTA_BG_COLOR));
+        editor.setForeground(new java.awt.Color(AppPreferences.DARK_RSTA_FG_COLOR));
+        editor.setCurrentLineHighlightColor(new java.awt.Color(AppPreferences.DARK_RSTA_HIGHLIGHT_COLOR));
         editor.setCaretColor(java.awt.Color.WHITE);
       }
     }

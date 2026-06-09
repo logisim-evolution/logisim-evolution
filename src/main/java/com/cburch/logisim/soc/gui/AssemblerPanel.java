@@ -181,9 +181,9 @@ public class AssemblerPanel extends JPanel
       theme.apply(asmWindow);
     } catch (Exception ignored) {
       if (isDark) {
-        asmWindow.setBackground(new Color(0x2B2B2B));
-        asmWindow.setForeground(new Color(0xAAAAAA));
-        asmWindow.setCurrentLineHighlightColor(new Color(0x3A3A3A));
+        asmWindow.setBackground(new Color(AppPreferences.DARK_RSTA_BG_COLOR));
+        asmWindow.setForeground(new Color(AppPreferences.DARK_RSTA_FG_COLOR));
+        asmWindow.setCurrentLineHighlightColor(new Color(AppPreferences.DARK_RSTA_HIGHLIGHT_COLOR));
         asmWindow.setCaretColor(Color.WHITE);
       }
     }

@@ -584,11 +584,31 @@ public class AppPreferences {
   public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
   public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
+  // default width-error colors
+  public static final int DEFAULT_WIDTH_ERROR_COLOR = 0xFF7B00;
+  public static final int DEFAULT_WIDTH_ERROR_CAPTION_COLOR = 0x550000;
+  public static final int DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR = 0xFFFF00;
+  public static final int DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR = 0xFFE6D2;
+  // default clock frequency color
+  public static final int DEFAULT_CLOCK_FREQUENCY_COLOR = 0xFF00B4;
   // dark mode default component colors
   public static final int DARK_COMPONENT_COLOR = 0xFFFFFFFF;
   public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
   public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
   public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
+  // dark mode fallback colors for RSyntaxTextArea editors
+  public static final int DARK_RSTA_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_RSTA_FG_COLOR = 0xFFAAAAAA;
+  public static final int DARK_RSTA_HIGHLIGHT_COLOR = 0xFF3A3A3A;
+  // default FPGA colors
+  public static final int DEFAULT_FPGA_DEFINE_COLOR = 0xFF0000;
+  public static final int DEFAULT_FPGA_DEFINE_HIGHLIGHT_COLOR = 0x00FF00;
+  public static final int DEFAULT_FPGA_DEFINE_RESIZE_COLOR = 0x00FFFF;
+  public static final int DEFAULT_FPGA_DEFINE_MOVE_COLOR = 0xFF00FF;
+  public static final int DEFAULT_FPGA_MAPPED_COLOR = 0x005000;
+  public static final int DEFAULT_FPGA_SELECTED_MAPPED_COLOR = 0xFF0000;
+  public static final int DEFAULT_FPGA_SELECTABLE_MAPPED_COLOR = 0x00A000;
+  public static final int DEFAULT_FPGA_SELECT_COLOR = 0x0000FF;
   // dark mode default signal colors
   public static final int DARK_TRUE_COLOR = 0xFF00FF00;
   public static final int DARK_FALSE_COLOR = 0xFF339933;
@@ -780,38 +800,38 @@ public class AppPreferences {
 
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
-      create(new PrefMonitorInt("SimTrueColor", 0x0000D200));
+      create(new PrefMonitorInt("SimTrueColor", DEFAULT_TRUE_COLOR));
   public static final PrefMonitor<String> TRUE_CHAR =
       create(new PrefMonitorString("SimTrueChar", "1 "));
   public static final PrefMonitor<Integer> FALSE_COLOR =
-      create(new PrefMonitorInt("SimFalseColor", 0x00006400));
+      create(new PrefMonitorInt("SimFalseColor", DEFAULT_FALSE_COLOR));
   public static final PrefMonitor<String> FALSE_CHAR =
       create(new PrefMonitorString("SimFalseChar", "0 "));
   public static final PrefMonitor<Integer> UNKNOWN_COLOR =
-      create(new PrefMonitorInt("SimUnknownColor", 0x002828FF));
+      create(new PrefMonitorInt("SimUnknownColor", DEFAULT_UNKNOWN_COLOR));
   public static final PrefMonitor<String> UNKNOWN_CHAR =
       create(new PrefMonitorString("SimUnknownChar", "U "));
   public static final PrefMonitor<Integer> ERROR_COLOR =
-      create(new PrefMonitorInt("SimErrorColor", 0x00C00000));
+      create(new PrefMonitorInt("SimErrorColor", DEFAULT_ERROR_COLOR));
   public static final PrefMonitor<String> ERROR_CHAR =
       create(new PrefMonitorString("SimErrorChar", "E "));
   public static final PrefMonitor<Integer> NIL_COLOR =
-      create(new PrefMonitorInt("SimNilColor", 0x808080));
+      create(new PrefMonitorInt("SimNilColor", DEFAULT_NIL_COLOR));
   public static final PrefMonitor<String> DONTCARE_CHAR =
       create(new PrefMonitorString("SimDontCareChar", "- "));
-  public static final PrefMonitor<Integer> BUS_COLOR = create(new PrefMonitorInt("SimBusColor", 0));
+  public static final PrefMonitor<Integer> BUS_COLOR = create(new PrefMonitorInt("SimBusColor", DEFAULT_BUS_COLOR));
   public static final PrefMonitor<Integer> STROKE_COLOR =
-      create(new PrefMonitorInt("SimStrokeColor", 0xff00ff));
+      create(new PrefMonitorInt("SimStrokeColor", DEFAULT_STROKE_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorColor", 0xFF7B00));
+      create(new PrefMonitorInt("SimWidthErrorColor", DEFAULT_WIDTH_ERROR_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_CAPTION_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorCaptionColor", 0x550000));
+      create(new PrefMonitorInt("SimWidthErrorCaptionColor", DEFAULT_WIDTH_ERROR_CAPTION_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_HIGHLIGHT_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorHighlightColor", 0xFFFF00));
+      create(new PrefMonitorInt("SimWidthErrorHighlightColor", DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_BACKGROUND_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorBackgroundColor", 0xFFE6D2));
+      create(new PrefMonitorInt("SimWidthErrorBackgroundColor", DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR));
   public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
-      create(new PrefMonitorInt("SimClockFrequencyColor", 0xFF00B4));
+      create(new PrefMonitorInt("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
@@ -847,21 +867,21 @@ public class AppPreferences {
 
   // FPGA Commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
-      create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
+      create(new PrefMonitorInt("FPGADefineColor", DEFAULT_FPGA_DEFINE_COLOR));
   public static final PrefMonitor<Integer> FPGA_DEFINE_HIGHLIGHT_COLOR =
-      create(new PrefMonitorInt("FPGADefineHighlightColor", 0x00FF00));
+      create(new PrefMonitorInt("FPGADefineHighlightColor", DEFAULT_FPGA_DEFINE_HIGHLIGHT_COLOR));
   public static final PrefMonitor<Integer> FPGA_DEFINE_RESIZE_COLOR =
-      create(new PrefMonitorInt("FPGADefineResizeColor", 0x00FFFF));
+      create(new PrefMonitorInt("FPGADefineResizeColor", DEFAULT_FPGA_DEFINE_RESIZE_COLOR));
   public static final PrefMonitor<Integer> FPGA_DEFINE_MOVE_COLOR =
-      create(new PrefMonitorInt("FPGADefineMoveColor", 0xFF00FF));
+      create(new PrefMonitorInt("FPGADefineMoveColor", DEFAULT_FPGA_DEFINE_MOVE_COLOR));
   public static final PrefMonitor<Integer> FPGA_MAPPED_COLOR =
-      create(new PrefMonitorInt("FPGAMappedColor", 0x005000));
+      create(new PrefMonitorInt("FPGAMappedColor", DEFAULT_FPGA_MAPPED_COLOR));
   public static final PrefMonitor<Integer> FPGA_SELECTED_MAPPED_COLOR =
-      create(new PrefMonitorInt("FPGASelectedMappedColor", 0xFF0000));
+      create(new PrefMonitorInt("FPGASelectedMappedColor", DEFAULT_FPGA_SELECTED_MAPPED_COLOR));
   public static final PrefMonitor<Integer> FPGA_SELECTABLE_MAPPED_COLOR =
-      create(new PrefMonitorInt("FPGASelectableMappedColor", 0x00A000));
+      create(new PrefMonitorInt("FPGASelectableMappedColor", DEFAULT_FPGA_SELECTABLE_MAPPED_COLOR));
   public static final PrefMonitor<Integer> FPGA_SELECT_COLOR =
-      create(new PrefMonitorInt("FPGASelectColor", 0x0000FF));
+      create(new PrefMonitorInt("FPGASelectColor", DEFAULT_FPGA_SELECT_COLOR));
 
   // Experimental preferences
   public static final String ACCEL_DEFAULT = "default";
