@@ -597,6 +597,14 @@ public class AppPreferences {
   public static final int DARK_NIL_COLOR = 0xFFBBBBBB;
   public static final int DARK_BUS_COLOR = 0xFFFFFFFF;
   public static final int DARK_STROKE_COLOR = 0xFFFF88FF;
+  // default light signal colors
+  public static final int DEFAULT_TRUE_COLOR = 0x0000D200;
+  public static final int DEFAULT_FALSE_COLOR = 0x00006400;
+  public static final int DEFAULT_UNKNOWN_COLOR = 0x002828FF;
+  public static final int DEFAULT_ERROR_COLOR = 0x00C00000;
+  public static final int DEFAULT_NIL_COLOR = 0x00808080;
+  public static final int DEFAULT_BUS_COLOR = 0x00000000;
+  public static final int DEFAULT_STROKE_COLOR = 0x00FF00FF;
 
   // returns true if the given LookAndFeel class name indicates a dark theme
   public static boolean isDarkTheme(String lafClassName) {
@@ -631,13 +639,13 @@ public class AppPreferences {
       COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
       COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
-      TRUE_COLOR.set(0x0000D200);
-      FALSE_COLOR.set(0x00006400);
-      UNKNOWN_COLOR.set(0x002828FF);
-      ERROR_COLOR.set(0x00C00000);
-      NIL_COLOR.set(0x808080);
-      BUS_COLOR.set(0);
-      STROKE_COLOR.set(0xFF00FF);
+      TRUE_COLOR.set(DEFAULT_TRUE_COLOR);
+      FALSE_COLOR.set(DEFAULT_FALSE_COLOR);
+      UNKNOWN_COLOR.set(DEFAULT_UNKNOWN_COLOR);
+      ERROR_COLOR.set(DEFAULT_ERROR_COLOR);
+      NIL_COLOR.set(DEFAULT_NIL_COLOR);
+      BUS_COLOR.set(DEFAULT_BUS_COLOR);
+      STROKE_COLOR.set(DEFAULT_STROKE_COLOR);
     }
   }
 
