@@ -296,6 +296,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   public static String execute(ProcessBuilder process, List<String> report) throws IOException, InterruptedException {
+    process.redirectErrorStream(true);
     var executable = process.start();
     var is = executable.getInputStream();
     var isr = new InputStreamReader(is);
@@ -318,6 +319,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     Reporter.report.print("==>");
     Reporter.report.print("==> " + StageName);
     Reporter.report.print("==>");
+    process.redirectErrorStream(true);
     synchronized (lock) {
       executable = process.start();
     }
