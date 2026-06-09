@@ -69,11 +69,9 @@ class WindowOptions extends OptionsPanel {
   private final JLabel restartWarningSpacer;
   private final JLabel zoomLabel;
   private final JTextArea zoomFactorImportant;
-  private final JPanel previewContainer;
   private final JComboBox<String> lookAndFeel;
   private final JComboBox<String> appFont;
   private final LookAndFeelInfo[] lookAndFeelInfos;
-  private JPanel previewPanel;
   private int index = 0;
   
   private String initialAppFont;
@@ -226,12 +224,6 @@ class WindowOptions extends OptionsPanel {
     panel.add(restartWarningSpacer);
     panel.add(restartWarning);
 
-    final var previewLabel = new JLabel(S.get("windowToolbarPreview"));
-    panel.add(previewLabel);
-    previewContainer = new JPanel();
-    panel.add(previewContainer);
-    initThemePreviewer();
-
     setLayout(new TableLayout(1));
     resetWindowLayoutButton = new JButton();
     resetWindowLayoutButton.addActionListener(listener);
@@ -264,18 +256,6 @@ class WindowOptions extends OptionsPanel {
         | InstantiationException
         | ClassNotFoundException ignored) {
     }
-  }
-
-  private void initThemePreviewer() {
-    if (previewPanel != null) previewContainer.remove(previewPanel);
-    previewPanel = new JPanel();
-    previewPanel.add(new JButton("Preview"));
-    previewPanel.add(new JCheckBox("Preview"));
-    previewPanel.add(new JRadioButton("Preview"));
-    previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
-    previewContainer.add(previewPanel);
-    previewContainer.repaint();
-    previewContainer.revalidate();
   }
 
   @Override
@@ -336,7 +316,6 @@ class WindowOptions extends OptionsPanel {
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
           AppPreferences.applyThemeColors();
           applyLookAndFeelGlobally(lookAndFeelInfos[index].getClassName());
-          initThemePreviewer();
         }
         checkRestartWarning();
       } else if (e.getSource().equals(appFont)) {
@@ -367,8 +346,7 @@ class WindowOptions extends OptionsPanel {
     }
 
     private void checkRestartWarning() {
-      boolean show = !Objects.equals(AppPreferences.APP_FONT.get(), initialAppFont)
-          || !Objects.equals(AppPreferences.LookAndFeel.get(), initialLookAndFeel);
+      boolean show = !Objects.equals(AppPreferences.APP_FONT.get(), initialAppFont);
       restartWarning.setVisible(show);
       restartWarningSpacer.setVisible(show);
     }
