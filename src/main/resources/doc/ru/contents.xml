@@ -84,7 +84,7 @@
 <!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->			
 			<tocitem target="prefs_exp" text="Вкладка Экспериментальные" />
 <!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
-<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->
+			<tocitem target="prefs_fpga" text="FPGA Commander settings" />
 			<tocitem target="prefs_cmdline" text="Командная строка" />
 		</tocitem>
 		<tocitem target="opts" text="Параметры проекта">

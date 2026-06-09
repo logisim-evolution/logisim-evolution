@@ -75,6 +75,7 @@
 	<mapID target="prefs_window"        url="ru/html/guide/prefs/pref-window.html" />
 	<mapID target="prefs_layout"        url="ru/html/guide/prefs/pref-layout.html" />
 	<mapID target="prefs_exp"           url="ru/html/guide/prefs/pref-exp.html" />
+	<mapID target="prefs_fpga"          url="en/html/guide/prefs/pref-fpgacommander.html" />
 	<mapID target="prefs_cmdline"       url="ru/html/guide/prefs/pref-cmdline.html" />
 	<mapID target="opts"                url="ru/html/guide/opts/index.html" />
 	<mapID target="opts_simulate"       url="ru/html/guide/opts/opts-simulate.html" />
