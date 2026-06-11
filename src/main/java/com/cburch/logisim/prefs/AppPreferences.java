@@ -516,7 +516,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> FPGA_Workspace =
       create(
           new PrefMonitorString(
-              "FPGAWorkspace", System.getProperty("user.home") + "/logisim_evolution_workspace"));
+              "FPGAWorkspace", System.getProperty("user.home") + File.separator + "logisim_evolution_workspace"));
   public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
