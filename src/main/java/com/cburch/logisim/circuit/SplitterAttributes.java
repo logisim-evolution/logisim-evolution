@@ -269,12 +269,16 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   private void clampBitEndsToFanout() {
     final var offs = INIT_ATTRIBUTES.size();
+    List<Integer> bitEndModified = new ArrayList<>();
     for (var i = 0; i < bitEnd.length; i++) {
       if (bitEnd[i] > fanout) {
-        final var attr = (BitOutAttribute) attrs.get(offs + i);
         bitEnd[i] = fanout;
-        fireAttributeValueChanged(attr, (int) bitEnd[i], null);
+        bitEndModified.add(i);
       }
+    }
+    for (int i : bitEndModified) {
+      final var attr = (BitOutAttribute) attrs.get(offs + i);
+      fireAttributeValueChanged(attr, (int) bitEnd[i], null);
     }
   }
 
