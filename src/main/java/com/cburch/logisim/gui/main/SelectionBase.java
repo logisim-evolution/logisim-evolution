@@ -283,15 +283,17 @@ class SelectionBase {
 
   void pasteHelper(CircuitMutation xn, Collection<Component> comps) {
     clear(xn);
-    java.awt.Point mousePos = proj.getFrame().getCanvas().getMousePosition();
+    final var canvas = proj.getFrame().getCanvas();
+    java.awt.Point mousePos = canvas.getMousePosition();
     HashMap<Component, Component> newItem;
 
     if (mousePos != null) {
+      final double zoomFactor = canvas.getZoomFactor();
       Bounds bds = computeBounds(comps);
       int centerX = bds.getX() + bds.getWidth() / 2;
       int centerY = bds.getY() + bds.getHeight() / 2;
-      int dx = (mousePos.x - centerX) / 10 * 10;
-      int dy = (mousePos.y - centerY) / 10 * 10;
+      int dx = ((int)(mousePos.x / zoomFactor - centerX)) / 10 * 10;
+      int dy = ((int)(mousePos.y / zoomFactor - centerY)) / 10 * 10;
       int newX = bds.getX() + dx;
       int newY = bds.getY() + dy;
       if (newX < 0) {
