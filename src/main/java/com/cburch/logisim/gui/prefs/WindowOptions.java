@@ -165,6 +165,7 @@ class WindowOptions extends OptionsPanel {
 
     importantB = new JTextArea(S.get("windowToolbarImportant"));
     importantB.setFont(importantB.getFont().deriveFont(Font.ITALIC));
+    importantB.setEditable(false);
     panel.add(importantB);
 
     zoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
