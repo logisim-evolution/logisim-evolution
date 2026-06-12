@@ -516,7 +516,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> FPGA_Workspace =
       create(
           new PrefMonitorString(
-              "FPGAWorkspace", System.getProperty("user.home") + "/logisim_evolution_workspace"));
+              "FPGAWorkspace", System.getProperty("user.home") + File.separator + "logisim_evolution_workspace"));
   public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
@@ -528,9 +528,9 @@ public class AppPreferences {
 
   public static final FpgaBoards Boards = new FpgaBoards();
 
-  public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
+  public static final PrefMonitor<Boolean> SuppressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
-  public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
+  public static final PrefMonitor<Boolean> SuppressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
@@ -783,7 +783,7 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> KMAP16_COLOR =
       create(new PrefMonitorInt("KMAPColor16", 0xF032E6));
 
-  // FPGA commander colors
+  // FPGA Commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
       create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
   public static final PrefMonitor<Integer> FPGA_DEFINE_HIGHLIGHT_COLOR =

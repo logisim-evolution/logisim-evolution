@@ -399,7 +399,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openInputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -416,7 +416,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openInputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -433,7 +433,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (!comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openInputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -450,7 +450,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (!comp.isEndConnected(j)) openOutputs = true;
       }
-      if (openOutputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openOutputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -2006,7 +2006,7 @@ public class Netlist {
     // their connected nets in    case it is not a clock net. The moment we call this function the
     // clock tree has been marked already!
     final var root = new ArrayList<Netlist>();
-    var suppress = AppPreferences.SupressGatedClockWarnings.getBoolean();
+    var suppress = AppPreferences.SuppressGatedClockWarnings.getBoolean();
     root.add(this);
     final var notGatedSet = new HashMap<String, Map<netlistComponent, Circuit>>();
     final var gatedSet = new HashMap<String, Map<netlistComponent, Circuit>>();
@@ -2118,7 +2118,7 @@ public class Netlist {
             S.get("NetList_GatedClock"));
       }
 
-      if (gatedClock && !pinSources.isEmpty() && !AppPreferences.SupressGatedClockWarnings.getBoolean()) {
+      if (gatedClock && !pinSources.isEmpty() && !AppPreferences.SuppressGatedClockWarnings.getBoolean()) {
         for (var i = 0; i < pinSources.size(); i++) {
           Reporter.report.addSevereWarning(S.get("NetList_GatedClock"));
           Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
@@ -2426,7 +2426,7 @@ public class Netlist {
       Set<netlistComponent> warnedComponents,
       List<Netlist> hierarchyNetlists,
       String warning) {
-    if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;
+    if (AppPreferences.SuppressGatedClockWarnings.getBoolean()) return;
     for (var i = 0; i < sources.size(); i++) {
       var alreadyWarned = false;
       for (final var comp : components.get(i))

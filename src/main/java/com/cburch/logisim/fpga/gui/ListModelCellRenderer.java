@@ -65,7 +65,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     }
     if (CountLines) {
       if (msg != null) {
-        if (msg.getSupressCount()) {
+        if (msg.getSuppressCount()) {
           setForeground(ADDENDUM);
           Line.append("       ");
         } else {
