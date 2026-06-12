@@ -783,7 +783,7 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> KMAP16_COLOR =
       create(new PrefMonitorInt("KMAPColor16", 0xF032E6));
 
-  // FPGA commander colors
+  // FPGA Commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
       create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
   public static final PrefMonitor<Integer> FPGA_DEFINE_HIGHLIGHT_COLOR =
