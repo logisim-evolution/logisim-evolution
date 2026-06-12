@@ -443,7 +443,6 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     mode = m;
     granularity = g;
     simulatorReset();
-    fireSignalsExtended(null); // reset, not extended, but works fine for now
     fireModeChanged(null);
   }
 
@@ -580,7 +579,6 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   private void extendWithOldValues(long duration) {
     for (final var s : signals) {
-      final var v = s.info.fetchValue(circuitState);
       s.extend(duration);
     }
     elapsedSinceTrigger += duration;
@@ -738,6 +736,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     }
     elapsedSinceTrigger += duration;
     timeEnd = duration;
+    fireSignalsReset(null);
   }
 
   public void setFile(File value) {
