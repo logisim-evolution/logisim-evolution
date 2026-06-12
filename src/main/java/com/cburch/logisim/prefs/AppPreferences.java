@@ -520,7 +520,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
-              "afterAdd",
+              "hdlType",
               new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
