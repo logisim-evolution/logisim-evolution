@@ -305,6 +305,9 @@ public final class Value {
   public static Color widthErrorHighlightColor = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
   public static Color widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
   public static Color clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
+  public static Color[] multiColors = new Color[] { new Color(14, 14, 16), new Color(124, 75, 39),
+      new Color(167, 41, 32), new Color(246, 120, 40), new Color(246, 182, 0), new Color(97, 153, 59),
+      new Color(0, 124, 176), new Color(118, 104, 154), new Color(122, 136, 142), new Color(215, 160, 166) };
 
   private static final Cache cache = new Cache();
 
@@ -480,11 +483,14 @@ public final class Value {
     } else if (width == 0) {
       return nilColor;
     } else if (width == 1) {
-      if (this == UNKNOWN) return unknownColor;
-      else if (this == TRUE) return trueColor;
-      else return falseColor;
+      if (this == UNKNOWN)
+        return unknownColor;
+      else if (this == TRUE)
+        return trueColor;
+      else
+        return falseColor;
     } else {
-      return multiColor;
+      return multiColors[(int) (this.value % multiColors.length)];
     }
   }
 
