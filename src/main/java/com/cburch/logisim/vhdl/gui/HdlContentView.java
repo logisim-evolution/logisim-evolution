@@ -20,23 +20,28 @@ import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.base.HdlModelListener;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.vhdl.file.HdlFile;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentView extends JPanel
-    implements BaseDocumentListenerContract, HdlModelListener {
+    implements BaseDocumentListenerContract, HdlModelListener, PropertyChangeListener {
 
   private class HdlEditAction extends Action {
     final HdlModel model;
@@ -101,6 +106,31 @@ public class HdlContentView extends JPanel
     dirty = true;
   }
 
+  private void applyEditorTheme() {
+    if (editor == null) return;
+    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    final var themePath = isDark ? DARK_THEME : LIGHT_THEME;
+    try {
+      final var theme = Theme.load(getClass().getResourceAsStream(themePath));
+      theme.apply(editor);
+    } catch (Exception ignored) {
+      // fallback: manually set basic colors
+      if (isDark) {
+        editor.setBackground(new java.awt.Color(AppPreferences.DARK_RSTA_BG_COLOR));
+        editor.setForeground(new java.awt.Color(AppPreferences.DARK_RSTA_FG_COLOR));
+        editor.setCurrentLineHighlightColor(new java.awt.Color(AppPreferences.DARK_RSTA_HIGHLIGHT_COLOR));
+        editor.setCaretColor(java.awt.Color.WHITE);
+      }
+    }
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent evt) {
+    if ("lookAndFeel".equals(evt.getPropertyName())) {
+      applyEditorTheme();
+    }
+  }
+
   void doExport() {
     JFileChooser chooser = JFileChoosers.createSelected(getDefaultExportFile(null));
     chooser.setDialogTitle(S.get("hdlSaveDialog"));
@@ -154,6 +184,9 @@ public class HdlContentView extends JPanel
 
   private static final String EXPORT_DIR = "hdl_export";
 
+  private static final String DARK_THEME = "/org/fife/ui/rsyntaxtextarea/themes/dark.xml";
+  private static final String LIGHT_THEME = "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
+
   private RSyntaxTextArea editor;
   private HdlModel model;
   private final Project project;
@@ -166,6 +199,8 @@ public class HdlContentView extends JPanel
     this.model = null;
     this.toolbar = new HdlToolbarModel(proj, this);
     configure("vhdl");
+    applyEditorTheme();
+    UIManager.addPropertyChangeListener(this);
   }
 
   private void configure(String lang) {

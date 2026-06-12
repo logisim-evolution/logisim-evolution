@@ -878,6 +878,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   private void doPaintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
+    final var savedColor = gfx.getColor();
     final var inputCount = table.getInputColumnCount();
     final var rowVars = ROW_VARS[inputCount];
     final var colVars = COL_VARS[inputCount];
@@ -937,7 +938,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         }
       }
     }
-    gfx.setColor(Color.BLACK);
+    gfx.setColor(savedColor);
   }
 
   public void setEntryProvisional(int y, int x, Entry value) {
