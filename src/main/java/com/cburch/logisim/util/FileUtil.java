@@ -24,6 +24,7 @@ public final class FileUtil {
   }
 
   public static String correctPath(String path) {
+    if (path == null) return null;
     return path.endsWith(File.separator) ? path : path + File.separator;
   }
 
