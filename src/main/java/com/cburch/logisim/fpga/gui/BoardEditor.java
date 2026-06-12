@@ -211,8 +211,8 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   }
 
   private String checkIfEndsWithSlash(String path) {
-    if (!path.endsWith("/")) {
-      path += "/";
+    if (!path.endsWith(File.separator)) {
+      path += File.separator;
     }
     return (path);
   }
