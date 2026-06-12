@@ -6,6 +6,7 @@ To do this, create a directory named `logisim-defaults` in the program directory
 
 - For an installed application, this is the application directory. On a default Windows install, that may be
   `C:\Program Files\logisim-evolution\app\logisim-defaults`.
+  ![Where the logisim-defaults folder goes, if Logisim Evolution is installed on Windows.](img/logisim-defaults-app.png)
 - For a standalone `.jar`, place `logisim-defaults` in the same directory as the `.jar` file that starts Logisim Evolution.
   ![Where the logisim-defaults folder goes, if executing from a JAR file.](img/logisim-defaults-jar.png)
 - For a Gradle run, place `logisim-defaults` inside `/build/classes/java/`.
