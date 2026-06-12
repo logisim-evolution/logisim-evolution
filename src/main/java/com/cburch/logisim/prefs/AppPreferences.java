@@ -528,9 +528,9 @@ public class AppPreferences {
 
   public static final FpgaBoards Boards = new FpgaBoards();
 
-  public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
+  public static final PrefMonitor<Boolean> SuppressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
-  public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
+  public static final PrefMonitor<Boolean> SuppressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));

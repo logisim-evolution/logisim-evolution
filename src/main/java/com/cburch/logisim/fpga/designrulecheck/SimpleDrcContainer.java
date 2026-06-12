@@ -42,12 +42,12 @@ public class SimpleDrcContainer {
     this.suppressCount = false;
   }
 
-  public SimpleDrcContainer(String message, int level, boolean supressCount) {
+  public SimpleDrcContainer(String message, int level, boolean suppressCount) {
     this.message = message;
     this.severityLevel = level;
     this.markType = MARK_NONE;
     this.listNumber = 0;
-    this.suppressCount = supressCount;
+    this.suppressCount = suppressCount;
   }
 
   public SimpleDrcContainer(Object message, int level) {
@@ -58,12 +58,12 @@ public class SimpleDrcContainer {
     this.suppressCount = false;
   }
 
-  public SimpleDrcContainer(Object message, int level, boolean supressCount) {
+  public SimpleDrcContainer(Object message, int level, boolean suppressCount) {
     this.message = message.toString();
     this.severityLevel = level;
     this.markType = MARK_NONE;
     this.listNumber = 0;
-    this.suppressCount = supressCount;
+    this.suppressCount = suppressCount;
   }
 
   public SimpleDrcContainer(Circuit circ, Object message, int level, int markMask) {
@@ -75,13 +75,13 @@ public class SimpleDrcContainer {
     this.suppressCount = false;
   }
 
-  public SimpleDrcContainer(Circuit circ, Object message, int level, int markMask, boolean supressCount) {
+  public SimpleDrcContainer(Circuit circ, Object message, int level, int markMask, boolean suppressCount) {
     this.message = message.toString();
     this.severityLevel = level;
     this.myCircuit = circ;
     this.markType = markMask;
     this.listNumber = 0;
-    this.suppressCount = supressCount;
+    this.suppressCount = suppressCount;
   }
 
   @Override
@@ -120,7 +120,7 @@ public class SimpleDrcContainer {
     listNumber = number;
   }
 
-  public boolean getSupressCount() {
+  public boolean getSuppressCount() {
     return suppressCount;
   }
 
