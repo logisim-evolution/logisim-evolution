@@ -405,7 +405,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       progressBar.setValue(4);
       progressBar.setString(S.get("FPGAState4"));
     }
-    downloader.setMapableResources(myMappableResources);
+    downloader.setMappableResources(myMappableResources);
     /* Stage 4 Create Download Scripts */
     return createDownloadScripts();
   }
