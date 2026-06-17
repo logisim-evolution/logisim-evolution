@@ -61,13 +61,13 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .pair("calcBits", CALC_BITS_STRING);
     if (Hdl.isVhdl()) {
       contents.empty().addVhdlKeywords().add("""
-          s_multResult <= std_logic_vector(unsigned(inputA)*unsigned(inputB))
-                              {{when}} {{unsigned}}= 1 {{else}}
-                           std_logic_vector(signed(inputA)*signed(inputB));
+          s_multResult <= std_logic_vector(unsigned(inputA) * unsigned(inputB))
+                              {{when}} {{unsigned}} = 1 {{else}}
+                           std_logic_vector(signed(inputA) * signed(inputB));
           s_extendedcarryIn({{calcBits}}-1 {{downto}} {{nrOfBits}}) <= ({{others}} => '0') {{when}} {{unsigned}} = 1 {{else}} ({{others}} => carryIn({{nrOfBits}}-1));
           s_extendedcarryIn({{nrOfBits}}-1 {{downto}} 0) <= carryIn;
           s_newResult  <= std_logic_vector(unsigned(s_multResult) + unsigned(s_extendedcarryIn))
-                              {{when}} {{unsigned}}= 1 {{else}}
+                              {{when}} {{unsigned}} = 1 {{else}}
                            std_logic_vector(signed(s_multResult) + signed(s_extendedcarryIn));
           multHigh     <= s_newResult({{calcBits}}-1 {{downto}} {{nrOfBits}});
           multLow      <= s_newResult({{nrOfBits}}-1 {{downto}} 0);
@@ -83,7 +83,7 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               always @(*)
               begin
                  s_carryIn[{{nrOfBits}}-1:0] = carryIn;
-                 if ({{unsigned}}== 1)
+                 if ({{unsigned}} == 1)
                     begin
                        s_carryIn[{{calcBits}}-1:{{nrOfBits}}] = 0;
                        s_multUnsigned = $unsigned(inputA) * $unsigned(inputB);
