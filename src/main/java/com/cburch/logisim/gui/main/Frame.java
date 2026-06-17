@@ -122,6 +122,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // for the Layout view
   private final LayoutToolbarModel layoutToolbarModel;
   private final Canvas layoutCanvas;
+  private final CanvasPane layoutCanvasPane;
+  private final CircuitViewMemory layoutViewMemory = new CircuitViewMemory();
   private final VhdlSimulatorConsole vhdlSimulatorConsole;
   private final HdlContentView hdlEditor;
   private final ZoomModel layoutZoomModel;
@@ -147,14 +149,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, project);
     layoutCanvas = new Canvas(project);
-    final var canvasPane = new CanvasPane(layoutCanvas);
+    layoutCanvasPane = new CanvasPane(layoutCanvas);
 
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
             buildZoomSteps(),
-            canvasPane);
+            layoutCanvasPane);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
@@ -185,9 +187,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     // set up the central area
     mainPanelSuper = new JPanel(new BorderLayout());
-    canvasPane.setZoomModel(layoutZoomModel);
+    layoutCanvasPane.setZoomModel(layoutZoomModel);
     mainPanel = new CardPanel();
-    mainPanel.addView(EDIT_LAYOUT, canvasPane);
+    mainPanel.addView(EDIT_LAYOUT, layoutCanvasPane);
     mainPanel.setView(EDIT_LAYOUT);
     mainPanelSuper.add(mainPanel, BorderLayout.CENTER);
 
@@ -676,6 +678,21 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return layoutZoomModel;
   }
 
+  private void rememberLayoutView(Object active) {
+    if (active instanceof CircuitState state) {
+      layoutViewMemory.remember(
+          state.getCircuit(), layoutZoomModel, layoutCanvasPane.getViewport().getViewPosition());
+    }
+  }
+
+  private void restoreLayoutView(Circuit circuit) {
+    layoutCanvas.computeSize(true);
+    layoutViewMemory.restore(
+        circuit,
+        layoutZoomModel,
+        position -> layoutCanvasPane.getViewport().setViewPosition(position));
+  }
+
   @Override
   public void localeChanged() {
     buildTitleString();
@@ -893,8 +910,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           }
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
-        if (event.getData() instanceof Circuit) {
+        rememberLayoutView(event.getOldData());
+        if (event.getData() instanceof Circuit circuit) {
           setEditorView(EDIT_LAYOUT);
+          restoreLayoutView(circuit);
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }
