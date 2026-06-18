@@ -47,7 +47,8 @@ public class ExpressionRenderData {
   private int[][] notStops;
   private Color markColor() {
     return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
-        ? Color.WHITE : Color.BLACK;
+        ? new Color(AppPreferences.DARK_EXPRESSION_OVERLINE_COLOR)
+        : new Color(AppPreferences.DEFAULT_EXPRESSION_OVERLINE_COLOR);
   }
 
   private final Font expressionBaseFont;

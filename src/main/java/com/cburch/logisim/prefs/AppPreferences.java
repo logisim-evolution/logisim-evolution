@@ -596,6 +596,9 @@ public class AppPreferences {
   public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
   public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
   public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
+  // expression overline colors
+  public static final int DEFAULT_EXPRESSION_OVERLINE_COLOR = 0xFF000000;
+  public static final int DARK_EXPRESSION_OVERLINE_COLOR = 0xFFFFFFFF;
   // default fpga board colors
   public static final int DEFAULT_FPGA_BOARD_OUTLINE_COLOR = 0xFF000000;
   public static final int DEFAULT_FPGA_BOARD_TEXT_COLOR = 0xFF0000FF;
