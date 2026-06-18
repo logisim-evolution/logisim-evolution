@@ -1213,7 +1213,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
       if (proj.getSimulator().isExceptionEncountered()) {
         g.setColor(SIM_EXCEPTION_COLOR);
-        msgY = paintString(g, msgY, S.get("canvasExceptionError"));
+        final var exceptionMessage = proj.getSimulator().getExceptionMessage();
+        msgY =
+            paintString(
+                g,
+                msgY,
+                exceptionMessage == null || exceptionMessage.isBlank()
+                    ? S.get("canvasExceptionError")
+                    : exceptionMessage);
       }
 
       computeViewportContents();
