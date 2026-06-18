@@ -81,6 +81,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   public static final int EN = 6;
 
   static final int CARRY = 7;
+  private static final int CONTROL_HEIGHT = 110;
+  private static final int DATA_ROW_HEIGHT = 20;
 
   public Counter() {
     super(_ID, S.getter("counterComponent"), new CounterHdlGeneratorFactory());
@@ -93,6 +95,62 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
     setInstanceLogger(RegisterLogger.class);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
+  }
+
+  static int getBitsPerDataRow(int nrOfBits) {
+    if (nrOfBits <= 8) return 1;
+    if (nrOfBits <= 32) return 4;
+    return 8;
+  }
+
+  static int getDataRowCount(int nrOfBits) {
+    final var bitsPerRow = getBitsPerDataRow(nrOfBits);
+    return (nrOfBits + bitsPerRow - 1) / bitsPerRow;
+  }
+
+  static String getDataRowLabel(int row, int nrOfBits) {
+    final var firstBit = getFirstDataRowBit(row, nrOfBits);
+    final var lastBit = getLastDataRowBit(row, nrOfBits);
+    return firstBit == lastBit ? Integer.toString(firstBit) : firstBit + "-" + lastBit;
+  }
+
+  static String getOutputDataRowLabel(int row, int nrOfBits) {
+    return getBitsPerDataRow(nrOfBits) == 1 ? getDataRowLabel(row, nrOfBits) : "";
+  }
+
+  static String getDataRowValue(Value value, int row, int nrOfBits) {
+    final var firstBit = getFirstDataRowBit(row, nrOfBits);
+    final var lastBit = getLastDataRowBit(row, nrOfBits);
+    final var result = new StringBuilder(lastBit - firstBit + 1);
+    for (var bit = lastBit; bit >= firstBit; bit--) {
+      final var bitValue = value.get(bit);
+      if (bitValue == Value.TRUE) {
+        result.append('1');
+      } else if (bitValue == Value.FALSE) {
+        result.append('0');
+      } else if (bitValue == Value.UNKNOWN) {
+        result.append('?');
+      } else {
+        result.append('!');
+      }
+    }
+    return result.toString();
+  }
+
+  static String getDataRowControlText(int nrOfBits) {
+    return getBitsPerDataRow(nrOfBits) == 1 ? "1,6D" : "";
+  }
+
+  static int getEvolutionHeight(int nrOfBits) {
+    return CONTROL_HEIGHT + DATA_ROW_HEIGHT * getDataRowCount(nrOfBits);
+  }
+
+  private static int getFirstDataRowBit(int row, int nrOfBits) {
+    return row * getBitsPerDataRow(nrOfBits);
+  }
+
+  private static int getLastDataRowBit(int row, int nrOfBits) {
+    return Math.min(nrOfBits - 1, getFirstDataRowBit(row, nrOfBits) + getBitsPerDataRow(nrOfBits) - 1);
   }
 
   @Override
@@ -289,10 +347,11 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  private void drawDataBlock(InstancePainter painter, int xpos, int ypos, int bitNr, int nrOfBits) {
-    final var realYpos = ypos + bitNr * 20;
-    final var first = bitNr == 0;
-    final var last = bitNr == (nrOfBits - 1);
+  private void drawDataBlock(InstancePainter painter, int xpos, int ypos, int row, int nrOfBits) {
+    final var dataRowCount = getDataRowCount(nrOfBits);
+    final var realYpos = ypos + row * DATA_ROW_HEIGHT;
+    final var first = row == 0;
+    final var last = row == (dataRowCount - 1);
     final var g = painter.getGraphics();
     final var font = g.getFont();
     g.setFont(font.deriveFont(7.0f));
@@ -328,22 +387,25 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     if (nrOfBits > 1) {
       GraphicsUtil.drawText(
           g,
-          Integer.toString(bitNr),
+          getOutputDataRowLabel(row, nrOfBits),
           xpos + 30 + getSymbolWidth(nrOfBits),
           realYpos + 8,
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_BASELINE);
       GraphicsUtil.drawText(
           g,
-          Integer.toString(bitNr),
+          getDataRowLabel(row, nrOfBits),
           xpos + 10,
           realYpos + 8,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_BASELINE);
     }
     g.setFont(font);
-    GraphicsUtil.drawText(
-        g, "1,6D", xpos + 21, realYpos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    final var controlText = getDataRowControlText(nrOfBits);
+    if (!controlText.isEmpty()) {
+      GraphicsUtil.drawText(
+          g, controlText, xpos + 21, realYpos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    }
     final var LineWidth =
         (nrOfBits == 1) ? GraphicsUtil.DATA_SINGLE_WIDTH : GraphicsUtil.DATA_MULTI_WIDTH;
     GraphicsUtil.switchToWidth(g, LineWidth);
@@ -389,24 +451,25 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
       var width = widthVal == null ? 8 : widthVal.getWidth();
       var xcenter = (getSymbolWidth(width) / 2) + 10;
-      var value = "";
+      final var value = getDataRowValue(val, row, width);
       if (val.isFullyDefined()) {
         g.setColor(Color.LIGHT_GRAY);
-        value = ((1L << bitNr) & val.toLongValue()) != 0 ? "1" : "0";
+      } else if (val.isErrorValue()) {
+        g.setColor(Color.RED);
       } else if (val.isUnknown()) {
         g.setColor(Color.BLUE);
-        value = "?";
       } else {
-        g.setColor(Color.RED);
-        value = "!";
+        g.setColor(Color.BLUE);
       }
-      g.fillRect(xpos + xcenter + 16, realYpos + 4, 8, 16);
+      final var valueWidth = Math.max(8, value.length() * 8);
+      final var valueX = xpos + xcenter + 20 - valueWidth / 2;
+      g.fillRect(valueX, realYpos + 4, valueWidth, 16);
       if (val.isFullyDefined()) g.setColor(Color.DARK_GRAY);
       else g.setColor(Color.YELLOW);
       GraphicsUtil.drawText(
           g,
           value,
-          xpos + xcenter + 20,
+          valueX + valueWidth / 2,
           realYpos + 10,
           GraphicsUtil.H_CENTER,
           GraphicsUtil.V_CENTER);
@@ -425,7 +488,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     final var width = widthVal == null ? 8 : widthVal.getWidth();
     return (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
         ? Bounds.create(-30, -20, 30, 40)
-        : Bounds.create(0, 0, getSymbolWidth(width) + 40, 110 + 20 * width);
+        : Bounds.create(0, 0, getSymbolWidth(width) + 40, getEvolutionHeight(width));
   }
 
   @Override
@@ -512,8 +575,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     drawControl(painter, Xpos, Ypos);
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
-    for (var bit = 0; bit < width; bit++) {
-      drawDataBlock(painter, Xpos, Ypos + 110, bit, width);
+    for (var row = 0; row < getDataRowCount(width); row++) {
+      drawDataBlock(painter, Xpos, Ypos + CONTROL_HEIGHT, row, width);
     }
   }
 
