@@ -32,15 +32,13 @@ public class Options {
           "gateUndefined",
           S.getter("gateUndefinedOption"),
           new AttributeOption[] {GATE_UNDEFINED_IGNORE, GATE_UNDEFINED_ERROR});
-  public static final Attribute<Boolean> ATTR_HDL_COMPATIBLE_NAMES =
-      Attributes.forBoolean("hdlCompatibleNames", S.getter("hdlCompatibleNamesOption"));
 
   public static final Integer SIM_RAND_DFLT = 32;
 
   private static final Attribute<?>[] ATTRIBUTES = {
-    ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND, ATTR_HDL_COMPATIBLE_NAMES
+    ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND
   };
-  private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, 1000, 0, true};
+  private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, 1000, 0};
 
   private final AttributeSet attrs;
   private final MouseMappings mmappings;
@@ -60,10 +58,6 @@ public class Options {
 
   public AttributeSet getAttributeSet() {
     return attrs;
-  }
-
-  public boolean requiresHdlCompatibleNames() {
-    return attrs.getValue(ATTR_HDL_COMPATIBLE_NAMES);
   }
 
   public MouseMappings getMouseMappings() {

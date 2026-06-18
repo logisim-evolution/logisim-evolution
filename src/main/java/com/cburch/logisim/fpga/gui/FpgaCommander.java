@@ -19,6 +19,7 @@ import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.download.DownloadBase;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.hdlgenerator.SynthesizedClockHdlGeneratorInstanceFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -87,6 +88,8 @@ public class FpgaCommander
     String property = pce.getKey();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
       updateBoardInformation();
+    } else if (property.equals(AppPreferences.HdlType.getIdentifier())) {
+      handleHdlOnly();
     }
   }
 
@@ -247,10 +250,11 @@ public class FpgaCommander
   }
 
   private void setExecuteWindowEnabled(boolean enabled) {
+    final var hdlGenerationEnabled = DownloadBase.isHdlGenerationEnabled(AppPreferences.HdlType.get());
     circuitsList.setEnabled(enabled);
     textMainCircuit.setEnabled(enabled);
-    actionCommands.setEnabled(enabled);
-    validateButton.setEnabled(enabled);
+    actionCommands.setEnabled(enabled && hdlGenerationEnabled);
+    validateButton.setEnabled(enabled && hdlGenerationEnabled);
   }
 
   public FpgaCommander(Project Main) {
@@ -338,6 +342,14 @@ public class FpgaCommander
     int sel = actionCommands.getItemCount() == 0 ? 1 : actionCommands.getSelectedIndex();
     int nrItems = 1;
     actionCommands.removeAllItems();
+    if (!DownloadBase.isHdlGenerationEnabled(AppPreferences.HdlType.get())) {
+      actionCommands.addItem(S.getter("FpgaGuiSelectHdl"));
+      actionCommands.setSelectedIndex(0);
+      actionCommands.setEnabled(false);
+      validateButton.setEnabled(false);
+      panel.pack();
+      return;
+    }
     actionCommands.addItem(S.getter("FpgaGuiHdlOnly"));
     ToolPath.setText(
         S.get(

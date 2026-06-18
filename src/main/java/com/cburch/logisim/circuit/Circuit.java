@@ -27,7 +27,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -302,14 +301,7 @@ public class Circuit {
   }
 
   private CircuitLabelValidator.LabelIdentity labelIdentity() {
-    return requiresHdlCompatibleNames()
-        ? CircuitLabelValidator.LabelIdentity.HDL_COMPATIBLE
-        : CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE;
-  }
-
-  private boolean requiresHdlCompatibleNames() {
-    final Options options = logiFile == null ? null : logiFile.getOptions();
-    return options == null || options.requiresHdlCompatibleNames();
+    return CircuitLabelValidator.labelIdentityForHdlType(AppPreferences.HdlType.get());
   }
 
   public SocSimulationManager getSocSimulationManager() {

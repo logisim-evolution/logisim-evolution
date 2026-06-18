@@ -17,18 +17,28 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.file.Options;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 class CircuitLabelValidationTest {
+  private final String originalHdlType = AppPreferences.HdlType.get();
+
+  @AfterEach
+  void restoreHdlType() {
+    AppPreferences.HdlType.set(originalHdlType);
+  }
+
   @Test
   void rejectsLabelsThatOnlyDifferByCaseFromAnotherComponent() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.VHDL);
     final var existingPin = pinWithLabel("A");
     final var components = componentSet(existingPin);
 
@@ -85,7 +95,8 @@ class CircuitLabelValidationTest {
   }
 
   @Test
-  void strictProjectOptionClearsCaseOnlyDuplicateLabelWhenAddingComponent() {
+  void vhdlClearsCaseOnlyDuplicateLabelWhenAddingComponent() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.VHDL);
     final var fixture = new Fixture();
     final var firstPin = pinWithLabel("A", 0);
     final var secondPin = pinWithLabel("a", 40);
@@ -97,9 +108,22 @@ class CircuitLabelValidationTest {
   }
 
   @Test
-  void relaxedProjectOptionKeepsCaseOnlyDuplicateLabelWhenAddingComponent() {
+  void verilogKeepsCaseOnlyDuplicateLabelWhenAddingComponent() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.VERILOG);
     final var fixture = new Fixture();
-    fixture.file.getOptions().getAttributeSet().setValue(Options.ATTR_HDL_COMPATIBLE_NAMES, false);
+    final var firstPin = pinWithLabel("A", 0);
+    final var secondPin = pinWithLabel("a", 40);
+
+    add(fixture.circuit, firstPin);
+    add(fixture.circuit, secondPin);
+
+    assertEquals("a", secondPin.getAttributeSet().getValue(StdAttr.LABEL));
+  }
+
+  @Test
+  void noHdlKeepsCaseOnlyDuplicateLabelWhenAddingComponent() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.NONE);
+    final var fixture = new Fixture();
     final var firstPin = pinWithLabel("A", 0);
     final var secondPin = pinWithLabel("a", 40);
 
@@ -159,11 +183,10 @@ class CircuitLabelValidationTest {
   }
 
   private static final class Fixture {
-    private final LogisimFile file;
     private final Circuit circuit;
 
     private Fixture() {
-      file = LogisimFile.createNew(new Loader(null), null);
+      final var file = LogisimFile.createNew(new Loader(null), null);
       final var project = new Project(file);
       circuit = file.getMainCircuit();
       circuit.setProject(project);

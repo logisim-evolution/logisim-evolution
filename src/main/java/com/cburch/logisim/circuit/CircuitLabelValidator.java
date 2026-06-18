@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import java.util.Locale;
 
 final class CircuitLabelValidator {
@@ -18,6 +19,12 @@ final class CircuitLabelValidator {
   }
 
   private CircuitLabelValidator() {}
+
+  static LabelIdentity labelIdentityForHdlType(String hdlType) {
+    return HdlGeneratorFactory.VHDL.equals(hdlType)
+        ? LabelIdentity.HDL_COMPATIBLE
+        : LabelIdentity.CASE_SENSITIVE;
+  }
 
   static String labelKey(String label) {
     return labelKey(label, LabelIdentity.HDL_COMPATIBLE);

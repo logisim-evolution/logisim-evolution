@@ -511,7 +511,9 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "hdlType",
-              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              new String[] {
+                HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG, HdlGeneratorFactory.NONE
+              },
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
