@@ -426,9 +426,13 @@ public class FpgaIoInformationSettingsDialog {
       panel.setLayout(new BorderLayout());
       panel.setBorder(BorderFactory.createTitledBorder(
           BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaRotationDefinition")));
-      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_ZERO)));
-      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CW_90)));
-      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CCW_90)));
+      final int[] rotations = {IoComponentTypes.ROTATION_ZERO, IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90, IoComponentTypes.ROTATION_180};
+      for (final var i : rotations) {
+        final var rotationString = S.get(IoComponentTypes.getRotationString(myType, i));
+        if (rotationString != null) {
+          mapRotation.addItem(rotationString);
+        }
+      }
       panel.add(mapRotation, BorderLayout.CENTER);
       switch (myRotation) {
         case IoComponentTypes.ROTATION_CW_90 -> {
@@ -437,6 +441,10 @@ public class FpgaIoInformationSettingsDialog {
         }
         case IoComponentTypes.ROTATION_CCW_90 -> {
           mapRotation.setSelectedIndex(2);
+          break;
+        }
+        case IoComponentTypes.ROTATION_180 -> {
+          mapRotation.setSelectedIndex(3);
           break;
         }
         default -> {
@@ -851,6 +859,7 @@ public class FpgaIoInformationSettingsDialog {
           final var rotation = switch (mapRotation.getSelectedIndex()) {
             case 1 -> IoComponentTypes.ROTATION_CW_90;
             case 2 -> IoComponentTypes.ROTATION_CCW_90;
+            case 3 -> IoComponentTypes.ROTATION_180;
             default -> IoComponentTypes.ROTATION_ZERO;
           };
           info.setMapRotation(rotation);
