@@ -596,6 +596,12 @@ public class AppPreferences {
   public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
   public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
   public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
+  // default fpga board colors
+  public static final int DEFAULT_FPGA_BOARD_OUTLINE_COLOR = 0xFF000000;
+  public static final int DEFAULT_FPGA_BOARD_TEXT_COLOR = 0xFF0000FF;
+  // dark mode fpga board colors
+  public static final int DARK_FPGA_BOARD_OUTLINE_COLOR = 0xFFC0C0C0;
+  public static final int DARK_FPGA_BOARD_TEXT_COLOR = 0xFF6CB6FF;
   // default FPGA colors
   public static final int DEFAULT_FPGA_DEFINE_COLOR = 0xFF0000;
   public static final int DEFAULT_FPGA_DEFINE_HIGHLIGHT_COLOR = 0x00FF00;

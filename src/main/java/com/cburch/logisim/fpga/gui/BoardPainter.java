@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.UIManager;
 
 public class BoardPainter {
 
@@ -74,7 +73,9 @@ public class BoardPainter {
     int skip = AppPreferences.getScaled(BoardManipulator.CONSTANT_BUTTON_WIDTH, scale);
     int xoffset = AppPreferences.getScaled(1, scale);
     final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
-    final var outlineColor = isDark ? Color.LIGHT_GRAY : Color.BLACK;
+    final var outlineColor = isDark
+        ? new Color(AppPreferences.DARK_FPGA_BOARD_OUTLINE_COLOR)
+        : new Color(AppPreferences.DEFAULT_FPGA_BOARD_OUTLINE_COLOR);
     g2.setColor(outlineColor);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
     for (int i = 0; i < 3; i++)
@@ -88,8 +89,12 @@ public class BoardPainter {
     int width = AppPreferences.getScaled(BoardManipulator.CONSTANT_BUTTON_WIDTH - 2, scale);
     int height = AppPreferences.getScaled(BoardManipulator.CONSTANT_BAR_HEIGHT - 2, scale);
     int ydif2 = height - (height >> 2);
-    final var outlineColor = isDark ? Color.LIGHT_GRAY : Color.BLACK;
-    final var textColor = isDark ? new Color(0x6CB6FF) : Color.BLUE;
+    final var outlineColor = isDark
+        ? new Color(AppPreferences.DARK_FPGA_BOARD_OUTLINE_COLOR)
+        : new Color(AppPreferences.DEFAULT_FPGA_BOARD_OUTLINE_COLOR);
+    final var textColor = isDark
+        ? new Color(AppPreferences.DARK_FPGA_BOARD_TEXT_COLOR)
+        : new Color(AppPreferences.DEFAULT_FPGA_BOARD_TEXT_COLOR);
     g.setColor(outlineColor);
     g.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
     g.drawRect(xpos, ypos, width, height);
@@ -112,8 +117,12 @@ public class BoardPainter {
     int width = AppPreferences.getScaled(BoardManipulator.CONSTANT_BUTTON_WIDTH - 2, scale);
     int height = AppPreferences.getScaled(BoardManipulator.CONSTANT_BAR_HEIGHT - 2, scale);
     int ydif2 = height - (height >> 2);
-    final var outlineColor = isDark ? Color.LIGHT_GRAY : Color.BLACK;
-    final var textColor = isDark ? new Color(0x6CB6FF) : Color.BLUE;
+    final var outlineColor = isDark
+        ? new Color(AppPreferences.DARK_FPGA_BOARD_OUTLINE_COLOR)
+        : new Color(AppPreferences.DEFAULT_FPGA_BOARD_OUTLINE_COLOR);
+    final var textColor = isDark
+        ? new Color(AppPreferences.DARK_FPGA_BOARD_TEXT_COLOR)
+        : new Color(AppPreferences.DEFAULT_FPGA_BOARD_TEXT_COLOR);
     g.setColor(outlineColor);
     g.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
     g.drawRect(xpos, ypos, width, height);
