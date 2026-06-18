@@ -29,6 +29,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -131,12 +132,13 @@ public final class InstanceComponent implements Component, AttributeListener, To
       final var value = (String) e.getSource().getValue(e.getAttribute());
       final var oldValue = e.getOldValue() != null ? (String) e.getOldValue() : "";
       if (!oldValue.equals(value)) {
-        if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
+        final var hdlType = AppPreferences.HdlType.get();
+        if (!SyntaxChecker.isVariableNameAcceptable(value, hdlType, true)) {
           e.getSource().setValue(lAttr, oldValue);
-        } else if (getFactory().getName().equalsIgnoreCase(value)) {
+        } else if (SyntaxChecker.namesEqual(getFactory().getName(), value, hdlType)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
           e.getSource().setValue(lAttr, oldValue);
-        } else if (CorrectLabel.isKeyword(value, false)) {
+        } else if (CorrectLabel.isKeyword(value, hdlType, false)) {
           OptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
           e.getSource().setValue(lAttr, oldValue);
         } else {

@@ -542,7 +542,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
           if (!dialog.execute()) {
             return;
           }
-          if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
+          if (SyntaxChecker.isVariableNameAcceptableForCurrentHdl(matrix.getLabel(), true)) {
             autoLabeler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
                 autoLabeler.correctMatrixBaseLabel(
