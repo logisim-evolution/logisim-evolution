@@ -16,7 +16,8 @@ import java.awt.font.TextLayout;
 public class ShifterIcon extends BaseIcon {
 
   private final int state = 2;
-
+  
+  @SuppressWarnings("unused")
   @Override
   protected void paintIcon(Graphics2D g2) {
     final var s = new StringBuilder();

@@ -247,6 +247,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     remove(s);
   }
 
+  @SuppressWarnings("unlikely-arg-type")
   public int remove(List<SignalInfo> items) {
     int count = 0;
     for (final var item : items) {
