@@ -13,7 +13,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
-import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocBusMasterInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
