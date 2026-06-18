@@ -31,29 +31,28 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       ".short", ".4byte", ".word", ".long", ".8byte", ".dword", ".quad", ".balign",
       ".zero", ".org"};
 
-  @SuppressWarnings("serial")
   public static final HashSet<String> BYTES = new HashSet<>() {{
       add(".byte");
     }};
-  @SuppressWarnings("serial")
+  
   public static final HashSet<String> SHORTS = new HashSet<>() {{
       add(".half");
       add(".2byte");
       add(".short");
     }};
-  @SuppressWarnings("serial")
+
   public static final HashSet<String> INTS = new HashSet<>() {{
       add(".word");
       add(".4byte");
       add(".long");
     }};
-  @SuppressWarnings("serial")
+
   public static final HashSet<String> LONGS = new HashSet<>() {{
       add(".dword");
       add(".8byte");
       add(".quad");
     }};
-  @SuppressWarnings("serial")
+
   public static final HashSet<String> STRINGS = new HashSet<>() {{
       add(".ascii");
       add(".asciz");

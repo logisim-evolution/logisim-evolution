@@ -84,7 +84,6 @@ public class VgaAttributes extends AbstractAttributeSet {
   private Boolean labelVisible = true;
   private VgaState state = new VgaState();
 
-  @SuppressWarnings("serial")
   public static final List<AttributeOption> MODES =
       new ArrayList<>() {
         {
