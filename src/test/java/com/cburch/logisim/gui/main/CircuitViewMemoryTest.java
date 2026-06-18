@@ -64,6 +64,35 @@ class CircuitViewMemoryTest {
   }
 
   @Test
+  void forgetRemovesSavedViewForCircuit() {
+    final var circuit = new Circuit("main", null, null);
+    final var memory = new CircuitViewMemory();
+    final var zoom = new TestZoomModel();
+    final var restoredPosition = new AtomicReference<Point>();
+
+    memory.remember(circuit, zoom, new Point(10, 20));
+    memory.forget(circuit);
+
+    assertFalse(memory.restore(circuit, zoom, restoredPosition::set));
+    assertNull(restoredPosition.get());
+  }
+
+  @Test
+  void forgetUsesCircuitIdentityInsteadOfName() {
+    final var first = new Circuit("same", null, null);
+    final var second = new Circuit("same", null, null);
+    final var memory = new CircuitViewMemory();
+    final var zoom = new TestZoomModel();
+    final var restoredPosition = new AtomicReference<Point>();
+
+    memory.remember(first, zoom, new Point(30, 40));
+    memory.forget(second);
+
+    assertTrue(memory.restore(first, zoom, restoredPosition::set));
+    assertEquals(new Point(30, 40), restoredPosition.get());
+  }
+
+  @Test
   void restorePassesCopyOfSavedPosition() {
     final var circuit = new Circuit("main", null, null);
     final var memory = new CircuitViewMemory();

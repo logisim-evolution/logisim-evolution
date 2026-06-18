@@ -17,6 +17,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
@@ -43,6 +44,7 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
@@ -891,6 +893,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
         buildTitleString();
         enableSave();
+      } else if (e.getAction() == LibraryEvent.REMOVE_TOOL
+          && e.getData() instanceof AddTool tool
+          && tool.getFactory() instanceof SubcircuitFactory subcircuitFactory) {
+        layoutViewMemory.forget(subcircuitFactory.getSubcircuit());
       }
     }
 

@@ -23,6 +23,10 @@ final class CircuitViewMemory {
     states.put(circuit, new ViewState(zoomModel.getZoomFactor(), new Point(viewPosition)));
   }
 
+  void forget(Circuit circuit) {
+    if (circuit != null) states.remove(circuit);
+  }
+
   boolean restore(Circuit circuit, ZoomModel zoomModel, Consumer<Point> viewPositionSetter) {
     if (circuit == null || zoomModel == null || viewPositionSetter == null) return false;
     final var state = states.get(circuit);
