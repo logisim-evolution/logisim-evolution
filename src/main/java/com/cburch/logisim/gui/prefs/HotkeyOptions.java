@@ -36,7 +36,7 @@ class HotkeyOptions extends OptionsPanel {
    * Author: Hanyuan Zhao <2524395907@qq.com>
    *
    * Description:
-   * This is the hotkey settings Tab in the preferences.
+   * This is the hotkeys Tab in the preferences.
    * Allowing users to decide which hotkey to bind to the specific function.
    *
    * To add your own hotkey bindings from your code, you need some operations as follows.

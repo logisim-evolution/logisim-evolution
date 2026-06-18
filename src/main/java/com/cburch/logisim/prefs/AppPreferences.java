@@ -914,7 +914,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> DIALOG_DIRECTORY =
       create(new PrefMonitorString("dialogDirectory", ""));
 
-  /* Hotkey Settings */
+  /* Hotkeys */
   /* Watch whether in headless mode */
   public static final int hotkeyMenuMask =
       GraphicsEnvironment.isHeadless()
