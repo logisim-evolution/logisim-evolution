@@ -10,7 +10,9 @@
 package com.cburch.logisim.fpga.designrulecheck;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import org.junit.jupiter.api.Test;
 
 class CorrectLabelTest {
@@ -20,6 +22,16 @@ class CorrectLabelTest {
     assertEquals(CorrectLabel.hdlLabelKey("A B"), CorrectLabel.hdlLabelKey("a-b"));
     assertEquals("L_1A", CorrectLabel.getCorrectLabel("1A"));
     assertEquals("L_1A", CorrectLabel.hdlLabelKey("1a"));
+  }
+
+  @Test
+  void hdlLabelKeysFollowSelectedHdlCaseSensitivity() {
+    assertEquals(
+        CorrectLabel.hdlLabelKey("A", HdlGeneratorFactory.VHDL),
+        CorrectLabel.hdlLabelKey("a", HdlGeneratorFactory.VHDL));
+    assertNotEquals(
+        CorrectLabel.hdlLabelKey("A", HdlGeneratorFactory.VERILOG),
+        CorrectLabel.hdlLabelKey("a", HdlGeneratorFactory.VERILOG));
   }
 
   @Test

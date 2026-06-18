@@ -30,7 +30,13 @@ public class CorrectLabel {
   }
 
   public static String hdlLabelKey(String label) {
-    return hdlNameKey(getCorrectLabel(label));
+    return hdlLabelKey(label, HdlGeneratorFactory.VHDL);
+  }
+
+  public static String hdlLabelKey(String label, String hdlType) {
+    final var correctLabel = getCorrectLabel(label);
+    if (HdlGeneratorFactory.VHDL.equals(hdlType)) return hdlNameKey(correctLabel);
+    return correctLabel;
   }
 
   public static String hdlNameKey(String hdlName) {

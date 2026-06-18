@@ -18,7 +18,6 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -37,10 +36,9 @@ class NetlistDrcTest {
   }
 
   @Test
-  void relaxedPinLabelsStillFailVhdlDrcWhenTheyDifferOnlyByCase() {
-    AppPreferences.HdlType.set(HdlGeneratorFactory.VHDL);
+  void caseDistinctPinLabelsStillFailVhdlDrcWhenTheyDifferOnlyByCase() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.VERILOG);
     final var fixture = new Fixture();
-    fixture.file.getOptions().getAttributeSet().setValue(Options.ATTR_HDL_COMPATIBLE_NAMES, false);
     final var firstPin = pinWithLabel("A", 0);
     final var secondPin = pinWithLabel("a", 40);
 
@@ -48,6 +46,7 @@ class NetlistDrcTest {
     add(fixture.circuit, secondPin);
 
     assertEquals("a", secondPin.getAttributeSet().getValue(StdAttr.LABEL));
+    AppPreferences.HdlType.set(HdlGeneratorFactory.VHDL);
     final var result = fixture.circuit.getNetList().designRuleCheckResult(true, new ArrayList<>());
     assertTrue((result & Netlist.DRC_ERROR) != 0);
   }
@@ -65,11 +64,10 @@ class NetlistDrcTest {
   }
 
   private static final class Fixture {
-    private final LogisimFile file;
     private final Circuit circuit;
 
     private Fixture() {
-      file = LogisimFile.createNew(new Loader(null), null);
+      final var file = LogisimFile.createNew(new Loader(null), null);
       final var project = new Project(file);
       circuit = file.getMainCircuit();
       circuit.setProject(project);

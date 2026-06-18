@@ -45,6 +45,10 @@ public class Hdl {
     return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VERILOG);
   }
 
+  public static boolean isNone() {
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.NONE);
+  }
+
   public static String bracketOpen() {
     return isVhdl() ? "(" : "[";
   }

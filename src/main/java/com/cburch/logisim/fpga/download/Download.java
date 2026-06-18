@@ -340,6 +340,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   private boolean prepareDownload() {
+    if (!isHdlGenerationEnabled(AppPreferences.HdlType.get())) {
+      Reporter.report.addFatalError(S.get("FpgaGuiSelectHdl"));
+      return false;
+    }
     if (downloadOnly && downloader.readyForDownload()) return true;
     /* Stage 0 DRC */
     if (useGui) progressBar.setString(S.get("FPGAState0"));
