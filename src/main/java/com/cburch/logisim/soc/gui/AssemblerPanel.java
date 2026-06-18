@@ -26,7 +26,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.util.Assembler;
 import com.cburch.logisim.soc.util.AssemblerInterface;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,8 +35,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -51,13 +48,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class AssemblerPanel extends JPanel
@@ -167,32 +162,6 @@ public class AssemblerPanel extends JPanel
     this.assembler = new Assembler(assembler, debugScrollPane);
     asmWindow.addParser(this.assembler);
     localeChanged();
-    applyAsmTheme();
-    UIManager.addPropertyChangeListener(this::onLookAndFeelChange);
-  }
-
-  private void applyAsmTheme() {
-    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
-    final var themePath = isDark
-        ? "/org/fife/ui/rsyntaxtextarea/themes/dark.xml"
-        : "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
-    try {
-      final var theme = Theme.load(getClass().getResourceAsStream(themePath));
-      theme.apply(asmWindow);
-    } catch (Exception ignored) {
-      if (isDark) {
-        asmWindow.setBackground(new Color(AppPreferences.DARK_RSTA_BG_COLOR));
-        asmWindow.setForeground(new Color(AppPreferences.DARK_RSTA_FG_COLOR));
-        asmWindow.setCurrentLineHighlightColor(new Color(AppPreferences.DARK_RSTA_HIGHLIGHT_COLOR));
-        asmWindow.setCaretColor(Color.WHITE);
-      }
-    }
-  }
-
-  private void onLookAndFeelChange(PropertyChangeEvent evt) {
-    if ("lookAndFeel".equals(evt.getPropertyName())) {
-      applyAsmTheme();
-    }
   }
 
   private void openFile() {

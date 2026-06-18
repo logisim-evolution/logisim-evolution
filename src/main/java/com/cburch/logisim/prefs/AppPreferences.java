@@ -596,10 +596,6 @@ public class AppPreferences {
   public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
   public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
   public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
-  // dark mode fallback colors for RSyntaxTextArea editors
-  public static final int DARK_RSTA_BG_COLOR = 0xFF2B2B2B;
-  public static final int DARK_RSTA_FG_COLOR = 0xFFAAAAAA;
-  public static final int DARK_RSTA_HIGHLIGHT_COLOR = 0xFF3A3A3A;
   // default FPGA colors
   public static final int DEFAULT_FPGA_DEFINE_COLOR = 0xFF0000;
   public static final int DEFAULT_FPGA_DEFINE_HIGHLIGHT_COLOR = 0x00FF00;
