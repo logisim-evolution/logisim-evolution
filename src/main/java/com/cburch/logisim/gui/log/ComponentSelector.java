@@ -305,9 +305,10 @@ public class ComponentSelector extends JTable {
       return option.toString();
     }
   }
-
+  
+  
+  @SuppressWarnings("serial")
   private class TreeNodeRenderer extends DefaultTableCellRenderer implements Icon {
-
     private TreeNode<?> node;
 
     @Override
@@ -315,7 +316,7 @@ public class ComponentSelector extends JTable {
       if (value instanceof CircuitNode) isSelected = false;
       final java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       if (ret instanceof JLabel && value instanceof TreeNode) {
-        node = (TreeNode) value;
+        node = (TreeNode<?>) value;
         ((JLabel) ret).setIcon(this);
       }
       return ret;

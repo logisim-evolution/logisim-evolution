@@ -51,7 +51,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
 
   public static final FontSelector FONT_SELECTOR = new FontSelector();
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public FontSelector() {
     fontNames = new TreeSet<>();
     for (final var font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()) {

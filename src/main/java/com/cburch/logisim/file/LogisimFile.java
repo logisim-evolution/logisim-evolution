@@ -356,7 +356,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     messages.addLast(msg);
   }
 
-  @SuppressWarnings("resource")
   public LogisimFile cloneLogisimFile(Loader newloader) {
     final var reader = new PipedInputStream();
     final var writer = new PipedOutputStream();
