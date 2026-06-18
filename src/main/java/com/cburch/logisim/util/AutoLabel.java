@@ -86,7 +86,7 @@ public class AutoLabel {
     if (StringUtil.isNullOrEmpty(common) || (maxX < 0) || (maxY < 0)) {
       return true;
     }
-    if (!SyntaxChecker.isVariableNameAcceptable(common, true)) {
+    if (!SyntaxChecker.isVariableNameAcceptableForCurrentHdl(common, true)) {
       return false;
     }
     for (var x = 0; x < maxX; x++) {
@@ -108,7 +108,7 @@ public class AutoLabel {
     }
     final var label = common.concat("_X" + x + "_Y" + y);
     if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
-        && SyntaxChecker.isVariableNameAcceptable(label, false)) {
+        && SyntaxChecker.isVariableNameAcceptableForCurrentHdl(label, false)) {
       return label;
     }
     return "";
@@ -190,7 +190,7 @@ public class AutoLabel {
     if (circ == null) {
       return;
     }
-    if (label.isEmpty() || !SyntaxChecker.isVariableNameAcceptable(label, false)) {
+    if (label.isEmpty() || !SyntaxChecker.isVariableNameAcceptableForCurrentHdl(label, false)) {
       labelBase.put(circ, "");
       currentIndex.put(circ, 0);
       useLabelBaseOnly.put(circ, false);
@@ -234,8 +234,8 @@ public class AutoLabel {
       if (newLabel != null) {
         if (Circuit.isCorrectLabel(circ.getName(),
             newLabel, circ.getNonWires(), attrs, compFactory, true)
-            && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
-            && !CorrectLabel.isKeyword(newLabel, true)) {
+            && SyntaxChecker.isVariableNameAcceptableForCurrentHdl(newLabel, true)
+            && !CorrectLabel.isKeyword(newLabel, AppPreferences.HdlType.get(), true)) {
           if (createAction) {
             act.set(comp, StdAttr.LABEL, newLabel);
           } else {

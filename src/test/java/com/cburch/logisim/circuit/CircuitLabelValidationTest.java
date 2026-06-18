@@ -80,10 +80,10 @@ class CircuitLabelValidationTest {
   }
 
   @Test
-  void relaxedModeStillRejectsPinLabelThatCollidesWithCircuitNameByCase() {
+  void relaxedModeAllowsPinLabelThatDiffersFromCircuitNameOnlyByCase() {
     final var components = componentSet(pinWithLabel("b"));
 
-    assertFalse(
+    assertTrue(
         Circuit.isCorrectLabel(
             "Main",
             "main",
@@ -91,6 +91,19 @@ class CircuitLabelValidationTest {
             Pin.FACTORY.createAttributeSet(),
             Pin.FACTORY,
             CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE,
+            false));
+  }
+
+  @Test
+  void strictModeRejectsPinLabelThatDiffersFromCircuitNameOnlyByCase() {
+    assertFalse(
+        Circuit.isCorrectLabel(
+            "Main",
+            "main",
+            Set.of(),
+            Pin.FACTORY.createAttributeSet(),
+            Pin.FACTORY,
+            CircuitLabelValidator.LabelIdentity.HDL_COMPATIBLE,
             false));
   }
 
@@ -131,6 +144,26 @@ class CircuitLabelValidationTest {
     add(fixture.circuit, secondPin);
 
     assertEquals("a", secondPin.getAttributeSet().getValue(StdAttr.LABEL));
+  }
+
+  @Test
+  void noHdlAllowsNonAsciiLabelWhenEditingComponentAttribute() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.NONE);
+    final var pin = pinWithLabel("");
+
+    pin.getAttributeSet().setValue(StdAttr.LABEL, "ö");
+
+    assertEquals("ö", pin.getAttributeSet().getValue(StdAttr.LABEL));
+  }
+
+  @Test
+  void noHdlAllowsNonAsciiCircuitNameWhenEditingCircuitAttribute() {
+    AppPreferences.HdlType.set(HdlGeneratorFactory.NONE);
+    final var fixture = new Fixture();
+
+    fixture.circuit.getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, "ö");
+
+    assertEquals("ö", fixture.circuit.getName());
   }
 
   @Test

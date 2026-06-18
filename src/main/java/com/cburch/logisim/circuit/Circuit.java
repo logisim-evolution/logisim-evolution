@@ -192,7 +192,7 @@ public class Circuit {
     if (myFactory instanceof Tunnel) return true;
     if (circuitName != null
         && !circuitName.isEmpty()
-        && CircuitLabelValidator.labelsMatch(circuitName, name)
+        && CircuitLabelValidator.labelsMatch(circuitName, name, labelIdentity)
         && myFactory instanceof Pin) {
       if (showDialog) {
         final var msg = S.get("ComponentLabelEqualCircuitName");
@@ -201,13 +201,17 @@ public class Circuit {
       return false;
     }
     return !(isExistingLabel(name, me, components, labelIdentity, showDialog)
-        || isComponentName(name, components, showDialog));
+        || isComponentName(name, components, labelIdentity, showDialog));
   }
 
-  private static boolean isComponentName(String name, Set<Component> comps, Boolean showDialog) {
+  private static boolean isComponentName(
+      String name,
+      Set<Component> comps,
+      CircuitLabelValidator.LabelIdentity labelIdentity,
+      Boolean showDialog) {
     if (name.isEmpty()) return false;
     for (final var comp : comps) {
-      if (CircuitLabelValidator.labelsMatch(comp.getFactory().getName(), name)) {
+      if (CircuitLabelValidator.labelsMatch(comp.getFactory().getName(), name, labelIdentity)) {
         if (showDialog) {
           final var msg = S.get("ComponentLabelNameError");
           OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
@@ -359,6 +363,7 @@ public class Circuit {
     final var comps = new TreeSet<Component>(Location.CompareVertical);
     final var labelers = new HashMap<String, AutoLabel>();
     final var labelNames = new LinkedHashSet<String>();
+    final var labelIdentity = labelIdentity();
     final var subCircuits = new LinkedHashSet<String>();
     for (final var comp : getNonWires()) {
       if (comp.getFactory() instanceof Tunnel) continue;
@@ -367,14 +372,14 @@ public class Circuit {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if (!label.isEmpty()) {
-          if (labelNames.contains(CircuitLabelValidator.labelKey(label))) {
+          if (labelNames.contains(CircuitLabelValidator.labelKey(label, labelIdentity))) {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
             // FIXME: hardcoded string
             Reporter.report.addSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
           } else {
-            labelNames.add(CircuitLabelValidator.labelKey(label));
+            labelNames.add(CircuitLabelValidator.labelKey(label, labelIdentity));
           }
         }
       }
@@ -836,7 +841,7 @@ public class Circuit {
             StringUtil.isNotEmpty(label)
                 && getName() != null
                 && !getName().isEmpty()
-                && CircuitLabelValidator.labelsMatch(getName(), label);
+                && CircuitLabelValidator.labelsMatch(getName(), label, labelIdentity);
         if (StringUtil.isNotEmpty(label)
             && (collidesWithCircuitName
                 || labels.contains(CircuitLabelValidator.labelKey(label, labelIdentity)))) {
@@ -904,11 +909,12 @@ public class Circuit {
 
   private void removeWrongLabels(String label) {
     var changed = false;
+    final var labelIdentity = labelIdentity();
     for (final var comp : comps) {
       final var attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var compLabel = attrs.getValue(StdAttr.LABEL);
-        if (CircuitLabelValidator.labelsMatch(label, compLabel)) {
+        if (CircuitLabelValidator.labelsMatch(label, compLabel, labelIdentity)) {
           attrs.setValue(StdAttr.LABEL, "");
           changed = true;
         }

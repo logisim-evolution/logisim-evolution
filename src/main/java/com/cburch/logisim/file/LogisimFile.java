@@ -26,6 +26,7 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
+import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
@@ -170,7 +171,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (isNameInLibraries(mylib, name)) return true;
     }
     for (final var mytool : this.getCircuits()) {
-      if (name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
+      if (SyntaxChecker.namesEqualForCurrentHdl(name, mytool.getName()) && !mytool.equals(changed))
         return true;
     }
     return false;
@@ -182,7 +183,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (isNameInLibraries(mylib, name)) return true;
     }
     for (final var mytool : lib.getTools()) {
-      if (name.equalsIgnoreCase(mytool.getName())) return true;
+      if (SyntaxChecker.namesEqualForCurrentHdl(name, mytool.getName())) return true;
     }
     return false;
   }
