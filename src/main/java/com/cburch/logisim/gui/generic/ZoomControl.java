@@ -97,7 +97,6 @@ public class ZoomControl extends JPanel {
   }
 
   private int nearestZoomOption() {
-    if (model == null) return 0;
     final var choices = model.getZoomOptions();
     final var factor = model.getZoomFactor() * 100.0;
     var closest = 0;
@@ -115,13 +114,11 @@ public class ZoomControl extends JPanel {
    * @return zoom factor as string
    */
   public String zoomString() {
-    if (model == null) return "";
     DecimalFormat df = new DecimalFormat("###.##");
     return "\u00D7" + df.format(model.getZoomFactor());
   }
 
   public void zoomIn() {
-    if (model == null) return;
     final var zoom = model.getZoomFactor();
     final var choices = model.getZoomOptions();
     final var factor = zoom * 100.0 * 1.001;
@@ -134,7 +131,6 @@ public class ZoomControl extends JPanel {
   }
 
   public void zoomOut() {
-    if (model == null) return;
     final var zoom = model.getZoomFactor();
     final var choices = model.getZoomOptions();
     final var factor = zoom * 100.0 * 0.999;
@@ -147,7 +143,6 @@ public class ZoomControl extends JPanel {
   }
 
   public void zoomTo(int i) {
-    if (model == null) return;
     final var choices = model.getZoomOptions();
     i = Math.max(Math.min(i, choices.size() - 1), 0);
     model.setZoomFactor(choices.get(i) / 100.0);
