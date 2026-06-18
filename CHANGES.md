@@ -26,6 +26,7 @@
       line-enable inputs may need to connect those inputs explicitly.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Fixed SoC execution trace painting when the trace changes during simulation.
   * Improved project editing stability:
     * Moving components preserves component state.
     * Floating subcircuit inputs now propagate floating values.

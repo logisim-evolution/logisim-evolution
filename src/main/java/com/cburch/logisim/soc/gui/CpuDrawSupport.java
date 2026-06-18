@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 
 public class CpuDrawSupport {
 
@@ -216,12 +217,13 @@ public class CpuDrawSupport {
     GraphicsUtil.drawCenteredText(g2, S.get("Rv32imBinInstruction"), bds.getX(), bds.getY());
     bds = getBounds(215 + blockWidth, 21, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g2, S.get("Rv32imAsmInstruction"), bds.getX(), bds.getY());
-    if (cpu.getTraces().isEmpty()) {
+    final var traces = new LinkedList<>(cpu.getTraces());
+    if (traces.isEmpty()) {
       bds = getBounds(207, 250, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g2, S.get("Rv32imEmptyTrace"), bds.getX(), bds.getY());
     } else {
       int yOff = 30;
-      for (TraceInfo t : cpu.getTraces()) {
+      for (TraceInfo t : traces) {
         t.paint(g2, yOff, scale);
         yOff += TRACE_HEIGHT;
       }
