@@ -151,6 +151,7 @@ public enum IoComponentTypes {
       case SevenSegment, SevenSegmentScanning -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
+        case ROTATION_180 -> null;
         default -> S.get("SevenSegmentZero");
       };
       case LedArray -> switch (rotation) {

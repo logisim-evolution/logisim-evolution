@@ -428,7 +428,7 @@ public class FpgaIoInformationSettingsDialog {
           BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaRotationDefinition")));
       final int[] rotations = {IoComponentTypes.ROTATION_ZERO, IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90, IoComponentTypes.ROTATION_180};
       for (final var i : rotations) {
-        final var rotationString = S.get(IoComponentTypes.getRotationString(myType, i));
+        final var rotationString = IoComponentTypes.getRotationString(myType, i);
         if (rotationString != null) {
           mapRotation.addItem(rotationString);
         }
