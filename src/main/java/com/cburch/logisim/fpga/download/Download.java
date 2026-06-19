@@ -424,7 +424,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (executable != null) {
         try {
           executable.descendants().forEach(ProcessHandle::destroy);
-        } catch (UnsupportedOperationException | SecurityException ignored) {}
+        } catch (UnsupportedOperationException | SecurityException ignored) { }
         executable.destroy();
       }
     }
