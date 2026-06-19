@@ -314,6 +314,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       comp.getRectangle().updateRectangle(rect);
     if (comp.isKnownComponent()) {
       ioComps.addComponent(comp, scale);
+      ioComps.setHighligted(comp);
       for (final var listener : listeners) {
         listener.componentsChanged(ioComps);
       }
