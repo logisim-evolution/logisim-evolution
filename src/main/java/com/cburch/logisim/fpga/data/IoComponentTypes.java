@@ -151,7 +151,7 @@ public enum IoComponentTypes {
       case SevenSegment, SevenSegmentScanning -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
-        case ROTATION_180 -> null;
+        case ROTATION_180 -> S.get("SevenSegment180");
         default -> S.get("SevenSegmentZero");
       };
       case LedArray -> switch (rotation) {
@@ -279,6 +279,10 @@ public enum IoComponentTypes {
                 xIndex = (int) ((float) h / partY);
                 yIndex = (int) ((float) (width - w - 1) / partX);
               }
+              case ROTATION_180 -> {
+                xIndex = (int) ((float) (width - w - 1) / partX);
+                yIndex = (int) ((float) (height - h - 1) / partY);
+              }
               default -> {
                 xIndex = (int) ((float) w / partX);
                 yIndex = (int) ((float) h / partY);
@@ -321,6 +325,12 @@ public enum IoComponentTypes {
                 selectedSegmentIndex = (float) h % segmentWidth;
                 xIndex = (int) (selectedSegmentIndex / partY);
                 yIndex = (int) ((float) w / partX);
+              }
+              case ROTATION_180 -> {
+                selectedSegment = nrOfRows - 1 - (int) ((float) w / segmentWidth);
+                selectedSegmentIndex = (float) w % segmentWidth;
+                xIndex = (int) ((segmentWidth - selectedSegmentIndex - 1) / partX);
+                yIndex = (int) ((float) (height - h - 1) / partY);
               }
               default -> {
                 selectedSegment = (int) ((float) w / segmentWidth);
@@ -468,6 +478,12 @@ public enum IoComponentTypes {
                   realYIndex = xIndex;
                   realYIndexPlusOne = xIndex + 1;
                 }
+                case ROTATION_180 -> {
+                  realXIndex = 4 - xIndex;
+                  realXIndexPlusOne = 5 - xIndex;
+                  realYIndex = 6 - yIndex;
+                  realYIndexPlusOne = 7 - yIndex;
+                }
                 default -> {
                   realXIndex = xIndex;
                   realXIndexPlusOne = xIndex + 1;
@@ -514,6 +530,12 @@ public enum IoComponentTypes {
                   realXIndexPlusOne = 7 - yIndex;
                   realYIndex = xIndex + segment * 5;
                   realYIndexPlusOne = xIndex + 1 + segment * 5;
+                }
+                case ROTATION_180 -> {
+                  realXIndex = 4 - xIndex + (nrOfRows - 1 - segment) * 5;
+                  realXIndexPlusOne = 5 - xIndex + (nrOfRows - 1 - segment) * 5;
+                  realYIndex = 6 - yIndex;
+                  realYIndexPlusOne = 7 - yIndex;
                 }
                 default -> {
                   realXIndex = xIndex + segment * 5;
