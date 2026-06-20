@@ -135,7 +135,7 @@ public enum IoComponentTypes {
 
   public static Boolean hasRotationAttribute(IoComponentTypes comp) {
     return switch (comp) {
-      case DIPSwitch, SevenSegment, LedArray, SevenSegmentScanning -> true;
+      case DIPSwitch, SevenSegment, SevenSegmentNoDp, SevenSegmentScanning, LedArray -> true;
       default -> false;
     };
   }
@@ -148,7 +148,7 @@ public enum IoComponentTypes {
         case ROTATION_180 -> S.get("DipSwitch180");
         default -> S.get("DipSwitchZero");
       };
-      case SevenSegment, SevenSegmentScanning -> switch (rotation) {
+      case SevenSegment, SevenSegmentNoDp, SevenSegmentScanning -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
         case ROTATION_180 -> S.get("SevenSegment180");
