@@ -681,7 +681,7 @@ public class Circuit {
     return null;
   }
 
-  public Set<String> getMapableBoards() {
+  public Set<String> getMappableBoards() {
     return myMappableResources.keySet();
   }
 

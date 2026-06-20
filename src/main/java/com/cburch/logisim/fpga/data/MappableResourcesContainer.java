@@ -41,7 +41,7 @@ public class MappableResourcesContainer {
     var BoardId = new ArrayList<String>();
     BoardId.add(CurrentBoard.getBoardName());
     updateIoComponents(CurrentBoard);
-    updateMapableComponents();
+    updateMappableComponents();
     circ.setBoardMap(CurrentBoard.getBoardName(), this);
   }
 
@@ -94,7 +94,7 @@ public class MappableResourcesContainer {
     }
   }
 
-  public void updateMapableComponents() {
+  public void updateMappableComponents() {
     var cur = new HashSet<ArrayList<String>>();
     if (myMappableResources == null) myMappableResources = new HashMap<>();
     else cur.addAll(myMappableResources.keySet());

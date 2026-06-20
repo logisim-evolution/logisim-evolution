@@ -109,7 +109,7 @@ public abstract class DownloadBase {
       myMappableResources = new MappableResourcesContainer(myBoardInformation, rootSheet);
     } else {
       myMappableResources.updateIoComponents(myBoardInformation);
-      myMappableResources.updateMapableComponents();
+      myMappableResources.updateMappableComponents();
     }
 
     return true;

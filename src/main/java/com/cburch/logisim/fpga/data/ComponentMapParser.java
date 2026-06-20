@@ -39,7 +39,7 @@ public class ComponentMapParser {
 
   private void unMapAll() {
     mappableComponents.unMapAll();
-    mappableComponents.updateMapableComponents();
+    mappableComponents.updateMappableComponents();
   }
 
   public String getError(int error) {

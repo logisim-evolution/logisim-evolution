@@ -182,9 +182,7 @@ public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponen
         }
       }
 
-      throw new UnsupportedOperationException(
-          "VHDL component simulation is not supported."
-          + " This could be because there is no Questasim/Modelsim simulation server running.");
+      throw new UnsupportedOperationException(S.get("vhdlSimulationNotEnabled"));
     }
   }
 

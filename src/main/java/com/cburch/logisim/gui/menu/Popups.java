@@ -186,7 +186,7 @@ public class Popups {
     final JMenuItem add = new JMenuItem(S.get("projectAddCircuitItem"));
     final JMenuItem vhdl = new JMenuItem(S.get("projectAddVhdlItem"));
     final JMenu load = new JMenu(S.get("projectLoadLibraryItem"));
-    final JMenuItem loadBuiltin = new JMenuItem(S.get("projectLoadBuiltinItem"));
+    final JMenu loadBuiltin = new JMenu(S.get("projectLoadBuiltinItem"));
     final JMenuItem loadLogisim = new JMenuItem(S.get("projectLoadLogisimItem"));
     final JMenuItem loadJar = new JMenuItem(S.get("projectLoadJarItem"));
 
@@ -194,8 +194,8 @@ public class Popups {
       super(S.get("projMenu"));
       this.proj = proj;
 
+      ProjectLibraryActions.populateBuiltinLibraryMenu(loadBuiltin, proj);
       load.add(loadBuiltin);
-      loadBuiltin.addActionListener(this);
       load.add(loadLogisim);
       loadLogisim.addActionListener(this);
       load.add(loadJar);
@@ -215,8 +215,6 @@ public class Popups {
         ProjectCircuitActions.doAddCircuit(proj);
       } else if (src == vhdl) {
         ProjectCircuitActions.doAddVhdl(proj);
-      } else if (src == loadBuiltin) {
-        ProjectLibraryActions.doLoadBuiltinLibrary(proj);
       } else if (src == loadLogisim) {
         ProjectLibraryActions.doLoadLogisimLibrary(proj);
       } else if (src == loadJar) {
