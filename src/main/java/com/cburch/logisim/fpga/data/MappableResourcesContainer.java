@@ -50,7 +50,7 @@ public class MappableResourcesContainer {
       } catch (CloneNotSupportedException e) {
       }
     }
-    updateMapableComponents();
+    updateMappableComponents();
     circ.setBoardMap(CurrentBoard.getBoardName(), this);
   }
 
@@ -90,7 +90,7 @@ public class MappableResourcesContainer {
     ProjectActions.doSave(myCircuit.getProject());
   }
 
-  public void updateMapableComponents() {
+  public void updateMappableComponents() {
     var cur = new HashSet<ArrayList<String>>();
     if (myMappableResources == null) myMappableResources = new HashMap<>();
     else cur.addAll(myMappableResources.keySet());
