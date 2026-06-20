@@ -324,7 +324,7 @@ public enum IoComponentTypes {
                 selectedSegment = (int) ((float) h / segmentWidth);
                 selectedSegmentIndex = (float) h % segmentWidth;
                 xIndex = (int) (selectedSegmentIndex / partY);
-                yIndex = (int) ((float) w / partX);
+                yIndex = (int) ((float) (width - w - 1) / partX);
               }
               case ROTATION_180 -> {
                 selectedSegment = nrOfRows - 1 - (int) ((float) w / segmentWidth);
