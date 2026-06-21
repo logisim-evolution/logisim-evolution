@@ -96,6 +96,7 @@ public class SocBusStateInfo extends JDialog
 
     private static final int NR_OF_TRACES_TO_KEEP = 10000;
     private final LinkedList<SocBusTransaction> trace;
+    private final Object traceLock = new Object();
     private long startTraceIndex;
     private final SocBusStateInfo parent;
     private final Instance instance;
@@ -120,32 +121,44 @@ public class SocBusStateInfo extends JDialog
     }
 
     public void addTransaction(SocBusTransaction t) {
-      while (trace.size() >= NR_OF_TRACES_TO_KEEP) {
-        startTraceIndex++;
-        trace.removeFirst();
+      synchronized (traceLock) {
+        while (trace.size() >= NR_OF_TRACES_TO_KEEP) {
+          startTraceIndex++;
+          trace.removeFirst();
+        }
+        trace.addLast(t);
       }
-      trace.addLast(t);
       for (SocBusStateListener l : listeners) l.fireCanged(this);
     }
 
     public void clear() {
-      if (trace.size() == 0) return;
-      trace.clear();
-      startTraceIndex = 0;
+      synchronized (traceLock) {
+        if (trace.size() == 0) return;
+        trace.clear();
+        startTraceIndex = 0;
+      }
       for (SocBusStateListener l : listeners) l.fireCanged(this);
     }
 
     public void paint(Graphics2D g, Bounds b) {
-      if (trace.isEmpty()) {
+      LinkedList<SocBusTransaction> theTrace;
+      long theStartTraceIndex;
+      synchronized (traceLock) {
+        @SuppressWarnings("unchecked")
+        final var myTrace = (LinkedList<SocBusTransaction>) trace.clone();
+        theTrace = myTrace;
+        theStartTraceIndex = startTraceIndex;
+      }
+      if (theTrace.isEmpty()) {
         GraphicsUtil.drawCenteredText(g, S.get("SocBusNoTrace"), b.getCenterX(), b.getCenterY());
         return;
       }
       long nrOfTraces = b.getHeight() / TRACE_HEIGHT;
-      if (nrOfTraces > trace.size()) nrOfTraces = trace.size();
-      int startIndex = trace.size() - 1;
+      if (nrOfTraces > theTrace.size()) nrOfTraces = theTrace.size();
+      int startIndex = theTrace.size() - 1;
       for (int i = 0; i < nrOfTraces; i++) {
-        SocBusTransaction t = trace.get(startIndex - i);
-        t.paint(b.getX() + 1, b.getY() + 1 + i * TRACE_HEIGHT, g, startTraceIndex + startIndex - i);
+        SocBusTransaction t = theTrace.get(startIndex - i);
+        t.paint(b.getX() + 1, b.getY() + 1 + i * TRACE_HEIGHT, g, theStartTraceIndex + startIndex - i);
       }
     }
 
@@ -162,12 +175,14 @@ public class SocBusStateInfo extends JDialog
     }
 
     public SocBusStateTrace getEntry(int index, TraceWindowTableModel model) {
-      if (index < 0 || index >= trace.size()) {
-        if (index == 0) return new SocBusStateTrace(null, 0, model);
-        return null;
+      synchronized (traceLock) {
+        if (index < 0 || index >= trace.size()) {
+          if (index == 0) return new SocBusStateTrace(null, 0, model);
+          return null;
+        }
+        long indx = startTraceIndex + trace.size() - index - 1;
+        return new SocBusStateTrace(trace.get(trace.size() - index - 1), indx, model);
       }
-      long indx = startTraceIndex + trace.size() - index - 1;
-      return new SocBusStateTrace(trace.get(trace.size() - index - 1), indx, model);
     }
 
     @Override
