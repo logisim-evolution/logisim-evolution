@@ -159,7 +159,7 @@ public class OpenFpgaDownload  implements VendorDownload {
   }
 
   @Override
-  public void setMapableResources(MappableResourcesContainer resources) {
+  public void setMappableResources(MappableResourcesContainer resources) {
     mapInfo = resources;
   }
 
