@@ -308,8 +308,10 @@ public class DualRam extends Mem {
     }
 
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate
-        || !state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE);
+    final var outputDisabled =
+        state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE)
+            && (!separate || DualRamAttributes.hasControlledOutput(attrs));
+    final var outputEnabled = !outputDisabled;
 
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
@@ -384,7 +386,9 @@ public class DualRam extends Mem {
         value, DELAY);
 
     if (outputNotEnabled) {
-      setValue.accept(Value.createUnknown(dataBits));
+      if (!isSeparate(attrs) || DualRamAttributes.hasControlledOutput(attrs)) {
+        setValue.accept(Value.createUnknown(dataBits));
+      }
       return;
     }
 
@@ -422,7 +426,7 @@ public class DualRam extends Mem {
 
   public static boolean isSeparate(AttributeSet attrs) {
     Object bus = attrs.getValue(DualRamAttributes.ATTR_DBUS);
-    return bus == null || bus.equals(DualRamAttributes.BUS_SEP);
+    return DualRamAttributes.isSeparateDataBus(bus);
   }
 
   @Override

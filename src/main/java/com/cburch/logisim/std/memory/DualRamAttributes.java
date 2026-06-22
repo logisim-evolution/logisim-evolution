@@ -14,6 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
@@ -36,9 +37,13 @@ public class DualRamAttributes extends AbstractAttributeSet {
       new AttributeOption("bidir", S.getter("ramBidirDataBus"));
   static final AttributeOption BUS_SEP =
       new AttributeOption("bibus", S.getter("ramSeparateDataBus"));
+  static final AttributeOption BUS_SEP_CONTROLLED =
+      new AttributeOption("bibusControlled", S.getter("ramSeparateDataBusControlled"));
   static final Attribute<AttributeOption> ATTR_DBUS =
       Attributes.forOption(
-          "databus", S.getter("ramDataAttr"), new AttributeOption[] {BUS_BIDIR, BUS_SEP});
+          "databus",
+          S.getter("ramDataAttr"),
+          new AttributeOption[] {BUS_BIDIR, BUS_SEP, BUS_SEP_CONTROLLED});
   static final AttributeOption BUS_WITH_BYTEENABLES =
       new AttributeOption("byteEnables", S.getter("ramWithByteEnables"));
   static final AttributeOption BUS_WITHOUT_BYTE_ENABLES =
@@ -71,6 +76,15 @@ public class DualRamAttributes extends AbstractAttributeSet {
 
   DualRamAttributes() {
     updateAttributes();
+  }
+
+  static boolean hasControlledOutput(AttributeSet attrs) {
+    final var bus = attrs.getValue(ATTR_DBUS);
+    return bus != null && bus.equals(BUS_SEP_CONTROLLED);
+  }
+
+  static boolean isSeparateDataBus(Object bus) {
+    return bus == null || bus.equals(BUS_SEP) || bus.equals(BUS_SEP_CONTROLLED);
   }
 
   public boolean updateAttributes() {

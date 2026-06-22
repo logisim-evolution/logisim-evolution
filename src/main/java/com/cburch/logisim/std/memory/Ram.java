@@ -290,7 +290,10 @@ public class Ram extends Mem {
 
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
+    final var outputDisabled =
+        state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE)
+            && (!separate || RamAttributes.hasControlledOutput(attrs));
+    final var outputEnabled = !outputDisabled;
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr + i);
@@ -345,7 +348,9 @@ public class Ram extends Mem {
     Consumer<Value> setValue = (Value value) -> state.setPort(RamAppearance.getDataOutIndex(0, attrs), value, DELAY);
 
     if (outputNotEnabled) {
-      setValue.accept(Value.createUnknown(dataBits));
+      if (!isSeparate(attrs) || RamAttributes.hasControlledOutput(attrs)) {
+        setValue.accept(Value.createUnknown(dataBits));
+      }
       return;
     }
 
@@ -383,7 +388,7 @@ public class Ram extends Mem {
 
   public static boolean isSeparate(AttributeSet attrs) {
     Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
-    return bus == null || bus.equals(RamAttributes.BUS_SEP);
+    return RamAttributes.isSeparateDataBus(bus);
   }
 
   @Override
