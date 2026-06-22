@@ -141,23 +141,32 @@ public class SocBusStateInfo extends JDialog
     }
 
     public void paint(Graphics2D g, Bounds b) {
-      LinkedList<SocBusTransaction> theTrace;
+      int traceSize;
       long theStartTraceIndex;
+      int nrOfTraces = b.getHeight() / TRACE_HEIGHT;
+      final var neededTraces = new ArrayList<SocBusTransaction>();
       synchronized (traceLock) {
-        @SuppressWarnings("unchecked")
-        final var myTrace = (LinkedList<SocBusTransaction>) trace.clone();
-        theTrace = myTrace;
+        traceSize = trace.size();
+        if (nrOfTraces > traceSize) nrOfTraces = traceSize;
+        if (nrOfTraces > 0) {
+          final var indexOfFirstTrace = traceSize - nrOfTraces;
+          long count = 0;
+          for (SocBusTransaction t : trace) {
+            if (count >= indexOfFirstTrace) {
+              neededTraces.add(t);
+            }
+            count++;
+          }
+        }
         theStartTraceIndex = startTraceIndex;
       }
-      if (theTrace.isEmpty()) {
+      if (nrOfTraces <= 0) {
         GraphicsUtil.drawCenteredText(g, S.get("SocBusNoTrace"), b.getCenterX(), b.getCenterY());
         return;
       }
-      long nrOfTraces = b.getHeight() / TRACE_HEIGHT;
-      if (nrOfTraces > theTrace.size()) nrOfTraces = theTrace.size();
-      int startIndex = theTrace.size() - 1;
+      int startIndex = traceSize - 1;
       for (int i = 0; i < nrOfTraces; i++) {
-        SocBusTransaction t = theTrace.get(startIndex - i);
+        SocBusTransaction t = neededTraces.get(nrOfTraces - 1 - i);
         t.paint(b.getX() + 1, b.getY() + 1 + i * TRACE_HEIGHT, g, theStartTraceIndex + startIndex - i);
       }
     }
