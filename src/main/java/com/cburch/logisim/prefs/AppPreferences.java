@@ -602,6 +602,13 @@ public class AppPreferences {
   // default kmap cell text colors
   public static final int DEFAULT_KMAP_CELL_TEXT_COLOR = 0xFF0000FF;
   public static final int DARK_KMAP_CELL_TEXT_COLOR = 0xFFFFFFFF;
+  // default table caret colors
+  public static final int DEFAULT_TABLE_CURSOR_COLOR = 0xFFFFFFFF;
+  public static final int DARK_TABLE_CURSOR_COLOR = 0xFF666666;
+  public static final int DEFAULT_TABLE_HIGHLIGHT_COLOR = 0xFFFFFFC0;
+  public static final int DARK_TABLE_HIGHLIGHT_COLOR = 0xFF7A6A00;
+  public static final int DEFAULT_TABLE_SELECTION_COLOR = 0xFFC0C0FF;
+  public static final int DARK_TABLE_SELECTION_COLOR = 0xFF323C78;
   // default fpga board colors
   public static final int DEFAULT_FPGA_BOARD_OUTLINE_COLOR = 0xFF000000;
   public static final int DEFAULT_FPGA_BOARD_TEXT_COLOR = 0xFF0000FF;
@@ -652,6 +659,9 @@ public class AppPreferences {
       COMPONENT_GHOST_COLOR.set(DARK_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DARK_COMPONENT_ICON_COLOR);
       KMAP_CELL_TEXT_COLOR.set(DARK_KMAP_CELL_TEXT_COLOR);
+      TABLE_CURSOR_COLOR.set(DARK_TABLE_CURSOR_COLOR);
+      TABLE_HIGHLIGHT_COLOR.set(DARK_TABLE_HIGHLIGHT_COLOR);
+      TABLE_SELECTION_COLOR.set(DARK_TABLE_SELECTION_COLOR);
       TRUE_COLOR.set(DARK_TRUE_COLOR);
       FALSE_COLOR.set(DARK_FALSE_COLOR);
       UNKNOWN_COLOR.set(DARK_UNKNOWN_COLOR);
@@ -669,6 +679,9 @@ public class AppPreferences {
       COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
       KMAP_CELL_TEXT_COLOR.set(DEFAULT_KMAP_CELL_TEXT_COLOR);
+      TABLE_CURSOR_COLOR.set(DEFAULT_TABLE_CURSOR_COLOR);
+      TABLE_HIGHLIGHT_COLOR.set(DEFAULT_TABLE_HIGHLIGHT_COLOR);
+      TABLE_SELECTION_COLOR.set(DEFAULT_TABLE_SELECTION_COLOR);
       TRUE_COLOR.set(DEFAULT_TRUE_COLOR);
       FALSE_COLOR.set(DEFAULT_FALSE_COLOR);
       UNKNOWN_COLOR.set(DEFAULT_UNKNOWN_COLOR);
@@ -844,6 +857,12 @@ public class AppPreferences {
       create(new PrefMonitorInt("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR));
   public static final PrefMonitor<Integer> KMAP_CELL_TEXT_COLOR =
       create(new PrefMonitorInt("KmapCellTextColor", DEFAULT_KMAP_CELL_TEXT_COLOR));
+  public static final PrefMonitor<Integer> TABLE_CURSOR_COLOR =
+      create(new PrefMonitorInt("TableCursorColor", DEFAULT_TABLE_CURSOR_COLOR));
+  public static final PrefMonitor<Integer> TABLE_HIGHLIGHT_COLOR =
+      create(new PrefMonitorInt("TableHighlightColor", DEFAULT_TABLE_HIGHLIGHT_COLOR));
+  public static final PrefMonitor<Integer> TABLE_SELECTION_COLOR =
+      create(new PrefMonitorInt("TableSelectionColor", DEFAULT_TABLE_SELECTION_COLOR));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
