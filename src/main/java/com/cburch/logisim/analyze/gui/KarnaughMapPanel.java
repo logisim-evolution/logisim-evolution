@@ -916,18 +916,17 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     if (outputColumn < 0) return;
 
     karnaughMapGroups.paint(gfx, x, y, cellWidth, cellHeight);
-    gfx.setColor(Color.BLUE);
+    final var cellTextColor = new Color(AppPreferences.KMAP_CELL_TEXT_COLOR.get());
+    gfx.setColor(cellTextColor);
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < cols; j++) {
         final var row = getTableRow(i, j, rows, cols);
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX) {
           final var text = provisionalValue.getDescription();
-          gfx.setColor(Color.BLACK);
           gfx.drawString(
               text,
               x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
               y + i * cellHeight + dy);
-          gfx.setColor(Color.BLUE);
         } else {
           final var entry = table.getOutputEntry(row, outputColumn);
           final var text = entry.getDescription();

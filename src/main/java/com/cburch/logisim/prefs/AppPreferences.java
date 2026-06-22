@@ -599,6 +599,9 @@ public class AppPreferences {
   // expression overline colors
   public static final int DEFAULT_EXPRESSION_OVERLINE_COLOR = 0xFF000000;
   public static final int DARK_EXPRESSION_OVERLINE_COLOR = 0xFFFFFFFF;
+  // default kmap cell text colors
+  public static final int DEFAULT_KMAP_CELL_TEXT_COLOR = 0xFF0000FF;
+  public static final int DARK_KMAP_CELL_TEXT_COLOR = 0xFFFFFFFF;
   // default fpga board colors
   public static final int DEFAULT_FPGA_BOARD_OUTLINE_COLOR = 0xFF000000;
   public static final int DEFAULT_FPGA_BOARD_TEXT_COLOR = 0xFF0000FF;
@@ -648,6 +651,7 @@ public class AppPreferences {
       COMPONENT_SECONDARY_COLOR.set(DARK_COMPONENT_SECONDARY_COLOR);
       COMPONENT_GHOST_COLOR.set(DARK_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DARK_COMPONENT_ICON_COLOR);
+      KMAP_CELL_TEXT_COLOR.set(DARK_KMAP_CELL_TEXT_COLOR);
       TRUE_COLOR.set(DARK_TRUE_COLOR);
       FALSE_COLOR.set(DARK_FALSE_COLOR);
       UNKNOWN_COLOR.set(DARK_UNKNOWN_COLOR);
@@ -664,6 +668,7 @@ public class AppPreferences {
       COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
       COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
       COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
+      KMAP_CELL_TEXT_COLOR.set(DEFAULT_KMAP_CELL_TEXT_COLOR);
       TRUE_COLOR.set(DEFAULT_TRUE_COLOR);
       FALSE_COLOR.set(DEFAULT_FALSE_COLOR);
       UNKNOWN_COLOR.set(DEFAULT_UNKNOWN_COLOR);
@@ -837,6 +842,8 @@ public class AppPreferences {
       create(new PrefMonitorInt("SimWidthErrorBackgroundColor", DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR));
   public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
       create(new PrefMonitorInt("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR));
+  public static final PrefMonitor<Integer> KMAP_CELL_TEXT_COLOR =
+      create(new PrefMonitorInt("KmapCellTextColor", DEFAULT_KMAP_CELL_TEXT_COLOR));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
