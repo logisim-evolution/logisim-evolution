@@ -42,7 +42,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static final int COARSE = 1;
   public static final int FINE = 2;
 
-  // FIXME: it looks we can get rid of Even class as it's a) dummy b) unused which forcess callers
+  // FIXME: it looks we can get rid of Event class as it's a) dummy b) unused which forcess callers
   // to pass `null`
   public static class Event {
     // no-op implementation
