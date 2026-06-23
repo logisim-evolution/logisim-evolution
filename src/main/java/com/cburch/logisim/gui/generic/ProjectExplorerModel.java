@@ -30,6 +30,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private final JTree uiElement;
   private Project proj;
   private final boolean showMouseTools;
+  private String filter = "";
 
   ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools) {
     super(null);
@@ -105,6 +106,58 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
       setLogisimFile(value.getLogisimFile());
     }
     fireStructureChanged();
+  }
+
+  public void setFilter(String newFilter) {
+    this.filter = (newFilter == null) ? "" : newFilter.trim().toLowerCase();
+    final var root = (Node<?>) getRoot();
+    if (root != null) {
+      fireTreeStructureChanged(this, root.getUserObjectPath(), null, null);
+    } else {
+      fireTreeStructureChanged(this, null, null, null);
+    }
+  }
+
+  private boolean nodeMatchesFilter(Object node) {
+    if (filter.isEmpty()) return true;
+    if (node instanceof ProjectExplorerToolNode toolNode) {
+      final var tool = toolNode.getValue();
+      return tool != null && tool.getDisplayName().toLowerCase().contains(filter);
+    }
+    if (node instanceof ProjectExplorerLibraryNode) {
+      final var libNode = (DefaultMutableTreeNode) node;
+      for (int i = 0; i < libNode.getChildCount(); i++) {
+        if (nodeMatchesFilter(libNode.getChildAt(i))) return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int getChildCount(Object parent) {
+    if (filter.isEmpty()) return super.getChildCount(parent);
+    int count = 0;
+    final int total = super.getChildCount(parent);
+    for (int i = 0; i < total; i++) {
+      if (nodeMatchesFilter(super.getChild(parent, i))) count++;
+    }
+    return count;
+  }
+
+  @Override
+  public Object getChild(Object parent, int index) {
+    if (filter.isEmpty()) return super.getChild(parent, index);
+    int count = 0;
+    final int total = super.getChildCount(parent);
+    for (int i = 0; i < total; i++) {
+      final var child = super.getChild(parent, i);
+      if (nodeMatchesFilter(child)) {
+        if (count == index) return child;
+        count++;
+      }
+    }
+    return null;
   }
 
   public void updateStructure() {
