@@ -30,6 +30,7 @@
     * Moving components preserves component state.
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.
+    * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.
     * No-op text edits no longer create undo actions.
   * Improved VHDL editing and simulation UI:
     * VHDL entity appearance is configured through entity properties.
