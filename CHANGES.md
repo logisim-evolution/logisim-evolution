@@ -27,6 +27,7 @@
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
   * Improved project editing stability:
+    * Layout zoom and scroll position are remembered separately for each circuit during a session.
     * Moving components preserves component state.
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.
