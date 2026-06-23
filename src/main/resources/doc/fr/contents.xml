@@ -85,7 +85,7 @@
 <!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->
 			<tocitem target="prefs_exp" text="L'onglet Expérimental"/>
 <!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
-			<tocitem target="prefs_fpga" text="FPGA Commander settings" />
+			<tocitem target="prefs_fpga" text="FPGA Commander" />
 			<tocitem target="prefs_cmdline" text="La ligne de commande"/>
 		</tocitem>
 		<tocitem target="opts" text="Options de projet">
