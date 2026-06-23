@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.menu.Menu;
@@ -24,6 +25,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -690,6 +692,18 @@ public class AppPreferences {
       BUS_COLOR.set(DEFAULT_BUS_COLOR);
       STROKE_COLOR.set(DEFAULT_STROKE_COLOR);
     }
+    Value.trueColor = new Color(TRUE_COLOR.get());
+    Value.falseColor = new Color(FALSE_COLOR.get());
+    Value.unknownColor = new Color(UNKNOWN_COLOR.get());
+    Value.errorColor = new Color(ERROR_COLOR.get());
+    Value.nilColor = new Color(NIL_COLOR.get());
+    Value.multiColor = new Color(BUS_COLOR.get());
+    Value.strokeColor = new Color(STROKE_COLOR.get());
+    Value.widthErrorColor = new Color(WIDTH_ERROR_COLOR.get());
+    Value.widthErrorCaptionColor = new Color(WIDTH_ERROR_CAPTION_COLOR.get());
+    Value.widthErrorHighlightColor = new Color(WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+    Value.widthErrorCaptionBgcolor = new Color(WIDTH_ERROR_BACKGROUND_COLOR.get());
+    Value.clockFrequencyColor = new Color(CLOCK_FREQUENCY_COLOR.get());
   }
 
   // restores default grid/component colors (theme-aware)
