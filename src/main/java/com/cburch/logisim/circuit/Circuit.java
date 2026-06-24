@@ -181,6 +181,23 @@ public class Circuit {
         showDialog);
   }
 
+  public static boolean isCorrectLabelForCurrentHdl(
+      String circuitName,
+      String name,
+      Set<Component> components,
+      AttributeSet me,
+      ComponentFactory myFactory,
+      Boolean showDialog) {
+    return isCorrectLabel(
+        circuitName,
+        name,
+        components,
+        me,
+        myFactory,
+        CircuitLabelValidator.labelIdentityForHdlType(AppPreferences.HdlType.get()),
+        showDialog);
+  }
+
   static boolean isCorrectLabel(
       String circuitName,
       String name,
