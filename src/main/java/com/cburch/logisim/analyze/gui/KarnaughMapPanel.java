@@ -893,6 +893,9 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     gfx.setStroke(new BasicStroke(2));
     gfx.drawLine(x - cellHeight, y - cellHeight, x, y);
     gfx.setStroke(oldstroke);
+    final var gridColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var hovBase = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var hoverFill = new Color(hovBase.getRed(), hovBase.getGreen(), hovBase.getBlue(), 40);
     final var outputColumn = table.getOutputIndex(output);
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < cols; j++) {
@@ -903,10 +906,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         if (entry.isError()) {
           gfx.setColor(Value.errorColor);
           gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
-          gfx.setColor(Color.BLACK);
         } else if (hover.x == j && hover.y == i) {
+          gfx.setColor(hoverFill);
           gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
         }
+        gfx.setColor(gridColor);
         gfx.setStroke(new BasicStroke(2));
         gfx.drawRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
         gfx.setStroke(oldstroke);

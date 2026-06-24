@@ -14,6 +14,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.prefs.AppPreferences;
+import java.awt.Color;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -361,7 +362,7 @@ public class ExpressionRenderData {
         curCol = col;
       } else {
         md = marks.get(0);
-        curCol = Color.GRAY;
+        curCol = new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get());
       }
       g.setColor(curCol);
       g.drawString(as.getIterator(), x, y + lineY[i] + fm.getAscent());
