@@ -15,6 +15,7 @@ import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 
 class TextFieldCaretTest {
@@ -73,6 +74,32 @@ class TextFieldCaretTest {
         keyPressed(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
 
     assertEquals("abcd", caret.getText());
+  }
+
+  @Test
+  void stopEditingNotifiesCaretListenersBeforeUpdatingTextField() {
+    final var field = new TextField(0, 0, TextField.H_LEFT, TextField.V_BASELINE);
+    field.setText("abc");
+    final var mirroredText = new AtomicReference<>(field.getText());
+    field.addTextFieldListener(e -> mirroredText.set(e.getText()));
+    final var caret = new TextFieldCaret(field, null, 3, false);
+    final var mirroredTextWhenCommitted = new AtomicReference<String>();
+
+    caret.addCaretListener(
+        new com.cburch.logisim.tools.CaretListener() {
+          @Override
+          public void editingCanceled(com.cburch.logisim.tools.CaretEvent e) {}
+
+          @Override
+          public void editingStopped(com.cburch.logisim.tools.CaretEvent e) {
+            mirroredTextWhenCommitted.set(mirroredText.get());
+          }
+        });
+
+    caret.keyTyped(keyTyped('d'));
+    caret.stopEditing();
+
+    assertEquals("abc", mirroredTextWhenCommitted.get());
   }
 
   private static TextFieldCaret caret(String text, int pos) {

@@ -440,7 +440,6 @@ class TextFieldCaret implements Caret, TextFieldListener {
   @Override
   public void stopEditing() {
     final var e = new CaretEvent(this, oldText, curText);
-    field.setText(curText);
     for (final var l : new ArrayList<>(listeners)) {
       l.editingStopped(e);
     }
