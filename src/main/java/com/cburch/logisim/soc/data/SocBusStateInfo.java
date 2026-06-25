@@ -23,6 +23,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.bus.SocBus;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
 import com.cburch.logisim.soc.gui.TraceWindowTableModel;
+import com.cburch.logisim.util.CircularArray;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -36,7 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -95,7 +95,7 @@ public class SocBusStateInfo extends JDialog
     }
 
     private static final int NR_OF_TRACES_TO_KEEP = 10000;
-    private final LinkedList<SocBusTransaction> trace;
+    private final CircularArray<SocBusTransaction> trace;
     private final Object traceLock = new Object();
     private long startTraceIndex;
     private final SocBusStateInfo parent;
@@ -103,7 +103,7 @@ public class SocBusStateInfo extends JDialog
     private final ArrayList<SocBusStateListener> listeners;
 
     public SocBusState(SocBusStateInfo parent, Instance instance) {
-      trace = new LinkedList<>();
+      trace = new CircularArray<>();
       startTraceIndex = 0;
       this.parent = parent;
       this.instance = instance;
@@ -150,12 +150,8 @@ public class SocBusStateInfo extends JDialog
         if (nrOfTraces > traceSize) nrOfTraces = traceSize;
         if (nrOfTraces > 0) {
           final var indexOfFirstTrace = traceSize - nrOfTraces;
-          long count = 0;
-          for (SocBusTransaction t : trace) {
-            if (count >= indexOfFirstTrace) {
-              neededTraces.add(t);
-            }
-            count++;
+          for (int i = indexOfFirstTrace; i < traceSize; i++) {
+            neededTraces.add(trace.get(i));
           }
         }
         theStartTraceIndex = startTraceIndex;
