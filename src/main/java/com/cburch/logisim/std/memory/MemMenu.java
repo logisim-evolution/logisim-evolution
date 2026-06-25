@@ -58,6 +58,9 @@ class MemMenu implements ActionListener, MenuExtender {
     if (attrs instanceof RomAttributes) {
       ((RomAttributes) attrs).setProject(proj);
     }
+    if (attrs instanceof EepromAttributes) {
+      ((EepromAttributes) attrs).setProject(proj);
+    }
 
     var enabled = circState != null;
     edit = createItem(enabled, S.get("ramEditMenuItem"));
