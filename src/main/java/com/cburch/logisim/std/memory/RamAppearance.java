@@ -232,7 +232,7 @@ public class RamAppearance {
     /* draw connections */
     drawConnections(inst, attrs, painter);
     /* draw the size */
-    final var type = inst.getFactory() instanceof Ram ? "RAM " : (inst.getFactory() instanceof Rom ? "ROM " : "EEPROM ");  // FIXME: hardcoded string
+    final var type = inst.getFactory() instanceof Eeprom ? "EEPROM " : (inst.getFactory() instanceof Ram ? "RAM " : "ROM ");  // FIXME: hardcoded string
     GraphicsUtil.drawCenteredText(g,
             type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
@@ -274,7 +274,7 @@ public class RamAppearance {
     /* draw connections */
     drawConnections(inst, attrs, painter);
     /* draw the size */
-    final var type = inst.getFactory() instanceof Ram ? "RAM " : (inst.getFactory() instanceof Rom ? "ROM " : "EEPROM ");  // FIXME: hardcoded string
+    final var type = inst.getFactory() instanceof Eeprom ? "EEPROM " : (inst.getFactory() instanceof Ram ? "RAM " : "ROM ");  // FIXME: hardcoded string
     GraphicsUtil.drawCenteredText(g,
             type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),

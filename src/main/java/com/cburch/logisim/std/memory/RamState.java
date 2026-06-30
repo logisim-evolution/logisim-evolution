@@ -17,17 +17,15 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.std.memory.Mem.MemListener;
 
-public class RamState extends MemState implements AttributeListener {
+public class RamState extends ClockedMemState implements AttributeListener {
 
   private Instance parent;
   private final MemListener listener;
-  private ClockState clockState;
 
   RamState(Instance parent, MemContents contents, MemListener listener) {
     super(contents);
     this.parent = parent;
     this.listener = listener;
-    this.clockState = new ClockState();
     if (parent != null) {
       parent.getAttributeSet().addAttributeListener(this);
     }
@@ -46,13 +44,8 @@ public class RamState extends MemState implements AttributeListener {
   public RamState clone() {
     RamState ret = (RamState) super.clone();
     ret.parent = null;
-    ret.clockState = this.clockState.clone();
     ret.getContents().addHexModelListener(listener);
     return ret;
-  }
-
-  public boolean setClock(Value newClock, Object trigger) {
-    return clockState.updateClock(newClock, trigger);
   }
 
   void setRam(Instance value) {

@@ -72,6 +72,8 @@ public class EepromAttributes extends RamAttributes {
   public boolean updateAttributes() {
     boolean changes = super.updateAttributes();
     if (changes) {
+      // ATTR_TYPE is not used
+      myAttributes.remove(RamAttributes.ATTR_TYPE);
       myAttributes.add(Eeprom.CONTENTS_ATTR);
     }
     return changes;
