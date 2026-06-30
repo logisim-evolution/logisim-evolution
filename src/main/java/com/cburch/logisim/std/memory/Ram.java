@@ -102,11 +102,11 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   protected Ram(
-    String name,
-    StringGetter desc,
-    int extraPorts,
-    HdlGeneratorFactory generator,
-    boolean needsLabel) {
+      String name,
+      StringGetter desc,
+      int extraPorts,
+      HdlGeneratorFactory generator,
+      boolean needsLabel) {
     super(name, desc, extraPorts, generator, needsLabel);
   }
 
