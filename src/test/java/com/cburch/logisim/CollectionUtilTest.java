@@ -39,7 +39,7 @@ public class CollectionUtilTest extends TestBase {
   @Test
   public void testIsNullOrEmptyPositive() {
     assertTrue(CollectionUtil.isNullOrEmpty(null));
-    assertTrue(CollectionUtil.isNullOrEmpty(new ArrayList()));
+    assertTrue(CollectionUtil.isNullOrEmpty(new ArrayList<>()));
   }
 
   /** Checks if isNullOrEmpty() correctly handles non-empty collections. */
