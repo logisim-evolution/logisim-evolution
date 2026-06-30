@@ -51,7 +51,7 @@ public class Eeprom extends Mem {
    */
   public static final String _ID = "EEPROM";
 
-  public static class Logger extends InstanceLogger {
+  public static class Logger extends Ram.Logger {
 
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -70,47 +70,13 @@ public class Eeprom extends Mem {
         return label;
       }
     }
-
-    @Override
-    public BitWidth getBitWidth(InstanceState state, Object option) {
-      return state.getAttributeValue(Mem.DATA_ATTR);
-    }
-
-    @Override
-    public Object[] getLogOptions(InstanceState state) {
-      var addrBits = state.getAttributeValue(ADDR_ATTR).getWidth();
-      if (addrBits >= logOptions.length) {
-        addrBits = logOptions.length - 1;
-      }
-      synchronized (logOptions) {
-        var ret = logOptions[addrBits];
-        if (ret == null) {
-          ret = new Object[1 << addrBits];
-          logOptions[addrBits] = ret;
-          for (var i = 0; i < ret.length; i++) {
-            ret[i] = i;
-          }
-        }
-        return ret;
-      }
-    }
-
-    @Override
-    public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Number addr) {
-        final var memState = (MemState) state.getData();
-        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr.longValue()));
-      } else {
-        return Value.NIL;
-      }
-    }
   }
 
   private static final Object[][] logOptions = new Object[9][];
 
-  static class ContentsAttribute extends Attribute<MemContents> {
+  static class ContentsAttribute extends Rom.ContentsAttribute {
     public ContentsAttribute() {
-      super("contents", S.getter("romContentsAttr"));
+      super();
     }
 
     @Override
@@ -123,48 +89,12 @@ public class Eeprom extends Mem {
       ret.mouseClicked(null);
       return ret;
     }
-
-    @Override
-    public MemContents parse(String value) {
-      final var lineBreak = value.indexOf('\n');
-      final var first = lineBreak < 0 ? value : value.substring(0, lineBreak);
-      final var rest = lineBreak < 0 ? "" : value.substring(lineBreak + 1);
-      final var toks = new StringTokenizer(first);
-      try {
-        final var header = toks.nextToken();
-        if (!header.equals("addr/data:")) return null;
-        final var addr = Integer.parseInt(toks.nextToken());
-        final var data = Integer.parseInt(toks.nextToken());
-        return HexFile.parseFromCircFile(rest, addr, data);
-      } catch (IOException | NoSuchElementException | NumberFormatException e) {
-        return null;
-      }
-    }
-
-    @Override
-    public String toDisplayString(MemContents value) {
-      return S.get("romContentsValue");
-    }
-
-    @Override
-    public String toStandardString(MemContents state) {
-      final var addr = state.getLogLength();
-      final var data = state.getWidth();
-      final var contents = HexFile.saveToString(state);
-      return "addr/data: " + addr + " " + data + "\n" + contents;
-    }
   }
 
   @SuppressWarnings("serial")
-  private static class ContentsCell extends JLabel implements BaseMouseListenerContract {
-    final Window source;
-    final MemContents contents;
-
+  private static class ContentsCell extends Rom.ContentsCell implements BaseMouseListenerContract {
     ContentsCell(Window source, MemContents contents) {
-      super(S.get("romContentsValue"));
-      this.source = source;
-      this.contents = contents;
-      addMouseListener(this);
+      super(source, contents);
     }
 
     @Override
@@ -221,7 +151,7 @@ public class Eeprom extends Mem {
   }
 
   @Override
-  HexFrame getHexFrame(Project proj, Instance instance, CircuitState state) {
+  public HexFrame getHexFrame(Project proj, Instance instance, CircuitState state) {
     return EepromAttributes.getHexFrame(getMemContents(instance), proj, instance);
   }
 
@@ -251,6 +181,7 @@ public class Eeprom extends Mem {
     }
     return ret;
   }
+
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {

@@ -46,7 +46,7 @@ public class Rom extends Mem {
    */
   public static final String _ID = "ROM";
 
-  static class ContentsAttribute extends Attribute<MemContents> {
+  public static class ContentsAttribute extends Attribute<MemContents> {
     public ContentsAttribute() {
       super("contents", S.getter("romContentsAttr"));
     }
@@ -94,7 +94,7 @@ public class Rom extends Mem {
   }
 
   @SuppressWarnings("serial")
-  private static class ContentsCell extends JLabel implements BaseMouseListenerContract {
+  public static class ContentsCell extends JLabel implements BaseMouseListenerContract {
     final Window source;
     final MemContents contents;
 

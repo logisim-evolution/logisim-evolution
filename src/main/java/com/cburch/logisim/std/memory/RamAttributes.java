@@ -50,24 +50,24 @@ public class RamAttributes extends AbstractAttributeSet {
           new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTE_ENABLES});
   static final Attribute<Boolean> CLEAR_PIN =
       Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
-  private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
+  protected final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
-  private BitWidth addrBits = BitWidth.create(8);
-  private BitWidth dataBits = BitWidth.create(8);
-  private String label = "";
-  private AttributeOption trigger = StdAttr.TRIG_RISING;
-  private AttributeOption busStyle = BUS_SEP;
-  private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisible = false;
-  private AttributeOption byteEnables = BUS_WITHOUT_BYTE_ENABLES;
-  private Boolean asynchronousRead = false;
-  private AttributeOption appearance = AppPreferences.getDefaultAppearance();
-  private AttributeOption readWriteBehavior = Mem.READAFTERWRITE;
-  private Boolean clearPin = false;
-  private AttributeOption lineSize = Mem.SINGLE;
-  private Boolean allowMisaligned = false;
-  private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
-  private AttributeOption ramType = VOLATILE;
+  protected BitWidth addrBits = BitWidth.create(8);
+  protected BitWidth dataBits = BitWidth.create(8);
+  protected String label = "";
+  protected AttributeOption trigger = StdAttr.TRIG_RISING;
+  protected AttributeOption busStyle = BUS_SEP;
+  protected Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
+  protected Boolean labelVisible = false;
+  protected AttributeOption byteEnables = BUS_WITHOUT_BYTE_ENABLES;
+  protected Boolean asynchronousRead = false;
+  protected AttributeOption appearance = AppPreferences.getDefaultAppearance();
+  protected AttributeOption readWriteBehavior = Mem.READAFTERWRITE;
+  protected Boolean clearPin = false;
+  protected AttributeOption lineSize = Mem.SINGLE;
+  protected Boolean allowMisaligned = false;
+  protected AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
+  protected AttributeOption ramType = VOLATILE;
 
   RamAttributes() {
     updateAttributes();

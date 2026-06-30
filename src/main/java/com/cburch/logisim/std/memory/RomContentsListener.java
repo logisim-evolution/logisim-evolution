@@ -24,18 +24,21 @@ class RomContentsListener implements HexModelListener {
     private final long[] oldValues;
     private final long[] newValues;
     private boolean completed = true;
+    private final String name;
 
     Change(
         RomContentsListener source,
         MemContents contents,
         long start,
         long[] oldValues,
-        long[] newValues) {
+        long[] newValues,
+        String name) {
       this.source = source;
       this.contents = contents;
       this.start = start;
       this.oldValues = oldValues;
       this.newValues = newValues;
+      this.name = name;
     }
 
     @Override
@@ -52,7 +55,7 @@ class RomContentsListener implements HexModelListener {
           System.arraycopy(oldValues, 0, nOld, (int) (start - nStart), oldValues.length);
           System.arraycopy(newValues, 0, nNew, (int) (start - nStart), newValues.length);
           System.arraycopy(o.newValues, 0, nNew, (int) (o.start - nStart), o.newValues.length);
-          return new Change(source, contents, nStart, nOld, nNew);
+          return new Change(source, contents, nStart, nOld, nNew, name);
         }
       }
       return super.append(other);
@@ -73,7 +76,7 @@ class RomContentsListener implements HexModelListener {
 
     @Override
     public String getName() {
-      return S.get("romChangeAction");
+      return name;
     }
 
     @Override
@@ -101,10 +104,12 @@ class RomContentsListener implements HexModelListener {
   }
 
   final Project proj;
+  final String actionName;
   boolean enabled = true;
 
-  RomContentsListener(Project proj) {
+  RomContentsListener(Project proj, String actionName) {
     this.proj = proj;
+    this.actionName = actionName;
   }
 
   @Override
@@ -115,7 +120,7 @@ class RomContentsListener implements HexModelListener {
       for (var i = 0; i < newValues.length; i++) {
         newValues[i] = source.get(start + i);
       }
-      proj.doAction(new Change(this, (MemContents) source, start, oldValues, newValues));
+      proj.doAction(new Change(this, (MemContents) source, start, oldValues, newValues, actionName));
     }
   }
 
