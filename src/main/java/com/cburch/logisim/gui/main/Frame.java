@@ -634,6 +634,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
   }
 
+  public void computeEditMenuEnabled() {
+    menuListener.computeEditEnabled();
+    menubar.refreshEditUndoRedoItems();
+  }
+
   public void setEditorView(String view) {
     final var curView = mainPanel.getView();
     if (hdlEditor.getHdlModel() == null && curView.equals(view)) return;
