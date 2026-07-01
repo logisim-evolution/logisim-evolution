@@ -25,6 +25,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.proj.Action;
+import com.cburch.logisim.proj.JoinedAction;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Cursor;
@@ -93,6 +94,10 @@ public class TextTool extends Tool {
           final var xn = new CircuitMutation(caretCircuit);
           xn.add(caretComponent);
           a = xn.toAction(S.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
+          final var editable = (TextEditable) caretComponent.getFeature(TextEditable.class);
+          final var editAction =
+              editable == null ? null : editable.getCommitAction(caretCircuit, e.getOldText(), val);
+          if (editAction != null) a = new JoinedAction(a, editAction);
         } else {
           // don't add the blank text field
           a = null;

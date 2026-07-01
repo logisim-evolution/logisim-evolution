@@ -17,6 +17,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
@@ -43,6 +44,7 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
@@ -122,6 +124,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // for the Layout view
   private final LayoutToolbarModel layoutToolbarModel;
   private final Canvas layoutCanvas;
+  private final CanvasPane layoutCanvasPane;
+  private final CircuitViewMemory layoutViewMemory = new CircuitViewMemory();
   private final VhdlSimulatorConsole vhdlSimulatorConsole;
   private final HdlContentView hdlEditor;
   private final ZoomModel layoutZoomModel;
@@ -147,14 +151,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, project);
     layoutCanvas = new Canvas(project);
-    final var canvasPane = new CanvasPane(layoutCanvas);
+    layoutCanvasPane = new CanvasPane(layoutCanvas);
 
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
             buildZoomSteps(),
-            canvasPane);
+            layoutCanvasPane);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
@@ -185,9 +189,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     // set up the central area
     mainPanelSuper = new JPanel(new BorderLayout());
-    canvasPane.setZoomModel(layoutZoomModel);
+    layoutCanvasPane.setZoomModel(layoutZoomModel);
     mainPanel = new CardPanel();
-    mainPanel.addView(EDIT_LAYOUT, canvasPane);
+    mainPanel.addView(EDIT_LAYOUT, layoutCanvasPane);
     mainPanel.setView(EDIT_LAYOUT);
     mainPanelSuper.add(mainPanel, BorderLayout.CENTER);
 
@@ -676,6 +680,21 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return layoutZoomModel;
   }
 
+  private void rememberLayoutView(Object active) {
+    if (active instanceof CircuitState state) {
+      layoutViewMemory.remember(
+          state.getCircuit(), layoutZoomModel, layoutCanvasPane.getViewport().getViewPosition());
+    }
+  }
+
+  private void restoreLayoutView(Circuit circuit) {
+    layoutCanvas.computeSize(true);
+    layoutViewMemory.restore(
+        circuit,
+        layoutZoomModel,
+        position -> layoutCanvasPane.getViewport().setViewPosition(position));
+  }
+
   @Override
   public void localeChanged() {
     buildTitleString();
@@ -874,6 +893,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
         buildTitleString();
         enableSave();
+      } else if (e.getAction() == LibraryEvent.REMOVE_TOOL
+          && e.getData() instanceof AddTool tool
+          && tool.getFactory() instanceof SubcircuitFactory subcircuitFactory) {
+        layoutViewMemory.forget(subcircuitFactory.getSubcircuit());
       }
     }
 
@@ -893,8 +916,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           }
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
-        if (event.getData() instanceof Circuit) {
+        rememberLayoutView(event.getOldData());
+        if (event.getData() instanceof Circuit circuit) {
           setEditorView(EDIT_LAYOUT);
+          restoreLayoutView(circuit);
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }

@@ -21,7 +21,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.54.0"
   java
   application
-  id("com.gradleup.shadow") version "9.4.2"
+  id("com.gradleup.shadow") version "9.4.3"
   id("org.sonarqube") version "7.3.1.8318"
 }
 
@@ -52,8 +52,8 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:6.1.0"))
-  testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
+  testImplementation(platform("org.junit:junit-bom:6.1.1"))
+  testImplementation("org.junit.jupiter:junit-jupiter:6.1.1")
   testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

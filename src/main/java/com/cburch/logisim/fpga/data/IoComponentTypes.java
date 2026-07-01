@@ -240,7 +240,7 @@ public enum IoComponentTypes {
             var pinIndex = 0;
             pinIndex = switch (mapRotation) {
               case ROTATION_CCW_90 -> (int) ((height - heightIndex - 1) / part);
-              case ROTATION_CW_90 -> (int) (height / part);
+              case ROTATION_CW_90 -> (int) (heightIndex / part);
               case ROTATION_180 -> (int) ((width - widthIndex - 1) / part);
               default -> (int) (widthIndex / part);
             };

@@ -283,7 +283,6 @@ public class ValueTable extends JPanel {
 
     // Called when a button in the button column is clicked (deprecated, use handleButtonClick(int, int) instead)
     @Deprecated
-    @SuppressWarnings("unused")
     default void handleButtonClick(int row) {
       // Default: do nothing (deprecated method, use handleButtonClick(int, int) instead)
     }

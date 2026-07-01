@@ -28,6 +28,7 @@ import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CanvasPaneContents;
 import com.cburch.logisim.gui.generic.GridPainter;
 import com.cburch.logisim.proj.Project;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -57,6 +58,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   private int panStartScrollX;
   private int panStartScrollY;
   private boolean middleButtonPanning;
+  private Cursor cursorBeforeMiddleButtonPanning;
 
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
@@ -96,10 +98,16 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
             : circState.getCircuit().getAppearance().getAbsoluteBounds();
     final var width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
     final var height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
+    final var viewportSize = canvasPane == null ? null : canvasPane.getViewportSize();
+    final var paddedWidth =
+        viewportSize == null ? width : bounds.getX() + bounds.getWidth() + viewportSize.width;
+    final var paddedHeight =
+        viewportSize == null ? height : bounds.getY() + bounds.getHeight() + viewportSize.height;
     Dimension dim =
         (canvasPane == null)
             ? new Dimension(width, height)
-            : canvasPane.supportPreferredSize(width, height);
+            : canvasPane.supportPreferredSize(
+                Math.max(width, paddedWidth), Math.max(height, paddedHeight));
     if (!immediate) {
       final var old = oldPreferredSize;
       if (old != null
@@ -283,12 +291,18 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
         panStartScreenY = e.getYOnScreen();
         panStartScrollX = canvasPane.getHorizontalScrollBar().getValue();
         panStartScrollY = canvasPane.getVerticalScrollBar().getValue();
+        cursorBeforeMiddleButtonPanning = getCursor();
+        setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
       }
       e.consume();
       return true;
     }
     if (e.getButton() == MouseEvent.BUTTON2 && e.getID() == MouseEvent.MOUSE_RELEASED) {
       middleButtonPanning = false;
+      if (cursorBeforeMiddleButtonPanning != null) {
+        setCursor(cursorBeforeMiddleButtonPanning);
+        cursorBeforeMiddleButtonPanning = null;
+      }
       e.consume();
       return true;
     }
@@ -296,7 +310,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   private boolean handleMiddleButtonPanMotion(MouseEvent e) {
-    if (!middleButtonPanning || (e.getModifiersEx() & MouseEvent.BUTTON2_DOWN_MASK) == 0) {
+    if (!middleButtonPanning) {
       return false;
     }
     canvasPane

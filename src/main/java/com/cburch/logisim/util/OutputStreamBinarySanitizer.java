@@ -28,7 +28,6 @@ public class OutputStreamBinarySanitizer extends OutputStream {
     out.flush();
   }
 
-  @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
   @Override
   public void write(int c) throws IOException {
     if ((0x20 <= c && c <= 0x7E) || c == '\t' || c == '\n' || c == '\r') out.write((char) c);

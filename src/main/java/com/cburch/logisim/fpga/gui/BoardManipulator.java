@@ -471,29 +471,25 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   @Override
   public void valueChanged(ListSelectionEvent event) {
     if (event.getSource().equals(unmappedList)) {
+      ioComps.removeSelectable(scale);
       if (unmappedList.getSelectedIndex() >= 0) {
         mappedList.clearSelection();
         if (unmapButton != null) unmapButton.setEnabled(false);
         ioComps.setSelectable(unmappedList.getSelectedValue(), scale);
-      } else ioComps.removeSelectable(scale);
+      }
     } else if (event.getSource().equals(mappedList)) {
+      ioComps.removeSelectable(scale);
       if (mappedList.getSelectedIndex() >= 0) {
         unmappedList.clearSelection();
         if (unmapButton != null) unmapButton.setEnabled(true);
         ioComps.setSelectable(mappedList.getSelectedValue(), scale);
-      } else ioComps.removeSelectable(scale);
+      }
       if (mappedList.getModel().getSize() > 0) {
         if (unmapAllButton != null) unmapAllButton.setEnabled(true);
       } else {
         if (unmapAllButton != null) unmapAllButton.setEnabled(false);
       }
     }
-  }
-
-  @Override
-  public void windowDeactivated(WindowEvent event) {
-    ioComps.removeSelectable(scale);
-    if (unmapButton != null) unmapButton.setEnabled(false);
   }
 
   @Override
