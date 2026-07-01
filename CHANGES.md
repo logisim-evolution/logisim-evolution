@@ -37,6 +37,7 @@
     * VHDL entity appearance is configured through entity properties.
     * VHDL code view no longer paints a circuit canvas without a circuit.
     * VHDL simulator log split pane remains recoverable after being maximized.
+    * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
     * TTY table output includes bit widths in headers.
@@ -136,7 +137,8 @@
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
   * Added partial support for VHDL time units
-  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties"
+    section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

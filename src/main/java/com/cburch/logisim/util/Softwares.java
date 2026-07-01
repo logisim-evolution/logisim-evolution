@@ -19,8 +19,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -240,15 +241,24 @@ public final class Softwares {
   }
 
   static void copyQuestaValidationConfig(File tmpDir) throws IOException {
+    copyQuestaModelsimConfig(tmpDir.toPath().resolve(MODELSIM_INI));
+  }
+
+  public static void copyQuestaModelsimConfig(Path configPath) throws IOException {
     final var configResource =
         Softwares.class.getResourceAsStream(VhdlSimConstants.SIM_RESOURCES_PATH + MODELSIM_INI);
     if (configResource == null) throw new IOException("Cannot find " + MODELSIM_INI);
 
     try (configResource) {
-      Files.copy(
-          configResource,
-          tmpDir.toPath().resolve(MODELSIM_INI),
-          StandardCopyOption.REPLACE_EXISTING);
+      final var config = new String(configResource.readAllBytes(), StandardCharsets.UTF_8);
+      Files.writeString(
+          configPath,
+          applyVhdlStandard(config, AppPreferences.VHDL_STANDARD.get()),
+          StandardCharsets.UTF_8);
     }
+  }
+
+  static String applyVhdlStandard(String config, String standard) {
+    return config.replaceFirst("(?m)^VHDL93\\s*=\\s*\\S+", "VHDL93 = " + standard);
   }
 }
