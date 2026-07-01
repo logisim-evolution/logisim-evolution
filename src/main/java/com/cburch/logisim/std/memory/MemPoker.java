@@ -113,6 +113,12 @@ public class MemPoker extends InstancePoker {
           ((RomAttributes) attrs).setProject(proj);
         }
       }
+      if (attrs instanceof EepromAttributes) {
+        final var proj = state.getProject();
+        if (proj != null) {
+          ((EepromAttributes) attrs).setProject(proj);
+        }
+      }
     }
 
     @Override

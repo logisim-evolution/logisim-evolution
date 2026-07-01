@@ -21,6 +21,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -29,6 +30,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.StringGetter;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -98,6 +100,15 @@ public class Ram extends Mem {
 
   private static final Object[][] logOptions = new Object[9][];
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
+
+  protected Ram(
+      String name,
+      StringGetter desc,
+      int extraPorts,
+      HdlGeneratorFactory generator,
+      boolean needsLabel) {
+    super(name, desc, extraPorts, generator, needsLabel);
+  }
 
   public Ram() {
     super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
@@ -226,7 +237,7 @@ public class Ram extends Mem {
   @Override
   public void propagate(InstanceState state) {
     final var attrs = state.getAttributeSet();
-    final var myState = (RamState) getState(state);
+    final var myState = (ClockedMemState) getState(state);
 
     // first we check the clear pin
     if (attrs.getValue(RamAttributes.CLEAR_PIN)) {
@@ -265,7 +276,7 @@ public class Ram extends Mem {
 
   private void propagateLineEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     final var attrs = state.getAttributeSet();
-    final var myState = (RamState) getState(state);
+    final var myState = (ClockedMemState) getState(state);
     final var separate = isSeparate(attrs);
 
     final var dataLines = Math.max(1, RamAppearance.getNrLEPorts(attrs));
@@ -307,7 +318,7 @@ public class Ram extends Mem {
 
   private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     final var attrs = state.getAttributeSet();
-    final var myState = (RamState) getState(state);
+    final var myState = (ClockedMemState) getState(state);
     final var separate = isSeparate(attrs);
     long oldMemValue = myState.getContents().get(myState.getCurrent());
     long newMemValue = oldMemValue;

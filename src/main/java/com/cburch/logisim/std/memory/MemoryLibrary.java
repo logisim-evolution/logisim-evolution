@@ -40,6 +40,7 @@ public class MemoryLibrary extends Library {
       new FactoryDescription(Random.class, S.getter("randomComponent"), "random.gif"),
       new FactoryDescription(Ram.class, S.getter("ramComponent"), "ram.gif"),
       new FactoryDescription(Rom.class, S.getter("romComponent"), "rom.gif"),
+      new FactoryDescription(Eeprom.class, S.getter("eepromComponent"), "rom.gif"),
       new FactoryDescription(DualRam.class, S.getter("dualRamComponent"), "D-ram.gif"),
   };
 

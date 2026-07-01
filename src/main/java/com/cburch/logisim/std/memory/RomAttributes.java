@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -48,7 +50,7 @@ class RomAttributes extends AbstractAttributeSet {
     if (proj == null || listenerRegistry.containsKey(value)) {
       return;
     }
-    final var l = new RomContentsListener(proj);
+    final var l = new RomContentsListener(proj, S.get("romChangeAction"));
     value.addHexModelListener(l);
     listenerRegistry.put(value, l);
   }
