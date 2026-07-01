@@ -25,6 +25,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
@@ -96,12 +97,12 @@ public class ProjectCircuitActions {
       /* Checking for valid names */
       if (name.isEmpty()) {
         error = S.get("circuitNameMissingError");
-      } else if (CorrectLabel.isKeyword(name, false)) {
+      } else if (CorrectLabel.isKeyword(name, AppPreferences.HdlType.get(), false)) {
         error = "\"" + name + "\": " + S.get("circuitNameKeyword");
       } else if (nameIsInUse(proj, name)) {
         error = "\"" + name + "\": " + S.get("circuitNameExists");
       } else {
-        String nameMessage = SyntaxChecker.getErrorMessage(name);
+        String nameMessage = SyntaxChecker.getErrorMessage(name, AppPreferences.HdlType.get());
         if (nameMessage != null) {
           error = "\"" + name + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
         }
@@ -125,7 +126,7 @@ public class ProjectCircuitActions {
       if (nameIsInLibraries(mylib, name)) return true;
     }
     for (AddTool mytool : proj.getLogisimFile().getTools()) {
-      if (name.equalsIgnoreCase(mytool.getName())) return true;
+      if (SyntaxChecker.namesEqualForCurrentHdl(name, mytool.getName())) return true;
     }
     return false;
   }
@@ -135,7 +136,7 @@ public class ProjectCircuitActions {
       if (nameIsInLibraries(myLib, name)) return true;
     }
     for (final var myTool : lib.getTools()) {
-      if (name.equalsIgnoreCase(myTool.getName())) return true;
+      if (SyntaxChecker.namesEqualForCurrentHdl(name, myTool.getName())) return true;
     }
     return false;
   }
