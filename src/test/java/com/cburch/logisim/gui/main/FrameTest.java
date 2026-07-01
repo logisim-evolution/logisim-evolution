@@ -19,6 +19,13 @@ class FrameTest {
   private static final double FRACTION_DELTA = 1.0e-4;
 
   @Test
+  void unfinishedFrameDoesNotReportExplorerVisibleDuringMenuConstruction() throws Exception {
+    final var frame = (Frame) allocateWithoutConstructor(Frame.class);
+
+    assertFalse(frame.isExplorerVisible());
+  }
+
+  @Test
   void restoresDefaultWhenVhdlConsoleSplitWouldCollapseEditor() {
     assertEquals(0.75, Frame.sanitizeVhdlConsoleSplitFraction(null), FRACTION_DELTA);
     assertEquals(0.75, Frame.sanitizeVhdlConsoleSplitFraction(Double.NaN), FRACTION_DELTA);
@@ -99,5 +106,13 @@ class FrameTest {
     assertFalse(Frame.isUsableExplorerSplitFraction(0.99));
     assertFalse(Frame.isUsableExplorerSplitFraction(1.0));
     assertFalse(Frame.isUsableExplorerSplitFraction(Double.POSITIVE_INFINITY));
+  }
+
+  private static Object allocateWithoutConstructor(Class<?> type) throws Exception {
+    final var unsafeClass = Class.forName("sun.misc.Unsafe");
+    final var unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+    unsafeField.setAccessible(true);
+    final var unsafe = unsafeField.get(null);
+    return unsafeClass.getMethod("allocateInstance", Class.class).invoke(unsafe, type);
   }
 }

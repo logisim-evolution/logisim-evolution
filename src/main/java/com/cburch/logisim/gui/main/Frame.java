@@ -811,7 +811,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public boolean isExplorerVisible() {
-    return mainRegion.getFraction() > 0.0;
+    return mainRegion != null && mainRegion.getFraction() > 0.0;
   }
 
   public void setExplorerVisible(boolean visible) {
