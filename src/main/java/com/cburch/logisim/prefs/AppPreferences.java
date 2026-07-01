@@ -841,6 +841,15 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> QUESTA_VALIDATION =
       create(new PrefMonitorBoolean("questaValidation", false));
+  public static final String VHDL_STANDARD_1993 = "1993";
+  public static final String VHDL_STANDARD_2002 = "2002";
+  public static final String VHDL_STANDARD_2008 = "2008";
+  public static final PrefMonitor<String> VHDL_STANDARD =
+      create(
+          new PrefMonitorStringOpts(
+              "vhdlStandard",
+              new String[] {VHDL_STANDARD_1993, VHDL_STANDARD_2002, VHDL_STANDARD_2008},
+              VHDL_STANDARD_2002));
   public static final PrefMonitor<String> QuartusToolPath =
       create(new PrefMonitorString("QuartusToolPath", ""));
   public static final PrefMonitor<String> ISEToolPath =
