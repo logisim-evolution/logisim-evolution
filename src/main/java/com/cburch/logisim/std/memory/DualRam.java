@@ -308,8 +308,10 @@ public class DualRam extends Mem {
     }
 
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate
-        || !state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE);
+    final var outputDisabled =
+        state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE)
+            && (!separate || DualRamAttributes.hasControlledOutput(attrs));
+    final var outputEnabled = !outputDisabled;
 
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
@@ -334,7 +336,6 @@ public class DualRam extends Mem {
       boolean errorValue) {
     final var attrs = state.getAttributeSet();
     final var myState = (DualRamState) getState(state);
-    final var separate = isSeparate(attrs);
     long oldMemValue = myState.getContents().get(myState.getCurrent(portIndex));
     long newMemValue = oldMemValue;
     // perform writes
@@ -384,14 +385,13 @@ public class DualRam extends Mem {
     Consumer<Value> setValue = (Value value) -> state.setPort(DualRamAppearance.getDataOutIndex(portIndex, attrs),
         value, DELAY);
 
-    if (!separate && outputNotEnabled) {
-      /* put the bus in tri-state in case of a combined bus and no output enable */
-      setValue.accept(Value.createUnknown(dataBits));
+    if (outputNotEnabled) {
+      if (!isSeparate(attrs) || DualRamAttributes.hasControlledOutput(attrs)) {
+        setValue.accept(Value.createUnknown(dataBits));
+      }
       return;
     }
-    /* if the OE is not activated return */
-    if (outputNotEnabled)
-      return;
+
     /* if the address is bogus set error value accordingly */
     if (errorValue) {
       setValue.accept(Value.createError(dataBits));
@@ -426,7 +426,7 @@ public class DualRam extends Mem {
 
   public static boolean isSeparate(AttributeSet attrs) {
     Object bus = attrs.getValue(DualRamAttributes.ATTR_DBUS);
-    return bus == null || bus.equals(DualRamAttributes.BUS_SEP);
+    return DualRamAttributes.isSeparateDataBus(bus);
   }
 
   @Override

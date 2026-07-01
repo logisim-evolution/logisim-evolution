@@ -5,6 +5,7 @@
 * @dev (????-??-??)
   * Added support for opening project files by dragging them into the application window.
   * Added ability to load multiple RAM or ROM memories from the command line
+  * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.

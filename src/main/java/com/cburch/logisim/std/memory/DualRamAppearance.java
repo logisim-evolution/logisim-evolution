@@ -719,7 +719,7 @@ public class DualRamAppearance {
 
   private static boolean seperatedBus(AttributeSet attrs) {
     Object bus = attrs.getValue(DualRamAttributes.ATTR_DBUS);
-    return (bus == null || bus.equals(DualRamAttributes.BUS_SEP));
+    return DualRamAttributes.isSeparateDataBus(bus);
   }
 
   private static boolean synchronous(AttributeSet attrs) {
