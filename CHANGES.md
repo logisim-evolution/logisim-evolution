@@ -6,6 +6,7 @@
   * Added support for opening project files by dragging them into the application window.
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added Real-Time Clock component.
+  * Added TTL 7476: dual J-K Flip-flop with preset and clear.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.
     * Corrected disjoint corners on Square Root arithmetic components.
