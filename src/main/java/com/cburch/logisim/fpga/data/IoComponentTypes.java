@@ -71,6 +71,7 @@ public enum IoComponentTypes {
   public static final int ROTATION_ZERO = 0;
   public static final int ROTATION_CW_90 = -90;
   public static final int ROTATION_CCW_90 = 90;
+  public static final int ROTATION_180 = 180;
 
   public static IoComponentTypes getEnumFromString(String str) {
     for (var elem : KNOWN_COMPONENT_SET) {
@@ -134,7 +135,7 @@ public enum IoComponentTypes {
 
   public static Boolean hasRotationAttribute(IoComponentTypes comp) {
     return switch (comp) {
-      case DIPSwitch, SevenSegment, LedArray, SevenSegmentScanning -> true;
+      case DIPSwitch, SevenSegment, SevenSegmentNoDp, SevenSegmentScanning, LedArray -> true;
       default -> false;
     };
   }
@@ -144,16 +145,19 @@ public enum IoComponentTypes {
       case DIPSwitch -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("DipSwitchCW90");
         case ROTATION_CCW_90 -> S.get("DipSwitchCCW90");
+        case ROTATION_180 -> S.get("DipSwitch180");
         default -> S.get("DipSwitchZero");
       };
-      case SevenSegment, SevenSegmentScanning -> switch (rotation) {
+      case SevenSegment, SevenSegmentNoDp, SevenSegmentScanning -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
+        case ROTATION_180 -> S.get("SevenSegment180");
         default -> S.get("SevenSegmentZero");
       };
       case LedArray -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("LEDArrayCW90");
         case ROTATION_CCW_90 -> S.get("LEDArrayCCW90");
+        case ROTATION_180 -> S.get("LEDArray180");
         default -> S.get("LEDArrayZero");
       };
       default -> Integer.toString(rotation);
@@ -237,6 +241,7 @@ public enum IoComponentTypes {
             pinIndex = switch (mapRotation) {
               case ROTATION_CCW_90 -> (int) ((height - heightIndex - 1) / part);
               case ROTATION_CW_90 -> (int) (heightIndex / part);
+              case ROTATION_180 -> (int) ((width - widthIndex - 1) / part);
               default -> (int) (widthIndex / part);
             };
             partialMap[widthIndex][heightIndex] = pinIndex;
@@ -273,6 +278,10 @@ public enum IoComponentTypes {
               case ROTATION_CW_90 -> {
                 xIndex = (int) ((float) h / partY);
                 yIndex = (int) ((float) (width - w - 1) / partX);
+              }
+              case ROTATION_180 -> {
+                xIndex = (int) ((float) (width - w - 1) / partX);
+                yIndex = (int) ((float) (height - h - 1) / partY);
               }
               default -> {
                 xIndex = (int) ((float) w / partX);
@@ -315,7 +324,13 @@ public enum IoComponentTypes {
                 selectedSegment = (int) ((float) h / segmentWidth);
                 selectedSegmentIndex = (float) h % segmentWidth;
                 xIndex = (int) (selectedSegmentIndex / partY);
-                yIndex = (int) ((float) w / partX);
+                yIndex = (int) ((float) (width - w - 1) / partX);
+              }
+              case ROTATION_180 -> {
+                selectedSegment = nrOfRows - 1 - (int) ((float) w / segmentWidth);
+                selectedSegmentIndex = (float) w % segmentWidth;
+                xIndex = (int) ((segmentWidth - selectedSegmentIndex - 1) / partX);
+                yIndex = (int) ((float) (height - h - 1) / partY);
               }
               default -> {
                 selectedSegment = (int) ((float) w / segmentWidth);
@@ -353,6 +368,10 @@ public enum IoComponentTypes {
               case ROTATION_CW_90 -> {
                 realRow = (int) ((float) (width - w - 1) / partX);
                 realColumn = (int) ((float) h / partY);
+              }
+              case ROTATION_180 -> {
+                realRow = (int) ((float) h / partY);
+                realColumn = (int) ((float) (width - w - 1) / partX);
               }
               default -> {
                 realRow = (int) ((float) h / partY);
@@ -394,22 +413,24 @@ public enum IoComponentTypes {
     var partY = 0f;
     switch (type) {
       case DIPSwitch:
+        var xPinNr = pinNr;
         var yPinNr = pinNr;
         switch (mapRotation) {
           case ROTATION_CCW_90: yPinNr = nrOfPins - pinNr - 1;
           case ROTATION_CW_90: {
             part = (float) height / (float) nrOfPins;
             boxXpos = x;
-            boxWidth = width;
             boxYpos = y + (int) ((float) yPinNr * part);
+            boxWidth = width;
             boxHeight = (int) ((float) (yPinNr + 1) * part) - (int) ((float) yPinNr * part);
             break;
           }
+          case ROTATION_180: xPinNr = nrOfPins - pinNr - 1;
           default: {
             part = (float) width / (float) nrOfPins;
-            boxXpos = x + (int) ((float) pinNr * part);
+            boxXpos = x + (int) ((float) xPinNr * part);
             boxYpos = y;
-            boxWidth = (int) ((float) (pinNr + 1) * part) - (int) (pinNr * part);
+            boxWidth = (int) ((float) (xPinNr + 1) * part) - (int) (xPinNr * part);
             boxHeight = height;
             break;
           }
@@ -457,6 +478,12 @@ public enum IoComponentTypes {
                   realYIndex = xIndex;
                   realYIndexPlusOne = xIndex + 1;
                 }
+                case ROTATION_180 -> {
+                  realXIndex = 4 - xIndex;
+                  realXIndexPlusOne = 5 - xIndex;
+                  realYIndex = 6 - yIndex;
+                  realYIndexPlusOne = 7 - yIndex;
+                }
                 default -> {
                   realXIndex = xIndex;
                   realXIndexPlusOne = xIndex + 1;
@@ -503,6 +530,12 @@ public enum IoComponentTypes {
                   realXIndexPlusOne = 7 - yIndex;
                   realYIndex = xIndex + segment * 5;
                   realYIndexPlusOne = xIndex + 1 + segment * 5;
+                }
+                case ROTATION_180 -> {
+                  realXIndex = 4 - xIndex + (nrOfRows - 1 - segment) * 5;
+                  realXIndexPlusOne = 5 - xIndex + (nrOfRows - 1 - segment) * 5;
+                  realYIndex = 6 - yIndex;
+                  realYIndexPlusOne = 7 - yIndex;
                 }
                 default -> {
                   realXIndex = xIndex + segment * 5;
@@ -553,6 +586,13 @@ public enum IoComponentTypes {
             nextXPosition = (int) ((float) (nrOfRows - selectedRow) * partX);
             yPosition = (int) ((float) selectedColumn * partY);
             nextYPosition = (int) ((float) (selectedColumn + 1) * partY);
+            break;
+          }
+          case ROTATION_180 -> {
+            xPosition = (int) ((float) (nrOfColumns - selectedColumn - 1) * partX);
+            nextXPosition = (int) ((float) (nrOfColumns - selectedColumn) * partX);
+            yPosition = (int) ((float) selectedRow * partY);
+            nextYPosition = (int) ((float) (selectedRow + 1) * partY);
             break;
           }
           default -> {
