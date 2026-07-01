@@ -31,6 +31,7 @@ repositories {
 
 application {
   mainClass.set("com.cburch.logisim.Main")
+  applicationDefaultJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
 }
 
 dependencies {
@@ -171,6 +172,7 @@ extra.apply {
       "--input", packageInputDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
+      "--java-options", "--enable-native-access=ALL-UNNAMED",
       "--copyright", copyrights,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
@@ -861,6 +863,7 @@ tasks {
 
   test {
     useJUnitPlatform()
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
 //    testLogging {
 //      events("passed", "skipped", "failed")
 //    }
