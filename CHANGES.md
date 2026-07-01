@@ -22,6 +22,7 @@
     * Added a go-to-address control to the hex editor.
     * Limited generated save previews for large memories.
     * Corrected memory display layout in exported graphics.
+    * Wide Counter components use compact grouped state rows in evolution appearance.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
