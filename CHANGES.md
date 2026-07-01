@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Added support for opening project files by dragging them into the application window.
+  * Added a Window menu option to hide or show the navigation pane.
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added Real-Time Clock component.
   * Improved drawing appearance:
@@ -136,7 +137,8 @@
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
   * Added partial support for VHDL time units
-  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in
+    "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

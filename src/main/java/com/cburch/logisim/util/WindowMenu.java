@@ -42,6 +42,8 @@ public class WindowMenu extends Menu {
         doClose();
       } else if (src == toolbar) {
         doToolbar();
+      } else if (src == explorer) {
+        doExplorer();
       } else if (src instanceof WindowMenuItem choice) {
         if (choice.isSelected()) {
           final var item = findOwnerItem();
@@ -77,12 +79,15 @@ public class WindowMenu extends Menu {
               ? S.get("windowZoomItemMac")
               : S.get("windowZoomItem"));
       toolbar.setText(S.get("windowShowToolbarItem"));
+      explorer.setText(S.get("windowShowNavigationPaneItem"));
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
         toolbar.setState(isToolbarVisible());
+      } else if (AppPreferences.WINDOW_EXPLORER_VISIBLE.isSource(event)) {
+        explorer.setState(isExplorerVisible());
       }
     }
   }
@@ -95,6 +100,7 @@ public class WindowMenu extends Menu {
   private final JMenuItem zoom = new JMenuItem();
   private final JCheckBoxMenuItem toolbar = new JCheckBoxMenuItem();
   private final JMenuItem close = new JMenuItem();
+  private final JCheckBoxMenuItem explorer = new JCheckBoxMenuItem();
   private final JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
   private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
   private final ArrayList<WindowMenuItem> transientItems = new ArrayList<>();
@@ -132,6 +138,13 @@ public class WindowMenu extends Menu {
     toolbar.addActionListener(myListener);
     AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myListener);
 
+    if (hasExplorerToggle()) {
+      explorer.setEnabled(true);
+      explorer.setState(isExplorerVisible());
+      explorer.addActionListener(myListener);
+      AppPreferences.WINDOW_EXPLORER_VISIBLE.addPropertyChangeListener(myListener);
+    }
+
     computeEnabled();
     computeContents();
 
@@ -167,6 +180,9 @@ public class WindowMenu extends Menu {
     add(close);
     addSeparator();
     add(toolbar);
+    if (hasExplorerToggle()) {
+      add(explorer);
+    }
 
     if (!persistentItems.isEmpty()) {
       addSeparator();
@@ -199,6 +215,10 @@ public class WindowMenu extends Menu {
     minimize.setEnabled(currentManager != null);
     zoom.setEnabled(currentManager != null);
     close.setEnabled(currentManager != null);
+    if (hasExplorerToggle()) {
+      explorer.setEnabled(true);
+      explorer.setState(isExplorerVisible());
+    }
   }
 
   void doClose() {
@@ -284,5 +304,20 @@ public class WindowMenu extends Menu {
 
   void doToolbar() {
     setToolbarVisibility(toolbar.getState());
+  }
+
+  private boolean hasExplorerToggle() {
+    return owner instanceof com.cburch.logisim.gui.main.Frame;
+  }
+
+  private boolean isExplorerVisible() {
+    return owner instanceof com.cburch.logisim.gui.main.Frame frame && frame.isExplorerVisible();
+  }
+
+  void doExplorer() {
+    if (owner instanceof com.cburch.logisim.gui.main.Frame frame) {
+      frame.setExplorerVisible(explorer.getState());
+      explorer.setState(frame.isExplorerVisible());
+    }
   }
 }
