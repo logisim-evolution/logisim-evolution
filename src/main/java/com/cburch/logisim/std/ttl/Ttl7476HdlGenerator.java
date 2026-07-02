@@ -22,8 +22,8 @@ public class Ttl7476HdlGenerator extends AbstractHdlGeneratorFactory {
   public Ttl7476HdlGenerator() {
     super();
     myWires
-        .addWire("state1", 1)
-        .addWire("state2", 1)
+        .addRegister("state1", 1)
+        .addRegister("state2", 1)
         .addWire("next1", 1)
         .addWire("next2", 1);
         
