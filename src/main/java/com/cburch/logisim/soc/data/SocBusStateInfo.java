@@ -23,6 +23,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.bus.SocBus;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
 import com.cburch.logisim.soc.gui.TraceWindowTableModel;
+import com.cburch.logisim.util.CircularArray;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -36,7 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -95,14 +95,15 @@ public class SocBusStateInfo extends JDialog
     }
 
     private static final int NR_OF_TRACES_TO_KEEP = 10000;
-    private final LinkedList<SocBusTransaction> trace;
+    private final CircularArray<SocBusTransaction> trace;
+    private final Object traceLock = new Object();
     private long startTraceIndex;
     private final SocBusStateInfo parent;
     private final Instance instance;
     private final ArrayList<SocBusStateListener> listeners;
 
     public SocBusState(SocBusStateInfo parent, Instance instance) {
-      trace = new LinkedList<>();
+      trace = new CircularArray<>();
       startTraceIndex = 0;
       this.parent = parent;
       this.instance = instance;
@@ -120,32 +121,49 @@ public class SocBusStateInfo extends JDialog
     }
 
     public void addTransaction(SocBusTransaction t) {
-      while (trace.size() >= NR_OF_TRACES_TO_KEEP) {
-        startTraceIndex++;
-        trace.removeFirst();
+      synchronized (traceLock) {
+        while (trace.size() >= NR_OF_TRACES_TO_KEEP) {
+          startTraceIndex++;
+          trace.removeFirst();
+        }
+        trace.addLast(t);
       }
-      trace.addLast(t);
       for (SocBusStateListener l : listeners) l.fireCanged(this);
     }
 
     public void clear() {
-      if (trace.size() == 0) return;
-      trace.clear();
-      startTraceIndex = 0;
+      synchronized (traceLock) {
+        if (trace.size() == 0) return;
+        trace.clear();
+        startTraceIndex = 0;
+      }
       for (SocBusStateListener l : listeners) l.fireCanged(this);
     }
 
     public void paint(Graphics2D g, Bounds b) {
-      if (trace.isEmpty()) {
+      int traceSize;
+      long theStartTraceIndex;
+      int nrOfTraces = b.getHeight() / TRACE_HEIGHT;
+      final var neededTraces = new ArrayList<SocBusTransaction>();
+      synchronized (traceLock) {
+        traceSize = trace.size();
+        if (nrOfTraces > traceSize) nrOfTraces = traceSize;
+        if (nrOfTraces > 0) {
+          final var indexOfFirstTrace = traceSize - nrOfTraces;
+          for (int i = indexOfFirstTrace; i < traceSize; i++) {
+            neededTraces.add(trace.get(i));
+          }
+        }
+        theStartTraceIndex = startTraceIndex;
+      }
+      if (nrOfTraces <= 0) {
         GraphicsUtil.drawCenteredText(g, S.get("SocBusNoTrace"), b.getCenterX(), b.getCenterY());
         return;
       }
-      long nrOfTraces = b.getHeight() / TRACE_HEIGHT;
-      if (nrOfTraces > trace.size()) nrOfTraces = trace.size();
-      int startIndex = trace.size() - 1;
+      int startIndex = traceSize - 1;
       for (int i = 0; i < nrOfTraces; i++) {
-        SocBusTransaction t = trace.get(startIndex - i);
-        t.paint(b.getX() + 1, b.getY() + 1 + i * TRACE_HEIGHT, g, startTraceIndex + startIndex - i);
+        SocBusTransaction t = neededTraces.get(nrOfTraces - 1 - i);
+        t.paint(b.getX() + 1, b.getY() + 1 + i * TRACE_HEIGHT, g, theStartTraceIndex + startIndex - i);
       }
     }
 
@@ -162,12 +180,14 @@ public class SocBusStateInfo extends JDialog
     }
 
     public SocBusStateTrace getEntry(int index, TraceWindowTableModel model) {
-      if (index < 0 || index >= trace.size()) {
-        if (index == 0) return new SocBusStateTrace(null, 0, model);
-        return null;
+      synchronized (traceLock) {
+        if (index < 0 || index >= trace.size()) {
+          if (index == 0) return new SocBusStateTrace(null, 0, model);
+          return null;
+        }
+        long indx = startTraceIndex + trace.size() - index - 1;
+        return new SocBusStateTrace(trace.get(trace.size() - index - 1), indx, model);
       }
-      long indx = startTraceIndex + trace.size() - index - 1;
-      return new SocBusStateTrace(trace.get(trace.size() - index - 1), indx, model);
     }
 
     @Override
