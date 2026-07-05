@@ -21,6 +21,7 @@
   * Improved memory and hex editor tools:
     * Added a go-to-address control to the hex editor.
     * Limited generated save previews for large memories.
+    * Clarified RAM and Dual Port RAM simulation reset behavior labels.
     * Corrected memory display layout in exported graphics.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.
@@ -136,7 +137,8 @@
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
   * Added partial support for VHDL time units
-  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in
+    "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
