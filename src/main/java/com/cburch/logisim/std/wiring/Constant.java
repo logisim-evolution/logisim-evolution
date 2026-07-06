@@ -166,7 +166,8 @@ public class Constant extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    int chars = (width.getWidth() + 3) / 4;
+    final var hexOffset = (width.getWidth() == 1) ? 0 : 2;
+    int chars = ((width.getWidth() + 3) / 4) + hexOffset;
     int w = 7 + 7 * chars;
     if (facing == Direction.EAST) return Bounds.create(-w, -8, w, 16);
     else if (facing == Direction.WEST) return Bounds.create(0, -8, w, 16);
@@ -262,7 +263,7 @@ public class Constant extends InstanceFactory {
       g.setFont(DEFAULT_FONT);
       GraphicsUtil.drawCenteredText(
           g,
-          v.toHexString(),
+          "0x"+v.toHexString(),
           x + bds.getX() + bds.getWidth() / 2,
           y + bds.getY() + bds.getHeight() / 2 - 2);
     }
