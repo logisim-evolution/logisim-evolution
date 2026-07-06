@@ -263,7 +263,7 @@ public class Constant extends InstanceFactory {
       g.setFont(DEFAULT_FONT);
       GraphicsUtil.drawCenteredText(
           g,
-          "0x"+v.toHexString(),
+          "0x" + v.toHexString(),
           x + bds.getX() + bds.getWidth() / 2,
           y + bds.getY() + bds.getHeight() / 2 - 2);
     }
