@@ -190,9 +190,10 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    long v = painter.getAttributeValue(ATTR_VALUE);
-    String vStr = Long.toHexString(v);
-    Bounds bds = getOffsetBounds(painter.getAttributeSet());
+    final var v = painter.getAttributeValue(ATTR_VALUE);
+    final var width = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
+    final var vStr = (width == 1) ? Long.toHexString(v) : "0x" + Long.toHexString(v);
+    final var bds = getOffsetBounds(painter.getAttributeSet());
 
     Graphics g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
