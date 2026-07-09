@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.data.IoComponentsInformation;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.file.BoardWriterClass;
 import com.cburch.logisim.fpga.file.XmlFileFilter;
+import com.cburch.logisim.fpga.menu.MenuFpga;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -33,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -48,11 +50,13 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   private final JButton fpgaButton = new JButton();
   private final JLabel locTextLabel = new JLabel();
   private final BoardManipulator picturepanel;
+  private final MenuFpga menu;
   // FIXME: hardcoded string (??)
   private static final String cancelStr = "cancel";
   private static final String fpgaStr = "fpgainfo";
 
-  public BoardEditor() {
+  public BoardEditor(MenuFpga menu) {
+    this.menu = menu;
     final var gbc = new GridBagConstraints();
 
     panel = new JFrame();
@@ -153,13 +157,29 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     switch (e.getActionCommand()) {
       case cancelStr -> this.clear();
       case "save" -> {
+        String boardName = boardNameInput.getText();
+        if (!isValidXmlTagName(boardName)) {
+          OptionPane.showMessageDialog(
+              panel,
+              S.get("FpgaBoardSaveInvalidName"),
+              S.get("FpgaBoardSaveInvalidNameTitle"),
+              JOptionPane.ERROR_MESSAGE
+          );
+          return;
+        }
+        String filePath = getDirName("", S.get("FpgaBoardSaveDir"));
+        if (filePath == null) {
+          return;
+        }
         panel.setVisible(false);
-        theBoard.setBoardName(boardNameInput.getText());
-        String filename = getDirName("", S.get("FpgaBoardSaveDir"));
-        filename += theBoard.getBoardName() + ".xml";
+        theBoard.setBoardName(boardName);
         theBoard.setComponents(picturepanel.getIoComponents());
         BoardWriterClass xmlwriter = new BoardWriterClass(theBoard, picturepanel.getImage());
-        xmlwriter.printXml(filename);
+        xmlwriter.printXml(filePath + boardName + ".xml");
+        final var commander = menu.getFpgaCommander();
+        if (commander != null) {
+          commander.updateBoardInformation(boardName);
+        }
         this.clear();
       }
       case "load" -> {
@@ -233,16 +253,27 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     panel.pack();
   }
 
+  private static boolean isValidXmlTagName(String tag) {
+    if (tag == null || tag.isEmpty()) {
+      return false;
+    }
+    if (tag.toLowerCase().startsWith("xml")) {
+      return false;
+    }
+    return tag.matches("^[a-zA-Z_:][a-zA-Z0-9._:-]*$");
+  }
+
   private String getDirName(String old, String windowName) {
     JFileChooser fc = new JFileChooser(old);
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     fc.setDialogTitle(windowName);
     int retval = fc.showOpenDialog(null);
+    String filePath = null;
     if (retval == JFileChooser.APPROVE_OPTION) {
       File file = fc.getSelectedFile();
-      old = checkIfEndsWithSlash(file.getPath());
+      filePath = checkIfEndsWithSlash(file.getPath());
     }
-    return old;
+    return filePath;
   }
 
   public JFrame getPanel() {
