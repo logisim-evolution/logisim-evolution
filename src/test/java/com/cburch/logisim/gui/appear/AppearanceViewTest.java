@@ -80,9 +80,10 @@ class AppearanceViewTest {
 
     canvas.setPreferredSize(new Dimension(1000, 1000));
     pane.setSize(200, 200);
+    pane.getViewport().setViewSize(canvas.getPreferredSize());
     pane.doLayout();
-    pane.getHorizontalScrollBar().setValue(80);
-    pane.getVerticalScrollBar().setValue(90);
+    pane.getHorizontalScrollBar().setValues(80, 200, 0, 1000);
+    pane.getVerticalScrollBar().setValues(90, 200, 0, 1000);
     final var initialX = pane.getHorizontalScrollBar().getValue();
     final var initialY = pane.getVerticalScrollBar().getValue();
 

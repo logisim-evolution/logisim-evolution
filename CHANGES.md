@@ -22,6 +22,7 @@
   * Improved memory and hex editor tools:
     * Added a go-to-address control to the hex editor.
     * Limited generated save previews for large memories.
+    * Clarified RAM and Dual Port RAM simulation reset behavior labels.
     * Corrected memory display layout in exported graphics.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.

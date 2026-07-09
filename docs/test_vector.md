@@ -5,9 +5,9 @@ This document describes the enhanced Test Vector functionality, including sequen
 
 ## Overview
 
-The Test Vector window allows you to load a test vector from a file, and Logisim will automatically run tests on the
-current circuit. The Test Vector module runs a separate copy of the circuit simulator, so it does not interfere with the
-simulation in the project window.
+The Test Vector window allows you to load a test vector from a file, and Logisim will automatically run tests on the current circuit.
+The Test Vector module runs a separate copy of the circuit simulator, so it does not interfere with
+the simulation in the project window.
 
 Any incorrect outputs will be flagged in red. Hover the mouse over the red box to see what the output should have been,
 according to the test vector. Rows with incorrect outputs are sorted to the top of the window.
