@@ -115,7 +115,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   }
 
   static String getOutputDataRowLabel(int row, int nrOfBits) {
-    return getBitsPerDataRow(nrOfBits) == 1 ? getDataRowLabel(row, nrOfBits) : "";
+    return getDataRowLabel(row, nrOfBits);
   }
 
   static String getDataRowValue(Value value, int row, int nrOfBits) {
@@ -143,6 +143,14 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
   static int getEvolutionHeight(int nrOfBits) {
     return CONTROL_HEIGHT + DATA_ROW_HEIGHT * getDataRowCount(nrOfBits);
+  }
+
+  static Bounds getControlValueBounds(int nrOfBits) {
+    final var len = (nrOfBits + 3) / 4;
+    final var valueWidth = len * 8;
+    final var preferredX = getSymbolWidth(nrOfBits) - 25 - valueWidth / 2;
+    final var rightEdge = 20 + getSymbolWidth(nrOfBits);
+    return Bounds.create(Math.min(preferredX, rightEdge - valueWidth), 22, valueWidth, 16);
   }
 
   private static int getFirstDataRowBit(int row, int nrOfBits) {
@@ -320,13 +328,16 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     /* Draw counter Value */
     RegisterData state = (RegisterData) painter.getData();
     if (painter.getShowState() && (state != null)) {
-      final var len = (width + 3) / 4;
-      final var xcenter = getSymbolWidth(width) - 25;
+      final var valueBounds = getControlValueBounds(width);
       final var val = state.value;
       if (val.isFullyDefined()) g.setColor(Color.LIGHT_GRAY);
       else if (val.isErrorValue()) g.setColor(Color.RED);
       else g.setColor(Color.BLUE);
-      g.fillRect(xpos + xcenter - len * 4, ypos + 22, len * 8, 16);
+      g.fillRect(
+          xpos + valueBounds.getX(),
+          ypos + valueBounds.getY(),
+          valueBounds.getWidth(),
+          valueBounds.getHeight());
       var value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
@@ -339,8 +350,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       GraphicsUtil.drawText(
           g,
           value,
-          xpos + xcenter - len * 4 + 1,
-          ypos + 30,
+          xpos + valueBounds.getX() + 1,
+          ypos + valueBounds.getY() + valueBounds.getHeight() / 2,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
       g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));

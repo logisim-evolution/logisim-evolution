@@ -37,9 +37,9 @@ class CounterAppearanceTest {
   }
 
   @Test
-  void compactDataRowsHideDuplicateOutputRangeLabelsForGroupedRows() {
+  void compactDataRowsShowOutputRangeLabelsForGroupedRows() {
     assertEquals("7", Counter.getOutputDataRowLabel(7, 8));
-    assertEquals("", Counter.getOutputDataRowLabel(7, 64));
+    assertEquals("56-63", Counter.getOutputDataRowLabel(7, 64));
   }
 
   @Test
@@ -51,6 +51,14 @@ class CounterAppearanceTest {
   @Test
   void compactEvolutionBoundsUseGroupedRowCount() {
     assertEquals(270, Counter.getEvolutionHeight(64));
+  }
+
+  @Test
+  void compactControlValueBoundsStayInsideControlBlockForWideCounters() {
+    final var bounds = Counter.getControlValueBounds(64);
+
+    assertEquals(16, bounds.getHeight());
+    assertEquals(20 + Counter.getSymbolWidth(64), bounds.getX() + bounds.getWidth());
   }
 
   @Test
