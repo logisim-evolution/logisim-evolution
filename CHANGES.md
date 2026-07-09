@@ -39,6 +39,7 @@
     * VHDL entity appearance is configured through entity properties.
     * VHDL code view no longer paints a circuit canvas without a circuit.
     * VHDL simulator log split pane remains recoverable after being maximized.
+    * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
     * TTY table output includes bit widths in headers.
