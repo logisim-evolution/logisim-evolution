@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Added support for opening project files by dragging them into the application window.
+  * Added a Window menu option to hide or show the navigation pane.
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added Real-Time Clock component.
   * Improved drawing appearance:

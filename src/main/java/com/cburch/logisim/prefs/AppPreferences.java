@@ -884,6 +884,7 @@ public class AppPreferences {
 
   public static void resetWindow() {
     CANVAS_PLACEMENT.set(Direction.EAST.toString());
+    WINDOW_EXPLORER_VISIBLE.set(true);
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);
     WINDOW_RIGHT_SPLIT.set(0.751);
@@ -894,6 +895,9 @@ public class AppPreferences {
 
   public static final PrefMonitor<Double> WINDOW_MAIN_SPLIT =
       create(new PrefMonitorDouble("windowMainSplit", 0.25));
+
+  public static final PrefMonitor<Boolean> WINDOW_EXPLORER_VISIBLE =
+      create(new PrefMonitorBoolean("windowExplorerVisible", true));
 
   public static final PrefMonitor<Double> WINDOW_LEFT_SPLIT =
       create(new PrefMonitorDouble("windowLeftSplit", 0.5));

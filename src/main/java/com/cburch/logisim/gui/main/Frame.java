@@ -98,6 +98,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
+  private static final double DEFAULT_EXPLORER_SPLIT = 0.25;
+  private static final double MIN_EXPLORER_SPLIT = 0.05;
+  private static final double MAX_EXPLORER_SPLIT = 0.95;
   private static final double DEFAULT_VHDL_CONSOLE_SPLIT = 0.75;
   private static final double MIN_VHDL_CONSOLE_SPLIT = 0.05;
   private static final double MAX_VHDL_CONSOLE_SPLIT = 0.95;
@@ -133,6 +136,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final AttrTableSelectionModel attrTableSelectionModel;
   // for the Appearance view
   private AppearanceView appearance;
+  private Double lastExplorerFraction =
+      sanitizeExplorerSplitFraction(AppPreferences.WINDOW_MAIN_SPLIT.get());
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
   private final RegTabContent regTabContent;
 
@@ -230,6 +235,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
     mainRegion = new MainRegionVerticalSplitPane(leftRegion, rightPanel);
+    if (!AppPreferences.WINDOW_EXPLORER_VISIBLE.getBoolean()) {
+      mainRegion.setFraction(0.0);
+    }
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
@@ -404,8 +412,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     private Direction orientation;
 
     public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas) {
-      this(componentTree, mainCanvas, AppPreferences.WINDOW_MAIN_SPLIT.get(),
-              Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
+      this(
+          componentTree,
+          mainCanvas,
+          sanitizeExplorerSplitFraction(AppPreferences.WINDOW_MAIN_SPLIT.get()),
+          Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
     }
 
     public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas, double fraction,
@@ -558,7 +569,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public void resetLayout() {
-    mainRegion.setFraction(0.25);
+    lastExplorerFraction = DEFAULT_EXPLORER_SPLIT;
+    mainRegion.setFraction(DEFAULT_EXPLORER_SPLIT);
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(true);
     mainRegion.setOrientation(Direction.EAST);
     leftRegion.setFraction(0.5);
     rightRegion.setFraction(1.0);
@@ -755,7 +768,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
       AppPreferences.WINDOW_RIGHT_SPLIT.set(rightFraction);
     }
-    if (mainRegion.getFraction() > 0) AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
+    final var explorerFraction = mainRegion.getFraction();
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(explorerFraction > 0.0);
+    if (isUsableExplorerSplitFraction(explorerFraction)) {
+      AppPreferences.WINDOW_MAIN_SPLIT.set(explorerFraction);
+    }
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
 
@@ -791,6 +808,44 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     rightRegion.setFractionBounds(0.0, 1.0);
     rightRegion.setFraction(1);
+  }
+
+  public boolean isExplorerVisible() {
+    return mainRegion != null && mainRegion.getFraction() > 0.0;
+  }
+
+  public void setExplorerVisible(boolean visible) {
+    final var oldVisible = isExplorerVisible();
+
+    if (visible) {
+      lastExplorerFraction = sanitizeExplorerSplitFraction(lastExplorerFraction);
+      mainRegion.setFraction(lastExplorerFraction);
+    } else {
+      final var explorerFraction = mainRegion.getFraction();
+      if (isUsableExplorerSplitFraction(explorerFraction)) {
+        lastExplorerFraction = explorerFraction;
+      }
+      mainRegion.setFraction(0.0);
+    }
+
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(visible);
+    final var newVisible = isExplorerVisible();
+    if (oldVisible != newVisible) {
+      firePropertyChange(EXPLORER_VIEW, oldVisible, newVisible);
+    }
+  }
+
+  static double sanitizeExplorerSplitFraction(Double fraction) {
+    if (fraction == null || !isUsableExplorerSplitFraction(fraction)) {
+      return DEFAULT_EXPLORER_SPLIT;
+    }
+    return fraction;
+  }
+
+  static boolean isUsableExplorerSplitFraction(double fraction) {
+    return Double.isFinite(fraction)
+        && fraction >= MIN_EXPLORER_SPLIT
+        && fraction <= MAX_EXPLORER_SPLIT;
   }
 
   static double sanitizeVhdlConsoleSplitFraction(Double fraction) {
