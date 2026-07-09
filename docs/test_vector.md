@@ -47,7 +47,8 @@ Each row in the Test Vector window has two buttons that allow you to manually in
 
 ## Basic File Format
 
-The file format is simple. You can use the Logging module (with "Include Header Line" selected in the file output tab) to get started,
+The file format is simple. You can use the Logging module (with "Include Header Line" selected in the file output tab)
+to get started,
 since in most cases the Logging module outputs the same format as used by the Test Vector module.
 
 Here is an example test vector file:
@@ -64,7 +65,8 @@ A[32] B[32] C[32] Cin Cout
 
 - Blank lines are ignored
 - Anything following a '#' character is a comment
-- The first non-blank, non-comment line lists the name of each circuit input/output pin and its width (if > 1), separated by whitespace
+- The first non-blank, non-comment line lists the name of each circuit input/output pin and its width (if > 1),
+  separated by whitespace
 - The remaining lines list each value separated by whitespace
 
 **Value Formats:**
@@ -248,7 +250,8 @@ All existing test vector files continue to work without modification. The new fe
 
 1. **Use sequences for stateful circuits**: If your circuit has memory (flip-flops, registers, counters),
 use sequential tests to verify state transitions
-2. **Use don't care for partial verification**: When testing complex circuits, use `<DC>` for outputs you're not currently verifying
+2. **Use don't care for partial verification**: When testing complex circuits, use `<DC>` for outputs you're not
+   currently verifying
 3. **Use floating for tri-state testing**: Use `<float>` to test circuits with tri-state outputs or high-impedance states
 4. **Organize with sets**: Use the `<set>` column to group related tests, even though it doesn't affect execution
 5. **Mix combinational and sequential**: You can mix combinational tests (seq=0) with sequential tests in the same file

@@ -351,15 +351,12 @@ public class AppPreferences {
 
   public static int getDownScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extScale;
-    return (int) ((float) value / scale);
+    return (int) Math.round(value / (SCALE_FACTOR.get() * extScale));
   }
 
   public static int getDownScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return (int) ((float) value / scale);
+    return (int) Math.round(value / SCALE_FACTOR.get());
   }
 
   public static double getDownScaled(double value) {
@@ -369,34 +366,27 @@ public class AppPreferences {
 
   public static int getScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extScale;
-    return (int) ((float) value * scale);
+    return (int) Math.round(value * (SCALE_FACTOR.get() * extScale));
   }
 
   public static int getScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return (int) ((float) value * scale);
+    return (int) Math.round(value * SCALE_FACTOR.get());
   }
 
   public static float getScaled(float value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return value * scale;
+    return value * SCALE_FACTOR.get().floatValue();
   }
 
   public static float getScaled(float value, float extscale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extscale;
-    return value * scale;
+    return value * SCALE_FACTOR.get().floatValue() * extscale;
   }
 
   public static double getScaled(double value) {
     getPrefs();
-    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
-    return value * scale;
+    return value * SCALE_FACTOR.get();
   }
 
   public static Font getScaledFont(Font myfont) {
@@ -903,6 +893,7 @@ public class AppPreferences {
 
   public static void resetWindow() {
     CANVAS_PLACEMENT.set(Direction.EAST.toString());
+    WINDOW_EXPLORER_VISIBLE.set(true);
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);
     WINDOW_RIGHT_SPLIT.set(0.751);
@@ -913,6 +904,9 @@ public class AppPreferences {
 
   public static final PrefMonitor<Double> WINDOW_MAIN_SPLIT =
       create(new PrefMonitorDouble("windowMainSplit", 0.25));
+
+  public static final PrefMonitor<Boolean> WINDOW_EXPLORER_VISIBLE =
+      create(new PrefMonitorBoolean("windowExplorerVisible", true));
 
   public static final PrefMonitor<Double> WINDOW_LEFT_SPLIT =
       create(new PrefMonitorDouble("windowLeftSplit", 0.5));

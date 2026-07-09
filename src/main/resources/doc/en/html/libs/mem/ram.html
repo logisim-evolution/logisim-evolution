@@ -421,12 +421,12 @@
             <b class="vprop">Use line enables</b>:one or more data lines make up the data bus. Each has its own selection signal. The Number of lines property lets you define the number of lines (1,2,4,8).
           </dd>
           <dt class="lib">
-            Ram type
+            Simulation reset behavior
           </dt>
           <dd>
-            Determines how the memory content is modified when the simulation is restarted:<br>
-            <b class="vprop">Non Volatile</b> memory contents are not modified.<br>
-            <b class="vprop">Volatile</b>; RAM contents reset to zero or randomly ( according to <a href="../../guide/opts/opts-simulate.html">Simulation tab</a> project options).
+            Determines how the memory content is modified when the simulation is reset or restarted:<br>
+            <b class="vprop">Keep contents on reset</b>: memory contents are not modified.<br>
+            <b class="vprop">Clear contents on reset</b>: RAM contents reset to zero or randomly, according to the <a href="../../guide/opts/opts-simulate.html">Simulation tab</a> project options.
           </dd>
           <dt class="lib">
             Use clear pin

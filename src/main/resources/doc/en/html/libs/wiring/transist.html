@@ -131,7 +131,7 @@
 <p>	Logisim supports two types of transistors, with slightly different behaviors described below; the P-type transistor is indicated by a circle connecting the <b>gate</b> input to its plate, while the N-type transistor has no such circle.
       </p>
       <p>
-        Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle) transmits when <b>gate</b> is 1. The behavior is summarized by the following tables.
+        Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle) transmits when <b>gate</b> is 1. The behavior is shown by the following tables.
       </p>
 	  <center>
       <table class="encapsul">
@@ -403,134 +403,13 @@
         </tbody>
       </table>
 	  </center>
-      <p>
-        Or in summarized form:
-      </p>
-      <center>
-        <table class="encapsul">
-          <tbody>
-            <tr>
-              <td>
-                <table>
-                  <thead>
-                    <tr>
-                      <th colspan="2">
-                        P-type
-                      </th>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="P-type transistor symbol" width="64" height="64">
-                      </p>
-					  </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th class="tspace">
-					    Gate
-                      </th>
-                      <th class="tspace">
-                        Drain
-                      </th>
-                    </tr>
-                    <tr>
-                      <td class="zerov">
-                        0
-                      </td>
-                      <td class="space">
-                        Source
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="unov">
-                        1
-                      </td>
-                      <td class="uvalue">
-                        U
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="space">
-                        <b class="uvalue">U</b>/<b class="evalue">E</b>
-                      </td>
-                      <td class="space">
-                        *
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-              <td width="60px">
-               
-              </td>
-              <td>
-                <table>
-                  <thead>
-                    <tr>
-                      <th colspan="2">
-                        <b>N-type</b>
-                      </th>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="N-type transistor symbol" width="64" height="64">
-                      </p>
-					  </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th class="tspace">
-                        Gate
-                      </th>
-                      <th class="tspace">
-                        Drain
-                      </th>
-                    </tr>
-                    <tr>
-                      <td class="zerov">
-                        0
-                      </td>
-                      <td class="uvalue">
-                        U
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="unov">
-                        1
-                      </td>
-                      <td align="center">
-                        Source
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="space">
-                        <b class="uvalue">U</b>/<b class="evalue">E</b>
-                      </td>
-                      <td class="space">
-                        *
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-          * When gate is <b class="uvalue">U</b> or <b class="evalue">E</b>, if source is <b class="uvalue">U</b>, drain is <b class="uvalue">U</b>; otherwise drain is <b class="evalue">E</b>.
-        </p>
-      </center>
 	 <p>
         <b class=note>Note:</b> Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error), the illustrations use the same markers rather than the more common Z (high impedance) and X (Error) found in other documents.</p>
       <p>
         If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits.
       </p>
       <p>
-        An N-type transistor behaves very similarly to a <a href="../gates/controlled.html">Controlled Buffer</a>. The primary difference is that a transistor is meant for more basic circuit designs.
+        The transistor is provided to allow instructors to demonstrate how to build the basic logic gates. In more complex designs, users are encouraged to use the logic gates rather than transistors.
       </p>
       <h2>
         Pins (assuming component faces east, gate line top/left)

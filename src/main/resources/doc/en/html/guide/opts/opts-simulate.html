@@ -42,10 +42,10 @@
         </li>
         <li>
           <p>
-            The <strong>Add Noise To Component Delays</strong> checkbox allows you to enable or disable the random noise that is added to the delays of components. The internal simulation uses a hidden clock for its simulation, and to provide a somewhat realistic simulation, each component (excluding wires and splitters) has a delay between when it receives an input and when it emits an output. If this option is enabled, Logisim will occassionally (about once every 16 component reactions) make a component take one click longer than normal.
+            The <strong>Add Noise To Component Delays</strong> checkbox allows you to enable or disable the random noise that is added to the delays of components. The internal simulation uses a hidden clock for its simulation, and to provide a somewhat realistic simulation, each component (excluding wires and splitters) has a delay between when it receives an input and when it emits an output. If this option is enabled, Logisim will occasionally (about once every 16 component reactions) make a component take one click longer than normal.
           </p>
           <p>
-            I recommend keeping this option off, as this technique does introduce rare errors with normal circuits.
+            I recommend keeping this option off for normal circuit work. It is mainly useful for studying whether a circuit is sensitive to propagation-order changes or race conditions. If enabling it causes an unexpected result, treat the result as a warning about timing-sensitive design rather than as a precise prediction of real hardware behavior.
           </p>
         </li>
 		<!--
