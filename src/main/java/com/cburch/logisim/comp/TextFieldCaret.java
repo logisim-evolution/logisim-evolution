@@ -13,6 +13,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.tools.Caret;
 import com.cburch.logisim.tools.CaretEvent;
 import com.cburch.logisim.tools.CaretListener;
+import com.cburch.logisim.tools.TextEditActions;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Color;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 
-class TextFieldCaret implements Caret, TextFieldListener {
+class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
 
   public static final Color EDIT_BACKGROUND = new Color(0xff, 0xff, 0x99);
   public static final Color EDIT_BORDER = Color.DARK_GRAY;
@@ -194,58 +195,37 @@ class TextFieldCaret implements Caret, TextFieldListener {
 
   @SuppressWarnings("fallthrough")
   protected void controlKeyPressed(KeyEvent e, boolean shift) {
-    var cut = false;
     switch (e.getKeyCode()) {
       case KeyEvent.VK_A:
-        pos = 0;
-        end = curText.length();
+        selectAll();
         e.consume();
         break;
       case KeyEvent.VK_CUT:
       case KeyEvent.VK_X:
-        cut = true;
-        // fall through
+        cut();
+        e.consume();
+        break;
       case KeyEvent.VK_COPY:
       case KeyEvent.VK_C:
-        if (end != pos) {
-          final var pp = (Math.min(pos, end));
-          final var ee = (Math.max(pos, end));
-          final var s = curText.substring(pp, ee);
-          final var sel = new StringSelection(s);
-          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
-          if (cut) {
-            rememberEdit();
-            deleteSelection();
-          }
-        }
+        copy();
         e.consume();
         break;
       case KeyEvent.VK_INSERT:
       case KeyEvent.VK_PASTE:
       case KeyEvent.VK_V:
-        try {
-          String s =
-              (String)
-                  Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-          final var replacement = normalizePastedText(s);
-          if (!replacement.isEmpty()) {
-            rememberEdit();
-            replaceSelection(replacement);
-          }
-        } catch (Exception ignored) {
-        }
+        paste();
         e.consume();
         break;
       case KeyEvent.VK_Z:
         if (shift) {
-          redoEdit();
+          redoTextEdit();
         } else {
-          undoEdit();
+          undoTextEdit();
         }
         e.consume();
         break;
       case KeyEvent.VK_Y:
-        redoEdit();
+        redoTextEdit();
         e.consume();
         break;
       default:// ignore
@@ -343,6 +323,59 @@ class TextFieldCaret implements Caret, TextFieldListener {
     undoStack.clear();
   }
 
+  @Override
+  public boolean canCopy() {
+    return pos != end;
+  }
+
+  @Override
+  public boolean canCut() {
+    return canCopy();
+  }
+
+  @Override
+  public boolean canPaste() {
+    try {
+      return Toolkit.getDefaultToolkit()
+          .getSystemClipboard()
+          .isDataFlavorAvailable(DataFlavor.stringFlavor);
+    } catch (Exception ignored) {
+      return false;
+    }
+  }
+
+  @Override
+  public boolean canRedoTextEdit() {
+    return !redoStack.isEmpty();
+  }
+
+  @Override
+  public boolean canSelectAll() {
+    return !curText.isEmpty();
+  }
+
+  @Override
+  public boolean canUndoTextEdit() {
+    return !undoStack.isEmpty();
+  }
+
+  @Override
+  public void copy() {
+    if (!canCopy()) return;
+    final var selection = getSelectedText();
+    Toolkit.getDefaultToolkit()
+        .getSystemClipboard()
+        .setContents(new StringSelection(selection), null);
+  }
+
+  @Override
+  public void cut() {
+    if (!canCut()) return;
+    copy();
+    rememberEdit();
+    deleteSelection();
+  }
+
   private EditState currentEditState() {
     return new EditState(curText, pos, end);
   }
@@ -351,6 +384,12 @@ class TextFieldCaret implements Caret, TextFieldListener {
     normalizeSelection();
     curText = curText.substring(0, pos) + (end < curText.length() ? curText.substring(end) : "");
     end = pos;
+  }
+
+  private String getSelectedText() {
+    final var pp = Math.min(pos, end);
+    final var ee = Math.max(pos, end);
+    return curText.substring(pp, ee);
   }
 
   private String normalizePastedText(String s) {
@@ -374,6 +413,11 @@ class TextFieldCaret implements Caret, TextFieldListener {
     restoreEditState(redoStack.pop());
   }
 
+  @Override
+  public void redoTextEdit() {
+    redoEdit();
+  }
+
   private void rememberEdit() {
     undoStack.push(currentEditState());
     redoStack.clear();
@@ -395,10 +439,37 @@ class TextFieldCaret implements Caret, TextFieldListener {
     end = state.end();
   }
 
+  @Override
+  public void paste() {
+    try {
+      String s =
+          (String)
+              Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+      final var replacement = normalizePastedText(s);
+      if (!replacement.isEmpty()) {
+        rememberEdit();
+        replaceSelection(replacement);
+      }
+    } catch (Exception ignored) {
+      // no text available from clipboard
+    }
+  }
+
+  @Override
+  public void selectAll() {
+    pos = 0;
+    end = curText.length();
+  }
+
   private void undoEdit() {
     if (undoStack.isEmpty()) return;
     redoStack.push(currentEditState());
     restoreEditState(undoStack.pop());
+  }
+
+  @Override
+  public void undoTextEdit() {
+    undoEdit();
   }
 
   protected void normalizeSelection() {
