@@ -292,7 +292,7 @@ public class DualRamAppearance {
         int totalHeight = bds.getHeight() - 20;
         int halfHeight = totalHeight / 2;
 
-        long addrA = stateA.getCurrent();
+        long addrA = stateA.getCurrent(0);
         stateA.setCurrent(addrA);
         stateA.scrollToShow(addrA);
 
@@ -306,7 +306,7 @@ public class DualRamAppearance {
             halfHeight,
             highlightCount);
 
-        long addrB = stateA.getCurrent();
+        long addrB = stateA.getCurrent(1);
         stateB.setCurrent(addrB);
         stateB.scrollToShow(addrB);
 
