@@ -124,14 +124,10 @@ public class DualRam extends Ram {
           S.get("dualWriteCollision", Long.toHexString(addrA)));
     }
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-      if (!writeCollision) {
-        propagateLineEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA);
-      }
+      propagateLineEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA);
       propagateLineEnables(state, 1, addrB, goodBAddr, addrBValue.isErrorValue(), writeEnabledB);
     } else {
-      if (!writeCollision) {
-        propagateByteEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA, edgeA);
-      }
+      propagateByteEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA, edgeA);
       propagateByteEnables(state, 1, addrB, goodBAddr, addrBValue.isErrorValue(), writeEnabledB, edgeB);
     }
   }
