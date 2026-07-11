@@ -21,19 +21,23 @@ public class RamState extends MemState implements AttributeListener {
 
   private Instance parent;
   private final MemListener listener;
-  private ClockState clockState;
+  private ClockState[] clockState = {new ClockState(), new ClockState()};
+  private long portB = -1;
 
   RamState(Instance parent, MemContents contents, MemListener listener) {
     super(contents);
     this.parent = parent;
     this.listener = listener;
-    this.clockState = new ClockState();
     if (parent != null) {
       parent.getAttributeSet().addAttributeListener(this);
     }
     contents.addHexModelListener(listener);
   }
 
+  public MemState getPortBState() {
+    return this.clone();
+  }
+  
   @Override
   public void attributeValueChanged(AttributeEvent e) {
     AttributeSet attrs = e.getSource();
@@ -51,8 +55,12 @@ public class RamState extends MemState implements AttributeListener {
     return ret;
   }
 
-  public boolean setClock(Value newClock, Object trigger) {
-    return clockState.updateClock(newClock, trigger);
+  public boolean setClock(int clockIndex, Value newClock, Object trigger) {
+    return (clockIndex < 0 || clockIndex > 1) ? false : clockState[clockIndex].updateClock(newClock, trigger);
+  }
+  
+  public boolean setClock( Value newClock, Object trigger) {
+    return setClock(0, newClock, trigger);
   }
 
   void setRam(Instance value) {
@@ -65,6 +73,18 @@ public class RamState extends MemState implements AttributeListener {
     parent = value;
     if (value != null) {
       value.getAttributeSet().addAttributeListener(this);
+    }
+  }
+  
+  long getCurrent(int index) {
+    return (index == 1) ? portB : getCurrent();
+  }
+
+  void setCurrent(int index, long value) {
+    if (index == 1) {
+      portB = value;
+    } else {
+      setCurrent(value);
     }
   }
 }
