@@ -118,7 +118,7 @@ public class DualRam extends Ram {
         ? myState.setClock(1, state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)), triggerType) :
         myState.setClock(1, state.getPortValue(DualRamAppearance.getClkIndex(1, attrs)), triggerType);
     final var writeEnabledB = weB && edgeB;
-    final var writeCollision = weA && weB && (addrA == addrB) && writeEnabledA && writeEnabledB;
+    final var writeCollision = (addrA == addrB) && writeEnabledA && writeEnabledB;
     if (writeCollision) {
       DialogNotification.showDialogNotification(null, "Warning", 
           S.get("dualWriteCollision", Long.toHexString(addrA)));
