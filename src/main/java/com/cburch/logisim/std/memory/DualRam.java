@@ -97,7 +97,7 @@ public class DualRam extends Ram {
     final var addrB = addrBValue.toLongValue();
     final var goodBAddr = addrBValue.isFullyDefined() && addrB >= 0;
     if (goodBAddr && addrB != myState.getCurrent(1)) {
-        myState.setCurrent(1, addrB);
+      myState.setCurrent(1, addrB);
     }
     final var addrAValue = state.getPortValue(DualRamAppearance.getAddrIndex(0, attrs));
     final var addrA = addrAValue.toLongValue();
@@ -119,7 +119,7 @@ public class DualRam extends Ram {
     final var writeCollision = weA && weB && (addrA == addrB) && writeEnabledA && writeEnabledB;
     if (writeCollision) {
       DialogNotification.showDialogNotification(null, "Warning", 
-        S.get("dualWriteCollision", Long.toHexString(addrA)));
+          S.get("dualWriteCollision", Long.toHexString(addrA)));
     }
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (!writeCollision) {
