@@ -489,18 +489,18 @@ public class DualRamAppearance {
     switch (portIndex) {
       case 0:
         if (nrDins == 1)
-          result.setToolTip(S.getter("dualRamInTip"));
+          result.setToolTip(S.getter("ramInTip"));
         else
-          result.setToolTip(S.getter("dualRamInTip0"));
+          result.setToolTip(S.getter("ramInTip0"));
         break;
       case 1:
-        result.setToolTip(S.getter("dualRamInTip1"));
+        result.setToolTip(S.getter("ramInTip1"));
         break;
       case 2:
-        result.setToolTip(S.getter("dualRamInTip2"));
+        result.setToolTip(S.getter("ramInTip2"));
         break;
       case 3:
-        result.setToolTip(S.getter("dualRamInTip3"));
+        result.setToolTip(S.getter("ramInTip3"));
         break;
     }
     return result;
