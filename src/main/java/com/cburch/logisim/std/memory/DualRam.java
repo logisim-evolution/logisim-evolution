@@ -110,10 +110,12 @@ public class DualRam extends Ram {
     final var weB = state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)) == Value.TRUE;
     final var triggerType = state.getAttributeValue(StdAttr.TRIGGER);
     final var async = triggerType.equals(StdAttr.TRIG_HIGH) || triggerType.equals(StdAttr.TRIG_LOW);
-    final var edgeA = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async ? weA :
+    final var edgeA = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async ? 
+        myState.setClock(0, state.getPortValue(DualRamAppearance.getWEIndex(0, attrs)) , triggerType):
         myState.setClock(0, state.getPortValue(DualRamAppearance.getClkIndex(0, attrs)), triggerType);
     final var writeEnabledA = weA && edgeA;
-    final var edgeB = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async ? weB :
+    final var edgeB = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async ? 
+        myState.setClock(1, state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)) , triggerType):
         myState.setClock(1, state.getPortValue(DualRamAppearance.getClkIndex(1, attrs)), triggerType);
     final var writeEnabledB = weB && edgeB;
     final var writeCollision = weA && weB && (addrA == addrB) && writeEnabledA && writeEnabledB;
