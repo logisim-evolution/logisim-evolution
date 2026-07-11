@@ -35,6 +35,10 @@ public class RamState extends MemState implements AttributeListener {
   }
 
   public MemState getPortBState() {
+    /* TODO: this is probably not the best way to be able
+     *       to display the memory contents for the second
+     *       port of the dual-ported ram component.
+     */
     return this.clone();
   }
   
@@ -59,8 +63,8 @@ public class RamState extends MemState implements AttributeListener {
     return (clockIndex < 0 || clockIndex > 1) ? false : clockState[clockIndex].updateClock(newClock, trigger);
   }
   
-  public boolean setClock( Value newClock, Object trigger) {
-    return setClock( 0, newClock, trigger);
+  public boolean setClock(Value newClock, Object trigger) {
+    return setClock(0, newClock, trigger);
   }
 
   void setRam(Instance value) {
