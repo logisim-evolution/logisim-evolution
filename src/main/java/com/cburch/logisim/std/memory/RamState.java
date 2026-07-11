@@ -60,7 +60,7 @@ public class RamState extends MemState implements AttributeListener {
   }
   
   public boolean setClock( Value newClock, Object trigger) {
-    return setClock(0, newClock, trigger);
+    return setClock( 0, newClock, trigger);
   }
 
   void setRam(Instance value) {

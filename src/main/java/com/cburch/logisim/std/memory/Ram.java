@@ -103,7 +103,7 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram(String id, StringGetter getter, HdlGeneratorFactory obj, boolean bool) {
-    super(id,getter, 3, obj, bool);
+    super(id, getter, 3, obj, bool);
   }
   
   public Ram() {
