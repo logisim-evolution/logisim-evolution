@@ -18,6 +18,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.gui.DialogNotification;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
@@ -91,29 +92,50 @@ public class DualRam extends Ram {
         return;
       }
     }
-
-    for (int portIndex = 0; portIndex < 2; portIndex++) {
-      final var addrValue = state.getPortValue(DualRamAppearance.getAddrIndex(portIndex, attrs));
-      long addr = addrValue.toLongValue();
-      final var goodAddr = addrValue.isFullyDefined() && addr >= 0;
-
-      if (goodAddr && addr != myState.getCurrent(portIndex)) {
-        myState.setCurrent(portIndex, addr);
-        if (portIndex == 0)
-          myState.scrollToShow(addr);
+    
+    final var addrBValue = state.getPortValue(DualRamAppearance.getAddrIndex(1, attrs));
+    final var addrB = addrBValue.toLongValue();
+    final var goodBAddr = addrBValue.isFullyDefined() && addrB >= 0;
+    if (goodBAddr && addrB != myState.getCurrent(1)) {
+        myState.setCurrent(1, addrB);
+    }
+    final var addrAValue = state.getPortValue(DualRamAppearance.getAddrIndex(0, attrs));
+    final var addrA = addrAValue.toLongValue();
+    final var goodAAddr = addrAValue.isFullyDefined() && addrA >= 0;
+    if (goodAAddr && addrA != myState.getCurrent(0)) {
+      myState.setCurrent(0, addrA);
+      myState.scrollToShow(addrA);
+    }
+    final var weA = state.getPortValue(DualRamAppearance.getWEIndex(0, attrs)) == Value.TRUE;
+    final var weB = state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)) == Value.TRUE;
+    final var triggerType = state.getAttributeValue(StdAttr.TRIGGER);
+    final var async = triggerType.equals(StdAttr.TRIG_HIGH) || triggerType.equals(StdAttr.TRIG_LOW);
+    final var edgeA = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async ? weA :
+        myState.setClock(0, state.getPortValue(DualRamAppearance.getClkIndex(0, attrs)), triggerType);
+    final var writeEnabledA = weA && edgeA;
+    final var edgeB = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async ? weB :
+        myState.setClock(1, state.getPortValue(DualRamAppearance.getClkIndex(1, attrs)), triggerType);
+    final var writeEnabledB = weB && edgeB;
+    final var writeCollision = weA && weB && (addrA == addrB) && writeEnabledA && writeEnabledB;
+    if (writeCollision) {
+      DialogNotification.showDialogNotification(null, "Warning", 
+        S.get("dualWriteCollision", Long.toHexString(addrA)));
+    }
+    if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
+      if (!writeCollision) {
+        propagateLineEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA);
       }
-      if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-        propagateLineEnables(state, portIndex, addr, goodAddr, addrValue.isErrorValue());
-      } else {
-        propagateByteEnables(state, portIndex, addr, goodAddr, addrValue.isErrorValue());
+      propagateLineEnables(state, 1, addrB, goodBAddr, addrBValue.isErrorValue(), writeEnabledB);
+    } else {
+      if (!writeCollision) {
+        propagateByteEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA, edgeA);
       }
-
+      propagateByteEnables(state, 1, addrB, goodBAddr, addrBValue.isErrorValue(), writeEnabledB, edgeB);
     }
   }
 
-  // Parameter added: int portIndex (to distinguish between Port A and Port B)
   private void propagateLineEnables(InstanceState state, int portIndex, long addr, boolean goodAddr,
-      boolean errorValue) {
+      boolean errorValue, boolean writeEnabled) {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
     final var separate = isSeparate(attrs);
@@ -125,12 +147,6 @@ public class DualRam extends Ram {
     final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
     // perform writes
-    Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-
-    final var triggered = myState.setClock(portIndex,
-        state.getPortValue(DualRamAppearance.getClkIndex(portIndex, attrs)), trigger);
-    final var writeEnabled = triggered
-        && (state.getPortValue(DualRamAppearance.getWEIndex(portIndex, attrs)) == Value.TRUE);
 
     if (writeEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
@@ -170,7 +186,7 @@ public class DualRam extends Ram {
   }
 
   private void propagateByteEnables(InstanceState state, int portIndex, long addr, boolean goodAddr,
-      boolean errorValue) {
+      boolean errorValue, boolean writeEnabled, boolean edge) {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
     final var separate = isSeparate(attrs);
@@ -178,24 +194,9 @@ public class DualRam extends Ram {
     long newMemValue = oldMemValue;
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-    final var weValue = state.getPortValue(DualRamAppearance.getWEIndex(portIndex, attrs));
     final var async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
 
-    Value clkValue = Value.FALSE;
-    if (!async) {
-      int clkIdx = DualRamAppearance.getClkIndex(portIndex, attrs);
-      if (clkIdx != -1) {
-        clkValue = state.getPortValue(clkIdx);
-      }
-    }
-
-    final var edge = !async && myState.setClock(portIndex, clkValue, trigger);
-
-    final var weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE))
-        || (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
-    final var weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
-
-    if (goodAddr && weTriggered) {
+    if (goodAddr && writeEnabled) {
       long dataInValue = state.getPortValue(DualRamAppearance.getDataInIndex(portIndex, attrs)).toLongValue();
       if (DualRamAppearance.getNrBEPorts(attrs) == 0) {
         newMemValue = dataInValue;
