@@ -102,12 +102,15 @@ public class Ram extends Mem {
   private static final Object[][] logOptions = new Object[9][];
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
-  public Ram(String id, StringGetter getter, HdlGeneratorFactory obj, boolean bool) {
-    super(id, getter, 3, obj, bool);
+  public Ram(String name,
+          StringGetter desc,
+          HdlGeneratorFactory generator,
+          boolean needsLabel) {
+    super(name, desc, generator, needsLabel);
   }
   
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
+    super(_ID, S.getter("ramComponent"), new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }
