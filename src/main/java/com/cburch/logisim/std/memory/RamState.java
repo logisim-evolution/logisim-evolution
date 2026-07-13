@@ -35,7 +35,7 @@ public class RamState extends MemState implements AttributeListener {
   }
 
   public MemState getPortBState() {
-    /* TODO: this is probably not the best way to be able
+    /* TODO: This is probably not the best way to be able
      *       to display the memory contents for the second
      *       port of the dual-ported ram component.
      */
