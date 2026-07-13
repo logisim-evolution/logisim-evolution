@@ -156,7 +156,7 @@ class RamLineEnableTest {
     final var attrs = dualRamAttrs(Mem.OCTO);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
-    state.setData(new DualRamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+    state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
 
     state.connectPort(DualRamAppearance.getDataOutIndex(0, attrs));
     state.setPortValue(DualRamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 3));
@@ -176,7 +176,7 @@ class RamLineEnableTest {
     final var attrs = dualRamAttrs(Mem.OCTO);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
-    state.setData(new DualRamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+    state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
 
     state.setPortValue(DualRamAppearance.getAddrIndex(port, attrs), known(ADDR_WIDTH, baseAddress));
     state.setPortValue(DualRamAppearance.getWEIndex(port, attrs), Value.TRUE);
@@ -206,7 +206,7 @@ class RamLineEnableTest {
     attrs.setValue(Mem.ALLOW_MISALIGNED, true);
     final var state = new TestInstanceState(ram, attrs);
     final var contents = MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
-    state.setData(new DualRamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+    state.setData(new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
 
     final var dataLines = DualRamAppearance.getNrLEPorts(attrs) / 2;
     final var baseLine = port * dataLines;
@@ -251,7 +251,7 @@ class RamLineEnableTest {
     attrs.setValue(Mem.DATA_ATTR, DATA_WIDTH);
     attrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
     attrs.setValue(Mem.LINE_ATTR, lineSize);
-    attrs.setValue(DualRamAttributes.ATTR_DBUS, DualRamAttributes.BUS_SEP);
+    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP);
     attrs.setValue(StdAttr.TRIGGER, StdAttr.TRIG_RISING);
     return attrs;
   }

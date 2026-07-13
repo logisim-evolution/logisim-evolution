@@ -122,7 +122,7 @@ public class Rom extends Mem {
   private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
-    super(_ID, S.getter("romComponent"), 0, new RomHdlGeneratorFactory(), true);
+    super(_ID, S.getter("romComponent"), new RomHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("ROM", 3));
     memListeners = new WeakHashMap<>();
   }

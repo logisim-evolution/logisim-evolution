@@ -37,7 +37,7 @@ class RamLoggerTest {
   void dualRamAddressLogOptionsReadMemoryValues() {
     final var contents = memoryContents();
     final var logger = new DualRam.Logger();
-    final var state = memoryState(new DualRamState(null, contents, listener()));
+    final var state = memoryState(new RamState(null, contents, listener()));
 
     assertAddressOptionReadsValue(logger, state);
   }
