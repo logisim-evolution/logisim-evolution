@@ -434,6 +434,9 @@ public class ShiftRegister extends InstanceFactory {
         painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
     drawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
     final var data = (ShiftRegisterData) painter.getData();
+    if (data != null) {
+      data.setDimensions(painter.getAttributeValue(StdAttr.WIDTH), len);
+    }
 
     // In the case data is null we assume that the different value are null. This allow the user to
     // instantiate the shift register without simulation mode
