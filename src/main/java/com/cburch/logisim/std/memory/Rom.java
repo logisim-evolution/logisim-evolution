@@ -164,7 +164,7 @@ public class Rom extends Mem {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    final var len = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    final var len = Math.min(8, attrs.getValue(Mem.DATA_ATTR).getWidth());
     if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       return Bounds.create(0, 0, SymbolWidth + 40, 140);
     } else {
