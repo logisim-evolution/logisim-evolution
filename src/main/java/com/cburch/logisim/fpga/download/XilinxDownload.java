@@ -192,7 +192,7 @@ public class XilinxDownload implements VendorDownload {
     if (!FileWriter.writeContents(vhdlListFile, contents.get())) return false;
 
     contents
-          .clear()
+          .clearBuffer()
           .add(
               "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
               ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME,
@@ -202,7 +202,7 @@ public class XilinxDownload implements VendorDownload {
 
     if (!FileWriter.writeContents(scriptFile, contents.get())) return false;
 
-    contents.clear();
+    contents.clearBuffer();
     contents.add("setmode -bscan");
 
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
@@ -296,15 +296,36 @@ public class XilinxDownload implements VendorDownload {
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
-    for (var key : LedArrayMap.keySet()) {
-      contents.add("NET \"" + LedArrayMap.get(key) + "\" LOC=\"" + key + "\";");
+    final var ledArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
+    for (var pin : ledArrayMap) {
+      temp.setLength(0);
+      temp.append("NET \"").append(pin.hdlSignal()).append("\" ");
+      temp.append("LOC = \"").append(pin.pinLocation()).append("\" ");
+      if (pin.pullBehavior() != PullBehaviors.UNKNOWN && pin.pullBehavior() != PullBehaviors.FLOAT) {
+        temp.append("| ")
+            .append(PullBehaviors.getConstrainedPullString(pin.pullBehavior()))
+            .append(" ");
+      }
+      if (pin.driveStrength() != DriveStrength.UNKNOWN
+          && pin.driveStrength() != DriveStrength.DEFAULT_STENGTH) {
+        temp.append("| DRIVE = ")
+            .append(DriveStrength.getConstrainedDriveStrength(pin.driveStrength()))
+            .append(" ");
+      }
+      if (pin.ioStandard() != IoStandards.UNKNOWN
+          && pin.ioStandard() != IoStandards.DEFAULT_STANDARD) {
+        temp.append("| IOSTANDARD = ")
+            .append(IoStandards.getConstraintedIoStandard(pin.ioStandard()))
+            .append(" ");
+      }
+      temp.append(";");
+      contents.add(temp.toString());
     }
     return contents;
   }
 
   @Override
-  public void setMapableResources(MappableResourcesContainer resources) {
+  public void setMappableResources(MappableResourcesContainer resources) {
     mapInfo = resources;
   }
 

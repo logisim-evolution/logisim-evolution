@@ -103,6 +103,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   private ArrayList<BoardManipulatorListener> listeners;
   private final IoComponentsInformation ioComps;
   private MappableResourcesContainer mapInfo;
+  private FpgaIoInformationContainer componentToDrag;
   private JList<MapListModel.MapInfo> unmappedList;
   private JList<MapListModel.MapInfo> mappedList;
   private JButton unmapButton;
@@ -313,6 +314,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       comp.getRectangle().updateRectangle(rect);
     if (comp.isKnownComponent()) {
       ioComps.addComponent(comp, scale);
+      ioComps.setHighligted(comp);
       for (final var listener : listeners) {
         listener.componentsChanged(ioComps);
       }
@@ -353,14 +355,16 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   @Override
   public void mouseDragged(MouseEvent e) {
     if (mapMode) return;
-    if (defineRectangle != null) {
-      repaint(defineRectangle.resizeAndGetUpdate(e));
-    } else if (ioComps.hasHighlighted()) {
-      /* resize or move the current highlighted component */
-      final var edit = ioComps.getHighligted();
+    if (componentToDrag != null && defineRectangle == null) {
+      final var edit = componentToDrag;
+      componentToDrag = null;
       ioComps.removeComponent(edit, scale);
       defineRectangle = new SimpleRectangle(e, edit, scale);
-      repaint(defineRectangle.resizeAndGetUpdate(e));
+    }
+    
+    if (defineRectangle != null) {
+      defineRectangle.resizeAndGetUpdate(e, scale);
+      repaint();
     }
   }
 
@@ -410,6 +414,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   public void mousePressed(MouseEvent e) {
     if (mapMode) return;
     if (image != null) {
+      componentToDrag = null;
       if (ioComps.hasHighlighted()) {
         /* Edit the current highligted component */
         if (e.getClickCount() > 1) {
@@ -426,22 +431,25 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
                 "FATAL!",
                 OptionPane.ERROR_MESSAGE);
           }
+        } else {
+          componentToDrag = ioComps.getHighligted();
         }
       } else {
         /* define a new component */
         defineRectangle = new SimpleRectangle(e);
-        repaint(e.getX(), e.getY(), 1, 1);
+        repaint();
       }
     }
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
+    componentToDrag = null;
     if (defineRectangle != null && !mapMode) {
-      final var toBeRepainted = defineRectangle.resizeRemoveAndgetUpdate(e);
+      defineRectangle.resizeAndGetUpdate(e, scale);
       defineIOComponent();
       defineRectangle = null;
-      repaint(toBeRepainted);
+      repaint();
     }
   }
 
@@ -471,29 +479,25 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   @Override
   public void valueChanged(ListSelectionEvent event) {
     if (event.getSource().equals(unmappedList)) {
+      ioComps.removeSelectable(scale);
       if (unmappedList.getSelectedIndex() >= 0) {
         mappedList.clearSelection();
         if (unmapButton != null) unmapButton.setEnabled(false);
         ioComps.setSelectable(unmappedList.getSelectedValue(), scale);
-      } else ioComps.removeSelectable(scale);
+      }
     } else if (event.getSource().equals(mappedList)) {
+      ioComps.removeSelectable(scale);
       if (mappedList.getSelectedIndex() >= 0) {
         unmappedList.clearSelection();
         if (unmapButton != null) unmapButton.setEnabled(true);
         ioComps.setSelectable(mappedList.getSelectedValue(), scale);
-      } else ioComps.removeSelectable(scale);
+      }
       if (mappedList.getModel().getSize() > 0) {
         if (unmapAllButton != null) unmapAllButton.setEnabled(true);
       } else {
         if (unmapAllButton != null) unmapAllButton.setEnabled(false);
       }
     }
-  }
-
-  @Override
-  public void windowDeactivated(WindowEvent event) {
-    ioComps.removeSelectable(scale);
-    if (unmapButton != null) unmapButton.setEnabled(false);
   }
 
   @Override

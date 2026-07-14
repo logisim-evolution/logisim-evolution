@@ -12,6 +12,7 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.DriveStrength;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
@@ -231,25 +232,43 @@ public class VivadoDownload implements VendorDownload {
           contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", map.getPinLocation(i), netName);
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            final var ioStandard = info.getIoStandard();
-            if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
-              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.getConstraintedIoStandard(info.getIoStandard()), netName);
-            final var pullBehavior = info.getPullBehavior();
-            if (pullBehavior == PullBehaviors.PULL_DOWN || pullBehavior == PullBehaviors.PULL_UP)
-              contents.add("    set_property {{1}} TRUE [get_ports {{{2}}}]", PullBehaviors.getConstrainedPullString(pullBehavior), netName);
+            addIoProperties(contents, info.getIoStandard(), info.getPullBehavior(), info.getDrive(), netName);
           }
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
-    for (final var key : LedArrayMap.keySet()) {
-      contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", key, LedArrayMap.get(key));
+    final var ledArrayMap = DownloadBase.getScanningMaps(mapInfo, rootNetList, boardInfo);
+    for (final var pin : ledArrayMap) {
+      contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", pin.pinLocation(), pin.hdlSignal());
+      addIoProperties(contents, pin.ioStandard(), pin.pullBehavior(), pin.driveStrength(), pin.hdlSignal());
     }
     return contents.get();
   }
 
+  private static void addIoProperties(
+      LineBuffer contents, char ioStandard, char pullBehavior, char driveStrength, String netName) {
+    if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD) {
+      contents.add(
+          "    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]",
+          IoStandards.getConstraintedIoStandard(ioStandard),
+          netName);
+    }
+    if (pullBehavior == PullBehaviors.PULL_DOWN || pullBehavior == PullBehaviors.PULL_UP) {
+      contents.add(
+          "    set_property {{1}} TRUE [get_ports {{{2}}}]",
+          PullBehaviors.getConstrainedPullString(pullBehavior),
+          netName);
+    }
+    if (driveStrength != DriveStrength.UNKNOWN && driveStrength != DriveStrength.DEFAULT_STENGTH) {
+      contents.add(
+          "    set_property DRIVE {{1}} [get_ports {{{2}}}]",
+          DriveStrength.getConstrainedDriveStrength(driveStrength).trim(),
+          netName);
+    }
+  }
+
   @Override
-  public void setMapableResources(MappableResourcesContainer resources) {
+  public void setMappableResources(MappableResourcesContainer resources) {
     mapInfo = resources;
   }
 

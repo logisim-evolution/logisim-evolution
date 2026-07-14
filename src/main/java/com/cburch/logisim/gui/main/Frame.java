@@ -17,6 +17,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
@@ -43,6 +44,7 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
@@ -50,6 +52,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
 import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
@@ -95,6 +98,12 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
+  private static final double DEFAULT_EXPLORER_SPLIT = 0.25;
+  private static final double MIN_EXPLORER_SPLIT = 0.05;
+  private static final double MAX_EXPLORER_SPLIT = 0.95;
+  private static final double DEFAULT_VHDL_CONSOLE_SPLIT = 0.75;
+  private static final double MIN_VHDL_CONSOLE_SPLIT = 0.05;
+  private static final double MAX_VHDL_CONSOLE_SPLIT = 0.95;
   private final Timer timer = new Timer();
   private final Project project;
   private final MyProjectListener myProjectListener = new MyProjectListener();
@@ -118,6 +127,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // for the Layout view
   private final LayoutToolbarModel layoutToolbarModel;
   private final Canvas layoutCanvas;
+  private final CanvasPane layoutCanvasPane;
+  private final CircuitViewMemory layoutViewMemory = new CircuitViewMemory();
   private final VhdlSimulatorConsole vhdlSimulatorConsole;
   private final HdlContentView hdlEditor;
   private final ZoomModel layoutZoomModel;
@@ -125,6 +136,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final AttrTableSelectionModel attrTableSelectionModel;
   // for the Appearance view
   private AppearanceView appearance;
+  private Double lastExplorerFraction =
+      sanitizeExplorerSplitFraction(AppPreferences.WINDOW_MAIN_SPLIT.get());
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
   private final RegTabContent regTabContent;
 
@@ -143,14 +156,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, project);
     layoutCanvas = new Canvas(project);
-    final var canvasPane = new CanvasPane(layoutCanvas);
+    layoutCanvasPane = new CanvasPane(layoutCanvas);
 
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
             buildZoomSteps(),
-            canvasPane);
+            layoutCanvasPane);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
@@ -181,9 +194,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     // set up the central area
     mainPanelSuper = new JPanel(new BorderLayout());
-    canvasPane.setZoomModel(layoutZoomModel);
+    layoutCanvasPane.setZoomModel(layoutZoomModel);
     mainPanel = new CardPanel();
-    mainPanel.addView(EDIT_LAYOUT, canvasPane);
+    mainPanel.addView(EDIT_LAYOUT, layoutCanvasPane);
     mainPanel.setView(EDIT_LAYOUT);
     mainPanelSuper.add(mainPanel, BorderLayout.CENTER);
 
@@ -222,6 +235,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
     mainRegion = new MainRegionVerticalSplitPane(leftRegion, rightPanel);
+    if (!AppPreferences.WINDOW_EXPLORER_VISIBLE.getBoolean()) {
+      mainRegion.setFraction(0.0);
+    }
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
@@ -396,8 +412,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     private Direction orientation;
 
     public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas) {
-      this(componentTree, mainCanvas, AppPreferences.WINDOW_MAIN_SPLIT.get(),
-              Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
+      this(
+          componentTree,
+          mainCanvas,
+          sanitizeExplorerSplitFraction(AppPreferences.WINDOW_MAIN_SPLIT.get()),
+          Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
     }
 
     public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas, double fraction,
@@ -550,7 +569,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public void resetLayout() {
-    mainRegion.setFraction(0.25);
+    lastExplorerFraction = DEFAULT_EXPLORER_SPLIT;
+    mainRegion.setFraction(DEFAULT_EXPLORER_SPLIT);
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(true);
     mainRegion.setOrientation(Direction.EAST);
     leftRegion.setFraction(0.5);
     rightRegion.setFraction(1.0);
@@ -626,6 +647,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
   }
 
+  public void computeEditMenuEnabled() {
+    menuListener.computeEditEnabled();
+    menubar.refreshEditUndoRedoItems();
+  }
+
   public void setEditorView(String view) {
     final var curView = mainPanel.getView();
     if (hdlEditor.getHdlModel() == null && curView.equals(view)) return;
@@ -670,6 +696,21 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   public ZoomModel getZoomModel() {
     return layoutZoomModel;
+  }
+
+  private void rememberLayoutView(Object active) {
+    if (active instanceof CircuitState state) {
+      layoutViewMemory.remember(
+          state.getCircuit(), layoutZoomModel, layoutCanvasPane.getViewport().getViewPosition());
+    }
+  }
+
+  private void restoreLayoutView(Circuit circuit) {
+    layoutCanvas.computeSize(true);
+    layoutViewMemory.restore(
+        circuit,
+        layoutZoomModel,
+        position -> layoutCanvasPane.getViewport().setViewPosition(position));
   }
 
   @Override
@@ -728,8 +769,15 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     if (loc != null) AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
     if (leftRegion.getFraction() > 0) AppPreferences.WINDOW_LEFT_SPLIT.set(leftRegion.getFraction());
-    if (rightRegion.getFraction() < 1.0) AppPreferences.WINDOW_RIGHT_SPLIT.set(rightRegion.getFraction());
-    if (mainRegion.getFraction() > 0) AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
+    final var rightFraction = rightRegion.getFraction();
+    if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
+      AppPreferences.WINDOW_RIGHT_SPLIT.set(rightFraction);
+    }
+    final var explorerFraction = mainRegion.getFraction();
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(explorerFraction > 0.0);
+    if (isUsableExplorerSplitFraction(explorerFraction)) {
+      AppPreferences.WINDOW_MAIN_SPLIT.set(explorerFraction);
+    }
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
 
@@ -753,12 +801,69 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public void setVhdlSimulatorConsoleStatusVisible() {
+    lastFraction = sanitizeVhdlConsoleSplitFraction(lastFraction);
+    rightRegion.setFractionBounds(MIN_VHDL_CONSOLE_SPLIT, MAX_VHDL_CONSOLE_SPLIT);
     rightRegion.setFraction(lastFraction);
   }
 
   public void setVhdlSimulatorConsoleStatusInvisible() {
-    lastFraction = rightRegion.getFraction();
+    final var rightFraction = rightRegion.getFraction();
+    if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
+      lastFraction = rightFraction;
+    }
+    rightRegion.setFractionBounds(0.0, 1.0);
     rightRegion.setFraction(1);
+  }
+
+  public boolean isExplorerVisible() {
+    return mainRegion != null && mainRegion.getFraction() > 0.0;
+  }
+
+  public void setExplorerVisible(boolean visible) {
+    final var oldVisible = isExplorerVisible();
+
+    if (visible) {
+      lastExplorerFraction = sanitizeExplorerSplitFraction(lastExplorerFraction);
+      mainRegion.setFraction(lastExplorerFraction);
+    } else {
+      final var explorerFraction = mainRegion.getFraction();
+      if (isUsableExplorerSplitFraction(explorerFraction)) {
+        lastExplorerFraction = explorerFraction;
+      }
+      mainRegion.setFraction(0.0);
+    }
+
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(visible);
+    final var newVisible = isExplorerVisible();
+    if (oldVisible != newVisible) {
+      firePropertyChange(EXPLORER_VIEW, oldVisible, newVisible);
+    }
+  }
+
+  static double sanitizeExplorerSplitFraction(Double fraction) {
+    if (fraction == null || !isUsableExplorerSplitFraction(fraction)) {
+      return DEFAULT_EXPLORER_SPLIT;
+    }
+    return fraction;
+  }
+
+  static boolean isUsableExplorerSplitFraction(double fraction) {
+    return Double.isFinite(fraction)
+        && fraction >= MIN_EXPLORER_SPLIT
+        && fraction <= MAX_EXPLORER_SPLIT;
+  }
+
+  static double sanitizeVhdlConsoleSplitFraction(Double fraction) {
+    if (fraction == null || !isUsableVhdlConsoleSplitFraction(fraction)) {
+      return DEFAULT_VHDL_CONSOLE_SPLIT;
+    }
+    return fraction;
+  }
+
+  static boolean isUsableVhdlConsoleSplitFraction(double fraction) {
+    return Double.isFinite(fraction)
+        && fraction >= MIN_VHDL_CONSOLE_SPLIT
+        && fraction <= MAX_VHDL_CONSOLE_SPLIT;
   }
 
   public HdlModel getHdlEditorView() {
@@ -796,16 +901,23 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) return;
     }
     if (newAttrs == null) {
-      final var circ = project.getCurrentCircuit();
-      if (circ != null) {
-        setAttrTableModel(new AttrTableCircuitModel(project, circ));
-      } else if (force) {
-        setAttrTableModel(null);
-      }
+      viewCircuitAttributes();
     } else if (newAttrs instanceof SelectionAttributes) {
+      attrTableSelectionModel.updateAttributeSet();
       setAttrTableModel(attrTableSelectionModel);
     } else {
       setAttrTableModel(new AttrTableToolModel(project, newTool));
+    }
+  }
+
+  void viewCircuitAttributes() {
+    final var circ = project.getCurrentCircuit();
+    if (circ != null) {
+      setAttrTableModel(new AttrTableCircuitModel(project, circ));
+    } else if (project.getCurrentHdl() instanceof VhdlContent hdl) {
+      setAttrTableModel(new AttrTableHdlModel(project, hdl));
+    } else {
+      setAttrTableModel(null);
     }
   }
 
@@ -841,6 +953,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
         buildTitleString();
         enableSave();
+      } else if (e.getAction() == LibraryEvent.REMOVE_TOOL
+          && e.getData() instanceof AddTool tool
+          && tool.getFactory() instanceof SubcircuitFactory subcircuitFactory) {
+        layoutViewMemory.forget(subcircuitFactory.getSubcircuit());
       }
     }
 
@@ -860,15 +976,20 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           }
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
-        if (event.getData() instanceof Circuit) {
+        rememberLayoutView(event.getOldData());
+        if (event.getData() instanceof Circuit circuit) {
           setEditorView(EDIT_LAYOUT);
+          restoreLayoutView(circuit);
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }
+          viewAttributes(project.getTool());
         } else if (event.getData() instanceof HdlModel model) {
           setHdlEditorView(model);
+          viewCircuitAttributes();
+        } else {
+          viewAttributes(project.getTool());
         }
-        viewAttributes(project.getTool());
         buildTitleString();
       } else if (action == ProjectEvent.ACTION_SET_TOOL) {
         if (attrTable == null) {

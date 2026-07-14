@@ -20,6 +20,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -304,9 +305,11 @@ public class ComponentSelector extends JTable {
       return option.toString();
     }
   }
-
+  
+  //Suppress serial warning because TreeNodeRenderer is a UI component and 
+  //is not intended to be serialized or persisted across different JVM versions.
+  @SuppressWarnings("serial")
   private class TreeNodeRenderer extends DefaultTableCellRenderer implements Icon {
-
     private TreeNode<?> node;
 
     @Override
@@ -314,7 +317,7 @@ public class ComponentSelector extends JTable {
       if (value instanceof CircuitNode) isSelected = false;
       final java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       if (ret instanceof JLabel && value instanceof TreeNode) {
-        node = (TreeNode) value;
+        node = (TreeNode<?>) value;
         ((JLabel) ret).setIcon(this);
       }
       return ret;
@@ -397,7 +400,7 @@ public class ComponentSelector extends JTable {
     // setAutoResizeMode(AUTO_RESIZE_OFF);
     setShowGrid(false);
     setFillsViewportHeight(true);
-    setDragEnabled(true);
+    if (!GraphicsEnvironment.isHeadless()) setDragEnabled(true);
     setDropMode(DropMode.ON_OR_INSERT); // ?
     setTransferHandler(new ComponentTransferHandler());
 

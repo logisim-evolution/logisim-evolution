@@ -48,6 +48,7 @@ import com.cburch.logisim.util.LocaleListener;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -75,6 +76,11 @@ public class Pin extends InstanceFactory {
    */
   public static final String _ID = "Pin";
 
+  private static Frame getOwnerFrame(InstanceState state) {
+    final var project = state.getProject();
+    return project == null ? null : project.getFrame();
+  }
+
   @SuppressWarnings("serial")
   private static class EditDecimal extends JDialog implements BaseKeyListenerContract, LocaleListener {
 
@@ -97,7 +103,7 @@ public class Pin extends InstanceFactory {
     }
 
     public EditDecimal(InstanceState state) {
-      super();
+      super(getOwnerFrame(state));
       this.state = state;
       radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
       pinState = getState(state);
@@ -160,6 +166,10 @@ public class Pin extends InstanceFactory {
       gbc.gridy = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      gbc.weightx = 1.0;
+      gbc.ipadx = AppPreferences.getScaled(8);
+      gbc.ipady = AppPreferences.getScaled(4);
       gbc.insets = new Insets(8, 4, 8, 4);
       text.addKeyListener(this);
       text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -250,7 +260,7 @@ public class Pin extends InstanceFactory {
     }
 
     public EditFloat(InstanceState state) {
-      super();
+      super(getOwnerFrame(state));
       this.state = state;
       pinState = getState(state);
       final var value = pinState.intendedValue;
@@ -317,6 +327,10 @@ public class Pin extends InstanceFactory {
       gbc.gridy = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      gbc.weightx = 1.0;
+      gbc.ipadx = AppPreferences.getScaled(8);
+      gbc.ipady = AppPreferences.getScaled(4);
       gbc.insets = new Insets(8, 4, 8, 4);
       text.addKeyListener(this);
       text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -1251,6 +1265,7 @@ public class Pin extends InstanceFactory {
   public void driveInputPin(InstanceState state, Value value) {
     PinAttributes attrs = (PinAttributes) state.getAttributeSet();
     PinState myState = getState(state);
+    if (value == Value.NIL) value = Value.createUnknown(attrs.width);
     // don't pull here -- instead, pull when displaying and propagating
     myState.intendedValue = value; // pull(attrs, value);
   }

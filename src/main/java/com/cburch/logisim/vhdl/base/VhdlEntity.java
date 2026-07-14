@@ -249,9 +249,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
         }
       }
 
-      // FIXME: hardcoded string
-      throw new UnsupportedOperationException(
-          "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");     // FIXME: hardcoded string
+      throw new UnsupportedOperationException(S.get("vhdlSimulationNotEnabled"));
     }
   }
 
@@ -327,6 +325,14 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   @Override
   public void contentSet(HdlModel source) {
     icon.setInvalid(!content.isValid());
+  }
+
+  @Override
+  public void appearanceChanged(HdlModel source) {
+    for (final var instance : myInstances) {
+      updatePorts(instance);
+      instance.fireInvalidated();
+    }
   }
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();

@@ -37,9 +37,40 @@ Project highlights:
 * supports [multiple languages](docs/docs.md#translations),
 * and more!
 
+Getting started (no experience needed):
+
+Step-by-step first circuit:
+
+| Step | What you do | Why it matters |
+| --- | --- | --- |
+| 1 | `File → New` | Start a clean project |
+| 2 | Place two `Input` components and one `AND` gate | Create a simple logic function |
+| 3 | Add a `Probe` or `Lamp` as the output | Make the result visible |
+| 4 | Use the wiring tool to connect inputs → gate → output | Build the circuit path |
+| 5 | Toggle the inputs | Observe how logic affects the output |
+| 6 | Save the project | Keep your work for later |
+
+Key ideas in plain language:
+
+| Concept | What it means in practice |
+| --- | --- |
+| Component | A building block you place on the canvas |
+| Wire | The path that carries a 0 or 1 between components |
+| Signal | The 0/1 value traveling on a wire |
+| Subcircuit | A reusable group of components you define |
+| Library | A collection of components you can add to a project |
+
+If you get stuck:
+
+* Click a component and read its properties panel.
+* Use `Edit → Undo` to step back safely.
+* Check the screenshots and docs links below for examples.
+
 [![Logisim-evolution](docs/img/logisim-evolution-01-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-02-small.png)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-03-small.png)](docs/pics.md)
+
+Image gallery: the three thumbnails above link to a larger set of screenshots in `docs/pics.md`.
 
 ---
 
@@ -47,6 +78,21 @@ Project highlights:
 
 `Logisim-evolution` is a Java application; therefore, it can run on any operating system supporting the Java runtime enviroment.
 It requires [Java 21 (or newer)](https://adoptium.net/temurin/releases/).
+
+Accessibility notes:
+
+* If you use a screen reader, the `docs/` pages are plain Markdown and generally read well in linear order.
+* If you prefer larger text or higher contrast, use your OS display settings or Java accessibility options.
+* Keyboard navigation is supported throughout the app; consult the in-app help for shortcuts.
+* The image gallery uses thumbnails that link to full-size images for better visibility.
+
+Accessibility quick setup:
+
+| Need | Tip |
+| --- | --- |
+| Larger text | Increase OS scaling or Java UI scaling |
+| High contrast | Enable high-contrast mode in your OS |
+| Keyboard-only use | Rely on menus and in-app shortcuts |
 
 ---
 
@@ -73,6 +119,19 @@ The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-
 is also available and can be run on any system with a supported Java runtime installed.
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/logisim-evolution)
+
+Which download should I pick?
+
+| You are on | Pick this | Notes |
+| --- | --- | --- |
+| Windows (Intel/AMD) | `logisim-evolution-<version>-amd64.msi` | Standard installer |
+| Windows (ARM) | `logisim-evolution-<version>-aarch64.msi` | For ARM devices |
+| macOS (Apple Silicon) | `logisim-evolution-<version>-aarch64.dmg` | For M-series Macs |
+| macOS (Intel) | `logisim-evolution-<version>-x86_64.dmg` | Also runs via Rosetta |
+| Linux (Debian/Ubuntu) | `logisim-evolution_<version>-1_amd64.deb` | Debian package |
+| Linux (Fedora/Redhat) | `logisim-evolution-<version>-1.x86_64.rpm` | RPM package |
+| Linux (Snap) | `logisim-evolution-<version>_amd64.snap` | Snap store build |
+| Any OS with Java | `logisim-evolution-<version>-all.jar` | Portable option |
 
 ---
 

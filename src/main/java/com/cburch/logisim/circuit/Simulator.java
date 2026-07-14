@@ -9,13 +9,10 @@
 
 package com.cburch.logisim.circuit;
 
-import com.cburch.hex.Test;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.log.ClockSource;
 import com.cburch.logisim.gui.log.ComponentSelector;
-import com.cburch.logisim.gui.test.TestPanel;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
@@ -160,6 +157,7 @@ public class Simulator {
     // the repaining thread. They can be read without locks as they do not need
     // to be kept consistent with other variables.
     private volatile boolean exceptionEncountered = false;
+    private volatile String exceptionMessage = null;
     private volatile boolean oscillating = false;
 
     // This last one should be made thread-safe, but it isn't for now.
@@ -210,6 +208,18 @@ public class Simulator {
 
     synchronized String getSingleStepMessage() {
       return autoPropagatingUnsynchronized ? "" : stepPoints.getSingleStepMessage();
+    }
+
+    private static String describeException(Throwable err) {
+      final var message = err.getLocalizedMessage();
+      return message == null || message.isBlank() ? err.getClass().getSimpleName() : message;
+    }
+
+    private void recordException(Throwable err) {
+      if (exceptionMessage == null || exceptionMessage.isBlank()) {
+        exceptionMessage = describeException(err);
+      }
+      err.printStackTrace();
     }
 
     boolean setPropagator(Propagator prop) {
@@ -485,6 +495,7 @@ public class Simulator {
       // doStep);
 
       exceptionEncountered = false;
+      exceptionMessage = null;
 
       var oops = false;
       var osc = false;
@@ -501,7 +512,7 @@ public class Simulator {
           propagated = true;
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -514,7 +525,7 @@ public class Simulator {
           sim.fireSimulatorReset();
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -537,7 +548,7 @@ public class Simulator {
           }
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -553,7 +564,7 @@ public class Simulator {
           }
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -601,7 +612,7 @@ public class Simulator {
             return;
           }
         } catch (Throwable e) {
-          e.printStackTrace();
+          recordException(e);
           exceptionEncountered = true;
           simStateLock.lock();
           try {
@@ -776,6 +787,10 @@ public class Simulator {
 
   public boolean isExceptionEncountered() {
     return simThread.exceptionEncountered;
+  }
+
+  public String getExceptionMessage() {
+    return simThread.exceptionMessage;
   }
 
   public boolean isOscillating() {

@@ -87,8 +87,8 @@ public class FpgaOptions extends OptionsPanel {
   private JPanel mapPan;
   private JPanel ReportPan;
   private JPanel vhdlPan;
-  private JCheckBox SupressGated;
-  private JCheckBox SupressOpen;
+  private JCheckBox SuppressGated;
+  private JCheckBox SuppressOpen;
   private JCheckBox vhdlKeywordUpperCase;
   private final PreferencesFrame frame;
   private final PrefOptionList HDL_Used;
@@ -177,11 +177,11 @@ public class FpgaOptions extends OptionsPanel {
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    SupressGated = ((PrefMonitorBoolean) AppPreferences.SupressGatedClockWarnings).getCheckBox();
-    ReportPan.add(SupressGated, gbc);
+    SuppressGated = ((PrefMonitorBoolean) AppPreferences.SuppressGatedClockWarnings).getCheckBox();
+    ReportPan.add(SuppressGated, gbc);
     gbc.gridy++;
-    SupressOpen = ((PrefMonitorBoolean) AppPreferences.SupressOpenPinWarnings).getCheckBox();
-    ReportPan.add(SupressOpen, gbc);
+    SuppressOpen = ((PrefMonitorBoolean) AppPreferences.SuppressOpenPinWarnings).getCheckBox();
+    ReportPan.add(SuppressOpen, gbc);
     return ReportPan;
   }
 
@@ -267,8 +267,8 @@ public class FpgaOptions extends OptionsPanel {
     SelMapLabel.setText(S.get("SelMapCol"));
     SelectMapLabel.setText(S.get("SelectMapCol"));
     SelectLabel.setText(S.get("SelectCol"));
-    SupressGated.setText(S.get("SupressGatedClock"));
-    SupressOpen.setText(S.get("SupressOpenInput"));
+    SuppressGated.setText(S.get("SuppressGatedClock"));
+    SuppressOpen.setText(S.get("SuppressOpenInput"));
     vhdlKeywordUpperCase.setText(S.get("VhdlKeywordUpperCase"));
     editPan.setBorder(BorderFactory.createTitledBorder(S.get("EditColors")));
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));

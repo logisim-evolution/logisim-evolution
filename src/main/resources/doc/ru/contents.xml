@@ -84,7 +84,7 @@
 <!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->			
 			<tocitem target="prefs_exp" text="Вкладка Экспериментальные" />
 <!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
-<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->
+			<tocitem target="prefs_fpga" text="FPGA Commander settings" />
 			<tocitem target="prefs_cmdline" text="Командная строка" />
 		</tocitem>
 		<tocitem target="opts" text="Параметры проекта">
@@ -178,6 +178,7 @@
 			<tocitem target="io_hexdig" text="Шестнадцатеричный индикатор" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="Светодиодная матрица" image="icon_dotmat" />
 			<tocitem target="io_tty" text="Терминал" image="icon_tty" />
+			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
 			<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
 			<tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" />

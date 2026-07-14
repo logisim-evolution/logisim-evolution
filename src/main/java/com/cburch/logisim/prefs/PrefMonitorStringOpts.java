@@ -22,6 +22,13 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 
   private final String dflt;
 
+  private String choose(String newValue) {
+    for (final var s : opts) {
+      if (isSame(s, newValue)) return s;
+    }
+    return dflt;
+  }
+
   /**
    * Constructor for the PrefMonitorStringOpts class.
    * Initializes and sets preferences for string options.
@@ -60,15 +67,8 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
     if (prop.equals(name)) {
       final var oldValue = value;
       final var newValue = prefs.get(name, dflt);
-      if (!isSame(oldValue, newValue)) {
-        String chosen = null;
-        for (final var s : opts) {
-          if (isSame(s, newValue)) {
-            chosen = s;
-            break;
-          }
-        }
-        if (chosen == null) chosen = dflt;
+      final var chosen = choose(newValue);
+      if (!isSame(oldValue, chosen)) {
         value = chosen;
         AppPreferences.firePropertyChange(name, oldValue, chosen);
       }
@@ -83,9 +83,14 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
    * @param newValue The new value for the preference.
    */
   public void set(String newValue) {
-    final var oldValue = value;
-    if (!isSame(oldValue, newValue)) {
-      AppPreferences.getPrefs().put(getIdentifier(), newValue);
+    final var chosen = choose(newValue);
+    if (!isSame(value, chosen)) {
+      final var oldValue = value;
+      value = chosen;
+      AppPreferences.getPrefs().put(getIdentifier(), chosen);
+      AppPreferences.firePropertyChange(getIdentifier(), oldValue, chosen);
+    } else if (!isSame(newValue, chosen)) {
+      AppPreferences.getPrefs().put(getIdentifier(), chosen);
     }
   }
 }

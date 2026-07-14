@@ -17,7 +17,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.Color;
@@ -244,7 +243,7 @@ public class ExportImage {
       }
       try {
         switch (filter.type) {
-          case FORMAT_GIF -> GifEncoder.toFile(img, where, monitor);
+          case FORMAT_GIF -> ImageIO.write(img, "GIF", where);
           case FORMAT_PNG -> ImageIO.write(img, "PNG", where);
           case FORMAT_JPG -> ImageIO.write(img, "JPEG", where);
           case FORMAT_TIKZ -> ((TikZWriter) g).writeFile(where);
@@ -294,6 +293,14 @@ public class ExportImage {
     @Override
     public String getDescription() {
       return desc.toString();
+    }
+
+    public String getDefaultExtension() {
+      return extensions[0];
+    }
+
+    public int getType() {
+      return type;
     }
   }
 

@@ -351,15 +351,12 @@ public class AppPreferences {
 
   public static int getDownScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extScale;
-    return (int) ((float) value / scale);
+    return (int) Math.round(value / (SCALE_FACTOR.get() * extScale));
   }
 
   public static int getDownScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return (int) ((float) value / scale);
+    return (int) Math.round(value / SCALE_FACTOR.get());
   }
 
   public static double getDownScaled(double value) {
@@ -369,34 +366,27 @@ public class AppPreferences {
 
   public static int getScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extScale;
-    return (int) ((float) value * scale);
+    return (int) Math.round(value * (SCALE_FACTOR.get() * extScale));
   }
 
   public static int getScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return (int) ((float) value * scale);
+    return (int) Math.round(value * SCALE_FACTOR.get());
   }
 
   public static float getScaled(float value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return value * scale;
+    return value * SCALE_FACTOR.get().floatValue();
   }
 
   public static float getScaled(float value, float extscale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extscale;
-    return value * scale;
+    return value * SCALE_FACTOR.get().floatValue() * extscale;
   }
 
   public static double getScaled(double value) {
     getPrefs();
-    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
-    return value * scale;
+    return value * SCALE_FACTOR.get();
   }
 
   public static Font getScaledFont(Font myfont) {
@@ -516,11 +506,11 @@ public class AppPreferences {
   public static final PrefMonitor<String> FPGA_Workspace =
       create(
           new PrefMonitorString(
-              "FPGAWorkspace", System.getProperty("user.home") + "/logisim_evolution_workspace"));
+              "FPGAWorkspace", System.getProperty("user.home") + File.separator + "logisim_evolution_workspace"));
   public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
-              "afterAdd",
+              "hdlType",
               new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
@@ -528,9 +518,9 @@ public class AppPreferences {
 
   public static final FpgaBoards Boards = new FpgaBoards();
 
-  public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
+  public static final PrefMonitor<Boolean> SuppressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
-  public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
+  public static final PrefMonitor<Boolean> SuppressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
@@ -578,6 +568,7 @@ public class AppPreferences {
   public static final int DEFAULT_COMPONENT_SECONDARY_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
+  public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
 
   // restores default grid colors
   public static void setDefaultGridColors() {
@@ -607,6 +598,8 @@ public class AppPreferences {
       create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
       create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+  public static final PrefMonitor<Integer> TEXT_TOOL_COLOR =
+      create(new PrefMonitorInt("textToolColor", DEFAULT_TEXT_TOOL_COLOR));
 
 
   // Layout preferences
@@ -780,7 +773,7 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> KMAP16_COLOR =
       create(new PrefMonitorInt("KMAPColor16", 0xF032E6));
 
-  // FPGA commander colors
+  // FPGA Commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
       create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
   public static final PrefMonitor<Integer> FPGA_DEFINE_HIGHLIGHT_COLOR =
@@ -838,6 +831,15 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> QUESTA_VALIDATION =
       create(new PrefMonitorBoolean("questaValidation", false));
+  public static final String VHDL_STANDARD_1993 = "1993";
+  public static final String VHDL_STANDARD_2002 = "2002";
+  public static final String VHDL_STANDARD_2008 = "2008";
+  public static final PrefMonitor<String> VHDL_STANDARD =
+      create(
+          new PrefMonitorStringOpts(
+              "vhdlStandard",
+              new String[] {VHDL_STANDARD_1993, VHDL_STANDARD_2002, VHDL_STANDARD_2008},
+              VHDL_STANDARD_2002));
   public static final PrefMonitor<String> QuartusToolPath =
       create(new PrefMonitorString("QuartusToolPath", ""));
   public static final PrefMonitor<String> ISEToolPath =
@@ -891,6 +893,7 @@ public class AppPreferences {
 
   public static void resetWindow() {
     CANVAS_PLACEMENT.set(Direction.EAST.toString());
+    WINDOW_EXPLORER_VISIBLE.set(true);
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);
     WINDOW_RIGHT_SPLIT.set(0.751);
@@ -901,6 +904,9 @@ public class AppPreferences {
 
   public static final PrefMonitor<Double> WINDOW_MAIN_SPLIT =
       create(new PrefMonitorDouble("windowMainSplit", 0.25));
+
+  public static final PrefMonitor<Boolean> WINDOW_EXPLORER_VISIBLE =
+      create(new PrefMonitorBoolean("windowExplorerVisible", true));
 
   public static final PrefMonitor<Double> WINDOW_LEFT_SPLIT =
       create(new PrefMonitorDouble("windowLeftSplit", 0.5));

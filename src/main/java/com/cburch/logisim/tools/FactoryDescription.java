@@ -33,7 +33,7 @@ public class FactoryDescription {
   private String iconName;
   private boolean iconLoadAttempted;
   private Icon icon;
-  private final Class factoryClass;
+  private final Class<? extends ComponentFactory> factoryClass;
   private boolean factoryLoadAttempted;
   private ComponentFactory factory;
   private StringGetter toolTip;

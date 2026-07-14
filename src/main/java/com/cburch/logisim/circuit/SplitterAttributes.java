@@ -267,6 +267,21 @@ public class SplitterAttributes extends AbstractAttributeSet {
     }
   }
 
+  private void clampBitEndsToFanout() {
+    final var offs = INIT_ATTRIBUTES.size();
+    List<Integer> bitEndModified = new ArrayList<>();
+    for (var i = 0; i < bitEnd.length; i++) {
+      if (bitEnd[i] > fanout) {
+        bitEnd[i] = fanout;
+        bitEndModified.add(i);
+      }
+    }
+    for (int i : bitEndModified) {
+      final var attr = (BitOutAttribute) attrs.get(offs + i);
+      fireAttributeValueChanged(attr, (int) bitEnd[i], null);
+    }
+  }
+
   @Override
   protected void copyInto(AbstractAttributeSet destObj) {
     final var dest = (SplitterAttributes) destObj;
@@ -330,14 +345,10 @@ public class SplitterAttributes extends AbstractAttributeSet {
       parameters = null;
     } else if (attr == ATTR_FANOUT) {
       int newValue = (Integer) value;
-      final var bits = bitEnd;
-      for (var i = 0; i < bits.length; i++) {
-        if (bits[i] > newValue) bits[i] = (byte) newValue;
-      }
       if (fanout == (byte) newValue) return;
       fanout = (byte) newValue;
       configureOptions();
-      configureDefaults();
+      clampBitEndsToFanout();
       parameters = null;
     } else if (attr == ATTR_WIDTH) {
       final var width = (BitWidth) value;

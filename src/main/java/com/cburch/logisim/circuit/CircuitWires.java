@@ -887,7 +887,7 @@ public class CircuitWires {
           GraphicsUtil.switchToWidth(g, width);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
         }
-        /* The following part is used by the FPGA-commanders DRC to highlight a wire with DRC
+        /* The following part is used by the FPGA Commander's DRC to highlight a wire with DRC
          * problems (KTT1)
          */
         if (wire.isDrcHighlighted()) {

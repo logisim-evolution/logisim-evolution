@@ -97,6 +97,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     private int pc;
     private int lastRegisterWritten = -1;
     private final LinkedList<TraceInfo> instrTrace;
+    private final Object instrTraceLock = new Object();
     private Value lastClock;
     private final SocUpSimulationState simState;
     private final Instance myInstance;
@@ -156,7 +157,9 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       Arrays.fill(csrs, 0);
       // mtvec remains 0 until firmware initializes it
       lastRegisterWritten = -1;
-      instrTrace.clear();
+      synchronized (instrTraceLock) {
+        instrTrace.clear();
+      }
       if (visible) repaint();
       simState.reset();
     }
@@ -341,7 +344,10 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       /* execute instruction */
       final var exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
-      while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES) instrTrace.removeLast();
+      synchronized (instrTraceLock) {
+        while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES) 
+          instrTrace.removeLast();
+      }
       if (exe == null) {
         OptionPane.showMessageDialog(
             null,
@@ -350,7 +356,9 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
                 + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
-        instrTrace.addFirst(new TraceInfo(pc, instruction, S.get("RV32imFetchInvInstrAsm"), true));
+        synchronized (instrTraceLock) {
+          instrTrace.addFirst(new TraceInfo(pc, instruction, S.get("RV32imFetchInvInstrAsm"), true));
+        }
         pc = pc + 4;
         if (visible) repaint();
         return;
@@ -368,11 +376,15 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         trace.setError();
-        instrTrace.addFirst(trace);
+        synchronized (instrTraceLock) {
+          instrTrace.addFirst(trace);
+        }
         if (visible) repaint();
         return;
       }
-      instrTrace.addFirst(trace);
+      synchronized (instrTraceLock) {
+        instrTrace.addFirst(trace);
+      }
       /* all done increment pc */
       if (!exe.performedJump()) pc = pc + 4;
       if (visible) repaint();
@@ -449,7 +461,11 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
     @Override
     public LinkedList<TraceInfo> getTraces() {
-      return instrTrace;
+      synchronized (instrTraceLock) {
+        @SuppressWarnings("unchecked")
+        LinkedList<TraceInfo> ret = (LinkedList<TraceInfo>) instrTrace.clone();
+        return ret;
+      }
     }
 
     @Override

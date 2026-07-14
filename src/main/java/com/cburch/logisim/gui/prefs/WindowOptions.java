@@ -55,6 +55,8 @@ class WindowOptions extends OptionsPanel {
   private final JLabel componentColorTitle;
   private final ColorChooserButton componentIconColor;
   private final JLabel componentIconColorTitle;
+  private final ColorChooserButton textToolColor;
+  private final JLabel textToolColorTitle;
   private final JButton gridColorsResetButton;
 
   private final ZoomSlider zoomValue;
@@ -64,8 +66,7 @@ class WindowOptions extends OptionsPanel {
   private final JLabel restartWarning;
   private final JLabel restartWarningSpacer;
   private final JLabel zoomLabel;
-  private final JLabel importantA;
-  private final JTextArea importantB;
+  private final JTextArea zoomFactorImportant;
   private final JPanel previewContainer;
   private final JComboBox<String> lookAndFeel;
   private final JComboBox<String> appFont;
@@ -142,6 +143,10 @@ class WindowOptions extends OptionsPanel {
     componentIconColor = new ColorChooserButton(window, AppPreferences.COMPONENT_ICON_COLOR);
     panel.add(componentIconColorTitle);
     panel.add(componentIconColor);
+    textToolColorTitle = new JLabel(S.get("windowTextToolColor"));
+    textToolColor = new ColorChooserButton(window, AppPreferences.TEXT_TOOL_COLOR);
+    panel.add(textToolColorTitle);
+    panel.add(textToolColor);
 
     gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);
@@ -152,14 +157,12 @@ class WindowOptions extends OptionsPanel {
 
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
+    panel.add(new JLabel(" "));
 
-    importantA = new JLabel(S.get("windowToolbarPleaserestart"));
-    importantA.setFont(importantA.getFont().deriveFont(Font.ITALIC));
-    panel.add(importantA);
-
-    importantB = new JTextArea(S.get("windowToolbarImportant"));
-    importantB.setFont(importantB.getFont().deriveFont(Font.ITALIC));
-    panel.add(importantB);
+    zoomFactorImportant = new JTextArea(S.get("windowToolbarImportant"));
+    zoomFactorImportant.setFont(zoomFactorImportant.getFont().deriveFont(Font.ITALIC));
+    zoomFactorImportant.setEditable(false);
+    panel.add(zoomFactorImportant);
 
     zoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
     zoomValue =
@@ -280,14 +283,15 @@ class WindowOptions extends OptionsPanel {
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     appFontLabel.setText(S.get("windowAppFont"));
     restartWarning.setText(S.get("windowRestartWarning"));
-    importantA.setText(S.get("windowToolbarPleaserestart"));
-    importantB.setText(S.get("windowToolbarImportant"));
+    zoomFactorImportant.setText(S.get("windowToolbarImportant"));
     resetWindowLayoutButton.setText(S.get("windowToolbarReset"));
     canvasBgColorTitle.setText(S.get("windowCanvasBgColor"));
     gridBgColorTitle.setText(S.get("windowGridBgColor"));
     gridDotColorTitle.setText(S.get("windowGridDotColor"));
     gridZoomedDotColorTitle.setText(S.get("windowGridZoomedDotColor"));
     componentColorTitle.setText(S.get("windowComponentColor"));
+    componentIconColorTitle.setText(S.get("windowComponentIconColor"));
+    textToolColorTitle.setText(S.get("windowTextToolColor"));
     gridColorsResetButton.setText(S.get("windowGridColorsReset"));
     zoomAutoButton.setText(S.get("windowSetAutoScaleFactor"));
   }

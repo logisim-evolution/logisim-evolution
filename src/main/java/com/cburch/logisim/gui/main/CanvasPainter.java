@@ -187,9 +187,13 @@ class CanvasPainter implements PropertyChangeListener {
     if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
       g2d.scale(zoomFactor, zoomFactor);
     }
+    final var circ = proj.getCurrentCircuit();
+    if (circ == null) {
+      gfxScaled.dispose();
+      return;
+    }
     drawWithUserState(g, gfxScaled, proj);
     drawWidthIncompatibilityData(g, gfxScaled, proj);
-    final var circ = proj.getCurrentCircuit();
 
     final var circState = proj.getCircuitState();
     final var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);

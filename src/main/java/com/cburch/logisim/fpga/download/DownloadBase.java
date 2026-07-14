@@ -12,6 +12,8 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.DriveStrength;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -35,9 +37,7 @@ import com.cburch.logisim.std.io.SevenSegmentScanningGenericHdlGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 public abstract class DownloadBase {
 
@@ -108,7 +108,8 @@ public abstract class DownloadBase {
     if (myMappableResources == null) {
       myMappableResources = new MappableResourcesContainer(myBoardInformation, rootSheet);
     } else {
-      myMappableResources.updateMapableComponents();
+      myMappableResources.updateIoComponents(myBoardInformation);
+      myMappableResources.updateMappableComponents();
     }
 
     return true;
@@ -373,6 +374,13 @@ public abstract class DownloadBase {
     return base + HDLPaths[identifier] + File.separator;
   }
 
+  public record ScanningIoPin(
+      String hdlSignal, String pinLocation, char ioStandard, char pullBehavior, char driveStrength) {
+    public ScanningIoPin(String hdlSignal, String pinLocation, FpgaIoInformationContainer info) {
+      this(hdlSignal, pinLocation, info.getIoStandard(), info.getPullBehavior(), info.getDrive());
+    }
+  }
+
   private boolean cleanDirectory(String dir) {
     try {
       final var thisDir = new File(dir);
@@ -391,9 +399,9 @@ public abstract class DownloadBase {
     }
   }
 
-  public static Map<String, String> getScanningMaps(
+  public static ArrayList<ScanningIoPin> getScanningMaps(
       MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
-    final var pinMaps = new HashMap<String, String>();
+    final var pinMaps = new ArrayList<ScanningIoPin>();
     var hasMappedClockedArray = false;
     var hasScanningSevenSegment = false;
     for (final var comp : maps.getIoComponentInformation().getComponents()) {
@@ -402,14 +410,15 @@ public abstract class DownloadBase {
           hasMappedClockedArray |=
               LedArrayGenericHdlGeneratorFactory.requiresClock(comp.getArrayDriveMode());
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
-            pinMaps.put(
+            pinMaps.add(new ScanningIoPin(
                 LedArrayGenericHdlGeneratorFactory.getExternalSignalName(
                     comp.getArrayDriveMode(),
                     comp.getNrOfRows(),
                     comp.getNrOfColumns(),
                     comp.getArrayId(),
                     pin),
-                comp.getPinLocation(pin));
+                comp.getPinLocation(pin),
+                comp));
           }
         }
       }
@@ -417,12 +426,13 @@ public abstract class DownloadBase {
         if (comp.hasMap()) {
           hasScanningSevenSegment = true;
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
-            pinMaps.put(
+            pinMaps.add(new ScanningIoPin(
                 SevenSegmentScanningGenericHdlGenerator.getExternalSignalName(
                     comp.getNrOfRows(),
                     comp.getArrayId(),
                     pin),
-                comp.getPinLocation(pin));
+                comp.getPinLocation(pin),
+                comp));
           }
         }
       }
@@ -430,8 +440,13 @@ public abstract class DownloadBase {
     if ((hasMappedClockedArray || hasScanningSevenSegment)
         && (nets.numberOfClockTrees() == 0)
         && !nets.requiresGlobalClockConnection()) {
-      pinMaps.put(
-          TickComponentHdlGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
+      pinMaps.add(
+          new ScanningIoPin(
+              TickComponentHdlGeneratorFactory.FPGA_CLOCK,
+              board.fpga.getClockPinLocation(),
+              board.fpga.getClockStandard(),
+              board.fpga.getClockPull(),
+              DriveStrength.UNKNOWN));
     }
     return pinMaps;
   }
