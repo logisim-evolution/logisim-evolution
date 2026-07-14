@@ -337,22 +337,22 @@ public class ShiftRegister extends InstanceFactory {
       else if (data_value.isErrorValue()) g.setColor(Color.RED);
       else g.setColor(Color.BLUE);
       final var yoff = (currentStage == 0) ? 10 : 0;
-      final var len = (nrOfBits + 3) / 4;
-      final var boxXpos = ((blockWidth - 30) / 2 + 30) - (len * 4);
-      g.fillRect(realXpos + boxXpos, realYpos + yoff + 2, 2 + len * 8, 16);
-      String value;
+      final var valueBounds = getStageValueBounds(nrOfBits);
+      g.fillRect(
+          realXpos + valueBounds.getX(),
+          realYpos + yoff + valueBounds.getY(),
+          valueBounds.getWidth(),
+          valueBounds.getHeight());
       if (data_value.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
-        value = StringUtil.toHexString(nrOfBits, data_value.toLongValue());
       } else {
         g.setColor(Color.YELLOW);
-        value = (data_value.isUnknown()) ? "?" : "!";
       }
       GraphicsUtil.drawText(
           g,
-          value,
-          realXpos + boxXpos + 1,
-          realYpos + yoff + 10,
+          getStageValueText(nrOfBits, data_value),
+          realXpos + valueBounds.getX() + 1,
+          realYpos + yoff + valueBounds.getY() + valueBounds.getHeight() / 2,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
       g.setColor(componentColor);
