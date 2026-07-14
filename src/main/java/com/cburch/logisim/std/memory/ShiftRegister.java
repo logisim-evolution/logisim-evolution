@@ -56,6 +56,21 @@ public class ShiftRegister extends InstanceFactory {
   static final int LD = 5;
   static final int symbolWidth = 100;
 
+  static Bounds getStageValueBounds(int nrOfBits) {
+    final var fullDigits = (nrOfBits + 3) / 4;
+    final var displayedSlots = Math.min(fullDigits, 9);
+    final var boxWidth = 2 + displayedSlots * 8;
+    final var preferredX =
+        ((symbolWidth - 30) / 2 + 30) - displayedSlots * 4;
+    return Bounds.create(Math.min(preferredX, symbolWidth - boxWidth), 2, boxWidth, 16);
+  }
+
+  static String getStageValueText(int nrOfBits, Value value) {
+    if (!value.isFullyDefined()) return value.isUnknown() ? "?" : "!";
+    final var text = StringUtil.toHexString(nrOfBits, value.toLongValue());
+    return text.length() <= 9 ? text : ".." + text.substring(text.length() - 7);
+  }
+
   public ShiftRegister() {
     super(_ID, S.getter("shiftRegisterComponent"), new ShiftRegisterHdlGeneratorFactory());
     setAttributes(
