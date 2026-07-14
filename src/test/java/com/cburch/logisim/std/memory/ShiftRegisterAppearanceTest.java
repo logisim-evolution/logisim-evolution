@@ -10,14 +10,21 @@
 package com.cburch.logisim.std.memory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.proj.Project;
+import java.awt.image.BufferedImage;
 import org.junit.jupiter.api.Test;
 
 class ShiftRegisterAppearanceTest {
@@ -93,6 +100,38 @@ class ShiftRegisterAppearanceTest {
     assertPortLocation(instance, ShiftRegister.LD, 0, 30);
     assertPortLocation(instance, 6, 0, 90);
     assertPortLocation(instance, 7, 120, 90);
+  }
+
+  @Test
+  void evolutionPaintSynchronizesDataAfterStageCountIncrease() {
+    final var file = LogisimFile.createNew(new Loader(null), null);
+    final var project = new Project(file);
+    final var circuit = file.getMainCircuit();
+    circuit.setProject(project);
+    final var circuitState = CircuitState.createRootState(project, circuit);
+    final var shiftRegister = new ShiftRegister();
+    final var attrs = shiftRegister.createAttributeSet();
+    attrs.setValue(StdAttr.WIDTH, BitWidth.create(8));
+    attrs.setValue(ShiftRegister.ATTR_LENGTH, 8);
+    attrs.setValue(ShiftRegister.ATTR_LOAD, true);
+    attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
+    final var component =
+        shiftRegister.createComponent(Location.create(0, 0, false), attrs);
+    final var data = new ShiftRegisterData(BitWidth.create(8), 8);
+    circuitState.setData(component, data);
+
+    attrs.setValue(ShiftRegister.ATTR_LENGTH, 24);
+
+    final var image = new BufferedImage(160, 560, BufferedImage.TYPE_INT_ARGB);
+    final var graphics = image.createGraphics();
+    try {
+      final var context =
+          new ComponentDrawContext(null, circuit, circuitState, graphics, graphics);
+      assertDoesNotThrow(() -> component.draw(context));
+    } finally {
+      graphics.dispose();
+    }
+    assertEquals(24, data.getLength());
   }
 
   private static Instance createEvolutionShiftRegisterInstance(int width) {
