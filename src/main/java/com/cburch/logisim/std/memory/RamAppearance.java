@@ -204,7 +204,7 @@ public class RamAppearance {
       return Bounds.create(0, 0, Mem.SymbolWidth + 40, getControlHeight(attrs) + len);
     } else {
       final var dataBlockHeight = attrs.getValue(Mem.DATA_ATTR).getWidth() * 20;
-      final var len = Math.max( (dataBlockHeight > 160) ? 160 : dataBlockHeight, (getNrLEPorts(attrs) + 1) * 10);
+      final var len = Math.max((dataBlockHeight > 160) ? 160 : dataBlockHeight, (getNrLEPorts(attrs) + 1) * 10);
       return Bounds.create(0, 0, Mem.SymbolWidth + xoffset, getControlHeight(attrs) + len);
     }
 
