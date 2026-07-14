@@ -26,7 +26,7 @@ public class KeyboardIcon extends BaseIcon {
     final int[] ypos = {y, y, scale(14), scale(14)};
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillPolygon(xpos, ypos, 4);
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawPolygon(xpos, ypos, 4);
     x = wh + scale(state);
     y = scale(state);
@@ -34,11 +34,11 @@ public class KeyboardIcon extends BaseIcon {
     final int[] ypos1 = {y, y + wh, scale(14), scale(3)};
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillPolygon(xpos1, ypos1, 4);
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawPolygon(xpos1, ypos1, 4);
     g2.setColor(Color.WHITE);
     g2.fillRect(scale(state), scale(state), wh, wh);
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawRect(scale(state), scale(state), wh, wh);
 
     final var s = "K";

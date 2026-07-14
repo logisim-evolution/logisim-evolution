@@ -11,6 +11,7 @@ package com.cburch.logisim;
 
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.generic.ThemeManager;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -50,7 +51,10 @@ public class Main {
         FlatMacDarkLaf.installLafInfo();
         
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        
+
+        ThemeManager.setDarkMode(ThemeManager.isDarkLaf(UIManager.getLookAndFeel()));
+        AppPreferences.applyThemeDefaults(ThemeManager.isDarkMode());
+
         // Apply global font preference
         final var appFont = AppPreferences.APP_FONT.get();
         if (appFont != null && !appFont.isBlank()) {

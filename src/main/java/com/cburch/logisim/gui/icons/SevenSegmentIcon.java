@@ -29,7 +29,7 @@ public class SevenSegmentIcon extends BaseIcon {
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.WHITE);
     g2.fillRect(scale(2), 0, scale(10), scale(16));
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawRect(scale(2), 0, scale(10), scale(16));
     g2.setColor((segson & HexDigit.SEG_A_MASK) != 0 ? Color.RED : Color.LIGHT_GRAY);
     g2.drawLine(scale(5), scale(3), scale(8), scale(3));

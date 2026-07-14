@@ -51,7 +51,7 @@ public class TreeIcon extends BaseIcon {
         AppPreferences.getScaled(paper.width),
         AppPreferences.getScaled(paper.height),
         true);
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(shape[0]), AppPreferences.getScaled(shape[1]));
     for (int i = 2; i < shape.length; i += 2)

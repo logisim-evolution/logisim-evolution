@@ -52,7 +52,7 @@ public class ZoomIcon extends BaseIcon {
             AppPreferences.getScaled(6),
             AppPreferences.getScaled(8));
     }
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawOval(scaledOne, scaledOne, scaledEleven, scaledEleven);
     final var xyPoint = AppPreferences.getScaled(6.0 + Math.sqrt(12.5));
     GeneralPath path = new GeneralPath();

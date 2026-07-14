@@ -384,8 +384,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
             y,
             AppPreferences.getScaled(AppPreferences.BOX_SIZE),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE));
-        g.setColor(Canvas.HALO_COLOR);
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
         g.setClip(s);
       }
 

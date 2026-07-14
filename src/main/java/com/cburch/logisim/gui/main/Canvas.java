@@ -36,6 +36,7 @@ import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CanvasPaneContents;
 import com.cburch.logisim.gui.generic.GridPainter;
+import com.cburch.logisim.gui.generic.ThemeManager;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -91,15 +92,29 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final int THRESH_SIZE_UPDATE = 10;
   private static final int BUTTONS_MASK =
       InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
-  private static final Color DEFAULT_ERROR_COLOR = new Color(192, 0, 0);
-  private static final Color OSC_ERR_COLOR = DEFAULT_ERROR_COLOR;
-  private static final Color SIM_EXCEPTION_COLOR = DEFAULT_ERROR_COLOR;
+  private static final Color LIGHT_ERROR_COLOR = new Color(192, 0, 0);
+  private static final Color DARK_ERROR_COLOR = new Color(255, 80, 80);
   private static final Font ERR_MSG_FONT = new Font("Sans Serif", Font.BOLD, 18);
-  private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
+  private static final Color LIGHT_TICK_RATE_COLOR = new Color(0, 0, 92, 92);
+  private static final Color DARK_TICK_RATE_COLOR = new Color(180, 180, 255, 180);
   private static final Font TICK_RATE_FONT = new Font("Monospaced", Font.PLAIN, 28);
-  private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
+  private static final Color LIGHT_SINGLE_STEP_MSG_COLOR = Color.BLUE;
+  private static final Color DARK_SINGLE_STEP_MSG_COLOR = new Color(100, 200, 255);
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
   public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
+
+  private static Color getTickRateColor() {
+    return ThemeManager.isDarkMode() ? DARK_TICK_RATE_COLOR : LIGHT_TICK_RATE_COLOR;
+  }
+
+  private static Color getErrorColor() {
+    return ThemeManager.isDarkMode() ? DARK_ERROR_COLOR : LIGHT_ERROR_COLOR;
+  }
+
+  private static Color getSingleStepMsgColor() {
+    return ThemeManager.isDarkMode() ? DARK_SINGLE_STEP_MSG_COLOR : LIGHT_SINGLE_STEP_MSG_COLOR;
+  }
+
   // public static BufferedImage image;
   private final Project proj;
   private final Selection selection;
@@ -146,6 +161,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
     AppPreferences.SHOW_TICK_RATE.addPropertyChangeListener(myListener);
     AppPreferences.CANVAS_BG_COLOR.addPropertyChangeListener(myListener);
+    ThemeManager.addPropertyChangeListener(myListener);
     loadOptions(options);
   }
 
@@ -162,7 +178,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   public static void paintAutoZoomButton(final Graphics g,
                                          final Dimension sz, final Color zoomButtonColor) {
     final var oldColor = g.getColor();
-    g.setColor(TICK_RATE_COLOR);
+    g.setColor(getTickRateColor());
     g.fillOval(
             sz.width - ZOOM_BUTTON_SIZE - 33,
             sz.height - ZOOM_BUTTON_SIZE - 33,
@@ -960,6 +976,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         setToolTipText(showTips ? "" : null);
       } else if (AppPreferences.CANVAS_BG_COLOR.isSource(event)) {
         setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
+      } else if (ThemeManager.THEME_PROPERTY.equals(event.getPropertyName())) {
+        setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
+        repaint();
       }
     }
 
@@ -1142,7 +1161,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     private static final long serialVersionUID = 1L;
     StringGetter errorMessage = null;
     String widthMessage = null;
-    Color errorColor = DEFAULT_ERROR_COLOR;
+    Color errorColor = getErrorColor();
     boolean isNorth = false;
     boolean isSouth = false;
     boolean isWest = false;
@@ -1207,12 +1226,12 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       }
 
       if (proj.getSimulator().isOscillating()) {
-        g.setColor(OSC_ERR_COLOR);
+        g.setColor(getErrorColor());
         msgY = paintString(g, msgY, S.get("canvasOscillationError"));
       }
 
       if (proj.getSimulator().isExceptionEncountered()) {
-        g.setColor(SIM_EXCEPTION_COLOR);
+        g.setColor(getErrorColor());
         final var exceptionMessage = proj.getSimulator().getExceptionMessage();
         msgY =
             paintString(
@@ -1229,7 +1248,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       if (widthMessage != null) {
         g.setColor(Value.widthErrorColor);
         msgY = paintString(g, msgY, widthMessage);
-      } else g.setColor(TICK_RATE_COLOR);
+      } else g.setColor(getTickRateColor());
 
       if (isNorth
           || isSouth
@@ -1293,7 +1312,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       }
 
       if (!proj.getSimulator().isAutoPropagating()) {
-        g.setColor(SINGLE_STEP_MSG_COLOR);
+        g.setColor(getSingleStepMsgColor());
         final var old = g.getFont();
         g.setFont(SINGLE_STEP_MSG_FONT);
         g.drawString(proj.getSimulator().getSingleStepMessage(), 10, 15);
@@ -1323,7 +1342,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     void setErrorMessage(StringGetter msg, Color color) {
       if (errorMessage != msg) {
         errorMessage = msg;
-        errorColor = color == null ? DEFAULT_ERROR_COLOR : color;
+        errorColor = color == null ? getErrorColor() : color;
         paintCoordinator.requestRepaint();
       }
     }

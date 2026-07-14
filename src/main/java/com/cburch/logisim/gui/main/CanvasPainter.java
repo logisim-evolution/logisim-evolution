@@ -15,6 +15,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.GridPainter;
+import com.cburch.logisim.gui.generic.ThemeManager;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.CollectionUtil;
@@ -200,9 +201,9 @@ class CanvasPainter implements PropertyChangeListener {
     ptContext.setHighlightedWires(highlightedWires);
     gfxScaled.setColor(Color.RED);
     circState.drawOscillatingPoints(ptContext);
-    gfxScaled.setColor(Color.BLUE);
+    gfxScaled.setColor(ThemeManager.isDarkMode() ? Color.CYAN : Color.BLUE);
     proj.getSimulator().drawStepPoints(ptContext);
-    gfxScaled.setColor(Color.MAGENTA); // fixme
+    gfxScaled.setColor(Color.MAGENTA);
     proj.getSimulator().drawPendingInputs(ptContext);
     gfxScaled.dispose();
   }

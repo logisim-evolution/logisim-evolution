@@ -20,7 +20,7 @@ public class LedMatrixIcon extends BaseIcon {
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.WHITE);
     g2.fillRect(0, 0, scale(16), scale(16));
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawRect(0, 0, scale(16), scale(16));
     final var xint = 2;
     final var yint = 1;

@@ -30,7 +30,7 @@ public class ShowStateIcon extends BaseIcon {
       gfx.setColor(Color.MAGENTA.brighter().brighter().brighter());
       gfx.fillRect(0, 0, getIconWidth(), getIconHeight());
     }
-    gfx.setColor(Color.BLACK);
+    gfx.setColor(gfx.getColor());
     gfx.drawRect(0, 0, getIconWidth(), getIconHeight() / 2);
     final var font = gfx.getFont().deriveFont((float) getIconWidth() / (float) 2);
     final var textLayout = new TextLayout("101", font, gfx.getFontRenderContext());
@@ -45,7 +45,7 @@ public class ShowStateIcon extends BaseIcon {
     gfx.fillOval(offset, offset + getIconHeight() / 2, wh, wh);
     gfx.setColor(Color.GREEN);
     gfx.fillOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
-    gfx.setColor(Color.BLACK);
+    gfx.setColor(gfx.getColor());
     gfx.drawOval(offset, offset + getIconHeight() / 2, wh, wh);
     gfx.drawOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
   }

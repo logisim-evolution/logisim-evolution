@@ -35,6 +35,7 @@ import com.cburch.logisim.gui.generic.CardPanel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.RegTabContent;
+import com.cburch.logisim.gui.generic.ThemeManager;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.gui.menu.MainMenuListener;
@@ -145,7 +146,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     super(project);
     this.project = project;
 
-    setBackground(Color.white);
+    setBackground(ThemeManager.isDarkMode() ? new Color(0xFF2B2B2B) : Color.white);
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new MyWindowListener());
 
@@ -262,6 +263,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     installFileDropTargets();
 
     LocaleManager.addLocaleListener(this);
+    ThemeManager.addPropertyChangeListener(myProjectListener);
     toolbox.updateStructure();
   }
 
@@ -1008,6 +1010,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
         placeToolbar();
+      } else if (ThemeManager.THEME_PROPERTY.equals(event.getPropertyName())) {
+        final var dark = (boolean) event.getNewValue();
+        setBackground(dark ? new Color(0xFF2B2B2B) : Color.white);
+        repaint();
       }
     }
 

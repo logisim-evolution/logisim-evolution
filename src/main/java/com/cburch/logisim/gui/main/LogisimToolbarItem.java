@@ -92,7 +92,7 @@ public class LogisimToolbarItem implements ToolbarItem {
       final var simple = AppPreferences.getScaled(AppPreferences.IconSize) >> 2;
       gfx.setColor(new Color(255, 128, 128));
       gfx.fillRect(simple, simple, 2 * simple, 2 * simple);
-      gfx.setColor(Color.BLACK);
+      gfx.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
       gfx.drawLine(simple, simple, 3 * simple, 3 * simple);
       gfx.drawLine(simple, 3 * simple, 3 * simple, simple);
       gfx.drawRect(simple, simple, 2 * simple, 2 * simple);

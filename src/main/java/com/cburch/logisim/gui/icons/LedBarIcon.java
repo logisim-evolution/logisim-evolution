@@ -26,7 +26,7 @@ public class LedBarIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    g2.setColor(Color.DARK_GRAY);
+    g2.setColor(g2.getColor());
     g2.fillRect(0, 0, getIconWidth(), getIconHeight());
 
     final var col1 = Color.green;

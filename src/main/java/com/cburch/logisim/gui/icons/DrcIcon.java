@@ -27,9 +27,6 @@ public class DrcIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2) {
     if (drawEmpty) return;
 
-    g2.setColor(Color.WHITE);
-    g2.fillRect(0, 0, getIconWidth(), getIconHeight());
-
     var p = new GeneralPath();
     p.moveTo(scale(15), 0);
     p.quadTo(scale(7), scale(7), 0, scale(6));

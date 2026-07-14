@@ -13,6 +13,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.gui.ZoomSlider;
+import com.cburch.logisim.gui.generic.ThemeManager;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
@@ -30,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -244,21 +246,12 @@ class WindowOptions extends OptionsPanel {
 
   private void initThemePreviewer() {
     if (previewPanel != null) previewContainer.remove(previewPanel);
-    javax.swing.LookAndFeel previousLF = UIManager.getLookAndFeel();
-    try {
-      UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-      previewPanel = new JPanel();
-      previewPanel.add(new JButton("Preview"));
-      previewPanel.add(new JCheckBox("Preview"));
-      previewPanel.add(new JRadioButton("Preview"));
-      previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
-      previewContainer.add(previewPanel);
-      UIManager.setLookAndFeel(previousLF);
-    } catch (IllegalAccessException
-        | UnsupportedLookAndFeelException
-        | InstantiationException
-        | ClassNotFoundException ignored) {
-    }
+    previewPanel = new JPanel();
+    previewPanel.add(new JButton("Preview"));
+    previewPanel.add(new JCheckBox("Preview"));
+    previewPanel.add(new JRadioButton("Preview"));
+    previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
+    previewContainer.add(previewPanel);
     previewContainer.repaint();
     previewContainer.revalidate();
   }
@@ -319,7 +312,13 @@ class WindowOptions extends OptionsPanel {
         if (newIndex != index && newIndex >= 0 && newIndex < lookAndFeelInfos.length) {
           index = newIndex;
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
-          initThemePreviewer();
+          try {
+            UIManager.setLookAndFeel(lookAndFeelInfos[index].getClassName());
+            initThemePreviewer();
+            ThemeManager.applyTheme();
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
         }
         checkRestartWarning();
       } else if (e.getSource().equals(appFont)) {
@@ -335,9 +334,8 @@ class WindowOptions extends OptionsPanel {
           proj.getFrame().repaint();
         }
       } else if (e.getActionCommand().equals(cmdResetGridColors)) {
-        //        AppPreferences.resetWindow();
         final var nowOpen = Projects.getOpenProjects();
-        AppPreferences.setDefaultGridColors();
+        AppPreferences.applyThemeDefaults(ThemeManager.isDarkMode());
         for (final var proj : nowOpen) {
           proj.getFrame().repaint();
         }
@@ -350,8 +348,7 @@ class WindowOptions extends OptionsPanel {
     }
 
     private void checkRestartWarning() {
-      boolean show = !Objects.equals(AppPreferences.APP_FONT.get(), initialAppFont)
-          || !Objects.equals(AppPreferences.LookAndFeel.get(), initialLookAndFeel);
+      boolean show = !Objects.equals(AppPreferences.APP_FONT.get(), initialAppFont);
       restartWarning.setVisible(show);
       restartWarningSpacer.setVisible(show);
     }

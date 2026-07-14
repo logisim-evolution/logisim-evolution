@@ -559,7 +559,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> APP_FONT =
       create(new PrefMonitorString("AppFont", ""));
 
-  // default grid colors
+  // default grid colors (light theme)
   public static final int DEFAULT_CANVAS_BG_COLOR = 0xFFFFFFFF;
   public static final int DEFAULT_GRID_BG_COLOR = 0xFFFFFFFF;
   public static final int DEFAULT_GRID_DOT_COLOR = 0xFF777777;
@@ -570,7 +570,32 @@ public class AppPreferences {
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
   public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
 
-  // restores default grid colors
+  // default grid colors (dark theme)
+  public static final int DARK_CANVAS_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_GRID_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_GRID_DOT_COLOR = 0xFF555555;
+  public static final int DARK_ZOOMED_DOT_COLOR = 0xFF3A3A3A;
+  public static final int DARK_COMPONENT_COLOR = 0xFFFFFFFF;
+  public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
+  public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF888888;
+  public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
+  public static final int DARK_TEXT_TOOL_COLOR = 0xFFFFFFFF;
+
+  // default wire colors (dark theme)
+  public static final int DARK_TRUE_COLOR = 0xFF33FF33;
+  public static final int DARK_FALSE_COLOR = 0xFF009900;
+  public static final int DARK_UNKNOWN_COLOR = 0xFF6464FF;
+  public static final int DARK_ERROR_COLOR = 0xFFFF4040;
+  public static final int DARK_NIL_COLOR = 0xFF808080;
+  public static final int DARK_BUS_COLOR = 0xFFFFFFFF;
+  public static final int DARK_STROKE_COLOR = 0xFFFF00FF;
+  public static final int DARK_WIDTH_ERROR_COLOR = 0xFFFF7B00;
+  public static final int DARK_WIDTH_ERROR_CAPTION_COLOR = 0xFFFFAAAA;
+  public static final int DARK_WIDTH_ERROR_HIGHLIGHT_COLOR = 0xFFFFFF00;
+  public static final int DARK_WIDTH_ERROR_BACKGROUND_COLOR = 0xFF553322;
+  public static final int DARK_CLOCK_FREQUENCY_COLOR = 0xFFFF00B4;
+
+  // restores default grid colors (light theme)
   public static void setDefaultGridColors() {
     CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
     GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
@@ -580,6 +605,61 @@ public class AppPreferences {
     COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
     COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
     COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
+  }
+
+  // applies theme-appropriate defaults (without overriding user customizations)
+  public static void applyThemeDefaults(boolean dark) {
+    if (dark) {
+      setIfDefault(CANVAS_BG_COLOR, DEFAULT_CANVAS_BG_COLOR, DARK_CANVAS_BG_COLOR);
+      setIfDefault(GRID_BG_COLOR, DEFAULT_GRID_BG_COLOR, DARK_GRID_BG_COLOR);
+      setIfDefault(GRID_DOT_COLOR, DEFAULT_GRID_DOT_COLOR, DARK_GRID_DOT_COLOR);
+      setIfDefault(GRID_ZOOMED_DOT_COLOR, DEFAULT_ZOOMED_DOT_COLOR, DARK_ZOOMED_DOT_COLOR);
+      setIfDefault(COMPONENT_COLOR, DEFAULT_COMPONENT_COLOR, DARK_COMPONENT_COLOR);
+      setIfDefault(COMPONENT_SECONDARY_COLOR, DEFAULT_COMPONENT_SECONDARY_COLOR, DARK_COMPONENT_SECONDARY_COLOR);
+      setIfDefault(COMPONENT_GHOST_COLOR, DEFAULT_COMPONENT_GHOST_COLOR, DARK_COMPONENT_GHOST_COLOR);
+      setIfDefault(COMPONENT_ICON_COLOR, DEFAULT_COMPONENT_ICON_COLOR, DARK_COMPONENT_ICON_COLOR);
+      setIfDefault(TEXT_TOOL_COLOR, DEFAULT_TEXT_TOOL_COLOR, DARK_TEXT_TOOL_COLOR);
+      setIfDefault(TRUE_COLOR, 0x0000D200, DARK_TRUE_COLOR);
+      setIfDefault(FALSE_COLOR, 0x00006400, DARK_FALSE_COLOR);
+      setIfDefault(UNKNOWN_COLOR, 0x002828FF, DARK_UNKNOWN_COLOR);
+      setIfDefault(ERROR_COLOR, 0x00C00000, DARK_ERROR_COLOR);
+      setIfDefault(NIL_COLOR, 0x808080, DARK_NIL_COLOR);
+      setIfDefault(BUS_COLOR, 0, DARK_BUS_COLOR);
+      setIfDefault(STROKE_COLOR, 0xff00ff, DARK_STROKE_COLOR);
+      setIfDefault(WIDTH_ERROR_COLOR, 0xFF7B00, DARK_WIDTH_ERROR_COLOR);
+      setIfDefault(WIDTH_ERROR_CAPTION_COLOR, 0x550000, DARK_WIDTH_ERROR_CAPTION_COLOR);
+      setIfDefault(WIDTH_ERROR_HIGHLIGHT_COLOR, 0xFFFF00, DARK_WIDTH_ERROR_HIGHLIGHT_COLOR);
+      setIfDefault(WIDTH_ERROR_BACKGROUND_COLOR, 0xFFE6D2, DARK_WIDTH_ERROR_BACKGROUND_COLOR);
+      setIfDefault(CLOCK_FREQUENCY_COLOR, 0xFF00B4, DARK_CLOCK_FREQUENCY_COLOR);
+    } else {
+      setIfDefault(CANVAS_BG_COLOR, DARK_CANVAS_BG_COLOR, DEFAULT_CANVAS_BG_COLOR);
+      setIfDefault(GRID_BG_COLOR, DARK_GRID_BG_COLOR, DEFAULT_GRID_BG_COLOR);
+      setIfDefault(GRID_DOT_COLOR, DARK_GRID_DOT_COLOR, DEFAULT_GRID_DOT_COLOR);
+      setIfDefault(GRID_ZOOMED_DOT_COLOR, DARK_ZOOMED_DOT_COLOR, DEFAULT_ZOOMED_DOT_COLOR);
+      setIfDefault(COMPONENT_COLOR, DARK_COMPONENT_COLOR, DEFAULT_COMPONENT_COLOR);
+      setIfDefault(COMPONENT_SECONDARY_COLOR, DARK_COMPONENT_SECONDARY_COLOR, DEFAULT_COMPONENT_SECONDARY_COLOR);
+      setIfDefault(COMPONENT_GHOST_COLOR, DARK_COMPONENT_GHOST_COLOR, DEFAULT_COMPONENT_GHOST_COLOR);
+      setIfDefault(COMPONENT_ICON_COLOR, DARK_COMPONENT_ICON_COLOR, DEFAULT_COMPONENT_ICON_COLOR);
+      setIfDefault(TEXT_TOOL_COLOR, DARK_TEXT_TOOL_COLOR, DEFAULT_TEXT_TOOL_COLOR);
+      setIfDefault(TRUE_COLOR, DARK_TRUE_COLOR, 0x0000D200);
+      setIfDefault(FALSE_COLOR, DARK_FALSE_COLOR, 0x00006400);
+      setIfDefault(UNKNOWN_COLOR, DARK_UNKNOWN_COLOR, 0x002828FF);
+      setIfDefault(ERROR_COLOR, DARK_ERROR_COLOR, 0x00C00000);
+      setIfDefault(NIL_COLOR, DARK_NIL_COLOR, 0x808080);
+      setIfDefault(BUS_COLOR, DARK_BUS_COLOR, 0);
+      setIfDefault(STROKE_COLOR, DARK_STROKE_COLOR, 0xff00ff);
+      setIfDefault(WIDTH_ERROR_COLOR, DARK_WIDTH_ERROR_COLOR, 0xFF7B00);
+      setIfDefault(WIDTH_ERROR_CAPTION_COLOR, DARK_WIDTH_ERROR_CAPTION_COLOR, 0x550000);
+      setIfDefault(WIDTH_ERROR_HIGHLIGHT_COLOR, DARK_WIDTH_ERROR_HIGHLIGHT_COLOR, 0xFFFF00);
+      setIfDefault(WIDTH_ERROR_BACKGROUND_COLOR, DARK_WIDTH_ERROR_BACKGROUND_COLOR, 0xFFE6D2);
+      setIfDefault(CLOCK_FREQUENCY_COLOR, DARK_CLOCK_FREQUENCY_COLOR, 0xFF00B4);
+    }
+  }
+
+  private static void setIfDefault(PrefMonitor<Integer> pref, int oldDefault, int newDefault) {
+    if (pref.get() == oldDefault || pref.get() == newDefault) {
+      pref.set(newDefault);
+    }
   }
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =

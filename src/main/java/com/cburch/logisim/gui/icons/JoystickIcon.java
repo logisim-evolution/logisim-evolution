@@ -33,7 +33,7 @@ public class JoystickIcon extends BaseIcon {
     var xtop = scale(13);
     var ytop = scale(3);
     g2.setStroke(new BasicStroke(scale(2)));
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawLine(xtop, ytop, xbase, ybase);
     xtop -= scale(2);
     ytop -= scale(2);

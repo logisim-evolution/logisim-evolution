@@ -20,7 +20,7 @@ public class CompileIcon extends BaseIcon {
   @Override
   protected void paintIcon(Graphics2D g2) {
     final var page = new int[] {0, 0, 0, 15, 15, 15, 15, 5, 10, 5, 10, 0, 15, 5, 10, 0, 0, 0};
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1F)));
     final var xpos = new int[9];
     final var ypos = new int[9];

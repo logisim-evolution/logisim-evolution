@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.main;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -78,7 +79,7 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
         int[] yp = {ty + 1, y + 20, y + 18, ty - 1};
         g.setColor(ProjectExplorer.MAGNIFYING_INTERIOR);
         g.fillOval(x + 5, y + 5, 10, 10);
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
         g.drawOval(x + 5, y + 5, 10, 10);
         g.fillPolygon(xp, yp, xp.length);
       }

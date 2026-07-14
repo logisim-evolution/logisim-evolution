@@ -306,6 +306,21 @@ public final class Value {
   public static Color widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
   public static Color clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
 
+  public static void refreshColors() {
+    falseColor = new Color(AppPreferences.FALSE_COLOR.get());
+    trueColor = new Color(AppPreferences.TRUE_COLOR.get());
+    unknownColor = new Color(AppPreferences.UNKNOWN_COLOR.get());
+    errorColor = new Color(AppPreferences.ERROR_COLOR.get());
+    nilColor = new Color(AppPreferences.NIL_COLOR.get());
+    strokeColor = new Color(AppPreferences.STROKE_COLOR.get());
+    multiColor = new Color(AppPreferences.BUS_COLOR.get());
+    widthErrorColor = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
+    widthErrorCaptionColor = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
+    widthErrorHighlightColor = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+    widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+    clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
+  }
+
   private static final Cache cache = new Cache();
 
   private final int width;

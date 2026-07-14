@@ -23,7 +23,7 @@ public class TtyIcon extends BaseIcon {
 
     g2.setColor(Color.BLUE);
     g2.fillRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
     final var f = Tty.DEFAULT_FONT.deriveFont(scale((float) 5)).deriveFont(Font.BOLD);
     final var t = new TextLayout(display.substring(0, 3), f, g2.getFontRenderContext());

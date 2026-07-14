@@ -27,7 +27,7 @@ public class HdlIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.WHITE);
     g2.fillRect(0, scale(4), scale(16), scale(12));
-    g2.setColor(Color.BLACK);
+    g2.setColor(g2.getColor());
     g2.drawRect(0, scale(4), scale(16), scale(12));
     g2.setColor(Color.LIGHT_GRAY);
     final var font = g2.getFont().deriveFont((float) getIconWidth() / (float) 4.5);
