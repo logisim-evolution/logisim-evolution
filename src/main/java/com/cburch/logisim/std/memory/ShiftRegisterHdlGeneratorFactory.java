@@ -41,27 +41,35 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
+    final var clasicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
+    final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     myPorts
         .add(Port.CLOCK, HdlPorts.getClockName(1), 1, ShiftRegister.CK)
         .add(Port.INPUT, "reset", 1, ShiftRegister.CLR)
         .add(Port.INPUT, "shiftEnable", 1, ShiftRegister.SH)
-        .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN);
+        .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN)
+        .add(Port.OUTPUT, "serOut", nrOfBits, ShiftRegister.OUT);
     if (hasParallelLoad) {
-      final var clasicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
-      final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-      final var realNrStages = (clasicLogisim) ? nrOfStages : nrOfStages - 1;
-      final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-      if (clasicLogisim) {
-        myPorts.add(Port.OUTPUT, "serOut", nrOfBits, ShiftRegister.OUT);
-      } else {
-        myPorts.add(Port.OUTPUT, "Q_0", nrOfBits, ShiftRegister.OUT);
-      }
-      for (var idx = 0; idx < realNrStages; idx++) {
-        
+      for (var idx = 0; idx < nrOfStages; idx++) {
+        myPorts.add(Port.INPUT, String.format("D%d", idx), nrOfBits, 6 + 2 * idx);
+        if (idx == nrOfStages - 1 && clasicLogisim) {
+          myPorts.add(Port.OUTPUT, String.format("Q%d", idx), nrOfBits, 6 + 2 * idx + 1);
+        } else {
+          myPorts.add(Port.OUTPUT, String.format("Q%d", idx), nrOfBits, 6 + 2 * idx + 1);
+        }
       }
       myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
     } else {
       myPorts.add(Port.INPUT, "parLoad", 1, Hdl.zeroBit());
+      for (var idx = 0; idx < nrOfStages; idx++) {
+        myPorts.add(Port.INPUT, String.format("D%d", idx), nrOfBits, Hdl.getZeroVector(nrOfBits, true));
+        if (idx == nrOfStages - 1 && clasicLogisim) {
+          myPorts.add(Port.OUTPUT, String.format("Q%d", idx), nrOfBits, 6 + 2 * idx + 1);
+        } else {
+          myPorts.add(Port.OUTPUT, String.format("Q%d", idx), nrOfBits, 6 + 2 * idx + 1);
+        }
+      }
     }
   }
 
