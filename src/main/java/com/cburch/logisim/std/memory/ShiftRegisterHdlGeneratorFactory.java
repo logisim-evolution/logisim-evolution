@@ -131,7 +131,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .add("""
               s_stageNext0 <= shiftIn {{when}} shiftEnable = '1' {{else}} s_stageReg0;
               """);
-      for (var idx = 1; idx < nrOfStages; idx++){
+      for (var idx = 1; idx < nrOfStages; idx++) {
         contents.add(String.format("s_stageNext%d <= s_stageReg%d {{when}} shiftEnable = '1' {{else}} s_stageReg%d;", idx, idx - 1, idx));
       }
       contents
@@ -176,7 +176,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .add("""
               assign s_stageNext0 <= (shiftEnable == 1'b1) ? shiftIn : s_stageReg0;
               """);
-      for (var idx = 1; idx < nrOfStages; idx++){
+      for (var idx = 1; idx < nrOfStages; idx++) {
         contents.add(String.format("assign s_stageNext%d = (shiftEnable == 1'b1) ? s_stageReg%d : s_stageReg%d;", idx, idx - 1, idx));
       }
       contents
