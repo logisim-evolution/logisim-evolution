@@ -77,7 +77,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>(super.getPortMap(nets, mapInfo));
-     if (mapInfo instanceof final netlistComponent comp) {
+    if (mapInfo instanceof final netlistComponent comp) {
       final var attrs = comp.getComponent().getAttributeSet();
       final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
@@ -131,9 +131,9 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .add("""
               s_stageNext0 <= shiftIn {{when}} shiftEnable = '1' {{else}} s_stageReg0;
               """);
-          for (var idx = 1; idx < nrOfStages; idx++){
-            contents.add(String.format("s_stageNext%d <= s_stageReg%d {{when}} shiftEnable = '1' {{else}} s_stageReg%d;", idx, idx - 1, idx));
-          }
+      for (var idx = 1; idx < nrOfStages; idx++){
+        contents.add(String.format("s_stageNext%d <= s_stageReg%d {{when}} shiftEnable = '1' {{else}} s_stageReg%d;", idx, idx - 1, idx));
+      }
       contents
           .empty()
           .addRemarkBlock("Here the state registers are defined")
@@ -176,9 +176,9 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .add("""
               assign s_stageNext0 <= (shiftEnable == 1'b1) ? shiftIn : s_stageReg0;
               """);
-          for (var idx = 1; idx < nrOfStages; idx++){
-            contents.add(String.format("assign s_stageNext%d = (shiftEnable == 1'b1) ? s_stageReg%d : s_stageReg%d;", idx, idx - 1, idx));
-          }
+      for (var idx = 1; idx < nrOfStages; idx++){
+        contents.add(String.format("assign s_stageNext%d = (shiftEnable == 1'b1) ? s_stageReg%d : s_stageReg%d;", idx, idx - 1, idx));
+      }
       contents
           .empty()
           .addRemarkBlock("Here the state registers are defined")
