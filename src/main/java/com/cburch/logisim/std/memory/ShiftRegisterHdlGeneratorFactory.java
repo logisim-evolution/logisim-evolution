@@ -192,9 +192,9 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
                 begin
               """);
       for (var idx = 0; idx < nrOfStages; idx++) {
-        contents.add(String.format("      s_stageReg%d <= (reset == 1'b1) ? 0 : ({{tick}} == 1'b1) s_stageNext%d : s_stageReg%d;", idx, idx, idx));
+        contents.add(String.format("      s_stageReg%d <= (reset == 1'b1) ? 0 : ({{tick}} == 1'b1) ? s_stageNext%d : s_stageReg%d;", idx, idx, idx));
       }
-      contents.add("  end;");
+      contents.add("  end");
     }
     return contents.empty();
   }
