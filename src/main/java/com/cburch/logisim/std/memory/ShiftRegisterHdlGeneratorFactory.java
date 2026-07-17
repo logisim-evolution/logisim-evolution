@@ -129,10 +129,12 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .empty()
           .addRemarkBlock("Here the next state is defined")
           .add("""
-              s_stageNext0 <= shiftIn {{when}} shiftEnable = '1' {{else}} s_stageReg0;
+              s_stageNext0 <= D0 {{when}} parLoad = '1' {{else}}
+                              shiftIn {{when}} shiftEnable = '1' {{else}} s_stageReg0;
               """);
       for (var idx = 1; idx < nrOfStages; idx++) {
-        contents.add(String.format("s_stageNext%d <= s_stageReg%d {{when}} shiftEnable = '1' {{else}} s_stageReg%d;", idx, idx - 1, idx));
+        contents.add(String.format("s_stageNext%d <= D%d {{when}} parLoad = '1' {{else}}", idx, idx));
+        contents.add(String.format("                 s_stageReg%d {{when}} shiftEnable = '1' {{else}} s_stageReg%d;", idx - 1, idx));
       }
       contents
           .empty()
@@ -174,10 +176,11 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .empty()
           .addRemarkBlock("Here the next state is defined")
           .add("""
-              assign s_stageNext0 <= (shiftEnable == 1'b1) ? shiftIn : s_stageReg0;
+              assign s_stageNext0 = (parLoad == 1'b1) ? D0 : (shiftEnable == 1'b1) ? shiftIn : s_stageReg0;
               """);
       for (var idx = 1; idx < nrOfStages; idx++) {
-        contents.add(String.format("assign s_stageNext%d = (shiftEnable == 1'b1) ? s_stageReg%d : s_stageReg%d;", idx, idx - 1, idx));
+        contents
+          .add(String.format("assign s_stageNext%d = (parLoad == 1'b1) ? D%d : (shiftEnable == 1'b1) ? s_stageReg%d : s_stageReg%d;", idx, idx, idx - 1, idx));
       }
       contents
           .empty()
@@ -185,7 +188,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .add("""
               assign s_clock = ({{invertClock}} == 0) ? {{clock}} : ~{{clock}};
 
-              always (@posedge(s_clock), @posedge(reset))
+              always @(posedge s_clock or posedge reset)
                 begin
               """);
       for (var idx = 0; idx < nrOfStages; idx++) {
