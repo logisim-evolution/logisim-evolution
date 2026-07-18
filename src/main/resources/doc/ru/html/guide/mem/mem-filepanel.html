@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2019-03-16T06:18:10.521000000">
+  <meta name="changed" content="2026-07-18T01:22:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>
+    Панель файлов памяти
+  </title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
+    <h1>
+      Панель файлов памяти
+    </h1>
+    <p>
+      Это диалоговое окно открывается автоматически, если при загрузке образа памяти Logisim не удаётся однозначно
+      распознать формат данных файла. Окно предоставляет инструменты для ручной настройки параметров конвертации,
+      вкладки для предварительного просмотра оригинальных и декодированных данных, а также панель диагностики ошибок.
+    </p>
+
+    <p align="center">
+      <img src="../../../img-guide/mem-filepanel.png" alt="#########">
+    </p>
+
+    <h3>Выбор формата и параметров</h3>
+    <p>
+      Группа переключателей позволяет выбрать один из базовых типов структуры файла. При выборе каждого типа динамически
+      активируются соответствующие флажки, позволяющие тонко настроить специфические параметры преобразования.
+    </p>
+    <p>
+      Подробное описание поддерживаемых форматов можно найти в соответствующих разделах справки:
+    </p>
+    <ul>
+      <li><a href="mem-v2raw.html">v2.0 raw</a></li>
+      <li><a href="mem-v3word.html">v3.0 hex words (plain / addressed)</a></li>
+      <li><a href="mem-v3byte.html">v3.0 hex bytes (big-endian / little-endian)</a></li>
+      <li><a href="mem-vbinary.html#">Binary data (big-endian / little-endian)</a></li>
+      <li><a href="mem-vascii.html">Ascii byte escape (big-endian / little-endian)</a></li>
+    </ul>
+
+    <h3>Предварительный просмотр данных</h3>
+    <p>
+      Вкладка <b>«Декодировано» (Decoded)</b> позволяет увидеть, как Logisim интерпретирует файл с текущими настройками
+      преобразования.
+    </p>
+    <p align="center">
+      <img src="../../../../img-guide/mem-paneldecoded.png" alt="#########">
+    </p>
+    <p>
+      Вкладка <b>«Оригинал» (Original)</b> отображает исходное содержимое файла в шестнадцатеричном виде для удобного
+      визуального сравнения с результатом декодирования.
+    </p>
+    <p align="center">
+      <img src="../../../../img-guide/mem-paneloriginal.png" alt="#########">
+    </p>
+
+    <h3>Диагностика ошибок</h3>
+    <p>
+      В нижней части окна расположено текстовое поле, в котором в реальном времени выводится отчёт о процессе
+      декодирования и список всех обнаруженных ошибок парсинга.
+    </p>
+    <p align="center">
+      <img src="../../../../img-guide/mem-panelerror.png" alt="#########">
+    </p>
+
+    <p>
+      <b>Далее:</b> <a href="../index.html">Руководство пользователя</a>.
+    </p>
+  </div>
+</body>
+
+</html>

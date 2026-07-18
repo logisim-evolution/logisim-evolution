@@ -1,25 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2026-07-11T00:20:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
-    <title>Счётчик кода Грея</title>
+    <title>
+      Счётчик кода Грея
+    </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
-
-<h1>Счётчик кода Грея</h1>
-
-<p>Этот курс по библиотекам Logisim завершается довольно сложным счётчиком кода Грея, который позволяет пользователю менять его текущее значение, используя Инструмент Нажатие и размещать на компоненте метку, используя Инструмент Текст. Он также настраивает значок в проводнике, связанный с этим инструментом.</p>
-
-<h2>GrayCounter</h2>
-
-<pre>
-package com.cburch.gray;
+      <h1>
+        Счётчик кода Грея
+      </h1>
+      <p>
+        Данный раздел руководства по разработке библиотек для Logisim-evolution завершается примером сложного счётчика кода Грея. Этот компонент позволяет пользователю изменять своё текущее значение на холсте с помощью инструмента «Нажатие» и размещать на элементе текстовую метку с помощью инструмента «Текст». Пример также демонстрирует, как настроить собственный значок компонента на панели «Навигатор».
+      </p>
+      <h2>
+        Класс GrayCounter
+      </h2>
+      <pre>package com.cburch.gray;
 
 import java.net.URL;
 
@@ -70,7 +73,7 @@ class GrayCounter extends InstanceFactory {
 
     /** Метод configureNewInstance вызывается каждый раз, когда создаётся
      * новый экземпляр. В суперклассе метод ничего не делает, поскольку
-     * новый экземпляр уже довольно хорошо настроен по умолчанию. Но
+     * новый экземпляр уже настроен надлежащим образом по умолчанию. Но
      * иногда вам нужно делать что-то специфическое с каждым экземпляром, так что вам
      * придётся переопределить метод. В этом случае мы должны задать расположение
      * для его метки. */
@@ -111,11 +114,10 @@ class GrayCounter extends InstanceFactory {
     }
 }
 </pre>
-
-<h2>CounterPoker</h2>
-
-<pre>
-package com.cburch.gray;
+      <h2>
+        Класс CounterPoker
+      </h2>
+      <pre>package com.cburch.gray;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -130,24 +132,24 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 
-/** Когда пользователь щёлкает на счётчике, используя Инструмент Нажатие, объект CounterPoker
- * создан, и этот объект будет обрабатывать все события пользователя. Обратите внимание, что
- * CounterPoker - это класс, специфичный для GrayCounter, и что он должен быть
- * подклассом InstancePoker из пакета com.cburch.logisim.instance. */
+/** Когда пользователь щёлкает на счётчике, используя инструмент «Нажатие», создаётся
+ * объект CounterPoker, который будет обрабатывать все последующие пользовательские события ввода.
+ * Обратите внимание, что CounterPoker — это класс, специфичный для GrayCounter, и он должен
+ * наследоваться от класса InstancePoker из пакета com.cburch.logisim.instance. */
 public class CounterPoker extends InstancePoker {
     public CounterPoker() {}
 
     /** Определяет, должно ли положение, в котором нажата мышь,
-     * инициировать нажатие.
+     * инициировать режим изменения значения (poke).
      */
     public boolean init(InstanceState state, MouseEvent e) {
         return state.getInstance().getBounds().contains(e.getX(), e.getY());
-            // В любом месте главного прямоугольника инициирует нажатие. Пользователь может
-            // нажать на метке, но это будет за пределами границ.
+            // Нажатие в любом месте рамки компонента инициирует изменение значения.
+            // Щелчок по метке приведёт к её выделению, если она выходит за границы рамки.
     }
 
-    /** Рисует индикатор того, что указатель был выбран. Здесь мы будем рисовать
-     * красный прямоугольник вокруг значения. */
+    /** Рисует индикатор того, что значение компонента редактируется.
+     * В данном случае мы рисуем красную рамку вокруг отображаемого значения. */
     public void paint(InstancePainter painter) {
         Bounds bds = painter.getBounds();
         BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
@@ -155,38 +157,37 @@ public class CounterPoker extends InstancePoker {
 
         Graphics g = painter.getGraphics();
         g.setColor(Color.RED);
-        int wid = 7 * len + 2; // width of caret rectangle
-        int ht = 16; // height of caret rectangle
+        int wid = 7 * len + 2; // ширина рамки курсора
+        int ht = 16; // высота рамки курсора
         g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2,
                 bds.getY() + (bds.getHeight() - ht) / 2, wid, ht);
         g.setColor(Color.BLACK);
     }
 
-    /**Обрабатывает клавишу, просто добавив её в конец текущего значения. */
+    /** Обрабатывает ввод с клавиатуры, добавляя шестнадцатеричную цифру в конец текущего значения. */
     public void keyTyped(InstanceState state, KeyEvent e) {
-        // преобразовать её в шестнадцатеричное число; если она - не шестнадцатеричное число, то отменить.
+        // Преобразуем символ в шестнадцатеричное число; если это не шестнадцатеричный символ, игнорируем ввод.
         int val = Character.digit(e.getKeyChar(), 16);
         BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
         if(val &lt; 0 || (val &amp; width.getMask()) != val) return;
 
-        // вычислить следующее значение
+        // Вычисляем новое значение
         CounterData cur = CounterData.get(state, width);
         int newVal = (cur.getValue().toIntValue() * 16 + val) &amp; width.getMask();
         Value newValue = Value.createKnown(width, newVal);
         cur.setValue(newValue);
         state.fireInvalidated();
 
-        // Вы, возможно, подумываете о том, чтобы просчитать значение здесь сразу, используя
-        // state.setPort. Однако, схема может просчитываться в данный момент в
-        // другом потоке, и непосредственный вызов setPort может помешать
-        // этому. Использование fireInvalidated уведомляет поток просчёта о том,
-        // чтобы вызвать просчёт для счётчика при первой же возможности.
+        // Может возникнуть соблазн сразу обновить порт через state.setPort. Однако
+        // моделирование схемы в этот момент может выполняться в другом потоке, и прямой
+        // вызов setPort может нарушить синхронизацию. Вызов fireInvalidated безопасно
+        // уведомляет среду моделирования о необходимости обновить состояние счётчика при первой возможности.
     }
 }
 </pre>
-
-
-<p><strong>Далее:</strong> <a href="guide.html">Указания</a>.</p>
-</div>
-</body>
+      <p>
+        <b>Далее:</b> <a href="guide.html">Рекомендации</a>.
+      </p>
+    </div>
+  </body>
 </html>
