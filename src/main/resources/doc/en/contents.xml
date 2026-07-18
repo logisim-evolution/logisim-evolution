@@ -30,6 +30,7 @@
 			<tocitem target="subcirc_personalise" text="Customize the appearance"/>
 			<tocitem target="subcirc_debug" text="Debugging subcircuits" />
 			<tocitem target="subcirc_library" text="Logisim libraries" />
+			<tocitem target="dynamic_components" text="Dynamic Components" />
 		</tocitem>
 		<tocitem target="features" text="Additional features">
 			<tocitem target="features_creating" text="Creating bundles" />

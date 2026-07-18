@@ -385,11 +385,7 @@
           </dt>
           <dd>
             Output bus: These buses are only present if the <b class="propertie">Enables</b> property is set to <b class="vprop">Use line enables</b> and the <b class="propertie">Line size</b> property is other than <b class="vprop">Single</b>. Their function is the same as the Data output, with this difference: Data0 transmits data from the memory position specified by the address pin value, Data1 transmits address + 1, Data2 transmits address + 2 and so on.<br>
-            The <b class="propertie">Allow misaligned?</b> property determines whether an error is generated when the address is not aligned to a multiple of the line number.<br>
-            <br>
-            <center>
-              <img class="appearancelibs" src="../../../../img-libs/memoryline.gif" alt="#########">
-            </center>
+            The <b class="propertie">Allow misaligned?</b> property determines whether an error is generated when the address is not aligned to a multiple of the line number.
           </dd>
         </dl>
       </div>
@@ -421,12 +417,12 @@
             <b class="vprop">Use line enables</b>:one or more data lines make up the data bus. Each has its own selection signal. The Number of lines property lets you define the number of lines (1,2,4,8).
           </dd>
           <dt class="lib">
-            Simulation reset behavior
+            Ram type
           </dt>
           <dd>
-            Determines how the memory content is modified when the simulation is reset or restarted:<br>
-            <b class="vprop">Keep contents on reset</b>: memory contents are not modified.<br>
-            <b class="vprop">Clear contents on reset</b>: RAM contents reset to zero or randomly, according to the <a href="../../guide/opts/opts-simulate.html">Simulation tab</a> project options.
+            Determines how the memory content is modified when the simulation is restarted:<br>
+            <b class="vprop">Non Volatile</b> memory contents are not modified.<br>
+            <b class="vprop">Volatile</b>; RAM contents reset to zero or randomly ( according to <a href="../../guide/opts/opts-simulate.html">Simulation tab</a> project options).
           </dd>
           <dt class="lib">
             Use clear pin
