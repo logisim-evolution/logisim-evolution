@@ -126,6 +126,15 @@ public class Ttl74181 extends AbstractTtlGate {
     _state.setPort(pinNrToPortNr(dsPinNr), b ? Value.TRUE : Value.FALSE, DELAY);
   }
 
+  /** Sets the specified open-collector pin to the specified level
+   *
+   * @param dsPinNr datasheet pin number
+   * @param b the logic level for the pin
+   */
+  private void setOcPort(byte dsPinNr, boolean b) {
+    _state.setPort(pinNrToPortNr(dsPinNr), b ? Value.UNKNOWN : Value.FALSE, DELAY);
+  }
+
   /**
    * Implements a "PAL32L1" device i.e. a programmable array logic device with a virtually
    * unlimited sum of products with up to 32 inputs for each product.
@@ -228,18 +237,18 @@ public class Ttl74181 extends AbstractTtlGate {
     var g = pal32L1(level2, new int[] { 0x00000080, 0x00000048, 0x0000002c, 0x0000001e });
     var co = !pal32L1(level2, new int[] { 0x0000020f }) || !g;
 
-    var eq = (a.get(0) == b.get(0)) && (a.get(1) == b.get(1)) && (a.get(2) == b.get(2) && a.get(3) == b.get(3));
-
     var f0 = x.get(0) ^ y.get(0) ^ z.get(0);
     var f1 = x.get(1) ^ y.get(1) ^ z.get(1);
     var f2 = x.get(2) ^ y.get(2) ^ z.get(2);
     var f3 = x.get(3) ^ y.get(3) ^ z.get(3);
 
+    var eq = f0 && f1 && f2 && f3;
+
     // Set outputs
     setPort(P, p);
     setPort(G, g);
     setPort(Co, co);
-    setPort(AeqB, eq);
+    setOcPort(AeqB, eq);
 
     setPort(F3, f3);
     setPort(F2, f2);
