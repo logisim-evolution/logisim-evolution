@@ -1,40 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ru">
-<head>
-	<META name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
-	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
-	<META http-equiv="content-type" content="text/html; charset=UTF-8">
-	<META http-equiv="Content-Language" content="ru">
-	<title>Последовательное тестирование</title>
-	<link rel="stylesheet" type="text/css" href="../../style.css">
-	<link rel="stylesheet" type="text/css" href="codefix.css">
-</head>
-<body>
-
-<h1>Последовательное тестирование</h1>
-
-<p>Функция тестовых векторов поддерживает как <strong>комбинационное</strong>, так и
-<strong>последовательное</strong> тестирование схем. По умолчанию тесты комбинационные:
-схема сбрасывается перед каждым тестом, обеспечивая независимость каждого теста.</p>
-
-<p>Для последовательных схем вы можете указать тестовые последовательности, используя специальные
-столбцы заголовков <code>&lt;set&gt;</code> и <code>&lt;seq&gt;</code>:</p>
-
-<ul>
-<li><strong>&lt;set&gt;</strong>: Определяет <strong>идентификатор последовательности</strong> — тесты с одинаковым номером набора
-принадлежат одной последовательности и выполняются вместе. Состояние схемы сохраняется между шагами
-в одном наборе. Тесты по умолчанию относятся к набору 0, если не указано иное.</li>
-<li><strong>&lt;seq&gt;</strong>: Определяет <strong>номер шага</strong> в наборе — это определяет
-порядок выполнения тестов в одном наборе. Тесты выполняются в порядке их
-значения <code>&lt;seq&gt;</code> в каждом <code>&lt;set&gt;</code>. Тесты со значением <code>&lt;seq&gt;</code> равным 0
-или отсутствующим обрабатываются как комбинационные (схема сбрасывается между тестами, даже если они имеют
-один и тот же набор).</li>
-</ul>
-
-<p>Вот пример последовательного тестового вектора:</p>
-<pre class="code">
-# Последовательный тест для счётчика
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-11T00:20:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Последовательное тестирование
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+    <link rel="stylesheet" type="text/css" href="codefix.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Последовательное тестирование
+      </h1>
+      <p>
+        Функция тестовых векторов поддерживает как <b>комбинационное</b>, так и <b>последовательное</b> тестирование схем. По умолчанию тесты комбинационные: схема автоматически сбрасывается перед каждым тестом, обеспечивая независимость результатов каждого теста.
+      </p>
+      <p>
+        Для тестирования последовательностных схем вы можете задавать последовательности тестов, используя специальные служебные столбцы <code>&lt;set&gt;</code> и <code>&lt;seq&gt;</code>:
+      </p>
+      <ul>
+        <li>
+          <b>&lt;set&gt;</b>: определяет <b>идентификатор последовательности</b> (набора) — все строки тестов с одинаковым номером набора принадлежат одной последовательности и выполняются друг за другом. Внутреннее состояние схемы сохраняется между шагами в одном наборе. По умолчанию тесты относятся к набору 0, если не указано иное.
+        </li>
+        <li>
+          <b>&lt;seq&gt;</b>: определяет <b>номер шага</b> в последовательности — задаёт порядок выполнения тестов в рамках одного набора. Шаги выполняются строго по возрастанию номеров <code>&lt;seq&gt;</code> в каждом <code>&lt;set&gt;</code>. Строки со значением <code>&lt;seq&gt;</code>, равным 0 или отсутствующим, обрабатываются как комбинационные тесты (схема сбрасывается перед их выполнением, даже если они имеют одинаковый номер набора).
+        </li>
+      </ul>
+      <p>
+        Пример последовательного тестового вектора:
+      </p>
+      <pre class="code"># Последовательный тест для счётчика
 Clock Reset Count &lt;set&gt; &lt;seq&gt;
 0     0     0     1     1
 1     0     0     1     2
@@ -42,50 +42,55 @@ Clock Reset Count &lt;set&gt; &lt;seq&gt;
 1     0     1     1     4
 0     0     2     1     5
 1     0     2     1     6
-0     1     0     2     1
-</pre>
-
-<p>В этом примере первые шесть тестов имеют <code>&lt;set&gt; 1</code> со значениями <code>&lt;seq&gt;</code>
-1-6, поэтому они образуют одну последовательность, которая выполняется по порядку (seq 1, затем 2, затем 3 и т.д.)
-без сброса между шагами. Последний тест имеет <code>&lt;set&gt; 2</code>, поэтому он начинает
-новую последовательность, и схема сбрасывается перед его выполнением.</p>
-
-<p>Note also that <code>Clock</code> could be an input pin here. But it could also be a labeled clock component (see below).</p>
-
-<h2>Правила выполнения последовательностей</h2>
-
-<ul>
-<li>Тесты с одинаковым номером <code>&lt;set&gt;</code> (&gt; 0) принадлежат одной последовательности</li>
-<li>В каждом наборе тесты выполняются в порядке их значения <code>&lt;seq&gt;</code> (seq 1, затем 2, затем 3 и т.д.)</li>
-<li>The circuit state is maintained between tests in the same set (same set ID)</li>
-<li>Схема сбрасывается при начале нового набора (другой номер <code>&lt;set&gt;</code>)</li>
-<li>Tests with <code>&lt;seq&gt;</code> = 0 or missing must also have <code>&lt;set&gt;</code> = 0 or missing and are always combinational (reset between tests)</li>
-</ul>
-
-<h2>Using the Clock</h2>
-
-<p>In a sequential test, the first step begins with a reset. In every step after the first, it begins with a simulation tick. Any Clock components in the simulation will be updated by that tick and their signals will be propagated along with any input pin values for that step. You may add a column to the test to show the ticks. The column will be checked against the clock in the circuit as if it were an output pin to verify it describes the clocks behavior. Here is an example for a simple positive edge-triggered D flip-flop test with a standard clock:</p>
-
-<pre class="code">
-&lt;clk&gt; D Q NotQ  &lt;set&gt; &lt;seq&gt;
+0     1     0     2     1</pre>
+      <p>
+        В этом примере первые шесть тестов имеют <code>&lt;set&gt;</code> равный 1 со значениями <code>&lt;seq&gt;</code> от 1 до 6. Они образуют единую последовательность, которая выполняется строго по порядку (шаг 1, затем 2, затем 3 и т. д.) без сброса схемы между шагами. Последний тест относится к набору <code>&lt;set&gt; 2</code>, поэтому перед его запуском начинается новая последовательность, и схема сбрасывается.
+      </p>
+      <p>
+        Также обратите внимание, что сигнал <code>Clock</code> здесь может быть как входным контактом, так и именованным тактовым генератором (см. ниже).
+      </p>
+      <h2>
+        Правила выполнения последовательностей
+      </h2>
+      <ul>
+        <li>Все строки тестов с одинаковым номером <code>&lt;set&gt;</code> (больше 0) объединяются в одну последовательность.
+        </li>
+        <li>В каждом наборе шаги выполняются строго по порядку номеров <code>&lt;seq&gt;</code> (шаг 1, затем 2, затем 3 и т. д.).
+        </li>
+        <li>Внутреннее состояние компонентов схемы сохраняется между шагами внутри одной последовательности (с одинаковым ID набора).
+        </li>
+        <li>Схема сбрасывается в исходное состояние при переходе к новой последовательности (к другому номеру <code>&lt;set&gt;</code>).
+        </li>
+        <li>Строки с <code>&lt;seq&gt;</code> равным 0 (или без него) должны иметь <code>&lt;set&gt;</code> также равный 0 (или отсутствующий) и всегда выполняются как комбинационные тесты со сбросом схемы.
+        </li>
+      </ul>
+      <h2>
+        Использование тактового генератора
+      </h2>
+      <p>
+        При последовательном тестировании первый шаг начинается со сброса схемы. Каждый последующий шаг начинается с такта моделирования. Все тактовые генераторы на схеме обновляются этим тактом, а их сигналы распространяются вместе со значениями входных контактов, заданными для этого шага. Вы можете добавить столбец в тест для отображения тактов. Этот столбец будет проверяться по тактовому генератору в схеме так, как если бы это был выходной контакт, чтобы подтвердить, что он описывает поведение тактового сигнала. Ниже приведён пример теста для простого D-триггера, тактируемого по нарастающему фронту стандартного тактового генератора:
+      </p>
+      <pre class="code">&lt;clk&gt; D Q NotQ  &lt;set&gt; &lt;seq&gt;
   0   0 0   1     1     1
   1   0 0   1     1     2
   0   1 0   1     1     3
   1   1 1   0     1     4
   0   1 1   0     1     5
   1   1 1   0     1     6
-  0   0 1   0     1     7
-</pre>
-
-<p>The <code>&lt;clk&gt;</code> header is a special name for an unlabeled clock component. You may also label the clock and use the label as the column header (see earlier example).</p>
-
-<p>We recommend that when using a Clock, you should not change the values of memory inputs during the same step that the clock makes a triggering transition. Doing so may allow an input signal to reach the component at near the same time as the clock signal giving surprising behavior. In the example above, the D input does not change in steps with a rising edge of the clock.</p>
-
-<h2>Полный пример</h2>
-
-<p>Вот полный пример, объединяющий все функции:</p>
-<pre class="code">
-# Mixed combinational and sequential tests
+  0   0 1   0     1     7</pre>
+      <p>
+        Заголовок <code>&lt;clk&gt;</code> — это специальное имя для неименованного (не имеющего метки) тактового генератора. Вы также можете дать тактовому генератору метку и использовать её в качестве заголовка столбца (как в предыдущем примере).
+      </p>
+      <p>
+        При использовании тактового генератора рекомендуется не изменять значения на входах памяти на том же шаге, на котором тактовый сигнал совершает активный (триггерный) переход. В противном случае входной сигнал может достичь компонента примерно в то же время, что и фронт тактового сигнала, что может привести к непредсказуемому поведению. В приведённом выше примере вход D не изменяется на шагах с нарастающим фронтом тактового сигнала.
+      </p>
+      <h2>
+        Полный пример
+      </h2>
+      <p>
+        Ниже приведён полный пример, объединяющий различные типы тестов:
+      </p>
+      <pre class="code"># Смешанные комбинационные и последовательные тесты
 A B C Out     &lt;clk&gt; &lt;set&gt; &lt;seq&gt;
 0 0 0 0       0     0     0
 0 0 1 1       0     0     0
@@ -93,36 +98,48 @@ A B C Out     &lt;clk&gt; &lt;set&gt; &lt;seq&gt;
 0 1 0 0       1     1     2
 1 1 1 1       0     1     3
 0 0 0 &lt;DC&gt;    0     2     1
-1 0 1 &lt;float&gt; 1     2     2
-</pre>
-
-<p>In this example:</p>
-<ul>
-<li>Notice how the clock resets to 0 in each line that does a reset.</li>
-<li>The first two tests are combinational (seq=0), so the circuit resets
-between each test, even though they share set 0.</li>
-<li>The next three tests all have set 1 with seq values 1-3, so they form one sequence
-that runs in order without reset between each other only resetting before the first test in the set runs.</li>
-<li>The last test has set 2 seq 1&2, so it starts a new sequence and the circuit resets before it runs but not between tests in the set.</li>
-<li>The sixth test uses <code>&lt;DC&gt;</code> for the output, so any output value passes.</li>
-<li>The last test uses <code>&lt;float&gt;</code> for the output, expecting a floating value.</li>
-</ul>
-
-<p> Thus the execution might look like this:</p>
-<ol>
-<li>Reset, set A=0, B=0, C=0 and check that Out==0 and clk=0</li>
-<li>Reset, set A=0, B=0, C=1 and check that Out==1 and clk=0</li>
-<li>Reset, set A=1, B=1, C=0 and check that Out==1 and clk=0</li>
-<li>Tick, set A=0, B=1, C=0 and check that Out==0 and clk=1</li>
-<li>Tick, set A=1, B=1, C=1 and check that Out==1 and clk=0</li>
-<li>Reset, set A=0, B=0, C=0 and not check Out but clk=0</li>
-<li>Tick, set A=1, B=0, C=1 and check that Out is floating (in Logisim this is notated as U) and clk=1</li>
-<li>Test Vector is complete</li>
-</ol>
-
-<p>
-	<b>Предыдущий:</b> <a href="test_vector_special_values.html">Специальные значения</a> | <b>Следующий:</b> <a href="test_vector_cmdline.html">Использование из командной строки</a>.
-</p>
-
-</body>
+1 0 1 &lt;float&gt; 1     2     2</pre>
+      <p>
+        В этом примере:
+      </p>
+      <ul>
+        <li>Обратите внимание, что тактовый сигнал сбрасывается в 0 на каждой строке, выполняющей сброс схемы.
+        </li>
+        <li>Первые два теста являются комбинационными (seq=0), поэтому схема сбрасывается перед каждым тестом, несмотря на то, что они оба относятся к набору 0.
+        </li>
+        <li>Следующие три теста относятся к набору 1 с номерами шагов 1–3, поэтому они образуют одну последовательность, которая выполняется по порядку без промежуточных сбросов (сброс происходит только перед запуском первого шага набора).
+        </li>
+        <li>Последние два теста относятся к набору 2 с шагами 1 и 2, поэтому перед их запуском начинается новая последовательность, и схема сбрасывается, но между шагами 1 и 2 сброса не происходит.
+        </li>
+        <li>Шестой тест использует специальное значение <code>&lt;DC&gt;</code> (don't care) для выхода, поэтому пройдёт любое выходное значение.
+        </li>
+        <li>Последний тест использует значение <code>&lt;float&gt;</code> для выхода, ожидая высокоимпедансное состояние (Z) на контакте.
+        </li>
+      </ul>
+      <p>
+        Таким образом, процесс выполнения выглядит следующим образом:
+      </p>
+      <ol>
+        <li>Сброс схемы, установка входов A=0, B=0, C=0. Проверка, что Out == 0 и clk == 0.
+        </li>
+        <li>Сброс схемы, установка входов A=0, B=0, C=1. Проверка, что Out == 1 and clk == 0.
+        </li>
+        <li>Сброс схемы, установка входов A=1, B=1, C=0. Проверка, что Out == 1 and clk == 0.
+        </li>
+        <li>Такт моделирования, установка входов A=0, B=1, C=0. Проверка, что Out == 0 and clk == 1.
+        </li>
+        <li>Такт моделирования, установка входов A=1, B=1, C=1. Проверка, что Out == 1 and clk == 0.
+        </li>
+        <li>Сброс схемы, установка входов A=0, B=0, C=0. Выход Out не проверяется, clk == 0.
+        </li>
+        <li>Такт моделирования, установка входов A=1, B=0, C=1. Проверка, что Out находится в высокоимпедансном состоянии (Z), а clk == 1.
+        </li>
+        <li>Тестирование по вектору завершено.
+        </li>
+      </ol>
+      <p>
+        <b>Назад:</b> <a href="test_vector_special_values.html">Специальные значения</a> | <b>Далее:</b> <a href="test_vector_cmdline.html">Использование из командной строки</a>.
+      </p>
+    </div>
+  </body>
 </html>

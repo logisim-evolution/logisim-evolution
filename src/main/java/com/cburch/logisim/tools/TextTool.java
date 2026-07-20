@@ -69,11 +69,15 @@ public class TextTool extends Tool {
       }
       caret.removeCaretListener(this);
       caretCircuit.removeCircuitListener(this);
+      final var canvas = caretCanvas;
 
       caretCircuit = null;
       caretComponent = null;
       caretCreatingText = false;
       caret = null;
+      caretCanvas = null;
+
+      refreshEditMenu(canvas);
     }
 
     @Override
@@ -84,11 +88,12 @@ public class TextTool extends Tool {
       }
       caret.removeCaretListener(this);
       caretCircuit.removeCircuitListener(this);
+      final var canvas = caretCanvas;
 
       final var val = caret.getText();
       var isEmpty = StringUtil.isNullOrEmpty(val);
       Action a;
-      final var proj = caretCanvas.getProject();
+      final var proj = canvas.getProject();
       if (caretCreatingText) {
         if (!isEmpty) {
           final var xn = new CircuitMutation(caretCircuit);
@@ -123,8 +128,10 @@ public class TextTool extends Tool {
       caretComponent = null;
       caretCreatingText = false;
       caret = null;
+      caretCanvas = null;
 
       if (a != null) proj.doAction(a);
+      refreshEditMenu(canvas);
     }
   }
 
@@ -180,6 +187,10 @@ public class TextTool extends Tool {
     return S.get("textToolDesc");
   }
 
+  public TextEditActions getTextEditActions() {
+    return caret instanceof TextEditActions actions ? actions : null;
+  }
+
   @Override
   public String getDisplayName() {
     return S.get("textTool");
@@ -195,6 +206,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.keyPressed(e);
       canvas.getProject().repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -203,6 +215,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.keyReleased(e);
       canvas.getProject().repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -211,6 +224,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.keyTyped(e);
       canvas.getProject().repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -229,6 +243,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.mouseDragged(e);
       proj.repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -254,6 +269,7 @@ public class TextTool extends Tool {
       if (caret.getBounds(g).contains(e.getX(), e.getY())) { // Yes
         caret.mousePressed(e);
         proj.repaintCanvas();
+        refreshEditMenu(canvas);
         return;
       } else {
         // No. End the current caret.
@@ -318,6 +334,7 @@ public class TextTool extends Tool {
       caretCircuit.addCircuitListener(listener);
     }
     proj.repaintCanvas();
+    refreshEditMenu(canvas);
   }
 
   @Override
@@ -334,11 +351,18 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.mouseReleased(e);
       proj.repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
     Text.FACTORY.paintIcon(c, x, y, null);
+  }
+
+  private void refreshEditMenu(Canvas canvas) {
+    if (canvas == null) return;
+    final var frame = canvas.getProject().getFrame();
+    if (frame != null) frame.computeEditMenuEnabled();
   }
 }

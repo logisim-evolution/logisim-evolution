@@ -11,6 +11,7 @@ package com.cburch.logisim.comp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.cburch.logisim.tools.TextEditActions;
 import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.event.InputEvent;
@@ -73,6 +74,30 @@ class TextFieldCaretTest {
     caret.keyPressed(
         keyPressed(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
 
+    assertEquals("abcd", caret.getText());
+  }
+
+  @Test
+  void textEditActionsSelectAllText() {
+    final TextEditActions actions = caret("abc", 0);
+    final var caret = (TextFieldCaret) actions;
+
+    actions.selectAll();
+    caret.keyTyped(keyTyped('x'));
+
+    assertEquals("x", caret.getText());
+  }
+
+  @Test
+  void textEditActionsUndoAndRedoInProgressTextEdit() {
+    final TextEditActions actions = caret("abc", 3);
+    final var caret = (TextFieldCaret) actions;
+
+    caret.keyTyped(keyTyped('d'));
+    actions.undoTextEdit();
+    assertEquals("abc", caret.getText());
+
+    actions.redoTextEdit();
     assertEquals("abcd", caret.getText());
   }
 

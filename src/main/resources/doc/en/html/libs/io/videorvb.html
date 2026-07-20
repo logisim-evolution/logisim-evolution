@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2026-06-26T14:48:00.000000000">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>RGB Video</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+	<div class="maindiv">
+		<h1>
+			<img class="iconlibs" src="../../../../icons/6464/rgbvideo.png" alt="#########" height="32" width="32">
+			<em>RGB Video</em>
+		</h1>
+		<table>
+			<tbody>
+				<tr>
+					<td><strong>Library:</strong></td>
+					<td><a href="index.html">Input/Output</a></td>
+				</tr>
+				<tr>
+					<td><strong>Introduced:</strong></td>
+					<td>3.0.0</td>
+				</tr>
+				<tr>
+					<td valign="top"><strong>Appearance:</strong></td>
+					<td valign="top">
+						A rectangular raster screen bordered by a gray frame. In the lower-left corner of the frame,
+						control and data pins are located.
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2>Behavior</h2>
+		<p>
+			The RGB Video component models a pixel-based raster display supporting various color schemes and resolutions.
+			It allows graphics to be rendered by writing pixel colors at specific (X, Y) coordinates.
+		</p>
+		<p>
+			A pixel write operation occurs on the <b>rising edge</b> of the clock signal <b class="unov">CLK</b>, provided that
+			the write enable input <b class="unov">WE</b> is <b class="unov">1</b>. The pixel color at coordinates (X, Y)
+			is updated with the value from the <b class="unov">Data</b> input.
+		</p>
+		<p>
+			Resetting the screen to black is performed by a signal on the <b class="unov">RST</b> input. The reset logic depends on
+			the <b class="propertie">Reset</b> attribute and can be either synchronous (on the rising edge of the clock) or asynchronous (immediately).
+		</p>
+
+		<h2>Pins (inputs are located on the bottom edge from left to right)</h2>
+		<dl>
+			<dt>Pin 0 (input, bit width 1):</dt>
+			<dd>Reset signal (RST). Clears the entire screen, filling it with black when a logical <b class="unov">1</b> is applied.</dd>
+			<dt>Pin 1 (input, bit width 1, clock input):</dt>
+			<dd>Clock signal (CLK). Data is written into the display memory on its rising edge.</dd>
+			<dt>Pin 2 (input, bit width 1):</dt>
+			<dd>Write enable (WE). Writing a pixel is active only when this input is <b class="unov">1</b>.</dd>
+			<dt>Pin 3 (input, bit width calculated based on screen width):</dt>
+			<dd>X coordinate of the pixel to be written (from 0 to screen width - 1).</dd>
+			<dt>Pin 4 (input, bit width calculated based on screen height):</dt>
+			<dd>Y coordinate of the pixel to be written (from 0 to screen height - 1).</dd>
+			<dt>Pin 5 (input, bit width determined by color format):</dt>
+			<dd>Pixel color data (Data). The color value to be written to the selected coordinate.</dd>
+		</dl>
+
+		<h2>Attributes</h2>
+		<div class="attliste">
+			<dl>
+				<dt><b class="propertie">Cursor</b></dt>
+				<dd>Allows enabling a blinking dot at the position of the last written pixel for visual debugging (Blinking dot / Without cursor).</dd>
+				<dt><b class="propertie">Reset</b></dt>
+				<dd>The type of reset signal: Asynchronous (immediate level-triggered reset) or Synchronous (edge-triggered reset on CLK rising edge).</dd>
+				<dt><b class="propertie">Color Mode</b></dt>
+				<dd>
+					Specifies the color encoding format on the Data input:
+					<ul>
+						<li><b>888 RGB (24 bit)</b> — 24-bit full color mode.</li>
+						<li><b>555 RGB (15 bit)</b> — 5 bits for each red, green, and blue channel.</li>
+						<li><b>565 RGB (16 bit)</b> — 5 bits for red, 6 bits for green, 5 bits for blue.</li>
+						<li><b>8-Color RGB (3 bit)</b> — Simple 3-bit scheme (8 basic colors).</li>
+						<li><b>Atari 2600 (7 bit)</b> — Color palette of the Atari 2600 console.</li>
+						<li><b>XTerm16 (4 bit)</b> — 16 standard terminal colors.</li>
+						<li><b>XTerm256 (8 bit)</b> — 256 terminal colors.</li>
+						<li><b>Grayscale (4 bit)</b> — 16 shades of gray.</li>
+						<li><b>VGA256 (8 bit)</b> — Standard 256-color VGA palette.</li>
+					</ul>
+				</dd>
+				<dt><b class="propertie">Resolution</b></dt>
+				<dd>Specifies the screen size in pixels (e.g., 128x128, 256x256, 320x240, 640x480, etc., or Custom).</dd>
+				<dt><b class="propertie">Width</b></dt>
+				<dd>The width of the screen in pixels (only available with custom resolution).</dd>
+				<dt><b class="propertie">Height</b></dt>
+				<dd>The height of the screen in pixels (only available with custom resolution).</dd>
+				<dt><b class="propertie">Scale</b></dt>
+				<dd>Zoom factor for displaying pixels on the canvas (from 1 to 8).</dd>
+			</dl>
+		</div>
+
+		<p><b>Back to</b> <a href="index.html">Library Reference</a></p>
+	</div>
+</body>
+
+</html>

@@ -1,53 +1,147 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html lang="en">
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>dynamic_components</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Dynamic Components
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <h1>Dynamic components</h1>
-    <p>The dynamic components provides the means of observing/manipulating
-      components that are hidden in a sub-circuit on a higher level. Example:
-      You have placed a led in a circuit named <strong>MyNiceCircuit</strong>.
-      Now you use <strong>MyNiceCircuit</strong> as sub-circuit in the circuit
-      named <strong>MyToplevel</strong>. Simulating in <strong>MyToplevel</strong>
-      will hide your led, hence you have no means to see if the led in <strong>MyNiceCircuit</strong>
-      is lighting up or not. The dynamic components help here by providing the
-      possibility of putting an image of the led on the sub-circuit symbol of <strong>MyNiceCircuit</strong>.
-      To add dynamic components to the sub-circuit symbol of <strong>MyNiceCircuit</strong>,
-      you have first to open the&nbsp;<a href="../subcirc/sub-appear.html">appearance editor</a>
-      of the circuit <strong>MyNiceCircuit</strong>. Than you click on the <img
-        src="../../../../icons/dynamic_component.png" alt="dyncomp" title="dyncomp">-tool
-      icon. A window will open listing all the available dynamic components, and
-      you can select which one to show in the appearance of your sub-circuit
-      symbol. Note that the dynamic components feature is a recursive property.
-      This means that if you have a hierarchical structure, it will show all
-      possible dynamic components available down from the current sub-circuit.</p>
-    <p>Currently following tools support dynamic components:</p>
-    <table style="width: 232px; height: 72px;" border="0">
-      <tbody>
-        <tr>
-          <td style="text-align: center;"><img src="../../../../icons/led.gif" alt="led"
-              title="led"><br>
-          </td>
-          <td><a href="../../libs/io/led.html">LED-tool</a></td>
-        </tr>
-        <tr>
-          <td style="width: 37.1333px; text-align: center;"><img src="../../../../icons/rgbled.gif"
-              alt="rgb" title="rgb"><br>
-          </td>
-          <td style="width: 184.867px;"><a href="../../libs/io/led.html">RGB-LED-tool</a></td>
-        </tr>
-        <tr>
-          <td><br>
-          </td>
-          <td>to be completed</td>
-        </tr>
-      </tbody>
-    </table>
-    <p><br>
-    </p>
-    <p><br>
-    </p>
+    <div class="maindiv">
+      <h1>Dynamic Components</h1>
+      <p>
+        The <b>dynamic components</b> feature provides the means of observing and interacting with components that are hidden inside a subcircuit directly from a higher hierarchical level of the design.
+      </p>
+      
+      <h3>Concept and Solution</h3>
+      <p>
+        Imagine you have placed a LED inside a circuit named <strong>MyNiceCircuit</strong>. Now you use <strong>MyNiceCircuit</strong> as a subcircuit in a top-level circuit named <strong>MyToplevel</strong>. During normal simulation in <strong>MyToplevel</strong>, your LED is hidden inside the subcircuit block; hence you have no way to see if the LED in <strong>MyNiceCircuit</strong> is lighting up or not without opening the subcircuit.
+      </p>
+      <p>
+        The dynamic components feature solves this problem: it provides the possibility of putting a visual representation of the indicator (or control component) directly on the subcircuit symbol of <strong>MyNiceCircuit</strong>.
+      </p>
+      <p>
+        <i>Note:</i> The dynamic components feature is recursive. This means that if you have a hierarchical structure, it will show all possible dynamic components available down from the current subcircuit.
+      </p>
+
+      <h3>How to Add</h3>
+      <ol>
+        <li>Open the circuit containing the component (e.g. <strong>MyNiceCircuit</strong>).</li>
+        <li>Open the <a href="sub-appear.html">appearance editor</a> of that circuit.</li>
+        <li>Click on the <img src="../../../../icons/1616/dynamic_component.png" alt="dynamic component" title="Dynamic component"> tool icon.</li>
+        <li>A window will open listing all the available components inside the circuit, and you can select which ones to show on the subcircuit symbol and place them.</li>
+      </ol>
+
+      <h3>Supported Components</h3>
+      <p>Currently, the following components support dynamic component visualization:</p>
+      
+      <table style="border: 0; border-collapse: collapse;">
+        <tbody>
+          <tr>
+            <td style="text-align: center; padding: 4px; width: 40px;">
+              <img src="../../../../icons/1616/led.png" alt="LED" title="LED">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/io/led.html">LED</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/rgbled.png" alt="RGB-LED" title="RGB-LED">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/io/led.html">RGB-LED</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/7seg.png" alt="7-Segment Display" title="7-Segment Display">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/io/7seg.html">7-Segment Display</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/hexdig.png" alt="Hex Digit Display" title="Hex Digit Display">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/io/hexdig.html">Hex Digit Display</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/dotmat.png" alt="Dot Matrix" title="Dot Matrix">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/io/dotmat.html">Dot Matrix</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/tty.png" alt="TTY" title="TTY">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/io/tty.html">TTY</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/probe.png" alt="Probe" title="Probe">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/wiring/probe.html">Probe</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/register.png" alt="Register" title="Register">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/mem/register.html">Register</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/counter.png" alt="Counter" title="Counter">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/mem/counter.html">Counter</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/up.png" alt="Nios2 Simulator" title="Nios2 Simulator">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/soc/nios2.html">Nios2 Simulator</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/socvga.png" alt="VGA Screen" title="VGA Screen">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/soc/socvga.html">VGA Screen</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 4px;">
+              <img src="../../../../icons/1616/up.png" alt="RISC-V IM Simulator" title="RISC-V IM Simulator">
+            </td>
+            <td style="padding: 4px;">
+              <a href="../../libs/soc/socriscv.html">RISC-V IM Simulator</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+      </p>
+    </div>
   </body>
 </html>

@@ -21,6 +21,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -29,6 +30,8 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.StringGetter;
+
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -99,8 +102,15 @@ public class Ram extends Mem {
   private static final Object[][] logOptions = new Object[9][];
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
+  public Ram(String name,
+          StringGetter desc,
+          HdlGeneratorFactory generator,
+          boolean needsLabel) {
+    super(name, desc, generator, needsLabel);
+  }
+  
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
+    super(_ID, S.getter("ramComponent"), new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }

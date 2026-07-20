@@ -21,7 +21,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.54.0"
   java
   application
-  id("com.gradleup.shadow") version "9.5.1"
+  id("com.gradleup.shadow") version "9.6.0"
   id("org.sonarqube") version "7.3.1.8318"
 }
 
@@ -43,7 +43,7 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.18")
   implementation("org.slf4j:slf4j-simple:2.0.18")
-  implementation("com.formdev:flatlaf:3.7.1")
+  implementation("com.formdev:flatlaf:3.7.2")
   implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
   implementation("org.apache.commons:commons-text:1.15.0")
@@ -52,8 +52,8 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:6.1.1"))
-  testImplementation("org.junit.jupiter:junit-jupiter:6.1.1")
+  testImplementation(platform("org.junit:junit-bom:6.1.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:6.1.2")
   testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

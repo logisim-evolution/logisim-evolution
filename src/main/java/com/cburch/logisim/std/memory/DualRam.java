@@ -13,28 +13,20 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.gui.hex.HexFrame;
+import com.cburch.logisim.fpga.gui.DialogNotification;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceLogger;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Project;
-import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
-public class DualRam extends Mem {
+public class DualRam extends Ram {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -43,82 +35,15 @@ public class DualRam extends Mem {
    */
   public static final String _ID = "DualRAM";
 
-  public static class Logger extends InstanceLogger {
-    @Override
-    public String getLogName(InstanceState state, Object option) {
-      var label = state.getAttributeValue(StdAttr.LABEL);
-      if (label.equals(""))
-        label = null;
-      if (option instanceof Number) {
-        if (label == null) {
-          final var disp = S.get("dualRamComponent");
-          final var loc = state.getInstance().getLocation();
-          return disp + loc + "[" + option + "]";
-        }
-        return label + "[" + option + "]";
-      } else {
-        return label;
-      }
-    }
-
-    @Override
-    public BitWidth getBitWidth(InstanceState state, Object option) {
-      return state.getAttributeValue(Mem.DATA_ATTR);
-    }
-
-    @Override
-    public Object[] getLogOptions(InstanceState state) {
-      var addrBits = state.getAttributeValue(Mem.ADDR_ATTR).getWidth();
-      if (addrBits >= logOptions.length) {
-        addrBits = logOptions.length - 1;
-      }
-      synchronized (logOptions) {
-        var ret = logOptions[addrBits];
-        if (ret == null) {
-          ret = new Object[1 << addrBits];
-          logOptions[addrBits] = ret;
-          for (var i = 0; i < ret.length; i++) {
-            ret[i] = i;
-          }
-        }
-        return ret;
-      }
-    }
-
-    @Override
-    public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Number addr) {
-        final var memState = (MemState) state.getData();
-        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr.longValue()));
-      } else {
-        return Value.NIL;
-      }
-    }
-  }
-
-  private static final Object[][] logOptions = new Object[9][];
-  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
-
   public DualRam() {
-    super(_ID, S.getter("dualRamComponent"), 3, null, true);
+    super(_ID, S.getter("dualRamComponent"), null, true);
     setIcon(new ArithmeticIcon("D-RAM", 3));
     setInstanceLogger(Logger.class);
   }
 
   @Override
-  protected void configureNewInstance(Instance instance) {
-    super.configureNewInstance(instance);
-    instance.addAttributeListener();
-  }
-
-  @Override
   void configurePorts(Instance instance) {
     DualRamAppearance.configurePorts(instance);
-  }
-
-  @Override
-  public AttributeSet createAttributeSet() {
-    return new DualRamAttributes();
   }
 
   @Override
@@ -129,94 +54,9 @@ public class DualRam extends Mem {
         : "DUALRAMCONTENTS_" + label;
   }
 
-  private MemContents getNewContents(AttributeSet attrs) {
-    final var contents = MemContents.create(
-        attrs.getValue(Mem.ADDR_ATTR).getWidth(), attrs.getValue(Mem.DATA_ATTR).getWidth(), true);
-    contents.condFillRandom();
-    return contents;
-  }
-
-  private static HexFrame getHexFrame(MemContents value, Project proj, Instance instance) {
-    synchronized (windowRegistry) {
-      var ret = windowRegistry.get(value);
-      if (ret == null) {
-        ret = new HexFrame(proj, instance, value);
-        windowRegistry.put(value, ret);
-      }
-      return ret;
-    }
-  }
-
-  public static void closeHexFrame(DualRamState state) {
-    final var contents = state.getContents();
-    HexFrame ret;
-    synchronized (windowRegistry) {
-      ret = windowRegistry.remove(contents);
-    }
-    if (ret == null)
-      return;
-    ret.closeAndDispose();
-  }
-
-  @Override
-  public HexFrame getHexFrame(Project proj, Instance instance, CircuitState circState) {
-    final var ret = (DualRamState) instance.getData(circState);
-    return getHexFrame((ret == null) ? getNewContents(instance.getAttributeSet()) : ret.getContents(), proj, instance);
-  }
-
-  public boolean reset(CircuitState state, Instance instance) {
-    final var ret = (DualRamState) instance.getData(state);
-    if (ret == null)
-      return true;
-    final var contents = ret.getContents();
-    if (instance.getAttributeValue(DualRamAttributes.ATTR_TYPE).equals(DualRamAttributes.VOLATILE)) {
-      contents.condClear();
-    }
-    return false;
-  }
-
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return DualRamAppearance.getBounds(attrs);
-  }
-
-  public MemContents getContents(InstanceState dualRamState) {
-    return getState(dualRamState).getContents();
-  }
-
-  @Override
-  MemState getState(Instance instance, CircuitState state) {
-    return getState(state.getInstanceState(instance));
-  }
-
-  @Override
-  MemState getState(InstanceState state) {
-    var ret = (DualRamState) state.getData();
-    if (ret == null) {
-      final var instance = state.getInstance();
-      ret = new DualRamState(instance, getNewContents(instance.getAttributeSet()), new Mem.MemListener(instance));
-      state.setData(ret);
-    } else {
-      ret.setRam(state.getInstance());
-    }
-    return ret;
-  }
-
-  @Override
-  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    super.instanceAttributeChanged(instance, attr);
-    if ((attr == Mem.DATA_ATTR)
-        || (attr == Mem.ADDR_ATTR)
-        || (attr == DualRamAttributes.ATTR_DBUS)
-        || (attr == StdAttr.TRIGGER)
-        || (attr == DualRamAttributes.ATTR_ByteEnables)
-        || (attr == StdAttr.APPEARANCE)
-        || (attr == Mem.LINE_ATTR)
-        || (attr == DualRamAttributes.CLEAR_PIN)
-        || (attr == Mem.ENABLES_ATTR)) {
-      instance.recomputeBounds();
-      configurePorts(instance);
-    }
   }
 
   @Override
@@ -231,11 +71,11 @@ public class DualRam extends Mem {
   @Override
   public void propagate(InstanceState state) {
     final var attrs = state.getAttributeSet();
-    final var myState = (DualRamState) getState(state);
+    final var myState = (RamState) getState(state);
 
     // If Clear is active: wipe memory contents and reset data outputs for both
     // ports (A & B).
-    if (attrs.getValue(DualRamAttributes.CLEAR_PIN)) {
+    if (attrs.getValue(RamAttributes.CLEAR_PIN)) {
       final var clearValue = state.getPortValue(DualRamAppearance.getClrIndex(0, attrs));
       if (clearValue.equals(Value.TRUE)) {
         myState.getContents().clear();
@@ -252,31 +92,50 @@ public class DualRam extends Mem {
         return;
       }
     }
-
-    for (int portIndex = 0; portIndex < 2; portIndex++) {
-      final var addrValue = state.getPortValue(DualRamAppearance.getAddrIndex(portIndex, attrs));
-      long addr = addrValue.toLongValue();
-      final var goodAddr = addrValue.isFullyDefined() && addr >= 0;
-
-      if (goodAddr && addr != myState.getCurrent(portIndex)) {
-        myState.setCurrent(portIndex, addr);
-        if (portIndex == 0)
-          myState.scrollToShow(addr);
-      }
-      if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-        propagateLineEnables(state, portIndex, addr, goodAddr, addrValue.isErrorValue());
-      } else {
-        propagateByteEnables(state, portIndex, addr, goodAddr, addrValue.isErrorValue());
-      }
-
+    
+    final var addrBValue = state.getPortValue(DualRamAppearance.getAddrIndex(1, attrs));
+    final var addrB = addrBValue.toLongValue();
+    final var goodBAddr = addrBValue.isFullyDefined() && addrB >= 0;
+    if (goodBAddr && addrB != myState.getCurrent(1)) {
+      myState.setCurrent(1, addrB);
+    }
+    final var addrAValue = state.getPortValue(DualRamAppearance.getAddrIndex(0, attrs));
+    final var addrA = addrAValue.toLongValue();
+    final var goodAAddr = addrAValue.isFullyDefined() && addrA >= 0;
+    if (goodAAddr && addrA != myState.getCurrent(0)) {
+      myState.setCurrent(0, addrA);
+      myState.scrollToShow(addrA);
+    }
+    final var weA = state.getPortValue(DualRamAppearance.getWEIndex(0, attrs)) == Value.TRUE;
+    final var weB = state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)) == Value.TRUE;
+    final var triggerType = state.getAttributeValue(StdAttr.TRIGGER);
+    final var async = triggerType.equals(StdAttr.TRIG_HIGH) || triggerType.equals(StdAttr.TRIG_LOW);
+    final var edgeA = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async 
+        ? myState.setClock(0, state.getPortValue(DualRamAppearance.getWEIndex(0, attrs)), triggerType) :
+        myState.setClock(0, state.getPortValue(DualRamAppearance.getClkIndex(0, attrs)), triggerType);
+    final var writeEnabledA = weA && edgeA;
+    final var edgeB = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async 
+        ? myState.setClock(1, state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)), triggerType) :
+        myState.setClock(1, state.getPortValue(DualRamAppearance.getClkIndex(1, attrs)), triggerType);
+    final var writeEnabledB = weB && edgeB;
+    final var writeCollision = (addrA == addrB) && writeEnabledA && writeEnabledB;
+    if (writeCollision) {
+      DialogNotification.showDialogNotification(null, "Warning", 
+          S.get("dualWriteCollision", Long.toHexString(addrA)));
+    }
+    if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
+      propagateLineEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA);
+      propagateLineEnables(state, 1, addrB, goodBAddr, addrBValue.isErrorValue(), writeEnabledB);
+    } else {
+      propagateByteEnables(state, 0, addrA, goodAAddr, addrAValue.isErrorValue(), writeEnabledA, edgeA);
+      propagateByteEnables(state, 1, addrB, goodBAddr, addrBValue.isErrorValue(), writeEnabledB, edgeB);
     }
   }
 
-  // Parameter added: int portIndex (to distinguish between Port A and Port B)
   private void propagateLineEnables(InstanceState state, int portIndex, long addr, boolean goodAddr,
-      boolean errorValue) {
+      boolean errorValue, boolean writeEnabled) {
     final var attrs = state.getAttributeSet();
-    final var myState = (DualRamState) getState(state); // Cast to DualRamState
+    final var myState = (RamState) getState(state);
     final var separate = isSeparate(attrs);
 
     final var totalLEs = DualRamAppearance.getNrLEPorts(attrs);
@@ -286,12 +145,6 @@ public class DualRam extends Mem {
     final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
     // perform writes
-    Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-
-    final var triggered = myState.setClock(portIndex,
-        state.getPortValue(DualRamAppearance.getClkIndex(portIndex, attrs)), trigger);
-    final var writeEnabled = triggered
-        && (state.getPortValue(DualRamAppearance.getWEIndex(portIndex, attrs)) == Value.TRUE);
 
     if (writeEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
@@ -331,32 +184,17 @@ public class DualRam extends Mem {
   }
 
   private void propagateByteEnables(InstanceState state, int portIndex, long addr, boolean goodAddr,
-      boolean errorValue) {
+      boolean errorValue, boolean writeEnabled, boolean edge) {
     final var attrs = state.getAttributeSet();
-    final var myState = (DualRamState) getState(state);
+    final var myState = (RamState) getState(state);
     final var separate = isSeparate(attrs);
-    long oldMemValue = myState.getContents().get(myState.getCurrent(portIndex));
+    long oldMemValue = myState.getContents().get(myState.getCurrent());
     long newMemValue = oldMemValue;
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
-    final var weValue = state.getPortValue(DualRamAppearance.getWEIndex(portIndex, attrs));
     final var async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
 
-    Value clkValue = Value.FALSE;
-    if (!async) {
-      int clkIdx = DualRamAppearance.getClkIndex(portIndex, attrs);
-      if (clkIdx != -1) {
-        clkValue = state.getPortValue(clkIdx);
-      }
-    }
-
-    final var edge = !async && myState.setClock(portIndex, clkValue, trigger);
-
-    final var weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE))
-        || (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
-    final var weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
-
-    if (goodAddr && weTriggered) {
+    if (goodAddr && writeEnabled) {
       long dataInValue = state.getPortValue(DualRamAppearance.getDataInIndex(portIndex, attrs)).toLongValue();
       if (DualRamAppearance.getNrBEPorts(attrs) == 0) {
         newMemValue = dataInValue;
@@ -416,22 +254,6 @@ public class DualRam extends Mem {
       else
         setValue.accept(Value.createKnown(dataBits, oldMemValue));
     }
-  }
-
-  @Override
-  public void removeComponent(Circuit circ, Component c, CircuitState state) {
-    if (state != null)
-      closeHexFrame((DualRamState) state.getData(c));
-  }
-
-  public static boolean isSeparate(AttributeSet attrs) {
-    Object bus = attrs.getValue(DualRamAttributes.ATTR_DBUS);
-    return bus == null || bus.equals(DualRamAttributes.BUS_SEP);
-  }
-
-  @Override
-  public boolean checkForGatedClocks(netlistComponent comp) {
-    return true;
   }
 
   @Override

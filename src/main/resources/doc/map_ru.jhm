@@ -32,6 +32,7 @@
     <mapID target="subcirc_personalise" url="ru/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug"       url="ru/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library"     url="ru/html/guide/subcirc/sub-library.html" />
+	<mapID target="dynamic_components"  url="ru/html/guide/subcirc/dynamic_components.html" />
 	<mapID target="features"            url="ru/html/guide/feature/index.html" />
 	<mapID target="features_creating"   url="ru/html/guide/feature/fet-creating.html" />
 	<mapID target="features_splitting"  url="ru/html/guide/feature/fet-splitting.html" />
@@ -68,14 +69,15 @@
 	<mapID target="verify_sub"          url="ru/html/guide/verify/sub.html" />
 	<mapID target="verify_other"        url="ru/html/guide/verify/other.html" />
 	<mapID target="verify_multi"        url="ru/html/guide/verify/multi.html" />
-    <mapID target="verify_test"         url="ru/html/guide/verify/test.html"/>
+    <mapID target="verify_test"         url="ru/html/guide/test_vector/index.html"/>
 	<mapID target="prefs"               url="ru/html/guide/prefs/index.html" />
 	<mapID target="prefs_template"      url="ru/html/guide/prefs/pref-template.html" />
 	<mapID target="prefs_intl"          url="ru/html/guide/prefs/pref-intl.html" />
 	<mapID target="prefs_window"        url="ru/html/guide/prefs/pref-window.html" />
 	<mapID target="prefs_layout"        url="ru/html/guide/prefs/pref-layout.html" />
+	<mapID target="prefs_simulation"    url="ru/html/guide/prefs/pref-simulation.html" />
 	<mapID target="prefs_exp"           url="ru/html/guide/prefs/pref-exp.html" />
-	<mapID target="prefs_fpga"          url="en/html/guide/prefs/pref-fpgacommander.html" />
+	<mapID target="prefs_fpga"          url="ru/html/guide/prefs/pref-fpgacommander.html" />
 	<mapID target="prefs_cmdline"       url="ru/html/guide/prefs/pref-cmdline.html" />
 	<mapID target="opts"                url="ru/html/guide/opts/index.html" />
 	<mapID target="opts_simulate"       url="ru/html/guide/opts/opts-simulate.html" />
@@ -101,18 +103,18 @@
 	<mapID target="menu_edit"           url="ru/html/guide/menu/edit.html" />
 	<mapID target="menu_project"        url="ru/html/guide/menu/project.html" />
 	<mapID target="menu_simulate"       url="ru/html/guide/menu/simulate.html" />
-	<mapID target="menu_fpga"           url="en/html/guide/menu/fpga.html" />
+	<mapID target="menu_fpga"           url="ru/html/guide/menu/fpga.html" />
 	<mapID target="menu_winhelp"        url="ru/html/guide/menu/winhelp.html" />
 	<mapID target="menu_exportab"       url="ru/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="ru/html/guide/menu/printertab.html" />
 	<mapID target="menu_assembly"       url="ru/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="ru/html/guide/about/index.html" />
-	<mapID target="about_gpl"           url="gpl.html" />
+	<mapID target="about_gpl"           url="ru/html/guide/about/gpl.html" />
+	<mapID target="about_gpl_tr"        url="ru/html/guide/about/gpl-ru.html" />
 	
-<!-- for testing and validation 
-	<mapID target="test_hmlcss"         url="ru/testhtml/index.html" />
+<!-- for testing and validation -->
+	<mapID target="test_hml_css"        url="en/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
--->	
 <!-- Librairie -->
 	<mapID target="libs"                url="ru/html/libs/index.html" />
 	<mapID target="wiring"              url="ru/html/libs/wiring/index.html" />
@@ -152,6 +154,12 @@
 	<mapID target="arith_shifter"       url="ru/html/libs/arith/shifter.html" />
 	<mapID target="arith_bitadder"      url="ru/html/libs/arith/bitadder.html" />
 	<mapID target="arith_bitfinder"     url="ru/html/libs/arith/bitfinder.html" />
+	<mapID target="arith_fpadder"       url="ru/html/libs/arith/fpadder.html" />
+	<mapID target="arith_fpsubtractor"  url="ru/html/libs/arith/fpsubtractor.html" />
+	<mapID target="arith_fpmultiplier"  url="ru/html/libs/arith/fpmultiplier.html" />
+	<mapID target="arith_fpdivider"     url="ru/html/libs/arith/fpdivider.html" />
+	<mapID target="arith_fpnegator"     url="ru/html/libs/arith/fpnegator.html" />
+	<mapID target="arith_fpcomparator"  url="ru/html/libs/arith/fpcomparator.html" />
 	<mapID target="mem"                 url="ru/html/libs/mem/index.html" />
 	<mapID target="mem_flipflops"       url="ru/html/libs/mem/flipflops.html" />
 	<mapID target="mem_register"        url="ru/html/libs/mem/register.html" />
@@ -160,6 +168,7 @@
 	<mapID target="mem_random"          url="ru/html/libs/mem/random.html" />
 	<mapID target="mem_ram"             url="ru/html/libs/mem/ram.html" />
 	<mapID target="mem_rom"             url="ru/html/libs/mem/rom.html" />
+	<mapID target="mem_dualram"         url="ru/html/libs/mem/dualportram.html" />
 	<mapID target="io"                  url="ru/html/libs/io/index.html" />
 	<mapID target="io_button"           url="ru/html/libs/io/button.html" />
 	<mapID target="io_joystick"         url="ru/html/libs/io/joystick.html" />
@@ -168,20 +177,32 @@
 	<mapID target="io_7seg"             url="ru/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="ru/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="ru/html/libs/io/dotmat.html" />
+	<mapID target="io_DIP"              url="ru/html/libs/io/dipswitch.html" />
+	<mapID target="io_ledRGB"           url="ru/html/libs/io/rgbled.html" />
 	<mapID target="io_tty"              url="ru/html/libs/io/tty.html" />
-	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+	<mapID target="io_telnet"           url="ru/html/libs/io/telnet.html" />
     <mapID target="io_Port_IO"          url="ru/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="ru/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="ru/html/libs/io/videorvb.html" />
+	<mapID target="io_videorgb"         url="ru/html/libs/io/videorvb.html" />
 	<mapID target="tcl"                 url="ru/html/libs/tcl/index.html" />
-    <mapID target="tcl_reds_console"    url="ru/html/libs/tcl/reds_console.html" />
-    <mapID target="tcl_generic"         url="ru/html/libs/tcl/generic.html" />
+    <mapID target="tcl_reds_console"    url="ru/html/libs/tcl/redsconsole.html" />
+    <mapID target="tcl_generic"         url="ru/html/libs/tcl/tclgeneric.html" />
+    <mapID target="hdl"                 url="ru/html/libs/hdl/index.html" />
+    <mapID target="hdl_vhdlentity"      url="ru/html/libs/hdl/vhdlentity.html" />
     <mapID target="soc"                 url="ru/html/libs/soc/index.html" />
-    <mapID target="nios2_sim"           url="ru/html/libs/soc/nios2.html" />
+    <mapID target="nios2_sim"           url="ru/html/libs/soc/socnios2s.html" />
     <mapID target="socbus"              url="ru/html/libs/soc/socbus.html" />
     <mapID target="assembler"           url="ru/html/libs/soc/assembler.html" />
     <mapID target="disassembler"        url="ru/html/libs/soc/disassembler.html" />
     <mapID target="socsimcontrol"       url="ru/html/libs/soc/socsimcontrol.html" />
+    <mapID target="soc_minimal"         url="ru/html/libs/soc/minimal.html" />
+    <mapID target="soc_dma"             url="ru/html/libs/soc/socdma.html" />
+    <mapID target="soc_jtag"            url="ru/html/libs/soc/socjtag.html" />
+    <mapID target="soc_memsimulator"    url="ru/html/libs/soc/socmemsimulator.html" />
+    <mapID target="soc_pio"             url="ru/html/libs/soc/socpio.html" />
+    <mapID target="soc_riscv"           url="ru/html/libs/soc/socriscv.html" />
+    <mapID target="soc_vga"             url="ru/html/libs/soc/socvga.html" />
 	
 <!-- Icon help tree -->
 	<mapID target="icon_poke"        url="icons/1616/poke.png" />
@@ -251,6 +272,15 @@
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	
+
+	<mapID target="base"                url="ru/html/guide/tools/index.html" />
+	<mapID target="base_poke"           url="ru/html/guide/tools/poke.html" />
+	<mapID target="base_edit"           url="ru/html/guide/tools/edit.html" />
+	<mapID target="base_select"         url="ru/html/guide/tools/select.html" />
+	<mapID target="base_wiring"         url="ru/html/guide/tools/wiring.html" />
+	<mapID target="base_text"           url="ru/html/guide/tools/text.html" />
+	<mapID target="base_menu"           url="ru/html/guide/tools/menu.html" />
+	<mapID target="base_label"          url="ru/html/guide/tools/label.html" />
 
 	<mapID target="icon_ttl"         url="icons/1616/ttl.png" />	
 	<mapID target="icon_reds_console" url="icons/1616/tcl.png" />	

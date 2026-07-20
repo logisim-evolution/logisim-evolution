@@ -1,42 +1,58 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="created" content="2020-01-31T06:18:42.262000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="ru">
-    <title>
+<html lang="ru">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2018-10-23T06:18:10.521000000">
+  <meta name="changed" content="2026-07-18T01:22:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>
+    Параметры проекта
+  </title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
+    <h1>
       Параметры проекта
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-        Параметры проекта
-      </h1>
-      <p>
-        Logisim поддерживает две категории параметров конфигурации: <em>настройки приложения</em> и <em>параметры проекта</em>. Настройки приложения охватывают все открытые проекты, а параметры проекта специфичны для одного определённого проекта. В этом разделе рассматриваются параметры проекта; <a href="../prefs/index.html">настройки приложения</a> описаны в другом разделе.
-      </p>
-      <p>
-        Вы можете просматривать и редактировать параметры проекта через пункт Параметры... из меню Проект. Это вызовет окно Параметры с несколькими вкладками.
-      </p>
-      <p align="center">
-        <img src="../../../img-guide/opts-simulate.png" width="533" height="260" alt="#########">
-      </p>
-      <p>
-        Мы будем обсуждать каждую из этих вкладок отдельно.
-      </p>
-      <blockquote>
-        <a href="opts-simulate.html">Вкладка Моделирование</a><br>
-        <a href="opts-toolbar.html">Вкладка Панель инструментов</a><br>
-        <a href="opts-mouse.html">Вкладка Мышь</a><br>
-		<a href="opts-mouse.html#reset">Вкладка Сброс</a>
-      </blockquote>
-      <p>
-        <strong>Далее:</strong> <a href="opts-simulate.html">Вкладка Моделирование</a>.
-      </p>
-    </div>
-  </body>
+    </h1>
+
+    <p>
+      Logisim-evolution поддерживает две независимые категории конфигурационных параметров: <em>глобальные настройки
+        приложения</em> (Preferences) и <em>локальные параметры проекта</em> (Options). Глобальные <a
+        href="../prefs/index.html">настройки приложения</a> применяются ко всем сеансам работы и пользовательскому
+      интерфейсу в целом, тогда как параметры проекта сохраняются непосредственно в файле схемы (<tt>.circ</tt>) и
+      действуют исключительно в рамках текущего открытого проекта. В данном разделе рассматривается работа именно с
+      локальными параметрами проекта.
+    </p>
+
+    <p>
+      Доступ к настройкам текущего проекта осуществляется через главное меню <b class="menu">|&nbsp;Проект&nbsp;|</b>
+      &rarr; <b class="menu">|&nbsp;Параметры...&nbsp;|</b> (Project &rarr; Options). Данная команда открывает
+      соответствующее диалоговое окно, разделённое на несколько тематических вкладок.
+    </p>
+
+    <p align="center">
+      <img class="notscal" src="../../../img-guide/opts-simulate.png" alt="#########">
+    </p>
+
+    <p>
+      Ниже представлено подробное описание каждой из доступных конфигурационных вкладок:
+    </p>
+
+    <ul>
+      <li><a href="opts-simulate.html">Вкладка «Моделирование»</a></li>
+      <li><a href="opts-toolbar.html">Вкладка «Панель инструментов»</a></li>
+      <li><a href="opts-mouse.html">Вкладка «Мышь»</a></li>
+      <li><a href="opts-mouse.html#reset">Вкладка «Сброс»</a></li>
+    </ul>
+
+    <p>
+      <strong>Далее:</strong> <a href="opts-simulate.html">Вкладка «Моделирование»</a>.
+    </p>
+  </div>
+</body>
+
 </html>
