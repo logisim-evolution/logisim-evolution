@@ -1,22 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ru">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-07-18T10:59:00.000000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="ru">
-    <title>
-      Согласующий резистор
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2026-07-07T08:00:00.000000000">
+  <meta name="changed" content="2026-07-16T23:45:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>
+    Подтягивающий резистор
+  </title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
     <h1>
-        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
-		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
-	  <em>Согласующий резистор</em>
+      <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32">
+      <img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32">
+      <em>Подтягивающий резистор</em>
     </h1>
     <table>
       <tbody>
@@ -25,7 +27,7 @@
             <strong>Библиотека:</strong>
           </td>
           <td>
-            <a href="index.html">Проводка</a>
+            <a href="index.html">Монтаж</a>
           </td>
         </tr>
         <tr>
@@ -33,7 +35,7 @@
             <strong>Введён в:</strong>
           </td>
           <td>
-            2.5.0 (в библиотеке Базовые, перемещён в библиотеку Проводка в 2.7.0)
+            2.5.0 (в библиотеке Базовые, перемещён в библиотеку Монтаж в 2.7.0)
           </td>
         </tr>
         <tr>
@@ -42,30 +44,34 @@
           </td>
           <td valign="top">
             <table>
-                <tbody>
-                  <tr>
-                    <th colspan="2">
-                      ANSI:
-                    </th>
-                    <th colspan="2">
-                      IEC:
-                    </th>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
-                    </td>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
-                    </td>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
-                    </td>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
-                    </td>
-                  </tr>
-                </tbody>
+              <tbody>
+                <tr>
+                  <th colspan="2">
+                    ANSI:
+                  </th>
+                  <th colspan="2">
+                    IEC:
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </td>
         </tr>
@@ -75,55 +81,56 @@
       Поведение
     </h2>
     <p>
-      Когда подключен к точке, этот компонент имеет воздействие только когда значение в этой точке - плавающее (<b class="uvalue">U</b>). В этом случае резистор меняет значение на проводе, к которому он подключен, на значение, указанное в его атрибуте <b class="propertie">Направление согласования</b>.
+      Подтягивающий резистор оказывает влияние на сигнал в цепи только тогда, когда значение в точке подключения
+      является неопределённым (<b class="uvalue">U</b>). В этом случае резистор притягивает потенциал
+      проводника, к которому он подключен, к уровню, заданному атрибутом <b class="propertie">Направление
+        согласования</b>.
     </p>
     <p>
-      Если он подключен к многобитному значению, то каждый плавающий бит в этом значении будет изменён в указанном направлении, а не плавающие биты будут оставлены без изменений.
+      Если резистор подключен к многобитной шине, то каждый неопределённый бит шины будет подтянут
+      к заданному значению, тогда как определенные биты останутся без изменений.
     </p>
     <h2>
       Контакты
     </h2>
     <p>
-      Резистор имеет всего один контакт, являющийся выходом, и имеющий разрядность, определяемую компонентом, к которому он подключен.
+      Компонент имеет единственный контакт — выход, разрядность которого автоматически определяется разрядностью
+      проводника, к которому он подключен.
     </p>
     <h2>
       Атрибуты
     </h2>
     <p>
-      Когда компонент выбран, или уже добавлен, клавиши со стрелками меняют его атрибут <b class="propertie">Направление</b>.
+      Когда компонент выбран или добавляется, клавиши со стрелками меняют его атрибут <b
+        class="propertie">Направление</b>.
     </p>
-	 <div class="attliste">
-    <dl>
-      <dt>
-        <b class="propertie">Направление</b>
-      </dt>
-      <dd>
-        Направление, в котором расположен контакт относительно центра компонента.
-      </dd>
-      <dt>
-        <b class="propertie">Направление согласования</b>
-      </dt>
-      <dd>
-        Определяет значение, на которое будет изменяться плавающее значение. Оно может быть <b class="zerov">0</b>, <b class="unov">1</b> или значением ошибки (<b class="evalue">E</b>).
-      </dd>
-    </dl>
-	</div>
+    <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Направление</b>
+        </dt>
+        <dd>
+          Сторона, на которой расположен контакт относительно центра компонента.
+        </dd>
+        <dt>
+          <b class="propertie">Направление согласования</b>
+        </dt>
+        <dd>
+          Определяет значение, к которому подтягивается неопределённый уровень. Это может быть логический
+          <b class="zerov">0</b>, логическая <b class="unov">1</b> или сигнал ошибки (<b class="evalue">E</b>).
+        </dd>
+      </dl>
+    </div>
     <h2>
-      Поведение Инструмента Нажатие
+      Поведение Инструмента «Нажатие»
     </h2>
     <p>
-      Нет.
-    </p>
-    <h2>
-      Поведение Инструмента Текст
-    </h2>
-    <p>
-      Нет.
+      Не предусмотрено.
     </p>
     <p>
-      <b>Назад к </b><a href="../index.html">Справке по библиотеке</a>
+      <b>Назад к</b> <a href="../index.html">Справке по библиотеке</a>
     </p>
-	</div>
-  </body>
-</html>
+  </div>
+</body>
 
+</html>
