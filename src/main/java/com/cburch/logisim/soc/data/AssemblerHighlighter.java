@@ -80,6 +80,12 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
     super.addToken(segment, start, end, tokenType, startOffset);
   }
 
+  private static boolean isHexCharacter(char c) {
+    return (c >= 'a' && c <= 'f') ||
+        (c >= 'A' && c <= 'F') ||
+        (c >= '0' && c <= '9');
+  }
+
   private int check(Segment text, char kar, int currentToken, int start, int index, int newStart) {
     int currentTokenType = currentToken >= 0 ? currentToken : Token.LITERAL_CHAR;
     if (currentTokenType == Token.COMMENT_EOL) return Token.COMMENT_EOL;
@@ -161,7 +167,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
           ? Token.LITERAL_NUMBER_DECIMAL_INT
           : currentTokenType;
     }
-    if (RSyntaxUtilities.isHexCharacter(kar)
+    if (isHexCharacter(kar)
         && currentTokenType == Token.LITERAL_NUMBER_HEXADECIMAL) return currentTokenType;
     if (currentTokenType != Token.NULL)
       addToken(text, start, index - 1, currentTokenType, newStart);
