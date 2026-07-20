@@ -81,9 +81,9 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
   }
 
   private static boolean isHexCharacter(char c) {
-    return (c >= 'a' && c <= 'f') ||
-        (c >= 'A' && c <= 'F') ||
-        (c >= '0' && c <= '9');
+    return (c >= 'a' && c <= 'f')
+        || (c >= 'A' && c <= 'F')
+        || (c >= '0' && c <= '9');
   }
 
   private int check(Segment text, char kar, int currentToken, int start, int index, int newStart) {
