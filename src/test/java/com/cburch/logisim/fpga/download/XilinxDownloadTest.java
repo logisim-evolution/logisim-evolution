@@ -53,7 +53,7 @@ class XilinxDownloadTest {
             List.of("gate_behavior.vhd"),
             HdlGeneratorFactory.VHDL,
             false);
-    download.setMapableResources(resources);
+    download.setMappableResources(resources);
 
     assertTrue(download.createDownloadScripts());
 

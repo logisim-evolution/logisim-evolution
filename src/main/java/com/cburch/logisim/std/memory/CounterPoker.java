@@ -32,8 +32,12 @@ public class CounterPoker extends RegisterPoker {
         g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY() + 4, wid, 15);
       }
     } else {
-      int xcenter = Counter.getSymbolWidth(width) - 25;
-      g.drawRect(bds.getX() + xcenter - len * 4, bds.getY() + 22, len * 8, 16);
+      final var valueBounds = Counter.getControlValueBounds(width);
+      g.drawRect(
+          bds.getX() + valueBounds.getX(),
+          bds.getY() + valueBounds.getY(),
+          valueBounds.getWidth(),
+          valueBounds.getHeight());
     }
     g.setColor(Color.BLACK);
   }

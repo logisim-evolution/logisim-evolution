@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.LongSupplier;
 
 public class Model implements CircuitListener, SignalInfo.Listener {
 
@@ -41,7 +42,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static final int COARSE = 1;
   public static final int FINE = 2;
 
-  // FIXME: it looks we can get rid of Even class as it's a) dummy b) unused which forcess callers
+  // FIXME: it looks we can get rid of Event class as it's a) dummy b) unused which forces callers
   // to pass `null`
   public static class Event {
     // no-op implementation
@@ -74,6 +75,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   final CircuitState circuitState;
+  private final LongSupplier nanoTime;
   private final ArrayList<SignalInfo> info = new ArrayList<>();
   private final ArrayList<Signal> signals = new ArrayList<>();
   private long timeEnd = -1; // signals go from 0 <= t < tEnd
@@ -95,7 +97,12 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   private long lastRealtimeUpdate;
 
   public Model(CircuitState root) {
+    this(root, System::nanoTime);
+  }
+
+  Model(CircuitState root, LongSupplier nanoTime) {
     circuitState = root;
+    this.nanoTime = nanoTime;
     // Add top-level pins, clocks, etc.
     final var circ = circuitState.getCircuit();
     for (final var comp : circ.getNonWires()) {
@@ -240,6 +247,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     remove(s);
   }
 
+  @SuppressWarnings("unlikely-arg-type")
   public int remove(List<SignalInfo> items) {
     int count = 0;
     for (final var item : items) {
@@ -346,7 +354,11 @@ public class Model implements CircuitListener, SignalInfo.Listener {
           (mode == CLOCK_DUAL) ? (curClockVal.equals(Value.FALSE) ? cc.lo : cc.hi) : cc.ticks;
       return timeScale * ticks;
     }
-    return mode == STEP ? timeScale : gateDelay;
+    return mode == STEP ? timeScale : getRealTimeEventDuration();
+  }
+
+  private long getRealTimeEventDuration() {
+    return Math.min(gateDelay, timeScale);
   }
 
   public int getHistoryLimit() {
@@ -432,7 +444,6 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     mode = m;
     granularity = g;
     simulatorReset();
-    fireSignalsExtended(null); // reset, not extended, but works fine for now
     fireModeChanged(null);
   }
 
@@ -569,7 +580,6 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   private void extendWithOldValues(long duration) {
     for (final var s : signals) {
-      final var v = s.info.fetchValue(circuitState);
       s.extend(duration);
     }
     elapsedSinceTrigger += duration;
@@ -617,10 +627,32 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   private void updateSignalsRealMode() {
-    long now = System.nanoTime();
+    long now = nanoTime.getAsLong();
     double duration = (now - lastRealtimeUpdate) * (double) timeScale / 1000000000;
-    extendWithNewValues(Math.max((long) duration, 1));
+    extendRealTimeWithNewValues(Math.max((long) duration, 1));
     lastRealtimeUpdate = now;
+  }
+
+  private void extendRealTimeWithNewValues(long elapsedDuration) {
+    final var values = new Value[signals.size()];
+    var valuesChanged = timeEnd <= 0;
+    for (var i = 0; i < signals.size(); i++) {
+      final var s = signals.get(i);
+      final var v = s.info.fetchValue(circuitState);
+      values[i] = v;
+      if (!valuesChanged) {
+        final var previous = s.getValue(timeEnd - 1);
+        valuesChanged = previous == null || !previous.equals(v);
+      }
+      s.extend(elapsedDuration);
+    }
+    final var eventDuration = valuesChanged ? getRealTimeEventDuration() : 0;
+    for (var i = 0; i < signals.size() && valuesChanged; i++) {
+      signals.get(i).extend(values[i], eventDuration);
+    }
+    elapsedSinceTrigger += elapsedDuration + eventDuration;
+    timeEnd += elapsedDuration + eventDuration;
+    fireSignalsExtended(null);
   }
 
   private void updateSignalsClockMode() {
@@ -697,7 +729,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       curClockVal = clockSource.fetchValue(circuitState);
     }
     long duration = getInitialDuration();
-    if (mode == REAL) lastRealtimeUpdate = System.nanoTime();
+    if (mode == REAL) lastRealtimeUpdate = nanoTime.getAsLong();
     elapsedSinceTrigger = 0;
     for (final var s : signals) {
       final var v = s.info.fetchValue(circuitState);
@@ -705,6 +737,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     }
     elapsedSinceTrigger += duration;
     timeEnd = duration;
+    fireSignalsReset(null);
   }
 
   public void setFile(File value) {

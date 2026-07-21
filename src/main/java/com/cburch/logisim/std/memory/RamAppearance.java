@@ -197,13 +197,14 @@ public class RamAppearance {
   }
 
   public static Bounds getBounds(AttributeSet attrs) {
-    int xoffset = (seperatedBus(attrs)) ? 40 : 50;
+    final var xoffset = (seperatedBus(attrs)) ? 40 : 50;
 
     if (classicAppearance(attrs)) {
-      int len = Math.max(64, (getNrLEPorts(attrs) + 1) * 10);
+      final var len = Math.max(64, (getNrLEPorts(attrs) + 1) * 10);
       return Bounds.create(0, 0, Mem.SymbolWidth + 40, getControlHeight(attrs) + len);
     } else {
-      int len = Math.max(attrs.getValue(Mem.DATA_ATTR).getWidth() * 20, (getNrLEPorts(attrs) + 1) * 10);
+      final var dataBlockHeight = attrs.getValue(Mem.DATA_ATTR).getWidth() * 20;
+      final var len = Math.max((dataBlockHeight > 160) ? 160 : dataBlockHeight, (getNrLEPorts(attrs) + 1) * 10);
       return Bounds.create(0, 0, Mem.SymbolWidth + xoffset, getControlHeight(attrs) + len);
     }
 
@@ -562,9 +563,11 @@ public class RamAppearance {
             ypos[1] = ypos[2] = y + 10;
             g.setFont(font.deriveFont(7.0f));
             g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-            for (var j = 0; j < nrOfBits; j++) {
+            for (var j = 0; j < Math.min(8, nrOfBits); j++) {
               g.drawPolyline(xpos, ypos, 3);
-              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT, GraphicsUtil.V_BASELINE);
+              if (nrOfBits <= 8) {
+                GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT, GraphicsUtil.V_BASELINE);
+              }
               ypos[0] += 20;
               ypos[1] += 20;
               ypos[2] += 20;
@@ -575,7 +578,7 @@ public class RamAppearance {
             xpos[1] = xpos[2] = x + 5;
             ypos[0] = y;
             ypos[1] = y + 5;
-            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
+            ypos[2] = y + 5 + Math.min(7, (nrOfBits - 1)) * 20;
             g.drawPolyline(xpos, ypos, 3);
           }
         }
@@ -625,9 +628,11 @@ public class RamAppearance {
             ypos[1] = ypos[2] = y + 10;
             g.setFont(font.deriveFont(7.0f));
             g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-            for (var j = 0; j < nrOfBits; j++) {
+            for (var j = 0; j < Math.min(8, nrOfBits); j++) {
               g.drawPolyline(xpos, ypos, 3);
-              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
+              if (nrOfBits <= 8) {
+                GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
+              }
               if (!seperate) drawBidir(g, xpos[2], ypos[2]);
               ypos[0] += 20;
               ypos[1] += 20;
@@ -639,7 +644,7 @@ public class RamAppearance {
             xpos[1] = xpos[2] = x - 5;
             ypos[0] = y;
             ypos[1] = y + 5;
-            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
+            ypos[2] = y + 5 + Math.min(7, (nrOfBits - 1)) * 20;
             g.drawPolyline(xpos, ypos, 3);
           }
         }
@@ -862,7 +867,7 @@ public class RamAppearance {
     }
     final var appendBE = getNrBEPorts(attrs) > 0;
     final var DLabel = seperate ? "" : "D";
-    for (var i = 0; i < nrOfBits; i++) {
+    for (var i = 0; i < Math.min(nrOfBits, 8); i++) {
       g.setStroke(new BasicStroke(2));
       g.drawRect(x, y, width, height);
       g.setStroke(new BasicStroke(1));

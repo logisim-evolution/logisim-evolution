@@ -14,9 +14,12 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.gui.FpgaCommander;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.prefs.OptionsPanel;
+import com.cburch.logisim.gui.prefs.PrefOption;
+import com.cburch.logisim.gui.prefs.PrefOptionList;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Softwares;
+import com.cburch.logisim.util.StringGetter;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -78,6 +81,15 @@ public class SoftwaresOptions extends OptionsPanel {
   private final MyListener myListener = new MyListener();
 
   private final JCheckBox questaValidationCheckBox = new JCheckBox();
+  private final PrefOptionList vhdlStandard =
+      new PrefOptionList(
+          AppPreferences.VHDL_STANDARD,
+          S.getter("softwaresVhdlStandardLabel"),
+          new PrefOption[] {
+              new PrefOption(AppPreferences.VHDL_STANDARD_1993, fixedString("VHDL-1993")),
+              new PrefOption(AppPreferences.VHDL_STANDARD_2002, fixedString("VHDL-2002")),
+              new PrefOption(AppPreferences.VHDL_STANDARD_2008, fixedString("VHDL-2008")),
+          });
   private final JLabel questaPathLabel = new JLabel();
   private final JTextField questaPathField = new JTextField(40);
   private final JButton questaPathButton = new JButton();
@@ -126,6 +138,15 @@ public class SoftwaresOptions extends OptionsPanel {
     gbc.gridwidth = 3;
     gbc.fill = GridBagConstraints.NONE;
     add(questaValidationCheckBox, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = gridY++;
+    gbc.gridwidth = 1;
+    gbc.fill = GridBagConstraints.NONE;
+    add(vhdlStandard.getJLabel(), gbc);
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    add(vhdlStandard.getJComboBox(), gbc);
 
     gbc.gridx = 0;
     gbc.gridy = gridY++;
@@ -280,6 +301,7 @@ public class SoftwaresOptions extends OptionsPanel {
   @Override
   public void localeChanged() {
     questaValidationCheckBox.setText(S.get("softwaresQuestaValidationLabel"));
+    vhdlStandard.getJLabel().setText(S.get("softwaresVhdlStandardLabel") + " ");
     questaPathButton.setText(S.get("softwaresQuestaPathButton"));
     questaPathLabel.setText(S.get("softwaresQuestaPathLabel"));
     quartusPathButton.setText(S.get("softwaresQuestaPathButton"));
@@ -290,5 +312,14 @@ public class SoftwaresOptions extends OptionsPanel {
     vivadoPathLabel.setText(S.get("VivadoToolPath"));
     openfpgaPathButton.setText(S.get("softwaresQuestaPathButton"));
     openfpgaPathLabel.setText(S.get("openfpgaToolPath"));
+  }
+
+  private static StringGetter fixedString(String value) {
+    return new StringGetter() {
+      @Override
+      public String toString() {
+        return value;
+      }
+    };
   }
 }

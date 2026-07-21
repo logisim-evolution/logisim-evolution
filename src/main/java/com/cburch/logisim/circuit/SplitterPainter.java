@@ -13,7 +13,9 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 class SplitterPainter {
@@ -48,6 +50,7 @@ class SplitterPainter {
     }
 
     final var g = context.getGraphics().create();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     final var font = g.getFont();
     g.setFont(font.deriveFont(7.0f));
 

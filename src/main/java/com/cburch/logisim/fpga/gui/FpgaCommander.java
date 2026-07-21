@@ -86,21 +86,30 @@ public class FpgaCommander
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
-      MyBoardInformation =
-          new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
-              .getBoardInformation();
-      MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
-      boardIcon = new BoardIcon(MyBoardInformation.getImage());
-      boardPic.setIcon(boardIcon);
-      boardPic.repaint();
-      FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
-      if (SynthesizedClockHdlGeneratorInstanceFactory.isClockScalingSupported(MyBoardInformation.fpga.getTechnology(), MyBoardInformation.fpga.getVendor())) {
-        FrequencyPanel.setClockScaling(true);
-      } else {
-        FrequencyPanel.setClockScaling(false);
-      }
-      handleHdlOnly();
+      updateBoardInformation();
     }
+  }
+
+  public void updateBoardInformation(String boardName) {
+    if (boardName.equals(AppPreferences.SelectedBoard.get())) {
+      updateBoardInformation();
+    }
+  }
+
+  private void updateBoardInformation() {
+    MyBoardInformation =
+        new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
+            .getBoardInformation();
+    boardIcon = new BoardIcon(MyBoardInformation.getImage());
+    boardPic.setIcon(boardIcon);
+    boardPic.repaint();
+    FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
+    if (SynthesizedClockHdlGeneratorInstanceFactory.isClockScalingSupported(MyBoardInformation.fpga.getTechnology(), MyBoardInformation.fpga.getVendor())) {
+      FrequencyPanel.setClockScaling(true);
+    } else {
+      FrequencyPanel.setClockScaling(false);
+    }
+    handleHdlOnly();
   }
 
   @Override
@@ -144,7 +153,6 @@ public class FpgaCommander
     MyBoardInformation =
         new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
             .getBoardInformation();
-    MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
     if (SynthesizedClockHdlGeneratorInstanceFactory.isClockScalingSupported(MyBoardInformation.fpga.getTechnology(), MyBoardInformation.fpga.getVendor())) {
       FrequencyPanel.setClockScaling(true);
     } else {

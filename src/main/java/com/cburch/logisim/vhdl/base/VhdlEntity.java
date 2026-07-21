@@ -249,9 +249,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
         }
       }
 
-      // FIXME: hardcoded string
-      throw new UnsupportedOperationException(
-          "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");     // FIXME: hardcoded string
+      throw new UnsupportedOperationException(S.get("vhdlSimulationNotEnabled"));
     }
   }
 

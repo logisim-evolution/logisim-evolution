@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2026-06-26T14:48:00.000000000">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Port I/O</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+	<div class="maindiv">
+		<h1>
+			<img class="iconlibs" src="../../../../icons/6464/portio.png" alt="#########" height="32" width="32">
+			<em>Port I/O</em>
+		</h1>
+		<table>
+			<tbody>
+				<tr>
+					<td><strong>Library:</strong></td>
+					<td><a href="index.html">Input/Output</a></td>
+				</tr>
+				<tr>
+					<td><strong>Introduced:</strong></td>
+					<td>4.0.0</td>
+				</tr>
+				<tr>
+					<td valign="top"><strong>Appearance:</strong></td>
+					<td valign="top">
+						<img src="../../../../img-libs/portio.png" width="89" height="84">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2>Behavior</h2>
+		<p>
+			The Port I/O component models a group of general-purpose input/output (GPIO) pins, which can be configured
+			for input, output, or bidirectional operation. Each pin in the block corresponds to its own square indicator,
+			whose color displays the current logic value.
+		</p>
+		<p>
+			Depending on the value of the <b class="propertie">Port Direction</b> attribute, the component operates in one of the following modes:
+		</p>
+		<ul>
+			<li>
+				<b>Input:</b> The component acts as a signal source for the circuit. The user can change the state of each pin by clicking on it with the Poke Tool. These states are output to the circuit.
+			</li>
+			<li>
+				<b>Output:</b> The component receives signals from the circuit and displays them on the indicators.
+			</li>
+			<li>
+				<b>Bidirectional (shared OE):</b> Bidirectional mode with a shared output enable signal. An additional 1-bit output enable (OE) input is present. When OE is <b class="unov">1</b>, the component acts as an input for the circuit and forwards values coming from other sources on the bus. When OE is <b class="zerov">0</b>, the component acts as a transmitter and drives the bus with values set by the user using the Poke Tool.
+			</li>
+			<li>
+				<b>Bidirectional (bit-wise OE):</b> Bidirectional mode with bit-wise direction control. A dedicated output enable bit is provided for each pin in a multi-bit control bus.
+			</li>
+		</ul>
+
+		<h2>Pins (for a component facing East)</h2>
+		<dl>
+			<dt>West edge, top pin (input, bit width 1 or equal to number of pins):</dt>
+			<dd>
+				Output enable signal (OE / Out Enable). Only present in bidirectional modes. In shared OE mode, its bit width is 1; in bit-wise OE mode, the bit width matches the number of pins.
+			</dd>
+			<dt>West edge, middle pin (output, bit width equal to number of pins):</dt>
+			<dd>Output pins from the component to the circuit (drive values to the circuit in Input mode or when OE is disabled in bidirectional modes).</dd>
+			<dt>West edge, bottom pin (input, bit width equal to number of pins):</dt>
+			<dd>Input pins to the component from the circuit (receive values from the circuit in Output mode or when OE is enabled in bidirectional modes).</dd>
+		</dl>
+
+		<h2>Attributes</h2>
+		<p>
+			When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute.
+		</p>
+		<div class="attliste">
+			<dl>
+				<dt><b class="propertie">Facing</b></dt>
+				<dd>Determines the side on which the component's pins are located.</dd>
+				<dt><b class="propertie">Number of Pins</b></dt>
+				<dd>The number of pins in the I/O port (from 1 to 32).</dd>
+				<dt><b class="propertie">Port Direction</b></dt>
+				<dd>
+					Specifies the operation mode: <b>Input</b>, <b>Output</b>, <b>Bidirectional (shared OE)</b>, or <b>Bidirectional (bit-wise OE)</b>.
+				</dd>
+				<dt><b class="propertie">Label</b>, <b class="propertie">Label Location</b>, <b class="propertie">Label Font</b>, <b class="propertie">Label Color</b></dt>
+				<dd>Configurations for the component's text label.</dd>
+				<dt><b class="propertie">Label Visible</b></dt>
+				<dd>Determines whether the label is displayed.</dd>
+			</dl>
+		</div>
+
+		<h2>Poke Tool Behavior</h2>
+		<p>
+			In input-capable modes ("Input" or bidirectional mode when output enable is disabled), clicking on a pin indicator cycles its value: <b class="zerov">0</b> &rarr; <b class="unov">1</b> &rarr; high-impedance state (Z/X).
+		</p>
+
+		<h2>Text Tool Behavior</h2>
+		<p>Allows the component's label to be edited.</p>
+
+		<p><b>Back to</b> <a href="index.html">Library Reference</a></p>
+	</div>
+</body>
+
+</html>

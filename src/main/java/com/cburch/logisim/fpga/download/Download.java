@@ -192,8 +192,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   public void stop() {
-    stopRequested = true;
-    progressBar.setString(S.get("FpgaGuiCanceling"));
+    windowClosing(null);
   }
 
   public boolean createDownloadScripts() {
@@ -296,6 +295,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   public static String execute(ProcessBuilder process, List<String> report) throws IOException, InterruptedException {
+    process.redirectErrorStream(true);
     var executable = process.start();
     var is = executable.getInputStream();
     var isr = new InputStreamReader(is);
@@ -318,19 +318,27 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     Reporter.report.print("==>");
     Reporter.report.print("==> " + StageName);
     Reporter.report.print("==>");
+    process.redirectErrorStream(true);
     synchronized (lock) {
       executable = process.start();
     }
-    var is = executable.getInputStream();
-    var isr = new InputStreamReader(is);
-    var br = new BufferedReader(isr);
-    var line = "";
-    while ((line = br.readLine()) != null) {
-      Reporter.report.print(line);
+    try {
+      var is = executable.getInputStream();
+      var isr = new InputStreamReader(is);
+      var br = new BufferedReader(isr);
+      var line = "";
+      while ((line = br.readLine()) != null) {
+        Reporter.report.print(line);
+      }
+    } catch (IOException e) {
+      if (!stopRequested) {
+        throw e;
+      }
     }
     executable.waitFor();
-    isr.close();
-    br.close();
+    if (stopRequested) {
+      return S.get("FPGAInterrupted");
+    }
     if (executable.exitValue() != 0) {
       return S.get("FPGAExecutionFailure", StageName);
     }
@@ -403,7 +411,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       progressBar.setValue(4);
       progressBar.setString(S.get("FPGAState4"));
     }
-    downloader.setMapableResources(myMappableResources);
+    downloader.setMappableResources(myMappableResources);
     /* Stage 4 Create Download Scripts */
     return createDownloadScripts();
   }
@@ -414,6 +422,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     stopRequested = true;
     synchronized (lock) {
       if (executable != null) {
+        try {
+          executable.descendants().forEach(ProcessHandle::destroy);
+        } catch (UnsupportedOperationException | SecurityException ignored) { }
         executable.destroy();
       }
     }

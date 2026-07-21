@@ -105,8 +105,8 @@ public class DualRamAppearance {
     final var async = !synchronous(attrs);
 
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES)
-        && attrs.containsAttribute(DualRamAttributes.ATTR_ByteEnables)
-        && attrs.getValue(DualRamAttributes.ATTR_ByteEnables).equals(DualRamAttributes.BUS_WITH_BYTEENABLES)
+        && attrs.containsAttribute(RamAttributes.ATTR_ByteEnables)
+        && attrs.getValue(RamAttributes.ATTR_ByteEnables).equals(RamAttributes.BUS_WITH_BYTEENABLES)
         && !async) {
 
       final var nrBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
@@ -117,7 +117,7 @@ public class DualRamAppearance {
   }
 
   public static int getNrClrPorts(AttributeSet attrs) {
-    return (attrs.containsAttribute(DualRamAttributes.CLEAR_PIN) && attrs.getValue(DualRamAttributes.CLEAR_PIN))
+    return (attrs.containsAttribute(RamAttributes.CLEAR_PIN) && attrs.getValue(RamAttributes.CLEAR_PIN))
         ? 1
         : 0;
   }
@@ -235,7 +235,7 @@ public class DualRamAppearance {
     if (classicAppearance(attrs)) {
       return Math.max(70, portsLen);
     } else {
-      int dataLen = attrs.getValue(Mem.DATA_ATTR).getWidth() * 40;
+      int dataLen = Math.min(8, attrs.getValue(Mem.DATA_ATTR).getWidth()) * 40;
       return Math.max(dataLen, portsLen);
     }
   }
@@ -284,8 +284,8 @@ public class DualRamAppearance {
     /* draw the contents */
     if (painter.getShowState()) {
       MemState memState = (MemState) inst.getData(painter.getCircuitState());
-      if (memState instanceof DualRamState) {
-        DualRamState stateA = (DualRamState) memState;
+      if (memState instanceof RamState) {
+        RamState stateA = (RamState) memState;
         MemState stateB = stateA.getPortBState();
 
         int highlightCount = getNrToHighlight(attrs);
@@ -353,8 +353,8 @@ public class DualRamAppearance {
     if (painter.getShowState()) {
       final var memState = inst.getData(painter.getCircuitState());
 
-      if (memState instanceof DualRamState) {
-        DualRamState stateA = (DualRamState) memState;
+      if (memState instanceof RamState) {
+        RamState stateA = (RamState) memState;
         MemState stateB = stateA.getPortBState();
         int highlightCount = getNrToHighlight(attrs);
         int totalAvailHeight = bds.getHeight() - 10 - getControlHeight(attrs);
@@ -387,9 +387,6 @@ public class DualRamAppearance {
             bds.getWidth() - 100,
             boxHeight,
             highlightCount);
-
-        stateA.setCurrent(addrA);
-        stateA.scrollToShow(addrA);
       }
     }
   }
@@ -484,7 +481,7 @@ public class DualRamAppearance {
     ypos += (portIndex % split) * 10;
 
     if (portIndex >= split) {
-      ypos += isClassic ? getClassicPortBoffset(attrs) : (bits.getWidth() * 20);
+      ypos += isClassic ? getClassicPortBoffset(attrs) : (Math.min(8, bits.getWidth()) * 20);
     }
 
     final var result = new Port(0, ypos, Port.INPUT, bits);
@@ -492,18 +489,18 @@ public class DualRamAppearance {
     switch (portIndex) {
       case 0:
         if (nrDins == 1)
-          result.setToolTip(S.getter("dualRamInTip"));
+          result.setToolTip(S.getter("ramInTip"));
         else
-          result.setToolTip(S.getter("dualRamInTip0"));
+          result.setToolTip(S.getter("ramInTip0"));
         break;
       case 1:
-        result.setToolTip(S.getter("dualRamInTip1"));
+        result.setToolTip(S.getter("ramInTip1"));
         break;
       case 2:
-        result.setToolTip(S.getter("dualRamInTip2"));
+        result.setToolTip(S.getter("ramInTip2"));
         break;
       case 3:
-        result.setToolTip(S.getter("dualRamInTip3"));
+        result.setToolTip(S.getter("ramInTip3"));
         break;
     }
     return result;
@@ -527,7 +524,7 @@ public class DualRamAppearance {
       ypos += 10;
     ypos += (portIndex % splitIndex) * 10;
     if (portIndex >= splitIndex) {
-      ypos += isClassic ? getClassicPortBoffset(attrs) : (bits.getWidth() * 20);
+      ypos += isClassic ? getClassicPortBoffset(attrs) : (Math.min(8, bits.getWidth()) * 20);
     }
 
     final var result = new Port(xpos, ypos, portType, bits);
@@ -718,8 +715,8 @@ public class DualRamAppearance {
   }
 
   private static boolean seperatedBus(AttributeSet attrs) {
-    Object bus = attrs.getValue(DualRamAttributes.ATTR_DBUS);
-    return DualRamAttributes.isSeparateDataBus(bus);
+    Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
+    return RamAttributes.isSeparateDataBus(bus);
   }
 
   private static boolean synchronous(AttributeSet attrs) {
@@ -778,10 +775,11 @@ public class DualRamAppearance {
             ypos[1] = ypos[2] = y + 10;
             g.setFont(font.deriveFont(7.0f));
             g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-            for (var j = 0; j < nrOfBits; j++) {
+            for (var j = 0; j < Math.min(8, nrOfBits); j++) {
               g.drawPolyline(xpos, ypos, 3);
-              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT,
-                  GraphicsUtil.V_BASELINE);
+              if (nrOfBits <= 8) {
+                GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT, GraphicsUtil.V_BASELINE);
+              }
               ypos[0] += 20;
               ypos[1] += 20;
               ypos[2] += 20;
@@ -792,7 +790,7 @@ public class DualRamAppearance {
             xpos[1] = xpos[2] = x + 5;
             ypos[0] = y;
             ypos[1] = y + 5;
-            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
+            ypos[2] = y + 5 + Math.min(7, (nrOfBits - 1)) * 20;
             g.drawPolyline(xpos, ypos, 3);
           }
         }
@@ -808,7 +806,7 @@ public class DualRamAppearance {
       label = !classic ? "" : getNrDataOutPorts(attrs) == 1 ? "D" : "D" + i;
       int idx = getDataOutIndex(i, attrs);
       if (!classic) {
-        final var seperate = seperatedBus(attrs) || !attrs.containsAttribute(DualRamAttributes.ATTR_DBUS);
+        final var seperate = seperatedBus(attrs) || !attrs.containsAttribute(RamAttributes.ATTR_DBUS);
         final var loc = inst.getPortLocation(idx);
         final var x = loc.getX();
         final var y = loc.getY();
@@ -846,10 +844,12 @@ public class DualRamAppearance {
             ypos[1] = ypos[2] = y + 10;
             g.setFont(font.deriveFont(7.0f));
             g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-            for (var j = 0; j < nrOfBits; j++) {
+            for (var j = 0; j < Math.min(8, nrOfBits); j++) {
               g.drawPolyline(xpos, ypos, 3);
-              GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT,
-                  GraphicsUtil.V_BASELINE);
+              if (nrOfBits <= 8) {
+                GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT,
+                    GraphicsUtil.V_BASELINE);
+              }
               if (!seperate)
                 drawBidir(g, xpos[2], ypos[2]);
               ypos[0] += 20;
@@ -862,7 +862,7 @@ public class DualRamAppearance {
             xpos[1] = xpos[2] = x - 5;
             ypos[0] = y;
             ypos[1] = y + 5;
-            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
+            ypos[2] = y + 5 + Math.min(7, (nrOfBits - 1)) * 20;
             g.drawPolyline(xpos, ypos, 3);
           }
         }
@@ -1064,13 +1064,13 @@ public class DualRamAppearance {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var async = !synchronous(attrs)
         || (attrs.containsAttribute(Mem.ASYNC_READ) && attrs.getValue(Mem.ASYNC_READ));
-    final var drawDin = attrs.containsAttribute(DualRamAttributes.ATTR_DBUS);
+    final var drawDin = attrs.containsAttribute(RamAttributes.ATTR_DBUS);
     final var seperate = seperatedBus(attrs) || !drawDin;
 
     for (int p = 0; p < 2; p++) {
       var y = base_y;
       if (p == 1)
-        y += (nrOfBits * 20);
+        y += Math.min(8, nrOfBits) * 20;
       String label = "A" + (p + 1);
       final var doutLabel = new StringBuilder();
       final var dinLabel = new StringBuilder();
@@ -1118,7 +1118,7 @@ public class DualRamAppearance {
 
       final var DLabel = seperate ? "" : "D";
 
-      for (var i = 0; i < nrOfBits; i++) {
+      for (var i = 0; i < Math.min(8, nrOfBits); i++) {
         g.setStroke(new BasicStroke(2));
         g.drawRect(x, y, width, height);
         g.setStroke(new BasicStroke(1));

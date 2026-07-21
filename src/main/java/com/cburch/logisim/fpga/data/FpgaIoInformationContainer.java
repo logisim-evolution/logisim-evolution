@@ -350,6 +350,7 @@ public class FpgaIoInformationContainer implements Cloneable {
 
   public void setMapRotation(int val) {
     if ((val == IoComponentTypes.ROTATION_CW_90)
+        || (val == IoComponentTypes.ROTATION_180)
         || (val == IoComponentTypes.ROTATION_CCW_90)
         || (val == IoComponentTypes.ROTATION_ZERO))
       myRotation = val;
@@ -518,7 +519,7 @@ public class FpgaIoInformationContainer implements Cloneable {
       }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
-          case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90 ->
+          case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_180, IoComponentTypes.ROTATION_CCW_90 ->
               result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
           default -> {
             // no rotation

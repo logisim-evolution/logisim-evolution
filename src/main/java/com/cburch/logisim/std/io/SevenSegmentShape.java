@@ -18,6 +18,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
@@ -84,9 +85,9 @@ public class SevenSegmentShape extends DynamicElement {
       g.setColor(bgColor);
       g.fillRect(x, y, w, h);
     }
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRect(x, y, w, h);
-    g.setColor(Color.DARK_GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     var summ = 0;
     var desired = 1;
     if (state != null) {
@@ -95,7 +96,7 @@ public class SevenSegmentShape extends DynamicElement {
       final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       desired = activ == null || activ ? 1 : 0;
     }
-    g.setColor(Color.DARK_GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     for (var i = 0; i <= 7; i++) {
       if (state != null) {
         g.setColor(((summ >> i) & 1) == desired ? onColor : offColor);

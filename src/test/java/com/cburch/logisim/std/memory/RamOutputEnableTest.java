@@ -69,7 +69,7 @@ class RamOutputEnableTest {
   @Test
   void dualRamSeparateDataBusRetainsOutputWhenOutputEnableIsFalse() {
     final var ram = new DualRam();
-    final var attrs = (DualRamAttributes) ram.createAttributeSet();
+    final var attrs = (RamAttributes) ram.createAttributeSet();
     final var state = dualRamState(attrs);
 
     ram.propagate(state);
@@ -81,8 +81,8 @@ class RamOutputEnableTest {
   @Test
   void dualRamControlledSeparateDataBusDrivesUnknownWhenOutputEnableIsFalse() {
     final var ram = new DualRam();
-    final var attrs = (DualRamAttributes) ram.createAttributeSet();
-    attrs.setValue(DualRamAttributes.ATTR_DBUS, DualRamAttributes.BUS_SEP_CONTROLLED);
+    final var attrs = (RamAttributes) ram.createAttributeSet();
+    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP_CONTROLLED);
     final var dataBits = attrs.getValue(Mem.DATA_ATTR);
     final var state = dualRamState(attrs);
 
@@ -126,12 +126,12 @@ class RamOutputEnableTest {
     return state;
   }
 
-  private static InstanceState dualRamState(DualRamAttributes attrs) {
+  private static InstanceState dualRamState(RamAttributes attrs) {
     final var state = mock(InstanceState.class);
     final var contents = MemContents.create(
         attrs.getValue(Mem.ADDR_ATTR).getWidth(), attrs.getValue(Mem.DATA_ATTR).getWidth(), false);
     final var instance = mock(Instance.class);
-    final var data = new DualRamState(null, contents, new Mem.MemListener(instance));
+    final var data = new RamState(null, contents, new Mem.MemListener(instance));
 
     contents.set(0, 0x5a);
     when(instance.getAttributeSet()).thenReturn(attrs);

@@ -3,15 +3,64 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed FlatLaf "restricted native access" warning on newer Java versions.
   * Added support for opening project files by dragging them into the application window.
+  * Added a Window menu option to hide or show the navigation pane.
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
+  * Added TTL 7476: dual J-K Flip-flop with preset and clear.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.
     * Corrected disjoint corners on Square Root arithmetic components.
     * Corrected disjoint corners on unpressed Button components.
     * Reduced line reordering errors in TikZ/SVG image exports.
+  * Improved dark theme (FlatLaf Dark / Darcula) color synchronization:
+    * Canvas background, grid dots, component outlines, icons, and signal wire
+      colors now adapt to the active theme.
+    * Look and feel switching applies globally to all open windows without requiring
+      a restart.
+    * Fixed gate negation bubbles, K-map text, expression overlines, and splitter
+      bit-range labels to be visible on dark backgrounds.
+    * Replaced hard-coded hex color literals with named `DEFAULT_*`/`DARK_*` constants
+      in class `AppPreferences`.
+  * Improved Timing Diagram recording and exports:
+    * Corrected vector and GIF exports.
+    * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.
+  * Improved custom circuit appearance editing and dynamic appearance elements:
+    * Circuit attributes are shown when no item is selected.
+    * Dynamic elements preserve nested paths and can display nested Probe/Register values correctly.
+    * Corrected drag selection, selected-object attributes, and automatic switching to custom appearance.
+  * Improved memory and hex editor tools:
+    * Added a go-to-address control to the hex editor.
+    * Limited generated save previews for large memories.
+    * Clarified RAM and Dual Port RAM simulation reset behavior labels.
+    * Corrected memory display layout in exported graphics.
+    * Wide Counter components use compact grouped state rows in evolution appearance.
+    * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
+      line-enable inputs may need to connect those inputs explicitly.
+  * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
+    ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Improved project editing stability:
+    * Layout zoom and scroll position are remembered separately for each circuit during a session.
+    * Moving components preserves component state.
+    * Floating subcircuit inputs now propagate floating values.
+    * Nested library tools resolve correctly.
+    * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.
+    * No-op text edits no longer create undo actions.
+  * Improved VHDL editing and simulation UI:
+    * VHDL entity appearance is configured through entity properties.
+    * VHDL code view no longer paints a circuit canvas without a circuit.
+    * VHDL simulator log split pane remains recoverable after being maximized.
+    * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
+  * Improved command-line output and localization:
+    * Command-line help now honors the selected locale.
+    * TTY table output includes bit widths in headers.
+    * Localized the Assembly Viewer.
+  * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
+    libraries, wire values, transistor behavior, and unused-library save options.
+  * Added a default text-tool color preference and synchronized string-option preference updates.
+  * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)
   * Increased number of components which may be displayed on custom circuit appearances and increased
@@ -103,7 +152,8 @@
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
   * Added partial support for VHDL time units
-  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in
+    "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
