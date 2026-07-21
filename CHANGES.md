@@ -38,6 +38,8 @@
     * Wide Counter components use compact grouped state rows in evolution appearance.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.
+  * Added HDL-language-aware label and circuit-name validation: VHDL remains case-insensitive,
+    Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
   * Improved project editing stability:
