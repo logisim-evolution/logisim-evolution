@@ -26,6 +26,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -40,6 +41,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public final class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
@@ -50,6 +52,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   private List<Port> portList;
   private EndData[] endArray;
   private List<EndData> endList;
+  private Map<Integer, Value> pullPorts = null;
   private boolean hasToolTips;
   private HashSet<Attribute<BitWidth>> widthAttrs;
   private final AttributeSet attrs;
@@ -396,6 +399,10 @@ public final class InstanceComponent implements Component, AttributeListener, To
     return portList;
   }
 
+  public Map<Integer, Value> getPullPorts() {
+    return pullPorts;
+  }
+
   @Override
   public String getToolTip(ComponentUserEvent e) {
     var i = 0;
@@ -437,6 +444,19 @@ public final class InstanceComponent implements Component, AttributeListener, To
     final var portsCopy = ports.clone();
     portList = new UnmodifiableList<>(portsCopy);
     computeEnds();
+  }
+
+  /**
+   * Sets the mapping from pull port indexes to pull value for those ports/ends that should have a pull.
+   * A null map means there is no pull for any End and is the default value.
+   * </p>This method assumes it will only be called while configuring a new InstanceComponent.
+   * If it must be called later, this method should be modified to notify CircuitWires so it
+   * can void the Connectivity.
+   *
+   * @param pullPorts the map from port indexes to pull values
+   */
+  public void setPullPorts(Map<Integer, Value> pullPorts) {
+    this.pullPorts = pullPorts == null || pullPorts.isEmpty() ? null : Map.copyOf(pullPorts);
   }
 
   void setTextField(
