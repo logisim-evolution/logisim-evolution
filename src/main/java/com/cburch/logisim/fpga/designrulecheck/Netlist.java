@@ -232,6 +232,7 @@ public class Netlist {
     // if we are the toplevel component we clear the complete netlist and check the basdir name
     if (isTopLevel) {
       clear();
+      final var isWindows = System.getProperty("os.name").startsWith("Windows");
       final var baseDir = AppPreferences.FPGA_Workspace.get();
       if (baseDir.contains(" ")) {
         drcStatus = DRC_ERROR;
@@ -239,6 +240,10 @@ public class Netlist {
         return drcStatus;
       }
       for (final var checkComponent : baseDir.split(File.separator)) {
+        if (isWindows && checkComponent.length() == 2 && checkComponent.endsWith(":")) {
+          // Normally on windows the first one is the drive letter, e.g. "C:"
+          continue;
+        }
         if (!CorrectLabel.isCorrectLabel(checkComponent)) {
           drcStatus = DRC_ERROR;
           Reporter.report.addFatalError(S.fmt("WorkDirIllegalChars", checkComponent));
