@@ -878,6 +878,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   private void doPaintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
+    final var savedColor = gfx.getColor();
     final var inputCount = table.getInputColumnCount();
     final var rowVars = ROW_VARS[inputCount];
     final var colVars = COL_VARS[inputCount];
@@ -892,6 +893,9 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     gfx.setStroke(new BasicStroke(2));
     gfx.drawLine(x - cellHeight, y - cellHeight, x, y);
     gfx.setStroke(oldstroke);
+    final var gridColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var hovBase = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var hoverFill = new Color(hovBase.getRed(), hovBase.getGreen(), hovBase.getBlue(), 40);
     final var outputColumn = table.getOutputIndex(output);
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < cols; j++) {
@@ -902,10 +906,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         if (entry.isError()) {
           gfx.setColor(Value.errorColor);
           gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
-          gfx.setColor(Color.BLACK);
         } else if (hover.x == j && hover.y == i) {
+          gfx.setColor(hoverFill);
           gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
         }
+        gfx.setColor(gridColor);
         gfx.setStroke(new BasicStroke(2));
         gfx.drawRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
         gfx.setStroke(oldstroke);
@@ -915,18 +920,17 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     if (outputColumn < 0) return;
 
     karnaughMapGroups.paint(gfx, x, y, cellWidth, cellHeight);
-    gfx.setColor(Color.BLUE);
+    final var cellTextColor = new Color(AppPreferences.KMAP_CELL_TEXT_COLOR.get());
+    gfx.setColor(cellTextColor);
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < cols; j++) {
         final var row = getTableRow(i, j, rows, cols);
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX) {
           final var text = provisionalValue.getDescription();
-          gfx.setColor(Color.BLACK);
           gfx.drawString(
               text,
               x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
               y + i * cellHeight + dy);
-          gfx.setColor(Color.BLUE);
         } else {
           final var entry = table.getOutputEntry(row, outputColumn);
           final var text = entry.getDescription();
@@ -937,7 +941,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         }
       }
     }
-    gfx.setColor(Color.BLACK);
+    gfx.setColor(savedColor);
   }
 
   public void setEntryProvisional(int y, int x, Entry value) {

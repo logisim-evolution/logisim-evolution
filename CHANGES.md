@@ -13,6 +13,15 @@
     * Corrected disjoint corners on Square Root arithmetic components.
     * Corrected disjoint corners on unpressed Button components.
     * Reduced line reordering errors in TikZ/SVG image exports.
+  * Improved dark theme (FlatLaf Dark / Darcula) color synchronization:
+    * Canvas background, grid dots, component outlines, icons, and signal wire
+      colors now adapt to the active theme.
+    * Look and feel switching applies globally to all open windows without requiring
+      a restart.
+    * Fixed gate negation bubbles, K-map text, expression overlines, and splitter
+      bit-range labels to be visible on dark backgrounds.
+    * Replaced hard-coded hex color literals with named `DEFAULT_*`/`DARK_*` constants
+      in class `AppPreferences`.
   * Improved Timing Diagram recording and exports:
     * Corrected vector and GIF exports.
     * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.

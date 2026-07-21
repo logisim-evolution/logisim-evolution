@@ -53,6 +53,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -150,6 +151,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
     AppPreferences.FPGA_SELECTED_MAPPED_COLOR.addPropertyChangeListener(this);
     AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR.addPropertyChangeListener(this);
     AppPreferences.FPGA_SELECT_COLOR.addPropertyChangeListener(this);
+    UIManager.addPropertyChangeListener(this);
   }
 
   public JList<MapListModel.MapInfo> getUnmappedList() {
@@ -460,6 +462,10 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
 
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
+    if ("lookAndFeel".equals(evt.getPropertyName())) {
+      this.repaint();
+      return;
+    }
     defineColor = new Color(AppPreferences.FPGA_DEFINE_COLOR.get());
     highlightColor = new Color(AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR.get());
     moveColor = new Color(AppPreferences.FPGA_DEFINE_MOVE_COLOR.get());
