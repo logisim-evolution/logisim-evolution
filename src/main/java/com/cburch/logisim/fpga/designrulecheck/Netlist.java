@@ -229,7 +229,7 @@ public class Netlist {
     final var labels = new HashMap<String, Component>();
     final var drc = new ArrayList<SimpleDrcContainer>();
 
-    // if we are the toplevel component we clear the complete netlist and check the basdir name
+    // if we are the toplevel component we clear the complete netlist and check the working dir name
     if (isTopLevel) {
       clear();
       final var isWindows = System.getProperty("os.name").startsWith("Windows");
