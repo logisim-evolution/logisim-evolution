@@ -26,9 +26,13 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   private final boolean CountLines;
 
   private static final Color FATAL = Color.RED;
-  private static final Color SEVERE = Color.yellow;
-  private static final Color NORMAL = Color.LIGHT_GRAY;
-  private static final Color ADDENDUM = Color.GRAY;
+  private static final Color FATAL_FOREGROUND = Color.WHITE;
+  private static final Color SEVERE_ON_DARK = Color.YELLOW;
+  private static final Color SEVERE_ON_LIGHT = Color.ORANGE.darker().darker();
+  private static final Color NORMAL_ON_DARK = Color.LIGHT_GRAY;
+  private static final Color NORMAL_ON_LIGHT = Color.DARK_GRAY;
+  private static final Color ADDENDUM_ON_DARK = Color.GRAY.brighter();
+  private static final Color ADDENDUM_ON_LIGHT = Color.GRAY.darker();
 
   private static final DrcIcon NoDRC = new DrcIcon(false);
   private static final DrcIcon DRCError = new DrcIcon(true);
@@ -44,6 +48,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     SimpleDrcContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
+    final var darkBackground = isDark(list.getBackground());
     StringBuilder Line = new StringBuilder();
     if (value instanceof SimpleDrcContainer cont) {
       msg = cont;
@@ -51,12 +56,13 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     setIcon((msg != null && msg.isDrcInfoPresent()) ? DRCError : NoDRC);
     if (msg != null) {
       switch (msg.getSeverity()) {
-        case SimpleDrcContainer.LEVEL_SEVERE -> setForeground(SEVERE);
+        case SimpleDrcContainer.LEVEL_SEVERE ->
+            setForeground(darkBackground ? SEVERE_ON_DARK : SEVERE_ON_LIGHT);
         case SimpleDrcContainer.LEVEL_FATAL -> {
           setBackground(FATAL);
-          setForeground(list.getBackground());
+          setForeground(FATAL_FOREGROUND);
         }
-        default -> setForeground(NORMAL);
+        default -> setForeground(darkBackground ? NORMAL_ON_DARK : NORMAL_ON_LIGHT);
       }
     }
     if (value.toString().contains("BUG")) {
@@ -66,7 +72,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     if (CountLines) {
       if (msg != null) {
         if (msg.getSuppressCount()) {
-          setForeground(ADDENDUM);
+          setForeground(darkBackground ? ADDENDUM_ON_DARK : ADDENDUM_ON_LIGHT);
           Line.append("       ");
         } else {
           int line = msg.getListNumber();
@@ -108,5 +114,12 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     setEnabled(list.isEnabled());
     setFont(list.getFont());
     return this;
+  }
+
+  private static boolean isDark(Color color) {
+    if (color == null) return false;
+    final var brightness =
+        color.getRed() * 299 + color.getGreen() * 587 + color.getBlue() * 114;
+    return brightness < 128_000;
   }
 }
