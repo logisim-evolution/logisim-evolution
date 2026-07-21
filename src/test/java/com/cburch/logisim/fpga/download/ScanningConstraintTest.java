@@ -40,7 +40,7 @@ class ScanningConstraintTest {
     final var netlist = createNetlistWithoutUserClock();
     final var downloader =
         new VivadoDownload("build/test-scanning-constraints", netlist, board, List.of(), List.of());
-    downloader.setMapableResources(createScanningResources());
+    downloader.setMappableResources(createScanningResources());
 
     final var constraints = getPinLocStrings(downloader);
 
@@ -70,7 +70,7 @@ class ScanningConstraintTest {
             List.of(),
             HdlGeneratorFactory.VHDL,
             false);
-    downloader.setMapableResources(createScanningResources());
+    downloader.setMappableResources(createScanningResources());
 
     final var constraints = getPinLocStrings(downloader);
 

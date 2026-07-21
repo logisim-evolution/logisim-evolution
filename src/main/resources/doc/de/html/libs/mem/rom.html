@@ -6,7 +6,7 @@
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" src="../../../../icons/rom.gif" width="32" height="32">
+<h1><img align="center" src="../../../../icons/6464/rom.png" width="32" height="32">
 <em>ROM</em></h1>
 
 <p><table>
@@ -15,23 +15,23 @@
 <tr><td><strong>Eingeführt:</strong></td>
 	<td>2.1.0</td></tr>
 <tr><td valign="top"><strong>Aussehen:</strong></td>
-	<td valign="top"><img src="../../../../img-libs/rom.png" width="145" height="84"></td></tr>
+	<td valign="top"><img src="../../../../img-libs/rom.png" width="160"></td></tr>
 </table></p>
 
 <h2>Verhalten</h2>
 
 <p>The ROM component stores up to 16,777,216 values (specified in the Address
-Bit Width attribute), each of which can include up to to 32 bits
+Bit Width attribute), each of which can include up to 64 bits
 (specified in the Data Bit Width attribute). A circuit can access
 the current values in ROM, but it cannot change them. The user can modify individual values
 interactively via the Poke Tool, or the user can modify the entire
 contents via the Menu Tool.</p>
 
-<p>Unlike the RAM component, the ROM component's current contents are
-stored as an attribute of the component. Thus, if a circuit containing
-a ROM component is used twice, then both ROM components will hold the
-same values. Also because of this behavior, the current ROM contents are
-stored in files created by Logisim.</p>
+<p>Unlike the RAM component, the ROM component's current contents are stored
+as an attribute of the component and are saved in circuit files created by
+Logisim. If a subcircuit containing a ROM component is instantiated multiple
+times, those subcircuit instances refer to the same ROM contents from the
+subcircuit definition. Independent ROM components have their own contents.</p>
 
 <p>Current values are displayed in the component. Addresses displayed
 are listed in gray to the left of the display area. Inside, each value
@@ -46,17 +46,9 @@ will be displayed in inverse text (white on black).</p>
 <dd>Selects which of the values are currently being accessed by the
 circuit.</dd>
 
-<dt><var>D</var> on east edge (input/output, bit width matches Data Bit Width attribute)</dt>
+<dt><var>D</var> on east edge (output, bit width matches Data Bit Width attribute)</dt>
 <dd>Outputs the value at the currently selected address at the
-<var>D</var> pin if <var>sel</var> is 1 or floating. If <var>sel</var>
-is 0, then <var>D</var> will be floating.</dd>
-
-<dt><var>sel</var> on south edge (input, bit width 1)</dt>
-<dd>If you have just one ROM module, ignore this input.
-If you have multiple ROM modules in parallel, you can use this input
-to enable or disable the entire ROM module, based on whether the value is
-1 or 0. In other words, when this is 0, no value is emitted on
-the <var>D</var> output.</dd>
+<var>D</var> pin.</dd>
 
 </dl>
 

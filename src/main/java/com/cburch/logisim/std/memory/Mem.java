@@ -118,7 +118,6 @@ public abstract class Mem extends InstanceFactory {
   Mem(
       String name,
       StringGetter desc,
-      int extraPorts,
       HdlGeneratorFactory generator,
       boolean needsLabel) {
     super(name, desc, generator, needsLabel);

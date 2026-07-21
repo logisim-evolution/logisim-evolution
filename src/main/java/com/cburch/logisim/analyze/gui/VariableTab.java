@@ -54,6 +54,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
@@ -576,6 +577,7 @@ public class VariableTab extends AnalyzerTab {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+      SwingUtilities.updateComponentTreeUI(width);
       editing = (Var) value;
       field.setText(editing.name);
       width.setSelectedItem(editing.width);

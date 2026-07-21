@@ -17,16 +17,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 class MenuProject extends Menu {
   private static final long serialVersionUID = 1L;
   private final LogisimMenuBar menubar;
   private final MyListener myListener = new MyListener();
+  private final MyMenuListener myMenuListener = new MyMenuListener();
   private final MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
   private final MenuItemImpl addVhdl = new MenuItemImpl(this, LogisimMenuBar.ADD_VHDL);
   private final MenuItemImpl importVhdl = new MenuItemImpl(this, LogisimMenuBar.IMPORT_VHDL);
   private final JMenu loadLibrary = new JMenu();
-  private final JMenuItem loadBuiltin = new JMenuItem();
+  private final JMenu loadBuiltin = new JMenu();
   private final JMenuItem loadLogisim = new JMenuItem();
   private final JMenuItem loadJar = new JMenuItem();
   private final JMenuItem unload = new JMenuItem();
@@ -56,7 +59,7 @@ class MenuProject extends Menu {
     menubar.registerItem(LogisimMenuBar.ADD_CIRCUIT, addCircuit);
     menubar.registerItem(LogisimMenuBar.ADD_VHDL, addVhdl);
     menubar.registerItem(LogisimMenuBar.IMPORT_VHDL, importVhdl);
-    loadBuiltin.addActionListener(myListener);
+    loadBuiltin.addMenuListener(myMenuListener);
     loadLogisim.addActionListener(myListener);
     loadJar.addActionListener(myListener);
     unload.addActionListener(myListener);
@@ -166,9 +169,7 @@ class MenuProject extends Menu {
       if (proj == null) {
         return;
       }
-      if (src == loadBuiltin) {
-        ProjectLibraryActions.doLoadBuiltinLibrary(proj);
-      } else if (src == loadLogisim) {
+      if (src == loadLogisim) {
         ProjectLibraryActions.doLoadLogisimLibrary(proj);
       } else if (src == loadJar) {
         ProjectLibraryActions.doLoadJarLibrary(proj);
@@ -178,5 +179,20 @@ class MenuProject extends Menu {
         proj.getOptionsFrame().setVisible(true);
       }
     }
+  }
+
+  private class MyMenuListener implements MenuListener {
+    @Override
+    public void menuSelected(MenuEvent event) {
+      if (event.getSource() == loadBuiltin) {
+        ProjectLibraryActions.populateBuiltinLibraryMenu(loadBuiltin, menubar.getSaveProject());
+      }
+    }
+
+    @Override
+    public void menuDeselected(MenuEvent event) {}
+
+    @Override
+    public void menuCanceled(MenuEvent event) {}
   }
 }

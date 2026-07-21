@@ -45,6 +45,10 @@ public class MenuListener {
     menubar.doAction(item);
   }
 
+  public void computeEditEnabled() {
+    editListener.computeEnabled();
+  }
+
   public LogisimMenuBar getMenuBar() {
     return menubar;
   }

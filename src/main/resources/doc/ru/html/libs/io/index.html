@@ -1,37 +1,157 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Библиотека Ввод/вывод</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2018-10-23T06:18:10.521000000">
+	<meta name="changed" content="2026-07-17T01:36:00.000000000">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Библиотека Ввод/вывод</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
-
-<h1>Библиотека Ввод/вывод</h1>
-
-<p>Библиотека Ввод/вывод включает в себя компоненты, созданные как соответствия типичным электронным компонентам для взаимодействия с пользователем.</p>
-
-<table>
-<tr><td align="right"><a href="button.html"><img border="0" src="../../../../icons/button.gif" width="16" height="16"></a></td>
-	<td><a href="button.html">Кнопка</a></td></tr>
-<tr><td align="right"><a href="joystick.html"><img border="0" src="../../../../icons/joystick.gif" width="16" height="16"></a></td>
-	<td><a href="joystick.html">Джойстик</a></td></tr>
-<tr><td align="right"><a href="keyboard.html"><img border="0" src="../../../../icons/keyboard.gif" width="16" height="16"></a></td>
-	<td><a href="keyboard.html">Клавиатура</a></td></tr>
-<tr><td align="right"><a href="led.html"><img border="0" src="../../../../icons/led.gif" width="16" height="16"></a></td>
-	<td><a href="led.html">Светодиод</a></td></tr>
-<tr><td align="right"><a href="7seg.html"><img border="0" src="../../../../icons/7seg.gif" width="16" height="16"></a></td>
-	<td><a href="7seg.html">7-сегментный индикатор</a></td></tr>
-<tr><td align="right"><a href="hexdig.html"><img border="0" src="../../../../icons/hexdig.gif" width="16" height="16"></a></td>
-	<td><a href="hexdig.html">Шестнадцатеричный индикатор</a></td></tr>
-<tr><td align="right"><a href="dotmat.html"><img border="0" src="../../../../icons/dotmat.gif" width="16" height="16"></a></td>
-	<td><a href="dotmat.html">Светодиодная матрица</a></td></tr>
-<tr><td align="right"><a href="tty.html"><img border="0" src="../../../../icons/tty.gif" width="16" height="16"></a></td>
-	<td><a href="tty.html">Терминал</a></td></tr>
-<tr><td align="right"><a href="../../../../en/html/libs/io/telnet.html"><img border="0" src="../../../../icons/1616/telnet.png" width="16" height="16"></a></td>
-	<td><a href="../../../../en/html/libs/io/telnet.html">Telnet</a></td></tr>
-</table>
-
-<p><a href="../index.html">Назад к <em>Справке по библиотеке</em></a></p>
-
+<body>
+	<div class="maindiv">
+		<h1>Библиотека Ввод/вывод</h1>
+		<p>
+			Библиотека Ввод/вывод включает в себя компоненты, предназначенные для взаимодействия пользователя
+			со схемой (кнопки, клавиатуры, выключатели) и отображения результатов её работы (светодиоды, индикаторы, терминалы, видео).
+		</p>
+		<h2>Компоненты</h2>
+		<table>
+			<tbody>
+				<tr>
+					<td align="right">
+						<a href="./button.html"><img class="iconlibs" src="../../../../icons/6464/button.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./button.html">Кнопка</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./dipswitch.html"><img class="iconlibs" src="../../../../icons/6464/dipswitch.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./dipswitch.html">DIP-переключатель</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./joystick.html"><img class="iconlibs" src="../../../../icons/6464/joystick.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./joystick.html">Джойстик</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./keyboard.html"><img class="iconlibs" src="../../../../icons/6464/keyboard.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./keyboard.html">Клавиатура</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./led.html"><img class="iconlibs" src="../../../../icons/6464/led.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./led.html">Светодиод</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./rgbled.html"><img class="iconlibs" src="../../../../icons/6464/rgbled.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./rgbled.html">RGB-светодиод</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./7seg.html"><img class="iconlibs" src="../../../../icons/6464/7seg.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./7seg.html">7-сегментный индикатор</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./hexdig.html"><img class="iconlibs" src="../../../../icons/6464/hexdig.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./hexdig.html">Шестнадцатеричный индикатор</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./dotmat.html"><img class="iconlibs" src="../../../../icons/6464/dotmat.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./dotmat.html">Светодиодная матрица</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./tty.html"><img class="iconlibs" src="../../../../icons/6464/tty.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./tty.html">Терминал</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./telnet.html"><img class="iconlibs" src="../../../../icons/6464/telnet.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./telnet.html">Telnet</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./Port_io.html"><img class="iconlibs" src="../../../../icons/6464/portio.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./Port_io.html">Порт ввода-вывода</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./repetar.html"><img class="iconlibs" src="../../../../icons/6464/repetar.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./repetar.html">Локальная шина Reptar</a>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<a href="./videorvb.html"><img class="iconlibs" src="../../../../icons/6464/rgbvideo.png" alt="#########" border="0" height="32" width="32"></a>
+					</td>
+					<td>&nbsp;</td>
+					<td>
+						<a href="./videorvb.html">RGB видео</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<a href="../index.html">Назад к <em>Справке по библиотеке</em></a>
+		</p>
+	</div>
 </body>
+
 </html>

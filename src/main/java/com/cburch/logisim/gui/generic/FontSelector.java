@@ -50,8 +50,10 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
   private int fontStyle;
 
   public static final FontSelector FONT_SELECTOR = new FontSelector();
-
-  @SuppressWarnings("unchecked")
+  
+  //Suppress warnings because JList is used as a raw type due to legacy Logisim/Swing components implementation, 
+  //where the elements are known to be of the correct type at runtime, making type casting safe.
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public FontSelector() {
     fontNames = new TreeSet<>();
     for (final var font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()) {

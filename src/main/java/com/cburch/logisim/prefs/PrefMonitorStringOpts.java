@@ -85,8 +85,10 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
   public void set(String newValue) {
     final var chosen = choose(newValue);
     if (!isSame(value, chosen)) {
+      final var oldValue = value;
       value = chosen;
       AppPreferences.getPrefs().put(getIdentifier(), chosen);
+      AppPreferences.firePropertyChange(getIdentifier(), oldValue, chosen);
     } else if (!isSame(newValue, chosen)) {
       AppPreferences.getPrefs().put(getIdentifier(), chosen);
     }

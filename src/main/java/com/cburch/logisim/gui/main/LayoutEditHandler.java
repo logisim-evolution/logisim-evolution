@@ -18,6 +18,8 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.EditTool;
+import com.cburch.logisim.tools.TextEditActions;
+import com.cburch.logisim.tools.TextTool;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -45,6 +47,7 @@ public class LayoutEditHandler extends EditHandler
     final var sel = proj == null ? null : proj.getSelection();
     final var selEmpty = (sel == null || sel.isEmpty());
     final var canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
+    final var textEditActions = getTextEditActions();
 
     var selectAvailable = false;
     for (final var lib : proj.getLogisimFile().getLibraries()) {
@@ -52,6 +55,22 @@ public class LayoutEditHandler extends EditHandler
         selectAvailable = true;
         break;
       }
+    }
+
+    if (textEditActions != null) {
+      setEnabled(LogisimMenuBar.CUT, canChange && textEditActions.canCut());
+      setEnabled(LogisimMenuBar.COPY, textEditActions.canCopy());
+      setEnabled(LogisimMenuBar.PASTE, canChange);
+      setEnabled(LogisimMenuBar.DELETE, false);
+      setEnabled(LogisimMenuBar.DUPLICATE, false);
+      setEnabled(LogisimMenuBar.SELECT_ALL, textEditActions.canSelectAll());
+      setEnabled(LogisimMenuBar.RAISE, false);
+      setEnabled(LogisimMenuBar.LOWER, false);
+      setEnabled(LogisimMenuBar.RAISE_TOP, false);
+      setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
+      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+      return;
     }
 
     setEnabled(LogisimMenuBar.CUT, !selEmpty && selectAvailable && canChange);
@@ -70,6 +89,13 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void copy() {
+    final var textEditActions = getTextEditActions();
+    if (textEditActions != null) {
+      textEditActions.copy();
+      refreshAfterTextEditAction();
+      return;
+    }
+
     final var proj = frame.getProject();
     final var sel = frame.getCanvas().getSelection();
     proj.doAction(SelectionActions.copy(sel));
@@ -77,6 +103,13 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void cut() {
+    final var textEditActions = getTextEditActions();
+    if (textEditActions != null) {
+      textEditActions.cut();
+      refreshAfterTextEditAction();
+      return;
+    }
+
     final var proj = frame.getProject();
     final var sel = frame.getCanvas().getSelection();
     proj.doAction(SelectionActions.cut(sel));
@@ -118,6 +151,13 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void paste() {
+    final var textEditActions = getTextEditActions();
+    if (textEditActions != null) {
+      textEditActions.paste();
+      refreshAfterTextEditAction();
+      return;
+    }
+
     final var proj = frame.getProject();
     final var sel = frame.getCanvas().getSelection();
     selectSelectTool(proj);
@@ -135,6 +175,8 @@ public class LayoutEditHandler extends EditHandler
     } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
       computeEnabled();
     } else if (action == ProjectEvent.ACTION_SELECTION) {
+      computeEnabled();
+    } else if (action == ProjectEvent.ACTION_SET_TOOL) {
       computeEnabled();
     }
   }
@@ -163,6 +205,13 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void selectAll() {
+    final var textEditActions = getTextEditActions();
+    if (textEditActions != null) {
+      textEditActions.selectAll();
+      refreshAfterTextEditAction();
+      return;
+    }
+
     final var proj = frame.getProject();
     final var sel = frame.getCanvas().getSelection();
     selectSelectTool(proj);
@@ -179,5 +228,18 @@ public class LayoutEditHandler extends EditHandler
         if (tool != null) proj.setTool(tool);
       }
     }
+  }
+
+  private TextEditActions getTextEditActions() {
+    final var proj = frame.getProject();
+    if (proj != null && proj.getTool() instanceof TextTool textTool) {
+      return textTool.getTextEditActions();
+    }
+    return null;
+  }
+
+  private void refreshAfterTextEditAction() {
+    frame.computeEditMenuEnabled();
+    frame.getProject().repaintCanvas();
   }
 }

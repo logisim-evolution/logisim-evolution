@@ -60,7 +60,6 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private class MyListener implements TruthTableListener, LocaleListener {
@@ -911,7 +910,6 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           final var numPages = (n + rowsPerPage - 1) / rowsPerPage;
           if (pageNum >= numPages) return Printable.NO_SUCH_PAGE;
 
-          // g.drawRect(0, 0, (int)w-1, (int)h-1); // bage border
           GraphicsUtil.drawText(
               g,
               String.format("Combinational Analysis (page %d of %d)", pageNum + 1, numPages),

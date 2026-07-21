@@ -17,6 +17,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.SocketClient;
+import com.cburch.logisim.util.Softwares;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants.State;
@@ -190,10 +191,7 @@ public class VhdlSimulatorTop implements CircuitListener {
           this.getClass().getResourceAsStream(VhdlSimConstants.SIM_RESOURCES_PATH + "run.tcl"),
           Paths.get(VhdlSimConstants.SIM_PATH + "run.tcl"),
           StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(
-          this.getClass().getResourceAsStream(VhdlSimConstants.SIM_RESOURCES_PATH + "modelsim.ini"),
-          Paths.get(VhdlSimConstants.SIM_COMP_PATH + "modelsim.ini"),
-          StandardCopyOption.REPLACE_EXISTING);
+      Softwares.copyQuestaModelsimConfig(Paths.get(VhdlSimConstants.SIM_COMP_PATH + "modelsim.ini"));
     } catch (IOException e) {
       VhdlSimulatorTop.logger.error("Cannot copy simulation files: {}", e.getMessage());
       e.printStackTrace();

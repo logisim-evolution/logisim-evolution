@@ -14,6 +14,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.prefs.AppPreferences;
+import java.awt.Color;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,7 +46,11 @@ public class ExpressionRenderData {
   private AttributedString[] lineStyled;
   private int[][] notStarts;
   private int[][] notStops;
-  private static final Color MARKCOLOR = Color.BLACK;
+  private Color markColor() {
+    return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+        ? new Color(AppPreferences.DARK_EXPRESSION_OVERLINE_COLOR)
+        : new Color(AppPreferences.DEFAULT_EXPRESSION_OVERLINE_COLOR);
+  }
 
   private final Font expressionBaseFont;
   private final FontMetrics expressionBaseFontMetrics;
@@ -258,7 +263,7 @@ public class ExpressionRenderData {
     }
     for (Range m : marks) {
       if (m.stopIndex <= end)
-        as.addAttribute(TextAttribute.FOREGROUND, MARKCOLOR, m.startIndex, m.stopIndex);
+        as.addAttribute(TextAttribute.FOREGROUND, markColor(), m.startIndex, m.stopIndex);
     }
     return as;
   }
@@ -357,7 +362,7 @@ public class ExpressionRenderData {
         curCol = col;
       } else {
         md = marks.get(0);
-        curCol = Color.GRAY;
+        curCol = new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get());
       }
       g.setColor(curCol);
       g.drawString(as.getIterator(), x, y + lineY[i] + fm.getAscent());
@@ -367,7 +372,7 @@ public class ExpressionRenderData {
         final var notY = y + lineY[i] - nd.depth * AppPreferences.getScaled(notSep);
         final var startX = x + notStarts[i][j];
         final var stopX = x + notStops[i][j];
-        if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex) g.setColor(MARKCOLOR);
+        if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex) g.setColor(markColor());
         GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(startX, notY, stopX, notY);
         GraphicsUtil.switchToWidth(g, 1);

@@ -11,7 +11,6 @@ package com.cburch.logisim.gui.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.logisim.data.TestVector;
 import java.io.ByteArrayOutputStream;

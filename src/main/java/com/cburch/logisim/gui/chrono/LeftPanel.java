@@ -56,9 +56,8 @@ public class LeftPanel extends JTable {
       return 2;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Class getColumnClass(int col) {
+    public Class<?> getColumnClass(int col) {
       return col == 0 ? SignalInfo.class : Signal.class;
     }
 

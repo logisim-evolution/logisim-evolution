@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="ru">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000" />
+    <meta name="changed" content="2026-06-27T23:00:00.000000000" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>Настройка Questa Advanced Simulator</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+    <div class="maindiv">
+        <h1>Настройка Questa Advanced Simulator</h1>
+        <p>
+            Внешняя среда моделирования <b>Questa Advanced Simulator</b> используется для компиляции и валидации компонентов VHDL,
+            а также является обязательным требованием для запуска любого моделирования схем, содержащих HDL-блоки.
+        </p>
+
+        <p>
+            По умолчанию автоматическая валидация VHDL-кода с помощью Questa Advanced Simulator отключена. Для её
+            активации перейдите в главное меню <b class="menu">|&nbsp;Окно&nbsp;|</b> &gt; <b
+                class="menu">|&nbsp;Настройки&nbsp;|</b>, а затем выберите вкладку <b class="menu">|&nbsp;Стороннее
+                ПО&nbsp;|</b>. Включить интеграцию можно, установив флажок <q>Использовать Questa Advanced Simulator для
+                проверки сущностей VHDL</q>.
+        </p>
+
+        <p align="center">
+            <img src="../../../img-guide/hdl-ip-questa.png" alt="Вкладка настроек стороннего ПО">
+        </p>
+
+        <p>
+            Непосредственно под этой опцией необходимо указать путь к директории, в которую установлен Questa Advanced
+            Simulator. Для этого нажмите кнопку <b class="button">Обзор…</b> и выберите соответствующую папку. Если
+            активировать эту функцию, но оставить поле пути пустым, система принудительно предложит указать его при
+            первой же попытке скомпилировать VHDL-код.
+        </p>
+
+        <p>
+            <i>Примечание:</i> Диалоговое окно выбора пути к среде моделирования также откроется автоматически, если вы
+            попытаетесь запустить моделирование схемы, содержащей хотя бы один VHDL-компонент, а среда QuestaSim ещё не
+            настроена.
+        </p>
+
+        <p>
+            <b>Далее:</b> <a href="simulation.html">Моделирование VHDL</a>.
+        </p>
+    </div>
+</body>
+
+</html>

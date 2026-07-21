@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 
 @SuppressWarnings("serial")
@@ -39,7 +40,7 @@ public class FpgaCommanderListWindow extends JFrame
     setResizable(true);
     setAlwaysOnTop(false);
     setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    Color bg = Color.black;
+    final var bg = UIManager.getColor("List.background");
 
     textArea.setBackground(bg);
     textArea.setForeground(fg);

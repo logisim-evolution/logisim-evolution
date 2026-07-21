@@ -27,7 +27,7 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes in monitored locations"
@@ -62,20 +62,20 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
       uses: actions/setup-java@v5
       with:
         java-version: ${{ env.JDK_VERSION }}
         distribution: ${{ env.JDK_DISTRO }}
     - name: Cache SonarCloud packages
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Cache Gradle packages
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}

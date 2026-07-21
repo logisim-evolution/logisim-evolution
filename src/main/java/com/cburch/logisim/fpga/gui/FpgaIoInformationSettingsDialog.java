@@ -159,7 +159,6 @@ public class FpgaIoInformationSettingsDialog {
           for (var col = 0; col < nrOfColumns; col++)
             pinLabels.add("Row_" + row + "_Col_" + col);
         }
-        break;
       }
       case LedArrayDriving.LED_ROW_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
@@ -171,7 +170,6 @@ public class FpgaIoInformationSettingsDialog {
             pinLabels.add("Col_" + (i - nrBits));
           }
         }
-        break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
@@ -183,7 +181,6 @@ public class FpgaIoInformationSettingsDialog {
             pinLabels.add("Row_" + (i - nrBits));
           }
         }
-        break;
       }
       case LedArrayDriving.RGB_DEFAULT -> {
         nrOfPins = nrOfRows * nrOfColumns * 3;
@@ -199,7 +196,6 @@ public class FpgaIoInformationSettingsDialog {
               pinLabels.add(preamble + "Row_" + row + "_Col_" + col);
           }
         }
-        break;
       }
       case LedArrayDriving.RGB_ROW_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
@@ -220,7 +216,6 @@ public class FpgaIoInformationSettingsDialog {
             pinLabels.add(preamble + "Col_" + col);
           }
         }
-        break;
       }
       case LedArrayDriving.RGB_COLUMN_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
@@ -241,7 +236,6 @@ public class FpgaIoInformationSettingsDialog {
             pinLabels.add(preamble + "Row_" + col);
           }
         }
-        break;
       }
       default -> {
         nrOfPins = 0;
@@ -429,20 +423,13 @@ public class FpgaIoInformationSettingsDialog {
       mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_ZERO)));
       mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CW_90)));
       mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CCW_90)));
+      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_180)));
       panel.add(mapRotation, BorderLayout.CENTER);
       switch (myRotation) {
-        case IoComponentTypes.ROTATION_CW_90 -> {
-          mapRotation.setSelectedIndex(1);
-          break;
-        }
-        case IoComponentTypes.ROTATION_CCW_90 -> {
-          mapRotation.setSelectedIndex(2);
-          break;
-        }
-        default -> {
-          mapRotation.setSelectedIndex(0);
-          break;
-        }
+        case IoComponentTypes.ROTATION_CW_90 -> mapRotation.setSelectedIndex(1);
+        case IoComponentTypes.ROTATION_CCW_90 -> mapRotation.setSelectedIndex(2);
+        case IoComponentTypes.ROTATION_180 -> mapRotation.setSelectedIndex(3);
+        default -> mapRotation.setSelectedIndex(0);
       }
       gbc.gridy++;
       gbc.gridwidth = 2;
@@ -851,6 +838,7 @@ public class FpgaIoInformationSettingsDialog {
           final var rotation = switch (mapRotation.getSelectedIndex()) {
             case 1 -> IoComponentTypes.ROTATION_CW_90;
             case 2 -> IoComponentTypes.ROTATION_CCW_90;
+            case 3 -> IoComponentTypes.ROTATION_180;
             default -> IoComponentTypes.ROTATION_ZERO;
           };
           info.setMapRotation(rotation);

@@ -1,5 +1,6 @@
 package com.cburch.logisim.util;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -30,5 +31,22 @@ public class SoftwaresTest {
     final var configFile = tmpDir.resolve("modelsim.ini");
     assertTrue(Files.exists(configFile));
     assertTrue(Files.readString(configFile).contains("VHDL93 = 2002"));
+  }
+
+  @Test
+  public void questaValidationCopiesConfiguredVhdlStandard(@TempDir Path tmpDir)
+      throws Exception {
+    final var previousStandard = AppPreferences.VHDL_STANDARD.get();
+    try {
+      AppPreferences.VHDL_STANDARD.set(AppPreferences.VHDL_STANDARD_2008);
+
+      Softwares.copyQuestaValidationConfig(tmpDir.toFile());
+
+      final var config = Files.readString(tmpDir.resolve("modelsim.ini"));
+      assertTrue(config.contains("VHDL93 = 2008"));
+      assertFalse(config.contains("VHDL93 = 2002"));
+    } finally {
+      AppPreferences.VHDL_STANDARD.set(previousStandard);
+    }
   }
 }
