@@ -250,11 +250,21 @@ public class FpgaCommander
   }
 
   private void setExecuteWindowEnabled(boolean enabled) {
-    final var hdlGenerationEnabled = DownloadBase.isHdlGenerationEnabled(AppPreferences.HdlType.get());
     circuitsList.setEnabled(enabled);
     textMainCircuit.setEnabled(enabled);
-    actionCommands.setEnabled(enabled && hdlGenerationEnabled);
-    validateButton.setEnabled(enabled && hdlGenerationEnabled);
+    setHdlControlsEnabled(
+        actionCommands, validateButton, enabled, AppPreferences.HdlType.get());
+  }
+
+  static void setHdlControlsEnabled(
+      JComboBox<?> actionCommands,
+      JButton validateButton,
+      boolean executeWindowEnabled,
+      String hdlType) {
+    final var enabled =
+        executeWindowEnabled && DownloadBase.isHdlGenerationEnabled(hdlType);
+    actionCommands.setEnabled(enabled);
+    validateButton.setEnabled(enabled);
   }
 
   public FpgaCommander(Project Main) {
@@ -342,11 +352,12 @@ public class FpgaCommander
     int sel = actionCommands.getItemCount() == 0 ? 1 : actionCommands.getSelectedIndex();
     int nrItems = 1;
     actionCommands.removeAllItems();
-    if (!DownloadBase.isHdlGenerationEnabled(AppPreferences.HdlType.get())) {
+    final var hdlType = AppPreferences.HdlType.get();
+    setHdlControlsEnabled(
+        actionCommands, validateButton, circuitsList.isEnabled(), hdlType);
+    if (!DownloadBase.isHdlGenerationEnabled(hdlType)) {
       actionCommands.addItem(S.getter("FpgaGuiSelectHdl"));
       actionCommands.setSelectedIndex(0);
-      actionCommands.setEnabled(false);
-      validateButton.setEnabled(false);
       panel.pack();
       return;
     }
