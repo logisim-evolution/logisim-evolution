@@ -40,7 +40,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
-    final var clasicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
+    final var classicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     for (var idx = 0; idx < nrOfStages; idx++) {
@@ -58,7 +58,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     if (hasParallelLoad) {
       for (var idx = 0; idx < nrOfStages; idx++) {
         myPorts.add(Port.INPUT, String.format("D%d", idx), NR_OF_BITS_ID, 6 + 2 * idx);
-        if ((idx == nrOfStages - 1 && clasicLogisim) || (idx < nrOfStages - 1)) {
+        if ((idx == nrOfStages - 1 && classicLogisim) || (idx < nrOfStages - 1)) {
           myPorts.add(Port.OUTPUT, String.format("Q%d", idx), NR_OF_BITS_ID, 6 + 2 * idx + 1);
         }
       }
@@ -67,7 +67,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       myPorts.add(Port.INPUT, "parLoad", 1, Hdl.zeroBit());
       for (var idx = 0; idx < nrOfStages; idx++) {
         myPorts.add(Port.INPUT, String.format("D%d", idx), NR_OF_BITS_ID, Hdl.getZeroVector(nrOfBits, true));
-        if ((idx == nrOfStages - 1 && clasicLogisim) || (idx < nrOfStages - 1)) {
+        if ((idx == nrOfStages - 1 && classicLogisim) || (idx < nrOfStages - 1)) {
           myPorts.add(Port.OUTPUT, String.format("Q%d", idx), NR_OF_BITS_ID, Hdl.unconnected(true));
         }
       }
@@ -81,7 +81,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       final var attrs = comp.getComponent().getAttributeSet();
       final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-      final var clasicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
+      final var classicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
       if (Hdl.isVhdl() && nrOfBits == 1) {
         final var shiftMap = map.get("shiftIn");
         final var outMap = map.get("shiftOut");
@@ -94,7 +94,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           final var dMap = map.get(dName);
           map.remove(dName);
           map.put(dName + "(0)", dMap);
-          if ((idx == nrOfStages - 1 && clasicLogisim) || (idx < nrOfStages - 1)) {
+          if ((idx == nrOfStages - 1 && classicLogisim) || (idx < nrOfStages - 1)) {
             final var qName = String.format("Q%d", idx);
             final var qMap = map.get(qName);
             map.remove(qName);
@@ -114,14 +114,14 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         .pair("invertClock", NEGATE_CLOCK_STRING)
         .pair("nrOfBits", NR_OF_BITS_STRING);
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-    final var clasicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
+    final var classicLogisim = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC;
     if (Hdl.isVhdl()) {
       contents.empty()
           .addVhdlKeywords()
           .addRemarkBlock("Here the outputs are mapped")
           .add(String.format("shiftOut <= s_stageReg%d;", nrOfStages - 1));
       for (var idx = 0; idx < nrOfStages; idx++) {
-        if ((idx == nrOfStages - 1 && clasicLogisim) || (idx < nrOfStages - 1)) {
+        if ((idx == nrOfStages - 1 && classicLogisim) || (idx < nrOfStages - 1)) {
           contents.add(String.format("Q%d <= s_stageReg%d;", idx, idx));
         }
       }
@@ -168,7 +168,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           .addRemarkBlock("Here the outputs are mapped")
           .add(String.format("assign shiftOut = s_stageReg%d;", nrOfStages - 1));
       for (var idx = 0; idx < nrOfStages; idx++) {
-        if ((idx == nrOfStages - 1 && clasicLogisim) || (idx < nrOfStages - 1)) {
+        if ((idx == nrOfStages - 1 && classicLogisim) || (idx < nrOfStages - 1)) {
           contents.add(String.format("assign Q%d = s_stageReg%d;", idx, idx));
         }
       }
