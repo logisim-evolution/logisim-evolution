@@ -7,6 +7,7 @@
   * Added support for opening project files by dragging them into the application window.
   * Added a Window menu option to hide or show the navigation pane.
   * Added ability to load multiple RAM or ROM memories from the command line
+  * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Added TTL 7476: dual J-K Flip-flop with preset and clear.
   * Improved drawing appearance:
