@@ -155,12 +155,19 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       hdlModel.setValueRequested(attr, value);
     } else {
       final var act = new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
+      final var comps = new TreeSet<>(new PositionComparator());
+      comps.addAll(selection.getComponents());
+      if (comps.size() == 1) {
+        final var comp = comps.first();
+        if (!(comp instanceof Wire)
+            && !AttrTableLabelValidator.shouldApply(circuit, comp, attr, value)) {
+          return;
+        }
+      }
       AutoLabel labeler = null;
       if (attr.equals(StdAttr.LABEL)) {
         labeler = new AutoLabel((String) value, circuit);
       }
-      final var comps = new TreeSet<>(new PositionComparator());
-      comps.addAll(selection.getComponents());
       for (final var comp : comps) {
         if (!(comp instanceof Wire)) {
           if (comp.getFactory() instanceof SubcircuitFactory fac) {

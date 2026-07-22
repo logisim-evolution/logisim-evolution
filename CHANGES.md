@@ -7,6 +7,7 @@
   * Added support for opening project files by dragging them into the application window.
   * Added a Window menu option to hide or show the navigation pane.
   * Added ability to load multiple RAM or ROM memories from the command line
+  * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Added TTL 7476: dual J-K Flip-flop with preset and clear.
   * Improved drawing appearance:
@@ -38,6 +39,8 @@
     * Wide Counter components use compact grouped state rows in evolution appearance.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.
+  * Added HDL-language-aware label and circuit-name validation: VHDL remains case-insensitive,
+    Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
   * Improved project editing stability:

@@ -505,7 +505,7 @@ public class RamAppearance {
 
   private static boolean seperatedBus(AttributeSet attrs) {
     Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
-    return (bus != null && bus.equals(RamAttributes.BUS_SEP));
+    return bus != null && RamAttributes.isSeparateDataBus(bus);
   }
 
   private static boolean synchronous(AttributeSet attrs) {

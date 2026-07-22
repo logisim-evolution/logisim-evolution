@@ -10,7 +10,11 @@
 package com.cburch.logisim.fpga.designrulecheck;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import org.junit.jupiter.api.Test;
 
 class CorrectLabelTest {
@@ -20,6 +24,24 @@ class CorrectLabelTest {
     assertEquals(CorrectLabel.hdlLabelKey("A B"), CorrectLabel.hdlLabelKey("a-b"));
     assertEquals("L_1A", CorrectLabel.getCorrectLabel("1A"));
     assertEquals("L_1A", CorrectLabel.hdlLabelKey("1a"));
+  }
+
+  @Test
+  void hdlLabelKeysFollowSelectedHdlCaseSensitivity() {
+    assertEquals(
+        CorrectLabel.hdlLabelKey("A", HdlGeneratorFactory.VHDL),
+        CorrectLabel.hdlLabelKey("a", HdlGeneratorFactory.VHDL));
+    assertNotEquals(
+        CorrectLabel.hdlLabelKey("A", HdlGeneratorFactory.VERILOG),
+        CorrectLabel.hdlLabelKey("a", HdlGeneratorFactory.VERILOG));
+  }
+
+  @Test
+  void keywordChecksFollowSelectedHdlCaseSensitivity() {
+    assertTrue(CorrectLabel.isKeyword("ENTITY", HdlGeneratorFactory.VHDL, false));
+    assertTrue(CorrectLabel.isKeyword("module", HdlGeneratorFactory.VERILOG, false));
+    assertFalse(CorrectLabel.isKeyword("MODULE", HdlGeneratorFactory.VERILOG, false));
+    assertFalse(CorrectLabel.isKeyword("entity", HdlGeneratorFactory.VERILOG, false));
   }
 
   @Test

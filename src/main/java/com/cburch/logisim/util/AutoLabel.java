@@ -68,7 +68,7 @@ public class AutoLabel {
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) {
       return "";
     }
-    if (Circuit.isCorrectLabel(circ.getName(),
+    if (Circuit.isCorrectLabelForCurrentHdl(circ.getName(),
         currentLabel.get(circ), circ.getNonWires(), null, me, false)) {
       return currentLabel.get(circ);
     }
@@ -86,7 +86,7 @@ public class AutoLabel {
     if (StringUtil.isNullOrEmpty(common) || (maxX < 0) || (maxY < 0)) {
       return true;
     }
-    if (!SyntaxChecker.isVariableNameAcceptable(common, true)) {
+    if (!SyntaxChecker.isVariableNameAcceptableForCurrentHdl(common, true)) {
       return false;
     }
     for (var x = 0; x < maxX; x++) {
@@ -107,8 +107,9 @@ public class AutoLabel {
       return "";
     }
     final var label = common.concat("_X" + x + "_Y" + y);
-    if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
-        && SyntaxChecker.isVariableNameAcceptable(label, false)) {
+    if (Circuit.isCorrectLabelForCurrentHdl(
+            circ.getName(), label, circ.getNonWires(), null, me, false)
+        && SyntaxChecker.isVariableNameAcceptableForCurrentHdl(label, false)) {
       return label;
     }
     return "";
@@ -136,7 +137,7 @@ public class AutoLabel {
         newLabel = newLabel.concat("_");
       }
       newLabel = newLabel.concat(Integer.toString(curIdx));
-    } while (!Circuit.isCorrectLabel(circ.getName(),
+    } while (!Circuit.isCorrectLabelForCurrentHdl(circ.getName(),
         newLabel, circ.getNonWires(), null, me, false));
     currentIndex.put(circ, curIdx);
     currentLabel.put(circ, newLabel);
@@ -190,7 +191,7 @@ public class AutoLabel {
     if (circ == null) {
       return;
     }
-    if (label.isEmpty() || !SyntaxChecker.isVariableNameAcceptable(label, false)) {
+    if (label.isEmpty() || !SyntaxChecker.isVariableNameAcceptableForCurrentHdl(label, false)) {
       labelBase.put(circ, "");
       currentIndex.put(circ, 0);
       useLabelBaseOnly.put(circ, false);
@@ -232,10 +233,10 @@ public class AutoLabel {
           OptionPane.showInputDialog(circ.getProject().getFrame(), S.get("editLabelQuestion") + " " + componentName,
               S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
-        if (Circuit.isCorrectLabel(circ.getName(),
+        if (Circuit.isCorrectLabelForCurrentHdl(circ.getName(),
             newLabel, circ.getNonWires(), attrs, compFactory, true)
-            && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
-            && !CorrectLabel.isKeyword(newLabel, true)) {
+            && SyntaxChecker.isVariableNameAcceptableForCurrentHdl(newLabel, true)
+            && !CorrectLabel.isKeyword(newLabel, AppPreferences.HdlType.get(), true)) {
           if (createAction) {
             act.set(comp, StdAttr.LABEL, newLabel);
           } else {

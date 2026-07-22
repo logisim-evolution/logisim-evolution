@@ -29,6 +29,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
+import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -282,7 +283,7 @@ public final class LogisimFileActions {
         Circuit newCircuit = null;
         var replace = false;
         for (final var circs : proj.getLogisimFile().getCircuits()) {
-          if (circs.getName().equalsIgnoreCase(circ.getName())) {
+          if (SyntaxChecker.namesEqualForCurrentHdl(circs.getName(), circ.getName())) {
             newCircuit = circs;
             replace = true;
           }

@@ -161,8 +161,10 @@ public class DualRam extends Ram {
     }
 
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate
-        || !state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE);
+    final var outputDisabled =
+        state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE)
+            && (!separate || RamAttributes.hasControlledOutput(attrs));
+    final var outputEnabled = !outputDisabled;
 
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
@@ -222,14 +224,13 @@ public class DualRam extends Ram {
     Consumer<Value> setValue = (Value value) -> state.setPort(DualRamAppearance.getDataOutIndex(portIndex, attrs),
         value, DELAY);
 
-    if (!separate && outputNotEnabled) {
-      /* put the bus in tri-state in case of a combined bus and no output enable */
-      setValue.accept(Value.createUnknown(dataBits));
+    if (outputNotEnabled) {
+      if (!separate || RamAttributes.hasControlledOutput(attrs)) {
+        setValue.accept(Value.createUnknown(dataBits));
+      }
       return;
     }
-    /* if the OE is not activated return */
-    if (outputNotEnabled)
-      return;
+
     /* if the address is bogus set error value accordingly */
     if (errorValue) {
       setValue.accept(Value.createError(dataBits));
