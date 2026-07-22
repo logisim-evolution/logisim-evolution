@@ -21,6 +21,7 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.util.ColorUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlContent;
@@ -44,6 +45,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
+
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -55,7 +57,7 @@ import javax.swing.tree.TreeSelectionModel;
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 public class ProjectExplorer extends JTree implements LocaleListener {
-  public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
+  public static final Color MAGNIFYING_INTERIOR = ColorUtil.MAGNIFYING_INTERIOR;
   private static final long serialVersionUID = 1L;
 
   private final Project proj;
@@ -178,9 +180,15 @@ public class ProjectExplorer extends JTree implements LocaleListener {
                     : (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
           }
           label.setFont(viewed ? boldFont : plainFont);
-          label.setText(tool.getDisplayName());
+          label.setText(viewed ? tool.getDisplayName() + " ●" : tool.getDisplayName());
           label.setIcon(new ToolIcon(tool));
           label.setToolTipText(tool.getDescription());
+
+          if (viewed) {
+            label.setForeground(ColorUtil.getThemeAccentColor());
+          } else {
+            label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
+          }
         }
       } else if (value instanceof ProjectExplorerLibraryNode libNode) {
         final var lib = libNode.getValue();
@@ -415,13 +423,16 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           y + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 2),
           ty - 1
         };
-        g.setColor(MAGNIFYING_INTERIOR);
+        final var magFill = ColorUtil.getMagnifyingInterior(ProjectExplorer.this);
+        final var magBorder = ColorUtil.getThemeAccentColor();
+
+        g.setColor(magFill);
         g.fillOval(
             x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
-        g.setColor(new Color(139, 69, 19));
+        g.setColor(magBorder);
         g.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
