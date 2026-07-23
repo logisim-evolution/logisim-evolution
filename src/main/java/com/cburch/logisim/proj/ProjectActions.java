@@ -25,6 +25,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +41,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -45,6 +54,12 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 public final class ProjectActions {
@@ -241,7 +256,109 @@ public final class ProjectActions {
       }
       return;
     }
-    baseProject.doAction(LogisimFileActions.mergeFile(mergelib, baseProject.getLogisimFile()));
+    final var circuits = mergelib.getCircuits();
+    List<Circuit> circuitsToMerge = null;
+    boolean includeDependencies = true;
+
+    if (!circuits.isEmpty()) {
+      final var depMap = new HashMap<Circuit, Set<Circuit>>();
+      for (final var circ : circuits) {
+        depMap.put(circ, LogisimFileActions.getCircuitDependencies(circ, mergelib));
+      }
+
+      final var list = new JList<>(circuits.toArray(new Circuit[0]));
+      list.setCellRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(
+            JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+          super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+          if (value instanceof Circuit circ) {
+            final var deps = depMap.get(circ);
+            if (deps != null && !deps.isEmpty()) {
+              final var names = deps.stream().map(Circuit::getName).collect(Collectors.joining(", "));
+              setText(circ.getName() + " " + S.get("FileMergeDepsCount", names));
+              setToolTipText(S.get("FileMergeDepsCount", names));
+            } else {
+              setText(circ.getName());
+              setToolTipText(null);
+            }
+          }
+          return this;
+        }
+      });
+      list.setSelectionInterval(0, circuits.size() - 1);
+      final var scrollPane = new JScrollPane(list);
+      scrollPane.setPreferredSize(new Dimension(520, 220));
+
+      final var panel = new JPanel(new BorderLayout(5, 5));
+      panel.add(new JLabel(S.get("FileMergeSelectPrompt")), BorderLayout.NORTH);
+      panel.add(scrollPane, BorderLayout.CENTER);
+
+      final var infoLabel = new JLabel(" ");
+      infoLabel.setFont(infoLabel.getFont().deriveFont(Font.ITALIC));
+
+      final var depsPanel = new JPanel(new BorderLayout(5, 5));
+      final var depsCheck = new JCheckBox(S.get("FileMergeIncludeDeps"), true);
+      depsPanel.add(depsCheck, BorderLayout.NORTH);
+      depsPanel.add(infoLabel, BorderLayout.SOUTH);
+
+      final Runnable updateInfoLabel = () -> {
+        final var selectedInList = list.getSelectedValuesList();
+        if (selectedInList.isEmpty()) {
+          infoLabel.setText(" ");
+          return;
+        }
+        if (depsCheck.isSelected()) {
+          final var allToMerge = new LinkedHashSet<Circuit>();
+          for (final var c : selectedInList) {
+            allToMerge.add(c);
+            allToMerge.addAll(depMap.getOrDefault(c, Collections.emptySet()));
+          }
+          final int mainCount = selectedInList.size();
+          final int totalCount = allToMerge.size();
+          final int depsCount = totalCount - mainCount;
+          if (depsCount > 0) {
+            infoLabel.setText(S.get("FileMergeSummaryWithDeps", totalCount, mainCount, depsCount));
+          } else {
+            infoLabel.setText(S.get("FileMergeSummarySelected", totalCount));
+          }
+        } else {
+          infoLabel.setText(S.get("FileMergeSummarySelected", selectedInList.size()));
+        }
+      };
+
+      list.addListSelectionListener(e -> updateInfoLabel.run());
+      depsCheck.addItemListener(e -> updateInfoLabel.run());
+      updateInfoLabel.run();
+
+      final var mainPanel = new JPanel(new BorderLayout(0, 10));
+      mainPanel.setPreferredSize(new Dimension(520, 300));
+      mainPanel.add(panel, BorderLayout.CENTER);
+      mainPanel.add(depsPanel, BorderLayout.SOUTH);
+
+      final var parentWindow = (baseProject != null && baseProject.getFrame() != null)
+          ? baseProject.getFrame()
+          : parent;
+
+      final var result = OptionPane.showConfirmDialog(
+          parentWindow,
+          mainPanel,
+          S.get("FileMergeItem"),
+          OptionPane.OK_CANCEL_OPTION,
+          OptionPane.PLAIN_MESSAGE);
+
+      if (result != OptionPane.OK_OPTION) return;
+
+      includeDependencies = depsCheck.isSelected();
+      circuitsToMerge = list.getSelectedValuesList();
+      if (circuitsToMerge.isEmpty()) return;
+    }
+
+    baseProject.doAction(LogisimFileActions.mergeFile(
+        mergelib, 
+        baseProject.getLogisimFile(), 
+        circuitsToMerge,
+        includeDependencies));
   }
 
   private static void updatecircs(LogisimFile lib, Project proj) {

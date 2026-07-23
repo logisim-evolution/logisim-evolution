@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 
 public final class LogisimFileActions {
+
   private static class AddCircuit extends Action {
     private final Circuit circuit;
 
@@ -93,6 +94,14 @@ public final class LogisimFileActions {
     private final ArrayList<File> logiLibs = new ArrayList<>();
 
     MergeFile(LogisimFile mergelib, LogisimFile source) {
+      this(mergelib, source, null, true);
+    }
+
+    MergeFile(LogisimFile mergelib, LogisimFile source, List<Circuit> selectedCircuits) {
+      this(mergelib, source, selectedCircuits, true);
+    }
+
+    MergeFile(LogisimFile mergelib, LogisimFile source, List<Circuit> selectedCircuits, boolean includeDependencies) {
       final var libNames = new HashMap<String, Library>();
       final var toolList = new HashSet<String>();
       final var errors = new HashMap<String, String>();
@@ -141,7 +150,7 @@ public final class LogisimFileActions {
           return;
         }
         /* Okay merged the missing libraries, now add the circuits */
-        for (final var circ : mergelib.getCircuits()) {
+        for (final var circ : getCircuitsToMerge(mergelib, selectedCircuits, includeDependencies)) {
           final var circName = circ.getName().toUpperCase();
           if (toolList.contains(circName)) {
             final var ret = new ArrayList<String>();
@@ -168,16 +177,60 @@ public final class LogisimFileActions {
                     "LogosimFileAction:",
                     OptionPane.ERROR_MESSAGE);
                 canContinue = false;
-              } else if (!areCircuitsEqual(circ1, circ)) {
-                final var Reponse =
-                    OptionPane.showConfirmDialog(
-                        null,
-                        S.get("FileMergeQuestion", circ.getName()),
-                        S.get("FileMergeTitle"),
-                        OptionPane.YES_NO_OPTION);
-                if (Reponse == OptionPane.YES_OPTION) {
-                  mergedCircuits.add(circ);
+              } else {
+                String suggestedName = circ.getName();
+                int index = 1;
+                while (true) {
+                  boolean exists = false;
+                  for (final var c : source.getCircuits()) {
+                    if (c.getName().equalsIgnoreCase(suggestedName)) {
+                      exists = true;
+                      break;
+                    }
+                  }
+                  if (!exists) {
+                    final var tools = new HashSet<String>();
+                    LibraryTools.buildToolList(source, tools);
+                    if (!tools.contains(suggestedName.toUpperCase())) {
+                      break;
+                    }
+                    exists = true;
+                  }
+                  if (!exists) break;
+                  suggestedName = circ.getName() + "_" + index++;
                 }
+
+                final var options = new String[] {
+                    S.get("FileMergeReplace"),
+                    S.get("FileMergeRename", suggestedName),
+                    S.get("FileMergeCancel")
+                };
+                final var response = OptionPane.showOptionDialog(
+                    null,
+                    S.get("FileMergeQuestion", circ.getName()),
+                    S.get("FileMergeTitle"),
+                    0,
+                    OptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+
+                if (response == 0) { 
+                  mergedCircuits.add(circ);
+                } else if (response == 1) { // Rename
+                  final var renamed = new Circuit(suggestedName, mergelib, null);
+                  CircuitAttributes.copyStaticAttributes(renamed.getStaticAttributes(), circ.getStaticAttributes());
+                  final var mutation = new CircuitMutation(renamed);
+                  for (final var comp : circ.getNonWires()) {
+                    mutation.add(comp);
+                  }
+                  for (final var wir : circ.getWires()) {
+                    mutation.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
+                  }
+                  mutation.execute();
+                  mergedCircuits.add(renamed);
+                }
+                // response == 2 or dialog closed -> cancel (do nothing)
               }
             }
           } else {
@@ -194,49 +247,24 @@ public final class LogisimFileActions {
       } else LibraryTools.showErrors(mergelib.getName(), errors);
     }
 
-    private boolean areCircuitsEqual(Circuit orig, Circuit newone) {
-      final var origComps = new HashMap<Location, Component>();
-      final var newComps = new HashMap<Location, Component>();
-      for (final var comp : orig.getWires()) {
-        origComps.put(comp.getLocation(), comp);
+    private static List<Circuit> getCircuitsToMerge(
+        LogisimFile mergelib, List<Circuit> selectedCircuits, boolean includeDependencies) {
+      if (selectedCircuits == null || selectedCircuits.isEmpty()) {
+        return mergelib.getCircuits();
       }
-      for (final var comp : orig.getNonWires()) {
-        origComps.put(comp.getLocation(), comp);
+      if (!includeDependencies) {
+        return selectedCircuits;
       }
-      for (final var comp : newone.getWires()) {
-        newComps.put(comp.getLocation(), comp);
+
+      final var result = new java.util.LinkedHashSet<Circuit>();
+      for (final var circ : selectedCircuits) {
+        addCircWithDeps(circ, mergelib, result);
       }
-      for (final var comp : newone.getNonWires()) {
-        newComps.put(comp.getLocation(), comp);
-      }
-      final var it = newComps.keySet().iterator();
-      while (it.hasNext()) {
-        final var loc = it.next();
-        if (origComps.containsKey(loc)) {
-          final var comp1 = newComps.get(loc);
-          final var comp2 = newComps.get(loc);
-          if (comp1.getFactory().getName().equals(comp2.getFactory().getName())) {
-            if ("Wire".equals(comp1.getFactory().getName())) {
-              final var wire1 = (Wire) comp1;
-              final var wire2 = (Wire) comp2;
-              if (wire1.overlaps(wire2, true)) {
-                it.remove();
-                origComps.remove(loc);
-              } else {
-                System.out.println("No Wire Overlap");
-              }
-            } else {
-              if (comp1.getAttributeSet().equals(comp2.getAttributeSet())) {
-                it.remove();
-                origComps.remove(loc);
-              } else {
-                System.out.println("Different component");
-              }
-            }
-          }
-        }
-      }
-      return origComps.isEmpty() && newComps.isEmpty();
+      return new ArrayList<>(result);
+    }
+
+    private static void addCircWithDeps(Circuit circ, LogisimFile mergelib, Set<Circuit> visited) {
+      LogisimFileActions.addCircWithDeps(circ, mergelib, visited);
     }
 
     @Override
@@ -711,6 +739,26 @@ public final class LogisimFileActions {
 
   private LogisimFileActions() {}
 
+  static void addCircWithDeps(Circuit circ, LogisimFile mergelib, Set<Circuit> visited) {
+    if (visited.contains(circ)) return;
+    for (final var comp : circ.getNonWires()) {
+      if (comp.getFactory() instanceof SubcircuitFactory subFact) {
+        final var subCirc = subFact.getSubcircuit();
+        if (mergelib.getCircuits().contains(subCirc)) {
+          addCircWithDeps(subCirc, mergelib, visited);
+        }
+      }
+    }
+    visited.add(circ);
+  }
+
+  public static Set<Circuit> getCircuitDependencies(Circuit circ, LogisimFile mergelib) {
+    final var visited = new java.util.LinkedHashSet<Circuit>();
+    addCircWithDeps(circ, mergelib, visited);
+    visited.remove(circ);
+    return visited;
+  }
+
   public static Action addVhdl(VhdlContent vhdl) {
     return new AddVhdl(vhdl);
   }
@@ -721,6 +769,14 @@ public final class LogisimFileActions {
 
   public static Action mergeFile(LogisimFile mergelib, LogisimFile source) {
     return new MergeFile(mergelib, source);
+  }
+
+  public static Action mergeFile(LogisimFile mergelib, LogisimFile source, List<Circuit> selectedCircuits) {
+    return new MergeFile(mergelib, source, selectedCircuits);
+  }
+
+  public static Action mergeFile(LogisimFile mergelib, LogisimFile source, List<Circuit> selectedCircuits, boolean includeDependencies) {
+    return new MergeFile(mergelib, source, selectedCircuits, includeDependencies);
   }
 
   public static Action loadLibraries(Library[] libs, LogisimFile source) {
