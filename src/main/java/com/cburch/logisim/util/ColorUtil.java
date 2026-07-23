@@ -9,7 +9,10 @@
 
 package com.cburch.logisim.util;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
+import java.awt.Component;
+import javax.swing.UIManager;
 
 /**
  * Some color management helper methods.
@@ -17,6 +20,8 @@ import java.awt.Color;
  * For Swing's UIManager color keys see:
  */
 public final class ColorUtil {
+
+  public static final Color MAGNIFYING_INTERIOR = new Color(255, 230, 230, 220);
 
   private ColorUtil() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
@@ -53,6 +58,25 @@ public final class ColorUtil {
   public static Color toGrayscale(Color color) {
     final int Y = getLuminance(color);
     return new Color(Y, Y, Y);
+  }
+
+  /**
+   * Return active theme accent color for active circuit highlight.
+   */
+  public static Color getThemeAccentColor() {
+    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    return isDark ? new Color(255, 107, 107) : new Color(185, 28, 28);
+  }
+
+  /**
+   * Return background color for magnifying glass icon interior.
+   */
+  public static Color getMagnifyingInterior(Component c) {
+    var bg = (c != null && c.getBackground() != null) ? c.getBackground() : UIManager.getColor("Tree.background");
+    if (bg == null) {
+      bg = UIManager.getColor("Panel.background");
+    }
+    return (bg != null) ? new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 180) : MAGNIFYING_INTERIOR;
   }
 
 }
