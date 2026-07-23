@@ -239,7 +239,8 @@ public class Netlist {
         Reporter.report.addFatalError(S.get("WorkDirWithSpaces"));
         return drcStatus;
       }
-      for (final var checkComponent : baseDir.split(File.separator)) {
+      final var splitChar = (isWindows) ? ":?\\\\" : File.separator;
+      for (final var checkComponent : baseDir.split(splitChar)) {
         if (isWindows && checkComponent.length() == 2 && checkComponent.endsWith(":")) {
           // Normally on windows the first one is the drive letter, e.g. "C:"
           continue;
