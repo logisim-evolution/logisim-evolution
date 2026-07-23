@@ -71,8 +71,16 @@ public class PreferencesFrame extends LFrame.Dialog {
   }
 
   public static void showPreferences() {
-    final var frame = MENU_MANAGER.getJFrame(true, null);
+    
+    java.awt.Window activeWindow = java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+    
+    final var frame = MENU_MANAGER.getJFrame(true, activeWindow);
+    
     frame.setVisible(true);
+    
+    //extra security for macOS
+    frame.toFront();
+    frame.requestFocus();
   }
 
   public static void showFPGAPreferences() {
