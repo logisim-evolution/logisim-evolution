@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.gui.appear;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -41,8 +43,7 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
 
   @Override
   public String getToolTip() {
-    // FIXME: hardcoded string
-    return isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default";
+    return isClear ? S.get("resetCustomAppearanceTip") : S.get("resetLogisimAppearanceTip");
   }
 
   @Override
@@ -60,10 +61,9 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
     if (canvas == null || canvas.getCircuit() == null) return;
     final var appearance = canvas.getCircuit().getAppearance();
     if (appearance == null) return;
-    // FIXME: hardcoded string
     if (OptionPane.showConfirmDialog(canvas,
-        "Are you sure you want to remove the current custom appearance and replace it?",
-        isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default",
+        S.get("resetAppearanceConfirmMessage"),
+        isClear ? S.get("resetCustomAppearanceTip") : S.get("resetLogisimAppearanceTip"),
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       if (isClear) appearance.resetDefaultCustomAppearance();
       else appearance.loadDefaultLogisimAppearance();

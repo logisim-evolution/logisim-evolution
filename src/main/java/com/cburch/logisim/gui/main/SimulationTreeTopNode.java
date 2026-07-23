@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.circuit.CircuitState;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +51,6 @@ class SimulationTreeTopNode extends SimulationTreeNode {
 
   @Override
   public String toString() {
-    return "Active Simulations";
+    return S.get("simulationTreeActiveSimulations");
   }
 }
