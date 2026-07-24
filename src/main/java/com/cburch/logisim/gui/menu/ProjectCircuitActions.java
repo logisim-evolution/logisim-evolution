@@ -19,6 +19,9 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
@@ -30,14 +33,22 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -347,5 +358,117 @@ public class ProjectCircuitActions {
     }
 
     return field.getText().trim();
+  }
+
+  public static void collectDependencies(
+      LogisimFile file, Circuit circuit, Set<Circuit> visitedCircuits, Set<VhdlContent> visitedVhdl) {
+    if (file == null || circuit == null) return;
+    for (final var comp : circuit.getNonWires()) {
+      final var factory = comp.getFactory();
+      if (factory instanceof SubcircuitFactory circFact) {
+        final var sub = circFact.getSubcircuit();
+        if (sub != null && file.contains(sub) && !visitedCircuits.contains(sub) && sub != circuit) {
+          visitedCircuits.add(sub);
+          collectDependencies(file, sub, visitedCircuits, visitedVhdl);
+        }
+      } else if (factory instanceof VhdlEntity vhdlFact) {
+        final var vhdl = vhdlFact.getContent();
+        if (vhdl != null && file.contains(vhdl) && !visitedVhdl.contains(vhdl)) {
+          visitedVhdl.add(vhdl);
+        }
+      }
+    }
+  }
+
+  public static void doExportCircuit(Project proj, Circuit targetCircuit) {
+    if (proj == null || targetCircuit == null) return;
+
+    final var file = proj.getLogisimFile();
+    final var dependentCircuits = new LinkedHashSet<Circuit>();
+    final var dependentVhdl = new LinkedHashSet<VhdlContent>();
+    collectDependencies(file, targetCircuit, dependentCircuits, dependentVhdl);
+
+    Map<Circuit, String> renamedMap = null;
+    if (!dependentCircuits.isEmpty()) {
+      final var dialog =
+          new ExportSubcircuitDialog(
+              proj.getFrame(), targetCircuit, new ArrayList<>(dependentCircuits));
+      dialog.setVisible(true);
+      if (!dialog.isApproved()) return;
+      renamedMap = dialog.getRenamedCircuits();
+    }
+
+    final var defaultFile = new File(targetCircuit.getName() + ".circ");
+    final var chooser = JFileChoosers.createSelected(defaultFile);
+    chooser.setFileFilter(Loader.LOGISIM_FILTER);
+    chooser.setDialogTitle(S.get("exportSubcircuitTitle", targetCircuit.getName()));
+
+    final var check = chooser.showSaveDialog(proj.getFrame());
+    if (check != JFileChooser.APPROVE_OPTION) return;
+
+    var dest = chooser.getSelectedFile();
+    if (dest == null) return;
+    if (!dest.getName().toLowerCase().endsWith(".circ")) {
+      dest = new File(dest.getParentFile(), dest.getName() + ".circ");
+    }
+
+    if (dest.exists()) {
+      final var confirm =
+          OptionPane.showConfirmDialog(
+              proj.getFrame(),
+              S.get("confirmOverwriteMessage", dest.getName()),
+              S.get("confirmOverwriteTitle"),
+              OptionPane.YES_NO_OPTION);
+      if (confirm != OptionPane.YES_OPTION) return;
+    }
+
+    final var originalNames = new HashMap<Circuit, String>();
+    if (renamedMap != null) {
+      for (final var entry : renamedMap.entrySet()) {
+        final var circ = entry.getKey();
+        final var newName = entry.getValue();
+        originalNames.put(circ, circ.getName());
+        circ.setName(newName);
+      }
+    }
+
+    try {
+      final var loader = proj.getLogisimFile().getLoader();
+      final var exportFile = LogisimFile.createEmpty(loader);
+
+      for (final var lib : proj.getLogisimFile().getLibraries()) {
+        exportFile.addLibrary(lib);
+      }
+      exportFile.addCircuit(targetCircuit);
+      for (final var circ : dependentCircuits) {
+        exportFile.addCircuit(circ);
+      }
+      for (final var vhdl : dependentVhdl) {
+        exportFile.addVhdlContent(vhdl);
+      }
+      exportFile.setMainCircuit(targetCircuit);
+
+      try (final var out = new FileOutputStream(dest)) {
+        exportFile.write(out, loader, dest);
+      }
+
+      OptionPane.showMessageDialog(
+          proj.getFrame(),
+          String.format(S.get("exportSubcircuitSuccess"), dest.getName()),
+          S.get("exportSubcircuitTitle", targetCircuit.getName()),
+          OptionPane.INFORMATION_MESSAGE);
+    } catch (Exception ex) {
+      OptionPane.showMessageDialog(
+          proj.getFrame(),
+          ex.getMessage(),
+          S.get("exportSubcircuitTitle", targetCircuit.getName()),
+          OptionPane.ERROR_MESSAGE);
+    } finally {
+      if (!originalNames.isEmpty()) {
+        for (final var entry : originalNames.entrySet()) {
+          entry.getKey().setName(entry.getValue());
+        }
+      }
+    }
   }
 }

@@ -4,8 +4,9 @@
 
 * @dev (????-??-??)
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
-  * Improved file merging capabilities:
+  * Improved file merging and export capabilities:
     * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
+    * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.
     * Added conflict resolution dialog to replace, rename, or skip conflicting circuits.
   * Added support for opening project files by dragging them into the application window.
   * Added a Window menu option to hide or show the navigation pane.
