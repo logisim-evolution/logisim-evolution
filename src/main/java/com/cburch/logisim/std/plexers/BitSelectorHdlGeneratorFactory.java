@@ -19,8 +19,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.memory.ShiftRegister;
 import com.cburch.logisim.util.LineBuffer;
 
 public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
