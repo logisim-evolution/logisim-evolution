@@ -18,6 +18,8 @@ import com.cburch.logisim.util.ZipClassLoader;
 import com.cburch.logisim.vhdl.file.HdlFile;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.util.Stack;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.zip.ZipOutputStream;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -576,6 +579,12 @@ public class Loader implements LibraryLoader {
       description = init + sep + description;
     }
 
+    final var copyButtonText = S.get("fileErrorCopyButton");
+    final var okButtonText = javax.swing.UIManager.getString("OptionPane.okButtonText") != null
+        ? javax.swing.UIManager.getString("OptionPane.okButtonText")
+        : "OK";
+    final Object[] options = new Object[] {copyButtonText, okButtonText};
+
     if (description.contains("\n") || description.length() > 60) {
       var lines = 1;
       for (var pos = description.indexOf('\n');
@@ -583,20 +592,44 @@ public class Loader implements LibraryLoader {
           pos = description.indexOf('\n', pos + 1)) {
         lines++;
       }
-      lines = Math.max(4, Math.min(lines, 7));
+      lines = Math.max(3, Math.min(lines, 8));
 
-      final var textArea = new JTextArea(lines, 60);
+      final var textArea = new JTextArea(lines, 45);
       textArea.setEditable(false);
       textArea.setText(description);
       textArea.setCaretPosition(0);
 
       final var scrollPane = new JScrollPane(textArea);
-      scrollPane.setPreferredSize(new Dimension(350, 150));
-      OptionPane.showMessageDialog(
-          parent, scrollPane, S.get("fileErrorTitle"), OptionPane.ERROR_MESSAGE);
+      
+      final var result = OptionPane.showOptionDialog(
+          parent,
+          scrollPane,
+          S.get("fileErrorTitle"),
+          JOptionPane.DEFAULT_OPTION,
+          OptionPane.ERROR_MESSAGE,
+          null,
+          options,
+          okButtonText);
+
+      if (result == 0) {
+        final var selection = new StringSelection(description);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+      }
     } else {
-      OptionPane.showMessageDialog(
-          parent, description, S.get("fileErrorTitle"), OptionPane.ERROR_MESSAGE);
+      final var result = OptionPane.showOptionDialog(
+          parent,
+          description,
+          S.get("fileErrorTitle"),
+          JOptionPane.DEFAULT_OPTION,
+          OptionPane.ERROR_MESSAGE,
+          null,
+          options,
+          okButtonText);
+
+      if (result == 0) {
+        final var selection = new StringSelection(description);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+      }
     }
   }
 
