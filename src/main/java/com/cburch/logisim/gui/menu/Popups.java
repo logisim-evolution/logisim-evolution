@@ -60,6 +60,7 @@ public class Popups {
     final JMenuItem remove = new JMenuItem(S.get("projectRemoveCircuitItem"));
     final JMenuItem editLayout = new JMenuItem(S.get("projectEditCircuitLayoutItem"));
     final JMenuItem editAppearance = new JMenuItem(S.get("projectEditCircuitAppearanceItem"));
+    final JMenuItem exportCircuit = new JMenuItem(S.get("projectExportCircuitItem"));
 
     CircuitPopup(Project proj, Tool tool, Circuit circuit) {
       super(S.get("circuitMenu"));
@@ -75,6 +76,8 @@ public class Popups {
       analyze.addActionListener(this);
       add(stats);
       stats.addActionListener(this);
+      add(exportCircuit);
+      exportCircuit.addActionListener(this);
       addSeparator();
       add(main);
       main.addActionListener(this);
@@ -109,6 +112,8 @@ public class Popups {
       } else if (source == stats) {
         JFrame frame = (JFrame) SwingUtilities.getRoot(this);
         StatisticsDialog.show(frame, proj.getLogisimFile(), circuit);
+      } else if (source == exportCircuit) {
+        ProjectCircuitActions.doExportCircuit(proj, circuit);
       } else if (source == main) {
         ProjectCircuitActions.doSetAsMainCircuit(proj, circuit);
       } else if (source == remove) {
