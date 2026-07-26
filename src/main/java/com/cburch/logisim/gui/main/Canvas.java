@@ -566,13 +566,21 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   public void updateArrows() {
     /* Disable for VHDL content */
-    if (proj.getCurrentCircuit() == null) return;
+    if (proj.getCurrentCircuit() == null) {
+      viewport.clearArrows();
+      viewport.repaint();
+      return;
+    }
     final var g = getGraphics();
     final var circBds = (g != null)
             ? proj.getCurrentCircuit().getBounds(getGraphics())
             : proj.getCurrentCircuit().getBounds();
     // no circuit
-    if (circBds == null || circBds.getHeight() == 0 || circBds.getWidth() == 0) return;
+    if (circBds == null || circBds.getHeight() == 0 || circBds.getWidth() == 0) {
+      viewport.clearArrows();
+      viewport.repaint();
+      return;
+    }
     var x = circBds.getX();
     var y = circBds.getY();
     if (x < 0) x = 0;
@@ -623,6 +631,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
     if (isEast && !viewport.isSoutheast && !viewport.isNortheast) viewport.setEast(true);
     if (isWest && !viewport.isSouthwest && !viewport.isNorthwest) viewport.setWest(true);
+    viewport.repaint();
   }
 
   void setHaloedComponent(Circuit circ, Component comp) {
@@ -1004,13 +1013,17 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         if (c == painter.getHaloedComponent()) {
           proj.getFrame().viewComponentAttributes(null, null);
         }
+        completeAction();
       } else if (act == CircuitEvent.ACTION_CLEAR) {
         if (painter.getHaloedComponent() != null) {
           proj.getFrame().viewComponentAttributes(null, null);
         }
+        completeAction();
       } else if (act == CircuitEvent.ACTION_INVALIDATE) {
         completeAction();
       }
+      updateArrows();
+      viewport.repaint();
     }
 
     private Tool findTool(List<? extends Tool> opts) {
