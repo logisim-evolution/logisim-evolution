@@ -127,6 +127,7 @@ public class CircuitState implements InstanceData {
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
         final var map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
+        proj.getSimulator().updatePendingInputs(CircuitState.this, map);
         for (final var comp : map.getRemovals()) {
           final var compState = componentData.remove(comp);
           if (compState == null) continue;
