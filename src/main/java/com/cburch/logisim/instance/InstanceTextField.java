@@ -145,6 +145,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     this.valign = valign;
     final var shouldReg = shouldRegister();
     var attrs = comp.getAttributeSet();
+    if (attrs.containsAttribute(StdAttr.LABEL_COLOR))
+      fontColor = attrs.getValue(StdAttr.LABEL_COLOR);
     if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
       isLabelVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
     if (!wasReg && shouldReg) attrs.addAttributeListener(this);

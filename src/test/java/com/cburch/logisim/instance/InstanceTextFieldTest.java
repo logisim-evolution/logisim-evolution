@@ -12,14 +12,22 @@ package com.cburch.logisim.instance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.base.Text;
+import com.cburch.logisim.std.io.Led;
 import com.cburch.logisim.tools.TextEditable;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import org.junit.jupiter.api.Test;
 
 public class InstanceTextFieldTest {
@@ -54,6 +62,27 @@ public class InstanceTextFieldTest {
     assertEquals("new", comp.getAttributeSet().getValue(Text.ATTR_TEXT));
     project.undoAction();
     assertEquals("old", comp.getAttributeSet().getValue(Text.ATTR_TEXT));
+  }
+
+  @Test
+  public void componentCreationHonorsConfiguredLabelColor() {
+    final var led = new Led();
+    final var attrs = led.createAttributeSet();
+    attrs.setValue(StdAttr.LABEL, "label");
+    attrs.setValue(StdAttr.LABEL_COLOR, Color.RED);
+    final var comp = led.createComponent(Location.create(100, 100, false), attrs);
+    final var textField = (InstanceTextField) comp.getFeature(TextEditable.class);
+    final var sourceGraphics = mock(Graphics.class);
+    final var labelGraphics = mock(Graphics.class);
+    final var context = mock(ComponentDrawContext.class);
+
+    assertNotNull(textField);
+    when(sourceGraphics.create()).thenReturn(labelGraphics);
+    when(labelGraphics.getFontMetrics()).thenReturn(mock(FontMetrics.class));
+    when(context.getGraphics()).thenReturn(sourceGraphics);
+    textField.draw(comp, context);
+
+    verify(labelGraphics).setColor(Color.RED);
   }
 
   private static TextEditable newTextEditable() {
