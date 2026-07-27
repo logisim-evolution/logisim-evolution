@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -45,6 +46,14 @@ public interface StdAttr {
   Font DEFAULT_LABEL_FONT = new Font("SansSerif", Font.BOLD, 16);
   Attribute<Color> LABEL_COLOR = Attributes.forColor("labelcolor", S.getter("ioLabelColorAttr"));
   Color DEFAULT_LABEL_COLOR = Color.BLUE;
+  Color DARK_DEFAULT_LABEL_COLOR = new Color(0x6C, 0xB6, 0xFF);
+
+  static Color getDefaultLabelColor() {
+    return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+        ? DARK_DEFAULT_LABEL_COLOR
+        : DEFAULT_LABEL_COLOR;
+  }
+
   AttributeOption LABEL_CENTER =
       new AttributeOption("center", "center", S.getter("stdLabelCenter"));
   Attribute<Object> LABEL_LOC =
