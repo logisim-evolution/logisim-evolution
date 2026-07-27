@@ -206,6 +206,10 @@ public class Simulator {
       }
     }
 
+    void updatePendingInputs(CircuitState state, ReplacementMap replacements) {
+      stepPoints.updatePendingInputs(state, replacements);
+    }
+
     synchronized String getSingleStepMessage() {
       return autoPropagatingUnsynchronized ? "" : stepPoints.getSingleStepMessage();
     }
@@ -728,6 +732,10 @@ public class Simulator {
 
   public void addPendingInput(CircuitState state, Component comp) {
     simThread.addPendingInput(state, comp);
+  }
+
+  void updatePendingInputs(CircuitState state, ReplacementMap replacements) {
+    simThread.updatePendingInputs(state, replacements);
   }
 
   private ArrayList<StatusListener> copyStatusListeners() {
