@@ -51,7 +51,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     this.field = null;
     this.labelAttr = null;
     this.fontAttr = null;
-    fontColor = StdAttr.DEFAULT_LABEL_COLOR;
+    fontColor = null;
   }
 
   @Override
@@ -79,7 +79,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     if (field != null && isLabelVisible) {
       final var gfx = context.getGraphics().create();
       final var currentColor = gfx.getColor();
-      if (!context.isPrintView()) gfx.setColor(fontColor);
+      if (!context.isPrintView())
+        gfx.setColor(fontColor == null ? StdAttr.getDefaultLabelColor() : fontColor);
       field.draw(gfx);
       gfx.setColor(currentColor);
       gfx.dispose();
@@ -145,8 +146,10 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     this.valign = valign;
     final var shouldReg = shouldRegister();
     var attrs = comp.getAttributeSet();
-    if (attrs.containsAttribute(StdAttr.LABEL_COLOR))
-      fontColor = attrs.getValue(StdAttr.LABEL_COLOR);
+    fontColor =
+        attrs.containsAttribute(StdAttr.LABEL_COLOR)
+            ? attrs.getValue(StdAttr.LABEL_COLOR)
+            : null;
     if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
       isLabelVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
     if (!wasReg && shouldReg) attrs.addAttributeListener(this);
