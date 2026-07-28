@@ -49,17 +49,17 @@ public class ConstantButton extends FpgaIoInformationContainer {
       case CONSTANT_ZERO -> map.tryConstantMap(selComp.getPin(), 0L);
       case CONSTANT_ONE  -> map.tryConstantMap(selComp.getPin(), -1L);
       case LEAVE_OPEN    -> map.tryOpenMap(selComp.getPin());
-      case CONSTANT_VALUE ->  getConstant(selComp.getPin(), map);
+      case CONSTANT_VALUE ->  getConstant(parent, selComp.getPin(), map);
       default -> false;
     };
   }
 
-  private boolean getConstant(int pin, MapComponent map) {
+  private boolean getConstant(JPanel parent, int pin, MapComponent map) {
     var v = 0L;
     boolean correct;
     do {
       correct = true;
-      final var value = OptionPane.showInputDialog(S.get("FpgaMapSpecConst"));
+      final var value = OptionPane.showInputDialog(parent, S.get("FpgaMapSpecConst"));
       if (value == null) return false;
       if (value.startsWith("0x")) {
         try {
@@ -74,7 +74,7 @@ public class ConstantButton extends FpgaIoInformationContainer {
           correct = false;
         }
       }
-      if (!correct) OptionPane.showMessageDialog(null, S.get("FpgaMapSpecErr"));
+      if (!correct) OptionPane.showMessageDialog(parent, S.get("FpgaMapSpecErr"));
     } while (!correct);
     return map.tryConstantMap(pin, v);
   }
