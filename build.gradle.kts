@@ -18,7 +18,7 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.56.0"
+  id("io.github.ben-manes.versions") version "0.56.0"
   java
   application
   id("com.gradleup.shadow") version "9.6.1"
@@ -905,7 +905,7 @@ tasks {
       it.name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
-    
+
     configProperties["org.checkstyle.google.suppressionfilter.config"] =
         "$projectDir/checkstyle-suppressions.xml"
 
