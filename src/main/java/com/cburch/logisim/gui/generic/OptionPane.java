@@ -115,13 +115,14 @@ public class OptionPane {
   /**
    * Displays an input dialog with the specified message.
    *
+   * @param parentComponent The parent component of the dialog.
    * @param message The message to be displayed.
    *
    * @return The input provided by the user, or null if the GUI is not available.
    */
-  public static String showInputDialog(Object message) {
+  public static String showInputDialog(Component parentComponent, Object message) {
     return Main.hasGui()
-            ? JOptionPane.showInputDialog(message)
+            ? JOptionPane.showInputDialog(parentComponent, message)
             : null;
   }
 
