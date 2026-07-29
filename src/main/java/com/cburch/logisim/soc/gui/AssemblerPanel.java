@@ -29,7 +29,6 @@ import com.cburch.logisim.soc.util.Assembler;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -153,7 +152,6 @@ public class AssemblerPanel extends JPanel
     info.add(Box.createHorizontalStrut(5));
     info.add(helpLabel);
     info.add(Box.createHorizontalGlue());
-    lineLabel.setOpaque(true);
     info.add(lineLabel);
     info.setPreferredSize(new Dimension(40, AppPreferences.getScaled(20)));
     setLayout(new BorderLayout());
@@ -264,7 +262,6 @@ public class AssemblerPanel extends JPanel
   }
 
   private void updateLineNumber() {
-    lineLabel.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
     lineLabel.setText(S.get("RV32imAsmLineIndicator", lineNumber, numberOfLines));
     lineLabel.repaint();
   }
