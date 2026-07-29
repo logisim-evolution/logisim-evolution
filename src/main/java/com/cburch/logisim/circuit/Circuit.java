@@ -526,6 +526,14 @@ public class Circuit {
   // Graphics methods
   //
   public void draw(ComponentDrawContext context, Collection<Component> hidden) {
+    if (context.isPrintView()) {
+      AppPreferences.runWithPrintViewColors(() -> drawComponents(context, hidden));
+    } else {
+      drawComponents(context, hidden);
+    }
+  }
+
+  private void drawComponents(ComponentDrawContext context, Collection<Component> hidden) {
     final var g = context.getGraphics();
     var gCopy = g.create();
     context.setGraphics(gCopy);

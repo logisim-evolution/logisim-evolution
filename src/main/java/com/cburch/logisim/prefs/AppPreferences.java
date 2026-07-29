@@ -54,6 +54,23 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 public class AppPreferences {
+  // Export and print jobs may run off the EDT, so keep their palette override thread-local.
+  private static final ThreadLocal<Boolean> PRINT_VIEW_COLORS = new ThreadLocal<>();
+
+  private static final class PrintViewColorPreference extends PrefMonitorInt {
+    private final int printValue;
+
+    private PrintViewColorPreference(String name, int printValue) {
+      super(name, printValue);
+      this.printValue = printValue;
+    }
+
+    @Override
+    public Integer get() {
+      return Boolean.TRUE.equals(PRINT_VIEW_COLORS.get()) ? printValue : super.get();
+    }
+  }
+
   //
   // LocalePreference
   //
@@ -168,6 +185,20 @@ public class AppPreferences {
 
   private static <E> PrefMonitor<E> create(PrefMonitor<E> monitor) {
     return monitor;
+  }
+
+  public static void runWithPrintViewColors(Runnable action) {
+    final var previous = PRINT_VIEW_COLORS.get();
+    PRINT_VIEW_COLORS.set(true);
+    try {
+      action.run();
+    } finally {
+      if (previous == null) {
+        PRINT_VIEW_COLORS.remove();
+      } else {
+        PRINT_VIEW_COLORS.set(previous);
+      }
+    }
   }
 
   static void firePropertyChange(String property, boolean oldVal, boolean newVal) {
@@ -712,13 +743,15 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
       create(new PrefMonitorInt("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_COLOR =
-      create(new PrefMonitorInt("componentColor", DEFAULT_COMPONENT_COLOR));
+      create(new PrintViewColorPreference("componentColor", DEFAULT_COMPONENT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_SECONDARY_COLOR =
-      create(new PrefMonitorInt("componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
+      create(
+          new PrintViewColorPreference(
+              "componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_GHOST_COLOR =
-      create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
+      create(new PrintViewColorPreference("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
-      create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+      create(new PrintViewColorPreference("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
   public static final PrefMonitor<Integer> TEXT_TOOL_COLOR =
       create(new PrefMonitorInt("textToolColor", DEFAULT_TEXT_TOOL_COLOR));
 
