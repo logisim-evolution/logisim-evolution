@@ -75,6 +75,7 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
     if (!isSame(oldValue, newValue)) {
       value = newValue;
       AppPreferences.getPrefs().put(getIdentifier(), newValue);
+      AppPreferences.firePropertyChange(getIdentifier(), oldValue, newValue);
     }
   }
 }
