@@ -13,6 +13,7 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import com.cburch.contracts.BaseKeyListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.EditorTheme;
 import com.cburch.logisim.gui.icons.BreakpointIcon;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
@@ -82,6 +83,7 @@ public class BreakpointPanel extends JPanel
     debugLines = new HashMap<>();
     localeChanged();
     LocaleManager.addLocaleListener(this);
+    EditorTheme.install(asmWindow);
   }
 
   public void loadProgram(

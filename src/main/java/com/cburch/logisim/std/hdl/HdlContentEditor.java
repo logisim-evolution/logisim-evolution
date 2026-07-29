@@ -15,6 +15,7 @@ import com.cburch.contracts.BaseDocumentListenerContract;
 import com.cburch.hdl.HdlFile;
 import com.cburch.hdl.HdlModel;
 import com.cburch.hdl.HdlModelListener;
+import com.cburch.logisim.gui.generic.EditorTheme;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
@@ -230,6 +231,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     editor.setCodeFoldingEnabled(true);
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(editorListener);
+    EditorTheme.install(editor);
 
     final var sp = new RTextScrollPane(editor);
     sp.setFoldIndicatorEnabled(true);

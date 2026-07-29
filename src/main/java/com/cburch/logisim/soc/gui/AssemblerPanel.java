@@ -16,6 +16,7 @@ import com.cburch.contracts.BaseKeyListenerContract;
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.EditorTheme;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.CompileIcon;
 import com.cburch.logisim.gui.icons.ErrorIcon;
@@ -162,6 +163,7 @@ public class AssemblerPanel extends JPanel
     this.assembler = new Assembler(assembler, debugScrollPane);
     asmWindow.addParser(this.assembler);
     localeChanged();
+    EditorTheme.install(asmWindow);
   }
 
   private void openFile() {
