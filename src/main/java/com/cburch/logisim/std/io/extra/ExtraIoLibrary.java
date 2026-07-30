@@ -37,6 +37,7 @@ public class ExtraIoLibrary extends Library {
         "digitaloscilloscope.gif"),
     new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent"), "plarom.gif"),
     new FactoryDescription(TwoWaySwitch.class, S.getter("twoWaySwitch"), "twoway.gif"),
+    new FactoryDescription(TwoPinLed.class, S.getter("twopinLEDComponent"), "twopinled.gif"),
   };
 
   private List<Tool> tools = null;
