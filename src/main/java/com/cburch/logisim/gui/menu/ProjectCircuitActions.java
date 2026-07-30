@@ -245,13 +245,13 @@ public class ProjectCircuitActions {
     } else if (!proj.getDependencies().canRemove(circuit)) {
       OptionPane.showMessageDialog(
           proj.getFrame(),
-          S.get("circuitRemoveUsedError"),
+          S.get("circuitRemoveUsedError", circuit.getName()),
           S.get("circuitRemoveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
     } else {
       int result = OptionPane.showConfirmDialog(
           proj.getFrame(),
-          S.get("circuitRemoveConfirm"),
+          S.get("circuitRemoveConfirm", circuit.getName()),
           S.get("circuitRemoveConfirmTitle"),
           OptionPane.YES_NO_OPTION);
       if (result == OptionPane.YES_OPTION) {
@@ -264,14 +264,14 @@ public class ProjectCircuitActions {
     if (!proj.getDependencies().canRemove(vhdl)) {
       OptionPane.showMessageDialog(
           proj.getFrame(),
-          S.get("circuitRemoveUsedError"),
-          S.get("circuitRemoveErrorTitle"),
+          S.get("vhdlRemoveUsedError", vhdl.getName()),
+          S.get("vhdlRemoveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
     } else {
       int result = OptionPane.showConfirmDialog(
           proj.getFrame(),
-          S.get("circuitRemoveConfirm"),
-          S.get("circuitRemoveConfirmTitle"),
+          S.get("vhdlRemoveConfirm", vhdl.getName()),
+          S.get("vhdlRemoveConfirmTitle"),
           OptionPane.YES_NO_OPTION);
       if (result == OptionPane.YES_OPTION) {
         proj.doAction(LogisimFileActions.removeVhdl(vhdl));
