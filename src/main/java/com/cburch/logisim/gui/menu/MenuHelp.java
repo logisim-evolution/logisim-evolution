@@ -22,6 +22,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
+import java.net.URL;
 import java.util.Locale;
 import javax.help.HelpSet;
 import javax.help.JHelp;
@@ -31,6 +32,7 @@ import javax.swing.JMenuItem;
 class MenuHelp extends JMenu implements ActionListener {
 
   private static final long serialVersionUID = 1L;
+  private static final String ENGLISH_HELP_SET = "doc/doc_en.hs";
   private final LogisimMenuBar menubar;
   private final JMenuItem tutorial = new JMenuItem();
   private final JMenuItem guide = new JMenuItem();
@@ -88,21 +90,16 @@ class MenuHelp extends JMenu implements ActionListener {
   }
 
   private void loadBroker() {
-    var helpUrl = S.get("helpsetUrl");
-    if (helpUrl == null) {
-      helpUrl = "doc/doc_en.hs";
+    final var resolved = resolveHelpSet(MenuHelp.class.getClassLoader(), S.get("helpsetUrl"));
+    if (resolved == null) {
+      disableHelp();
+      OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpNotFoundError"));
+      return;
     }
-    if (helpSet == null || helpFrame == null || !helpUrl.equals(helpSetUrl)) {
-      final var loader = MenuHelp.class.getClassLoader();
+    if (helpSet == null || helpFrame == null || !resolved.path().equals(helpSetUrl)) {
       try {
-        final var hsUrl = HelpSet.findHelpSet(loader, helpUrl);
-        if (hsUrl == null) {
-          disableHelp();
-          OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpNotFoundError"));
-          return;
-        }
-        helpSetUrl = helpUrl;
-        helpSet = new HelpSet(null, hsUrl);
+        helpSetUrl = resolved.path();
+        helpSet = new HelpSet(null, resolved.url());
         helpComponent = new JHelp(helpSet);
         if (helpFrame == null) {
           helpFrame = new LFrame.Dialog(null);
@@ -125,6 +122,26 @@ class MenuHelp extends JMenu implements ActionListener {
       }
     }
   }
+
+  static ResolvedHelpSet resolveHelpSet(ClassLoader loader, String localizedHelpSet) {
+    final var requested =
+        localizedHelpSet == null || localizedHelpSet.isBlank()
+            ? ENGLISH_HELP_SET
+            : localizedHelpSet;
+    var url = HelpSet.findHelpSet(loader, requested);
+    if (url != null) {
+      return new ResolvedHelpSet(requested, url);
+    }
+    if (!ENGLISH_HELP_SET.equals(requested)) {
+      url = HelpSet.findHelpSet(loader, ENGLISH_HELP_SET);
+      if (url != null) {
+        return new ResolvedHelpSet(ENGLISH_HELP_SET, url);
+      }
+    }
+    return null;
+  }
+
+  record ResolvedHelpSet(String path, URL url) {}
 
   // On Linux this feature depends on Gnome, so may not be
   // working on all distros (i.e. KDE).
