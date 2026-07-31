@@ -231,10 +231,10 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     editor.setCodeFoldingEnabled(true);
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(editorListener);
-    EditorTheme.install(editor);
 
     final var sp = new RTextScrollPane(editor);
     sp.setFoldIndicatorEnabled(true);
+    EditorTheme.install(editor);
 
     add(sp, BorderLayout.CENTER);
     add(buttonsPanel, BorderLayout.SOUTH);
