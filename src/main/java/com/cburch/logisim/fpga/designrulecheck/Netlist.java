@@ -660,6 +660,9 @@ public class Netlist {
             SimpleDrcContainer.MARK_INSTANCE));
     final var points = new HashMap<Location, Integer>();
     for (final var comp : components) {
+      // Probes are intentionally omitted from the generated netlist. Do not
+      // let their one-bit endpoint participate in width validation either.
+      if (comp.getFactory() instanceof Probe) continue;
       for (final var end : comp.getEnds()) {
         final var loc = end.getLocation();
         if (points.containsKey(loc)) {
