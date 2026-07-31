@@ -41,13 +41,13 @@
     <mapID target="mem_guide"           url="de/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="de/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="de/html/guide/mem/mem-menu.html"/>
-    <mapID target="mem_filetabel"       url="de/html/guide/mem/mem-filepanel.html"/>
+    <mapID target="mem_filetabel"       url="en/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="de/html/guide/mem/mem-hex.html"/>  
-    <mapID target="mem_v2raw"           url="de/html/guide/mem/mem-v2raw.html"/>  
-    <mapID target="mem_v3word"          url="de/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte"          url="de/html/guide/mem/mem-v3byte.html"/> 
-    <mapID target="mem_binary"          url="de/html/guide/mem/mem-vbinary.html"/>
-    <mapID target="mem_ascii"           url="de/html/guide/mem/mem-vascii.html"/>
+    <mapID target="mem_v2raw"           url="en/html/guide/mem/mem-v2raw.html"/>
+    <mapID target="mem_v3word"          url="en/html/guide/mem/mem-v3word.html"/>
+    <mapID target="mem_v3byte"          url="en/html/guide/mem/mem-v3byte.html"/>
+    <mapID target="mem_binary"          url="en/html/guide/mem/mem-vbinary.html"/>
+    <mapID target="mem_ascii"           url="en/html/guide/mem/mem-vascii.html"/>
 	<mapID target="test_vector"         url="de/html/guide/test_vector/index.html" />
 	<mapID target="test_vector_window"  url="de/html/guide/test_vector/test_vector_window.html" />
 	<mapID target="test_vector_file_format" url="de/html/guide/test_vector/test_vector_file_format.html" />
