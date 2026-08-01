@@ -140,7 +140,7 @@ public final class Value {
       }
     }
     final var cleaned = sb.toString();
-    
+
     final var radix = radixOfLogString(width, cleaned);
     int offset;
 
@@ -216,7 +216,7 @@ public final class Value {
           // Calculate actual bits needed
           int actualBits = value == 0 ? 1 : 64 - Long.numberOfLeadingZeros(value);
           String reminder = "";
-          
+
           // For hex values, suggest based on number of hex digits * 4 (each hex digit = 4 bits)
           if (radix == 16 && cleaned.length() > 2) {
             int hexDigits = cleaned.length() - 2; // Subtract "0x" prefix
@@ -236,7 +236,7 @@ public final class Value {
             actualBits = octalDigits * 3;
             reminder = " Remember that 0o means octal and each octal digit is 3 bits";
           }
-          
+
           throw new Exception("Too many bits in \"" + t + "\" expected " + w + " bit" + (w != 1 ? "s" : "")
               + (actualBits > 0 ? " did you mean [" + actualBits + "]?" : "") + reminder);
         }
@@ -680,7 +680,7 @@ public final class Value {
     long value = this.value & mask;
     if (unsigned) {
       return new BigInteger(
-        1,
+         1,
           new byte[] {
             (byte) ((value >> 56) & 0xFFL),
             (byte) ((value >> 48) & 0xFFL),

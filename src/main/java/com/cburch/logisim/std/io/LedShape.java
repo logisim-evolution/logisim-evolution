@@ -118,7 +118,7 @@ public class LedShape extends DynamicElement {
   public Element toSvgElement(Document doc) {
     return toSvgElement(doc.createElement("visible-led"));
   }
-  
+
   @Override
   public Element toSvgElement(Element ret) {
     ret = super.toSvgElement(ret);
@@ -127,7 +127,7 @@ public class LedShape extends DynamicElement {
     }
     return ret;
   }
-  
+
   @Override
   public void parseSvgElement(Element elt) {
     super.parseSvgElement(elt);

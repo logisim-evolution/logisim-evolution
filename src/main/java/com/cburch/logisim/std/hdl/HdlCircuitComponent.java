@@ -60,10 +60,10 @@ public abstract class HdlCircuitComponent<C extends HdlContent> extends GenericI
   protected void configureNewInstance(Instance instance) {
     final var content = instance.getAttributeValue(contentAttr);
     final var listener = new HdlCircuitListener(instance);
-  
+
     contentListeners.put(instance, listener);
     content.addHdlModelListener(listener);
-  
+
     instance.addAttributeListener();
     updatePorts(instance);
   }

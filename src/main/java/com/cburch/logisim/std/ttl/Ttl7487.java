@@ -32,7 +32,7 @@ public class Ttl7487 extends AbstractTtlGate {
   * <p>Identifier value must MUST be unique string among all tools.
   */
   public static final String _ID = "7487";
-  
+
   //input data (port number)
   public static final byte A1 = 1;
   public static final byte A2 = 3;
@@ -41,19 +41,19 @@ public class Ttl7487 extends AbstractTtlGate {
   //input control (port number)
   public static final byte B = 5;
   public static final byte C = 0;
-  
+
   //output (port number)
   public static final byte Y1 = 2;
   public static final byte Y2 = 4;
   public static final byte Y3 = 6;
   public static final byte Y4 = 8;
-  
+
   //No Connect (datasheet pins)
   public static final byte NC1 = 4;
   public static final byte NC2 = 11;
-  
+
   public static final byte DELAY = 1;
-  
+
   public Ttl7487() {
     super(
         _ID,
@@ -104,6 +104,6 @@ public class Ttl7487 extends AbstractTtlGate {
       state.setPort(Y3, Value.ERROR, DELAY);
       state.setPort(Y4, Value.ERROR, DELAY);
     }
-    
+
   }
 }

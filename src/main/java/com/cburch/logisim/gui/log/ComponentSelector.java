@@ -305,9 +305,9 @@ public class ComponentSelector extends JTable {
       return option.toString();
     }
   }
-  
-  //Suppress serial warning because TreeNodeRenderer is a UI component and 
-  //is not intended to be serialized or persisted across different JVM versions.
+
+  // Suppress serial warning because TreeNodeRenderer is a UI component and
+  // is not intended to be serialized or persisted across different JVM versions.
   @SuppressWarnings("serial")
   private class TreeNodeRenderer extends DefaultTableCellRenderer implements Icon {
     private TreeNode<?> node;

@@ -34,7 +34,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
   public static final HashSet<String> BYTES = new HashSet<>() {{
       add(".byte");
     }};
-  
+
   public static final HashSet<String> SHORTS = new HashSet<>() {{
       add(".half");
       add(".2byte");

@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public abstract class DotMatrixBaseShape extends DynamicElement {
-  
+
   static final int DEFAULT_SCALE = 4;  // FOR-REVIEW: is this a good value?
   // FOR-REVIEW: should this be somewhere else?
   // TODO: internationalization
@@ -49,7 +49,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
           * DEFAULT_SCALE * ((DotMatrixBase) p.leaf().getFactory()).scaleY
     ));
   }
-  
+
   @Override
   public List<Attribute<?>> getAttributes() {
     return UnmodifiableList.create(
@@ -58,7 +58,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
         }
     );
   }
-  
+
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
@@ -82,7 +82,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
     }
     super.updateValue(attr, value);
   }
-  
+
   public void drawShape(Graphics g, int x, int y, AttributeOption shape, int scaleX, int scaleY) {
     if (DotMatrixBase.SHAPE_SQUARE.equals(shape)) {
       g.fillRect(x, y, scale * scaleX, scale * scaleY);
@@ -106,19 +106,19 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
   public void paintDynamic(Graphics g, CircuitState state) {
     final var onColor = path.leafGetAttributeValue(IoLibrary.ATTR_ON_COLOR);
     final var offColor = path.leafGetAttributeValue(IoLibrary.ATTR_OFF_COLOR);
-  
+
     final var factory = (DotMatrixBase) this.path.leaf().getFactory();
 
     final var scaleX = factory.scaleX;
     final var scaleY = factory.scaleY;
     final var shape = path.leafGetAttributeValue(factory.getAttributeShape());
-    
+
     // FIXME: path.leaf().getInstanceStateImpl() always returns null here
-    
+
     final var instanceState = state != null ? state.getInstanceState(path.leaf()) : null;
     final var data = instanceState != null ? factory.getState(instanceState) : null;
     final var ticks = instanceState != null ? instanceState.getTickCount() : null;
-    
+
     final var rows = this.path.leafGetAttributeValue(factory.getAttributeRows()).getWidth();
     final var cols = this.path.leafGetAttributeValue(factory.getAttributeColumns()).getWidth();
 
@@ -126,7 +126,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
       for (var i = 0; i < cols; i++) {
         int x = bounds.getX() + i * scale * scaleX;
         int y = bounds.getY() + j * scale * scaleY;
-        
+
         if (state == null || data == null) {
           g.setColor(Value.errorColor);
           this.drawShape(g, x, y, shape, scaleX, scaleY);
@@ -154,12 +154,12 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
       GraphicsUtil.switchToWidth(g, 1);
     }
     drawLabel(g);
-    
+
   }
-  
+
   @Override
   public abstract Element toSvgElement(Document doc);
-  
+
   @Override
   public Element toSvgElement(Element ret) {
     ret = super.toSvgElement(ret);
@@ -168,7 +168,7 @@ public abstract class DotMatrixBaseShape extends DynamicElement {
     }
     return ret;
   }
-  
+
   @Override
   public void parseSvgElement(Element elt) {
     super.parseSvgElement(elt);
