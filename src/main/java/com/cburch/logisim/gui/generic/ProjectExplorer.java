@@ -169,8 +169,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
    * Marks the parts of given name the current filter matches.
    */
   private String highlightFilterMatches(String name, boolean selected) {
-    final var words = ((ProjectExplorerModel) getModel()).getFilterWords();
+    final var model = (ProjectExplorerModel) getModel();
+    final var words = model.getFilterWords();
     if (StringUtil.isNullOrEmpty(name) || words.isEmpty()) return name;
+
+    // Only the names matching on their own get marked.
+    if (!model.matchesFilter(name)) return name;
 
     final var marked = markMatchedCharacters(name, words);
     if (marked == null) return name;
@@ -203,9 +207,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   }
 
   /**
-   * Flags every character of given name covered by any of the filter words. Returns {@code null}
-   * when none of the words occurs in the name, which is the case for the elements shown only
-   * because of what their parent or their children matched.
+   * Flags every character of given name covered by any of the filter words. Expects a name that
+   * matches the filter, so that each of the words is bound to be found in it. Returns {@code null}
+   * when the marks cannot be aligned with the name.
    */
   private static boolean[] markMatchedCharacters(String name, List<String> words) {
     final var lowercased = name.toLowerCase();
@@ -214,15 +218,13 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     if (lowercased.length() != name.length()) return null;
 
     final var marked = new boolean[name.length()];
-    var anyFound = false;
     for (final var word : words) {
       // Stepping by one rather than by the word length, as occurrences may overlap each other.
       for (var at = lowercased.indexOf(word); at >= 0; at = lowercased.indexOf(word, at + 1)) {
         Arrays.fill(marked, at, at + word.length(), true);
-        anyFound = true;
       }
     }
-    return anyFound ? marked : null;
+    return marked;
   }
 
   private static String toHtmlColor(Color color) {

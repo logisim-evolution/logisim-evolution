@@ -136,8 +136,12 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     return selfMatch || !visible.isEmpty();
   }
 
-  private boolean nameMatchesFilter(TreeNode node) {
-    final var name = getDisplayName(node);
+  /**
+   * Tells whether given name matches the filter on its own, i.e. contains all of its words. Note
+   * that an element can well be shown while its name does not match, when what matched is its
+   * parent or any of its children (i.e. library name because its content matches).
+   */
+  boolean matchesFilter(String name) {
     if (name == null) return false;
 
     final var lowercased = name.toLowerCase();
@@ -145,6 +149,10 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
       if (!lowercased.contains(word)) return false;
     }
     return true;
+  }
+
+  private boolean nameMatchesFilter(TreeNode node) {
+    return matchesFilter(getDisplayName(node));
   }
 
   private static String getDisplayName(TreeNode node) {
