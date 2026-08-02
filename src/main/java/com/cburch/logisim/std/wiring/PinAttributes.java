@@ -36,7 +36,7 @@ class PinAttributes extends ProbeAttributes {
   AttributeOption behavior = Pin.SIMPLE;
   Long initialValue = 0L;
 
-  public PinAttributes() { }
+  public PinAttributes() {}
 
   @Override
   public List<Attribute<?>> getAttributes() {

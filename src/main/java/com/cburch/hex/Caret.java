@@ -275,8 +275,9 @@ public class Caret {
           }
         }
 
-        case '\u0008' ->
+        case '\u0008' -> {
           movecursor(KeyEvent.VK_LEFT, shift);
+        }
         case '\u007f' -> {
           if (ctrlx) {
             movecursor(KeyEvent.VK_PAGE_UP, shift);

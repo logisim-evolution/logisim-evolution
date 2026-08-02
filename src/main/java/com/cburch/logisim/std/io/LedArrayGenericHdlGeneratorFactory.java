@@ -80,17 +80,20 @@ public class LedArrayGenericHdlGeneratorFactory {
     final var nrRowAddressBits = getNrOfBitsRequired(nrOfRows);
     final var nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
     switch (typeId) {
-      case LedArrayDriving.LED_DEFAULT:
+      case LedArrayDriving.LED_DEFAULT -> {
         return LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayOutputs, identifier, pinNr);
-      case LedArrayDriving.LED_ROW_SCANNING:
+      }
+      case LedArrayDriving.LED_ROW_SCANNING -> {
         return (pinNr < nrRowAddressBits)
-          ? LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowAddress, identifier, pinNr)
-          : LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnOutputs, identifier, pinNr - nrRowAddressBits);
-      case LedArrayDriving.LED_COLUMN_SCANNING:
+            ? LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowAddress, identifier, pinNr)
+            : LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnOutputs, identifier, pinNr - nrRowAddressBits);
+      }
+      case LedArrayDriving.LED_COLUMN_SCANNING -> {
         return (pinNr < nrColumnAddressBits)
             ? LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnAddress, identifier, pinNr)
             : LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowOutputs, identifier, pinNr - nrColumnAddressBits);
-      case LedArrayDriving.RGB_DEFAULT: {
+      }
+      case LedArrayDriving.RGB_DEFAULT -> {
         final var index = pinNr % 3;
         final var col = pinNr / 3;
         return switch (col) {
@@ -100,11 +103,12 @@ public class LedArrayGenericHdlGeneratorFactory {
           default -> "";
         };
       }
-      case LedArrayDriving.RGB_ROW_SCANNING: {
+      case LedArrayDriving.RGB_ROW_SCANNING -> {
         final var index = (pinNr - nrRowAddressBits) % nrOfColumns;
         final var col = (pinNr - nrRowAddressBits) / nrOfColumns;
-        if (pinNr < nrRowAddressBits)
+        if (pinNr < nrRowAddressBits) {
           return LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowAddress, identifier, pinNr);
+        }
         return switch (col) {
           case 0 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnRedOutputs, identifier, index);
           case 1 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnGreenOutputs, identifier, index);
@@ -112,11 +116,12 @@ public class LedArrayGenericHdlGeneratorFactory {
           default -> "";
         };
       }
-      case LedArrayDriving.RGB_COLUMN_SCANNING: {
+      case LedArrayDriving.RGB_COLUMN_SCANNING -> {
         final var index = (pinNr - nrColumnAddressBits) % nrOfRows;
         final var col = (pinNr - nrColumnAddressBits) / nrOfRows;
-        if (pinNr < nrColumnAddressBits)
+        if (pinNr < nrColumnAddressBits) {
           return LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnAddress, identifier, pinNr);
+        }
         return switch (col) {
           case 0 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowRedOutputs, identifier, index);
           case 1 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowGreenOutputs, identifier, index);
