@@ -104,6 +104,8 @@ public class AttrTable extends JPanel implements LocaleListener {
   private String scrollFinalValue = null;
   private AttrTableModelRow scrollRow = null;
   private Timer scrollTimer = null;
+  private long lastWheelTime = 0;
+  private static final long WHEEL_THROTTLE_MS = 100;
 
   private void handleMouseWheel(MouseWheelEvent e) {
     final var rowIdx = table.rowAtPoint(e.getPoint());
@@ -115,11 +117,15 @@ public class AttrTable extends JPanel implements LocaleListener {
     final var row = attrModel.getRow(rowIdx);
     if (row == null || !row.isValueEditable()) return;
 
+    final var now = System.currentTimeMillis();
+    if (now - lastWheelTime < WHEEL_THROTTLE_MS) return;
+    lastWheelTime = now;
+
     final var editorComp = row.getEditor(parent);
-    if (editorComp instanceof JComboBox<?> box) {
+    if (editorComp instanceof JComboBox<?> box && !box.isEditable()) {
       final var count = box.getItemCount();
       if (count <= 1) return;
-      final var rotation = e.getWheelRotation();
+      final var rotation = Integer.signum(e.getWheelRotation());
       if (rotation == 0) return;
 
       int currentIdx = box.getSelectedIndex();
@@ -155,7 +161,7 @@ public class AttrTable extends JPanel implements LocaleListener {
       return;
     }
 
-    final var rotation = e.getWheelRotation();
+    final var rotation = Integer.signum(e.getWheelRotation());
     if (rotation == 0) return;
 
     final var label = row.getLabel().toLowerCase();
