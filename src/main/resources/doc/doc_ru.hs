@@ -41,7 +41,7 @@
      *  The toolbar has a back arrow, a forward arrow, and
      *  a home button that has a user-defined image.
    -->
-   <presentation default=true>
+    <presentation default="true">
        <name>main window</name>
        <location x="200" y="10" />
        <toolbar>

@@ -13,7 +13,6 @@ doc_de.hs: XML is not well-formed
 doc_en.hs: XML is not well-formed
 doc_fr.hs: XML is not well-formed
 doc_pt.hs: XML is not well-formed
-doc_ru.hs: XML is not well-formed
 doc_zh.hs: XML is not well-formed
 en/contents.xml: target 'Tests_for_doc' has no mapID in map_en.jhm
 en/contents.xml: target 'Tests_for_doc' has no mapID in map_pt.jhm
@@ -86,14 +85,10 @@ map_pt.jhm: mapID 'wiring_const01' points to missing file pt/html/libs/wiring/co
 map_pt.jhm: mapID 'wiring_notconnect' points to missing file pt/html/libs/wiring/notconnect.html
 map_pt.jhm: mapID 'wiring_transist' points to missing file pt/html/libs/wiring/transist.html
 map_pt.jhm: mapID 'wiring_transmis' points to missing file pt/html/libs/wiring/transmis.html
-map_ru.jhm: duplicate mapID 'icon_controlled'
-map_ru.jhm: duplicate mapID 'socbus_icon'
-map_ru.jhm: duplicate mapID 'up_icon'
 map_zh.jhm: duplicate mapID 'icon_controlled'
 map_zh.jhm: duplicate mapID 'socbus_icon'
 map_zh.jhm: duplicate mapID 'up_icon'
 map_zh.jhm: mapID 'io_Port_IO' points to missing file zh/html/libs/io/Port_io.html
 map_zh.jhm: mapID 'io_Repetar' points to missing file zh/html/libs/io/repetar.html
-ru/contents.xml: target 'Tests_for_doc' has no mapID in map_ru.jhm
 zh/contents.xml: target 'Tests_for_doc' has no mapID in map_zh.jhm
 zh/contents.xml: target 'io_videorgb' has no mapID in map_zh.jhm
