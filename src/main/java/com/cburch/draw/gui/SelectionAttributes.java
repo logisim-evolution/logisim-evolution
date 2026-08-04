@@ -135,6 +135,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
         for (var i = 0; i < attrs.length; i++) {
           if (attrs[i] == attr) {
             values[i] = getSelectionValue(attr, selected.keySet());
+            fireAttributeValueChanged(attr, values[i], null);
           }
         }
       }

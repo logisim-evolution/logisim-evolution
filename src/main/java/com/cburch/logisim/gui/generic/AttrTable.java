@@ -141,6 +141,7 @@ public class AttrTable extends JPanel implements LocaleListener {
         row.setValue(parent, newItem);
       } catch (Exception ignored) {
       }
+      table.repaint();
       return;
     }
 
@@ -190,6 +191,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     } catch (Exception ignored) {
     }
 
+    table.repaint();
     scrollTimer.restart();
   }
 
