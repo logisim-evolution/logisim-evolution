@@ -139,7 +139,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     if (model.isFiltering()) {
       expandAllRows();
     } else if (unfilteredExpandedPaths != null) {
-      for (final var path : unfilteredExpandedPaths) expandPath(path);
+      for (final var path : unfilteredExpandedPaths) {
+        expandPath(path);
+      }
       unfilteredExpandedPaths = null;
     }
   }
@@ -153,7 +155,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     if (isExpanded(rootPath)) result.add(rootPath);
     final var descendants = getExpandedDescendants(rootPath);
     if (descendants != null) {
-      while (descendants.hasMoreElements()) result.add(descendants.nextElement());
+      while (descendants.hasMoreElements()) {
+        result.add(descendants.nextElement());
+      }
     }
     return result;
   }
@@ -188,7 +192,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     while (pos < name.length()) {
       final var runStart = pos;
       final var marks = marked[pos];
-      while (pos < name.length() && marked[pos] == marks) pos++;
+      while (pos < name.length() && marked[pos] == marks) {
+        pos++;
+      }
 
       final var run = escapeHtml(name.substring(runStart, pos));
       if (marks) {
