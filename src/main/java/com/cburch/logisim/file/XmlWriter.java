@@ -218,6 +218,7 @@ final class XmlWriter {
     Source src = new DOMSource(doc);
     Result dest = new StreamResult(out);
     tf.transform(src, dest);
+    out.flush();
   }
 
   void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifiedOnly) {

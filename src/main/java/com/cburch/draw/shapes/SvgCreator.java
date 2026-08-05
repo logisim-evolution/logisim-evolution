@@ -102,6 +102,26 @@ public final class SvgCreator {
     return elt;
   }
 
+  public static Element createImage(Document doc, ImageShape image) {
+    final var elt = doc.createElement("image");
+    elt.setAttribute("x", "" + image.getX());
+    elt.setAttribute("y", "" + image.getY());
+    elt.setAttribute("width", "" + Math.max(1, image.getWidth()));
+    elt.setAttribute("height", "" + Math.max(1, image.getHeight()));
+    final var scale = image.getValue(ImageShape.SCALE_ATTR);
+    if (scale != null) {
+      elt.setAttribute("scale", scale.getValue().toString());
+    }
+    var src = image.getImageSource();
+    if (src != null && !src.isBlank()) {
+      src = src.replaceAll("[\\r\\n]+", "");
+      elt.setAttribute("href", src);
+      elt.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+      elt.setAttribute("xlink:href", src);
+    }
+    return elt;
+  }
+
   public static Element createText(Document doc, Text text) {
     final var elt = doc.createElement("text");
     final var loc = text.getLocation();
