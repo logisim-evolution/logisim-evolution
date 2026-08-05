@@ -10,6 +10,7 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseTreeModelListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -24,6 +25,7 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.ColorUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 
@@ -35,6 +37,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
@@ -44,8 +49,11 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -67,11 +75,15 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   private Listener listener = null;
   private Tool haloedTool = null;
 
+  /** Expansion state the tree had before filtering started, to be brought back once it is over. */
+  private List<TreePath> unfilteredExpandedPaths = null;
+
   public ProjectExplorer(Project proj, boolean showMouseTools) {
     super();
     this.proj = proj;
 
     setModel(new ProjectExplorerModel(proj, this, showMouseTools));
+    getModel().addTreeModelListener(myListener);
     setRootVisible(true);
     addMouseListener(myListener);
     ToolTipManager.sharedInstance().registerComponent(this);
@@ -109,6 +121,124 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   public void updateStructure() {
     ProjectExplorerModel model = (ProjectExplorerModel) getModel();
     model.updateStructure();
+  }
+
+  /**
+   * Shows only the elements matching filter texts, Matching is done on component and library names,
+   * and is case insensitive. Filter treats each word separately so word order does not matter
+   * as long as all words are present in the subject (i.e. "foo bar" and "bar foo" would both match
+   * the "foo and bar" name). Empty text disables filtering and and brings the whole tree back
+   * along with the expansion state it had before filtering started.
+   */
+  public void setFilterText(String text) {
+    final var model = (ProjectExplorerModel) getModel();
+    if (!model.isFiltering()) unfilteredExpandedPaths = getExpandedPaths();
+
+    model.setFilter(text);
+
+    if (model.isFiltering()) {
+      expandAllRows();
+    } else if (unfilteredExpandedPaths != null) {
+      for (final var path : unfilteredExpandedPaths) {
+        expandPath(path);
+      }
+      unfilteredExpandedPaths = null;
+    }
+  }
+
+  private List<TreePath> getExpandedPaths() {
+    final var root = getModel().getRoot();
+    if (root == null) return null;
+
+    final var result = new ArrayList<TreePath>();
+    final var rootPath = new TreePath(root);
+    if (isExpanded(rootPath)) result.add(rootPath);
+    final var descendants = getExpandedDescendants(rootPath);
+    if (descendants != null) {
+      while (descendants.hasMoreElements()) {
+        result.add(descendants.nextElement());
+      }
+    }
+    return result;
+  }
+
+  private void expandAllRows() {
+    // Row count grows as rows get expanded, so this walks down the whole (filtered) tree.
+    for (var row = 0; row < getRowCount(); row++) {
+      expandRow(row);
+    }
+  }
+
+  /**
+   * Marks the parts of given name the current filter matches.
+   */
+  private String highlightFilterMatches(String name, boolean selected) {
+    final var model = (ProjectExplorerModel) getModel();
+    final var words = model.getFilterWords();
+    if (StringUtil.isNullOrEmpty(name) || words.isEmpty()) return name;
+
+    // Only the names matching on their own get marked.
+    if (!model.matchesFilter(name)) return name;
+
+    final var marked = markMatchedCharacters(name, words);
+    if (marked == null) return name;
+    final var background =
+        UIManager.getColor(selected ? "Tree.textBackground" : "Tree.selectionBackground");
+    if (background == null) return name;
+    final var foreground = ColorUtil.getComplementaryBlackWhite(background);
+
+    final var html = new StringBuilder("<html>");
+    var pos = 0;
+    while (pos < name.length()) {
+      final var runStart = pos;
+      final var marks = marked[pos];
+      while (pos < name.length() && marked[pos] == marks) {
+        pos++;
+      }
+
+      final var run = escapeHtml(name.substring(runStart, pos));
+      if (marks) {
+        html.append("<span style=\"background-color:")
+            .append(toHtmlColor(background))
+            .append(";color:")
+            .append(toHtmlColor(foreground))
+            .append("\">")
+            .append(run)
+            .append("</span>");
+      } else {
+        html.append(run);
+      }
+    }
+    return html.append("</html>").toString();
+  }
+
+  /**
+   * Flags every character of given name covered by any of the filter words. Expects a name that
+   * matches the filter, so that each of the words is bound to be found in it. Returns {@code null}
+   * when the marks cannot be aligned with the name.
+   */
+  private static boolean[] markMatchedCharacters(String name, List<String> words) {
+    final var lowercased = name.toLowerCase();
+    // Safety check - lowercasing grows the text in some languages (Turkish, Lithuanian),
+    // that would misalign the marks. Low impact for now, still…
+    if (lowercased.length() != name.length()) return null;
+
+    final var marked = new boolean[name.length()];
+    for (final var word : words) {
+      // Stepping by one rather than by the word length, as occurrences may overlap each other.
+      for (var at = lowercased.indexOf(word); at >= 0; at = lowercased.indexOf(word, at + 1)) {
+        Arrays.fill(marked, at, at + word.length(), true);
+      }
+    }
+    return marked;
+  }
+
+  private static String toHtmlColor(Color color) {
+    return String.format("#%06X", color.getRGB() & 0xFFFFFF);
+  }
+
+  private static String escapeHtml(String text) {
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 
   @Override
@@ -180,7 +310,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
                     : (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
           }
           label.setFont(viewed ? boldFont : plainFont);
-          label.setText(viewed ? tool.getDisplayName() + " ●" : tool.getDisplayName());
+          label.setText(
+              highlightFilterMatches(
+                  viewed ? tool.getDisplayName() + " ●" : tool.getDisplayName(), selected));
           label.setIcon(new ToolIcon(tool));
           label.setToolTipText(tool.getDescription());
 
@@ -204,14 +336,19 @@ public class ProjectExplorer extends JTree implements LocaleListener {
             text = DIRTY_MARKER_LOCAL + baseName;
           }
 
-          ((JLabel) ret).setText(text);
+          ((JLabel) ret).setText(highlightFilterMatches(text, selected));
         }
       }
       return ret;
     }
   }
 
-  private class MyListener implements BaseMouseListenerContract, TreeSelectionListener, ProjectListener, PropertyChangeListener {
+  private class MyListener
+      implements BaseMouseListenerContract,
+          BaseTreeModelListenerContract,
+          TreeSelectionListener,
+          ProjectListener,
+          PropertyChangeListener {
     private void checkForPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
         final var path = getPathForLocation(e.getX(), e.getY());
@@ -275,6 +412,18 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.GATE_SHAPE.isSource(event)) {
         ProjectExplorer.this.repaint();
+      }
+    }
+
+    //
+    // TreeModelListener methods
+    //
+    @Override
+    public void treeStructureChanged(TreeModelEvent event) {
+      // Tree struct change collapses the tree but while filtering the change
+      // is expected so we enforce tree expansion to keep all matches visible.
+      if (((ProjectExplorerModel) getModel()).isFiltering()) {
+        SwingUtilities.invokeLater(ProjectExplorer.this::expandAllRows);
       }
     }
 
