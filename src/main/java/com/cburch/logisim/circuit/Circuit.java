@@ -28,6 +28,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -373,8 +374,7 @@ public class Circuit {
   public void annotate(boolean clearExistingLabels, boolean insideLibrary) {
     /* If I am already completely annotated, return */
     if (isAnnotated) {
-      // FIXME: hardcoded string
-      Reporter.report.addInfo("Nothing to do!");
+      Reporter.report.addInfo(S.get("annotateNoAction"));
       return;
     }
     final var comps = new TreeSet<Component>(Location.CompareVertical);
@@ -389,14 +389,20 @@ public class Circuit {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if (!label.isEmpty()) {
-          if (labelNames.contains(CircuitLabelValidator.labelKey(label, labelIdentity))) {
+          var removeLabel = false;
+          if (!CorrectLabel.isCorrectLabel(label)) {
+            removeLabel = true;
+            Reporter.report.addSevereWarning(S.fmt("annotateRemInvalid", this.getName(), label));
+          } else if (labelNames.contains(CircuitLabelValidator.labelKey(label, labelIdentity))) {
+            removeLabel = true;
+            Reporter.report.addSevereWarning(S.fmt("annotateRemDuplicate", this.getName(), label));
+          } else {
+            labelNames.add(CircuitLabelValidator.labelKey(label, labelIdentity));
+          }
+          if (removeLabel) {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
-            // FIXME: hardcoded string
-            Reporter.report.addSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
-          } else {
-            labelNames.add(CircuitLabelValidator.labelKey(label, labelIdentity));
           }
         }
       }
@@ -404,8 +410,7 @@ public class Circuit {
       if (comp.getFactory().requiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
-          // FIXME: hardcoded string
-          Reporter.report.addInfo("Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
+          Reporter.report.addInfo(S.fmt("annotateCleared", this.getName(), comp.getAttributeSet().getValue(StdAttr.LABEL)));
           final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
           act.set(comp, StdAttr.LABEL, "");
           proj.doAction(act);
@@ -429,34 +434,24 @@ public class Circuit {
       final var componentName = getAnnotationName(comp);
       if (!labelers.containsKey(componentName) || !labelers.get(componentName).hasNext(this)) {
         // This should never happen!
-        // FIXME: hardcoded string
-        Reporter.report.addFatalError(
-            "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
+        Reporter.report.addFatalError(S.get("annotateError"));
         return;
       } else {
         final var newLabel = labelers.get(componentName).getNext(this, comp.getFactory());
         final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, newLabel);
         proj.doAction(act);
-        Reporter.report.addInfo("Labeled " + this.getName() + "/" + newLabel);
+        Reporter.report.addInfo(S.fmt("annotateLabeled", this.getName(), newLabel));
         if (comp.getFactory() instanceof Pin) {
           sizeMightHaveChanged = true;
         }
       }
     }
     if (!comps.isEmpty() && insideLibrary) {
-      // FIXME: hardcoded string
-      Reporter.report.addSevereWarning(
-          "Annotated the circuit \""
-              + this.getName()
-              + "\" which is inside a library these changes will not be saved!");
+      Reporter.report.addSevereWarning(S.fmt("annotateInLib", this.getName()));
     }
     if (sizeMightHaveChanged)
-      // FIXME: hardcoded string
-      Reporter.report.addSevereWarning(
-          "Annotated one ore more pins in circuit \""
-              + this.getName()
-              + "\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
+      Reporter.report.addSevereWarning(S.fmt("annotateSizeChange", this.getName()));
     isAnnotated = true;
     /* Now annotate all circuits below me */
     for (final var subs : subCircuits) {
