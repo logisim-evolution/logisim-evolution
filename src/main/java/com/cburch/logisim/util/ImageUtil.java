@@ -219,12 +219,24 @@ public class ImageUtil {
 
     // Start flood fill from all four outer borders
     for (var x = 0; x < w; x++) {
-      if (isWhite.test(x, 0)) { visited[x][0] = true; queue.add(new int[]{x, 0}); }
-      if (isWhite.test(x, h - 1)) { visited[x][h - 1] = true; queue.add(new int[]{x, h - 1}); }
+      if (isWhite.test(x, 0)) {
+        visited[x][0] = true;
+        queue.add(new int[]{x, 0});
+      }
+      if (isWhite.test(x, h - 1)) {
+        visited[x][h - 1] = true;
+        queue.add(new int[]{x, h - 1});
+      }
     }
     for (var y = 0; y < h; y++) {
-      if (isWhite.test(0, y) && !visited[0][y]) { visited[0][y] = true; queue.add(new int[]{0, y}); }
-      if (isWhite.test(w - 1, y) && !visited[w - 1][y]) { visited[w - 1][y] = true; queue.add(new int[]{w - 1, y}); }
+      if (isWhite.test(0, y) && !visited[0][y]) {
+        visited[0][y] = true;
+        queue.add(new int[]{0, y});
+      }
+      if (isWhite.test(w - 1, y) && !visited[w - 1][y]) {
+        visited[w - 1][y] = true;
+        queue.add(new int[]{w - 1, y});
+      }
     }
 
     final int[] dx = {0, 0, 1, -1};
