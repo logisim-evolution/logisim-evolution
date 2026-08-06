@@ -299,6 +299,26 @@ public class ImageUtil {
     return out;
   }
 
+  public static BufferedImage toGrayscale(BufferedImage src) {
+    if (src == null) return null;
+    final var w = src.getWidth();
+    final var h = src.getHeight();
+    final var out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        final var rgb = src.getRGB(x, y);
+        final var a = (rgb >> 24) & 0xFF;
+        final var r = (rgb >> 16) & 0xFF;
+        final var g = (rgb >> 8) & 0xFF;
+        final var b = rgb & 0xFF;
+        final var gray = (int) (0.2126 * r + 0.7152 * g + 0.0722 * b);
+        final var newRgb = (a << 24) | (gray << 16) | (gray << 8) | gray;
+        out.setRGB(x, y, newRgb);
+      }
+    }
+    return out;
+  }
+
   public static BufferedImage toBufferedImage(java.awt.Image img) {
     if (img == null) return null;
     if (img instanceof BufferedImage b) return enforceMaxDimensions(b);

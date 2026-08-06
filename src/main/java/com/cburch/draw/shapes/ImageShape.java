@@ -72,12 +72,22 @@ public class ImageShape extends Rectangular {
     }
 
     if (cachedImage != null) {
+      var drawImg = cachedImage;
+      if (g.getClass().getName().contains("ComponentDrawContext")) {
+        try {
+          final var m = g.getClass().getMethod("isPrintView");
+          if ((Boolean) m.invoke(g)) {
+            drawImg = ImageUtil.toGrayscale(cachedImage);
+          }
+        } catch (Exception ignored) {
+        }
+      }
       final var scaleOpt = scale == null ? "fit" : (String) scale.getValue();
       if ("stretch".equals(scaleOpt)) {
-        g.drawImage(cachedImage, x, y, w, h, null);
+        g.drawImage(drawImg, x, y, w, h, null);
       } else if ("cover".equals(scaleOpt)) {
-        final var imgW = cachedImage.getWidth();
-        final var imgH = cachedImage.getHeight();
+        final var imgW = drawImg.getWidth();
+        final var imgH = drawImg.getHeight();
         final var scaleFactor = Math.max((double) w / imgW, (double) h / imgH);
         final var targetW = Math.max(1, (int) (imgW * scaleFactor));
         final var targetH = Math.max(1, (int) (imgH * scaleFactor));
@@ -85,17 +95,17 @@ public class ImageShape extends Rectangular {
         final var targetY = y + (h - targetH) / 2;
         final var oldClip = g.getClip();
         g.clipRect(x, y, w, h);
-        g.drawImage(cachedImage, targetX, targetY, targetW, targetH, null);
+        g.drawImage(drawImg, targetX, targetY, targetW, targetH, null);
         g.setClip(oldClip);
       } else { // fit — preserve aspect ratio
-        final var imgW = cachedImage.getWidth();
-        final var imgH = cachedImage.getHeight();
+        final var imgW = drawImg.getWidth();
+        final var imgH = drawImg.getHeight();
         final var scaleFactor = Math.min((double) w / imgW, (double) h / imgH);
         final var targetW = Math.max(1, (int) (imgW * scaleFactor));
         final var targetH = Math.max(1, (int) (imgH * scaleFactor));
         final var targetX = x + (w - targetW) / 2;
         final var targetY = y + (h - targetH) / 2;
-        g.drawImage(cachedImage, targetX, targetY, targetW, targetH, null);
+        g.drawImage(drawImg, targetX, targetY, targetW, targetH, null);
       }
     } else {
       g.setColor(Color.LIGHT_GRAY);
