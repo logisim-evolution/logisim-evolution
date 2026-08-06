@@ -212,12 +212,13 @@ public class Image extends InstanceFactory {
     final var img = attrs.getCachedImage();
 
     if (img != null) {
+      final var drawImg = painter.isPrintView() ? ImageUtil.toGrayscale(img) : img;
       final var scaleOpt = attrs.getScale() == null ? "fit" : (String) attrs.getScale().getValue();
       if ("stretch".equals(scaleOpt)) {
-        g.drawImage(img, 0, 0, w, h, null);
+        g.drawImage(drawImg, 0, 0, w, h, null);
       } else if ("cover".equals(scaleOpt)) {
-        final var imgW = img.getWidth();
-        final var imgH = img.getHeight();
+        final var imgW = drawImg.getWidth();
+        final var imgH = drawImg.getHeight();
         final var scale = Math.max((double) w / imgW, (double) h / imgH);
         final var targetW = Math.max(1, (int) (imgW * scale));
         final var targetH = Math.max(1, (int) (imgH * scale));
@@ -225,17 +226,17 @@ public class Image extends InstanceFactory {
         final var targetY = (h - targetH) / 2;
         final var oldClip = g.getClip();
         g.clipRect(0, 0, w, h);
-        g.drawImage(img, targetX, targetY, targetW, targetH, null);
+        g.drawImage(drawImg, targetX, targetY, targetW, targetH, null);
         g.setClip(oldClip);
       } else { // fit — preserve aspect ratio
-        final var imgW = img.getWidth();
-        final var imgH = img.getHeight();
+        final var imgW = drawImg.getWidth();
+        final var imgH = drawImg.getHeight();
         final var scale = Math.min((double) w / imgW, (double) h / imgH);
         final var targetW = Math.max(1, (int) (imgW * scale));
         final var targetH = Math.max(1, (int) (imgH * scale));
         final var targetX = (w - targetW) / 2;
         final var targetY = (h - targetH) / 2;
-        g.drawImage(img, targetX, targetY, targetW, targetH, null);
+        g.drawImage(drawImg, targetX, targetY, targetW, targetH, null);
       }
     } else {
       g.setColor(Color.LIGHT_GRAY);
