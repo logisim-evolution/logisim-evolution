@@ -557,6 +557,8 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
   public static final PrefMonitor<Boolean> SuppressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
+  public static final PrefMonitor<Boolean> IMAGE_COPYRIGHT_WARNED =
+      create(new PrefMonitorBoolean("imageCopyrightWarned", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
   //file preferences

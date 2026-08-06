@@ -104,6 +104,14 @@ public final class SvgCreator {
 
   public static Element createImage(Document doc, ImageShape image) {
     final var elt = doc.createElement("image");
+    final var attr = image.getAttribution();
+    if (attr != null && !attr.isBlank()) {
+      elt.setAttribute("attribution", attr);
+    }
+    final var license = image.getValue(ImageShape.LICENSE_ATTR);
+    if (license != null) {
+      elt.setAttribute("license", license.getValue().toString());
+    }
     elt.setAttribute("x", "" + image.getX());
     elt.setAttribute("y", "" + image.getY());
     elt.setAttribute("width", "" + Math.max(1, image.getWidth()));
@@ -116,8 +124,6 @@ public final class SvgCreator {
     if (src != null && !src.isBlank()) {
       src = src.replaceAll("[\\r\\n]+", "");
       elt.setAttribute("href", src);
-      elt.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-      elt.setAttribute("xlink:href", src);
     }
     return elt;
   }

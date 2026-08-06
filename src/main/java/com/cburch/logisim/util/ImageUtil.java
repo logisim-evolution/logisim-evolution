@@ -9,6 +9,9 @@
 
 package com.cburch.logisim.util;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import static com.cburch.logisim.std.Strings.S;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.image.BufferedImage;
@@ -34,6 +37,37 @@ public class ImageUtil {
 
   private ImageUtil() {
     // static
+  }
+
+  public static void checkAndShowCopyrightDisclaimer(Component parent) {
+    if (AppPreferences.IMAGE_COPYRIGHT_WARNED.getBoolean()) {
+      return;
+    }
+
+    final var parts = S.get("imageCopyrightDialogMessage").split("\n\n");
+    final var msgLabel = new javax.swing.JLabel(
+        "<html><center>"
+        + "<b>" + parts[0] + "</b>"
+        + "<br><br>"
+        + "<span style='font-weight: normal;'>" + (parts.length > 1 ? parts[1] : "") + "</span>"
+        + "<br><br>"
+        + "</center></html>");
+
+    final var dontShowCheckBox = new javax.swing.JCheckBox(S.get("imageCopyrightDontShowAgain"));
+    dontShowCheckBox.setFont(dontShowCheckBox.getFont().deriveFont(java.awt.Font.PLAIN));
+
+    final var checkPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 10));
+    checkPanel.add(dontShowCheckBox);
+
+    com.cburch.logisim.gui.generic.OptionPane.showMessageDialog(
+        parent,
+        new Object[] { msgLabel, checkPanel },
+        S.get("imageCopyrightDialogTitle"),
+        com.cburch.logisim.gui.generic.OptionPane.INFORMATION_MESSAGE);
+
+    if (dontShowCheckBox.isSelected()) {
+      AppPreferences.IMAGE_COPYRIGHT_WARNED.set(true);
+    }
   }
 
   /**

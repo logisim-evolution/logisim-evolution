@@ -22,12 +22,12 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.ImageUtil;
+import com.cburch.logisim.util.StringUtil;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -45,6 +45,40 @@ public class Image extends InstanceFactory {
           new AttributeOption("stretch", "stretch", S.getter("imageScaleStretchOpt")),
           new AttributeOption("cover", "cover", S.getter("imageScaleCoverOpt")),
       });
+
+  public static final AttributeOption LICENSE_UNSPECIFIED = new AttributeOption("Unspecified", S.getter("imageLicenseUnspecifiedOpt"));
+  public static final AttributeOption LICENSE_PUBLIC_DOMAIN = new AttributeOption("Public Domain / CC0", StringUtil.constantGetter("Public Domain / CC0"));
+  public static final AttributeOption LICENSE_CC_BY = new AttributeOption("CC BY (Attribution)", StringUtil.constantGetter("CC BY (Attribution)"));
+  public static final AttributeOption LICENSE_CC_BY_SA = new AttributeOption("CC BY-SA (Attribution-ShareAlike)", StringUtil.constantGetter("CC BY-SA (Attribution-ShareAlike)"));
+  public static final AttributeOption LICENSE_CC_BY_NC = new AttributeOption("CC BY-NC (NonCommercial)", StringUtil.constantGetter("CC BY-NC (NonCommercial)"));
+  public static final AttributeOption LICENSE_CC_BY_ND = new AttributeOption("CC BY-ND (NoDerivatives)", StringUtil.constantGetter("CC BY-ND (NoDerivatives)"));
+  public static final AttributeOption LICENSE_FAIR_USE = new AttributeOption("Fair Use / Educational", StringUtil.constantGetter("Fair Use / Educational"));
+  public static final AttributeOption LICENSE_PROPRIETARY = new AttributeOption("Proprietary / Copyrighted", StringUtil.constantGetter("Proprietary / Copyrighted"));
+  public static final AttributeOption LICENSE_OTHER = new AttributeOption("Other", S.getter("imageLicenseOtherOpt"));
+
+
+
+  public static final Attribute<AttributeOption> ATTR_LICENSE = Attributes.forOption(
+      "license",
+      S.getter("imageLicenseAttr"),
+      new AttributeOption[] {
+          LICENSE_UNSPECIFIED,
+          LICENSE_PUBLIC_DOMAIN,
+          LICENSE_CC_BY,
+          LICENSE_CC_BY_SA,
+          LICENSE_CC_BY_NC,
+          LICENSE_CC_BY_ND,
+          LICENSE_FAIR_USE,
+          LICENSE_PROPRIETARY,
+          LICENSE_OTHER
+      });
+
+  public static final Attribute<String> ATTR_ATTRIBUTION = Attributes.forString(
+      "attribution",
+      S.getter("imageAttributionAttr"));
+
+
+
 
   public static final Image FACTORY = new Image();
 

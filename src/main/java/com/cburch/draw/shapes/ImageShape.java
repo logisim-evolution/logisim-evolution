@@ -34,10 +34,14 @@ public class ImageShape extends Rectangular {
   public static final Attribute<Integer> WIDTH_ATTR = Image.ATTR_WIDTH;
   public static final Attribute<Integer> HEIGHT_ATTR = Image.ATTR_HEIGHT;
   public static final Attribute<AttributeOption> SCALE_ATTR = Image.ATTR_SCALE;
+  public static final Attribute<AttributeOption> LICENSE_ATTR = Image.ATTR_LICENSE;
+  public static final Attribute<String> ATTRIBUTION_ATTR = Image.ATTR_ATTRIBUTION;
 
   private String imageSource = "";
   private BufferedImage cachedImage = null;
   private AttributeOption scale = SCALE_ATTR.parse("fit");
+  private AttributeOption license = Image.LICENSE_UNSPECIFIED;
+  private String attribution = "";
 
   public ImageShape(int x, int y, int w, int h) {
     super(x, y, w, h);
@@ -50,6 +54,10 @@ public class ImageShape extends Rectangular {
   public void setImageSource(String source) {
     this.imageSource = source;
     this.cachedImage = ImageUtil.loadBufferedImage(source);
+  }
+
+  public String getAttribution() {
+    return attribution;
   }
 
   @Override
@@ -101,7 +109,7 @@ public class ImageShape extends Rectangular {
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return List.of(IMAGE_ATTR, ATTR_X, ATTR_Y, WIDTH_ATTR, HEIGHT_ATTR, SCALE_ATTR);
+    return List.of(IMAGE_ATTR, ATTR_X, ATTR_Y, WIDTH_ATTR, HEIGHT_ATTR, SCALE_ATTR, LICENSE_ATTR, ATTRIBUTION_ATTR);
   }
 
   @Override
@@ -113,6 +121,8 @@ public class ImageShape extends Rectangular {
     if (attr == WIDTH_ATTR) return (V) Integer.valueOf(getWidth());
     if (attr == HEIGHT_ATTR) return (V) Integer.valueOf(getHeight());
     if (attr == SCALE_ATTR) return (V) scale;
+    if (attr == LICENSE_ATTR) return (V) license;
+    if (attr == ATTRIBUTION_ATTR) return (V) attribution;
     return super.getValue(attr);
   }
 
@@ -142,6 +152,10 @@ public class ImageShape extends Rectangular {
       }
     } else if (attr == SCALE_ATTR) {
       scale = (AttributeOption) value;
+    } else if (attr == LICENSE_ATTR) {
+      license = (AttributeOption) value;
+    } else if (attr == ATTRIBUTION_ATTR) {
+      attribution = value == null ? "" : (String) value;
     } else {
       super.updateValue(attr, value);
     }
@@ -157,6 +171,8 @@ public class ImageShape extends Rectangular {
     final var ret = (ImageShape) super.clone();
     ret.imageSource = this.imageSource;
     ret.cachedImage = this.cachedImage;
+    ret.license = this.license;
+    ret.attribution = this.attribution;
     return ret;
   }
 
