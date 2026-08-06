@@ -40,7 +40,7 @@ public class ImageSourceAttribute extends Attribute<String> {
   @Override
   public String toDisplayString(String value) {
     if (value == null || value.isBlank()) {
-      return "...";
+      return S.get("imageSourceNone");
     }
     if (value.startsWith("data:image/")) {
       final var semicolon = value.indexOf(';');
