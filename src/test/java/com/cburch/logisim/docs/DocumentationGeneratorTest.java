@@ -10,6 +10,8 @@
 package com.cburch.logisim.docs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -31,10 +33,95 @@ class DocumentationGeneratorTest {
 
   private static final Path DOC_ROOT = Path.of("src", "main", "resources", "doc");
   private static final Path MANIFEST = Path.of("src", "main", "doc", "guide-memory.xml");
+  private static final Path HELP_SET_METADATA =
+      Path.of("src", "main", "doc", "help-sets.xml");
   private static final Path GERMAN_OVERLAY =
       Path.of("src", "main", "doc", "locales", "de-guide-memory.xml");
 
   @TempDir Path temporaryDirectory;
+
+  @Test
+  void generatesCompleteDeterministicHelpSetCollection() throws Exception {
+    final var firstOutput = temporaryDirectory.resolve("first");
+    final var secondOutput = temporaryDirectory.resolve("second");
+
+    DocumentationGenerator.generateHelpSets(HELP_SET_METADATA, DOC_ROOT, firstOutput);
+    DocumentationGenerator.generateHelpSets(HELP_SET_METADATA, DOC_ROOT, secondOutput);
+
+    final var expectedNames =
+        List.of("doc_de.hs", "doc_en.hs", "doc_fr.hs", "doc_pt.hs", "doc_ru.hs", "doc_zh.hs");
+    assertIterableEquals(expectedNames, fileNames(firstOutput));
+    assertIterableEquals(expectedNames, fileNames(secondOutput));
+    for (final var name : expectedNames) {
+      assertEquals(
+          Files.readString(firstOutput.resolve(name), StandardCharsets.UTF_8),
+          Files.readString(secondOutput.resolve(name), StandardCharsets.UTF_8));
+    }
+
+    assertHelpSet(
+        firstOutput.resolve("doc_en.hs"),
+        "Logisim - Help",
+        "map_en.jhm",
+        "en",
+        "Table Of Contents",
+        "en/contents.xml",
+        "Search",
+        "search_lookup_en",
+        "Favorites");
+    assertHelpSet(
+        firstOutput.resolve("doc_pt.hs"),
+        "Logisim - Help",
+        "map_pt.jhm",
+        "en",
+        "Table Of Contents",
+        "en/contents.xml",
+        "Search",
+        "search_lookup_pt",
+        "Favorites");
+    assertHelpSet(
+        firstOutput.resolve("doc_zh.hs"),
+        "Logisim - 帮助",
+        "map_zh.jhm",
+        "zh",
+        "目录",
+        "zh/contents.xml",
+        "查找",
+        "search_lookup_en",
+        "收藏");
+  }
+
+  @Test
+  void rejectsDuplicateHelpSetLanguage() throws Exception {
+    final var metadata = temporaryDirectory.resolve("duplicate-help-sets.xml");
+    Files.writeString(
+        metadata,
+        "<helpSets>"
+            + helpSetEntry("en", "map_en.jhm")
+            + helpSetEntry("en", "map_en.jhm")
+            + "</helpSets>",
+        StandardCharsets.UTF_8);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            DocumentationGenerator.generateHelpSets(
+                metadata, DOC_ROOT, temporaryDirectory.resolve("duplicate-output")));
+  }
+
+  @Test
+  void rejectsMissingHelpSetReference() throws Exception {
+    final var metadata = temporaryDirectory.resolve("missing-help-set-reference.xml");
+    Files.writeString(
+        metadata,
+        "<helpSets>" + helpSetEntry("en", "missing-map.jhm") + "</helpSets>",
+        StandardCharsets.UTF_8);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            DocumentationGenerator.generateHelpSets(
+                metadata, DOC_ROOT, temporaryDirectory.resolve("missing-output")));
+  }
 
   @Test
   void generatesLegacyCompatibleEnglishAndGermanMemoryTrees() throws Exception {
@@ -107,6 +194,101 @@ class DocumentationGeneratorTest {
                 List.of(invalidOverlay)));
   }
 
+  private static List<String> fileNames(Path directory) throws Exception {
+    try (var files = Files.list(directory)) {
+      return files.map(path -> path.getFileName().toString()).sorted().toList();
+    }
+  }
+
+  private static void assertHelpSet(
+      Path path,
+      String title,
+      String map,
+      String tocLanguage,
+      String tocLabel,
+      String toc,
+      String searchLabel,
+      String search,
+      String favoritesLabel)
+      throws Exception {
+    final var document = parseXml(path);
+    final var root = document.getDocumentElement();
+    assertEquals("helpset", root.getTagName());
+    assertEquals("2.0", root.getAttribute("version"));
+    assertFalse(root.hasAttributeNS(XMLConstants.XML_NS_URI, "lang"));
+    assertEquals(title, elementText(root, "title"));
+    assertEquals("top", elementText(root, "homeID"));
+    assertEquals(map, ((Element) root.getElementsByTagName("mapref").item(0)).getAttribute("location"));
+
+    final var tocView = findView(root, "TOC");
+    assertEquals(tocLanguage, tocView.getAttributeNS(XMLConstants.XML_NS_URI, "lang"));
+    assertEquals("javax.help.UniteAppendMerge", tocView.getAttribute("mergetype"));
+    assertEquals(tocLabel, elementText(tocView, "label"));
+    assertEquals(toc, elementText(tocView, "data"));
+
+    final var searchView = findView(root, "Search");
+    assertEquals(searchLabel, elementText(searchView, "label"));
+    assertEquals(search, elementText(searchView, "data"));
+    assertEquals(
+        "com.sun.java.help.search.DefaultSearchEngine",
+        ((Element) searchView.getElementsByTagName("data").item(0)).getAttribute("engine"));
+
+    final var favoritesView = findView(root, "Favorites");
+    assertEquals(favoritesLabel, elementText(favoritesView, "label"));
+
+    final var presentation = (Element) root.getElementsByTagName("presentation").item(0);
+    assertEquals("true", presentation.getAttribute("default"));
+    assertEquals("main window", elementText(presentation, "name"));
+    final var location = (Element) presentation.getElementsByTagName("location").item(0);
+    assertEquals("200", location.getAttribute("x"));
+    assertEquals("10", location.getAttribute("y"));
+    final var actions = presentation.getElementsByTagName("helpaction");
+    assertEquals(5, actions.getLength());
+    assertEquals("homeicon", ((Element) actions.item(2)).getAttribute("image"));
+
+    assertEquals(
+        "helpbrokerclass=\"javax.help.DefaultHelpBroker\"",
+        elementText(root, "helpsetregistry"));
+    final var viewerRegistries = root.getElementsByTagName("viewerregistry");
+    assertEquals(2, viewerRegistries.getLength());
+    assertEquals(
+        "viewertype=\"text/html\" viewerclass=\"com.sun.java.help.impl.CustomKit\"",
+        viewerRegistries.item(0).getTextContent().trim());
+    assertEquals(
+        "viewertype=\"text/xml\" viewerclass=\"com.sun.java.help.impl.CustomXMLKit\"",
+        viewerRegistries.item(1).getTextContent().trim());
+  }
+
+  private static Element findView(Element root, String name) {
+    final var views = root.getElementsByTagName("view");
+    for (var i = 0; i < views.getLength(); i++) {
+      final var view = (Element) views.item(i);
+      if (name.equals(elementText(view, "name"))) {
+        return view;
+      }
+    }
+    return fail("Missing HelpSet view " + name);
+  }
+
+  private static String elementText(Element root, String name) {
+    return root.getElementsByTagName(name).item(0).getTextContent().trim();
+  }
+
+  private static String helpSetEntry(String language, String map) {
+    return """
+        <helpSet
+            language="%s"
+            title="Logisim - Help"
+            map="%s"
+            tocLanguage="en"
+            tocLabel="Table Of Contents"
+            toc="en/contents.xml"
+            searchLabel="Search"
+            search="search_lookup_en"
+            favoritesLabel="Favorites" />
+        """.formatted(language, map);
+  }
+
   private void assertGeneratedMapMatchesLegacy(String language) throws Exception {
     final var generated =
         mapEntries(parseXml(temporaryDirectory.resolve("map_" + language + ".jhm")));
@@ -129,6 +311,7 @@ class DocumentationGeneratorTest {
 
   private static Document parseXml(Path path) throws Exception {
     final var factory = DocumentBuilderFactory.newInstance();
+    factory.setNamespaceAware(true);
     factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
     factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
     factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);

@@ -35,7 +35,9 @@ import org.xml.sax.helpers.DefaultHandler;
 class DocumentationStructureTest {
 
   private static final String BASELINE_RESOURCE = "/documentation-known-issues.txt";
-  private static final Path DOC_ROOT = Path.of("src", "main", "resources", "doc");
+  private static final Path DOC_ROOT = Path.of("build", "resources", "main", "doc");
+  private static final Set<String> REQUIRED_HELP_SETS =
+      Set.of("doc_de.hs", "doc_en.hs", "doc_fr.hs", "doc_pt.hs", "doc_ru.hs", "doc_zh.hs");
   private static final Set<String> REQUIRED_TARGETS =
       Set.of("top", "guide", "tutorial", "libs");
   private static final Pattern HELP_SET_NAME = Pattern.compile("doc_([a-z]{2})\\.hs");
@@ -81,14 +83,17 @@ class DocumentationStructureTest {
 
   private static List<String> validateJavaHelp(Path docRoot) throws Exception {
     final var issues = new ArrayList<String>();
+    final var helpSetNames = new TreeSet<String>();
     try (var paths = Files.list(docRoot)) {
       for (final var helpSet : paths.filter(Files::isRegularFile).sorted().toList()) {
         final var matcher = HELP_SET_NAME.matcher(helpSet.getFileName().toString());
         if (matcher.matches()) {
+          helpSetNames.add(helpSet.getFileName().toString());
           validateHelpSet(docRoot, helpSet, issues);
         }
       }
     }
+    assertEquals(REQUIRED_HELP_SETS, helpSetNames, "Unexpected packaged HelpSet descriptors");
     issues.sort(String::compareTo);
     return issues;
   }
