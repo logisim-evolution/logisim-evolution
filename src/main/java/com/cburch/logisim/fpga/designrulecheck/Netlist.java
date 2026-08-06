@@ -30,6 +30,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.std.wiring.Tunnel;
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -228,9 +229,30 @@ public class Netlist {
     final var labels = new HashMap<String, Component>();
     final var drc = new ArrayList<SimpleDrcContainer>();
 
-    // if we are the toplevel component we clear the complete netlist
-    if (isTopLevel) clear();
-
+    // if we are the toplevel component we clear the complete netlist and check the working dir name
+    if (isTopLevel) {
+      clear();
+      final var isWindows = System.getProperty("os.name").startsWith("Windows");
+      final var baseDir = AppPreferences.FPGA_Workspace.get();
+      if (baseDir.contains(" ")) {
+        drcStatus = DRC_ERROR;
+        Reporter.report.addFatalError(S.get("WorkDirWithSpaces"));
+        return drcStatus;
+      }
+      final var splitChar = (isWindows) ? ":?\\\\" : File.separator;
+      for (final var checkComponent : baseDir.split(splitChar)) {
+        if (isWindows && checkComponent.length() == 2 && checkComponent.endsWith(":")) {
+          // Normally on windows the first one is the drive letter, e.g. "C:"
+          continue;
+        }
+        if (!CorrectLabel.isCorrectLabel(checkComponent)) {
+          drcStatus = DRC_ERROR;
+          Reporter.report.addFatalError(S.fmt("WorkDirIllegalChars", checkComponent));
+          return drcStatus;
+        }
+      }
+    } 
+    
     // if we already have good drc results we can leave
     if (drcStatus == DRC_PASSED) return DRC_PASSED;
 
@@ -252,6 +274,11 @@ public class Netlist {
       drcStatus |= DRC_ERROR;
     } else {
       sheetNames.add(myCircuit.getName());
+    }
+    if (!CorrectLabel.isCorrectLabel(myCircuit.getName())) {
+      // this could happen if we switch from relaxed naming to VHDL or Verilog
+      drcStatus |= DRC_ERROR;
+      Reporter.report.addFatalError(S.fmt("SheetIllegalChars", myCircuit.getName()));
     }
     // we have to go down the tree to build first all subcircuits
     final var handledCircuits = new ArrayList<Circuit>();
