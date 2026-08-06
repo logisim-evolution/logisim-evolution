@@ -292,7 +292,6 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
                       add,
                       null,
                       null));
-          ImageUtil.checkAndShowCopyrightDisclaimer(canvas.getProject().getFrame());
           return true;
         }
       }

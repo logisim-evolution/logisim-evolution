@@ -199,7 +199,6 @@ public class LayoutEditHandler extends EditHandler
           final var xn = new CircuitMutation(circuit);
           xn.add(comp);
           proj.doAction(xn.toAction(S.getter("addComponentAction", Image.FACTORY.getDisplayGetter())));
-          ImageUtil.checkAndShowCopyrightDisclaimer(proj.getFrame());
           return true;
         }
       }
