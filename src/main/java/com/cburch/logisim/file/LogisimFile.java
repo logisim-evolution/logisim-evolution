@@ -704,9 +704,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     } catch (ParserConfigurationException e) {
       loader.showError("internal error configuring parser");
     } catch (TransformerException e) {
+      org.slf4j.LoggerFactory.getLogger(LogisimFile.class).error("XML Transformation Exception during save", e);
       final var msg = e.getMessage();
       var err = S.get("xmlConversionError");
-      if (msg == null) err += ": " + msg;
+      if (msg != null) err += ": " + msg;
       loader.showError(err);
     } catch (IOException e) {
       loader.showError("Unable to create zip file");

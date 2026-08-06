@@ -25,6 +25,10 @@ abstract class Rectangular extends FillableCanvasObject {
     bounds = Bounds.create(x, y, w, h);
   }
 
+  protected void setBounds(int x, int y, int w, int h) {
+    bounds = Bounds.create(x, y, Math.max(1, w), Math.max(1, h));
+  }
+
   @Override
   public boolean canMoveHandle(Handle handle) {
     return true;

@@ -340,6 +340,7 @@ class SelectionAttributes extends AbstractAttributeSet {
     public void attributeValueChanged(AttributeEvent e) {
       if (listening) {
         updateList(false);
+        selection.fireSelectionChanged();
       }
     }
 

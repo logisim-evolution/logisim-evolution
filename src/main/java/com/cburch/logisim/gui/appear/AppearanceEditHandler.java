@@ -27,11 +27,15 @@ import com.cburch.logisim.circuit.appear.AppearanceAnchor;
 import com.cburch.logisim.circuit.appear.AppearanceElement;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.draw.shapes.ImageShape;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.util.ImageUtil;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AppearanceEditHandler extends EditHandler implements SelectionListener, PropertyChangeListener, CanvasModelListener {
   private final AppearanceCanvas canvas;
@@ -58,7 +62,6 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
     final var sel = canvas.getSelection();
     final var selEmpty = sel.isEmpty();
     final var canChange = proj.getLogisimFile().contains(circ);
-    final var clipExists = !Clipboard.isEmpty();
     var selHasRemovable = false;
     for (final var o : sel.getSelected()) {
       if (!(o instanceof AppearanceElement)) {
@@ -104,7 +107,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
     setEnabled(LogisimMenuBar.CUT, selHasRemovable && canChange);
     setEnabled(LogisimMenuBar.COPY, !selEmpty);
-    setEnabled(LogisimMenuBar.PASTE, canChange && clipExists);
+    setEnabled(LogisimMenuBar.PASTE, canChange);
     setEnabled(LogisimMenuBar.DELETE, selHasRemovable && canChange);
     setEnabled(LogisimMenuBar.DUPLICATE, !selEmpty && canChange);
     setEnabled(LogisimMenuBar.SELECT_ALL, true);
@@ -214,8 +217,14 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void paste() {
+    if (pasteSystemClipboardImage()) return;
+
+    if (Clipboard.isEmpty()) return;
+
     final var clip = Clipboard.get();
     final var contents = clip.getElements();
+    if (contents.isEmpty()) return;
+
     final var add = new ArrayList<CanvasObject>(contents.size());
     for (final var obj : contents) {
       add.add(obj.clone());
@@ -261,6 +270,36 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
                 add,
                 anchorLocation,
                 clip.getAnchorFacing()));
+  }
+
+  private boolean pasteSystemClipboardImage() {
+    try {
+      final var img = ImageUtil.getSystemClipboardImage();
+      if (img != null) {
+        final var base64 = ImageUtil.bufferedImageToBase64(img);
+        if (base64 != null && !base64.isBlank()) {
+          final var shape = new ImageShape(-img.getWidth() / 2, -img.getHeight() / 2, img.getWidth(), img.getHeight());
+          shape.setImageSource(base64);
+          final var add = Collections.<CanvasObject>singletonList(shape);
+          canvas
+              .getProject()
+              .doAction(
+                  new SelectionAction(
+                      canvas,
+                      S.getter("pasteClipboardAction"),
+                      null,
+                      add,
+                      add,
+                      null,
+                      null));
+          return true;
+        }
+      }
+    } catch (Exception e) {
+      org.slf4j.LoggerFactory.getLogger(AppearanceEditHandler.class)
+          .error("Failed to paste image from clipboard", e);
+    }
+    return false;
   }
 
   @Override
