@@ -10,11 +10,13 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.logisim.util.ImageUtil;
 import com.cburch.logisim.util.XmlUtil;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -24,6 +26,7 @@ import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,6 +47,7 @@ public class TikZInfo implements Cloneable {
 
   private static final double BASIC_STROKE_WIDTH = 1;
 
+  private boolean svgMode = false;
   private AffineTransform myTransformer = new AffineTransform();
   private Color drawColor;
   private Color backColor;
@@ -91,9 +95,18 @@ public class TikZInfo implements Cloneable {
     return " (" + getBarePoint(p) + ") ";
   }
 
+  public boolean isSvgMode() {
+    return svgMode;
+  }
+
+  public void setSvgMode(boolean mode) {
+    this.svgMode = mode;
+  }
+
   @Override
   public TikZInfo clone() {
     var newInst = new TikZInfo();
+    newInst.svgMode = svgMode;
     newInst.myTransformer = (AffineTransform) myTransformer.clone();
     newInst.drawColor = drawColor;
     newInst.backColor = backColor;
@@ -231,6 +244,15 @@ public class TikZInfo implements Cloneable {
 
   public void addString(AttributedCharacterIterator str, int x, int y) {
     contents.add(new TikZString(str, x, y));
+  }
+
+  public void addImage(Image img, int x, int y, int width, int height, Color bgcolor) {
+    if (img == null) return;
+    final var bufImg = ImageUtil.toBufferedImage(img);
+    if (bufImg == null) return;
+    final var pos = new Point(x, y);
+    transform(pos, pos);
+    contents.add(new TikZImage(bufImg, pos, width, height, bgcolor));
   }
 
   public void rotate(double theta) {
@@ -1408,6 +1430,72 @@ public class TikZInfo implements Cloneable {
     @Override
     public void move(int dx, int dy) {
       location = new Point(location.x + dx, location.y + dy);
+    }
+  }
+
+  private class TikZImage implements DrawObject {
+    private final BufferedImage image;
+    private final Point pos;
+    private final int width;
+    private final int height;
+    private final Color bgcolor;
+    private final String color;
+    private final float strokeWidth;
+
+    public TikZImage(BufferedImage img, Point pos, int w, int h, Color bg) {
+      this.image = img;
+      this.pos = pos;
+      this.width = Math.max(1, w);
+      this.height = Math.max(1, h);
+      this.bgcolor = bg;
+      this.color = getDrawColorString();
+      this.strokeWidth = getStrokeWidth();
+    }
+
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      final var ne = root.createElement("image");
+      e.appendChild(ne);
+      ne.setAttribute("x", rounded(pos.x));
+      ne.setAttribute("y", rounded(pos.y));
+      ne.setAttribute("width", Integer.toString(width));
+      ne.setAttribute("height", Integer.toString(height));
+      final var base64 = ImageUtil.bufferedImageToBase64(image);
+      ne.setAttribute("href", base64);
+    }
+
+    @Override
+    public String getTikZCommand() {
+      final var sb = new StringBuilder();
+      sb.append("\\draw [line width=").append(rounded(strokeWidth * BASIC_STROKE_WIDTH))
+        .append("pt, ").append(color).append("]");
+      sb.append(getPoint(new Point2D.Double(pos.x, pos.y))).append("rectangle");
+      sb.append(getPoint(new Point2D.Double(pos.x + width, pos.y + height)));
+      sb.append(";");
+      sb.append("\\node[anchor=north west, font=\\small] at (").append(rounded(pos.x))
+        .append(",").append(rounded(pos.y)).append(") {[Image: ").append(width).append("x")
+        .append(height).append("]};");
+      return sb.toString();
+    }
+
+    @Override
+    public boolean insideArea(int x, int y, int width, int height) {
+      return (pos.x >= x && pos.x <= x + width)
+          && (pos.y >= y && pos.y <= y + height)
+          && (pos.x + this.width >= x && pos.x + this.width <= x + width)
+          && (pos.y + this.height >= y && pos.y + this.height <= y + height);
+    }
+
+    @Override
+    public DrawObject clone() {
+      return new TikZImage(image, (Point) pos.clone(), width, height, bgcolor);
+    }
+
+    @Override
+    public void move(int dx, int dy) {
+      final var move = new Point(dx, dy);
+      transform(move, move);
+      pos.setLocation(pos.x + move.x, pos.y + move.y);
     }
   }
 }

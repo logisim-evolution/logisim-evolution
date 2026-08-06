@@ -53,6 +53,10 @@ public class TikZWriter extends Graphics2D {
     MyInfo = info;
   }
 
+  public void setSvgMode(boolean mode) {
+    MyInfo.setSvgMode(mode);
+  }
+
   @Override
   public void draw(Shape s) {
     MyInfo.addBezier(s, false);
@@ -404,9 +408,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, ImageObserver observer)");
-    return false;
+    return drawImage(img, x, y, width, height, null, observer);
   }
 
   @Override
@@ -419,9 +421,8 @@ public class TikZWriter extends Graphics2D {
   @Override
   public boolean drawImage(
       Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer)");
-    return false;
+    MyInfo.addImage(img, x, y, width, height, bgcolor);
+    return true;
   }
 
   @Override
