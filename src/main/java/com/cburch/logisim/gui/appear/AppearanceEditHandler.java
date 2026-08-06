@@ -220,9 +220,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void paste() {
-    if (pasteSystemClipboardImage()) {
-      return;
-    }
+    if (pasteSystemClipboardImage()) return;
 
     if (Clipboard.isEmpty()) return;
 
@@ -302,7 +300,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
       }
     } catch (Exception e) {
       org.slf4j.LoggerFactory.getLogger(AppearanceEditHandler.class)
-          .error("Failed to paste image from system clipboard", e);
+          .error("Failed to paste image from clipboard", e);
     }
     return false;
   }
