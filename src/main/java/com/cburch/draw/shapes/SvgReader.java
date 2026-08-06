@@ -183,6 +183,18 @@ public final class SvgReader {
         }
       }
     }
+    if (elt.hasAttribute("license")) {
+      final var licenseStr = elt.getAttribute("license");
+      if (!licenseStr.isBlank()) {
+        try {
+          ret.updateValue(ImageShape.LICENSE_ATTR, ImageShape.LICENSE_ATTR.parse(licenseStr));
+        } catch (Exception ignored) {
+        }
+      }
+    }
+    if (elt.hasAttribute("attribution")) {
+      ret.updateValue(ImageShape.ATTRIBUTION_ATTR, elt.getAttribute("attribution"));
+    }
     var href = elt.getAttribute("xlink:href");
     if (href.isBlank()) {
       href = elt.getAttribute("href");

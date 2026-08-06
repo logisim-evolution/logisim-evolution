@@ -97,6 +97,7 @@ public class ImageSourceAttribute extends Attribute<String> {
         } catch (Exception e) {
           resultValue = selected.getAbsolutePath();
         }
+        ImageUtil.checkAndShowCopyrightDisclaimer(parent);
       } else {
         resultValue = currentValue;
       }

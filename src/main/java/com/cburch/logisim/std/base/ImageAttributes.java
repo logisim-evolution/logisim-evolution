@@ -22,12 +22,17 @@ import java.util.Objects;
 
 public class ImageAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(
-      Image.ATTR_IMAGE, Image.ATTR_WIDTH, Image.ATTR_HEIGHT, Image.ATTR_SCALE);
+      Image.ATTR_IMAGE, Image.ATTR_WIDTH, Image.ATTR_HEIGHT, Image.ATTR_SCALE, Image.ATTR_LICENSE, Image.ATTR_ATTRIBUTION);
+
+
+
 
   private String imageSource;
   private Integer width;
   private Integer height;
   private AttributeOption scale;
+  private AttributeOption license;
+  private String attribution;
   private Bounds offsetBounds;
   private BufferedImage cachedImage;
   private boolean userSetDimensions;
@@ -37,6 +42,8 @@ public class ImageAttributes extends AbstractAttributeSet {
     width = 64;
     height = 64;
     scale = Image.ATTR_SCALE.parse("fit");
+    license = Image.LICENSE_UNSPECIFIED;
+    attribution = "";
     offsetBounds = Bounds.create(0, 0, width, height);
     cachedImage = null;
     userSetDimensions = false;
@@ -49,6 +56,8 @@ public class ImageAttributes extends AbstractAttributeSet {
     dest.width = this.width;
     dest.height = this.height;
     dest.scale = this.scale;
+    dest.license = this.license;
+    dest.attribution = this.attribution;
     dest.offsetBounds = this.offsetBounds;
     dest.cachedImage = this.cachedImage;
     dest.userSetDimensions = this.userSetDimensions;
@@ -107,6 +116,10 @@ public class ImageAttributes extends AbstractAttributeSet {
       return (V) height;
     if (attr == Image.ATTR_SCALE)
       return (V) scale;
+    if (attr == Image.ATTR_LICENSE)
+      return (V) license;
+    if (attr == Image.ATTR_ATTRIBUTION)
+      return (V) attribution;
     return null;
   }
 
@@ -142,6 +155,10 @@ public class ImageAttributes extends AbstractAttributeSet {
       offsetBounds = Bounds.create(0, 0, getWidth(), getHeight());
     } else if (attr == Image.ATTR_SCALE) {
       scale = (AttributeOption) value;
+    } else if (attr == Image.ATTR_LICENSE) {
+      license = (AttributeOption) value;
+    } else if (attr == Image.ATTR_ATTRIBUTION) {
+      attribution = value == null ? "" : (String) value;
     } else {
       return;
     }

@@ -22,6 +22,7 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.base.Image;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
@@ -235,6 +236,7 @@ final class XmlWriter {
         var newValue = attr.toStandardString(val);
         if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue))
             || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
+            || (attr.equals(Image.ATTR_LICENSE) && !userModifiedOnly)
             || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());

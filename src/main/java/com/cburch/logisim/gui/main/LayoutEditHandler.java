@@ -26,8 +26,6 @@ import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.TextEditActions;
 import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.util.ImageUtil;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -201,6 +199,7 @@ public class LayoutEditHandler extends EditHandler
           final var xn = new CircuitMutation(circuit);
           xn.add(comp);
           proj.doAction(xn.toAction(S.getter("addComponentAction", Image.FACTORY.getDisplayGetter())));
+          ImageUtil.checkAndShowCopyrightDisclaimer(proj.getFrame());
           return true;
         }
       }

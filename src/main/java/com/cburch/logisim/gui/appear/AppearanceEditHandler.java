@@ -31,11 +31,8 @@ import com.cburch.draw.shapes.ImageShape;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.util.ImageUtil;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -295,6 +292,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
                       add,
                       null,
                       null));
+          ImageUtil.checkAndShowCopyrightDisclaimer(canvas.getProject().getFrame());
           return true;
         }
       }
