@@ -97,7 +97,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   @Override
   public void circuitChanged(CircuitEvent event) {
     int action = event.getAction();
-    if (action == CircuitEvent.ACTION_SET_NAME) return;
+    if (action == CircuitEvent.ACTION_SET_NAME || action == CircuitEvent.ACTION_INVALIDATE) return;
     else model.clearResults();
   }
 
