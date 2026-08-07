@@ -39,12 +39,6 @@ map_de.jhm: mapID 'gates_PLA' points to missing file de/html/libs/gates/pla.html
 map_de.jhm: mapID 'io_Port_IO' points to missing file de/html/libs/io/Port_io.html
 map_de.jhm: mapID 'io_Repetar' points to missing file de/html/libs/io/repetar.html
 map_de.jhm: mapID 'log_timetable' points to missing file de/html/guide/log/timetable.html
-map_de.jhm: mapID 'mem_ascii' points to missing file de/html/guide/mem/mem-vascii.html
-map_de.jhm: mapID 'mem_binary' points to missing file de/html/guide/mem/mem-vbinary.html
-map_de.jhm: mapID 'mem_filetabel' points to missing file de/html/guide/mem/mem-filepanel.html
-map_de.jhm: mapID 'mem_v2raw' points to missing file de/html/guide/mem/mem-v2raw.html
-map_de.jhm: mapID 'mem_v3byte' points to missing file de/html/guide/mem/mem-v3byte.html
-map_de.jhm: mapID 'mem_v3word' points to missing file de/html/guide/mem/mem-v3word.html
 map_de.jhm: mapID 'nios2_sim' points to missing file de/html/libs/soc/nios2.html
 map_de.jhm: mapID 'prefs_intl' points to missing file de/html/guide/prefs/pref-intl.html
 map_de.jhm: mapID 'soc' points to missing file de/html/libs/soc/index.html
