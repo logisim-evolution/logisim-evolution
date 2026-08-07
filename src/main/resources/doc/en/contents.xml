@@ -94,7 +94,7 @@
 <!--	<tocitem target="prefs_simulation" text="The  simulation tab"/> -->
 			<tocitem target="prefs_exp" text="The Experimental tab" />
 <!--	<tocitem target="prefs_sofware" text="The Sofware tab"/> -->
-			<tocitem target="prefs_fpga" text="The FPGA Commander settings tab"/>
+			<tocitem target="prefs_fpga" text="The FPGA Commander tab"/>
 			<tocitem target="prefs_cmdline" text="The command line" />
 		</tocitem>
 		<tocitem target="opts" text="Project options">
