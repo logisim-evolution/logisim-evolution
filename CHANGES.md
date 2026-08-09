@@ -13,6 +13,7 @@
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
+  * Added Floating Point Constant component.
   * Modified paste behavior to paste at current mouse location if it is on canvas.
   * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
   * Fixed TTL 7447 BI/RBO port to be an input/output port to allow cascading of blanking mode.
