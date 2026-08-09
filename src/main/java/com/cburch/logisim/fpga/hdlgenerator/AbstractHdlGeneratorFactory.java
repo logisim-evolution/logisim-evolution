@@ -132,9 +132,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         body.empty().addRemarkBlock("Here all module parameters are defined with a dummy value");
         final var parameters = new TreeSet<String>();
         for (final var paramId : myParametersList.keySet(attrs)) {
-          // For verilog we specify a maximum vector, this seems the best way to do it
-          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs)
-              ? myParametersList.get(paramId, attrs) : String.format("[64:0] %s", myParametersList.get(paramId, attrs));
+          // Verilog vector parameters need their width in the module declaration.
+          final var paramName =
+              myParametersList.isPresentedByInteger(paramId, attrs)
+                  ? myParametersList.get(paramId, attrs)
+                  : String.format(
+                      "[%d:0] %s",
+                      myParametersList.getNumberOfVectorBits(paramId, attrs) - 1,
+                      myParametersList.get(paramId, attrs));
           parameters.add(paramName);
         }
         for (final var param : parameters)
@@ -222,10 +227,10 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var compName = StringUtil.isNotEmpty(name) ? name : componentHdlName;
     final var thisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
-    if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
+    if (componentInfo == null) parameterMap.putAll(getParameterMap(null));
     else if (componentInfo instanceof netlistComponent comp) {
       final var attrs = comp.getComponent().getAttributeSet();
-      parameterMap.putAll(myParametersList.getMaps(attrs));
+      parameterMap.putAll(getParameterMap(attrs));
     }
     var tabLength = 0;
     var first = true;
@@ -322,6 +327,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       contents.add(oneLine.toString());
     }
     return contents;
+  }
+
+  /**
+   * Returns the parameter values used for a component instance. Subclasses may override this hook
+   * when a parameter must be derived from several attributes or requires a nontrivial transform.
+   */
+  protected Map<String, String> getParameterMap(AttributeSet attrs) {
+    return myParametersList.getMaps(attrs);
   }
 
   @Override
