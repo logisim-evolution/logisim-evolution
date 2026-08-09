@@ -106,14 +106,15 @@ public class FpDivider extends InstanceFactory {
     final var out_val = a_val / b_val;
     final var out = Value.createKnown(dataWidth, out_val);
 
-    final var rem_val =  Math.IEEEremainder(a_val, b_val);
+    final var rem_val = Math.IEEEremainder(a_val, b_val);
     final var rem = Value.createKnown(dataWidth, rem_val);
 
+    final var hasError = Double.isNaN(out_val) || Double.isNaN(rem_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
     state.setPort(OUT1, out, delay);
     state.setPort(OUT2, rem, delay);
-    state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(out_val) ? 1 : 0), delay);
+    state.setPort(ERR, Value.createKnown(BitWidth.create(1), hasError ? 1 : 0), delay);
   }
 }
