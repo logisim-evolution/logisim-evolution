@@ -73,7 +73,7 @@ public class FpTrigonometry extends InstanceFactory {
 
     final Port[] ps = new Port[5];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
-    ps[SIN] = new Port(0, -10, Port.INPUT, StdAttr.FP_WIDTH);
+    ps[SIN] = new Port(0, -10, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[TAN] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[COS] = new Port(0, 10, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
