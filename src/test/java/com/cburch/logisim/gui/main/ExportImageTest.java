@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.Loader;
@@ -22,7 +23,9 @@ import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.gates.GatesLibrary;
+import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.tools.AddTool;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -139,6 +142,36 @@ class ExportImageTest {
     } finally {
       setPreference(AppPreferences.COMPONENT_COLOR, originalComponentColor);
     }
+  }
+
+  @Test
+  void rgbVideoCircuitEmbedsItsDisplayInSvg() throws Exception {
+    final var file = LogisimFile.createNew(new Loader(null), null);
+    final var project = new Project(file);
+    final var circuit = file.getMainCircuit();
+    circuit.setProject(project);
+    final var circuitState = CircuitState.createRootState(project, circuit);
+    final var videoFactory = ((AddTool) new IoLibrary().getTool("RGB Video")).getFactory();
+    final var video =
+        videoFactory.createComponent(
+            Location.create(100, 300, false), videoFactory.createAttributeSet());
+    final var mutation = new CircuitMutation(circuit);
+    mutation.add(video);
+    mutation.execute();
+
+    final var graphics = new TikZWriter();
+    final var context =
+        new ComponentDrawContext(null, circuit, circuitState, graphics, graphics, false);
+    circuit.draw(context, null);
+    final var svg = tempDir.resolve("rgb-video.svg").toFile();
+    graphics.writeSvg(350, 350, svg);
+
+    final var content = Files.readString(svg.toPath());
+    assertTrue(content.contains("<image"));
+    assertTrue(content.contains("width=\"128\""));
+    assertTrue(content.contains("height=\"128\""));
+    assertTrue(content.contains("transform=\"matrix(2 0 0 2 77 37)\""));
+    assertTrue(content.contains("data:image/png;base64,"));
   }
 
   private static boolean hasNonWhitePixel(BufferedImage image) {

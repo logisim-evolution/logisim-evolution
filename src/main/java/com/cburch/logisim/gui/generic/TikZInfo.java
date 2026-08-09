@@ -24,13 +24,18 @@ import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HexFormat;
+import javax.imageio.ImageIO;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -43,6 +48,8 @@ import org.w3c.dom.Element;
 public class TikZInfo implements Cloneable {
 
   private static final double BASIC_STROKE_WIDTH = 1;
+  private static final String PNG_DATA_URI_PREFIX = "data:image/png;base64,";
+  private static final String XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
 
   private AffineTransform myTransformer = new AffineTransform();
   private Color drawColor;
@@ -233,6 +240,10 @@ public class TikZInfo implements Cloneable {
     contents.add(new TikZString(str, x, y));
   }
 
+  public void addImage(BufferedImage image, AffineTransform transform) {
+    contents.add(new TikZImage(image, transform));
+  }
+
   public void rotate(double theta) {
     getAffineTransform().rotate(theta);
     myRotation += theta;
@@ -419,6 +430,7 @@ public class TikZInfo implements Cloneable {
     final var svgInfo = parser.newDocument();
     final var svg = svgInfo.createElement("svg");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute("xmlns:xlink", XLINK_NAMESPACE);
     svg.setAttribute("version", "1.1");
     svg.setAttribute("viewBox", "0 0 " + width + " " + height);
     // Specifying only a viewBox is not sufficient.
@@ -1222,6 +1234,99 @@ public class TikZInfo implements Cloneable {
       content.append(" ").append(rounded(startAngle)).append(info);
       content.append(getBarePoint(stopPos));
       ne.setAttribute("d", content.toString());
+    }
+  }
+
+  private class TikZImage implements DrawObject {
+    private final String dataUri;
+    private final int width;
+    private final int height;
+    private AffineTransform transform;
+
+    public TikZImage(BufferedImage image, AffineTransform transform) {
+      dataUri = encodePng(image);
+      width = image.getWidth();
+      height = image.getHeight();
+      this.transform = new AffineTransform(transform);
+    }
+
+    private TikZImage(String dataUri, int width, int height, AffineTransform transform) {
+      this.dataUri = dataUri;
+      this.width = width;
+      this.height = height;
+      this.transform = transform;
+    }
+
+    private String encodePng(BufferedImage image) {
+      try {
+        final var output = new ByteArrayOutputStream();
+        if (!ImageIO.write(image, "png", output)) {
+          throw new IllegalStateException("No PNG image writer is available");
+        }
+        return PNG_DATA_URI_PREFIX + Base64.getEncoder().encodeToString(output.toByteArray());
+      } catch (IOException exception) {
+        throw new IllegalStateException("Unable to encode an image for SVG export", exception);
+      }
+    }
+
+    @Override
+    public String getTikZCommand() {
+      return "% Raster image omitted: TikZ image export is not supported.";
+    }
+
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      final var image = root.createElement("image");
+      image.setAttribute("x", "0");
+      image.setAttribute("y", "0");
+      image.setAttribute("width", Integer.toString(width));
+      image.setAttribute("height", Integer.toString(height));
+      image.setAttribute("preserveAspectRatio", "none");
+      final var matrix = new double[6];
+      transform.getMatrix(matrix);
+      image.setAttribute(
+          "transform",
+          "matrix("
+              + rounded(matrix[0])
+              + " "
+              + rounded(matrix[1])
+              + " "
+              + rounded(matrix[2])
+              + " "
+              + rounded(matrix[3])
+              + " "
+              + rounded(matrix[4])
+              + " "
+              + rounded(matrix[5])
+              + ")");
+      image.setAttributeNS(XLINK_NAMESPACE, "xlink:href", dataUri);
+      e.appendChild(image);
+    }
+
+    @Override
+    public boolean insideArea(int x, int y, int areaWidth, int areaHeight) {
+      final var imageBounds =
+          transform
+              .createTransformedShape(new Rectangle2D.Double(0, 0, width, height))
+              .getBounds2D();
+      final var areaBounds =
+          getAffineTransform()
+              .createTransformedShape(new Rectangle2D.Double(x, y, areaWidth, areaHeight))
+              .getBounds2D();
+      return areaBounds.contains(imageBounds);
+    }
+
+    @Override
+    public DrawObject clone() {
+      return new TikZImage(dataUri, width, height, new AffineTransform(transform));
+    }
+
+    @Override
+    public void move(int dx, int dy) {
+      final var delta = new Point2D.Double();
+      getAffineTransform().deltaTransform(new Point2D.Double(dx, dy), delta);
+      transform.preConcatenate(
+          AffineTransform.getTranslateInstance(delta.getX(), delta.getY()));
     }
   }
 
