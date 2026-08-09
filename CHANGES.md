@@ -18,6 +18,7 @@
   * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
   * Fixed TTL 7447 BI/RBO port to be an input/output port to allow cascading of blanking mode.
   * Added TTL 7476: dual J-K Flip-flop with preset and clear.
+  * Added TTL 7493: 4-bit binary ripple counter.
   * Added TTL 7438: quad dual-input NAND gate, open collector.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.
