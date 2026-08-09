@@ -113,9 +113,11 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
     // draw selection
     if (pos != end) {
       g.setColor(SELECTION_BACKGROUND);
-      final var p = GraphicsUtil.getTextCursor(g, curText, x, y, Math.min(pos, end), halign, valign);
-      final var e = GraphicsUtil.getTextCursor(g, curText, x, y, Math.max(pos, end), halign, valign);
-      g.fillRect(p.x, p.y - 1, e.x - p.x + 1, e.height + 2);
+      for (final var selection :
+          GraphicsUtil.getTextSelectionBounds(g, curText, x, y, pos, end, halign, valign)) {
+        g.fillRect(
+            selection.x, selection.y - 1, selection.width + 1, selection.height + 2);
+      }
     }
 
     // draw text
@@ -177,9 +179,9 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
     if (!shift) normalizeSelection();
 
     if (dy < 0) {
-      pos = 0;
+      pos = field.isMultiline() ? adjacentLinePosition(pos, -1) : 0;
     } else if (dy > 0) {
-      pos = curText.length();
+      pos = field.isMultiline() ? adjacentLinePosition(pos, 1) : curText.length();
     } else if (pos + dx >= 0 && pos + dx <= curText.length()) {
       if (!shift && pos != end) {
         if (dx < 0) end = pos;
@@ -251,14 +253,14 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
         e.consume();
       }
       case KeyEvent.VK_HOME -> {
-        pos = 0;
+        pos = field.isMultiline() && !ctrl ? lineStart(pos) : 0;
         if (!shift) {
           end = pos;
         }
         e.consume();
       }
       case KeyEvent.VK_END -> {
-        pos = curText.length();
+        pos = field.isMultiline() && !ctrl ? lineEnd(pos) : curText.length();
         if (!shift) {
           end = pos;
         }
@@ -277,7 +279,15 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
           end = pos = 0;
         }
       }
-      case KeyEvent.VK_ENTER -> stopEditing();
+      case KeyEvent.VK_ENTER -> {
+        if (field.isMultiline() && shift) {
+          rememberEdit();
+          replaceSelection("\n");
+        } else {
+          stopEditing();
+        }
+        e.consume();
+      }
       case KeyEvent.VK_BACK_SPACE -> {
         if (pos != end) {
           rememberEdit();
@@ -313,7 +323,7 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
     if (allowedCharacter(c)) {
       rememberEdit();
       replaceSelection(String.valueOf(c));
-    } else if (c == '\n') {
+    } else if (c == '\n' && !(field.isMultiline() && e.isShiftDown())) {
       stopEditing();
     }
   }
@@ -392,11 +402,17 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
     return curText.substring(pp, ee);
   }
 
-  private String normalizePastedText(String s) {
+  String normalizePastedText(String s) {
     final var result = new StringBuilder();
     var lastWasSpace = false;
     for (var i = 0; i < s.length(); i++) {
       var c = s.charAt(i);
+      if (field.isMultiline() && (c == '\r' || c == '\n')) {
+        if (c == '\r' && i + 1 < s.length() && s.charAt(i + 1) == '\n') i++;
+        result.append('\n');
+        lastWasSpace = false;
+        continue;
+      }
       if (!allowedCharacter(c)) {
         if (lastWasSpace) continue;
         c = ' ';
@@ -478,6 +494,30 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
       end = pos;
       pos = t;
     }
+  }
+
+  private int adjacentLinePosition(int offset, int direction) {
+    final var start = lineStart(offset);
+    final var column = offset - start;
+    if (direction < 0) {
+      if (start == 0) return offset;
+      final var previousEnd = start - 1;
+      final var previousStart = lineStart(previousEnd);
+      return previousStart + Math.min(column, previousEnd - previousStart);
+    }
+    final var endOfLine = lineEnd(offset);
+    if (endOfLine == curText.length()) return offset;
+    final var nextStart = endOfLine + 1;
+    return nextStart + Math.min(column, lineEnd(nextStart) - nextStart);
+  }
+
+  private int lineEnd(int offset) {
+    final var newline = curText.indexOf('\n', offset);
+    return newline < 0 ? curText.length() : newline;
+  }
+
+  private int lineStart(int offset) {
+    return offset <= 0 ? 0 : curText.lastIndexOf('\n', offset - 1) + 1;
   }
 
   @Override

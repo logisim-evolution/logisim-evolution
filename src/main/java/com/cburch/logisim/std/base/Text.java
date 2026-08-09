@@ -41,7 +41,7 @@ public class Text extends InstanceFactory {
   public static final String _ID = "Text";
 
   public static final Attribute<String> ATTR_TEXT =
-      Attributes.forString("text", S.getter("textTextAttr"));
+      Attributes.forMultilineString("text", S.getter("textTextAttr"));
   public static final Attribute<Font> ATTR_FONT =
       Attributes.forFont("font", S.getter("textFontAttr"));
   public static final Attribute<Color> ATTR_COLOR =
@@ -82,7 +82,8 @@ public class Text extends InstanceFactory {
         loc.getX(),
         loc.getY(),
         attrs.getHorizontalAlign(),
-        attrs.getVerticalAlign());
+        attrs.getVerticalAlign(),
+        true);
   }
 
   //

@@ -424,6 +424,23 @@ public class Attributes {
     }
   }
 
+  private static class MultilineStringAttribute extends StringAttribute {
+    private MultilineStringAttribute(String name, StringGetter disp) {
+      super(name, disp);
+    }
+
+    @Override
+    public String toStandardString(String value) {
+      final var normalized = value.replace("\r\n", "\n").replace('\r', '\n');
+      final var result = new StringBuilder(normalized.length());
+      for (var i = 0; i < normalized.length(); i++) {
+        final var character = normalized.charAt(i);
+        if (character == '\n' || character >= ' ') result.append(character);
+      }
+      return result.toString().replaceAll("&#.*?;", "");
+    }
+  }
+
   private static class HiddenAttribute extends Attribute<String> {
     private HiddenAttribute() {
       super();
@@ -577,6 +594,10 @@ public class Attributes {
   //
   public static Attribute<String> forString(String name, StringGetter disp) {
     return new StringAttribute(name, disp);
+  }
+
+  public static Attribute<String> forMultilineString(String name, StringGetter disp) {
+    return new MultilineStringAttribute(name, disp);
   }
 
   private static StringGetter getter(String s) {

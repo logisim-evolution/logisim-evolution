@@ -463,13 +463,24 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   void setTextField(
       Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+    setTextField(labelAttr, fontAttr, x, y, halign, valign, false);
+  }
+
+  void setTextField(
+      Attribute<String> labelAttr,
+      Attribute<Font> fontAttr,
+      int x,
+      int y,
+      int halign,
+      int valign,
+      boolean multiline) {
     var field = textField;
     if (field == null) {
       field = new InstanceTextField(this);
-      field.update(labelAttr, fontAttr, x, y, halign, valign);
+      field.update(labelAttr, fontAttr, x, y, halign, valign, multiline);
       textField = field;
     } else {
-      field.update(labelAttr, fontAttr, x, y, halign, valign);
+      field.update(labelAttr, fontAttr, x, y, halign, valign, multiline);
     }
   }
 
