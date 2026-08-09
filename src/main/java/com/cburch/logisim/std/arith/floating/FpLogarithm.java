@@ -51,7 +51,7 @@ public class FpLogarithm extends InstanceFactory {
   static final Attribute<AttributeOption> LOG_MODE =
       Attributes.forOption(
           "mode",
-          S.getter("fpExponentMode"),
+          S.getter("fpLogarithmMode"),
           new AttributeOption[] {
             LOGXY,
             LOG,
