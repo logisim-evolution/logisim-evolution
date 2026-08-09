@@ -178,6 +178,11 @@
 			<tocitem target="fparith_logarithm" text="Floating Point Logarithm" />
 			<tocitem target="fparith_squareroot" text="Floating Point Square Root" />
 			<tocitem target="fparith_absolute" text="Floating Point Absolute" />
+			<tocitem target="fparith_comparator" text="Floating Point Comparator" />
+			<tocitem target="fparith_minmax" text="Floating Point Minimum and Maximum" />
+			<tocitem target="fparith_round" text="Floating Point Round" />
+			<tocitem target="fparith_trigonometry" text="Floating Point Trigonometry" />
+			<tocitem target="fparith_classificator" text="Floating Point Classificator" />
 		</tocitem>
 		<tocitem target="mem" text="Memory library">
 			<tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" />
