@@ -206,6 +206,38 @@ java {
   }
 }
 
+val docgen = sourceSets.create("docgen") {
+  java.srcDir("src/docgen/java")
+}
+
+dependencies {
+  testImplementation(docgen.output)
+}
+
+tasks.register<JavaExec>("generateDocumentationPrototype") {
+  group = "documentation"
+  description = "Generates the prototype English and German JavaHelp memory trees."
+  dependsOn(docgen.classesTaskName)
+
+  val manifest = layout.projectDirectory.file("src/main/doc/guide-memory.xml")
+  val germanOverlay = layout.projectDirectory.file("src/main/doc/locales/de-guide-memory.xml")
+  val docRoot = layout.projectDirectory.dir("src/main/resources/doc")
+  val outputRoot = layout.buildDirectory.dir("generated/documentation-prototype")
+
+  classpath = docgen.runtimeClasspath
+  mainClass.set("com.cburch.logisim.docs.DocumentationGenerator")
+  args(
+      manifest.asFile.absolutePath,
+      docRoot.asFile.absolutePath,
+      outputRoot.get().asFile.absolutePath,
+      germanOverlay.asFile.absolutePath,
+  )
+
+  inputs.files(manifest, germanOverlay)
+  inputs.dir(docRoot)
+  outputs.dir(outputRoot)
+}
+
 tasks.register<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a JAR archive with project sources."

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locale language="de">
+  <topic
+      id="mem_guide"
+      title="Speicherbauelemente"
+      path="de/html/guide/mem/index.html" />
+  <topic
+      id="mem_poke"
+      title="Speicherinhalte bearbeiten"
+      path="de/html/guide/mem/mem-poke.html" />
+  <topic id="mem_hex" title="Hex-Editor" path="de/html/guide/mem/mem-hex.html" />
+  <topic
+      id="mem_menu"
+      title="Kontextmenüs und Dateien"
+      path="de/html/guide/mem/mem-menu.html" />
+  <topic id="mem_filetabel" title="Speicherdatei-Panel" />
+  <topic id="mem_v2raw" title="v2raw-Date" />
+  <topic id="mem_v3word" title="v3word-Date" />
+  <topic id="mem_v3byte" title="v3byte-Date" />
+  <topic id="mem_binary" title="Binärdatei" />
+  <topic id="mem_ascii" title="ascii-Datei" />
+</locale>
