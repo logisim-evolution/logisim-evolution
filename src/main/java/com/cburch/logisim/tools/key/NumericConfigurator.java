@@ -91,7 +91,15 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
         curValue = val;
 
         if (val >= min) {
-          final Object valObj = createValue(val);
+          final var valObj = createValue(val);
+          // The configurator's numeric bounds may be broader than the attribute's accepted values.
+          try {
+            if (!valObj.equals(attr.parse(attr.toStandardString(valObj)))) {
+              return null;
+            }
+          } catch (NumberFormatException ignored) {
+            return null;
+          }
           return new KeyConfigurationResult(event, attr, valObj);
         }
       }
