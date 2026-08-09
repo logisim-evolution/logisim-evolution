@@ -19,6 +19,7 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -107,6 +108,7 @@ public class Telnet extends InstanceFactory {
     final var g = painter.getGraphics();
 
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    g.setFont(g.getFont().deriveFont(12.0f));
 
     painter.drawBounds();
     painter.drawPort(IN, "in", Direction.EAST);
