@@ -330,7 +330,8 @@ public final class LibraryManager {
   }
 
   public LoadedLibrary loadLogisimLibrary(Loader loader, File toRead) {
-    var ret = findKnown(toRead);
+    final var descriptor = new LogisimProjectDescriptor(toRead);
+    var ret = findKnown(descriptor);
     if (ret != null) return ret;
 
     try {
@@ -340,9 +341,8 @@ public final class LibraryManager {
       return null;
     }
 
-    final var desc = new LogisimProjectDescriptor(toRead);
-    fileMap.put(desc, new WeakReference<>(ret));
-    invMap.put(ret, desc);
+    fileMap.put(descriptor, new WeakReference<>(ret));
+    invMap.put(ret, descriptor);
     return ret;
   }
 

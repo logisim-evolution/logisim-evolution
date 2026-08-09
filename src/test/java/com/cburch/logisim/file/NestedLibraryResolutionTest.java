@@ -11,6 +11,7 @@ package com.cburch.logisim.file;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -64,6 +65,46 @@ class NestedLibraryResolutionTest {
         reloaded.getMainCircuit().getNonWires().stream()
             .anyMatch(component -> component.getFactory().getName().equals("Leaf")));
     assertFalse(reloadLoader.hasErrors(), reloadLoader.errors());
+  }
+
+  @Test
+  void reusesSharedNestedLogisimLibraryAcrossParentLibraries() throws Exception {
+    final var sharedPath = tempDir.resolve("Shared.circ").toFile();
+    final var aPath = tempDir.resolve("A.circ").toFile();
+    final var bPath = tempDir.resolve("B.circ").toFile();
+
+    final var sharedLoader = new RecordingLoader();
+    save(sharedLoader, newProject(sharedLoader, "Common"), sharedPath);
+
+    final var aLoader = new RecordingLoader();
+    final var aFile = newProject(aLoader, "ParentA");
+    final var sharedFromA = aLoader.loadLogisimLibrary(sharedPath);
+    assertNotNull(sharedFromA, aLoader.errors());
+    aFile.addLibrary(sharedFromA);
+    addComponent(aFile.getMainCircuit(), tool(sharedFromA, "Common"));
+    save(aLoader, aFile, aPath);
+
+    final var bLoader = new RecordingLoader();
+    final var bFile = newProject(bLoader, "ParentB");
+    final var sharedFromB = bLoader.loadLogisimLibrary(sharedPath);
+    assertNotNull(sharedFromB, bLoader.errors());
+    bFile.addLibrary(sharedFromB);
+    addComponent(bFile.getMainCircuit(), tool(sharedFromB, "Common"));
+    save(bLoader, bFile, bPath);
+
+    final var rootLoader = new RecordingLoader();
+    final var aLibrary = rootLoader.loadLogisimLibrary(aPath);
+    final var bLibrary = rootLoader.loadLogisimLibrary(bPath);
+    assertNotNull(aLibrary, rootLoader.errors());
+    assertNotNull(bLibrary, rootLoader.errors());
+
+    final var nestedSharedFromA = findLibrary(aLibrary, "Shared");
+    final var nestedSharedFromB = findLibrary(bLibrary, "Shared");
+    assertSame(nestedSharedFromA, nestedSharedFromB);
+    assertSame(
+        tool(nestedSharedFromA, "Common").getFactory(),
+        tool(nestedSharedFromB, "Common").getFactory());
+    assertFalse(rootLoader.hasErrors(), rootLoader.errors());
   }
 
   private static void addComponent(Circuit circuit, AddTool tool) {
