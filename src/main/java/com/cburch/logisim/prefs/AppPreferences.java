@@ -591,6 +591,19 @@ public class AppPreferences {
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
+  public static final String EDITOR_THEME_DEFAULT = "default";
+  public static final String EDITOR_THEME_DARK = "dark";
+  public static final String[] EDITOR_THEMES = {
+    EDITOR_THEME_DEFAULT, EDITOR_THEME_DARK, "monokai", "eclipse", "idea", "vs", "druid"
+  };
+  public static final PrefMonitor<String> LIGHT_EDITOR_THEME =
+      create(
+          new PrefMonitorStringOpts(
+              "lightEditorTheme", EDITOR_THEMES, EDITOR_THEME_DEFAULT));
+  public static final PrefMonitor<String> DARK_EDITOR_THEME =
+      create(
+          new PrefMonitorStringOpts("darkEditorTheme", EDITOR_THEMES, EDITOR_THEME_DARK));
+
   public static final PrefMonitor<String> APP_FONT =
       create(new PrefMonitorString("AppFont", ""));
 

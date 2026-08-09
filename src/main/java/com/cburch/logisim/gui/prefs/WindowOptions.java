@@ -70,6 +70,8 @@ class WindowOptions extends OptionsPanel {
   private final JLabel zoomLabel;
   private final JTextArea zoomFactorImportant;
   private final JComboBox<String> lookAndFeel;
+  private final JLabel editorThemeLabel;
+  private final JComboBox<String> editorTheme;
   private final JComboBox<String> appFont;
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private int index = 0;
@@ -191,6 +193,17 @@ class WindowOptions extends OptionsPanel {
         lookAndFeel.setSelectedIndex(index = i);
       }
     }
+
+    editorTheme = new JComboBox<>();
+    editorTheme.addItem("Default");
+    editorTheme.addItem("Dark");
+    editorTheme.addItem("Monokai");
+    editorTheme.addItem("Eclipse");
+    editorTheme.addItem("IDEA");
+    editorTheme.addItem("Visual Studio");
+    editorTheme.addItem("Druid");
+    updateEditorThemeSelection();
+    editorThemeLabel = new JLabel(S.get("windowEditorTheme"));
     
     appFont = new JComboBox<>();
     appFont.addItem(S.get("windowAppFontDefault"));
@@ -208,6 +221,10 @@ class WindowOptions extends OptionsPanel {
     panel.add(lookfeelLabel);
     panel.add(lookAndFeel);
     lookAndFeel.addActionListener(listener);
+
+    panel.add(editorThemeLabel);
+    panel.add(editorTheme);
+    editorTheme.addActionListener(listener);
 
     panel.add(appFontLabel);
     panel.add(appFont);
@@ -258,6 +275,20 @@ class WindowOptions extends OptionsPanel {
     }
   }
 
+  private void updateEditorThemeSelection() {
+    final var preference =
+        AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+            ? AppPreferences.DARK_EDITOR_THEME
+            : AppPreferences.LIGHT_EDITOR_THEME;
+    final var selectedTheme = preference.get();
+    for (var i = 0; i < AppPreferences.EDITOR_THEMES.length; i++) {
+      if (AppPreferences.EDITOR_THEMES[i].equals(selectedTheme)) {
+        editorTheme.setSelectedIndex(i);
+        return;
+      }
+    }
+  }
+
   @Override
   public String getHelpText() {
     return S.get("windowHelp");
@@ -276,6 +307,7 @@ class WindowOptions extends OptionsPanel {
     toolbarPlacement.localeChanged();
     zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
+    editorThemeLabel.setText(S.get("windowEditorTheme"));
     appFontLabel.setText(S.get("windowAppFont"));
     restartWarning.setText(S.get("windowRestartWarning"));
     zoomFactorImportant.setText(S.get("windowToolbarImportant"));
@@ -316,8 +348,18 @@ class WindowOptions extends OptionsPanel {
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
           AppPreferences.applyThemeColors();
           applyLookAndFeelGlobally(lookAndFeelInfos[index].getClassName());
+          updateEditorThemeSelection();
         }
         checkRestartWarning();
+      } else if (e.getSource().equals(editorTheme)) {
+        final var selectedIndex = editorTheme.getSelectedIndex();
+        if (selectedIndex >= 0 && selectedIndex < AppPreferences.EDITOR_THEMES.length) {
+          final var preference =
+              AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+                  ? AppPreferences.DARK_EDITOR_THEME
+                  : AppPreferences.LIGHT_EDITOR_THEME;
+          preference.set(AppPreferences.EDITOR_THEMES[selectedIndex]);
+        }
       } else if (e.getSource().equals(appFont)) {
         String val = (String) appFont.getSelectedItem();
         AppPreferences.APP_FONT.set(S.get("windowAppFontDefault").equals(val) ? "" : val);

@@ -97,6 +97,7 @@ public class ZoomControl extends JPanel {
   }
 
   private int nearestZoomOption() {
+    if (model == null) return 0;
     final var choices = model.getZoomOptions();
     final var factor = model.getZoomFactor() * 100.0;
     var closest = 0;

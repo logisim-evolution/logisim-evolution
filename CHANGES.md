@@ -34,6 +34,7 @@
       bit-range labels to be visible on dark backgrounds.
     * Replaced hard-coded hex color literals with named `DEFAULT_*`/`DARK_*` constants
       in class `AppPreferences`.
+  * Added separate light and dark code editor theme preferences for HDL and assembly editors.
   * Improved Timing Diagram recording and exports:
     * Corrected vector and GIF exports.
     * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.
