@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -383,16 +385,16 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           final var activeLow = StdAttr.TRIG_LOW.equals(clockAttr) || StdAttr.TRIG_FALLING.equals(clockAttr);
           final var compPinId = myPorts.getComponentPortId(port);
           if (!componentInfo.isEndConnected(compPinId)) {
-            // FIXME hard coded string
             Reporter.report.addSevereWarning(
-                String.format("Component \"%s\" in circuit \"%s\" has no clock connection!", compName, nets.getCircuitName()));
+                getClockWarning(
+                    "HDLGenerator_NoClockConnection", compName, nets.getCircuitName()));
             hasClock = false;
           }
           final var clockNetName = Hdl.getClockNetName(componentInfo, compPinId, nets);
           if (StringUtil.isNullOrEmpty(clockNetName)) {
-            // FIXME hard coded string
             Reporter.report.addSevereWarning(
-                String.format("Component \"%s\" in circuit \"%s\" has a gated clock connection!", compName, nets.getCircuitName()));
+                getClockWarning(
+                    "HDLGenerator_GatedClockConnection", compName, nets.getCircuitName()));
             gatedClock = true;
           }
           if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
@@ -431,6 +433,10 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
     }
     return result;
+  }
+
+  static String getClockWarning(String messageKey, String componentName, String circuitName) {
+    return S.get(messageKey, componentName, circuitName);
   }
 
   @Override
