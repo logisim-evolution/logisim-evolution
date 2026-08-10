@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.fpga.file;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.FpgaClass;
 import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
@@ -101,21 +103,15 @@ public class BoardReaderClass {
         }
       }
       if (CodeTable == null) {
-        DialogNotification.showDialogNotification(
-            // FIXME: hardcoded string
-            null, "Error", "The selected XML file does not contain a compression code table");
+        showBoardFileError("BoardReaderMissingCodeTable");
         return null;
       }
       if ((PictureWidth == 0) || (PictureHeight == 0)) {
-        DialogNotification.showDialogNotification(
-            // FIXME: hardcoded string
-            null, "Error", "The selected XML file does not contain the picture dimensions");
+        showBoardFileError("BoardReaderMissingPictureDimensions");
         return null;
       }
       if (PixelData == null) {
-        DialogNotification.showDialogNotification(
-            // FIXME: hardcoded string
-            null, "Error", "The selected XML file does not contain the picture data");
+        showBoardFileError("BoardReaderMissingPictureData");
         return null;
       }
 
@@ -230,9 +226,7 @@ public class BoardReaderClass {
         || (family == null)
         || (Package == null)
         || (speed == null)) {
-      // FIXME: hardcoded string
-      DialogNotification.showDialogNotification(
-          null, "Error", "The selected xml file does not contain the required FPGA parameters");
+      showBoardFileError("BoardReaderMissingFpgaParameters");
       return null;
     }
     if (usbTmc == null) usbTmc = Boolean.toString(false);
@@ -255,6 +249,11 @@ public class BoardReaderClass {
         flashName,
         flashPos);
     return result;
+  }
+
+  private static void showBoardFileError(String messageKey) {
+    DialogNotification.showDialogNotification(
+        null, S.get("BoardReaderErrorTitle"), S.get(messageKey));
   }
 
   private void processComponentList(NodeList compList, BoardInformation board) {
