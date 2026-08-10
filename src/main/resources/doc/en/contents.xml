@@ -168,6 +168,13 @@
 			<tocitem target="arith_bitadder" text="Bit Adder" image="icon_bitadder" />
 			<tocitem target="arith_bitfinder" text="Bit Finder" image="icon_bitfinder" />
 		</tocitem>
+		<tocitem target="fparith" text="Floating Point Arithmetic library">
+			<tocitem target="fparith_adder" text="Floating Point Adder" image="icon_adder" />
+			<tocitem target="fparith_subtractor" text="Floating Point Subtractor" image="icon_subtractor" />
+			<tocitem target="fparith_multiplier" text="Floating Point Multiplier" image="icon_multiplier" />
+			<tocitem target="fparith_divider" text="Floating Point Divider" image="icon_divider" />
+			<tocitem target="fparith_negator" text="Floating Point Negator" image="icon_negator" />
+		</tocitem>
 		<tocitem target="mem" text="Memory library">
 			<tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" />
 			<tocitem target="mem_register" text="Register" image="icon_register" />
