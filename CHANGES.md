@@ -51,6 +51,8 @@
     * Wide Counter components use compact grouped state rows in evolution appearance.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.
+    * Random Generator now uses xoshiro256++ to produce full-width 64-bit pseudorandom values in
+      simulation and generated HDL.
   * Added HDL-language-aware label and circuit-name validation: VHDL remains case-insensitive,
     Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble

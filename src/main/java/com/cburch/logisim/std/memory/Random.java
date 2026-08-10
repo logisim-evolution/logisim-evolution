@@ -71,54 +71,44 @@ public class Random extends InstanceFactory {
   }
 
   private static class StateData extends ClockState implements InstanceData {
-    private static final long MULTIPLIER = 0x5DEECE66DL;
-    private static final long ADDEND = 0xBL;
-    private static final long MASK = (1L << 48) - 1;
-
-    private long initSeed;
-    private long curSeed;
+    private long resetSeed;
+    private Xoshiro256PlusPlus generator;
     private long value;
-    private long resetValue;
     private Value oldReset;
 
     public StateData(Object seed) {
-      resetValue = this.initSeed = this.curSeed = getRandomSeed(seed);
-      this.value = this.initSeed;
+      resetSeed = getRandomSeed(seed);
+      reset();
       oldReset = Value.UNKNOWN;
     }
 
     private void propagateReset(Value reset, Object seed) {
       if (oldReset == Value.FALSE && reset == Value.TRUE) {
-        resetValue = getRandomSeed(seed);
+        resetSeed = getRandomSeed(seed);
       }
       oldReset = reset;
     }
 
-    public void reset(Object seed) {
-      this.initSeed = resetValue;
-      this.curSeed = resetValue;
-      this.value = resetValue;
+    public void reset() {
+      generator = new Xoshiro256PlusPlus(resetSeed);
+      value = generator.currentValue();
     }
 
     private long getRandomSeed(Object seed) {
-      long retValue = seed instanceof Integer ? (Integer) seed : 0;
+      var retValue = seed instanceof Integer intSeed ? Integer.toUnsignedLong(intSeed) : 0L;
       if (retValue == 0) {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what
         // would be intended was starting a new sequence entirely...
-        retValue = (System.currentTimeMillis() ^ MULTIPLIER) & MASK;
-        if (retValue == initSeed) {
-          retValue = (retValue + MULTIPLIER) & MASK;
-        }
+        retValue = System.currentTimeMillis();
+        if (retValue == resetSeed) retValue += 0x9E3779B97F4A7C15L;
       }
       return retValue;
     }
 
     void step() {
-      long v = curSeed;
-      v = (v * MULTIPLIER + ADDEND) & MASK;
-      curSeed = v;
-      value = v >> 12;
+      generator.step();
+      value = generator.currentValue();
     }
   }
 
@@ -342,7 +332,7 @@ public class Random extends InstanceFactory {
 
     data.propagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED));
     if (state.getPortValue(RST) == Value.TRUE) {
-      data.reset(state.getAttributeValue(ATTR_SEED));
+      data.reset();
     } else if (triggered && state.getPortValue(NXT) != Value.FALSE) {
       data.step();
     }
