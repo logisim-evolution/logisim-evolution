@@ -66,8 +66,6 @@ public class Ttl74173 extends AbstractTtlGate {
   private static final byte[] DATA = new byte[] { D4, D3, D2, D1 };
   private static final byte[] OUTPUTS = new byte[] { Q4, Q3, Q2, Q1 };
 
-  private InstanceState _state;
-
   public Ttl74173() {
     super(
         _ID,
@@ -86,118 +84,126 @@ public class Ttl74173 extends AbstractTtlGate {
     Drawgates.paintPortNames(painter, x, y, height, portNames);
   }
 
-  /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
-   *
-   * @param dsPinNr datasheet pin number
-   * @return port number
-   */
-  private byte pinNrToPortNr(byte dsPinNr) {
-    return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
-  }
-
-  /** Gets the current state of the specified pin
-   *
-   * @param dsPinNr datasheet pin number
-   * @return the current state of the specified pin
-   */
-  private Value getPort(byte dsPinNr) {
-    return _state.getPortValue(pinNrToPortNr(dsPinNr));
-  }
-
-  /** Sets the specified pin to the specified value
-   *
-   * @param dsPinNr datasheet pin number
-   * @param v the value for the pin
-   */
-  private void setPort(byte dsPinNr, Value v) {
-    _state.setPort(pinNrToPortNr(dsPinNr), v, DELAY);
-  }
-
-  /**
-   * Gets the instance data
-   *
-   * @return the instance data
-   */
-  private TtlRegisterData getData() {
-    var data = (TtlRegisterData) _state.getData();
-
-    if (data == null) {
-      data = new TtlRegisterData(BitWidth.ONE, DATA.length);
-      _state.setData(data);
+  private record LogicScope(InstanceState state, TtlRegisterData data) {
+    LogicScope(InstanceState state) {
+      this(state, getData(state));
     }
 
-    return data;
-  }
-
-  /**
-   * Predicate which is true when the clock was triggered
-   *
-   * @return true when the clock was triggered
-   */
-  private boolean isTriggered() {
-    return getData().updateClock(getPort(CLK), StdAttr.TRIG_RISING);
-  }
-
-  /**
-   * Decodes the mode inputs
-   *
-   * @return the detected mode
-   */
-  private Mode getMode() {
-    if (getPort(CLR) == Value.TRUE) {
-      return Mode.CLEAR;
-    } else if ((getPort(nG1) == Value.FALSE) && (getPort(nG2) == Value.FALSE)) {
-      return Mode.LOAD;
+    public void run() {
+      propagateRegister();
+      propagateOutputs();
     }
 
-    return Mode.HOLD;
-  }
+    /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
+     *
+     * @param dsPinNr datasheet pin number
+     * @return port number
+     */
+    public static byte pinNrToPortNr(byte dsPinNr) {
+      return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
+    }
 
-  /**
-   * Predicate which is true when the output buffers are enabled
-   *
-   * @return true when the output buffers are enabled
-   */
-  private boolean isOutputEnabled() {
-    return (getPort(nM) == Value.FALSE) && (getPort(nN) == Value.FALSE);
-  }
+    /** Gets the current state of the specified pin
+     *
+     * @param dsPinNr datasheet pin number
+     * @return the current state of the specified pin
+     */
+    private Value getPort(byte dsPinNr) {
+      return state.getPortValue(pinNrToPortNr(dsPinNr));
+    }
 
-  /**
-   * Update the state of the internal register
-   */
-  private void propagateRegister() {
-    switch (getMode()) {
-      case CLEAR:
-        getData().clear();
-        break;
-      case LOAD:
-        if (isTriggered()) {
-          for (var i = 0; i < DATA.length; i++) {
-            getData().setValue(i, getPort(DATA[i]));
+    /** Sets the specified pin to the specified value
+     *
+     * @param dsPinNr datasheet pin number
+     * @param v the value for the pin
+     */
+    private void setPort(byte dsPinNr, Value v) {
+      state.setPort(pinNrToPortNr(dsPinNr), v, DELAY);
+    }
+
+    /**
+     * Gets the instance data
+     *
+     * @return the instance data
+     */
+    private static TtlRegisterData getData(InstanceState state) {
+      var data = (TtlRegisterData) state.getData();
+
+      if (data == null) {
+        data = new TtlRegisterData(BitWidth.ONE, DATA.length);
+        state.setData(data);
+      }
+
+      return data;
+    }
+
+    /**
+     * Predicate which is true when the clock was triggered
+     *
+     * @return true when the clock was triggered
+     */
+    private boolean isTriggered() {
+      return data.updateClock(getPort(CLK), StdAttr.TRIG_RISING);
+    }
+
+    /**
+     * Decodes the mode inputs
+     *
+     * @return the detected mode
+     */
+    private Mode getMode() {
+      if (getPort(CLR) == Value.TRUE) {
+        return Mode.CLEAR;
+      } else if ((getPort(nG1) == Value.FALSE) && (getPort(nG2) == Value.FALSE)) {
+        return Mode.LOAD;
+      }
+
+      return Mode.HOLD;
+    }
+
+    /**
+     * Predicate which is true when the output buffers are enabled
+     *
+     * @return true when the output buffers are enabled
+     */
+    private boolean isOutputEnabled() {
+      return (getPort(nM) == Value.FALSE) && (getPort(nN) == Value.FALSE);
+    }
+
+    /**
+     * Update the state of the internal register
+     */
+    private void propagateRegister() {
+      switch (getMode()) {
+        case CLEAR:
+          data.clear();
+          break;
+        case LOAD:
+          if (isTriggered()) {
+            for (var i = 0; i < DATA.length; i++) {
+              data.setValue(i, getPort(DATA[i]));
+            }
           }
-        }
-        break;
-      case HOLD:
-        // Nothing to do
-        break;
+          break;
+        case HOLD:
+          // Nothing to do
+          break;
+      }
     }
-  }
 
-  /**
-   * Drive the output buffers
-   */
-  private void propagateOutputs() {
-    for (var i = 0; i < OUTPUTS.length; i++) {
-      setPort(OUTPUTS[i], isOutputEnabled() ? getData().getValue(i) : Value.UNKNOWN);
+    /**
+     * Drive the output buffers
+     */
+    private void propagateOutputs() {
+      for (var i = 0; i < OUTPUTS.length; i++) {
+        setPort(OUTPUTS[i], isOutputEnabled() ? data.getValue(i) : Value.UNKNOWN);
+      }
     }
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    _state = state;
-
-    propagateRegister();
-    propagateOutputs();
+    new LogicScope(state).run();
   }
 
   @Override
@@ -207,6 +213,6 @@ public class Ttl74173 extends AbstractTtlGate {
 
   @Override
   public int[] clockPinIndex(netlistComponent comp) {
-    return new int[] { pinNrToPortNr(CLK) };
+    return new int[] { LogicScope.pinNrToPortNr(CLK) };
   }
 }
