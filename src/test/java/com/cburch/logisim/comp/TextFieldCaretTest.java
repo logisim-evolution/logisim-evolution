@@ -127,6 +127,52 @@ class TextFieldCaretTest {
     assertEquals("abc", mirroredTextWhenCommitted.get());
   }
 
+  @Test
+  void shiftEnterAddsNewlineOnlyToMultilineField() {
+    final var caret = multilineCaret("ab", 1);
+
+    caret.keyPressed(keyPressed(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK));
+    caret.keyTyped(keyTyped('\n', InputEvent.SHIFT_DOWN_MASK));
+
+    assertEquals("a\nb", caret.getText());
+  }
+
+  @Test
+  void shiftEnterDoesNotAddNewlineToSingleLineField() {
+    final var caret = caret("ab", 1);
+
+    caret.keyPressed(keyPressed(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK));
+
+    assertEquals("ab", caret.getText());
+  }
+
+  @Test
+  void verticalArrowsKeepColumnWithinMultilineText() {
+    final var caret = multilineCaret("ab\ncde", 1);
+
+    caret.keyPressed(keyPressed(KeyEvent.VK_DOWN, 0));
+    caret.keyTyped(keyTyped('X'));
+
+    assertEquals("ab\ncXde", caret.getText());
+  }
+
+  @Test
+  void homeMovesToStartOfCurrentLine() {
+    final var caret = multilineCaret("ab\ncde", 5);
+
+    caret.keyPressed(keyPressed(KeyEvent.VK_HOME, 0));
+    caret.keyTyped(keyTyped('X'));
+
+    assertEquals("ab\nXcde", caret.getText());
+  }
+
+  @Test
+  void multilinePastePreservesLineBreaksAndNormalizesWindowsEndings() {
+    final var caret = multilineCaret("", 0);
+
+    assertEquals("a\nb\nc d", caret.normalizePastedText("a\r\nb\rc\td"));
+  }
+
   private static TextFieldCaret caret(String text, int pos) {
     return caret(text, pos, false);
   }
@@ -137,13 +183,24 @@ class TextFieldCaretTest {
     return new TextFieldCaret(field, null, pos, metaMenuShortcutEnabled);
   }
 
+  private static TextFieldCaret multilineCaret(String text, int pos) {
+    final var field =
+        new TextField(0, 0, TextField.H_LEFT, TextField.V_BASELINE, null, true);
+    field.setText(text);
+    return new TextFieldCaret(field, null, pos, false);
+  }
+
   private static KeyEvent keyPressed(int keyCode, int modifiers) {
     return new KeyEvent(
         EVENT_SOURCE, KeyEvent.KEY_PRESSED, 0, modifiers, keyCode, KeyEvent.CHAR_UNDEFINED);
   }
 
   private static KeyEvent keyTyped(char keyChar) {
+    return keyTyped(keyChar, 0);
+  }
+
+  private static KeyEvent keyTyped(char keyChar, int modifiers) {
     return new KeyEvent(
-        EVENT_SOURCE, KeyEvent.KEY_TYPED, 0, 0, KeyEvent.VK_UNDEFINED, keyChar);
+        EVENT_SOURCE, KeyEvent.KEY_TYPED, 0, modifiers, KeyEvent.VK_UNDEFINED, keyChar);
   }
 }

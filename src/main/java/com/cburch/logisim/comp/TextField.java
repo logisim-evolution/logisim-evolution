@@ -32,18 +32,24 @@ public class TextField {
   private int valign;
   private Font font;
   private String text = "";
+  private final boolean multiline;
   private final LinkedList<TextFieldListener> listeners = new LinkedList<>();
 
   public TextField(int x, int y, int halign, int valign) {
-    this(x, y, halign, valign, null);
+    this(x, y, halign, valign, null, false);
   }
 
   public TextField(int x, int y, int halign, int valign, Font font) {
+    this(x, y, halign, valign, font, false);
+  }
+
+  public TextField(int x, int y, int halign, int valign, Font font, boolean multiline) {
     this.x = x;
     this.y = y;
     this.halign = halign;
     this.valign = valign;
     this.font = font;
+    this.multiline = multiline;
   }
 
   //
@@ -56,28 +62,31 @@ public class TextField {
   public void draw(Graphics g) {
     final var old = g.getFont();
     if (font != null) g.setFont(font);
-
-    var x = this.x;
-    var y = this.y;
-    final var fm = g.getFontMetrics();
-    final var width = fm.stringWidth(text);
-    final var ascent = fm.getAscent();
-    final var descent = fm.getDescent();
-    switch (halign) {
-      case TextField.H_CENTER -> x -= width / 2;
-      case TextField.H_RIGHT -> x -= width;
-      default -> {
+    if (multiline) {
+      GraphicsUtil.drawText(g, text, x, y, halign, valign);
+    } else {
+      var drawX = x;
+      var drawY = y;
+      final var fm = g.getFontMetrics();
+      final var width = fm.stringWidth(text);
+      final var ascent = fm.getAscent();
+      final var descent = fm.getDescent();
+      switch (halign) {
+        case TextField.H_CENTER -> drawX -= width / 2;
+        case TextField.H_RIGHT -> drawX -= width;
+        default -> {
+        }
       }
-    }
-    switch (valign) {
-      case TextField.V_TOP -> y += ascent;
-      case TextField.V_CENTER -> y += ascent / 2;
-      case TextField.V_CENTER_OVERALL -> y += (ascent - descent) / 2;
-      case TextField.V_BOTTOM -> y -= descent;
-      default -> {
+      switch (valign) {
+        case TextField.V_TOP -> drawY += ascent;
+        case TextField.V_CENTER -> drawY += ascent / 2;
+        case TextField.V_CENTER_OVERALL -> drawY += (ascent - descent) / 2;
+        case TextField.V_BOTTOM -> drawY -= descent;
+        default -> {
+        }
       }
+      g.drawString(text, drawX, drawY);
     }
-    g.drawString(text, x, y);
     g.setFont(old);
   }
 
@@ -88,29 +97,30 @@ public class TextField {
   }
 
   public Bounds getBounds(Graphics g) {
-    var x = this.x;
-    var y = this.y;
+    if (multiline) {
+      return Bounds.create(GraphicsUtil.getTextBounds(g, font, text, x, y, halign, valign));
+    }
+    var boundsX = x;
+    var boundsY = y;
     final var fm = (font == null) ? g.getFontMetrics() : g.getFontMetrics(font);
     final var width = fm.stringWidth(text);
     final var ascent = fm.getAscent();
     final var descent = fm.getDescent();
-
     switch (halign) {
-      case TextField.H_CENTER -> x -= width / 2;
-      case TextField.H_RIGHT -> x -= width;
+      case TextField.H_CENTER -> boundsX -= width / 2;
+      case TextField.H_RIGHT -> boundsX -= width;
       default -> {
       }
     }
-
     switch (valign) {
-      case TextField.V_TOP -> y += ascent;
-      case TextField.V_CENTER -> y += ascent / 2;
-      case TextField.V_CENTER_OVERALL -> y += (ascent - descent) / 2;
-      case TextField.V_BOTTOM -> y -= descent;
+      case TextField.V_TOP -> boundsY += ascent;
+      case TextField.V_CENTER -> boundsY += ascent / 2;
+      case TextField.V_CENTER_OVERALL -> boundsY += (ascent - descent) / 2;
+      case TextField.V_BOTTOM -> boundsY -= descent;
       default -> {
       }
     }
-    return Bounds.create(x, y - ascent, width, ascent + descent);
+    return Bounds.create(boundsX, boundsY - ascent, width, ascent + descent);
   }
 
   public TextFieldCaret getCaret(Graphics g, int pos) {
@@ -138,6 +148,10 @@ public class TextField {
 
   public int getVAlign() {
     return valign;
+  }
+
+  public boolean isMultiline() {
+    return multiline;
   }
 
   //

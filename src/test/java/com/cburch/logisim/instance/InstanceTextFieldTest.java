@@ -10,8 +10,10 @@
 package com.cburch.logisim.instance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,6 +67,29 @@ public class InstanceTextFieldTest {
     assertEquals("new", comp.getAttributeSet().getValue(Text.ATTR_TEXT));
     project.undoAction();
     assertEquals("old", comp.getAttributeSet().getValue(Text.ATTR_TEXT));
+  }
+
+  @Test
+  public void standaloneTextEnablesMultilineEditing() {
+    final var attrs = Text.FACTORY.createAttributeSet();
+    final var comp = Text.FACTORY.createComponent(Location.create(0, 0, false), attrs);
+
+    final var textField = (InstanceTextField) comp.getFeature(TextEditable.class);
+
+    assertNotNull(textField);
+    assertTrue(textField.isMultiline());
+  }
+
+  @Test
+  public void componentLabelKeepsSingleLineEditing() {
+    final var led = new Led();
+    final var comp =
+        led.createComponent(Location.create(100, 100, false), led.createAttributeSet());
+
+    final var textField = (InstanceTextField) comp.getFeature(TextEditable.class);
+
+    assertNotNull(textField);
+    assertFalse(textField.isMultiline());
   }
 
   @Test
