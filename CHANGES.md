@@ -15,6 +15,7 @@
     * Added conflict resolution dialog to replace, rename, or skip conflicting circuits.
   * Added support for opening project files by dragging them into the application window.
   * Added a Window menu option to hide or show the navigation pane.
+  * Added configurable shortcuts for selecting the default toolbar tools.
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
