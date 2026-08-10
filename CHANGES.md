@@ -21,6 +21,7 @@
   * Added TTL 7476: dual J-K Flip-flop with preset and clear.
   * Added TTL 7493: 4-bit binary ripple counter.
   * Added TTL 7438: quad dual-input NAND gate, open collector.
+  * Added TTL 74173: 4-bit D-type registers with 3-state outputs.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.
     * Corrected disjoint corners on Square Root arithmetic components.
