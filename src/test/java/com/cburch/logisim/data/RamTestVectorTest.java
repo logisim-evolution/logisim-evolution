@@ -56,7 +56,7 @@ class RamTestVectorTest {
         ramFactory.createComponent(Location.create(200, 150, true), ramAttrs);
     add(circuit, ram);
 
-  /*
+    /*
     * RAM port order is defined by RamAppearance.configurePorts():
     * address, data input, data output, OE, WE, clock.
     */
