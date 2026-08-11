@@ -72,6 +72,7 @@
     * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
+    * Invalid command-line option values now return a nonzero exit status.
     * TTY table output includes bit widths in headers.
     * Localized the Assembly Viewer.
   * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
