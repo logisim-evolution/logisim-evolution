@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
@@ -419,8 +421,7 @@ public class Hdl {
   public static boolean writeEntity(String targetDirectory, List<String> contents, String componentName) {
     if (!Hdl.isVhdl()) return true;
     if (contents.isEmpty()) {
-      // FIXME: hardcoded string
-      Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");
+      Reporter.report.addFatalError(S.get("HdlEmptyEntityError"));
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, true);
@@ -430,8 +431,7 @@ public class Hdl {
 
   public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
     if (CollectionUtil.isNullOrEmpty(contents)) {
-      // FIXME: hardcoded string
-      Reporter.report.addFatalErrorFmt("INTERNAL ERROR: Empty behavior description for Component '%s' received!", componentName);
+      Reporter.report.addFatalError(S.get("HdlEmptyBehaviorError", componentName));
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
