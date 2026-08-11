@@ -158,6 +158,10 @@
 	<mapID target="fparith_multiplier"  url="en/html/libs/fparith/multiplier.html" />
 	<mapID target="fparith_divider"     url="en/html/libs/fparith/divider.html" />
 	<mapID target="fparith_negator"     url="en/html/libs/fparith/negator.html" />
+	<mapID target="fparith_exponentiator" url="en/html/libs/fparith/exponentiator.html" />
+	<mapID target="fparith_logarithm"     url="en/html/libs/fparith/logarithm.html" />
+	<mapID target="fparith_squareroot"    url="en/html/libs/fparith/squareroot.html" />
+	<mapID target="fparith_absolute"      url="en/html/libs/fparith/absolute.html" />
 	<mapID target="mem"                 url="en/html/libs/mem/index.html" />
 	<mapID target="mem_flipflops"       url="en/html/libs/mem/flipflops.html" />
 	<mapID target="mem_register"        url="en/html/libs/mem/register.html" />
