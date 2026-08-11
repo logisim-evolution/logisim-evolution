@@ -14,11 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class IoDocumentationTest {
   private static final Path DOC_ROOT = Path.of("src", "main", "resources", "doc");
+  private static final String[] REFERENCE_PAGES = {"ledbar", "realtimeclock", "matrixkeypad"};
 
   @ParameterizedTest
   @ValueSource(strings = {"ledbar", "realtimeclock", "matrixkeypad"})
@@ -45,11 +47,45 @@ class IoDocumentationTest {
     final var indexPath = DOC_ROOT.resolve(language + "/html/libs/io/index.html");
     final var index = Files.readString(indexPath, StandardCharsets.UTF_8);
 
-    for (final var page : new String[] {"ledbar", "realtimeclock", "matrixkeypad"}) {
+    for (final var page : REFERENCE_PAGES) {
       final var expected = "href=\"../../../../en/html/libs/io/" + page + ".html\"";
       assertTrue(
           index.contains(expected),
           () -> language + " I/O index does not fall back to English " + page + ".html");
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"de", "fr", "ru", "zh"})
+  void localizedHelpTreeIncludesReferencePages(String language) throws Exception {
+    final var contents =
+        Files.readString(DOC_ROOT.resolve(language + "/contents.xml"), StandardCharsets.UTF_8);
+
+    for (final var page : REFERENCE_PAGES) {
+      final var target = "target=\"io_" + page + "\"";
+      assertTrue(
+          contents.contains(target),
+          () -> language + " JavaHelp tree does not include target io_" + page);
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"de", "fr", "ru", "zh"})
+  void localizedHelpMapFallsBackToEnglish(String language) throws Exception {
+    final var map =
+        Files.readString(DOC_ROOT.resolve("map_" + language + ".jhm"), StandardCharsets.UTF_8);
+
+    for (final var page : REFERENCE_PAGES) {
+      final var entry =
+          Pattern.compile(
+              "<mapID\\s+target=\"io_"
+                  + page
+                  + "\"\\s+url=\"en/html/libs/io/"
+                  + page
+                  + "\\.html\"\\s*/>");
+      assertTrue(
+          entry.matcher(map).find(),
+          () -> language + " JavaHelp map does not fall back to English " + page + ".html");
     }
   }
 }
