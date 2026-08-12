@@ -161,10 +161,9 @@ public class DualRam extends Ram {
     }
 
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputDisabled =
-        state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE)
-            && (!separate || RamAttributes.hasControlledOutput(attrs));
-    final var outputEnabled = !outputDisabled;
+    final var outputEnabled = (separate) ? true :
+        !(state.getPortValue(DualRamAppearance.getOEIndex(portIndex, attrs)).equals(Value.FALSE)
+        && RamAttributes.hasControlledOutput(attrs));
 
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {

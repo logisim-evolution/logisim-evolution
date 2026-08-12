@@ -300,10 +300,9 @@ public class Ram extends Mem {
 
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputDisabled =
-        state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE)
-            && (!separate || RamAttributes.hasControlledOutput(attrs));
-    final var outputEnabled = !outputDisabled;
+    final var outputEnabled = (separate) ? true : 
+        !(state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE)
+            && RamAttributes.hasControlledOutput(attrs));
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr + i);

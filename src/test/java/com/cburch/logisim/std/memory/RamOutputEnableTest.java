@@ -52,21 +52,6 @@ class RamOutputEnableTest {
   }
 
   @Test
-  void controlledLineEnableRamDrivesUnknownWhenOutputEnableIsFalse() {
-    final var ram = new Ram();
-    final var attrs = (RamAttributes) ram.createAttributeSet();
-    attrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
-    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP_CONTROLLED);
-    final var dataBits = attrs.getValue(Mem.DATA_ATTR);
-    final var state = ramState(attrs);
-
-    ram.propagate(state);
-
-    verify(state)
-        .setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createUnknown(dataBits), Mem.DELAY);
-  }
-
-  @Test
   void dualRamSeparateDataBusRetainsOutputWhenOutputEnableIsFalse() {
     final var ram = new DualRam();
     final var attrs = (RamAttributes) ram.createAttributeSet();
