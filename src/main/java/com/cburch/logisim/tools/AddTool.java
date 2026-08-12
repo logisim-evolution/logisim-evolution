@@ -160,6 +160,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void deselect(Canvas canvas) {
+    canvas.stopAutoPan();
     setState(canvas, SHOW_GHOST);
     moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
     bounds = null;
@@ -454,6 +455,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void mouseExited(Canvas canvas, Graphics gfx, MouseEvent event) {
+    canvas.stopAutoPan();
     if (state == SHOW_GHOST) {
       moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
       setState(canvas, SHOW_NONE);
@@ -466,15 +468,19 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public void mouseMoved(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state != SHOW_NONE) {
+      canvas.updatePreviewAutoPan(event.getX(), event.getY());
       if (shouldSnap) {
         Canvas.snapToGrid(event);
       }
       moveTo(canvas, gfx, event.getX(), event.getY());
+    } else {
+      canvas.stopAutoPan();
     }
   }
 
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+    canvas.stopAutoPan();
     // verify the addition would be valid
     final var circ = canvas.getCircuit();
     if (!canvas.getProject().getLogisimFile().contains(circ)) {
