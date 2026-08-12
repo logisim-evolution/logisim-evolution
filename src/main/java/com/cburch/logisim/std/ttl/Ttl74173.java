@@ -89,11 +89,6 @@ public class Ttl74173 extends AbstractTtlGate {
       this(state, getData(state));
     }
 
-    public void run() {
-      propagateRegister();
-      propagateOutputs();
-    }
-
     /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
      *
      * @param dsPinNr datasheet pin number
@@ -199,11 +194,16 @@ public class Ttl74173 extends AbstractTtlGate {
         setPort(OUTPUTS[i], isOutputEnabled() ? data.getValue(i) : Value.UNKNOWN);
       }
     }
+
+    public void propagate() {
+      propagateRegister();
+      propagateOutputs();
+    }
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    new LogicScope(state).run();
+    new LogicScope(state).propagate();
   }
 
   @Override

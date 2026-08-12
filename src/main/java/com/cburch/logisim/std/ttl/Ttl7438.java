@@ -52,8 +52,6 @@ public class Ttl7438 extends AbstractTtlGate {
   public static final byte GND = 7;
   public static final byte VCC = 14;
 
-  private InstanceState _state;
-
   public Ttl7438() {
     super(
         _ID,
@@ -87,54 +85,62 @@ public class Ttl7438 extends AbstractTtlGate {
     Drawgates.paintDoubleInputgate(g, x + 30, y, x + 44 - portwidth, youtput, portheight, up, false, height);
   }
 
-  /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
-   *
-   * @param dsPinNr datasheet pin number
-   * @return port number
-   */
-  protected byte pinNrToPortNr(byte dsPinNr) {
-    return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
-  }
+  private record LogicScope(InstanceState state) {
+    /**
+     * IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
+     *
+     * @param dsPinNr datasheet pin number
+     * @return port number
+     */
+    private byte pinNrToPortNr(byte dsPinNr) {
+      return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
+    }
 
-  /** Gets the current state of the specified pin
-   *
-   * @param dsPinNr datasheet pin number
-   * @return true if the specified pin has a logic high level
-   */
-  private boolean getPort(byte dsPinNr) {
-    return _state.getPortValue(pinNrToPortNr(dsPinNr)) == Value.TRUE;
-  }
+    /**
+     * Gets the current state of the specified pin
+     *
+     * @param dsPinNr datasheet pin number
+     * @return true if the specified pin has a logic high level
+     */
+    private boolean getPort(byte dsPinNr) {
+      return state.getPortValue(pinNrToPortNr(dsPinNr)) == Value.TRUE;
+    }
 
-  /** Sets the specified open-collector pin to the specified level
-   *
-   * @param dsPinNr datasheet pin number
-   * @param b the logic level for the pin
-   */
-  private void setOcPort(byte dsPinNr, boolean b) {
-    _state.setPort(pinNrToPortNr(dsPinNr), b ? Value.UNKNOWN : Value.FALSE, DELAY);
-  }
+    /**
+     * Sets the specified open-collector pin to the specified level
+     *
+     * @param dsPinNr datasheet pin number
+     * @param b       the logic level for the pin
+     */
+    private void setOcPort(byte dsPinNr, boolean b) {
+      state.setPort(pinNrToPortNr(dsPinNr), b ? Value.UNKNOWN : Value.FALSE, DELAY);
+    }
 
-  /** Sets the output for the specified NAND gate.
-   *
-   * @param A datasheet pin number for input A
-   * @param B datasheet pin number for input B
-   * @param Y datasheet pin number for output Y
-   */
-  private void setGate(byte A, byte B, byte Y) {
-    final var a = getPort(A);
-    final var b = getPort(B);
+    /**
+     * Sets the output for the specified NAND gate.
+     *
+     * @param A datasheet pin number for input A
+     * @param B datasheet pin number for input B
+     * @param Y datasheet pin number for output Y
+     */
+    private void setGate(byte A, byte B, byte Y) {
+      final var a = getPort(A);
+      final var b = getPort(B);
 
-    setOcPort(Y, !(a && b));
+      setOcPort(Y, !(a && b));
+    }
+
+    public void propagate() {
+      // Set outputs
+      setGate(A1, B1, Y1);
+      setGate(A2, B2, Y2);
+      setGate(A3, B3, Y3);
+      setGate(A4, B4, Y4);
+    }
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    _state = state;
-
-    // Set outputs
-    setGate(A1, B1, Y1);
-    setGate(A2, B2, Y2);
-    setGate(A3, B3, Y3);
-    setGate(A4, B4, Y4);
+    new LogicScope(state).propagate();
   }
 }

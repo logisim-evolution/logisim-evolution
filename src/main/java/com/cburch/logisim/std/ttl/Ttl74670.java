@@ -58,9 +58,6 @@ public class Ttl74670 extends AbstractTtlGate {
 
   private static final byte[] DATA_OUTPUTS = new byte[] { Q1, Q2, Q3, Q4 };
 
-  private InstanceState _state;
-  private TtlRegisterData _data;
-
   public Ttl74670() {
     super(
             _ID,
@@ -79,120 +76,130 @@ public class Ttl74670 extends AbstractTtlGate {
     Drawgates.paintPortNames(painter, x, y, height, portNames);
   }
 
-  /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
-   *
-   * @param dsPinNr datasheet pin number
-   * @return port number
-   */
-  private byte pinNrToPortNr(byte dsPinNr) {
-    return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
-  }
-
-  /** Gets the current state of the specified pin
-   *
-   * @param dsPinNr datasheet pin number
-   * @return the current state of the specified pin
-   */
-  private Value getPort(byte dsPinNr) {
-    return _state.getPortValue(pinNrToPortNr(dsPinNr));
-  }
-
-  /** Sets the specified pin to the specified value
-   *
-   * @param dsPinNr datasheet pin number
-   * @param v the value for the pin
-   */
-  private void setPort(byte dsPinNr, Value v) {
-    _state.setPort(pinNrToPortNr(dsPinNr), v, DELAY);
-  }
-
-  /**
-   * Gets the instance data
-   *
-   * @return the instance data
-   */
-  private TtlRegisterData getData() {
-    var data = (TtlRegisterData) _state.getData();
-
-    if (data == null) {
-      data = new TtlRegisterData(BitWidth.create(4), 4);
-      _state.setData(data);
+  private record LogicScope(InstanceState state, TtlRegisterData data) {
+    LogicScope(InstanceState state) {
+      this(state, getData(state));
     }
 
-    return data;
-  }
+    /**
+     * IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
+     *
+     * @param dsPinNr datasheet pin number
+     * @return port number
+     */
+    private byte pinNrToPortNr(byte dsPinNr) {
+      return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
+    }
 
-  /**
-   * Calculate the read/write address
-   *
-   * @param msbPinNr the pin number of the most significant bit
-   * @param lsbPinNr the pin number of the least significant bit
-   * @return the address
-   */
-  private int getAddress(byte msbPinNr, byte lsbPinNr) {
-    return ((getPort(msbPinNr) == Value.TRUE) ? 2 : 0)
-         + ((getPort(lsbPinNr) == Value.TRUE) ? 1 : 0);
-  }
+    /**
+     * Gets the current state of the specified pin
+     *
+     * @param dsPinNr datasheet pin number
+     * @return the current state of the specified pin
+     */
+    private Value getPort(byte dsPinNr) {
+      return state.getPortValue(pinNrToPortNr(dsPinNr));
+    }
 
-  /**
-   * Calculate the read-address based on the levels on RA0 and RA1
-   *
-   * @return the read-address
-   */
-  private int getReadAddress() {
-    return getAddress(RA1, RA0);
-  }
+    /**
+     * Sets the specified pin to the specified value
+     *
+     * @param dsPinNr datasheet pin number
+     * @param v       the value for the pin
+     */
+    private void setPort(byte dsPinNr, Value v) {
+      state.setPort(pinNrToPortNr(dsPinNr), v, DELAY);
+    }
 
-  /**
-   * Calculate the write-address based on the levels on WA0 and WA1
-   *
-   * @return the write-address
-   */
-  private int getWriteAddress() {
-    return getAddress(WA1, WA0);
-  }
+    /**
+     * Gets the instance data
+     *
+     * @return the instance data
+     */
+    private static TtlRegisterData getData(InstanceState state) {
+      var data = (TtlRegisterData) state.getData();
 
-  /**
-   * Predicate which is true when the clock was triggered for the selected address.
-   *
-   * @return true when the clock was triggered
-   */
-  private boolean isTriggered() {
-    return _data.updateClock(getPort(nWE), getWriteAddress(), StdAttr.TRIG_LOW);
-  }
+      if (data == null) {
+        data = new TtlRegisterData(BitWidth.create(4), 4);
+        state.setData(data);
+      }
 
-  /**
-   * Propagate data from the data inputs to internal memory
-   */
-  private void propagateWritePort() {
-    if (isTriggered()) {
-      for (var i = 0; i < 4; i++) {
-        _data.setValue(
-            getWriteAddress(),
-            Value.create(new Value[] { getPort(D1), getPort(D2), getPort(D3), getPort(D4) }));
+      return data;
+    }
+
+    /**
+     * Calculate the read/write address
+     *
+     * @param msbPinNr the pin number of the most significant bit
+     * @param lsbPinNr the pin number of the least significant bit
+     * @return the address
+     */
+    private int getAddress(byte msbPinNr, byte lsbPinNr) {
+      return ((getPort(msbPinNr) == Value.TRUE) ? 2 : 0)
+          + ((getPort(lsbPinNr) == Value.TRUE) ? 1 : 0);
+    }
+
+    /**
+     * Calculate the read-address based on the levels on RA0 and RA1
+     *
+     * @return the read-address
+     */
+    private int getReadAddress() {
+      return getAddress(RA1, RA0);
+    }
+
+    /**
+     * Calculate the write-address based on the levels on WA0 and WA1
+     *
+     * @return the write-address
+     */
+    private int getWriteAddress() {
+      return getAddress(WA1, WA0);
+    }
+
+    /**
+     * Predicate which is true when the clock was triggered for the selected address.
+     *
+     * @return true when the clock was triggered
+     */
+    private boolean isTriggered() {
+      return data.updateClock(getPort(nWE), getWriteAddress(), StdAttr.TRIG_LOW);
+    }
+
+    /**
+     * Propagate data from the data inputs to internal memory
+     */
+    private void propagateWritePort() {
+      if (isTriggered()) {
+        for (var i = 0; i < 4; i++) {
+          data.setValue(
+              getWriteAddress(),
+              Value.create(new Value[]{getPort(D1), getPort(D2), getPort(D3), getPort(D4)}));
+        }
       }
     }
-  }
 
-  /**
-   * Propagate data from internal memory to the data outputs
-   */
-  private void propagateReadPort() {
-    var readEnabled = getPort(nOE) == Value.FALSE;  // nOE is active low
-    var readData = _data.getValue(getReadAddress());
+    /**
+     * Propagate data from internal memory to the data outputs
+     */
+    private void propagateReadPort() {
+      var readEnabled = getPort(nOE) == Value.FALSE;  // nOE is active low
+      var readData = data.getValue(getReadAddress());
 
-    for (var i = 0; i < 4; i++) {
-      setPort(DATA_OUTPUTS[i], readEnabled ? readData.get(i) : Value.UNKNOWN);
+      for (var i = 0; i < 4; i++) {
+        setPort(DATA_OUTPUTS[i], readEnabled ? readData.get(i) : Value.UNKNOWN);
+      }
+    }
+
+    public void propagate() {
+      // Must write before read in order to simulate the internal latches
+      propagateWritePort();
+      propagateReadPort();
     }
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    _state = state;
-    _data = getData();
-
-    // Must write before read in order to simulate the internal latches
-    propagateWritePort();
-    propagateReadPort();
+    new LogicScope(state).propagate();
   }
 }
