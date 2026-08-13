@@ -625,8 +625,16 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgLocale(Startup startup, Option opt) {
-    setLocale(opt.getValue());
-    return RC.OK;
+    if (trySetLocale(opt.getValue())) return RC.OK;
+
+    final var opts = S.getLocaleOptions();
+    logger.warn(S.get("invalidLocaleError"));
+    logger.warn(S.get("invalidLocaleOptionsHeader"));
+
+    for (final var locale : opts) {
+      logger.warn("   {}", locale.toString());
+    }
+    return RC.ERROR;
   }
 
   private static RC handleArgTemplate(Startup startup, Option opt) {
@@ -793,19 +801,6 @@ public class Startup implements AWTEventListener {
       }
     }
     return false;
-  }
-
-  private static void setLocale(String lang) {
-    if (trySetLocale(lang)) return;
-
-    final var opts = S.getLocaleOptions();
-    logger.warn(S.get("invalidLocaleError"));
-    logger.warn(S.get("invalidLocaleOptionsHeader"));
-
-    for (final var opt : opts) {
-      logger.warn("   {}", opt.toString());
-    }
-    System.exit(-1);
   }
 
   private static String getProgramDirectory() {
