@@ -61,9 +61,9 @@ parts:
     build-attributes: [network]
     source: .
     override-pull: |
-      # set version from git tag
-      VERSION=$(git describe --tags --abbrev=0)
-      craftctl set version="${VERSION}"
+      craftctl default
+      LSE_VERSION="$(cat gradle.properties | grep '^version\s*=.*' | awk '{print $3}')"
+      craftctl set version="${LSE_VERSION}"
     override-build: |
       # Ensure that gradlew is executable
       chmod +x gradlew
