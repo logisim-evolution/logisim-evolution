@@ -183,6 +183,9 @@
 			<tocitem target="fparith_round" text="Floating Point Round" />
 			<tocitem target="fparith_trigonometry" text="Floating Point Trigonometry" />
 			<tocitem target="fparith_classificator" text="Floating Point Classificator" />
+			<tocitem target="fparith_fpconverter" text="Floating Point Converter" />
+			<tocitem target="fparith_fptoint" text="Floating Point to Integer" />
+			<tocitem target="fparith_inttofp" text="Integer to Floating Point" />
 		</tocitem>
 		<tocitem target="mem" text="Memory library">
 			<tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" />

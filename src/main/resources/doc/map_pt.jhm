@@ -166,6 +166,9 @@
 	<mapID target="fparith_round"         url="en/html/libs/fparith/round.html" />
 	<mapID target="fparith_trigonometry"  url="en/html/libs/fparith/trigonometry.html" />
 	<mapID target="fparith_classificator" url="en/html/libs/fparith/classificator.html" />
+	<mapID target="fparith_fpconverter"   url="en/html/libs/fparith/fpconverter.html" />
+	<mapID target="fparith_fptoint"       url="en/html/libs/fparith/fptoint.html" />
+	<mapID target="fparith_inttofp"       url="en/html/libs/fparith/inttofp.html" />
 	<mapID target="mem"                 url="pt/html/libs/mem/index.html" />
 	<mapID target="mem_flipflops"       url="pt/html/libs/mem/flipflops.html" />
 	<mapID target="mem_register"        url="pt/html/libs/mem/register.html" />
