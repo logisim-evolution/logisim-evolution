@@ -13,6 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import javax.swing.JPanel;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
 
 class FrameTest {
@@ -106,6 +111,23 @@ class FrameTest {
     assertFalse(Frame.isUsableExplorerSplitFraction(0.99));
     assertFalse(Frame.isUsableExplorerSplitFraction(1.0));
     assertFalse(Frame.isUsableExplorerSplitFraction(Double.POSITIVE_INFINITY));
+  }
+
+  @Test
+  void growsCircuitViewBeforeRestoringItsScrollPosition() throws Exception {
+    SwingUtilities.invokeAndWait(
+        () -> {
+          final var viewport = new JViewport();
+          viewport.setView(new JPanel());
+          viewport.setExtentSize(new Dimension(400, 300));
+          viewport.setViewSize(new Dimension(400, 300));
+
+          Frame.restoreViewPosition(
+              viewport, new Dimension(1000, 800), new Point(325, 175));
+
+          assertEquals(new Dimension(1000, 800), viewport.getViewSize());
+          assertEquals(new Point(325, 175), viewport.getViewPosition());
+        });
   }
 
   private static Object allocateWithoutConstructor(Class<?> type) throws Exception {
