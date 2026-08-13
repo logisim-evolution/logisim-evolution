@@ -10,4 +10,4 @@ opts=(
 )
 
 # Run logisim-evolution with the gathered arguments
-exec java "${opts[@]}" -jar "${SNAP}/logisim-evolution/logisim-evolution.jar" "$@"
+exec java "${opts[@]}" -jar "${SNAP}/jar/logisim-evolution.jar" "$@"
