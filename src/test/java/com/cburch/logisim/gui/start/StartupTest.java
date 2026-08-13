@@ -91,6 +91,8 @@ class StartupTest {
 
   private static Stream<Arguments> invalidOptionArguments() {
     return Stream.of(
+        Arguments.of(
+            "invalid locale", new String[] {"--tty", "table", "--locale", "not-a-locale"}),
         Arguments.of("invalid TTY format", new String[] {"--tty", "invalid"}),
         Arguments.of(
             "duplicate substitution",
