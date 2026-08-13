@@ -165,8 +165,8 @@ class RamLineEnableTest {
 
       if (dataLines > 1) {
         state.setPortValue(
-          RamAppearance.getLEIndex(i, attrs),
-          (enableMask & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
+            RamAppearance.getLEIndex(i, attrs),
+            (enableMask & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
       }
     }
 
