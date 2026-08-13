@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -550,13 +552,14 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     return portMap;
   }
 
-  private static Map<String, String> getSignalMap(String portName, netlistComponent comp, int endIndex, Netlist theNets) {
+  static Map<String, String> getSignalMap(
+      String portName, netlistComponent comp, int endIndex, Netlist theNets) {
     final var signal = new HashMap<String, String>();
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
-      // FIXME: hardcoded string
-      Reporter.report.addFatalErrorFmt(
-              "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '%s'",
-              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      Reporter.report.addFatalError(
+          S.get(
+              "HdlInvalidSolderPointComponentError",
+              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       return signal;
     }
     final var connectionInformation = comp.getEnd(endIndex);
