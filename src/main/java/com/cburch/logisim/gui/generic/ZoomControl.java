@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.generic;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.icons.ZoomIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -30,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
+import java.util.List;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -41,6 +43,7 @@ import javax.swing.SwingConstants;
 
 public class ZoomControl extends JPanel {
   private static final long serialVersionUID = 1L;
+  private static final int AUTO_ZOOM_PADDING = 50;
   private final ZoomLabel label;
   private final JSlider slider;
   private final GridIcon grid;
@@ -147,6 +150,34 @@ public class ZoomControl extends JPanel {
     final var choices = model.getZoomOptions();
     i = Math.max(Math.min(i, choices.size() - 1), 0);
     model.setZoomFactor(choices.get(i) / 100.0);
+  }
+
+  public static double computeFitZoomFactor(
+      Bounds bounds, Dimension viewportSize, List<Double> zoomOptions) {
+    if (bounds == null
+        || bounds.getWidth() <= 0
+        || bounds.getHeight() <= 0
+        || viewportSize == null
+        || viewportSize.width <= 0
+        || viewportSize.height <= 0
+        || zoomOptions == null
+        || zoomOptions.isEmpty()) {
+      return Double.NaN;
+    }
+
+    final var paddedWidth = bounds.getWidth() + 2.0 * AUTO_ZOOM_PADDING;
+    final var paddedHeight = bounds.getHeight() + 2.0 * AUTO_ZOOM_PADDING;
+    final var fitZoom =
+        Math.min(viewportSize.getWidth() / paddedWidth, viewportSize.getHeight() / paddedHeight);
+    final var minZoom = zoomOptions.get(0) / 100.0;
+    final var maxZoom = zoomOptions.get(zoomOptions.size() - 1) / 100.0;
+    return Math.max(minZoom, Math.min(fitZoom, maxZoom));
+  }
+
+  public static double computeInitialZoomFactor(
+      Bounds bounds, Dimension viewportSize, List<Double> zoomOptions) {
+    final var fitZoom = computeFitZoomFactor(bounds, viewportSize, zoomOptions);
+    return Double.isNaN(fitZoom) ? 1.0 : Math.min(1.0, fitZoom);
   }
 
   public void setAutoZoomButtonEnabled(boolean val) {
@@ -384,22 +415,10 @@ public class ZoomControl extends JPanel {
 
         final var canvasPane = canvas.getCanvasPane();
         if (canvasPane == null) return;
-        // the white space around
-        final var padding = 50;
-        // set autozoom
         final var zoomFactor = zoomModel.getZoomFactor();
-        final var height = (bounds.getHeight() + 2 * padding) * zoomFactor;
-        final var width = (bounds.getWidth() + 2 * padding) * zoomFactor;
-        var autozoom = zoomFactor;
-        autozoom *=
-            Math.min(
-                canvasPane.getViewport().getSize().getWidth() / width,
-                canvasPane.getViewport().getSize().getHeight() / height);
-        final var max =
-            zoomModel.getZoomOptions().get(zoomModel.getZoomOptions().size() - 1) / 100.0;
-        final var min = zoomModel.getZoomOptions().get(0) / 100.0;
-        if (autozoom > max) autozoom = max;
-        if (autozoom < min) autozoom = min;
+        final var autozoom =
+            computeFitZoomFactor(
+                bounds, canvasPane.getViewport().getSize(), zoomModel.getZoomOptions());
         if (Math.abs(autozoom - zoomFactor) >= 0.01) {
           zoomModel.setZoomFactorCenter(autozoom);
         }
