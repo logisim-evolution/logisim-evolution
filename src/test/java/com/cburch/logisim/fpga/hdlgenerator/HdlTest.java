@@ -19,12 +19,14 @@ import static org.mockito.Mockito.verify;
 
 import com.cburch.logisim.TestBase;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDrcContainer;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.gui.FpgaReportTabbedPane;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.util.LocaleManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +56,21 @@ public class HdlTest extends TestBase {
           Locale.SIMPLIFIED_CHINESE,
           "内部错误：收到的实体描述为空！",
           "内部错误：收到的元件“TestComponent”行为描述为空！");
+    } finally {
+      LocaleManager.setLocale(originalLocale);
+    }
+  }
+
+  @Test
+  void invalidSolderPointErrorUsesCurrentLocale() {
+    final var originalLocale = LocaleManager.getLocale();
+    try {
+      assertInvalidSolderPointError(
+          Locale.ENGLISH,
+          "INTERNAL ERROR: Component tried to index non-existing SolderPoint");
+      assertInvalidSolderPointError(
+          Locale.SIMPLIFIED_CHINESE,
+          "内部错误：元件尝试索引不存在的连接点！");
     } finally {
       LocaleManager.setLocale(originalLocale);
     }
@@ -135,6 +152,21 @@ public class HdlTest extends TestBase {
     assertFalse(Hdl.writeArchitecture("unused", List.of(), "TestComponent"));
     verify(reporterGui).addErrors(error.capture());
     assertEquals(expectedBehaviorError, error.getValue().toString());
+    assertEquals(
+        SimpleDrcContainer.LEVEL_FATAL, ((SimpleDrcContainer) error.getValue()).getSeverity());
+  }
+
+  private void assertInvalidSolderPointError(Locale locale, String expectedError) {
+    LocaleManager.setLocale(locale);
+    final var reporterGui = mock(FpgaReportTabbedPane.class);
+    Reporter.report.setGuiLogger(reporterGui);
+    final var component = mock(netlistComponent.class);
+
+    assertEquals(Map.of(), Hdl.getNetMap("unused", false, component, -1, null));
+
+    final var error = ArgumentCaptor.forClass(Object.class);
+    verify(reporterGui).addErrors(error.capture());
+    assertEquals(expectedError, error.getValue().toString());
     assertEquals(
         SimpleDrcContainer.LEVEL_FATAL, ((SimpleDrcContainer) error.getValue()).getSeverity());
   }
