@@ -188,7 +188,7 @@ public class DualRam extends Ram {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
     final var separate = isSeparate(attrs);
-    long oldMemValue = myState.getContents().get(myState.getCurrent());
+    long oldMemValue = myState.getContents().get(myState.getCurrent(portIndex));
     long newMemValue = oldMemValue;
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
