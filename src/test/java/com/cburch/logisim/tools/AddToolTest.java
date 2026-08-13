@@ -10,11 +10,18 @@
 package com.cburch.logisim.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.base.Text;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.util.Objects;
+import javax.swing.JPanel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +57,35 @@ class AddToolTest {
     setTextToolPreference(Color.RED);
 
     assertEquals(Color.BLACK, Text.FACTORY.createAttributeSet().getValue(Text.ATTR_COLOR));
+  }
+
+  @Test
+  void movingComponentPreviewRequestsAutoPan() {
+    final var tool = new AddTool(Text.FACTORY);
+    final var canvas = mock(Canvas.class);
+    final var event =
+        new MouseEvent(
+            new JPanel(), MouseEvent.MOUSE_MOVED, 0, 0, 123, 87, 0, false, MouseEvent.NOBUTTON);
+
+    tool.mouseMoved(canvas, null, event);
+
+    verify(canvas).updatePreviewAutoPan(123, 87);
+  }
+
+  @Test
+  void movingOutsideCanvasDoesNotRequestAutoPan() {
+    final var tool = new AddTool(Text.FACTORY);
+    final var canvas = mock(Canvas.class);
+    final var event =
+        new MouseEvent(
+            new JPanel(), MouseEvent.MOUSE_MOVED, 0, 0, 123, 87, 0, false, MouseEvent.NOBUTTON);
+
+    tool.mouseExited(canvas, null, event);
+    clearInvocations(canvas);
+    tool.mouseMoved(canvas, null, event);
+
+    verify(canvas, never()).updatePreviewAutoPan(123, 87);
+    verify(canvas).stopAutoPan();
   }
 
   private static void setTextToolPreference(Color color) throws InterruptedException {
