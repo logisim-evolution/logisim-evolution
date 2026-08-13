@@ -60,6 +60,7 @@
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
   * Improved project editing stability:
     * Layout zoom and scroll position are remembered separately for each circuit during a session.
+    * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
     * Moving components preserves component state.
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.

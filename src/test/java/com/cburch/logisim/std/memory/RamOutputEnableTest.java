@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.memory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -87,6 +88,84 @@ class RamOutputEnableTest {
 
     attrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
     assertFalse(hdl.isHdlSupportedTarget(attrs));
+  }
+
+  @Test
+  void outputEnableDrivesStoredValueOnSeparateBus() {
+    final var ram = new Ram();
+    final var attrs = (RamAttributes) ram.createAttributeSet();
+    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP);
+
+    final var state = ramState(attrs);
+    when(state.getPortValue(RamAppearance.getOEIndex(0, attrs)))
+        .thenReturn(Value.TRUE);
+    when(state.getPortValue(RamAppearance.getClkIndex(0, attrs)))
+        .thenReturn(Value.TRUE);
+
+    ram.propagate(state);
+
+    verify(state)
+        .setPort(
+            RamAppearance.getDataOutIndex(0, attrs),
+            Value.createKnown(attrs.getValue(Mem.DATA_ATTR), 0x5A),
+            Mem.DELAY);
+  }
+
+  @Test
+  void clearPinClearsMemoryAndDrivesZeroOnSeparateBus() {
+    final var ram = new Ram();
+    final var attrs = (RamAttributes) ram.createAttributeSet();
+    attrs.setValue(RamAttributes.CLEAR_PIN, true);
+    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP);
+
+    final var state = ramState(attrs);
+    when(state.getPortValue(RamAppearance.getClrIndex(0, attrs)))
+        .thenReturn(Value.TRUE);
+
+    ram.propagate(state);
+
+    verify(state)
+        .setPort(
+            RamAppearance.getDataOutIndex(0, attrs),
+            Value.createKnown(attrs.getValue(Mem.DATA_ATTR), 0),
+            Mem.DELAY);
+  }
+
+  @Test
+  void clearPinDrivesUnknownOnBidirectionalBus() {
+    final var ram = new Ram();
+    final var attrs = (RamAttributes) ram.createAttributeSet();
+    attrs.setValue(RamAttributes.CLEAR_PIN, true);
+    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_BIDIR);
+
+    final var state = ramState(attrs);
+    when(state.getPortValue(RamAppearance.getClrIndex(0, attrs)))
+        .thenReturn(Value.TRUE);
+
+    ram.propagate(state);
+
+    verify(state)
+        .setPort(
+            RamAppearance.getDataOutIndex(0, attrs),
+            Value.createUnknown(attrs.getValue(Mem.DATA_ATTR)),
+            Mem.DELAY);
+  }
+
+  @Test
+  void clearPinActuallyErasesMemory() {
+    final var ram = new Ram();
+    final var attrs = (RamAttributes) ram.createAttributeSet();
+    attrs.setValue(RamAttributes.CLEAR_PIN, true);
+    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP);
+
+    final var state = ramState(attrs);
+    when(state.getPortValue(RamAppearance.getClrIndex(0, attrs)))
+        .thenReturn(Value.TRUE);
+
+    ram.propagate(state);
+
+    final var data = (RamState) state.getData();
+    assertEquals(0, data.getContents().get(0));
   }
 
   private static InstanceState ramState(RamAttributes attrs) {

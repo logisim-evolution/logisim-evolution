@@ -79,6 +79,152 @@ class RamLineEnableTest {
   }
 
   @Test
+  void ramErrorAddressDrivesErrorOutput() {
+    final var ram = new Ram();
+    final var attrs = ramAttrs(Mem.SINGLE);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents =
+        MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+
+    state.setData(
+        new RamState(
+            state.getInstance(),
+            contents,
+            new Mem.MemListener(state.getInstance())));
+
+    state.setPortValue(
+        RamAppearance.getAddrIndex(0, attrs),
+        Value.createError(ADDR_WIDTH));
+    state.setPortValue(
+        RamAppearance.getOEIndex(0, attrs),
+        Value.TRUE);
+
+    ram.propagate(state);
+
+    assertEquals(
+        Value.createError(DATA_WIDTH),
+        state.getPortValue(RamAppearance.getDataOutIndex(0, attrs)));
+  }
+
+  @Test
+  void ramUnknownAddressDrivesUnknownOutput() {
+    final var ram = new Ram();
+    final var attrs = ramAttrs(Mem.SINGLE);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents =
+        MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+
+    state.setData(
+        new RamState(
+            state.getInstance(),
+            contents,
+            new Mem.MemListener(state.getInstance())));
+
+    state.setPortValue(
+        RamAppearance.getAddrIndex(0, attrs),
+        Value.createUnknown(ADDR_WIDTH));
+    state.setPortValue(
+        RamAppearance.getOEIndex(0, attrs),
+        Value.TRUE);
+
+    ram.propagate(state);
+
+    assertEquals(
+        Value.createUnknown(DATA_WIDTH),
+        state.getPortValue(RamAppearance.getDataOutIndex(0, attrs)));
+  }
+
+  private static void verifyLineEnableConfiguration(
+      AttributeOption busStyle, AttributeOption lineSize, int enableMask) {
+
+    final var ram = new Ram();
+    final var attrs = ramAttrs(lineSize, busStyle);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents =
+        MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+
+    state.setData(
+        new RamState(
+            state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+
+    final int dataLines =
+        lineSize.equals(Mem.SINGLE)
+            ? 1
+            : lineSize.equals(Mem.DUAL)
+                ? 2
+                : lineSize.equals(Mem.QUAD) ? 4 : 8;
+
+    state.setPortValue(
+        RamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 0));
+    state.setPortValue(RamAppearance.getWEIndex(0, attrs), Value.TRUE);
+    state.setPortValue(RamAppearance.getClkIndex(0, attrs), Value.TRUE);
+
+    for (var i = 0; i < dataLines; i++) {
+      state.setPortValue(
+          RamAppearance.getDataInIndex(i, attrs), known(DATA_WIDTH, 0x40 + i));
+
+      if (dataLines > 1) {
+        state.setPortValue(
+            RamAppearance.getLEIndex(i, attrs),
+            (enableMask & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
+      }
+    }
+
+    ram.propagate(state);
+
+    for (var i = 0; i < dataLines; i++) {
+      final var expected =
+          dataLines == 1
+              ? 0x40
+              : (enableMask & (1 << i)) != 0 ? 0x40 + i : 0;
+
+      assertEquals(
+          expected,
+          contents.get(i),
+          "unexpected value at line " + i
+              + " for bus=" + busStyle
+              + ", lineSize=" + lineSize
+              + ", enableMask=" + Integer.toBinaryString(enableMask));
+    }
+  }
+
+  @Test
+  void ramDualLineWritesOnlyEnabledLines() {
+    verifyRamLineWritesOnlyEnabledLines(Mem.DUAL, 2);
+  }
+
+  @Test
+  void ramQuadLineWritesOnlyEnabledLines() {
+    verifyRamLineWritesOnlyEnabledLines(Mem.QUAD, 4);
+  }
+
+  @Test
+  void lineEnableWritesCoverAllBusStylesAndLineSizes() {
+    final var busStyles =
+        new AttributeOption[] {
+          RamAttributes.BUS_BIDIR,
+          RamAttributes.BUS_SEP,
+          RamAttributes.BUS_SEP_CONTROLLED
+        };
+
+    final var lineSizes =
+        new AttributeOption[] {
+          Mem.SINGLE,
+          Mem.DUAL,
+          Mem.QUAD,
+          Mem.OCTO
+        };
+
+    for (var bus : busStyles) {
+      for (var lineSize : lineSizes) {
+        for (var enableMask : new int[] {0b0000, 0b0001, 0b0101, 0b1111}) {
+          verifyLineEnableConfiguration(bus, lineSize, enableMask);
+        }
+      }
+    }
+  }
+
+  @Test
   void ramOctoLineAllowMisalignedWritesOnlyTrueLineAtArbitraryAddress() {
     final var ram = new Ram();
     final var attrs = ramAttrs(Mem.OCTO);
@@ -151,6 +297,28 @@ class RamLineEnableTest {
   }
 
   @Test
+  void dualRamLineEnableWritesCoverDualQuadOcto() {
+    for (var lineSize :
+        new AttributeOption[] {
+          Mem.DUAL,
+          Mem.QUAD,
+          Mem.OCTO
+        }) {
+      for (var port = 0; port < 2; port++) {
+        final var dataLines =
+            lineSize.equals(Mem.DUAL) ? 2
+                : lineSize.equals(Mem.QUAD) ? 4
+                : 8;
+
+        for (var enableMask : new int[] {0, 1, (1 << (dataLines - 1)), (1 << dataLines) - 1}) {
+          verifyDualRamLineEnableConfiguration(
+              lineSize, port, enableMask, dataLines);
+        }
+      }
+    }
+  }
+
+  @Test
   void dualRamOctoLineDisallowedMisalignmentKeepsFixedLineAlignment() {
     final var ram = new DualRam();
     final var attrs = dualRamAttrs(Mem.OCTO);
@@ -169,6 +337,37 @@ class RamLineEnableTest {
 
     assertEquals(0, contents.get(3));
     assertEquals(Value.createError(DATA_WIDTH), state.getPortValue(DualRamAppearance.getDataOutIndex(0, attrs)));
+  }
+
+  private static void verifyRamLineWritesOnlyEnabledLines(
+      AttributeOption lineSize, int dataLines) {
+
+    final var ram = new Ram();
+    final var attrs = ramAttrs(lineSize);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents =
+        MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+
+    state.setData(
+        new RamState(state.getInstance(), contents, new Mem.MemListener(state.getInstance())));
+
+    state.setPortValue(RamAppearance.getAddrIndex(0, attrs), known(ADDR_WIDTH, 0));
+    state.setPortValue(RamAppearance.getWEIndex(0, attrs), Value.TRUE);
+    state.setPortValue(RamAppearance.getClkIndex(0, attrs), Value.TRUE);
+
+    for (var i = 0; i < dataLines; i++) {
+      state.setPortValue(
+          RamAppearance.getDataInIndex(i, attrs), known(DATA_WIDTH, 0x30 + i));
+      state.setPortValue(
+          RamAppearance.getLEIndex(i, attrs), i == 0 ? Value.TRUE : Value.FALSE);
+    }
+
+    ram.propagate(state);
+
+    assertEquals(0x30, contents.get(0));
+    for (var i = 1; i < dataLines; i++) {
+      assertEquals(0, contents.get(i), "disabled line " + i + " must not be written");
+    }
   }
 
   private static void verifyDualRamOctoLineWritesOnlyEnabledLine(int port, int baseAddress, int dataBase) {
@@ -197,6 +396,60 @@ class RamLineEnableTest {
           0,
           contents.get(baseAddress + i),
           "port " + port + " line " + i + " must not be written by unknown LE");
+    }
+  }
+
+  private static void verifyDualRamLineEnableConfiguration(
+      AttributeOption lineSize, int port, int enableMask, int dataLines) {
+
+    final var ram = new DualRam();
+    final var attrs = dualRamAttrs(lineSize);
+    final var state = new TestInstanceState(ram, attrs);
+    final var contents =
+        MemContents.create(ADDR_WIDTH.getWidth(), DATA_WIDTH.getWidth(), false);
+
+    state.setData(
+        new RamState(
+            state.getInstance(),
+            contents,
+            new Mem.MemListener(state.getInstance())));
+
+    final var baseLine = port * dataLines;
+    final var baseAddress = port == 0 ? 0 : 8;
+
+    state.setPortValue(
+        DualRamAppearance.getAddrIndex(port, attrs),
+        known(ADDR_WIDTH, baseAddress));
+    state.setPortValue(
+        DualRamAppearance.getWEIndex(port, attrs),
+        Value.TRUE);
+    state.setPortValue(
+        DualRamAppearance.getClkIndex(port, attrs),
+        Value.TRUE);
+
+    for (var i = 0; i < dataLines; i++) {
+      state.setPortValue(
+          DualRamAppearance.getDataInIndex(baseLine + i, attrs),
+          known(DATA_WIDTH, 0x40 + i));
+
+      state.setPortValue(
+          DualRamAppearance.getLEIndex(baseLine + i, attrs),
+          (enableMask & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
+    }
+
+    ram.propagate(state);
+
+    for (var i = 0; i < dataLines; i++) {
+      final var expected =
+          (enableMask & (1 << i)) != 0 ? 0x40 + i : 0;
+
+      assertEquals(
+          expected,
+          contents.get(baseAddress + i),
+          "unexpected value at line " + i
+              + " for port=" + port
+              + ", lineSize=" + lineSize
+              + ", enableMask=" + Integer.toBinaryString(enableMask));
     }
   }
 
@@ -234,15 +487,19 @@ class RamLineEnableTest {
     }
   }
 
-  private static AttributeSet ramAttrs(AttributeOption lineSize) {
+  private static AttributeSet ramAttrs(AttributeOption lineSize, AttributeOption busStyle) {
     final var attrs = new Ram().createAttributeSet();
     attrs.setValue(Mem.ADDR_ATTR, ADDR_WIDTH);
     attrs.setValue(Mem.DATA_ATTR, DATA_WIDTH);
     attrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
     attrs.setValue(Mem.LINE_ATTR, lineSize);
-    attrs.setValue(RamAttributes.ATTR_DBUS, RamAttributes.BUS_SEP);
+    attrs.setValue(RamAttributes.ATTR_DBUS, busStyle);
     attrs.setValue(StdAttr.TRIGGER, StdAttr.TRIG_RISING);
     return attrs;
+  }
+
+  private static AttributeSet ramAttrs(AttributeOption lineSize) {
+    return ramAttrs(lineSize, RamAttributes.BUS_SEP);
   }
 
   private static AttributeSet dualRamAttrs(AttributeOption lineSize) {
@@ -260,14 +517,14 @@ class RamLineEnableTest {
     return Value.createKnown(width, value);
   }
 
-  private static final class TestInstanceState implements com.cburch.logisim.instance.InstanceState {
+  static final class TestInstanceState implements com.cburch.logisim.instance.InstanceState {
     private final AttributeSet attrs;
     private final Instance instance;
     private final Map<Integer, Value> portValues = new HashMap<>();
     private final Set<Integer> connectedPorts = new HashSet<>();
     private InstanceData data;
 
-    private TestInstanceState(InstanceFactory factory, AttributeSet attrs) {
+    TestInstanceState(InstanceFactory factory, AttributeSet attrs) {
       this.attrs = attrs;
       final var component = factory.createComponent(Location.create(0, 0, false), attrs);
       this.instance = Instance.getInstanceFor(component);
@@ -346,7 +603,7 @@ class RamLineEnableTest {
       portValues.put(portIndex, value);
     }
 
-    private void setPortValue(int portIndex, Value value) {
+    void setPortValue(int portIndex, Value value) {
       portValues.put(portIndex, value);
       connectPort(portIndex);
     }

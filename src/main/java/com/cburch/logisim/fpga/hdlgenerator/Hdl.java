@@ -443,7 +443,7 @@ public class Hdl {
       netlistComponent comp, int endIndex, Netlist theNets) {
     final var netMap = new HashMap<String, String>();
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
-      Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
+      Reporter.report.addFatalError(S.get("HdlInvalidSolderPointError"));
       return netMap;
     }
     final var connectionInformation = comp.getEnd(endIndex);
