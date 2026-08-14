@@ -9,11 +9,6 @@ de/contents.xml: target 'hdl_vhdlentity' has no mapID in map_de.jhm
 de/contents.xml: target 'io_DIP' has no mapID in map_de.jhm
 de/contents.xml: target 'io_ledRGB' has no mapID in map_de.jhm
 de/contents.xml: target 'io_videorgb' has no mapID in map_de.jhm
-doc_de.hs: XML is not well-formed
-doc_en.hs: XML is not well-formed
-doc_fr.hs: XML is not well-formed
-doc_pt.hs: XML is not well-formed
-doc_zh.hs: XML is not well-formed
 en/contents.xml: target 'Tests_for_doc' has no mapID in map_en.jhm
 en/contents.xml: target 'Tests_for_doc' has no mapID in map_pt.jhm
 en/contents.xml: target 'Translation_status' has no mapID in map_pt.jhm

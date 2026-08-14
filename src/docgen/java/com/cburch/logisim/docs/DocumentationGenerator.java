@@ -31,7 +31,12 @@ import org.w3c.dom.Element;
 public final class DocumentationGenerator {
 
   private static final String ENGLISH = "en";
+  private static final String HELP_SET_MODE = "--help-sets";
   private static final Pattern LANGUAGE = Pattern.compile("[a-z]{2}");
+  private static final String HELP_SET_PUBLIC_ID =
+      "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN";
+  private static final String HELP_SET_SYSTEM_ID =
+      "http://java.sun.com/products/javahelp/helpset_2_0.dtd";
   private static final String MAP_PUBLIC_ID =
       "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN";
   private static final String MAP_SYSTEM_ID =
@@ -44,6 +49,14 @@ public final class DocumentationGenerator {
   private DocumentationGenerator() {}
 
   public static void main(String[] args) throws Exception {
+    if (args.length > 0 && HELP_SET_MODE.equals(args[0])) {
+      if (args.length != 4) {
+        throw new IllegalArgumentException(
+            "Usage: DocumentationGenerator --help-sets <metadata> <doc-root> <output-root>");
+      }
+      generateHelpSets(Path.of(args[1]), Path.of(args[2]), Path.of(args[3]));
+      return;
+    }
     if (args.length < 3) {
       throw new IllegalArgumentException(
           "Usage: DocumentationGenerator <manifest> <doc-root> <output-root> [overlay ...]");
@@ -54,6 +67,13 @@ public final class DocumentationGenerator {
       overlays.add(Path.of(args[i]));
     }
     generate(Path.of(args[0]), Path.of(args[1]), Path.of(args[2]), overlays);
+  }
+
+  public static void generateHelpSets(Path metadataPath, Path docRoot, Path outputRoot)
+      throws Exception {
+    for (final var helpSet : readHelpSets(metadataPath, docRoot)) {
+      writeHelpSet(outputRoot.resolve("doc_" + helpSet.language() + ".hs"), helpSet);
+    }
   }
 
   public static void generate(
@@ -93,6 +113,54 @@ public final class DocumentationGenerator {
       throw new IllegalArgumentException("The documentation manifest has no topics");
     }
     return List.copyOf(topics);
+  }
+
+  private static List<HelpSetConfig> readHelpSets(Path path, Path docRoot) throws Exception {
+    final var document = parseXml(path);
+    final var root = document.getDocumentElement();
+    if (!"helpSets".equals(root.getTagName())) {
+      throw new IllegalArgumentException("Expected <helpSets> in " + path);
+    }
+
+    final var languages = new HashSet<String>();
+    final var helpSets = new ArrayList<HelpSetConfig>();
+    for (final var element : childElements(root, "helpSet")) {
+      final var language = requiredAttribute(element, "language", path);
+      if (!LANGUAGE.matcher(language).matches()) {
+        throw new IllegalArgumentException("Invalid HelpSet language '" + language + "'");
+      }
+      if (!languages.add(language)) {
+        throw new IllegalArgumentException("Duplicate HelpSet language '" + language + "'");
+      }
+
+      final var mapPath = requiredAttribute(element, "map", path);
+      final var tocLanguage = requiredAttribute(element, "tocLanguage", path);
+      final var tocPath = requiredAttribute(element, "toc", path);
+      final var searchPath = requiredAttribute(element, "search", path);
+      if (!LANGUAGE.matcher(tocLanguage).matches()) {
+        throw new IllegalArgumentException(
+            "Invalid HelpSet TOC language '" + tocLanguage + "'");
+      }
+      validateDocumentPath(docRoot, mapPath, path);
+      validateDocumentPath(docRoot, tocPath, path);
+      validateDocumentDirectory(docRoot, searchPath, path);
+
+      helpSets.add(
+          new HelpSetConfig(
+              language,
+              requiredAttribute(element, "title", path),
+              mapPath,
+              tocLanguage,
+              requiredAttribute(element, "tocLabel", path),
+              tocPath,
+              requiredAttribute(element, "searchLabel", path),
+              searchPath,
+              requiredAttribute(element, "favoritesLabel", path)));
+    }
+    if (!languages.contains(ENGLISH)) {
+      throw new IllegalArgumentException("HelpSet metadata must define English");
+    }
+    return List.copyOf(helpSets);
   }
 
   private static Topic readTopic(
@@ -168,6 +236,92 @@ public final class DocumentationGenerator {
       throws Exception {
     writeMap(outputRoot.resolve("map_" + language + ".jhm"), topics);
     writeToc(outputRoot.resolve(language).resolve("contents.xml"), topics);
+  }
+
+  private static void writeHelpSet(Path output, HelpSetConfig helpSet) throws Exception {
+    final var document = newDocument();
+    final var root = document.createElement("helpset");
+    root.setAttribute("version", "2.0");
+    document.appendChild(root);
+
+    appendTextElement(document, root, "title", helpSet.title());
+
+    final var maps = document.createElement("maps");
+    root.appendChild(maps);
+    appendTextElement(document, maps, "homeID", "top");
+    final var mapReference = document.createElement("mapref");
+    mapReference.setAttribute("location", helpSet.mapPath());
+    maps.appendChild(mapReference);
+
+    final var tocView = document.createElement("view");
+    tocView.setAttributeNS(XMLConstants.XML_NS_URI, "xml:lang", helpSet.tocLanguage());
+    tocView.setAttribute("mergetype", "javax.help.UniteAppendMerge");
+    root.appendChild(tocView);
+    appendTextElement(document, tocView, "name", "TOC");
+    appendTextElement(document, tocView, "label", helpSet.tocLabel());
+    appendTextElement(document, tocView, "type", "javax.help.TOCView");
+    appendTextElement(document, tocView, "data", helpSet.tocPath());
+
+    final var searchView = document.createElement("view");
+    root.appendChild(searchView);
+    appendTextElement(document, searchView, "name", "Search");
+    appendTextElement(document, searchView, "label", helpSet.searchLabel());
+    appendTextElement(document, searchView, "type", "javax.help.SearchView");
+    final var searchData =
+        appendTextElement(document, searchView, "data", helpSet.searchPath());
+    searchData.setAttribute("engine", "com.sun.java.help.search.DefaultSearchEngine");
+
+    final var favoritesView = document.createElement("view");
+    root.appendChild(favoritesView);
+    appendTextElement(document, favoritesView, "name", "Favorites");
+    appendTextElement(document, favoritesView, "label", helpSet.favoritesLabel());
+    appendTextElement(document, favoritesView, "type", "javax.help.FavoritesView");
+
+    final var presentation = document.createElement("presentation");
+    presentation.setAttribute("default", "true");
+    root.appendChild(presentation);
+    appendTextElement(document, presentation, "name", "main window");
+    final var location = document.createElement("location");
+    location.setAttribute("x", "200");
+    location.setAttribute("y", "10");
+    presentation.appendChild(location);
+    final var toolbar = document.createElement("toolbar");
+    presentation.appendChild(toolbar);
+    appendTextElement(document, toolbar, "helpaction", "javax.help.BackAction");
+    appendTextElement(document, toolbar, "helpaction", "javax.help.ForwardAction");
+    final var homeAction =
+        appendTextElement(document, toolbar, "helpaction", "javax.help.HomeAction");
+    homeAction.setAttribute("image", "homeicon");
+    appendTextElement(document, toolbar, "helpaction", "javax.help.SeparatorAction");
+    appendTextElement(document, toolbar, "helpaction", "javax.help.FavoritesAction");
+
+    final var implementation = document.createElement("impl");
+    root.appendChild(implementation);
+    appendTextElement(
+        document,
+        implementation,
+        "helpsetregistry",
+        " helpbrokerclass=\"javax.help.DefaultHelpBroker\" ");
+    appendTextElement(
+        document,
+        implementation,
+        "viewerregistry",
+        " viewertype=\"text/html\" viewerclass=\"com.sun.java.help.impl.CustomKit\" ");
+    appendTextElement(
+        document,
+        implementation,
+        "viewerregistry",
+        " viewertype=\"text/xml\" viewerclass=\"com.sun.java.help.impl.CustomXMLKit\" ");
+
+    writeXml(document, output, HELP_SET_PUBLIC_ID, HELP_SET_SYSTEM_ID);
+  }
+
+  private static Element appendTextElement(
+      Document document, Element parent, String name, String value) {
+    final var element = document.createElement(name);
+    element.setTextContent(value);
+    parent.appendChild(element);
+    return element;
   }
 
   private static void writeMap(Path output, List<ResolvedTopic> topics) throws Exception {
@@ -269,6 +423,16 @@ public final class DocumentationGenerator {
 
   private static void validateDocumentPath(Path docRoot, String value, Path source)
       throws IOException {
+    validateDocumentEntry(docRoot, value, source, false);
+  }
+
+  private static void validateDocumentDirectory(Path docRoot, String value, Path source)
+      throws IOException {
+    validateDocumentEntry(docRoot, value, source, true);
+  }
+
+  private static void validateDocumentEntry(
+      Path docRoot, String value, Path source, boolean directory) throws IOException {
     final var relative = Path.of(value).normalize();
     final var normalizedRoot = docRoot.toAbsolutePath().normalize();
     final var resolved = normalizedRoot.resolve(relative).normalize();
@@ -276,9 +440,14 @@ public final class DocumentationGenerator {
       throw new IllegalArgumentException(
           "Documentation path points outside the documentation root in " + source + ": " + value);
     }
-    if (!Files.isRegularFile(resolved)) {
+    if (directory ? !Files.isDirectory(resolved) : !Files.isRegularFile(resolved)) {
       throw new IllegalArgumentException(
-          "Documentation path does not exist in " + source + ": " + value);
+          "Documentation "
+              + (directory ? "directory" : "path")
+              + " does not exist in "
+              + source
+              + ": "
+              + value);
     }
     if (!pathExistsWithExactCase(normalizedRoot, resolved)) {
       throw new IllegalArgumentException(
@@ -311,6 +480,17 @@ public final class DocumentationGenerator {
   private record LocalizedTopic(String title, String path) {}
 
   private record LocaleOverlay(String language, Map<String, LocalizedTopic> entries) {}
+
+  private record HelpSetConfig(
+      String language,
+      String title,
+      String mapPath,
+      String tocLanguage,
+      String tocLabel,
+      String tocPath,
+      String searchLabel,
+      String searchPath,
+      String favoritesLabel) {}
 
   private record ResolvedTopic(
       String id, String title, String path, List<ResolvedTopic> children) {}

@@ -198,12 +198,16 @@ extra.apply {
   set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
+val generatedDocumentationResources =
+    layout.buildDirectory.dir("generated/documentation-resources")
+
 java {
   sourceSets["main"].java {
     val buildDir = getLayout().getBuildDirectory().get().asFile
     srcDir("${buildDir}/generated/logisim/java")
     srcDir("${buildDir}/generated/sources/srcgen")
   }
+  sourceSets["main"].resources.srcDir(generatedDocumentationResources)
 }
 
 val docgen = sourceSets.create("docgen") {
@@ -236,6 +240,39 @@ tasks.register<JavaExec>("generateDocumentationPrototype") {
   inputs.files(manifest, germanOverlay)
   inputs.dir(docRoot)
   outputs.dir(outputRoot)
+}
+
+val generateHelpSets = tasks.register<JavaExec>("generateHelpSets") {
+  group = "documentation"
+  description = "Generates the JavaHelp HelpSet descriptors packaged by the application."
+  dependsOn(docgen.classesTaskName)
+
+  val metadata = layout.projectDirectory.file("src/main/doc/help-sets.xml")
+  val docRoot = layout.projectDirectory.dir("src/main/resources/doc")
+  val outputRoot = generatedDocumentationResources.map { it.dir("doc") }
+
+  classpath = docgen.runtimeClasspath
+  mainClass.set("com.cburch.logisim.docs.DocumentationGenerator")
+  args(
+      "--help-sets",
+      metadata.asFile.absolutePath,
+      docRoot.asFile.absolutePath,
+      outputRoot.get().asFile.absolutePath,
+  )
+
+  inputs.file(metadata)
+  inputs.dir(docRoot)
+  outputs.dir(outputRoot)
+  doFirst {
+    val directory = outputRoot.get().asFile
+    if (directory.exists() && !directory.deleteRecursively()) {
+      error("Could not clear generated HelpSet output directory: ${directory}")
+    }
+  }
+}
+
+tasks.named("processResources") {
+  dependsOn(generateHelpSets)
 }
 
 tasks.register<Jar>("sourcesJar") {
