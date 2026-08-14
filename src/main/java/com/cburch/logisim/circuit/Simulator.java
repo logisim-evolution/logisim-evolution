@@ -230,11 +230,13 @@ public class Simulator {
       var smoothFactor = 1;
       if (prop != null) {
         final var opts = prop.getRootState().getProject().getOptions();
-        //smoothFactor = opts.getAttributeSet().getValue(Options.ATTR_SIM_SMOOTH); #TODO: implement smooth factor
+        // smoothFactor = opts.getAttributeSet().getValue(Options.ATTR_SIM_SMOOTH); #TODO: implement smooth factor
         if (smoothFactor < 1) {
           smoothFactor = 1;
         }
       }
+      final var newRootCircuit = prop == null ? null : prop.getRootState().getCircuit();
+      final var newFrequency = newRootCircuit == null ? -1 : newRootCircuit.getTickFrequency();
       simStateLock.lock();
       try {
         if (propagator == prop) {
@@ -245,6 +247,7 @@ public class Simulator {
         smoothingFactor = smoothFactor;
         manualTicksRequested = 0;
         manualStepsRequested = 0;
+        if (newFrequency > 0) setTickFrequency(newFrequency); // simStateLock is reentrant so this works here.
         if (Thread.currentThread() != this) {
           simStateUpdated.signalAll();
         }
