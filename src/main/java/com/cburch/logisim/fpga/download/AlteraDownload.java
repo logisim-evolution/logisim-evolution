@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
@@ -49,6 +50,7 @@ public class AlteraDownload implements VendorDownload {
   private final List<String> architectures;
   private final String hdlType;
   private String cablename;
+  private final String requestedCableName;
   private final boolean writeToFlash;
 
   private static final String alteraTclFile = "AlteraDownload.tcl";
@@ -62,6 +64,26 @@ public class AlteraDownload implements VendorDownload {
       List<String> architectures,
       String hdlType,
       boolean writeToFlash) {
+    this(
+        projectPath,
+        rootNetList,
+        boardInfo,
+        entities,
+        architectures,
+        hdlType,
+        writeToFlash,
+        null);
+  }
+
+  public AlteraDownload(
+      String projectPath,
+      Netlist rootNetList,
+      BoardInformation boardInfo,
+      List<String> entities,
+      List<String> architectures,
+      String hdlType,
+      boolean writeToFlash,
+      String requestedCableName) {
     this.projectPath = projectPath;
     this.sandboxPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.SANDBOX_PATH);
     this.scriptPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.SCRIPT_PATH);
@@ -71,6 +93,7 @@ public class AlteraDownload implements VendorDownload {
     this.architectures = architectures;
     this.hdlType = hdlType;
     this.writeToFlash = writeToFlash;
+    this.requestedCableName = requestedCableName;
     cablename = "";
   }
 
@@ -114,22 +137,24 @@ public class AlteraDownload implements VendorDownload {
   @Override
   public ProcessBuilder downloadToBoard() {
     if (writeToFlash && !doFlashing()) return null;
-    final var command = new ArrayList<String>();
-    command.add(alteraVendor.getBinaryPath(1));
-    command.add("-c");
-    command.add(cablename);
-    command.add("-m");
-    command.add("jtag");
-    command.add("-o");
     // if there is no .sof generated, try with the .pof
+    final String operation;
     if (new File(sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
-      command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof"
-                  + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
+      operation =
+          "P;"
+              + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME
+              + ".sof@"
+              + boardInfo.fpga.getFpgaJTAGChainPosition();
     } else {
-      command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof"
-                  + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
+      operation =
+          "P;"
+              + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME
+              + ".pof@"
+              + boardInfo.fpga.getFpgaJTAGChainPosition();
     }
-    final var down = new ProcessBuilder(command);
+    final var down =
+        new ProcessBuilder(
+            buildProgrammerCommand(alteraVendor.getBinaryPath(1), cablename, operation));
     down.directory(new File(sandboxPath));
     return down;
   }
@@ -303,17 +328,28 @@ public class AlteraDownload implements VendorDownload {
     }
     var devices = getDevices(response);
     if (devices == null) return false;
-    if (devices.size() == 1) {
-      cablename = devices.get(0);
+    if (Main.hasGui()) {
+      if (devices.size() == 1) {
+        cablename = devices.get(0);
+        return true;
+      }
+      final var selection = Download.chooseBoard(devices);
+      if (selection == null) return false;
+      cablename = selection;
       return true;
     }
-    var selection = Download.chooseBoard(devices);
-    if (selection == null) return false;
-    cablename = selection;
+
+    final var selection = selectHeadlessCable(devices, requestedCableName);
+    if (selection.failure() != CableSelectionFailure.NONE) {
+      Reporter.report.addFatalError(
+          getCableSelectionError(selection, devices, requestedCableName));
+      return false;
+    }
+    cablename = selection.cableName();
     return true;
   }
 
-  private List<String> getDevices(ArrayList<String> lines) {
+  static List<String> getDevices(List<String> lines) {
     final var dev = new ArrayList<String>();
     for (var line : lines) {
       var n = dev.size() + 1;
@@ -322,6 +358,45 @@ public class AlteraDownload implements VendorDownload {
       dev.add(line.trim());
     }
     return (dev.isEmpty()) ? null : dev;
+  }
+
+  enum CableSelectionFailure {
+    NONE,
+    REQUIRED,
+    NOT_FOUND
+  }
+
+  record CableSelection(String cableName, CableSelectionFailure failure) {}
+
+  static CableSelection selectHeadlessCable(List<String> devices, String requestedCableName) {
+    if (devices.size() == 1) {
+      return new CableSelection(devices.get(0), CableSelectionFailure.NONE);
+    }
+    if (requestedCableName == null) {
+      return new CableSelection(null, CableSelectionFailure.REQUIRED);
+    }
+    if (!devices.contains(requestedCableName)) {
+      return new CableSelection(null, CableSelectionFailure.NOT_FOUND);
+    }
+    return new CableSelection(requestedCableName, CableSelectionFailure.NONE);
+  }
+
+  static String getCableSelectionError(
+      CableSelection selection, List<String> devices, String requestedCableName) {
+    final var detected =
+        System.lineSeparator()
+            + "  "
+            + String.join(System.lineSeparator() + "  ", devices);
+    return switch (selection.failure()) {
+      case REQUIRED -> S.get("AlteraCableSelectionRequired", detected);
+      case NOT_FOUND -> S.get("AlteraCableNotFound", requestedCableName, detected);
+      case NONE -> throw new IllegalArgumentException("Successful cable selection has no error");
+    };
+  }
+
+  static List<String> buildProgrammerCommand(
+      String programmerPath, String cableName, String operation) {
+    return List.of(programmerPath, "-c", cableName, "-m", "jtag", "-o", operation);
   }
 
   private boolean doFlashing() {
@@ -398,13 +473,14 @@ public class AlteraDownload implements VendorDownload {
       return false;
     }
     final var command = LineBuffer.getBuffer();
-    command.add(alteraVendor.getBinaryPath(1))
-            .add("-c")
-            .add(cablename)
-            .add("-m")
-            .add("jtag")
-            .add("-o")
-            .add("P;{{1}}", ProgrammerSofFile);
+    command
+        .add(alteraVendor.getBinaryPath(1))
+        .add("-c")
+        .add(cablename)
+        .add("-m")
+        .add("jtag")
+        .add("-o")
+        .add("P;{{1}}", ProgrammerSofFile);
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(sandboxPath));
     try {
