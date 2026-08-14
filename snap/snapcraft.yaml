@@ -65,8 +65,9 @@ parts:
       - test
       - --console=plain
     override-pull: |
-      VERSION=$(git describe --tags --abbrev=0)
-      craftctl set version="${VERSION}"
+      craftctl default
+      LSE_VERSION="$(cat gradle.properties | grep '^version\s*=.*' | awk '{print $3}')"
+      craftctl set version="${LSE_VERSION}"
     build-packages:
       - gradle
       - openjdk-21-jdk
