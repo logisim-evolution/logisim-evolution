@@ -75,7 +75,7 @@ class WindowOptions extends OptionsPanel {
   private final JComboBox<String> appFont;
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private int index = 0;
-  
+
   private String initialAppFont;
   private String initialLookAndFeel;
 
@@ -92,6 +92,8 @@ class WindowOptions extends OptionsPanel {
     checks =
         new PrefBoolean[] {
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
+          new PrefBoolean(
+              AppPreferences.SEARCH_DOUBLE_SHIFT, S.getter("windowSearchDoubleShift")),
         };
 
     canvasPlacement =
@@ -204,16 +206,16 @@ class WindowOptions extends OptionsPanel {
     editorTheme.addItem("Druid");
     updateEditorThemeSelection();
     editorThemeLabel = new JLabel(S.get("windowEditorTheme"));
-    
+
     appFont = new JComboBox<>();
     appFont.addItem(S.get("windowAppFontDefault"));
     for (String f : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
       appFont.addItem(f);
     }
     initialAppFont = AppPreferences.APP_FONT.get();
-    appFont.setSelectedItem((initialAppFont == null || initialAppFont.isEmpty()) 
+    appFont.setSelectedItem((initialAppFont == null || initialAppFont.isEmpty())
         ? S.get("windowAppFontDefault") : initialAppFont);
-        
+
     appFontLabel = new JLabel(S.get("windowAppFont"));
 
     // Add components
@@ -234,7 +236,7 @@ class WindowOptions extends OptionsPanel {
     restartWarning.setFont(restartWarning.getFont().deriveFont(Font.ITALIC));
     restartWarning.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
     restartWarning.setVisible(false);
-    
+
     restartWarningSpacer = new CollapsibleLabel(" ");
     restartWarningSpacer.setVisible(false);
 

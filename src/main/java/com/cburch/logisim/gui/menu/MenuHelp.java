@@ -14,7 +14,12 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.search.OmniSearchDialog;
+import com.cburch.logisim.gui.search.SearchContext;
+import com.cburch.logisim.gui.search.providers.MenuSearchProvider;
 import com.cburch.logisim.gui.start.About;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -26,14 +31,14 @@ import java.net.URL;
 import java.util.Locale;
 import javax.help.HelpSet;
 import javax.help.JHelp;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-class MenuHelp extends JMenu implements ActionListener {
+class MenuHelp extends Menu implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private static final String ENGLISH_HELP_SET = "doc/doc_en.hs";
   private final LogisimMenuBar menubar;
+  private final JMenuItem search = new JMenuItem();
   private final JMenuItem tutorial = new JMenuItem();
   private final JMenuItem guide = new JMenuItem();
   private final JMenuItem library = new JMenuItem();
@@ -47,12 +52,22 @@ class MenuHelp extends JMenu implements ActionListener {
   public MenuHelp(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
+    search.addActionListener(this);
     tutorial.addActionListener(this);
     guide.addActionListener(this);
     library.addActionListener(this);
     about.addActionListener(this);
     www.addActionListener(this);
 
+    // Keep the entry point out of its own results; finding "Find Action" is never what was wanted.
+    search.putClientProperty(MenuSearchProvider.EXCLUDE_PROPERTY, Boolean.TRUE);
+    search.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SEARCH).getWithMask(0));
+
+    /* add myself to hotkey sync */
+    AppPreferences.gui_sync_objects.add(this);
+
+    add(search);
+    addSeparator();
     add(tutorial);
     add(guide);
     add(library);
@@ -69,7 +84,9 @@ class MenuHelp extends JMenu implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     final var src = e.getSource();
-    if (guide.equals(src)) {
+    if (search.equals(src)) {
+      showSearch();
+    } else if (guide.equals(src)) {
       showHelp("guide");
     } else if (tutorial.equals(src)) {
       showHelp("tutorial");
@@ -80,6 +97,22 @@ class MenuHelp extends JMenu implements ActionListener {
     } else if (www.equals(src)) {
       openProjectWebsite();
     }
+  }
+
+  @Override
+  public void hotkeyUpdate() {
+    search.setAccelerator(((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SEARCH).getWithMask(0));
+  }
+
+  @Override
+  protected void computeEnabled() {
+    setEnabled(true);
+  }
+
+  /** Opens the omni-search over the actions this window offers. */
+  private void showSearch() {
+    OmniSearchDialog.showDialog(
+        new SearchContext(menubar.getParentFrame(), menubar, menubar.getBaseProject()));
   }
 
   private void disableHelp() {
@@ -165,6 +198,7 @@ class MenuHelp extends JMenu implements ActionListener {
     if (helpFrame != null) {
       helpFrame.setTitle(S.get("helpWindowTitle"));
     }
+    search.setText(S.get("helpSearchItem"));
     tutorial.setText(S.get("helpTutorialItem"));
     guide.setText(S.get("helpGuideItem"));
     library.setText(S.get("helpLibraryItem"));
