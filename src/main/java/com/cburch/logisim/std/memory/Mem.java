@@ -32,6 +32,7 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
+import javax.swing.SwingUtilities;
 import java.io.File;
 import java.util.WeakHashMap;
 
@@ -59,7 +60,7 @@ public abstract class Mem extends InstanceFactory {
 
     @Override
     public void bytesChanged(HexModel source, long start, long numBytes, long[] values) {
-      instance.fireInvalidated();
+      if (SwingUtilities.isEventDispatchThread()) instance.fireInvalidated();
     }
 
     @Override
