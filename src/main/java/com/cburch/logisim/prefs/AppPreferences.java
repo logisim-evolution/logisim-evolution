@@ -454,8 +454,8 @@ public class AppPreferences {
   /**
    * Determines the appropriate font style (PLAIN or BOLD) for the given font.
    *
-   * This is a heuristic to prevent "faux bold" rendering artifacts. Fonts with explicit 
-   * weights (e.g. Medium, Light) are typically standalone faces. Applying the BOLD style 
+   * This is a heuristic to prevent "faux bold" rendering artifacts. Fonts with explicit
+   * weights (e.g. Medium, Light) are typically standalone faces. Applying the BOLD style
    * to them forces synthetic bolding, which degrades rendering quality ("smearing").
    *
    * This method returns Font.PLAIN for such weighted fonts to ensure crisp rendering,
@@ -466,7 +466,7 @@ public class AppPreferences {
    */
   public static int getPreferredFontStyle(String fontName) {
     String font = fontName.toLowerCase();
-    if (font.contains("medium") || font.contains("light") 
+    if (font.contains("medium") || font.contains("light")
         || font.contains("thin") || font.contains("regular")
         || font.contains("semibold") || font.contains("extrabold")) {
       return Font.PLAIN;
@@ -1092,6 +1092,11 @@ public class AppPreferences {
   public static final PrefMonitor<String> DIALOG_DIRECTORY =
       create(new PrefMonitorString("dialogDirectory", ""));
 
+  /* Opens the action search when Shift is tapped twice in quick succession. Kept switchable
+   * because Shift is a working modifier on the canvas, so the gesture can misfire. */
+  public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
+      create(new PrefMonitorBoolean("searchDoubleShift", true));
+
   /* Hotkey Settings */
   /* Watch whether in headless mode */
   public static final int hotkeyMenuMask =
@@ -1147,6 +1152,11 @@ public class AppPreferences {
 
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
       create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_SEARCH =
+      create(new PrefMonitorKeyStroke("hotkeySearch",
+          KeyEvent.VK_A, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
           true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
@@ -1238,6 +1248,8 @@ public class AppPreferences {
       HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,
           InputEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
+      HOTKEY_SEARCH.set(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+          InputEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
           KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
