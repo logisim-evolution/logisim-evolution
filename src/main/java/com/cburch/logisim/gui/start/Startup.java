@@ -27,6 +27,7 @@ import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
+import com.cburch.logisim.gui.search.DoubleShiftTrigger;
 import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -947,6 +948,7 @@ public class Startup implements AWTEventListener {
       monitor.setProgress(SplashScreen.GUI_INIT);
     }
     WindowManagers.initialize();
+    DoubleShiftTrigger.install();
     if (MacCompatibility.isSwingUsingScreenMenuBar()) {
       MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null, null, null));
     } else {
