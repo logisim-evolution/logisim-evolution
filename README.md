@@ -198,5 +198,5 @@ if you found a bug or have suggestions for improvement.
 
 ## License ##
 
-* `Logisim-evolution` is ©2001-2026 opyrighted by Logisim-evolution [developers](docs/credits.md).
+* `Logisim-evolution` is ©2001-2026 copyrighted by Logisim-evolution [developers](docs/credits.md).
 * This is free software licensed under [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
