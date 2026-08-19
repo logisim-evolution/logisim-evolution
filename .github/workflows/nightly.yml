@@ -139,7 +139,7 @@ jobs:
         env:
           # Obtain Snapcraft.io store token:
           # $ snapcraft export-login --snaps=logisim-evolution --acls package_access,package_push,package_update,package_release token.txt
-          # Then open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
+          # Then, open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_TOKEN }}
         with:
           snap: ${{ steps.snapcraft.outputs.snap }}
