@@ -95,11 +95,15 @@ jobs:
   # ###############################################################################################
 
   snap:
-    name: "Snapcraft build"
+    name: Snapcraft build ${{ matrix.arch }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04-arm]
-        arch: [amd64, arm64]
+        include:
+          - os: ubuntu-latest
+            arch: amd64
+          - os: ubuntu-22.04-arm
+            arch: arm64
     runs-on: ${{ matrix.os }}
     # Will run only if git_check determined it is needed.
     needs: git_check
