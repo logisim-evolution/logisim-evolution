@@ -27,7 +27,7 @@ env:
 jobs:
   git_check:
     name: "Any changes since last run?"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     # Export build vars so other steps can use it.
     outputs:
@@ -100,9 +100,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-26.04
             arch: amd64
-          - os: ubuntu-22.04-arm
+          - os: ubuntu-26.04-arm
             arch: arm64
     runs-on: ${{ matrix.os }}
     # Will run only if git_check determined it is needed.
@@ -139,7 +139,7 @@ jobs:
         env:
           # Obtain Snapcraft.io store token:
           # $ snapcraft export-login --snaps=logisim-evolution --acls package_access,package_push,package_update,package_release token.txt
-          # then open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
+          # Then open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_TOKEN }}
         with:
           snap: ${{ steps.snapcraft.outputs.snap }}
@@ -148,7 +148,7 @@ jobs:
   # Building for Linux.
   build_linux:
     name: 'Linux build'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
@@ -242,7 +242,7 @@ jobs:
   # Building for Linux Arm.
   build_linux_arm:
     name: 'Linux Arm build'
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-26.04-arm
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
