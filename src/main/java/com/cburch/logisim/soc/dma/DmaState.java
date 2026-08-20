@@ -52,7 +52,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
   public static final int CTRL_START = 1 << 0;
   public static final int CTRL_IRQ_EN = 1 << 1;
   public static final int CTRL_DST_INC = 1 << 2;
-  public static final int CTRL_SRC_INC = 1<< 3;
+  public static final int CTRL_SRC_INC = 1 << 3;
 
   /* ---------- STATUS register bits ---------- */
   public static final int STAT_BUSY = 1 << 0;
@@ -202,24 +202,12 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     int remaining = regs.length - regs.bytesDone;
     int wordsToTransfer = Math.min(burstSize, remaining / 4);
     int wordsTransferred = 0;
-
     int val = regs.control;
 
     // some sinks may only accept one word at a time,
     // so we need to iterate the burst transfer word by word in one cycle
     for (int i = 0; i < wordsToTransfer; i++) {
       int offset = regs.bytesDone + i * 4;
-
-      // Compute address based on control reg
-      // In mode 00 both the src address and dst address are incremented
-      // in mode 01 src address is incremented and the destination is fixed
-      // in mode 10 opposite of mode 01 happens
-      // in mode 11 both the src and dst address are fixed
-      // bit3  bit2     Behaviour
-      //  0     0       inc Src   Inc Dst
-      //  0     1       inc Src   Fix Dst
-      //  1     0       Fix Src   Incr Dst
-      //  1     1       Fix Src   Fix Dst
 
       // Read one word from source (hidden to avoid flooding the bus trace;
       // read-side sniffing is not useful for observers like VGA)
@@ -237,7 +225,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
       // can observe the writes and update their framebuffer in real time)
       SocBusTransaction writeTrans = new SocBusTransaction(
           SocBusTransaction.WRITE_TRANSACTION,
-              (val & CTRL_DST_INC )== 0 ? regs.dstAddr + offset  : regs.dstAddr,
+              (val & CTRL_DST_INC )== 0 ? regs.dstAddr + offset : regs.dstAddr,
           readTrans.getReadData(),
           SocBusTransaction.WORD_ACCESS,
           controlBus.getComponent());
