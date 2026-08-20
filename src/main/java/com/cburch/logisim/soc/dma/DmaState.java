@@ -353,7 +353,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     if (trans.isReadTransaction()) trans.setReadData(regs.control);
     if (trans.isWriteTransaction()) {
       int val = trans.getWriteData();
-      regs.control = val & (CTRL_IRQ_EN|CTRL_DST_INC|CTRL_SRC_INC); // preserve IRQ_EN Inc_Src IncDst
+      regs.control = val & (CTRL_IRQ_EN | CTRL_DST_INC | CTRL_SRC_INC); // preserve IRQ_EN Inc_Src IncDst
 
       // START bit: write-1-to-start, triggers a new transfer if not busy
       if ((val & CTRL_START) != 0 && !regs.busy && regs.length > 0) {
