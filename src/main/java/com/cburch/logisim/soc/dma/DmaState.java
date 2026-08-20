@@ -209,11 +209,23 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     for (int i = 0; i < wordsToTransfer; i++) {
       int offset = regs.bytesDone + i * 4;
 
+      // compute address based on control reg
+      // in mode 00 both the src address and dst address are incremented
+      // in mode 01 src address is incremented and the destination is fixed
+      // in mode 10 opposite of mode 01 happens
+      // in mode 11 both the src and dst address are fixed
+      // bit3  bit2     Behaviour
+      //  0     0       Inc Src   Inc Dst
+      //  0     1       Inc Src   Fix Dst
+      //  1     0       Fix Src   Incr Dst
+      //  1     1       Fix Src   Fix Dst
+
+
       // Read one word from source (hidden to avoid flooding the bus trace;
       // read-side sniffing is not useful for observers like VGA)
       SocBusTransaction readTrans = new SocBusTransaction(
           SocBusTransaction.READ_TRANSACTION,
-              (val & CTRL_SRC_INC)==0  ?regs.srcAddr + offset : regs.srcAddr,  // change offset using src inc and dest inc
+              (val & CTRL_SRC_INC) == 0  ? regs.srcAddr + offset : regs.srcAddr,  // change offset using src inc and dest inc
           0,
           SocBusTransaction.WORD_ACCESS,
           controlBus.getComponent());
@@ -225,7 +237,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
       // can observe the writes and update their framebuffer in real time)
       SocBusTransaction writeTrans = new SocBusTransaction(
           SocBusTransaction.WRITE_TRANSACTION,
-              (val & CTRL_DST_INC )== 0 ? regs.dstAddr + offset : regs.dstAddr,
+              (val & CTRL_DST_INC ) == 0 ? regs.dstAddr + offset : regs.dstAddr,
           readTrans.getReadData(),
           SocBusTransaction.WORD_ACCESS,
           controlBus.getComponent());
