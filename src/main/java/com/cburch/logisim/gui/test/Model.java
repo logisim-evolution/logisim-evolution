@@ -10,6 +10,8 @@
 package com.cburch.logisim.gui.test;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitEvent;
+import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
@@ -19,7 +21,7 @@ import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 
-class Model {
+class Model implements CircuitListener {
 
   private final EventSourceWeakSupport<ModelListener> listeners;
   private final Project project;
@@ -42,6 +44,17 @@ class Model {
     listeners = new EventSourceWeakSupport<>();
     this.circuit = circuit;
     this.project = proj;
+    // Listen for the lifetime of the model rather than the lifetime of a test
+    // run: TestThread comes and goes, and circuit listeners are held weakly, so
+    // a thread-owned registration is dropped or duplicated unpredictably.
+    circuit.addCircuitListener(this);
+  }
+
+  @Override
+  public void circuitChanged(CircuitEvent event) {
+    // A rename doesn't invalidate results.
+    if (event.getAction() == CircuitEvent.ACTION_SET_NAME) return;
+    clearResults();
   }
 
   public void addModelListener(ModelListener l) {

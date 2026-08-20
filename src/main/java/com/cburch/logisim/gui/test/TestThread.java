@@ -12,8 +12,6 @@ package com.cburch.logisim.gui.test;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitEvent;
-import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.data.TestException;
@@ -21,7 +19,7 @@ import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.UniquelyNamedThread;
 
-public class TestThread extends UniquelyNamedThread implements CircuitListener {
+public class TestThread extends UniquelyNamedThread {
 
   private final Project project;
   private final Circuit circuit;
@@ -41,7 +39,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     this.circuitState = this.project.getCircuitState().cloneAsNewRootState(this);
     this.vector = model.getVector();
     this.evaluator = new TestVectorEvaluator(circuitState, vector);
-    model.getCircuit().addCircuitListener(this);
   }
 
   // used only for automated testing via command line arguments
@@ -92,13 +89,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
   public void cancel() {
     canceled = true;
-  }
-
-  @Override
-  public void circuitChanged(CircuitEvent event) {
-    int action = event.getAction();
-    if (action == CircuitEvent.ACTION_SET_NAME) return;
-    else model.clearResults();
   }
 
   @Override
