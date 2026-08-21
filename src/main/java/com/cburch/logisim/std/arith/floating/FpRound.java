@@ -49,7 +49,7 @@ public class FpRound extends InstanceFactory {
         new Object[] {BitWidth.create(32), FpToInt.ROUND_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u230A\u2309", 2));
+    setIcon(new ArithmeticIcon("⌊⌉", 2));
 
     final var ps = new Port[3];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
@@ -71,13 +71,13 @@ public class FpRound extends InstanceFactory {
     painter.drawPort(IN);
 
     if (roundMode.getValue().equals("ceil"))
-      painter.drawPort(OUT, "\u2308x\u2309", Direction.WEST);
+      painter.drawPort(OUT, "⌈x⌉", Direction.WEST);
     else if (roundMode.getValue().equals("floor"))
-       painter.drawPort(OUT, "\u230Ax\u230B", Direction.WEST);
+       painter.drawPort(OUT, "⌊x⌋", Direction.WEST);
     else if (roundMode.getValue().equals("round"))
-       painter.drawPort(OUT, "\u27E6x\u27E7", Direction.WEST);
+       painter.drawPort(OUT, "⟦x⟧", Direction.WEST);
     else if (roundMode.getValue().equals("rint"))
-       painter.drawPort(OUT, "\u27E6x\u27E7*", Direction.WEST);
+       painter.drawPort(OUT, "⟦x⟧*", Direction.WEST);
     else painter.drawPort(OUT, "Trunc", Direction.WEST);
 
     final var loc = painter.getLocation();

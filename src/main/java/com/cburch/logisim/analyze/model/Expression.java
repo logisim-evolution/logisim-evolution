@@ -191,11 +191,11 @@ public abstract class Expression {
       switch (id) {
         case 1 -> { // Logic notation: equiv, vee, vee-underbar, cap, tilde
           opLvl = new int[]{0, 9, 9, 9, 9, 14};
-          opSym = new String[]{" = ", "\u2261", "\u2228", "\u22BB", "\u2227", "\u00AC"};
+          opSym = new String[]{" = ", "≡", "∨", "⊻", "∧", "¬"};
         }
         case 2 -> { // Alternative Logic notation: equiv, vee, not-equiv, cap, ell
           opLvl = new int[]{0, 9, 9, 9, 9, 14};
-          opSym = new String[]{" = ", "\u2261", "\u2228", "\u2262", "\u2227", "~"};
+          opSym = new String[]{" = ", "≡", "∨", "≢", "∧", "~"};
         }
         case 3 -> { // Programming with booleans notation: ==, ||, !=, &&, !
           opLvl = new int[]{0, 9, 4, 9, 5, 14};
@@ -211,7 +211,7 @@ public abstract class Expression {
         }
         default -> { // Mathematical notation: otimes, plus, oplus, times, and overbar
           opLvl = new int[]{0, 10, 11, 12, 13, 14};
-          opSym = new String[]{" = ", "\u2299", "+", "\u2295", "\u22C5", "~"};
+          opSym = new String[]{" = ", "⊙", "+", "⊕", "⋅", "~"};
         }
       }
     }
@@ -241,8 +241,8 @@ public abstract class Expression {
 
   //  // Notation choices:
   //  public static final String[][] OPSYM = {
-  //    {"=" , "+" , "\u2295" , "\u22C5" , "~", }, // Mathematic
-  //    {"=", "\u2228", "\u2295", "\u2227", "\u00AC", }, // Logic
+  //    {"=" , "+" , "⊕" , "⋅" , "~", }, // Mathematic
+  //    {"=", "∨", "⊕", "∧", "¬", }, // Logic
   //    {"==", "||", "^", "&&", "!",}, // programming
   //    {" = ", " + ", " \\oplus ", " \\cdot ", " \\overline{",}, // LaTeX
   //  };

@@ -24,7 +24,7 @@ public class ShifterIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2) {
     final var s = new StringBuilder();
     if (state < 0) {
-      s.append("\u25b6".repeat(3));
+      s.append("▶".repeat(3));
     } else {
       var mask = 4;
       while (mask > 0) {

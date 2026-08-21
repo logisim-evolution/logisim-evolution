@@ -573,8 +573,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         if (comp.isEndConnected(endIndex)) {
           signal.put(portName, Hdl.getNetName(comp, endIndex, true, theNets));
         } else {
-          // FIXME: hardcoded string
-          Reporter.report.addSevereWarning("Found an unconnected output pin, tied the pin to ground!");
+          Reporter.report.addSevereWarning(S.get("HdlUnconnectedOutputPinWarning"));
           signal.put(portName, Hdl.zeroBit());
         }
       }
@@ -591,8 +590,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (!connected) {
         /* Here is the easy case, the bus is unconnected */
         if (!isInputConnection) {
-          // FIXME: hardcoded string
-          Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
+          Reporter.report.addSevereWarning(S.get("HdlUnconnectedOutputBusWarning"));
           signal.put(portName, Hdl.getZeroVector(nrOfBits, true));
         }
       } else {
@@ -615,8 +613,8 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             if (solderPoint.getParentNet() == null) {
               /* The net is not connected */
               if (isInputConnection) continue;
-              // FIXME: hardcoded string
-              Reporter.report.addSevereWarning(String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
+              Reporter.report.addSevereWarning(
+                  S.get("HdlUnconnectedOutputBusBitWarning", bit));
               signal.put(bitConnection, Hdl.zeroBit());
             } else {
               /*

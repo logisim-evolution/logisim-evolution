@@ -54,7 +54,7 @@ class OrGate extends AbstractGate {
 
   private OrGate() {
     super("OR Gate", S.getter("orGateComponent"), new OrGateHdlGeneratorFactory());
-    setRectangularLabel("\u2265" + "1");
+    setRectangularLabel("≥" + "1");
     setPaintInputLines(true);
   }
 

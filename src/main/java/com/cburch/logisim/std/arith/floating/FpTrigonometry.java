@@ -69,7 +69,7 @@ public class FpTrigonometry extends InstanceFactory {
       new Object[] {BitWidth.create(32), TRIG});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u25B3", 3));
+    setIcon(new ArithmeticIcon("△", 3));
 
     final Port[] ps = new Port[5];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
@@ -152,12 +152,17 @@ public class FpTrigonometry extends InstanceFactory {
     final var sin = Value.createKnown(dataWidth, sin_val);
     final var tan = Value.createKnown(dataWidth, tan_val);
     final var cos = Value.createKnown(dataWidth, cos_val);
+    final var hasError =
+        Double.isNaN(a_val)
+            || Double.isNaN(sin_val)
+            || Double.isNaN(tan_val)
+            || Double.isNaN(cos_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
     state.setPort(SIN, sin, delay);
     state.setPort(TAN, tan, delay);
     state.setPort(COS, cos, delay);
-    state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(a_val) ? 1 : 0), delay);
+    state.setPort(ERR, Value.createKnown(BitWidth.create(1), hasError ? 1 : 0), delay);
   }
 }
