@@ -79,6 +79,7 @@
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
     * Invalid command-line option values now return a nonzero exit status.
+    * Intel/Altera FPGA downloads can select an exact Quartus cable with `--fpga-cable`.
     * TTY table output includes bit widths in headers.
     * Localized the Assembly Viewer.
   * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR

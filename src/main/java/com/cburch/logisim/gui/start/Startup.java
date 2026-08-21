@@ -117,6 +117,7 @@ public class Startup implements AWTEventListener {
   /* Test implementation */
   private String testCircuitImpPath = null;
   private boolean doFpgaDownload = false;
+  private String fpgaCableName = null;
   private double testTickFrequency = -1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
@@ -151,6 +152,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
   private static final String ARG_TEST_FGPA_SHORT = "f";
   private static final String ARG_TEST_FGPA_LONG = "test-fpga";
+  private static final String ARG_FPGA_CABLE_LONG = "fpga-cable";
   private static final String ARG_GATES_SHORT = "g";
   private static final String ARG_GATES_LONG = "gates";
   private static final String ARG_HELP_SHORT = "h";
@@ -324,6 +326,7 @@ public class Startup implements AWTEventListener {
     // It is assumed that evey option always has long-form switch. Short forms are optional.
     addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
+    addOption(opts, "argFpgaCableOption", ARG_FPGA_CABLE_LONG, 1);
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
@@ -401,6 +404,7 @@ public class Startup implements AWTEventListener {
         case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
         case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
         case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
+        case ARG_FPGA_CABLE_LONG -> handleArgFpgaCable(startup, opt);
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
         case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
@@ -415,6 +419,11 @@ public class Startup implements AWTEventListener {
         default:
           continue;
       }
+    }
+
+    if (startup.fpgaCableName != null && !startup.doFpgaDownload) {
+      logger.error(S.get("argFpgaCableRequiresTestFpga"));
+      return null;
     }
 
     // positional argument being files to load
@@ -769,6 +778,16 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
+  private static RC handleArgFpgaCable(Startup startup, Option opt) {
+    final var cableName = opt.getValue();
+    if (cableName == null || cableName.isBlank()) {
+      logger.error(S.get("argFpgaCableInvalid"));
+      return RC.ERROR;
+    }
+    startup.fpgaCableName = cableName;
+    return RC.OK;
+  }
+
   private static RC handleArgTestCircuit(Startup startup, Option opt) {
     final var fileName = opt.getValue();
     startup.testCircuitPathInput = fileName;
@@ -855,6 +874,10 @@ public class Startup implements AWTEventListener {
     return doFpgaDownload;
   }
 
+  String getFpgaCableName() {
+    return fpgaCableName;
+  }
+
   boolean fpgaDownload(Project proj) {
     /* Testing synthesis */
     final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
@@ -875,7 +898,8 @@ public class Startup implements AWTEventListener {
             false,
             testCircuitHdlOnly,
             1.0,
-            1.0);
+            1.0,
+            fpgaCableName);
     return downloader.runTty();
   }
 

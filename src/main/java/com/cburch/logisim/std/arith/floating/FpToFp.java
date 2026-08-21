@@ -64,7 +64,7 @@ public class FpToFp extends InstanceFactory {
         new Object[] {BitWidth.create(32), BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(FP_WIDTH_IN));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("FP\u2192FP", 3));
+    setIcon(new ArithmeticIcon("FP→FP", 3));
   }
 
   @Override
@@ -100,7 +100,7 @@ public class FpToFp extends InstanceFactory {
     int y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     var font = g.getFont().deriveFont(20f);
-    GraphicsUtil.drawText(g, font, "\u2192", x - 20, y, GraphicsUtil.H_CENTER,
+    GraphicsUtil.drawText(g, font, "→", x - 20, y, GraphicsUtil.H_CENTER,
         GraphicsUtil.V_CENTER_OVERALL);
     GraphicsUtil.switchToWidth(g, 1);
 

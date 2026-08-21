@@ -15,6 +15,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.ColorUtil;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.Icon;
@@ -24,6 +25,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
   private static final long serialVersionUID = 1L;
+  private static final String CURRENT_VIEW_SUFFIX = " ●";
+  private int preferredWidthAdjustment;
 
   @Override
   public Component getTreeCellRendererComponent(
@@ -34,6 +37,7 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
       boolean leaf,
       int row,
       boolean hasFocus) {
+    preferredWidthAdjustment = 0;
     Component ret =
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
     final var model = (SimulationTreeModel) tree.getModel();
@@ -45,19 +49,35 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
           label.setIcon(new RendererIcon(factory, viewed));
         }
 
-        final var plainFont = AppPreferences.getScaledFont(label.getFont());
+        final var baseFont = tree.getFont() != null ? tree.getFont() : label.getFont();
+        final var plainFont = AppPreferences.getScaledFont(baseFont);
         final var boldFont = plainFont.deriveFont(Font.BOLD);
 
         label.setFont(viewed ? boldFont : plainFont);
         if (viewed) {
-          label.setText(node.toString() + " ●");
+          label.setText(node.toString() + CURRENT_VIEW_SUFFIX);
           label.setForeground(ColorUtil.getThemeAccentColor());
         } else {
+          final var plainTextWidth = label.getFontMetrics(plainFont).stringWidth(label.getText());
+          final var currentViewTextWidth =
+              label
+                  .getFontMetrics(boldFont)
+                  .stringWidth(node.toString() + CURRENT_VIEW_SUFFIX);
+          preferredWidthAdjustment = Math.max(0, currentViewTextWidth - plainTextWidth);
           label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
         }
       }
     }
     return ret;
+  }
+
+  @Override
+  public Dimension getPreferredSize() {
+    final var size = super.getPreferredSize();
+    if (size == null || preferredWidthAdjustment == 0) {
+      return size;
+    }
+    return new Dimension(size.width + preferredWidthAdjustment, size.height);
   }
 
   private static class RendererIcon implements Icon {

@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.gui.start;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -87,6 +88,37 @@ class StartupTest {
     assertNotNull(helpStartup);
     assertTrue(helpStartup.shallQuit());
     assertFalse(regularStartup.shallQuit());
+  }
+
+  @Test
+  void fpgaCablePreservesExactQuartusNameForFpgaDownload() {
+    final var cableName = "USB-Blaster II [3-2]";
+
+    final var startup =
+        Startup.parseArgs(
+            new String[] {
+              "--fpga-cable", cableName,
+              "--test-fpga", "test.circ", "main", "board"
+            });
+
+    assertNotNull(startup);
+    assertEquals(cableName, startup.getFpgaCableName());
+
+    final var cableAfterFpgaOption =
+        Startup.parseArgs(
+            new String[] {
+              "--test-fpga", "test.circ", "main", "board",
+              "--fpga-cable", cableName
+            });
+    assertNotNull(cableAfterFpgaOption);
+    assertEquals(cableName, cableAfterFpgaOption.getFpgaCableName());
+  }
+
+  @Test
+  void fpgaCableRequiresFpgaDownload() {
+    assertNull(
+        Startup.parseArgs(
+            new String[] {"--tty", "table", "--fpga-cable", "USB-Blaster [1-1]", "test.circ"}));
   }
 
   private static Stream<Arguments> invalidOptionArguments() {
