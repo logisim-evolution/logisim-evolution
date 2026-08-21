@@ -69,7 +69,7 @@ public class FpTrigonometry extends InstanceFactory {
       new Object[] {BitWidth.create(32), TRIG});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u25B3", 3));
+    setIcon(new ArithmeticIcon("△", 3));
 
     final Port[] ps = new Port[5];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);

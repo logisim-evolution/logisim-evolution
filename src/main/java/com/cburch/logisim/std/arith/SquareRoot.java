@@ -83,7 +83,7 @@ public class SquareRoot extends InstanceFactory {
         new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u221A"));
+    setIcon(new ArithmeticIcon("√"));
 
     Port[] ps = new Port[4];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);

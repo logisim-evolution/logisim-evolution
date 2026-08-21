@@ -61,8 +61,8 @@ public class Parser {
     return Character.isWhitespace(c)
         || Character.isJavaIdentifierStart(c)
         || "()01~-^+*!&|=\\':[]".indexOf(c) >= 0
-        || "\u2260\u2262\u22C0\u22C1\u2227\u2228\u2295\u22C5\u00AC\u2219".indexOf(c) >= 0
-        || "\u21D4\u2261\u2194\u02DC\u00B7\u2225\u22BB\u22A4\u22A5".indexOf(c) >= 0;
+        || "≠≢⋀⋁∧∨⊕⋅¬∙".indexOf(c) >= 0
+        || "⇔≡↔˜·∥⊻⊤⊥".indexOf(c) >= 0;
   }
 
   public static Expression parseMaybeAssignment(String in, AnalyzerModel model)
@@ -323,15 +323,15 @@ public class Parser {
         case ')':
           return new Token(TOKEN_RPAREN, start, ")", Integer.MAX_VALUE);
         case '1':
-        case '\u22A4': // down tack
+        case '⊤': // down tack
           return new Token(TOKEN_CONST, start, "1", Integer.MAX_VALUE);
         case '0':
-        case '\u22A5': // up tack
+        case '⊥': // up tack
           return new Token(TOKEN_CONST, start, "0", Integer.MAX_VALUE);
         case '~':
         case '-':
-        case '\u00AC': // logical not
-        case '\u02DC': // tilde
+        case '¬': // logical not
+        case '˜': // tilde
           return new Token(TOKEN_NOT, start, "~", Notation.NOT_PRECEDENCE);
         case '!':
           if (accept('=')) {
@@ -342,31 +342,31 @@ public class Parser {
         case '\'':
           return new Token(TOKEN_NOT_POSTFIX, start, "'", Notation.NOT_PRECEDENCE);
         case '^':
-        case '\u2295': // oplus
+        case '⊕': // oplus
           return new Token(TOKEN_XOR, start, "^", Notation.OPLUS_PRECEDENCE);
-        case '\u22BB': // vee-underbar
-        case '\u2262': // not-equiv
-        case '\u2260': // not-equals
+        case '⊻': // vee-underbar
+        case '≢': // not-equiv
+        case '≠': // not-equals
           return new Token(TOKEN_XOR, start, "^", Notation.LOGIC_PRECEDENCE);
         case '+':
-        case '\u22C1': // large disjunction
-        case '\u2228': // small disjunction
+        case '⋁': // large disjunction
+        case '∨': // small disjunction
           return new Token(TOKEN_OR, start, "+", Notation.LOGIC_PRECEDENCE);
-        case '\u2225': // logical or
+        case '∥': // logical or
           return new Token(TOKEN_OR, start, "+", Notation.OR_PRECEDENCE);
         case '*':
-        case '\u22C0': // large conjunction
-        case '\u2227': // small conjunction
+        case '⋀': // large conjunction
+        case '∧': // small conjunction
           return new Token(TOKEN_AND, start, "*", Notation.LOGIC_PRECEDENCE);
-        case '\u22C5': // cdot
-        case '\u2219': // bullet
-        case '\u00B7': // middle-dot
+        case '⋅': // cdot
+        case '∙': // bullet
+        case '·': // middle-dot
           return new Token(TOKEN_AND, start, "*", Notation.TIMES_PRECEDENCE);
-        case '\u2299': // otimes
+        case '⊙': // otimes
           return new Token(TOKEN_XNOR, start, "^", Notation.OTIMES_PRECEDENCE);
-        case '\u21D4': // left-right-doublearrow
-        case '\u2261': // equiv
-        case '\u2194': // left-right-arrow
+        case '⇔': // left-right-doublearrow
+        case '≡': // equiv
+        case '↔': // left-right-arrow
           return new Token(TOKEN_XNOR, start, "=", Notation.LOGIC_PRECEDENCE);
         case '&':
           if (accept('&')) {
