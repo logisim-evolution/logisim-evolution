@@ -117,7 +117,7 @@ public class FpLogarithm extends InstanceFactory {
 
     final var mode = painter.getAttributeValue(LOG_MODE);
     if (mode == LOGXY) {
-      painter.drawPort(OUT, "log\u1D67x", Direction.WEST);
+      painter.drawPort(OUT, "logᵧx", Direction.WEST);
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
       painter.drawPort(ALOG);
       painter.drawPort(BASE);
@@ -125,7 +125,7 @@ public class FpLogarithm extends InstanceFactory {
       if (mode == LOG) {
         painter.drawPort(OUT, "log", Direction.WEST);
       } else if (mode == LOG10) {
-        painter.drawPort(OUT, "log\u2081\u2080", Direction.WEST);
+        painter.drawPort(OUT, "log₁₀", Direction.WEST);
       } else {
         painter.drawPort(OUT, "log+1", Direction.WEST);
       }

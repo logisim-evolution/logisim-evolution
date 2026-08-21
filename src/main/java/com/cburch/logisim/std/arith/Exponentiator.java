@@ -97,7 +97,7 @@ public class Exponentiator extends InstanceFactory {
       new Object[] {BitWidth.create(32), Comparator.UNSIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("y\u02E3", 2));
+    setIcon(new ArithmeticIcon("yˣ", 2));
 
     final var ps = new Port[4];
     ps[BASE] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
@@ -116,7 +116,7 @@ public class Exponentiator extends InstanceFactory {
     final var g = painter.getGraphics();
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    painter.drawPort(LOW_OUT, "y\u02E3", Direction.WEST);
+    painter.drawPort(LOW_OUT, "yˣ", Direction.WEST);
     g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(UPP_OUT, S.get("dividerUpperInput"), Direction.SOUTH);
     painter.drawPort(BASE);

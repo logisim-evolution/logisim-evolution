@@ -132,10 +132,10 @@ public class Drawgates {
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
       if (!rightToLeft) {
         g.drawRect(x - width, y - height / 2, width, height);
-        GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x - width / 2, y);
+        GraphicsUtil.drawCenteredText(g, "≥" + "1", x - width / 2, y);
       } else {
         g.drawRect(x, y - height / 2, width, height);
-        GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x + width / 2, y);
+        GraphicsUtil.drawCenteredText(g, "≥" + "1", x + width / 2, y);
       }
     } else {
       if (!rightToLeft) {

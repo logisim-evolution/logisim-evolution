@@ -86,11 +86,11 @@ public class ZoomControl extends JPanel {
     this.add(zoomButton, BorderLayout.WEST);
 
     zoomContainer = new JPanel(new GridLayout());
-    predefinedZoom1 = new PredefinedZoomButton(model, "\u00D7" + "\u00BD", 0.5);
+    predefinedZoom1 = new PredefinedZoomButton(model, "×" + "½", 0.5);
     zoomContainer.add(predefinedZoom1);
-    predefinedZoom2 = new PredefinedZoomButton(model, "\u00D7" + "1", 1.0);
+    predefinedZoom2 = new PredefinedZoomButton(model, "×" + "1", 1.0);
     zoomContainer.add(predefinedZoom2);
-    predefinedZoom3 = new PredefinedZoomButton(model, "\u00D7" + "2", 2.0);
+    predefinedZoom3 = new PredefinedZoomButton(model, "×" + "2", 2.0);
     zoomContainer.add(predefinedZoom3);
     this.add(zoomContainer, BorderLayout.CENTER);
 
@@ -119,7 +119,7 @@ public class ZoomControl extends JPanel {
    */
   public String zoomString() {
     DecimalFormat df = new DecimalFormat("###.##");
-    return "\u00D7" + df.format(model.getZoomFactor());
+    return "×" + df.format(model.getZoomFactor());
   }
 
   public void zoomIn() {

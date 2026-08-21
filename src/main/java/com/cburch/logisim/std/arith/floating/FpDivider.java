@@ -48,7 +48,7 @@ public class FpDivider extends InstanceFactory {
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u00f7"));
+    setIcon(new ArithmeticIcon("÷"));
 
     final var ps = new Port[5];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);

@@ -1416,7 +1416,7 @@ public class TikZInfo implements Cloneable {
           } else content.append("}}\\text{");
         } else {
           char kar = strIter.current();
-          if (kar == '\u22C5' && !svg) {
+          if (kar == '⋅' && !svg) {
             content.append("}\\cdot\\text{");
           } else if (kar == '_' && !svg) {
             content.append("\\_");
