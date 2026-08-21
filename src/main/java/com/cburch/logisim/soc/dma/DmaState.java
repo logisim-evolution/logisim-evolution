@@ -237,7 +237,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
       // can observe the writes and update their framebuffer in real time)
       SocBusTransaction writeTrans = new SocBusTransaction(
           SocBusTransaction.WRITE_TRANSACTION,
-              (val & CTRL_DST_INC ) == 0 ? regs.dstAddr + offset : regs.dstAddr,
+              (val & CTRL_DST_INC) == 0 ? regs.dstAddr + offset : regs.dstAddr,
           readTrans.getReadData(),
           SocBusTransaction.WORD_ACCESS,
           controlBus.getComponent());
