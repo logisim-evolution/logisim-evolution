@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.std.bfh;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -162,8 +164,7 @@ public class BinToBcdHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             .add(getAdd3Block("s_level9", 12, "s_level10", 12, "C20"));
       }
     } else {
-      // FIXME: hardcoded String
-      Reporter.report.addFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.report.addFatalError(S.get("HdlBinToBcdUnsupportedVerilogError"));
     }
     return contents.empty();
   }
