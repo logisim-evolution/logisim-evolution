@@ -9,22 +9,18 @@
 
 package com.cburch.logisim.vhdl.sim;
 
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.generated.BuildInfo;
-import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.vhdl.base.VhdlEntity;
-import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 import com.cburch.logisim.vhdl.base.VhdlParser;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +34,9 @@ import org.slf4j.LoggerFactory;
 public class VhdlSimulatorVhdlTop {
   static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorVhdlTop.class);
   private boolean valid = false;
-  private final VhdlSimulatorTop vhdlSimulator;
   private boolean firstPort;
   private boolean firstComp;
   private boolean firstMap;
-
-  VhdlSimulatorVhdlTop(VhdlSimulatorTop vs) {
-    vhdlSimulator = vs;
-  }
 
   public void fireInvalidated() {
     valid = false;
@@ -54,11 +45,29 @@ public class VhdlSimulatorVhdlTop {
   /**
    * If the top file has been invalidated, regenerates the VHDL top file.
    */
-  public void generate(List<Component> comps) {
+  public void generate(List<VhdlSimulatorComponent> comps) {
     /* Do not generate if file is already valid */
     if (valid) {
       return;
     }
+
+    final var template = buildTop(comps);
+    if (template == null) return;
+
+    try (final var writer =
+        new PrintWriter(
+            VhdlSimConstants.SIM_SRC_PATH + VhdlSimConstants.SIM_TOP_FILENAME,
+            StandardCharsets.UTF_8)) {
+      writer.print(template);
+    } catch (IOException e) {
+      logger.error("Could not create top_sim file : {}", e.getMessage());
+      return;
+    }
+
+    valid = true;
+  }
+
+  String buildTop(List<VhdlSimulatorComponent> comps) {
 
     final var lineSeparator = System.getProperty("line.separator");
 
@@ -75,29 +84,13 @@ public class VhdlSimulatorVhdlTop {
     map.append(lineSeparator);
 
     firstPort = firstComp = firstMap = true;
-    String[] type = {Port.INOUT, Port.INPUT, Port.OUTPUT};
+    final var declaredEntities = new HashSet<String>();
 
     /* For each vhdl entity */
     for (final var comp : comps) {
-      final var state = vhdlSimulator.getProject().getCircuitState().getInstanceState(comp);
-
-      final var fac = comp.getFactory();
-      String vhdlEntityName;
-      final var myPorts = new ArrayList<VhdlParser.PortDescription>();
-      if (fac instanceof VhdlEntity) {
-        vhdlEntityName = ((VhdlEntity) fac).getSimName(state.getInstance().getAttributeSet());
-        myPorts.addAll(((VhdlEntityAttributes) state.getAttributeSet()).getContent().getPorts());
-      } else {
-        vhdlEntityName =
-            ((VhdlEntityComponent) fac).getSimName(state.getInstance().getAttributeSet());
-        for (final var port :
-            state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR).getPorts()) {
-          VhdlParser.PortDescription nport =
-              new VhdlParser.PortDescription(
-                  port.getName(), port.getType(), port.getWidthInt());
-          myPorts.add(nport);
-        }
-      }
+      final var vhdlEntityName = comp.entityName();
+      final var simulationName = comp.simulationName();
+      final var myPorts = comp.ports();
 
       /*
        * Create ports
@@ -109,7 +102,7 @@ public class VhdlSimulatorVhdlTop {
         } else {
           firstPort = false;
         }
-        final var portName = vhdlEntityName + "_" + port.getName();
+        final var portName = simulationName + "_" + port.getName();
         ports
             .append("      ")
             .append(portName)
@@ -125,49 +118,51 @@ public class VhdlSimulatorVhdlTop {
       /*
        * Create components
        */
-      components.append("   component ").append(vhdlEntityName);
-      components.append(lineSeparator);
+      if (declaredEntities.add(vhdlEntityName.toLowerCase(Locale.ROOT))) {
+        components.append("   component ").append(vhdlEntityName);
+        components.append(lineSeparator);
 
-      components.append("      port (");
-      components.append(lineSeparator);
+        components.append("      port (");
+        components.append(lineSeparator);
 
-      firstComp = true;
-      for (final var port : myPorts) {
-        if (!firstComp) {
-          components.append(";");
-          components.append(lineSeparator);
-        } else {
-          firstComp = false;
+        firstComp = true;
+        for (final var port : myPorts) {
+          if (!firstComp) {
+            components.append(";");
+            components.append(lineSeparator);
+          } else {
+            firstComp = false;
+          }
+
+          components
+              .append("         ")
+              .append(port.getName())
+              .append(" : ")
+              .append(port.getVhdlType())
+              .append(" std_logic");
+
+          int width = port.getWidth().getWidth();
+          if (width > 1) {
+            components.append("_vector(").append(width - 1).append(" downto 0)");
+          }
         }
 
-        components
-            .append("         ")
-            .append(port.getName())
-            .append(" : ")
-            .append(port.getVhdlType())
-            .append(" std_logic");
+        components.append(lineSeparator);
+        components.append("      );");
+        components.append(lineSeparator);
 
-        int width = port.getWidth().getWidth();
-        if (width > 1) {
-          components.append("_vector(").append(width - 1).append(" downto 0)");
-        }
+        components.append("   end component ;");
+        components.append(lineSeparator);
+
+        components.append("   ");
+        components.append(lineSeparator);
       }
-
-      components.append(lineSeparator);
-      components.append("      );");
-      components.append(lineSeparator);
-
-      components.append("   end component ;");
-      components.append(lineSeparator);
-
-      components.append("   ");
-      components.append(lineSeparator);
 
       /*
        * Create port map
        */
       map.append("   ")
-          .append(vhdlEntityName)
+          .append(simulationName)
           .append("_map : ")
           .append(vhdlEntityName)
           .append(" port map (");
@@ -186,7 +181,7 @@ public class VhdlSimulatorVhdlTop {
         map.append("      ")
             .append(port.getName())
             .append(" => ")
-            .append(vhdlEntityName)
+            .append(simulationName)
             .append("_")
             .append(port.getName());
       }
@@ -220,28 +215,13 @@ public class VhdlSimulatorVhdlTop {
                           VhdlSimConstants.VHDL_TEMPLATES_PATH + "top_sim.templ")));
     } catch (IOException e) {
       logger.error("Could not read template : {}", e.getMessage());
-      return;
+      return null;
     }
 
-    template = template
-            .replaceAll("%date%", LocaleManager.PARSER_SDF.format(new Date()))
-            .replaceAll("%ports%", ports.toString())
-            .replaceAll("%components%", components.toString())
-            .replaceAll("%map%", map.toString());
-
-    PrintWriter writer;
-    try {
-      writer = new PrintWriter(
-              VhdlSimConstants.SIM_SRC_PATH + VhdlSimConstants.SIM_TOP_FILENAME,
-              StandardCharsets.UTF_8);
-      writer.print(template);
-      writer.close();
-    } catch (IOException e) {
-      logger.error("Could not create top_sim file : {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    }
-
-    valid = true;
+    return template
+        .replace("%date%", LocaleManager.PARSER_SDF.format(new Date()))
+        .replace("%ports%", ports.toString())
+        .replace("%components%", components.toString())
+        .replace("%map%", map.toString());
   }
 }
