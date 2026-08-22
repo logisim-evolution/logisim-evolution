@@ -593,8 +593,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         if (myParametersList.containsKey(nrOfBits, attrs)) {
           signalSet.put(input, String.format("%s [%s-1:0]", preamble, myParametersList.get(nrOfBits, attrs)));
         } else {
-          // FIXME: hard coded String
-          Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+          Reporter.report.addFatalError(S.get("HdlMissingParameterError"));
           return false;
         }
       } else if (nrOfBits == 0) {
