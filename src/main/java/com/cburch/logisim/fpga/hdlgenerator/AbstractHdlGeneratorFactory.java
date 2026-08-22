@@ -339,6 +339,22 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return myParametersList.getMaps(attrs);
   }
 
+  /**
+   * Returns the VHDL generic names and declaration types used by this generator. Subclasses may
+   * override this hook when their declarations do not originate from {@link HdlParameters}.
+   */
+  protected Map<String, String> getVhdlParameterDeclarations(AttributeSet attrs) {
+    final var declarations = new TreeMap<String, String>();
+    for (final var generic : myParametersList.keySet(attrs)) {
+      declarations.put(
+          myParametersList.get(generic, attrs),
+          myParametersList.isPresentedByInteger(generic, attrs)
+              ? "{{integer}}"
+              : "std_logic_vector");
+    }
+    return declarations;
+  }
+
   @Override
   public List<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
@@ -476,27 +492,25 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
     contents.add(isEntity ? "{{entity}} {{1}} {{is}}" : "{{component}} {{1}}", componentName);
-    if (!myParametersList.isEmpty(attrs)) {
+    final var parameterDeclarations = getVhdlParameterDeclarations(attrs);
+    if (!parameterDeclarations.isEmpty()) {
       // first we build a list with parameters to determine the max. string length
-      final var myParameters = new HashMap<String, Boolean>();
-      for (final var generic : myParametersList.keySet(attrs)) {
-        final var parameterName = myParametersList.get(generic, attrs);
+      for (final var parameterName : parameterDeclarations.keySet()) {
         maxNameLength = Math.max(maxNameLength, parameterName.length());
-        myParameters.put(parameterName, myParametersList.isPresentedByInteger(generic, attrs));
       }
       maxNameLength += 1; // add one space after the longest one
-      final var myGenerics = new TreeSet<>(myParameters.keySet());
+      final var myGenerics = new TreeSet<>(parameterDeclarations.keySet());
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
           contents.add("   {{generic}} ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
+              parameterDeclarations.get(thisGeneric),
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         } else {
           contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
+              parameterDeclarations.get(thisGeneric),
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         }
         currentGenericId++;
