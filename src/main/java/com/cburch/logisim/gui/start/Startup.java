@@ -919,13 +919,13 @@ public class Startup implements AWTEventListener {
 
   public void run() {
     if (isTty) {
+      var exitCode = TtyInterface.EXIT_FAILURE;
       try {
-        TtyInterface.run(this);
-        System.exit(0);
+        exitCode = TtyInterface.run(this);
       } catch (Exception t) {
         t.printStackTrace();
-        System.exit(-1);
       }
+      System.exit(exitCode);
     }
 
     // kick off the progress monitor

@@ -55,6 +55,9 @@ public class TtyInterface {
   public static final int FORMAT_TABLE_CSV = 64;
   public static final int FORMAT_TABLE_BIN = 128;
   public static final int FORMAT_TABLE_HEX = 256;
+  static final int EXIT_SUCCESS = 0;
+  static final int EXIT_FAILURE = -1;
+  static final int EXIT_OSCILLATION = 1;
   static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
   private static boolean lastIsNewline = true;
 
@@ -285,7 +288,7 @@ public class TtyInterface {
     return found;
   }
 
-  public static void run(Startup args) {
+  public static int run(Startup args) {
     final var fileToOpen = args.getFilesToOpen().get(0);
     final var loader = new Loader(null);
     LogisimFile file;
@@ -293,12 +296,19 @@ public class TtyInterface {
       file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
     } catch (LoadFailedException e) {
       logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
-      System.exit(-1);
-      return;
+      return EXIT_FAILURE;
     }
     final var proj = new Project(file);
+    try {
+      return run(args, file, proj);
+    } finally {
+      proj.getSimulator().shutDown();
+    }
+  }
+
+  private static int run(Startup args, LogisimFile file, Project proj) {
     if (args.isFpgaDownload()) {
-      if (!args.fpgaDownload(proj)) System.exit(-1);
+      if (!args.fpgaDownload(proj)) return EXIT_FAILURE;
     }
 
     final var circuitToTest = args.getCircuitToTest();
@@ -312,7 +322,7 @@ public class TtyInterface {
       displayStatistics(file, circuit);
     }
     if (format == 0) { // no simulation remaining to perform, so just exit
-      System.exit(0);
+      return EXIT_SUCCESS;
     }
 
     final var pinNames = Analyze.getPinLabels(circuit);
@@ -333,7 +343,7 @@ public class TtyInterface {
     }
     if (haltPin == null && (format & FORMAT_TABLE) != 0) {
       doTableAnalysis(proj, circuit, pinNames, format);
-      return;
+      return EXIT_SUCCESS;
     }
 
     CircuitState circState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
@@ -348,32 +358,37 @@ public class TtyInterface {
           final var keys = memoriesToLoad.keySet();
           keys.removeAll(loaded);
           logger.error("{}", S.get("loadNoRamError", keys));
-          System.exit(-1);
+          return EXIT_FAILURE;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("loadIoError"), e.toString());
-        System.exit(-1);
+        return EXIT_FAILURE;
       }
       prop.propagate(); // propagate memory values before running simulation.
     }
 
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
+    return finishSimulation(circState, args.getSaveFile(), simCode);
+  }
 
-    if (args.getSaveFile() != null) {
+  static int finishSimulation(CircuitState circState, File saveFile, int simCode) {
+    if (simCode == EXIT_FAILURE) return EXIT_FAILURE;
+
+    if (saveFile != null) {
       try {
-        final var saved = saveRam(circState, args.getSaveFile());
+        final var saved = saveRam(circState, saveFile);
         if (!saved) {
           logger.error("{}", S.get("saveNoRamError"));
-          System.exit(-1);
+          return EXIT_FAILURE;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("saveIoError"), e.toString());
-        System.exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
-    System.exit(simCode);
+    return simCode;
   }
 
   private static int doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
@@ -472,7 +487,8 @@ public class TtyInterface {
     return 0;
   }
 
-  private static int runSimulation(CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
+  static int runSimulation(
+      CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
     final var showTable = (format & FORMAT_TABLE) != 0;
     final var showSpeed = (format & FORMAT_SPEED) != 0;
     final var showTty = (format & FORMAT_TTY) != 0;
@@ -485,7 +501,7 @@ public class TtyInterface {
       final var ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
-        System.exit(-1);
+        return EXIT_FAILURE;
       }
       if (keyboardStates.isEmpty()) {
         keyboardStates = null;
@@ -495,7 +511,7 @@ public class TtyInterface {
       }
     }
 
-    var retCode = 0;
+    var retCode = EXIT_SUCCESS;
     long tickCount = 0;
     final var start = System.currentTimeMillis();
     var halted = false;
@@ -521,11 +537,11 @@ public class TtyInterface {
       }
 
       if (halted) {
-        retCode = 0; // normal exit
+        retCode = EXIT_SUCCESS;
         break;
       }
       if (prop.isOscillating()) {
-        retCode = 1; // abnormal exit
+        retCode = EXIT_OSCILLATION;
         break;
       }
       if (keyboardStates != null) {
