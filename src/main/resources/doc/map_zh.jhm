@@ -179,6 +179,14 @@
     <mapID target="io_Port_IO"          url="zh/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="zh/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="zh/html/libs/io/videorvb.html" />
+	<mapID target="ioex"                 url="en/html/libs/ioextra/index.html" />
+	<mapID target="ioex_switch"          url="en/html/libs/ioextra/switch.html" />
+	<mapID target="ioex_buzzer"          url="en/html/libs/ioextra/buzzer.html" />
+	<mapID target="ioex_slider"          url="en/html/libs/ioextra/slider.html" />
+	<mapID target="ioex_digitalscope"    url="en/html/libs/ioextra/digitalscope.html" />
+	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
+	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
+	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
 	<mapID target="tcl"                 url="zh/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="zh/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="zh/html/libs/tcl/generic.html" />

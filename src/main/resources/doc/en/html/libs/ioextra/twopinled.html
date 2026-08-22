@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>2-Pin LED</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../../resources/logisim/icons/twopinled.gif"
+            alt="2-Pin LED icon" width="32" height="32" align="middle">
+        <em>2-Pin LED</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output-Extra</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Models an LED with separate anode and cathode connections. It uses <q>On Color</q> only
+        when the anode is 1 and the cathode is 0. With <q>Bipolar</q> enabled, it uses
+        <q>Reverse Color</q> when the anode is 0 and the cathode is 1. All equal, unknown, or error
+        input combinations display <q>Off Color</q>.
+      </p>
+      <p>The component can also be placed in a circuit's dynamic appearance.</p>
+
+      <h2>Pins</h2>
+      <dl>
+        <dt>Anode (1 bit)</dt>
+        <dd>The LED's anode input.</dd>
+        <dt>Cathode (1 bit)</dt>
+        <dd>The LED's cathode input.</dd>
+      </dl>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Facing</dt>
+        <dd>Controls the orientation of the diode symbol and the anode and cathode pins.</dd>
+        <dt>On Color</dt>
+        <dd>The color displayed for forward polarity.</dd>
+        <dt>Off Color</dt>
+        <dd>The color displayed when the LED is off.</dd>
+        <dt>Bipolar</dt>
+        <dd>Enables a distinct color for reverse polarity.</dd>
+        <dt>Reverse Color</dt>
+        <dd>The color displayed for reverse polarity when <q>Bipolar</q> is enabled.</dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Location</dt>
+        <dd>The location of the label relative to the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+        <dt>Label Color</dt>
+        <dd>The color used to draw the label.</dd>
+        <dt>Label Visible</dt>
+        <dd>Controls whether the label is displayed.</dd>
+      </dl>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>
