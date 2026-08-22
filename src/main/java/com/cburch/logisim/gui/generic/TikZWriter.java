@@ -60,15 +60,17 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, AffineTransform xform, ImageObserver obs)");
-    return false;
+    final var buffered = toBufferedImage(img, obs);
+    if (buffered == null) return false;
+    final var transform = new AffineTransform(MyInfo.getAffineTransform());
+    transform.concatenate(xform);
+    MyInfo.addImage(buffered, transform);
+    return true;
   }
 
   @Override
   public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(BufferedImage img, BufferedImageOp op, int x, int y)");
+    drawImage(op == null ? img : op.filter(img, null), x, y, null);
   }
 
   @Override
@@ -397,31 +399,52 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int x, int y, ImageObserver observer)");
-    return false;
+    if (img == null) return false;
+    final var width = img.getWidth(observer);
+    final var height = img.getHeight(observer);
+    if (width < 0 || height < 0) return false;
+    return drawImage(img, x, y, x + width, y + height, 0, 0, width, height, observer);
   }
 
   @Override
   public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, ImageObserver observer)");
-    return false;
+    if (img == null) return false;
+    final var imageWidth = img.getWidth(observer);
+    final var imageHeight = img.getHeight(observer);
+    if (imageWidth < 0 || imageHeight < 0) return false;
+    return drawImage(
+        img, x, y, x + width, y + height, 0, 0, imageWidth, imageHeight, observer);
   }
 
   @Override
   public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer)");
-    return false;
+    if (img == null) return false;
+    final var width = img.getWidth(observer);
+    final var height = img.getHeight(observer);
+    if (width < 0 || height < 0) return false;
+    return drawImage(
+        img, x, y, x + width, y + height, 0, 0, width, height, bgcolor, observer);
   }
 
   @Override
   public boolean drawImage(
       Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer)");
-    return false;
+    if (img == null) return false;
+    final var imageWidth = img.getWidth(observer);
+    final var imageHeight = img.getHeight(observer);
+    if (imageWidth < 0 || imageHeight < 0) return false;
+    return drawImage(
+        img,
+        x,
+        y,
+        x + width,
+        y + height,
+        0,
+        0,
+        imageWidth,
+        imageHeight,
+        bgcolor,
+        observer);
   }
 
   @Override
@@ -436,10 +459,8 @@ public class TikZWriter extends Graphics2D {
       int sx2,
       int sy2,
       ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,\n"
-            + "      ImageObserver observer)");
-    return false;
+    return drawImageRegion(
+        img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null, observer);
   }
 
   @Override
@@ -455,10 +476,73 @@ public class TikZWriter extends Graphics2D {
       int sy2,
       Color bgcolor,
       ImageObserver observer) {
-    System.out.println(
-        "TikZ not yet supported : drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,\n"
-            + "      Color bgcolor, ImageObserver observer)");
-    return false;
+    return drawImageRegion(
+        img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer);
+  }
+
+  private boolean drawImageRegion(
+      Image img,
+      int dx1,
+      int dy1,
+      int dx2,
+      int dy2,
+      int sx1,
+      int sy1,
+      int sx2,
+      int sy2,
+      Color background,
+      ImageObserver observer) {
+    if (img == null) return false;
+    if (img.getWidth(observer) < 0 || img.getHeight(observer) < 0) return false;
+
+    final var sourceWidth = Math.abs(sx2 - sx1);
+    final var sourceHeight = Math.abs(sy2 - sy1);
+    if (sourceWidth == 0 || sourceHeight == 0 || dx1 == dx2 || dy1 == dy2) return true;
+
+    final var selected = new BufferedImage(sourceWidth, sourceHeight, BufferedImage.TYPE_INT_ARGB);
+    final var graphics = selected.createGraphics();
+    final boolean complete;
+    if (background == null) {
+      complete =
+          graphics.drawImage(
+              img, 0, 0, sourceWidth, sourceHeight, sx1, sy1, sx2, sy2, observer);
+    } else {
+      complete =
+          graphics.drawImage(
+              img,
+              0,
+              0,
+              sourceWidth,
+              sourceHeight,
+              sx1,
+              sy1,
+              sx2,
+              sy2,
+              background,
+              observer);
+    }
+    graphics.dispose();
+    if (!complete) return false;
+
+    final var transform = new AffineTransform(MyInfo.getAffineTransform());
+    transform.translate(dx1, dy1);
+    transform.scale(
+        (double) (dx2 - dx1) / sourceWidth, (double) (dy2 - dy1) / sourceHeight);
+    MyInfo.addImage(selected, transform);
+    return true;
+  }
+
+  private static BufferedImage toBufferedImage(Image image, ImageObserver observer) {
+    if (image == null) return null;
+    if (image instanceof BufferedImage buffered) return buffered;
+    final var width = image.getWidth(observer);
+    final var height = image.getHeight(observer);
+    if (width < 0 || height < 0) return null;
+    final var buffered = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    final var graphics = buffered.createGraphics();
+    final var complete = graphics.drawImage(image, 0, 0, observer);
+    graphics.dispose();
+    return complete ? buffered : null;
   }
 
   @Override

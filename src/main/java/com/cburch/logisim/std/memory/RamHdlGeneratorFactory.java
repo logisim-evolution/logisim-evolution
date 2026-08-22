@@ -689,6 +689,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
+    if (RamAttributes.hasControlledOutput(attrs)) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);

@@ -201,7 +201,7 @@ public class SelectionActions {
           droppedStr.append("\n  ");
           droppedStr.append(curName);
           if (curCount > 1) {
-            droppedStr.append(" \u00d7 ").append(curCount);
+            droppedStr.append(" × ").append(curCount);
           }
 
           curName = nextName;

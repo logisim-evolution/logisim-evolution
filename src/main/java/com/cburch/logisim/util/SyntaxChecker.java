@@ -14,6 +14,7 @@ import static com.cburch.logisim.util.Strings.S;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.util.regex.Pattern;
 
 public final class SyntaxChecker {
@@ -26,10 +27,16 @@ public final class SyntaxChecker {
   }
 
   public static String getErrorMessage(String val) {
+    return getErrorMessage(val, null);
+  }
+
+  public static String getErrorMessage(String val, String hdlType) {
     if (StringUtil.isNullOrEmpty(val)) return null;
+    if (HdlGeneratorFactory.NONE.equals(hdlType)) return null;
+
     var messageBuilder = new StringBuilder();
     buildVariableErrorMessage(val, messageBuilder);
-    final var hdl = CorrectLabel.hdlCorrectLabel(val);
+    final var hdl = CorrectLabel.hdlCorrectLabel(val, hdlType);
     if (hdl != null) {
       messageBuilder.append(hdl.equals(HdlGeneratorFactory.VHDL)
           ? S.get("variableVHDLKeyword")
@@ -68,10 +75,27 @@ public final class SyntaxChecker {
   }
 
   public static boolean isVariableNameAcceptable(String val, Boolean showDialog) {
-    final var message = getErrorMessage(val);
+    return isVariableNameAcceptable(val, null, showDialog);
+  }
+
+  public static boolean isVariableNameAcceptable(String val, String hdlType, Boolean showDialog) {
+    final var message = getErrorMessage(val, hdlType);
     if (message != null && showDialog) {
       OptionPane.showMessageDialog(null, message.concat("\n" + S.get("variableNameNotAcceptable")));
     }
     return message == null;
+  }
+
+  public static boolean isVariableNameAcceptableForCurrentHdl(String val, Boolean showDialog) {
+    return isVariableNameAcceptable(val, AppPreferences.HdlType.get(), showDialog);
+  }
+
+  public static boolean namesEqual(String first, String second, String hdlType) {
+    if (HdlGeneratorFactory.VHDL.equals(hdlType)) return first.equalsIgnoreCase(second);
+    return first.equals(second);
+  }
+
+  public static boolean namesEqualForCurrentHdl(String first, String second) {
+    return namesEqual(first, second, AppPreferences.HdlType.get());
   }
 }

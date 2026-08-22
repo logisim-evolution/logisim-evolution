@@ -157,5 +157,6 @@ class SimulateOptions extends OptionsPanel {
     private void loadSimRandomness(Integer val) {
       simRandomness.setSelected(val > 0);
     }
+
   }
 }

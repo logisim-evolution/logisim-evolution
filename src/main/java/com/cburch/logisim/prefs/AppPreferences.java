@@ -54,6 +54,23 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 public class AppPreferences {
+  // Export and print jobs may run off the EDT, so keep their palette override thread-local.
+  private static final ThreadLocal<Boolean> PRINT_VIEW_COLORS = new ThreadLocal<>();
+
+  private static final class PrintViewColorPreference extends PrefMonitorInt {
+    private final int printValue;
+
+    private PrintViewColorPreference(String name, int printValue) {
+      super(name, printValue);
+      this.printValue = printValue;
+    }
+
+    @Override
+    public Integer get() {
+      return Boolean.TRUE.equals(PRINT_VIEW_COLORS.get()) ? printValue : super.get();
+    }
+  }
+
   //
   // LocalePreference
   //
@@ -168,6 +185,20 @@ public class AppPreferences {
 
   private static <E> PrefMonitor<E> create(PrefMonitor<E> monitor) {
     return monitor;
+  }
+
+  public static void runWithPrintViewColors(Runnable action) {
+    final var previous = PRINT_VIEW_COLORS.get();
+    PRINT_VIEW_COLORS.set(true);
+    try {
+      action.run();
+    } finally {
+      if (previous == null) {
+        PRINT_VIEW_COLORS.remove();
+      } else {
+        PRINT_VIEW_COLORS.set(previous);
+      }
+    }
   }
 
   static void firePropertyChange(String property, boolean oldVal, boolean newVal) {
@@ -423,8 +454,8 @@ public class AppPreferences {
   /**
    * Determines the appropriate font style (PLAIN or BOLD) for the given font.
    *
-   * This is a heuristic to prevent "faux bold" rendering artifacts. Fonts with explicit 
-   * weights (e.g. Medium, Light) are typically standalone faces. Applying the BOLD style 
+   * This is a heuristic to prevent "faux bold" rendering artifacts. Fonts with explicit
+   * weights (e.g. Medium, Light) are typically standalone faces. Applying the BOLD style
    * to them forces synthetic bolding, which degrades rendering quality ("smearing").
    *
    * This method returns Font.PLAIN for such weighted fonts to ensure crisp rendering,
@@ -435,7 +466,7 @@ public class AppPreferences {
    */
   public static int getPreferredFontStyle(String fontName) {
     String font = fontName.toLowerCase();
-    if (font.contains("medium") || font.contains("light") 
+    if (font.contains("medium") || font.contains("light")
         || font.contains("thin") || font.contains("regular")
         || font.contains("semibold") || font.contains("extrabold")) {
       return Font.PLAIN;
@@ -513,7 +544,9 @@ public class AppPreferences {
       create(
           new PrefMonitorStringOpts(
               "hdlType",
-              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              new String[] {
+                HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG, HdlGeneratorFactory.NONE
+              },
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
@@ -557,6 +590,19 @@ public class AppPreferences {
 
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
+
+  public static final String EDITOR_THEME_DEFAULT = "default";
+  public static final String EDITOR_THEME_DARK = "dark";
+  public static final String[] EDITOR_THEMES = {
+    EDITOR_THEME_DEFAULT, EDITOR_THEME_DARK, "monokai", "eclipse", "idea", "vs", "druid"
+  };
+  public static final PrefMonitor<String> LIGHT_EDITOR_THEME =
+      create(
+          new PrefMonitorStringOpts(
+              "lightEditorTheme", EDITOR_THEMES, EDITOR_THEME_DEFAULT));
+  public static final PrefMonitor<String> DARK_EDITOR_THEME =
+      create(
+          new PrefMonitorStringOpts("darkEditorTheme", EDITOR_THEMES, EDITOR_THEME_DARK));
 
   public static final PrefMonitor<String> APP_FONT =
       create(new PrefMonitorString("AppFont", ""));
@@ -710,13 +756,15 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
       create(new PrefMonitorInt("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_COLOR =
-      create(new PrefMonitorInt("componentColor", DEFAULT_COMPONENT_COLOR));
+      create(new PrintViewColorPreference("componentColor", DEFAULT_COMPONENT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_SECONDARY_COLOR =
-      create(new PrefMonitorInt("componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
+      create(
+          new PrintViewColorPreference(
+              "componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_GHOST_COLOR =
-      create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
+      create(new PrintViewColorPreference("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
-      create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+      create(new PrintViewColorPreference("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
   public static final PrefMonitor<Integer> TEXT_TOOL_COLOR =
       create(new PrefMonitorInt("textToolColor", DEFAULT_TEXT_TOOL_COLOR));
 
@@ -1045,6 +1093,12 @@ public class AppPreferences {
       create(new PrefMonitorString("dialogDirectory", ""));
 
   /* Hotkeys */
+  /* Opens the action search when Shift is tapped twice in quick succession. Kept switchable
+   * because Shift is a working modifier on the canvas, so the gesture can misfire. */
+  public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
+      create(new PrefMonitorBoolean("searchDoubleShift", true));
+
+  /* Hotkey Settings */
   /* Watch whether in headless mode */
   public static final int hotkeyMenuMask =
       GraphicsEnvironment.isHeadless()
@@ -1100,6 +1154,63 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
       create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask,
           true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_SEARCH =
+      create(new PrefMonitorKeyStroke("hotkeySearch",
+          KeyEvent.VK_A, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_1 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect1", KeyEvent.VK_1, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_2 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect2", KeyEvent.VK_2, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_3 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect3", KeyEvent.VK_3, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_4 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect4", KeyEvent.VK_4, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_5 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect5", KeyEvent.VK_5, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_6 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect6", KeyEvent.VK_6, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_7 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect7", KeyEvent.VK_7, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_8 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect8", KeyEvent.VK_8, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_9 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect9", KeyEvent.VK_9, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_10 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect10", KeyEvent.VK_0, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_11 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect11", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_12 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect12", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_13 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect13", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_14 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect14", null, true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
       create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
@@ -1190,6 +1301,22 @@ public class AppPreferences {
       HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,
           InputEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
+      HOTKEY_SEARCH.set(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+          InputEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_TOOL_SELECT_1.set(KeyStroke.getKeyStroke(KeyEvent.VK_1, menuMask));
+      HOTKEY_TOOL_SELECT_2.set(KeyStroke.getKeyStroke(KeyEvent.VK_2, menuMask));
+      HOTKEY_TOOL_SELECT_3.set(KeyStroke.getKeyStroke(KeyEvent.VK_3, menuMask));
+      HOTKEY_TOOL_SELECT_4.set(KeyStroke.getKeyStroke(KeyEvent.VK_4, menuMask));
+      HOTKEY_TOOL_SELECT_5.set(KeyStroke.getKeyStroke(KeyEvent.VK_5, menuMask));
+      HOTKEY_TOOL_SELECT_6.set(KeyStroke.getKeyStroke(KeyEvent.VK_6, menuMask));
+      HOTKEY_TOOL_SELECT_7.set(KeyStroke.getKeyStroke(KeyEvent.VK_7, menuMask));
+      HOTKEY_TOOL_SELECT_8.set(KeyStroke.getKeyStroke(KeyEvent.VK_8, menuMask));
+      HOTKEY_TOOL_SELECT_9.set(KeyStroke.getKeyStroke(KeyEvent.VK_9, menuMask));
+      HOTKEY_TOOL_SELECT_10.set(KeyStroke.getKeyStroke(KeyEvent.VK_0, menuMask));
+      HOTKEY_TOOL_SELECT_11.set(null);
+      HOTKEY_TOOL_SELECT_12.set(null);
+      HOTKEY_TOOL_SELECT_13.set(null);
+      HOTKEY_TOOL_SELECT_14.set(null);
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
           KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
@@ -1229,6 +1356,9 @@ public class AppPreferences {
 
   public static final List<Menu> gui_sync_objects = new ArrayList<>();
 
+  private static final KeyStroke SWING_SHOW_TOOL_TIP_SHORTCUT =
+      KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.CTRL_DOWN_MASK);
+
   public static void hotkeySync() {
     try {
       AppPreferences.getPrefs().flush();
@@ -1245,6 +1375,9 @@ public class AppPreferences {
   }
 
   public static String hotkeyCheckConflict(String keyName, int keyCode, int modifier) {
+    if (SWING_SHOW_TOOL_TIP_SHORTCUT.equals(KeyStroke.getKeyStroke(keyCode, modifier))) {
+      return S.get("hotkeyErrConflict", S.get("hotkeyReservedShowToolTip"));
+    }
     try {
       /* Check the supported hotkey bindings */
       Field[] fields = AppPreferences.class.getDeclaredFields();

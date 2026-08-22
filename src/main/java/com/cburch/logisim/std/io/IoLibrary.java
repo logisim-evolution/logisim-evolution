@@ -59,6 +59,7 @@ public class IoLibrary extends Library {
     new FactoryDescription(ReptarLocalBus.class, S.getter("repLBComponent"), "localbus.gif"),
     new FactoryDescription(Telnet.class, S.getter("telnetComponent"), "telnet.gif"),
     new FactoryDescription(RealTimeClock.class, S.getter("realTimeClockComponent"), "realtimeclock.gif"),
+    new FactoryDescription(MatrixKeypad.class, S.getter("matrixKeypadComponent"), "matrixkeypad.gif"),
   };
 
   private List<Tool> tools = null;

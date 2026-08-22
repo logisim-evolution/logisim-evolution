@@ -69,7 +69,7 @@ public class FpExponentiator extends InstanceFactory {
       new Object[] {BitWidth.create(32), ARB});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("y\u02E3", 2));
+    setIcon(new ArithmeticIcon("yˣ", 2));
   }
 
   @Override
@@ -114,15 +114,15 @@ public class FpExponentiator extends InstanceFactory {
 
     final var mode = painter.getAttributeValue(EXP_MODE);
     if (mode == ARB) {
-      painter.drawPort(OUT, "y\u02E3", Direction.WEST);
+      painter.drawPort(OUT, "yˣ", Direction.WEST);
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
       painter.drawPort(BASE);
       painter.drawPort(EXPO);
     } else {
       if (mode == EXP) {
-        painter.drawPort(OUT, "e\u02E3", Direction.WEST);
+        painter.drawPort(OUT, "eˣ", Direction.WEST);
       } else {
-        painter.drawPort(OUT, "e\u02E3-1", Direction.WEST);
+        painter.drawPort(OUT, "eˣ-1", Direction.WEST);
       }
       g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
       painter.drawPort(EXPO);

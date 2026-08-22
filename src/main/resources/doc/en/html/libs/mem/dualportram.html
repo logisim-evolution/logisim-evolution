@@ -57,15 +57,15 @@
         Current values are displayed in the component. Addresses are listed in gray to the left of the display area. A key feature is <strong>Independent View Control</strong>: users can scroll through Port A's view and Port B's view separately to monitor different memory regions.
       </p>
       <p>
-        The component supports different interfaces, depending on the Data Interface attribute.
+        The component supports different interfaces, depending on the Data bus implementation attribute.
       </p>
       <dl>
         <dt>
-          Separate Data Bus (Default)
+          Separate Data Buses With Latched Output (Default)
         </dt>
         <dd>
           <p>
-            For each port (A and B), separate pins are provided for input (Din) and output (Dout). This option removes the necessity of dealing with Controlled Buffers and is easier to use for most dual-port applications.
+            For each port (A and B), separate pins are provided for input (Din) and output (Dout). This option preserves the previous output value when output enable is inactive and matches the legacy behavior for existing circuits.
           </p>
           <center>
             <img src="../../../../img-libs/dualportramdemo1.png" alt="#########">
@@ -119,7 +119,7 @@
               <var>ld1, ld2</var> on south edge (input, bit width 1)
             </dt>
             <dd>
-              Load (Output Enable): Selects whether the RAM should emit (on <var>D</var>) the value at the current address. If 0, the output is high-impedance.
+              Load (Output Enable): Selects whether the RAM should emit (on <var>D</var>) the value at the current address. If 0, a bidirectional data bus or separate data buses with controlled output are high-impedance. Separate data buses with latched output retain the previous output value.
             </dd>
             <dt>
               <var>C1, C2</var> on south edge (input, bit width 1)
@@ -157,7 +157,7 @@
               Data Interface
             </dt>
             <dd>
-              Configures whether to use Separate Data Buses (separate input/output pins) or Bidirectional Data Buses (shared pins).
+              Configures whether to use one bidirectional data bus, separate data buses with latched output, or separate data buses with controlled output.
             </dd>
             <dt>
               Byte Enables

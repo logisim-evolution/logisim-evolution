@@ -40,7 +40,7 @@ class MultiplierHdlGeneratorFactoryTest {
 
   private static class ExposedMultiplierHdlGeneratorFactory extends MultiplierHdlGeneratorFactory {
     Map<String, String> parameterMap(AttributeSet attrs) {
-      return myParametersList.getMaps(attrs);
+      return getParameterMap(attrs);
     }
   }
 }

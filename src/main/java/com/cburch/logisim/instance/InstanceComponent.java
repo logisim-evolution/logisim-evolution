@@ -26,9 +26,11 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -40,6 +42,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public final class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
@@ -50,6 +53,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   private List<Port> portList;
   private EndData[] endArray;
   private List<EndData> endList;
+  private Map<Integer, Value> pullPorts = null;
   private boolean hasToolTips;
   private HashSet<Attribute<BitWidth>> widthAttrs;
   private final AttributeSet attrs;
@@ -131,12 +135,13 @@ public final class InstanceComponent implements Component, AttributeListener, To
       final var value = (String) e.getSource().getValue(e.getAttribute());
       final var oldValue = e.getOldValue() != null ? (String) e.getOldValue() : "";
       if (!oldValue.equals(value)) {
-        if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
+        final var hdlType = AppPreferences.HdlType.get();
+        if (!SyntaxChecker.isVariableNameAcceptable(value, hdlType, true)) {
           e.getSource().setValue(lAttr, oldValue);
-        } else if (getFactory().getName().equalsIgnoreCase(value)) {
+        } else if (SyntaxChecker.namesEqual(getFactory().getName(), value, hdlType)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
           e.getSource().setValue(lAttr, oldValue);
-        } else if (CorrectLabel.isKeyword(value, false)) {
+        } else if (CorrectLabel.isKeyword(value, hdlType, false)) {
           OptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
           e.getSource().setValue(lAttr, oldValue);
         } else {
@@ -396,6 +401,10 @@ public final class InstanceComponent implements Component, AttributeListener, To
     return portList;
   }
 
+  public Map<Integer, Value> getPullPorts() {
+    return pullPorts;
+  }
+
   @Override
   public String getToolTip(ComponentUserEvent e) {
     var i = 0;
@@ -439,15 +448,39 @@ public final class InstanceComponent implements Component, AttributeListener, To
     computeEnds();
   }
 
+  /**
+   * Sets the mapping from pull port indexes to pull value for those ports/ends that should have a pull.
+   * A null map means there is no pull for any End and is the default value.
+   * </p>This method assumes it will only be called while configuring a new InstanceComponent.
+   * If it must be called later, this method should be modified to notify CircuitWires so it
+   * can void the Connectivity.
+   *
+   * @param pullPorts the map from port indexes to pull values
+   */
+  public void setPullPorts(Map<Integer, Value> pullPorts) {
+    this.pullPorts = pullPorts == null || pullPorts.isEmpty() ? null : Map.copyOf(pullPorts);
+  }
+
   void setTextField(
       Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+    setTextField(labelAttr, fontAttr, x, y, halign, valign, false);
+  }
+
+  void setTextField(
+      Attribute<String> labelAttr,
+      Attribute<Font> fontAttr,
+      int x,
+      int y,
+      int halign,
+      int valign,
+      boolean multiline) {
     var field = textField;
     if (field == null) {
       field = new InstanceTextField(this);
-      field.update(labelAttr, fontAttr, x, y, halign, valign);
+      field.update(labelAttr, fontAttr, x, y, halign, valign, multiline);
       textField = field;
     } else {
-      field.update(labelAttr, fontAttr, x, y, halign, valign);
+      field.update(labelAttr, fontAttr, x, y, halign, valign, multiline);
     }
   }
 

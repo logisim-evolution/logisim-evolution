@@ -205,7 +205,7 @@ public class ShiftRegister extends InstanceFactory {
     if (active_low_clock) g.drawOval(xpos, ypos + 45, 10, 10);
     else g.drawLine(xpos, ypos + 50, xpos + 10, ypos + 50);
     painter.drawPort(CK);
-    final var cntrl = "1\u2192/C3";
+    final var cntrl = "1→/C3";
     GraphicsUtil.drawText(
         g, cntrl, xpos + 20, ypos + 50, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     /* draw shift input */
@@ -546,4 +546,12 @@ public class ShiftRegister extends InstanceFactory {
   public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
+    final var extension = (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) ? "Classic" : "Evolution";
+    return String.format("SHIFTREG_%d_%s", nrOfStages, extension);
+  }
+
 }

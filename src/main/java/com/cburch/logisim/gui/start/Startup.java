@@ -27,6 +27,7 @@ import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
+import com.cburch.logisim.gui.search.DoubleShiftTrigger;
 import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -99,6 +100,7 @@ public class Startup implements AWTEventListener {
   private String testVector = null;
   private String circuitToTest = null;
   private boolean exitAfterStartup = false;
+  private boolean quitAfterParsing = false;
   private boolean showSplash;
 
   /* File contains the data that should be loaded into a RAM/ROM with a label matching the String
@@ -115,6 +117,7 @@ public class Startup implements AWTEventListener {
   /* Test implementation */
   private String testCircuitImpPath = null;
   private boolean doFpgaDownload = false;
+  private String fpgaCableName = null;
   private double testTickFrequency = -1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
@@ -149,6 +152,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
   private static final String ARG_TEST_FGPA_SHORT = "f";
   private static final String ARG_TEST_FGPA_LONG = "test-fpga";
+  private static final String ARG_FPGA_CABLE_LONG = "fpga-cable";
   private static final String ARG_GATES_SHORT = "g";
   private static final String ARG_GATES_LONG = "gates";
   private static final String ARG_HELP_SHORT = "h";
@@ -298,16 +302,9 @@ public class Startup implements AWTEventListener {
     addOption(opts, stringBaseKey, shortKey, longKey, 0);
   }
 
-  /**
-   * Return code of last run argument handler.
-   */
-  private static RC lastHandlerRc;
-
-  /**
-   * Returns {@true} if last argument handler called requested app termination (w/o error).
-   */
+  /** Returns whether an argument requested successful application termination. */
   public boolean shallQuit() {
-    return lastHandlerRc == RC.QUIT;
+    return quitAfterParsing;
   }
 
   /**
@@ -329,6 +326,7 @@ public class Startup implements AWTEventListener {
     // It is assumed that evey option always has long-form switch. Short forms are optional.
     addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
+    addOption(opts, "argFpgaCableOption", ARG_FPGA_CABLE_LONG, 1);
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
@@ -406,18 +404,26 @@ public class Startup implements AWTEventListener {
         case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
         case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
         case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
+        case ARG_FPGA_CABLE_LONG -> handleArgFpgaCable(startup, opt);
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
         case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
-      lastHandlerRc = optHandlerRc;
       switch (optHandlerRc) {
+        case ERROR:
+          return null;
         case QUIT:
+          startup.quitAfterParsing = true;
           return startup;
         default:
           continue;
       }
+    }
+
+    if (startup.fpgaCableName != null && !startup.doFpgaDownload) {
+      logger.error(S.get("argFpgaCableRequiresTestFpga"));
+      return null;
     }
 
     // positional argument being files to load
@@ -475,7 +481,11 @@ public class Startup implements AWTEventListener {
      */
     WARN,
     /**
-     * Unrecoverable error occurred while handling option. No fall back, must quit.
+     * Unrecoverable error occurred while handling an option. Parsing must fail.
+     */
+    ERROR,
+    /**
+     * Handler completed successfully and requested application termination.
      */
     QUIT
   }
@@ -502,14 +512,14 @@ public class Startup implements AWTEventListener {
 
         if (val == 0) {
           logger.error(S.get("ttyFormatError"));
-          return RC.QUIT;
+          return RC.ERROR;
         }
         startup.ttyFormat |= val;
       }
       return RC.OK;
     }
     logger.error(S.get("ttyFormatError"));
-    return RC.QUIT;
+    return RC.ERROR;
   }
 
   private static RC handleArgSubstitute(Startup startup, Option opt) {
@@ -522,7 +532,7 @@ public class Startup implements AWTEventListener {
 
     // FIXME: warning should be sufficient here maybe?
     logger.error(S.get("argDuplicateSubstitutionError"));
-    return RC.QUIT;
+    return RC.ERROR;
   }
 
   private static RC handleArgLoad(Startup startup, Option opt) {
@@ -530,19 +540,19 @@ public class Startup implements AWTEventListener {
 
     if (optArgs == null) {
       logger.error(S.get("argLoadInvalidArguments"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
 
     final var argsCnt = optArgs.length;
     if (argsCnt < 1 || argsCnt > 2) {
       logger.error(S.get("argLoadInvalidArguments"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
 
     final var label = argsCnt == 1 ? "" : optArgs[1];
     if (startup.memoryLoadFiles.containsKey(label)) {
       logger.error(S.get("argLoadDuplicateLabel", label));
-      return RC.QUIT;
+      return RC.ERROR;
     }
     startup.memoryLoadFiles.put(label, new File(optArgs[0]));
 
@@ -570,7 +580,7 @@ public class Startup implements AWTEventListener {
     }
 
     logger.error(S.get("argGatesOptionError"));
-    return RC.QUIT;
+    return RC.ERROR;
   }
 
   private static RC handleArgGeometry(Startup startup, Option opt) {
@@ -579,7 +589,7 @@ public class Startup implements AWTEventListener {
 
     if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
       logger.error(S.get("argGeometryError"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
 
     final var p = wxh[1].indexOf('+', 1);
@@ -592,14 +602,14 @@ public class Startup implements AWTEventListener {
       final var xy = loc.split("\\+");
       if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
         logger.error(S.get("argGeometryError"));
-        return RC.QUIT;
+        return RC.ERROR;
       }
       try {
         x = Integer.parseInt(xy[0]);
         y = Integer.parseInt(xy[1]);
       } catch (NumberFormatException e) {
         logger.error(S.get("argGeometryError"));
-        return RC.QUIT;
+        return RC.ERROR;
       }
     }
 
@@ -610,11 +620,11 @@ public class Startup implements AWTEventListener {
       h = Integer.parseInt(wxh[1]);
     } catch (NumberFormatException e) {
       logger.error(S.get("argGeometryError"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
     if (w <= 0 || h <= 0) {
       logger.error(S.get("argGeometryError"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
     AppPreferences.WINDOW_WIDTH.set(w);
     AppPreferences.WINDOW_HEIGHT.set(h);
@@ -625,14 +635,22 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgLocale(Startup startup, Option opt) {
-    setLocale(opt.getValue());
-    return RC.OK;
+    if (trySetLocale(opt.getValue())) return RC.OK;
+
+    final var opts = S.getLocaleOptions();
+    logger.warn(S.get("invalidLocaleError"));
+    logger.warn(S.get("invalidLocaleOptionsHeader"));
+
+    for (final var locale : opts) {
+      logger.warn("   {}", locale.toString());
+    }
+    return RC.ERROR;
   }
 
   private static RC handleArgTemplate(Startup startup, Option opt) {
     if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
     // first we get the option
     final var option = opt.getValue();
@@ -642,7 +660,7 @@ public class Startup implements AWTEventListener {
       startup.templFile = file;
       if (!startup.templFile.canRead()) {
         logger.error(S.get("templateCannotReadError", file));
-        return RC.QUIT;
+        return RC.ERROR;
       }
       return RC.OK;
     }
@@ -656,7 +674,7 @@ public class Startup implements AWTEventListener {
       return RC.OK;
     }
     logger.error(S.get("argOneTemplateError"));
-    return RC.QUIT;
+    return RC.ERROR;
   }
 
   private static RC handleArgNoSplash(Startup startup, Option opt) {
@@ -719,7 +737,7 @@ public class Startup implements AWTEventListener {
     }
 
     logger.error(S.get("argTestUnknownFlagOrValue", String.valueOf(argVal)));
-    return RC.QUIT;
+    return RC.ERROR;
   }
 
   // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
@@ -730,13 +748,13 @@ public class Startup implements AWTEventListener {
 
     if (optArgs == null) {
       logger.error(S.get("argTestInvalidArguments"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
 
     final var argsCnt = optArgs.length;
     if (argsCnt < 3 || argsCnt > 5) {
       logger.error(S.get("argTestInvalidArguments"));
-      return RC.QUIT;
+      return RC.ERROR;
     }
 
     // already handled above
@@ -747,16 +765,26 @@ public class Startup implements AWTEventListener {
     var handlerRc = RC.OK;
     if (argsCnt >= 4) {
       handlerRc = handleArgTestFpgaParseArg(startup, optArgs[3]);
-      if (handlerRc == RC.QUIT) return handlerRc;
+      if (handlerRc == RC.ERROR) return handlerRc;
     }
     if (argsCnt >= 5) {
       handlerRc = handleArgTestFpgaParseArg(startup, optArgs[4]);
-      if (handlerRc == RC.QUIT) return handlerRc;
+      if (handlerRc == RC.ERROR) return handlerRc;
     }
 
     startup.doFpgaDownload = true;
     startup.showSplash = false;
     startup.filesToOpen.add(new File(startup.testCircuitImpPath));
+    return RC.OK;
+  }
+
+  private static RC handleArgFpgaCable(Startup startup, Option opt) {
+    final var cableName = opt.getValue();
+    if (cableName == null || cableName.isBlank()) {
+      logger.error(S.get("argFpgaCableInvalid"));
+      return RC.ERROR;
+    }
+    startup.fpgaCableName = cableName;
     return RC.OK;
   }
 
@@ -793,19 +821,6 @@ public class Startup implements AWTEventListener {
       }
     }
     return false;
-  }
-
-  private static void setLocale(String lang) {
-    if (trySetLocale(lang)) return;
-
-    final var opts = S.getLocaleOptions();
-    logger.warn(S.get("invalidLocaleError"));
-    logger.warn(S.get("invalidLocaleOptionsHeader"));
-
-    for (final var opt : opts) {
-      logger.warn("   {}", opt.toString());
-    }
-    System.exit(-1);
   }
 
   private static String getProgramDirectory() {
@@ -859,6 +874,10 @@ public class Startup implements AWTEventListener {
     return doFpgaDownload;
   }
 
+  String getFpgaCableName() {
+    return fpgaCableName;
+  }
+
   boolean fpgaDownload(Project proj) {
     /* Testing synthesis */
     final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
@@ -879,7 +898,8 @@ public class Startup implements AWTEventListener {
             false,
             testCircuitHdlOnly,
             1.0,
-            1.0);
+            1.0,
+            fpgaCableName);
     return downloader.runTty();
   }
 
@@ -952,6 +972,7 @@ public class Startup implements AWTEventListener {
       monitor.setProgress(SplashScreen.GUI_INIT);
     }
     WindowManagers.initialize();
+    DoubleShiftTrigger.install();
     if (MacCompatibility.isSwingUsingScreenMenuBar()) {
       MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null, null, null));
     } else {

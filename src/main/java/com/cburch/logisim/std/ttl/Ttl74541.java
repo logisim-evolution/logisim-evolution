@@ -61,8 +61,6 @@ public class Ttl74541 extends AbstractTtlGate {
   private static final byte[] INPUTS = new byte[] { A1, A2, A3, A4, A5, A6, A7, A8 };
   private static final byte[] OUTPUTS = new byte[] { Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8 };
 
-  private InstanceState _state;
-
   public Ttl74541() {
     super(
             _ID,
@@ -145,41 +143,48 @@ public class Ttl74541 extends AbstractTtlGate {
     g.drawLine(x + 27, y + 40, x + 170, y + 40);
   }
 
-  /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
-   *
-   * @param dsPinNr datasheet pin number
-   * @return port number
-   */
-  private byte pinNrToPortNr(byte dsPinNr) {
-    return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
-  }
+  private record LogicScope(InstanceState state) {
+    /**
+     * IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
+     *
+     * @param dsPinNr datasheet pin number
+     * @return port number
+     */
+    private byte pinNrToPortNr(byte dsPinNr) {
+      return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
+    }
 
-  /** Gets the current state of the specified pin
-   *
-   * @param dsPinNr datasheet pin number
-   * @return the current state of the specified pin
-   */
-  private Value getPort(byte dsPinNr) {
-    return _state.getPortValue(pinNrToPortNr(dsPinNr));
-  }
+    /**
+     * Gets the current state of the specified pin
+     *
+     * @param dsPinNr datasheet pin number
+     * @return the current state of the specified pin
+     */
+    private Value getPort(byte dsPinNr) {
+      return state.getPortValue(pinNrToPortNr(dsPinNr));
+    }
 
-  /** Sets the specified pin to the specified value
-   *
-   * @param dsPinNr datasheet pin number
-   * @param v the value for the pin
-   */
-  private void setPort(byte dsPinNr, Value v) {
-    _state.setPort(pinNrToPortNr(dsPinNr), v, DELAY);
+    /**
+     * Sets the specified pin to the specified value
+     *
+     * @param dsPinNr datasheet pin number
+     * @param v       the value for the pin
+     */
+    private void setPort(byte dsPinNr, Value v) {
+      state.setPort(pinNrToPortNr(dsPinNr), v, DELAY);
+    }
+
+    public void propagate() {
+      var active = (getPort(OE1) == Value.FALSE) && (getPort(OE2) == Value.FALSE);
+
+      for (var i = 0; i < 8; i++) {
+        setPort(OUTPUTS[i], active ? getPort(INPUTS[i]) : Value.UNKNOWN);
+      }
+    }
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    _state = state;
-
-    var active = (getPort(OE1) == Value.FALSE) && (getPort(OE2) == Value.FALSE);
-
-    for (var i = 0; i < 8; i++) {
-      setPort(OUTPUTS[i], active ? getPort(INPUTS[i]) : Value.UNKNOWN);
-    }
+    new LogicScope(state).propagate();
   }
 }

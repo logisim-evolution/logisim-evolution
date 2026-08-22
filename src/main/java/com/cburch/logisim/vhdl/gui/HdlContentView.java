@@ -13,6 +13,7 @@ import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.contracts.BaseDocumentListenerContract;
 import com.cburch.draw.toolbar.ToolbarModel;
+import com.cburch.logisim.gui.generic.EditorTheme;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
@@ -166,6 +167,7 @@ public class HdlContentView extends JPanel
     this.model = null;
     this.toolbar = new HdlToolbarModel(proj, this);
     configure("vhdl");
+    EditorTheme.install(editor);
   }
 
   private void configure(String lang) {

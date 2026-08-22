@@ -29,6 +29,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.LinkedList;
@@ -42,6 +43,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
@@ -84,6 +86,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     final var titleFont = baseFont.deriveFont(AppPreferences.getScaled((float) titleSize)).deriveFont(Font.BOLD);
     title.setFont(titleFont);
     table.setDefaultRenderer(String.class, new HdlColorRenderer());
+    table.addMouseWheelListener(this::handleMouseWheel);
 
     final var propPanel = new JPanel(new BorderLayout(0, 0));
     final var tableScroll = new JScrollPane(table);
@@ -95,6 +98,110 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     localeChanged();
+  }
+
+  private String scrollInitialValue = null;
+  private String scrollFinalValue = null;
+  private AttrTableModelRow scrollRow = null;
+  private Timer scrollTimer = null;
+  private long lastWheelTime = 0;
+  private static final long WHEEL_THROTTLE_MS = 100;
+
+  private void handleMouseWheel(MouseWheelEvent e) {
+    final var rowIdx = table.rowAtPoint(e.getPoint());
+    final var colIdx = table.columnAtPoint(e.getPoint());
+    if (colIdx != 1 || rowIdx < 0) return;
+
+    final var attrModel = tableModel.attrModel;
+    if (attrModel == null) return;
+    final var row = attrModel.getRow(rowIdx);
+    if (row == null || !row.isValueEditable()) return;
+
+    final var now = System.currentTimeMillis();
+    if (now - lastWheelTime < WHEEL_THROTTLE_MS) return;
+    lastWheelTime = now;
+
+    final var editorComp = row.getEditor(parent);
+    if (editorComp instanceof JComboBox<?> box && !box.isEditable()) {
+      final var count = box.getItemCount();
+      if (count <= 1) return;
+      final var rotation = Integer.signum(e.getWheelRotation());
+      if (rotation == 0) return;
+
+      int currentIdx = box.getSelectedIndex();
+      if (currentIdx < 0) return;
+
+      int newIdx = currentIdx + rotation;
+      if (newIdx < 0) newIdx = 0;
+      if (newIdx >= count) newIdx = count - 1;
+      if (newIdx == currentIdx) return;
+
+      final var newItem = box.getItemAt(newIdx);
+      try {
+        row.setValue(parent, newItem);
+      } catch (Exception ignored) {
+      }
+      table.repaint();
+      return;
+    }
+
+    final var valStr = row.getValue();
+    if (valStr == null || valStr.isBlank()) return;
+
+    Integer currentVal = null;
+    boolean isHex = false;
+    try {
+      final var s = valStr.trim();
+      if (s.startsWith("0x") || s.startsWith("0X")) {
+        currentVal = Integer.parseInt(s.substring(2), 16);
+        isHex = true;
+      } else {
+        currentVal = Integer.parseInt(s);
+      }
+    } catch (NumberFormatException ex) {
+      return;
+    }
+
+    final var rotation = Integer.signum(e.getWheelRotation());
+    if (rotation == 0) return;
+
+    final var label = row.getLabel().toLowerCase();
+    int newVal = currentVal - rotation;
+    if (newVal < 1 && (label.contains("width") || label.contains("height") || label.contains("bit"))) {
+      newVal = 1;
+    }
+
+    final var finalValStr = isHex ? "0x" + Integer.toHexString(newVal).toUpperCase() : String.valueOf(newVal);
+
+    if (scrollTimer == null) {
+      scrollTimer = new Timer(500, evt -> finishMouseWheelScroll());
+      scrollTimer.setRepeats(false);
+    }
+
+    if (scrollRow != row || !scrollTimer.isRunning()) {
+      finishMouseWheelScroll();
+      scrollRow = row;
+      scrollInitialValue = valStr;
+    }
+
+    scrollFinalValue = finalValStr;
+
+    try {
+      row.setValue(parent, finalValStr);
+    } catch (Exception ignored) {
+    }
+
+    table.repaint();
+    scrollTimer.restart();
+  }
+
+  private void finishMouseWheelScroll() {
+    if (scrollTimer != null && scrollTimer.isRunning()) {
+      scrollTimer.stop();
+    }
+    scrollRow = null;
+    scrollInitialValue = null;
+    scrollFinalValue = null;
   }
 
   public AttrTableModel getAttrTableModel() {

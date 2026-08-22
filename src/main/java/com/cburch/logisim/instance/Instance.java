@@ -104,7 +104,18 @@ public final class Instance implements Location.At {
   }
 
   public void setTextField(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int hAlign, int vAlign) {
-    comp.setTextField(labelAttr, fontAttr, x, y, hAlign, vAlign);
+    setTextField(labelAttr, fontAttr, x, y, hAlign, vAlign, false);
+  }
+
+  public void setTextField(
+      Attribute<String> labelAttr,
+      Attribute<Font> fontAttr,
+      int x,
+      int y,
+      int hAlign,
+      int vAlign,
+      boolean multiline) {
+    comp.setTextField(labelAttr, fontAttr, x, y, hAlign, vAlign, multiline);
   }
 
   public static final int AVOID_TOP = 1;

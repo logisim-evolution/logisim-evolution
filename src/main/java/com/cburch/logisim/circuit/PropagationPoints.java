@@ -52,6 +52,23 @@ class PropagationPoints {
     pendingInputs.add(new Entry<>(state, comp));
   }
 
+  void updatePendingInputs(CircuitState state, ReplacementMap replacements) {
+    if (pendingInputs.isEmpty() || replacements.isEmpty()) return;
+
+    final var updated = new HashSet<Entry<Component>>(pendingInputs.size());
+    for (final var entry : pendingInputs) {
+      if (entry.state != state || !replacements.getRemovals().contains(entry.item)) {
+        updated.add(entry);
+      } else {
+        for (final var replacement : replacements.getReplacementsFor(entry.item)) {
+          updated.add(new Entry<>(state, replacement));
+        }
+      }
+    }
+    pendingInputs.clear();
+    pendingInputs.addAll(updated);
+  }
+
   void add(CircuitState state, Location loc) {
     data.add(new Entry<>(state, loc));
   }

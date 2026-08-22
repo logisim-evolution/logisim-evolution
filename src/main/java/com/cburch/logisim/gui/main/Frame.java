@@ -86,6 +86,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -110,6 +112,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // GUI elements shared between views
   private final MainMenuListener menuListener;
   private final Toolbar toolbar;
+  private final KeyboardToolSelection.Registration keyboardToolSelection;
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
@@ -154,7 +157,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     project.addCircuitListener(myProjectListener);
 
     // set up elements for the Layout view
-    layoutToolbarModel = new LayoutToolbarModel(this, project);
+    layoutToolbarModel = new LayoutToolbarModel(project);
     layoutCanvas = new Canvas(project);
     layoutCanvasPane = new CanvasPane(layoutCanvas);
 
@@ -250,7 +253,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     this.setExtendedState(AppPreferences.WINDOW_STATE.get());
 
     menuListener.register(mainPanel);
-    KeyboardToolSelection.register(toolbar);
+    keyboardToolSelection = KeyboardToolSelection.register(toolbar);
 
     project.setFrame(this);
     if (project.getTool() == null) {
@@ -263,6 +266,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+
+    restoreLayoutView(project.getCurrentCircuit());
   }
 
   private final class FileDropTargetListener extends DropTargetAdapter {
@@ -707,10 +712,43 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   private void restoreLayoutView(Circuit circuit) {
     layoutCanvas.computeSize(true);
-    layoutViewMemory.restore(
+    if (layoutViewMemory.restore(
         circuit,
         layoutZoomModel,
-        position -> layoutCanvasPane.getViewport().setViewPosition(position));
+        position ->
+            restoreViewPosition(
+                layoutCanvasPane.getViewport(), layoutCanvas.getPreferredSize(), position))) {
+      return;
+    }
+
+    SwingUtilities.invokeLater(() -> initializeLayoutView(circuit));
+  }
+
+  private void initializeLayoutView(Circuit circuit) {
+    if (circuit == null || project.getCurrentCircuit() != circuit) return;
+
+    final var graphics = layoutCanvas.getGraphics();
+    final var bounds = graphics == null ? circuit.getBounds() : circuit.getBounds(graphics);
+    final var initialZoom =
+        ZoomControl.computeInitialZoomFactor(
+            bounds,
+            layoutCanvasPane.getViewport().getSize(),
+            layoutZoomModel.getZoomOptions());
+    layoutZoomModel.setZoomFactor(initialZoom);
+    SwingUtilities.invokeLater(
+        () -> {
+          if (project.getCurrentCircuit() == circuit) {
+            layoutCanvas.computeSize(true);
+            layoutCanvasPane.getViewport().setViewSize(layoutCanvas.getPreferredSize());
+            layoutCanvas.center();
+          }
+        });
+  }
+
+  static void restoreViewPosition(JViewport viewport, java.awt.Dimension viewSize, Point position) {
+    if (viewport == null || viewSize == null || position == null) return;
+    viewport.setViewSize(viewSize);
+    viewport.setViewPosition(position);
   }
 
   @Override
@@ -1029,6 +1067,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         timer.cancel();
         Frame.this.dispose();
       }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+      keyboardToolSelection.close();
     }
 
     @Override

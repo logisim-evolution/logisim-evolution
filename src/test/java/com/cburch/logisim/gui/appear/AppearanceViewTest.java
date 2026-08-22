@@ -35,6 +35,7 @@ import com.cburch.logisim.proj.Project;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
+import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
 
 class AppearanceViewTest {
@@ -73,26 +74,30 @@ class AppearanceViewTest {
   }
 
   @Test
-  void middleButtonDragPansAppearanceCanvas() {
-    final var view = newAppearanceView();
-    final var canvas = (AppearanceCanvas) view.getCanvas();
-    final var pane = view.getCanvasPane();
+  void middleButtonDragPansAppearanceCanvas() throws Exception {
+    SwingUtilities.invokeAndWait(
+        () -> {
+          final var view = newAppearanceView();
+          final var canvas = (AppearanceCanvas) view.getCanvas();
+          final var pane = view.getCanvasPane();
 
-    canvas.setPreferredSize(new Dimension(1000, 1000));
-    pane.setSize(200, 200);
-    pane.getViewport().setViewSize(canvas.getPreferredSize());
-    pane.doLayout();
-    pane.getHorizontalScrollBar().setValues(80, 200, 0, 1000);
-    pane.getVerticalScrollBar().setValues(90, 200, 0, 1000);
-    final var initialX = pane.getHorizontalScrollBar().getValue();
-    final var initialY = pane.getVerticalScrollBar().getValue();
+          canvas.setPreferredSize(new Dimension(1000, 1000));
+          pane.setSize(200, 200);
+          pane.getViewport().setViewSize(canvas.getPreferredSize());
+          pane.doLayout();
+          pane.getHorizontalScrollBar().setValues(80, 200, 0, 1000);
+          pane.getVerticalScrollBar().setValues(90, 200, 0, 1000);
+          final var initialX = pane.getHorizontalScrollBar().getValue();
+          final var initialY = pane.getVerticalScrollBar().getValue();
 
-    canvas.processMouseEvent(mouse(canvas, MouseEvent.MOUSE_PRESSED, 40, 40, MouseEvent.BUTTON2));
-    canvas.processMouseMotionEvent(
-        mouse(canvas, MouseEvent.MOUSE_DRAGGED, 10, 20, MouseEvent.NOBUTTON, 0));
+          canvas.processMouseEvent(
+              mouse(canvas, MouseEvent.MOUSE_PRESSED, 40, 40, MouseEvent.BUTTON2));
+          canvas.processMouseMotionEvent(
+              mouse(canvas, MouseEvent.MOUSE_DRAGGED, 10, 20, MouseEvent.NOBUTTON, 0));
 
-    assertTrue(pane.getHorizontalScrollBar().getValue() > initialX);
-    assertTrue(pane.getVerticalScrollBar().getValue() > initialY);
+          assertTrue(pane.getHorizontalScrollBar().getValue() > initialX);
+          assertTrue(pane.getVerticalScrollBar().getValue() > initialY);
+        });
   }
 
   @Test

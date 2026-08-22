@@ -61,6 +61,10 @@ public abstract class DownloadBase {
   public static final Integer UCF_PATH = 4;
   public static final Integer XDC_PATH = 5;
 
+  public static boolean isHdlGenerationEnabled(String hdlType) {
+    return HdlGeneratorFactory.VHDL.equals(hdlType) || HdlGeneratorFactory.VERILOG.equals(hdlType);
+  }
+
   protected boolean isClockScalingRequested() {
     return !(preDivider == 1.0 && preMultiplier == 1.0);
   }

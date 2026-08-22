@@ -188,7 +188,7 @@ public class DualRam extends Ram {
     final var attrs = state.getAttributeSet();
     final var myState = (RamState) getState(state);
     final var separate = isSeparate(attrs);
-    long oldMemValue = myState.getContents().get(myState.getCurrent());
+    long oldMemValue = myState.getContents().get(myState.getCurrent(portIndex));
     long newMemValue = oldMemValue;
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
@@ -222,14 +222,13 @@ public class DualRam extends Ram {
     Consumer<Value> setValue = (Value value) -> state.setPort(DualRamAppearance.getDataOutIndex(portIndex, attrs),
         value, DELAY);
 
-    if (!separate && outputNotEnabled) {
-      /* put the bus in tri-state in case of a combined bus and no output enable */
-      setValue.accept(Value.createUnknown(dataBits));
+    if (outputNotEnabled) {
+      if (!separate || RamAttributes.hasControlledOutput(attrs)) {
+        setValue.accept(Value.createUnknown(dataBits));
+      }
       return;
     }
-    /* if the OE is not activated return */
-    if (outputNotEnabled)
-      return;
+
     /* if the address is bogus set error value accordingly */
     if (errorValue) {
       setValue.accept(Value.createError(dataBits));

@@ -9,12 +9,16 @@
 
 package com.cburch.logisim.std.plexers;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 
 public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -43,6 +47,27 @@ public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
         .add(Port.OUTPUT, "dataOut", OUTPUT_BITS_ID, 0, BitSelector.GROUP_ATTR);
   }
 
+  @Override
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>(super.getPortMap(nets, mapInfo));
+    if (mapInfo instanceof final netlistComponent comp) {
+      final var attrs = comp.getComponent().getAttributeSet();
+      final var nrOfSelBits = attrs.getValue(BitSelector.SELECT_ATTR);
+      final var nrOfInBits = attrs.getValue(StdAttr.WIDTH).getWidth();
+      if (Hdl.isVhdl() && nrOfSelBits == 1) {
+        final var selMap = map.get("sel");
+        map.remove("sel");
+        map.put("sel(0)", selMap);
+      }
+      if (Hdl.isVhdl() && nrOfInBits == 1) {
+        final var inMap = map.get("dataIn");
+        map.remove("dataIn");
+        map.put("dataIn(0)", inMap);
+      }
+    }
+    return map;
+  }
+  
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =

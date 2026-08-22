@@ -41,13 +41,13 @@
     <mapID target="mem_guide"           url="de/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="de/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="de/html/guide/mem/mem-menu.html"/>
-    <mapID target="mem_filetabel"       url="de/html/guide/mem/mem-filepanel.html"/>
+    <mapID target="mem_filetabel"       url="en/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="de/html/guide/mem/mem-hex.html"/>  
-    <mapID target="mem_v2raw"           url="de/html/guide/mem/mem-v2raw.html"/>  
-    <mapID target="mem_v3word"          url="de/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte"          url="de/html/guide/mem/mem-v3byte.html"/> 
-    <mapID target="mem_binary"          url="de/html/guide/mem/mem-vbinary.html"/>
-    <mapID target="mem_ascii"           url="de/html/guide/mem/mem-vascii.html"/>
+    <mapID target="mem_v2raw"           url="en/html/guide/mem/mem-v2raw.html"/>
+    <mapID target="mem_v3word"          url="en/html/guide/mem/mem-v3word.html"/>
+    <mapID target="mem_v3byte"          url="en/html/guide/mem/mem-v3byte.html"/>
+    <mapID target="mem_binary"          url="en/html/guide/mem/mem-vbinary.html"/>
+    <mapID target="mem_ascii"           url="en/html/guide/mem/mem-vascii.html"/>
 	<mapID target="test_vector"         url="de/html/guide/test_vector/index.html" />
 	<mapID target="test_vector_window"  url="de/html/guide/test_vector/test_vector_window.html" />
 	<mapID target="test_vector_file_format" url="de/html/guide/test_vector/test_vector_file_format.html" />
@@ -166,11 +166,14 @@
 	<mapID target="io_joystick"         url="de/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="de/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="de/html/libs/io/led.html" />
+	<mapID target="io_ledbar"           url="en/html/libs/io/ledbar.html" />
 	<mapID target="io_7seg"             url="de/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="de/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="de/html/libs/io/dotmat.html" />
 	<mapID target="io_tty"              url="de/html/libs/io/tty.html" />
 	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+	<mapID target="io_realtimeclock"    url="en/html/libs/io/realtimeclock.html" />
+	<mapID target="io_matrixkeypad"     url="en/html/libs/io/matrixkeypad.html" />
     <mapID target="io_Port_IO"          url="de/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="de/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="de/html/libs/io/videorvb.html" />

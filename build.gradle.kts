@@ -18,11 +18,11 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.54.0"
+  id("io.github.ben-manes.versions") version "0.61.0"
   java
   application
-  id("com.gradleup.shadow") version "9.6.0"
-  id("org.sonarqube") version "7.3.1.8318"
+  id("com.gradleup.shadow") version "9.6.1"
+  id("org.sonarqube") version "7.4.0.8496"
 }
 
 repositories {
@@ -37,7 +37,7 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.6.3")
+  implementation("com.fifesoft:rsyntaxtextarea:4.0.1")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
@@ -53,8 +53,8 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:6.1.2"))
-  testImplementation("org.junit.jupiter:junit-jupiter:6.1.2")
+  testImplementation(platform("org.junit:junit-bom:6.1.3"))
+  testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
   testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -198,12 +198,81 @@ extra.apply {
   set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
+val generatedDocumentationResources =
+    layout.buildDirectory.dir("generated/documentation-resources")
+
 java {
   sourceSets["main"].java {
     val buildDir = getLayout().getBuildDirectory().get().asFile
     srcDir("${buildDir}/generated/logisim/java")
     srcDir("${buildDir}/generated/sources/srcgen")
   }
+  sourceSets["main"].resources.srcDir(generatedDocumentationResources)
+}
+
+val docgen = sourceSets.create("docgen") {
+  java.srcDir("src/docgen/java")
+}
+
+dependencies {
+  testImplementation(docgen.output)
+}
+
+tasks.register<JavaExec>("generateDocumentationPrototype") {
+  group = "documentation"
+  description = "Generates the prototype English and German JavaHelp memory trees."
+  dependsOn(docgen.classesTaskName)
+
+  val manifest = layout.projectDirectory.file("src/main/doc/guide-memory.xml")
+  val germanOverlay = layout.projectDirectory.file("src/main/doc/locales/de-guide-memory.xml")
+  val docRoot = layout.projectDirectory.dir("src/main/resources/doc")
+  val outputRoot = layout.buildDirectory.dir("generated/documentation-prototype")
+
+  classpath = docgen.runtimeClasspath
+  mainClass.set("com.cburch.logisim.docs.DocumentationGenerator")
+  args(
+      manifest.asFile.absolutePath,
+      docRoot.asFile.absolutePath,
+      outputRoot.get().asFile.absolutePath,
+      germanOverlay.asFile.absolutePath,
+  )
+
+  inputs.files(manifest, germanOverlay)
+  inputs.dir(docRoot)
+  outputs.dir(outputRoot)
+}
+
+val generateHelpSets = tasks.register<JavaExec>("generateHelpSets") {
+  group = "documentation"
+  description = "Generates the JavaHelp HelpSet descriptors packaged by the application."
+  dependsOn(docgen.classesTaskName)
+
+  val metadata = layout.projectDirectory.file("src/main/doc/help-sets.xml")
+  val docRoot = layout.projectDirectory.dir("src/main/resources/doc")
+  val outputRoot = generatedDocumentationResources.map { it.dir("doc") }
+
+  classpath = docgen.runtimeClasspath
+  mainClass.set("com.cburch.logisim.docs.DocumentationGenerator")
+  args(
+      "--help-sets",
+      metadata.asFile.absolutePath,
+      docRoot.asFile.absolutePath,
+      outputRoot.get().asFile.absolutePath,
+  )
+
+  inputs.file(metadata)
+  inputs.dir(docRoot)
+  outputs.dir(outputRoot)
+  doFirst {
+    val directory = outputRoot.get().asFile
+    if (directory.exists() && !directory.deleteRecursively()) {
+      error("Could not clear generated HelpSet output directory: ${directory}")
+    }
+  }
+}
+
+tasks.named("processResources") {
+  dependsOn(generateHelpSets)
 }
 
 tasks.register<Jar>("sourcesJar") {
@@ -905,7 +974,7 @@ tasks {
       it.name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
-    
+
     configProperties["org.checkstyle.google.suppressionfilter.config"] =
         "$projectDir/checkstyle-suppressions.xml"
 

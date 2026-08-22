@@ -24,16 +24,20 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.JoinedAction;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.util.StringUtil;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class TextTool extends Tool {
+public class TextTool extends Tool implements PropertyChangeListener {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
@@ -147,6 +151,8 @@ public class TextTool extends Tool {
 
   public TextTool() {
     attrs = Text.FACTORY.createAttributeSet();
+    AppPreferences.TEXT_TOOL_COLOR.addPropertyChangeListener(this);
+    attrs.setValue(Text.ATTR_COLOR, new Color(AppPreferences.TEXT_TOOL_COLOR.get()));
   }
 
   @Override
@@ -358,6 +364,13 @@ public class TextTool extends Tool {
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
     Text.FACTORY.paintIcon(c, x, y, null);
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent event) {
+    if (AppPreferences.TEXT_TOOL_COLOR.isSource(event)) {
+      attrs.setValue(Text.ATTR_COLOR, new Color(AppPreferences.TEXT_TOOL_COLOR.get()));
+    }
   }
 
   private void refreshEditMenu(Canvas canvas) {

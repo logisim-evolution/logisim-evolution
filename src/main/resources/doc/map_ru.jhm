@@ -113,8 +113,9 @@
 	<mapID target="about_gpl_tr"        url="ru/html/guide/about/gpl-ru.html" />
 	
 <!-- for testing and validation -->
-	<mapID target="test_hml_css"        url="en/testhtml/index.html" />
-	<mapID target="Translation_status"  url="index.html" />
+ 	<mapID target="Tests_for_doc"       url="index.html" />
+ 	<mapID target="test_hml_css"        url="en/testhtml/index.html" />
+ 	<mapID target="Translation_status"  url="index.html" />
 <!-- Librairie -->
 	<mapID target="libs"                url="ru/html/libs/index.html" />
 	<mapID target="wiring"              url="ru/html/libs/wiring/index.html" />
@@ -174,6 +175,7 @@
 	<mapID target="io_joystick"         url="ru/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="ru/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="ru/html/libs/io/led.html" />
+	<mapID target="io_ledbar"           url="en/html/libs/io/ledbar.html" />
 	<mapID target="io_7seg"             url="ru/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="ru/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="ru/html/libs/io/dotmat.html" />
@@ -181,6 +183,8 @@
 	<mapID target="io_ledRGB"           url="ru/html/libs/io/rgbled.html" />
 	<mapID target="io_tty"              url="ru/html/libs/io/tty.html" />
 	<mapID target="io_telnet"           url="ru/html/libs/io/telnet.html" />
+	<mapID target="io_realtimeclock"    url="en/html/libs/io/realtimeclock.html" />
+	<mapID target="io_matrixkeypad"     url="en/html/libs/io/matrixkeypad.html" />
     <mapID target="io_Port_IO"          url="ru/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="ru/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="ru/html/libs/io/videorvb.html" />
@@ -230,7 +234,6 @@
 	<mapID target="icon_buffer"      url="icons/1616/ansbuffergate.png" />
 	<mapID target="icon_basic"       url="icons/1616/ansandgate.png" />
 	<mapID target="icon_xor"         url="icons/1616/ansxorgate.png" />
-	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
 	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
 	<mapID target="icon_pla"         url="icons/1616/pla0.png" />
 	
@@ -291,10 +294,7 @@
 	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
 	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
 	<mapID target="icon_digitalscope"    url="icons/1616/digitalscope.png" />	
-	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
-	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
-	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		
-
+	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />
 	<mapID target="icon_vhdl"        url="icons/1616/vhdl.png" />
     <mapID target="up_icon"          url="icons/1616/up.png"/>
     <mapID target="socbus_icon"      url="icons/1616/socbus.png"/>

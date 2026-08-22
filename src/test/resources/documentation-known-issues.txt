@@ -1,0 +1,83 @@
+# Existing JavaHelp structure issues on 2026-07-30.
+# Keep this list explicit so new documentation regressions fail CI while existing debt can be
+# removed incrementally.
+de/contents.xml: image target 'icon_DIP' has no mapID in map_de.jhm
+de/contents.xml: image target 'icon_ledRGB' has no mapID in map_de.jhm
+de/contents.xml: target 'Tests_for_doc' has no mapID in map_de.jhm
+de/contents.xml: target 'hdl' has no mapID in map_de.jhm
+de/contents.xml: target 'hdl_vhdlentity' has no mapID in map_de.jhm
+de/contents.xml: target 'io_DIP' has no mapID in map_de.jhm
+de/contents.xml: target 'io_ledRGB' has no mapID in map_de.jhm
+de/contents.xml: target 'io_videorgb' has no mapID in map_de.jhm
+en/contents.xml: target 'Tests_for_doc' has no mapID in map_en.jhm
+en/contents.xml: target 'Tests_for_doc' has no mapID in map_pt.jhm
+en/contents.xml: target 'Translation_status' has no mapID in map_pt.jhm
+en/contents.xml: target 'dynamic_components' has no mapID in map_pt.jhm
+en/contents.xml: target 'io_DIP' has no mapID in map_en.jhm
+en/contents.xml: target 'io_DIP' has no mapID in map_pt.jhm
+en/contents.xml: target 'io_ledRGB' has no mapID in map_en.jhm
+en/contents.xml: target 'io_ledRGB' has no mapID in map_pt.jhm
+en/contents.xml: target 'test_hmlcss' has no mapID in map_pt.jhm
+fr/contents.xml: image target 'icon_DIP' has no mapID in map_fr.jhm
+fr/contents.xml: image target 'icon_led RGB' has no mapID in map_fr.jhm
+fr/contents.xml: target 'Tests_for_doc' has no mapID in map_fr.jhm
+fr/contents.xml: target 'hdl' has no mapID in map_fr.jhm
+fr/contents.xml: target 'hdl_vhdlentity' has no mapID in map_fr.jhm
+fr/contents.xml: target 'io_DIP' has no mapID in map_fr.jhm
+fr/contents.xml: target 'io_ledRGB' has no mapID in map_fr.jhm
+fr/contents.xml: target 'io_videorgb' has no mapID in map_fr.jhm
+map_de.jhm: duplicate mapID 'icon_controlled'
+map_de.jhm: duplicate mapID 'socbus_icon'
+map_de.jhm: duplicate mapID 'up_icon'
+map_de.jhm: mapID 'analyze_expimp' points to missing file de/html/guide/analyze/ana-expimp.html
+map_de.jhm: mapID 'gates_PLA' points to missing file de/html/libs/gates/pla.html
+map_de.jhm: mapID 'io_Port_IO' points to missing file de/html/libs/io/Port_io.html
+map_de.jhm: mapID 'io_Repetar' points to missing file de/html/libs/io/repetar.html
+map_de.jhm: mapID 'log_timetable' points to missing file de/html/guide/log/timetable.html
+map_de.jhm: mapID 'nios2_sim' points to missing file de/html/libs/soc/nios2.html
+map_de.jhm: mapID 'prefs_intl' points to missing file de/html/guide/prefs/pref-intl.html
+map_de.jhm: mapID 'soc' points to missing file de/html/libs/soc/index.html
+map_de.jhm: mapID 'socbus' points to missing file de/html/libs/soc/socbus.html
+map_de.jhm: mapID 'tcl' points to missing file de/html/libs/tcl/index.html
+map_de.jhm: mapID 'tcl_generic' points to missing file de/html/libs/tcl/generic.html
+map_de.jhm: mapID 'tcl_reds_console' points to missing file de/html/libs/tcl/reds_console.html
+map_de.jhm: mapID 'test_hmlcss' points to missing file de/testhtml/index.html
+map_de.jhm: mapID 'wiring' points to missing file de/html/libs/wiring/index.html
+map_de.jhm: mapID 'wiring_const01' points to missing file de/html/libs/wiring/const01.html
+map_de.jhm: mapID 'wiring_notconnect' points to missing file de/html/libs/wiring/notconnect.html
+map_de.jhm: mapID 'wiring_por' points to missing file de/html/libs/wiring/poweronreset.html
+map_de.jhm: mapID 'wiring_transist' points to missing file de/html/libs/wiring/transist.html
+map_de.jhm: mapID 'wiring_transmis' points to missing file de/html/libs/wiring/transmis.html
+map_en.jhm: duplicate mapID 'icon_controlled'
+map_en.jhm: duplicate mapID 'socbus_icon'
+map_en.jhm: duplicate mapID 'up_icon'
+map_fr.jhm: duplicate mapID 'icon_controlled'
+map_fr.jhm: duplicate mapID 'socbus_icon'
+map_fr.jhm: duplicate mapID 'up_icon'
+map_fr.jhm: mapID 'nios2_sim' points to missing file en/html/libs/soc/nios2.html
+map_fr.jhm: mapID 'tcl_generic' points to missing file en/html/libs/tcl/generic.html
+map_fr.jhm: mapID 'tcl_reds_console' points to missing file en/html/libs/tcl/reds_console.html
+map_pt.jhm: duplicate mapID 'icon_controlled'
+map_pt.jhm: duplicate mapID 'socbus_icon'
+map_pt.jhm: duplicate mapID 'up_icon'
+map_pt.jhm: mapID 'about' points to missing file pt/html/guide/about/index.html
+map_pt.jhm: mapID 'analyze_expimp' points to missing file pt/html/guide/analyze/ana-expimp.html
+map_pt.jhm: mapID 'gates_PLA' points to missing file pt/html/libs/gates/pla.html
+map_pt.jhm: mapID 'log_timetable' points to missing file pt/html/guide/log/timetable.html
+map_pt.jhm: mapID 'mem_ascii' points to missing file pt/html/guide/mem/mem-vascii.html
+map_pt.jhm: mapID 'mem_binary' points to missing file pt/html/guide/mem/mem-vbinary.html
+map_pt.jhm: mapID 'mem_filetabel' points to missing file pt/html/guide/mem/mem-filepanel.html
+map_pt.jhm: mapID 'mem_v2raw' points to missing file pt/html/guide/mem/mem-v2raw.html
+map_pt.jhm: mapID 'mem_v3byte' points to missing file pt/html/guide/mem/mem-v3byte.html
+map_pt.jhm: mapID 'mem_v3word' points to missing file pt/html/guide/mem/mem-v3word.html
+map_pt.jhm: mapID 'wiring_const01' points to missing file pt/html/libs/wiring/const01.html
+map_pt.jhm: mapID 'wiring_notconnect' points to missing file pt/html/libs/wiring/notconnect.html
+map_pt.jhm: mapID 'wiring_transist' points to missing file pt/html/libs/wiring/transist.html
+map_pt.jhm: mapID 'wiring_transmis' points to missing file pt/html/libs/wiring/transmis.html
+map_zh.jhm: duplicate mapID 'icon_controlled'
+map_zh.jhm: duplicate mapID 'socbus_icon'
+map_zh.jhm: duplicate mapID 'up_icon'
+map_zh.jhm: mapID 'io_Port_IO' points to missing file zh/html/libs/io/Port_io.html
+map_zh.jhm: mapID 'io_Repetar' points to missing file zh/html/libs/io/repetar.html
+zh/contents.xml: target 'Tests_for_doc' has no mapID in map_zh.jhm
+zh/contents.xml: target 'io_videorgb' has no mapID in map_zh.jhm

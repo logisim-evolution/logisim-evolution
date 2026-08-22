@@ -197,9 +197,17 @@ public class JHotkeyInput extends JPanel {
   }
 
   private void applyChanges() {
-    if (hotkeyListener.code != 0) {
+    var changed = false;
+    if (hotkeyListener.clearRequested) {
+      boundKeyStroke.set((KeyStroke) null);
+      previousData = "";
+      changed = true;
+    } else if (hotkeyListener.code != 0) {
       boundKeyStroke.set(KeyStroke.getKeyStroke(hotkeyListener.code, hotkeyListener.modifier));
       previousData = hotkeyListener.getHotkeyString();
+      changed = true;
+    }
+    if (changed) {
       try {
         AppPreferences.getPrefs().flush();
         AppPreferences.hotkeySync();
@@ -248,6 +256,7 @@ public class JHotkeyInput extends JPanel {
     private final JHotkeyInput hotkeyInput;
     private int modifier = 0;
     private int code = 0;
+    private boolean clearRequested = false;
     private boolean rewriteFlag = true;
     private String hotkeyString = "";
 
@@ -259,6 +268,7 @@ public class JHotkeyInput extends JPanel {
       code = 0;
       modifier = 0;
       hotkeyString = "";
+      clearRequested = false;
       rewriteFlag = false;
     }
 
@@ -279,6 +289,14 @@ public class JHotkeyInput extends JPanel {
     public void keyPressed(KeyEvent e) {
       modifier = e.getModifiersEx();
       code = e.getKeyCode();
+      if (code == KeyEvent.VK_BACK_SPACE || code == KeyEvent.VK_DELETE) {
+        clearStatus();
+        clearRequested = true;
+        hotkeyInput.setText("");
+        hotkeyInput.setApplyEnabled(true);
+        return;
+      }
+      clearRequested = false;
       if (code == 0
           || code == KeyEvent.VK_CONTROL
           || code == KeyEvent.VK_ALT
@@ -317,7 +335,7 @@ public class JHotkeyInput extends JPanel {
     @Override
     public void keyReleased(KeyEvent e) {
       hotkeyInput.setText(hotkeyString);
-      hotkeyInput.setApplyEnabled(!hotkeyString.isEmpty());
+      hotkeyInput.setApplyEnabled(clearRequested || !hotkeyString.isEmpty());
       if (!hotkeyString.isEmpty()) {
         rewriteFlag = true;
       }
@@ -338,5 +356,3 @@ public class JHotkeyInput extends JPanel {
     }
   }
 }
-
-

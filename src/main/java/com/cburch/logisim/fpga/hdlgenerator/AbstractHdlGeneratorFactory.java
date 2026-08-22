@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -132,9 +134,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         body.empty().addRemarkBlock("Here all module parameters are defined with a dummy value");
         final var parameters = new TreeSet<String>();
         for (final var paramId : myParametersList.keySet(attrs)) {
-          // For verilog we specify a maximum vector, this seems the best way to do it
-          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs)
-              ? myParametersList.get(paramId, attrs) : String.format("[64:0] %s", myParametersList.get(paramId, attrs));
+          // Verilog vector parameters need their width in the module declaration.
+          final var paramName =
+              myParametersList.isPresentedByInteger(paramId, attrs)
+                  ? myParametersList.get(paramId, attrs)
+                  : String.format(
+                      "[%d:0] %s",
+                      myParametersList.getNumberOfVectorBits(paramId, attrs) - 1,
+                      myParametersList.get(paramId, attrs));
           parameters.add(paramName);
         }
         for (final var param : parameters)
@@ -222,10 +229,10 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var compName = StringUtil.isNotEmpty(name) ? name : componentHdlName;
     final var thisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
-    if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
+    if (componentInfo == null) parameterMap.putAll(getParameterMap(null));
     else if (componentInfo instanceof netlistComponent comp) {
       final var attrs = comp.getComponent().getAttributeSet();
-      parameterMap.putAll(myParametersList.getMaps(attrs));
+      parameterMap.putAll(getParameterMap(attrs));
     }
     var tabLength = 0;
     var first = true;
@@ -324,6 +331,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return contents;
   }
 
+  /**
+   * Returns the parameter values used for a component instance. Subclasses may override this hook
+   * when a parameter must be derived from several attributes or requires a nontrivial transform.
+   */
+  protected Map<String, String> getParameterMap(AttributeSet attrs) {
+    return myParametersList.getMaps(attrs);
+  }
+
   @Override
   public List<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
@@ -383,16 +398,16 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           final var activeLow = StdAttr.TRIG_LOW.equals(clockAttr) || StdAttr.TRIG_FALLING.equals(clockAttr);
           final var compPinId = myPorts.getComponentPortId(port);
           if (!componentInfo.isEndConnected(compPinId)) {
-            // FIXME hard coded string
             Reporter.report.addSevereWarning(
-                String.format("Component \"%s\" in circuit \"%s\" has no clock connection!", compName, nets.getCircuitName()));
+                getClockWarning(
+                    "HDLGenerator_NoClockConnection", compName, nets.getCircuitName()));
             hasClock = false;
           }
           final var clockNetName = Hdl.getClockNetName(componentInfo, compPinId, nets);
           if (StringUtil.isNullOrEmpty(clockNetName)) {
-            // FIXME hard coded string
             Reporter.report.addSevereWarning(
-                String.format("Component \"%s\" in circuit \"%s\" has a gated clock connection!", compName, nets.getCircuitName()));
+                getClockWarning(
+                    "HDLGenerator_GatedClockConnection", compName, nets.getCircuitName()));
             gatedClock = true;
           }
           if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
@@ -431,6 +446,10 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
     }
     return result;
+  }
+
+  static String getClockWarning(String messageKey, String componentName, String circuitName) {
+    return S.get(messageKey, componentName, circuitName);
   }
 
   @Override

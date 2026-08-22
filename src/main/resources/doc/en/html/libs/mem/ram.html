@@ -81,7 +81,7 @@
         The RAM component supports different interfaces, depending on the following attributes: <b class="propertie">Asynchronous read:</b>, <b class="propertie">Data bus implementation</b>, and <b class="propertie">Enables:</b>.
       </p>
       <p>
-        The <b class="propertie">Data bus implementation</b> property allows you to modify the architecture of the data bus, either an omnidirectional <var>Input</var> and <var>Data</var> bus, or a bidirectional <var>Data</var> bus.
+        The <b class="propertie">Data bus implementation</b> property allows you to modify the architecture of the data bus: one bidirectional <var>Data</var> bus, separate input/output buses with latched output behavior, or separate input/output buses with output-enable-controlled high-impedance behavior.
       </p>
       <dl>
         <dt>
@@ -366,7 +366,7 @@
             <var>Input</var>
           </dt>
           <dd>
-            Input bus: This bus is only present if the <b class="propertie">Data bus implementation</b> property is set to <b class="vprop">Separate data bus for read and write</b>. It receives the data that will be written to memory at the position specified by the value of the address pins when the trigger is triggered. See tables above.
+            Input bus: This bus is only present if the <b class="propertie">Data bus implementation</b> property uses separate read and write data buses. It receives the data that will be written to memory at the position specified by the value of the address pins when the trigger is triggered. See tables above.
           </dd>
           <dt class="lib">
             <var>Input0</var> à <var>Input7</var>
@@ -378,7 +378,7 @@
             <var>Data</var>
           </dt>
           <dd>
-            Output bus: This bus is only present if the <b class="propertie">Data bus implementation</b> property is set to <b class="vprop">Separate data bus for read and write</b>. It transmits the data to be read at the position specified by the value of the address pins on triggering. See tables above.
+            Output bus: This bus is only present if the <b class="propertie">Data bus implementation</b> property uses separate read and write data buses. With the latched-output option, disabling output enable leaves the previous output value unchanged. With the controlled-output option, disabling output enable drives the output to high-impedance (<b class="uvalue">U</b>). See tables above.
           </dd>
           <dt class="lib">
             <var>Data0</var> to <var>Data7</var>
@@ -474,7 +474,8 @@
           <dd>
             Determines the architecture of the data bus. Values:<br>
             <b class="vprop">One bidirectional data bus</b>: A bus is present for data input and output. Controlled buffers must be used to manage data flow.<br>
-            <b class="vprop">Separate data bus for read and write</b>: Two buses are present, one for input and one for output.
+            <b class="vprop">Separate data buses with latched output</b>: Two buses are present, one for input and one for output. Disabling output enable leaves the previous output value unchanged.<br>
+            <b class="vprop">Separate data buses with controlled output</b>: Two buses are present, one for input and one for output. Disabling output enable drives the output to high-impedance (<b class="uvalue">U</b>).
           </dd>
           <dt class="lib">
             Label

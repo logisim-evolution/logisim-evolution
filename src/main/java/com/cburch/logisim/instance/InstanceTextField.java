@@ -45,13 +45,14 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   private int fieldY;
   private int halign;
   private int valign;
+  private boolean multiline;
 
   InstanceTextField(InstanceComponent comp) {
     this.comp = comp;
     this.field = null;
     this.labelAttr = null;
     this.fontAttr = null;
-    fontColor = StdAttr.DEFAULT_LABEL_COLOR;
+    fontColor = null;
   }
 
   @Override
@@ -70,7 +71,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   private void createField(AttributeSet attrs, String text) {
     final var font = attrs.getValue(fontAttr);
-    field = new TextField(fieldX, fieldY, halign, valign, font);
+    field = new TextField(fieldX, fieldY, halign, valign, font, multiline);
     field.setText(text);
     field.addTextFieldListener(this);
   }
@@ -79,7 +80,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     if (field != null && isLabelVisible) {
       final var gfx = context.getGraphics().create();
       final var currentColor = gfx.getColor();
-      if (!context.isPrintView()) gfx.setColor(fontColor);
+      if (!context.isPrintView())
+        gfx.setColor(fontColor == null ? StdAttr.getDefaultLabelColor() : fontColor);
       field.draw(gfx);
       gfx.setColor(currentColor);
       gfx.dispose();
@@ -136,6 +138,17 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   void update(
       Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+    update(labelAttr, fontAttr, x, y, halign, valign, false);
+  }
+
+  void update(
+      Attribute<String> labelAttr,
+      Attribute<Font> fontAttr,
+      int x,
+      int y,
+      int halign,
+      int valign,
+      boolean multiline) {
     final var wasReg = shouldRegister();
     this.labelAttr = labelAttr;
     this.fontAttr = fontAttr;
@@ -143,14 +156,27 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     this.fieldY = y;
     this.halign = halign;
     this.valign = valign;
+    if (field != null && this.multiline != multiline) {
+      field.removeTextFieldListener(this);
+      field = null;
+    }
+    this.multiline = multiline;
     final var shouldReg = shouldRegister();
     var attrs = comp.getAttributeSet();
+    fontColor =
+        attrs.containsAttribute(StdAttr.LABEL_COLOR)
+            ? attrs.getValue(StdAttr.LABEL_COLOR)
+            : null;
     if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
       isLabelVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
     if (!wasReg && shouldReg) attrs.addAttributeListener(this);
     if (wasReg && !shouldReg) attrs.removeAttributeListener(this);
 
     updateField(attrs);
+  }
+
+  boolean isMultiline() {
+    return multiline;
   }
 
   private void updateField(AttributeSet attrs) {

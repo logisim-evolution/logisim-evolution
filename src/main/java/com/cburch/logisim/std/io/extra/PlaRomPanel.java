@@ -91,7 +91,7 @@ public class PlaRomPanel extends JPanel
   private void drawOr(Graphics g, int x, int y) {
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
       g.drawRect(x - 14, y, 28, 28);
-      GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x, y + 12);
+      GraphicsUtil.drawCenteredText(g, "≥" + "1", x, y + 12);
     } else {
       GraphicsUtil.drawCenteredArc(g, x + 21, y - 1, 36, 180, 53);
       GraphicsUtil.drawCenteredArc(g, x - 21, y - 1, 36, 0, -53);
@@ -176,12 +176,12 @@ public class PlaRomPanel extends JPanel
     g.setFont(new Font("sans serif", Font.BOLD, 14));
     GraphicsUtil.drawCenteredText(
         g,
-        "\u2190" + S.getter("demultiplexerInTip").toString(),
+        "←" + S.getter("demultiplexerInTip").toString(),
         40 * (inputs + 1) - (20 - IMAGE_BORDER) + 5,
         IMAGE_BORDER - 6);
     GraphicsUtil.drawCenteredText(
         g,
-        S.getter("multiplexerOutTip").toString() + "\u2192",
+        S.getter("multiplexerOutTip").toString() + "→",
         IMAGE_BORDER + 10 + 40 * inputs,
         IMAGE_BORDER + 100 + 40 * and + 6);
     for (byte i = 1; i <= inputs; i++) {

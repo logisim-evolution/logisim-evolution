@@ -54,7 +54,7 @@ public class FpClassificator extends InstanceFactory {
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -40, 40, 80));
-    setIcon(new ArithmeticIcon("\u2630 ", 3));
+    setIcon(new ArithmeticIcon("☰ ", 3));
 
     final var ps = new Port[7];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
@@ -103,7 +103,7 @@ public class FpClassificator extends InstanceFactory {
     painter.drawPort(ZERO, "0", Direction.WEST);
     painter.drawPort(SUBNORMAL, "sn", Direction.WEST);
     painter.drawPort(NORMAL, "n", Direction.WEST);
-    painter.drawPort(INFINITE, "\u221E", Direction.WEST);
+    painter.drawPort(INFINITE, "∞", Direction.WEST);
     //painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
     painter.drawPort(QUIET_NAN, "NaN", Direction.WEST); //change to qNaN if sNaN is added
 

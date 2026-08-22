@@ -47,6 +47,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   private double tickFrequency;
   private static final int basicSteps = 5;
   private String mapFileName;
+  private boolean configurationValid = true;
   final ArrayList<String> entities = new ArrayList<>();
   final ArrayList<String> architectures = new ArrayList<>();
 
@@ -81,7 +82,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         downloadOnly,
         generateHdlOnly,
         preMultiplier,
-        preDivider);
+        preDivider,
+        null);
   }
 
   public Download(
@@ -95,6 +97,32 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       boolean generateHdlOnly,
       double preMultiplier,
       double preDivider) {
+    this(
+        myProject,
+        topLevelSheet,
+        tickFrequency,
+        myBoardInformation,
+        mapFileName,
+        writeToFlash,
+        downloadOnly,
+        generateHdlOnly,
+        preMultiplier,
+        preDivider,
+        null);
+  }
+
+  public Download(
+      Project myProject,
+      String topLevelSheet,
+      double tickFrequency,
+      BoardInformation myBoardInformation,
+      String mapFileName,
+      boolean writeToFlash,
+      boolean downloadOnly,
+      boolean generateHdlOnly,
+      double preMultiplier,
+      double preDivider,
+      String fpgaCableName) {
     setUpDownload(
         myProject,
         topLevelSheet,
@@ -105,7 +133,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         downloadOnly,
         generateHdlOnly,
         preMultiplier,
-        preDivider);
+        preDivider,
+        fpgaCableName);
   }
 
   private void setUpDownload(
@@ -118,7 +147,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       boolean downloadOnly,
       boolean generateHdlOnly,
       double preMultiplier,
-      double preDivider) {
+      double preDivider,
+      String fpgaCableName) {
     this.myProject = myProject;
     this.myBoardInformation = myBoardInformation;
     this.downloadOnly = downloadOnly;
@@ -130,6 +160,12 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       this.vendor = ' ';
     } else {
       this.vendor = myBoardInformation.fpga.getVendor();
+    }
+    if (!isFpgaCableSupported(vendor, fpgaCableName)) {
+      Reporter.report.addFatalError(
+          S.get("FPGACableUnsupportedVendor", VendorSoftware.getVendorString(vendor)));
+      configurationValid = false;
+      return;
     }
     this.useGui = !Main.headless;
     this.topLevelSheet = topLevelSheet;
@@ -148,7 +184,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
               entities,
               architectures,
               AppPreferences.HdlType.get(),
-              writeToFlash);
+              writeToFlash,
+              fpgaCableName);
       case VendorSoftware.VENDOR_XILINX -> downloader =
           new XilinxDownload(
               getProjDir(topLevelSheet),
@@ -216,7 +253,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
 
   @Override
   public void run() {
-    if (prepareDownload() && isVendorSoftwarePresent() && !generateHdlOnly) {
+    if (configurationValid
+        && prepareDownload()
+        && isVendorSoftwarePresent()
+        && !generateHdlOnly) {
       try {
         var error = download();
         if (error != null) Reporter.report.addFatalError(error);
@@ -231,6 +271,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   public boolean runTty() {
+    if (!configurationValid) return false;
     final var root = myProject.getLogisimFile().getCircuit(topLevelSheet);
     if (root != null) {
       root.annotate(myProject, false, false);
@@ -256,6 +297,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       return false;
     }
     return true;
+  }
+
+  static boolean isFpgaCableSupported(char vendor, String fpgaCableName) {
+    return fpgaCableName == null || vendor == VendorSoftware.VENDOR_ALTERA;
   }
 
   private String download() throws IOException, InterruptedException {
@@ -346,6 +391,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   private boolean prepareDownload() {
+    if (!isHdlGenerationEnabled(AppPreferences.HdlType.get())) {
+      Reporter.report.addFatalError(S.get("FpgaGuiSelectHdl"));
+      return false;
+    }
     if (downloadOnly && downloader.readyForDownload()) return true;
     /* Stage 0 DRC */
     if (useGui) progressBar.setString(S.get("FPGAState0"));

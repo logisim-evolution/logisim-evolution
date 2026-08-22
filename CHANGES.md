@@ -3,12 +3,33 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
+    name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
+    the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
+    tapping Shift twice (switchable under Preferences > Window). It is built as a hub over pluggable
+    search providers, so further sources of results can be added without changing the dialog. Its
+    Add provider can select components for placement from the project's open libraries.
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
+  * Improved file merging and export capabilities:
+    * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
+    * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.
+    * Added conflict resolution dialog to replace, rename, or skip conflicting circuits.
   * Added support for opening project files by dragging them into the application window.
   * Added a Window menu option to hide or show the navigation pane.
+  * Added configurable shortcuts for selecting the default toolbar tools.
   * Added ability to load multiple RAM or ROM memories from the command line
+  * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
+  * Added Floating Point Constant component.
+  * Added 444 RGB (12 bit) color mode to the RGB Video component.
+  * Modified paste behavior to paste at current mouse location if it is on canvas.
+  * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
+  * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
+  * Fixed TTL 7447 BI/RBO port to be an input/output port to allow cascading of blanking mode.
   * Added TTL 7476: dual J-K Flip-flop with preset and clear.
+  * Added TTL 7493: 4-bit binary ripple counter.
+  * Added TTL 7438: quad dual-input NAND gate, open collector.
+  * Added TTL 74173: 4-bit D-type registers with 3-state outputs.
   * Improved drawing appearance:
     * Corrected font choice for default fonts in TikZ image exports.
     * Corrected disjoint corners on Square Root arithmetic components.
@@ -23,6 +44,7 @@
       bit-range labels to be visible on dark backgrounds.
     * Replaced hard-coded hex color literals with named `DEFAULT_*`/`DARK_*` constants
       in class `AppPreferences`.
+  * Added separate light and dark code editor theme preferences for HDL and assembly editors.
   * Improved Timing Diagram recording and exports:
     * Corrected vector and GIF exports.
     * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.
@@ -38,10 +60,15 @@
     * Wide Counter components use compact grouped state rows in evolution appearance.
     * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
       line-enable inputs may need to connect those inputs explicitly.
+    * Random Generator now uses xoshiro256++ to produce full-width 64-bit pseudorandom values in
+      simulation and generated HDL.
+  * Added HDL-language-aware label and circuit-name validation: VHDL remains case-insensitive,
+    Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
   * Improved project editing stability:
     * Layout zoom and scroll position are remembered separately for each circuit during a session.
+    * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
     * Moving components preserves component state.
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.
@@ -54,11 +81,14 @@
     * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
+    * Invalid command-line option values now return a nonzero exit status.
+    * Intel/Altera FPGA downloads can select an exact Quartus cable with `--fpga-cable`.
     * TTY table output includes bit widths in headers.
     * Localized the Assembly Viewer.
   * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
     libraries, wire values, transistor behavior, and unused-library save options.
   * Added a default text-tool color preference and synchronized string-option preference updates.
+  * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
   * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)

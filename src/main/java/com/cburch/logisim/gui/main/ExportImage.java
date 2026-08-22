@@ -168,8 +168,32 @@ public class ExportImage {
     // And start a thread to actually perform the operation
     // (This is run in a thread so that Swing will update the
     // monitor.)
-    new ExportThread(frame, frame.getCanvas(), dest, filter, circuits, scale, printerView, monitor)
+    new ExportThread(
+            frame,
+            frame.getCanvas(),
+            dest,
+            filter,
+            circuits,
+            scale,
+            printerView,
+            frame.getCanvas().getBackground(),
+            monitor)
         .start();
+  }
+
+  static void paintExportBackground(
+      Graphics g,
+      int width,
+      int height,
+      int format,
+      boolean printerView,
+      Color canvasBackground) {
+    final var vectorFormat = format == FORMAT_TIKZ || format == FORMAT_SVG;
+    if (!printerView || !vectorFormat) {
+      g.setColor(printerView ? Color.WHITE : canvasBackground);
+      g.fillRect(0, 0, width, height);
+    }
+    g.setColor(Color.BLACK);
   }
 
   private static class ExportThread extends UniquelyNamedThread {
@@ -180,6 +204,7 @@ public class ExportImage {
     final List<Circuit> circuits;
     final double scale;
     final boolean printerView;
+    final Color canvasBackground;
     final ProgressMonitor monitor;
 
     ExportThread(
@@ -190,6 +215,7 @@ public class ExportImage {
         List<Circuit> circuits,
         double scale,
         boolean printerView,
+        Color canvasBackground,
         ProgressMonitor monitor) {
       super("ExportThread");
       this.frame = frame;
@@ -199,6 +225,7 @@ public class ExportImage {
       this.circuits = circuits;
       this.scale = scale;
       this.printerView = printerView;
+      this.canvasBackground = canvasBackground;
       this.monitor = monitor;
     }
 
@@ -215,10 +242,8 @@ public class ExportImage {
       } else {
         base = img.getGraphics();
         g = base.create();
-        g.setColor(Color.white);
-        g.fillRect(0, 0, width, height);
-        g.setColor(Color.black);
       }
+      paintExportBackground(g, width, height, filter.type, printerView, canvasBackground);
       if (g instanceof Graphics2D g2d) {
         g2d.scale(scale, scale);
         g.translate(-bds.getX(), -bds.getY());

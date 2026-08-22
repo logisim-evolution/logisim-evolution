@@ -11,6 +11,7 @@ package com.cburch.logisim.circuit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,25 @@ class CircuitLabelValidatorTest {
   }
 
   @Test
+  void relaxedLabelKeysPreserveCaseForEditorIdentity() {
+    assertNotEquals(
+        CircuitLabelValidator.labelKey("A", CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE),
+        CircuitLabelValidator.labelKey("a", CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE));
+  }
+
+  @Test
   void labelsMatchIgnoringCase() {
     assertTrue(CircuitLabelValidator.labelsMatch("SegmentA", "segmenta"));
     assertFalse(CircuitLabelValidator.labelsMatch("SegmentA", "SegmentB"));
+  }
+
+  @Test
+  void relaxedLabelsMatchOnlyWithExactCase() {
+    assertFalse(
+        CircuitLabelValidator.labelsMatch(
+            "SegmentA", "segmenta", CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE));
+    assertTrue(
+        CircuitLabelValidator.labelsMatch(
+            "SegmentA", "SegmentA", CircuitLabelValidator.LabelIdentity.CASE_SENSITIVE));
   }
 }

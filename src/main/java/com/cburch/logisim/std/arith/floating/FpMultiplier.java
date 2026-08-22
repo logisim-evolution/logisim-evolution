@@ -66,7 +66,7 @@ public class FpMultiplier extends InstanceFactory {
       new Object[] {BitWidth.create(32), MUL});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u00d7"));
+    setIcon(new ArithmeticIcon("×"));
   }
 
   @Override

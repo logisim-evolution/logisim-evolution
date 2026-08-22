@@ -26,6 +26,7 @@ public class FPArithmeticLibrary extends Library {
   public static final String _ID = "FPArithmetic";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
+    new FactoryDescription(FpConstant.class, S.getter("fpConstantComponent"), "constant.gif"),
     new FactoryDescription(FpAdder.class, S.getter("fpAdderComponent"), "adder.gif"),
     new FactoryDescription(FpSubtractor.class, S.getter("fpSubtractorComponent"), "subtractor.gif"),
     new FactoryDescription(FpMultiplier.class, S.getter("fpMultiplierComponent"), "multiplier.gif"),

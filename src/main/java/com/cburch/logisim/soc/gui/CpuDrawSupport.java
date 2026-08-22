@@ -169,7 +169,7 @@ public class CpuDrawSupport {
     g2.drawString("Mask:", bds.getWidth(), bds.getHeight());
     bds = getBounds(41, 54, 542, 15, scale);
     g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-    GraphicsUtil.drawCenteredText(g2, "\u2265" + "1", bds.getCenterX(), bds.getCenterY());
+    GraphicsUtil.drawCenteredText(g2, "≥" + "1", bds.getCenterX(), bds.getCenterY());
     bds = getBounds(312, 69, 312, 71, scale);
     g2.drawLine(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     bds = getBounds(304, 71, 15, 15, scale);
