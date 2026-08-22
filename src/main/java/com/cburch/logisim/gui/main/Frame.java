@@ -112,6 +112,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // GUI elements shared between views
   private final MainMenuListener menuListener;
   private final Toolbar toolbar;
+  private final KeyboardToolSelection.Registration keyboardToolSelection;
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
@@ -156,7 +157,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     project.addCircuitListener(myProjectListener);
 
     // set up elements for the Layout view
-    layoutToolbarModel = new LayoutToolbarModel(this, project);
+    layoutToolbarModel = new LayoutToolbarModel(project);
     layoutCanvas = new Canvas(project);
     layoutCanvasPane = new CanvasPane(layoutCanvas);
 
@@ -252,7 +253,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     this.setExtendedState(AppPreferences.WINDOW_STATE.get());
 
     menuListener.register(mainPanel);
-    KeyboardToolSelection.register(toolbar);
+    keyboardToolSelection = KeyboardToolSelection.register(toolbar);
 
     project.setFrame(this);
     if (project.getTool() == null) {
@@ -1066,6 +1067,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         timer.cancel();
         Frame.this.dispose();
       }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+      keyboardToolSelection.close();
     }
 
     @Override
