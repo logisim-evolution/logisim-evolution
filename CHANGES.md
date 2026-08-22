@@ -20,6 +20,7 @@
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Added Floating Point Constant component.
+  * Added 444 RGB (12 bit) color mode to the RGB Video component.
   * Modified paste behavior to paste at current mouse location if it is on canvas.
   * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
   * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
