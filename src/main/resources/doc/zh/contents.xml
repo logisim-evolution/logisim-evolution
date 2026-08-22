@@ -414,6 +414,7 @@
 
 			<!-- <tocitem target="io_led" text="LED" image="icon_led" /> -->
 			<tocitem target="io_led" text="LED" image="icon_led" />
+			<tocitem target="io_ledbar" text="LED Bar" />
 
 			<!-- <tocitem target="io_rgbled" text="LED RGB" image="icon_rgbled" /> -->
 			<tocitem target="io_rgbled" text="RGB LED" image="icon_rgbled" />
@@ -430,8 +431,10 @@
 			<tocitem target="io_tty" text="TTY 终端" image="icon_tty" />
 
 			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
+			<tocitem target="io_realtimeclock" text="Real-Time Clock" />
+			<tocitem target="io_matrixkeypad" text="Matrix Keypad" />
 
-     		<!-- <tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" /> -->
+			<!-- <tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" /> -->
 			<tocitem target="io_Port_IO" text="端口 IO" image="icon_Port_IO" />
 
 			<!-- <tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" /> -->
