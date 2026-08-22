@@ -348,10 +348,7 @@ public class OmniSearchDialog extends JDialog {
             .reversed());
 
     final var previous = resultList.getSelectedValue();
-    resultModel.clear();
-    for (final var result : merged) {
-      resultModel.addElement(result);
-    }
+    replaceResults(resultModel, merged);
 
     var selection = previous == null ? -1 : resultModel.indexOf(previous);
     if (selection < 0 && !resultModel.isEmpty()) selection = 0;
@@ -368,6 +365,13 @@ public class OmniSearchDialog extends JDialog {
                 "searchResultCount",
                 String.valueOf(resultModel.size()),
                 providerCount));
+  }
+
+  /** Replaces the visible results using one removal and one addition event. */
+  static void replaceResults(
+      DefaultListModel<SearchResult> model, List<SearchResult> results) {
+    model.clear();
+    model.addAll(results);
   }
 
   /**

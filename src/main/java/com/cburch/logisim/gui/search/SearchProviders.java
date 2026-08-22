@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.gui.search;
 
+import com.cburch.logisim.gui.search.providers.AddToolSearchProvider;
 import com.cburch.logisim.gui.search.providers.MenuSearchProvider;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,6 +28,7 @@ public final class SearchProviders {
 
   static {
     register(new MenuSearchProvider());
+    register(new AddToolSearchProvider());
   }
 
   private SearchProviders() {

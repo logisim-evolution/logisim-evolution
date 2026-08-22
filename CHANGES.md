@@ -7,7 +7,8 @@
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
     the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
     tapping Shift twice (switchable under Preferences > Window). It is built as a hub over pluggable
-    search providers, so further sources of results can be added without changing the dialog.
+    search providers, so further sources of results can be added without changing the dialog. Its
+    Add provider can select components for placement from the project's open libraries.
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
   * Improved file merging and export capabilities:
     * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
