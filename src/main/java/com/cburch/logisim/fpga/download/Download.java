@@ -212,7 +212,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
               AppPreferences.HdlType.get(),
               writeToFlash);
       default -> {
-        Reporter.report.addFatalError("BUG: Tried to Download to an unknown target");
+        Reporter.report.addFatalError(S.get("FPGAUnknownDownloadTarget"));
         return;
       }
     }
@@ -276,7 +276,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (root != null) {
       root.annotate(myProject, false, false);
     } else {
-      Reporter.report.addFatalError("Toplevel sheet \"" + topLevelSheet + "\" not found in project!");
+      Reporter.report.addFatalError(S.get("FPGAToplevelSheetNotFound", topLevelSheet));
       return false;
     }
     if (!prepareDownload()) return false;
