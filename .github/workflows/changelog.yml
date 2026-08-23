@@ -134,7 +134,7 @@ jobs:
             "${CHANGELOG}, i.e.:" \
             "" \
             "  * @dev (????-??-??)" \
-            "    * Fixed the frobnicator not on Tuesdays (@${PR_AUTHOR})."
+            "    * Fixed the frobnicator not working (@${PR_AUTHOR})."
         }
 
         if [[ "${CHANGES_TOUCHED}" != "true" ]]; then
@@ -196,7 +196,7 @@ jobs:
         done
 
         if [[ "${SKIP_CREDIT}" == "true" ]]; then
-          echo "Looks good. Author credit waived by the PR description."
+          echo "Author credit waived by the PR description."
           exit 0
         fi
 
@@ -206,7 +206,7 @@ jobs:
             # credit required
             ;;
           *)
-            echo "Looks good. Author credit waived repository wide."
+            echo "Author credit waived repository wide."
             exit 0
             ;;
         esac
@@ -216,7 +216,7 @@ jobs:
         # and made of [A-Za-z0-9-] only
         for line in "${entry_lines[@]}"; do
           if sed -n "${line}p" "${CHANGELOG}" | grep -qiE "@${PR_AUTHOR}([^A-Za-z0-9-]|$)"; then
-            echo "Looks good. Entry credits @${PR_AUTHOR}."
+            echo "Entry credits @${PR_AUTHOR}."
             exit 0
           fi
         done
