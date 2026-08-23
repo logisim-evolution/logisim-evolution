@@ -235,10 +235,11 @@ public class Loader implements LibraryLoader {
   //
   File getFileFor(String name, FileFilter filter) {
     // Determine the actual file name.
-    var file = new File(name);
+    final var normalizedName = ProjectBundlePaths.normalizeLibraryDescriptorPath(name);
+    var file = new File(normalizedName);
     if (!file.isAbsolute()) {
       final var currentDirectory = getCurrentDirectory();
-      if (currentDirectory != null) file = new File(currentDirectory, name);
+      if (currentDirectory != null) file = new File(currentDirectory, normalizedName);
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.

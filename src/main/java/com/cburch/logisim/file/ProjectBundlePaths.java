@@ -38,6 +38,11 @@ public final class ProjectBundlePaths {
         : "." + ARCHIVE_SEPARATOR + LIBRARY_DIRECTORY + fileName;
   }
 
+  /** Returns a portable path when reading library descriptors written on another platform. */
+  public static String normalizeLibraryDescriptorPath(String path) {
+    return path.replace('\\', '/');
+  }
+
   /** Returns whether an entry is the library directory, accepting legacy Windows separators. */
   public static boolean isLibraryDirectory(String entryName) {
     if (entryName == null) return false;

@@ -15,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -31,6 +34,38 @@ class ProjectBundlePathsTest {
         ProjectBundlePaths.libraryDescriptor("dependency.circ", false));
     assertEquals(
         "./dependency.circ", ProjectBundlePaths.libraryDescriptor("dependency.circ", true));
+  }
+
+  @Test
+  void readsPortableAndLegacyWindowsLibraryDescriptors() {
+    assertEquals(
+        "./library/dependency.circ",
+        ProjectBundlePaths.normalizeLibraryDescriptorPath("./library/dependency.circ"));
+    assertEquals(
+        "./library/dependency.circ",
+        ProjectBundlePaths.normalizeLibraryDescriptorPath(".\\library\\dependency.circ"));
+    assertEquals(
+        "./dependency.circ",
+        ProjectBundlePaths.normalizeLibraryDescriptorPath(".\\dependency.circ"));
+  }
+
+  @Test
+  void loaderResolvesLegacyWindowsLibraryDescriptor() throws IOException {
+    final var expected = tempDir.resolve("library").resolve("dependency.circ");
+    Files.createDirectories(expected.getParent());
+    Files.createFile(expected);
+
+    final var loader =
+        new Loader(null) {
+          @Override
+          public File getCurrentDirectory() {
+            return tempDir.toFile();
+          }
+        };
+
+    assertEquals(
+        expected.toFile().getCanonicalFile(),
+        loader.getFileFor(".\\library\\dependency.circ", null).getCanonicalFile());
   }
 
   @Test
