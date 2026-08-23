@@ -10,6 +10,8 @@
     search providers, so further sources of results can be added without changing the dialog. Its
     Add provider can select components for placement from the project's open libraries.
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
+  * Fixed HDL generator tests failing when the "Use upper case for VHDL keywords" preference is
+    disabled (@MarcinOrlowski)
   * Improved file merging and export capabilities:
     * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
     * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.
