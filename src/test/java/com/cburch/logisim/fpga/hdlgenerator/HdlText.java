@@ -16,22 +16,22 @@ import java.util.Locale;
  */
 public final class HdlText {
 
-    private HdlText() {
-        // utility class
-    }
+  private HdlText() {
+    // utility class
+  }
 
-    /**
-     * Returns whether hdl contains expected value ignoring case. VHDL keywords are
-     * emitted in upper or lower case depending on the persisted "Use upper case for
-     * VHDL keywords" preference. Tests that describe the generated logic rather
-     * than its presentation must not depend on that setting, so they compare
-     * case-insensitively and leave the casing itself to the preference's own
-     * coverage. And it seems that preference pinning is not proper approach here
-     * as preference's set() updates cached data asyncronously, so `set()`/`get()`
-     * condition race can occur therefore @BeforeEach/@AfterEach approach looks
-     * not reliable.
-     */
-    public static boolean containsIgnoringCase(String hdl, String expected) {
-        return hdl.toLowerCase(Locale.ROOT).contains(expected.toLowerCase(Locale.ROOT));
-    }
+  /**
+   * Returns whether hdl contains expected value ignoring case. VHDL keywords are
+   * emitted in upper or lower case depending on the persisted "Use upper case for
+   * VHDL keywords" preference. Tests that describe the generated logic rather
+   * than its presentation must not depend on that setting, so they compare
+   * case-insensitively and leave the casing itself to the preference's own
+   * coverage. And it seems that preference pinning is not proper approach here
+   * as preference's set() updates cached data asynchronously, so `set()`/`get()`
+   * condition race can occur therefore @BeforeEach/@AfterEach approach looks
+   * not reliable.
+   */
+  public static boolean containsIgnoringCase(String hdl, String expected) {
+    return hdl.toLowerCase(Locale.ROOT).contains(expected.toLowerCase(Locale.ROOT));
+  }
 }
