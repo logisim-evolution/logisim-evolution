@@ -9,10 +9,10 @@
 
 package com.cburch.logisim.prefs;
 
-
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import javax.swing.KeyStroke;
@@ -35,14 +35,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    * @param modifier Modifiers applied to the keystroke.
    */
   public PrefMonitorKeyStroke(String name, int keycode, int modifier) {
-    super(name);
-    prefName = name;
-    this.defaultData = keystrokeToByteArray(
-        new KeyStroke[] {KeyStroke.getKeyStroke(keycode, modifier)});
-    this.value = keystrokeToByteArray(new KeyStroke[] {KeyStroke.getKeyStroke(keycode, modifier)});
-    final var prefs = AppPreferences.getPrefs();
-    set(prefs.getByteArray(name, defaultData));
-    prefs.addPreferenceChangeListener(this);
+    this(name, KeyStroke.getKeyStroke(keycode, modifier), false, true);
   }
 
   /**
@@ -55,16 +48,23 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    * @param metaRequired Determines whether a meta key is required.
    * @param canModify    Determines whether the keystroke can be modified.
    */
-  public PrefMonitorKeyStroke(String name, int keycode, int modifier,
-                              boolean metaRequired, boolean canModify) {
-    super(name);
-    prefName = name;
-    this.defaultData = keystrokeToByteArray(new KeyStroke[] {
-        KeyStroke.getKeyStroke(keycode, modifier)});
-    this.value = keystrokeToByteArray(new KeyStroke[] {KeyStroke.getKeyStroke(keycode, modifier)});
-    final var prefs = AppPreferences.getPrefs();
-    set(prefs.getByteArray(name, defaultData));
-    prefs.addPreferenceChangeListener(this);
+  public PrefMonitorKeyStroke(
+      String name, int keycode, int modifier, boolean metaRequired, boolean canModify) {
+    this(name, KeyStroke.getKeyStroke(keycode, modifier), metaRequired, canModify);
+  }
+
+  /**
+   * Constructor initializes a preference monitor with an optional keystroke,
+   * meta-key requirement and modifiability status.
+   *
+   * @param name         The preference's name.
+   * @param defaultValue Default keystroke, or {@code null} for an unassigned shortcut.
+   * @param metaRequired Determines whether a meta key is required.
+   * @param canModify    Determines whether the keystroke can be modified.
+   */
+  public PrefMonitorKeyStroke(
+      String name, KeyStroke defaultValue, boolean metaRequired, boolean canModify) {
+    this(name, defaultValue == null ? new KeyStroke[0] : new KeyStroke[] {defaultValue});
     this.metaRequired = metaRequired;
     this.canModify = canModify;
   }
@@ -78,8 +78,9 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
   public PrefMonitorKeyStroke(String name, KeyStroke[] multipleValues) {
     super(name);
     prefName = name;
-    this.defaultData = keystrokeToByteArray(multipleValues);
-    this.value = keystrokeToByteArray(multipleValues);
+    final var defaults = multipleValues == null ? new KeyStroke[0] : multipleValues;
+    this.defaultData = keystrokeToByteArray(defaults);
+    this.value = Arrays.copyOf(defaultData, defaultData.length);
     final var prefs = AppPreferences.getPrefs();
     set(prefs.getByteArray(name, defaultData));
     prefs.addPreferenceChangeListener(this);
@@ -188,7 +189,8 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    */
   @Override
   public KeyStroke get() {
-    return byteArrayToKeyStroke(value).get(0);
+    final var keyStrokes = byteArrayToKeyStroke(value);
+    return keyStrokes.isEmpty() ? null : keyStrokes.get(0);
   }
 
   /**
@@ -208,10 +210,11 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    * @return KeyStroke with given mask.
    */
   public KeyStroke getWithMask(int mask) {
-    final var tmp = byteArrayToKeyStroke(value).get(0);
-    return KeyStroke.getKeyStroke(tmp.getKeyCode(), tmp.getModifiers() | mask);
+    final var keyStroke = get();
+    return keyStroke == null
+        ? null
+        : KeyStroke.getKeyStroke(keyStroke.getKeyCode(), keyStroke.getModifiers() | mask);
   }
-
 
   /**
    * Compares the provided key code and modifier with the stored keystrokes.
@@ -271,10 +274,19 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
     if (prop.equals(name)) {
       final var oldValue = value;
       final var newValue = prefs.getByteArray(name, defaultData);
-      if (newValue != oldValue) {
-        value = newValue;
+      if (!Arrays.equals(newValue, oldValue)) {
+        value = Arrays.copyOf(newValue, newValue.length);
         AppPreferences.firePropertyChange(name, oldValue, newValue);
       }
+    }
+  }
+
+  private void setAndStore(byte[] newValue) {
+    if (!Arrays.equals(value, newValue)) {
+      final var oldValue = value;
+      value = Arrays.copyOf(newValue, newValue.length);
+      AppPreferences.getPrefs().putByteArray(getIdentifier(), value);
+      AppPreferences.firePropertyChange(getIdentifier(), oldValue, value);
     }
   }
 
@@ -285,9 +297,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    * @param newValue New value in byte array format.
    */
   public void set(byte[] newValue) {
-    if (value != newValue) {
-      AppPreferences.getPrefs().putByteArray(getIdentifier(), newValue);
-    }
+    setAndStore(newValue);
   }
 
   /**
@@ -298,10 +308,9 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    */
   @Override
   public void set(KeyStroke newValue) {
-    final byte[] newVal = keystrokeToByteArray(new KeyStroke[] {newValue});
-    if (value != newVal) {
-      AppPreferences.getPrefs().putByteArray(getIdentifier(), newVal);
-    }
+    final byte[] newVal =
+        keystrokeToByteArray(newValue == null ? new KeyStroke[0] : new KeyStroke[] {newValue});
+    setAndStore(newVal);
   }
 
   /**
@@ -311,9 +320,7 @@ public class PrefMonitorKeyStroke extends AbstractPrefMonitor<KeyStroke> {
    * @param newValue Array of new KeyStroke values.
    */
   public void set(KeyStroke[] newValue) {
-    final byte[] newVal = keystrokeToByteArray(newValue);
-    if (value != newVal) {
-      AppPreferences.getPrefs().putByteArray(getIdentifier(), newVal);
-    }
+    final byte[] newVal = keystrokeToByteArray(newValue == null ? new KeyStroke[0] : newValue);
+    setAndStore(newVal);
   }
 }

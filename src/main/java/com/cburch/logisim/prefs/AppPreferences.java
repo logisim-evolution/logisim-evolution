@@ -1159,6 +1159,58 @@ public class AppPreferences {
           KeyEvent.VK_A, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
           true, true));
 
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_1 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect1", KeyEvent.VK_1, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_2 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect2", KeyEvent.VK_2, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_3 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect3", KeyEvent.VK_3, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_4 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect4", KeyEvent.VK_4, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_5 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect5", KeyEvent.VK_5, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_6 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect6", KeyEvent.VK_6, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_7 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect7", KeyEvent.VK_7, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_8 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect8", KeyEvent.VK_8, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_9 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect9", KeyEvent.VK_9, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_10 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect10", KeyEvent.VK_0, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_11 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect11", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_12 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect12", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_13 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect13", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_14 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect14", null, true, true));
+
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
       create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
 
@@ -1250,6 +1302,20 @@ public class AppPreferences {
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
       HOTKEY_SEARCH.set(KeyStroke.getKeyStroke(KeyEvent.VK_A,
           InputEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_TOOL_SELECT_1.set(KeyStroke.getKeyStroke(KeyEvent.VK_1, menuMask));
+      HOTKEY_TOOL_SELECT_2.set(KeyStroke.getKeyStroke(KeyEvent.VK_2, menuMask));
+      HOTKEY_TOOL_SELECT_3.set(KeyStroke.getKeyStroke(KeyEvent.VK_3, menuMask));
+      HOTKEY_TOOL_SELECT_4.set(KeyStroke.getKeyStroke(KeyEvent.VK_4, menuMask));
+      HOTKEY_TOOL_SELECT_5.set(KeyStroke.getKeyStroke(KeyEvent.VK_5, menuMask));
+      HOTKEY_TOOL_SELECT_6.set(KeyStroke.getKeyStroke(KeyEvent.VK_6, menuMask));
+      HOTKEY_TOOL_SELECT_7.set(KeyStroke.getKeyStroke(KeyEvent.VK_7, menuMask));
+      HOTKEY_TOOL_SELECT_8.set(KeyStroke.getKeyStroke(KeyEvent.VK_8, menuMask));
+      HOTKEY_TOOL_SELECT_9.set(KeyStroke.getKeyStroke(KeyEvent.VK_9, menuMask));
+      HOTKEY_TOOL_SELECT_10.set(KeyStroke.getKeyStroke(KeyEvent.VK_0, menuMask));
+      HOTKEY_TOOL_SELECT_11.set(null);
+      HOTKEY_TOOL_SELECT_12.set(null);
+      HOTKEY_TOOL_SELECT_13.set(null);
+      HOTKEY_TOOL_SELECT_14.set(null);
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
           KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
@@ -1289,6 +1355,9 @@ public class AppPreferences {
 
   public static final List<Menu> gui_sync_objects = new ArrayList<>();
 
+  private static final KeyStroke SWING_SHOW_TOOL_TIP_SHORTCUT =
+      KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.CTRL_DOWN_MASK);
+
   public static void hotkeySync() {
     try {
       AppPreferences.getPrefs().flush();
@@ -1305,6 +1374,9 @@ public class AppPreferences {
   }
 
   public static String hotkeyCheckConflict(String keyName, int keyCode, int modifier) {
+    if (SWING_SHOW_TOOL_TIP_SHORTCUT.equals(KeyStroke.getKeyStroke(keyCode, modifier))) {
+      return S.get("hotkeyErrConflict", S.get("hotkeyReservedShowToolTip"));
+    }
     try {
       /* Check the supported hotkey bindings */
       Field[] fields = AppPreferences.class.getDeclaredFields();

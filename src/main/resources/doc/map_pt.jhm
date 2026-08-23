@@ -182,11 +182,14 @@
 	<mapID target="io_joystick"         url="pt/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="pt/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="pt/html/libs/io/led.html" />
+	<mapID target="io_ledbar"           url="en/html/libs/io/ledbar.html" />
 	<mapID target="io_7seg"             url="pt/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="pt/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="pt/html/libs/io/dotmat.html" />
 	<mapID target="io_tty"              url="pt/html/libs/io/tty.html" />
 	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+	<mapID target="io_realtimeclock"    url="en/html/libs/io/realtimeclock.html" />
+	<mapID target="io_matrixkeypad"     url="en/html/libs/io/matrixkeypad.html" />
     <mapID target="io_Port_IO"          url="pt/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="pt/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="pt/html/libs/io/videorvb.html" />

@@ -202,12 +202,15 @@
 			<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
 			<tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" />
 			<tocitem target="io_led" text="LED" image="icon_led" />
+			<tocitem target="io_ledbar" text="LED Bar" />
 			<tocitem target="io_ledRGB" text="LED RGB" image="icon_rgbled" />
 			<tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" />
 			<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 			<tocitem target="io_tty" text="TTY" image="icon_tty" />
 			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
+			<tocitem target="io_realtimeclock" text="Real-Time Clock" />
+			<tocitem target="io_matrixkeypad" text="Matrix Keypad" />
 <!-- not documented 
      		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />

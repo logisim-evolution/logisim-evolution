@@ -7,7 +7,8 @@
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
     the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
     tapping Shift twice (switchable under Preferences > Window). It is built as a hub over pluggable
-    search providers, so further sources of results can be added without changing the dialog.
+    search providers, so further sources of results can be added without changing the dialog. Its
+    Add provider can select components for placement from the project's open libraries.
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
   * Improved file merging and export capabilities:
     * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
@@ -15,10 +16,12 @@
     * Added conflict resolution dialog to replace, rename, or skip conflicting circuits.
   * Added support for opening project files by dragging them into the application window.
   * Added a Window menu option to hide or show the navigation pane.
+  * Added configurable shortcuts for selecting the default toolbar tools.
   * Added ability to load multiple RAM or ROM memories from the command line
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Added Floating Point Constant component.
+  * Added 444 RGB (12 bit) color mode to the RGB Video component.
   * Modified paste behavior to paste at current mouse location if it is on canvas.
   * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
   * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
