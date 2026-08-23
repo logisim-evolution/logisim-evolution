@@ -2,9 +2,10 @@
 # CHANGES.md, in the topmost (unreleased) section, and that the added entry
 # credits its author with their GitHub handle.
 #
-# The check is skipped for PRs that do not touch the code (docs, workflows,
-# translations, etc.), for Dependabot, and for PRs explicitly marked as not
-# needing an entry by putting NO_CHANGELOG_ENTRY in the PR description.
+# The check is skipped for PRs that touch neither the code nor the project
+# infrastructure (i.e. docs or translations only), for Dependabot, and for PRs
+# explicitly marked as not needing an entry by putting NO_CHANGELOG_ENTRY in
+# the PR description.
 #
 # The author credit part is waived by NO_CHANGELOG_AUTHOR_CREDIT, either put
 # in the PR description (waives it for that PR only), or set as a repository
@@ -89,14 +90,19 @@ jobs:
             - added|modified|deleted: 'build.gradle*'
             - added|modified|deleted: 'settings.gradle*'
             - added|modified|deleted: 'gradle/libs.versions.toml'
-          changes:
+            - added|modified|deleted: '.github/**'
+            - added|modified|deleted: 'support/**'
+            - added|modified|deleted: 'snap/**'
+          # NOTE: do not name this filter "changes", as that name is already
+          # taken by paths-filter's own output listing all matched filters.
+          changelog:
             - added|modified: 'CHANGES.md'
 
     - name: "Verify CHANGES.md was updated"
       if: steps.optout.outputs.skip == 'false' && steps.filter.outputs.code == 'true'
       env:
         BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        CHANGES_TOUCHED: ${{ steps.filter.outputs.changes }}
+        CHANGES_TOUCHED: ${{ steps.filter.outputs.changelog }}
         PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         SKIP_CREDIT: ${{ steps.optout.outputs.skip_credit }}
       run: |
