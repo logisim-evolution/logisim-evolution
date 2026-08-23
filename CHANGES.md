@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added contributor guidance and an online component overview for the TTL library.
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
     the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
