@@ -83,6 +83,9 @@ jobs:
       id: filter
       if: steps.optout.outputs.skip == 'false'
       with:
+        # Needed by the negated ("!") patterns below. Without it, they would be
+        # treated as ordinary patterns and match everything they exclude.
+        predicate-quantifier: 'some-with-excludes'
         filters: |
           code:
             - added|modified|deleted: 'src/**'
@@ -93,6 +96,10 @@ jobs:
             - added|modified|deleted: '.github/**'
             - added|modified|deleted: 'support/**'
             - added|modified|deleted: 'snap/**'
+            # Documentation and translations need no changelog entry, even
+            # though they live under src/**.
+            - '!src/main/resources/doc/**'
+            - '!src/main/resources/resources/logisim/strings/**'
           # NOTE: do not name this filter "changes", as that name is already
           # taken by paths-filter's own output listing all matched filters.
           changelog:
