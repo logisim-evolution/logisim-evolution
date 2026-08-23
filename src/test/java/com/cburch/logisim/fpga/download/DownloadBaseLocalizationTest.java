@@ -60,19 +60,19 @@ class DownloadBaseLocalizationTest {
 
     assertNormalError(
         Locale.ENGLISH,
-        "INTERNAL ERROR: Circuit not found ?!?",
+        "Circuit not found.",
         () -> assertFalse(new TestDownloadBase(project, null).mapDesignForTest("Missing")));
     assertNormalError(
         Locale.SIMPLIFIED_CHINESE,
-        "内部错误：未找到电路？！",
+        "未找到电路",
         () -> assertFalse(new TestDownloadBase(project, null).mapDesignForTest("Missing")));
     assertNormalError(
         Locale.ENGLISH,
-        "INTERNAL ERROR: No board information available ?!?",
+        "No board information is available.",
         () -> assertFalse(new TestDownloadBase(project, null).mapDesignForTest("Main")));
     assertNormalError(
         Locale.SIMPLIFIED_CHINESE,
-        "内部错误：没有可用的板卡信息？！",
+        "没有可用的板卡信息",
         () -> assertFalse(new TestDownloadBase(project, null).mapDesignForTest("Main")));
   }
 
@@ -120,11 +120,11 @@ class DownloadBaseLocalizationTest {
 
     assertFatalError(
         Locale.ENGLISH,
-        "Internal error on HDL generation, null pointer exception",
+        "No HDL generator is available for the top-level circuit.",
         () -> assertFalse(new TestDownloadBase(project, null).writeHdlForTest("Main")));
     assertFatalError(
         Locale.SIMPLIFIED_CHINESE,
-        "HDL 生成过程中发生内部错误：顶层 HDL 生成器为空",
+        "顶层电路没有可用的 HDL 生成器",
         () -> assertFalse(new TestDownloadBase(project, null).writeHdlForTest("Main")));
   }
 

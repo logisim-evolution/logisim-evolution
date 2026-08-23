@@ -52,11 +52,11 @@ class DownloadLocalizationTest {
 
     assertFatalError(
         Locale.ENGLISH,
-        "BUG: Tried to Download to an unknown target",
+        "Unknown FPGA download target.",
         () -> new Download(project, "Main", 1.0, board, null, false, false, true, 1.0, 1.0));
     assertFatalError(
         Locale.SIMPLIFIED_CHINESE,
-        "程序错误：尝试下载到未知目标",
+        "无法识别 FPGA 下载目标",
         () -> new Download(project, "Main", 1.0, board, null, false, false, true, 1.0, 1.0));
   }
 
