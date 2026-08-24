@@ -9,12 +9,15 @@
 
 package com.cburch.logisim.vhdl.base;
 
+import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -47,32 +50,33 @@ public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents;
   }
 
-  /* FIXME: implement the generics in the VHDL class (keeping this code for reference)
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
-    VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    for (Attribute<Integer> a : content.getGenericAttributes()) {
-      VhdlEntityAttributes.VhdlGenericAttribute va = (VhdlEntityAttributes.VhdlGenericAttribute) a;
-      VhdlContent.Generic g = va.getGeneric();
-      Integer v = attrs.getValue(a);
-      ParameterMap.put(g.getName(), Objects.requireNonNullElseGet(v, g::getDefaultValue));
+  protected Map<String, String> getParameterMap(AttributeSet attrs) {
+    final var parameterMap = new TreeMap<String, String>();
+    if (!(attrs instanceof VhdlEntityAttributes vhdlAttrs)) return parameterMap;
+
+    final var content = vhdlAttrs.getContent();
+    for (final Attribute<Integer> attribute : content.getGenericAttributes()) {
+      final var genericAttribute = (VhdlEntityAttributes.VhdlGenericAttribute) attribute;
+      final var generic = genericAttribute.getGeneric();
+      final var configuredValue = attrs.getValue(attribute);
+      final var value = configuredValue == null ? generic.getDefaultValue() : configuredValue;
+      parameterMap.put(
+          generic.getName(), generic.getType().equals("time") ? value + " fs" : Integer.toString(value));
     }
-    return ParameterMap;
+    return parameterMap;
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    int i = -1;
-    for (VhdlContent.Generic g : content.getGenerics()) {
-      Parameters.put(i--, g.getName());
+  protected Map<String, String> getVhdlParameterDeclarations(AttributeSet attrs) {
+    final var declarations = new TreeMap<String, String>();
+    if (!(attrs instanceof VhdlEntityAttributes vhdlAttrs)) return declarations;
+
+    for (final var generic : vhdlAttrs.getContent().getGenerics()) {
+      declarations.put(generic.getName(), generic.getType());
     }
-    return Parameters;
+    return declarations;
   }
-  */
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {

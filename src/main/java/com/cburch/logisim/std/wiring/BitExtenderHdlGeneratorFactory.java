@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -25,11 +27,7 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
     int nrOfPins = componentInfo.nrOfEnds();
     for (int i = 1; i < nrOfPins; i++) {
       if (!componentInfo.isEndConnected(i)) {
-        // FIXME: hardcoded string
-        Reporter.report.addError(
-            String.format(
-                "Bit Extender component has floating input connection in circuit: %s",
-                circuitName));
+        Reporter.report.addError(S.get("HdlBitExtenderFloatingInputError", circuitName));
         // return empty buffer.
         return contents;
       }

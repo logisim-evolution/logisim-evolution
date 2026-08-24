@@ -17,6 +17,7 @@ import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.file.ProjectBundlePaths;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
@@ -37,6 +38,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -566,10 +568,21 @@ public final class ProjectActions {
             ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
             if (!ret) return ret;
             final var exportDirectory = chooser.getSelectedFile().getAbsolutePath();
-            final var mainProjectFileName = String.format("%s%s%s", exportDirectory, File.separator, bundleInfo.getMainLogisimFilename()); 
-            var filename =  mainProjectFileName;
-            if (Files.exists(Paths.get(filename)) 
-                || Files.exists(Paths.get(String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR)))) {
+            final var extractionDirectory =
+                Paths.get(exportDirectory).toAbsolutePath().normalize();
+            final var mainProjectFile =
+                ProjectBundlePaths.resolveMainFile(
+                    extractionDirectory, bundleInfo.getMainLogisimFilename());
+            if (mainProjectFile == null) {
+              OptionPane.showMessageDialog(
+                  proj.getFrame(),
+                  S.fmt("projBundleReadError", S.get("projBundleMainNotFound")));
+              return false;
+            }
+            final var mainProjectFileName = mainProjectFile.toString();
+            var filename = mainProjectFileName;
+            final var libDir = extractionDirectory.resolve(Loader.LOGISIM_LIBRARY_DIR);
+            if (Files.exists(mainProjectFile) || Files.exists(libDir)) {
               isCorrectDirectory = false;
               OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projContainsFileDir", bundleInfo.getMainLogisimFilename(), Loader.LOGISIM_LIBRARY_DIR));
             } else {
@@ -585,37 +598,32 @@ public final class ProjectActions {
               zipInput.close();
               fileOutput.close();
               final var zipFileEntries = zipFile.entries();
-              final var libDir = String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR);
+              final var extractedLibraryFiles = new HashSet<Path>();
               while (zipFileEntries.hasMoreElements()) {
                 final var entry = zipFileEntries.nextElement();
-                if (entry.isDirectory()) {
-                  final var dirName = entry.getName();
-                  if (!dirName.equals(Loader.LOGISIM_LIBRARY_DIR)) continue;
-                  new File(String.format("%s%s%s", exportDirectory, File.separator, dirName)).mkdirs();
-                } else {
-                  final var entryName = entry.getName();
-                  if (!entryName.startsWith(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator))) continue;
-                  if (entryName.lastIndexOf(File.separator) != entryName.indexOf(File.separator)) continue;
-                  if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) 
-                      && !entryName.toLowerCase().endsWith(".jar")) {
-                    continue;
-                  }
-                  // make sure the library dir exists
-                  if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
-                  filename = String.format("%s%s%s", exportDirectory, File.separator, entryName);
-                  final var testFile = new File(filename);
-                  final var testDir = new File(exportDirectory);
-                  if (!testFile.toPath().normalize().startsWith(testDir.toPath())) continue;
-                  zipInput = zipFile.getInputStream(entry);
-                  fileOutput = new FileOutputStream(filename);
-                  final var bytes = new byte[1024];
-                  var length = 0;
-                  while (((length = zipInput.read(bytes)) >= 0)) {
-                    fileOutput.write(bytes, 0, length);
-                  }
-                  fileOutput.close();
-                  zipInput.close();
+                if (ProjectBundlePaths.isLibraryDirectory(entry.getName())) {
+                  Files.createDirectories(libDir);
+                  continue;
                 }
+                final var libraryFile =
+                    ProjectBundlePaths.resolveLibraryFile(extractionDirectory, entry.getName());
+                if (libraryFile == null
+                    || !extractedLibraryFiles.add(libraryFile)
+                    || (!libraryFile.toString().endsWith(Loader.LOGISIM_EXTENSION)
+                        && !libraryFile.toString().toLowerCase().endsWith(".jar"))) {
+                  continue;
+                }
+                Files.createDirectories(libDir);
+                filename = libraryFile.toString();
+                zipInput = zipFile.getInputStream(entry);
+                fileOutput = new FileOutputStream(filename);
+                final var bytes = new byte[1024];
+                var length = 0;
+                while (((length = zipInput.read(bytes)) >= 0)) {
+                  fileOutput.write(bytes, 0, length);
+                }
+                fileOutput.close();
+                zipInput.close();
               }
               ProjectActions.doOpen(proj.getFrame().getCanvas(), proj, new File(mainProjectFileName));
             }
@@ -679,7 +687,8 @@ public final class ProjectActions {
           final var projectFile = new FileOutputStream(zipFile);
           final var projectZipFile = new ZipOutputStream(projectFile);
           ProjectBundleReadme.writeReadmeFile(projectZipFile, readmeInfo);
-          projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
+          projectZipFile.putNextEntry(
+              new ZipEntry(ProjectBundlePaths.libraryDirectoryEntry()));
           mainFileName = chooser.getSelectedFile().getName().replace(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION, "").concat(Loader.LOGISIM_EXTENSION);
           ret &= loader.export(proj.getLogisimFile(), projectZipFile, mainFileName);
           final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, mainFileName);
