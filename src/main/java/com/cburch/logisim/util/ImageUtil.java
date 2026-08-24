@@ -10,6 +10,7 @@
 package com.cburch.logisim.util;
 
 import java.awt.Toolkit;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -31,6 +32,26 @@ public class ImageUtil {
 
   private static final Map<String, SoftReference<BufferedImage>> IMAGE_CACHE = Collections
       .synchronizedMap(new WeakHashMap<>());
+
+  private static final String[] BYTE_UNITS = new String[] {"B", "KB", "MB", "GB", "TB"};
+
+  public static String formatBytes(long bytes) {
+    if (bytes <= 0) return "0 B";
+    int digitGroups = (int) (Math.log10(bytes) / Math.log10(1024));
+    digitGroups = Math.min(digitGroups, BYTE_UNITS.length - 1);
+    if (digitGroups == 0) {
+      return bytes + " B";
+    }
+    return String.format(java.util.Locale.US, "%.1f %s", bytes / Math.pow(1024, digitGroups), BYTE_UNITS[digitGroups]);
+  }
+
+  public static String formatDataSize(String base64Source) {
+    if (base64Source == null || base64Source.isEmpty()) {
+      return formatBytes(0);
+    }
+    final var bytes = base64Source.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+    return formatBytes(bytes);
+  }
 
   private ImageUtil() {
     // static

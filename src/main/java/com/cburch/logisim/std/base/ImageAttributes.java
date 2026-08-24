@@ -22,10 +22,7 @@ import java.util.Objects;
 
 public class ImageAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(
-      Image.ATTR_IMAGE, Image.ATTR_WIDTH, Image.ATTR_HEIGHT, Image.ATTR_SCALE, Image.ATTR_LICENSE, Image.ATTR_ATTRIBUTION);
-
-
-
+      Image.ATTR_IMAGE, Image.ATTR_WIDTH, Image.ATTR_HEIGHT, Image.ATTR_SCALE, Image.ATTR_DATA_SIZE, Image.ATTR_LICENSE, Image.ATTR_ATTRIBUTION);
 
   private String imageSource;
   private Integer width;
@@ -68,6 +65,18 @@ public class ImageAttributes extends AbstractAttributeSet {
     return ATTRIBUTES;
   }
 
+  @Override
+  public boolean isReadOnly(Attribute<?> attr) {
+    if (attr == Image.ATTR_DATA_SIZE) return true;
+    return super.isReadOnly(attr);
+  }
+
+  @Override
+  public boolean isToSave(Attribute<?> attr) {
+    if (attr == Image.ATTR_DATA_SIZE) return false;
+    return super.isToSave(attr);
+  }
+
   public String getImageSource() {
     return imageSource;
   }
@@ -105,6 +114,10 @@ public class ImageAttributes extends AbstractAttributeSet {
     this.cachedImage = img;
   }
 
+  public String getDataSizeFormatted() {
+    return ImageUtil.formatDataSize(imageSource);
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
@@ -116,6 +129,8 @@ public class ImageAttributes extends AbstractAttributeSet {
       return (V) height;
     if (attr == Image.ATTR_SCALE)
       return (V) scale;
+    if (attr == Image.ATTR_DATA_SIZE)
+      return (V) getDataSizeFormatted();
     if (attr == Image.ATTR_LICENSE)
       return (V) license;
     if (attr == Image.ATTR_ATTRIBUTION)
@@ -163,5 +178,8 @@ public class ImageAttributes extends AbstractAttributeSet {
       return;
     }
     fireAttributeValueChanged(attr, value, null);
+    if (attr == Image.ATTR_IMAGE) {
+      fireAttributeValueChanged(Image.ATTR_DATA_SIZE, getDataSizeFormatted(), null);
+    }
   }
 }

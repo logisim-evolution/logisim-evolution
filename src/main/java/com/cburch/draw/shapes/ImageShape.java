@@ -34,6 +34,7 @@ public class ImageShape extends Rectangular {
   public static final Attribute<Integer> WIDTH_ATTR = Image.ATTR_WIDTH;
   public static final Attribute<Integer> HEIGHT_ATTR = Image.ATTR_HEIGHT;
   public static final Attribute<AttributeOption> SCALE_ATTR = Image.ATTR_SCALE;
+  public static final Attribute<String> DATA_SIZE_ATTR = Image.ATTR_DATA_SIZE;
   public static final Attribute<AttributeOption> LICENSE_ATTR = Image.ATTR_LICENSE;
   public static final Attribute<String> ATTRIBUTION_ATTR = Image.ATTR_ATTRIBUTION;
 
@@ -57,6 +58,7 @@ public class ImageShape extends Rectangular {
   }
 
   public String getAttribution() {
+
     return attribution;
   }
 
@@ -119,7 +121,23 @@ public class ImageShape extends Rectangular {
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return List.of(IMAGE_ATTR, ATTR_X, ATTR_Y, WIDTH_ATTR, HEIGHT_ATTR, SCALE_ATTR, LICENSE_ATTR, ATTRIBUTION_ATTR);
+    return List.of(IMAGE_ATTR, ATTR_X, ATTR_Y, WIDTH_ATTR, HEIGHT_ATTR, SCALE_ATTR, DATA_SIZE_ATTR, LICENSE_ATTR, ATTRIBUTION_ATTR);
+  }
+
+  @Override
+  public boolean isReadOnly(Attribute<?> attr) {
+    if (attr == DATA_SIZE_ATTR) return true;
+    return super.isReadOnly(attr);
+  }
+
+  @Override
+  public boolean isToSave(Attribute<?> attr) {
+    if (attr == DATA_SIZE_ATTR) return false;
+    return super.isToSave(attr);
+  }
+
+  public String getDataSizeFormatted() {
+    return ImageUtil.formatDataSize(imageSource);
   }
 
   @Override
@@ -131,6 +149,7 @@ public class ImageShape extends Rectangular {
     if (attr == WIDTH_ATTR) return (V) Integer.valueOf(getWidth());
     if (attr == HEIGHT_ATTR) return (V) Integer.valueOf(getHeight());
     if (attr == SCALE_ATTR) return (V) scale;
+    if (attr == DATA_SIZE_ATTR) return (V) getDataSizeFormatted();
     if (attr == LICENSE_ATTR) return (V) license;
     if (attr == ATTRIBUTION_ATTR) return (V) attribution;
     return super.getValue(attr);

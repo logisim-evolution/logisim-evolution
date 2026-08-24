@@ -56,8 +56,6 @@ public class Image extends InstanceFactory {
   public static final AttributeOption LICENSE_PROPRIETARY = new AttributeOption("Proprietary / Copyrighted", StringUtil.constantGetter("Proprietary / Copyrighted"));
   public static final AttributeOption LICENSE_OTHER = new AttributeOption("Other", S.getter("imageLicenseOtherOpt"));
 
-
-
   public static final Attribute<AttributeOption> ATTR_LICENSE = Attributes.forOption(
       "license",
       S.getter("imageLicenseAttr"),
@@ -77,8 +75,9 @@ public class Image extends InstanceFactory {
       "attribution",
       S.getter("imageAttributionAttr"));
 
-
-
+  public static final Attribute<String> ATTR_DATA_SIZE = Attributes.forString(
+      "dataSize",
+      S.getter("imageDataSizeAttr"));
 
   public static final Image FACTORY = new Image();
 
