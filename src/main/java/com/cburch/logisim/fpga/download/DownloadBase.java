@@ -87,18 +87,18 @@ public abstract class DownloadBase {
     final var myFile = myProject.getLogisimFile();
     final var rootSheet = myFile.getCircuit(circuitName);
     if (rootSheet == null) {
-      Reporter.report.addError("INTERNAL ERROR: Circuit not found ?!?");
+      Reporter.report.addError(S.get("FPGACircuitNotFoundError"));
       return false;
     }
     if (myBoardInformation == null) {
-      Reporter.report.addError("INTERNAL ERROR: No board information available ?!?");
+      Reporter.report.addError(S.get("FPGABoardInformationMissingError"));
       return false;
     }
 
     final var boardComponents = myBoardInformation.getComponents();
-    Reporter.report.addInfo("The Board " + myBoardInformation.getBoardName() + " has:");
+    Reporter.report.addInfo(S.get("FPGABoardContents", myBoardInformation.getBoardName()));
     for (final var key : boardComponents.keySet()) {
-      Reporter.report.addInfo(boardComponents.get(key).size() + " " + key + "(s)");
+      Reporter.report.addInfo(S.get("FPGABoardComponentCount", boardComponents.get(key).size(), key));
     }
     /*
      * At this point I require 2 sorts of information: 1) A hierarchical
@@ -159,28 +159,26 @@ public abstract class DownloadBase {
             + File.separator
             + myProject.getLogisimFile().getName())) {
       Reporter.report.addFatalError(
-          "Unable to create directory: \""
-              + AppPreferences.FPGA_Workspace.get()
-              + File.separator
-              + myProject.getLogisimFile().getName()
-              + "\"");
+          S.get(
+              "FPGAUnableToCreateDirectory",
+              AppPreferences.FPGA_Workspace.get()
+                  + File.separator
+                  + myProject.getLogisimFile().getName()));
       return false;
     }
     final var projectDir = getProjDir(selectedCircuit);
     final var rootSheet = myProject.getLogisimFile().getCircuit(selectedCircuit);
     if (!cleanDirectory(projectDir)) {
-      Reporter.report.addFatalError(
-          "Unable to cleanup old project files in directory: \"" + projectDir + "\"");
+      Reporter.report.addFatalError(S.get("FPGAUnableToCleanDirectory", projectDir));
       return false;
     }
     if (!genDirectory(projectDir)) {
-      Reporter.report.addFatalError("Unable to create directory: \"" + projectDir + "\"");
+      Reporter.report.addFatalError(S.get("FPGAUnableToCreateDirectory", projectDir));
       return false;
     }
     for (final var hdlPath : HDLPaths) {
       if (!genDirectory(projectDir + hdlPath)) {
-        Reporter.report.addFatalError(
-            "Unable to create directory: \"" + projectDir + hdlPath + "\"");
+        Reporter.report.addFatalError(S.get("FPGAUnableToCreateDirectory", projectDir + hdlPath));
         return false;
       }
     }
@@ -188,7 +186,7 @@ public abstract class DownloadBase {
     final var generatedHDLComponents = new HashSet<String>();
     var worker = rootSheet.getSubcircuitFactory().getHDLGenerator(rootSheet.getStaticAttributes());
     if (worker == null) {
-      Reporter.report.addFatalError("Internal error on HDL generation, null pointer exception");
+      Reporter.report.addFatalError(S.get("FPGANullHdlGeneratorError"));
       return false;
     }
     if (!worker.generateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
@@ -334,7 +332,7 @@ public abstract class DownloadBase {
       var dir = new File(dirPath);
       return dir.exists() ? true : dir.mkdirs();
     } catch (Exception e) {
-      Reporter.report.addFatalError("Could not check/create directory :" + dirPath);
+      Reporter.report.addFatalError(S.get("FPGADirectoryCheckCreateError", dirPath));
       return false;
     }
   }
@@ -385,7 +383,7 @@ public abstract class DownloadBase {
     }
   }
 
-  private boolean cleanDirectory(String dir) {
+  boolean cleanDirectory(String dir) {
     try {
       final var thisDir = new File(dir);
       if (!thisDir.exists()) return true;
@@ -398,7 +396,7 @@ public abstract class DownloadBase {
       }
       return thisDir.delete();
     } catch (Exception e) {
-      Reporter.report.addFatalError("Could not remove directory tree :" + dir);
+      Reporter.report.addFatalError(S.get("FPGADirectoryRemoveError", dir));
       return false;
     }
   }
