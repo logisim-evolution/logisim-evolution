@@ -43,7 +43,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -407,9 +406,8 @@ final class XmlWriter {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         final var isJarLibrary = LibraryManager.isJarLibrary(file.getLoader(), desc);
         if (origFile != null) {
-          final var names = origFile.split(Pattern.quote(File.separator));
-          final var filename = names[names.length - 1];
-          final var newFile = LineBuffer.format("{{1}}{{2}}{{3}}", Loader.LOGISIM_LIBRARY_DIR, File.separator, filename);
+          final var filename = new File(origFile).getName();
+          final var newFile = ProjectBundlePaths.libraryEntry(filename);
           final var zipFile = file.getLoader().getZipFile();
           if (zipFile != null) {
             if (isJarLibrary) {
@@ -417,9 +415,11 @@ final class XmlWriter {
             } else {
               writeLogisimFileToZip(zipFile, origFile, newFile);
             }
-            desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, isRecursiveCall
-                ? LineBuffer.format(".{{1}}{{2}}", File.separator, filename)
-                : LineBuffer.format(".{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename));
+            desc =
+                LibraryManager.getReplacementDescriptor(
+                    file.getLoader(),
+                    desc,
+                    ProjectBundlePaths.libraryDescriptor(filename, isRecursiveCall));
           }
         }
       }

@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.fpga.hdlgenerator.HdlText.containsIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,8 +62,8 @@ class PortHdlGeneratorFactoryTest {
                   .getInlinedCode(nets, 1L, componentInfo, "main")
                   .get());
 
-      assertTrue(code.contains("logisimOutputBubbles(11 DOWNTO 8) <= portData;"));
-      assertFalse(code.contains("logisimOutputBubbles(6 DOWNTO 3)"));
+      assertTrue(containsIgnoringCase(code, "logisimOutputBubbles(11 DOWNTO 8) <= portData;"));
+      assertFalse(containsIgnoringCase(code, "logisimOutputBubbles(6 DOWNTO 3)"));
     }
   }
 
@@ -85,12 +86,13 @@ class PortHdlGeneratorFactoryTest {
                   .getInlinedCode(nets, 1L, componentInfo, "main")
                   .get());
 
-      assertTrue(code.contains("readData <= logisimInOutBubbles(23 DOWNTO 20);"));
+      assertTrue(containsIgnoringCase(code, "readData <= logisimInOutBubbles(23 DOWNTO 20);"));
       assertTrue(
-          code.contains(
+          containsIgnoringCase(
+              code,
               "logisimInOutBubbles(23 DOWNTO 20) <= writeData WHEN enable = '1' "
                   + "ELSE (OTHERS => 'Z');"));
-      assertFalse(code.contains("logisimInOutBubbles(6 DOWNTO 3)"));
+      assertFalse(containsIgnoringCase(code, "logisimInOutBubbles(6 DOWNTO 3)"));
     }
   }
 

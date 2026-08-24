@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added contributor guidance and an online component overview for the TTL library.
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
     the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
@@ -10,6 +11,8 @@
     search providers, so further sources of results can be added without changing the dialog. Its
     Add provider can select components for placement from the project's open libraries.
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
+  * Fixed HDL generator tests failing when the "Use upper case for VHDL keywords" preference is
+    disabled (@MarcinOrlowski)
   * Improved file merging and export capabilities:
     * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
     * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.

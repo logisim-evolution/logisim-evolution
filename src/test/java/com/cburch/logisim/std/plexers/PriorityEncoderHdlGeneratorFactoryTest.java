@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.plexers;
 
+import static com.cburch.logisim.fpga.hdlgenerator.HdlText.containsIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,8 +47,11 @@ class PriorityEncoderHdlGeneratorFactoryTest {
   void vhdlCopiesFullInputVectorIntoSelectionTree() {
     final var hdl = functionality(HdlGeneratorFactory.VHDL, 3);
 
-    assertTrue(hdl.contains("s_selectVector0(63 DOWNTO nrOfInputBits)  <= (OTHERS => '0');"));
-    assertTrue(hdl.contains("s_selectVector0(nrOfInputBits-1 DOWNTO 0) <= inputVector;"));
+    assertTrue(
+        containsIgnoringCase(
+            hdl, "s_selectVector0(63 DOWNTO nrOfInputBits)  <= (OTHERS => '0');"));
+    assertTrue(
+        containsIgnoringCase(hdl, "s_selectVector0(nrOfInputBits-1 DOWNTO 0) <= inputVector;"));
   }
 
   private static String functionality(String hdlType, int selectBits) {

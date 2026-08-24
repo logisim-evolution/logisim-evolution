@@ -217,10 +217,8 @@
 			<tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" />
 -->	
 		</tocitem>
+		<tocitem target="ttl" text="TTL library" image="icon_ttl" />
 <!-- not documented 
-		<tocitem target="ttl" text="TTL">
-			<tocitem target="ttl_xxxx" text="TTL" image="icon_ttl" />
-		</tocitem>
 		<tocitem target="tcl" text="TCL library">
 			<tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
 			<tocitem target="tcl_generic" text="Generic" image="icon_generic" />
