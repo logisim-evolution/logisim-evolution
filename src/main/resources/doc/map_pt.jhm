@@ -193,6 +193,7 @@
     <mapID target="io_Port_IO"          url="pt/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="pt/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="pt/html/libs/io/videorvb.html" />
+	<mapID target="ttl"                 url="en/html/libs/ttl/index.html" />
 	<mapID target="tcl"                 url="pt/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="pt/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="pt/html/libs/tcl/generic.html" />
