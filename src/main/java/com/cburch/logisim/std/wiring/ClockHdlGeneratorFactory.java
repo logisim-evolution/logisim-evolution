@@ -92,7 +92,7 @@ public class ClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
     if (Hdl.isVhdl()) {
       contents.addVhdlKeywords().add("""
-          clockBus <= globalClock&s_outputRegs;
+          clockBus <= globalClock & s_outputRegs;
 
           makeOutputs : {{process}}(globalClock) {{is}}
           {{begin}}
@@ -114,9 +114,9 @@ public class ClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
              s_bufferRegs[0] <= s_derivedClock[{{phase}} - 1];
              s_bufferRegs[1] <= ~s_derivedClock[{{phase}} - 1];
              s_outputRegs[0] <= s_bufferRegs[0];
-             s_outputRegs[1] <= s_outputRegs[1];
+             s_outputRegs[1] <= s_bufferRegs[1];
              s_outputRegs[2] <= ~s_bufferRegs[0] & s_derivedClock[{{phase}} - 1];
-             s_outputRegs[3] <= ~s_derivedClock[{{phase}} - 1] & s_bufferRegs[0];
+             s_outputRegs[3] <= s_bufferRegs[0] & ~s_derivedClock[{{phase}} - 1];
           end
           """);
     }
