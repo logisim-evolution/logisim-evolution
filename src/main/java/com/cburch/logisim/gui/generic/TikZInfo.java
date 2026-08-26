@@ -10,11 +10,13 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.logisim.util.ImageUtil;
 import com.cburch.logisim.util.XmlUtil;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -51,6 +53,7 @@ public class TikZInfo implements Cloneable {
   private static final String PNG_DATA_URI_PREFIX = "data:image/png;base64,";
   private static final String XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
 
+  private boolean svgMode = false;
   private AffineTransform myTransformer = new AffineTransform();
   private Color drawColor;
   private Color backColor;
@@ -98,9 +101,18 @@ public class TikZInfo implements Cloneable {
     return " (" + getBarePoint(p) + ") ";
   }
 
+  public boolean isSvgMode() {
+    return svgMode;
+  }
+
+  public void setSvgMode(boolean mode) {
+    this.svgMode = mode;
+  }
+
   @Override
   public TikZInfo clone() {
     var newInst = new TikZInfo();
+    newInst.svgMode = svgMode;
     newInst.myTransformer = (AffineTransform) myTransformer.clone();
     newInst.drawColor = drawColor;
     newInst.backColor = backColor;
@@ -1271,7 +1283,19 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
-      return "% Raster image omitted: TikZ image export is not supported.";
+      final var pt = new Point2D.Double(0, 0);
+      transform.transform(pt, pt);
+      final var sb = new StringBuilder();
+      sb.append("% Raster image omitted: TikZ image export is not supported.\n");
+      sb.append("\\draw [line width=").append(rounded(getStrokeWidth() * BASIC_STROKE_WIDTH))
+        .append("pt, ").append(getDrawColorString()).append("]");
+      sb.append(getPoint(pt)).append("rectangle");
+      sb.append(getPoint(new Point2D.Double(pt.x + width, pt.y + height)));
+      sb.append(";");
+      sb.append("\\node[anchor=north west, font=\\small] at (").append(rounded(pt.x))
+        .append(",").append(rounded(pt.y)).append(") {[Image: ").append(width).append("x")
+        .append(height).append("]};");
+      return sb.toString();
     }
 
     @Override
@@ -1516,3 +1540,4 @@ public class TikZInfo implements Cloneable {
     }
   }
 }
+

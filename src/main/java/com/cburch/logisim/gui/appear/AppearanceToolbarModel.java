@@ -15,6 +15,7 @@ import com.cburch.draw.toolbar.ToolbarItem;
 import com.cburch.draw.tools.AbstractTool;
 import com.cburch.draw.tools.CurveTool;
 import com.cburch.draw.tools.DrawingAttributeSet;
+import com.cburch.draw.tools.ImageTool;
 import com.cburch.draw.tools.LineTool;
 import com.cburch.draw.tools.OvalTool;
 import com.cburch.draw.tools.PolyTool;
@@ -38,6 +39,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
     AbstractTool[] tools = {
       selectTool,
       new TextTool(attrs),
+      new ImageTool(attrs),
       new LineTool(attrs),
       new CurveTool(attrs),
       new PolyTool(false, attrs),

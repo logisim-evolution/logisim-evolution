@@ -9,6 +9,10 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
+import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.gui.menu.EditHandler;
@@ -17,11 +21,15 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.BaseLibrary;
+import com.cburch.logisim.std.base.Image;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.TextEditActions;
 import com.cburch.logisim.tools.TextTool;
+import com.cburch.logisim.util.ImageUtil;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.List;
 
 public class LayoutEditHandler extends EditHandler
     implements ProjectListener, LibraryListener, PropertyChangeListener {
@@ -75,7 +83,7 @@ public class LayoutEditHandler extends EditHandler
 
     setEnabled(LogisimMenuBar.CUT, !selEmpty && selectAvailable && canChange);
     setEnabled(LogisimMenuBar.COPY, !selEmpty && selectAvailable);
-    setEnabled(LogisimMenuBar.PASTE, selectAvailable && canChange && !Clipboard.isEmpty());
+    setEnabled(LogisimMenuBar.PASTE, selectAvailable && canChange);
     setEnabled(LogisimMenuBar.DELETE, !selEmpty && selectAvailable && canChange);
     setEnabled(LogisimMenuBar.DUPLICATE, !selEmpty && selectAvailable && canChange);
     setEnabled(LogisimMenuBar.SELECT_ALL, selectAvailable);
@@ -161,10 +169,44 @@ public class LayoutEditHandler extends EditHandler
     final var proj = frame.getProject();
     final var sel = frame.getCanvas().getSelection();
     selectSelectTool(proj);
-    final var action = SelectionActions.pasteMaybe(proj, sel);
-    if (action != null) {
-      proj.doAction(action);
+
+    if (pasteSystemClipboardImage(proj)) {
+      return;
     }
+
+    if (!Clipboard.isEmpty()) {
+      final var action = SelectionActions.pasteMaybe(proj, sel);
+      if (action != null) {
+        proj.doAction(action);
+        return;
+      }
+    }
+  }
+
+  private boolean pasteSystemClipboardImage(Project proj) {
+    try {
+      final var img = ImageUtil.getSystemClipboardImage();
+      if (img != null) {
+        final var base64 = ImageUtil.bufferedImageToBase64(img);
+        if (base64 != null && !base64.isBlank()) {
+          final var circuit = proj.getCurrentCircuit();
+          final var attrs = Image.FACTORY.createAttributeSet();
+          attrs.setValue(Image.ATTR_IMAGE, base64);
+          attrs.setValue(Image.ATTR_WIDTH, img.getWidth());
+          attrs.setValue(Image.ATTR_HEIGHT, img.getHeight());
+
+          final var comp = Image.FACTORY.createComponent(Location.create(100, 100, false), attrs);
+          final var xn = new CircuitMutation(circuit);
+          xn.add(comp);
+          proj.doAction(xn.toAction(S.getter("addComponentAction", Image.FACTORY.getDisplayGetter())));
+          return true;
+        }
+      }
+    } catch (Exception e) {
+      org.slf4j.LoggerFactory.getLogger(LayoutEditHandler.class)
+          .error("Failed to paste image onto layout canvas from system clipboard", e);
+    }
+    return false;
   }
 
   @Override

@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
   * Added contributor guidance and an online component overview for the TTL library.
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from

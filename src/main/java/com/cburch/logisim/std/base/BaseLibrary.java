@@ -35,24 +35,25 @@ public class BaseLibrary extends Library {
 
   private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);
+  private final AddTool imageAdder = new AddTool(Image.FACTORY);
   private final SelectTool selectTool = new SelectTool();
 
   public BaseLibrary() {
     setHidden();
     WiringTool wiring = new WiringTool();
 
-    tools =
-        Arrays.asList(
-            new PokeTool(),
-            new EditTool(selectTool, wiring),
-            wiring,
-            new TextTool(),
-            new MenuTool());
+    tools = Arrays.asList(
+        new PokeTool(),
+        new EditTool(selectTool, wiring),
+        wiring,
+        new TextTool(),
+        imageAdder,
+        new MenuTool());
   }
 
   @Override
   public boolean contains(ComponentFactory querry) {
-    return super.contains(querry) || (querry instanceof Text);
+    return super.contains(querry) || (querry instanceof Text) || (querry instanceof Image);
   }
 
   @Override
@@ -60,6 +61,9 @@ public class BaseLibrary extends Library {
     final var t = super.getTool(name);
     if (t == null && name.equals(Text._ID)) {
       return textAdder; // needed by XmlCircuitReader
+    }
+    if (t == null && name.equals(Image._ID)) {
+      return imageAdder;
     }
     return t;
   }

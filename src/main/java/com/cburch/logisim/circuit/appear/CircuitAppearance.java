@@ -25,9 +25,11 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.appear.CanvasActionAdapter;
+import com.cburch.draw.shapes.ImageShape;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.util.ImageUtil;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.awt.Graphics;
@@ -312,10 +314,21 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
         // Do nothing.
       }
     }
+    final var isPrintView = painter.isPrintView();
     for (final var shape : getObjectsFromBottom()) {
       if (!(shape instanceof AppearanceElement)) {
         final var dup = g.create();
-        if (shape instanceof DynamicElement dynEl) {
+        if (shape instanceof ImageShape imgShape && isPrintView) {
+          final var grayImg = ImageUtil.toGrayscale(ImageUtil.loadBufferedImage(imgShape.getImageSource()));
+          if (grayImg != null) {
+            final var origSrc = imgShape.getImageSource();
+            imgShape.setImageSource(ImageUtil.bufferedImageToBase64(grayImg));
+            shape.paint(dup, null);
+            imgShape.setImageSource(origSrc);
+          } else {
+            shape.paint(dup, null);
+          }
+        } else if (shape instanceof DynamicElement dynEl) {
           dynEl.paintDynamic(dup, state);
           if (shape instanceof DynamicElementWithPoker dynElWithPoker)
             dynElWithPoker.setAnchor(offset);

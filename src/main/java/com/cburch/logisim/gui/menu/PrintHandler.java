@@ -146,6 +146,9 @@ public abstract class PrintHandler implements Printable {
     }
     final var img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     final var base = (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) ? new TikZWriter() : img.getGraphics();
+    if (base instanceof TikZWriter tz) {
+      tz.setSvgMode(fmt == ExportImage.FORMAT_SVG);
+    }
     final var gr = base.create();
 
     try {

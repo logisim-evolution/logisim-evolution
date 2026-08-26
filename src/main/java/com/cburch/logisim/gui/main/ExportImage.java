@@ -237,7 +237,9 @@ public class ExportImage {
       Graphics base;
       final var img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
       if (filter.type == FORMAT_TIKZ || filter.type == FORMAT_SVG) {
-        base = new TikZWriter();
+        final var tz = new TikZWriter();
+        tz.setSvgMode(filter.type == FORMAT_SVG);
+        base = tz;
         g = base.create();
       } else {
         base = img.getGraphics();
