@@ -84,6 +84,8 @@
     * VHDL code view no longer paints a circuit canvas without a circuit.
     * VHDL simulator log split pane remains recoverable after being maximized.
     * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
+    * VHDL co-simulation now analyzes project-local entities in library order and preserves their
+      canonical names for dependency resolution [#1350] (@hewzhew).
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
     * Invalid command-line option values now return a nonzero exit status.
