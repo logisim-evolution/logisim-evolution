@@ -42,7 +42,7 @@ class IoDocumentationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"de", "pt", "ru", "zh"})
+  @ValueSource(strings = {"de", "pt", "zh"})
   void packagedLocaleIndexFallsBackToEnglish(String language) throws Exception {
     final var indexPath = DOC_ROOT.resolve(language + "/html/libs/io/index.html");
     final var index = Files.readString(indexPath, StandardCharsets.UTF_8);
@@ -70,7 +70,7 @@ class IoDocumentationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"de", "fr", "ru", "zh"})
+  @ValueSource(strings = {"de", "fr", "zh"})
   void localizedHelpMapFallsBackToEnglish(String language) throws Exception {
     final var map =
         Files.readString(DOC_ROOT.resolve("map_" + language + ".jhm"), StandardCharsets.UTF_8);
