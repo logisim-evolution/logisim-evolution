@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.icons.ImageIcon;
 
 import java.awt.Graphics;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 
@@ -47,7 +48,7 @@ public class ImageTool extends RectangularTool {
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return List.of(ImageShape.SCALE_ATTR, ImageShape.LICENSE_ATTR, ImageShape.ATTRIBUTION_ATTR);
+    return Collections.emptyList();
   }
 
   @Override

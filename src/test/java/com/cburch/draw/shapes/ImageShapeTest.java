@@ -43,4 +43,10 @@ class ImageShapeTest {
     assertEquals(200, shape.getValue(ImageShape.WIDTH_ATTR));
     assertEquals(150, shape.getValue(ImageShape.HEIGHT_ATTR));
   }
+
+  @Test
+  void testImageToolAttributesIsEmptyBeforeDrawing() {
+    final var imageTool = new com.cburch.draw.tools.ImageTool(new com.cburch.draw.tools.DrawingAttributeSet());
+    assertTrue(imageTool.getAttributes().isEmpty());
+  }
 }

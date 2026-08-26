@@ -219,11 +219,9 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
   public void paste() {
     if (pasteSystemClipboardImage()) return;
 
-    if (Clipboard.isEmpty()) return;
-
     final var clip = Clipboard.get();
+    if (clip == null || clip.getElements().isEmpty()) return;
     final var contents = clip.getElements();
-    if (contents.isEmpty()) return;
 
     final var add = new ArrayList<CanvasObject>(contents.size());
     for (final var obj : contents) {
