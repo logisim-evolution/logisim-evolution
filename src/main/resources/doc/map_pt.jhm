@@ -277,6 +277,9 @@
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
 	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
+	<mapID target="icon_ledbar"      url="icons/1616/ledbar.png" />
+	<mapID target="icon_realtimeclock" url="icons/1616/realtimeclock.png" />
+	<mapID target="icon_matrixkeypad"  url="icons/1616/matrixkeypad.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	
