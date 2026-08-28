@@ -52,15 +52,19 @@ public abstract class Mem extends InstanceFactory {
 
   static class MemListener implements HexModelListener {
 
-    final Instance instance;
+    private Instance instance;
 
     MemListener(Instance instance) {
       this.instance = instance;
     }
 
+    void setInstance(Instance instance) {
+      this.instance = instance;
+    }
+
     @Override
     public void bytesChanged(HexModel source, long start, long numBytes, long[] values) {
-      if (SwingUtilities.isEventDispatchThread()) instance.fireInvalidated();
+      if (instance != null && SwingUtilities.isEventDispatchThread()) instance.fireInvalidated();
     }
 
     @Override

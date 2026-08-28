@@ -77,6 +77,8 @@
     * Layout zoom and scroll position are remembered separately for each circuit during a session.
     * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
     * Moving components preserves component state.
+    * RAM components continue to notify their circuit of memory changes after being moved [#2873]
+      (@henriquejsza).
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.
     * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.

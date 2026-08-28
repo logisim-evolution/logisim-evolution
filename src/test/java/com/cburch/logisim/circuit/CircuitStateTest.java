@@ -22,6 +22,9 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
 
 class CircuitStateTest {
@@ -46,19 +49,51 @@ class CircuitStateTest {
   void replacementWithSameFactoryKeepsComponentState() {
     final var fixture = new Fixture();
     final var ramFactory = new Ram();
-    final var ram = ramFactory.createComponent(Location.create(100, 100, true), ramFactory.createAttributeSet());
+    final var ram =
+        ramFactory.createComponent(
+            Location.create(100, 100, true), ramFactory.createAttributeSet());
     add(fixture.circuit, ram);
 
     final var contents = ramFactory.getContents(fixture.state.getInstanceState(ram));
     contents.set(3, 0x5a);
     final var ramState = fixture.state.getData(ram);
 
-    final var movedRam = ramFactory.createComponent(Location.create(140, 100, true), ram.getAttributeSet());
+    final var movedRam =
+        ramFactory.createComponent(Location.create(140, 100, true), ram.getAttributeSet());
     replace(fixture.circuit, ram, movedRam);
 
     assertNull(fixture.state.getData(ram));
     assertSame(ramState, fixture.state.getData(movedRam));
     assertEquals(0x5a, ramFactory.getContents(fixture.state.getInstanceState(movedRam)).get(3));
+  }
+
+  @Test
+  void replacementWithSameFactoryRetargetsStateListeners() throws Exception {
+    final var fixture = new Fixture();
+    final var ramFactory = new Ram();
+    final var ram =
+        ramFactory.createComponent(
+            Location.create(100, 100, true), ramFactory.createAttributeSet());
+    add(fixture.circuit, ram);
+
+    final var contents = ramFactory.getContents(fixture.state.getInstanceState(ram));
+    final var movedRam =
+        ramFactory.createComponent(Location.create(140, 100, true), ram.getAttributeSet());
+    replace(fixture.circuit, ram, movedRam);
+
+    assertSame(contents, ramFactory.getContents(fixture.state.getInstanceState(movedRam)));
+
+    final var invalidatedComponents = new ArrayList<Component>();
+    fixture.circuit.addCircuitListener(
+        event -> {
+          if (event.getAction() == CircuitEvent.ACTION_INVALIDATE) {
+            invalidatedComponents.add((Component) event.getData());
+          }
+        });
+
+    SwingUtilities.invokeAndWait(() -> contents.set(0, contents.get(0) ^ 1));
+
+    assertEquals(List.of(movedRam), invalidatedComponents);
   }
 
   @Test
