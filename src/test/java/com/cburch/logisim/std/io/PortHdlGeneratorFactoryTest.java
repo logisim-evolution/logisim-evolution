@@ -46,6 +46,22 @@ class PortHdlGeneratorFactoryTest {
   }
 
   @Test
+  void outputOnlyDataEndpointIsNetlistSink() {
+    final var end = portComponent(PortIo.OUTPUT, 4).getComponent().getEnd(0);
+
+    assertTrue(end.isInput());
+    assertFalse(end.isOutput());
+  }
+
+  @Test
+  void inputOnlyDataEndpointIsNetlistSource() {
+    final var end = portComponent(PortIo.INPUT, 4).getComponent().getEnd(0);
+
+    assertFalse(end.isInput());
+    assertTrue(end.isOutput());
+  }
+
+  @Test
   void outputOnlyPortsUseOutputBubbleRange() {
     AppPreferences.HdlType.set(HdlGeneratorFactory.VHDL);
     final var nets = mock(Netlist.class);
