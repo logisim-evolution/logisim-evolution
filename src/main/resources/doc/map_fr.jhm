@@ -271,7 +271,9 @@
 	<mapID target="icon_switch"      url="icons/1616/switch.png" />	
 	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
 	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
-	<mapID target="icon_digitalscope"    url="icons/1616/digitalscope.png" />	
+	<mapID target="icon_digitalscope"    url="icons/1616/digitaloscilloscope.png" />	
+	<mapID target="icon_twowayswitch"    url="icons/1616/twowayswitch.png" />	
+	<mapID target="icon_twopinled"       url="icons/1616/twopinled.png" />	
 	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
 	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
 	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		
