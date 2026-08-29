@@ -5,6 +5,8 @@
 * @dev (????-??-??)
   * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
   * Added contributor guidance and an online component overview for the TTL library.
+  * Fixed packaged runtimes failing to launch when Java accessibility support is configured
+    [#2398] (@hewzhew).
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
     the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
