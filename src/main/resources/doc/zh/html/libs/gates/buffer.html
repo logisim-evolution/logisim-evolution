@@ -1,350 +1,250 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="zh">
- <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:23" name="changed" translator="gocpicnic"/>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-  <meta content="zh" http-equiv="Content-Language"/>
-  <title>
-   <!-- Buffer -->
-   缓冲区
-  </title>
-  <link href="../../style.css" rel="stylesheet" type="text/css"/>
- </head>
- <body>
-  <div class="maindiv">
-   <h1>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/ansbuffergate.png" width="32"/>
-    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/iecbuffergate.png" width="32"/>
-    <!-- <em>Buffer</em> -->
-    <em>
-     缓冲区
-    </em>
-   </h1>
-   <table>
-    <tbody>
-     <tr>
-      <td>
-       <!-- <strong>Library:</strong> -->
-       <strong>
-        库:
-       </strong>
-      </td>
-      <td>
-       <!-- <a href="index.html">Gates</a> -->
-       <a href="index.html">
-        门
-       </a>
-      </td>
-     </tr>
-     <tr>
-      <td>
-       <!-- <strong>Introduced:</strong> -->
-       <strong>
-        介绍:
-       </strong>
-      </td>
-      <td>
-       2.0 Beta 1
-      </td>
-     </tr>
-     <tr>
-      <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
-       <strong>
-        外观符号:
-       </strong>
-      </td>
-      <td valign="top">
-       <table>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      缓冲器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/ansbuffergate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/iecbuffergate.png" alt="#########" width="32" height="32">&nbsp;  
+		<em> 缓冲器</em>
+      </h1>
+      <table>
         <tbody>
-         <tr>
-          <th>
-           ANSI:
-          </th>
-          <th>
-           IEC:
-          </th>
-         </tr>
-         <tr>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ansbuffergate.png" width="64"/>
-          </td>
-          <td>
-           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/iecbuffergate.png" width="64"/>
-          </td>
-         </tr>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">逻辑门</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI：
+                    </th>
+                    <th>
+                      IEC：
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
         </tbody>
-       </table>
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <h2>
-    <!-- Behavior -->
-    行为
-   </h2>
-   <p>
-    <!-- The buffer simply passes through to its right output whatever input it receives on the left side. The way data is presented on the output is defined by the <b class="propertie">output value</b> attribute. The truth table for a one-bit buffer is the following. -->
-    缓冲区只是将其在左侧接收到的任何输入传递到其右侧输出。 数据在输出上的呈现方式由
-    <b class="propertie">
-     输出值
-    </b>
-    属性定义。 一位缓冲区的真值表如下。
-   </p>
-   <center>
-    <table class="encapsul">
-     <tbody>
-      <tr>
-       <th class="tspace">
-        In
-       </th>
-       <th class="tspace" colspan="3">
-        Out
-       </th>
-      </tr>
-      <tr>
-       <th class="tspace">
-       </th>
-       <th class="tspace">
-        O/1
-       </th>
-       <th class="tspace">
-        O/flt.
-       </th>
-       <th class="tspace">
-        flt./1
-       </th>
-      </tr>
-      <tr>
-       <td class="tzerov">
-        0
-       </td>
-       <td class="zerov">
-        0
-       </td>
-       <td class="zerov">
-        0
-       </td>
-       <td class="uvalue">
-        U
-       </td>
-      </tr>
-      <tr>
-       <td class="tunov">
-        1
-       </td>
-       <td class="unov">
-        1
-       </td>
-       <td class="uvalue">
-        U
-       </td>
-       <td class="unov">
-        1
-       </td>
-      </tr>
-      <tr>
-       <td class="tuvalue">
-        U
-       </td>
-       <td class="uvalue">
-        U
-       </td>
-       <td class="uvalue">
-        U
-       </td>
-       <td class="uvalue">
-        U
-       </td>
-      </tr>
-      <tr>
-       <td class="tevalue">
-        E
-       </td>
-       <td class="evalue">
-        E
-       </td>
-       <td class="evalue">
-        E
-       </td>
-       <td class="evalue">
-        E
-       </td>
-      </tr>
-     </tbody>
-    </table>
-   </center>
-   <p>
-    <!-- If the input is unspecified (i.e., floating <b class="uvalue">U</b>), then the output will also be unspecified. If the input is an error (<b class="evalue">E</b>) value, then the output will also be. -->
-    如果输入未指定（即浮动
-    <b class="uvalue">
-     U
-    </b>
-    ），则输出也将是未指定的。 如果输入是错误 (
-    <b class="evalue">
-     E
-    </b>
-    ) 值，则输出也将是错误值。
-   </p>
-   <p>
-    <!-- Buffers are the most useless of the gate components provided in Logisim; its presence in the Gates library is just as much a matter of completeness (a component for each possible one-input truth table) as it is a matter of providing useful functionality. Still, it can be occasionally useful to ensure that values propagate in only one direction along a wire. -->
-    缓冲区是 Logisim-evolution 中提供的门组件中最无用的； 它在逻辑门库中的存在既是一个完整性问题（每个可能的单输入真值表的一个组件），也是一个提供有用功能的问题。 尽管如此，确保值仅沿导线的一个方向传播有时还是有用的。
-   </p>
-   <h2>
-    <!-- Pins (assuming component faces east) -->
-    引脚（假设元件朝东）
-   </h2>
-   <dl>
-    <dt>
-     <!-- West edge : -->
-     西边：
-    </dt>
-    <dd>
-     <!-- The input into the component. Bit width according to Data  <b class="propertie">Bits attribute</b>. -->
-     元件的输入。 位宽度根据数据
-     <b class="propertie">
-      位属性
-     </b>
-     。
-    </dd>
-    <dt>
-     <!-- East edge : -->
-     东边：
-    </dt>
-    <dd>
-     <!-- The output, which always matches the input into the left side. <b class="propertie">Bits attribute</b>.		  The data presentation mode is defined by the <b class="propertie">Output Value</b> attribute.  -->
-     输出始终与左侧的输入相匹配。
-     <b class="propertie">
-      位属性
-     </b>
-     。 数据呈现模式由
-     <b class="propertie">
-      输出值
-     </b>
-     属性定义。
-    </dd>
-   </dl>
-   <h2>
-    <!-- Attributes -->
-    属性
-   </h2>
-   <p>
-    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute. -->
-    选择或添加元件时，
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    到
-    <b class="tkeybd">
-     Alt-9
-    </b>
-    会更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性，方向键更改其
-    <b class="propertie">
-     方向
-    </b>
-    属性。
-   </p>
-   <div class="attliste">
-    <dl>
-     <dt>
-      <!-- <b class="propertie">Facing</b> -->
-      <b class="propertie">
-       方向
-      </b>
-     </dt>
-     <dd>
-      <!-- The direction of the component (its output relative to its input). -->
-      元件的方向（其输出相对于其输入）。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Data Bits</b> -->
-      <b class="property">
-       数据位
-      </b>
-     </dt>
-     <dd>
-      <!-- The bit width of the component's inputs and outputs. -->
-      元件输入和输出的位宽。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Output Value</b> -->
-      <b class="propertie">
-       输出值
-      </b>
-     </dt>
-     <dd>
-      <!-- Indicates how false and true results should be translated into output values. By default, false is indicated by a low voltage (<b class="zerov">0</b>) and true by a high voltage (<b class="unov">1</b>), but one or the other can be replaced by a high-impedance (<q>floating</q>) value instead. This allows wired-or and wired-and connections, as illustrated in the <a href="basic.html">AND/OR/NAND/NOR Gate documentation</a>. -->
-      指示如何将错误和正确的结果转换为输出值。 默认情况下，假由低电压 (
-      <b class="zerov">
-       0
-      </b>
-      ) 表示，真由高电压 (
-      <b class="unov">
-       1
-      </b>
-      ) 表示，但一个或 另一个可以用高阻抗（
-      <q>
-       浮动
-      </q>
-      ）值代替。 这允许有线或和有线与连接，如
-      <a href="basic.html">
-       AND/OR/NAND/NOR门文档
-      </a>
-      中所示。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Label</b> -->
-      <b class="propertie">
-       标签
-      </b>
-     </dt>
-     <dd>
-      <!-- The text within the label associated with the gate. -->
-      与门关联的标签内的文本。
-     </dd>
-     <dt>
-      <!-- <b class="propertie">Label Font</b> -->
-      <b class="propertie">
-       标签字体
-      </b>
-     </dt>
-     <dd>
-      <!-- The font with which to render the label. -->
-      用于呈现标签的字体。
-     </dd>
-    </dl>
-    <h2>
-     <!-- Poke Tool Behavior -->
-     Poke 工具行为
-    </h2>
-    <p>
-     <!-- None. -->
-     无
-    </p>
-    <h2>
-     <!-- Text Tool Behavior -->
-     文本工具行为
-    </h2>
-    <p>
-     <!-- Allows the label associated with the gate to be edited. -->
-     允许编辑与门关联的标签。
-    </p>
-    <p>
-     <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
-     <b>
-      返回
-     </b>
-     <a href="../index.html">
-      电路元件库参考手册
-     </a>
-    </p>
-   </div>
-  </div>
- </body>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        缓冲器会将左侧输入的值原样传递到右侧输出端。输出端如何表示该数据由
+        <b class="propertie">输出值</b> 属性决定。1 位缓冲器的真值表如下。
+      </p>
+      <center>
+        <table class="encapsul">
+          <tbody>
+             <tr>
+              <th class="tspace">
+                &nbsp;输入&nbsp;
+              </th>
+              <th class="tspace" colspan="3">
+                &nbsp;输出&nbsp;
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace"></th>
+              <th class="tspace">
+                &nbsp;&nbsp;0/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                0/高阻
+              </th>
+              <th class="tspace">
+                高阻/1
+              </th>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tevalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        若输入未指定（即悬空 <b class="uvalue">U</b>），输出同样为悬空；
+        若输入为错误值（<b class="evalue">E</b>），输出也为错误值。
+      </p>
+      <p>
+        缓冲器的存在既是为了完整性（覆盖所有单输入真值表），也能在少数情况下派上用场，
+        例如确保信号只沿导线的一个方向传播。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东）
+      </h2>
+      <dl>
+        <dt>
+          西侧：
+        </dt>
+        <dd>
+          组件输入端。位宽由 <b class="propertie">数据位宽</b> 属性决定。
+        </dd>
+        <dt>
+          东侧：
+        </dt>
+        <dd>
+          组件输出端，始终与左侧输入一致。
+          位宽由 <b class="propertie">数据位宽</b> 属性决定；
+          输出的表现形式由 <b class="propertie">输出值</b> 属性定义。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改
+        <b class="propertie">数据位宽</b> 属性，方向键可修改
+        <b class="propertie">朝向</b> 属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            组件方向（输出相对于输入的位置）。
+          </dd>
+          <dt>
+            <b class="propertie">数据位宽</b>
+          </dt>
+          <dd>
+            组件输入与输出的位宽。
+          </dd>
+          <dt>
+            <b class="propertie">输出值</b>
+          </dt>
+          <dd>
+            指定逻辑假/真如何映射为输出值。默认情况下，
+            假为低电平（<b class="zerov">0</b>），真为高电平（<b class="unov">1</b>）；
+            其中之一也可以改为高阻值，以支持线与、线或连接，详见
+            <a href="basic.html">与/或/与非/或非门</a> 文档中的示例。
+          </dd>
+          <dt>
+            <b class="propertie">标签</b>
+          </dt>
+          <dd>
+            与该逻辑门关联的标签文本。
+          </dd>
+          <dt>
+            <b class="propertie">标签字体</b>
+          </dt>
+          <dd>
+            标签的显示字体。
+          </dd>
+        </dl>
+
+        <h2>
+          手形工具行为
+        </h2>
+        <p>
+          无。
+        </p>
+        <h2>
+          文本工具行为
+        </h2>
+        <p>
+          可编辑该逻辑门的标签。
+        </p>
+        <p>
+          <b>返回</b> <a href="../index.html">库参考手册</a>
+        </p>
+      </div>
+    </div>
+  </body>
 </html>

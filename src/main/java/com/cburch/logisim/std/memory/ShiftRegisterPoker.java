@@ -40,13 +40,12 @@ public class ShiftRegisterPoker extends InstancePoker {
       if (x < 0 || x >= lenObj * 10) return -1;
       return x / 10;
     } else {
-      final var len = (widObj.getWidth() + 3) / 4;
-      final var boxXpos = ((ShiftRegister.symbolWidth - 30) / 2 + 30) - (len * 4);
-      final var boxXend = boxXpos + 2 + len * 8;
+      final var valueBounds = ShiftRegister.getStageValueBounds(widObj.getWidth());
       final var y = e.getY() - bds.getY() - 80;
       if (y < 0) return -1;
       final var x = e.getX() - bds.getX() - 10;
-      if ((x < boxXpos) || (x > boxXend)) return -1;
+      if (x < valueBounds.getX()
+          || x > valueBounds.getX() + valueBounds.getWidth()) return -1;
       return (y / 20);
     }
   }
@@ -154,12 +153,12 @@ public class ShiftRegisterPoker extends InstancePoker {
       g.setColor(Color.RED);
       g.drawRect(x, y - 6, 10, 13);
     } else {
-      final var len = (widObj.getWidth() + 3) / 4;
-      final var boxXpos = ((ShiftRegister.symbolWidth - 30) / 2 + 30) - (len * 4) + bds.getX() + 10;
-      final var y = bds.getY() + 82 + loc * 20;
+      final var valueBounds = ShiftRegister.getStageValueBounds(widObj.getWidth());
+      final var boxXpos = bds.getX() + 10 + valueBounds.getX();
+      final var y = bds.getY() + 80 + loc * 20 + valueBounds.getY();
       final var g = painter.getGraphics();
       g.setColor(Color.RED);
-      g.drawRect(boxXpos, y, 2 + len * 8, 16);
+      g.drawRect(boxXpos, y, valueBounds.getWidth(), valueBounds.getHeight());
     }
   }
 }

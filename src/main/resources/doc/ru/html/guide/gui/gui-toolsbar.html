@@ -3,304 +3,316 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2019-12-15T06:18:42.262000000">
+    <meta name="changed" content="2026-07-18T01:22:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
-    <title>
-      Toolbars
-    </title>
+    <title>Панели инструментов</title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
-      <h1 id="tb1">
-        Toolbars
-      </h1>
+      <h1 id="tb1">Панели инструментов</h1>
       <p>
-        Logisim-evolution has several toolbars. The main toolbar is <a href="../opts/opts-toolbar.html">configurable</a> and provides quick access to the most used tools. These are also always available in the navigation pane.
+        В Logisim-evolution есть несколько панелей инструментов. Главная панель инструментов является <a href="../opts/opts-toolbar.html">настраиваемой</a> и обеспечивает быстрый доступ к наиболее часто используемым функциям. Эти же инструменты всегда доступны в навигаторе.
       </p>
       <p align="center">
         <img class="notscal" src="../../../../img-guide/tools10.png" alt="#########"><br>
-		 The bar in "Drawing" mode
+        Панель инструментов в режиме «Черчение»
       </p>
       <p align="center">
         <img class="notscal" src="../../../../img-guide/tools11.png" alt="#########"><br>
-		 The bar in "Appearance" mode
+        Панель инструментов в режиме «Внешний вид»
       </p>
       <p>
-        And finally two more bars appear depending on the status of the navigation panel. They are presented below.
+        В зависимости от состояния навигатора также отображаются две дополнительные панели управления (показаны ниже).
       </p>
       <p align="center">
         <img class="notscal" src="../../../../img-guide/tools31.png" alt="#########">&nbsp;&nbsp;<img class="notscal" src="../../../../img-guide/tools32.png" alt="#########">
       </p>
-      <h2 id="tb2">
-        The main toolbar
-      </h2>
+      
+      <h2 id="tb2">Главная панель инструментов</h2>
       <p>
-        This toolbar with two presentations (see above) according to the editing mode chooses "Drawing" or <a href="../subcirc/sub-appear.html#pa1">"Appearance"</a>
+        Внешний вид и набор кнопок на главной панели инструментов зависят от текущего режима редактирования: «Черчение» или <a href="../subcirc/sub-appear.html#pa1">«Внешний вид»</a>.
       </p>
-      <h3>
-        The bar in the mode "drawing"
-      </h3>
+      
+      <h3>Панель в режиме «Черчение»</h3>
       <p>
-        In the "Drawing" mode it is customizable using the <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;Options&nbsp;|</b>menu tab <b class=menu>|&nbsp;Barre&nbsp;d'outils&nbsp;|</b> The configuration is presented by the page on <a href="../opts/opts-toolbar.html">The Toolbar tab.</a> Below we briefly present the default tools in the bar. There are many other components to build circuits. You will find a lot more information about all the tools in the <a href="../../libs/index.html">Library Reference</a>
+        В режиме «Черчение» панель инструментов можно настроить в меню <b class="menu">|&nbsp;Проект&nbsp;|</b>→<b class="menu">|&nbsp;Параметры...&nbsp;|</b> на вкладке <b class="menu">|&nbsp;Панель инструментов&nbsp;|</b> (подробнее см. раздел <a href="../opts/opts-toolbar.html">«Параметры: Панель инструментов»</a>). Ниже приведено краткое описание инструментов, доступных на панели по умолчанию. Более подробную информацию обо всех компонентах вы найдёте в <a href="../../libs/index.html">«Справке по библиотеке»</a>.
       </p>
-      <table class=toolslist>
+      
+      <table class="toolslist">
         <tbody>
           <tr>
-            <td class=toolslist valign="top">
-              <a href="../../libs/base/poke.html"><img class=intxt src="../../../../icons/1616/toolpoke.png" alt="poke" border="1"></a>
+            <td class="toolslist" valign="top">
+              <a href="../tools/poke.html"><img class="intxt" src="../../../../icons/1616/toolpoke.png" alt="Нажатие" border="1"></a>
             </td>
             <td>
-              <strong>Poke tool :</strong> <b class="tkeybd">Ctrl-1</b> This tool allows you to interact with the simulation components. For example if you <q>push</q> on a circuit connection it will switch from one state to another or if <q>push</q> on a cable you can know the value of the signals transported. More information on the link <a href="../../libs/base/poke.html">poke</a> from the library <b class=propertie>base</b>
+              <strong>Инструмент «Нажатие»</strong> (<b class="tkeybd">Ctrl-1</b>): позволяет взаимодействовать с компонентами схемы во время моделирования. Например, клик по входу переключателя изменит его состояние, а клик по проводнику отобразит его текущее значение. Подробнее см. раздел <a href="../tools/poke.html">«Инструмент «Нажатие»</a>.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <a href="../../libs/base/select.html"><img class=intxt src="../../../../img-guide/toolselect.png" alt="#########" border="1"></a>
+            <td class="toolslist" valign="top">
+              <a href="../tools/select.html"><img class="intxt" src="../../../../img-guide/toolselect.png" alt="#########" border="1"></a>
             </td>
             <td>
-              <strong>Selection tool :</strong> <b class="tkeybd">Ctrl-2</b> This tool is particularly useful when designing circuits, it allows to ask, move or select the elements. It is also used to wire the circuit. More information on the link <a href="../../libs/base/select.html">select</a> from the library <b class=propertie>base</b>
+              <strong>Инструмент «Выбор»</strong> (<b class="tkeybd">Ctrl-2</b>): основной инструмент для выделения, перемещения и удаления компонентов, а также для прокладки проводников на схеме. Подробнее см. раздел <a href="../tools/select.html">«Инструмент «Выбор»»</a>.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <a href="../../libs/base/text.html"><img class=intxt src="../../../../img-guide/cabel.png" alt="#########" border="1"></a>
+            <td class="toolslist" valign="top">
+              <a href="../tools/wiring.html"><img class="intxt" src="../../../../img-guide/toolcabel.png" alt="#########" border="1"></a>
             </td>
             <td>
-              <strong>Wiring tool :</strong> <b class="tkeybd">Ctrl-3</b> This tool allows you to place cables on the diagram.
+              <strong>Инструмент разводки</strong> (<b class="tkeybd">Ctrl-3</b>): позволяет вручную прокладывать проводники и шины на схеме. Подробнее см. раздел <a href="../tools/wiring.html">«Инструмент разводки»</a>.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <a href="../../libs/base/text.html"><img class=intxt src="../../../../img-guide/text.png" alt="#########" border="1"></a>
+            <td class="toolslist" valign="top">
+              <a href="../tools/text.html"><img class="intxt" src="../../../../img-guide/tooltext.png" alt="#########" border="1"></a>
             </td>
             <td>
-              <strong>Text Tool :</strong> <b class="tkeybd">Ctrl-4</b> This tool makes it possible to place text on the drawings and to modify the labels of the components. More information on the link <a href="../../libs/base/text.html">Text</a> from the library <b class=propertie>base</b>
+              <strong>Инструмент «Текст»</strong> (<b class="tkeybd">Ctrl-4</b>): используется для добавления текстовых аннотаций на схему и изменения меток компонентов. Подробнее см. раздел <a href="../tools/text.html">«Инструмент «Текст»»</a>.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <a href="../../libs/wiring/pin.html"><img class=intxt src="../../../../img-guide/toolpininput.png" alt="#########" border="1"><img class=intxt src="../../../../icons/1616/toolpinoutput.png" alt="#########" border="1"></a>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/wiring/pin.html"><img class="intxt" src="../../../../img-guide/toolpininput.png" alt="Входной контакт" border="1"><img class="intxt" src="../../../../icons/1616/toolpinoutput.png" alt="Выходной контакт" border="1"></a>
             </td>
             <td>
-              <strong>Pin Tool broche :</strong> <b class="tkeybd">Ctrl-5 / 6</b> This tool makes it possible to place connection pins on the diagram. The connections are of two types: input or output. They are presented in this page <a href="../../libs/wiring/pin.html">Pin</a> from the library <b class=propertie>Wiring</b>
+              <strong>Инструмент «Контакт»</strong> (<b class="tkeybd">Ctrl-5 / 6</b>): позволяет размещать контакты подключения (входы и выходы) на схеме. Подробнее см. раздел <a href="../../libs/wiring/pin.html">«Контакт»</a> библиотеки <b class="propertie">Монтаж</b>.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <a href="../../libs/gates/not.html"><img class=intxt src="../../../../img-guide/notGate.png" alt="notGate" border="1"></a> <a href="../../libs/gates/basic.html"><img class=intxt src="../../../../img-guide/andGate.png" alt="andGate.png" border="1"></a>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/gates/not.html"><img class="intxt" src="../../../../img-guide/toolnotgate.png" alt="НЕ" border="1"></a> <a href="../../libs/gates/basic.html"><img class="intxt" src="../../../../img-guide/toolandgate.png" alt="И" border="1"></a>
             </td>
             <td>
-              <strong>Tools Not,And,Or... :</strong> <b class="tkeybd">Ctrl-7 / 8 / 9 / 0</b> These tools make it possible to place the basic logic gates on the drawing. Logic gates are presented in the <a href="../../libs/gates/index.html">Gates library</a>
+              <strong>Базовые элементы (НЕ, И, ИЛИ...)</strong> (<b class="tkeybd">Ctrl-7 / 8 / 9 / 0</b>): позволяют быстро размещать простейшие логические элементы. Описание элементов приведено в разделе <a href="../../libs/gates/index.html">«Библиотека Элементы»</a>.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/mem/flipflops.html"><img class="intxt" src="../../../../img-guide/tooldflipflop.png" alt="D-триггер" border="1"></a>
+            </td>
+            <td>
+              <strong>Инструмент «D-триггер»</strong>: позволяет разместить D-триггер на схеме. Триггеры описаны в разделе <a href="../../libs/mem/index.html">«Библиотека Память»</a>.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/mem/register.html"><img class="intxt" src="../../../../img-guide/toolregister.png" alt="Регистр" border="1"></a>
+            </td>
+            <td>
+              <strong>Инструмент «Регистр»</strong>: позволяет разместить регистр на схеме. Регистры описаны в разделе <a href="../../libs/mem/index.html">«Библиотека Память»</a>.
             </td>
           </tr>
         </tbody>
       </table>
-      <h3>
-        The bar in mode "Appearance" mode
-      </h3>
+      
+      <h3>Панель в режиме «Внешний вид»</h3>
       <p>
-        In this mode or we can edit the symbol of a sub-circuit. the bar offers drawing tools. You will find a little more information on the use in <a href="../subcirc/sub-appear.html">Editing subcircuit appearance</a>
+        В этом режиме вы можете отредактировать графическое представление (символ) подсхемы. Панель предлагает стандартный набор инструментов рисования. Подробнее см. раздел <a href="../subcirc/sub-appear.html">«Внешний вид подсхемы»</a>.
       </p>
-      <table class=toolslist>
+      
+      <table class="toolslist">
         <tbody>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/toolselect.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/toolselect.png" alt="Выбор" border="1">
             </td>
             <td>
-              <strong>Selection Tool :</strong> Select, move, copy, paste the symbols.
+              <strong>Инструмент «Выбор»:</strong> выделение, перемещение, копирование и вставка графических примитивов.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/text.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooltext.png" alt="Текст" border="1">
             </td>
             <td>
-              <strong>Text Tool :</strong> Insert or edit a text.
+              <strong>Инструмент «Текст»:</strong> вставка и редактирование текстовых надписей на символе.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawline.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawline.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Line Tool :</strong> Creates a line segment.
+              <strong>Инструмент «Линия»:</strong> рисование прямых линий.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawcurv.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawcurv.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Curve tool:</strong> Create a Bezier curve. The first <b class="tkeybd">click</b> and drag specifies the beginning of the line, the second <b class="tkeybd">click</b> and drag ends the line and sets the curvature. A <b class="tkeybd">click</b> on the line shows you the three control points. <b class="tkeybd">Shift</b> and click on central control point impose a symmetrical curve. <b class="tkeybd">Alt click</b> on center point draws the curve through the control point (under the mouse).
+              <strong>Инструмент «Кривая»:</strong> создание кривых Безье. Первый <b class="tkeybd">клик</b> с удержанием задаёт начало линии, второй <b class="tkeybd">клик</b> с удержанием — её конец и изгиб. Клик по готовой линии отображает три управляющие точки. Комбинация <b class="tkeybd">Shift + клик</b> на центральной точке делает кривую симметричной. Комбинация <b class="tkeybd">Alt + клик</b> на центральной точке заставляет кривую проходить непосредственно через эту точку.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawplin.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawplin.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Polylines tool</strong> Creates a sequence of connected lines, each <b class="tkeybd">click</b> starts a new line. A <b class="tkeybd">double-click</b> ends the sequence.
+              <strong>Инструмент «Ломаная линия»:</strong> рисование ломаных линий. Каждый <b class="tkeybd">клик</b> фиксирует новую вершину, а <b class="tkeybd">двойной клик</b> завершает рисование.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawrect.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawrect.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Rectangle tool</strong> Create a rectangle or a square ( <b class="tkeybd">Shift</b> ) by dragging from an angle to the opposite corner.
+              <strong>Инструмент «Прямоугольник»:</strong> рисование прямоугольника или квадрата (при удерживании клавиши <b class="tkeybd">Shift</b>) путём перетаскивания из одного угла в противоположный.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawrrct.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawrrct.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Round Rectangle tool :</strong> Creates a rectangle or square with a rounded edge (<b class="tkeybd">Maj</b>) dragging from an angle to the opposite corner.
+              <strong>Инструмент «Скруглённый прямоугольник»:</strong> создание прямоугольника или квадрата со скруглёнными углами (при удерживании клавиши <b class="tkeybd">Shift</b>).
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawoval.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawoval.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Oval tool</strong> Creates an oval or circle ( <b class="tkeybd">Shift</b> ) by dragging from an angle to the opposite corner.
+              <strong>Инструмент «Овал»:</strong> рисование эллипсов или правильных кругов (при удерживании клавиши <b class="tkeybd">Shift</b>).
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/drawpoly.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawpoly.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Polygon tool</strong> Create a polygon, each <b class="tkeybd">click</b> starts a new face. A <b class="tkeybd">double-click</b> ends the sequence.
-            </td>
-<!--
-          </tr>
-          <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/shownstate.png" alt="#########" border="1">
-            </td>
-            <td>
-              <strong>Outil ?????? :</strong>
-            </td>
-          </tr>
--->
-        </tbody>
-      </table>
-      <h2 id="tb4">
-        The navigation panel tabs toolbar
-      </h2>
-      <p>
-        This toolbar area displays two bars depending on the tabs of the program. The first has four buttons and is displayed when the program is in "drawing" mode. These are shortcuts to some of the menu submenu <a href="../menu/project.html"><b class=menu>|&nbsp;Project&nbsp;|</b></a>.
-      </p>
-      <table class=toolslist>
-        <tbody>
-          <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/projadd.png" alt="#########" border="1">
-            </td>
-            <td>
-              <strong>Add a circuit</strong> : Adds a new crcuit to our projects.
+              <strong>Инструмент «Многоугольник»:</strong> рисование произвольных многоугольников. Каждый <b class="tkeybd">клик</b> добавляет новую грань, а <b class="tkeybd">двойной клик</b> замыкает фигуру.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/projvhdl.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/tooldrawdyncomp.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>VHDL</strong>:Add a new VHDL circuit to our projects.
-            </td>
-          </tr>
-          <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/projup.png" alt="#########" border="1">
-            </td>
-            <td>
-              <strong>Bring up the circuit</strong> in the project hierarchy.
-            </td>
-          </tr>
-          <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/projdown.png" alt="#########" border="1">
-            </td>
-            <td>
-              <strong>Bring down the circuit</strong> in the project hierarchy.
-            </td>
-          </tr>
-          <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/projdesign.png" alt="#########" border="1">
-            </td>
-            <td>
-              <strong>Edition mode</strong>: Toggles from schema mode to appearance edit mode alternately.
-            </td>
-          </tr>
-          <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/projdel.png" alt="#########" border="1">
-            </td>
-            <td>
-              <strong>Deletes a circuit</strong> in the project hierarchy.
+              <strong>Динамические компоненты:</strong> инструмент для размещения динамических компонентов. Щелчок по холсту открывает диалоговое окно для выбора проецируемых индикаторов и органов управления из внутренних схем.
             </td>
           </tr>
         </tbody>
       </table>
+      
+      <h2 id="tb4">Панель управления навигатора</h2>
       <p>
-        The second is displayed when the program is in the simulation tree view. These are shortcuts to some of the menu submenus <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulate&nbsp;|</b></a>
+        В зависимости от выбранного режима отображения в навигаторе (вкладка проекта или вкладка моделирования), здесь выводятся различные наборы кнопок.
       </p>
-      <table class=toolslist>
+      <p>
+        Первая панель отображается в режиме редактирования схемы («Черчение») и содержит кнопки быстрого вызова функций из меню <a href="../menu/project.html"><b class="menu">|&nbsp;Проект&nbsp;|</b></a>:
+      </p>
+      <table class="toolslist">
         <tbody>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/simplay.png" alt="#########" border="1"> 
-			  <img class=intxt src="../../../../img-guide/simplay1.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/projadd.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Enabled/disabled</strong> : <b class="tkeybd">Ctrl-E</b> Enabled/disabled the simulation.
+              <strong>Добавить схему:</strong> добавляет новую схему в текущий проект.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/simstep.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/projvhdl.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Step simulation</strong> : <b class="tkeybd">Ctrl-I</b> Take a step forward in the simulation.
+              <strong>Добавить сущность VHDL:</strong> добавляет новую сущность VHDL в проект.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/simtplay.png" alt="#########" border="1"> 
-			  <img class=intxt src="../../../../img-guide/simtplay1.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/projup.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Activate/deactivate tick</strong> : <b class="tkeybd">Ctrl-K</b> Enable or disable clock operation.
+              <strong>Переместить вверх:</strong> поднимает выбранную схему в иерархии проекта.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/simalfcycle.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/projdown.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Tick once</strong> : <b class="tkeybd">Ctrl-T</b> Advance the clocks of a tick.
+              <strong>Переместить вниз:</strong> опускает выбранную схему в иерархии проекта.
             </td>
           </tr>
           <tr>
-            <td class=toolslist valign="top">
-              <img class=intxt src="../../../../img-guide/simfullcycle.png" alt="#########" border="1">
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/projdesign.png" alt="#########" border="1">
             </td>
             <td>
-              <strong>Tick once</strong> : <b class="tkeybd">F2</b> Advance the simulation of a clock cycle.
+              <strong>Редактировать внешний вид схемы:</strong> переключает вид между редактированием схемы и её внешнего вида.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/projdel.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Удалить схему:</strong> удаляет выбранную схему из проекта.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p>
+        Вторая панель отображается при просмотре дерева моделирования. Эти кнопки дублируют команды из меню <a href="../menu/simulate.html"><b class="menu">|&nbsp;Моделирование&nbsp;|</b></a>:
+      </p>
+      <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/simplay.png" alt="#########" border="1"> 
+              <img class="intxt" src="../../../../img-guide/simplay1.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Моделирование включено</strong> (<b class="tkeybd">Ctrl-E</b>): запускает или приостанавливает моделирование логических уровней схемы.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/simstep.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Один шаг моделирования</strong> (<b class="tkeybd">Ctrl-I</b>): выполняет ровно один шаг распространения сигналов в схеме.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/simtplay.png" alt="#########" border="1"> 
+              <img class="intxt" src="../../../../img-guide/simtplay1.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Генерация тактов</strong> (<b class="tkeybd">Ctrl-K</b>): запускает или останавливает автоматическую генерацию тактовых импульсов.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/simalfcycle.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Выполнить полутакт</strong> (<b class="tkeybd">Ctrl-T</b>): выполняет один полутакт (полупериод) тактового генератора.
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../img-guide/simfullcycle.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Выполнить такт</strong> (<b class="tkeybd">F2</b>): выполняет один полный такт (период) тактового генератора.
             </td>
           </tr>
         </tbody>
       </table>
       <p>
-        You will find more information in <a href="../menu/simulate.html">The Simulate menu</a>
+        Подробнее об этих функциях см. раздел <a href="../menu/simulate.html">«Меню Моделирование»</a>.
       </p>
       <p>
-        <b>Next:</b> <a href="gui-attribut.html">The attribute table</a>.
+        <b>Далее:</b> <a href="gui-attribut.html">Таблица атрибутов</a>.
       </p>
     </div>
   </body>

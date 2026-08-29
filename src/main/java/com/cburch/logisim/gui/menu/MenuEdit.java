@@ -16,6 +16,8 @@ import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.tools.TextEditActions;
+import com.cburch.logisim.tools.TextTool;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -197,6 +199,10 @@ class MenuEdit extends Menu {
     remCtrl.setText(S.get("editRemoveControlItem"));
   }
 
+  void refreshUndoRedoItems() {
+    myListener.projectChanged(null);
+  }
+
   private void populateUndoHistoryMenu() {
     undoHistory.removeAll();
     final var proj = menubar.getSaveProject();
@@ -253,9 +259,24 @@ class MenuEdit extends Menu {
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
       final var proj = menubar.getSaveProject();
+      final var textEditActions = getTextEditActions();
       if (src == undo && proj != null) {
+        if (textEditActions != null) {
+          if (textEditActions.canUndoTextEdit()) {
+            textEditActions.undoTextEdit();
+            refreshAfterTextEditAction(proj);
+          }
+          return;
+        }
         proj.undoAction();
       } else if (src == redo && proj != null) {
+        if (textEditActions != null) {
+          if (textEditActions.canRedoTextEdit()) {
+            textEditActions.redoTextEdit();
+            refreshAfterTextEditAction(proj);
+          }
+          return;
+        }
         proj.redoAction();
       } else if (src == clearHistory && proj != null) {
         final var result = JOptionPane.showConfirmDialog(
@@ -274,6 +295,12 @@ class MenuEdit extends Menu {
     @Override
     public void projectChanged(ProjectEvent e) {
       final var proj = menubar.getSaveProject();
+      final var textEditActions = getTextEditActions();
+      if (textEditActions != null) {
+        updateTextEditUndoRedoItems(proj, textEditActions);
+        return;
+      }
+
       final var last = (proj != null) ? proj.getLastAction() : null;
       if (last == null) {
         undo.setText(S.get("editCantUndoItem"));
@@ -299,6 +326,48 @@ class MenuEdit extends Menu {
 
       final var historyExists = (last != null || canRedo);
       clearHistory.setEnabled(historyExists);
+    }
+
+    private TextEditActions getTextEditActions() {
+      final var proj = menubar.getSaveProject();
+      if (proj != null && proj.getTool() instanceof TextTool textTool) {
+        return textTool.getTextEditActions();
+      }
+      return null;
+    }
+
+    private void refreshAfterTextEditAction(com.cburch.logisim.proj.Project proj) {
+      proj.repaintCanvas();
+      projectChanged(null);
+    }
+
+    private String textEditActionName() {
+      return com.cburch.logisim.tools.Strings.S.get("textTool");
+    }
+
+    private void updateTextEditUndoRedoItems(
+        com.cburch.logisim.proj.Project proj, TextEditActions textEditActions) {
+      if (textEditActions.canUndoTextEdit()) {
+        undo.setText(S.get("editUndoItem", textEditActionName()));
+        undo.setEnabled(true);
+      } else {
+        undo.setText(S.get("editCantUndoItem"));
+        undo.setEnabled(false);
+      }
+      undoHistory.setEnabled(false);
+
+      if (textEditActions.canRedoTextEdit()) {
+        redo.setText(S.get("editRedoItem", textEditActionName()));
+        redo.setEnabled(true);
+      } else {
+        redo.setText(S.get("editCantRedoItem"));
+        redo.setEnabled(false);
+      }
+      redoHistory.setEnabled(false);
+
+      final var projectHistoryExists =
+          proj != null && (proj.getLastAction() != null || proj.getCanRedo());
+      clearHistory.setEnabled(projectHistoryExists);
     }
   }
 }

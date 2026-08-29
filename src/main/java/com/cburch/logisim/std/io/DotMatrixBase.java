@@ -31,6 +31,8 @@ package com.cburch.logisim.std.io;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -60,7 +62,7 @@ import java.util.List;
 
 // TODO repropagate when rows/cols change
 
-public abstract class DotMatrixBase extends InstanceFactory {
+public abstract class DotMatrixBase extends InstanceFactory implements DynamicElementProvider {
   protected static class State implements InstanceData, Cloneable {
     protected int rows;
     protected int cols;
@@ -487,4 +489,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
     }
     instance.setPorts(ps);
   }
+
+  @Override
+  public abstract DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
 }

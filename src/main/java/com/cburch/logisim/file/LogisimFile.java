@@ -26,6 +26,7 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
+import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
@@ -170,7 +171,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (isNameInLibraries(mylib, name)) return true;
     }
     for (final var mytool : this.getCircuits()) {
-      if (name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
+      if (SyntaxChecker.namesEqualForCurrentHdl(name, mytool.getName()) && !mytool.equals(changed))
         return true;
     }
     return false;
@@ -182,7 +183,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (isNameInLibraries(mylib, name)) return true;
     }
     for (final var mytool : lib.getTools()) {
-      if (name.equalsIgnoreCase(mytool.getName())) return true;
+      if (SyntaxChecker.namesEqualForCurrentHdl(name, mytool.getName())) return true;
     }
     return false;
   }
@@ -356,7 +357,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     messages.addLast(msg);
   }
 
-  @SuppressWarnings("resource")
   public LogisimFile cloneLogisimFile(Loader newloader) {
     final var reader = new PipedInputStream();
     final var writer = new PipedOutputStream();
@@ -669,11 +669,19 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     fireEvent(LibraryEvent.SET_NAME, name);
   }
 
+  public static LogisimFile createEmpty(Loader loader) {
+    return new LogisimFile(loader);
+  }
+
   //
   // other methods
   //
-  void write(OutputStream out, LibraryLoader loader) {
+  public void write(OutputStream out, LibraryLoader loader) {
     write(out, loader, null, null, false);
+  }
+
+  public void write(OutputStream out, LibraryLoader loader, File dest) {
+    write(out, loader, dest, null, false);
   }
 
   void write(OutputStream out, LibraryLoader loader, String mainCircFile) {
@@ -696,9 +704,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     } catch (ParserConfigurationException e) {
       loader.showError("internal error configuring parser");
     } catch (TransformerException e) {
+      org.slf4j.LoggerFactory.getLogger(LogisimFile.class).error("XML Transformation Exception during save", e);
       final var msg = e.getMessage();
       var err = S.get("xmlConversionError");
-      if (msg == null) err += ": " + msg;
+      if (msg != null) err += ": " + msg;
       loader.showError(err);
     } catch (IOException e) {
       loader.showError("Unable to create zip file");

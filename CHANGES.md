@@ -3,12 +3,131 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
+  * Added contributor guidance and an online component overview for the TTL library.
+  * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
+    name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
+    the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
+    tapping Shift twice (switchable under Preferences > Window). It is built as a hub over pluggable
+    search providers, so further sources of results can be added without changing the dialog. Its
+    Add provider can select components for placement from the project's open libraries.
+  * Fixed FlatLaf "restricted native access" warning on newer Java versions.
+  * Fixed HDL generator tests failing when the "Use upper case for VHDL keywords" preference is
+    disabled (@MarcinOrlowski)
+  * Improved file merging and export capabilities:
+    * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
+    * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.
+    * Added conflict resolution dialog to replace, rename, or skip conflicting circuits.
+  * Added support for opening project files by dragging them into the application window.
+  * Added a Window menu option to hide or show the navigation pane.
+  * Added configurable shortcuts for selecting the default toolbar tools.
+  * Added ability to load multiple RAM or ROM memories from the command line
+  * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
+  * Added Real-Time Clock component.
+  * Added Floating Point Constant component.
+  * Added FPGA HDL support for the Bit Finder component [#2890] (@hewzhew).
+  * Added 444 RGB (12 bit) color mode to the RGB Video component.
+  * Modified paste behavior to paste at current mouse location if it is on canvas.
+  * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
+  * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
+  * Fixed TTL 7447 BI/RBO port to be an input/output port to allow cascading of blanking mode.
+  * Added TTL 7476: dual J-K Flip-flop with preset and clear.
+  * Added TTL 7493: 4-bit binary ripple counter.
+  * Added TTL 7438: quad dual-input NAND gate, open collector.
+  * Added TTL 74173: 4-bit D-type registers with 3-state outputs.
+  * Improved drawing appearance:
+    * Corrected font choice for default fonts in TikZ image exports.
+    * Corrected disjoint corners on Square Root arithmetic components.
+    * Corrected disjoint corners on unpressed Button components.
+    * Reduced line reordering errors in TikZ/SVG image exports.
+  * Improved dark theme (FlatLaf Dark / Darcula) color synchronization:
+    * Canvas background, grid dots, component outlines, icons, and signal wire
+      colors now adapt to the active theme.
+    * Look and feel switching applies globally to all open windows without requiring
+      a restart.
+    * Fixed gate negation bubbles, K-map text, expression overlines, and splitter
+      bit-range labels to be visible on dark backgrounds.
+    * Replaced hard-coded hex color literals with named `DEFAULT_*`/`DARK_*` constants
+      in class `AppPreferences`.
+  * Added separate light and dark code editor theme preferences for HDL and assembly editors.
+  * Improved Timing Diagram recording and exports:
+    * Corrected vector and GIF exports.
+    * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.
+  * Improved custom circuit appearance editing and dynamic appearance elements:
+    * Circuit attributes are shown when no item is selected.
+    * Dynamic elements preserve nested paths and can display nested Probe/Register values correctly.
+    * Corrected drag selection, selected-object attributes, and automatic switching to custom appearance.
+  * Improved memory and hex editor tools:
+    * Added a go-to-address control to the hex editor.
+    * Limited generated save previews for large memories.
+    * Clarified RAM and Dual Port RAM simulation reset behavior labels.
+    * Corrected memory display layout in exported graphics.
+    * Wide Counter components use compact grouped state rows in evolution appearance.
+    * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
+      line-enable inputs may need to connect those inputs explicitly.
+    * Random Generator now uses xoshiro256++ to produce full-width 64-bit pseudorandom values in
+      simulation and generated HDL.
+  * Added HDL-language-aware label and circuit-name validation: VHDL remains case-insensitive,
+    Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
+  * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
+    ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Fixed output-only Port I/O components being reported as multiple drivers during FPGA netlist
+    generation, and corrected the symmetric input-only endpoint direction [#2537] (@henriquejsza).
+  * Improved project editing stability:
+    * Layout zoom and scroll position are remembered separately for each circuit during a session.
+    * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
+    * Moving components preserves component state.
+    * RAM components continue to notify their circuit of memory changes after being moved [#2873]
+      (@henriquejsza).
+    * Floating subcircuit inputs now propagate floating values.
+    * Nested library tools resolve correctly.
+    * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.
+    * No-op text edits no longer create undo actions.
+  * Improved VHDL editing and simulation UI:
+    * VHDL entity appearance is configured through entity properties.
+    * VHDL code view no longer paints a circuit canvas without a circuit.
+    * VHDL simulator log split pane remains recoverable after being maximized.
+    * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
+    * VHDL co-simulation now analyzes project-local entities in library order and preserves their
+      canonical names for dependency resolution [#1350] (@hewzhew).
+  * Improved command-line output and localization:
+    * Command-line help now honors the selected locale.
+    * Invalid command-line option values now return a nonzero exit status.
+    * Intel/Altera FPGA downloads can select an exact Quartus cable with `--fpga-cable`.
+    * TTY table output includes bit widths in headers.
+    * Localized the Assembly Viewer.
+  * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
+    libraries, wire values, transistor behavior, and unused-library save options.
+  * Added a default text-tool color preference and synchronized string-option preference updates.
+  * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
+  * Added a Github Action check ensuring PRs also provide updated changel(@MarcinOrlowski).
+  * Many other bug fixes.
+
+* v4.1.0 (2026-02-15)
+  * Increased number of components which may be displayed on custom circuit appearances and increased
+    options for existing ones.
+  * Bug fixes:
+    * Fixed more synchronization issues with simulation tree and propagator.
+    * Fixed INOUT port issue in TTL74245.
+    * Fixed several other minor issues.
+  * Enhanced TestVector for sequential circuits. See user's guide for details.
+  * Enhanced Video resolution choices.
+  * Allow more components to show in State (register) tab.
   * Enhanced Undo and Redo functionality:
     * Added "Undo History" dropdown menu to view and select specific undo actions.
     * Added "Redo History" dropdown menu to view and select specific redo actions.
     * Added "Clear Undo/Redo History" menu item with confirmation dialog.
     * Limited undo and redo history to a maximum of 64 actions.
     * Retained standard single-step undo and redo functionality via menu item.
+  * Enhanced Counter component:
+    * Counter state can now be displayed in "State" tab alongside registers.
+    * Counter state can now drive "Assembly viewer" address.
+  * Corrected appearance of OR gates in TikZ/SVG image exports.
+  * Corrected font choice for default fonts in SVG image exports.
+  * Reduced filesize of TikZ/SVG image exports.
+  * Enhanced SoC component labels.
+  * Enhanced Chinese localization.
+  * Added DMA copy engine component (SocDma) in the System On Chip library.
 
 * v4.0.0 (2025-09-07)
   * Updated VHDL and created Verilog generator for RAM component with byte-enables
@@ -73,7 +192,9 @@
   * Added TTL 74541: Octal buffers with three-state outputs
   * Added TTL 74670: 4-by-4 register file with three-state outputs
   * Added 16 bit floating point support for floating point arithmetic
-  * Fixed the problem of keys getting assigned to focusing on the cell of the table in "properties" section along with its actual intent
+  * Added partial support for VHDL time units
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in
+    "properties" section along with its actual intent
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

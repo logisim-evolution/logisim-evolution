@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.PullResistor;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
@@ -751,6 +753,23 @@ public class CircuitWires {
       final var instance = Instance.getInstanceFor(comp);
       b.addPullValue(PullResistor.getPullValue(instance));
     }
+    for (final var comp : components) {
+      if (comp instanceof InstanceComponent instanceComponent) {
+        final Map<Integer, Value> pullPorts = instanceComponent.getPullPorts();
+        if (pullPorts != null) {
+          for (final var portIndex : pullPorts.keySet()) {
+            final var loc = comp.getEnd(portIndex).getLocation();
+            var b = ret.getBundleAt(loc);
+            if (b == null) {
+              b = ret.createBundleAt(loc);
+              b.tempPoints.add(loc);
+              ret.setBundleAt(loc, b);
+            }
+            b.addPullValue(pullPorts.get(portIndex));
+          }
+        }
+      }
+    }
   }
 
   private void connectTunnels(Connectivity ret) {
@@ -887,7 +906,7 @@ public class CircuitWires {
           GraphicsUtil.switchToWidth(g, width);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
         }
-        /* The following part is used by the FPGA-commanders DRC to highlight a wire with DRC
+        /* The following part is used by the FPGA Commander's DRC to highlight a wire with DRC
          * problems (KTT1)
          */
         if (wire.isDrcHighlighted()) {

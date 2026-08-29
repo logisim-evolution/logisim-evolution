@@ -25,6 +25,7 @@ import com.cburch.logisim.gui.main.StatisticsDialog;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -92,7 +93,11 @@ public class MainMenuListener extends MenuListener {
       } else if (src == LogisimMenuBar.SET_MAIN_CIRCUIT) {
         ProjectCircuitActions.doSetAsMainCircuit(proj, cur);
       } else if (src == LogisimMenuBar.REMOVE_CIRCUIT) {
-        ProjectCircuitActions.doRemoveCircuit(proj, cur);
+        if (cur != null) {
+          ProjectCircuitActions.doRemoveCircuit(proj, cur);
+        } else if (proj.getCurrentHdl() != null) {
+          ProjectCircuitActions.doRemoveVhdl(proj, (VhdlContent) proj.getCurrentHdl());
+        }
       } else if (src == LogisimMenuBar.EDIT_LAYOUT) {
         frame.setEditorView(Frame.EDIT_LAYOUT);
       } else if (src == LogisimMenuBar.EDIT_APPEARANCE) {
@@ -123,16 +128,18 @@ public class MainMenuListener extends MenuListener {
       var canMoveDown = false;
       var canRemove = false;
       var canRevert = false;
+      var canToggleAppearance = true;
 
       // is project circuit?
       if (curIndex >= 0) {
-        List<?> tools = proj.getLogisimFile().getTools();
-
-        canSetMain = proj.getLogisimFile().getMainCircuit() != cur;
+        canSetMain = file.getMainCircuit() != cur;
         canMoveUp = curIndex > 0;
-        canMoveDown = curIndex < tools.size() - 1;
-        canRemove = tools.size() > 1;
+        canMoveDown = curIndex < file.getTools().size() - 1;
+        canRemove = file.getCircuits().size() > 1 && proj.getDependencies().canRemove(cur);
         canRevert = viewAppearance && !cur.getAppearance().isDefaultAppearance();
+      } else if (proj.getCurrentHdl() != null) {
+        canRemove = true;
+        canToggleAppearance = false;
       }
 
       menubar.setEnabled(LogisimMenuBar.ADD_CIRCUIT, true);
@@ -144,7 +151,7 @@ public class MainMenuListener extends MenuListener {
       menubar.setEnabled(LogisimMenuBar.REMOVE_CIRCUIT, canRemove);
       menubar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, viewAppearance);
       menubar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, viewLayout);
-      menubar.setEnabled(LogisimMenuBar.TOGGLE_APPEARANCE, true);
+      menubar.setEnabled(LogisimMenuBar.TOGGLE_APPEARANCE, canToggleAppearance);
       menubar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
       menubar.setEnabled(LogisimMenuBar.ANALYZE_CIRCUIT, true);
       menubar.setEnabled(LogisimMenuBar.CIRCUIT_STATS, true);

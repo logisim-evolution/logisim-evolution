@@ -45,6 +45,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   private final HashSet<Byte> outputPorts = new HashSet<>();
   private final HashSet<Byte> inoutPorts = new HashSet<>();
   private final HashSet<Byte> unusedPins = new HashSet<>();
+  private final byte vccPin;
+  private final byte gndPin;
 
   /**
    * @param name         name to display in the center of the TTl
@@ -62,7 +64,42 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    */
   protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
       String[] ttlPortNames, boolean drawGates, int height, HdlGeneratorFactory generator) {
+    this(
+        name,
+        pins,
+        outputPorts,
+        notUsedPins,
+        inoutPorts,
+        ttlPortNames,
+        drawGates,
+        height,
+        pins,
+        (byte) (pins / 2),
+        generator);
+  }
+
+  /**
+   * Creates a TTL package whose power pins are not in the conventional last-pin VCC and midpoint
+   * GND positions.
+   *
+   * <p>The pin numbers are the physical, one-based numbers printed in the component data sheet.
+   */
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      byte[] notUsedPins,
+      byte[] inoutPorts,
+      String[] ttlPortNames,
+      boolean drawGates,
+      int height,
+      byte vccPin,
+      byte gndPin,
+      HdlGeneratorFactory generator) {
     super(name, generator);
+    if (vccPin < 1 || vccPin > pins || gndPin < 1 || gndPin > pins || vccPin == gndPin) {
+      throw new IllegalArgumentException("Invalid TTL power pin mapping");
+    }
     setIconName("ttl.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
@@ -71,6 +108,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
     this.pinNumber = pins;
+    this.vccPin = vccPin;
+    this.gndPin = gndPin;
     if (outputPorts != null) {
       for (final var outPort : outputPorts) {
         this.outputPorts.add(outPort);
@@ -89,6 +128,31 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     portNames = ttlPortNames;
     this.numberOfGatesToDraw = (byte) (drawGates ? this.outputPorts.size() : 0);
     this.height = height;
+  }
+
+  /** See {@link #AbstractTtlGate(String, byte, byte[], byte[], byte[], String[], boolean, int, byte, byte,
+   * HdlGeneratorFactory)}. */
+  protected AbstractTtlGate(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      byte[] notUsedPins,
+      String[] ttlPortNames,
+      byte vccPin,
+      byte gndPin,
+      HdlGeneratorFactory generator) {
+    this(
+        name,
+        pins,
+        outputPorts,
+        notUsedPins,
+        null,
+        ttlPortNames,
+        false,
+        DEFAULT_HEIGHT,
+        vccPin,
+        gndPin,
+        generator);
   }
 
   /** See {@link #AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, byte[] inoutPorts,
@@ -274,8 +338,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       height = bds.getWidth();
     }
     g.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 7));
-    GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
-    GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 7);
+    drawPowerPinLabels(g, xp, yp, width, height, 4, 7, 0, 0);
   }
 
   @Override
@@ -364,20 +427,54 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         xp = x + (width - height) / 2;
         yp = y + (height - width) / 2;
       }
-      if (dir == Direction.SOUTH) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 14, yp + width - PIN_HEIGHT - 8);
-      } else if (dir == Direction.WEST) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 6);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 8);
-      } else if (dir == Direction.NORTH) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 14, yp + PIN_HEIGHT + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 10, yp + width - PIN_HEIGHT - 8);
-      } else { // east
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 10);
-      }
+      final var packageWidth = dir == Direction.NORTH || dir == Direction.SOUTH ? height : width;
+      final var packageHeight = dir == Direction.NORTH || dir == Direction.SOUTH ? width : height;
+      if (dir == Direction.SOUTH)
+        drawPowerPinLabels(g, xp, yp, packageWidth, packageHeight, 4, 8, 0, -4);
+      else if (dir == Direction.WEST)
+        drawPowerPinLabels(g, xp, yp, packageWidth, packageHeight, 6, 8, 0, 0);
+      else if (dir == Direction.NORTH)
+        drawPowerPinLabels(g, xp, yp, packageWidth, packageHeight, 4, 8, 4, 0);
+      else drawPowerPinLabels(g, xp, yp, packageWidth, packageHeight, 4, 10, 0, 0);
     } else paintInternalBase(painter);
+  }
+
+  private void drawPowerPinLabels(
+      Graphics2D g,
+      int x,
+      int y,
+      int width,
+      int height,
+      int upperOffset,
+      int lowerInset,
+      int upperXOffset,
+      int lowerXOffset) {
+    drawPowerPinLabel(
+        g, "Vcc", vccPin, x, y, width, height, upperOffset, lowerInset, upperXOffset, lowerXOffset);
+    drawPowerPinLabel(
+        g, "GND", gndPin, x, y, width, height, upperOffset, lowerInset, upperXOffset, lowerXOffset);
+  }
+
+  private void drawPowerPinLabel(
+      Graphics2D g,
+      String label,
+      byte pin,
+      int x,
+      int y,
+      int width,
+      int height,
+      int upperOffset,
+      int lowerInset,
+      int upperXOffset,
+      int lowerXOffset) {
+    final var isLowerPin = pin <= pinNumber / 2;
+    final var pinX =
+        isLowerPin ? x + (pin - 1) * 20 + 10 : x + (pinNumber - pin) * 20 + 10;
+    GraphicsUtil.drawCenteredText(
+        g,
+        label,
+        pinX + (isLowerPin ? lowerXOffset : upperXOffset),
+        isLowerPin ? y + height - PIN_HEIGHT - lowerInset : y + PIN_HEIGHT + upperOffset);
   }
 
   /**
@@ -428,16 +525,16 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   /** Here you have to write the logic of your component */
   @Override
   public void propagate(InstanceState state) {
-    final var NrOfUnusedPins = unusedPins.size();
+    final var numberOfUnusedPins = unusedPins.size();
+    final var powerPortIndex = this.pinNumber - 2 - numberOfUnusedPins;
     if (state.getAttributeValue(TtlLibrary.VCC_GND)
-        && (state.getPortValue(this.pinNumber - 2 - NrOfUnusedPins) != Value.FALSE
-            || state.getPortValue(this.pinNumber - 1 - NrOfUnusedPins) != Value.TRUE)) {
+        && (state.getPortValue(powerPortIndex) != Value.FALSE
+            || state.getPortValue(powerPortIndex + 1) != Value.TRUE)) {
       var port = 0;
       for (byte i = 1; i <= pinNumber; i++) {
-        if (!unusedPins.contains(i) && (i != (pinNumber / 2))) {
-          if (outputPorts.contains(i)) state.setPort(port, Value.UNKNOWN, 1);
-          port++;
-        }
+        if (unusedPins.contains(i) || i == gndPin || i == vccPin) continue;
+        if (outputPorts.contains(i)) state.setPort(port, Value.UNKNOWN, 1);
+        port++;
       }
     } else propagateTtl(state);
   }
@@ -452,22 +549,22 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     final var width = bds.getWidth();
     final var height = bds.getHeight();
     byte portindex = 0;
-    var isoutput = false;
-    var isinout = false;
-    var hasvccgnd = instance.getAttributeValue(TtlLibrary.VCC_GND);
-    var skip = false;
-    final var NrOfUnusedPins = unusedPins.size();
+    final var hasvccgnd = instance.getAttributeValue(TtlLibrary.VCC_GND);
+    final var numberOfUnusedPins = unusedPins.size();
     /*
-     * array port is composed in this order: lower ports less GND, upper ports less
-     * Vcc, GND, Vcc
+     * Ports follow physical pin order with unused and power pins omitted, followed by GND and VCC
+     * when the explicit power-pin attribute is enabled.
      */
     final var ps =
-        new Port[hasvccgnd ? this.pinNumber - NrOfUnusedPins : this.pinNumber - 2 - NrOfUnusedPins];
+        new Port[
+            hasvccgnd
+                ? this.pinNumber - numberOfUnusedPins
+                : this.pinNumber - 2 - numberOfUnusedPins];
 
     for (byte i = 0; i < this.pinNumber; i++) {
-      isoutput = outputPorts.contains((byte) (i + 1));
-      isinout = inoutPorts.contains((byte) (i + 1));
-      skip = unusedPins.contains((byte) (i + 1));
+      final var physicalPin = (byte) (i + 1);
+      final var isoutput = outputPorts.contains(physicalPin);
+      final var isinout = inoutPorts.contains(physicalPin);
       // set the position
       if (i < this.pinNumber / 2) {
         if (dir == Direction.EAST) {
@@ -499,8 +596,20 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         }
       }
       // Set the port (output/input)
-      if (skip) {
-        portindex--;
+      if (unusedPins.contains(physicalPin)) {
+        continue;
+      } else if (physicalPin == gndPin) {
+        if (hasvccgnd) {
+          ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
+          ps[ps.length - 2].setToolTip(S.getter("GNDPin", Byte.toString(gndPin)));
+        }
+        continue;
+      } else if (physicalPin == vccPin) {
+        if (hasvccgnd) {
+          ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
+          ps[ps.length - 1].setToolTip(S.getter("VCCPin", Byte.toString(vccPin)));
+        }
+        continue;
       } else if (isoutput) { // output port
         ps[portindex] = new Port(dx, dy, Port.OUTPUT, 1);
         if (this.portNames == null || this.portNames.length <= portindex)
@@ -516,23 +625,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           ps[portindex].setToolTip(
               S.getter("ttlInOutTip", (i + 1) + ": " + this.portNames[portindex]));
       } else { // input port
-        if (hasvccgnd && i == this.pinNumber - 1) { // Vcc
-          ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
-          ps[ps.length - 1].setToolTip(S.getter("VCCPin", Integer.toString(this.pinNumber)));
-        } else if (i == this.pinNumber / 2 - 1) { // GND
-          if (hasvccgnd) {
-            ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
-            ps[ps.length - 2].setToolTip(S.getter("GNDPin", Integer.toString(this.pinNumber / 2)));
-          }
-          portindex--;
-        } else if (i != this.pinNumber - 1 && i != this.pinNumber / 2 - 1) { // normal output
-          ps[portindex] = new Port(dx, dy, Port.INPUT, 1);
-          if (this.portNames == null || this.portNames.length <= portindex)
-            ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + (i + 1)));
-          else
-            ps[portindex].setToolTip(
-                S.getter("multiplexerInTip", (i + 1) + ": " + this.portNames[portindex]));
-        }
+        ps[portindex] = new Port(dx, dy, Port.INPUT, 1);
+        if (this.portNames == null || this.portNames.length <= portindex)
+          ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + (i + 1)));
+        else
+          ps[portindex].setToolTip(
+              S.getter("multiplexerInTip", (i + 1) + ": " + this.portNames[portindex]));
       }
       portindex++;
     }

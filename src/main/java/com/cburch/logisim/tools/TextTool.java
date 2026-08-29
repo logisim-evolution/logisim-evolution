@@ -24,15 +24,20 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
+import com.cburch.logisim.proj.JoinedAction;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.util.StringUtil;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class TextTool extends Tool {
+public class TextTool extends Tool implements PropertyChangeListener {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
@@ -68,11 +73,15 @@ public class TextTool extends Tool {
       }
       caret.removeCaretListener(this);
       caretCircuit.removeCircuitListener(this);
+      final var canvas = caretCanvas;
 
       caretCircuit = null;
       caretComponent = null;
       caretCreatingText = false;
       caret = null;
+      caretCanvas = null;
+
+      refreshEditMenu(canvas);
     }
 
     @Override
@@ -83,16 +92,21 @@ public class TextTool extends Tool {
       }
       caret.removeCaretListener(this);
       caretCircuit.removeCircuitListener(this);
+      final var canvas = caretCanvas;
 
       final var val = caret.getText();
       var isEmpty = StringUtil.isNullOrEmpty(val);
       Action a;
-      final var proj = caretCanvas.getProject();
+      final var proj = canvas.getProject();
       if (caretCreatingText) {
         if (!isEmpty) {
           final var xn = new CircuitMutation(caretCircuit);
           xn.add(caretComponent);
           a = xn.toAction(S.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
+          final var editable = (TextEditable) caretComponent.getFeature(TextEditable.class);
+          final var editAction =
+              editable == null ? null : editable.getCommitAction(caretCircuit, e.getOldText(), val);
+          if (editAction != null) a = new JoinedAction(a, editAction);
         } else {
           // don't add the blank text field
           a = null;
@@ -118,8 +132,10 @@ public class TextTool extends Tool {
       caretComponent = null;
       caretCreatingText = false;
       caret = null;
+      caretCanvas = null;
 
       if (a != null) proj.doAction(a);
+      refreshEditMenu(canvas);
     }
   }
 
@@ -135,6 +151,8 @@ public class TextTool extends Tool {
 
   public TextTool() {
     attrs = Text.FACTORY.createAttributeSet();
+    AppPreferences.TEXT_TOOL_COLOR.addPropertyChangeListener(this);
+    attrs.setValue(Text.ATTR_COLOR, new Color(AppPreferences.TEXT_TOOL_COLOR.get()));
   }
 
   @Override
@@ -175,6 +193,10 @@ public class TextTool extends Tool {
     return S.get("textToolDesc");
   }
 
+  public TextEditActions getTextEditActions() {
+    return caret instanceof TextEditActions actions ? actions : null;
+  }
+
   @Override
   public String getDisplayName() {
     return S.get("textTool");
@@ -190,6 +212,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.keyPressed(e);
       canvas.getProject().repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -198,6 +221,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.keyReleased(e);
       canvas.getProject().repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -206,6 +230,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.keyTyped(e);
       canvas.getProject().repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -224,6 +249,7 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.mouseDragged(e);
       proj.repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
@@ -249,6 +275,7 @@ public class TextTool extends Tool {
       if (caret.getBounds(g).contains(e.getX(), e.getY())) { // Yes
         caret.mousePressed(e);
         proj.repaintCanvas();
+        refreshEditMenu(canvas);
         return;
       } else {
         // No. End the current caret.
@@ -313,6 +340,7 @@ public class TextTool extends Tool {
       caretCircuit.addCircuitListener(listener);
     }
     proj.repaintCanvas();
+    refreshEditMenu(canvas);
   }
 
   @Override
@@ -329,11 +357,25 @@ public class TextTool extends Tool {
     if (caret != null) {
       caret.mouseReleased(e);
       proj.repaintCanvas();
+      refreshEditMenu(canvas);
     }
   }
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
     Text.FACTORY.paintIcon(c, x, y, null);
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent event) {
+    if (AppPreferences.TEXT_TOOL_COLOR.isSource(event)) {
+      attrs.setValue(Text.ATTR_COLOR, new Color(AppPreferences.TEXT_TOOL_COLOR.get()));
+    }
+  }
+
+  private void refreshEditMenu(Canvas canvas) {
+    if (canvas == null) return;
+    final var frame = canvas.getProject().getFrame();
+    if (frame != null) frame.computeEditMenuEnabled();
   }
 }

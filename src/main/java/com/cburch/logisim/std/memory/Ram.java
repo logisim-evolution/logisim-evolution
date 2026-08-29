@@ -21,6 +21,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -29,6 +30,8 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.StringGetter;
+
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -49,10 +52,13 @@ public class Ram extends Mem {
       if (label.equals("")) {
         label = null;
       }
-      if (option instanceof Long) {
-        final var disp = S.get("ramComponent");
-        final var loc = state.getInstance().getLocation();
-        return (label == null) ? disp + loc + "[" + option + "]" : label + "[" + option + "]";
+      if (option instanceof Number) {
+        if (label == null) {
+          final var disp = S.get("ramComponent");
+          final var loc = state.getInstance().getLocation();
+          return disp + loc + "[" + option + "]";
+        }
+        return label + "[" + option + "]";
       } else {
         return label;
       }
@@ -84,9 +90,9 @@ public class Ram extends Mem {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Long addr) {
+      if (option instanceof Number addr) {
         final var memState = (MemState) state.getData();
-        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr));
+        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr.longValue()));
       } else {
         return Value.NIL;
       }
@@ -96,8 +102,15 @@ public class Ram extends Mem {
   private static final Object[][] logOptions = new Object[9][];
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
+  public Ram(String name,
+          StringGetter desc,
+          HdlGeneratorFactory generator,
+          boolean needsLabel) {
+    super(name, desc, generator, needsLabel);
+  }
+  
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
+    super(_ID, S.getter("ramComponent"), new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }
@@ -174,10 +187,6 @@ public class Ram extends Mem {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return RamAppearance.getBounds(attrs);
-  }
-
-  public MemContents getContents(InstanceState ramState) {
-    return getState(ramState).getContents();
   }
 
   @Override
@@ -281,7 +290,7 @@ public class Ram extends Mem {
       for (var i = 0; i < dataLines; i++) {
         if (dataLines > 1) {
           final var le = state.getPortValue(RamAppearance.getLEIndex(i, attrs));
-          if (le != null && le.equals(Value.FALSE))
+          if (!Value.TRUE.equals(le))
             continue;
         }
         long dataValue = state.getPortValue(RamAppearance.getDataInIndex(i, attrs)).toLongValue();
@@ -291,7 +300,8 @@ public class Ram extends Mem {
 
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
+    final var outputEnabled = separate  
+        || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {
         long val = myState.getContents().get(addr + i);
@@ -346,13 +356,12 @@ public class Ram extends Mem {
 
     Consumer<Value> setValue = (Value value) -> state.setPort(RamAppearance.getDataOutIndex(0, attrs), value, DELAY);
 
-    if (!separate && outputNotEnabled) {
-      /* put the bus in tri-state in case of a combined bus and no output enable */
-      setValue.accept(Value.createUnknown(dataBits));
+    if (outputNotEnabled) {
+      if (!separate || RamAttributes.hasControlledOutput(attrs)) {
+        setValue.accept(Value.createUnknown(dataBits));
+      }
       return;
     }
-    /* if the OE is not activated return */
-    if (outputNotEnabled) return;
 
     /* if the address is bogus set error value accordingly */
 
@@ -388,7 +397,7 @@ public class Ram extends Mem {
 
   public static boolean isSeparate(AttributeSet attrs) {
     Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
-    return bus == null || bus.equals(RamAttributes.BUS_SEP);
+    return RamAttributes.isSeparateDataBus(bus);
   }
 
   @Override

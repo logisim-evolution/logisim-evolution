@@ -22,7 +22,6 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.Tool;
-import com.cburch.logisim.util.InputEventUtil;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,14 +34,12 @@ import java.util.List;
 import java.util.Objects;
 
 class LayoutToolbarModel extends AbstractToolbarModel {
-  private final Frame frame;
   private final Project proj;
   private final MyListener myListener;
   private List<ToolbarItem> items;
   private Tool haloedTool;
 
-  public LayoutToolbarModel(Frame frame, Project proj) {
-    this.frame = frame;
+  public LayoutToolbarModel(Project proj) {
     this.proj = proj;
     myListener = new MyListener();
     items = Collections.emptyList();
@@ -193,10 +190,11 @@ class LayoutToolbarModel extends AbstractToolbarModel {
         if (item == this) break;
         if (item instanceof ToolItem) ++index;
       }
-      if (index <= 10) {
-        if (index == 10) index = 0;
-        final var mask = frame.getToolkit().getMenuShortcutKeyMaskEx();
-        ret += " (" + InputEventUtil.toKeyDisplayString(mask) + "-" + index + ")";
+      if (index <= KeyboardToolSelection.TOOL_SELECTION_COUNT) {
+        final var hotkey = KeyboardToolSelection.getHotkeyDisplayString(index - 1);
+        if (!hotkey.isEmpty()) {
+          ret += " (" + hotkey + ")";
+        }
       }
       return ret;
     }

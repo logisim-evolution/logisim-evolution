@@ -20,6 +20,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
@@ -100,13 +101,15 @@ public class DefaultEvolutionAppearance {
     final var ret = new ArrayList<CanvasObject>();
     placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, fixedSize);
     placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, fixedSize);
+    final var compColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     var rect = new Rectangle(rx + 10, ry + height - thight, width - 20, thight);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-    rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
+    rect.setValue(DrawAttr.FILL_COLOR, compColor);
     ret.add(rect);
     rect = new Rectangle(rx + 10, ry, width - 20, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
+    rect.setValue(DrawAttr.STROKE_COLOR, compColor);
     ret.add(rect);
     var label = circuitName == null ? "VHDL Component" : circuitName;
     final var maxLength = 23;
@@ -117,7 +120,7 @@ public class DefaultEvolutionAppearance {
     final var textLabel =
         new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), label);
     textLabel.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
-    textLabel.getLabel().setColor(Color.WHITE);
+    textLabel.getLabel().setColor(new Color(0xFFFFFF ^ AppPreferences.COMPONENT_COLOR.get()));
     textLabel.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
     ret.add(textLabel);
     ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay, true)));
@@ -135,7 +138,7 @@ public class DefaultEvolutionAppearance {
       int ldy,
       boolean isFixedSize) {
     int hAlign;
-    final var color = Color.DARK_GRAY;
+    final var color = new Color(AppPreferences.COMPONENT_COLOR.get());
     int ldX;
     for (final var pin : pins) {
       final var offset =
@@ -156,7 +159,7 @@ public class DefaultEvolutionAppearance {
       }
       rect.setValue(DrawAttr.STROKE_WIDTH, 1);
       rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-      rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
+      rect.setValue(DrawAttr.FILL_COLOR, color);
       dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y, true), pin));
       final var isClockPin = Pin.FACTORY.isClockPin(pin);

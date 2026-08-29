@@ -11,9 +11,12 @@ package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
-import com.cburch.logisim.gui.generic.ProjectExplorer;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.ColorUtil;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -22,6 +25,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
   private static final long serialVersionUID = 1L;
+  private static final String CURRENT_VIEW_SUFFIX = " ●";
+  private int preferredWidthAdjustment;
 
   @Override
   public Component getTreeCellRendererComponent(
@@ -32,18 +37,47 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
       boolean leaf,
       int row,
       boolean hasFocus) {
+    preferredWidthAdjustment = 0;
     Component ret =
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
     final var model = (SimulationTreeModel) tree.getModel();
     if (ret instanceof JLabel label) {
       if (value instanceof SimulationTreeNode node) {
+        final var viewed = node.isCurrentView(model);
         final var factory = node.getComponentFactory();
         if (factory != null) {
-          label.setIcon(new RendererIcon(factory, node.isCurrentView(model)));
+          label.setIcon(new RendererIcon(factory, viewed));
+        }
+
+        final var baseFont = tree.getFont() != null ? tree.getFont() : label.getFont();
+        final var plainFont = AppPreferences.getScaledFont(baseFont);
+        final var boldFont = plainFont.deriveFont(Font.BOLD);
+
+        label.setFont(viewed ? boldFont : plainFont);
+        if (viewed) {
+          label.setText(node.toString() + CURRENT_VIEW_SUFFIX);
+          label.setForeground(ColorUtil.getThemeAccentColor());
+        } else {
+          final var plainTextWidth = label.getFontMetrics(plainFont).stringWidth(label.getText());
+          final var currentViewTextWidth =
+              label
+                  .getFontMetrics(boldFont)
+                  .stringWidth(node.toString() + CURRENT_VIEW_SUFFIX);
+          preferredWidthAdjustment = Math.max(0, currentViewTextWidth - plainTextWidth);
+          label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
         }
       }
     }
     return ret;
+  }
+
+  @Override
+  public Dimension getPreferredSize() {
+    final var size = super.getPreferredSize();
+    if (size == null || preferredWidthAdjustment == 0) {
+      return size;
+    }
+    return new Dimension(size.width + preferredWidthAdjustment, size.height);
   }
 
   private static class RendererIcon implements Icon {
@@ -76,9 +110,9 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
         final var ty = y + 13;
         int[] xp = {tx - 1, x + 18, x + 20, tx + 1};
         int[] yp = {ty + 1, y + 20, y + 18, ty - 1};
-        g.setColor(ProjectExplorer.MAGNIFYING_INTERIOR);
+        g.setColor(ColorUtil.getMagnifyingInterior(c));
         g.fillOval(x + 5, y + 5, 10, 10);
-        g.setColor(Color.BLACK);
+        g.setColor(ColorUtil.getThemeAccentColor());
         g.drawOval(x + 5, y + 5, 10, 10);
         g.fillPolygon(xp, yp, xp.length);
       }

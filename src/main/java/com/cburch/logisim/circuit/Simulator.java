@@ -133,6 +133,7 @@ public class Simulator {
     private Condition simStateUpdated = simStateLock.newCondition();
     // NOTE: These variables must only be accessed with lock held.
     private Propagator propagator = null;
+    private ArrayList<TestVectorEvaluator> requestedTestVectors = null;
     private boolean autoPropagating = true;
     private boolean autoTicking = false;
     private double autoTickFreq = 1.0; // Hz
@@ -156,6 +157,7 @@ public class Simulator {
     // the repaining thread. They can be read without locks as they do not need
     // to be kept consistent with other variables.
     private volatile boolean exceptionEncountered = false;
+    private volatile String exceptionMessage = null;
     private volatile boolean oscillating = false;
 
     // This last one should be made thread-safe, but it isn't for now.
@@ -204,19 +206,37 @@ public class Simulator {
       }
     }
 
+    void updatePendingInputs(CircuitState state, ReplacementMap replacements) {
+      stepPoints.updatePendingInputs(state, replacements);
+    }
+
     synchronized String getSingleStepMessage() {
       return autoPropagatingUnsynchronized ? "" : stepPoints.getSingleStepMessage();
+    }
+
+    private static String describeException(Throwable err) {
+      final var message = err.getLocalizedMessage();
+      return message == null || message.isBlank() ? err.getClass().getSimpleName() : message;
+    }
+
+    private void recordException(Throwable err) {
+      if (exceptionMessage == null || exceptionMessage.isBlank()) {
+        exceptionMessage = describeException(err);
+      }
+      err.printStackTrace();
     }
 
     boolean setPropagator(Propagator prop) {
       var smoothFactor = 1;
       if (prop != null) {
         final var opts = prop.getRootState().getProject().getOptions();
-        //smoothFactor = opts.getAttributeSet().getValue(Options.ATTR_SIM_SMOOTH); #TODO: implement smooth factor
+        // smoothFactor = opts.getAttributeSet().getValue(Options.ATTR_SIM_SMOOTH); #TODO: implement smooth factor
         if (smoothFactor < 1) {
           smoothFactor = 1;
         }
       }
+      final var newRootCircuit = prop == null ? null : prop.getRootState().getCircuit();
+      final var newFrequency = newRootCircuit == null ? -1 : newRootCircuit.getTickFrequency();
       simStateLock.lock();
       try {
         if (propagator == prop) {
@@ -227,6 +247,7 @@ public class Simulator {
         smoothingFactor = smoothFactor;
         manualTicksRequested = 0;
         manualStepsRequested = 0;
+        if (newFrequency > 0) setTickFrequency(newFrequency); // simStateLock is reentrant so this works here.
         if (Thread.currentThread() != this) {
           simStateUpdated.signalAll();
         }
@@ -350,6 +371,21 @@ public class Simulator {
       }
     }
 
+    void requestShowTestVector(TestVectorEvaluator evaluator) {
+      simStateLock.lock();
+      try {
+        if (requestedTestVectors == null) {
+          requestedTestVectors = new ArrayList<TestVectorEvaluator>();
+        }
+        requestedTestVectors.add(evaluator);
+        if (Thread.currentThread() != this) {
+          simStateUpdated.signalAll();
+        }
+      } finally {
+        simStateLock.unlock();
+      }
+    }
+
     void requestShutDown() {
       simStateLock.lock();
       try {
@@ -365,6 +401,7 @@ public class Simulator {
     private boolean loop() {
 
       Propagator prop = null;
+      ArrayList<TestVectorEvaluator> testVectors = null;
       var doReset = false;
       var doNudge = false;
       var doTick = false;
@@ -385,7 +422,11 @@ public class Simulator {
           prop = propagator;
           now = System.nanoTime();
 
-          if (resetRequested) {
+          if (requestedTestVectors != null) {
+            testVectors = requestedTestVectors;
+            requestedTestVectors = null;
+            ready = true;
+          } else if (resetRequested) {
             resetRequested = false;
             doReset = true;
             doProp = autoPropagating;
@@ -461,6 +502,7 @@ public class Simulator {
       // doStep);
 
       exceptionEncountered = false;
+      exceptionMessage = null;
 
       var oops = false;
       var osc = false;
@@ -468,6 +510,18 @@ public class Simulator {
       var stepped = false;
       var propagated = false;
       var hasClocks = true;
+
+      if (testVectors != null  && !testVectors.isEmpty()) {
+        try {
+          for (final var evaluator : testVectors) {
+            evaluator.evaluate();
+          }
+          propagated = true;
+        } catch (Exception err) {
+          oops = true;
+          recordException(err);
+        }
+      }
 
       if (doReset) {
         try {
@@ -478,7 +532,7 @@ public class Simulator {
           sim.fireSimulatorReset();
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -501,7 +555,7 @@ public class Simulator {
           }
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -517,7 +571,7 @@ public class Simulator {
           }
         } catch (Exception err) {
           oops = true;
-          err.printStackTrace();
+          recordException(err);
         }
       }
 
@@ -565,7 +619,7 @@ public class Simulator {
             return;
           }
         } catch (Throwable e) {
-          e.printStackTrace();
+          recordException(e);
           exceptionEncountered = true;
           simStateLock.lock();
           try {
@@ -683,6 +737,10 @@ public class Simulator {
     simThread.addPendingInput(state, comp);
   }
 
+  void updatePendingInputs(CircuitState state, ReplacementMap replacements) {
+    simThread.updatePendingInputs(state, replacements);
+  }
+
   private ArrayList<StatusListener> copyStatusListeners() {
     ArrayList<StatusListener> copy;
     synchronized (lock) {
@@ -742,6 +800,10 @@ public class Simulator {
     return simThread.exceptionEncountered;
   }
 
+  public String getExceptionMessage() {
+    return simThread.exceptionMessage;
+  }
+
   public boolean isOscillating() {
     return simThread.oscillating;
   }
@@ -775,12 +837,16 @@ public class Simulator {
 
   public void setTickFrequency(double freq) {
     if (simThread.setTickFrequency(freq)) {
-      final var propagator = simThread.getPropagatorUnsynchronized(); 
+      final var propagator = simThread.getPropagatorUnsynchronized();
       if (propagator != null) {
         propagator.getRootState().getCircuit().setTickFrequency(freq);
       }
       fireSimulatorStateChanged();
     }
+  }
+
+  public void showTestVector(TestVectorEvaluator evaluator) {
+    simThread.requestShowTestVector(evaluator);
   }
 
   public void step() {

@@ -432,7 +432,6 @@ class MinimizedTab extends AnalyzerTab {
     ((NotationModel) notationChoice.getModel()).localeChanged();
   }
 
-  @SuppressWarnings("serial")
   @Override
   void updateTab() {
     final var output = getCurrentVariable();

@@ -13,7 +13,9 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.tools.Caret;
 import com.cburch.logisim.tools.CaretEvent;
 import com.cburch.logisim.tools.CaretListener;
+import com.cburch.logisim.tools.TextEditActions;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -22,26 +24,38 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 
-class TextFieldCaret implements Caret, TextFieldListener {
+class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
 
   public static final Color EDIT_BACKGROUND = new Color(0xff, 0xff, 0x99);
   public static final Color EDIT_BORDER = Color.DARK_GRAY;
   public static final Color SELECTION_BACKGROUND = new Color(0x99, 0xcc, 0xff);
 
   private final LinkedList<CaretListener> listeners = new LinkedList<>();
+  private final Deque<EditState> redoStack = new ArrayDeque<>();
+  private final Deque<EditState> undoStack = new ArrayDeque<>();
   private final TextField field;
   private final Graphics g;
+  private final boolean metaMenuShortcutEnabled;
   private String oldText;
   private String curText;
   private int pos;
   private int end;
 
+  private record EditState(String text, int pos, int end) {}
+
   public TextFieldCaret(TextField field, Graphics g, int pos) {
+    this(field, g, pos, MacCompatibility.isRunningOnMac());
+  }
+
+  TextFieldCaret(TextField field, Graphics g, int pos, boolean metaMenuShortcutEnabled) {
     this.field = field;
     this.g = g;
+    this.metaMenuShortcutEnabled = metaMenuShortcutEnabled;
     this.oldText = field.getText();
     this.curText = field.getText();
     this.pos = pos;
@@ -77,6 +91,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     curText = text;
     pos = curText.length();
     end = pos;
+    clearEditHistory();
     field.setText(text);
   }
 
@@ -98,9 +113,11 @@ class TextFieldCaret implements Caret, TextFieldListener {
     // draw selection
     if (pos != end) {
       g.setColor(SELECTION_BACKGROUND);
-      final var p = GraphicsUtil.getTextCursor(g, curText, x, y, Math.min(pos, end), halign, valign);
-      final var e = GraphicsUtil.getTextCursor(g, curText, x, y, Math.max(pos, end), halign, valign);
-      g.fillRect(p.x, p.y - 1, e.x - p.x + 1, e.height + 2);
+      for (final var selection :
+          GraphicsUtil.getTextSelectionBounds(g, curText, x, y, pos, end, halign, valign)) {
+        g.fillRect(
+            selection.x, selection.y - 1, selection.width + 1, selection.height + 2);
+      }
     }
 
     // draw text
@@ -132,13 +149,16 @@ class TextFieldCaret implements Caret, TextFieldListener {
 
   @Override
   public void keyPressed(KeyEvent e) {
-    final var ign = InputEvent.ALT_DOWN_MASK | InputEvent.META_DOWN_MASK;
-    if ((e.getModifiersEx() & ign) != 0) return;
+    if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0) return;
     final var shift = ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
     final var ctrl = ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0);
-    arrowKeyMaybePressed(e, shift, ctrl);
+    final var meta = ((e.getModifiersEx() & InputEvent.META_DOWN_MASK) != 0);
+    final var metaMenuShortcut = metaMenuShortcutEnabled && meta;
+    if (meta && !metaMenuShortcut) return;
+    final var menuShortcut = ctrl || metaMenuShortcut;
+    if (!metaMenuShortcut) arrowKeyMaybePressed(e, shift, ctrl);
     if (e.isConsumed()) return;
-    if (ctrl)
+    if (menuShortcut)
       controlKeyPressed(e, shift);
     else
       normalKeyPressed(e, shift);
@@ -159,9 +179,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
     if (!shift) normalizeSelection();
 
     if (dy < 0) {
-      pos = 0;
+      pos = field.isMultiline() ? adjacentLinePosition(pos, -1) : 0;
     } else if (dy > 0) {
-      pos = curText.length();
+      pos = field.isMultiline() ? adjacentLinePosition(pos, 1) : curText.length();
     } else if (pos + dx >= 0 && pos + dx <= curText.length()) {
       if (!shift && pos != end) {
         if (dx < 0) end = pos;
@@ -177,58 +197,37 @@ class TextFieldCaret implements Caret, TextFieldListener {
 
   @SuppressWarnings("fallthrough")
   protected void controlKeyPressed(KeyEvent e, boolean shift) {
-    var cut = false;
     switch (e.getKeyCode()) {
       case KeyEvent.VK_A:
-        pos = 0;
-        end = curText.length();
+        selectAll();
         e.consume();
         break;
       case KeyEvent.VK_CUT:
       case KeyEvent.VK_X:
-        cut = true;
-        // fall through
+        cut();
+        e.consume();
+        break;
       case KeyEvent.VK_COPY:
       case KeyEvent.VK_C:
-        if (end != pos) {
-          final var pp = (Math.min(pos, end));
-          final var ee = (Math.max(pos, end));
-          final var s = curText.substring(pp, ee);
-          final var sel = new StringSelection(s);
-          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
-          if (cut) {
-            normalizeSelection();
-            curText =
-                curText.substring(0, pos) + (end < curText.length() ? curText.substring(end) : "");
-            end = pos;
-          }
-        }
+        copy();
         e.consume();
         break;
       case KeyEvent.VK_INSERT:
       case KeyEvent.VK_PASTE:
       case KeyEvent.VK_V:
-        try {
-          String s =
-              (String)
-                  Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-          var lastWasSpace = false;
-          for (var i = 0; i < s.length(); i++) {
-            var c = s.charAt(i);
-            if (!allowedCharacter(c)) {
-              if (lastWasSpace) continue;
-              c = ' ';
-            }
-            lastWasSpace = (c == ' ');
-            normalizeSelection();
-            curText = (end < curText.length())
-                    ? curText.substring(0, pos) + c + curText.substring(end)
-                    : curText.substring(0, pos) + c;
-            ++pos;
-            end = pos;
-          }
-        } catch (Exception ignored) {
+        paste();
+        e.consume();
+        break;
+      case KeyEvent.VK_Z:
+        if (shift) {
+          redoTextEdit();
+        } else {
+          undoTextEdit();
         }
+        e.consume();
+        break;
+      case KeyEvent.VK_Y:
+        redoTextEdit();
         e.consume();
         break;
       default:// ignore
@@ -254,14 +253,14 @@ class TextFieldCaret implements Caret, TextFieldListener {
         e.consume();
       }
       case KeyEvent.VK_HOME -> {
-        pos = 0;
+        pos = field.isMultiline() && !ctrl ? lineStart(pos) : 0;
         if (!shift) {
           end = pos;
         }
         e.consume();
       }
       case KeyEvent.VK_END -> {
-        pos = curText.length();
+        pos = field.isMultiline() && !ctrl ? lineEnd(pos) : curText.length();
         if (!shift) {
           end = pos;
         }
@@ -274,28 +273,38 @@ class TextFieldCaret implements Caret, TextFieldListener {
     switch (e.getKeyCode()) {
       case KeyEvent.VK_ESCAPE, KeyEvent.VK_CANCEL -> cancelEditing();
       case KeyEvent.VK_CLEAR -> {
-        curText = "";
-        end = pos = 0;
+        if (!curText.isEmpty()) {
+          rememberEdit();
+          curText = "";
+          end = pos = 0;
+        }
       }
-      case KeyEvent.VK_ENTER -> stopEditing();
+      case KeyEvent.VK_ENTER -> {
+        if (field.isMultiline() && shift) {
+          rememberEdit();
+          replaceSelection("\n");
+        } else {
+          stopEditing();
+        }
+        e.consume();
+      }
       case KeyEvent.VK_BACK_SPACE -> {
-        normalizeSelection();
         if (pos != end) {
-          curText = curText.substring(0, pos) + curText.substring(end);
-          end = pos;
+          rememberEdit();
+          deleteSelection();
         } else if (pos > 0) {
+          rememberEdit();
           curText = curText.substring(0, pos - 1) + curText.substring(pos);
           --pos;
           end = pos;
         }
       }
       case KeyEvent.VK_DELETE -> {
-        normalizeSelection();
         if (pos != end) {
-          curText =
-              curText.substring(0, pos) + (end < curText.length() ? curText.substring(end) : "");
-          end = pos;
+          rememberEdit();
+          deleteSelection();
         } else if (pos < curText.length()) {
+          rememberEdit();
           curText = curText.substring(0, pos) + curText.substring(pos + 1);
         }
       }
@@ -312,17 +321,171 @@ class TextFieldCaret implements Caret, TextFieldListener {
 
     final var c = e.getKeyChar();
     if (allowedCharacter(c)) {
-      normalizeSelection();
-      if (end < curText.length()) {
-        curText = curText.substring(0, pos) + c + curText.substring(end);
-      } else {
-        curText = curText.substring(0, pos) + c;
-      }
-      ++pos;
-      end = pos;
-    } else if (c == '\n') {
+      rememberEdit();
+      replaceSelection(String.valueOf(c));
+    } else if (c == '\n' && !(field.isMultiline() && e.isShiftDown())) {
       stopEditing();
     }
+  }
+
+  private void clearEditHistory() {
+    redoStack.clear();
+    undoStack.clear();
+  }
+
+  @Override
+  public boolean canCopy() {
+    return pos != end;
+  }
+
+  @Override
+  public boolean canCut() {
+    return canCopy();
+  }
+
+  @Override
+  public boolean canPaste() {
+    try {
+      return Toolkit.getDefaultToolkit()
+          .getSystemClipboard()
+          .isDataFlavorAvailable(DataFlavor.stringFlavor);
+    } catch (Exception ignored) {
+      return false;
+    }
+  }
+
+  @Override
+  public boolean canRedoTextEdit() {
+    return !redoStack.isEmpty();
+  }
+
+  @Override
+  public boolean canSelectAll() {
+    return !curText.isEmpty();
+  }
+
+  @Override
+  public boolean canUndoTextEdit() {
+    return !undoStack.isEmpty();
+  }
+
+  @Override
+  public void copy() {
+    if (!canCopy()) return;
+    final var selection = getSelectedText();
+    Toolkit.getDefaultToolkit()
+        .getSystemClipboard()
+        .setContents(new StringSelection(selection), null);
+  }
+
+  @Override
+  public void cut() {
+    if (!canCut()) return;
+    copy();
+    rememberEdit();
+    deleteSelection();
+  }
+
+  private EditState currentEditState() {
+    return new EditState(curText, pos, end);
+  }
+
+  private void deleteSelection() {
+    normalizeSelection();
+    curText = curText.substring(0, pos) + (end < curText.length() ? curText.substring(end) : "");
+    end = pos;
+  }
+
+  private String getSelectedText() {
+    final var pp = Math.min(pos, end);
+    final var ee = Math.max(pos, end);
+    return curText.substring(pp, ee);
+  }
+
+  String normalizePastedText(String s) {
+    final var result = new StringBuilder();
+    var lastWasSpace = false;
+    for (var i = 0; i < s.length(); i++) {
+      var c = s.charAt(i);
+      if (field.isMultiline() && (c == '\r' || c == '\n')) {
+        if (c == '\r' && i + 1 < s.length() && s.charAt(i + 1) == '\n') i++;
+        result.append('\n');
+        lastWasSpace = false;
+        continue;
+      }
+      if (!allowedCharacter(c)) {
+        if (lastWasSpace) continue;
+        c = ' ';
+      }
+      lastWasSpace = (c == ' ');
+      result.append(c);
+    }
+    return result.toString();
+  }
+
+  private void redoEdit() {
+    if (redoStack.isEmpty()) return;
+    undoStack.push(currentEditState());
+    restoreEditState(redoStack.pop());
+  }
+
+  @Override
+  public void redoTextEdit() {
+    redoEdit();
+  }
+
+  private void rememberEdit() {
+    undoStack.push(currentEditState());
+    redoStack.clear();
+  }
+
+  private void replaceSelection(String replacement) {
+    normalizeSelection();
+    curText =
+        (end < curText.length())
+            ? curText.substring(0, pos) + replacement + curText.substring(end)
+            : curText.substring(0, pos) + replacement;
+    pos += replacement.length();
+    end = pos;
+  }
+
+  private void restoreEditState(EditState state) {
+    curText = state.text();
+    pos = state.pos();
+    end = state.end();
+  }
+
+  @Override
+  public void paste() {
+    try {
+      String s =
+          (String)
+              Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+      final var replacement = normalizePastedText(s);
+      if (!replacement.isEmpty()) {
+        rememberEdit();
+        replaceSelection(replacement);
+      }
+    } catch (Exception ignored) {
+      // no text available from clipboard
+    }
+  }
+
+  @Override
+  public void selectAll() {
+    pos = 0;
+    end = curText.length();
+  }
+
+  private void undoEdit() {
+    if (undoStack.isEmpty()) return;
+    redoStack.push(currentEditState());
+    restoreEditState(undoStack.pop());
+  }
+
+  @Override
+  public void undoTextEdit() {
+    undoEdit();
   }
 
   protected void normalizeSelection() {
@@ -331,6 +494,30 @@ class TextFieldCaret implements Caret, TextFieldListener {
       end = pos;
       pos = t;
     }
+  }
+
+  private int adjacentLinePosition(int offset, int direction) {
+    final var start = lineStart(offset);
+    final var column = offset - start;
+    if (direction < 0) {
+      if (start == 0) return offset;
+      final var previousEnd = start - 1;
+      final var previousStart = lineStart(previousEnd);
+      return previousStart + Math.min(column, previousEnd - previousStart);
+    }
+    final var endOfLine = lineEnd(offset);
+    if (endOfLine == curText.length()) return offset;
+    final var nextStart = endOfLine + 1;
+    return nextStart + Math.min(column, lineEnd(nextStart) - nextStart);
+  }
+
+  private int lineEnd(int offset) {
+    final var newline = curText.indexOf('\n', offset);
+    return newline < 0 ? curText.length() : newline;
+  }
+
+  private int lineStart(int offset) {
+    return offset <= 0 ? 0 : curText.lastIndexOf('\n', offset - 1) + 1;
   }
 
   @Override
@@ -364,7 +551,6 @@ class TextFieldCaret implements Caret, TextFieldListener {
   @Override
   public void stopEditing() {
     final var e = new CaretEvent(this, oldText, curText);
-    field.setText(curText);
     for (final var l : new ArrayList<>(listeners)) {
       l.editingStopped(e);
     }
@@ -377,5 +563,6 @@ class TextFieldCaret implements Caret, TextFieldListener {
     oldText = curText;
     pos = curText.length();
     end = pos;
+    clearEditHistory();
   }
 }

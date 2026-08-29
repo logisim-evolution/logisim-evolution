@@ -44,10 +44,10 @@
         From a technical point of view, it is relatively easy to deal with this level of sophistication in a single circuit. Dealing with gate delays well across subcircuits, though, is a bit more complex; Logisim does attempt to address this correctly by placing all primitive component's propagation values into a single schedule regardless of the subcircuit in which the component lies.
       </p>
       <p>
-        Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation tab</a>, you can configure Logisim to add a random, occasional delay to a component's propagation. This is intended to simulate the unevenness of real circuits. In particular, an R-S latch built using two NOR gates will oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is disabled by default.
+        Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation tab</a>, you can configure Logisim to add a random, occasional delay to a component's propagation. This is intended to expose circuits that are sensitive to propagation-order changes, such as races or asynchronous feedback. In particular, an R-S latch built using two NOR gates will oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is disabled by default.
       </p>
       <p>
-        Note that I'm stopping short of saying that Logisim always addresses gate delays well. But at least it tries.
+        Note that I'm stopping short of saying that Logisim always addresses gate delays well. Randomized delays remain part of Logisim's simplified propagation model; they are not a substitute for timing-aware HDL simulation or circuit-level simulation when a design relies on specific gate delays.
       </p>
       <p>
         <b>Next:</b> <a href="oscillate.html">Oscillation errors</a>.

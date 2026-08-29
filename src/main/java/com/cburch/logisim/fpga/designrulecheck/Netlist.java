@@ -30,6 +30,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.std.wiring.Tunnel;
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -228,9 +229,30 @@ public class Netlist {
     final var labels = new HashMap<String, Component>();
     final var drc = new ArrayList<SimpleDrcContainer>();
 
-    // if we are the toplevel component we clear the complete netlist
-    if (isTopLevel) clear();
-
+    // if we are the toplevel component we clear the complete netlist and check the working dir name
+    if (isTopLevel) {
+      clear();
+      final var isWindows = System.getProperty("os.name").startsWith("Windows");
+      final var baseDir = AppPreferences.FPGA_Workspace.get();
+      if (baseDir.contains(" ")) {
+        drcStatus = DRC_ERROR;
+        Reporter.report.addFatalError(S.get("WorkDirWithSpaces"));
+        return drcStatus;
+      }
+      final var splitChar = (isWindows) ? ":?\\\\" : File.separator;
+      for (final var checkComponent : baseDir.split(splitChar)) {
+        if (isWindows && checkComponent.length() == 2 && checkComponent.endsWith(":")) {
+          // Normally on windows the first one is the drive letter, e.g. "C:"
+          continue;
+        }
+        if (!CorrectLabel.isCorrectLabel(checkComponent)) {
+          drcStatus = DRC_ERROR;
+          Reporter.report.addFatalError(S.fmt("WorkDirIllegalChars", checkComponent));
+          return drcStatus;
+        }
+      }
+    } 
+    
     // if we already have good drc results we can leave
     if (drcStatus == DRC_PASSED) return DRC_PASSED;
 
@@ -252,6 +274,11 @@ public class Netlist {
       drcStatus |= DRC_ERROR;
     } else {
       sheetNames.add(myCircuit.getName());
+    }
+    if (!CorrectLabel.isCorrectLabel(myCircuit.getName())) {
+      // this could happen if we switch from relaxed naming to VHDL or Verilog
+      drcStatus |= DRC_ERROR;
+      Reporter.report.addFatalError(S.fmt("SheetIllegalChars", myCircuit.getName()));
     }
     // we have to go down the tree to build first all subcircuits
     final var handledCircuits = new ArrayList<Circuit>();
@@ -318,7 +345,9 @@ public class Netlist {
       }
       // we check that all components that require a non zero label (annotation) have a label set
       if (comp.getFactory().requiresNonZeroLabel()) {
-        final var label = CorrectLabel.getCorrectLabel(comp.getAttributeSet().getValue(StdAttr.LABEL)).toUpperCase();
+        final var label =
+            CorrectLabel.hdlLabelKey(
+                comp.getAttributeSet().getValue(StdAttr.LABEL), AppPreferences.HdlType.get());
         final var componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
         if (label.isEmpty()) {
           drc.get(0).addMarkComponent(comp);
@@ -343,7 +372,7 @@ public class Netlist {
         }
         if (comp.getFactory() instanceof final SubcircuitFactory sub) {
           // Special care has to be taken for sub-circuits
-          if (label.equals(componentName.toUpperCase())) {
+          if (label.equals(CorrectLabel.hdlNameKey(componentName))) {
             drc.get(1).addMarkComponent(comp);
             drcStatus |= DRC_ERROR;
           }
@@ -399,7 +428,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openInputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -416,7 +445,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openInputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -433,7 +462,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (!comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openInputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -450,7 +479,7 @@ public class Netlist {
       for (var j = 0; j < comp.nrOfEnds(); j++) {
         if (!comp.isEndConnected(j)) openOutputs = true;
       }
-      if (openOutputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+      if (openOutputs && !AppPreferences.SuppressOpenPinWarnings.get()) {
         final var warn =
             new SimpleDrcContainer(
                     myCircuit,
@@ -658,6 +687,9 @@ public class Netlist {
             SimpleDrcContainer.MARK_INSTANCE));
     final var points = new HashMap<Location, Integer>();
     for (final var comp : components) {
+      // Probes are intentionally omitted from the generated netlist. Do not
+      // let their one-bit endpoint participate in width validation either.
+      if (comp.getFactory() instanceof Probe) continue;
       for (final var end : comp.getEnds()) {
         final var loc = end.getLocation();
         if (points.containsKey(loc)) {
@@ -2006,7 +2038,7 @@ public class Netlist {
     // their connected nets in    case it is not a clock net. The moment we call this function the
     // clock tree has been marked already!
     final var root = new ArrayList<Netlist>();
-    var suppress = AppPreferences.SupressGatedClockWarnings.getBoolean();
+    var suppress = AppPreferences.SuppressGatedClockWarnings.getBoolean();
     root.add(this);
     final var notGatedSet = new HashMap<String, Map<netlistComponent, Circuit>>();
     final var gatedSet = new HashMap<String, Map<netlistComponent, Circuit>>();
@@ -2118,7 +2150,7 @@ public class Netlist {
             S.get("NetList_GatedClock"));
       }
 
-      if (gatedClock && !pinSources.isEmpty() && !AppPreferences.SupressGatedClockWarnings.getBoolean()) {
+      if (gatedClock && !pinSources.isEmpty() && !AppPreferences.SuppressGatedClockWarnings.getBoolean()) {
         for (var i = 0; i < pinSources.size(); i++) {
           Reporter.report.addSevereWarning(S.get("NetList_GatedClock"));
           Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
@@ -2426,7 +2458,7 @@ public class Netlist {
       Set<netlistComponent> warnedComponents,
       List<Netlist> hierarchyNetlists,
       String warning) {
-    if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;
+    if (AppPreferences.SuppressGatedClockWarnings.getBoolean()) return;
     for (var i = 0; i < sources.size(); i++) {
       var alreadyWarned = false;
       for (final var comp : components.get(i))

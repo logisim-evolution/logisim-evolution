@@ -34,7 +34,7 @@ public interface VendorDownload {
   boolean createDownloadScripts();
   /* This handle creates all the scripts required to to synthesis P&R bitstream generation
    */
-  void setMapableResources(MappableResourcesContainer resources);
+  void setMappableResources(MappableResourcesContainer resources);
 
   boolean isBoardConnected();
   /*

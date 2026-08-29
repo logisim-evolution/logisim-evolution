@@ -108,6 +108,7 @@ public class VhdlContent extends HdlContent {
       VhdlContent ret = (VhdlContent) super.clone();
       ret.content = new StringBuilder(this.content);
       ret.valid = this.valid;
+      ret.staticAttrs = VhdlEntityAttributes.createBaseAttrs(ret);
       return ret;
     } catch (CloneNotSupportedException ex) {
       return this;

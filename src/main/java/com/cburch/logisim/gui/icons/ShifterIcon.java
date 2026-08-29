@@ -16,12 +16,15 @@ import java.awt.font.TextLayout;
 public class ShifterIcon extends BaseIcon {
 
   private final int state = 2;
-
+  
+  //Suppress unused/dead-code warnings because 'state' is currently a private final constant equal to 2,
+  //making the 'state < 0' check dead code. The condition is kept for future-proofing or consistency with BaseIcon sub-classes.
+  @SuppressWarnings("unused")
   @Override
   protected void paintIcon(Graphics2D g2) {
     final var s = new StringBuilder();
     if (state < 0) {
-      s.append("\u25b6".repeat(3));
+      s.append("▶".repeat(3));
     } else {
       var mask = 4;
       while (mask > 0) {

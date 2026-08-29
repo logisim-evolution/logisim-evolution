@@ -12,9 +12,11 @@ package com.cburch.logisim.gui.appear;
 import com.cburch.draw.actions.ModelAction;
 import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
 import com.cburch.logisim.circuit.appear.AppearanceElement;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.proj.Project;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +24,13 @@ import java.util.Map;
 public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   private final Circuit circuit;
   private final UndoAction canvasAction;
+  private final AttributeOption previousAppearance;
 
   public CanvasActionAdapter(Circuit circuit, UndoAction action) {
     this.circuit = circuit;
     this.canvasAction = action;
+    previousAppearance =
+        circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR);
   }
 
   private boolean affectsPorts() {
@@ -43,6 +48,7 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
       final var xn = new ActionTransaction(true);
       xn.execute();
     } else {
+      setCustomAppearance();
       canvasAction.doIt();
     }
   }
@@ -59,6 +65,25 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
       xn.execute();
     } else {
       canvasAction.undo();
+      restorePreviousAppearance();
+    }
+  }
+
+  private boolean shouldManageAppearanceAttribute() {
+    return previousAppearance != CircuitAttributes.APPEAR_CUSTOM;
+  }
+
+  private void setCustomAppearance() {
+    if (shouldManageAppearanceAttribute()) {
+      circuit.getStaticAttributes()
+          .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
+    }
+  }
+
+  private void restorePreviousAppearance() {
+    if (shouldManageAppearanceAttribute()) {
+      circuit.getStaticAttributes()
+          .setValue(CircuitAttributes.APPEARANCE_ATTR, previousAppearance);
     }
   }
 
@@ -81,9 +106,11 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
     @Override
     protected void run(CircuitMutator mutator) {
       if (forward) {
+        setCustomAppearance();
         canvasAction.doIt();
       } else {
         canvasAction.undo();
+        restorePreviousAppearance();
       }
     }
   }

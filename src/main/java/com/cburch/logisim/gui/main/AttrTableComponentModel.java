@@ -57,6 +57,7 @@ class AttrTableComponentModel extends AttributeSetTableModel {
       final var msg = S.get("cannotModifyCircuitError");
       throw new AttrTableSetException(msg);
     } else {
+      if (!AttrTableLabelValidator.shouldApply(circ, comp, attr, value)) return;
       final var act = new SetAttributeAction(circ, S.getter("changeAttributeAction"));
       final var compAttrSet = comp.getAttributeSet();
       if (compAttrSet != null) {

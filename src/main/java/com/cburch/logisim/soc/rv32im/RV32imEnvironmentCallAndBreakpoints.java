@@ -24,8 +24,11 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
 
   private static final int INSTR_ECALL = 0;
   private static final int INSTR_EBREAK = 1;
+  private static final int INSTR_MRET = 2;
 
-  private static final String[] AsmOpcodes = {"ECALL", "EBREAK"};
+  private static final int FUNCT12_MRET = 0x302;
+
+  private static final String[] AsmOpcodes = {"ECALL", "EBREAK", "MRET"};
 
   private int instruction = 0;
   private int operation;
@@ -39,6 +42,11 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
+    if (operation == INSTR_MRET) {
+      final var cpuState = (RV32imState.ProcessorState) state;
+      cpuState.machineReturn();
+      return true;
+    }
     OptionPane.showMessageDialog(null, S.get("Rv32imECABNotImplmented"));
     return true;
   }
@@ -63,7 +71,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
 
   @Override
   public boolean performedJump() {
-    return false;
+    return valid && operation == INSTR_MRET;
   }
 
   @Override
@@ -74,9 +82,15 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   private boolean decodeBin() {
     if (RV32imSupport.getOpcode(instruction) == SYSTEM) {
       int funct12 = (instruction >> 20) & 0xFFF;
-      if (funct12 > 1) return false;
-      operation = funct12;
-      return true;
+      if (funct12 <= 1) {
+        operation = funct12;
+        return true;
+      }
+      if (funct12 == FUNCT12_MRET) {
+        operation = INSTR_MRET;
+        return true;
+      }
+      return false;
     }
     return false;
   }
@@ -106,7 +120,10 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
       valid = false;
       return true;
     }
-    instruction = RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, operation);
+    instruction =
+        (operation == INSTR_MRET)
+            ? RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, FUNCT12_MRET)
+            : RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, operation);
     valid = true;
     instr.setInstructionByteCode(instruction, 4);
     return true;

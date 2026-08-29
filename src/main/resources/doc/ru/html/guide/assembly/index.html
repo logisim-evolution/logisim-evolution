@@ -3,33 +3,33 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2019-03-16T06:18:42.262000000">
+    <meta name="changed" content="2026-07-18T01:22:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
     <title>
-      Window Text Vector
+      Просмотр кода ассемблера
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        Assembly viewer
+        Просмотр кода ассемблера
       </h1>
       <p>
-        The Assembly viewer window displays an address value stored in a register in the current circuit, together with the assembly language instruction at that address.
+        Окно «Просмотр кода ассемблера» отображает значение адреса, хранящееся в регистре текущей схемы, вместе с соответствующей инструкцией на языке ассемблера по этому адресу.
       </p>
       <p align="center">
         <img class="notscal" src="../../../../img-guide/assembly-viewer.png" alt="#########">
       </p>
       <p>
-        Whenever the value stored in the register changes, the new address is highlighted in the Assembly viewer.
+        Всякий раз, когда значение, хранящееся в регистре, изменяется, новый адрес выделяется в окне «Просмотр кода ассемблера».
       </p>
       <p>
-        Select the register for display and load a text file containing the assembly language instructions.
+        Выберите регистр для отображения и загрузите текстовый файл, содержащий инструкции на языке ассемблера.
       </p>
       <p>
-        The filename must have a .lss suffix. An example text file is<br>
+        Имя файла должно иметь расширение .lss. Пример текстового файла:
       </p>
       <blockquote>
         <pre>    0: LOD A,[1005h]
@@ -54,10 +54,10 @@
 </pre>
       </blockquote>
       <p>
-        Instruction addresses in the text file are in hexadecimal without leading zeroes and with at least one leading space at the start of the line, followed by a colon and the assembly language instruction.
+        Адреса инструкций в текстовом файле записываются в шестнадцатеричной системе счисления без ведущих нулей, перед адресом должен быть как минимум один пробел в начале строки, после адреса следует двоеточие и инструкция на языке ассемблера.
       </p>
       <p>
-        Pressing <b class="tkeybd">F2</b> in the Assembly window advances the clock by two ticks.
+        Нажатие клавиши <b class="tkeybd">F2</b> в окне просмотра кода ассемблера продвигает тактовый сигнал на два такта.
       </p>
     </div>
   </body>

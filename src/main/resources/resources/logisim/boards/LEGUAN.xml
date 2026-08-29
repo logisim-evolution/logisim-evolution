@@ -63,6 +63,10 @@
       <Pin BiDirPinSet="PIN_C21" Rect_x_y_w_h="648,25,8,10"/>
       <Pin BiDirPinSet="PIN_D20" Rect_x_y_w_h="638,25,8,10"/>
       <Pin BiDirPinSet="PIN_D22" Rect_x_y_w_h="626,24,10,10"/>
+      <Pin BiDirPinSet="PIN_A20" Label="motionSensor_CLK" Rect_x_y_w_h="350,215,6,6"/>
+      <Pin BiDirPinSet="PIN_H20" Label="motionSensor_MOSI" Rect_x_y_w_h="350,205,6,6"/>
+      <Pin BiDirPinSet="PIN_B19" Label="motionSensor_MISO" Rect_x_y_w_h="350,195,6,6"/>
+      <Pin BiDirPinSet="PIN_L21" Label="motionSensor_nCS" Rect_x_y_w_h="350,185,6,6"/>
    </IOComponents>
    <BoardPicture>
       <!--This section hold the board picture-->

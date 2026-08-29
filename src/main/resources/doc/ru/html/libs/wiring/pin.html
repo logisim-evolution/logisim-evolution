@@ -1,192 +1,247 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ru">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-07-18T10:59:00.000000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="ru">
-    <title>
-      Контакт
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
-      <h1>
-	  <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp;
-		<img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32" height="32">&nbsp;<em>Контакт</em>
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <strong>Библиотека:</strong>
-            </td>
-            <td>
-              <a href="index.html">Проводка</a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>Введён в:</strong>
-            </td>
-            <td>
-              2.0 Beta 1 (в библиотеке Базовые, перемещён в библиотеку Проводка в 2.7.0)
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <strong>Внешний вид:</strong>
-            </td>
-            <td valign="top">
-			  <table>
-                <tbody>
-                  <tr>
-                    <th></th>
-                    <th colspan=2>
-                      Arrow
-                    </th>
-                    <th colspan=2>
-                      Classic
-                    </th>
-                    <th >
-                    </th>
-                  </tr>
-                  <tr>
-                    <th valign="middle" align="left">
-                      Pin in:
-                    </th>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64" height="64">
-                    </td>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64" height="64">
-                    </td>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64" height="64">
-                    </td>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64" height="64">
-                    </td>
-                  </tr>
-                  <tr>
-                    <th valign="middle" align="left">
-                      Pin out:
-                    </th>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64" height="64">
-                    </td>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64" height="64">
-                    </td>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64" height="64">
-                    </td>
-					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64" height="64">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        Поведение
-      </h2>
-      <p>
-        Контакт - это выход или вход схемы, в зависимости от значения атрибута Type. При отрисовке контакта Logisim представляет выходные контакты как кружки или скруглённые прямоугольники, а входные контакты как квадраты или прямоугольники. В обоих случаях отдельные биты значения, которое оправляется или принимается, отображаются внутри данного компонента (кроме Вида для печати, когда компонент говорит только какова разрядность контакта).
-      </p>
-      <p>
-        Контакт - удобный компонент для взаимодействия со схемой, и начинающим пользователям Logisim не нужно использовать их каким-либо другим образом. Но пользователь, строящий схему с использованием нескольких подсхем (как описано в разделе <a  class=refguide href="../../guide/subcirc/index.html">Подсхемы</a> <em>Руководства пользователя</em> ) будет использовать контакты также чтобы определить интерфейс между схемой и подсхемой. В частности, компоненты Контакт чертежа схемы определяют контакты, которые отображаются на компоненте Подсхема, когда чертёж используется внутри другой схемы. В такой схеме значения, переданные и принятые в этих точках компонента Подсхема, связаны с контактами внутри чертежа подсхемы.
-      </p>
-      <h2>
-        Контакты
-      </h2>
-      <p>
-        Компонент Контакт имеет только один контакт, который будет входом для компонента, если компонент является выходным контактом, и будет выходом для компонента, если компонент является входным контактом. В обоих случаях его разрядность соответствует атрибуту Биты данных, а его положение определено атрибутом Направление.
-      </p>
-      <h2>
-        Атрибуты
-      </h2>
-      <p>
-        Когда компонент выбран, или уже добавлен, комбинации от Alt-0 до Alt-9 меняют его атрибут <q>Биты данных</q>, клавиши со стрелками меняют его атрибут <q>Направление</q>, а клавиши со стрелками при зажатой Alt меняют его атрибут <q>Направление метки</q>.
-      </p>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2018-10-23T06:18:10.521000000">
+  <meta name="changed" content="2026-07-16T23:45:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>
+    Контакт
+  </title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
+    <h1>
+      <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp;
+      <img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32"
+        height="32">&nbsp;<em>Контакт</em>
+    </h1>
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Библиотека:</strong>
+          </td>
+          <td>
+            <a href="index.html">Монтаж</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Введён в:</strong>
+          </td>
+          <td>
+            2.0 Beta 1 (в библиотеке Базовые, перемещён в библиотеку Монтаж в 2.7.0)
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <strong>Внешний вид:</strong>
+          </td>
+          <td valign="top">
+            <table>
+              <tbody>
+                <tr>
+                  <th></th>
+                  <th colspan="2">
+                    Стрелка (Arrow)
+                  </th>
+                  <th colspan="2">
+                    Классический (Classic)
+                  </th>
+                  <th></th>
+                </tr>
+                <tr>
+                  <th valign="middle" align="left">
+                    Входной:
+                  </th>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                </tr>
+                <tr>
+                  <th valign="middle" align="left">
+                    Выходной:
+                  </th>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Поведение</h2>
+    <p>
+      Компонент <b>Контакт</b> служит интерфейсом ввода или вывода для схемы. Его роль определяется атрибутом <b
+        class="propertie">Тип контакта</b>.
+    </p>
+    <p>
+      <b>Внешний вид (задаётся атрибутом <b class="propertie">Внешний вид</b>):</b>
+    </p>
+    <ul>
+      <li><b>Стиль «Стрелка» (Arrow):</b> входные контакты имеют заострённую форму со стороны подключения, а выходные —
+        прямоугольную.</li>
+      <li><b>Стиль «Классический» (Classic):</b> входные контакты отрисовываются как квадраты или прямоугольники, а
+        выходные — как круги или скруглённые прямоугольники.</li>
+    </ul>
+    <p>
+      <i>Примечание:</i> Отдельные биты передаваемого значения всегда отображаются внутри самого компонента (за
+      исключением режима печати, где выводится только разрядность).
+    </p>
+    <p>
+      <b>Использование в иерархии:</b> Контакт — удобный элемент для интерактивного управления схемой на начальном
+      этапе. Однако его главная функция раскрывается при создании иерархических проектов (см. раздел <a class="refguide"
+        href="../../guide/subcirc/index.html">Подсхемы</a> <i>Руководства пользователя</i>). Контакты, размещённые на
+      чертеже текущей схемы, автоматически становятся внешними контактами (портами) на её графическом обозначении при
+      вставке в другую схему.
+    </p>
+
+    <h2>Контакты</h2>
+    <p>
+      Компонент имеет единственный физический контакт на холсте:
+    </p>
+    <ul>
+      <li>Он работает как <b>вход</b> для самого компонента, если тот настроен как <i>выходной порт схемы</i>.</li>
+      <li>Он работает как <b>выход</b> (источник сигнала), если компонент настроен как <i>входной порт схемы</i>.</li>
+    </ul>
+    <p>
+      Разрядность этого контакта соответствует атрибуту <b class="propertie">Биты данных</b>, а положение на корпусе —
+      атрибуту <b class="propertie">Направление</b>.
+    </p>
+
+    <h2>Атрибуты</h2>
+    <p>
+      <b>Горячие клавиши при выборе или добавлении компонента:</b>
+    </p>
+    <ul>
+      <li>Комбинации от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> — изменяют <b class="propertie">Биты
+          данных</b>. (Клавиши можно нажимать последовательно: например, <b class="tkeybd">Alt-1</b> затем <b
+          class="tkeybd">Alt-2</b> задаст разрядность 12);</li>
+      <li>Клавиши со стрелками — изменяют <b class="propertie">Направление</b> (ориентацию компонента);</li>
+      <li><b class="tkeybd">Alt</b> + Клавиши со стрелками — изменяют <b class="propertie">Направление метки</b>.</li>
+    </ul>
+
+    <div class="attliste">
       <dl>
-        <dt>
-          Направление
-        </dt>
+        <dt><b class="propertie">Направление</b></dt>
+        <dd>Сторона компонента, на которой располагается его линия связи (электрический контакт).</dd>
+
+        <dt><b class="propertie">Тип контакта</b></dt>
         <dd>
-          Сторона компонента, где должен быть его входной/выходной контакт.
+          Определяет, является ли компонент входным или выходным портом текущей схемы.
         </dd>
-        <dt>
-          Type
-        </dt>
+
+        <dt><b class="propertie">Биты данных</b></dt>
+        <dd>Разрядность значения, принимаемого или выдаваемого контактом.</dd>
+
+        <dt><b class="propertie">Поведение</b></dt>
         <dd>
-          Определяет, будет компонент выходным контактом или входным. (Заметьте, что если компонент Контакт - входной контакт, то контакт, который выступает в качестве интерфейса в схеме, будет выходом, и наоборот.)
+          <i>(Доступно только для входных контактов).</i> Определяет обработку неопределённых (высокоимпедансных)
+          состояний <b class="uvalue">U</b> (или Z):
+          <ul>
+            <li><b>Два состояния (0/1)</b> или <b>Три состояния (0/1/Z):</b> состояния <b class="uvalue">U</b>
+              передаются в схему «как есть».</li>
+            <li><b>Подтяжка вверх (Pull Up):</b> заменяет любые состояния <b class="uvalue">U</b> на логическую <b
+                class="unov">1</b> перед отправкой в схему.</li>
+            <li><b>Подтяжка вниз (Pull Down):</b> заменяет состояния <b class="uvalue">U</b> на логический <b
+                class="zerov">0</b>.</li>
+          </ul>
+          Данный атрибут также контролирует ручной ввод: только режим «Три состояния» позволяет пользователю
+          интерактивно вводить неопределённые биты <b class="uvalue">U</b> через интерфейс.
         </dd>
-        <dt>
-          Биты данных
-        </dt>
+
+        <dt><b class="propertie">Метка</b></dt>
+        <dd>Текстовое название компонента.</dd>
+
+        <dt><b class="propertie">Направление метки</b></dt>
+        <dd>Положение текста метки относительно корпуса компонента.</dd>
+
+        <dt><b class="propertie">Шрифт метки</b></dt>
+        <dd>Выбор стиля шрифта для метки.</dd>
+
+        <dt><b class="propertie">Система счисления</b></dt>
         <dd>
-          Количество битов значения, с которым имеет дело контакт.
+          Определяет формат отображения многобитных значений на корпусе компонента. Пример отображения двоичного
+          значения 1010:
+          <ul>
+            <li>Двоичная: <b>1010<sub>b</sub></b></li>
+            <li>Восьмеричная: <b>12<sub>o</sub></b></li>
+            <li>Знаковая десятичная: <b>-6<sub>s</sub></b></li>
+            <li>Беззнаковая десятичная: <b>10<sub>u</sub></b></li>
+            <li>Шестнадцатеричная: <b>A<sub>h</sub></b></li>
+            <li>С плавающей точкой (16 бит): <b>6.0E-07<sub>f</sub></b></li>
+            <li>С плавающей точкой (32 бита): <b>1.4E-44<sub>f</sub></b></li>
+            <li>С плавающей точкой (64 бита): <b>4.9E-323<sub>f</sub></b></li>
+            <li>С плавающей точкой (иная разрядность): <b>NaN<sub>f</sub></b></li>
+          </ul>
         </dd>
-        <dt>
-          <b class="propertie">Behavior</b>
-        </dt>
+
+        <dt><b class="propertie">Внешний вид</b></dt>
+        <dd>Выбор графического стиля компонента («Стрелка» или «Классический»).</dd>
+
+        <dt><b class="propertie">Значение при сбросе</b></dt>
         <dd>
-          The <b class="propertie">Behavior</b> attribute is only available for an input pin. The attribute specifies how unknown (floating), <b class="uvalue">U</b>, values should be treated. If the <b class="propertie">Behavior</b> is Simple or Tri-state, the <b class="uvalue">U</b> values are sent into the layout as <b class="uvalue">U</b> values. Pull Up converts <b class="uvalue">U</b> values to <b class="unov">1</b> before being sent into the circuit layout. Pull Down converts <b class="uvalue">U</b> values to <b class="zerov">0</b> before being sent into the circuit layout.
-          <br><br>
-          The <b class="propertie">Behavior</b> attribute also specifies what values may be entered into the pin when it is not receiving a value from a parent circuit. Tri-state allows you to enter <b class="uvalue">U</b> values. The other settings do not allow you to enter <b class="uvalue">U</b> values.
-        </dd>
-        <dt>
-          Метка
-        </dt>
-        <dd>
-          Текст внутри метки, привязанной к компоненту.
-        </dd>
-        <dt>
-          Направление метки
-        </dt>
-        <dd>
-          Расположение метки относительно компонента.
-        </dd>
-        <dt>
-          Шрифт метки
-        </dt>
-        <dd>
-          Шрифт, которым отрисовывается метка.
-        </dd>
-        <dt>
-          <b class="propertie">&nbsp;Reset Value</b>
-        </dt>
-        <dd>
-          An input pin may be given a reset value if it does not have the Tri-state Behavior. The reset value is given as a hexadecimal value. It is loaded into the pin on a simulator reset. If the input pin has Tri-state Behavior, it is loaded with all unknown (floating), <b class="uvalue">U</b>, bits on a reset.
+          <i>(Только для входных контактов).</i> Позволяет задать стартовое шестнадцатеричное значение, которое
+          автоматически применится при сбросе моделирования. Если контакт работает в режиме «Три состояния», при сбросе
+          все биты принудительно перейдут в неопределённое состояние (<b class="uvalue">U</b>).
         </dd>
       </dl>
-      <h2>
-        Поведение Инструмента Нажатие
-      </h2>
-      <p>
-        Нажатие на выходной контакт не даёт эффекта, только атрибуты контакта будут отображены.
-      </p>
-      <p>
-        Нажатие на входной контакт будет переключать бит, на который нажали. Если это контакт с тремя состояниями, то соответствующий бит будет переключаться между тремя состояниями.
-      </p>
-      <p>
-        Однако, если пользователь просматривает состояние подсхемы, как описано в разделе "<a href="../../guide/subcirc/sub-debug.html">Отладка подсхемы</a> <em>Руководства пользователя</em>, то значение на контакте жёстко привязано к значению, которое подсхема принимает из содержащей её схемы. Пользователь не может изменить значение, не нарушая эту связь между состоянием подсхемы и состоянием содержащей её схемы, и Logisim будет предлагать пользователю подтвердить, что он действительно хочет нарушить эту связь.
-      </p>
-      <h2>
-        Поведение Инструмента Текст
-      </h2>
-      <p>
-        Позволяет редактировать привязанную к компоненту метку.
-      </p>
+    </div>
+
+    <h2>Поведение Инструмента «Нажатие»</h2>
+    <ul>
+      <li><b>На выходном контакте:</b> Действие отсутствует (инструмент только выводит атрибуты контакта на панель
+        свойств).</li>
+      <li><b>На входном контакте:</b> Инвертирует значение бита, по которому произведён щелчок.
+        <ul>
+          <li>В режиме «Три состояния» клик циклически переключает бит по кругу: 0 → 1 → U.</li>
+          <li>В системе счисления «С плавающей точкой» клик открывает диалоговое окно для текстового ввода точного
+            значения.</li>
+        </ul>
+      </li>
+      <li><b>При отладке подсхемы:</b> Если вы просматриваете внутреннее состояние подсхемы (см. «<a
+          href="../../guide/subcirc/sub-debug.html">Отладка подсхемы</a>»), значения на её портах жёстко задаются
+        родительской схемой. Попытка изменить их вручную приведёт к конфликту; Logisim выдаст предупреждение и предложит
+        разорвать синхронизацию состояний с родительской схемой.</li>
+    </ul>
+
     <p>
-      <b>Назад к </b><a href="../index.html">Справке по библиотеке</a>
+      <b>Назад к</b> <a href="../index.html">Справке по библиотеке</a>
     </p>
-	</div>
-  </body>
+  </div>
+</body>
+
 </html>

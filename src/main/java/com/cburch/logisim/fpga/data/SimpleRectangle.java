@@ -13,15 +13,14 @@ import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import javax.swing.SwingUtilities;
 
 public class SimpleRectangle {
 
-  private int x, y, width, height;
+  private int x, y, width, height, offsetX, offsetY;
   private final FpgaIoInformationContainer toBeModified;
   private final boolean movemode;
-  private boolean show;
   private final boolean fill;
 
   public SimpleRectangle(MouseEvent e) {
@@ -30,7 +29,8 @@ public class SimpleRectangle {
     y = e.getY();
     width = 1;
     height = 1;
-    show = true;
+    offsetX = 0;
+    offsetY = 0;
     fill = false;
     movemode = false;
   }
@@ -42,43 +42,26 @@ public class SimpleRectangle {
     y = AppPreferences.getScaled(rect.getYpos(), scale);
     width = AppPreferences.getScaled(rect.getWidth(), scale);
     height = AppPreferences.getScaled(rect.getHeight(), scale);
-    int offset = AppPreferences.getScaled(5, scale);
-    BoardRectangle test =
-        new BoardRectangle(x + width - offset, y + height - offset, offset, offset);
-    show = true;
+    offsetX = x - e.getX();
+    offsetY = y - e.getY();
     fill = true;
-    movemode = !test.isPointInside(e.getX(), e.getY());
+    movemode = SwingUtilities.isLeftMouseButton(e);
   }
 
-  public Rectangle resizeAndGetUpdate(MouseEvent e) {
-    int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
+  public void resizeAndGetUpdate(MouseEvent e, float scale) {
+    int xmax = AppPreferences.getScaled(BoardManipulator.IMAGE_WIDTH, scale);
+    int ymax = AppPreferences.getScaled(BoardManipulator.IMAGE_HEIGHT, scale);
     if (movemode) {
-      xmin = Math.min(Math.min(x, e.getX()), e.getX() + width);
-      xmax = Math.max(Math.max(x, x + width), e.getX() + width);
-      ymin = Math.min(Math.min(y, e.getY()), e.getY() + height);
-      ymax = Math.max(Math.max(y, y + height), e.getY() + height);
-      x = e.getX();
-      y = e.getY();
+      x = Math.max(Math.min(e.getX() + offsetX, xmax - width), 0);
+      y = Math.max(Math.min(e.getY() + offsetY, ymax - height), 0);
     } else {
-      xmin = Math.min(Math.min(x, e.getX()), x + width);
-      xmax = Math.max(Math.max(x, e.getX()), x + width);
-      ymin = Math.min(Math.min(y, e.getY()), y + height);
-      ymax = Math.max(Math.max(y, e.getY()), y + height);
-      width = e.getX() - x;
-      height = e.getY() - y;
+      width = Math.max(0, Math.min(e.getX(), xmax)) - x;
+      height = Math.max(0, Math.min(e.getY(), ymax)) - y;
     }
-    int off = AppPreferences.getScaled(2);
-    int off2 = off << 1;
-    return new Rectangle(xmin - off, ymin - off, off2 + xmax - xmin, off2 + ymax - ymin);
   }
-
+ 
   public FpgaIoInformationContainer getIoInfo() {
     return toBeModified;
-  }
-
-  public Rectangle resizeRemoveAndgetUpdate(MouseEvent e) {
-    show = false;
-    return resizeAndGetUpdate(e);
   }
 
   public BoardRectangle getBoardRectangle(float scale) {
@@ -96,7 +79,6 @@ public class SimpleRectangle {
   }
 
   public void paint(Graphics2D g) {
-    if (!show) return;
     int xmin = Math.min(x, x + width);
     int xmax = Math.max(x, x + width);
     int ymin = Math.min(y, y + height);

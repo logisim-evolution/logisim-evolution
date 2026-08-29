@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      The FPGA menu
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        The FPGA menu
+      </h1>
+      <dl>
+        <dt>
+          <strong>FPGA Board Editor</strong>
+        </dt>
+        <dd>
+          <p>
+            Opens the FPGA Board Editor, which creates and edits XML board description files. A board description combines the board image, the FPGA and clock parameters, and the rectangular regions that describe the board's switches, LEDs, pins, and other I/O resources.
+          </p>
+          <p>
+            To start a board description, either click the empty board area and choose a PNG board image, use <b class="button">Load board</b> to load an existing XML board description, or use <b class="button">Built-in board</b> to load one of the boards bundled with Logisim-evolution. When a board image is loaded, the board name field is initialized from the file or board name.
+          </p>
+          <p>
+            Use <b class="button">Configure FPGA</b> to enter the FPGA, clock, and download parameters. To define board I/O resources, drag a rectangle on the board image. After the rectangle is created, Logisim-evolution opens a dialog for selecting and configuring the I/O component type. Defined rectangles may not overlap.
+          </p>
+          <p>
+            Existing rectangles can be edited by double-clicking them, moved by dragging the highlighted rectangle, and resized by dragging their lower-right resize handle. The zoom slider changes the display scale while editing the board image.
+          </p>
+          <p>
+            Use <b class="button">Save board</b> to save the board description as an external XML board file. If a built-in board was loaded as a starting point, change the board name before saving it as an external board; otherwise the external board name will conflict with the built-in board.
+          </p>
+        </dd>
+        <dt>
+          <strong>FPGA Commander</strong>
+        </dt>
+        <dd>
+          <p>
+            Opens the FPGA Commander for design-rule checking, mapping circuit resources to a selected board, generating HDL and constraints, and running the configured FPGA toolchain. Application-wide FPGA Commander preferences are described in <a href="../prefs/pref-fpgacommander.html">the FPGA Commander Settings tab</a>.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <b>Next:</b> <a href="winhelp.html">The Window and Help menus</a>.
+      </p>
+    </div>
+  </body>
+</html>

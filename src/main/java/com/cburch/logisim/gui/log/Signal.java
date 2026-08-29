@@ -235,6 +235,7 @@ public class Signal {
     last = null;
     curSize = 0;
     firstIndex = 0;
+    timeStart = 0;
     extend(v, duration);
   }
 

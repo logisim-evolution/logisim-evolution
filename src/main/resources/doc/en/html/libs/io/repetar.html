@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2026-06-26T14:48:00.000000000">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Repetar Local Bus</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+	<div class="maindiv">
+		<h1>
+			<img class="iconlibs" src="../../../../icons/6464/repetar.png" alt="#########" height="32" width="32">
+			<em>Repetar Local Bus</em>
+		</h1>
+		<table>
+			<tbody>
+				<tr>
+					<td><strong>Library:</strong></td>
+					<td><a href="index.html">Input/Output</a></td>
+				</tr>
+				<tr>
+					<td><strong>Introduced:</strong></td>
+					<td>3.0.0</td>
+				</tr>
+				<tr>
+					<td valign="top"><strong>Appearance:</strong></td>
+					<td valign="top">
+						<img src="../../../../img-libs/repetar.png" width="170" height="169">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2>Behavior</h2>
+		<p>
+			The Reptar Local Bus component is a specialized interface block designed to connect Logisim-Evolution logic
+			circuits with the physical hardware bus of the Reptar development board (based on the Spartan-6 FPGA).
+		</p>
+		<p>
+			<b>Important Note:</b> Software simulation of the Reptar Local Bus directly within Logisim-Evolution
+			<b>is not supported</b>. This component is intended solely for VHDL code generation and circuit synthesis onto the
+			physical FPGA board. During simulation runs in Logisim-Evolution, signals at the component's ports are not processed.
+		</p>
+
+		<h2>Pins (all pins are located on the right edge)</h2>
+		<dl>
+			<dt>SP6_LB_nCS3_o (output, bit width 1):</dt>
+			<dd>Chip Select 3 signal (active low) driven from the bus to the circuit.</dd>
+			<dt>SP6_LB_nADV_ALE_o (output, bit width 1):</dt>
+			<dd>Address Valid / Address Latch Enable signal (active low) driven from the bus to the circuit.</dd>
+			<dt>SP6_LB_RE_nOE_o (output, bit width 1):</dt>
+			<dd>Read Enable / Output Enable signal (active low) driven from the bus to the circuit.</dd>
+			<dt>SP6_LB_nWE_o (output, bit width 1):</dt>
+			<dd>Write Enable signal (active low) driven from the bus to the circuit.</dd>
+			<dt>SP6_LB_WAIT3_i (input, bit width 1):</dt>
+			<dd>Wait 3 input signal driven from the circuit to the bus.</dd>
+			<dt>Addr_Data_LB_o (output, bit width 16):</dt>
+			<dd>16-bit address/data output bus from the local bus to the circuit.</dd>
+			<dt>Addr_Data_LB_i (input, bit width 16):</dt>
+			<dd>16-bit address/data input bus from the circuit to the local bus.</dd>
+			<dt>Addr_Data_LB_tris_i (input, bit width 1):</dt>
+			<dd>Controls the high-impedance (tri-state) mode of the address/data bus.</dd>
+			<dt>Addr_LB_o (output, bit width 9):</dt>
+			<dd>9-bit address output bus from the local bus to the circuit.</dd>
+			<dt>IRQ_i (input, bit width 1):</dt>
+			<dd>Interrupt Request signal driven from the circuit to the local bus.</dd>
+		</dl>
+
+		<h2>Attributes</h2>
+		<div class="attliste">
+			<dl>
+				<dt><b class="propertie">Label</b></dt>
+				<dd>The name of the local bus in the generated VHDL code (defaults to "LocalBus", cannot be changed).</dd>
+			</dl>
+		</div>
+
+		<p><b>Back to</b> <a href="index.html">Library Reference</a></p>
+	</div>
+</body>
+
+</html>

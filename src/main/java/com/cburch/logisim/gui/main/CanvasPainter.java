@@ -45,6 +45,10 @@ class CanvasPainter implements PropertyChangeListener {
     AppPreferences.GRID_BG_COLOR.addPropertyChangeListener(this);
     AppPreferences.GRID_DOT_COLOR.addPropertyChangeListener(this);
     AppPreferences.GRID_ZOOMED_DOT_COLOR.addPropertyChangeListener(this);
+    AppPreferences.COMPONENT_COLOR.addPropertyChangeListener(this);
+    AppPreferences.COMPONENT_SECONDARY_COLOR.addPropertyChangeListener(this);
+    AppPreferences.COMPONENT_GHOST_COLOR.addPropertyChangeListener(this);
+    AppPreferences.COMPONENT_ICON_COLOR.addPropertyChangeListener(this);
   }
 
   private void drawWidthIncompatibilityData(Graphics base, Graphics g, Project proj) {
@@ -187,9 +191,13 @@ class CanvasPainter implements PropertyChangeListener {
     if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
       g2d.scale(zoomFactor, zoomFactor);
     }
+    final var circ = proj.getCurrentCircuit();
+    if (circ == null) {
+      gfxScaled.dispose();
+      return;
+    }
     drawWithUserState(g, gfxScaled, proj);
     drawWidthIncompatibilityData(g, gfxScaled, proj);
-    final var circ = proj.getCurrentCircuit();
 
     final var circState = proj.getCircuitState();
     final var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);
@@ -207,7 +215,11 @@ class CanvasPainter implements PropertyChangeListener {
   public void propertyChange(PropertyChangeEvent event) {
     if (AppPreferences.GRID_BG_COLOR.isSource(event)
         || AppPreferences.GRID_DOT_COLOR.isSource(event)
-        || AppPreferences.GRID_ZOOMED_DOT_COLOR.isSource(event)) {
+        || AppPreferences.GRID_ZOOMED_DOT_COLOR.isSource(event)
+        || AppPreferences.COMPONENT_COLOR.isSource(event)
+        || AppPreferences.COMPONENT_SECONDARY_COLOR.isSource(event)
+        || AppPreferences.COMPONENT_GHOST_COLOR.isSource(event)
+        || AppPreferences.COMPONENT_ICON_COLOR.isSource(event)) {
       canvas.repaint();
     }
   }

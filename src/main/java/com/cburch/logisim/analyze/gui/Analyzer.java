@@ -88,6 +88,7 @@ public class Analyzer extends LFrame.SubWindow {
       buildCircuit.localeChanged();
       exportTable.localeChanged();
       exportTex.localeChanged();
+      resizeForLocaleChange();
     }
   }
 
@@ -237,6 +238,27 @@ public class Analyzer extends LFrame.SubWindow {
       model.getOutputExpressions().disableUpdates();
     }
     tabbedPane.setSelectedIndex(index);
+  }
+
+  private void resizeForLocaleChange() {
+    getContentPane().invalidate();
+    invalidate();
+
+    final var current = getSize();
+    if (current.width <= 0 || current.height <= 0) return;
+
+    final var expanded = expandedSizeForLocaleChange(current, getPreferredSize());
+    if (!expanded.equals(current)) {
+      setSize(expanded);
+    }
+    validate();
+    repaint();
+  }
+
+  static Dimension expandedSizeForLocaleChange(Dimension current, Dimension preferred) {
+    return new Dimension(
+        Math.max(current.width, preferred.width),
+        Math.max(current.height, preferred.height));
   }
 
   public abstract static class PleaseWait<T> extends JDialog {

@@ -54,7 +54,7 @@ public class Constant extends InstanceFactory {
 
     @Override
     protected void copyInto(AbstractAttributeSet destObj) {
-      ConstantAttributes dest = (ConstantAttributes) destObj;
+      final var dest = (ConstantAttributes) destObj;
       dest.facing = this.facing;
       dest.width = this.width;
       dest.value = this.value;
@@ -83,7 +83,7 @@ public class Constant extends InstanceFactory {
         this.value =
             this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
       } else if (attr == ATTR_VALUE) {
-        long val = (Long) value;
+        final var val = (Long) value;
         this.value = Value.createKnown(width, val);
       } else {
         throw new IllegalArgumentException("unknown attribute " + attr);
@@ -109,10 +109,10 @@ public class Constant extends InstanceFactory {
 
     @Override
     public void computeExpression(ExpressionComputer.Map expressionMap) {
-      AttributeSet attrs = instance.getAttributeSet();
-      int width = attrs.getValue(StdAttr.WIDTH).getWidth();
-      Value v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
-      for (int b = 0; b < width; b++) {
+      final var attrs = instance.getAttributeSet();
+      final var width = attrs.getValue(StdAttr.WIDTH).getWidth();
+      final var v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
+      for (var b = 0; b < width; b++) {
         expressionMap.put(
             instance.getLocation(), b, Expressions.constant((int) v.get(b).toLongValue()));
       }
@@ -164,10 +164,11 @@ public class Constant extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING);
-    BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    int chars = (width.getWidth() + 3) / 4;
-    int w = 7 + 7 * chars;
+    final var facing = attrs.getValue(StdAttr.FACING);
+    final var width = attrs.getValue(StdAttr.WIDTH);
+    final var hexOffset = (width.getWidth() == 1) ? 0 : 2;
+    final var chars = ((width.getWidth() + 3) / 4) + hexOffset;
+    final var w = 7 + 7 * chars;
     if (facing == Direction.EAST) return Bounds.create(-w, -8, w, 16);
     else if (facing == Direction.WEST) return Bounds.create(0, -8, w, 16);
     else if (facing == Direction.SOUTH) return Bounds.create(-w / 2, -16, w, 16);
@@ -189,11 +190,12 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    long v = painter.getAttributeValue(ATTR_VALUE);
-    String vStr = Long.toHexString(v);
-    Bounds bds = getOffsetBounds(painter.getAttributeSet());
+    final var v = painter.getAttributeValue(ATTR_VALUE);
+    final var width = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
+    final var vStr = (width == 1) ? Long.toHexString(v) : "0x" + Long.toHexString(v);
+    final var bds = getOffsetBounds(painter.getAttributeSet());
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.fillOval(-2, -2, 4, 4);
     g.setFont(DEFAULT_FONT);
@@ -206,10 +208,10 @@ public class Constant extends InstanceFactory {
   //
   @Override
   public void paintIcon(InstancePainter painter) {
-    int w = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
-    int pinx = 16;
-    int piny = 9;
-    Direction dir = painter.getAttributeValue(StdAttr.FACING);
+    final var w = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
+    var pinx = 16;
+    var piny = 9;
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
     if (dir == Direction.EAST) {
     } else if (dir == Direction.WEST) {
       pinx = 4;
@@ -221,10 +223,10 @@ public class Constant extends InstanceFactory {
       piny = 16;
     }
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     if (w == 1) {
-      long v = painter.getAttributeValue(ATTR_VALUE);
-      Value val = v == 1L ? Value.TRUE : Value.FALSE;
+      final var v = painter.getAttributeValue(ATTR_VALUE);
+      final var val = v == 1L ? Value.TRUE : Value.FALSE;
       g.setColor(val.getColor());
       GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
     } else {
@@ -236,15 +238,15 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Bounds bds = painter.getOffsetBounds();
-    BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    long longValue = painter.getAttributeValue(ATTR_VALUE);
-    Value v = Value.createKnown(width, longValue);
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var bds = painter.getOffsetBounds();
+    final var width = painter.getAttributeValue(StdAttr.WIDTH);
+    final var longValue = painter.getAttributeValue(ATTR_VALUE);
+    final var v = Value.createKnown(width, longValue);
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     if (painter.shouldDrawColor()) {
       g.setColor(BACKGROUND_COLOR);
       g.fillRect(x + bds.getX(), y + bds.getY(), bds.getWidth(), bds.getHeight());
@@ -262,7 +264,7 @@ public class Constant extends InstanceFactory {
       g.setFont(DEFAULT_FONT);
       GraphicsUtil.drawCenteredText(
           g,
-          v.toHexString(),
+          "0x" + v.toHexString(),
           x + bds.getX() + bds.getWidth() / 2,
           y + bds.getY() + bds.getHeight() / 2 - 2);
     }
@@ -271,13 +273,13 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-    long value = state.getAttributeValue(ATTR_VALUE);
+    final var width = state.getAttributeValue(StdAttr.WIDTH);
+    final var value = state.getAttributeValue(ATTR_VALUE);
     state.setPort(0, Value.createKnown(width, value), 1);
   }
 
   private void updatePorts(Instance instance) {
-    Port[] ps = {new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH)};
+    final Port[] ps = {new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH)};
     instance.setPorts(ps);
   }
 

@@ -167,6 +167,8 @@ public class HorizontalSplitPane extends JPanel {
   private final JComponent comp1;
   private final MyDragbar dragbar;
   private double fraction;
+  private double minimumFraction = 0.0;
+  private double maximumFraction = 1.0;
 
   public HorizontalSplitPane(JComponent comp0, JComponent comp1) {
     this(comp0, comp1, 0.5);
@@ -188,9 +190,23 @@ public class HorizontalSplitPane extends JPanel {
     return fraction;
   }
 
+  public void setFractionBounds(double minimumFraction, double maximumFraction) {
+    if (!Double.isFinite(minimumFraction)
+        || !Double.isFinite(maximumFraction)
+        || minimumFraction < 0.0
+        || maximumFraction > 1.0
+        || minimumFraction > maximumFraction) {
+      throw new IllegalArgumentException("invalid fraction bounds");
+    }
+    this.minimumFraction = minimumFraction;
+    this.maximumFraction = maximumFraction;
+    setFraction(fraction);
+  }
+
   public void setFraction(double value) {
-    if (value < 0.0) value = 0.0;
-    if (value > 1.0) value = 1.0;
+    if (Double.isNaN(value)) return;
+    if (value < minimumFraction) value = minimumFraction;
+    if (value > maximumFraction) value = maximumFraction;
     if (fraction != value) {
       fraction = value;
       revalidate();

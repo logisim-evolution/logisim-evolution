@@ -18,6 +18,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Pin;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -183,7 +184,7 @@ public class DefaultHolyCrossAppearance {
       final var label = new Text(rx + width / 2, ry + TOP_TEXT_MARGIN, name);
       label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
       label.getLabel().setVerticalAlignment(EditableLabel.TOP);
-      label.getLabel().setColor(Color.BLACK);
+      label.getLabel().setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       ret.add(label);
     }
 
@@ -204,7 +205,7 @@ public class DefaultHolyCrossAppearance {
       int dy,
       boolean isLeftSide) {
     int hAlign;
-    final var color = Color.DARK_GRAY; // maybe GRAY instead?
+    final var color = new Color(AppPreferences.COMPONENT_COLOR.get());
     int ldx;
     for (final var pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y, true), pin));

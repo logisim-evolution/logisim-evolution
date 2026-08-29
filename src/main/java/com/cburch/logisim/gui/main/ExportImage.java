@@ -17,7 +17,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.Color;
@@ -58,6 +57,7 @@ public class ExportImage {
   public static final int FORMAT_JPG = 2;
   public static final int FORMAT_TIKZ = 3;
   public static final int FORMAT_SVG = 4;
+  public static final int FORMAT_WAVEDROM = 5;
   static final Logger logger = LoggerFactory.getLogger(ExportImage.class);
 
   private static final int SLIDER_DIVISIONS = 6;
@@ -80,6 +80,8 @@ public class ExportImage {
         return new ImageFileFilter(fmt, S.getter("exportTikZFilter"), new String[] {"tex"});
       case FORMAT_SVG:
         return new ImageFileFilter(fmt, S.getter("exportSvgFilter"), new String[] {"svg"});
+      case FORMAT_WAVEDROM:
+        return new ImageFileFilter(fmt, S.getter("exportWaveDromFilter"), new String[] {"json"});
       default:
         logger.error("Unexpected image format; aborted!");
         return null;
@@ -166,8 +168,32 @@ public class ExportImage {
     // And start a thread to actually perform the operation
     // (This is run in a thread so that Swing will update the
     // monitor.)
-    new ExportThread(frame, frame.getCanvas(), dest, filter, circuits, scale, printerView, monitor)
+    new ExportThread(
+            frame,
+            frame.getCanvas(),
+            dest,
+            filter,
+            circuits,
+            scale,
+            printerView,
+            frame.getCanvas().getBackground(),
+            monitor)
         .start();
+  }
+
+  static void paintExportBackground(
+      Graphics g,
+      int width,
+      int height,
+      int format,
+      boolean printerView,
+      Color canvasBackground) {
+    final var vectorFormat = format == FORMAT_TIKZ || format == FORMAT_SVG;
+    if (!printerView || !vectorFormat) {
+      g.setColor(printerView ? Color.WHITE : canvasBackground);
+      g.fillRect(0, 0, width, height);
+    }
+    g.setColor(Color.BLACK);
   }
 
   private static class ExportThread extends UniquelyNamedThread {
@@ -178,6 +204,7 @@ public class ExportImage {
     final List<Circuit> circuits;
     final double scale;
     final boolean printerView;
+    final Color canvasBackground;
     final ProgressMonitor monitor;
 
     ExportThread(
@@ -188,6 +215,7 @@ public class ExportImage {
         List<Circuit> circuits,
         double scale,
         boolean printerView,
+        Color canvasBackground,
         ProgressMonitor monitor) {
       super("ExportThread");
       this.frame = frame;
@@ -197,6 +225,7 @@ public class ExportImage {
       this.circuits = circuits;
       this.scale = scale;
       this.printerView = printerView;
+      this.canvasBackground = canvasBackground;
       this.monitor = monitor;
     }
 
@@ -208,15 +237,15 @@ public class ExportImage {
       Graphics base;
       final var img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
       if (filter.type == FORMAT_TIKZ || filter.type == FORMAT_SVG) {
-        base = new TikZWriter();
+        final var tz = new TikZWriter();
+        tz.setSvgMode(filter.type == FORMAT_SVG);
+        base = tz;
         g = base.create();
       } else {
         base = img.getGraphics();
         g = base.create();
-        g.setColor(Color.white);
-        g.fillRect(0, 0, width, height);
-        g.setColor(Color.black);
       }
+      paintExportBackground(g, width, height, filter.type, printerView, canvasBackground);
       if (g instanceof Graphics2D g2d) {
         g2d.scale(scale, scale);
         g.translate(-bds.getX(), -bds.getY());
@@ -241,7 +270,7 @@ public class ExportImage {
       }
       try {
         switch (filter.type) {
-          case FORMAT_GIF -> GifEncoder.toFile(img, where, monitor);
+          case FORMAT_GIF -> ImageIO.write(img, "GIF", where);
           case FORMAT_PNG -> ImageIO.write(img, "PNG", where);
           case FORMAT_JPG -> ImageIO.write(img, "JPEG", where);
           case FORMAT_TIKZ -> ((TikZWriter) g).writeFile(where);
@@ -291,6 +320,14 @@ public class ExportImage {
     @Override
     public String getDescription() {
       return desc.toString();
+    }
+
+    public String getDefaultExtension() {
+      return extensions[0];
+    }
+
+    public int getType() {
+      return type;
     }
   }
 

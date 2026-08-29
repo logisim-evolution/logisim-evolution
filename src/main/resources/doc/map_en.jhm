@@ -31,6 +31,7 @@
     <mapID target="subcirc_personalise" url="en/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug"       url="en/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library"     url="en/html/guide/subcirc/sub-library.html" />
+	<mapID target="dynamic_components"  url="en/html/guide/subcirc/dynamic_components.html" />
 	<mapID target="features"            url="en/html/guide/feature/index.html" />
 	<mapID target="features_creating"   url="en/html/guide/feature/fet-creating.html" />
 	<mapID target="features_splitting"  url="en/html/guide/feature/fet-splitting.html" />
@@ -47,6 +48,13 @@
     <mapID target="mem_v3byte"          url="en/html/guide/mem/mem-v3byte.html"/> 
     <mapID target="mem_binary"          url="en/html/guide/mem/mem-vbinary.html"/>
     <mapID target="mem_ascii"           url="en/html/guide/mem/mem-vascii.html"/>
+	<mapID target="test_vector"         url="en/html/guide/test_vector/index.html" />
+	<mapID target="test_vector_window"  url="en/html/guide/test_vector/test_vector_window.html" />
+	<mapID target="test_vector_file_format" url="en/html/guide/test_vector/test_vector_file_format.html" />
+	<mapID target="test_vector_special_values" url="en/html/guide/test_vector/test_vector_special_values.html" />
+	<mapID target="test_vector_sequential" url="en/html/guide/test_vector/test_vector_sequential.html" />
+	<mapID target="test_vector_cmdline" url="en/html/guide/test_vector/test_vector_cmdline.html" />
+	<mapID target="test_vector_tips"    url="en/html/guide/test_vector/test_vector_tips.html" />
 	<mapID target="analyze"             url="en/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="en/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="en/html/guide/analyze/ana-table.html" />
@@ -67,6 +75,7 @@
 	<mapID target="prefs_window"        url="en/html/guide/prefs/pref-window.html" />
 	<mapID target="prefs_layout"        url="en/html/guide/prefs/pref-layout.html" />
 	<mapID target="prefs_exp"           url="en/html/guide/prefs/pref-exp.html" />
+	<mapID target="prefs_fpga"          url="en/html/guide/prefs/pref-fpgacommander.html" />
 	<mapID target="prefs_cmdline"       url="en/html/guide/prefs/pref-cmdline.html" />
 	<mapID target="opts"                url="en/html/guide/opts/index.html" />
 	<mapID target="opts_simulate"       url="en/html/guide/opts/opts-simulate.html" />
@@ -92,6 +101,7 @@
 	<mapID target="menu_edit"           url="en/html/guide/menu/edit.html" />
 	<mapID target="menu_project"        url="en/html/guide/menu/project.html" />
 	<mapID target="menu_simulate"       url="en/html/guide/menu/simulate.html" />
+	<mapID target="menu_fpga"           url="en/html/guide/menu/fpga.html" />
 	<mapID target="menu_winhelp"        url="en/html/guide/menu/winhelp.html" />
 	<mapID target="menu_exportab"       url="en/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="en/html/guide/menu/printertab.html" />
@@ -142,6 +152,24 @@
 	<mapID target="arith_shifter"       url="en/html/libs/arith/shifter.html" />
 	<mapID target="arith_bitadder"      url="en/html/libs/arith/bitadder.html" />
 	<mapID target="arith_bitfinder"     url="en/html/libs/arith/bitfinder.html" />
+	<mapID target="fparith"             url="en/html/libs/fparith/index.html" />
+	<mapID target="fparith_adder"       url="en/html/libs/fparith/adder.html" />
+	<mapID target="fparith_subtractor"  url="en/html/libs/fparith/subtractor.html" />
+	<mapID target="fparith_multiplier"  url="en/html/libs/fparith/multiplier.html" />
+	<mapID target="fparith_divider"     url="en/html/libs/fparith/divider.html" />
+	<mapID target="fparith_negator"     url="en/html/libs/fparith/negator.html" />
+	<mapID target="fparith_exponentiator" url="en/html/libs/fparith/exponentiator.html" />
+	<mapID target="fparith_logarithm"     url="en/html/libs/fparith/logarithm.html" />
+	<mapID target="fparith_squareroot"    url="en/html/libs/fparith/squareroot.html" />
+	<mapID target="fparith_absolute"      url="en/html/libs/fparith/absolute.html" />
+	<mapID target="fparith_comparator"    url="en/html/libs/fparith/comparator.html" />
+	<mapID target="fparith_minmax"        url="en/html/libs/fparith/minmax.html" />
+	<mapID target="fparith_round"         url="en/html/libs/fparith/round.html" />
+	<mapID target="fparith_trigonometry"  url="en/html/libs/fparith/trigonometry.html" />
+	<mapID target="fparith_classificator" url="en/html/libs/fparith/classificator.html" />
+	<mapID target="fparith_fpconverter"   url="en/html/libs/fparith/fpconverter.html" />
+	<mapID target="fparith_fptoint"       url="en/html/libs/fparith/fptoint.html" />
+	<mapID target="fparith_inttofp"       url="en/html/libs/fparith/inttofp.html" />
 	<mapID target="mem"                 url="en/html/libs/mem/index.html" />
 	<mapID target="mem_flipflops"       url="en/html/libs/mem/flipflops.html" />
 	<mapID target="mem_register"        url="en/html/libs/mem/register.html" />
@@ -155,13 +183,26 @@
 	<mapID target="io_joystick"         url="en/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="en/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="en/html/libs/io/led.html" />
+	<mapID target="io_ledbar"           url="en/html/libs/io/ledbar.html" />
 	<mapID target="io_7seg"             url="en/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="en/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="en/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="en/html/libs/io/tty.html" />	
-    <mapID target="io_Port_IO"          url="en/html/libs/io/Port_io.html" />	
-	<mapID target="io_Repetar"          url="en/html/libs/io/repetar.html" />	
+	<mapID target="io_tty"              url="en/html/libs/io/tty.html" />
+	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+	<mapID target="io_realtimeclock"    url="en/html/libs/io/realtimeclock.html" />
+	<mapID target="io_matrixkeypad"     url="en/html/libs/io/matrixkeypad.html" />
+    <mapID target="io_Port_IO"          url="en/html/libs/io/Port_io.html" />
+	<mapID target="io_Repetar"          url="en/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="en/html/libs/io/videorvb.html" />
+	<mapID target="ioex"                 url="en/html/libs/ioextra/index.html" />
+	<mapID target="ioex_switch"          url="en/html/libs/ioextra/switch.html" />
+	<mapID target="ioex_buzzer"          url="en/html/libs/ioextra/buzzer.html" />
+	<mapID target="ioex_slider"          url="en/html/libs/ioextra/slider.html" />
+	<mapID target="ioex_digitalscope"    url="en/html/libs/ioextra/digitalscope.html" />
+	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
+	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
+	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
+	<mapID target="ttl"                 url="en/html/libs/ttl/index.html" />
 	<mapID target="tcl"                 url="en/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="en/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="en/html/libs/tcl/generic.html" />
@@ -236,6 +277,10 @@
 	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
+	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
+	<mapID target="icon_ledbar"      url="icons/1616/ledbar.png" />
+	<mapID target="icon_realtimeclock" url="icons/1616/realtimeclock.png" />
+	<mapID target="icon_matrixkeypad"  url="icons/1616/matrixkeypad.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	

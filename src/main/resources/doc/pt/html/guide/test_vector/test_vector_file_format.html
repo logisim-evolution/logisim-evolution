@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="pt">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="pt">
+	<title>Formato de Arquivo de Vetor de Teste</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Formato de Arquivo de Vetor de Teste</h1>
+
+<p>Aqui está um exemplo de arquivo de vetor de teste:</p>
+<pre class="code">
+# meu vetor de teste para add32
+A[8]      B[8]      C[8]      Cin Cout
+0000_0000 0000_0000 0000_0000 0   0
+-2        0x05      3         0   0
+0         0o3       3         0   0
+</pre>
+
+<p>Primeiro e acima de tudo, o formato do arquivo é simples. Os cabeçalhos correspondem aos pinos de entrada/saída do circuito. Abaixo deles estão os valores para testar.</p>
+
+<p>A primeira linha não vazia e não comentário lista o nome de cada pino de entrada do circuito e sua largura de bits (se > 1), separados por espaços em branco.</p>
+
+<p>Uma coisa que frequentemente confunde as pessoas que estão começando é que a largura de bits deve ser especificada no cabeçalho sempre que não for 1 bit.</p>
+<p>NOTA: A largura de bits não é necessariamente a mesma que o número de caracteres no valor. Por exemplo, um valor de 4 bits de 13 pode ser representado como 1101, 00001101, 0x0d, 0o15, 15, ou 0b1101, etc.</p>
+
+<p>Linhas em branco são ignoradas. Qualquer coisa após um caractere '#' é um
+comentário. A primeira linha não vazia e não comentário lista o nome de cada
+pino de entrada do circuito e sua largura (se &gt; 1), separados por espaços em branco.
+</p>
+
+<p>As linhas restantes listam cada valor separado por espaços em branco. Os
+valores podem estar em hexadecimal, octal, binário ou decimal com sinal. Valores hexadecimais
+devem ter o prefixo '0x'. Valores octais devem ter o prefixo '0o'.
+Binário e decimal são
+distinguidos pelo número de dígitos: valores binários devem sempre ter
+exatamente tantos dígitos quanto a largura da coluna; valores decimais devem
+sempre ter menos, não devem ter zeros à esquerda e podem ter um
+sinal negativo.</p>
+
+<p>Para melhorar a legibilidade, você pode usar sublinhados (<code>_</code>) em qualquer lugar
+em valores numéricos. Sublinhados são ignorados durante a análise. Exemplos:
+<code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>,
+<code>1_234</code>, ou <code>-5_000</code>.</p>
+
+<p>Para valores hexadecimais, octais e binários, um dígito 'x' especifica quatro,
+três ou um bit "não importa". Então o valor 101xx é um valor binário de cinco bits,
+com os últimos dois bits não especificados, e 0x1ax5 é um valor hexadecimal
+com quatro bits não especificados. Tais "não importa" não podem ser usados
+em notação decimal.</p>
+
+<p>
+	<b>Anterior:</b> <a href="test_vector_window.html">Janela de Vetor de Teste</a> | <b>Próximo:</b> <a href="test_vector_special_values.html">Valores Especiais</a>.
+</p>
+
+</body>
+</html>
+

@@ -75,7 +75,7 @@ public class Shifter extends InstanceFactory {
         new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT, 4});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("\u2b05"));
+    setIcon(new ArithmeticIcon("⬅"));
   }
 
   @Override

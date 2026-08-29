@@ -68,6 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 class XmlReader {
@@ -465,6 +466,19 @@ class XmlReader {
             final var vhdl = circElt.getTextContent();
             final var contents = VhdlContent.parse(name, vhdl, file);
             if (contents != null) {
+              if (circElt.hasAttribute("appearance")) {
+                try {
+                  contents.setAppearance(
+                      StdAttr.APPEARANCE.parse(circElt.getAttribute("appearance")));
+                } catch (NumberFormatException e) {
+                  addError(
+                      S.get(
+                          "attrValueInvalidError",
+                          circElt.getAttribute("appearance"),
+                          StdAttr.APPEARANCE.getName()),
+                      "vhdl." + name);
+                }
+              }
               file.addVhdlContent(contents);
             }
           }
@@ -543,13 +557,23 @@ class XmlReader {
       builder.execute();
     }
 
+    Tool findTool(Library lib, String name) {
+      final var tool = lib.getTool(name);
+      if (tool != null) return tool;
+      for (final var sub : lib.getLibraries()) {
+        final var ret = findTool(sub, name);
+        if (ret != null) return ret;
+      }
+      return null;
+    }
+
     Tool toTool(Element elt) throws XmlReaderException {
       final var lib = findLibrary(elt.getAttribute("lib"));
       final var name = elt.getAttribute("name");
       if (name == null || "".equals(name)) {
         throw new XmlReaderException(S.get("toolNameMissing"));
       }
-      final var tool = lib.getTool(name);
+      final var tool = findTool(lib, name);
       if (tool == null) {
         throw new XmlReaderException(S.get("toolNotFound"));
       }
@@ -1047,6 +1071,13 @@ class XmlReader {
     for (final Element toolElt : XmlIterator.forDescendantElements(root, "tool")) {
       convertObsoletePinAttributes(doc, toolElt, wiringLibName);
     }
+
+    //prevents the following repairs to be applied when you open the program.
+    if (version.compareTo(new LogisimVersion(0, 0, 0)) == 0) return;
+
+    if (version.compareTo(new LogisimVersion(4, 1, 0, "dev")) < 0) {
+      repairFloatLibrary(doc, root);
+    }
   }
 
   private void convertObsoletePinAttributes(Document doc, Element elt, String wiringLibName) {
@@ -1292,6 +1323,54 @@ class XmlReader {
     updateFromLabelMap(XmlIterator.forDescendantElements(root, "tool"), labelMap);
   }
 
+  private void repairFloatLibrary(Document doc, Element root) {
+    Element arithmeticLib = null;
+    Node nextSibling = null;
+    for (final var lib : XmlIterator.forChildElements(root, "lib")) {
+      if (lib.getAttribute("desc").equals("#Arithmetic")) {
+        arithmeticLib = lib;
+        nextSibling = lib.getNextSibling();
+        break;
+      }
+    }
+
+    if (arithmeticLib != null) {
+      final Element floatLib = doc.createElement("lib");
+      floatLib.setAttribute("desc", "#FPArithmetic");
+      floatLib.setAttribute("name", "float");
+
+      final List<Element> toolsToMove = new ArrayList<>();
+      for (final var tool : XmlIterator.forChildElements(arithmeticLib, "tool")) {
+        final String toolName = tool.getAttribute("name");
+        if (toolName.startsWith("FP") || toolName.equals("IntToFP")) {
+          toolsToMove.add(tool);
+        }
+      }
+
+      for (Element tool : toolsToMove) {
+        arithmeticLib.removeChild(tool);
+        floatLib.appendChild(tool);
+      }
+
+      if (nextSibling != null) {
+        root.insertBefore(floatLib, nextSibling);
+      } else {
+        root.appendChild(floatLib);
+      }
+
+      for (final var circuit : XmlIterator.forChildElements(root, "circuit")) {
+        for (final var comp : XmlIterator.forChildElements(circuit, "comp")) {
+          final String libName = comp.getAttribute("lib");
+          final String compName = comp.getAttribute("name");
+
+          if (libName.equals(arithmeticLib.getAttribute("name"))
+              && compName.startsWith("FP") || compName.equals("IntToFP")) {
+            comp.setAttribute("lib", "float");
+          }
+        }
+      }
+    }
+  }
   private void updateFromLabelMap(Iterable<Element> elts, HashMap<String, String> labelMap) {
     for (final var elt : elts) {
       final var oldLib = elt.getAttribute("lib");

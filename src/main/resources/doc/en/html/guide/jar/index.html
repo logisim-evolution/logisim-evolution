@@ -23,7 +23,10 @@
         Logisim has two types of circuit components: those that are designed within Logisim as combinations of components, and those primitive components that are written in Java. Logisim circuits are easier to design, but they cannot support sophisticated user interaction, and they are relatively inefficient.
       </p>
       <p>
-        Logisim contains a fairly thorough collection of built-in libraries of Java components, but it can also load additional libraries written by you or others. Once you have downloaded a library, you can import it into your project by right-clicking the project in the explorer pane (the top line) and choosing Load Library &gt; JAR Library.... Then, Logisim will prompt you to select the JAR file. (In some circumstances, you may have to type the starting class name when prompted, which would be provided by the library developer. However, a developer typically configures the JAR library to avoid this (by including a <q>manifest</q> file in the JAR with a Library-Class attribute specifying the main class name).)
+        Logisim contains a fairly thorough collection of built-in libraries of Java components, but it can also load additional libraries written by you or others. Once you have downloaded a library, you can import it into your project by right-clicking the project in the explorer pane (the top line) and choosing Load Library &gt; JAR Library&hellip;. Then, Logisim will prompt you to select the JAR file. (In some circumstances, you may have to type the starting class name when prompted, which would be provided by the library developer. However, a developer typically configures the JAR library to avoid this (by including a <q>manifest</q> file in the JAR with a Library-Class attribute specifying the main class name).)
+      </p>
+      <p>
+        If you only want to reuse circuits designed in Logisim, you do not need to write a JAR library. Save the circuits in a <tt>.circ</tt> file and load that file with <b class=menu>|&nbsp;Project&nbsp;|</b>→<b class=menu>|&nbsp;Load Library&nbsp;|</b>→<b class=menu>|&nbsp;Logisim-evolution Library&hellip;&nbsp;|</b>. This is described in the <a href="../subcirc/sub-library.html">Logisim libraries</a> section.
       </p>
       <h2>
         Creating JAR libraries
@@ -32,7 +35,19 @@
         The remainder of this section is dedicated to a series of thoroughly commented examples illustrating how to develop Logisim libraries yourself. You should only attempt this if you're an experienced Java programmer. You will find the documentation beyond these examples fairly meager.
       </p>
       <p>
-        You can download a JAR file that allows these examples to be imported into Logisim via the Logisim Web site's Links section. That JAR file also contains the source code contained in these examples.
+        The example source code is maintained in the Logisim-evolution source tree under <tt>src/main/java/com/cburch/gray</tt>. The pages in this section explain the important pieces of that example, but the source tree is the best reference if the printed snippets and the current code diverge.
+      </p>
+      <h2>
+        Building a JAR library
+      </h2>
+      <p>
+        A JAR library must be compiled against the same Logisim-evolution API that it is intended to run with. When building outside the Logisim-evolution source tree, put the Logisim-evolution JAR on your Java compiler's class path, compile the library classes, and package those classes and any resources into a JAR file.
+      </p>
+      <p>
+        To avoid asking users for a class name when they load the JAR, include a manifest entry named <tt>Library-Class</tt>. Its value must be the fully qualified name of the class extending <code>com.cburch.logisim.tools.Library</code>. For the gray-code example, that entry would be <tt>Library-Class: com.cburch.gray.Components</tt>.
+      </p>
+      <p>
+        The gray-code example is also compiled as part of Logisim-evolution itself, so contributors can verify that the example still builds by running <tt>./gradlew compileJava</tt> from the Logisim-evolution source tree.
       </p>
       <dl>
         <dt>

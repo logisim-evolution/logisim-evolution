@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class CorrectLabel {
   public static String getCorrectLabel(String label) {
@@ -26,6 +27,20 @@ public class CorrectLabel {
     if (NUMBERS.contains(label.substring(0, 1))) result.append("L_");
     result.append(label.replace(" ", "_").replace("-", "_"));
     return result.toString();
+  }
+
+  public static String hdlLabelKey(String label) {
+    return hdlLabelKey(label, HdlGeneratorFactory.VHDL);
+  }
+
+  public static String hdlLabelKey(String label, String hdlType) {
+    final var correctLabel = getCorrectLabel(label);
+    if (HdlGeneratorFactory.VHDL.equals(hdlType)) return hdlNameKey(correctLabel);
+    return correctLabel;
+  }
+
+  public static String hdlNameKey(String hdlName) {
+    return hdlName.toUpperCase(Locale.ROOT);
   }
 
   public static boolean isCorrectLabel(String label, String errorIdentifierString) {
@@ -64,9 +79,19 @@ public class CorrectLabel {
   }
 
   public static String hdlCorrectLabel(String label) {
+    return hdlCorrectLabel(label, null);
+  }
+
+  public static String hdlCorrectLabel(String label, String hdlType) {
     if (label.isEmpty()) return null;
-    if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) return HdlGeneratorFactory.VHDL;
-    if (VERILOG_KEYWORDS.contains(label)) return HdlGeneratorFactory.VERILOG;
+    if ((hdlType == null || HdlGeneratorFactory.VHDL.equals(hdlType))
+        && Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
+      return HdlGeneratorFactory.VHDL;
+    }
+    if ((hdlType == null || HdlGeneratorFactory.VERILOG.equals(hdlType))
+        && VERILOG_KEYWORDS.contains(label)) {
+      return HdlGeneratorFactory.VERILOG;
+    }
     return null;
   }
 
@@ -101,12 +126,20 @@ public class CorrectLabel {
   }
 
   public static boolean isKeyword(String label, Boolean showDialog) {
+    return isKeyword(label, null, showDialog);
+  }
+
+  public static boolean isKeyword(String label, String hdlType, Boolean showDialog) {
     boolean ret = false;
 
-    if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
+    if ((hdlType == null || HdlGeneratorFactory.VHDL.equals(hdlType))
+        && Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
       ret = true;
       if (showDialog) OptionPane.showMessageDialog(null, S.get("VHDLKeywordNameError"));
-    } else if (VERILOG_KEYWORDS.contains(label.toLowerCase())) {
+    } else if (hdlType == null && VERILOG_KEYWORDS.contains(label.toLowerCase())) {
+      if (showDialog) OptionPane.showMessageDialog(null, S.get("VerilogKeywordNameError"));
+      ret = true;
+    } else if (HdlGeneratorFactory.VERILOG.equals(hdlType) && VERILOG_KEYWORDS.contains(label)) {
       if (showDialog) OptionPane.showMessageDialog(null, S.get("VerilogKeywordNameError"));
       ret = true;
     }

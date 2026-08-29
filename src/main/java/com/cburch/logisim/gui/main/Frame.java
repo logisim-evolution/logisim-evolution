@@ -17,10 +17,12 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.generated.BuildInfo;
@@ -42,6 +44,7 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
@@ -49,26 +52,42 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
 import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.Timer;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -81,12 +100,19 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
+  private static final double DEFAULT_EXPLORER_SPLIT = 0.25;
+  private static final double MIN_EXPLORER_SPLIT = 0.05;
+  private static final double MAX_EXPLORER_SPLIT = 0.95;
+  private static final double DEFAULT_VHDL_CONSOLE_SPLIT = 0.75;
+  private static final double MIN_VHDL_CONSOLE_SPLIT = 0.05;
+  private static final double MAX_VHDL_CONSOLE_SPLIT = 0.95;
   private final Timer timer = new Timer();
   private final Project project;
   private final MyProjectListener myProjectListener = new MyProjectListener();
   // GUI elements shared between views
   private final MainMenuListener menuListener;
   private final Toolbar toolbar;
+  private final KeyboardToolSelection.Registration keyboardToolSelection;
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
@@ -104,6 +130,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   // for the Layout view
   private final LayoutToolbarModel layoutToolbarModel;
   private final Canvas layoutCanvas;
+  private final CanvasPane layoutCanvasPane;
+  private final CircuitViewMemory layoutViewMemory = new CircuitViewMemory();
   private final VhdlSimulatorConsole vhdlSimulatorConsole;
   private final HdlContentView hdlEditor;
   private final ZoomModel layoutZoomModel;
@@ -111,6 +139,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final AttrTableSelectionModel attrTableSelectionModel;
   // for the Appearance view
   private AppearanceView appearance;
+  private Double lastExplorerFraction =
+      sanitizeExplorerSplitFraction(AppPreferences.WINDOW_MAIN_SPLIT.get());
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
   private final RegTabContent regTabContent;
 
@@ -127,16 +157,16 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     project.addCircuitListener(myProjectListener);
 
     // set up elements for the Layout view
-    layoutToolbarModel = new LayoutToolbarModel(this, project);
+    layoutToolbarModel = new LayoutToolbarModel(project);
     layoutCanvas = new Canvas(project);
-    final var canvasPane = new CanvasPane(layoutCanvas);
+    layoutCanvasPane = new CanvasPane(layoutCanvas);
 
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
             buildZoomSteps(),
-            canvasPane);
+            layoutCanvasPane);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
@@ -151,7 +181,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     toolbox = new Toolbox(project, this, menuListener);
     simExplorer = new SimulationExplorer(project, menuListener);
     bottomTab = new JTabbedPane();
-    bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
+    var fontName = "Dialog";
+    final var appFont = AppPreferences.APP_FONT.get();
+    if (appFont != null && !appFont.isBlank()) {
+      fontName = appFont;
+    }
+    
+    var fontStyle = AppPreferences.getPreferredFontStyle(fontName);
+    bottomTab.setFont(AppPreferences.getScaledFont(new Font(fontName, fontStyle, 9)));
     bottomTab.add(attrTable = new AttrTable(this));
     regTabContent = new RegTabContent(this);
     bottomTab.add(regTabContent);
@@ -160,9 +197,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     // set up the central area
     mainPanelSuper = new JPanel(new BorderLayout());
-    canvasPane.setZoomModel(layoutZoomModel);
+    layoutCanvasPane.setZoomModel(layoutZoomModel);
     mainPanel = new CardPanel();
-    mainPanel.addView(EDIT_LAYOUT, canvasPane);
+    mainPanel.addView(EDIT_LAYOUT, layoutCanvasPane);
     mainPanel.setView(EDIT_LAYOUT);
     mainPanelSuper.add(mainPanel, BorderLayout.CENTER);
 
@@ -176,7 +213,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     simPanel.add(simExplorer, BorderLayout.CENTER);
 
     topTab = new JTabbedPane();
-    topTab.setFont(new Font("Dialog", Font.BOLD, 9));
+    topTab.setFont(new Font(fontName, fontStyle, 9));
     topTab.add(explPanel);
     topTab.add(simPanel);
 
@@ -201,6 +238,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
     mainRegion = new MainRegionVerticalSplitPane(leftRegion, rightPanel);
+    if (!AppPreferences.WINDOW_EXPLORER_VISIBLE.getBoolean()) {
+      mainRegion.setFraction(0.0);
+    }
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
@@ -213,7 +253,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     this.setExtendedState(AppPreferences.WINDOW_STATE.get());
 
     menuListener.register(mainPanel);
-    KeyboardToolSelection.register(toolbar);
+    keyboardToolSelection = KeyboardToolSelection.register(toolbar);
 
     project.setFrame(this);
     if (project.getTool() == null) {
@@ -222,9 +262,146 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     mainPanel.addChangeListener(myProjectListener);
     AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myProjectListener);
     placeToolbar();
+    installFileDropTargets();
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+
+    restoreLayoutView(project.getCurrentCircuit());
+  }
+
+  private final class FileDropTargetListener extends DropTargetAdapter {
+    @Override
+    public void dragEnter(DropTargetDragEvent event) {
+      if (supportsFileDrop(event.getCurrentDataFlavors())) {
+        event.acceptDrag(DnDConstants.ACTION_COPY);
+      } else {
+        event.rejectDrag();
+      }
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent event) {
+      if (supportsFileDrop(event.getCurrentDataFlavors())) {
+        event.acceptDrag(DnDConstants.ACTION_COPY);
+      } else {
+        event.rejectDrag();
+      }
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent event) {
+      if (!supportsFileDrop(event.getCurrentDataFlavors())) {
+        event.rejectDrop();
+        return;
+      }
+
+      var success = false;
+      event.acceptDrop(DnDConstants.ACTION_COPY);
+      try {
+        final var transferable = event.getTransferable();
+        final var droppedData = transferable.getTransferData(DataFlavor.javaFileListFlavor);
+        if (droppedData instanceof List<?> files) {
+          success = openDroppedFiles(files);
+        }
+      } catch (Exception ex) {
+        success = false;
+      }
+      event.dropComplete(success);
+    }
+  }
+
+  private void installFileDropTargets() {
+    final var listener = new FileDropTargetListener();
+    final Set<java.awt.Component> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    installFileDropTarget(this, listener, seen);
+    installFileDropTarget(getJMenuBar(), listener, seen);
+    installFileDropTarget(getRootPane(), listener, seen);
+    installFileDropTarget(getLayeredPane(), listener, seen);
+    installFileDropTarget(getContentPane(), listener, seen);
+  }
+
+  private void installFileDropTarget(
+      java.awt.Component component, FileDropTargetListener listener, Set<java.awt.Component> seen) {
+    if (component == null || !seen.add(component)) {
+      return;
+    }
+
+    new DropTarget(component, DnDConstants.ACTION_COPY, listener, true);
+    if (component instanceof Container container) {
+      for (final var child : container.getComponents()) {
+        installFileDropTarget(child, listener, seen);
+      }
+    }
+  }
+
+  private boolean openDroppedFiles(List<?> droppedFiles) {
+    var openedAny = false;
+    for (final var item : droppedFiles) {
+      if (!(item instanceof File file)) {
+        continue;
+      }
+
+      if (!isProjectFile(file) && !confirmOpenNonProjectFile(file)) {
+        continue;
+      }
+
+      openedAny |= openDroppedFile(file);
+    }
+    return openedAny;
+  }
+
+  private boolean openDroppedFile(File file) {
+    final var shouldReuseCurrent = shouldOpenDropInCurrentWindow();
+    final var previousStartupScreen = project.isStartupScreen();
+    if (shouldReuseCurrent && !previousStartupScreen) {
+      project.setStartupScreen(true);
+    }
+
+    final var openedProject = ProjectActions.doOpen(this, project, file);
+    if (shouldReuseCurrent && openedProject != project) {
+      project.setStartupScreen(previousStartupScreen);
+    }
+    return openedProject != null;
+  }
+
+  private boolean shouldOpenDropInCurrentWindow() {
+    final var loader = project.getLogisimFile().getLoader();
+    final var currentCircuit = project.getCurrentCircuit();
+    return loader != null
+        && loader.getMainFile() == null
+        && !project.isFileDirty()
+        && currentCircuit != null
+        && currentCircuit.getBounds().getWidth() == 0
+        && currentCircuit.getBounds().getHeight() == 0;
+  }
+
+  private boolean confirmOpenNonProjectFile(File file) {
+    final var message =
+        S.get("dragOpenNonProjectMessage", file.getAbsolutePath(), Loader.LOGISIM_EXTENSION);
+    final var result =
+        OptionPane.showConfirmDialog(
+            this,
+            message,
+            S.get("dragOpenNonProjectTitle"),
+            OptionPane.YES_NO_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    return result == OptionPane.YES_OPTION;
+  }
+
+  private boolean isProjectFile(File file) {
+    final var name = file.getName().toLowerCase(Locale.ROOT);
+    return name.endsWith(Loader.LOGISIM_EXTENSION);
+  }
+
+  private boolean supportsFileDrop(DataFlavor[] flavors) {
+    for (final var flavor : flavors) {
+      if (DataFlavor.javaFileListFlavor.equals(flavor)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public RegTabContent getRegTabContent() {
@@ -240,8 +417,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     private Direction orientation;
 
     public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas) {
-      this(componentTree, mainCanvas, AppPreferences.WINDOW_MAIN_SPLIT.get(),
-              Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
+      this(
+          componentTree,
+          mainCanvas,
+          sanitizeExplorerSplitFraction(AppPreferences.WINDOW_MAIN_SPLIT.get()),
+          Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
     }
 
     public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas, double fraction,
@@ -394,7 +574,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public void resetLayout() {
-    mainRegion.setFraction(0.25);
+    lastExplorerFraction = DEFAULT_EXPLORER_SPLIT;
+    mainRegion.setFraction(DEFAULT_EXPLORER_SPLIT);
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(true);
     mainRegion.setOrientation(Direction.EAST);
     leftRegion.setFraction(0.5);
     rightRegion.setFraction(1.0);
@@ -470,6 +652,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
   }
 
+  public void computeEditMenuEnabled() {
+    menuListener.computeEditEnabled();
+    menubar.refreshEditUndoRedoItems();
+  }
+
   public void setEditorView(String view) {
     final var curView = mainPanel.getView();
     if (hdlEditor.getHdlModel() == null && curView.equals(view)) return;
@@ -514,6 +701,54 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   public ZoomModel getZoomModel() {
     return layoutZoomModel;
+  }
+
+  private void rememberLayoutView(Object active) {
+    if (active instanceof CircuitState state) {
+      layoutViewMemory.remember(
+          state.getCircuit(), layoutZoomModel, layoutCanvasPane.getViewport().getViewPosition());
+    }
+  }
+
+  private void restoreLayoutView(Circuit circuit) {
+    layoutCanvas.computeSize(true);
+    if (layoutViewMemory.restore(
+        circuit,
+        layoutZoomModel,
+        position ->
+            restoreViewPosition(
+                layoutCanvasPane.getViewport(), layoutCanvas.getPreferredSize(), position))) {
+      return;
+    }
+
+    SwingUtilities.invokeLater(() -> initializeLayoutView(circuit));
+  }
+
+  private void initializeLayoutView(Circuit circuit) {
+    if (circuit == null || project.getCurrentCircuit() != circuit) return;
+
+    final var graphics = layoutCanvas.getGraphics();
+    final var bounds = graphics == null ? circuit.getBounds() : circuit.getBounds(graphics);
+    final var initialZoom =
+        ZoomControl.computeInitialZoomFactor(
+            bounds,
+            layoutCanvasPane.getViewport().getSize(),
+            layoutZoomModel.getZoomOptions());
+    layoutZoomModel.setZoomFactor(initialZoom);
+    SwingUtilities.invokeLater(
+        () -> {
+          if (project.getCurrentCircuit() == circuit) {
+            layoutCanvas.computeSize(true);
+            layoutCanvasPane.getViewport().setViewSize(layoutCanvas.getPreferredSize());
+            layoutCanvas.center();
+          }
+        });
+  }
+
+  static void restoreViewPosition(JViewport viewport, java.awt.Dimension viewSize, Point position) {
+    if (viewport == null || viewSize == null || position == null) return;
+    viewport.setViewSize(viewSize);
+    viewport.setViewPosition(position);
   }
 
   @Override
@@ -572,8 +807,15 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     if (loc != null) AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
     if (leftRegion.getFraction() > 0) AppPreferences.WINDOW_LEFT_SPLIT.set(leftRegion.getFraction());
-    if (rightRegion.getFraction() < 1.0) AppPreferences.WINDOW_RIGHT_SPLIT.set(rightRegion.getFraction());
-    if (mainRegion.getFraction() > 0) AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
+    final var rightFraction = rightRegion.getFraction();
+    if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
+      AppPreferences.WINDOW_RIGHT_SPLIT.set(rightFraction);
+    }
+    final var explorerFraction = mainRegion.getFraction();
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(explorerFraction > 0.0);
+    if (isUsableExplorerSplitFraction(explorerFraction)) {
+      AppPreferences.WINDOW_MAIN_SPLIT.set(explorerFraction);
+    }
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
 
@@ -597,12 +839,69 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public void setVhdlSimulatorConsoleStatusVisible() {
+    lastFraction = sanitizeVhdlConsoleSplitFraction(lastFraction);
+    rightRegion.setFractionBounds(MIN_VHDL_CONSOLE_SPLIT, MAX_VHDL_CONSOLE_SPLIT);
     rightRegion.setFraction(lastFraction);
   }
 
   public void setVhdlSimulatorConsoleStatusInvisible() {
-    lastFraction = rightRegion.getFraction();
+    final var rightFraction = rightRegion.getFraction();
+    if (isUsableVhdlConsoleSplitFraction(rightFraction)) {
+      lastFraction = rightFraction;
+    }
+    rightRegion.setFractionBounds(0.0, 1.0);
     rightRegion.setFraction(1);
+  }
+
+  public boolean isExplorerVisible() {
+    return mainRegion != null && mainRegion.getFraction() > 0.0;
+  }
+
+  public void setExplorerVisible(boolean visible) {
+    final var oldVisible = isExplorerVisible();
+
+    if (visible) {
+      lastExplorerFraction = sanitizeExplorerSplitFraction(lastExplorerFraction);
+      mainRegion.setFraction(lastExplorerFraction);
+    } else {
+      final var explorerFraction = mainRegion.getFraction();
+      if (isUsableExplorerSplitFraction(explorerFraction)) {
+        lastExplorerFraction = explorerFraction;
+      }
+      mainRegion.setFraction(0.0);
+    }
+
+    AppPreferences.WINDOW_EXPLORER_VISIBLE.set(visible);
+    final var newVisible = isExplorerVisible();
+    if (oldVisible != newVisible) {
+      firePropertyChange(EXPLORER_VIEW, oldVisible, newVisible);
+    }
+  }
+
+  static double sanitizeExplorerSplitFraction(Double fraction) {
+    if (fraction == null || !isUsableExplorerSplitFraction(fraction)) {
+      return DEFAULT_EXPLORER_SPLIT;
+    }
+    return fraction;
+  }
+
+  static boolean isUsableExplorerSplitFraction(double fraction) {
+    return Double.isFinite(fraction)
+        && fraction >= MIN_EXPLORER_SPLIT
+        && fraction <= MAX_EXPLORER_SPLIT;
+  }
+
+  static double sanitizeVhdlConsoleSplitFraction(Double fraction) {
+    if (fraction == null || !isUsableVhdlConsoleSplitFraction(fraction)) {
+      return DEFAULT_VHDL_CONSOLE_SPLIT;
+    }
+    return fraction;
+  }
+
+  static boolean isUsableVhdlConsoleSplitFraction(double fraction) {
+    return Double.isFinite(fraction)
+        && fraction >= MIN_VHDL_CONSOLE_SPLIT
+        && fraction <= MAX_VHDL_CONSOLE_SPLIT;
   }
 
   public HdlModel getHdlEditorView() {
@@ -640,16 +939,23 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) return;
     }
     if (newAttrs == null) {
-      final var circ = project.getCurrentCircuit();
-      if (circ != null) {
-        setAttrTableModel(new AttrTableCircuitModel(project, circ));
-      } else if (force) {
-        setAttrTableModel(null);
-      }
+      viewCircuitAttributes();
     } else if (newAttrs instanceof SelectionAttributes) {
+      attrTableSelectionModel.updateAttributeSet();
       setAttrTableModel(attrTableSelectionModel);
     } else {
       setAttrTableModel(new AttrTableToolModel(project, newTool));
+    }
+  }
+
+  void viewCircuitAttributes() {
+    final var circ = project.getCurrentCircuit();
+    if (circ != null) {
+      setAttrTableModel(new AttrTableCircuitModel(project, circ));
+    } else if (project.getCurrentHdl() instanceof VhdlContent hdl) {
+      setAttrTableModel(new AttrTableHdlModel(project, hdl));
+    } else {
+      setAttrTableModel(null);
     }
   }
 
@@ -685,6 +991,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
         buildTitleString();
         enableSave();
+      } else if (e.getAction() == LibraryEvent.REMOVE_TOOL
+          && e.getData() instanceof AddTool tool
+          && tool.getFactory() instanceof SubcircuitFactory subcircuitFactory) {
+        layoutViewMemory.forget(subcircuitFactory.getSubcircuit());
       }
     }
 
@@ -704,15 +1014,20 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           }
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
-        if (event.getData() instanceof Circuit) {
+        rememberLayoutView(event.getOldData());
+        if (event.getData() instanceof Circuit circuit) {
           setEditorView(EDIT_LAYOUT);
+          restoreLayoutView(circuit);
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }
+          viewAttributes(project.getTool());
         } else if (event.getData() instanceof HdlModel model) {
           setHdlEditorView(model);
+          viewCircuitAttributes();
+        } else {
+          viewAttributes(project.getTool());
         }
-        viewAttributes(project.getTool());
         buildTitleString();
       } else if (action == ProjectEvent.ACTION_SET_TOOL) {
         if (attrTable == null) {
@@ -752,6 +1067,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         timer.cancel();
         Frame.this.dispose();
       }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+      keyboardToolSelection.close();
     }
 
     @Override

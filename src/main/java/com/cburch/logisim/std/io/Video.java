@@ -72,6 +72,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   static final String COLOR_RGB = "888 RGB (24 bit)";
   static final String COLOR_555_RGB = "555 RGB (15 bit)";
   static final String COLOR_565_RGB = "565 RGB (16 bit)";
+  static final String COLOR_444_RGB = "444 RGB (12 bit)";
   static final String COLOR_111_RGB = "8-Color RGB (3 bit)";
   static final String COLOR_ATARI = "Atari 2600 (7 bit)";
   static final String COLOR_XTERM16 = "XTerm16 (4 bit)";
@@ -83,6 +84,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     COLOR_RGB,
     COLOR_555_RGB,
     COLOR_565_RGB,
+    COLOR_444_RGB,
     COLOR_111_RGB,
     COLOR_ATARI,
     COLOR_XTERM16,
@@ -271,6 +273,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   }
 
   static final DirectColorModel rgb111 = new DirectColorModel(3, 0x4, 0x2, 0x1);
+  static final DirectColorModel rgb444 = new DirectColorModel(12, 0xF00, 0x0F0, 0x00F);
   static final DirectColorModel rgb555 = new DirectColorModel(15, 0x7C00, 0x03E0, 0x001F);
   static final DirectColorModel rgb565 = new DirectColorModel(16, 0xF800, 0x07E0, 0x001F);
   static final DirectColorModel rgb = new DirectColorModel(24, 0xFF0000, 0x00FF00, 0x0000FF);
@@ -408,6 +411,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     if (model == COLOR_RGB) return rgb;
     else if (model == COLOR_555_RGB) return rgb555;
     else if (model == COLOR_565_RGB) return rgb565;
+    else if (model == COLOR_444_RGB) return rgb444;
     else if (model == COLOR_111_RGB) return rgb111;
     else if (model == COLOR_ATARI) return atari;
     else if (model == COLOR_XTERM16) return xterm16;

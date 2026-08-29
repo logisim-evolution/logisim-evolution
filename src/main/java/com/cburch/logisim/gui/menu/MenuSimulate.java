@@ -238,6 +238,9 @@ public class MenuSimulate extends Menu {
     log.setText(S.get("simulateLogItem"));
     test.setText(S.get("simulateTestItem"));
     assemblyWindow.setText(S.get("simulateAssemblyViewer"));
+    if (assWin != null) {
+      assWin.localeChanged();
+    }
   }
 
   private void recreateStateMenu(JMenu menu, List<CircuitStateMenuItem> items, int code) {

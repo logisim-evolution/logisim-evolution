@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="changed" content="2026-07-08T01:58:00.000000000">
+    <meta name="created" content="2026-06-26T14:48:00.000000000">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Локальная шина Reptar</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+	<div class="maindiv">
+		<h1>
+			<img class="iconlibs" src="../../../../icons/6464/repetar.png" alt="#########" height="32" width="32">
+			<em>Локальная шина Reptar</em>
+		</h1>
+		<table>
+			<tbody>
+				<tr>
+					<td><strong>Библиотека:</strong></td>
+					<td><a href="index.html">Ввод-вывод</a></td>
+				</tr>
+				<tr>
+					<td><strong>Введён в:</strong></td>
+					<td>3.0.0</td>
+				</tr>
+				<tr>
+					<td valign="top"><strong>Внешний вид:</strong></td>
+					<td valign="top">
+						<img src="../../../../img-libs/repetar.png" width="170" height="169">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2>Поведение</h2>
+		<p>
+			Компонент Локальная шина Reptar (Reptar Local Bus) представляет собой специализированный интерфейсный блок
+			для связи логических схем Logisim-Evolution с аппаратной шиной отладочной платы Reptar (на базе ПЛИС Spartan-6).
+		</p>
+		<p>
+			<b>Важное примечание:</b> Моделирование работы локальной шины Reptar непосредственно внутри программы
+			Logisim-Evolution <b>не поддерживается</b>. Этот компонент предназначен исключительно для генерации VHDL-кода
+			и синтеза схемы на физическую плату ПЛИС. При запуске моделирования в Logisim-Evolution сигналы на портах
+			компонента не будут обрабатываться.
+		</p>
+
+		<h2>Контакты (все контакты расположены на правом краю)</h2>
+		<dl>
+			<dt>SP6_LB_nCS3_o (выход, разрядность 1):</dt>
+			<dd>Сигнал выбора кристалла (Chip Select 3, активный низкий уровень), передаваемый от шины в схему.</dd>
+			<dt>SP6_LB_nADV_ALE_o (выход, разрядность 1):</dt>
+			<dd>Сигнал фиксации адреса (Address Valid / Address Latch Enable, активный низкий уровень), передаваемый от шины в схему.</dd>
+			<dt>SP6_LB_RE_nOE_o (выход, разрядность 1):</dt>
+			<dd>Сигнал разрешения чтения (Read Enable / Output Enable, активный низкий уровень), передаваемый от шины в схему.</dd>
+			<dt>SP6_LB_nWE_o (выход, разрядность 1):</dt>
+			<dd>Сигнал разрешения записи (Write Enable, активный низкий уровень), передаваемый от шины в схему.</dd>
+			<dt>SP6_LB_WAIT3_i (вход, разрядность 1):</dt>
+			<dd>Входной сигнал ожидания (WAIT 3), передаваемый схемой на шину.</dd>
+			<dt>Addr_Data_LB_o (выход, разрядность 16):</dt>
+			<dd>Выходная 16-разрядная шина адреса/данных от локальной шины в схему.</dd>
+			<dt>Addr_Data_LB_i (вход, разрядность 16):</dt>
+			<dd>Входная 16-разрядная шина адреса/данных от схемы на локальную шину.</dd>
+			<dt>Addr_Data_LB_tris_i (вход, разрядность 1):</dt>
+			<dd>Сигнал управления третьим (высокоимпедансным) состоянием шины адреса/данных.</dd>
+			<dt>Addr_LB_o (выход, разрядность 9):</dt>
+			<dd>Выходная 9-разрядная шина адреса от локальной шины в схему.</dd>
+			<dt>IRQ_i (вход, разрядность 1):</dt>
+			<dd>Сигнал запроса прерывания от схемы к локальной шине.</dd>
+		</dl>
+
+		<h2>Атрибуты</h2>
+		<div class="attliste">
+			<dl>
+				<dt><b class="propertie">Метка</b></dt>
+				<dd>Имя локальной шины в сгенерированном VHDL-коде (по умолчанию "LocalBus", изменить нельзя).</dd>
+			</dl>
+		</div>
+
+		<p><b>Назад к</b> <a href="../index.html">Справке по библиотеке</a></p>
+	</div>
+</body>
+
+</html>

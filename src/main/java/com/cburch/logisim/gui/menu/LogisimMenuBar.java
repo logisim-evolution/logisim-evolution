@@ -190,6 +190,10 @@ public class LogisimMenuBar extends JMenuBar {
     enableListeners.remove(l);
   }
 
+  public void refreshEditUndoRedoItems() {
+    edit.refreshUndoRedoItems();
+  }
+
   public void setCircuitState(Simulator sim, CircuitState state) {
     simulate.setCurrentState(sim, state);
   }

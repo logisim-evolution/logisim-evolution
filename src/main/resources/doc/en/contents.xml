@@ -30,6 +30,7 @@
 			<tocitem target="subcirc_personalise" text="Customize the appearance"/>
 			<tocitem target="subcirc_debug" text="Debugging subcircuits" />
 			<tocitem target="subcirc_library" text="Logisim libraries" />
+			<tocitem target="dynamic_components" text="Dynamic Components" />
 		</tocitem>
 		<tocitem target="features" text="Additional features">
 			<tocitem target="features_creating" text="Creating bundles" />
@@ -48,6 +49,14 @@
 			<tocitem target="mem_v3byte" text="File v3byte"/>
 			<tocitem target="mem_binary" text="File binary"/>
 			<tocitem target="mem_ascii" text="File ASCII"/>
+		</tocitem>
+		<tocitem target="test_vector" text="Test Vectors">
+			<tocitem target="test_vector_window" text="Test Vector Window" />
+			<tocitem target="test_vector_file_format" text="Test Vector File Format" />
+			<tocitem target="test_vector_special_values" text="Special Values" />
+			<tocitem target="test_vector_sequential" text="Sequential Testing" />
+			<tocitem target="test_vector_cmdline" text="Command Line Usage" />
+			<tocitem target="test_vector_tips" text="Tips and Best Practices" />
 		</tocitem>
 		<tocitem target="analyze" text="Combinational analysis">
 			<tocitem target="analyze_open" text="Opening Combinational Analysis" />
@@ -71,6 +80,7 @@
 			<tocitem target="menu_edit" text="The Edit menu" />
 			<tocitem target="menu_project" text="The Project menu" />
 			<tocitem target="menu_simulate" text="The Simulate menu" />
+			<tocitem target="menu_fpga" text="The FPGA menu" />
 			<tocitem target="menu_winhelp" text="The Window and Help menus" />
 			<tocitem target="menu_exportab" text="Export Image"/>
 			<tocitem target="menu_printertab" text="Printing "/>
@@ -84,7 +94,7 @@
 <!--	<tocitem target="prefs_simulation" text="The  simulation tab"/> -->
 			<tocitem target="prefs_exp" text="The Experimental tab" />
 <!--	<tocitem target="prefs_sofware" text="The Sofware tab"/> -->
-<!--	<tocitem target="prefs_fpga" text="The FPGA Commander settings tab"/> -->
+			<tocitem target="prefs_fpga" text="The FPGA Commander settings tab"/>
 			<tocitem target="prefs_cmdline" text="The command line" />
 		</tocitem>
 		<tocitem target="opts" text="Project options">
@@ -158,6 +168,25 @@
 			<tocitem target="arith_bitadder" text="Bit Adder" image="icon_bitadder" />
 			<tocitem target="arith_bitfinder" text="Bit Finder" image="icon_bitfinder" />
 		</tocitem>
+		<tocitem target="fparith" text="Floating Point Arithmetic library">
+			<tocitem target="fparith_adder" text="Floating Point Adder" image="icon_adder" />
+			<tocitem target="fparith_subtractor" text="Floating Point Subtractor" image="icon_subtractor" />
+			<tocitem target="fparith_multiplier" text="Floating Point Multiplier" image="icon_multiplier" />
+			<tocitem target="fparith_divider" text="Floating Point Divider" image="icon_divider" />
+			<tocitem target="fparith_negator" text="Floating Point Negator" image="icon_negator" />
+			<tocitem target="fparith_exponentiator" text="Floating Point Exponentiator" />
+			<tocitem target="fparith_logarithm" text="Floating Point Logarithm" />
+			<tocitem target="fparith_squareroot" text="Floating Point Square Root" />
+			<tocitem target="fparith_absolute" text="Floating Point Absolute" />
+			<tocitem target="fparith_comparator" text="Floating Point Comparator" />
+			<tocitem target="fparith_minmax" text="Floating Point Minimum and Maximum" />
+			<tocitem target="fparith_round" text="Floating Point Round" />
+			<tocitem target="fparith_trigonometry" text="Floating Point Trigonometry" />
+			<tocitem target="fparith_classificator" text="Floating Point Classificator" />
+			<tocitem target="fparith_fpconverter" text="Floating Point Converter" />
+			<tocitem target="fparith_fptoint" text="Floating Point to Integer" />
+			<tocitem target="fparith_inttofp" text="Integer to Floating Point" />
+		</tocitem>
 		<tocitem target="mem" text="Memory library">
 			<tocitem target="mem_flipflops" text="D/T/J-K/S-R Flip-Flop" image="icon_flipflops" />
 			<tocitem target="mem_register" text="Register" image="icon_register" />
@@ -173,21 +202,32 @@
 			<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
 			<tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" />
 			<tocitem target="io_led" text="LED" image="icon_led" />
+			<tocitem target="io_ledbar" text="LED Bar" image="icon_ledbar" />
 			<tocitem target="io_ledRGB" text="LED RGB" image="icon_rgbled" />
 			<tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" />
 			<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 			<tocitem target="io_tty" text="TTY" image="icon_tty" />
+			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
+			<tocitem target="io_realtimeclock" text="Real-Time Clock" image="icon_realtimeclock" />
+			<tocitem target="io_matrixkeypad" text="Matrix Keypad" image="icon_matrixkeypad" />
 <!-- not documented 
      		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
 			<tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" />
 -->	
 		</tocitem>
-<!-- not documented 
-		<tocitem target="ttl" text="TTL">
-			<tocitem target="ttl_xxxx" text="TTL" image="icon_ttl" />
+		<tocitem target="ioex" text="Input/Output-Extra">
+			<tocitem target="ioex_switch" text="Switch" />
+			<tocitem target="ioex_buzzer" text="Buzzer" />
+			<tocitem target="ioex_slider" text="Slider" />
+			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" />
+			<tocitem target="ioex_plarom" text="Programmable Logic Array" />
+			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" />
+			<tocitem target="ioex_twopinled" text="2-Pin LED" />
 		</tocitem>
+		<tocitem target="ttl" text="TTL library" image="icon_ttl" />
+<!-- not documented 
 		<tocitem target="tcl" text="TCL library">
 			<tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
 			<tocitem target="tcl_generic" text="Generic" image="icon_generic" />
@@ -195,13 +235,6 @@
 		<tocitem target="bfh" text="BFH mega functions">
 			<tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="icon_binbcd" />
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="icon_bcdtoseven" />
-		</tocitem>
-		<tocitem target="ioex" text="Input/Output-Extra">
-			<tocitem target="ioex_switch" text="Switch" image="icon_switch" />
-			<tocitem target="ioex_buzzer" text="Buzzer" image="icon_buzzer" />
-			<tocitem target="ioex_slider" text="Slider" image="icon_slider" />
-			<tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="icon_digitalscope" />
-			<tocitem target="ioex_plarom" text="Programmable logic array ROM" image="icon_pla2" />
 		</tocitem>
 		<tocitem target="soc" text = "SOC library">
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />

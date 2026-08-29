@@ -32,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.text.DefaultCaret;
 
 public class FpgaReportTabbedPane extends JTabbedPane
@@ -78,8 +79,8 @@ public class FpgaReportTabbedPane extends JTabbedPane
     /* first we setup all info for the first tab, the Information window */
     infoMessages = new ArrayList<>();
     textAreaInfo = new JTextArea(10, 50);
-    textAreaInfo.setForeground(Color.GRAY);
-    textAreaInfo.setBackground(Color.BLACK);
+    textAreaInfo.setForeground(UIManager.getColor("TextArea.foreground"));
+    textAreaInfo.setBackground(UIManager.getColor("TextArea.background"));
     textAreaInfo.setFont(new Font("monospaced", Font.PLAIN, fontSize));
     textAreaInfo.setEditable(false);
     textAreaInfo.setText(null);
@@ -97,10 +98,10 @@ public class FpgaReportTabbedPane extends JTabbedPane
     /* now we setup the Warning window */
     warningsList = new FpgaCommanderListModel(true);
     warnings = new JList<>();
-    warnings.setBackground(Color.BLACK);
+    warnings.setBackground(UIManager.getColor("List.background"));
     warnings.setForeground(Color.ORANGE);
     warnings.setSelectionBackground(Color.ORANGE);
-    warnings.setSelectionForeground(Color.BLACK);
+    warnings.setSelectionForeground(UIManager.getColor("List.background"));
     warnings.setFont(new Font("monospaced", Font.PLAIN, fontSize));
     warnings.setModel(warningsList);
     warnings.setCellRenderer(warningsList.getMyRenderer());
@@ -123,10 +124,10 @@ public class FpgaReportTabbedPane extends JTabbedPane
     /* here we setup the Error window */
     errorsList = new FpgaCommanderListModel(false);
     errors = new JList<>();
-    errors.setBackground(Color.BLACK);
+    errors.setBackground(UIManager.getColor("List.background"));
     errors.setForeground(Color.RED);
     errors.setSelectionBackground(Color.RED);
-    errors.setSelectionForeground(Color.BLACK);
+    errors.setSelectionForeground(UIManager.getColor("List.background"));
     errors.setFont(new Font("monospaced", Font.PLAIN, fontSize));
     errors.setModel(errorsList);
     errors.setCellRenderer(errorsList.getMyRenderer());
@@ -149,8 +150,8 @@ public class FpgaReportTabbedPane extends JTabbedPane
     /* finally we define the console window */
     consoleMessages = new ArrayList<>();
     textAreaConsole = new JTextArea(10, 50);
-    textAreaConsole.setForeground(Color.LIGHT_GRAY);
-    textAreaConsole.setBackground(Color.BLACK);
+    textAreaConsole.setForeground(UIManager.getColor("TextArea.foreground"));
+    textAreaConsole.setBackground(UIManager.getColor("TextArea.background"));
     textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, fontSize));
     textAreaConsole.setEditable(false);
     textAreaConsole.setText(null);

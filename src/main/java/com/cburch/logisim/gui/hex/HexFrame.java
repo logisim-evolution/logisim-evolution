@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.hex.HexEditor;
 import com.cburch.hex.HexModel;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
@@ -29,8 +30,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -44,6 +47,9 @@ public class HexFrame extends LFrame.SubWindow {
   private final JButton open = new JButton();
   private final JButton save = new JButton();
   private final JButton close = new JButton();
+  private final JLabel addressLabel = new JLabel();
+  private final JTextField addressField = new JTextField(12);
+  private final JButton goAddress = new JButton();
   private final Instance instance;
 
   public HexFrame(Project project, Instance instance, HexModel model) {
@@ -57,9 +63,14 @@ public class HexFrame extends LFrame.SubWindow {
     final var buttonPanel = new JPanel();
     buttonPanel.add(open);
     buttonPanel.add(save);
+    buttonPanel.add(addressLabel);
+    buttonPanel.add(addressField);
+    buttonPanel.add(goAddress);
     buttonPanel.add(close);
     open.addActionListener(myListener);
     save.addActionListener(myListener);
+    addressField.addActionListener(myListener);
+    goAddress.addActionListener(myListener);
     close.addActionListener(myListener);
 
     final var pref = editor.getPreferredSize();
@@ -90,6 +101,25 @@ public class HexFrame extends LFrame.SubWindow {
     editor.getCaret().setDot(0, false);
     editListener.register(menubar);
     setLocationRelativeTo(project.getFrame());
+  }
+
+  static long parseAddress(String text, HexModel model) {
+    final var address = parseAddress(text);
+    if (model == null || address < model.getFirstOffset() || address > model.getLastOffset()) {
+      throw new NumberFormatException();
+    }
+    return address;
+  }
+
+  private static long parseAddress(String text) {
+    var normalized = text == null ? "" : text.trim();
+    if (normalized.startsWith("0x") || normalized.startsWith("0X")) {
+      normalized = normalized.substring(2);
+    }
+    if (normalized.isEmpty()) {
+      throw new NumberFormatException();
+    }
+    return Long.parseLong(normalized, 16);
   }
 
   public void closeAndDispose() {
@@ -164,6 +194,20 @@ public class HexFrame extends LFrame.SubWindow {
         HexFile.open((MemContents) model, HexFrame.this, project, instance);
       } else if (src == save) {
         HexFile.save((MemContents) model, HexFrame.this, project, instance);
+      } else if (src == addressField || src == goAddress) {
+        try {
+          editor.getCaret().setDot(parseAddress(addressField.getText(), model), false);
+          editor.requestFocusInWindow();
+        } catch (NumberFormatException e) {
+          OptionPane.showMessageDialog(
+              HexFrame.this,
+              S.get(
+                  "hexAddressInvalidMessage",
+                  Long.toHexString(model.getFirstOffset()),
+                  Long.toHexString(model.getLastOffset())),
+              S.get("hexAddressInvalidTitle"),
+              OptionPane.ERROR_MESSAGE);
+        }
       } else if (src == close) {
         WindowEvent e = new WindowEvent(HexFrame.this, WindowEvent.WINDOW_CLOSING);
         HexFrame.this.processWindowEvent(e);
@@ -175,6 +219,8 @@ public class HexFrame extends LFrame.SubWindow {
       setTitle(S.get("hexFrameTitle"));
       open.setText(S.get("openButton"));
       save.setText(S.get("saveButton"));
+      addressLabel.setText(S.get("hexAddressLabel"));
+      goAddress.setText(S.get("hexAddressGo"));
       close.setText(S.get("closeButton"));
     }
   }

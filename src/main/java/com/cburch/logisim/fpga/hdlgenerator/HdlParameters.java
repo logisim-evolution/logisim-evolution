@@ -43,6 +43,7 @@ public class HdlParameters {
     private long parameterValue = -1;
     private long multiplyValue = 1;
     private long offsetValue = 0;
+    private int fixedVectorWidth = -1;
     private final List<Attribute<?>> attributesList = new ArrayList<>();
     private Map<AttributeOption, Integer> attributeOptionMap = new HashMap<>();
     private final Attribute<BitWidth> attributeToCheckForBus;
@@ -250,8 +251,15 @@ public class HdlParameters {
       isIntParameter = false;
     }
 
+    public void setVectorRepresentation(int width) {
+      if (width < 1) throw new IllegalArgumentException("Vector width must be positive");
+      isIntParameter = false;
+      fixedVectorWidth = width;
+    }
+
     public int getNumberOfVectorBits(AttributeSet attrs) {
       if (isIntParameter) throw new UnsupportedOperationException("Parameter is not a bit vector!");
+      if (fixedVectorWidth > 0) return fixedVectorWidth;
       var nrOfVectorBits = -1;
       if (myMapType == MAP_GATE_INPUT_BUBLE) {
         if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException("Component has not the required attribute");
@@ -343,6 +351,21 @@ public class HdlParameters {
   public HdlParameters addVector(String name, int id, int type, Object... args) {
     final var newParameter = new ParameterInfo(name, id, type, args);
     newParameter.setVectorRepresentation();
+    myParameters.add(newParameter);
+    return this;
+  }
+
+  /**
+   * Constructs a fixed-width vector parameter with a zero placeholder value. Generators that need
+   * to derive an instance-specific value can replace the placeholder in their parameter map.
+   *
+   * @param name Name used for the parameter
+   * @param id Identifier of the parameter (must be negative)
+   * @param width Fixed vector width in bits
+   */
+  public HdlParameters addVectorWithFixedWidth(String name, int id, int width) {
+    final var newParameter = new ParameterInfo(name, id, MAP_CONSTANT, 0L);
+    newParameter.setVectorRepresentation(width);
     myParameters.add(newParameter);
     return this;
   }

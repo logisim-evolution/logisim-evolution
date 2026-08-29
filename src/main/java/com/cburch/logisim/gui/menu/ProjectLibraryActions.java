@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.menu;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
@@ -22,16 +23,45 @@ import java.util.List;
 import java.util.jar.JarFile;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 
 public class ProjectLibraryActions {
   private ProjectLibraryActions() {}
 
+  static List<Library> availableBuiltinLibraries(LogisimFile file) {
+    final var builtins = new ArrayList<>(file.getLoader().getBuiltin().getLibraries());
+    builtins.removeAll(file.getLibraries());
+    return builtins;
+  }
+
+  static void populateBuiltinLibraryMenu(JMenu menu, Project proj) {
+    menu.removeAll();
+    if (proj == null) {
+      menu.setEnabled(false);
+      return;
+    }
+
+    menu.setEnabled(true);
+    final var builtins = availableBuiltinLibraries(proj.getLogisimFile());
+    if (builtins.isEmpty()) {
+      final var emptyItem = new JMenuItem(S.get("loadBuiltinNoneError"));
+      emptyItem.setEnabled(false);
+      menu.add(emptyItem);
+      return;
+    }
+
+    for (final var lib : builtins) {
+      final var item = new JMenuItem(lib.getDisplayName());
+      item.addActionListener((event) -> doLoadBuiltinLibrary(proj, lib));
+      menu.add(item);
+    }
+  }
+
   public static void doLoadBuiltinLibrary(Project proj) {
     final var file = proj.getLogisimFile();
-    final var baseBuilt = file.getLoader().getBuiltin().getLibraries();
-    final var builtins = new ArrayList<>(baseBuilt);
-    builtins.removeAll(file.getLibraries());
+    final var builtins = availableBuiltinLibraries(file);
     if (builtins.isEmpty()) {
       OptionPane.showMessageDialog(
           proj.getFrame(),
@@ -53,6 +83,12 @@ public class ProjectLibraryActions {
       final var libs = list.getSelectedLibraries();
       if (libs != null)
         proj.doAction(LogisimFileActions.loadLibraries(libs, proj.getLogisimFile()));
+    }
+  }
+
+  private static void doLoadBuiltinLibrary(Project proj, Library lib) {
+    if (!proj.getLogisimFile().getLibraries().contains(lib)) {
+      proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
     }
   }
 

@@ -12,6 +12,8 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.DriveStrength;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -35,9 +37,7 @@ import com.cburch.logisim.std.io.SevenSegmentScanningGenericHdlGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 public abstract class DownloadBase {
 
@@ -61,6 +61,10 @@ public abstract class DownloadBase {
   public static final Integer UCF_PATH = 4;
   public static final Integer XDC_PATH = 5;
 
+  public static boolean isHdlGenerationEnabled(String hdlType) {
+    return HdlGeneratorFactory.VHDL.equals(hdlType) || HdlGeneratorFactory.VERILOG.equals(hdlType);
+  }
+
   protected boolean isClockScalingRequested() {
     return !(preDivider == 1.0 && preMultiplier == 1.0);
   }
@@ -83,18 +87,18 @@ public abstract class DownloadBase {
     final var myFile = myProject.getLogisimFile();
     final var rootSheet = myFile.getCircuit(circuitName);
     if (rootSheet == null) {
-      Reporter.report.addError("INTERNAL ERROR: Circuit not found ?!?");
+      Reporter.report.addError(S.get("FPGACircuitNotFoundError"));
       return false;
     }
     if (myBoardInformation == null) {
-      Reporter.report.addError("INTERNAL ERROR: No board information available ?!?");
+      Reporter.report.addError(S.get("FPGABoardInformationMissingError"));
       return false;
     }
 
     final var boardComponents = myBoardInformation.getComponents();
-    Reporter.report.addInfo("The Board " + myBoardInformation.getBoardName() + " has:");
+    Reporter.report.addInfo(S.get("FPGABoardContents", myBoardInformation.getBoardName()));
     for (final var key : boardComponents.keySet()) {
-      Reporter.report.addInfo(boardComponents.get(key).size() + " " + key + "(s)");
+      Reporter.report.addInfo(S.get("FPGABoardComponentCount", boardComponents.get(key).size(), key));
     }
     /*
      * At this point I require 2 sorts of information: 1) A hierarchical
@@ -108,7 +112,8 @@ public abstract class DownloadBase {
     if (myMappableResources == null) {
       myMappableResources = new MappableResourcesContainer(myBoardInformation, rootSheet);
     } else {
-      myMappableResources.updateMapableComponents();
+      myMappableResources.updateIoComponents(myBoardInformation);
+      myMappableResources.updateMappableComponents();
     }
 
     return true;
@@ -154,28 +159,26 @@ public abstract class DownloadBase {
             + File.separator
             + myProject.getLogisimFile().getName())) {
       Reporter.report.addFatalError(
-          "Unable to create directory: \""
-              + AppPreferences.FPGA_Workspace.get()
-              + File.separator
-              + myProject.getLogisimFile().getName()
-              + "\"");
+          S.get(
+              "FPGAUnableToCreateDirectory",
+              AppPreferences.FPGA_Workspace.get()
+                  + File.separator
+                  + myProject.getLogisimFile().getName()));
       return false;
     }
     final var projectDir = getProjDir(selectedCircuit);
     final var rootSheet = myProject.getLogisimFile().getCircuit(selectedCircuit);
     if (!cleanDirectory(projectDir)) {
-      Reporter.report.addFatalError(
-          "Unable to cleanup old project files in directory: \"" + projectDir + "\"");
+      Reporter.report.addFatalError(S.get("FPGAUnableToCleanDirectory", projectDir));
       return false;
     }
     if (!genDirectory(projectDir)) {
-      Reporter.report.addFatalError("Unable to create directory: \"" + projectDir + "\"");
+      Reporter.report.addFatalError(S.get("FPGAUnableToCreateDirectory", projectDir));
       return false;
     }
     for (final var hdlPath : HDLPaths) {
       if (!genDirectory(projectDir + hdlPath)) {
-        Reporter.report.addFatalError(
-            "Unable to create directory: \"" + projectDir + hdlPath + "\"");
+        Reporter.report.addFatalError(S.get("FPGAUnableToCreateDirectory", projectDir + hdlPath));
         return false;
       }
     }
@@ -183,7 +186,7 @@ public abstract class DownloadBase {
     final var generatedHDLComponents = new HashSet<String>();
     var worker = rootSheet.getSubcircuitFactory().getHDLGenerator(rootSheet.getStaticAttributes());
     if (worker == null) {
-      Reporter.report.addFatalError("Internal error on HDL generation, null pointer exception");
+      Reporter.report.addFatalError(S.get("FPGANullHdlGeneratorError"));
       return false;
     }
     if (!worker.generateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
@@ -329,7 +332,7 @@ public abstract class DownloadBase {
       var dir = new File(dirPath);
       return dir.exists() ? true : dir.mkdirs();
     } catch (Exception e) {
-      Reporter.report.addFatalError("Could not check/create directory :" + dirPath);
+      Reporter.report.addFatalError(S.get("FPGADirectoryCheckCreateError", dirPath));
       return false;
     }
   }
@@ -373,7 +376,14 @@ public abstract class DownloadBase {
     return base + HDLPaths[identifier] + File.separator;
   }
 
-  private boolean cleanDirectory(String dir) {
+  public record ScanningIoPin(
+      String hdlSignal, String pinLocation, char ioStandard, char pullBehavior, char driveStrength) {
+    public ScanningIoPin(String hdlSignal, String pinLocation, FpgaIoInformationContainer info) {
+      this(hdlSignal, pinLocation, info.getIoStandard(), info.getPullBehavior(), info.getDrive());
+    }
+  }
+
+  boolean cleanDirectory(String dir) {
     try {
       final var thisDir = new File(dir);
       if (!thisDir.exists()) return true;
@@ -386,14 +396,14 @@ public abstract class DownloadBase {
       }
       return thisDir.delete();
     } catch (Exception e) {
-      Reporter.report.addFatalError("Could not remove directory tree :" + dir);
+      Reporter.report.addFatalError(S.get("FPGADirectoryRemoveError", dir));
       return false;
     }
   }
 
-  public static Map<String, String> getScanningMaps(
+  public static ArrayList<ScanningIoPin> getScanningMaps(
       MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
-    final var pinMaps = new HashMap<String, String>();
+    final var pinMaps = new ArrayList<ScanningIoPin>();
     var hasMappedClockedArray = false;
     var hasScanningSevenSegment = false;
     for (final var comp : maps.getIoComponentInformation().getComponents()) {
@@ -402,14 +412,15 @@ public abstract class DownloadBase {
           hasMappedClockedArray |=
               LedArrayGenericHdlGeneratorFactory.requiresClock(comp.getArrayDriveMode());
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
-            pinMaps.put(
+            pinMaps.add(new ScanningIoPin(
                 LedArrayGenericHdlGeneratorFactory.getExternalSignalName(
                     comp.getArrayDriveMode(),
                     comp.getNrOfRows(),
                     comp.getNrOfColumns(),
                     comp.getArrayId(),
                     pin),
-                comp.getPinLocation(pin));
+                comp.getPinLocation(pin),
+                comp));
           }
         }
       }
@@ -417,12 +428,13 @@ public abstract class DownloadBase {
         if (comp.hasMap()) {
           hasScanningSevenSegment = true;
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
-            pinMaps.put(
+            pinMaps.add(new ScanningIoPin(
                 SevenSegmentScanningGenericHdlGenerator.getExternalSignalName(
                     comp.getNrOfRows(),
                     comp.getArrayId(),
                     pin),
-                comp.getPinLocation(pin));
+                comp.getPinLocation(pin),
+                comp));
           }
         }
       }
@@ -430,8 +442,13 @@ public abstract class DownloadBase {
     if ((hasMappedClockedArray || hasScanningSevenSegment)
         && (nets.numberOfClockTrees() == 0)
         && !nets.requiresGlobalClockConnection()) {
-      pinMaps.put(
-          TickComponentHdlGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
+      pinMaps.add(
+          new ScanningIoPin(
+              TickComponentHdlGeneratorFactory.FPGA_CLOCK,
+              board.fpga.getClockPinLocation(),
+              board.fpga.getClockStandard(),
+              board.fpga.getClockPull(),
+              DriveStrength.UNKNOWN));
     }
     return pinMaps;
   }

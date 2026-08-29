@@ -203,8 +203,8 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
       toolMap.put(oldTool, newTool);
       if (oldTool instanceof AddTool tool) {
         final var oldFactory = tool.getFactory();
-        if (newTool instanceof AddTool) {
-          final var newFactory = tool.getFactory();
+        if (newTool instanceof AddTool newAddTool) {
+          final var newFactory = newAddTool.getFactory();
           componentMap.put(oldFactory, newFactory);
         } else {
           componentMap.put(oldFactory, null);

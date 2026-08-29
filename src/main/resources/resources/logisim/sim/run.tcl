@@ -20,9 +20,14 @@
 
 puts "Run simulation environnment build..."
 
-# Create work library
-vlib work
-vmap work work
+# Create a fresh physical library for the logical work library.
+# Rebuilding it avoids reusing a stale or incomplete ModelSim/Questa library.
+set logisim_worklib logisim_work
+if {[file exists $logisim_worklib]} {
+  file delete -force $logisim_worklib
+}
+vlib $logisim_worklib
+vmap work $logisim_worklib
 
 # Compile vhdl
 do ../comp.tcl

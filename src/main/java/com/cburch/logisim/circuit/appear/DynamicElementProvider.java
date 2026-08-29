@@ -10,6 +10,7 @@
 package com.cburch.logisim.circuit.appear;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.InstanceComponent;
 import java.util.HashSet;
@@ -19,8 +20,7 @@ public interface DynamicElementProvider {
 
   DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
 
-  static void removeDynamicElements(Circuit circuit, Component comp) {
-    if (!(comp instanceof InstanceComponent)) return;
+  private static HashSet<Circuit> collectAffectedCircuits(Circuit circuit) {
     final var allAffected = new HashSet<Circuit>();
     final var todo = new LinkedList<Circuit>();
     todo.add(circuit);
@@ -31,7 +31,18 @@ public interface DynamicElementProvider {
       for (final var other : circ.getCircuitsUsingThis())
         if (!allAffected.contains(other)) todo.add(other);
     }
-    for (final var circ : allAffected)
+    return allAffected;
+  }
+
+  static void removeDynamicElements(Circuit circuit, Component comp) {
+    if (!(comp instanceof InstanceComponent)) return;
+    for (final var circ : collectAffectedCircuits(circuit))
       circ.getAppearance().removeDynamicElement((InstanceComponent) comp);
+  }
+
+  static void repairDynamicElementPaths(Circuit circuit, ReplacementMap replacements) {
+    if (replacements.isEmpty()) return;
+    for (final var circ : collectAffectedCircuits(circuit))
+      circ.getAppearance().repairDynamicElementPaths(replacements);
   }
 }

@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.menu.Menu;
@@ -24,6 +25,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -52,6 +54,23 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 public class AppPreferences {
+  // Export and print jobs may run off the EDT, so keep their palette override thread-local.
+  private static final ThreadLocal<Boolean> PRINT_VIEW_COLORS = new ThreadLocal<>();
+
+  private static final class PrintViewColorPreference extends PrefMonitorInt {
+    private final int printValue;
+
+    private PrintViewColorPreference(String name, int printValue) {
+      super(name, printValue);
+      this.printValue = printValue;
+    }
+
+    @Override
+    public Integer get() {
+      return Boolean.TRUE.equals(PRINT_VIEW_COLORS.get()) ? printValue : super.get();
+    }
+  }
+
   //
   // LocalePreference
   //
@@ -166,6 +185,20 @@ public class AppPreferences {
 
   private static <E> PrefMonitor<E> create(PrefMonitor<E> monitor) {
     return monitor;
+  }
+
+  public static void runWithPrintViewColors(Runnable action) {
+    final var previous = PRINT_VIEW_COLORS.get();
+    PRINT_VIEW_COLORS.set(true);
+    try {
+      action.run();
+    } finally {
+      if (previous == null) {
+        PRINT_VIEW_COLORS.remove();
+      } else {
+        PRINT_VIEW_COLORS.set(previous);
+      }
+    }
   }
 
   static void firePropertyChange(String property, boolean oldVal, boolean newVal) {
@@ -351,15 +384,12 @@ public class AppPreferences {
 
   public static int getDownScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extScale;
-    return (int) ((float) value / scale);
+    return (int) Math.round(value / (SCALE_FACTOR.get() * extScale));
   }
 
   public static int getDownScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return (int) ((float) value / scale);
+    return (int) Math.round(value / SCALE_FACTOR.get());
   }
 
   public static double getDownScaled(double value) {
@@ -369,34 +399,27 @@ public class AppPreferences {
 
   public static int getScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extScale;
-    return (int) ((float) value * scale);
+    return (int) Math.round(value * (SCALE_FACTOR.get() * extScale));
   }
 
   public static int getScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return (int) ((float) value * scale);
+    return (int) Math.round(value * SCALE_FACTOR.get());
   }
 
   public static float getScaled(float value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    return value * scale;
+    return value * SCALE_FACTOR.get().floatValue();
   }
 
   public static float getScaled(float value, float extscale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= extscale;
-    return value * scale;
+    return value * SCALE_FACTOR.get().floatValue() * extscale;
   }
 
   public static double getScaled(double value) {
     getPrefs();
-    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
-    return value * scale;
+    return value * SCALE_FACTOR.get();
   }
 
   public static Font getScaledFont(Font myfont) {
@@ -427,6 +450,30 @@ public class AppPreferences {
         iconImage.getScaledInstance(
             getScaled(IconSize, scale), getScaled(IconSize, scale), Image.SCALE_SMOOTH));
   }
+
+  /**
+   * Determines the appropriate font style (PLAIN or BOLD) for the given font.
+   *
+   * This is a heuristic to prevent "faux bold" rendering artifacts. Fonts with explicit
+   * weights (e.g. Medium, Light) are typically standalone faces. Applying the BOLD style
+   * to them forces synthetic bolding, which degrades rendering quality ("smearing").
+   *
+   * This method returns Font.PLAIN for such weighted fonts to ensure crisp rendering,
+   * while preserving Font.BOLD for standard fonts to maintain typical emphasis.
+   *
+   * @param fontName The name of the font family.
+   * @return Font.PLAIN if the font name suggests a specific weight, otherwise Font.BOLD.
+   */
+  public static int getPreferredFontStyle(String fontName) {
+    String font = fontName.toLowerCase();
+    if (font.contains("medium") || font.contains("light")
+        || font.contains("thin") || font.contains("regular")
+        || font.contains("semibold") || font.contains("extrabold")) {
+      return Font.PLAIN;
+    }
+    return Font.BOLD;
+  }
+
 
   public static void updateRecentFile(File file) {
     recentProjects.updateRecent(file);
@@ -492,21 +539,23 @@ public class AppPreferences {
   public static final PrefMonitor<String> FPGA_Workspace =
       create(
           new PrefMonitorString(
-              "FPGAWorkspace", System.getProperty("user.home") + "/logisim_evolution_workspace"));
+              "FPGAWorkspace", System.getProperty("user.home") + File.separator + "logisim_evolution_workspace"));
   public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
-              "afterAdd",
-              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              "hdlType",
+              new String[] {
+                HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG, HdlGeneratorFactory.NONE
+              },
               HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
 
   public static final FpgaBoards Boards = new FpgaBoards();
 
-  public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
+  public static final PrefMonitor<Boolean> SuppressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
-  public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
+  public static final PrefMonitor<Boolean> SuppressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
@@ -542,26 +591,160 @@ public class AppPreferences {
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
+  public static final String EDITOR_THEME_DEFAULT = "default";
+  public static final String EDITOR_THEME_DARK = "dark";
+  public static final String[] EDITOR_THEMES = {
+    EDITOR_THEME_DEFAULT, EDITOR_THEME_DARK, "monokai", "eclipse", "idea", "vs", "druid"
+  };
+  public static final PrefMonitor<String> LIGHT_EDITOR_THEME =
+      create(
+          new PrefMonitorStringOpts(
+              "lightEditorTheme", EDITOR_THEMES, EDITOR_THEME_DEFAULT));
+  public static final PrefMonitor<String> DARK_EDITOR_THEME =
+      create(
+          new PrefMonitorStringOpts("darkEditorTheme", EDITOR_THEMES, EDITOR_THEME_DARK));
+
+  public static final PrefMonitor<String> APP_FONT =
+      create(new PrefMonitorString("AppFont", ""));
+
   // default grid colors
   public static final int DEFAULT_CANVAS_BG_COLOR = 0xFFFFFFFF;
   public static final int DEFAULT_GRID_BG_COLOR = 0xFFFFFFFF;
   public static final int DEFAULT_GRID_DOT_COLOR = 0xFF777777;
   public static final int DEFAULT_ZOOMED_DOT_COLOR = 0xFFCCCCCC;
+  // dark mode default grid colors
+  public static final int DARK_CANVAS_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_GRID_BG_COLOR = 0xFF2B2B2B;
+  public static final int DARK_GRID_DOT_COLOR = 0xFFAAAAAA;
+  public static final int DARK_ZOOMED_DOT_COLOR = 0xFF666666;
   public static final int DEFAULT_COMPONENT_COLOR = 0x00000000;
   public static final int DEFAULT_COMPONENT_SECONDARY_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
   public static final int DEFAULT_COMPONENT_ICON_COLOR = 0x00000000;
+  public static final int DEFAULT_TEXT_TOOL_COLOR = 0x00000000;
+  // default width-error colors
+  public static final int DEFAULT_WIDTH_ERROR_COLOR = 0xFF7B00;
+  public static final int DEFAULT_WIDTH_ERROR_CAPTION_COLOR = 0x550000;
+  public static final int DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR = 0xFFFF00;
+  public static final int DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR = 0xFFE6D2;
+  // default clock frequency color
+  public static final int DEFAULT_CLOCK_FREQUENCY_COLOR = 0xFF00B4;
+  // dark mode default component colors
+  public static final int DARK_COMPONENT_COLOR = 0xFFFFFFFF;
+  public static final int DARK_COMPONENT_SECONDARY_COLOR = 0xFFAAAAAA;
+  public static final int DARK_COMPONENT_GHOST_COLOR = 0xFF777777;
+  public static final int DARK_COMPONENT_ICON_COLOR = 0xFFFFFFFF;
+  // expression overline colors
+  public static final int DEFAULT_EXPRESSION_OVERLINE_COLOR = 0xFF000000;
+  public static final int DARK_EXPRESSION_OVERLINE_COLOR = 0xFFFFFFFF;
+  // default kmap cell text colors
+  public static final int DEFAULT_KMAP_CELL_TEXT_COLOR = 0xFF0000FF;
+  public static final int DARK_KMAP_CELL_TEXT_COLOR = 0xFFFFFFFF;
+  // default table caret colors
+  public static final int DEFAULT_TABLE_CURSOR_COLOR = 0xFFFFFFFF;
+  public static final int DARK_TABLE_CURSOR_COLOR = 0xFF666666;
+  public static final int DEFAULT_TABLE_HIGHLIGHT_COLOR = 0xFFFFFFC0;
+  public static final int DARK_TABLE_HIGHLIGHT_COLOR = 0xFF7A6A00;
+  public static final int DEFAULT_TABLE_SELECTION_COLOR = 0xFFC0C0FF;
+  public static final int DARK_TABLE_SELECTION_COLOR = 0xFF323C78;
+  // default fpga board colors
+  public static final int DEFAULT_FPGA_BOARD_OUTLINE_COLOR = 0xFF000000;
+  public static final int DEFAULT_FPGA_BOARD_TEXT_COLOR = 0xFF0000FF;
+  // dark mode fpga board colors
+  public static final int DARK_FPGA_BOARD_OUTLINE_COLOR = 0xFFC0C0C0;
+  public static final int DARK_FPGA_BOARD_TEXT_COLOR = 0xFF6CB6FF;
+  // default FPGA colors
+  public static final int DEFAULT_FPGA_DEFINE_COLOR = 0xFF0000;
+  public static final int DEFAULT_FPGA_DEFINE_HIGHLIGHT_COLOR = 0x00FF00;
+  public static final int DEFAULT_FPGA_DEFINE_RESIZE_COLOR = 0x00FFFF;
+  public static final int DEFAULT_FPGA_DEFINE_MOVE_COLOR = 0xFF00FF;
+  public static final int DEFAULT_FPGA_MAPPED_COLOR = 0x005000;
+  public static final int DEFAULT_FPGA_SELECTED_MAPPED_COLOR = 0xFF0000;
+  public static final int DEFAULT_FPGA_SELECTABLE_MAPPED_COLOR = 0x00A000;
+  public static final int DEFAULT_FPGA_SELECT_COLOR = 0x0000FF;
+  // dark mode default signal colors
+  public static final int DARK_TRUE_COLOR = 0xFF00FF00;
+  public static final int DARK_FALSE_COLOR = 0xFF339933;
+  public static final int DARK_UNKNOWN_COLOR = 0xFF3399FF;
+  public static final int DARK_ERROR_COLOR = 0xFFFF4444;
+  public static final int DARK_NIL_COLOR = 0xFFBBBBBB;
+  public static final int DARK_BUS_COLOR = 0xFFFFFFFF;
+  public static final int DARK_STROKE_COLOR = 0xFFFF88FF;
+  // default light signal colors
+  public static final int DEFAULT_TRUE_COLOR = 0x0000D200;
+  public static final int DEFAULT_FALSE_COLOR = 0x00006400;
+  public static final int DEFAULT_UNKNOWN_COLOR = 0x002828FF;
+  public static final int DEFAULT_ERROR_COLOR = 0x00C00000;
+  public static final int DEFAULT_NIL_COLOR = 0x00808080;
+  public static final int DEFAULT_BUS_COLOR = 0x00000000;
+  public static final int DEFAULT_STROKE_COLOR = 0x00FF00FF;
 
-  // restores default grid colors
+  // returns true if the given LookAndFeel class name indicates a dark theme
+  public static boolean isDarkTheme(String lafClassName) {
+    return lafClassName != null && (
+        lafClassName.contains("Dark") || lafClassName.contains("Darcula"));
+  }
+
+  // applies theme-appropriate grid/component/signal colors based on current LookAndFeel
+  public static void applyThemeColors() {
+    if (isDarkTheme(LookAndFeel.get())) {
+      CANVAS_BG_COLOR.set(DARK_CANVAS_BG_COLOR);
+      GRID_BG_COLOR.set(DARK_GRID_BG_COLOR);
+      GRID_DOT_COLOR.set(DARK_GRID_DOT_COLOR);
+      GRID_ZOOMED_DOT_COLOR.set(DARK_ZOOMED_DOT_COLOR);
+      COMPONENT_COLOR.set(DARK_COMPONENT_COLOR);
+      COMPONENT_SECONDARY_COLOR.set(DARK_COMPONENT_SECONDARY_COLOR);
+      COMPONENT_GHOST_COLOR.set(DARK_COMPONENT_GHOST_COLOR);
+      COMPONENT_ICON_COLOR.set(DARK_COMPONENT_ICON_COLOR);
+      KMAP_CELL_TEXT_COLOR.set(DARK_KMAP_CELL_TEXT_COLOR);
+      TABLE_CURSOR_COLOR.set(DARK_TABLE_CURSOR_COLOR);
+      TABLE_HIGHLIGHT_COLOR.set(DARK_TABLE_HIGHLIGHT_COLOR);
+      TABLE_SELECTION_COLOR.set(DARK_TABLE_SELECTION_COLOR);
+      TRUE_COLOR.set(DARK_TRUE_COLOR);
+      FALSE_COLOR.set(DARK_FALSE_COLOR);
+      UNKNOWN_COLOR.set(DARK_UNKNOWN_COLOR);
+      ERROR_COLOR.set(DARK_ERROR_COLOR);
+      NIL_COLOR.set(DARK_NIL_COLOR);
+      BUS_COLOR.set(DARK_BUS_COLOR);
+      STROKE_COLOR.set(DARK_STROKE_COLOR);
+    } else {
+      CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
+      GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
+      GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
+      GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
+      COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
+      COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
+      COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
+      COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
+      KMAP_CELL_TEXT_COLOR.set(DEFAULT_KMAP_CELL_TEXT_COLOR);
+      TABLE_CURSOR_COLOR.set(DEFAULT_TABLE_CURSOR_COLOR);
+      TABLE_HIGHLIGHT_COLOR.set(DEFAULT_TABLE_HIGHLIGHT_COLOR);
+      TABLE_SELECTION_COLOR.set(DEFAULT_TABLE_SELECTION_COLOR);
+      TRUE_COLOR.set(DEFAULT_TRUE_COLOR);
+      FALSE_COLOR.set(DEFAULT_FALSE_COLOR);
+      UNKNOWN_COLOR.set(DEFAULT_UNKNOWN_COLOR);
+      ERROR_COLOR.set(DEFAULT_ERROR_COLOR);
+      NIL_COLOR.set(DEFAULT_NIL_COLOR);
+      BUS_COLOR.set(DEFAULT_BUS_COLOR);
+      STROKE_COLOR.set(DEFAULT_STROKE_COLOR);
+    }
+    Value.trueColor = new Color(TRUE_COLOR.get());
+    Value.falseColor = new Color(FALSE_COLOR.get());
+    Value.unknownColor = new Color(UNKNOWN_COLOR.get());
+    Value.errorColor = new Color(ERROR_COLOR.get());
+    Value.nilColor = new Color(NIL_COLOR.get());
+    Value.multiColor = new Color(BUS_COLOR.get());
+    Value.strokeColor = new Color(STROKE_COLOR.get());
+    Value.widthErrorColor = new Color(WIDTH_ERROR_COLOR.get());
+    Value.widthErrorCaptionColor = new Color(WIDTH_ERROR_CAPTION_COLOR.get());
+    Value.widthErrorHighlightColor = new Color(WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+    Value.widthErrorCaptionBgcolor = new Color(WIDTH_ERROR_BACKGROUND_COLOR.get());
+    Value.clockFrequencyColor = new Color(CLOCK_FREQUENCY_COLOR.get());
+  }
+
+  // restores default grid/component colors (theme-aware)
   public static void setDefaultGridColors() {
-    CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
-    GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
-    GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
-    GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
-    COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
-    COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
-    COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
-    COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
+    applyThemeColors();
   }
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
@@ -573,13 +756,17 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
       create(new PrefMonitorInt("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_COLOR =
-      create(new PrefMonitorInt("componentColor", DEFAULT_COMPONENT_COLOR));
+      create(new PrintViewColorPreference("componentColor", DEFAULT_COMPONENT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_SECONDARY_COLOR =
-      create(new PrefMonitorInt("componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
+      create(
+          new PrintViewColorPreference(
+              "componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_GHOST_COLOR =
-      create(new PrefMonitorInt("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
+      create(new PrintViewColorPreference("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
-      create(new PrefMonitorInt("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+      create(new PrintViewColorPreference("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+  public static final PrefMonitor<Integer> TEXT_TOOL_COLOR =
+      create(new PrefMonitorInt("textToolColor", DEFAULT_TEXT_TOOL_COLOR));
 
 
   // Layout preferences
@@ -688,38 +875,46 @@ public class AppPreferences {
 
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
-      create(new PrefMonitorInt("SimTrueColor", 0x0000D200));
+      create(new PrefMonitorInt("SimTrueColor", DEFAULT_TRUE_COLOR));
   public static final PrefMonitor<String> TRUE_CHAR =
       create(new PrefMonitorString("SimTrueChar", "1 "));
   public static final PrefMonitor<Integer> FALSE_COLOR =
-      create(new PrefMonitorInt("SimFalseColor", 0x00006400));
+      create(new PrefMonitorInt("SimFalseColor", DEFAULT_FALSE_COLOR));
   public static final PrefMonitor<String> FALSE_CHAR =
       create(new PrefMonitorString("SimFalseChar", "0 "));
   public static final PrefMonitor<Integer> UNKNOWN_COLOR =
-      create(new PrefMonitorInt("SimUnknownColor", 0x002828FF));
+      create(new PrefMonitorInt("SimUnknownColor", DEFAULT_UNKNOWN_COLOR));
   public static final PrefMonitor<String> UNKNOWN_CHAR =
       create(new PrefMonitorString("SimUnknownChar", "U "));
   public static final PrefMonitor<Integer> ERROR_COLOR =
-      create(new PrefMonitorInt("SimErrorColor", 0x00C00000));
+      create(new PrefMonitorInt("SimErrorColor", DEFAULT_ERROR_COLOR));
   public static final PrefMonitor<String> ERROR_CHAR =
       create(new PrefMonitorString("SimErrorChar", "E "));
   public static final PrefMonitor<Integer> NIL_COLOR =
-      create(new PrefMonitorInt("SimNilColor", 0x808080));
+      create(new PrefMonitorInt("SimNilColor", DEFAULT_NIL_COLOR));
   public static final PrefMonitor<String> DONTCARE_CHAR =
       create(new PrefMonitorString("SimDontCareChar", "- "));
-  public static final PrefMonitor<Integer> BUS_COLOR = create(new PrefMonitorInt("SimBusColor", 0));
+  public static final PrefMonitor<Integer> BUS_COLOR = create(new PrefMonitorInt("SimBusColor", DEFAULT_BUS_COLOR));
   public static final PrefMonitor<Integer> STROKE_COLOR =
-      create(new PrefMonitorInt("SimStrokeColor", 0xff00ff));
+      create(new PrefMonitorInt("SimStrokeColor", DEFAULT_STROKE_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorColor", 0xFF7B00));
+      create(new PrefMonitorInt("SimWidthErrorColor", DEFAULT_WIDTH_ERROR_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_CAPTION_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorCaptionColor", 0x550000));
+      create(new PrefMonitorInt("SimWidthErrorCaptionColor", DEFAULT_WIDTH_ERROR_CAPTION_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_HIGHLIGHT_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorHighlightColor", 0xFFFF00));
+      create(new PrefMonitorInt("SimWidthErrorHighlightColor", DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_BACKGROUND_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorBackgroundColor", 0xFFE6D2));
+      create(new PrefMonitorInt("SimWidthErrorBackgroundColor", DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR));
   public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
-      create(new PrefMonitorInt("SimClockFrequencyColor", 0xFF00B4));
+      create(new PrefMonitorInt("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR));
+  public static final PrefMonitor<Integer> KMAP_CELL_TEXT_COLOR =
+      create(new PrefMonitorInt("KmapCellTextColor", DEFAULT_KMAP_CELL_TEXT_COLOR));
+  public static final PrefMonitor<Integer> TABLE_CURSOR_COLOR =
+      create(new PrefMonitorInt("TableCursorColor", DEFAULT_TABLE_CURSOR_COLOR));
+  public static final PrefMonitor<Integer> TABLE_HIGHLIGHT_COLOR =
+      create(new PrefMonitorInt("TableHighlightColor", DEFAULT_TABLE_HIGHLIGHT_COLOR));
+  public static final PrefMonitor<Integer> TABLE_SELECTION_COLOR =
+      create(new PrefMonitorInt("TableSelectionColor", DEFAULT_TABLE_SELECTION_COLOR));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
@@ -753,23 +948,23 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> KMAP16_COLOR =
       create(new PrefMonitorInt("KMAPColor16", 0xF032E6));
 
-  // FPGA commander colors
+  // FPGA Commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
-      create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
+      create(new PrefMonitorInt("FPGADefineColor", DEFAULT_FPGA_DEFINE_COLOR));
   public static final PrefMonitor<Integer> FPGA_DEFINE_HIGHLIGHT_COLOR =
-      create(new PrefMonitorInt("FPGADefineHighlightColor", 0x00FF00));
+      create(new PrefMonitorInt("FPGADefineHighlightColor", DEFAULT_FPGA_DEFINE_HIGHLIGHT_COLOR));
   public static final PrefMonitor<Integer> FPGA_DEFINE_RESIZE_COLOR =
-      create(new PrefMonitorInt("FPGADefineResizeColor", 0x00FFFF));
+      create(new PrefMonitorInt("FPGADefineResizeColor", DEFAULT_FPGA_DEFINE_RESIZE_COLOR));
   public static final PrefMonitor<Integer> FPGA_DEFINE_MOVE_COLOR =
-      create(new PrefMonitorInt("FPGADefineMoveColor", 0xFF00FF));
+      create(new PrefMonitorInt("FPGADefineMoveColor", DEFAULT_FPGA_DEFINE_MOVE_COLOR));
   public static final PrefMonitor<Integer> FPGA_MAPPED_COLOR =
-      create(new PrefMonitorInt("FPGAMappedColor", 0x005000));
+      create(new PrefMonitorInt("FPGAMappedColor", DEFAULT_FPGA_MAPPED_COLOR));
   public static final PrefMonitor<Integer> FPGA_SELECTED_MAPPED_COLOR =
-      create(new PrefMonitorInt("FPGASelectedMappedColor", 0xFF0000));
+      create(new PrefMonitorInt("FPGASelectedMappedColor", DEFAULT_FPGA_SELECTED_MAPPED_COLOR));
   public static final PrefMonitor<Integer> FPGA_SELECTABLE_MAPPED_COLOR =
-      create(new PrefMonitorInt("FPGASelectableMappedColor", 0x00A000));
+      create(new PrefMonitorInt("FPGASelectableMappedColor", DEFAULT_FPGA_SELECTABLE_MAPPED_COLOR));
   public static final PrefMonitor<Integer> FPGA_SELECT_COLOR =
-      create(new PrefMonitorInt("FPGASelectColor", 0x0000FF));
+      create(new PrefMonitorInt("FPGASelectColor", DEFAULT_FPGA_SELECT_COLOR));
 
   // Experimental preferences
   public static final String ACCEL_DEFAULT = "default";
@@ -811,6 +1006,15 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> QUESTA_VALIDATION =
       create(new PrefMonitorBoolean("questaValidation", false));
+  public static final String VHDL_STANDARD_1993 = "1993";
+  public static final String VHDL_STANDARD_2002 = "2002";
+  public static final String VHDL_STANDARD_2008 = "2008";
+  public static final PrefMonitor<String> VHDL_STANDARD =
+      create(
+          new PrefMonitorStringOpts(
+              "vhdlStandard",
+              new String[] {VHDL_STANDARD_1993, VHDL_STANDARD_2002, VHDL_STANDARD_2008},
+              VHDL_STANDARD_2002));
   public static final PrefMonitor<String> QuartusToolPath =
       create(new PrefMonitorString("QuartusToolPath", ""));
   public static final PrefMonitor<String> ISEToolPath =
@@ -864,6 +1068,7 @@ public class AppPreferences {
 
   public static void resetWindow() {
     CANVAS_PLACEMENT.set(Direction.EAST.toString());
+    WINDOW_EXPLORER_VISIBLE.set(true);
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);
     WINDOW_RIGHT_SPLIT.set(0.751);
@@ -875,6 +1080,9 @@ public class AppPreferences {
   public static final PrefMonitor<Double> WINDOW_MAIN_SPLIT =
       create(new PrefMonitorDouble("windowMainSplit", 0.25));
 
+  public static final PrefMonitor<Boolean> WINDOW_EXPLORER_VISIBLE =
+      create(new PrefMonitorBoolean("windowExplorerVisible", true));
+
   public static final PrefMonitor<Double> WINDOW_LEFT_SPLIT =
       create(new PrefMonitorDouble("windowLeftSplit", 0.5));
 
@@ -883,6 +1091,11 @@ public class AppPreferences {
 
   public static final PrefMonitor<String> DIALOG_DIRECTORY =
       create(new PrefMonitorString("dialogDirectory", ""));
+
+  /* Opens the action search when Shift is tapped twice in quick succession. Kept switchable
+   * because Shift is a working modifier on the canvas, so the gesture can misfire. */
+  public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
+      create(new PrefMonitorBoolean("searchDoubleShift", true));
 
   /* Hotkey Settings */
   /* Watch whether in headless mode */
@@ -940,6 +1153,63 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_FILE_PRINT =
       create(new PrefMonitorKeyStroke("hotkeyFilePrint", KeyEvent.VK_P, hotkeyMenuMask,
           true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_SEARCH =
+      create(new PrefMonitorKeyStroke("hotkeySearch",
+          KeyEvent.VK_A, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_1 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect1", KeyEvent.VK_1, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_2 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect2", KeyEvent.VK_2, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_3 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect3", KeyEvent.VK_3, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_4 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect4", KeyEvent.VK_4, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_5 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect5", KeyEvent.VK_5, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_6 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect6", KeyEvent.VK_6, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_7 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect7", KeyEvent.VK_7, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_8 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect8", KeyEvent.VK_8, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_9 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect9", KeyEvent.VK_9, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_10 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect10", KeyEvent.VK_0, hotkeyMenuMask,
+          true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_11 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect11", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_12 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect12", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_13 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect13", null, true, true));
+
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_14 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect14", null, true, true));
 
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
       create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
@@ -1030,6 +1300,22 @@ public class AppPreferences {
       HOTKEY_FILE_EXPORT.set(KeyStroke.getKeyStroke(KeyEvent.VK_E,
           InputEvent.SHIFT_DOWN_MASK | menuMask));
       HOTKEY_FILE_PRINT.set(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
+      HOTKEY_SEARCH.set(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+          InputEvent.SHIFT_DOWN_MASK | menuMask));
+      HOTKEY_TOOL_SELECT_1.set(KeyStroke.getKeyStroke(KeyEvent.VK_1, menuMask));
+      HOTKEY_TOOL_SELECT_2.set(KeyStroke.getKeyStroke(KeyEvent.VK_2, menuMask));
+      HOTKEY_TOOL_SELECT_3.set(KeyStroke.getKeyStroke(KeyEvent.VK_3, menuMask));
+      HOTKEY_TOOL_SELECT_4.set(KeyStroke.getKeyStroke(KeyEvent.VK_4, menuMask));
+      HOTKEY_TOOL_SELECT_5.set(KeyStroke.getKeyStroke(KeyEvent.VK_5, menuMask));
+      HOTKEY_TOOL_SELECT_6.set(KeyStroke.getKeyStroke(KeyEvent.VK_6, menuMask));
+      HOTKEY_TOOL_SELECT_7.set(KeyStroke.getKeyStroke(KeyEvent.VK_7, menuMask));
+      HOTKEY_TOOL_SELECT_8.set(KeyStroke.getKeyStroke(KeyEvent.VK_8, menuMask));
+      HOTKEY_TOOL_SELECT_9.set(KeyStroke.getKeyStroke(KeyEvent.VK_9, menuMask));
+      HOTKEY_TOOL_SELECT_10.set(KeyStroke.getKeyStroke(KeyEvent.VK_0, menuMask));
+      HOTKEY_TOOL_SELECT_11.set(null);
+      HOTKEY_TOOL_SELECT_12.set(null);
+      HOTKEY_TOOL_SELECT_13.set(null);
+      HOTKEY_TOOL_SELECT_14.set(null);
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
           KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(
@@ -1069,6 +1355,9 @@ public class AppPreferences {
 
   public static final List<Menu> gui_sync_objects = new ArrayList<>();
 
+  private static final KeyStroke SWING_SHOW_TOOL_TIP_SHORTCUT =
+      KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.CTRL_DOWN_MASK);
+
   public static void hotkeySync() {
     try {
       AppPreferences.getPrefs().flush();
@@ -1085,6 +1374,9 @@ public class AppPreferences {
   }
 
   public static String hotkeyCheckConflict(String keyName, int keyCode, int modifier) {
+    if (SWING_SHOW_TOOL_TIP_SHORTCUT.equals(KeyStroke.getKeyStroke(keyCode, modifier))) {
+      return S.get("hotkeyErrConflict", S.get("hotkeyReservedShowToolTip"));
+    }
     try {
       /* Check the supported hotkey bindings */
       Field[] fields = AppPreferences.class.getDeclaredFields();

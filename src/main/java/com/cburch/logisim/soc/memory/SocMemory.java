@@ -92,7 +92,7 @@ public class SocMemory extends SocInstanceFactory {
     painter.drawLabel();
     Font f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "SOC Memory", loc.getX() + 160, loc.getY() + 10);
+    GraphicsUtil.drawCenteredText(g2, S.get("SocMemoryComponent"), loc.getX() + 160, loc.getY() + 10);
     g2.setFont(f);
     GraphicsUtil.drawCenteredText(
         g2,

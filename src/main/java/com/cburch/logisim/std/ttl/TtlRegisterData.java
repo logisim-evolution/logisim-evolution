@@ -40,6 +40,10 @@ public class TtlRegisterData extends ClockState implements InstanceData {
     this(width, 1);
   }
 
+  public void clear() {
+    Arrays.fill(values, Value.createKnown(values.length, 0));
+  }
+
   public void setValue(int i, Value value) {
     this.values[i] = value;
   }

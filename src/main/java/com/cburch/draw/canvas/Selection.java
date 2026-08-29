@@ -114,11 +114,19 @@ public class Selection {
       case CanvasModelEvent.ACTION_REMOVED:
         final var affected = event.getAffected();
         if (affected != null) {
-          selected.removeAll(affected);
-          suppressed.keySet().removeAll(affected);
+          final var removed = new ArrayList<CanvasObject>();
+          for (final var shape : affected) {
+            if (selected.remove(shape)) {
+              removed.add(shape);
+            }
+            suppressed.remove(shape);
+          }
           final var handle = selectedHandle;
           if (handle != null && affected.contains(handle.getObject())) {
             setHandleSelected(null);
+          }
+          if (!removed.isEmpty()) {
+            fireChanged(SelectionEvent.ACTION_REMOVED, removed);
           }
         }
         break;

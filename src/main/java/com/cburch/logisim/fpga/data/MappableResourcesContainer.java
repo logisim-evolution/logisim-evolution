@@ -21,10 +21,10 @@ import java.util.Map;
 public class MappableResourcesContainer {
 
   private final Circuit myCircuit;
-  private final BoardInformation currentUsedBoard;
+  private BoardInformation currentUsedBoard;
   private IoComponentsInformation ioComps;
   private Map<ArrayList<String>, MapComponent> myMappableResources;
-  private final List<FpgaIoInformationContainer> myIOComponents;
+  private List<FpgaIoInformationContainer> myIOComponents;
 
   /*
    * We differentiate two notation for each component, namely: 1) The display
@@ -37,20 +37,11 @@ public class MappableResourcesContainer {
    * The MappedList keeps track of the display names.
    */
   public MappableResourcesContainer(BoardInformation CurrentBoard, Circuit circ) {
-    currentUsedBoard = CurrentBoard;
     myCircuit = circ;
     var BoardId = new ArrayList<String>();
     BoardId.add(CurrentBoard.getBoardName());
-    myIOComponents = new ArrayList<>();
-    for (var io : currentUsedBoard.getAllComponents()) {
-      try {
-        var clone = (FpgaIoInformationContainer) io.clone();
-        clone.setMapMode();
-        myIOComponents.add(clone);
-      } catch (CloneNotSupportedException e) {
-      }
-    }
-    updateMapableComponents();
+    updateIoComponents(CurrentBoard);
+    updateMappableComponents();
     circ.setBoardMap(CurrentBoard.getBoardName(), this);
   }
 
@@ -90,7 +81,20 @@ public class MappableResourcesContainer {
     ProjectActions.doSave(myCircuit.getProject());
   }
 
-  public void updateMapableComponents() {
+  public void updateIoComponents(BoardInformation CurrentBoard) {
+    currentUsedBoard = CurrentBoard;
+    myIOComponents = new ArrayList<>();
+    for (var io : currentUsedBoard.getAllComponents()) {
+      try {
+        var clone = (FpgaIoInformationContainer) io.clone();
+        clone.setMapMode();
+        myIOComponents.add(clone);
+      } catch (CloneNotSupportedException e) {
+      }
+    }
+  }
+
+  public void updateMappableComponents() {
     var cur = new HashSet<ArrayList<String>>();
     if (myMappableResources == null) myMappableResources = new HashMap<>();
     else cur.addAll(myMappableResources.keySet());

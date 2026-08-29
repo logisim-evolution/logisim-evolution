@@ -19,6 +19,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class GraphicsUtil {
 
@@ -108,26 +110,60 @@ public final class GraphicsUtil {
   }
 
   public static Rectangle getTextCursor(Graphics g, String text, int x, int y, int pos, int halign, int valign) {
-    final var r = getTextBounds(g, text, x, y, halign, valign);
-    if (pos > 0) r.x += new TextMetrics(g, text.substring(0, pos)).width;
-    r.width = 1;
-    return r;
+    final var layout = textLayout(g, text);
+    final var offset = Math.max(0, Math.min(pos, text.length()));
+    final var line = lineAtOffset(text, offset);
+    final var top = textTop(y, layout.ascent(), layout.height(), layout.lines().length, valign);
+    final var left = textLeft(x, layout.widths()[line.index()], halign);
+    final var prefix = text.substring(line.start(), offset);
+    return new Rectangle(
+        left + new TextMetrics(g, prefix).width,
+        top + line.index() * layout.lineHeight(),
+        1,
+        layout.lineHeight());
   }
 
   public static int getTextPosition(Graphics g, String text, int x, int y, int halign, int valign) {
-    final var r = getTextBounds(g, text, 0, 0, halign, valign);
-    x -= r.x;
+    final var layout = textLayout(g, text);
+    final var top = textTop(0, layout.ascent(), layout.height(), layout.lines().length, valign);
+    final var lineIndex =
+        Math.max(0, Math.min((y - top) / layout.lineHeight(), layout.lines().length - 1));
+    final var line = layout.lines()[lineIndex];
+    x -= textLeft(0, layout.widths()[lineIndex], halign);
     var last = 0;
     final var font = g.getFont();
     final var fr = ((Graphics2D) g).getFontRenderContext();
-    for (var i = 0; i < text.length(); i++) {
-      final var cur = (int) font.getStringBounds(text.substring(0, i + 1), fr).getWidth();
+    for (var i = 0; i < line.length(); i++) {
+      final var cur = (int) font.getStringBounds(line.substring(0, i + 1), fr).getWidth();
       if (x <= (last + cur) / 2) {
-        return i;
+        return lineStart(text, lineIndex) + i;
       }
       last = cur;
     }
-    return text.length();
+    return lineStart(text, lineIndex) + line.length();
+  }
+
+  public static List<Rectangle> getTextSelectionBounds(
+      Graphics g, String text, int x, int y, int start, int end, int halign, int valign) {
+    final var result = new ArrayList<Rectangle>();
+    final var first = Math.max(0, Math.min(Math.min(start, end), text.length()));
+    final var last = Math.max(0, Math.min(Math.max(start, end), text.length()));
+    if (first == last) return result;
+
+    final var layout = textLayout(g, text);
+    var lineStart = 0;
+    for (var i = 0; i < layout.lines().length; i++) {
+      final var lineEnd = lineStart + layout.lines()[i].length();
+      final var selectionStart = Math.max(first, lineStart);
+      final var selectionEnd = Math.min(last, lineEnd);
+      if (selectionStart < selectionEnd) {
+        final var from = getTextCursor(g, text, x, y, selectionStart, halign, valign);
+        final var to = getTextCursor(g, text, x, y, selectionEnd, halign, valign);
+        result.add(new Rectangle(from.x, from.y, Math.max(1, to.x - from.x), from.height));
+      }
+      lineStart = lineEnd + 1;
+    }
+    return result;
   }
 
   public static void drawText(
@@ -156,21 +192,25 @@ public final class GraphicsUtil {
 
   public static void drawText(Graphics g, String text, int x, int y, int halign, int valign) {
     if (text.length() == 0) return;
-    final var bd = getTextBounds(g, text, x, y, halign, valign);
-    final var tm = new TextMetrics(g, text);
-    g.drawString(text, bd.x, bd.y + tm.ascent);
+    final var layout = textLayout(g, text);
+    final var top = textTop(y, layout.ascent(), layout.height(), layout.lines().length, valign);
+    for (var i = 0; i < layout.lines().length; i++) {
+      g.drawString(
+          layout.lines()[i],
+          textLeft(x, layout.widths()[i], halign),
+          top + layout.ascent() + i * layout.lineHeight());
+    }
   }
 
   public static void drawText(Graphics g, String text, int x, int y, int halign, int valign, Color fg, Color bg) {
     if (text.length() == 0) return;
     final var bd = getTextBounds(g, text, x, y, halign, valign);
-    final var tm = new TextMetrics(g, text);
     if (g instanceof Graphics2D g2d) {
       g2d.setPaint(bg);
       g.fillRect(bd.x, bd.y, bd.width, bd.height);
       g2d.setPaint(fg);
     }
-    g.drawString(text, bd.x, bd.y + tm.ascent);
+    drawText(g, text, x, y, halign, valign);
   }
 
   public static void outlineText(Graphics g, String text, int x, int y, Color fg, Color bg) {
@@ -198,36 +238,68 @@ public final class GraphicsUtil {
   public static Rectangle getTextBounds(Graphics g, String text, int x, int y, int halign, int valign) {
     if (g == null) return new Rectangle(x, y, 0, 0);
 
-    final var tm = new TextMetrics(g, text);
-    final var width = tm.width;
-    final var ascent = tm.ascent;
-    final var height = tm.height;
+    final var layout = textLayout(g, text);
+    final var width = layout.width();
+    final var height = layout.height();
 
-    final var ret = new Rectangle(x, y, width, height);
-    switch (halign) {
-      case H_CENTER -> ret.translate(-(width / 2), 0);
-      case H_RIGHT -> ret.translate(-width, 0);
-      default -> {
-      }
+    return new Rectangle(
+        textLeft(x, width, halign),
+        textTop(y, layout.ascent(), height, layout.lines().length, valign),
+        width,
+        height);
+  }
+
+  private record LineOffset(int index, int start) {}
+
+  private record TextLayout(
+      String[] lines, int[] widths, int width, int ascent, int lineHeight, int height) {}
+
+  private static LineOffset lineAtOffset(String text, int offset) {
+    var start = 0;
+    var index = 0;
+    while (true) {
+      final var newline = text.indexOf('\n', start);
+      if (newline < 0 || offset <= newline) return new LineOffset(index, start);
+      start = newline + 1;
+      index++;
     }
-    switch (valign) {
-      case V_TOP:
-        break;
-      case V_CENTER:
-        ret.translate(0, -(ascent / 2));
-        break;
-      case V_CENTER_OVERALL:
-        ret.translate(0, -(height / 2));
-        break;
-      case V_BASELINE:
-        ret.translate(0, -ascent);
-        break;
-      case V_BOTTOM:
-        ret.translate(0, -height);
-        break;
-      default:
+  }
+
+  private static int lineStart(String text, int lineIndex) {
+    var start = 0;
+    for (var i = 0; i < lineIndex; i++) start = text.indexOf('\n', start) + 1;
+    return start;
+  }
+
+  private static int textLeft(int x, int width, int halign) {
+    return switch (halign) {
+      case H_CENTER -> x - width / 2;
+      case H_RIGHT -> x - width;
+      default -> x;
+    };
+  }
+
+  private static TextLayout textLayout(Graphics g, String text) {
+    final var lines = text.split("\\n", -1);
+    final var widths = new int[lines.length];
+    var width = 0;
+    for (var i = 0; i < lines.length; i++) {
+      widths[i] = new TextMetrics(g, lines[i]).width;
+      width = Math.max(width, widths[i]);
     }
-    return ret;
+    final var metrics = new TextMetrics(g, lines[0]);
+    return new TextLayout(
+        lines, widths, width, metrics.ascent, metrics.height, metrics.height * lines.length);
+  }
+
+  private static int textTop(int y, int ascent, int height, int lineCount, int valign) {
+    return switch (valign) {
+      case V_CENTER -> y - (lineCount == 1 ? ascent / 2 : height / 2);
+      case V_CENTER_OVERALL -> y - height / 2;
+      case V_BASELINE -> y - ascent;
+      case V_BOTTOM -> y - height;
+      default -> y;
+    };
   }
 
   public static void switchToWidth(Graphics gfx, int width) {

@@ -18,6 +18,7 @@ import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -418,8 +419,13 @@ class TableTabCaret {
     }
   }
 
-  private static final Color SELECT_COLOR = new Color(192, 192, 255);
-  private static final Color HIGHLIGHT_COLOR = new Color(255, 255, 192);
+  private Color selectionColor() {
+    return new Color(AppPreferences.TABLE_SELECTION_COLOR.get());
+  }
+
+  private Color highlightColor() {
+    return new Color(AppPreferences.TABLE_HIGHLIGHT_COLOR.get());
+  }
   private final Listener listener = new Listener();
   private final TableTab table;
   private Pt cursor;
@@ -513,7 +519,7 @@ class TableTabCaret {
 
   void paintBackground(Graphics g) {
     if (hilightRows != null) {
-      g.setColor(HIGHLIGHT_COLOR);
+      g.setColor(highlightColor());
       final var inputs = table.getInputColumnCount();
       final var outputs = table.getOutputColumnCount();
       final var x0 = table.getXLeft(0);
@@ -526,12 +532,12 @@ class TableTabCaret {
     }
     if (marked() && !markA.equals(markB)) {
       final var r = region(markA, markB);
-      g.setColor(SELECT_COLOR);
+      g.setColor(selectionColor());
       g.fillRect(r.x, r.y, r.width, r.height);
     }
     if (table.isFocusOwner() && cursor.isValid()) {
       final var r = region(cursor);
-      g.setColor(Color.WHITE);
+      g.setColor(new Color(AppPreferences.TABLE_CURSOR_COLOR.get()));
       g.fillRect(r.x, r.y + 1, r.width - 1, r.height - 3);
     }
   }
@@ -539,12 +545,13 @@ class TableTabCaret {
   void paintForeground(Graphics g) {
     if (!table.isFocusOwner()) return;
     Pt p;
+    final var borderColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     if (cursor.isValid()) {
       p = cursor;
-      g.setColor(Color.BLACK);
+      g.setColor(borderColor);
     } else if (hover.isValid()) {
       p = hover;
-      g.setColor(Color.GRAY);
+      g.setColor(borderColor);
     } else {
       return;
     }

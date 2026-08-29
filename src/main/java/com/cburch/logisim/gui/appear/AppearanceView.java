@@ -20,6 +20,7 @@ import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.BasicZoomModel;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.ZoomModel;
+import com.cburch.logisim.gui.main.AttrTableCircuitModel;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -79,7 +80,12 @@ public class AppearanceView {
   public AttrTableDrawManager getAttrTableDrawManager(AttrTable table) {
     var ret = attrTableManager;
     if (ret == null) {
-      ret = new AttrTableDrawManager(canvas, table, attrs);
+      ret =
+          new AttrTableDrawManager(
+              canvas,
+              table,
+              attrs,
+              () -> new AttrTableCircuitModel(canvas.getProject(), canvas.getCircuit()));
       attrTableManager = ret;
     }
     return ret;

@@ -13,6 +13,7 @@ import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Implicant;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -129,12 +130,14 @@ public class KarnaughMapGroups {
         boolean highlighted,
         boolean colored) {
       int d = 2 * IMP_RADIUS;
-      final var col = g.getColor();
+      final var oldColor = g.getColor();
+      final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
       if (highlighted)
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 180));
+        g.setColor(adjustColor(color, 180, 220, isDark));
       else if (colored)
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128));
-      else g.setColor(new Color(128, 128, 128, 128));
+        g.setColor(adjustColor(color, 128, 180, isDark));
+      else
+        g.setColor(isDark ? new Color(170, 170, 170, 160) : new Color(128, 128, 128, 128));
       for (CoverInfo cover : areas) {
         g.fillRoundRect(
             x + cover.getCol() * cellWidth + IMP_INSET,
@@ -144,7 +147,17 @@ public class KarnaughMapGroups {
             d,
             d);
       }
-      g.setColor(col);
+      g.setColor(oldColor);
+    }
+
+    private Color adjustColor(Color c, int lightAlpha, int darkAlpha, boolean isDark) {
+      if (!isDark) return new Color(c.getRed(), c.getGreen(), c.getBlue(), lightAlpha);
+      // brighten dark colors for visibility on dark backgrounds
+      final float factor = 0.45f;
+      final int r = Math.min(255, (int) (c.getRed() + (255 - c.getRed()) * factor));
+      final int g = Math.min(255, (int) (c.getGreen() + (255 - c.getGreen()) * factor));
+      final int b = Math.min(255, (int) (c.getBlue() + (255 - c.getBlue()) * factor));
+      return new Color(r, g, b, darkAlpha);
     }
 
     public boolean insideCover(int col, int row) {

@@ -380,18 +380,18 @@ public class SimOptions extends OptionsPanel {
   }
 
   private void setDefaults() {
-    AppPreferences.TRUE_COLOR.set(0x0000D300);
-    AppPreferences.FALSE_COLOR.set(0x00006500);
-    AppPreferences.UNKNOWN_COLOR.set(0x002827FF);
-    AppPreferences.ERROR_COLOR.set(0x00C10000);
-    AppPreferences.NIL_COLOR.set(0x818181);
-    AppPreferences.BUS_COLOR.set(1);
-    AppPreferences.STROKE_COLOR.set(0xFE00FF);
-    AppPreferences.WIDTH_ERROR_COLOR.set(0xFF7A00);
-    AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
-    AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
-    AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(0xFFE6D2);
-    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4);
+    AppPreferences.TRUE_COLOR.set(AppPreferences.DEFAULT_TRUE_COLOR);
+    AppPreferences.FALSE_COLOR.set(AppPreferences.DEFAULT_FALSE_COLOR);
+    AppPreferences.UNKNOWN_COLOR.set(AppPreferences.DEFAULT_UNKNOWN_COLOR);
+    AppPreferences.ERROR_COLOR.set(AppPreferences.DEFAULT_ERROR_COLOR);
+    AppPreferences.NIL_COLOR.set(AppPreferences.DEFAULT_NIL_COLOR);
+    AppPreferences.BUS_COLOR.set(AppPreferences.DEFAULT_BUS_COLOR);
+    AppPreferences.STROKE_COLOR.set(AppPreferences.DEFAULT_STROKE_COLOR);
+    AppPreferences.WIDTH_ERROR_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_COLOR);
+    AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_CAPTION_COLOR);
+    AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR);
+    AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR);
+    AppPreferences.CLOCK_FREQUENCY_COLOR.set(AppPreferences.DEFAULT_CLOCK_FREQUENCY_COLOR);
     AppPreferences.KMAP1_COLOR.set(0x810000);
     AppPreferences.KMAP2_COLOR.set(0xE7194B);
     AppPreferences.KMAP3_COLOR.set(0xFABEBF);

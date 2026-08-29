@@ -1,22 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ru">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-07-18T10:59:00.000000000">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="ru">
-    <title>
-      Транзистор
-    </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
-  </head>
-  <body>
-    <div class="maindiv">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2018-10-23T06:18:10.521000000">
+  <meta name="changed" content="2026-07-16T23:45:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>
+    Транзистор
+  </title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
     <h1>
-      <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" height="32" width="32"> 
-	  <img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" height="32" width="32">
-	  <em>Транзистор</em>
+      <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" height="32" width="32">
+      <img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" height="32" width="32">
+      <em>Транзистор</em>
     </h1>
     <table>
       <tbody>
@@ -25,7 +27,7 @@
             <strong>Библиотека:</strong>
           </td>
           <td>
-            <a href="index.html">Проводка</a>
+            <a href="index.html">Монтаж</a>
           </td>
         </tr>
         <tr>
@@ -40,30 +42,32 @@
           <td valign="top">
             <strong>Внешний вид:</strong>
           </td>
-             <td valign="top">
-			<table>
-                <tbody>
-				  <tr>
-				    <th>p-тип
-					</th>
-					<th>
-					</th>
-					<th>n-тип
-					</th>
-				  </tr>
-                  <tr>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
-                    </td>
-					<td>&nbsp;
-					</td>
-                    <td>
-                      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
+          <td valign="top">
+            <table>
+              <tbody>
+                <tr>
+                  <th>
+                    p-тип
+                  </th>
+                  <th></th>
+                  <th>
+                    n-тип
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64"
+                      height="64">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -71,130 +75,132 @@
       Поведение
     </h2>
     <p>
-      Транзистор имеет два входа, называемые <em>затвор</em> и <em>исток</em>, и выход, называемый <em>сток</em>. На схемах вход <em>исток</em> и выход <em>сток</em> изображаются соединёнными пластиной; Logisim отрисовывает стрелку, указывающую направление потока от входа к выходу. Вход <em>затвор</em> изображён соединённым с пластиной, параллельной пластине, соединяющей <em>исток</em> со <em>стоком</em>.</p> 
-	 		     <center>
-        <table>
-          <tbody>
-            <tr>
-              <td></td>
-              <td align="center">
-                <em>затвор</em>
-              </td>
-              <td></td>
-              <td>
-                &nbsp; &nbsp;
-              </td>
-              <td></td>
-              <td align="center">
-                <em>затвор</em>
-              </td>
-              <td></td>
-            </tr>
-            <tr>
-              <td valign="bottom">
-                <em>исток</em>
-              </td>
-              <td valign="middle" align="center">
-                <img src="../../../../img-libs/trans1.png" alt="#########">
-              </td>
-              <td valign="bottom">
-                <em>сток</em>
-              </td>
-              <td></td>
-              <td valign="bottom">
-                <em>исток</em>
-              </td>
-              <td valign="middle" align="center">
-                <img src="../../../../img-libs/trans0.png" alt="#########">
-              </td>
-              <td valign="bottom">
-                <em>сток</em>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td align="center">
-                <b>n-тип</b>
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td align="center">
-                <b>p-тип</b>
-              </td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-		</center> 
-	 <p> 
-	  Logisim поддерживает два типа транзисторов с немного различными поведениями, описанными ниже; транзистор p-типа обозначен кружком, соединяющим вход <em>затвор</em> с его пластиной, а транзистор n-типа не имеет такого кружка.
+      Транзистор имеет два входа (<em>затвор</em> и <em>исток</em>) и один выход (<em>сток</em>).
+      На схемах вход <em>исток</em> и выход <em>сток</em> соединены проводящим каналом (пластиной),
+      на котором Logisim отображает стрелку, указывающую направление протекания тока.
+      Вход <em>затвор</em> изображается в виде пластины, параллельной каналу <em>исток-сток</em>.
+    </p>
+    <center>
+      <table>
+        <tbody>
+          <tr>
+            <td></td>
+            <td align="center">
+              <em>затвор</em>
+            </td>
+            <td></td>
+            <td>&nbsp; &nbsp;</td>
+            <td></td>
+            <td align="center">
+              <em>затвор</em>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td valign="bottom">
+              <em>исток</em>
+            </td>
+            <td valign="middle" align="center">
+              <img src="../../../../img-libs/trans1.png" alt="#########">
+            </td>
+            <td valign="bottom">
+              <em>сток</em>
+            </td>
+            <td></td>
+            <td valign="bottom">
+              <em>исток</em>
+            </td>
+            <td valign="middle" align="center">
+              <img src="../../../../img-libs/trans0.png" alt="#########">
+            </td>
+            <td valign="bottom">
+              <em>сток</em>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td align="center">
+              <b>n-тип</b>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td align="center">
+              <b>p-тип</b>
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </center>
+    <p>
+      Logisim поддерживает два типа транзисторов с немного различными поведениями;
+      транзистор p-типа обозначается кружком, соединяющим вход <em>затвор</em> с затворной пластиной,
+      а транзистор n-типа не имеет такого кружка.
     </p>
     <p>
-      В зависимости от значения, поступающего на <em>затвор</em>, значение с <em>истока</em> может быть передано на <em>сток</em>; или соединения с <em>истоком</em> может не быть, тогда значение на <em>стоке</em> остаётся плавающим. Решение о передаче или разъединении зависит от типа транзистора: транзистор p-типа (обозначенный кружком на линии <em>затвора</em>) передаёт значение, когда на <em>затворе</em> 0, а транзистор n-типа (без кружка) передаёт значение, когда на <em>затворе</em> 1. Это поведение обобщено следующими таблицами.
+      В зависимости от уровня сигнала на <em>затворе</em> значение с <em>истока</em> может передаваться на
+      <em>сток</em>.
+      Если транзистор закрыт, соединение разрывается, и на <em>стоке</em> формируется неопределённое (высокоимпедансное)
+      значение.
+      Условие открытия транзистора зависит от его типа: транзистор p-типа (обозначается кружком на контакте затвора)
+      открывается логическим <b class="zerov">0</b> на <em>затворе</em>, а транзистор n-типа (без кружка) —
+      логической <b class="unov">1</b>. Поведение транзисторов подробно описано в таблицах истинности ниже.
     </p>
     <center>
       <table class="encapsul">
         <tbody>
-		  <tr>
-		   <th colspan=3>
-		     p-тип
-		   </th>
-		   <td>
-		   </td>
-		   <th colspan=3>
-		     n-тип
-		   </th>
-		  </tr>
-		  <tr>
-		   <td>
-		   </td>
-		   <td class="center">
-		   G
-		   </td>
-		   <td>
-		   </td>
-		    <td>	
-			
-		   </td>
-		   <td>
-		   
-		   </td>
-		   <td class="center">
-		   G
-		   </td>
-		   <td>
-		   
-		   </td>
-		  </tr>
-		  <tr>
-		   <td class="right">
-		     S
-		   </td>
-		   <td>
-		   <p align="center">
-		      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
-		   </p>
-		   </td>
-		    <td class="left">
-		     D
-		   </td>
-		   <td>
-		   </td>
-		    <td class="right">
-		     S
-		   </td>
-		   <td>
-		   <p align="center">
-		      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
-		   </p>
-		   </td>
-		    <td class="left">
-		     D
-		   </td>
-		  </tr>
           <tr>
-            <td colspan=3>
+            <th colspan="3">
+              p-тип
+            </th>
+            <td></td>
+            <th colspan="3">
+              n-тип
+            </th>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="center">
+              З
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="center">
+              З
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="right">
+              И
+            </td>
+            <td>
+              <p align="center">
+                <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64"
+                  height="64">
+              </p>
+            </td>
+            <td class="left">
+              С
+            </td>
+            <td></td>
+            <td class="right">
+              И
+            </td>
+            <td>
+              <p align="center">
+                <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64"
+                  height="64">
+              </p>
+            </td>
+            <td class="left">
+              С
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
               <table class="truthtable">
                 <tbody>
                   <tr>
@@ -223,7 +229,7 @@
                       E
                     </td>
                   </tr>
-                 <tr>
+                  <tr>
                     <td class="tzerov">
                       0
                     </td>
@@ -294,10 +300,10 @@
                 </tbody>
               </table>
             </td>
-			<td>
-			  &nbsp;&nbsp;&nbsp;&nbsp;
-			</d>
-            <td  colspan=3>
+            <td>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+            <td colspan="3">
               <table class="truthtable">
                 <tbody>
                   <tr>
@@ -312,8 +318,7 @@
                     </th>
                   </tr>
                   <tr>
-                    <td class="tzerov">
-					</td>
+                    <td class="tzerov"></td>
                     <td class="tzerov">
                       0
                     </td>
@@ -406,203 +411,218 @@
       Или в краткой форме:
     </p>
     <center>
-          <table class="encapsul">
-          <tbody>
-            <tr>
-              <td>
-                <table>
-                  <thead>
-                    <tr>
-                      <th colspan="2">
-                        p-тип
-                      </th>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+      <table class="encapsul">
+        <tbody>
+          <tr>
+            <td>
+              <table>
+                <thead>
+                  <tr>
+                    <th colspan="2">
+                      p-тип
+                    </th>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <p align="center">
+                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64"
+                          height="64">
                       </p>
-					  </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th class="tspace">
-					    затвор
-                      </th>
-                      <th class="tspace">
-                        сток
-                      </th>
-                    </tr>
-                    <tr>
-                      <td class="zerov">
-                        0
-                      </td>
-                      <td class="space">
-                        исток
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="unov">
-                        1
-                      </td>
-                      <td class="uvalue">
-                        U
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="space">
-                        <b class="uvalue">U</b>/<b class="evalue">E</b>
-                      </td>
-                      <td class="space">
-                        *
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-              <td>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </td>
-              <td>
-                <table>
-                  <thead>
-                    <tr>
-                      <th colspan="2">
-                        <b>n-тип</b>
-                      </th>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-					  <p align="center">
-                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th class="tspace">
+                      затвор
+                    </th>
+                    <th class="tspace">
+                      сток
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="zerov">
+                      0
+                    </td>
+                    <td class="space">
+                      исток
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="unov">
+                      1
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="space">
+                      <b class="uvalue">U</b>/<b class="evalue">E</b>
+                    </td>
+                    <td class="space">
+                      *
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+            <td width="60px">&nbsp;</td>
+            <td>
+              <table>
+                <thead>
+                  <tr>
+                    <th colspan="2">
+                      <b>n-тип</b>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <p align="center">
+                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64"
+                          height="64">
                       </p>
-					  </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th class="tspace">
-                        затвор
-                      </th>
-                      <th class="tspace">
-                        сток
-                      </th>
-                    </tr>
-                    <tr>
-                      <td class="zerov">
-                        0
-                      </td>
-                      <td class="uvalue">
-                        U
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="unov">
-                        1
-                      </td>
-                      <td align="center">
-                        исток
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="space">
-                        <b class="uvalue">U</b>/<b class="evalue">E</b>
-                      </td>
-                      <td class="space">
-                        *
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th class="tspace">
+                      затвор
+                    </th>
+                    <th class="tspace">
+                      сток
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="zerov">
+                      0
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="unov">
+                      1
+                    </td>
+                    <td align="center">
+                      исток
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="space">
+                      <b class="uvalue">U</b>/<b class="evalue">E</b>
+                    </td>
+                    <td class="space">
+                      *
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <p>
-        * Если на <em>истоке</em> <b class=uvalue>U</b>, то на <em>стоке</em> <b class=uvalue>U</b>; в противном случае на <em>стоке</em> <b class=evalue>E</b>.
+        * Когда на затворе значение <b class="uvalue">U</b> или <b class="evalue">E</b>: если на истоке <b
+          class="uvalue">U</b>, то на стоке <b class="uvalue">U</b>; во всех остальных случаях на выходе стока
+        формируется ошибка <b class="evalue">E</b>.
       </p>
     </center>
     <p>
-      Если значение атрибута Биты данных больше единицы, то вход <em>затвор</em> остаётся однобитным, но значение на нём применяется одновременно к каждому биту входа <em>исток</em>.
+      <b class="note">Примечание:</b> Поскольку в Logisim используются обозначения <b class="uvalue">U</b> (высокое
+      сопротивление / неопределённое состояние) и <b class="evalue">E</b> (ошибка), в иллюстрациях также используются
+      эти обозначения вместо более распространённых Z (высокоимпедансное состояние) и X (ошибка), встречающихся в другой
+      технической документации.
     </p>
     <p>
-      Транзистор n-типа ведёт себя очень похоже на <a href="../затворs/controlled.html">Управляемый буфер</a>. Основная разница в том, что транзистор предназначен для проектирования более элементарных схем.
+      Если значение атрибута <b class="propertie">Биты данных</b> больше 1, то вход <b class="propertie">Затвор</b>
+      остаётся однобитным, но его значение управляет передачей каждого бита многобитного сигнала
+      с <b class="propertie">Истока</b> на <b class="propertie">Сток</b>.
+    </p>
+    <p>
+      Транзистор n-типа функционирует аналогично <a href="../gates/controlled.html">управляемому буферу</a>.
+      Главное отличие заключается в том, что транзисторы используются как более низкоуровневые базовые элементы
+      для построения логических схем.
     </p>
     <h2>
-      Контакты (предполагается, что компонент направлен на восток, положение затвора - сверху/справа)
+      Контакты (для компонента, направленного вправо, с верхним/правым расположением затвора):
     </h2>
     <dl>
       <dt>
-        Западный край (вход, разрядность соответствует атрибуту Биты данных)
+        Левый контакт (вход, разрядность соответствует атрибуту <b class="propertie">Биты данных</b>):
       </dt>
       <dd>
-        Вход <em>исток</em> компонента, значение с которого будет передано на выход, если это инициировано входом <em>затвор</em>.
+        Вход <em>исток</em> компонента, сигнал с которого передается на выход, когда транзистор открыт.
       </dd>
       <dt>
-        Северный край (вход, разрядность равна 1)
+        Верхний контакт (вход, разрядность равна 1):
       </dt>
       <dd>
-        Вход <em>затвор</em> компонента. Для транзисторов p-типа транзистор будет передавать значение, если значение на <em>затворе</em> - 0; для транзисторов n-типа это будет происходить, если на <em>затворе</em> 1.
+        Вход <em>затвор</em> компонента. Транзистор p-типа открывается при значении <b class="zerov">0</b> на затворе;
+        транзистор n-типа — при значении <b class="unov">1</b>.
       </dd>
       <dt>
-        Восточный край (выход, разрядность соответствует атрибуту Биты данных)
+        Правый контакт (выход, разрядность соответствует атрибуту <b class="propertie">Биты данных</b>):
       </dt>
       <dd>
-        Выход компонента, значение на котором будет совпадать со значением на входе <em>исток</em>, если это определено входом <em>затвор</em>, или будет плавающим, если на входе <em>затвор</em> соответствующее значение. Если на <em>затворе</em> плавающее значение, или значение ошибки, то на выходе будет значение ошибки.
+        Выход <em>сток</em> компонента. Если сигнал на затворе открывает транзистор, значение на выходе
+        повторяет значение на входе исток за исключением заблокированного значения: транзистор p-типа
+        выдаёт <b class="uvalue">U</b> при значении истока <b class="zerov">0</b>, а транзистор n-типа
+        выдаёт <b class="uvalue">U</b> при значении истока <b class="unov">1</b>.
+        Если сигнал на затворе определен, но закрывает транзистор, то выход находится в высокоимпедансном состоянии
+        (<b class="uvalue">U</b>). Если на затворе неинициализированное значение (<b class="uvalue">U</b>) или значение
+        ошибки (<b class="evalue">E</b>), то высокоимпедансный бит истока остаётся <b class="uvalue">U</b>,
+        а любой другой бит истока преобразуется в значение ошибки (<b class="evalue">E</b>).
       </dd>
     </dl>
     <h2>
       Атрибуты
     </h2>
     <p>
-      Когда компонент выбран, или уже добавлен, комбинации от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> меняют его атрибут <b class="propertie">Биты данных</b>, а клавиши со стрелками меняют его атрибут <b class="propertie">Направление</b>.
+      Когда компонент выбран или добавляется, комбинации клавиш от <b class="tkeybd">Alt-0</b>
+      до <b class="tkeybd">Alt-9</b> меняют его атрибут <b class="propertie">Биты данных</b>,
+      а клавиши со стрелками — его атрибут <b class="propertie">Направление</b>.
     </p>
-		  <div class="attliste">
-    <dl>
-      <dt>
-        <b class="propertie">Тип</b>
-      </dt>
-      <dd>
-        Определяет тип транзистора: p-тип или n-тип.
-      </dd>
-      <dt>
-        <b class="propertie">Направление</b>
-      </dt>
-      <dd>
-        Направление компонента (его выхода относительно его входа).
-      </dd>
-      <dt>
-        <b class="propertie">Положение затвора</b>
-      </dt>
-      <dd>
-        Положение входа затвор.
-      </dd>
-      <dt>
-        <b class="propertie">Биты данных</b>
-      </dt>
-      <dd>
-        Разрядность входов и выходов компонента.
-      </dd>
-    </dl>
-	</div>
+    <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Тип</b>
+        </dt>
+        <dd>
+          Определяет тип транзистора: p-тип или n-тип.
+        </dd>
+        <dt>
+          <b class="propertie">Направление</b>
+        </dt>
+        <dd>
+          Направление компонента (его выхода стока относительно истока).
+        </dd>
+        <dt>
+          <b class="propertie">Положение затвора</b>
+        </dt>
+        <dd>
+          Сторона размещения управляющего входа затвора.
+        </dd>
+        <dt>
+          <b class="propertie">Биты данных</b>
+        </dt>
+        <dd>
+          Разрядность входов и выходов (истока и стока) компонента.
+        </dd>
+      </dl>
+    </div>
     <h2>
-      Поведение Инструмента Нажатие
+      Поведение Инструмента «Нажатие»
     </h2>
     <p>
-      Нет.
-    </p>
-    <h2>
-      Поведение Инструмента Текст
-    </h2>
-    <p>
-      Нет.
+      Не предусмотрено.
     </p>
     <p>
-      <b>Назад к </b><a href="../index.html">Справке по библиотеке</a>
+      <b>Назад к</b> <a href="../index.html">Справке по библиотеке</a>
     </p>
-	</div>
-  </body>
-</html>
+  </div>
+</body>
 
+</html>

@@ -267,7 +267,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           contents
               .add("res{{1}} : {{process}}({{clock}}, s_byteEnable{{1}}, s_ramDataOut) {{is}}", i)
               .add("{{begin}}")
-              .add("   {{if}} (rising_edge({{clock}}) {{then}}")
+              .add("   {{if}} (rising_edge({{clock}})) {{then}}")
               .add("      {{if}} (s_byteEnable{{1}} = '1') {{then}}", i);
           final var startIndex = i * 8;
           final var endIndex =
@@ -689,6 +689,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
+    if (RamAttributes.hasControlledOutput(attrs)) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);

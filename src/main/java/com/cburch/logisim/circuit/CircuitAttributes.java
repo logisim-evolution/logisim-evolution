@@ -110,15 +110,15 @@ public class CircuitAttributes extends AbstractAttributeSet {
             e.getSource().setValue(NAME_ATTR, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
-          } else if (!SyntaxChecker.isVariableNameAcceptable(NewName, true)) {
+          } else if (!SyntaxChecker.isVariableNameAcceptableForCurrentHdl(NewName, true)) {
             e.getSource().setValue(NAME_ATTR, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
           } else {
             for (final var component : source.getNonWires()) {
               if (component.getFactory() instanceof Pin) {
-                final var label = component.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
-                if (!label.isEmpty() && label.equals(NewName.toUpperCase())) {
+                final var label = component.getAttributeSet().getValue(StdAttr.LABEL);
+                if (!label.isEmpty() && SyntaxChecker.namesEqualForCurrentHdl(label, NewName)) {
                   final var msg = S.get("CircuitSameInputOutputLabel");
                   OptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
                   e.getSource().setValue(NAME_ATTR, OldName);

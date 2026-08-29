@@ -41,13 +41,20 @@
     <mapID target="mem_guide"           url="de/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="de/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="de/html/guide/mem/mem-menu.html"/>
-    <mapID target="mem_filetabel"       url="de/html/guide/mem/mem-filepanel.html"/>
+    <mapID target="mem_filetabel"       url="en/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="de/html/guide/mem/mem-hex.html"/>  
-    <mapID target="mem_v2raw"           url="de/html/guide/mem/mem-v2raw.html"/>  
-    <mapID target="mem_v3word"          url="de/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte"          url="de/html/guide/mem/mem-v3byte.html"/> 
-    <mapID target="mem_binary"          url="de/html/guide/mem/mem-vbinary.html"/>
-    <mapID target="mem_ascii"           url="de/html/guide/mem/mem-vascii.html"/>
+    <mapID target="mem_v2raw"           url="en/html/guide/mem/mem-v2raw.html"/>
+    <mapID target="mem_v3word"          url="en/html/guide/mem/mem-v3word.html"/>
+    <mapID target="mem_v3byte"          url="en/html/guide/mem/mem-v3byte.html"/>
+    <mapID target="mem_binary"          url="en/html/guide/mem/mem-vbinary.html"/>
+    <mapID target="mem_ascii"           url="en/html/guide/mem/mem-vascii.html"/>
+	<mapID target="test_vector"         url="de/html/guide/test_vector/index.html" />
+	<mapID target="test_vector_window"  url="de/html/guide/test_vector/test_vector_window.html" />
+	<mapID target="test_vector_file_format" url="de/html/guide/test_vector/test_vector_file_format.html" />
+	<mapID target="test_vector_special_values" url="de/html/guide/test_vector/test_vector_special_values.html" />
+	<mapID target="test_vector_sequential" url="de/html/guide/test_vector/test_vector_sequential.html" />
+	<mapID target="test_vector_cmdline" url="de/html/guide/test_vector/test_vector_cmdline.html" />
+	<mapID target="test_vector_tips"    url="de/html/guide/test_vector/test_vector_tips.html" />
 	<mapID target="analyze"             url="de/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="de/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="de/html/guide/analyze/ana-table.html" />
@@ -68,6 +75,7 @@
 	<mapID target="prefs_window"        url="de/html/guide/prefs/pref-window.html" />
 	<mapID target="prefs_layout"        url="de/html/guide/prefs/pref-layout.html" />
 	<mapID target="prefs_exp"           url="de/html/guide/prefs/pref-exp.html" />
+	<mapID target="prefs_fpga"          url="en/html/guide/prefs/pref-fpgacommander.html" />
 	<mapID target="prefs_cmdline"       url="de/html/guide/prefs/pref-cmdline.html" />
 	<mapID target="opts"                url="de/html/guide/opts/index.html" />
 	<mapID target="opts_simulate"       url="de/html/guide/opts/opts-simulate.html" />
@@ -93,6 +101,7 @@
 	<mapID target="menu_edit"           url="de/html/guide/menu/edit.html" />
 	<mapID target="menu_project"        url="de/html/guide/menu/project.html" />
 	<mapID target="menu_simulate"       url="de/html/guide/menu/simulate.html" />
+	<mapID target="menu_fpga"           url="en/html/guide/menu/fpga.html" />
 	<mapID target="menu_winhelp"        url="de/html/guide/menu/winhelp.html" />
 	<mapID target="menu_exportab"       url="de/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="de/html/guide/menu/printertab.html" />
@@ -157,13 +166,25 @@
 	<mapID target="io_joystick"         url="de/html/libs/io/joystick.html" />
 	<mapID target="io_keyboard"         url="de/html/libs/io/keyboard.html" />
 	<mapID target="io_led"              url="de/html/libs/io/led.html" />
+	<mapID target="io_ledbar"           url="en/html/libs/io/ledbar.html" />
 	<mapID target="io_7seg"             url="de/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="de/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="de/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="de/html/libs/io/tty.html" />	
-    <mapID target="io_Port_IO"          url="de/html/libs/io/Port_io.html" />	
-	<mapID target="io_Repetar"          url="de/html/libs/io/repetar.html" />	
+	<mapID target="io_tty"              url="de/html/libs/io/tty.html" />
+	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+	<mapID target="io_realtimeclock"    url="en/html/libs/io/realtimeclock.html" />
+	<mapID target="io_matrixkeypad"     url="en/html/libs/io/matrixkeypad.html" />
+    <mapID target="io_Port_IO"          url="de/html/libs/io/Port_io.html" />
+	<mapID target="io_Repetar"          url="de/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="de/html/libs/io/videorvb.html" />
+	<mapID target="ioex"                 url="en/html/libs/ioextra/index.html" />
+	<mapID target="ioex_switch"          url="en/html/libs/ioextra/switch.html" />
+	<mapID target="ioex_buzzer"          url="en/html/libs/ioextra/buzzer.html" />
+	<mapID target="ioex_slider"          url="en/html/libs/ioextra/slider.html" />
+	<mapID target="ioex_digitalscope"    url="en/html/libs/ioextra/digitalscope.html" />
+	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
+	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
+	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
 	<mapID target="tcl"                 url="de/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="de/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="de/html/libs/tcl/generic.html" />
@@ -238,6 +259,7 @@
 	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
+	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	

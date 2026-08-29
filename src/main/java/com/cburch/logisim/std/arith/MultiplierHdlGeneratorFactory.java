@@ -9,9 +9,6 @@
 
 package com.cburch.logisim.std.arith;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -20,6 +17,8 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -89,7 +88,7 @@ public class MultiplierHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
               always @(*)
               begin
                  s_carryIn[{{nrOfBits}}-1:0] = carryIn;
-                 if ({{unsigned}}== 1)
+                 if ({{unsigned}} == 1)
                     begin
                        s_carryIn[{{calcBits}}-1:{{nrOfBits}}] = 0;
                        s_multUnsigned = $unsigned(inputA) * $unsigned(inputB);

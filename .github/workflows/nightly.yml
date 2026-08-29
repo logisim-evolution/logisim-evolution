@@ -27,7 +27,7 @@ env:
 jobs:
   git_check:
     name: "Any changes since last run?"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     # Export build vars so other steps can use it.
     outputs:
@@ -44,7 +44,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -94,46 +94,70 @@ jobs:
 
   # ###############################################################################################
 
-  # Building for Linux.
-  build_linux:
-    name: 'Linux build'
-    runs-on: ubuntu-latest
+  snap:
+    name: Snapcraft build ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            arch: amd64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.os }}
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v6
-        with:
-          ref: 'main'
+        uses: actions/checkout@v7
 
       - name: 'Build Snap package'
         # https://github.com/snapcore/action-build
         uses: snapcore/action-build@v1
         id: snapcraft
 
+      - name: Review the built snap
+        # https://github.com/snapcrafters/ci
+        uses: snapcrafters/ci/review-snap@main
+        if: success()
+        with:
+          snap: ${{ steps.snapcraft.outputs.snap }}
+
       - name: 'Upload *.snap artifact.'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
            path: ${{ steps.snapcraft.outputs.snap }}
-           name: ${{ needs.git_check.outputs.base_name }}_amd64.snap
+           name: ${{ needs.git_check.outputs.base_name }}_${{ matrix.arch }}.snap
 
-#      - name: 'Pushing *.snap to snapcraft.io'
-#        # https://github.com/snapcore/action-publish
-#        uses: snapcore/action-publish@v1
-#        if: success()
-#        env:
-#          # Obtain Snapcraft.io store token:
-#          # $ snapcraft export-login --snaps=logisim-evolution --acls package_access,package_push,package_update,package_release token.txt
-#          # then open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
-#          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_TOKEN }}
-#        with:
-#          snap: ${{ steps.snapcraft.outputs.snap }}
-#          release: edge
+      - name: 'Pushing *.snap to snapcraft.io'
+        # https://github.com/snapcore/action-publish
+        uses: snapcore/action-publish@v1
+        if: success()
+        env:
+          # Obtain Snapcraft.io store token:
+          # $ snapcraft export-login --snaps=logisim-evolution --acls package_access,package_push,package_update,package_release token.txt
+          # Then, open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_TOKEN }}
+        with:
+          snap: ${{ steps.snapcraft.outputs.snap }}
+          release: edge
 
-        # ###########################################################################################
+  # Building for Linux.
+  build_linux:
+    name: 'Linux build'
+    runs-on: ubuntu-26.04
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
+    steps:
+      # https://github.com/z0al/dependent-issues
+      - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
+        uses: actions/checkout@v7
+        with:
+          ref: 'main'
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v5
@@ -153,7 +177,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -170,7 +194,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_amd64.deb
@@ -188,7 +212,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -207,7 +231,7 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
@@ -218,14 +242,14 @@ jobs:
   # Building for Linux Arm.
   build_linux_arm:
     name: 'Linux Arm build'
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-26.04-arm
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: 'main'
 
@@ -246,7 +270,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *arm64.deb'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_arm64.deb
@@ -264,7 +288,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *aarch64.rpm'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.aarch64.rpm
@@ -283,7 +307,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref_name }}
 
@@ -302,7 +326,7 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload aarch64 DMG'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-aarch64.dmg
@@ -324,7 +348,7 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload x86_64 DMG'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
@@ -343,7 +367,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v5
         with:
@@ -354,7 +378,7 @@ jobs:
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
       - name: "Upload MSI"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
@@ -365,7 +389,7 @@ jobs:
         run: .\gradlew.bat createWindowsPortableZip -x checkstyleMain -x checkstyleTest
 
       - name: "Upload self-contained archive for Windows"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-windows-amd64.zip
@@ -385,7 +409,7 @@ jobs:
 #    steps:
 #      # https://github.com/marketplace/actions/checkout
 #      - name: "Checkout sources"
-#        uses: actions/checkout@v6
+#        uses: actions/checkout@v7
 #      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
 #        uses: actions/setup-java@v5
 #        with:
@@ -396,7 +420,7 @@ jobs:
 #        run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 #
 #      - name: "Upload Arm MSI"
-#        uses: actions/upload-artifact@v5
+#        uses: actions/upload-artifact@v7
 #        if: success()
 #        with:
 #          # NOTE: Gradle builder creates AArch64 file that always uses short version format in file name.

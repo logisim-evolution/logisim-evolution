@@ -3,12 +3,12 @@
  <head>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:24" name="changed" translator="gocpicnic"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
   <meta content="zh" http-equiv="Content-Language"/>
   <title>
    <!-- Bit Adder -->
-   位加法器
+   位计数器
   </title>
   <link href="../../style.css" rel="stylesheet" type="text/css"/>
  </head>
@@ -18,7 +18,7 @@
     <!-- <img  class="iconlibs" src="../../../../icons/6464/bitadder.png" alt="#########" width="32" height="32" align="middle"> <em>Bit Adder</em> -->
     <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/bitadder.png" width="32"/>
     <em>
-     位加法器
+     位计数器
     </em>
    </h1>
    <table>
@@ -33,7 +33,7 @@
       <td>
        <!-- <a href="index.html">Arithmetic</a> -->
        <a href="index.html">
-        算术
+        运算器
        </a>
       </td>
      </tr>
@@ -41,7 +41,7 @@
       <td>
        <!-- <strong>Introduced:</strong> -->
        <strong>
-        介绍:
+        引入版本：
        </strong>
       </td>
       <td>
@@ -52,7 +52,7 @@
       <td valign="top">
        <!-- <strong>Appearance:</strong> -->
        <strong>
-        外观符号:
+        外观：
        </strong>
       </td>
       <td valign="top">
@@ -67,11 +67,15 @@
    </h2>
    <p>
     <!-- The component determines how many 1 bits are in its input(s) and emits the total number of 1 bits on its output. For example, given the 8-bit input 10011101, the output would be 5, since there are five 1-bits in the input (the first, the last, and a string of three bits in the middle). -->
-    该元件确定其输入中有多少 1 位，并在其输出上发出 1 位的总数。 例如，给定 8 位输入 10011101，输出将为 5，因为输入中有 5 个 1 位（第一个、最后一个和中间的三位串）。
+    该组件统计输入中有多少个值为 1 的位，并在输出端给出 1 的总数。
+    例如，对 8 位输入 10011101，输出为 5，因为其中共有 5 个 1（首位、末位，以及中间连续的 3 个 1）。
    </p>
    <p>
     <!-- If any of the input bits are floating or error values, then the output will contain error bits in the output corresponding to the range of possible outputs depending on whether those floating/error values are counted as zeroes or ones. For instance, if the 14-bit input is 111x10110x1101, then the output must be at least 9 (if the x's are interpreted as zeroes) and at most 11 (if they are interpreted as ones). Thus, the output will be 10EE: The upper two bits will be 1 and 0 since all integers between 9 and 11 have 1 and 0 as their top two bits, but the lower two bits are EE since integers between 9 and 11 vary within these bits. -->
-    如果任何输入位是浮点值或错误值，则输出中将包含与可能输出范围相对应的输出中的错误位，具体取决于这些浮点/错误值是否被计为零或一。 例如，如果 14 位输入为 111x10110x1101，则输出必须至少为 9（如果 x 被解释为 0），最多为 11（如果它们被解释为 1）。 因此，输出将为 10EE：高两位将为 1 和 0，因为 9 到 11 之间的所有整数的前两位都是 1 和 0，但低两位是 EE，因为 9 到 11 之间的整数在这些范围内变化。 位。
+    若输入中存在悬空位或错误位，则输出会根据“可能结果范围”产生相应的错误位：
+    悬空/错误位若按 0 计或按 1 计，会导致计数结果落在一个范围内；输出中凡是该范围内并非固定不变的位，都会显示为错误（E）。
+    例如 14 位输入为 111x10110x1101：若将 x 视为 0，则至少有 9 个 1；若将 x 视为 1，则最多有 11 个 1。
+    因此输出为 10EE：9～11 的二进制在高两位恒为 10，但低两位会变化，所以低两位为 EE。
    </p>
    <h2>
     <!-- Pins -->
@@ -80,19 +84,20 @@
    <dl>
     <dt>
      <!-- West edge (inputs, bit width matches Data Bits attribute) -->
-     西边（输入，位宽与数据位属性匹配）
+     西侧（输入，位宽与“数据位宽”一致）
     </dt>
     <dd>
      <!-- The inputs whose 1 bits are to be counted. The number of inputs is based on the Number of Inputs attribute. -->
-     要计算 1 位的输入。 输入的数量基于“输入数量”属性。
+     需要统计其中 1 的输入端。输入端数量由“输入数量”属性决定。
     </dd>
     <dt>
      <!-- East edge (output, bit width computed as described below) -->
-     东边（输出，位宽计算如下）
+     东侧（输出，位宽按下述规则确定）
     </dt>
     <dd>
      <!-- The number of input bits which are 1. The bit width of the output is the minimum number of bits to store the maximum possible value (which would be the product of the Data Bits attribute and the Number of Inputs attribute). -->
-     输入位数为 1。输出的位宽是存储最大可能值（这将是数据位属性和输入数属性的乘积）的最小位数。
+     输出为“输入中值为 1 的位”的数量。
+     输出位宽取能表示最大可能计数值所需的最小位数（最大值为“数据位宽”与“输入数量”的乘积）。
     </dd>
    </dl>
    <h2>
@@ -101,35 +106,20 @@
    </h2>
    <p>
     <!-- When the component is selected or being added, the digits '0' through '9' alter its <q>Number of Inputs</q> attribute and <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
-    选择或添加元件时，数字“0”到“9”会更改其
-    <q>
-     输入数量
-    </q>
-    属性和
-    <b class="tkeybd">
-     Alt-0
-    </b>
-    到
-    <b class="tkeybd">
-     Alt-9
-    </b>
-    更改其
-    <b class="propertie">
-     数据位
-    </b>
-    属性。
+    当组件被选中或正在放置时，数字键“0”到“9”可修改其 <q>输入数量</q> 属性；
+    <b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
    </p>
    <div class="attliste">
     <dl>
      <dt>
       <!-- <b class="propertie">Data Bits</b> -->
       <b class="propertie">
-       数据位
+       数据位宽
       </b>
      </dt>
      <dd>
       <!-- The bit width of the input(s). -->
-      输入的位宽。
+      输入端的位宽。
      </dd>
      <dt>
       <!-- <b class="propertie">Number of Inputs</b> -->
@@ -139,13 +129,13 @@
      </dt>
      <dd>
       <!-- The number of input values. -->
-      输入值的数量。
+      输入端的数量。
      </dd>
     </dl>
    </div>
    <h2>
     <!-- Poke Tool Behavior -->
-    Poke 工具行为
+    手形工具行为
    </h2>
    <p>
     <!-- None. -->
@@ -165,7 +155,7 @@
      返回
     </b>
     <a href="../index.html">
-     电路元件库参考手册
+     库参考手册
     </a>
    </p>
   </div>

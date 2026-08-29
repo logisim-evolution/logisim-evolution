@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>Conseils et bonnes pratiques</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Conseils et bonnes pratiques</h1>
+
+<p>Voici quelques conseils pour utiliser efficacement la fonctionnalité Vecteur de test :</p>
+
+<ol>
+    <li><strong>Utilisez la largeur en bits dans les en-têtes</strong> : Spécifiez la largeur en bits de chaque broche d'entrée/sortie dans l'en-tête, même si c'est 1 bit. Ceci est requis pour les valeurs multi-bits.</li>
+    <li><strong>Utilisez des underscores pour la lisibilité</strong> : Vous pouvez utiliser des underscores (<code>_</code>) n'importe où dans les valeurs numériques. Les underscores sont ignorés lors de l'analyse. Exemples : <code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>, <code>1_234</code>, ou <code>-5_000</code>.</li>
+    <li><strong>Utilisez des espaces entre les valeurs et les en-têtes pour l'alignement</strong> : Aligner la position de départ des valeurs et des en-têtes améliore la lisibilité et facilite l'identification des valeurs et des en-têtes. Sans cela, il est très facile de confondre quelle valeur appartient à quel en-tête, et donc de se retrouver vraiment confus lorsque le test échoue mais que le circuit semble fonctionner correctement.</li>
+    <li><strong>Utilisez des séquences pour les circuits avec état</strong> : Si votre circuit a de la mémoire (bascules, registres, compteurs), utilisez des tests séquentiels pour vérifier les transitions d'état.</li>
+    <li><strong>Utilisez peu importe pour la vérification partielle</strong> : Lors du test de circuits complexes, utilisez <code>&lt;DC&gt;</code> pour les sorties que vous ne vérifiez pas actuellement.</li>
+    <li><strong>Utilisez flottant pour les tests tri-state</strong> : Utilisez <code>&lt;float&gt;</code> pour tester les circuits avec des sorties tri-state ou des états à haute impédance.</li>
+    <li><strong>Organisez avec des sets</strong> : Utilisez la colonne <code>&lt;set&gt;</code> pour regrouper les tests connexes en séquences. Les tests avec le même numéro <code>&lt;set&gt;</code> s'exécutent ensemble dans l'ordre <code>&lt;seq&gt;</code>, avec l'état du circuit préservé entre les étapes.</li>
+    <li><strong>Mélangez combinatoire et séquentiel</strong> : Vous pouvez mélanger les tests combinatoires (seq=0) avec les tests séquentiels dans le même fichier.</li>
+</ol>
+
+<h2>Compatibilité ascendante</h2>
+
+<p>Tous les fichiers de vecteur de test existants continuent de fonctionner sans modification. Les nouvelles fonctionnalités sont optionnelles :</p>
+
+<ul>
+    <li>Si les colonnes <code>&lt;set&gt;</code> et <code>&lt;seq&gt;</code> ne sont pas présentes, tous les tests sont combinatoires (comportement par défaut)</li>
+    <li>Si les valeurs spéciales <code>&lt;DC&gt;</code> et <code>&lt;float&gt;</code> ne sont pas utilisées, la comparaison de valeurs normale s'applique</li>
+    <li>Le format de fichier original est entièrement pris en charge</li>
+</ul>
+
+<p>
+	<b>Précédent :</b> <a href="test_vector_cmdline.html">Utilisation en ligne de commande</a> | <b>Suivant :</b> <a href="index.html">Vecteurs de test</a>.
+</p>
+
+</body>
+</html>
+

@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.gui.appear;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.draw.toolbar.ToolbarClickableItem;
 import com.cburch.draw.tools.DrawingAttributeSet;
 import com.cburch.logisim.gui.icons.ShowStateIcon;
@@ -37,8 +39,7 @@ public class ShowStateTool implements ToolbarClickableItem {
 
   @Override
   public String getToolTip() {
-    // FIXME: hardcoded string
-    return "Select state to be shown";
+    return S.get("showStateToolTip");
   }
 
   @Override

@@ -13,6 +13,7 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
@@ -98,12 +99,13 @@ public class SocUpSimulationState {
 
   private void paintState(Graphics g, int x, int y, Bounds b) {
     Bounds state = getStateLocation(x, y, b);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRect(state.getX(), state.getY(), state.getWidth(), state.getHeight());
     switch (simulationState) {
       case SIMULATION_RUNNING -> g.setColor(Color.GREEN);
       case SIMULATION_HALTED_BY_ERROR -> g.setColor(Color.RED);
       case SIMULATION_HALTED_BY_BREAKPOINT -> g.setColor(Color.MAGENTA);
+      default -> g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
     GraphicsUtil.drawCenteredText(g, getStateString(), state.getCenterX(), state.getCenterY());
   }
@@ -118,7 +120,7 @@ public class SocUpSimulationState {
     String bname = simulationState == SIMULATION_RUNNING ? S.get("SocUpSimstateStop") : S.get("SocUpSimstateStart");
     GraphicsUtil.drawCenteredText(g, bname, button.getCenterX(), button.getCenterY());
     Bounds labloc = getLabelLocation(x, y, b);
-    g.setColor(Color.black);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.drawCenteredText(g, S.get("SocUpSimStateLabel"), labloc.getCenterX(), labloc.getCenterY());
     g.setFont(f);
     paintState(g, x, y, b);

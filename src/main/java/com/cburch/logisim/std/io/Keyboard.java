@@ -151,7 +151,6 @@ public class Keyboard extends InstanceFactory {
 
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-  @SuppressWarnings("checkstyle:IllegalTokenText")
   private static final char FORM_FEED = 12; // control-L (LINE FEED)
 
   private static final Attribute<Integer> ATTR_BUFFER =

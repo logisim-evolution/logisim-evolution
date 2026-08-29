@@ -14,6 +14,7 @@ import com.cburch.logisim.comp.ComponentUserEvent;
 import com.cburch.logisim.proj.Action;
 
 public interface TextEditable {
+  /** Returns the action for a committed edit, or {@code null} if no action is needed. */
   Action getCommitAction(Circuit circuit, String oldText, String newText);
 
   Caret getTextCaret(ComponentUserEvent event);

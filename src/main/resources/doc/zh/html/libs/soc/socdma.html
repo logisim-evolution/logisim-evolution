@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2026-02-14T00:00:00.000000000">
+    <meta name="changed" content="2026-02-14T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      DMA 引擎
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        DMA 引擎
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>所属库：</strong>
+            </td>
+            <td>
+              <a href="index.html">片上系统组件</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              4.1
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        功能说明
+      </h2>
+      <p>
+        DMA 引擎是一个简单的线性内存拷贝控制器。它在时钟驱动下，以可配置的突发大小将数据从源地址拷贝到目标地址。
+        该组件主要用于配合 <a href="socvga.html">VGA 屏幕</a>组件，高效地将图像数据拷贝到 VGA 帧缓冲区，
+        但也可用于任何内存到内存的数据传输。
+      </p>
+      <p>
+        DMA 引擎支持三个独立的总线连接：一个用于控制寄存器访问（DMA 在该总线上作为从设备），
+        一个用于源端读取（仅作为主设备），一个用于目标端写入（仅作为主设备）。
+        这使得数据传输可以跨越不同的 SoC 总线。如果未显式配置源或目标总线，则默认使用控制总线。
+      </p>
+      <h3>
+        传输过程
+      </h3>
+      <p>
+        通过编程源地址、目标地址和长度寄存器，然后向控制寄存器写入 START 位来启动一次传输。
+        启动后，DMA 引擎每个时钟周期拷贝<em>突发大小</em>个字（32 位），直到所有字节传输完毕。
+        传输结束时会设置 DONE 状态位，如果控制寄存器中的 IRQ_EN 已被设置，还会触发中断。
+      </p>
+      <p>
+        在传输进行中（BUSY=1）时，对 SRC_ADDR、DST_ADDR 和 LENGTH 寄存器的写操作将被忽略。
+      </p>
+      <h3>
+        性能
+      </h3>
+      <p>
+        在默认突发大小为 16 字/周期的配置下，DMA 引擎的传输速度约为 CPU 软件拷贝循环的 80 倍
+        （CPU 每拷贝一个字需要约 5 个时钟周期，包含取指、译码和执行的开销）。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        组件西侧（左侧）：
+      </p>
+      <ul>
+        <li>
+          <strong><em>Reset</em></strong>：高电平有效的复位输入。置位时，所有 DMA 寄存器被清零，
+          正在进行的传输将被终止。
+        </li>
+        <li>
+          <strong><em>Clock</em></strong>：时钟输入。每个上升沿，DMA 引擎在传输进行中时
+          最多传输<em>突发大小</em>个字。
+        </li>
+      </ul>
+      <p>
+        组件东侧（右侧）：
+      </p>
+      <ul>
+        <li>
+          <strong><em>IRQ</em></strong>：高电平有效的中断输出。当传输完成且 CONTROL 寄存器中
+          IRQ_EN 被设置时置位。向 STATUS 寄存器的 DONE 位写 1 可清除该中断。
+        </li>
+      </ul>
+      <h2>
+        MMIO 寄存器映射
+      </h2>
+      <table border="1">
+        <tbody>
+          <tr>
+            <td style="text-align: center;"><strong>偏移</strong></td>
+            <td style="text-align: center;"><strong>寄存器</strong></td>
+            <td style="text-align: center;"><strong>访问</strong></td>
+            <td style="text-align: center;"><strong>描述</strong></td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x00</td>
+            <td>SRC_ADDR</td>
+            <td style="text-align: center;">读/写</td>
+            <td>源地址（必须字对齐）。BUSY 状态下写操作被忽略。</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x04</td>
+            <td>DST_ADDR</td>
+            <td style="text-align: center;">读/写</td>
+            <td>目标地址（必须字对齐）。BUSY 状态下写操作被忽略。</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x08</td>
+            <td>LENGTH</td>
+            <td style="text-align: center;">读/写</td>
+            <td>传输长度（字节），必须为 4 的倍数。BUSY 状态下写操作被忽略。</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x0C</td>
+            <td>CONTROL</td>
+            <td style="text-align: center;">读/写</td>
+            <td>
+              <strong>bit 0 (START)</strong>：写 1 启动新传输（BUSY 或 LENGTH=0 时忽略）。<br>
+              <strong>bit 1 (IRQ_EN)</strong>：设置后在传输完成时触发中断。
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x10</td>
+            <td>STATUS</td>
+            <td style="text-align: center;">读/写1清除</td>
+            <td>
+              <strong>bit 0 (BUSY)</strong>：只读。传输进行中为 1。<br>
+              <strong>bit 1 (DONE)</strong>：写 1 清除。传输完成时置位。
+              向该位写 1 可清除该标志并撤销 IRQ 输出。
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">0x14</td>
+            <td>BYTES_DONE</td>
+            <td style="text-align: center;">只读</td>
+            <td>已传输的字节数。新传输启动时复位为 0。</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        属性
+      </h2>
+      <ul>
+        <li>
+          <strong><em>基地址</em></strong>：MMIO 寄存器区域的起始地址（共 6 个寄存器，24 字节）。必须字对齐。
+        </li>
+        <li>
+          <strong><em>突发传输大小</em></strong>：每个时钟周期传输的 32 位字数。
+          必须为 2 的幂次（1、2、4、8、16、32、64、128 或 256）。默认为 16。
+        </li>
+        <li>
+          <strong><em>标签</em></strong>：组件的可选标签。
+        </li>
+        <li>
+          <strong><em>标签字体</em></strong>：标签使用的字体。
+        </li>
+        <li>
+          <strong><em>标签可见</em></strong>：标签是否显示。
+        </li>
+        <li>
+          <strong><em>已连接的总线</em></strong>：DMA 控制寄存器所在的总线（DMA 作为从设备）。
+          点击选择一个<a href="socbus.html">总线组件</a>。
+        </li>
+        <li>
+          <strong><em>源总线</em></strong>：用于源端（读）数据传输的总线。
+          未配置时使用控制总线。点击以选择总线。
+        </li>
+        <li>
+          <strong><em>目标总线</em></strong>：用于目标端（写）数据传输的总线。
+          未配置时使用控制总线。点击以选择总线。
+        </li>
+      </ul>
+      <h2>
+        与 VGA 屏幕配合使用
+      </h2>
+      <p>
+        使用 DMA 引擎将图像拷贝到 VGA 帧缓冲区的步骤：
+      </p>
+      <ol>
+        <li>在同一电路上放置 <a href="socbus.html">SoC 总线</a>、<a href="socmemsimulator.html">内存仿真器</a>、
+          <a href="socvga.html">VGA 屏幕</a>和 DMA 引擎。</li>
+        <li>将所有组件连接到同一总线（或根据需要分别配置源/目标总线）。</li>
+        <li>确保 VGA 组件在 DMA 写入的目标总线上注册为嗅探器（sniffer），以便实时观察写操作并更新显示。</li>
+        <li>在 CPU 程序中：将源图像地址写入 SRC_ADDR (0x00)，将 VGA 缓冲区地址写入 DST_ADDR (0x04)，
+          将传输大小写入 LENGTH (0x08)，然后向 CONTROL (0x0C) 写入 START|IRQ_EN 启动传输。</li>
+        <li>轮询 STATUS 寄存器或等待 IRQ 以确认传输完成。</li>
+      </ol>
+      <p>
+        <strong>注意：</strong>DMA 写事务对总线嗅探器（如 VGA 组件）可见，
+        因此在 DMA 传输期间 VGA 显示会实时更新。DMA 读事务则被隐藏，不会出现在总线踪迹中，以减少噪声。
+      </p>
+      <p>
+        <a href="index.html">返回<em>片上系统组件库</em></a>
+      </p>
+    </div>
+  </body>
+</html>

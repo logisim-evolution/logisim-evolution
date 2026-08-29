@@ -15,7 +15,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
-import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Color;
 import java.awt.Component;
@@ -85,7 +84,8 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_GIF),
       ExportImage.getFilter(ExportImage.FORMAT_JPG),
       ExportImage.getFilter(ExportImage.FORMAT_TIKZ),
-      ExportImage.getFilter(ExportImage.FORMAT_SVG)
+      ExportImage.getFilter(ExportImage.FORMAT_SVG),
+      ExportImage.getFilter(ExportImage.FORMAT_WAVEDROM)
     };
     final var chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
@@ -101,18 +101,8 @@ public abstract class PrintHandler implements Printable {
             S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
     var dest = chooser.getSelectedFile();
-    FileFilter ff = null;
-    for (final var filter : filters) {
-      if (filter.accept(dest)) ff = filter;
-    }
-    if (ff == null) ff = chooser.getFileFilter();
-    if (!ff.accept(dest)) {
-      if (ff == filters[0]) dest = new File(dest + ".png");
-      else if (ff == filters[1]) dest = new File(dest + ".gif");
-      else if (ff == filters[2]) dest = new File(dest + ".jpg");
-      else if (ff == filters[3]) dest = new File(dest + ".tex");
-      else dest = new File(dest + ".svg");
-    }
+    final var ff = chooseExportFilter(dest, chooser.getFileFilter(), filters);
+    dest = ensureFileExtension(dest, ff);
     setLastExported(dest);
     if (dest.exists()) {
       final var confirm =
@@ -123,15 +113,25 @@ public abstract class PrintHandler implements Printable {
               OptionPane.YES_NO_OPTION);
       if (confirm != OptionPane.YES_OPTION) return;
     }
-    final var fmt =
-        (ff == filters[0]
-            ? ExportImage.FORMAT_PNG
-            : ff == filters[1]
-                ? ExportImage.FORMAT_GIF
-                : ff == filters[2]
-                    ? ExportImage.FORMAT_JPG
-                    : ff == filters[2] ? ExportImage.FORMAT_TIKZ : ExportImage.FORMAT_SVG);
-    exportImage(dest, fmt);
+    exportImage(dest, ff.getType());
+  }
+
+  static ImageFileFilter chooseExportFilter(
+      File dest, FileFilter selectedFilter, ImageFileFilter[] filters) {
+    if (selectedFilter instanceof ImageFileFilter imageFileFilter) {
+      return imageFileFilter;
+    }
+    if (dest != null && !dest.isDirectory()) {
+      for (final var filter : filters) {
+        if (filter.accept(dest)) return filter;
+      }
+    }
+    return filters[0];
+  }
+
+  static File ensureFileExtension(File dest, ImageFileFilter filter) {
+    if (dest == null || (!dest.isDirectory() && filter.accept(dest))) return dest;
+    return new File(dest + filter.getDefaultExtension());
   }
 
   public void exportImage(File dest, int fmt) {
@@ -140,9 +140,15 @@ public abstract class PrintHandler implements Printable {
       showErr("couldNotCreateImage");
       return;
     }
-
+    if (fmt == ExportImage.FORMAT_WAVEDROM) {
+      exportWaveDrom(dest);
+      return;
+    }
     final var img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     final var base = (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) ? new TikZWriter() : img.getGraphics();
+    if (base instanceof TikZWriter tz) {
+      tz.setSvgMode(fmt == ExportImage.FORMAT_SVG);
+    }
     final var gr = base.create();
 
     try {
@@ -163,7 +169,7 @@ public abstract class PrintHandler implements Printable {
 
       try {
         switch (fmt) {
-          case ExportImage.FORMAT_GIF -> GifEncoder.toFile(img, dest, null);
+          case ExportImage.FORMAT_GIF -> ImageIO.write(img, "GIF", dest);
           case ExportImage.FORMAT_PNG -> ImageIO.write(img, "PNG", dest);
           case ExportImage.FORMAT_JPG -> ImageIO.write(img, "JPEG", dest);
           case ExportImage.FORMAT_TIKZ -> ((TikZWriter) g2d).writeFile(dest);
@@ -176,6 +182,14 @@ public abstract class PrintHandler implements Printable {
     } finally {
       gr.dispose();
     }
+  }
+
+  public void exportWaveDrom(File dest) {
+    OptionPane.showMessageDialog(
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+            "WaveDrom export is only supported for Timing Diagrams.",
+            "Unsupported Format",
+            OptionPane.WARNING_MESSAGE);
   }
 
   public abstract Dimension getExportImageSize();

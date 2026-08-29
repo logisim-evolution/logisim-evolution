@@ -132,10 +132,10 @@ public class Drawgates {
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
       if (!rightToLeft) {
         g.drawRect(x - width, y - height / 2, width, height);
-        GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x - width / 2, y);
+        GraphicsUtil.drawCenteredText(g, "≥" + "1", x - width / 2, y);
       } else {
         g.drawRect(x, y - height / 2, width, height);
-        GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x + width / 2, y);
+        GraphicsUtil.drawCenteredText(g, "≥" + "1", x + width / 2, y);
       }
     } else {
       if (!rightToLeft) {
@@ -181,6 +181,31 @@ public class Drawgates {
                 - 7
                 - i * (height - 2 * AbstractTtlGate.PIN_HEIGHT - 11));
       }
+    }
+  }
+
+  static void paintPortNamesByPin(
+      InstancePainter painter, int x, int y, int height, String[] physicalPinNames) {
+    final var gfx = painter.getGraphics();
+    final var pinCount = physicalPinNames.length;
+    final var pinsPerRow = pinCount / 2;
+    gfx.drawRect(
+        x + 10,
+        y + AbstractTtlGate.PIN_HEIGHT + 10,
+        pinCount * 10 - 20,
+        height - 2 * AbstractTtlGate.PIN_HEIGHT - 20);
+    for (var index = 0; index < pinCount; index++) {
+      final var name = physicalPinNames[index];
+      if (name == null) continue;
+      final var pin = index + 1;
+      final var isLowerPin = pin <= pinsPerRow;
+      GraphicsUtil.drawCenteredText(
+          gfx,
+          name,
+          isLowerPin ? x + index * 20 + 10 : x + (pinCount - pin) * 20 + 10,
+          isLowerPin
+              ? y + height - AbstractTtlGate.PIN_HEIGHT - 7
+              : y + AbstractTtlGate.PIN_HEIGHT + 4);
     }
   }
 

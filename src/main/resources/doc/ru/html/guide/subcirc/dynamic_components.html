@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2026-07-08T01:58:00.000000000">
+  <meta name="changed" content="2026-07-08T01:58:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>Динамические компоненты</title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+<div class="maindiv">
+      <h1>Динамические компоненты (Dynamic Components)</h1>
+      <p>
+        <b>Динамические компоненты</b> предоставляют возможность визуального наблюдения и интерактивного взаимодействия с элементами, скрытыми внутри подсхем, непосредственно с более высоких уровней иерархии проекта.
+      </p>
+
+      <h2>Суть проблемы и её решение</h2>
+      <p>
+        При стандартном проектировании, если разместить индикатор (например, светодиод) внутри схемы (допустим, <tt>MyNiceCircuit</tt>), а затем использовать её в качестве компонента на главном холсте (<tt>MainToplevel</tt>), этот индикатор окажется полностью скрыт внутри графического блока подсхемы. Для наблюдения за его текущим состоянием потребовалось бы принудительно переходить в режим <a href="../subcirc/sub-debug.html">отладки подсхемы</a>.
+      </p>
+      <p>
+        Функционал <b>динамических компонентов</b> решает эту проблему: он позволяет проецировать визуальное состояние индикаторов и органов управления из внутренних схем непосредственно на условное графическое обозначение (УГО) родительского компонента.
+      </p>
+      
+      <b class="note">Важное свойство:</b>
+      <p>
+        Данный механизм работает рекурсивно. Это означает, что на графический корпус главной схемы верхнего уровня могут корректно транслироваться динамические компоненты со всех нижележащих уровней вложенности проекта.
+      </p>
+
+      <h2>Инструкция по настройке</h2>
+      <ol>
+        <li>Откройте чертёж схемы, содержащей целевой компонент (в нашем примере — <tt>MyNiceCircuit</tt>).</li>
+        <li>Перейдите в <a href="../subcirc/sub-appear.html">Редактор внешнего вида</a> для этой подсхемы.</li>
+        <li>На панели инструментов редактора выберите инструмент <b>«Динамический компонент»</b> (<img class="icontxt" src="../../../../icons/1616/dynamic_component.png" alt="Инструмент Динамический компонент">).</li>
+        <li>В открывшемся диалоговом окне отобразится список всех поддерживаемых элементов, присутствующих на чертеже данной схемы. Выберите те, которые необходимо проецировать на внешний корпус, и разместите их в нужных местах УГО.</li>
+      </ol>
+
+      <h2>Поддерживаемые элементы</h2>
+      <p>
+        На данный момент механизм динамического проецирования на внешний корпус поддерживается для следующих компонентов:
+      </p>
+
+      <table style="border: 0; border-collapse: collapse; width: 100%;">
+        <tbody>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px; width: 50px;">
+              <img src="../../../../icons/1616/led.png" alt="Светодиод">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/io/led.html">Светодиод</a> (включая <a href="../../libs/io/led.html">RGB-светодиод</a>)
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/7seg.png" alt="7-сегментный индикатор">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/io/7seg.html">7-сегментный индикатор</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/hexdig.png" alt="Шестнадцатеричный индикатор">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/io/hexdig.html">Шестнадцатеричный индикатор</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/dotmat.png" alt="Светодиодная матрица">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/io/dotmat.html">Светодиодная матрица</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/tty.png" alt="Терминал">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/io/tty.html">Терминал (TTY)</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/probe.png" alt="Датчик">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/wiring/probe.html">Датчик (Probe)</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/register.png" alt="Регистр">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/mem/register.html">Регистр</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/counter.png" alt="Счётчик">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/mem/counter.html">Счётчик</a>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/socvga.png" alt="Экран VGA">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/soc/socvga.html">Экран VGA (SoC)</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; padding: 8px;">
+              <img src="../../../../icons/1616/up.png" alt="Имитационные модели процессоров">
+            </td>
+            <td style="padding: 8px;">
+              <a href="../../libs/soc/socnios2s.html">Имитационная модель процессора Nios2s</a> / <a href="../../libs/soc/socriscv.html">Имитационная модель процессора RISC-V (расширение IM)</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p>
+        <strong>Далее:</strong> <a href="../index.html">Главное руководство пользователя</a>
+      </p>
+    </div>
+</body>
+</html>

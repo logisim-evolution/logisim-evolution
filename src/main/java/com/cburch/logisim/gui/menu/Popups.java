@@ -60,6 +60,7 @@ public class Popups {
     final JMenuItem remove = new JMenuItem(S.get("projectRemoveCircuitItem"));
     final JMenuItem editLayout = new JMenuItem(S.get("projectEditCircuitLayoutItem"));
     final JMenuItem editAppearance = new JMenuItem(S.get("projectEditCircuitAppearanceItem"));
+    final JMenuItem exportCircuit = new JMenuItem(S.get("projectExportCircuitItem"));
 
     CircuitPopup(Project proj, Tool tool, Circuit circuit) {
       super(S.get("circuitMenu"));
@@ -75,6 +76,8 @@ public class Popups {
       analyze.addActionListener(this);
       add(stats);
       stats.addActionListener(this);
+      add(exportCircuit);
+      exportCircuit.addActionListener(this);
       addSeparator();
       add(main);
       main.addActionListener(this);
@@ -109,6 +112,8 @@ public class Popups {
       } else if (source == stats) {
         JFrame frame = (JFrame) SwingUtilities.getRoot(this);
         StatisticsDialog.show(frame, proj.getLogisimFile(), circuit);
+      } else if (source == exportCircuit) {
+        ProjectCircuitActions.doExportCircuit(proj, circuit);
       } else if (source == main) {
         ProjectCircuitActions.doSetAsMainCircuit(proj, circuit);
       } else if (source == remove) {
@@ -186,7 +191,7 @@ public class Popups {
     final JMenuItem add = new JMenuItem(S.get("projectAddCircuitItem"));
     final JMenuItem vhdl = new JMenuItem(S.get("projectAddVhdlItem"));
     final JMenu load = new JMenu(S.get("projectLoadLibraryItem"));
-    final JMenuItem loadBuiltin = new JMenuItem(S.get("projectLoadBuiltinItem"));
+    final JMenu loadBuiltin = new JMenu(S.get("projectLoadBuiltinItem"));
     final JMenuItem loadLogisim = new JMenuItem(S.get("projectLoadLogisimItem"));
     final JMenuItem loadJar = new JMenuItem(S.get("projectLoadJarItem"));
 
@@ -194,8 +199,8 @@ public class Popups {
       super(S.get("projMenu"));
       this.proj = proj;
 
+      ProjectLibraryActions.populateBuiltinLibraryMenu(loadBuiltin, proj);
       load.add(loadBuiltin);
-      loadBuiltin.addActionListener(this);
       load.add(loadLogisim);
       loadLogisim.addActionListener(this);
       load.add(loadJar);
@@ -215,8 +220,6 @@ public class Popups {
         ProjectCircuitActions.doAddCircuit(proj);
       } else if (src == vhdl) {
         ProjectCircuitActions.doAddVhdl(proj);
-      } else if (src == loadBuiltin) {
-        ProjectLibraryActions.doLoadBuiltinLibrary(proj);
       } else if (src == loadLogisim) {
         ProjectLibraryActions.doLoadLogisimLibrary(proj);
       } else if (src == loadJar) {

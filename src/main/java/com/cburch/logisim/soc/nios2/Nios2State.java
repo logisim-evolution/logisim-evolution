@@ -66,6 +66,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     private int ipending;
     private int lastRegisterWritten = -1;
     private final LinkedList<TraceInfo> instrTrace;
+    private final Object instrTraceLock = new Object();
     private Value lastClock;
     private final SocUpSimulationState simState;
     private final Instance myInstance;
@@ -121,7 +122,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       bstatus = 0;
       ienable = 0;
       ipending = 0;
-      instrTrace.clear();
+      synchronized (instrTraceLock) {
+        instrTrace.clear();
+      }
       if (visible) repaint();
       simState.reset();
     }
@@ -324,8 +327,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       /* execute instruction */
       final var exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
-      while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
-        instrTrace.removeLast();
+      synchronized (instrTraceLock) {
+        while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
+          instrTrace.removeLast();
+      }
       if (exe == null) {
         OptionPane.showMessageDialog(
             null,
@@ -333,7 +338,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
             SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
-        instrTrace.addFirst(new TraceInfo(pc, instruction, S.get("RV32imFetchInvInstrAsm"), true));
+        synchronized (instrTraceLock) {
+          instrTrace.addFirst(new TraceInfo(pc, instruction, S.get("RV32imFetchInvInstrAsm"), true));
+        }
         pc = pc + 4;
         if (visible) repaint();
         return;
@@ -351,11 +358,15 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         trace.setError();
-        instrTrace.addFirst(trace);
+        synchronized (instrTraceLock) {
+          instrTrace.addFirst(trace);
+        }
         if (visible) repaint();
         return;
       }
-      instrTrace.addFirst(trace);
+      synchronized (instrTraceLock) {
+        instrTrace.addFirst(trace);
+      }
       /* all done increment pc */
       if (!exe.performedJump()) pc = pc + 4;
       if (visible) repaint();
@@ -438,7 +449,11 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     @Override
     public LinkedList<TraceInfo> getTraces() {
-      return instrTrace;
+      synchronized (instrTraceLock) {
+        @SuppressWarnings("unchecked")
+        LinkedList<TraceInfo> ret = (LinkedList<TraceInfo>) instrTrace.clone();
+        return ret;
+      }
     }
 
     @Override

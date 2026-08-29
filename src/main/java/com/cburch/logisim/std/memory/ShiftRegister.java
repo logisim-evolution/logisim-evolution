@@ -56,6 +56,21 @@ public class ShiftRegister extends InstanceFactory {
   static final int LD = 5;
   static final int symbolWidth = 100;
 
+  static Bounds getStageValueBounds(int nrOfBits) {
+    final var fullDigits = (nrOfBits + 3) / 4;
+    final var displayedSlots = Math.min(fullDigits, 9);
+    final var boxWidth = 2 + displayedSlots * 8;
+    final var preferredX =
+        ((symbolWidth - 30) / 2 + 30) - displayedSlots * 4;
+    return Bounds.create(Math.min(preferredX, symbolWidth - boxWidth), 2, boxWidth, 16);
+  }
+
+  static String getStageValueText(int nrOfBits, Value value) {
+    if (!value.isFullyDefined()) return value.isUnknown() ? "?" : "!";
+    final var text = StringUtil.toHexString(nrOfBits, value.toLongValue());
+    return text.length() <= 9 ? text : ".." + text.substring(text.length() - 7);
+  }
+
   public ShiftRegister() {
     super(_ID, S.getter("shiftRegisterComponent"), new ShiftRegisterHdlGeneratorFactory());
     setAttributes(
@@ -190,7 +205,7 @@ public class ShiftRegister extends InstanceFactory {
     if (active_low_clock) g.drawOval(xpos, ypos + 45, 10, 10);
     else g.drawLine(xpos, ypos + 50, xpos + 10, ypos + 50);
     painter.drawPort(CK);
-    final var cntrl = "1\u2192/C3";
+    final var cntrl = "1→/C3";
     GraphicsUtil.drawText(
         g, cntrl, xpos + 20, ypos + 50, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     /* draw shift input */
@@ -322,22 +337,22 @@ public class ShiftRegister extends InstanceFactory {
       else if (data_value.isErrorValue()) g.setColor(Color.RED);
       else g.setColor(Color.BLUE);
       final var yoff = (currentStage == 0) ? 10 : 0;
-      final var len = (nrOfBits + 3) / 4;
-      final var boxXpos = ((blockWidth - 30) / 2 + 30) - (len * 4);
-      g.fillRect(realXpos + boxXpos, realYpos + yoff + 2, 2 + len * 8, 16);
-      String value;
+      final var valueBounds = getStageValueBounds(nrOfBits);
+      g.fillRect(
+          realXpos + valueBounds.getX(),
+          realYpos + yoff + valueBounds.getY(),
+          valueBounds.getWidth(),
+          valueBounds.getHeight());
       if (data_value.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
-        value = StringUtil.toHexString(nrOfBits, data_value.toLongValue());
       } else {
         g.setColor(Color.YELLOW);
-        value = (data_value.isUnknown()) ? "?" : "!";
       }
       GraphicsUtil.drawText(
           g,
-          value,
-          realXpos + boxXpos + 1,
-          realYpos + yoff + 10,
+          getStageValueText(nrOfBits, data_value),
+          realXpos + valueBounds.getX() + 1,
+          realYpos + yoff + valueBounds.getY() + valueBounds.getHeight() / 2,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
       g.setColor(componentColor);
@@ -419,6 +434,9 @@ public class ShiftRegister extends InstanceFactory {
         painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
     drawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
     final var data = (ShiftRegisterData) painter.getData();
+    if (data != null) {
+      data.setDimensions(painter.getAttributeValue(StdAttr.WIDTH), len);
+    }
 
     // In the case data is null we assume that the different value are null. This allow the user to
     // instantiate the shift register without simulation mode
@@ -528,4 +546,12 @@ public class ShiftRegister extends InstanceFactory {
   public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
+    final var extension = (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) ? "Classic" : "Evolution";
+    return String.format("SHIFTREG_%d_%s", nrOfStages, extension);
+  }
+
 }

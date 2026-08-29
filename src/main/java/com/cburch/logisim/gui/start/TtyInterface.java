@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
+import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UniquelyNamedThread;
@@ -36,8 +37,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +55,9 @@ public class TtyInterface {
   public static final int FORMAT_TABLE_CSV = 64;
   public static final int FORMAT_TABLE_BIN = 128;
   public static final int FORMAT_TABLE_HEX = 256;
+  static final int EXIT_SUCCESS = 0;
+  static final int EXIT_FAILURE = -1;
+  static final int EXIT_OSCILLATION = 1;
   static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
   private static boolean lastIsNewline = true;
 
@@ -201,6 +207,14 @@ public class TtyInterface {
     }
   }
 
+  static String formatTestVectorHeader(String pinName, int width) {
+    return width == 1 ? pinName : String.format("%s[%d]", pinName, width);
+  }
+
+  private static String formatTestVectorHeader(String pinName, Instance pin) {
+    return formatTestVectorHeader(pinName, pin.getAttributeValue(StdAttr.WIDTH).getWidth());
+  }
+
   private static void ensureLineTerminated() {
     if (!lastIsNewline) {
       lastIsNewline = true;
@@ -208,21 +222,29 @@ public class TtyInterface {
     }
   }
 
-  private static boolean loadRam(CircuitState circState, File loadFile) throws IOException {
-    if (loadFile == null) return false;
-
-    var found = false;
+  private static HashSet<String> loadMemories(CircuitState circState, HashMap<String, File> memToLoad) throws IOException {
+    final var found = new HashSet<String>();
     for (final var comp : circState.getCircuit().getNonWires()) {
-      if (comp.getFactory() instanceof Ram ramFactory) {
-        final var ramState = circState.getInstanceState(comp);
-        final var m = ramFactory.getContents(ramState);
-        HexFile.open(m, loadFile);
-        found = true;
+      if (comp.getFactory() instanceof Mem memFactory) {
+        final var memLabel = comp.getAttributeSet().getValue(StdAttr.LABEL);
+        var key = memLabel == null ? "" : memLabel; // use no-label key if no label was found
+        var loadFile = memToLoad.get(key);
+        if (loadFile == null) {
+          key = "";
+          loadFile = memToLoad.get(key); // use no-label file if no file for components label
+        }
+        if (loadFile != null) {
+          final var memState = circState.getInstanceState(comp);
+          final var m = memFactory.getContents(memState);
+          HexFile.open(m, loadFile);
+          circState.markComponentAsDirty(comp);
+          found.add(key);
+        }
       }
     }
 
     for (final var sub : circState.getSubstates()) {
-      found |= loadRam(sub, loadFile);
+      found.addAll(loadMemories(sub, memToLoad));
     }
     return found;
   }
@@ -266,7 +288,7 @@ public class TtyInterface {
     return found;
   }
 
-  public static void run(Startup args) {
+  public static int run(Startup args) {
     final var fileToOpen = args.getFilesToOpen().get(0);
     final var loader = new Loader(null);
     LogisimFile file;
@@ -274,12 +296,19 @@ public class TtyInterface {
       file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
     } catch (LoadFailedException e) {
       logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
-      System.exit(-1);
-      return;
+      return EXIT_FAILURE;
     }
     final var proj = new Project(file);
+    try {
+      return run(args, file, proj);
+    } finally {
+      proj.getSimulator().shutDown();
+    }
+  }
+
+  private static int run(Startup args, LogisimFile file, Project proj) {
     if (args.isFpgaDownload()) {
-      if (!args.fpgaDownload(proj)) System.exit(-1);
+      if (!args.fpgaDownload(proj)) return EXIT_FAILURE;
     }
 
     final var circuitToTest = args.getCircuitToTest();
@@ -293,7 +322,7 @@ public class TtyInterface {
       displayStatistics(file, circuit);
     }
     if (format == 0) { // no simulation remaining to perform, so just exit
-      System.exit(0);
+      return EXIT_SUCCESS;
     }
 
     final var pinNames = Analyze.getPinLabels(circuit);
@@ -314,47 +343,52 @@ public class TtyInterface {
     }
     if (haltPin == null && (format & FORMAT_TABLE) != 0) {
       doTableAnalysis(proj, circuit, pinNames, format);
-      return;
+      return EXIT_SUCCESS;
     }
 
-    CircuitState circState = CircuitState.createRootState(proj, circuit);
+    CircuitState circState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
+    final var prop = circState.getPropagator();
+    prop.propagate(); // adds the substates so we can search them.
 
-    // we load the ram before first propagation
-    // so the first propagation emits correct values
-    if (args.getLoadFile() != null) {
+    final var memoriesToLoad = args.getMemoryLoadFiles();
+    if (!memoriesToLoad.isEmpty()) {
       try {
-        final var loaded = loadRam(circState, args.getLoadFile());
-        if (!loaded) {
-          logger.error("{}", S.get("loadNoRamError"));
-          System.exit(-1);
+        final var loaded = loadMemories(circState, memoriesToLoad);
+        if (loaded.size() != memoriesToLoad.size()) {
+          final var keys = memoriesToLoad.keySet();
+          keys.removeAll(loaded);
+          logger.error("{}", S.get("loadNoRamError", keys));
+          return EXIT_FAILURE;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("loadIoError"), e.toString());
-        System.exit(-1);
+        return EXIT_FAILURE;
       }
+      prop.propagate(); // propagate memory values before running simulation.
     }
-
-    // we have to do our initial propagation before the simulation starts -
-    // it's necessary to populate the circuit with substates.
-    circState.getPropagator().propagate();
 
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
+    return finishSimulation(circState, args.getSaveFile(), simCode);
+  }
 
-    if (args.getSaveFile() != null) {
+  static int finishSimulation(CircuitState circState, File saveFile, int simCode) {
+    if (simCode == EXIT_FAILURE) return EXIT_FAILURE;
+
+    if (saveFile != null) {
       try {
-        final var saved = saveRam(circState, args.getSaveFile());
+        final var saved = saveRam(circState, saveFile);
         if (!saved) {
           logger.error("{}", S.get("saveNoRamError"));
-          System.exit(-1);
+          return EXIT_FAILURE;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("saveIoError"), e.toString());
-        System.exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
-    System.exit(simCode);
+    return simCode;
   }
 
   private static int doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
@@ -388,7 +422,7 @@ public class TtyInterface {
       final var pin = entry.getKey();
       final var pinName = entry.getValue();
       if (Pin.FACTORY.isInputPin(pin)) {
-        headers.add(pinName);
+        headers.add(formatTestVectorHeader(pinName, pin));
         pinList.add(pin);
       }
     }
@@ -397,7 +431,7 @@ public class TtyInterface {
       final var pin = entry.getKey();
       final var pinName = entry.getValue();
       if (!Pin.FACTORY.isInputPin(pin)) {
-        headers.add(pinName);
+        headers.add(formatTestVectorHeader(pinName, pin));
         pinList.add(pin);
       }
     }
@@ -409,7 +443,8 @@ public class TtyInterface {
     final var valueMap = new HashMap<Instance, Value>();
     for (var i = 0; i < rowCount; i++) {
       valueMap.clear();
-      final var circuitState = CircuitState.createRootState(proj, circuit);
+      final var circuitState = CircuitState.createRootState(proj, circuit, Thread.currentThread());
+      final var prop = circuitState.getPropagator();
       var incol = 0;
       for (final var pin : inputPins) {
         final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
@@ -423,13 +458,13 @@ public class TtyInterface {
         valueMap.put(pin, Value.create(v));
       }
 
-      final var prop = circuitState.getPropagator();
       prop.propagate();
       /*
        * TODO for the SimulatorPrototype class do { prop.step(); } while
        * (prop.isPending());
        */
       // TODO: Search for circuit state
+
 
       for (final var pin : outputPins) {
         if (prop.isOscillating()) {
@@ -452,7 +487,8 @@ public class TtyInterface {
     return 0;
   }
 
-  private static int runSimulation(CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
+  static int runSimulation(
+      CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
     final var showTable = (format & FORMAT_TABLE) != 0;
     final var showSpeed = (format & FORMAT_SPEED) != 0;
     final var showTty = (format & FORMAT_TTY) != 0;
@@ -465,7 +501,7 @@ public class TtyInterface {
       final var ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
-        System.exit(-1);
+        return EXIT_FAILURE;
       }
       if (keyboardStates.isEmpty()) {
         keyboardStates = null;
@@ -475,33 +511,37 @@ public class TtyInterface {
       }
     }
 
-    var retCode = 0;
+    var retCode = EXIT_SUCCESS;
     long tickCount = 0;
     final var start = System.currentTimeMillis();
     var halted = false;
     ArrayList<Value> prevOutputs = null;
     final var prop = circState.getPropagator();
     while (true) {
-      final var curOutputs = new ArrayList<Value>();
-      for (final var pin : outputPins) {
-        final var pinState = circState.getInstanceState(pin);
-        final var val = Pin.FACTORY.getValue(pinState);
-        if (pin == haltPin) {
-          halted |= val.equals(Value.TRUE);
-        } else if (showTable) {
-          curOutputs.add(val);
-        }
-      }
       if (showTable) {
+        final var curOutputs = new ArrayList<Value>();
+        for (final var pin : outputPins) {
+          if (pin != haltPin) {
+            final var pinState = circState.getInstanceState(pin);
+            final var val = Pin.FACTORY.getValue(pinState);
+            curOutputs.add(val);
+          }
+        }
         displayTableRow(prevOutputs, curOutputs);
+        prevOutputs = curOutputs;
+      }
+      if (haltPin != null) {
+        final var pinState = circState.getReusableInstanceState(haltPin); // OK as we are not propagating
+        final var val = Pin.FACTORY.getValue(pinState);
+        halted = val.equals(Value.TRUE);
       }
 
       if (halted) {
-        retCode = 0; // normal exit
+        retCode = EXIT_SUCCESS;
         break;
       }
       if (prop.isOscillating()) {
-        retCode = 1; // abnormal exit
+        retCode = EXIT_OSCILLATION;
         break;
       }
       if (keyboardStates != null) {
@@ -512,7 +552,6 @@ public class TtyInterface {
           }
         }
       }
-      prevOutputs = curOutputs;
       tickCount++;
       prop.toggleClocks();
       prop.propagate();

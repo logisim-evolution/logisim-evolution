@@ -22,6 +22,7 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.base.Image;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
@@ -43,7 +44,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -79,7 +79,7 @@ final class XmlWriter {
     this(file, doc, loader, outFilePath, null, false);
   }
 
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, 
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath,
       String mainCircFile, boolean recursiveCall) {
     this.file = file;
     this.doc = doc;
@@ -119,7 +119,7 @@ final class XmlWriter {
   }
 
   private static int stringCompare(String stringA, String stringB) {
-    if (stringA == null) return -1;
+    if (stringA == null) return stringB == null ? 0 : -1;
     if (stringB == null) return 1;
     return stringA.compareTo(stringB);
   }
@@ -218,6 +218,7 @@ final class XmlWriter {
     Source src = new DOMSource(doc);
     Result dest = new StreamResult(out);
     tf.transform(src, dest);
+    out.flush();
   }
 
   void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifiedOnly) {
@@ -234,6 +235,7 @@ final class XmlWriter {
         var newValue = attr.toStandardString(val);
         if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue))
             || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
+            || (attr.equals(Image.ATTR_LICENSE) && !userModifiedOnly)
             || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
@@ -258,7 +260,7 @@ final class XmlWriter {
   Library findLibrary(ComponentFactory source) {
     if (file.contains(source)) return file;
     for (final var lib : file.getLibraries()) {
-      if (lib.contains(source)) return lib;
+      if (libraryContains(lib, source)) return lib;
     }
     return null;
   }
@@ -305,6 +307,7 @@ final class XmlWriter {
     vhdl.aboutToSave();
     final var ret = doc.createElement("vhdl");
     ret.setAttribute("name", vhdl.getName());
+    ret.setAttribute("appearance", StdAttr.APPEARANCE.toStandardString(vhdl.getAppearance()));
     ret.setTextContent(vhdl.getContent());
     return ret;
   }
@@ -388,7 +391,7 @@ final class XmlWriter {
       final var tools = lib.getTools();
       for (final var circuit : file.getCircuits()) {
         for (final var tool : circuit.getNonWires()) {
-          isUsed |= lib.contains(tool.getFactory());
+          isUsed |= libraryContains(lib, tool.getFactory());
         }
       }
       for (final var tool : file.getOptions().getToolbarData().getContents()) {
@@ -406,9 +409,8 @@ final class XmlWriter {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         final var isJarLibrary = LibraryManager.isJarLibrary(file.getLoader(), desc);
         if (origFile != null) {
-          final var names = origFile.split(Pattern.quote(File.separator));
-          final var filename = names[names.length - 1];
-          final var newFile = LineBuffer.format("{{1}}{{2}}{{3}}", Loader.LOGISIM_LIBRARY_DIR, File.separator, filename);
+          final var filename = new File(origFile).getName();
+          final var newFile = ProjectBundlePaths.libraryEntry(filename);
           final var zipFile = file.getLoader().getZipFile();
           if (zipFile != null) {
             if (isJarLibrary) {
@@ -416,9 +418,11 @@ final class XmlWriter {
             } else {
               writeLogisimFileToZip(zipFile, origFile, newFile);
             }
-            desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, isRecursiveCall 
-                ? LineBuffer.format(".{{1}}{{2}}", File.separator, filename)
-                : LineBuffer.format(".{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename));
+            desc =
+                LibraryManager.getReplacementDescriptor(
+                    file.getLoader(),
+                    desc,
+                    ProjectBundlePaths.libraryDescriptor(filename, isRecursiveCall));
           }
         }
       }
@@ -544,6 +548,17 @@ final class XmlWriter {
     for (final var tool : lib.getTools()) {
       if (tool.sharesSource(query)) return true;
     }
+    for (final var sub : lib.getLibraries()) {
+      if (libraryContains(sub, query)) return true;
+    }
+    return false;
+  }
+
+  boolean libraryContains(Library lib, ComponentFactory query) {
+    if (lib.contains(query)) return true;
+    for (final var sub : lib.getLibraries()) {
+      if (libraryContains(sub, query)) return true;
+    }
     return false;
   }
 
@@ -558,7 +573,7 @@ final class XmlWriter {
     }
     fileReader.close();
   }
-  
+
   private void writeLogisimFileToZip(ZipOutputStream zipFile, String inputFileName, String outputFileName) throws IOException, LoadFailedException {
     final var newLoader = new Loader(null);
     newLoader.setZipFile(zipFile);

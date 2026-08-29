@@ -22,8 +22,16 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
       Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_DIR);
-    var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
-    final var startIndex = componentInfo.getLocalBubbleInputStartId();
+    var nrOfPins =
+        componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
+    final int startIndex;
+    if (portType == PortIo.INPUT) {
+      startIndex = componentInfo.getLocalBubbleInputStartId();
+    } else if (portType == PortIo.OUTPUT) {
+      startIndex = componentInfo.getLocalBubbleOutputStartId();
+    } else {
+      startIndex = componentInfo.getLocalBubbleInOutStartId();
+    }
     final var endIndex = startIndex + nrOfPins - 1;
     if (portType == PortIo.INPUT) {
       if (nrOfPins == 1) {
@@ -77,25 +85,37 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
       // simple case first, we have a single output enable
       if (portType == PortIo.INOUTSE || nrOfPins == 1) {
         if (Hdl.isVhdl()) {
+          final var netEnable = Hdl.getNetName(componentInfo, 0, true, nets);
           if (nrOfPins == 1) {
-            contents
-                .addVhdlKeywords()
-                .add(
-                    "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} ({{others}} => 'Z');",
-                    LOCAL_INOUT_BUBBLE_BUS_NAME,
-                    startIndex,
-                    Hdl.getNetName(componentInfo, 1, true, nets),
-                    Hdl.getNetName(componentInfo, 0, true, nets));
+            final var netData = Hdl.getNetName(componentInfo, 1, true, nets);
+            
+            // skip OPEN assignment if any pin is unconnected 
+            if (!netData.equals("OPEN") && !netEnable.equals("OPEN")) {
+              contents
+                  .addVhdlKeywords()
+                  //'Z' instead of (others => 'Z') for 1-bit signals
+                  .add(
+                      "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} 'Z';",
+                      LOCAL_INOUT_BUBBLE_BUS_NAME,
+                      startIndex,
+                      netData,
+                      netEnable);
+            }
           } else {
-            contents
-                .addVhdlKeywords()
-                .add(
-                    "{{1}}({{2}} {{downto}} {{3}}) <= {{4}} {{when}} {{5}} = '1' {{else}} ({{others}} => 'Z');",
-                    LOCAL_INOUT_BUBBLE_BUS_NAME,
-                    endIndex,
-                    startIndex,
-                    Hdl.getBusName(componentInfo, 1, nets),
-                    Hdl.getNetName(componentInfo, 0, true, nets));
+            final var busData = Hdl.getBusName(componentInfo, 1, nets);
+            
+            // skip OPEN assignment if any pin is unconnected 
+            if (!busData.equals("OPEN") && !netEnable.equals("OPEN")) {
+              contents
+                  .addVhdlKeywords()
+                  .add(
+                      "{{1}}({{2}} {{downto}} {{3}}) <= {{4}} {{when}} {{5}} = '1' {{else}} ({{others}} => 'Z');",
+                      LOCAL_INOUT_BUBBLE_BUS_NAME,
+                      endIndex,
+                      startIndex,
+                      busData,
+                      netEnable);
+            }
           }
         } else {
           if (nrOfPins == 1) {

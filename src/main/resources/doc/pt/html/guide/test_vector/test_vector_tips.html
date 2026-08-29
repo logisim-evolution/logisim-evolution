@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="pt">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="pt">
+	<title>Dicas e Melhores Práticas</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Dicas e Melhores Práticas</h1>
+
+<p>Aqui estão algumas dicas para usar efetivamente a funcionalidade de Vetor de Teste:</p>
+
+<ol>
+    <li><strong>Use largura de bits nos cabeçalhos</strong>: Especifique a largura de bits de cada pino de entrada/saída no cabeçalho, mesmo que seja 1 bit. Isso é necessário para valores multi-bit.</li>
+    <li><strong>Use sublinhados para legibilidade</strong>: Você pode usar sublinhados (<code>_</code>) em qualquer lugar em valores numéricos. Sublinhados são ignorados durante a análise. Exemplos: <code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>, <code>1_234</code>, ou <code>-5_000</code>.</li>
+    <li><strong>Use espaços entre valores e cabeçalhos para alinhamento</strong>: Alinhar a posição inicial dos valores e cabeçalhos melhora a legibilidade e facilita identificar os valores e cabeçalhos. Sem fazer isso, é muito fácil confundir qual valor pertence a qual cabeçalho, ficando realmente confuso quando o teste falha mas o circuito parece estar funcionando corretamente.</li>
+    <li><strong>Use sequências para circuitos com estado</strong>: Se seu circuito tem memória (flip-flops, registradores, contadores), use testes sequenciais para verificar transições de estado.</li>
+    <li><strong>Use "não importa" para verificação parcial</strong>: Ao testar circuitos complexos, use <code>&lt;DC&gt;</code> para saídas que você não está verificando atualmente.</li>
+    <li><strong>Use flutuante para testes tri-state</strong>: Use <code>&lt;float&gt;</code> para testar circuitos com saídas tri-state ou estados de alta impedância.</li>
+    <li><strong>Organize com conjuntos</strong>: Use a coluna <code>&lt;set&gt;</code> para agrupar testes relacionados em sequências. Testes com o mesmo número <code>&lt;set&gt;</code> são executados juntos na ordem <code>&lt;seq&gt;</code>, com o estado do circuito preservado entre etapas.</li>
+    <li><strong>Misture combinacional e sequencial</strong>: Você pode misturar testes combinacionais (seq=0) com testes sequenciais no mesmo arquivo.</li>
+</ol>
+
+<h2>Compatibilidade com Versões Anteriores</h2>
+
+<p>Todos os arquivos de vetor de teste existentes continuam funcionando sem modificação. As novas funcionalidades são opcionais:</p>
+
+<ul>
+    <li>Se as colunas <code>&lt;set&gt;</code> e <code>&lt;seq&gt;</code> não estiverem presentes, todos os testes são combinacionais (comportamento padrão)</li>
+    <li>Se os valores especiais <code>&lt;DC&gt;</code> e <code>&lt;float&gt;</code> não forem usados, a comparação de valores normal se aplica</li>
+    <li>O formato de arquivo original é totalmente suportado</li>
+</ul>
+
+<p>
+	<b>Anterior:</b> <a href="test_vector_cmdline.html">Uso da Linha de Comando</a> | <b>Próximo:</b> <a href="index.html">Vetores de Teste</a>.
+</p>
+
+</body>
+</html>
+

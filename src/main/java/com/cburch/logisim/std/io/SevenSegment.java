@@ -21,6 +21,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.SevenSegmentIcon;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -62,10 +63,10 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     if (painter.shouldDrawColor() && bgColor.getAlpha() != 0) {
       g.setColor(bgColor);
       g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-      g.setColor(Color.BLACK);
     }
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-    g.setColor(Color.DARK_GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     for (int i = 0; i <= 7; i++) {
       if (painter.getShowState()) {
         g.setColor(((summ >> i) & 1) == desired ? onColor : offColor);
@@ -77,7 +78,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
         if (drawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
       }
     }
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawLabel();
     painter.drawPorts();
   }

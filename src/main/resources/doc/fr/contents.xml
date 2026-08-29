@@ -85,7 +85,7 @@
 <!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->
 			<tocitem target="prefs_exp" text="L'onglet Expérimental"/>
 <!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
-<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->
+			<tocitem target="prefs_fpga" text="FPGA Commander settings" />
 			<tocitem target="prefs_cmdline" text="La ligne de commande"/>
 		</tocitem>
 		<tocitem target="opts" text="Options de projet">
@@ -174,11 +174,15 @@
 			<tocitem target="io_joystick" image="icon_joystick" text="Manette"/>
 			<tocitem target="io_keyboard" image="icon_keyboard" text="Clavier"/>
 			<tocitem target="io_led" image="icon_led" text="LED"/>
+			<tocitem target="io_ledbar" text="LED Bar" />
 			<tocitem target="io_ledRGB" text="LED RVB" image="icon_led RGB" />			
 			<tocitem target="io_7seg" image="icon_7seg" text="Afficheur 7-Segments"/>
 			<tocitem target="io_hexdig" image="icon_hexdig" text="Afficheur Hexadecimal"/>
 			<tocitem target="io_dotmat" image="icon_dotmat" text="Matrice de LED"/>
 			<tocitem target="io_tty" image="icon_tty" text="TTY"/>
+			<tocitem target="io_telnet" image="icon_telnet" text="Telnet"/>
+			<tocitem target="io_realtimeclock" text="Real-Time Clock" />
+			<tocitem target="io_matrixkeypad" text="Matrix Keypad" />
 			<tocitem target="io_Port_IO" image="icon_Port_IO" text="Port I/O"  />
 			<tocitem target="io_Repetar"  image="icon_repetar" text="Reptar Local Bus"/>
 			<tocitem target="io_videorgb"  image="icon_videorgb" text="Afficheur Video RVB"/>
@@ -203,16 +207,15 @@
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
 		</tocitem>
 		-->
-		<!-- Input/output-Extra
 		<tocitem target="ioex" text="Input/Output-Extra">
-			<tocitem target="ioex_proggen" text="Progr. generator" image="ioex_***********" />
-			<tocitem target="ioex_switch" text="switch" image="ioex_***********" />
-			<tocitem target="ioex_buzzer" text="Buzzer" image="ioex_***********" />
-			<tocitem target="ioex_slider" text="Slider" image="ioex_***********" />
-			<tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="ioex_***********" />
-			<tocitem target="ioex_plarom" text="Programmable logic array ROM" image="ioex_***********" />
+			<tocitem target="ioex_switch" text="Switch" />
+			<tocitem target="ioex_buzzer" text="Buzzer" />
+			<tocitem target="ioex_slider" text="Slider" />
+			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" />
+			<tocitem target="ioex_plarom" text="Programmable Logic Array" />
+			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" />
+			<tocitem target="ioex_twopinled" text="2-Pin LED" />
 		</tocitem>
-		-->
 		<tocitem target="soc" text = "SOC library">
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
 			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />

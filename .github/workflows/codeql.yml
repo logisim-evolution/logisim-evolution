@@ -10,8 +10,56 @@ on:
     - cron: '25 17 * * 6'
 
 jobs:
+  analyze_sources:
+    name: "Is there any code to analyze?"
+    runs-on: ubuntu-latest
+
+    outputs:
+      run_analysis: ${{ steps.decide.outputs.run_analysis }}
+
+    steps:
+    # https://github.com/marketplace/actions/checkout
+    - name: "Checkout sources"
+      uses: actions/checkout@v7
+
+    # https://github.com/marketplace/actions/paths-changes-filter
+    - name: "Look for changes that matters for us…"
+      uses: dorny/paths-filter@v4
+      id: filter
+      if: github.event_name == 'pull_request'
+      with:
+        filters: |
+          src:
+            - added|modified|deleted: 'src/**/*.java'
+            - added|modified|deleted: 'buildSrc/**'
+            - added|modified|deleted: 'build.gradle*'
+            - added|modified|deleted: 'settings.gradle*'
+            - added|modified|deleted: 'gradle/**'
+
+    - name: "WILL CODEQL ANALYSIS BE RUN?"
+      id: decide
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        SRC_CHANGED: ${{ steps.filter.outputs.src }}
+      run: |
+        # Only pull requests are filtered. Pushes to main and scheduled scans
+        # must always run, or the code scanning results would go stale.
+        run_analysis="true"
+        if [[ "${EVENT_NAME}" == "pull_request" && "${SRC_CHANGED}" != "true" ]]; then
+          run_analysis="false"
+        fi
+
+        echo "run_analysis=${run_analysis}" >> "${GITHUB_OUTPUT}"
+        echo -e "\n****************************************"
+        echo "Event: ${EVENT_NAME}, code changed: ${SRC_CHANGED:-n/a} => ${run_analysis}"
+        echo -e "****************************************"
+
   analyze:
     name: Analyze
+
+    needs: analyze_sources
+    if: needs.analyze_sources.outputs.run_analysis == 'true'
+
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     permissions:
@@ -30,11 +78,11 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v4
+      uses: github/codeql-action/init@v4.37.8
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -48,7 +96,7 @@ jobs:
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v4
+      uses: github/codeql-action/autobuild@v4.37.8
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -61,6 +109,6 @@ jobs:
     #     ./location_of_script_within_repo/buildscript.sh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4
+      uses: github/codeql-action/analyze@v4.37.8
       with:
         category: "/language:${{matrix.language}}"

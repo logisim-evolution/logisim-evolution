@@ -9,13 +9,14 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
+import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-
-import static com.cburch.logisim.std.Strings.S;
 
 /** LED dot Matrix */
 public class DotMatrix extends DotMatrixBase {
@@ -75,5 +76,10 @@ public class DotMatrix extends DotMatrixBase {
   @Override
   public AttributeOption getAttributeItemSelect() {
     return INPUT_SELECT;
+  }
+
+  @Override
+  public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path p) {
+    return new DotMatrixShape(x, y, p);
   }
 }

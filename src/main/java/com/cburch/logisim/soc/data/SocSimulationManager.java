@@ -19,7 +19,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
 import com.cburch.logisim.util.StringUtil;
@@ -156,6 +155,15 @@ public class SocSimulationManager implements SocBusMasterInterface {
         }
       }
     }
+    // Also set the simulation manager on any additional SocBusInfo attributes
+    // (e.g. DMA source/destination bus connections that are master-only).
+    for (final var attr : c.getAttributeSet().getAttributes()) {
+      if (attr == SOC_BUS_SELECT) continue;
+      final var val = c.getAttributeSet().getValue(attr);
+      if (val instanceof SocBusInfo busInfo) {
+        busInfo.setSocSimulationManager(this, c);
+      }
+    }
     return true;
   }
 
@@ -230,7 +238,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
 
   public InstanceState getState(Component comp) {
     if (state == null) return null;
-    return new InstanceStateImpl(state, comp);
+    return state.getInstanceState(comp);
   }
 
   @Override

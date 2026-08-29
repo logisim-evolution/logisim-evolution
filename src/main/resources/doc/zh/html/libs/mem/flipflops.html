@@ -3,11 +3,10 @@
  <head>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="2018-10-23T06:18:10.521000000" name="created"/>
-  <meta content="2023-12-12T09:31:25" name="changed" translator="gocpicnic"/>
+  <meta content="2026-01-12T06:18:42.262000000" name="changed"/>
   <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
   <meta content="zh" http-equiv="Content-Language"/>
   <title>
-   <!-- D/T/J-K/S-R Flip-Flop -->
    D/T/J-K/S-R 触发器
   </title>
   <link href="../../style.css" rel="stylesheet" type="text/css"/>
@@ -19,7 +18,6 @@
     <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/tflipflop.png" width="32"/>
     <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/jkflipflop.png" width="32"/>
     <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/srflipflop.png" width="32"/>
-    <!-- <em> D/T/J-K/S-R Flip-Flop</em> -->
     <em>
      D/T/J-K/S-R 触发器
     </em>
@@ -28,23 +26,20 @@
     <tbody>
      <tr>
       <td>
-       <!-- <strong>Library:</strong> -->
        <strong>
         库:
        </strong>
       </td>
       <td>
-       <!-- <a href="index.html">Memory</a> -->
        <a href="index.html">
-        存储
+        存储器
        </a>
       </td>
      </tr>
      <tr>
       <td>
-       <!-- <strong>Introduced:</strong> -->
        <strong>
-        介绍:
+        引入版本：
        </strong>
       </td>
       <td>
@@ -53,9 +48,8 @@
      </tr>
      <tr>
       <td valign="top">
-       <!-- <strong>Appearance:</strong> -->
        <strong>
-        外观符号:
+        外观：
        </strong>
       </td>
       <table>
@@ -78,8 +72,7 @@
         </tr>
         <tr>
          <td align="left" valign="middle">
-          <!-- Logisim: -->
-          Logisim-evolution:
+          经典 Logisim:
          </td>
          <td>
           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ldflipflops.png" width="64"/>
@@ -96,7 +89,7 @@
         </tr>
         <tr>
          <td align="left" valign="middle">
-          Evolution:
+          Logisim-evolution:
          </td>
          <td>
           <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/hdflipflops.png" width="64"/>
@@ -117,39 +110,25 @@
     </tbody>
    </table>
    <h2>
-    <!-- Behavior -->
     行为
    </h2>
    <p>
-    <!-- Each flip-flop stores a single bit of data, which is emitted through the <var>Q</var> output on the east side. Normally, the value can be controlled via the inputs to the west side. In particular, the value changes when the <strong>clock</strong> input, marked by a triangle on each flip-flop, rises from 0 to 1 (or otherwise as configured); on this rising edge, the value changes according to the table below. -->
-    每个触发器存储一位数据，该数据通过东侧的
-    <var>
-     Q
-    </var>
-    输出发出。 通常，可以通过西侧的输入来控制该值。 特别是，当每个触发器上用三角形标记的
-    <strong>
-     时钟
-    </strong>
-    输入从 0 上升到 1（或按照配置）时，该值会发生变化； 在此上升沿，该值根据下表发生变化。
+    每个触发器存储 1 位数据，并通过东侧的 <var>Q</var> 输出端给出该值。通常可通过西侧的输入来控制其状态：当各触发器上以三角形标记的<strong>时钟</strong>输入从 0 上升到 1（或按属性配置为其它触发方式）时，触发器会在该上升沿按下表所示更新其存储值。
    </p>
    <center>
     <table>
      <tbody>
       <tr>
        <th>
-        <!-- D Flip-Flop -->
         D 触发器
        </th>
        <th>
-        <!-- T Flip-Flop -->
         T 触发器
        </th>
        <th>
-        <!-- J-K Flip-Flop -->
         J-K 触发器
        </th>
        <th>
-        <!-- S-R Flip-Flop -->
         S-R 触发器
        </th>
       </tr>
@@ -375,249 +354,133 @@
     </table>
    </center>
    <p>
-    <!-- Another way of describing the different behavior of the flip-flops is in English text. -->
-    描述触发器不同行为的另一种方式是用英文文本。
+    另一种描述这些触发器不同行为的方法，是用文字进行说明。
    </p>
    <ul>
     <li>
      <p>
-      <!-- <strong>D Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop becomes the value of the <var>D</var> input (<em>Data</em>) at that instant. -->
       <strong>
-       D 触发器
+       D 触发器：
       </strong>
-      ：当时钟触发时，触发器记住的值成为
-      <var>
-       D
-      </var>
-      输入的值 (
-      <em>
-       Data
-      </em>
-      ) 那一瞬间。
+      当时钟触发时，触发器存储的值更新为该瞬间 <var>D</var> 输入（<em>数据</em>）的值。
      </p>
     </li>
     <li>
      <p>
-      <!-- <strong>T Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop either toggles or remains the same depending on whether the <var>T</var> input (<em>Toggle</em>) is 1 or 0. -->
       <strong>
        T 触发器：
       </strong>
-      当时钟触发时，触发器记住的值会切换或保持不变，具体取决于
-      <var>
-       T
-      </var>
-      输入（
-      <em>
-       切换&lt; /em&gt;) 是 1 或 0。
-      </em>
+      当时钟触发时，触发器存储的值是翻转还是保持不变，取决于 <var>T</var> 输入（<em>翻转</em>）为 1 还是为 0。
      </p>
     </li>
     <li>
      <p>
-      <!-- <strong>J-K Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop toggles if the <var>J</var> and <var>K</var> inputs are both 1 and the value remains the same if both are 0; if they are different, then the value becomes 1 if the <var>J</var> (<em>Jump</em>) input is 1 and 0 if the <var>K</var> (<em>Kill</em>) input is 1. -->
       <strong>
        J-K 触发器：
       </strong>
-      当时钟触发时，如果
-      <var>
-       J
-      </var>
-      和
-      <var>
-       K
-      </var>
-      输入均为 1 且 如果两者都为 0，则该值保持不变； 如果它们不同，则如果
-      <var>
-       J
-      </var>
-      （
-      <em>
-       Jump
-      </em>
-      ）输入为 1，则该值变为 1；如果
-      <var>
-       K
-      </var>
-      （
-      <em>
-       Kill）输入为 0，则该值变为 0
-      </em>
-      ）输入为1。
+      当时钟触发时，若 <var>J</var> 与 <var>K</var> 均为 1，则存储值翻转；若二者均为 0，则保持不变；若二者不同，则当 <var>J</var>（<em>Jump</em>）为 1 时输出变为 1，当 <var>K</var>（<em>Kill</em>）为 1 时输出变为 0。
      </p>
     </li>
     <li>
      <p>
-      <!-- <strong>S-R Flip-Flop:</strong> When the clock triggers, the value remembered by the flip-flop remains unchanged if <var>R</var> and <var>S</var> are both 0, becomes 0 if the <var>R</var> input (<em>Reset</em>) is 1, and becomes 1 if the <var>S</var> input (<em>Set</em>) is 1. The behavior in unspecified if both inputs are 1. (In Logisim, the value in the flip-flop remains unchanged.) -->
       <strong>
-       S-R触发器：
+       S-R 触发器：
       </strong>
-      当时钟触发时，如果
-      <var>
-       R
-      </var>
-      和
-      <var>
-       S
-      </var>
-      都为0，触发器记住的值保持不变，变为 如果
-      <var>
-       R
-      </var>
-      输入（
-      <em>
-       Reset
-      </em>
-      ）为 1，则为 0；如果
-      <var>
-       S
-      </var>
-      输入（
-      <em>
-       Set
-      </em>
-      ）为 1，则变为 1 1. 如果两个输入均为 1，则行为未指定。（在 Logisim 中，触发器中的值保持不变。）
+      当时钟触发时，若 <var>R</var> 与 <var>S</var> 均为 0，则保持不变；若 <var>R</var> 输入（<em>Reset</em>）为 1，则输出变为 0；若 <var>S</var> 输入（<em>Set</em>）为 1，则输出变为 1。若两个输入均为 1，则行为未指定。（在 Logisim-evolution 中，触发器中的值保持不变。）
      </p>
     </li>
    </ul>
    <p>
-    <!-- By default, the clock triggers on a rising edge — that is, when the clock input changes from 0 to 1. However, the Trigger attribute allows this to change to a falling edge (when the clock input changes from 1 to 0), a high level (for the duration that the clock input is 1), or a low level (for the duration that the clock input is 0). The level-trigger options are unavailable for the T and J-K flip-flops, because a flip-flop behaves unpredictably when told to toggle for an indeterminate amount of time. -->
-    默认情况下，时钟在上升沿触发，即当时钟输入从 0 变为 1 时。但是，触发属性允许其更改为下降沿（当时钟输入从 1 变为 0 时）， 高电平（时钟输入为1期间），或低电平（时钟输入为0期间）。 电平触发选项对于 T 和 J-K 触发器不可用，因为当被告知要切换不确定的时间量时，触发器的行为是不可预测的。
+    默认情况下，时钟在上升沿触发——也就是时钟输入从 0 变为 1 的瞬间。不过，“触发方式”属性允许将其改为下降沿（时钟从 1 变为 0）、高电平（时钟为 1 的整个期间）或低电平（时钟为 0 的整个期间）。由于触发器在被要求以不确定的时长进行翻转时会表现得不可预测，T 与 J-K 触发器不提供电平触发选项。
    </p>
    <h2>
-    <!-- Pins -->
     引脚
    </h2>
    <dl>
     <dt>
-     <!-- West edge, marked by triangle (input, bit width 1) -->
-     西边，以三角形标记（输入，位宽1）
+     西侧（三角形标记，输入，位宽 1）
     </dt>
     <dd>
-     <!-- Clock input: At the instant that this input value switches from 0 to 1 (the rising edge), the value will be updated according to the other inputs on the west edge. As long as this remains 0 or 1, the other inputs on the west edge have no effect. -->
-     时钟输入：在该输入值从 0 切换到 1 的瞬间（上升沿），该值将根据西沿的其他输入进行更新。 只要该值保持为 0 或 1，西边缘的其他输入就不会产生任何影响。
+     时钟输入：当该输入值从 0 切换到 1 的瞬间（上升沿）时，触发器会根据西侧的其它输入更新其存储值。只要该输入保持为 0 或 1，西侧的其它输入就不会产生任何影响。
     </dd>
     <dt>
-     <!-- West edge, other labeled pin(s) (input(s), bit width 1) -->
-     西边缘，其他标记的引脚（输入，位宽 1）
+     西侧其它标记引脚（输入，位宽 1）
     </dt>
     <dd>
-     <!-- These inputs control how the flip-flop's value changes during the rising edge of the clock. Their exact behavior depends on the flip-flop; the above tables summarize their behavior. -->
-     这些输入控制触发器的值在时钟上升沿期间如何变化。 它们的确切行为取决于触发器； 上表总结了它们的行为。
+     这些输入用于控制触发器在时钟上升沿触发瞬间如何更新其存储值。其具体行为取决于触发器类型；上表已概括了这些行为。
     </dd>
     <dt>
-     <!-- East edge, labeled <var>Q</var>, north end (output, bit width 1) -->
-     东边，标记为
-     <var>
-      Q
-     </var>
-     ，北端（输出，位宽1）
+     东侧上端（标记为 <var>Q</var>，输出，位宽 1）
     </dt>
     <dd>
-     <!-- Outputs the value currently stored by the flip-flop. -->
      输出触发器当前存储的值。
     </dd>
     <dt>
-     <!-- East edge, south end (output, bit width 1) -->
-     东边，南边（输出，位宽1）
+     东侧下端（输出，位宽 1）
     </dt>
     <dd>
-     <!-- Outputs the complement of the value currently stored by the flip-flop. -->
-     输出触发器当前存储的值的补码。
+     输出触发器当前存储值的反码（补码）。
     </dd>
     <dt>
-     <!-- South edge, east end (input, bit width 1) -->
-     南边、东边（输入，位宽1）
+     南侧东端（输入，位宽 1）
     </dt>
     <dd>
-     <!-- Asynchronous reset: When 0 or undefined, this input has no effect. As long as it is 1, the flip-flop's value is pinned to 0. This occurs asynchronously - that is, without regard to the current clock input value. As long as this is 1, the other inputs have no effect. -->
-     异步复位：当为0或未定义时，该输入无效。 只要它为 1，触发器的值就固定为 0。这是异步发生的，即不考虑当前时钟输入值。 只要该值为 1，其他输入就没有影响。
+     异步复位：当为 0 或未定义时无效；只要为 1，触发器的值就会被固定为 0。这一过程是异步的——即不考虑当前时钟输入值。只要该输入为 1，其它输入均不起作用。
     </dd>
     <dt>
-     <!-- South edge, west end or Nort edge (input, bit width 1) -->
-     南边、西边或北边（输入，位宽1）
+     南侧西端或北侧（输入，位宽 1）
     </dt>
     <dd>
-     <!-- Asynchronous set: When 0 or undefined, this input has no effect. When 1, the flip-flop's value is pinned to 1. This occurs asynchronously - that is, without regard to the current clock input value. As long as this input is 1, the other inputs have no effect, except for the asynchronous reset input, which has priority. -->
-     异步设置：当为0或未定义时，该输入无效。 当为 1 时，触发器的值固定为 1。这是异步发生的，即不考虑当前时钟输入值。 只要该输入为 1，除异步复位输入具有优先级外，其他输入均无效。
+     异步置位：当为 0 或未定义时无效；当为 1 时，触发器的值就会被固定为 1。这一过程是异步的——即不考虑当前时钟输入值。只要该输入为 1，其它输入均不起作用，但异步复位输入具有更高优先级。
     </dd>
    </dl>
    <h2>
-    <!-- Attributes -->
     属性
    </h2>
    <dl>
     <dt>
-     <!-- Trigger -->
-     扳机
+     触发方式
     </dt>
     <dd>
-     <!-- Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the flip-flop should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should update at the instant the clock falls from 1 to 0. The <q>high level</q> value indicates that the flip-flop should update continuously whenever the clock input is 1. And the <q>low level</q> value indicates that it should update continuously when the clock input is 0. Note that the latter two options are unavailable for T and J-K flip-flops. -->
-     配置如何解释时钟输入。
-     <q>
-      上升沿
-     </q>
-     值表示触发器应在时钟从0上升到1的瞬间更新其值。
-     <q>
-      下降沿
-     </q>
-     值表示应在时钟从0上升到1时更新其值。 时钟从 1 下降到 0 的瞬间。
-     <q>
-      高电平
-     </q>
-     值表示每当时钟输入为 1 时触发器应不断更新。
-     <q>
-      低电平
-     </q>
-     值表示 当时钟输入为 0 时，它应该连续更新。请注意，后两个选项对于 T 和 J-K 触发器不可用。
+     配置如何解释时钟输入。<q>上升沿</q>表示时钟从 0 上升到 1 的瞬间更新；<q>下降沿</q>表示时钟从 1 下降到 0 的瞬间更新；<q>高电平</q>表示只要时钟输入为 1 就持续更新；<q>低电平</q>表示只要时钟输入为 0 就持续更新。注意：后两项对 T 与 J-K 触发器不可用。
     </dd>
     <dt>
-     <!-- Label -->
      标签
     </dt>
     <dd>
-     <!-- The text within the label associated with the flip-flop. -->
-     与触发器关联的标签内的文本。
+     触发器标签中显示的文本。
     </dd>
     <dt>
-     <!-- Label Font -->
      标签字体
     </dt>
     <dd>
-     <!-- The font with which to render the label. -->
-     用于呈现标签的字体。
+     用于渲染标签的字体。
     </dd>
     <dt>
-     <!-- Appaerance -->
      外观
     </dt>
     <dd>
-     <!-- Classic Logisim : Presents flipflops as the legacy of logisim   Logisim-HolyCross / Logsim-Evolutions : New presentation of flipflops in the IEC way -->
-     Classic Logisim ：将触发器呈现为 logisim Logisim-Holy Cross / Logisim-Evolution 的遗产：以 IEC 方式全新呈现触发器
+     经典 Logisim：以 Logisim 传统样式呈现触发器；Logisim-HolyCross / Logisim-Evolutions：以 IEC 风格的新样式呈现触发器。
     </dd>
    </dl>
    <h2>
-    <!-- Poke Tool Behavior -->
-    Poke 工具行为
+    手形工具行为
    </h2>
    <p>
-    <!-- Clicking a flip-flop using the Poke Tool toggles the bit stored in the flip-flop, unless the asynchronous set/reset inputs currently pin the flip-flop's value. -->
-    使用 Poke 工具单击触发器会切换触发器中存储的位，除非异步设置/重置输入当前固定触发器的值。
+    使用手形工具单击触发器会翻转其中存储的位，除非异步置位/复位输入当前固定了触发器的值。
    </p>
    <h2>
-    <!-- Text Tool Behavior -->
     文本工具行为
    </h2>
    <p>
-    <!-- Allows the label associated with the component to be edited. -->
     允许编辑与组件关联的标签。
    </p>
    <p>
-    <!-- <a href="../index.html">Back to <em>Library Reference</em></a> -->
-    <b>
-     返回
-    </b>
     <a href="../index.html">
-     电路元件库参考手册
+     返回
+     <em>
+      库参考手册
+     </em>
     </a>
    </p>
   </div>

@@ -169,7 +169,7 @@ public class CpuDrawSupport {
     g2.drawString("Mask:", bds.getWidth(), bds.getHeight());
     bds = getBounds(41, 54, 542, 15, scale);
     g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-    GraphicsUtil.drawCenteredText(g2, "\u2265" + "1", bds.getCenterX(), bds.getCenterY());
+    GraphicsUtil.drawCenteredText(g2, "≥" + "1", bds.getCenterX(), bds.getCenterY());
     bds = getBounds(312, 69, 312, 71, scale);
     g2.drawLine(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     bds = getBounds(304, 71, 15, 15, scale);
@@ -216,12 +216,13 @@ public class CpuDrawSupport {
     GraphicsUtil.drawCenteredText(g2, S.get("Rv32imBinInstruction"), bds.getX(), bds.getY());
     bds = getBounds(215 + blockWidth, 21, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g2, S.get("Rv32imAsmInstruction"), bds.getX(), bds.getY());
-    if (cpu.getTraces().isEmpty()) {
+    final var traces = cpu.getTraces();
+    if (traces.isEmpty()) {
       bds = getBounds(207, 250, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g2, S.get("Rv32imEmptyTrace"), bds.getX(), bds.getY());
     } else {
       int yOff = 30;
-      for (TraceInfo t : cpu.getTraces()) {
+      for (TraceInfo t : traces) {
         t.paint(g2, yOff, scale);
         yOff += TRACE_HEIGHT;
       }

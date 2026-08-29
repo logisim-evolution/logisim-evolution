@@ -32,6 +32,7 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
+import javax.swing.SwingUtilities;
 import java.io.File;
 import java.util.WeakHashMap;
 
@@ -51,15 +52,19 @@ public abstract class Mem extends InstanceFactory {
 
   static class MemListener implements HexModelListener {
 
-    final Instance instance;
+    private Instance instance;
 
     MemListener(Instance instance) {
       this.instance = instance;
     }
 
+    void setInstance(Instance instance) {
+      this.instance = instance;
+    }
+
     @Override
     public void bytesChanged(HexModel source, long start, long numBytes, long[] values) {
-      instance.fireInvalidated();
+      if (instance != null && SwingUtilities.isEventDispatchThread()) instance.fireInvalidated();
     }
 
     @Override
@@ -118,7 +123,6 @@ public abstract class Mem extends InstanceFactory {
   Mem(
       String name,
       StringGetter desc,
-      int extraPorts,
       HdlGeneratorFactory generator,
       boolean needsLabel) {
     super(name, desc, generator, needsLabel);
@@ -170,6 +174,10 @@ public abstract class Mem extends InstanceFactory {
     }
     int size = 1 << addrBits;
     return size + labels[pass];
+  }
+
+  public MemContents getContents(InstanceState ramState) {
+    return getState(ramState).getContents();
   }
 
   abstract MemState getState(Instance instance, CircuitState state);

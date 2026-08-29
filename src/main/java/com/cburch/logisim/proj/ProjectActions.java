@@ -17,6 +17,7 @@ import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.file.ProjectBundlePaths;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
@@ -25,6 +26,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,10 +38,16 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -45,6 +56,12 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 public final class ProjectActions {
@@ -241,7 +258,109 @@ public final class ProjectActions {
       }
       return;
     }
-    baseProject.doAction(LogisimFileActions.mergeFile(mergelib, baseProject.getLogisimFile()));
+    final var circuits = mergelib.getCircuits();
+    List<Circuit> circuitsToMerge = null;
+    boolean includeDependencies = true;
+
+    if (!circuits.isEmpty()) {
+      final var depMap = new HashMap<Circuit, Set<Circuit>>();
+      for (final var circ : circuits) {
+        depMap.put(circ, LogisimFileActions.getCircuitDependencies(circ, mergelib));
+      }
+
+      final var list = new JList<>(circuits.toArray(new Circuit[0]));
+      list.setCellRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(
+            JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+          super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+          if (value instanceof Circuit circ) {
+            final var deps = depMap.get(circ);
+            if (deps != null && !deps.isEmpty()) {
+              final var names = deps.stream().map(Circuit::getName).collect(Collectors.joining(", "));
+              setText(circ.getName() + " " + S.get("FileMergeDepsCount", names));
+              setToolTipText(S.get("FileMergeDepsCount", names));
+            } else {
+              setText(circ.getName());
+              setToolTipText(null);
+            }
+          }
+          return this;
+        }
+      });
+      list.setSelectionInterval(0, circuits.size() - 1);
+      final var scrollPane = new JScrollPane(list);
+      scrollPane.setPreferredSize(new Dimension(520, 220));
+
+      final var panel = new JPanel(new BorderLayout(5, 5));
+      panel.add(new JLabel(S.get("FileMergeSelectPrompt")), BorderLayout.NORTH);
+      panel.add(scrollPane, BorderLayout.CENTER);
+
+      final var infoLabel = new JLabel(" ");
+      infoLabel.setFont(infoLabel.getFont().deriveFont(Font.ITALIC));
+
+      final var depsPanel = new JPanel(new BorderLayout(5, 5));
+      final var depsCheck = new JCheckBox(S.get("FileMergeIncludeDeps"), true);
+      depsPanel.add(depsCheck, BorderLayout.NORTH);
+      depsPanel.add(infoLabel, BorderLayout.SOUTH);
+
+      final Runnable updateInfoLabel = () -> {
+        final var selectedInList = list.getSelectedValuesList();
+        if (selectedInList.isEmpty()) {
+          infoLabel.setText(" ");
+          return;
+        }
+        if (depsCheck.isSelected()) {
+          final var allToMerge = new LinkedHashSet<Circuit>();
+          for (final var c : selectedInList) {
+            allToMerge.add(c);
+            allToMerge.addAll(depMap.getOrDefault(c, Collections.emptySet()));
+          }
+          final int mainCount = selectedInList.size();
+          final int totalCount = allToMerge.size();
+          final int depsCount = totalCount - mainCount;
+          if (depsCount > 0) {
+            infoLabel.setText(S.get("FileMergeSummaryWithDeps", totalCount, mainCount, depsCount));
+          } else {
+            infoLabel.setText(S.get("FileMergeSummarySelected", totalCount));
+          }
+        } else {
+          infoLabel.setText(S.get("FileMergeSummarySelected", selectedInList.size()));
+        }
+      };
+
+      list.addListSelectionListener(e -> updateInfoLabel.run());
+      depsCheck.addItemListener(e -> updateInfoLabel.run());
+      updateInfoLabel.run();
+
+      final var mainPanel = new JPanel(new BorderLayout(0, 10));
+      mainPanel.setPreferredSize(new Dimension(520, 300));
+      mainPanel.add(panel, BorderLayout.CENTER);
+      mainPanel.add(depsPanel, BorderLayout.SOUTH);
+
+      final var parentWindow = (baseProject != null && baseProject.getFrame() != null)
+          ? baseProject.getFrame()
+          : parent;
+
+      final var result = OptionPane.showConfirmDialog(
+          parentWindow,
+          mainPanel,
+          S.get("FileMergeItem"),
+          OptionPane.OK_CANCEL_OPTION,
+          OptionPane.PLAIN_MESSAGE);
+
+      if (result != OptionPane.OK_OPTION) return;
+
+      includeDependencies = depsCheck.isSelected();
+      circuitsToMerge = list.getSelectedValuesList();
+      if (circuitsToMerge.isEmpty()) return;
+    }
+
+    baseProject.doAction(LogisimFileActions.mergeFile(
+        mergelib, 
+        baseProject.getLogisimFile(), 
+        circuitsToMerge,
+        includeDependencies));
   }
 
   private static void updatecircs(LogisimFile lib, Project proj) {
@@ -449,10 +568,21 @@ public final class ProjectActions {
             ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
             if (!ret) return ret;
             final var exportDirectory = chooser.getSelectedFile().getAbsolutePath();
-            final var mainProjectFileName = String.format("%s%s%s", exportDirectory, File.separator, bundleInfo.getMainLogisimFilename()); 
-            var filename =  mainProjectFileName;
-            if (Files.exists(Paths.get(filename)) 
-                || Files.exists(Paths.get(String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR)))) {
+            final var extractionDirectory =
+                Paths.get(exportDirectory).toAbsolutePath().normalize();
+            final var mainProjectFile =
+                ProjectBundlePaths.resolveMainFile(
+                    extractionDirectory, bundleInfo.getMainLogisimFilename());
+            if (mainProjectFile == null) {
+              OptionPane.showMessageDialog(
+                  proj.getFrame(),
+                  S.fmt("projBundleReadError", S.get("projBundleMainNotFound")));
+              return false;
+            }
+            final var mainProjectFileName = mainProjectFile.toString();
+            var filename = mainProjectFileName;
+            final var libDir = extractionDirectory.resolve(Loader.LOGISIM_LIBRARY_DIR);
+            if (Files.exists(mainProjectFile) || Files.exists(libDir)) {
               isCorrectDirectory = false;
               OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projContainsFileDir", bundleInfo.getMainLogisimFilename(), Loader.LOGISIM_LIBRARY_DIR));
             } else {
@@ -468,37 +598,32 @@ public final class ProjectActions {
               zipInput.close();
               fileOutput.close();
               final var zipFileEntries = zipFile.entries();
-              final var libDir = String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR);
+              final var extractedLibraryFiles = new HashSet<Path>();
               while (zipFileEntries.hasMoreElements()) {
                 final var entry = zipFileEntries.nextElement();
-                if (entry.isDirectory()) {
-                  final var dirName = entry.getName();
-                  if (!dirName.equals(Loader.LOGISIM_LIBRARY_DIR)) continue;
-                  new File(String.format("%s%s%s", exportDirectory, File.separator, dirName)).mkdirs();
-                } else {
-                  final var entryName = entry.getName();
-                  if (!entryName.startsWith(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator))) continue;
-                  if (entryName.lastIndexOf(File.separator) != entryName.indexOf(File.separator)) continue;
-                  if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) 
-                      && !entryName.toLowerCase().endsWith(".jar")) {
-                    continue;
-                  }
-                  // make sure the library dir exists
-                  if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
-                  filename = String.format("%s%s%s", exportDirectory, File.separator, entryName);
-                  final var testFile = new File(filename);
-                  final var testDir = new File(exportDirectory);
-                  if (!testFile.toPath().normalize().startsWith(testDir.toPath())) continue;
-                  zipInput = zipFile.getInputStream(entry);
-                  fileOutput = new FileOutputStream(filename);
-                  final var bytes = new byte[1024];
-                  var length = 0;
-                  while (((length = zipInput.read(bytes)) >= 0)) {
-                    fileOutput.write(bytes, 0, length);
-                  }
-                  fileOutput.close();
-                  zipInput.close();
+                if (ProjectBundlePaths.isLibraryDirectory(entry.getName())) {
+                  Files.createDirectories(libDir);
+                  continue;
                 }
+                final var libraryFile =
+                    ProjectBundlePaths.resolveLibraryFile(extractionDirectory, entry.getName());
+                if (libraryFile == null
+                    || !extractedLibraryFiles.add(libraryFile)
+                    || (!libraryFile.toString().endsWith(Loader.LOGISIM_EXTENSION)
+                        && !libraryFile.toString().toLowerCase().endsWith(".jar"))) {
+                  continue;
+                }
+                Files.createDirectories(libDir);
+                filename = libraryFile.toString();
+                zipInput = zipFile.getInputStream(entry);
+                fileOutput = new FileOutputStream(filename);
+                final var bytes = new byte[1024];
+                var length = 0;
+                while (((length = zipInput.read(bytes)) >= 0)) {
+                  fileOutput.write(bytes, 0, length);
+                }
+                fileOutput.close();
+                zipInput.close();
               }
               ProjectActions.doOpen(proj.getFrame().getCanvas(), proj, new File(mainProjectFileName));
             }
@@ -562,7 +687,8 @@ public final class ProjectActions {
           final var projectFile = new FileOutputStream(zipFile);
           final var projectZipFile = new ZipOutputStream(projectFile);
           ProjectBundleReadme.writeReadmeFile(projectZipFile, readmeInfo);
-          projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
+          projectZipFile.putNextEntry(
+              new ZipEntry(ProjectBundlePaths.libraryDirectoryEntry()));
           mainFileName = chooser.getSelectedFile().getName().replace(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION, "").concat(Loader.LOGISIM_EXTENSION);
           ret &= loader.export(proj.getLogisimFile(), projectZipFile, mainFileName);
           final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, mainFileName);

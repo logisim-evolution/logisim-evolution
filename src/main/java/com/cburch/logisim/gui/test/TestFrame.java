@@ -12,7 +12,6 @@ package com.cburch.logisim.gui.test;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.generic.LFrame;
@@ -53,7 +52,6 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   private final JButton close = new JButton();
   private final JLabel pass = new JLabel();
   private final JLabel fail = new JLabel();
-  private Simulator curSimulator = null;
   private Model curModel;
   private int finished;
   private int count;
@@ -63,7 +61,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     super(project);
     this.windowManager = new WindowMenuManager();
     project.addProjectListener(myListener);
-    setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
+    updateWithProject(project);
 
     chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
     chooser.addChoosableFileFilter(TestVector.FILE_FILTER);
@@ -111,34 +109,34 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     return curModel;
   }
 
-  private void setSimulator(Simulator value, Circuit circuit) {
-    if ((value == null) == (curModel == null)) {
-      if (value == null || value.getCircuitState().getCircuit() == curModel.getCircuit()) return;
-    }
+  private void updateWithProject(Project theProject) {
+    final var simulator = theProject.getSimulator();
+    if (simulator == null) return;
+    final var circuitState = simulator.getCircuitState();
+    final var circuit = circuitState.getCircuit();
+    if (curModel != null && circuit == curModel.getCircuit()) return;
 
-    menubar.setCircuitState(value, value.getCircuitState());
+    menubar.setCircuitState(simulator, circuitState);
 
-    if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
     if (curModel != null) curModel.setSelected(false);
     if (curModel != null) curModel.removeModelListener(myListener);
 
     Model oldModel = curModel;
     Model data = null;
-    if (value != null) {
-      data = modelMap.get(value.getCircuitState().getCircuit());
+    if (simulator != null) {
+      data = modelMap.get(circuit);
       if (data == null) {
-        data = new Model(project, value.getCircuitState().getCircuit());
+        data = new Model(project, circuit);
         modelMap.put(data.getCircuit(), data);
       }
     }
-    curSimulator = value;
     curModel = data;
 
-    if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(true);
     if (curModel != null) curModel.addModelListener(myListener);
+    if (curModel != null) curModel.setSelected(true);
     setTitle(computeTitle(curModel, project));
     if (panel != null) panel.modelChanged(oldModel, curModel);
+    repaint();
   }
 
   @Override
@@ -150,7 +148,6 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   private class MyListener
       implements ActionListener,
           ProjectListener,
-          Simulator.Listener,
           LocaleListener,
           ModelListener {
 
@@ -227,8 +224,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
-        setSimulator(
-            event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
+        updateWithProject(event.getProject());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
         setTitle(computeTitle(curModel, project));
       }
@@ -258,24 +254,6 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
 
     @Override
     public void vectorChanged() {
-      // do nothing
-    }
-
-    // simulator
-    @Override
-    public void simulatorReset(Simulator.Event e) {
-      // FIXME: is no-op the right implementation here?
-      // ? curModel.propagationCompleted();
-    }
-
-    @Override
-    public void propagationCompleted(Simulator.Event e) {
-      // FIXME: is no-op the right implementation here?
-      // curMoedl.propagationCompleted();
-    }
-
-    @Override
-    public void simulatorStateChanged(Simulator.Event e) {
       // do nothing
     }
   }

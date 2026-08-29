@@ -31,29 +31,28 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       ".short", ".4byte", ".word", ".long", ".8byte", ".dword", ".quad", ".balign",
       ".zero", ".org"};
 
-  @SuppressWarnings("serial")
   public static final HashSet<String> BYTES = new HashSet<>() {{
       add(".byte");
     }};
-  @SuppressWarnings("serial")
+  
   public static final HashSet<String> SHORTS = new HashSet<>() {{
       add(".half");
       add(".2byte");
       add(".short");
     }};
-  @SuppressWarnings("serial")
+
   public static final HashSet<String> INTS = new HashSet<>() {{
       add(".word");
       add(".4byte");
       add(".long");
     }};
-  @SuppressWarnings("serial")
+
   public static final HashSet<String> LONGS = new HashSet<>() {{
       add(".dword");
       add(".8byte");
       add(".quad");
     }};
-  @SuppressWarnings("serial")
+
   public static final HashSet<String> STRINGS = new HashSet<>() {{
       add(".ascii");
       add(".asciz");
@@ -79,6 +78,12 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       }
     }
     super.addToken(segment, start, end, tokenType, startOffset);
+  }
+
+  private static boolean isHexCharacter(char c) {
+    return (c >= 'a' && c <= 'f')
+        || (c >= 'A' && c <= 'F')
+        || (c >= '0' && c <= '9');
   }
 
   private int check(Segment text, char kar, int currentToken, int start, int index, int newStart) {
@@ -162,7 +167,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
           ? Token.LITERAL_NUMBER_DECIMAL_INT
           : currentTokenType;
     }
-    if (RSyntaxUtilities.isHexCharacter(kar)
+    if (isHexCharacter(kar)
         && currentTokenType == Token.LITERAL_NUMBER_HEXADECIMAL) return currentTokenType;
     if (currentTokenType != Token.NULL)
       addToken(text, start, index - 1, currentTokenType, newStart);

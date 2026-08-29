@@ -35,6 +35,7 @@ import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.base.BaseLibrary;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
@@ -100,12 +101,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     this.shouldSnap = base.shouldSnap;
     this.attrs = (AttributeSet) base.attrs.clone();
     attrs.addAttributeListener(new MyAttributeListener());
-    if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
-      AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
-    }
-    if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
-      AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
-    }
+    configurePreferenceListeners(false);
   }
 
   public AddTool(Class<? extends Library> base, FactoryDescription description) {
@@ -116,12 +112,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     this.attrs = new FactoryAttributes(base, description);
     attrs.addAttributeListener(new MyAttributeListener());
     this.keyHandlerTried = false;
-    if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
-      AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
-    }
-    if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
-      AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
-    }
+    configurePreferenceListeners(true);
   }
 
   public AddTool(ComponentFactory source) {
@@ -133,12 +124,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     attrs.addAttributeListener(new MyAttributeListener());
     final var value = (Boolean) source.getFeature(ComponentFactory.SHOULD_SNAP, attrs);
     this.shouldSnap = value == null || value;
-    if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
-      AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
-    }
-    if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
-      AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
-    }
+    configurePreferenceListeners(true);
   }
 
   @Override
@@ -147,6 +133,23 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
     } else if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.isSource(evt)) {
       attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
+    } else if (AppPreferences.TEXT_TOOL_COLOR.isSource(evt)) {
+      attrs.setValue(Text.ATTR_COLOR, new Color(AppPreferences.TEXT_TOOL_COLOR.get()));
+    }
+  }
+
+  private void configurePreferenceListeners(boolean applyTextToolColor) {
+    if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
+      AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
+    }
+    if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
+      AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
+    }
+    if (this.attrs.containsAttribute(Text.ATTR_COLOR)) {
+      AppPreferences.TEXT_TOOL_COLOR.addPropertyChangeListener(this);
+      if (applyTextToolColor) {
+        attrs.setValue(Text.ATTR_COLOR, new Color(AppPreferences.TEXT_TOOL_COLOR.get()));
+      }
     }
   }
 
@@ -157,6 +160,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void deselect(Canvas canvas) {
+    canvas.stopAutoPan();
     setState(canvas, SHOW_GHOST);
     moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
     bounds = null;
@@ -451,6 +455,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void mouseExited(Canvas canvas, Graphics gfx, MouseEvent event) {
+    canvas.stopAutoPan();
     if (state == SHOW_GHOST) {
       moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
       setState(canvas, SHOW_NONE);
@@ -463,15 +468,19 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public void mouseMoved(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state != SHOW_NONE) {
+      canvas.updatePreviewAutoPan(event.getX(), event.getY());
       if (shouldSnap) {
         Canvas.snapToGrid(event);
       }
       moveTo(canvas, gfx, event.getX(), event.getY());
+    } else {
+      canvas.stopAutoPan();
     }
   }
 
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+    canvas.stopAutoPan();
     // verify the addition would be valid
     final var circ = canvas.getCircuit();
     if (!canvas.getProject().getLogisimFile().contains(circ)) {
@@ -539,7 +548,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
           if (!dialog.execute()) {
             return;
           }
-          if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
+          if (SyntaxChecker.isVariableNameAcceptableForCurrentHdl(matrix.getLabel(), true)) {
             autoLabeler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
                 autoLabeler.correctMatrixBaseLabel(

@@ -24,12 +24,11 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -142,9 +141,22 @@ public class Circuit {
       final var oldLabel = attrEvent.getOldValue() != null ? (String) attrEvent.getOldValue() : "";
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) attrEvent.getAttribute();
-      if (!isCorrectLabel(getName(), newLabel, comps, attrEvent.getSource(), e.getSource().getFactory(), true)) {
+      if (!isCorrectLabel(
+          getName(),
+          newLabel,
+          comps,
+          attrEvent.getSource(),
+          e.getSource().getFactory(),
+          labelIdentity(),
+          true)) {
         if (isCorrectLabel(
-            getName(), oldLabel, comps, attrEvent.getSource(), e.getSource().getFactory(), false)) {
+            getName(),
+            oldLabel,
+            comps,
+            attrEvent.getSource(),
+            e.getSource().getFactory(),
+            labelIdentity(),
+            false)) {
           attrEvent.getSource().setValue(lattr, oldLabel);
         } else {
           attrEvent.getSource().setValue(lattr, "");
@@ -160,10 +172,45 @@ public class Circuit {
       AttributeSet me,
       ComponentFactory myFactory,
       Boolean showDialog) {
+    return isCorrectLabel(
+        circuitName,
+        name,
+        components,
+        me,
+        myFactory,
+        CircuitLabelValidator.LabelIdentity.HDL_COMPATIBLE,
+        showDialog);
+  }
+
+  public static boolean isCorrectLabelForCurrentHdl(
+      String circuitName,
+      String name,
+      Set<Component> components,
+      AttributeSet me,
+      ComponentFactory myFactory,
+      Boolean showDialog) {
+    return isCorrectLabel(
+        circuitName,
+        name,
+        components,
+        me,
+        myFactory,
+        CircuitLabelValidator.labelIdentityForHdlType(AppPreferences.HdlType.get()),
+        showDialog);
+  }
+
+  static boolean isCorrectLabel(
+      String circuitName,
+      String name,
+      Set<Component> components,
+      AttributeSet me,
+      ComponentFactory myFactory,
+      CircuitLabelValidator.LabelIdentity labelIdentity,
+      Boolean showDialog) {
     if (myFactory instanceof Tunnel) return true;
     if (circuitName != null
         && !circuitName.isEmpty()
-        && circuitName.equalsIgnoreCase(name)
+        && CircuitLabelValidator.labelsMatch(circuitName, name, labelIdentity)
         && myFactory instanceof Pin) {
       if (showDialog) {
         final var msg = S.get("ComponentLabelEqualCircuitName");
@@ -171,14 +218,18 @@ public class Circuit {
       }
       return false;
     }
-    return !(isExistingLabel(name, me, components, showDialog)
-        || isComponentName(name, components, showDialog));
+    return !(isExistingLabel(name, me, components, labelIdentity, showDialog)
+        || isComponentName(name, components, labelIdentity, showDialog));
   }
 
-  private static boolean isComponentName(String name, Set<Component> comps, Boolean showDialog) {
+  private static boolean isComponentName(
+      String name,
+      Set<Component> comps,
+      CircuitLabelValidator.LabelIdentity labelIdentity,
+      Boolean showDialog) {
     if (name.isEmpty()) return false;
     for (final var comp : comps) {
-      if (comp.getFactory().getName().equalsIgnoreCase(name)) {
+      if (CircuitLabelValidator.labelsMatch(comp.getFactory().getName(), name, labelIdentity)) {
         if (showDialog) {
           final var msg = S.get("ComponentLabelNameError");
           OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
@@ -191,7 +242,12 @@ public class Circuit {
     return false;
   }
 
-  private static boolean isExistingLabel(String name, AttributeSet me, Set<Component> comps, Boolean showDialog) {
+  private static boolean isExistingLabel(
+      String name,
+      AttributeSet me,
+      Set<Component> comps,
+      CircuitLabelValidator.LabelIdentity labelIdentity,
+      Boolean showDialog) {
     if (name.isEmpty()) return false;
     for (final var comp : comps) {
       if (!comp.getAttributeSet().equals(me) && !(comp.getFactory() instanceof Tunnel)) {
@@ -199,7 +255,7 @@ public class Circuit {
             (comp.getAttributeSet().containsAttribute(StdAttr.LABEL))
                 ? comp.getAttributeSet().getValue(StdAttr.LABEL)
                 : "";
-        if (Label.equalsIgnoreCase(name)) {
+        if (CircuitLabelValidator.labelsMatch(Label, name, labelIdentity)) {
           if (showDialog) {
             final var msg = S.get("UsedLabelNameError");
             OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
@@ -266,6 +322,10 @@ public class Circuit {
     return proj;
   }
 
+  private CircuitLabelValidator.LabelIdentity labelIdentity() {
+    return CircuitLabelValidator.labelIdentityForHdlType(AppPreferences.HdlType.get());
+  }
+
   public SocSimulationManager getSocSimulationManager() {
     return socSim;
   }
@@ -314,13 +374,13 @@ public class Circuit {
   public void annotate(boolean clearExistingLabels, boolean insideLibrary) {
     /* If I am already completely annotated, return */
     if (isAnnotated) {
-      // FIXME: hardcoded string
-      Reporter.report.addInfo("Nothing to do!");
+      Reporter.report.addInfo(S.get("annotateNoAction"));
       return;
     }
     final var comps = new TreeSet<Component>(Location.CompareVertical);
     final var labelers = new HashMap<String, AutoLabel>();
     final var labelNames = new LinkedHashSet<String>();
+    final var labelIdentity = labelIdentity();
     final var subCircuits = new LinkedHashSet<String>();
     for (final var comp : getNonWires()) {
       if (comp.getFactory() instanceof Tunnel) continue;
@@ -329,14 +389,20 @@ public class Circuit {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if (!label.isEmpty()) {
-          if (labelNames.contains(label.toUpperCase())) {
+          var removeLabel = false;
+          if (!CorrectLabel.isCorrectLabel(label)) {
+            removeLabel = true;
+            Reporter.report.addSevereWarning(S.fmt("annotateRemInvalid", this.getName(), label));
+          } else if (labelNames.contains(CircuitLabelValidator.labelKey(label, labelIdentity))) {
+            removeLabel = true;
+            Reporter.report.addSevereWarning(S.fmt("annotateRemDuplicate", this.getName(), label));
+          } else {
+            labelNames.add(CircuitLabelValidator.labelKey(label, labelIdentity));
+          }
+          if (removeLabel) {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
-            // FIXME: hardcoded string
-            Reporter.report.addSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
-          } else {
-            labelNames.add(label.toUpperCase());
           }
         }
       }
@@ -344,8 +410,7 @@ public class Circuit {
       if (comp.getFactory().requiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
-          // FIXME: hardcoded string
-          Reporter.report.addInfo("Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
+          Reporter.report.addInfo(S.fmt("annotateCleared", this.getName(), comp.getAttributeSet().getValue(StdAttr.LABEL)));
           final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
           act.set(comp, StdAttr.LABEL, "");
           proj.doAction(act);
@@ -369,34 +434,24 @@ public class Circuit {
       final var componentName = getAnnotationName(comp);
       if (!labelers.containsKey(componentName) || !labelers.get(componentName).hasNext(this)) {
         // This should never happen!
-        // FIXME: hardcoded string
-        Reporter.report.addFatalError(
-            "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
+        Reporter.report.addFatalError(S.get("annotateError"));
         return;
       } else {
         final var newLabel = labelers.get(componentName).getNext(this, comp.getFactory());
         final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, newLabel);
         proj.doAction(act);
-        Reporter.report.addInfo("Labeled " + this.getName() + "/" + newLabel);
+        Reporter.report.addInfo(S.fmt("annotateLabeled", this.getName(), newLabel));
         if (comp.getFactory() instanceof Pin) {
           sizeMightHaveChanged = true;
         }
       }
     }
     if (!comps.isEmpty() && insideLibrary) {
-      // FIXME: hardcoded string
-      Reporter.report.addSevereWarning(
-          "Annotated the circuit \""
-              + this.getName()
-              + "\" which is inside a library these changes will not be saved!");
+      Reporter.report.addSevereWarning(S.fmt("annotateInLib", this.getName()));
     }
     if (sizeMightHaveChanged)
-      // FIXME: hardcoded string
-      Reporter.report.addSevereWarning(
-          "Annotated one ore more pins in circuit \""
-              + this.getName()
-              + "\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
+      Reporter.report.addSevereWarning(S.fmt("annotateSizeChange", this.getName()));
     isAnnotated = true;
     /* Now annotate all circuits below me */
     for (final var subs : subCircuits) {
@@ -462,55 +517,18 @@ public class Circuit {
     }
   }
 
-  /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   */
-  public void doTestVector(Project project, Instance[] pin, Value[] val) throws TestException {
-    final var state = project.getCircuitState();
-    state.reset();
-
-    for (var i = 0; i < pin.length; ++i) {
-      if (Pin.FACTORY.isInputPin(pin[i])) {
-        final var pinState = state.getInstanceState(pin[i]);
-        Pin.FACTORY.driveInputPin(pinState, val[i]);
-      }
-    }
-
-    final var prop = state.getPropagator();
-
-    try {
-      prop.propagate();
-    } catch (Throwable thr) {
-      thr.printStackTrace();
-    }
-
-    if (prop.isOscillating()) throw new TestException("oscillation detected");
-
-    FailException err = null;
-
-    for (var i = 0; i < pin.length; i++) {
-      final var pinState = state.getInstanceState(pin[i]);
-      if (Pin.FACTORY.isInputPin(pin[i])) continue;
-
-      final var v = Pin.FACTORY.getValue(pinState);
-      if (!val[i].compatible(v)) {
-        if (err == null) {
-          err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
-        } else {
-          err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
-        }
-      }
-    }
-
-    if (err != null) {
-      throw err;
-    }
-  }
-
   //
   // Graphics methods
   //
   public void draw(ComponentDrawContext context, Collection<Component> hidden) {
+    if (context.isPrintView()) {
+      AppPreferences.runWithPrintViewColors(() -> drawComponents(context, hidden));
+    } else {
+      drawComponents(context, hidden);
+    }
+  }
+
+  private void drawComponents(ComponentDrawContext context, Collection<Component> hidden) {
     final var g = context.getGraphics();
     var gCopy = g.create();
     context.setGraphics(gCopy);
@@ -728,7 +746,7 @@ public class Circuit {
     return null;
   }
 
-  public Set<String> getMapableBoards() {
+  public Set<String> getMappableBoards() {
     return myMappableResources.keySet();
   }
 
@@ -828,17 +846,25 @@ public class Circuit {
       if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)
           && !(c.getFactory() instanceof Tunnel)) {
         final var labels = new HashSet<String>();
+        final var labelIdentity = labelIdentity();
         for (final var comp : comps) {
           if (comp.equals(c) || comp.getFactory() instanceof Tunnel) continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             final var label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            if (StringUtil.isNotEmpty(label)) labels.add(label.toUpperCase());
+            if (StringUtil.isNotEmpty(label)) {
+              labels.add(CircuitLabelValidator.labelKey(label, labelIdentity));
+            }
           }
         }
-        /* we also have to check for the entity name */
-        if (getName() != null && !getName().isEmpty()) labels.add(getName());
         final var label = c.getAttributeSet().getValue(StdAttr.LABEL);
-        if (StringUtil.isNotEmpty(label) && labels.contains(label.toUpperCase())) {
+        final var collidesWithCircuitName =
+            StringUtil.isNotEmpty(label)
+                && getName() != null
+                && !getName().isEmpty()
+                && CircuitLabelValidator.labelsMatch(getName(), label, labelIdentity);
+        if (StringUtil.isNotEmpty(label)
+            && (collidesWithCircuitName
+                || labels.contains(CircuitLabelValidator.labelKey(label, labelIdentity)))) {
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
         }
       }
@@ -903,11 +929,12 @@ public class Circuit {
 
   private void removeWrongLabels(String label) {
     var changed = false;
+    final var labelIdentity = labelIdentity();
     for (final var comp : comps) {
       final var attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var compLabel = attrs.getValue(StdAttr.LABEL);
-        if (label.equalsIgnoreCase(compLabel)) {
+        if (CircuitLabelValidator.labelsMatch(label, compLabel, labelIdentity)) {
           attrs.setValue(StdAttr.LABEL, "");
           changed = true;
         }

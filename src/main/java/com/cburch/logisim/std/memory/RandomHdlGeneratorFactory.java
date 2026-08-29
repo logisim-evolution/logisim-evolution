@@ -14,50 +14,46 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
-import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class RandomHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
+  static final long HDL_DEFAULT_SEED = 0x5DEECE66DL;
+
   private static final String NR_OF_BITS_STR = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
-  private static final String SEED_STR = "seed";
-  private static final int SEED_ID = -2;
+  private static final String[] INITIAL_STATE_STR = {
+    "initialState0", "initialState1", "initialState2", "initialState3"
+  };
+  private static final int[] INITIAL_STATE_ID = {-2, -3, -4, -5};
 
   public RandomHdlGeneratorFactory() {
     super();
-    myParametersList
-        .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
-        // The seed parameter has 32 bits fixed
-        .addVector(SEED_STR, SEED_ID, HdlParameters.MAP_INT_ATTRIBUTE, Random.ATTR_SEED, 32);
+    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID);
+    for (var i = 0; i < INITIAL_STATE_STR.length; i++) {
+      myParametersList.addVectorWithFixedWidth(INITIAL_STATE_STR[i], INITIAL_STATE_ID[i], 64);
+    }
     myWires
-        .addWire("s_initSeed", 48)
-        .addWire("s_reset", 1)
-        .addWire("s_resetNext", 3)
-        .addWire("s_multShiftNext", 36)
-        .addWire("s_seedShiftNext", 48)
-        .addWire("s_multBusy", 1)
-        .addWire("s_start", 1)
-        .addWire("s_macLowIn1", 25)
-        .addWire("s_macLowIn2", 25)
-        .addWire("s_macHigh1Next", 24)
-        .addWire("s_macHighIn2", 24)
-        .addWire("s_busyPipeNext", 2)
-        .addRegister("s_currentSeed", 48)
-        .addRegister("s_resetReg", 3)
-        .addRegister("s_multShiftReg", 36)
-        .addRegister("s_seedShiftReg", 48)
-        .addRegister("s_startReg", 1)
-        .addRegister("s_macLowReg", 25)
-        .addRegister("s_macHighReg", 24)
-        .addRegister("s_macHighReg1", 24)
-        .addRegister("s_busyPipeReg", 2)
-        .addRegister("s_outputReg", NR_OF_BITS_ID);
+        .addWire("s_sum", 64)
+        .addWire("s_rotatedSum", 64)
+        .addWire("s_result", 64)
+        .addWire("s_shiftedState1", 64)
+        .addWire("s_nextState0", 64)
+        .addWire("s_nextState1", 64)
+        .addWire("s_nextState2", 64)
+        .addWire("s_nextState3", 64)
+        .addWire("s_state3XorState1", 64)
+        .addRegister("s_state0", 64)
+        .addRegister("s_state1", 64)
+        .addRegister("s_state2", 64)
+        .addRegister("s_state3", 64)
+        .addRegister("s_resetReg", 3);
     myPorts
         .add(Port.CLOCK, HdlPorts.getClockName(1), 1, Random.CK)
         .add(Port.INPUT, "clear", 1, Random.RST)
@@ -66,10 +62,26 @@ public class RandomHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
-    final var map = new TreeMap<String, String>(super.getPortMap(Nets, MapInfo));
-    if (MapInfo instanceof final netlistComponent comp && Hdl.isVhdl()) {
-      final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+  protected Map<String, String> getParameterMap(AttributeSet attrs) {
+    if (attrs == null) return new TreeMap<>();
+
+    final var parameters = new TreeMap<>(super.getParameterMap(attrs));
+    final var configuredSeed = attrs.getValue(Random.ATTR_SEED);
+    final var seed =
+        configuredSeed == 0 ? HDL_DEFAULT_SEED : Integer.toUnsignedLong(configuredSeed);
+    final var initialState = Xoshiro256PlusPlus.initialState(seed);
+    for (var i = 0; i < initialState.length; i++) {
+      parameters.put(INITIAL_STATE_STR[i], Hdl.getConstantVector(initialState[i], 64));
+    }
+    return parameters;
+  }
+
+  @Override
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>(super.getPortMap(nets, mapInfo));
+    if (mapInfo instanceof final netlistComponent comp && Hdl.isVhdl()) {
+      final var nrOfBits =
+          comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
         final var outMap = map.get("q");
         map.remove("q");
@@ -83,144 +95,130 @@ public class RandomHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
-            .pair("seed", SEED_STR)
+            .pair("initialState0", INITIAL_STATE_STR[0])
+            .pair("initialState1", INITIAL_STATE_STR[1])
+            .pair("initialState2", INITIAL_STATE_STR[2])
+            .pair("initialState3", INITIAL_STATE_STR[3])
             .pair("nrOfBits", NR_OF_BITS_STR)
             .pair("GlobalClock", HdlPorts.getClockName(1))
             .pair("ClockEnable", HdlPorts.getTickName(1))
-            .addRemarkBlock("This is a multicycle implementation of the Random Component")
+            .addRemarkBlock("This is an implementation of the xoshiro256++ algorithm")
             .empty();
 
     if (Hdl.isVhdl()) {
-      contents.empty().addVhdlKeywords().add("""
-          q               <= s_outputReg;
-          s_initSeed      <= x"0005DEECE66D" {{when}} {{seed}} = x"00000000" {{else}}
-                             x"0000"&seed;
-          s_reset         <= '1' {{when}} s_resetReg /= "010" {{else}} '0';
-          s_resetNext     <= "010" {{when}} (s_resetReg = "101" {{or}}
-                                         s_resetReg = "010") {{and}}
-                                         clear = '0' {{else}}
-                             "101" {{when}} s_resetReg = "001" {{else}}
-                             "001";
-          s_start         <= '1' {{when}} ({{ClockEnable}} = '1' {{and}} enable = '1') {{or}}
-                                   (s_resetReg = "101" {{and}} clear = '0') {{else}} '0';
-          s_multShiftNext <= ({{others}} => '0') {{when}} s_reset = '1' {{else}}
-                             X"5DEECE66D" {{when}} s_startReg = '1' {{else}}
-                             '0'&s_multShiftReg(35 {{downto}} 1);
-          s_seedShiftNext <= ({{others}} => '0') {{when}} s_reset = '1' {{else}}
-                             s_currentSeed {{when}} s_startReg = '1' {{else}}
-                             s_seedShiftReg(46 {{downto}} 0)&'0';
-          s_multBusy      <= '0' {{when}} s_multShiftReg = X"000000000" {{else}} '1';
+      contents.addVhdlKeywords().add("""
+          q                  <= s_result(({{nrOfBits}} - 1) {{downto}} 0);
+          s_sum              <= std_logic_vector(unsigned(s_state0) + unsigned(s_state3));
+          s_rotatedSum       <= s_sum(40 {{downto}} 0)&s_sum(63 {{downto}} 41);
+          s_result           <= std_logic_vector(unsigned(s_rotatedSum) + unsigned(s_state0));
+          s_shiftedState1    <= s_state1(46 {{downto}} 0)&"00000000000000000";
+          s_state3XorState1  <= s_state3 {{xor}} s_state1;
+          s_nextState0       <= s_state0 {{xor}} s_state3XorState1;
+          s_nextState1       <= s_state1 {{xor}} s_state2 {{xor}} s_state0;
+          s_nextState2       <= s_state2 {{xor}} s_state0 {{xor}} s_shiftedState1;
+          s_nextState3       <= s_state3XorState1(18 {{downto}} 0)&
+                                s_state3XorState1(63 {{downto}} 19);
 
-          s_macLowIn1     <= ({{others}} => '0') {{when}} s_startReg = '1' {{or}}
-                                                    s_reset = '1' {{else}}
-                             '0'&s_macLowReg(23 {{downto}} 0);
-          s_macLowIn2     <= '0'&X"00000B"
-                                  {{when}} s_startReg = '1' {{else}}
-                             '0'&s_seedShiftReg(23 {{downto}} 0)
-                                  {{when}} s_multShiftReg(0) = '1' {{else}}
-                             ({{others}} => '0');
-          s_macHighIn2    <= ({{others}} => '0') {{when}} s_startReg = '1' {{else}}
-                             s_macHighReg;
-          s_macHigh1Next  <= s_seedShiftReg(47 {{downto}} 24)
-                                {{when}} s_multShiftReg(0) = '1' {{else}}
-                             ({{others}} => '0');
-          s_busyPipeNext  <= "00" {{when}} s_reset = '1' {{else}}
-                             s_busyPipeReg(0)&s_multBusy;
-
-          makeCurrentSeed : {{process}}({{GlobalClock}}, s_busyPipeReg, s_reset) {{is}}
+          updateState : {{process}}({{GlobalClock}}) {{is}}
           {{begin}}
-             {{if}} (rising_edge({{GlobalClock}})) {{then}}
-                {{if}} (s_reset = '1') {{then}} s_currentSeed <= s_initSeed;
-                {{elsif}} (s_busyPipeReg = "10") {{then}}
-                   s_currentSeed <= s_macHighReg&s_macLowReg(23 {{downto}} 0);
-                {{end}} {{if}};
+             {{if}} rising_edge({{GlobalClock}}) {{then}}
+                {{case}} s_resetReg {{is}}
+                   {{when}} "010" =>
+                      {{if}} clear = '1' {{then}}
+                         s_state0   <= {{initialState0}};
+                         s_state1   <= {{initialState1}};
+                         s_state2   <= {{initialState2}};
+                         s_state3   <= {{initialState3}};
+                         s_resetReg <= "001";
+                      {{elsif}} {{ClockEnable}} = '1' {{and}} enable = '1' {{then}}
+                         s_state0 <= s_nextState0;
+                         s_state1 <= s_nextState1;
+                         s_state2 <= s_nextState2;
+                         s_state3 <= s_nextState3;
+                      {{end}} {{if}};
+                   {{when}} "001" =>
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      s_resetReg <= "101";
+                   {{when}} "101" =>
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      {{if}} clear = '1' {{then}}
+                         s_resetReg <= "001";
+                      {{else}}
+                         s_resetReg <= "010";
+                      {{end}} {{if}};
+                   {{when}} {{others}} =>
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      s_resetReg <= "001";
+                {{end}} {{case}};
              {{end}} {{if}};
-          {{end}} {{process}} makeCurrentSeed;
-
-          makeShiftRegs : {{process}}({{GlobalClock}}, s_multShiftNext, s_seedShiftNext,
-                                  s_macLowIn1, s_macLowIn2) {{is}}
-          {{begin}}
-             {{if}} (rising_edge({{GlobalClock}})) {{then}}
-                s_multShiftReg <= s_multShiftNext;
-                s_seedShiftReg <= s_seedShiftNext;
-                s_macLowReg    <= std_logic_vector( unsigned(s_macLowIn1) + unsigned(s_macLowIn2) );
-                s_macHighReg1  <= s_macHigh1Next;
-                s_macHighReg   <= std_logic_vector( unsigned(s_macHighReg1) + unsigned(s_macHighIn2) +
-                                  unsigned(s_macLowReg(24 {{downto}} 24)) );
-                s_busyPipeReg  <= s_busyPipeNext;
-             {{end}} {{if}};
-          {{end}} {{process}} makeShiftRegs;
-
-          makeStartReg : {{process}}({{GlobalClock}}, s_start) {{is}}
-          {{begin}}
-             {{if}} (rising_edge({{GlobalClock}})) {{then}}
-                s_startReg <= s_start;
-             {{end}} {{if}};
-          {{end}} {{process}} makeStartReg;
-
-          makeResetReg : {{process}}({{GlobalClock}}, s_resetNext) {{is}}
-          {{begin}}
-             {{if}} (rising_edge({{GlobalClock}})) {{then}}
-                s_resetReg <= s_resetNext;
-             {{end}} {{if}};
-          {{end}} {{process}} makeResetReg;
-
-          makeOutput : {{process}}({{GlobalClock}}, s_reset, s_initSeed) {{is}}
-          {{begin}}
-             {{if}} (rising_edge({{GlobalClock}})) {{then}}
-                {{if}} (s_reset = '1') {{then}} s_outputReg <= s_initSeed( ({{nrOfBits}}-1) {{downto}} 0 );
-                {{elsif}} ({{ClockEnable}} = '1' {{and}} enable = '1') {{then}}
-                   s_outputReg <= s_currentSeed(({{nrOfBits}}+11) {{downto}} 12);
-                {{end}} {{if}};
-             {{end}} {{if}};
-          {{end}} {{process}} makeOutput;
+          {{end}} {{process}} updateState;
           """);
     } else {
       contents.add("""
-          assign q = s_outputReg;
-          assign s_initSeed      = ({{seed}} == 0) ? 48'h5DEECE66D : {{seed}};
-          assign s_reset         = (s_resetReg==3'b010) ? 1'b1 : 1'b0;
-          assign s_resetNext     = (( (s_resetReg == 3'b101) | (s_resetReg == 3'b010)) & clear)
-                                      ? 3'b010
-                                      : (s_resetReg==3'b001) ? 3'b101 : 3'b001;
-          assign s_start         = (({{ClockEnable}}&enable)|((s_resetReg == 3'b101)&clear)) ? 1'b1 : 1'b0;
-          assign s_multShiftNext = (s_reset)
-                                      ? 36'd0
-                                      : (s_startReg) ? 36'h5DEECE66D : {1'b0,s_multShiftReg[35:1]};
-          assign s_seedShiftNext = (s_reset)
-                                      ? 48'd0
-                                      : (s_startReg) ? s_currentSeed : {s_seedShiftReg[46:0],1'b0};
-          assign s_multBusy      = (s_multShiftReg == 0) ? 1'b0 : 1'b1;
-          assign s_macLowIn1     = (s_startReg|s_reset) ? 25'd0 : {1'b0,s_macLowReg[23:0]};
-          assign s_macLowIn2     = (s_startReg) ? 25'hB
-                                      : (s_multShiftReg[0])
-                                      ? {1'b0,s_seedShiftReg[23:0]} : 25'd0;
-          assign s_macHighIn2    = (s_startReg) ? 0 : s_macHighReg;
-          assign s_macHigh1Next  = (s_multShiftReg[0]) ? s_seedShiftReg[47:24] : 0;
-          assign s_busyPipeNext  = (s_reset) ? 2'd0 : {s_busyPipeReg[0],s_multBusy};
+          assign q                 = s_result;
+          assign s_sum             = s_state0 + s_state3;
+          assign s_rotatedSum      = {s_sum[40:0], s_sum[63:41]};
+          assign s_result          = s_rotatedSum + s_state0;
+          assign s_shiftedState1   = {s_state1[46:0], 17'b0};
+          assign s_state3XorState1 = s_state3 ^ s_state1;
+          assign s_nextState0      = s_state0 ^ s_state3XorState1;
+          assign s_nextState1      = s_state1 ^ s_state2 ^ s_state0;
+          assign s_nextState2      = s_state2 ^ s_state0 ^ s_shiftedState1;
+          assign s_nextState3      = {s_state3XorState1[18:0], s_state3XorState1[63:19]};
 
           always @(posedge {{GlobalClock}})
           begin
-             if (s_reset) s_currentSeed <= s_initSeed;
-             else if (s_busyPipeReg == 2'b10) s_currentSeed <= {s_macHighReg,s_macLowReg[23:0]};
-          end
-
-          always @(posedge {{GlobalClock}})
-          begin
-                s_multShiftReg <= s_multShiftNext;
-                s_seedShiftReg <= s_seedShiftNext;
-                s_macLowReg    <= s_macLowIn1+s_macLowIn2;
-                s_macHighReg1  <= s_macHigh1Next;
-                s_macHighReg   <= s_macHighReg1+s_macHighIn2+s_macLowReg[24];
-                s_busyPipeReg  <= s_busyPipeNext;
-                s_startReg     <= s_start;
-                s_resetReg     <= s_resetNext;
-          end
-
-          always @(posedge {{GlobalClock}})
-          begin
-             if (s_reset) s_outputReg <= s_initSeed[({{nrOfBits}}-1):0];
-             else if ({{ClockEnable}}&enable) s_outputReg <= s_currentSeed[({{nrOfBits}}+11):12];
+             case (s_resetReg)
+                3'b010:
+                   if (clear)
+                   begin
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      s_resetReg <= 3'b001;
+                   end
+                   else if ({{ClockEnable}} && enable)
+                   begin
+                      s_state0 <= s_nextState0;
+                      s_state1 <= s_nextState1;
+                      s_state2 <= s_nextState2;
+                      s_state3 <= s_nextState3;
+                   end
+                3'b001:
+                   begin
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      s_resetReg <= 3'b101;
+                   end
+                3'b101:
+                   begin
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      s_resetReg <= clear ? 3'b001 : 3'b010;
+                   end
+                default:
+                   begin
+                      s_state0   <= {{initialState0}};
+                      s_state1   <= {{initialState1}};
+                      s_state2   <= {{initialState2}};
+                      s_state3   <= {{initialState3}};
+                      s_resetReg <= 3'b001;
+                   end
+             endcase
           end
           """);
     }

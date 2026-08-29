@@ -127,8 +127,14 @@ public final class LibraryManager {
     } catch (IOException e) {
       // Do nothing as we already have defined the default above
     }
-    if (currentDirectory != null) {
-      final var currentParts = currentDirectory.toString().split(Pattern.quote(File.separator));
+    String currentDirectoryPath = null;
+    try {
+      currentDirectoryPath = currentDirectory.getCanonicalPath();
+    } catch (IOException e) {
+      // Do nothing as we will use filename without relative association.
+    }
+    if (currentDirectoryPath != null) {
+      final var currentParts = currentDirectoryPath.split(Pattern.quote(File.separator));
       final var newParts = fileName.split(Pattern.quote(File.separator));
       final var nrOfNewParts = newParts.length;
       // note that the newParts includes the filename, whilst the old doesn't
@@ -324,7 +330,8 @@ public final class LibraryManager {
   }
 
   public LoadedLibrary loadLogisimLibrary(Loader loader, File toRead) {
-    var ret = findKnown(toRead);
+    final var descriptor = new LogisimProjectDescriptor(toRead);
+    var ret = findKnown(descriptor);
     if (ret != null) return ret;
 
     try {
@@ -334,9 +341,8 @@ public final class LibraryManager {
       return null;
     }
 
-    final var desc = new LogisimProjectDescriptor(toRead);
-    fileMap.put(desc, new WeakReference<>(ret));
-    invMap.put(ret, desc);
+    fileMap.put(descriptor, new WeakReference<>(ret));
+    invMap.put(ret, descriptor);
     return ret;
   }
 

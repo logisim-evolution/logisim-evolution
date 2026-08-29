@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-06-27T23:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Библиотека TCL
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Библиотека TCL
+      </h1>
+      <p>
+        Компоненты TCL позволяют создавать компоненты, поведение которых описывается TCL-скриптом.
+      </p>
+      <table>
+        <tbody>
+          <tr>
+            <td align="right">
+              <a href="redsconsole.html"><img class="iconlibs" src="../../../../icons/1616/tcl.png" alt="#########"></a>
+            </td>
+            <td>
+              <a href="redsconsole.html">Консоль REDS</a>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <a href="tclgeneric.html"><img class="iconlibs" src="../../../../icons/1616/tcl.png" alt="#########"></a>
+            </td>
+            <td>
+              <a href="tclgeneric.html">Универсальный TCL-компонент</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Спецификация TCL-скрипта
+      </h2>
+      <p>
+        TCL-скрипт запускается Logisim во вспомогательной оболочке (wrapper).
+      </p>
+      <h3>
+        API оболочки
+      </h3>
+      <p>
+        Оболочка предоставляет API, совместимый с API Questasim/Modelsim для проведения моделирования. Доступны следующие функции:
+      </p>
+      <dl>
+        <dt>
+          <code>examine &lt;сигнал&gt;</code>
+        </dt>
+        <dd>
+          Получает буферизованное значение сигнала. Возвращаемое значение представляет собой строку с двоичным значением сигнала.
+        </dd>
+        <dd>
+          <code>&lt;сигнал&gt;</code> — имя сигнала. Если имя содержит путь к сигналу (для Questasim), этот путь будет проигнорирован (например, <code>/top_sim/component2/Signal_2_i</code> превратится в <code>Signal_2_i</code>).
+        </dd>
+        <dd>
+          <i>Чтение отдельных битов (например, <code>examine Signal_2_i(3)</code>) не поддерживается.</i>
+        </dd>
+        <dd>
+          <br>
+        </dd>
+        <dt>
+          <code>force &lt;сигнал&gt; &lt;значение&gt;</code>
+        </dt>
+        <dd>
+          Устанавливает буферизованное значение сигнала.
+        </dd>
+        <dd>
+          <code>&lt;сигнал&gt;</code> — имя сигнала. Если имя содержит путь к сигналу (для Questasim), этот путь будет проигнорирован (например, <code>/top_sim/component2/Signal_2_i</code> превратится в <code>Signal_2_i</code>).
+        </dd>
+        <dd>
+          <code>&lt;значение&gt;</code> — строка с двоичным значением. Если строка неполная (отсутствуют старшие значащие биты), она будет дополнена символами X (например, значение <code>10100</code>, переданное для 8-разрядного сигнала, станет <code>XXX10100</code>).
+        </dd>
+        <dd>
+          <br>
+        </dd>
+        <dt>
+          <code>run</code>
+        </dt>
+        <dd>
+          Запрашивает у Logisim один шаг моделирования.
+        </dd>
+      </dl>
+      <h3>
+        Обратный вызов оболочки
+      </h3>
+      <p>
+        На каждом шаге моделирования оболочка вызывает функцию обратного вызова <code>refresh {}</code>. Обычно в нее помещают код, необходимый для чтения входов, расчета выходов, обновления графического интерфейса пользователя (GUI) и установки выходов.
+      </p>
+      <p>
+        Функции обратного вызова refresh запрещено содержать вызов функции <code>run</code>. В противном случае вы создадите бесконечный цикл, так как функция <code>run</code> выполняет шаг моделирования, который снова вызывает функцию refresh.
+      </p>
+      <code>refresh {} {<br></code>
+      <dl>
+        <dd>
+          <code># Чтение входов с помощью функции examine</code>
+        </dd>
+        <dd>
+          <code># Вычисление значений</code>
+        </dd>
+        <dd>
+          <code># Обновление графического интерфейса</code>
+        </dd>
+        <dd>
+          <code># Установка выходов с помощью функции force</code>
+        </dd>
+        <dt>
+          <code>}</code><br>
+          <a href="../index.html">Назад к <em>Справке по библиотеке</em></a><br>
+          <br>
+        </dt>
+      </dl>
+    </div>
+  </body>
+</html>
