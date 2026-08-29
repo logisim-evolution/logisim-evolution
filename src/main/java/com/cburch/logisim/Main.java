@@ -50,6 +50,7 @@ public class Main {
         FlatMacDarkLaf.installLafInfo();
         
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
+        AppPreferences.applyThemeColors();
         
         // Apply global font preference
         final var appFont = AppPreferences.APP_FONT.get();
