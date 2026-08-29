@@ -300,7 +300,7 @@ public class PortIo extends InstanceFactory {
         x += dx;
         y += dy;
       }
-      if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
+      if (dir == OUTPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.INPUT, e);
         ps[p].setToolTip(S.getter("pioOutputs", range));
         p++;
@@ -315,7 +315,7 @@ public class PortIo extends InstanceFactory {
     while (n > 0) {
       final var e = Math.min(n, BitWidth.MAXWIDTH);
       String range = "[" + i + "..." + (i + e - 1) + "]";
-      if (dir == OUTPUT || dir == INOUTSE || dir == INOUTME) {
+      if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.OUTPUT, e);
         ps[p].setToolTip(S.getter("pioInputs", range));
         p++;

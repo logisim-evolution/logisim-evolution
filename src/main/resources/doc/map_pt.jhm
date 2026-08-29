@@ -193,6 +193,14 @@
     <mapID target="io_Port_IO"          url="pt/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="pt/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="pt/html/libs/io/videorvb.html" />
+	<mapID target="ioex"                 url="en/html/libs/ioextra/index.html" />
+	<mapID target="ioex_switch"          url="en/html/libs/ioextra/switch.html" />
+	<mapID target="ioex_buzzer"          url="en/html/libs/ioextra/buzzer.html" />
+	<mapID target="ioex_slider"          url="en/html/libs/ioextra/slider.html" />
+	<mapID target="ioex_digitalscope"    url="en/html/libs/ioextra/digitalscope.html" />
+	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
+	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
+	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
 	<mapID target="ttl"                 url="en/html/libs/ttl/index.html" />
 	<mapID target="tcl"                 url="pt/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="pt/html/libs/tcl/reds_console.html" />
@@ -269,6 +277,9 @@
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
 	<mapID target="icon_tty"         url="icons/1616/tty.png" />
 	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
+	<mapID target="icon_ledbar"      url="icons/1616/ledbar.png" />
+	<mapID target="icon_realtimeclock" url="icons/1616/realtimeclock.png" />
+	<mapID target="icon_matrixkeypad"  url="icons/1616/matrixkeypad.png" />
 	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
 	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
 	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	

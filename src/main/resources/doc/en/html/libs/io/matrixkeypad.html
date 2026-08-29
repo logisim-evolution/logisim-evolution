@@ -12,7 +12,7 @@
     <div class="maindiv">
       <h1>
         <img class="iconlibs"
-            src="../../../../../resources/logisim/icons/matrixkeypad.gif"
+            src="../../../../icons/6464/matrixkeypad.png"
             alt="Matrix Keypad icon" width="32" height="32" align="middle">
         <em>Matrix Keypad</em>
       </h1>
@@ -35,23 +35,22 @@
       <dl>
         <dt>Raw Matrix</dt>
         <dd>
-          An unpressed column is unknown. A pressed key passes the value of its row input to the
-          corresponding column output. If simultaneously pressed keys drive incompatible known
-          values into one column, that column reports an error value.
+          While the keys are not pressed, the outputs (rows) are in a high-impedance state (Z).
+          Pressing a key passes the signal from the corresponding input (column) to the corresponding output (row).
         </dd>
         <dt>Pmod KYPD (Internal Pull-Up)</dt>
         <dd>
-          An unpressed column is 1. A pressed key connected to a row driven to 0 pulls its column
-          output to 0. Conflicting or erroneous row values produce an error value. This mode uses
-          the fixed Pmod KYPD labels, including 0, F, E, and D on the bottom row.
+          By default, the outputs (rows) are held at logic 1. Pressing a key passes the signal from the
+          corresponding input (column) to the corresponding output (row). This mode uses the fixed Pmod KYPD
+          layout (with symbols 0, F, E, and D on the bottom row).
         </dd>
       </dl>
 
       <h2>Pins</h2>
       <p>
-        Four 1-bit row inputs are located along the bottom edge, and four 1-bit column outputs are
-        located along the right edge. Each key connects the row and column that intersect at its
-        position while the key is pressed.
+        Four 1-bit inputs (columns) are located along the bottom edge, and four 1-bit outputs (rows) are 
+        located along the right edge. While pressed, each key connects the intersecting input and output 
+        at its position.
       </p>
 
       <h2>Attributes</h2>
@@ -79,8 +78,8 @@
 
       <h2>Poke Tool Behavior</h2>
       <p>
-        Press and hold a key to connect its row and column. The key remains pressed until the mouse
-        button is released.
+        Press and hold a key to connect the corresponding input (column) to the output (row). The key remains pressed
+        until the mouse button is released.
       </p>
 
       <h2>Text Tool Behavior</h2>

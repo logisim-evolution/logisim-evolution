@@ -55,17 +55,21 @@ public class BitFinder extends InstanceFactory {
           S.getter("bitFinderTypeAttr"),
           new AttributeOption[] {LOW_ONE, HIGH_ONE, LOW_ZERO, HIGH_ZERO});
 
+  static final int PRESENT = 0;
+  static final int INDEX = 1;
+  static final int INPUT = 2;
+
   public BitFinder() {
-    super(_ID, S.getter("bitFinderComponent"));
+    super(_ID, S.getter("bitFinderComponent"), new BitFinderHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, TYPE}, new Object[] {BitWidth.create(8), LOW_ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setIcon(new ArithmeticIcon("?"));
   }
 
-  private int computeOutputBits(int maxBits) {
+  static int computeOutputBits(int inputWidth) {
     int outWidth = 1;
-    while ((1 << outWidth) <= maxBits) outWidth++;
+    while ((1L << outWidth) < inputWidth) outWidth++;
     return outWidth;
   }
 
@@ -77,29 +81,35 @@ public class BitFinder extends InstanceFactory {
 
   private void configurePorts(Instance instance) {
     BitWidth inWidth = instance.getAttributeValue(StdAttr.WIDTH);
-    int outWidth = computeOutputBits(inWidth.getWidth() - 1);
+    int outWidth = computeOutputBits(inWidth.getWidth());
 
     Port[] ps = new Port[3];
-    ps[0] = new Port(-20, 20, Port.OUTPUT, BitWidth.ONE);
-    ps[1] = new Port(0, 0, Port.OUTPUT, BitWidth.create(outWidth));
-    ps[2] = new Port(-40, 0, Port.INPUT, inWidth);
+    ps[PRESENT] = new Port(-20, 20, Port.OUTPUT, BitWidth.ONE);
+    ps[INDEX] = new Port(0, 0, Port.OUTPUT, BitWidth.create(outWidth));
+    ps[INPUT] = new Port(-40, 0, Port.INPUT, inWidth);
 
     Object type = instance.getAttributeValue(TYPE);
     if (type == HIGH_ZERO) {
-      ps[0].setToolTip(S.getter("bitFinderPresentTip", "0"));
-      ps[1].setToolTip(S.getter("bitFinderIndexHighTip", "0"));
+      ps[PRESENT].setToolTip(S.getter("bitFinderPresentTip", "0"));
+      ps[INDEX].setToolTip(S.getter("bitFinderIndexHighTip", "0"));
     } else if (type == LOW_ZERO) {
-      ps[0].setToolTip(S.getter("bitFinderPresentTip", "0"));
-      ps[1].setToolTip(S.getter("bitFinderIndexLowTip", "0"));
+      ps[PRESENT].setToolTip(S.getter("bitFinderPresentTip", "0"));
+      ps[INDEX].setToolTip(S.getter("bitFinderIndexLowTip", "0"));
     } else if (type == HIGH_ONE) {
-      ps[0].setToolTip(S.getter("bitFinderPresentTip", "1"));
-      ps[1].setToolTip(S.getter("bitFinderIndexHighTip", "1"));
+      ps[PRESENT].setToolTip(S.getter("bitFinderPresentTip", "1"));
+      ps[INDEX].setToolTip(S.getter("bitFinderIndexHighTip", "1"));
     } else {
-      ps[0].setToolTip(S.getter("bitFinderPresentTip", "1"));
-      ps[1].setToolTip(S.getter("bitFinderIndexLowTip", "1"));
+      ps[PRESENT].setToolTip(S.getter("bitFinderPresentTip", "1"));
+      ps[INDEX].setToolTip(S.getter("bitFinderIndexLowTip", "1"));
     }
-    ps[2].setToolTip(S.getter("bitFinderInputTip"));
+    ps[INPUT].setToolTip(S.getter("bitFinderInputTip"));
     instance.setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    final var inputWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
+    return inputWidth < 3 ? "BitFinder_" + inputWidth + "_bit" : _ID;
   }
 
   @Override
@@ -152,10 +162,10 @@ public class BitFinder extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     int width = state.getAttributeValue(StdAttr.WIDTH).getWidth();
-    int outWidth = computeOutputBits(width - 1);
+    int outWidth = computeOutputBits(width);
     Object type = state.getAttributeValue(TYPE);
 
-    Value[] bits = state.getPortValue(2).getAll();
+    Value[] bits = state.getPortValue(INPUT).getAll();
     Value want;
     int i;
     if (type == HIGH_ZERO) {
@@ -186,7 +196,7 @@ public class BitFinder extends InstanceFactory {
     }
 
     int delay = outWidth * Adder.PER_DELAY;
-    state.setPort(0, present, delay);
-    state.setPort(1, index, delay);
+    state.setPort(PRESENT, present, delay);
+    state.setPort(INDEX, index, delay);
   }
 }
