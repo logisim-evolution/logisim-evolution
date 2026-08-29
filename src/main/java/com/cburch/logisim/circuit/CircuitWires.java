@@ -14,6 +14,8 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
+import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
@@ -508,6 +510,19 @@ public class CircuitWires {
   private HashSet<Component> tunnels = new HashSet<>(); // Components having Tunnel factory
   private HashSet<Component> pulls = new HashSet<>(); // Components having PullResistor factory
   private HashSet<Component> components = new HashSet<>(); // other Components
+  private HashMap<Wire, AttributeOption> wireBusWidthPos = new HashMap<>();
+
+  public AttributeOption getWireBusWidthPos(Wire w) {
+    return wireBusWidthPos.getOrDefault(w, Wire.BUS_WIDTH_POS_NONE);
+  }
+
+  public void setWireBusWidthPos(Wire w, AttributeOption pos) {
+    if (pos == null || pos == Wire.BUS_WIDTH_POS_NONE) {
+      wireBusWidthPos.remove(w);
+    } else {
+      wireBusWidthPos.put(w, pos);
+    }
+  }
 
   static final Logger logger = LoggerFactory.getLogger(CircuitWires.class);
 
@@ -866,6 +881,56 @@ public class CircuitWires {
     return v;
   }
 
+  private void drawBusWidthLabel(Graphics2D g, Wire wire, WireBundle wb, Location s, Location t) {
+    final var posOption = getWireBusWidthPos(wire);
+    if (posOption == null || posOption == Wire.BUS_WIDTH_POS_NONE
+        || wb == null || !wb.isValid() || !wb.isBus()) {
+      return;
+    }
+    final var bitWidth = wb.getWidth();
+    if (bitWidth.getWidth() <= 1) {
+      return;
+    }
+    final var len = wire.getLength();
+    final var offset = Math.min(20, len / 2);
+    int px, py;
+    if (posOption == Wire.BUS_WIDTH_POS_START) {
+      if (wire.isVertical()) {
+        px = s.getX();
+        py = s.getY() + offset;
+      } else {
+        px = s.getX() + offset;
+        py = s.getY();
+      }
+    } else if (posOption == Wire.BUS_WIDTH_POS_END) {
+      if (wire.isVertical()) {
+        px = t.getX();
+        py = t.getY() - offset;
+      } else {
+        px = t.getX() - offset;
+        py = t.getY();
+      }
+    } else { // CENTER
+      px = (s.getX() + t.getX()) / 2;
+      py = (s.getY() + t.getY()) / 2;
+    }
+    final var oldFont = g.getFont();
+    final var oldColor = g.getColor();
+    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    g.setColor(isDark ? new Color(200, 200, 200) : Color.DARK_GRAY);
+    GraphicsUtil.switchToWidth(g, 2);
+    g.drawLine(px - 4, py + 4, px + 4, py - 4);
+    final var label = String.valueOf(bitWidth.getWidth());
+    g.setFont(g.getFont().deriveFont(10.0f));
+    if (wire.isVertical()) {
+      GraphicsUtil.drawText(g, label, px + 6, py, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    } else {
+      GraphicsUtil.drawText(g, label, px, py - 6, GraphicsUtil.H_CENTER, GraphicsUtil.V_BOTTOM);
+    }
+    g.setFont(oldFont);
+    g.setColor(oldColor);
+  }
+
   void draw(ComponentDrawContext context, Collection<Component> hidden) {
     final var showState = context.getShowState();
     final var state = context.getCircuitState();
@@ -921,6 +986,8 @@ public class CircuitWires {
             g.drawLine(s.getX(), s.getY() + width, t.getX(), t.getY() + width);
           }
         }
+
+        drawBusWidthLabel(g, wire, wb, s, t);
       }
 
       for (final var loc : points.getAllLocations()) {
@@ -969,6 +1036,8 @@ public class CircuitWires {
             GraphicsUtil.switchToWidth(g, wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH);
             g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
           }
+
+          drawBusWidthLabel(g, wire, wb, s, t);
         }
       }
 

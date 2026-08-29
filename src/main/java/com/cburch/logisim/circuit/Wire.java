@@ -62,11 +62,22 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public static final double DOT_MULTIPLY_FACTOR = 1.35; // multiply factor for the intersection points
   public static final AttributeOption VALUE_HORZ = new AttributeOption("horz", S.getter("wireDirectionHorzOption"));
   public static final AttributeOption VALUE_VERT = new AttributeOption("vert", S.getter("wireDirectionVertOption"));
+  public static final AttributeOption BUS_WIDTH_POS_NONE = new AttributeOption("none", S.getter("wireBusWidthPosNoneOption"));
+  public static final AttributeOption BUS_WIDTH_POS_START = new AttributeOption("start", S.getter("wireBusWidthPosStartOption"));
+  public static final AttributeOption BUS_WIDTH_POS_CENTER = new AttributeOption("center", S.getter("wireBusWidthPosCenterOption"));
+  public static final AttributeOption BUS_WIDTH_POS_END = new AttributeOption("end", S.getter("wireBusWidthPosEndOption"));
 
   public static final Attribute<AttributeOption> DIR_ATTR = Attributes.forOption("direction", S.getter("wireDirectionAttr"), new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
   public static final Attribute<Integer> LEN_ATTR = Attributes.forInteger("length", S.getter("wireLengthAttr"));
+  public static final Attribute<AttributeOption> BUS_WIDTH_POS_ATTR =
+      Attributes.forOption(
+          "buswidthpos",
+          S.getter("wireBusWidthPosAttr"),
+          new AttributeOption[] {
+            BUS_WIDTH_POS_NONE, BUS_WIDTH_POS_START, BUS_WIDTH_POS_CENTER, BUS_WIDTH_POS_END
+          });
 
-  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(DIR_ATTR, LEN_ATTR);
+  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(DIR_ATTR, LEN_ATTR, BUS_WIDTH_POS_ATTR);
 
   private static final Cache cache = new Cache();
 
@@ -170,7 +181,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
     java.awt.Component dest = context.getDestination();
     final var x0 = e0.getX();
     final var y0 = e0.getY();
-    dest.repaint(x0 - 5, y0 - 5, e1.getX() - x0 + 10, e1.getY() - y0 + 10);
+    dest.repaint(x0 - 30, y0 - 30, e1.getX() - x0 + 60, e1.getY() - y0 + 60);
   }
 
   @Override

@@ -21,6 +21,7 @@ import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -788,6 +789,15 @@ public class Circuit {
 
   public Set<Wire> getWires() {
     return wires.getWires();
+  }
+
+  public AttributeOption getWireBusWidthPos(Wire w) {
+    return wires.getWireBusWidthPos(w);
+  }
+
+  public void setWireBusWidthPos(Wire w, AttributeOption pos) {
+    wires.setWireBusWidthPos(w, pos);
+    fireEvent(CircuitEvent.ACTION_INVALIDATE, w);
   }
 
   public Collection<Wire> getWires(Location loc) {

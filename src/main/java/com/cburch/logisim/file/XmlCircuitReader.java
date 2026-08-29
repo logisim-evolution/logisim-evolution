@@ -160,7 +160,15 @@ public class XmlCircuitReader extends CircuitTransaction {
 
     if (!pt0.equals(pt1)) {
       // Avoid zero length wires
-      mutator.add(dest, Wire.create(pt0, pt1));
+      final var w = Wire.create(pt0, pt1);
+      mutator.add(dest, w);
+      if (elt.hasAttribute("buswidthpos")) {
+        final var posStr = elt.getAttribute("buswidthpos");
+        final var opt = Wire.BUS_WIDTH_POS_ATTR.parse(posStr);
+        if (opt != null) {
+          dest.setWireBusWidthPos(w, opt);
+        }
+      }
     }
   }
 
