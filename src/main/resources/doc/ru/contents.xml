@@ -228,14 +228,14 @@
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
 		</tocitem>
 		-->
-		<tocitem target="ioex" text="Input/Output-Extra">
-			<tocitem target="ioex_switch" text="Switch" />
-			<tocitem target="ioex_buzzer" text="Buzzer" />
-			<tocitem target="ioex_slider" text="Slider" />
-			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" />
-			<tocitem target="ioex_plarom" text="Programmable Logic Array" />
-			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" />
-			<tocitem target="ioex_twopinled" text="2-Pin LED" />
+		<tocitem target="ioex" text="Дополнительный ввод/вывод">
+			<tocitem target="ioex_switch" text="Выключатель" image="icon_switch" />
+			<tocitem target="ioex_buzzer" text="Зуммер" image="icon_buzzer" />
+			<tocitem target="ioex_slider" text="Ползунок" image="icon_slider" />
+			<tocitem target="ioex_digitalscope" text="Цифровой осциллограф" image="icon_digitalscope" />
+			<tocitem target="ioex_plarom" text="ПЗУ на основе ПЛМ" image="icon_pla" />
+			<tocitem target="ioex_twowayswitch" text="Переключатель" image="icon_twowayswitch" />
+			<tocitem target="ioex_twopinled" text="2-контактный светодиод" image="icon_twopinled" />
 		</tocitem>
 		<tocitem target="soc" text = "Библиотека SoC">
 			<tocitem target="nios2_sim" text ="Имитационная модель процессора Nios2s" image="up_icon" />

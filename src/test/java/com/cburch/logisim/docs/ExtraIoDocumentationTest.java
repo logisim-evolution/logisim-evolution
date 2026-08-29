@@ -150,10 +150,11 @@ class ExtraIoDocumentationTest {
       }
 
       for (final var target : TARGET_PAGES.entrySet()) {
+        final var expectedLanguage = "ru".equals(language) ? "ru" : "en";
         assertEquals(
-            "en/html/libs/ioextra/" + target.getValue() + ".html",
+            expectedLanguage + "/html/libs/ioextra/" + target.getValue() + ".html",
             actualEntries.get(target.getKey()),
-            () -> language + " JavaHelp map has an incorrect Extra I/O fallback");
+            () -> language + " JavaHelp map has an incorrect Extra I/O mapping");
       }
     }
   }
