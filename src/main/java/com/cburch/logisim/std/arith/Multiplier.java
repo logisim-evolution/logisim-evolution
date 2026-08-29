@@ -46,7 +46,7 @@ public class Multiplier extends InstanceFactory {
   public static final AttributeOption SIGNED_OPTION =
       new AttributeOption("twosComplement", "twosComplement", S.getter("twosComplementOption"));
   public static final AttributeOption SIGNED_UNSIGNED_OPTION =
-      new AttributeOption("signedUnsigned", "signedUnsigned", S.getter("signedUnsignedOption"));
+      new AttributeOption("signedUnsigned", "signedUnsigned", S.getter("multiplierSignedUnsignedOption"));
   public static final AttributeOption UNSIGNED_OPTION =
       new AttributeOption("unsigned", "unsigned", S.getter("unsignedOption"));
   public static final Attribute<AttributeOption> MODE_ATTR =
