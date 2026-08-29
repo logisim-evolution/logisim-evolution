@@ -3,7 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Added a new signed/unsigned option to the multiplier component.
+  * Added a new signed/unsigned option to the multiplier component.(Diogo-Valadares)
   * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
   * Added contributor guidance and an online component overview for the TTL library.
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
