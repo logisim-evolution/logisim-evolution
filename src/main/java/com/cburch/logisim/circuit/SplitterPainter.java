@@ -165,15 +165,22 @@ class SplitterPainter {
     var dy = parms.getEndToEndDeltaY();
     final var dxEndSpine = parms.getEndToSpineDeltaX();
     final var dyEndSpine = parms.getEndToSpineDeltaY();
+    final var endBitCounts = new int[attrs.fanout + 1];
+    for (final var b : attrs.bitEnd) {
+      if (b >= 1 && b <= attrs.fanout) {
+        endBitCounts[b]++;
+      }
+    }
 
     final var g = context.getGraphics();
     final var oldColor = g.getColor();
-    GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     for (int i = 0, n = attrs.fanout; i < n; i++) {
       if (showState) {
         final var val = state.getValue(Location.create(x, y, true));
         g.setColor(val.getColor());
       }
+      final var width = endBitCounts[i + 1] >= 2 ? Wire.WIDTH_BUS : Wire.WIDTH;
+      GraphicsUtil.switchToWidth(g, width);
       g.drawLine(x, y, x + dxEndSpine, y + dyEndSpine);
       x += dx;
       y += dy;
