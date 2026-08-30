@@ -205,16 +205,15 @@
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
 		</tocitem>
 		-->
-		<!-- Input/output-Extra
 		<tocitem target="ioex" text="Input/Output-Extra">
-			<tocitem target="ioex_proggen" text="Progr. generator" image="ioex_***********" />
-			<tocitem target="ioex_switch" text="switch" image="ioex_***********" />
-			<tocitem target="ioex_buzzer" text="Buzzer" image="ioex_***********" />
-			<tocitem target="ioex_slider" text="Slider" image="ioex_***********" />
-			<tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="ioex_***********" />
-			<tocitem target="ioex_plarom" text="Programmable logic array ROM" image="ioex_***********" />
+			<tocitem target="ioex_switch" text="Switch" />
+			<tocitem target="ioex_buzzer" text="Buzzer" />
+			<tocitem target="ioex_slider" text="Slider" />
+			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" />
+			<tocitem target="ioex_plarom" text="Programmable Logic Array" />
+			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" />
+			<tocitem target="ioex_twopinled" text="2-Pin LED" />
 		</tocitem>
-		-->
 		<tocitem target="soc" text = "SOC library">
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
 			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />

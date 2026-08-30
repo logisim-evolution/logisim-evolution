@@ -130,6 +130,7 @@ public class SelectionActions {
 
     ArrayList<String> dropped = null;
     final var clip = Clipboard.get();
+    if (clip == null) return null;
     final var comps = clip.getComponents();
     final var factoryReplacements = new HashMap<ComponentFactory, ComponentFactory>();
     for (final var comp : comps) {

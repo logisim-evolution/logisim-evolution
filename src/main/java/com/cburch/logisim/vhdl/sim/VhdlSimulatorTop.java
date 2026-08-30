@@ -18,7 +18,9 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.SocketClient;
 import com.cburch.logisim.util.Softwares;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
+import com.cburch.logisim.vhdl.base.VhdlParser;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants.State;
 import java.io.File;
@@ -27,7 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import javax.help.UnsupportedOperationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +46,8 @@ import org.slf4j.LoggerFactory;
  */
 public class VhdlSimulatorTop implements CircuitListener {
 
-  private final VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
-  private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
+  private final VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop();
+  private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp();
   private VhdlSimulatorTclBinder tclBinder;
   private final SocketClient socketClient = new SocketClient();
 
@@ -197,24 +201,87 @@ public class VhdlSimulatorTop implements CircuitListener {
       e.printStackTrace();
     }
 
-    List<Component> vhdlComponents = VhdlSimConstants.getVhdlComponents(project.getCircuitState(), true);
-    for (int index = 0; index < vhdlComponents.size(); index++) {
-      ComponentFactory fact = vhdlComponents.get(index).getFactory();
-      String label = VhdlSimConstants.VHDL_COMPONENT_SIM_NAME + index;
-      if (fact instanceof VhdlEntity)
-        ((VhdlEntity) fact).setSimName(vhdlComponents.get(index).getAttributeSet(), label);
-      else
-        ((VhdlEntityComponent) fact).setSimName(vhdlComponents.get(index).getAttributeSet(), label);
+    final var vhdlComponents =
+        VhdlSimConstants.getVhdlComponents(project.getCircuitState(), true);
+    final var simulationComponents = configureSimulationComponents(vhdlComponents);
+    final var projectSources =
+        collectVhdlSources(project.getLogisimFile().getVhdlContents(), vhdlComponents);
+
+    vhdlTop.generate(simulationComponents);
+
+    final var sourceNames = new ArrayList<String>();
+    for (final var source : projectSources) {
+      saveProjectSource(source);
+      sourceNames.add(source.getName());
     }
 
-    vhdlTop.generate(vhdlComponents);
-    tclRun.generate(vhdlComponents);
+    /* Preserve the legacy embedded component path, which still uses a per-instance entity name. */
+    for (final var comp : vhdlComponents) {
+      if (comp.getFactory() instanceof VhdlEntityComponent entity) {
+        entity.saveFile(comp.getAttributeSet());
+        sourceNames.add(entity.getSimName(comp.getAttributeSet()));
+      }
+    }
 
-    /* Generate each component's file */
-    for (Component comp : vhdlComponents) {
-      ComponentFactory fact = comp.getFactory();
-      if (fact instanceof VhdlEntity) ((VhdlEntity) fact).saveFile(comp.getAttributeSet());
-      else ((VhdlEntityComponent) fact).saveFile(comp.getAttributeSet());
+    tclRun.generate(sourceNames);
+  }
+
+  static List<VhdlSimulatorComponent> configureSimulationComponents(
+      List<Component> components) {
+    final var result = new ArrayList<VhdlSimulatorComponent>(components.size());
+    for (var index = 0; index < components.size(); index++) {
+      final var component = components.get(index);
+      final var attrs = component.getAttributeSet();
+      final ComponentFactory factory = component.getFactory();
+
+      if (factory instanceof VhdlEntity entity) {
+        final var entityName = entity.getContent().getName();
+        final var simulationName = createSimulationName(entityName, index);
+        entity.setSimName(attrs, simulationName);
+        result.add(
+            new VhdlSimulatorComponent(entityName, simulationName, entity.getContent().getPorts()));
+      } else if (factory instanceof VhdlEntityComponent entity) {
+        entity.setSimName(attrs, VhdlSimConstants.VHDL_COMPONENT_SIM_NAME + index);
+        final var simulationName = entity.getSimName(attrs);
+        final var ports = new ArrayList<VhdlParser.PortDescription>();
+        for (final var port : attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getPorts()) {
+          ports.add(
+              new VhdlParser.PortDescription(
+                  port.getName(), port.getType(), port.getWidthInt()));
+        }
+        result.add(new VhdlSimulatorComponent(simulationName, simulationName, ports));
+      }
+    }
+    return result;
+  }
+
+  static List<VhdlContent> collectVhdlSources(
+      List<VhdlContent> projectSources, List<Component> placedComponents) {
+    final var sources = new LinkedHashMap<String, VhdlContent>();
+    for (final var source : projectSources) {
+      sources.putIfAbsent(source.getName().toLowerCase(Locale.ROOT), source);
+    }
+    for (final var component : placedComponents) {
+      if (component.getFactory() instanceof VhdlEntity entity) {
+        final var source = entity.getContent();
+        sources.putIfAbsent(source.getName().toLowerCase(Locale.ROOT), source);
+      }
+    }
+    return List.copyOf(sources.values());
+  }
+
+  static String createSimulationName(String entityName, int index) {
+    return VhdlSimConstants.VHDL_COMPONENT_SIM_NAME + entityName + "_" + index;
+  }
+
+  private static void saveProjectSource(VhdlContent source) {
+    try (final var writer =
+        new java.io.PrintWriter(
+            VhdlSimConstants.SIM_SRC_PATH + source.getName() + ".vhdl",
+            VhdlSimConstants.ENCODING)) {
+      writer.print(source.getContent());
+    } catch (IOException e) {
+      logger.error("Could not create VHDL file: {}", e.getMessage());
     }
   }
 

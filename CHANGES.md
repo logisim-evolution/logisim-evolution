@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
   * Added contributor guidance and an online component overview for the TTL library.
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
@@ -24,6 +25,7 @@
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Added Floating Point Constant component.
+  * Added FPGA HDL support for the Bit Finder component [#2890] (@hewzhew).
   * Added 444 RGB (12 bit) color mode to the RGB Video component.
   * Modified paste behavior to paste at current mouse location if it is on canvas.
   * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
@@ -69,10 +71,14 @@
     Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Fixed output-only Port I/O components being reported as multiple drivers during FPGA netlist
+    generation, and corrected the symmetric input-only endpoint direction [#2537] (@henriquejsza).
   * Improved project editing stability:
     * Layout zoom and scroll position are remembered separately for each circuit during a session.
     * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
     * Moving components preserves component state.
+    * RAM components continue to notify their circuit of memory changes after being moved [#2873]
+      (@henriquejsza).
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.
     * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.
@@ -82,6 +88,8 @@
     * VHDL code view no longer paints a circuit canvas without a circuit.
     * VHDL simulator log split pane remains recoverable after being maximized.
     * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
+    * VHDL co-simulation now analyzes project-local entities in library order and preserves their
+      canonical names for dependency resolution [#1350] (@hewzhew).
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
     * Invalid command-line option values now return a nonzero exit status.
@@ -92,6 +100,7 @@
     libraries, wire values, transistor behavior, and unused-library save options.
   * Added a default text-tool color preference and synchronized string-option preference updates.
   * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
+  * Added a Github Action check ensuring PRs also provide updated changel(@MarcinOrlowski).
   * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)

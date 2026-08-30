@@ -115,6 +115,26 @@ public class SelectionAttributes extends AbstractAttributeSet {
     }
   }
 
+  @Override
+  public boolean isReadOnly(Attribute<?> attr) {
+    for (final var objAttrs : selected.keySet()) {
+      if (objAttrs.isReadOnly(attr)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isToSave(Attribute<?> attr) {
+    for (final var objAttrs : selected.keySet()) {
+      if (!objAttrs.isToSave(attr)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private class Listener implements SelectionListener, AttributeListener {
     //
     // AttributeSet listener
@@ -128,14 +148,15 @@ public class SelectionAttributes extends AbstractAttributeSet {
     @Override
     public void attributeValueChanged(AttributeEvent e) {
       if (selected.containsKey(e.getSource())) {
-        @SuppressWarnings("unchecked")
-        Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
         final var attrs = SelectionAttributes.this.selAttrs;
         final var values = SelectionAttributes.this.selValues;
         for (var i = 0; i < attrs.length; i++) {
-          if (attrs[i] == attr) {
-            values[i] = getSelectionValue(attr, selected.keySet());
-            fireAttributeValueChanged(attr, values[i], null);
+          @SuppressWarnings("unchecked")
+          final var a = (Attribute<Object>) attrs[i];
+          final var newValue = getSelectionValue(a, selected.keySet());
+          if (!Objects.equals(values[i], newValue)) {
+            values[i] = newValue;
+            fireAttributeValueChanged(a, newValue, null);
           }
         }
       }
