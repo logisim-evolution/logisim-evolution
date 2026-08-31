@@ -99,6 +99,7 @@
     * Invalid command-line option values now return a nonzero exit status.
     * Intel/Altera FPGA downloads can select an exact Quartus cable with `--fpga-cable`.
     * TTY table output includes bit widths in headers.
+    * Updated the command-line option reference to match the current interface [#1546] (@hewzhew).
     * Localized the Assembly Viewer.
   * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
     libraries, wire values, transistor behavior, and unused-library save options.

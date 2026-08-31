@@ -3,241 +3,172 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2021-05-22T11:23:21.115000000">
+    <meta name="changed" content="2026-08-31T00:00:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
-    <title>
-      Command-line options
-    </title>
+    <title>Command-line options</title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
-      <h1>
-        Command-line options
-      </h1>
+      <h1>Command-line options</h1>
       <p>
-        You can configure many of Logisim's application preferences via command line options. This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program.
-      </p>
-      <p>
-        The overall command-line syntax is as follows.
+        Command-line options can select startup preferences, run a project without the graphical
+        interface, or invoke verification and FPGA workflows. The general syntax is:
       </p>
       <blockquote>
-        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
-</pre>
+        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[project-files]</i></pre>
       </blockquote>
       <p>
-        The optional additional files named on the command line will be opened as separate windows within Logisim.
-      </p>
-      <p>
-        The following example starts Logisim in its basic configuration.
+        Project files that are not consumed as option arguments are opened by Logisim-evolution.
+        Long option names are shown below; where available, the equivalent short name is shown
+        first. For example:
       </p>
       <blockquote>
-        <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
-</pre>
+        <pre>java -jar <i><b>jarFileName</b></i> --user-template plain --gates ansi --locale en</pre>
       </blockquote>
-      <p>
-        Supported options include the following.
-      </p>
+
+      <h2>General options</h2>
       <dl>
-        <dt>
-          <tt>-plain</tt>
-        </dt>
-        <dt>
-          <tt>-empty</tt>
-        </dt>
-        <dt>
-          <tt>-template <b><i>templateFile</i></b></tt>
-        </dt>
+        <dt><tt>-h, --help</tt></dt>
+        <dd><p>Displays the current command-line option summary and exits.</p></dd>
+
+        <dt><tt>-v, --version</tt></dt>
+        <dd><p>Displays version and build information and exits.</p></dd>
+
+        <dt><tt>--clear-prefs</tt></dt>
+        <dd><p>Clears saved application preferences at startup.</p></dd>
+
+        <dt><tt>-g, --gates <i>[ansi|iec]</i></tt></dt>
+        <dd><p>Selects ANSI-shaped or IEC-rectangular gate symbols.</p></dd>
+
+        <dt><tt>-m, --geometry <i>WIDTHxHEIGHT[+X+Y]</i></tt></dt>
         <dd>
           <p>
-            Configures the template for Logisim to use.
+            Sets the main-window dimensions and, when supplied, the position of its upper-left
+            corner. For example: <tt>--geometry 600x400+100+100</tt>.
           </p>
         </dd>
-        <dt>
-          <tt>-gates <i>[<b>shaped</b>|<b>rectangular</b>]</i></tt>
-        </dt>
+
+        <dt><tt>-o, --locale <i>LANGUAGE</i></tt></dt>
         <dd>
-          <p>
-            Configures which type of gate to use.
-          </p>
-        </dd>
-        <dt>
-          <tt>-locale <i><b>localeIdentifier</b></i></tt>
-        </dt>
-        <dd>
-          <p>
-            Configures which translation to use. As of this writing, the supported locales include:
-          </p>
+          <p>Selects one of the supported locale identifiers:</p>
           <table>
             <tbody>
-              <tr>
-                <td>
-                  <tt>de</tt> German
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>el</tt> Greek
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>en</tt> English
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>es</tt> Spanish
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>fr</tt> French
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>pt</tt> Portugais
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>ru</tt> Russian
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>it</tt> Italian
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <tt>nl</tt> Dutch
-                </td>
-              </tr>
-			  <tr>
-                <td>
-                  <tt>jp</tt> Japanese
-                </td>
-              </tr>
+              <tr><td><tt>de</tt> German</td></tr>
+              <tr><td><tt>el</tt> Greek</td></tr>
+              <tr><td><tt>en</tt> English</td></tr>
+              <tr><td><tt>es</tt> Spanish</td></tr>
+              <tr><td><tt>fr</tt> French</td></tr>
+              <tr><td><tt>pt</tt> Portuguese</td></tr>
+              <tr><td><tt>ru</tt> Russian</td></tr>
+              <tr><td><tt>it</tt> Italian</td></tr>
+              <tr><td><tt>nl</tt> Dutch</td></tr>
+              <tr><td><tt>ja</tt> Japanese</td></tr>
+              <tr><td><tt>pl</tt> Polish</td></tr>
+              <tr><td><tt>zh</tt> Simplified Chinese</td></tr>
             </tbody>
           </table>
         </dd>
-        <dt>
-          <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
-        </dt>
+
+        <dt><tt>-u, --user-template <i>[empty|plain|FILE]</i></tt></dt>
         <dd>
           <p>
-            This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <i>no</i>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.
+            Selects the empty template, the default plain template, or a readable custom template
+            file.
           </p>
         </dd>
-        <dt>
-          <tt>-clearprops</tt>
-        </dt>
+
+        <dt><tt>--no-splash</tt></dt>
+        <dd><p>Hides the splash screen at startup.</p></dd>
+
+        <dt><tt>-s, --substitute <i>LIBRARY1 LIBRARY2</i></tt></dt>
         <dd>
           <p>
-            Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time.
-          </p>
-        </dd>
-        <dt>
-          <tt>-nosplash</tt>
-        </dt>
-        <dd>
-          <p>
-            Hides the initial Logisim splash screen.
-          </p>
-        </dd>
-        <dt>
-          <tt>-help</tt>
-        </dt>
-        <dd>
-          <p>
-            Displays a summary of the command line options.
-          </p>
-        </dd>
-        <dt>
-          <tt>-version</tt>
-        </dt>
-        <dd>
-          <p>
-            Displays the Logisim version number.
-          </p>
-        </dd>
-        <dt>
-          <tt>-analyze</tt>
-        </dt>
-        <dd>
-          <p>
-            Displays the combinatorial analysis menus.
-          </p>
-        </dd>
-        <dt>
-          <tt>-load <i><b>filename</b></i></tt>
-        </dt>
-        <dd>
-          <p>
-            Load an image in RAM (works only with -tty)
-          </p>
-        </dd>
-        <dt>
-          <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
-        </dt>
-        <dd>
-          <p>
-            load the file by replacing the library file (file1) with the library file (file2). More information in <a href="../verify/sub.html">Substituting libraries</a>
-          </p>
-        </dd>
-        <dt>
-          <tt>-tty</tt> [<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]
-        </dt>
-        <dd>
-          <p>
-            Run without GUI. More information in <a href="../verify/other.html">Other verification</a>
-          </p>
-        </dd>
-        <dt>
-          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
-        </dt>
-        <dd>
-          <p>
-            Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More information in <a href="../verify/test.html">Window Text Vector</a>
-          </p>
-        </dd>
-        <dt>
-          <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
-        </dt>
-        <dd>
-          <p>
-            Opens Logisim with a window dimensioned according to the parameters W (width) and H (height) or with the upper left corner positioned according to the parameters X,Y.<br>
-            Example: -geom 600x400+100+100
+            Replaces references to <i>LIBRARY1</i> with <i>LIBRARY2</i> while loading projects. See
+            <a href="../verify/sub.html">Substituting libraries</a>.
           </p>
         </dd>
       </dl>
-      <h2>
-        Undocumented Options
-      </h2>
+
+      <h2>TTY simulation options</h2>
+      <dl>
+        <dt><tt>-t, --tty <i>FORMAT[,FORMAT...]</i></tt></dt>
+        <dd>
+          <p>
+            Runs without the graphical interface. Accepted comma-separated formats are
+            <tt>table</tt>, <tt>speed</tt>, <tt>tty</tt>, <tt>halt</tt>, <tt>stats</tt>,
+            <tt>binary</tt>, <tt>hex</tt>, <tt>csv</tt>, and <tt>tabs</tt>. See
+            <a href="../verify/other.html">Other verification options</a>.
+          </p>
+        </dd>
+
+        <dt><tt>-l, --load <i>FILE [LABEL]</i></tt></dt>
+        <dd>
+          <p>
+            Loads a memory image before a TTY simulation. With a label, it applies to matching RAM
+            and ROM components; without one, it supplies the fallback image. The option may be
+            repeated for different labels and works only with <tt>--tty</tt>.
+          </p>
+        </dd>
+
+        <dt><tt>--save <i>FILE</i></tt></dt>
+        <dd>
+          <p>
+            Saves RAM contents to an image file after a TTY run. This option works only with
+            <tt>--tty</tt>.
+          </p>
+        </dd>
+
+        <dt><tt>--toplevel-circuit <i>NAME</i></tt></dt>
+        <dd><p>Selects the circuit to use as the top-level circuit.</p></dd>
+      </dl>
+
+      <h2>Verification and conversion options</h2>
+      <dl>
+        <dt><tt>-w, --test-vector <i>CIRCUIT VECTOR_FILE PROJECT_FILE</i></tt></dt>
+        <dd>
+          <p>
+            Runs <i>VECTOR_FILE</i> against <i>CIRCUIT</i> in <i>PROJECT_FILE</i>, then exits. See
+            <a href="../verify/test.html">Test vectors</a>.
+          </p>
+        </dd>
+
+        <dt><tt>-b, --test-circuit <i>CIRC_FILE</i></tt></dt>
+        <dd><p>Opens a project, runs its test bench, reports success or failure, and exits.</p></dd>
+
+        <dt><tt>-n, --new-file-format <i>INPUT OUTPUT</i></tt></dt>
+        <dd>
+          <p>
+            Opens <i>INPUT</i> as a Logisim project and writes it to <i>OUTPUT</i> using the current
+            Logisim-evolution file format.
+          </p>
+        </dd>
+      </dl>
+
+      <h2>FPGA options</h2>
       <dl>
         <dt>
-          <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+          <tt>-f, --test-fpga <i>CIRC_FILE CIRCUIT BOARD [TICK_FREQUENCY] [HDLONLY]</i></tt>
         </dt>
-        <dd></dd>
-        <dt>
-          <tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt>
-        </dt>
-        <dd></dd>
-        <dt>
-          <tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt>
-        </dt>
-        <dd></dd>
-        <dt>
-          <tt>-questa<i>[<b>yes</b>|<b>no</b>]</i></tt>
-        </dt>
-        <dd></dd>
+        <dd>
+          <p>
+            Runs the FPGA implementation flow for <i>CIRCUIT</i> on <i>BOARD</i>. The optional tick
+            frequency is in hertz. <tt>HDLONLY</tt> stops after HDL generation; the two optional
+            values may be supplied in either order.
+          </p>
+        </dd>
+
+        <dt><tt>--fpga-cable <i>NAME</i></tt></dt>
+        <dd>
+          <p>
+            Selects an Intel/Altera Quartus cable by its exact reported name. This option requires
+            <tt>--test-fpga</tt> and is only valid for Intel/Altera targets.
+          </p>
+        </dd>
       </dl>
-      <p>
-        <b>Next:</b> <a href="../index.html">User's Guide</a>.
-      </p>
+
+      <p><b>Next:</b> <a href="../index.html">User's Guide</a>.</p>
     </div>
   </body>
 </html>
