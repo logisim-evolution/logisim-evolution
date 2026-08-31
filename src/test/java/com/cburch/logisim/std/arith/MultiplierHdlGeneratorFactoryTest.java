@@ -20,21 +20,28 @@ class MultiplierHdlGeneratorFactoryTest {
 
   @Test
   void unsignedNumericTypeSetsUnsignedMultiplierGeneric() {
-    final var parameters = parametersFor(Comparator.UNSIGNED_OPTION);
+    final var parameters = parametersFor(Multiplier.UNSIGNED_OPTION);
+
+    assertEquals("0", parameters.get("unsignedMultiplier"));
+  }
+
+  @Test
+  void signedUnsignedNumericTypeSetsSignedUnsignedMultiplierGeneric() {
+    final var parameters = parametersFor(Multiplier.SIGNED_UNSIGNED_OPTION);
 
     assertEquals("1", parameters.get("unsignedMultiplier"));
   }
 
   @Test
   void twosComplementNumericTypeClearsUnsignedMultiplierGeneric() {
-    final var parameters = parametersFor(Comparator.SIGNED_OPTION);
+    final var parameters = parametersFor(Multiplier.SIGNED_OPTION);
 
-    assertEquals("0", parameters.get("unsignedMultiplier"));
+    assertEquals("2", parameters.get("unsignedMultiplier"));
   }
 
   private static Map<String, String> parametersFor(AttributeOption numericType) {
     final var attrs = new Multiplier().createAttributeSet();
-    attrs.setValue(Comparator.MODE_ATTR, numericType);
+    attrs.setValue(Multiplier.MODE_ATTR, numericType);
     return new ExposedMultiplierHdlGeneratorFactory().parameterMap(attrs);
   }
 
