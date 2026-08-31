@@ -290,7 +290,7 @@ final class XmlWriter {
       ret.appendChild(appear);
     }
     for (final var wire : circuit.getWires()) {
-      ret.appendChild(fromWire(wire));
+      ret.appendChild(fromWire(wire, circuit));
     }
     for (final var comp : circuit.getNonWires()) {
       final var elt = fromComponent(comp);
@@ -537,10 +537,14 @@ final class XmlWriter {
     return elt;
   }
 
-  Element fromWire(Wire w) {
+  Element fromWire(Wire w, Circuit circuit) {
     final var ret = doc.createElement("wire");
     ret.setAttribute("from", w.getEnd0().toString());
     ret.setAttribute("to", w.getEnd1().toString());
+    final var pos = circuit.getWireBusWidthPos(w);
+    if (pos != null && pos != Wire.BUS_WIDTH_POS_NONE) {
+      ret.setAttribute("buswidthpos", pos.getValue().toString());
+    }
     return ret;
   }
 

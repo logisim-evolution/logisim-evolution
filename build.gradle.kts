@@ -417,6 +417,9 @@ tasks.register("createNeededJavaModules") {
   description = "Creates a file containing the jdeps dependencies"
   dependsOn("shadowJar")
 
+  // AWT loads accessibility providers from user configuration at runtime, so jdeps cannot detect
+  // this optional module through static analysis.
+  val additionalJavaModules = listOf("jdk.accessibility")
   val libsDir = ext.get(LIBS_DIR) as String
   val shadowJarFilename = ext.get(SHADOW_JAR_FILE_NAME) as String
   val jarFileName = "${libsDir}/${shadowJarFilename}"
@@ -424,10 +427,18 @@ tasks.register("createNeededJavaModules") {
   val cmd = listOf(ext.get(JDEPS) as String, "--multi-release", "base","--print-module-deps", "--ignore-missing-deps", jarFileName)
 
   inputs.file(jarFileName)
+  inputs.property("additionalJavaModules", additionalJavaModules)
   outputs.file(outFileName)
 
   doLast {
-    val neededJavaModules = func.runCommand(cmd, "Error while finding Java dependencies with jdeps.").trim()
+    val neededJavaModules =
+        (func.runCommand(cmd, "Error while finding Java dependencies with jdeps.").split(',') +
+            additionalJavaModules)
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .distinct()
+            .sorted()
+            .joinToString(",")
     File(outFileName).writeText(neededJavaModules)
     func.verifyFileExists(outFileName)
   }
