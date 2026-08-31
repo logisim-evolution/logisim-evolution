@@ -108,7 +108,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       if (value < 0) {
         return S.get("splitterBitNone");
       } else {
-        var ret = "" + value;
+        var ret = S.get("splitterBitEndOption", "" + value);
         Direction noteDir;
         if (value == 0) {
           noteDir = isVertical ? Direction.NORTH : Direction.EAST;
