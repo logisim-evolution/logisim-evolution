@@ -75,6 +75,8 @@
     Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Fixed FPGA component mappings losing their board highlights when the mapping dialog is reopened
+    [#2933] (@hewzhew).
   * Fixed output-only Port I/O components being reported as multiple drivers during FPGA netlist
     generation, and corrected the symmetric input-only endpoint direction [#2537] (@henriquejsza).
   * Improved project editing stability:
