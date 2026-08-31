@@ -160,7 +160,7 @@ jobs:
           ref: 'main'
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -254,7 +254,7 @@ jobs:
           ref: 'main'
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -312,7 +312,7 @@ jobs:
           ref: ${{ github.ref_name }}
 
       - name: Set up aarch64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -333,7 +333,7 @@ jobs:
           name: ${{ needs.git_check.outputs.base_name }}-aarch64.dmg
 
       - name: Set up x86_64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -369,7 +369,7 @@ jobs:
       - name: "Checkout sources"
         uses: actions/checkout@v7
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -411,7 +411,7 @@ jobs:
 #      - name: "Checkout sources"
 #        uses: actions/checkout@v7
 #      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-#        uses: actions/setup-java@v5
+#        uses: actions/setup-java@v6
 #        with:
 #          java-version: ${{ env.JDK_VERSION }}
 #          distribution: ${{ env.JDK_DISTRO }}
