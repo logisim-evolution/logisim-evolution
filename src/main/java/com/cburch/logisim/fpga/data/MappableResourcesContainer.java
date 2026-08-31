@@ -109,7 +109,7 @@ public class MappableResourcesContainer {
           myMappableResources.put(key, new MapComponent(key, newMappableResources.get(key)));
         } else {
           var newMap = new MapComponent(key, newMappableResources.get(key));
-          newMap.copyMapFrom(comp);
+          newMap.copyMapFrom(comp, myIOComponents);
           myMappableResources.put(key, newMap);
         }
         cur.remove(key);
