@@ -15,6 +15,7 @@ import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.util.Collection;
@@ -55,25 +56,48 @@ class SelectionAttributes extends AbstractAttributeSet {
     setListening(true);
   }
 
-  private static LinkedHashMap<Attribute<Object>, Object> computeAttributes(
+  private LinkedHashMap<Attribute<Object>, Object> computeAttributes(
       Collection<Component> newSel) {
     final var attrMap = new LinkedHashMap<Attribute<Object>, Object>();
     final var sit = newSel.iterator();
     if (sit.hasNext()) {
-      final var first = sit.next().getAttributeSet();
+      final var firstComp = sit.next();
+      final var first = firstComp.getAttributeSet();
+      final var circ = canvas.getCircuit();
       for (Attribute<?> attr : first.getAttributes()) {
         @SuppressWarnings("unchecked")
         final var attrObj = (Attribute<Object>) attr;
-        attrMap.put(attrObj, first.getValue(attr));
+        Object val = first.getValue(attr);
+        if (Wire.BUS_WIDTH_POS_ATTR.equals(attr) && firstComp instanceof Wire w && circ != null) {
+          final var bw = circ.getWidth(w.getEnd0());
+          if (bw.getWidth() <= 1) {
+            continue; // Hide attribute for 1-bit
+          }
+          val = circ.getWireBusWidthPos(w);
+        }
+        attrMap.put(attrObj, val);
       }
       while (sit.hasNext()) {
-        final var next = sit.next().getAttributeSet();
+        final var nextComp = sit.next();
+        final var next = nextComp.getAttributeSet();
         final var ait = attrMap.keySet().iterator();
         while (ait.hasNext()) {
           final var attr = ait.next();
+          if (Wire.BUS_WIDTH_POS_ATTR.equals(attr) && nextComp instanceof Wire w && circ != null) {
+            final var bw = circ.getWidth(w.getEnd0());
+            if (bw.getWidth() <= 1) {
+              ait.remove();
+              continue;
+            }
+          }
           if (next.containsAttribute(attr)) {
             final var v = attrMap.get(attr);
-            if (v != null && !v.equals(next.getValue(attr))) {
+            Object nv = next.getValue(attr);
+            if (Wire.BUS_WIDTH_POS_ATTR.equals(attr) && nextComp instanceof Wire w && circ != null) {
+              nv = circ.getWireBusWidthPos(w);
+            }
+
+            if (v != null && !v.equals(nv)) {
               attrMap.put(attr, null);
             }
           } else {
@@ -85,8 +109,16 @@ class SelectionAttributes extends AbstractAttributeSet {
     return attrMap;
   }
 
-  private static boolean computeReadOnly(Collection<Component> sel, Attribute<?> attr) {
+  private boolean computeReadOnly(Collection<Component> sel, Attribute<?> attr) {
+    final var circ = canvas.getCircuit();
     for (final var comp : sel) {
+      if (attr == Wire.BUS_WIDTH_POS_ATTR && comp instanceof Wire w && circ != null) {
+        final var bitWidth = circ.getWidth(w.getEnd0());
+        if (bitWidth.getWidth() <= 1) {
+          return true;
+        }
+        continue;
+      }
       final var attrs = comp.getAttributeSet();
       if (attrs.isReadOnly(attr)) {
         return true;
@@ -96,25 +128,8 @@ class SelectionAttributes extends AbstractAttributeSet {
   }
 
   private static Set<Component> createSet(Collection<Component> comps) {
-    var includeWires = true;
-    for (final var comp : comps) {
-      if (!(comp instanceof Wire)) {
-        includeWires = false;
-        break;
-      }
-    }
-
-    if (includeWires) {
-      return new HashSet<>(comps);
-    } else {
-      final var ret = new HashSet<Component>();
-      for (final var comp : comps) {
-        if (!(comp instanceof Wire)) {
-          ret.add(comp);
-        }
-      }
-      return ret;
-    }
+    if (comps == null) return Collections.emptySet();
+    return new HashSet<>(comps);
   }
 
   private static boolean haveSameElements(Collection<Component> a, Collection<Component> b) {
@@ -196,6 +211,15 @@ class SelectionAttributes extends AbstractAttributeSet {
       return circ.getStaticAttributes().getValue(attr);
     }
 
+    if (attr == Wire.BUS_WIDTH_POS_ATTR && circ != null && selected.size() == 1) {
+      final var comp = selected.iterator().next();
+      if (comp instanceof Wire w) {
+        @SuppressWarnings("unchecked")
+        V ret = (V) circ.getWireBusWidthPos(w);
+        return ret;
+      }
+    }
+
     final var i = findIndex(attr);
     final var vs = values;
     @SuppressWarnings("unchecked")
@@ -212,6 +236,13 @@ class SelectionAttributes extends AbstractAttributeSet {
     } else if (circ != null && selected.isEmpty()) {
       return circ.getStaticAttributes().isReadOnly(attr);
     } else {
+      if (attr == Wire.BUS_WIDTH_POS_ATTR && selected.size() == 1) {
+        final var comp = selected.iterator().next();
+        if (comp instanceof Wire w && circ != null) {
+          final var width = circ.getWidth(w.getEnd0());
+          return width.getWidth() <= 1;
+        }
+      }
       int i = findIndex(attr);
       final var ro = readOnly;
       return i < 0 || i >= ro.length || ro[i];
@@ -238,13 +269,27 @@ class SelectionAttributes extends AbstractAttributeSet {
     if (selected.isEmpty() && circ != null) {
       circ.getStaticAttributes().setValue(attr, value);
     } else {
+      if (attr == Wire.BUS_WIDTH_POS_ATTR && circ != null) {
+        for (final var comp : selected) {
+          if (comp instanceof Wire w) {
+            circ.setWireBusWidthPos(w, (AttributeOption) value);
+          }
+        }
+      }
       int i = findIndex(attr);
       final var vs = values;
       if (i >= 0 && i < vs.length) {
+        final var oldVal = vs[i];
         vs[i] = value;
         for (final var comp : selected) {
-          comp.getAttributeSet().setValue(attr, value);
+          if (!(comp instanceof Wire)
+              && comp.getAttributeSet().containsAttribute(attr)) {
+            comp.getAttributeSet().setValue(attr, value);
+          }
         }
+        @SuppressWarnings("unchecked")
+        final var attrObj = (Attribute<Object>) attr;
+        fireAttributeValueChanged(attrObj, value, oldVal);
       }
     }
   }

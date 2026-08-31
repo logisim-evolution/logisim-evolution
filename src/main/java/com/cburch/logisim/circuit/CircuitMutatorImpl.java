@@ -117,6 +117,19 @@ class CircuitMutatorImpl implements CircuitMutator {
       DynamicElementProvider.repairDynamicElementPaths(circuit, repl);
 
       for (final var component : repl.getRemovals()) {
+        if (component instanceof Wire oldWire) {
+          final var pos = circuit.getWireBusWidthPos(oldWire);
+          if (pos != Wire.BUS_WIDTH_POS_NONE) {
+            final var additions = repl.getReplacementsFor(oldWire);
+            if (additions != null) {
+              for (final var addComp : additions) {
+                if (addComp instanceof Wire newWire) {
+                  circuit.setWireBusWidthPos(newWire, pos);
+                }
+              }
+            }
+          }
+        }
         circuit.mutatorRemove(component);
       }
       for (final var component : repl.getAdditions()) {
@@ -131,10 +144,16 @@ class CircuitMutatorImpl implements CircuitMutator {
       modified.add(circuit);
       @SuppressWarnings("unchecked")
       final var a = (Attribute<Object>) attr;
-      final var attrs = comp.getAttributeSet();
-      final var oldValue = attrs.getValue(a);
-      log.add(CircuitChange.set(circuit, comp, attr, oldValue, newValue));
-      attrs.setValue(a, newValue);
+      if (comp instanceof Wire w && Wire.BUS_WIDTH_POS_ATTR.equals(attr)) {
+        final var oldValue = circuit.getWireBusWidthPos(w);
+        log.add(CircuitChange.set(circuit, comp, attr, oldValue, newValue));
+        circuit.setWireBusWidthPos(w, (com.cburch.logisim.data.AttributeOption) newValue);
+      } else {
+        final var attrs = comp.getAttributeSet();
+        final var oldValue = attrs.getValue(a);
+        log.add(CircuitChange.set(circuit, comp, attr, oldValue, newValue));
+        attrs.setValue(a, newValue);
+      }
     }
   }
 

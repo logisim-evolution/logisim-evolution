@@ -169,7 +169,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
         labeler = new AutoLabel((String) value, circuit);
       }
       for (final var comp : comps) {
-        if (!(comp instanceof Wire)) {
+        if (!(comp instanceof Wire) || Wire.BUS_WIDTH_POS_ATTR.equals(attr)) {
           if (comp.getFactory() instanceof SubcircuitFactory fac) {
             if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
                 || attr.equals(CircuitAttributes.NAME_ATTR)) {
