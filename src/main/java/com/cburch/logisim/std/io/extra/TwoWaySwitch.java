@@ -19,7 +19,6 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.icons.TwoWaySwitchIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;

@@ -206,13 +206,13 @@
 		</tocitem>
 		-->
 		<tocitem target="ioex" text="Input/Output-Extra">
-			<tocitem target="ioex_switch" text="Switch" />
-			<tocitem target="ioex_buzzer" text="Buzzer" />
-			<tocitem target="ioex_slider" text="Slider" />
-			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" />
-			<tocitem target="ioex_plarom" text="Programmable Logic Array" />
-			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" />
-			<tocitem target="ioex_twopinled" text="2-Pin LED" />
+			<tocitem target="ioex_switch" text="Switch" image="icon_switch" />
+			<tocitem target="ioex_buzzer" text="Buzzer" image="icon_buzzer" />
+			<tocitem target="ioex_slider" text="Slider" image="icon_slider" />
+			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" image="icon_digitalscope" />
+			<tocitem target="ioex_plarom" text="Programmable Logic Array" image="icon_pla" />
+			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" image="icon_twowayswitch" />
+			<tocitem target="ioex_twopinled" text="2-Pin LED" image="icon_twopinled" />
 		</tocitem>
 		<tocitem target="soc" text = "SOC library">
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />

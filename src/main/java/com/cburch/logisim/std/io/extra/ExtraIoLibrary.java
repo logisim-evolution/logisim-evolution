@@ -28,16 +28,13 @@ public class ExtraIoLibrary extends Library {
   public static final String _ID = "Input/Output-Extra";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(Switch.class, S.getter("switchComponent"), "switch.gif"),
-    new FactoryDescription(Buzzer.class, S.getter("buzzerComponent"), "buzzer.gif"),
-    new FactoryDescription(Slider.class, S.getter("Slider"), "slider.gif"),
-    new FactoryDescription(
-        DigitalOscilloscope.class,
-        S.getter("DigitalOscilloscopeComponent"),
-        "digitaloscilloscope.gif"),
-    new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent"), "plarom.gif"),
-    new FactoryDescription(TwoWaySwitch.class, S.getter("twoWaySwitch"), "twoway.gif"),
-    new FactoryDescription(TwoPinLed.class, S.getter("twopinLEDComponent"), "twopinled.gif"),
+    new FactoryDescription(Switch.class, S.getter("switchComponent")),
+    new FactoryDescription(Buzzer.class, S.getter("buzzerComponent")),
+    new FactoryDescription(Slider.class, S.getter("Slider")),
+    new FactoryDescription(DigitalOscilloscope.class, S.getter("DigitalOscilloscopeComponent")),
+    new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent")),
+    new FactoryDescription(TwoWaySwitch.class, S.getter("twoWaySwitch")),
+    new FactoryDescription(TwoPinLed.class, S.getter("twopinLEDComponent")),
   };
 
   private List<Tool> tools = null;

@@ -119,7 +119,7 @@ public class Buzzer extends InstanceFactory {
           2
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("buzzer.gif");
+    setIcon(new BuzzerIcon());
   }
 
   public static void stopBuzzerSound(Component comp, CircuitState circState) {

@@ -93,7 +93,7 @@ public class DigitalOscilloscope extends InstanceFactory {
           Direction.NORTH,
           StdAttr.DEFAULT_LABEL_FONT
         });
-    setIconName("digitaloscilloscope.gif");
+    setIcon(new DigitalOscilloscopeIcon());
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
   }
 

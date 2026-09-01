@@ -98,7 +98,7 @@ public class Switch extends InstanceFactory {
           Direction.EAST, BitWidth.ONE, Color.WHITE, "", Direction.NORTH, StdAttr.DEFAULT_LABEL_FONT
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("switch.gif");
+    setIcon(new SwitchIcon());
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setInstancePoker(Poker.class);
     setInstanceLogger(Logger.class);
@@ -153,6 +153,9 @@ public class Switch extends InstanceFactory {
     }
 
     Color color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
+    if (Color.WHITE.equals(color) && AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())) {
+      color = new Color(40, 40, 40);
+    }
     if (!painter.shouldDrawColor()) {
       int hue = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
       color = new Color(hue, hue, hue);
@@ -192,8 +195,11 @@ public class Switch extends InstanceFactory {
         g.fillPolygon(xp, yp, xp.length);
         g.setColor(color);
         g.fillPolygon(xr, yr, xr.length);
-        g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+      } else {
+        g.setColor(new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()));
+        g.fillPolygon(xp, yp, xp.length);
       }
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       g.drawPolygon(xp, yp, xp.length);
       g.drawPolygon(xr, yr, xr.length);
       if (facing == Direction.NORTH || facing == Direction.SOUTH) {
@@ -248,8 +254,11 @@ public class Switch extends InstanceFactory {
         g.fillPolygon(xp, yp, xp.length);
         g.setColor(color);
         g.fillPolygon(xr, yr, xr.length);
-        g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+      } else {
+        g.setColor(new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()));
+        g.fillPolygon(xp, yp, xp.length);
       }
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       g.drawPolygon(xp, yp, xp.length);
       g.drawPolygon(xr, yr, xr.length);
       if (facing == Direction.NORTH || facing == Direction.SOUTH) {
