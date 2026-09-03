@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added newer screenshot to documentation (@Mher-DeLight)
   * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
   * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
   * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
