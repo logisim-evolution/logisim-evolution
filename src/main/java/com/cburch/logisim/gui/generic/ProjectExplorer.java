@@ -102,6 +102,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     proj.addProjectListener(myListener);
     AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
+    AppPreferences.UI_ANTIALIASING.addPropertyChangeListener(myListener);
     LocaleManager.addLocaleListener(this);
     DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
     renderer.setClosedIcon(new TreeIcon(true));
@@ -410,7 +411,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-      if (AppPreferences.GATE_SHAPE.isSource(event)) {
+      if (AppPreferences.GATE_SHAPE.isSource(event)
+          || AppPreferences.UI_ANTIALIASING.isSource(event)) {
         ProjectExplorer.this.repaint();
       }
     }
@@ -549,6 +551,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       // draw tool icon
       g.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
       final var gfxIcon = g.create();
+      if (gfxIcon instanceof java.awt.Graphics2D g2d && AppPreferences.UI_ANTIALIASING.getBoolean()) {
+        g2d.setRenderingHint(
+            java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(
+            java.awt.RenderingHints.KEY_STROKE_CONTROL, java.awt.RenderingHints.VALUE_STROKE_PURE);
+      }
       final var context = new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(
           context,
@@ -575,19 +583,27 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         final var magFill = ColorUtil.getMagnifyingInterior(ProjectExplorer.this);
         final var magBorder = ColorUtil.getThemeAccentColor();
 
-        g.setColor(magFill);
-        g.fillOval(
+        final var gfxMag = g.create();
+        if (gfxMag instanceof java.awt.Graphics2D g2d && AppPreferences.UI_ANTIALIASING.getBoolean()) {
+          g2d.setRenderingHint(
+              java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+          g2d.setRenderingHint(
+              java.awt.RenderingHints.KEY_STROKE_CONTROL, java.awt.RenderingHints.VALUE_STROKE_PURE);
+        }
+        gfxMag.setColor(magFill);
+        gfxMag.fillOval(
             x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
-        g.setColor(magBorder);
-        g.drawOval(
+        gfxMag.setColor(magBorder);
+        gfxMag.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
-        g.fillPolygon(xp, yp, xp.length);
+        gfxMag.fillPolygon(xp, yp, xp.length);
+        gfxMag.dispose();
       }
     }
   }
