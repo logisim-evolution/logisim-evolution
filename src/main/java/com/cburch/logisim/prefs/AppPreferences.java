@@ -529,10 +529,16 @@ public class AppPreferences {
   public static final String SHAPE_RECTANGULAR = "rectangular"; // IEC
   // public static final String SHAPE_DIN40700 = "din40700";
 
+  private static String getDefaultGateShape() {
+    return "ru".equalsIgnoreCase(Locale.getDefault().getLanguage())
+        ? SHAPE_RECTANGULAR
+        : SHAPE_SHAPED;
+  }
+
   public static final PrefMonitor<String> GATE_SHAPE =
       create(
           new PrefMonitorStringOpts(
-              "gateShape", new String[] {SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
+              "gateShape", new String[] {SHAPE_SHAPED, SHAPE_RECTANGULAR}, getDefaultGateShape()));
   public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 
   // FPGA Commander Preferences
