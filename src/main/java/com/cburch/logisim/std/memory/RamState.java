@@ -78,6 +78,7 @@ public class RamState extends MemState implements AttributeListener {
     if (value != null) {
       value.getAttributeSet().addAttributeListener(this);
     }
+    listener.setInstance(value);
   }
   
   long getCurrent(int index) {

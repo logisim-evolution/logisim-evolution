@@ -202,25 +202,32 @@
 			<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
 			<tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" />
 			<tocitem target="io_led" text="LED" image="icon_led" />
-			<tocitem target="io_ledbar" text="LED Bar" />
+			<tocitem target="io_ledbar" text="LED Bar" image="icon_ledbar" />
 			<tocitem target="io_ledRGB" text="LED RGB" image="icon_rgbled" />
 			<tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" />
 			<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 			<tocitem target="io_tty" text="TTY" image="icon_tty" />
 			<tocitem target="io_telnet" text="Telnet" image="icon_telnet" />
-			<tocitem target="io_realtimeclock" text="Real-Time Clock" />
-			<tocitem target="io_matrixkeypad" text="Matrix Keypad" />
+			<tocitem target="io_realtimeclock" text="Real-Time Clock" image="icon_realtimeclock" />
+			<tocitem target="io_matrixkeypad" text="Matrix Keypad" image="icon_matrixkeypad" />
 <!-- not documented 
      		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
 			<tocitem target="io_videorgb" text="Video RGB" image="icon_videorgb" />
 -->	
 		</tocitem>
-<!-- not documented 
-		<tocitem target="ttl" text="TTL">
-			<tocitem target="ttl_xxxx" text="TTL" image="icon_ttl" />
+		<tocitem target="ioex" text="Input/Output-Extra">
+			<tocitem target="ioex_switch" text="Switch" image="icon_switch" />
+			<tocitem target="ioex_buzzer" text="Buzzer" image="icon_buzzer" />
+			<tocitem target="ioex_slider" text="Slider" image="icon_slider" />
+			<tocitem target="ioex_digitalscope" text="Digital Oscilloscope" image="icon_digitalscope" />
+			<tocitem target="ioex_plarom" text="Programmable Logic Array" image="icon_pla" />
+			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" image="icon_twowayswitch" />
+			<tocitem target="ioex_twopinled" text="2-Pin LED" image="icon_twopinled" />
 		</tocitem>
+		<tocitem target="ttl" text="TTL library" image="icon_ttl" />
+<!-- not documented 
 		<tocitem target="tcl" text="TCL library">
 			<tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
 			<tocitem target="tcl_generic" text="Generic" image="icon_generic" />
@@ -228,13 +235,6 @@
 		<tocitem target="bfh" text="BFH mega functions">
 			<tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="icon_binbcd" />
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="icon_bcdtoseven" />
-		</tocitem>
-		<tocitem target="ioex" text="Input/Output-Extra">
-			<tocitem target="ioex_switch" text="Switch" image="icon_switch" />
-			<tocitem target="ioex_buzzer" text="Buzzer" image="icon_buzzer" />
-			<tocitem target="ioex_slider" text="Slider" image="icon_slider" />
-			<tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="icon_digitalscope" />
-			<tocitem target="ioex_plarom" text="Programmable logic array ROM" image="icon_pla2" />
 		</tocitem>
 		<tocitem target="soc" text = "SOC library">
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />

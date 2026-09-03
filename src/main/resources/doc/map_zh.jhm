@@ -179,6 +179,14 @@
     <mapID target="io_Port_IO"          url="zh/html/libs/io/Port_io.html" />
 	<mapID target="io_Repetar"          url="zh/html/libs/io/repetar.html" />
 	<mapID target="io_videorvb"         url="zh/html/libs/io/videorvb.html" />
+	<mapID target="ioex"                 url="en/html/libs/ioextra/index.html" />
+	<mapID target="ioex_switch"          url="en/html/libs/ioextra/switch.html" />
+	<mapID target="ioex_buzzer"          url="en/html/libs/ioextra/buzzer.html" />
+	<mapID target="ioex_slider"          url="en/html/libs/ioextra/slider.html" />
+	<mapID target="ioex_digitalscope"    url="en/html/libs/ioextra/digitalscope.html" />
+	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
+	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
+	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
 	<mapID target="tcl"                 url="zh/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="zh/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="zh/html/libs/tcl/generic.html" />
@@ -266,7 +274,9 @@
 	<mapID target="icon_switch"      url="icons/1616/switch.png" />	
 	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
 	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
-	<mapID target="icon_digitalscope"    url="icons/1616/digitalscope.png" />	
+	<mapID target="icon_digitalscope"    url="icons/1616/digitaloscilloscope.png" />	
+	<mapID target="icon_twowayswitch"    url="icons/1616/twowayswitch.png" />	
+	<mapID target="icon_twopinled"       url="icons/1616/twopinled.png" />	
 	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
 	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
 	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		

@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Digital Oscilloscope</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/digitaloscilloscope.png"
+            alt="Digital Oscilloscope icon" width="32" height="32" align="middle">
+        <em>Digital Oscilloscope</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output-Extra</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Records the clock and each 1-bit signal whenever the clock changes between 0 and 1. Once
+        the display is full, older samples move left as new samples are added on the right.
+        Signal changes that occur after an edge can update the most recent sample, allowing the
+        display to reflect propagation delays in the simulated circuit.
+      </p>
+      <p>
+        Recording pauses while <q>Enable</q> is 0. Setting <q>Clear</q> to 1 erases the history and
+        resets clock-edge numbering. An unknown clock is not sampled; unknown or error signal
+        values appear as gaps in their traces.
+      </p>
+
+      <h2>Pins</h2>
+      <dl>
+        <dt>Clock (1 bit)</dt>
+        <dd>The sampling clock. Both rising and falling edges add samples.</dd>
+        <dt>Signal inputs (1 bit each)</dt>
+        <dd>The signals displayed beneath the optional clock trace.</dd>
+        <dt>Enable (1 bit)</dt>
+        <dd>A value of 0 pauses recording; other values permit recording.</dd>
+        <dt>Clear (1 bit)</dt>
+        <dd>A value of 1 clears all recorded samples.</dd>
+      </dl>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Number of Inputs</dt>
+        <dd>Selects from 1 through 32 signal inputs.</dd>
+        <dt>Number of States</dt>
+        <dd>Selects the width of the displayed history, from 4 through 35 clock cycles.</dd>
+        <dt>Draw Clock Front Line</dt>
+        <dd>
+          Draws vertical guides at no edges, rising edges, falling edges, or both kinds of edge.
+        </dd>
+        <dt>Show Clock</dt>
+        <dd>Controls whether the clock trace and edge numbers are displayed.</dd>
+        <dt>Border Color</dt>
+        <dd>Selects the border and guide color.</dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Location</dt>
+        <dd>The location of the label relative to the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+      </dl>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>

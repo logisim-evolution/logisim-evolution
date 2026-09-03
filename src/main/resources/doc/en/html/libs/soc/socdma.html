@@ -136,7 +136,9 @@
             <td style="text-align: center;">R/W</td>
             <td>
               <strong>bit 0 (START)</strong>: Write 1 to start a new transfer (ignored if BUSY or LENGTH=0).<br>
-              <strong>bit 1 (IRQ_EN)</strong>: Set to enable interrupt on transfer completion.
+              <strong>bit 1 (IRQ_EN)</strong>: Set to enable interrupt on transfer completion. <br>
+              <strong>bit 2 (DST_FIXED)</strong>: Write 1 to make the destination address fixed. If this is not set the destination address is incremented.<br>
+              <strong>bit 3 (SRC_FIXED)</strong>: Write 1 to make the source address fixed. If not set, the source address will increment.
             </td>
           </tr>
           <tr>

@@ -22,6 +22,7 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.base.Image;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
@@ -43,7 +44,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -218,6 +218,7 @@ final class XmlWriter {
     Source src = new DOMSource(doc);
     Result dest = new StreamResult(out);
     tf.transform(src, dest);
+    out.flush();
   }
 
   void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifiedOnly) {
@@ -234,6 +235,7 @@ final class XmlWriter {
         var newValue = attr.toStandardString(val);
         if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue))
             || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
+            || (attr.equals(Image.ATTR_LICENSE) && !userModifiedOnly)
             || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
@@ -288,7 +290,7 @@ final class XmlWriter {
       ret.appendChild(appear);
     }
     for (final var wire : circuit.getWires()) {
-      ret.appendChild(fromWire(wire));
+      ret.appendChild(fromWire(wire, circuit));
     }
     for (final var comp : circuit.getNonWires()) {
       final var elt = fromComponent(comp);
@@ -407,9 +409,8 @@ final class XmlWriter {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         final var isJarLibrary = LibraryManager.isJarLibrary(file.getLoader(), desc);
         if (origFile != null) {
-          final var names = origFile.split(Pattern.quote(File.separator));
-          final var filename = names[names.length - 1];
-          final var newFile = LineBuffer.format("{{1}}{{2}}{{3}}", Loader.LOGISIM_LIBRARY_DIR, File.separator, filename);
+          final var filename = new File(origFile).getName();
+          final var newFile = ProjectBundlePaths.libraryEntry(filename);
           final var zipFile = file.getLoader().getZipFile();
           if (zipFile != null) {
             if (isJarLibrary) {
@@ -417,9 +418,11 @@ final class XmlWriter {
             } else {
               writeLogisimFileToZip(zipFile, origFile, newFile);
             }
-            desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, isRecursiveCall
-                ? LineBuffer.format(".{{1}}{{2}}", File.separator, filename)
-                : LineBuffer.format(".{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename));
+            desc =
+                LibraryManager.getReplacementDescriptor(
+                    file.getLoader(),
+                    desc,
+                    ProjectBundlePaths.libraryDescriptor(filename, isRecursiveCall));
           }
         }
       }
@@ -534,10 +537,14 @@ final class XmlWriter {
     return elt;
   }
 
-  Element fromWire(Wire w) {
+  Element fromWire(Wire w, Circuit circuit) {
     final var ret = doc.createElement("wire");
     ret.setAttribute("from", w.getEnd0().toString());
     ret.setAttribute("to", w.getEnd1().toString());
+    final var pos = circuit.getWireBusWidthPos(w);
+    if (pos != null && pos != Wire.BUS_WIDTH_POS_NONE) {
+      ret.setAttribute("buswidthpos", pos.getValue().toString());
+    }
     return ret;
   }
 

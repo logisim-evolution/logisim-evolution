@@ -3,6 +3,12 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
+  * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
+  * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
+  * Added contributor guidance and an online component overview for the TTL library.
+  * Fixed packaged runtimes failing to launch when Java accessibility support is configured
+    [#2398] (@hewzhew).
   * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
     name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
     the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
@@ -10,6 +16,8 @@
     search providers, so further sources of results can be added without changing the dialog. Its
     Add provider can select components for placement from the project's open libraries.
   * Fixed FlatLaf "restricted native access" warning on newer Java versions.
+  * Fixed HDL generator tests failing when the "Use upper case for VHDL keywords" preference is
+    disabled (@MarcinOrlowski)
   * Improved file merging and export capabilities:
     * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
     * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.
@@ -21,6 +29,7 @@
   * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
   * Added Real-Time Clock component.
   * Added Floating Point Constant component.
+  * Added FPGA HDL support for the Bit Finder component [#2890] (@hewzhew).
   * Added 444 RGB (12 bit) color mode to the RGB Video component.
   * Modified paste behavior to paste at current mouse location if it is on canvas.
   * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
@@ -66,10 +75,16 @@
     Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
   * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
     ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Fixed FPGA component mappings losing their board highlights when the mapping dialog is reopened
+    [#2933] (@hewzhew).
+  * Fixed output-only Port I/O components being reported as multiple drivers during FPGA netlist
+    generation, and corrected the symmetric input-only endpoint direction [#2537] (@henriquejsza).
   * Improved project editing stability:
     * Layout zoom and scroll position are remembered separately for each circuit during a session.
     * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
     * Moving components preserves component state.
+    * RAM components continue to notify their circuit of memory changes after being moved [#2873]
+      (@henriquejsza).
     * Floating subcircuit inputs now propagate floating values.
     * Nested library tools resolve correctly.
     * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.
@@ -79,16 +94,22 @@
     * VHDL code view no longer paints a circuit canvas without a circuit.
     * VHDL simulator log split pane remains recoverable after being maximized.
     * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
+    * VHDL co-simulation now analyzes project-local entities in library order and preserves their
+      canonical names for dependency resolution [#1350] (@hewzhew).
   * Improved command-line output and localization:
     * Command-line help now honors the selected locale.
     * Invalid command-line option values now return a nonzero exit status.
     * Intel/Altera FPGA downloads can select an exact Quartus cable with `--fpga-cable`.
     * TTY table output includes bit widths in headers.
+    * Updated the command-line option reference to match the current interface [#1546] (@hewzhew).
     * Localized the Assembly Viewer.
   * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
     libraries, wire values, transistor behavior, and unused-library save options.
   * Added a default text-tool color preference and synchronized string-option preference updates.
   * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
+  * Added a Github Action check ensuring PRs also provide updated changel(@MarcinOrlowski).
+  * Fixed `Line.matches()` comparing transposed coordinates, causing identical lines to be treated
+    as different and some different lines as identical [#2939] (@henriquejsza).
   * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)

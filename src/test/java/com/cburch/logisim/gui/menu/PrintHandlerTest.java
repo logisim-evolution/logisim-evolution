@@ -153,4 +153,42 @@ class PrintHandlerTest {
       }
     }
   }
+
+  @Test
+  void svgExportWithImageComponent() throws Exception {
+    final var handler = new ImagePrintHandler();
+    final var dest = tempDir.resolve("with-image.svg").toFile();
+    handler.exportImage(dest, ExportImage.FORMAT_SVG);
+    final var content = Files.readString(dest.toPath());
+    assertTrue(content.contains("<image"));
+    assertTrue(content.contains("href=\"data:image/png;base64,"));
+  }
+
+  @Test
+  void tikzExportWithImageComponent() throws Exception {
+    final var handler = new ImagePrintHandler();
+    final var dest = tempDir.resolve("with-image.tex").toFile();
+    handler.exportImage(dest, ExportImage.FORMAT_TIKZ);
+    final var content = Files.readString(dest.toPath());
+    assertTrue(content.contains("[Image: 30x30]"));
+    assertFalse(content.contains("data:image/png;base64,"));
+  }
+
+  static class ImagePrintHandler extends PrintHandler {
+    @Override
+    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+      return 0;
+    }
+
+    @Override
+    public Dimension getExportImageSize() {
+      return new Dimension(100, 100);
+    }
+
+    @Override
+    public void paintExportImage(BufferedImage img, Graphics2D g) {
+      final var testImg = new BufferedImage(30, 30, BufferedImage.TYPE_INT_ARGB);
+      g.drawImage(testImg, 10, 10, 30, 30, null);
+    }
+  }
 }

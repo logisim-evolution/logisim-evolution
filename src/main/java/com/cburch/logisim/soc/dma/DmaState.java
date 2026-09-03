@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *   0x00    SRC_ADDR    R/W     Source address (must be word-aligned)
  *   0x04    DST_ADDR    R/W     Destination address (must be word-aligned)
  *   0x08    LENGTH      R/W     Transfer length in bytes (must be multiple of 4)
- *   0x0C    CONTROL     R/W     bit0: START (write-1-to-start), bit1: IRQ_EN
+ *   0x0C    CONTROL     R/W     bit0: START (write-1-to-start), bit1: IRQ_EN, bit2: DST_FIXED, bit3: SRC_FIXED
  *   0x10    STATUS      R/W1C   bit0: BUSY (RO), bit1: DONE (W1C)
  *   0x14    BYTES_DONE  RO      Number of bytes already transferred
  * </pre>
@@ -51,6 +51,8 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
   /* ---------- CONTROL register bits ---------- */
   public static final int CTRL_START = 1 << 0;
   public static final int CTRL_IRQ_EN = 1 << 1;
+  public static final int CTRL_DST_FIXED = 1 << 2;
+  public static final int CTRL_SRC_FIXED = 1 << 3;
 
   /* ---------- STATUS register bits ---------- */
   public static final int STAT_BUSY = 1 << 0;
@@ -200,17 +202,30 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     int remaining = regs.length - regs.bytesDone;
     int wordsToTransfer = Math.min(burstSize, remaining / 4);
     int wordsTransferred = 0;
+    int val = regs.control;
 
     // some sinks may only accept one word at a time,
     // so we need to iterate the burst transfer word by word in one cycle
     for (int i = 0; i < wordsToTransfer; i++) {
       int offset = regs.bytesDone + i * 4;
 
+      // compute address based on control reg
+      // in mode 00 both the src address and dst address are incremented
+      // in mode 01 src address is incremented and the destination is fixed
+      // in mode 10 opposite of mode 01 happens
+      // in mode 11 both the src and dst address are fixed
+      // bit3  bit2     Behaviour
+      //  0     0       Inc Src   Inc Dst
+      //  0     1       Inc Src   Fix Dst
+      //  1     0       Fix Src   Incr Dst
+      //  1     1       Fix Src   Fix Dst
+
+
       // Read one word from source (hidden to avoid flooding the bus trace;
       // read-side sniffing is not useful for observers like VGA)
       SocBusTransaction readTrans = new SocBusTransaction(
           SocBusTransaction.READ_TRANSACTION,
-          regs.srcAddr + offset,
+              (val & CTRL_SRC_FIXED) == 0  ? regs.srcAddr + offset : regs.srcAddr,  // change offset using src inc and dest inc
           0,
           SocBusTransaction.WORD_ACCESS,
           controlBus.getComponent());
@@ -222,7 +237,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
       // can observe the writes and update their framebuffer in real time)
       SocBusTransaction writeTrans = new SocBusTransaction(
           SocBusTransaction.WRITE_TRANSACTION,
-          regs.dstAddr + offset,
+              (val & CTRL_DST_FIXED) == 0 ? regs.dstAddr + offset : regs.dstAddr,
           readTrans.getReadData(),
           SocBusTransaction.WORD_ACCESS,
           controlBus.getComponent());
@@ -338,7 +353,7 @@ public class DmaState implements SocBusSlaveInterface, SocBusMasterInterface {
     if (trans.isReadTransaction()) trans.setReadData(regs.control);
     if (trans.isWriteTransaction()) {
       int val = trans.getWriteData();
-      regs.control = val & CTRL_IRQ_EN; // preserve IRQ_EN
+      regs.control = val & (CTRL_IRQ_EN | CTRL_DST_FIXED | CTRL_SRC_FIXED); // preserve IRQ_EN Inc_Src IncDst
 
       // START bit: write-1-to-start, triggers a new transfer if not busy
       if ((val & CTRL_START) != 0 && !regs.busy && regs.length > 0) {

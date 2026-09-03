@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.fpga.hdlgenerator.HdlText.containsIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,12 +44,17 @@ class RandomHdlGeneratorFactoryTest {
   void vhdlImplementsFullXoshiroStateTransitionAndClockEnable() {
     final var hdl = functionality(HdlGeneratorFactory.VHDL);
 
-    assertTrue(hdl.contains("q                  <= s_result((nrOfBits - 1) DOWNTO 0);"));
-    assertTrue(hdl.contains("s_rotatedSum       <= s_sum(40 DOWNTO 0)&s_sum(63 DOWNTO 41);"));
-    assertTrue(hdl.contains("s_nextState3       <= s_state3XorState1(18 DOWNTO 0)&"));
-    assertTrue(hdl.contains(HdlPorts.getTickName(1) + " = '1' AND enable = '1'"));
-    assertTrue(hdl.contains("CASE s_resetReg IS"));
-    assertTrue(hdl.contains("WHEN OTHERS =>"));
+    assertTrue(
+        containsIgnoringCase(hdl, "q                  <= s_result((nrOfBits - 1) DOWNTO 0);"));
+    assertTrue(
+        containsIgnoringCase(
+            hdl, "s_rotatedSum       <= s_sum(40 DOWNTO 0)&s_sum(63 DOWNTO 41);"));
+    assertTrue(
+        containsIgnoringCase(hdl, "s_nextState3       <= s_state3XorState1(18 DOWNTO 0)&"));
+    assertTrue(
+        containsIgnoringCase(hdl, HdlPorts.getTickName(1) + " = '1' AND enable = '1'"));
+    assertTrue(containsIgnoringCase(hdl, "CASE s_resetReg IS"));
+    assertTrue(containsIgnoringCase(hdl, "WHEN OTHERS =>"));
     assertFalse(hdl.contains("5DEECE66D"));
     assertFalse(hdl.contains("s_currentSeed"));
   }

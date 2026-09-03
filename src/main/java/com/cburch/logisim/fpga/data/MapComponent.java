@@ -21,6 +21,7 @@ import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.io.SevenSegment;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import org.w3c.dom.DOMException;
@@ -267,18 +268,42 @@ public class MapComponent {
     }
   }
 
-  public void copyMapFrom(MapComponent comp) {
+  public void copyMapFrom(
+      MapComponent comp, List<FpgaIoInformationContainer> ioComponents) {
     if (comp.nrOfPins != nrOfPins || !comp.myFactory.equals(myFactory)) {
       comp.unmap();
       return;
     }
-    maps = comp.maps;
-    opens = comp.opens;
-    constants = comp.constants;
+    maps = new ArrayList<>();
+    opens = new ArrayList<>(comp.opens);
+    constants = new ArrayList<>(comp.constants);
+    for (var i = 0; i < nrOfPins; i++) maps.add(null);
+
+    final var reboundMaps = new IdentityHashMap<MapClass, MapClass>();
     for (var i = 0; i < nrOfPins; i++) {
-      final var map = maps.get(i);
-      if (map != null) if (!map.update(this)) unmap(i);
+      final var oldMap = comp.maps.get(i);
+      if (oldMap == null) continue;
+
+      var newMap = reboundMaps.get(oldMap);
+      if (newMap == null) {
+        final var newIoComponent = findIoComponent(oldMap.getIoComp(), ioComponents);
+        if (newIoComponent == null
+            || !newIoComponent.tryMap(this, i, oldMap.getIoPin())) continue;
+        newMap = new MapClass(newIoComponent, oldMap.getIoPin());
+        reboundMaps.put(oldMap, newMap);
+      }
+      maps.set(i, newMap);
     }
+  }
+
+  private static FpgaIoInformationContainer findIoComponent(
+      FpgaIoInformationContainer oldComponent,
+      List<FpgaIoInformationContainer> ioComponents) {
+    for (final var component : ioComponents) {
+      if (component.getType().equals(oldComponent.getType())
+          && component.getRectangle().equals(oldComponent.getRectangle())) return component;
+    }
+    return null;
   }
 
   public void tryMap(CircuitMapInfo cmap, List<FpgaIoInformationContainer> IOcomps) {

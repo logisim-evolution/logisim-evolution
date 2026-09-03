@@ -166,7 +166,7 @@ public class Slider extends InstanceFactory {
           LEFT_TO_RIGHT
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("slider.gif");
+    setIcon(new SliderIcon());
     setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, 1)});
     setInstancePoker(Poker.class);
   }

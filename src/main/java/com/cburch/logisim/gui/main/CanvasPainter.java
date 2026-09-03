@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.GridPainter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.tools.PokeTool;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -139,7 +140,9 @@ class CanvasPainter implements PropertyChangeListener {
     final var context = new ComponentDrawContext(canvas, circ, circState, base, g, false);
     context.setHighlightedWires(highlightedWires);
     circ.draw(context, hidden);
-    sel.draw(context, hidden);
+    if (!(proj.getTool() instanceof PokeTool)) {
+      sel.draw(context, hidden);
+    }
 
     // draw tool
     final var tool = dragTool != null ? dragTool : proj.getTool();

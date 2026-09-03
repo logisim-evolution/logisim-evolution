@@ -168,9 +168,47 @@ public final class SvgReader {
     return ret;
   }
 
+  private static AbstractCanvasObject createImage(Element elt) {
+    final var x = Integer.parseInt(elt.getAttribute("x"));
+    final var y = Integer.parseInt(elt.getAttribute("y"));
+    final var w = Integer.parseInt(elt.getAttribute("width"));
+    final var h = Integer.parseInt(elt.getAttribute("height"));
+    final var ret = new ImageShape(x, y, w, h);
+    if (elt.hasAttribute("scale")) {
+      final var scaleStr = elt.getAttribute("scale");
+      if (!scaleStr.isBlank()) {
+        try {
+          ret.updateValue(ImageShape.SCALE_ATTR, ImageShape.SCALE_ATTR.parse(scaleStr));
+        } catch (Exception ignored) {
+        }
+      }
+    }
+    if (elt.hasAttribute("license")) {
+      final var licenseStr = elt.getAttribute("license");
+      if (!licenseStr.isBlank()) {
+        try {
+          ret.updateValue(ImageShape.LICENSE_ATTR, ImageShape.LICENSE_ATTR.parse(licenseStr));
+        } catch (Exception ignored) {
+        }
+      }
+    }
+    if (elt.hasAttribute("attribution")) {
+      ret.updateValue(ImageShape.ATTRIBUTION_ATTR, elt.getAttribute("attribution"));
+    }
+    var href = elt.getAttribute("xlink:href");
+    if (href.isBlank()) {
+      href = elt.getAttribute("href");
+    }
+    if (!href.isBlank()) {
+      ret.setImageSource(href);
+    }
+    return ret;
+  }
+
   private static AbstractCanvasObject createShapeObject(Element elt, String name) {
     return switch (name) {
       case "ellipse" -> createOval(elt);
+      case "image" -> createImage(elt);
       case "line" -> createLine(elt);
       case "path" -> createPath(elt);
       case "polyline" -> createPolyline(elt);
