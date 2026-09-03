@@ -24,6 +24,7 @@ import com.cburch.logisim.gui.icons.TextIcon;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
@@ -130,7 +131,15 @@ public class TextTool extends AbstractTool {
       }
     }
     if (!found) {
-      clicked = attrs.applyTo(new Text(mx, my, ""));
+      var x = mx;
+      var y = my;
+
+      if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
+        x = canvas.snapX(x);
+        y = canvas.snapY(y);
+      }
+
+      clicked = attrs.applyTo(new Text(x, y, ""));
     }
 
     curText = clicked;
