@@ -7,6 +7,7 @@
 * **Table of contents**
   * [Features](#features)
   * [Requirements](#requirements)
+  * [Troubleshooting](#troubleshooting)
   * **[Downloads](#download)**
     * [Package Manager](#package-manager)
     * [Nightly builds (unstable)](#nightly-builds)
@@ -93,6 +94,24 @@ Accessibility quick setup:
 | Larger text | Increase OS scaling or Java UI scaling |
 | High contrast | Enable high-contrast mode in your OS |
 | Keyboard-only use | Rely on menus and in-app shortcuts |
+
+---
+
+## Troubleshooting ##
+
+### Blank window on Linux ###
+
+With some non-reparenting window managers, the Logisim-evolution window may appear blank even
+though its controls still respond. This is caused by an interaction between Java AWT and the window
+manager. Try launching the JAR once with the following environment variable:
+
+```bash
+env _JAVA_AWT_WM_NONREPARENTING=1 java -jar logisim-evolution-<version>-all.jar
+```
+
+If this resolves the problem, configure the same environment variable in the session or launcher
+used to start Logisim-evolution. See [issue #1235](https://github.com/logisim-evolution/logisim-evolution/issues/1235)
+for background and confirmed configurations.
 
 ---
 
