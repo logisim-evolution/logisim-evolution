@@ -108,7 +108,7 @@
     libraries, wire values, transistor behavior, and unused-library save options.
   * Added a default text-tool color preference and synchronized string-option preference updates.
   * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
-  * Added a Github Action check ensuring PRs also provide updated changel(@MarcinOrlowski).
+  * Added a Github Action check ensuring PRs also provide updated changelog (@MarcinOrlowski).
   * Fixed `Line.matches()` comparing transposed coordinates, causing identical lines to be treated
     as different and some different lines as identical [#2939] (@henriquejsza).
   * Many other bug fixes.
