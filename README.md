@@ -66,11 +66,9 @@ If you get stuck:
 * Use `Edit → Undo` to step back safely.
 * Check the screenshots and docs links below for examples.
 
-[![Logisim-evolution](docs/img/logisim-evolution-01-small.png)](docs/pics.md)
-[![Logisim-evolution](docs/img/logisim-evolution-02-small.png)](docs/pics.md)
-[![Logisim-evolution](docs/img/logisim-evolution-03-small.png)](docs/pics.md)
+[![Photo of a project in Logisim Evolution.](docs/img/logisim-evolution-new.png)](docs/pics.md)
 
-Image gallery: the three thumbnails above link to a larger set of screenshots in `docs/pics.md`.
+Image gallery: the thumbnail above link to a larger set of screenshots in `docs/pics.md`.
 
 ---
 

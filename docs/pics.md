@@ -2,21 +2,25 @@
 
 ---
 
-# Additional information #
+# Additional information
 
 * [« Go back](../README.md)
 * **Screenshots**
   * [KDE](#kubuntu)
 
-## Project history ##
+## Project history
 
 Images demonstrating Logisim-evolution in action, running on various platforms.
 (pictures are 1400x1200, PNG format):
 
-## Kubuntu ##
+## Kubuntu
 
 ![Logisim-evolution](img/logisim-evolution-01.png)
 
 ![Logisim-evolution](img/logisim-evolution-02.png)
 
 ![Logisim-evolution](img/logisim-evolution-03.png)
+
+## Mint
+
+![Logisim-evolution](img/logisim-evolution-new.png)
