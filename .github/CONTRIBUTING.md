@@ -14,3 +14,6 @@ Contributing rules
   * `NO_CHANGELOG_ENTRY` if the change really needs no entry at all (typo fix,
     internal cleanup, etc.),
   * `NO_CHANGELOG_AUTHOR_CREDIT` if you want the entry, but prefer not to be credited.
+
+Once merged, the pull request and the ticket it closed both get their conversation locked, so
+please open a new ticket for anything that comes up afterwards.
