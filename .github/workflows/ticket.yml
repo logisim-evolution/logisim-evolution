@@ -1,0 +1,140 @@
+# Ensures every pull request links the ticket it addresses, using one of GitHub's
+# closing keywords in the PR description, i.e. "Closes #1234". Each referenced
+# ticket must exist in this repository, must be an issue (tickets and PR share
+# the same space in GitHub), and must still be in OPEN state.
+#
+# The check is skipped for Dependabot automatically.
+#
+# Any PR can opt-out from this check by adding `NO_TICKET` to the PR description.
+#
+# Marcin Orlowski
+
+name: "Ticket"
+
+on:
+  pull_request:
+    branches: [ main ]
+    # "edited" so adding the reference (or `NO_TICKET`) to the description
+    # re-runs the check.
+    types: [ opened, synchronize, reopened, edited ]
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  ticket:
+    name: "Check ticket reference"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "Is the check opted out of?"
+      id: optout
+      env:
+        PR_BODY: ${{ github.event.pull_request.body }}
+        PR_USER: ${{ github.event.pull_request.user.login }}
+      run: |
+        skip="false"
+        reason=""
+
+        if grep -qF 'NO_TICKET' <<< "${PR_BODY}"; then
+          skip="true"
+          reason="PR description contains NO_TICKET"
+        elif [[ "${PR_USER}" == "dependabot[bot]" ]]; then
+          skip="true"
+          reason="PR comes from Dependabot"
+        fi
+
+        echo "skip=${skip}" >> "${GITHUB_OUTPUT}"
+
+        [[ "${skip}" == "true" ]] && echo "Skipping: ${reason}."
+        exit 0
+
+    - name: "Verify the PR references an open ticket"
+      if: steps.optout.outputs.skip == 'false'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+
+        fail() {
+          echo "*********************************************************"
+          echo "* FIXME! ${1}"
+          shift
+          for msg in "${@}"; do
+            echo "* ${msg}"
+          done
+          echo "*"
+          echo "* If this pull request **really** has no ticket behind it, put"
+          echo "* NO_TICKET in the PR description to opt-out from this check."
+          echo "* If unsure, open a ticket for this effort first."
+          echo "*********************************************************"
+          exit 1
+        }
+
+        # Bails out on a missing or unusable ticket reference.
+        fail_ref() {
+          fail "${@}" \
+            "" \
+            "Pull requests are expected to state the ticket they address," \
+            "so merging them closes it, i.e.:" \
+            "" \
+            "  Closes #1234" \
+            "" \
+            "Any of GitHub's closing keywords will do (closes, fixes," \
+            "resolves, ...), and so will the full ticket URL in place of" \
+            "the #1234 shorthand."
+        }
+
+        # GitHub's closing keywords, see
+        # https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue
+        declare -r KEYWORDS='close[sd]?|fix(e[sd])?|resolve[sd]?'
+        # The long form of a reference, i.e. the ticket's own URL. Dots are the
+        # only regex metacharacter a repository slug can bring in.
+        declare -r URL="https://github\.com/${REPO//./\\.}/issues/"
+
+        # Ticket numbers referenced in the description, deduplicated. Both the
+        # "#1234" shorthand and the full URL are accepted, as GitHub itself
+        # honours either.
+        mapfile -t tickets < <(
+          grep -oiE "(${KEYWORDS})[[:space:]]*:?[[:space:]]+(#|${URL})[0-9]+" <<< "${PR_BODY}" \
+            | grep -oE '[0-9]+$' \
+            | sort -un \
+            || true
+        )
+
+        if [[ "${#tickets[@]}" -eq 0 ]]; then
+          fail_ref "No ticket reference found in this pull request's description."
+        fi
+
+        echo "Referenced ticket(s): ${tickets[*]/#/#}"
+
+        for ticket in "${tickets[@]}"; do
+          if ! issue="$(gh api "repos/${REPO}/issues/${ticket}" 2>/dev/null)"; then
+            fail_ref "Ticket #${ticket} does not exist in ${REPO}." \
+              "" \
+              "https://github.com/${REPO}/issues/${ticket} (404 - Not Found)"
+          fi
+
+          # The issues endpoint serves pull requests too, and those carry a
+          # "pull_request" key that plain issues do not have.
+          if [[ "$(jq -r 'has("pull_request")' <<< "${issue}")" == "true" ]]; then
+            fail_ref "#${ticket} is a pull request, not a ticket." \
+              "" \
+              "https://github.com/${REPO}/pull/${ticket}"
+          fi
+
+          state="$(jq -r '.state' <<< "${issue}")"
+          if [[ "${state}" != "open" ]]; then
+            fail_ref "Ticket #${ticket} is ${state}, not open." \
+              "" \
+              "$(jq -r '.title' <<< "${issue}")" \
+              "https://github.com/${REPO}/issues/${ticket}" \
+              "" \
+              "Reopen it, or reference the ticket this work really belongs to."
+          fi
+
+          echo "  #${ticket} is an open ticket: $(jq -r '.title' <<< "${issue}")"
+        done
