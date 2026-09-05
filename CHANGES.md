@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
   * Set default gate shape to rectangular (IEC) for Russian locale (@V-Zemlyakov).
   * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
   * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
