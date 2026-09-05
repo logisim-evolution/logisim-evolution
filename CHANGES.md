@@ -4,6 +4,8 @@
 
 * @dev (????-??-??)
   * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
+  * Simplified Keyboard component buffer handling by removing redundant array-copy guards
+    [#564] (@hewzhew).
   * Set default gate shape to rectangular (IEC) for Russian locale (@V-Zemlyakov).
   * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
   * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
@@ -114,6 +116,8 @@
     as different and some different lines as identical [#2939] (@henriquejsza).
   * Added a Github Action check ensuring pull requests reference the open ticket they address (@MarcinOrlowski).
   * Added a Github Action locking merged pull requests and the tickets they closed (@MarcinOrlowski).
+  * Fixed the DEB package refusing to install on Debian 12 and Ubuntu 22.04, by listing the
+    pre-`t64` library names as alternative dependencies [#2959] (@MarcinOrlowski).
   * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)

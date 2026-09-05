@@ -391,6 +391,73 @@ object func {
     return listOf("--add-modules", dependencies)
     // return (ext.get(parametersName) as List<Any?>).filterIsInstance<String>() + addModules
   }
+
+  /** Matches a bare package name that carries the Debian 64-bit `time_t` suffix. */
+  private val T64_PACKAGE_NAME = Regex("""[a-z0-9][a-z0-9+.-]*t64""")
+
+  /**
+   * Rewrites the `Depends` field of the given DEB package so that every `t64` package name is
+   * offered together with its pre-transition name, i.e. `libasound2t64 | libasound2`.
+   *
+   * Debian's 64-bit `time_t` transition renamed a lot of library packages by appending a `t64`
+   * suffix. `jpackage` reads the dependency names off the build machine, so a package built on a
+   * recent Ubuntu lists the new names only and refuses to install on Debian 12 or Ubuntu 22.04.
+   * On the architectures we ship (amd64, arm64) `time_t` was 64 bits all along, so both packages
+   * expose the very same ABI and either one satisfies us. `apt` honours the order of the
+   * alternatives, therefore recent systems keep using the `t64` package.
+   *
+   * See https://github.com/logisim-evolution/logisim-evolution/issues/2959
+   */
+  fun addLegacyDebDependencyAliases(debFile: String, workDir: String) {
+    val root = File(workDir)
+    root.deleteRecursively()
+    root.mkdirs()
+
+    // `--raw-extract` unpacks the payload and drops the control files into `DEBIAN/`,
+    // which is exactly the layout `--build` expects back.
+    runCommand(listOf("dpkg-deb", "--raw-extract", debFile, workDir),
+        "Error while unpacking the DEB package.")
+
+    val controlFile = File("${workDir}/DEBIAN/control")
+    val lines = controlFile.readLines()
+    val patched = mutableListOf<String>()
+    var aliased = false
+    var idx = 0
+    while (idx < lines.size) {
+      val line = lines[idx]
+      idx++
+      if (!line.startsWith("Depends:")) {
+        patched.add(line)
+        continue
+      }
+      // Control fields may be folded over continuation lines.
+      val value = StringBuilder(line.removePrefix("Depends:"))
+      while (idx < lines.size && (lines[idx].startsWith(" ") || lines[idx].startsWith("\t"))) {
+        value.append(" ").append(lines[idx].trim())
+        idx++
+      }
+      val deps = value.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
+      patched.add("Depends: " + deps.joinToString(", ") { dep ->
+        if (!T64_PACKAGE_NAME.matches(dep)) dep else {
+          aliased = true
+          "${dep} | ${dep.dropLast(3)}"
+        }
+      })
+    }
+
+    if (!aliased) {
+      logger.lifecycle("No t64 dependencies found in ${debFile}. Package left untouched.")
+      root.deleteRecursively()
+      return
+    }
+
+    controlFile.writeText(patched.joinToString("\n") + "\n")
+    // `--root-owner-group` is a must, as the build user owns the unpacked files but the package
+    // has to hand them over to root, just like the one `jpackage` produced.
+    runCommand(listOf("dpkg-deb", "--root-owner-group", "--build", workDir, debFile),
+        "Error while repacking the DEB package.")
+    root.deleteRecursively()
+  }
 }
 
 /**
@@ -493,6 +560,7 @@ tasks.register("createDeb") {
   val outputFile = "${targetDir}/${project.name}_${appVersion}_${debArch}.deb"
   val linuxParams = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>()
   val jdepsFile = ext.get(JDEPS_FILE) as String
+  val repackDir = "${ext.get(BUILD_DIR) as String}/debRepack"
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
@@ -509,6 +577,7 @@ tasks.register("createDeb") {
     val params = linuxParams + func.getNeededModules(jdepsFile) + listOf("--type", "deb")
     func.runCommand(params, "Error while creating the DEB package.")
     func.verifyFileExists(outputFile);
+    func.addLegacyDebDependencyAliases(outputFile, repackDir)
   }
 }
 
