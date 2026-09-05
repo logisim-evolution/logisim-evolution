@@ -112,6 +112,7 @@
   * Added a Github Action check ensuring PRs also provide updated changelog (@MarcinOrlowski).
   * Fixed `Line.matches()` comparing transposed coordinates, causing identical lines to be treated
     as different and some different lines as identical [#2939] (@henriquejsza).
+  * Added a Github Action check ensuring pull requests reference the open ticket they address (@MarcinOrlowski).
   * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)
