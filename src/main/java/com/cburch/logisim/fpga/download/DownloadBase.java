@@ -383,7 +383,7 @@ public abstract class DownloadBase {
     }
   }
 
-  boolean cleanDirectory(String dir) {
+  private boolean cleanDirectory(String dir) {
     try {
       final var thisDir = new File(dir);
       if (!thisDir.exists()) return true;

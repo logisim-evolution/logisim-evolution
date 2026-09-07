@@ -33,7 +33,8 @@ class ToplevelHdlGeneratorFactoryTest {
   }
 
   @Test
-  void zeroPinComponentErrorUsesCurrentLocaleAndKeepsEmptyMapBehavior() {
+  void zeroPinComponentErrorUsesCurrentLocaleAndKeepsEmptyMapBehavior()
+      throws ReflectiveOperationException {
     final var originalLocale = LocaleManager.getLocale();
     try {
       assertZeroPinComponentError(
@@ -47,14 +48,19 @@ class ToplevelHdlGeneratorFactoryTest {
     }
   }
 
-  private void assertZeroPinComponentError(Locale locale, String expectedError) {
+  private void assertZeroPinComponentError(Locale locale, String expectedError)
+      throws ReflectiveOperationException {
     LocaleManager.setLocale(locale);
     final var reporterGui = mock(FpgaReportTabbedPane.class);
     Reporter.report.setGuiLogger(reporterGui);
     final var component = mock(MapComponent.class);
     when(component.getNrOfPins()).thenReturn(0);
 
-    assertEquals(Map.of(), ToplevelHdlGeneratorFactory.getToplevelWires(component));
+    final var method =
+        ToplevelHdlGeneratorFactory.class.getDeclaredMethod(
+            "getToplevelWires", MapComponent.class);
+    method.setAccessible(true);
+    assertEquals(Map.of(), method.invoke(null, component));
 
     final var error = ArgumentCaptor.forClass(Object.class);
     verify(reporterGui).addErrors(error.capture());

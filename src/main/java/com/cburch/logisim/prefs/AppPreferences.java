@@ -1005,6 +1005,8 @@ public class AppPreferences {
       );
   public static final PrefMonitor<Boolean> AntiAliassing =
       create(new PrefMonitorBoolean("AntiAliassing", true));
+  public static final PrefMonitor<Boolean> UI_ANTIALIASING =
+      create(new PrefMonitorBoolean("uiAntiAliasing", true));
 
   // Third party softwares preferences
   public static final PrefMonitor<String> QUESTA_PATH =

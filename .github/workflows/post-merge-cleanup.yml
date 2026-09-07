@@ -1,0 +1,121 @@
+# Locks the conversation of every merged pull request, and of the ticket(s) that
+# pull request closed, so that follow-up talk starts a fresh ticket instead of
+# landing in a thread nobody watches any more.
+#
+# Runs on "pull_request_target" and not on "pull_request", because this project
+# takes its contributions as pull requests from forks, and those only get a
+# read-only token on "pull_request", while locking needs write access. That is
+# safe here, as this workflow never checks out nor runs the pull request's code.
+# It only reads the pull request description, and does so through an environment
+# variable, never by pasting it into the script.
+#
+# Marcin Orlowski
+
+name: "Post-Merge Cleanup"
+
+on:
+  pull_request_target:
+    types: [ closed ]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  lock:
+    name: "Lock merged PR and its ticket(s)"
+    runs-on: ubuntu-latest
+    # "closed" fires for merged pull requests and for dropped ones alike, and
+    # there's nothing to clean up after the latter.
+    if: github.event.pull_request.merged == true
+
+    steps:
+    - name: "Lock the pull request conversation"
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+
+        # A pull request is an issue as far as this endpoint is concerned.
+        if [[ "$(gh api "repos/${REPO}/issues/${PR}" --jq '.locked')" == "true" ]]; then
+          echo "PR #${PR} conversation is already locked."
+          exit 0
+        fi
+
+        gh api --silent -X PUT "repos/${REPO}/issues/${PR}/lock" -f "lock_reason=resolved"
+        echo "PR #${PR} conversation locked."
+
+    - name: "Lock the ticket(s) the pull request closed"
+      # Runs even if locking the pull request itself went wrong, as the two are
+      # unrelated.
+      if: always()
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+
+        # GitHub closes a referenced ticket as part of the merge, but the event
+        # that started this run can get here first, so give it time to catch up.
+        declare -r ATTEMPTS=3
+        declare -r DELAY=5
+
+        # Formats kept in sync with ticket.yml, so that anything accepted there
+        # also gets locked here.
+        declare -r KEYWORDS='close[sd]?|fix(e[sd])?|resolve[sd]?'
+        declare -r URL="https://github\.com/${REPO//./\\.}/issues/"
+
+        mapfile -t tickets < <(
+          grep -oiE "(${KEYWORDS})[[:space:]]*:?[[:space:]]+(#|${URL})[0-9]+" <<< "${PR_BODY}" \
+            | grep -oE '[0-9]+$' \
+            | sort -un \
+            || true
+        )
+
+        if [[ "${#tickets[@]}" -eq 0 ]]; then
+          echo "This pull request references no ticket. Nothing to lock."
+          exit 0
+        fi
+
+        echo "Referenced ticket(s): ${tickets[*]/#/#}"
+
+        for ticket in "${tickets[@]}"; do
+          for (( attempt = 1; attempt <= ATTEMPTS; attempt++ )); do
+            if ! issue="$(gh api "repos/${REPO}/issues/${ticket}" 2>/dev/null)"; then
+              echo "#${ticket}: no such ticket. Skipped."
+              continue 2
+            fi
+
+            if [[ "$(jq -r '.state' <<< "${issue}")" == "closed" ]]; then
+              break
+            fi
+
+            if (( attempt < ATTEMPTS )); then
+              echo "#${ticket}: still open. Waiting ${DELAY}s for the merge to close it…"
+              sleep "${DELAY}"
+            fi
+          done
+
+          # GitHub only closes referenced tickets for pull requests merged into
+          # the default branch, so an open one here is expected, not an error.
+          state="$(jq -r '.state' <<< "${issue}")"
+          if [[ "${state}" != "closed" ]]; then
+            echo "#${ticket}: ${state}, so not locking it."
+            continue
+          fi
+
+          if [[ "$(jq -r '.locked' <<< "${issue}")" == "true" ]]; then
+            echo "#${ticket}: already locked."
+            continue
+          fi
+
+          if gh api --silent -X PUT "repos/${REPO}/issues/${ticket}/lock" -f "lock_reason=resolved"; then
+            echo "#${ticket}: locked."
+          else
+            echo "#${ticket}: could not be locked."
+          fi
+        done

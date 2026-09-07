@@ -95,6 +95,12 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
     if (toolbar.getPressed() == this) {
       if (item instanceof ToolbarClickableItem clickableItem) {
         final var g2 = g.create();
+        if (g2 instanceof java.awt.Graphics2D g2d && AppPreferences.UI_ANTIALIASING.getBoolean()) {
+          g2d.setRenderingHint(
+              java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+          g2d.setRenderingHint(
+              java.awt.RenderingHints.KEY_STROKE_CONTROL, java.awt.RenderingHints.VALUE_STROKE_PURE);
+        }
         g2.translate(BORDER, BORDER);
         clickableItem.paintPressedIcon(ToolbarButton.this, g2);
         g2.dispose();
@@ -110,6 +116,12 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
     }
 
     final var g2 = g.create();
+    if (g2 instanceof java.awt.Graphics2D g2d && AppPreferences.UI_ANTIALIASING.getBoolean()) {
+      g2d.setRenderingHint(
+          java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+      g2d.setRenderingHint(
+          java.awt.RenderingHints.KEY_STROKE_CONTROL, java.awt.RenderingHints.VALUE_STROKE_PURE);
+    }
     g2.translate(BORDER, BORDER);
     item.paintIcon(ToolbarButton.this, g2);
     g2.dispose();

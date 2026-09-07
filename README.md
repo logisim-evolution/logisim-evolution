@@ -182,14 +182,16 @@ before [creating an issue](https://github.com/logisim-evolution/logisim-evolutio
 the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).
 Otherwise, report the issue to the package maintainer!
 
-* [Snap](https://snapcraft.io/logisim-evolution) (`snap install logisim-evolution`)
-* [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
-* [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
-* [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
-* [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
-* [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) (`winget install -e --id logisim-evolution.logisim-evolution`)
-* [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
-* [nixpkgs](https://search.nixos.org/packages?channel=24.05&show=logisim-evolution)(`nix-shell -p logisim-evolution`)
+| Package manager | Command | Available version |
+| --------------- | ------- | ----------------- |
+| [Snap](https://snapcraft.io/logisim-evolution) | `snap install logisim-evolution` | ![Snapcraft Version](https://img.shields.io/snapcraft/v/logisim-evolution/latest/stable) |
+| [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) | `flatpak install flathub com.github.reds.LogisimEvolution` | ![Flathub Version](https://img.shields.io/flathub/v/com.github.reds.LogisimEvolution) |
+| [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) | `brew install --cask logisim-evolution` | ![Homebrew Cask Version](https://img.shields.io/homebrew/cask/v/logisim-evolution) |
+| [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) | `port install logisim-evolution` | ![MacPorts Port Version](https://img.shields.io/macports/v/logisim-evolution) |
+| [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) | `choco install logisim-evolution` | ![Chocolatey Version](https://img.shields.io/chocolatey/v/Logisim-evolution) |
+| [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) | `winget install -e --id logisim-evolution.logisim-evolution` | ![WinGet Package Version](https://img.shields.io/winget/v/logisim-evolution.logisim-evolution) |
+| [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution) | | ![AUR Version](https://img.shields.io/aur/version/logisim-evolution) |
+| [nixpkgs](https://search.nixos.org/packages?channel=26.05&show=logisim-evolution) | `nix-shell -p logisim-evolution` | [![nixpkgs stable 26.05 package](https://repology.org/badge/version-for-repo/nix_stable_26_05/logisim-evolution.svg)](https://repology.org/project/logisim-evolution/versions) |
 
 ### Nightly builds ###
 

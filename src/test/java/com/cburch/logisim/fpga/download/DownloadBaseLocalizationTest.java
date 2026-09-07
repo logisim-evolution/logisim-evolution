@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,18 +30,23 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.LocaleManager;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
 class DownloadBaseLocalizationTest {
 
   private final Locale originalLocale = LocaleManager.getLocale();
   private final String originalWorkspace = AppPreferences.FPGA_Workspace.get();
+
+  @TempDir Path tempDir;
 
   @AfterEach
   void restoreGlobals() {
@@ -84,32 +90,42 @@ class DownloadBaseLocalizationTest {
 
   @Test
   void workspaceCreationAndCleanupFailuresUseCurrentLocaleAndRemainFatal() {
-    AppPreferences.FPGA_Workspace.set("TestWorkspace");
+    final var workspace = tempDir.resolve("TestWorkspace").toString();
+    AppPreferences.FPGA_Workspace.set(workspace);
     final var project = projectNamed("TestProject", mock(Circuit.class));
-    final var workspaceProject = "TestWorkspace" + File.separator + "TestProject";
-    final var circuitProject = workspaceProject + File.separator + "Main" + File.separator;
+    final var workspaceProject = workspace + File.separator + "TestProject";
 
     assertFatalError(
         Locale.ENGLISH,
         "Unable to create directory: \"" + workspaceProject + "\"",
-        () -> assertFalse(new TestDownloadBase(project, null, true, false).writeHdlForTest("Main")));
+        () -> assertFalse(new TestDownloadBase(project, null, false).writeHdlForTest("Main")));
     assertFatalError(
         Locale.SIMPLIFIED_CHINESE,
         "无法创建目录：“" + workspaceProject + "”",
-        () -> assertFalse(new TestDownloadBase(project, null, true, false).writeHdlForTest("Main")));
-    assertFatalError(
+        () -> assertFalse(new TestDownloadBase(project, null, false).writeHdlForTest("Main")));
+    assertFatalErrors(
         Locale.ENGLISH,
-        "Unable to cleanup old project files in directory: \"" + circuitProject + "\"",
-        () -> assertFalse(new TestDownloadBase(project, null, false, true).writeHdlForTest("Main")));
-    assertFatalError(
+        List.of(
+            "Could not remove directory tree :null",
+            "Unable to cleanup old project files in directory: \"null\""),
+        () ->
+            assertFalse(
+                new TestDownloadBase(project, null, true)
+                    .withNullProjectDirectory()
+                    .writeHdlForTest("Main")));
+    assertFatalErrors(
         Locale.SIMPLIFIED_CHINESE,
-        "无法清理目录“" + circuitProject + "”中的旧工程文件",
-        () -> assertFalse(new TestDownloadBase(project, null, false, true).writeHdlForTest("Main")));
+        List.of("无法移除目录树：null", "无法清理目录“null”中的旧工程文件"),
+        () ->
+            assertFalse(
+                new TestDownloadBase(project, null, true)
+                    .withNullProjectDirectory()
+                    .writeHdlForTest("Main")));
   }
 
   @Test
   void nullHdlGeneratorUsesCurrentLocaleAndKeepsFalseResult() {
-    AppPreferences.FPGA_Workspace.set("TestWorkspace");
+    AppPreferences.FPGA_Workspace.set(tempDir.resolve("NullHdlWorkspace").toString());
     final var circuit = mock(Circuit.class);
     final var factory = mock(SubcircuitFactory.class);
     final var attrs = mock(AttributeSet.class);
@@ -129,7 +145,7 @@ class DownloadBaseLocalizationTest {
   }
 
   @Test
-  void directoryExceptionMessagesUseCurrentLocaleAndKeepFalseResults() {
+  void directoryCreationExceptionMessageUsesCurrentLocaleAndKeepsFalseResult() {
     assertFatalError(
         Locale.ENGLISH,
         "Could not check/create directory :null",
@@ -138,14 +154,6 @@ class DownloadBaseLocalizationTest {
         Locale.SIMPLIFIED_CHINESE,
         "无法检查或创建目录：null",
         () -> assertFalse(new TestDownloadBase(null, null).genDirectoryForTest(null)));
-    assertFatalError(
-        Locale.ENGLISH,
-        "Could not remove directory tree :null",
-        () -> assertFalse(new TestDownloadBase(null, null).cleanDirectoryForTest(null)));
-    assertFatalError(
-        Locale.SIMPLIFIED_CHINESE,
-        "无法移除目录树：null",
-        () -> assertFalse(new TestDownloadBase(null, null).cleanDirectoryForTest(null)));
   }
 
   private void assertBoardContentsInfo(Locale locale, String boardInfo, String componentInfo) {
@@ -186,8 +194,17 @@ class DownloadBaseLocalizationTest {
     assertReporterError(locale, expectedError, SimpleDrcContainer.LEVEL_FATAL, action);
   }
 
+  private void assertFatalErrors(Locale locale, List<String> expectedErrors, Runnable action) {
+    assertReporterErrors(locale, expectedErrors, SimpleDrcContainer.LEVEL_FATAL, action);
+  }
+
   private void assertReporterError(
       Locale locale, String expectedError, int expectedSeverity, Runnable action) {
+    assertReporterErrors(locale, List.of(expectedError), expectedSeverity, action);
+  }
+
+  private void assertReporterErrors(
+      Locale locale, List<String> expectedErrors, int expectedSeverity, Runnable action) {
     LocaleManager.setLocale(locale);
     final var reporterGui = mock(FpgaReportTabbedPane.class);
     Reporter.report.setGuiLogger(reporterGui);
@@ -195,24 +212,31 @@ class DownloadBaseLocalizationTest {
     action.run();
 
     final var error = ArgumentCaptor.forClass(Object.class);
-    verify(reporterGui).addErrors(error.capture());
-    assertEquals(expectedError, error.getValue().toString());
-    assertEquals(expectedSeverity, ((SimpleDrcContainer) error.getValue()).getSeverity());
+    verify(reporterGui, times(expectedErrors.size())).addErrors(error.capture());
+    assertEquals(expectedErrors, error.getAllValues().stream().map(Object::toString).toList());
+    for (final var reportedError : error.getAllValues()) {
+      assertEquals(expectedSeverity, ((SimpleDrcContainer) reportedError).getSeverity());
+    }
   }
 
   private static class TestDownloadBase extends DownloadBase {
     private final ArrayDeque<Boolean> directoryResults = new ArrayDeque<>();
-    private final boolean cleanupResult;
+    private boolean nullProjectDirectory;
 
-    private TestDownloadBase(Project project, BoardInformation board, boolean cleanupResult, Boolean... directoryResults) {
+    private TestDownloadBase(
+        Project project, BoardInformation board, Boolean... directoryResults) {
       myProject = project;
       myBoardInformation = board;
-      this.cleanupResult = cleanupResult;
       this.directoryResults.addAll(java.util.List.of(directoryResults));
     }
 
     private TestDownloadBase(Project project, BoardInformation board) {
-      this(project, board, true);
+      this(project, board, new Boolean[0]);
+    }
+
+    private TestDownloadBase withNullProjectDirectory() {
+      nullProjectDirectory = true;
+      return this;
     }
 
     private boolean mapDesignForTest(String circuitName) {
@@ -227,8 +251,9 @@ class DownloadBaseLocalizationTest {
       return super.genDirectory(path);
     }
 
-    private boolean cleanDirectoryForTest(String path) {
-      return super.cleanDirectory(path);
+    @Override
+    protected String getProjDir(String selectedCircuit) {
+      return nullProjectDirectory ? null : super.getProjDir(selectedCircuit);
     }
 
     @Override
@@ -236,9 +261,5 @@ class DownloadBaseLocalizationTest {
       return directoryResults.isEmpty() || directoryResults.removeFirst();
     }
 
-    @Override
-    boolean cleanDirectory(String path) {
-      return cleanupResult;
-    }
   }
 }
