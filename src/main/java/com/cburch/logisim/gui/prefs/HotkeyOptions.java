@@ -31,7 +31,7 @@ import javax.swing.Timer;
 class HotkeyOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   /*
-   * Hotkey Options TAB
+   * Hotkeys TAB
    *
    * Author: Hanyuan Zhao <2524395907@qq.com>
    *
@@ -39,14 +39,14 @@ class HotkeyOptions extends OptionsPanel {
    * This is the hotkeys Tab in the preferences.
    * Allowing users to decide which hotkey to bind to the specific function.
    *
-   * To add your own hotkey bindings from your code, you need some operations as follows.
-   * Firstly add your hotkey configurations to AppPreferences and set up their strings in resources
+   * To add your own bindings from your code, you need some operations as follows.
+   * Firstly add your configurations to AppPreferences and set up their strings in resources
    * Fill the resetHotkeys method in AppPreferences, adding the reset code for your hotkeys
-   * Set up the hotkey in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
+   * Set up the in your code by accessing AppPreferences.HOTKEY_ADD_BY_YOU
    * Do not forget to sync with the user's settings.
    * You should go modifying hotkeySync in AppPreferences, adding your codes there.
    *
-   * Now the hotkey options don't involve all the bindings in logisim.
+   * Now the options don't involve all the bindings in logisim.
    * The hotkeys chosen by the user might have conflict with
    * some build-in key bindings until all key bindings can be set in this tab.
    * TODO: If you are available, you can bind them in order to make logisim feel better
