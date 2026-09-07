@@ -56,6 +56,7 @@
     * Corrected disjoint corners on Square Root arithmetic components.
     * Corrected disjoint corners on unpressed Button components.
     * Reduced line reordering errors in TikZ/SVG image exports.
+    * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Improved dark theme (FlatLaf Dark / Darcula) color synchronization:
     * Canvas background, grid dots, component outlines, icons, and signal wire
       colors now adapt to the active theme.
