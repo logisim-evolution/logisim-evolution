@@ -3,8 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
-
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
+  * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
   * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
   * Simplified Keyboard component buffer handling by removing redundant array-copy guards

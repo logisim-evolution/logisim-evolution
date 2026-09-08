@@ -86,13 +86,13 @@ public class PullResistor extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
     if (facing == Direction.EAST) {
-      return Bounds.create(-42, -6, 42, 12);
+      return Bounds.create(-42, -18, 42, 24);
     } else if (facing == Direction.WEST) {
-      return Bounds.create(0, -6, 42, 12);
+      return Bounds.create(0, -18, 42, 24);
     } else if (facing == Direction.NORTH) {
-      return Bounds.create(-6, 0, 12, 42);
+      return Bounds.create(-8, 0, 26, 44);
     } else {
-      return Bounds.create(-6, -42, 12, 42);
+      return Bounds.create(-8, -44, 26, 44);
     }
   }
 
@@ -114,16 +114,16 @@ public class PullResistor extends InstanceFactory {
     if (color && inColor != null) g.setColor(inColor);
     if (facing == Direction.EAST) {
       GraphicsUtil.drawText(
-          g, pullValue.toDisplayString(), -32, 0, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
+          g, pullValue.toDisplayString(), -32, -14, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
     } else if (facing == Direction.WEST) {
       GraphicsUtil.drawText(
-          g, pullValue.toDisplayString(), 32, 0, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+          g, pullValue.toDisplayString(), 32, -14, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     } else if (facing == Direction.NORTH) {
       GraphicsUtil.drawText(
-          g, pullValue.toDisplayString(), 0, 32, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+          g, pullValue.toDisplayString(), 10, 38, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
     } else {
       GraphicsUtil.drawText(
-          g, pullValue.toDisplayString(), 0, -32, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+          g, pullValue.toDisplayString(), 10, -32, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
     }
 
     double rotate = 0.0;
@@ -131,9 +131,32 @@ public class PullResistor extends InstanceFactory {
       rotate = Direction.SOUTH.toRadians() - facing.toRadians();
       if (rotate != 0.0) ((Graphics2D) g).rotate(rotate);
     }
-    g.drawLine(0, -30, 0, -26);
-    g.drawLine(-6, -30, 6, -30);
+    if (pullValue == Value.TRUE) {
+      // VCC
+      GraphicsUtil.switchToWidth(g, 3);
+      g.drawLine(0, -31, 0, -26);
+      GraphicsUtil.switchToWidth(g, 2);
+      int[] xp = {-6, 6, 0};
+      int[] yp = {-32, -32, -38};
+      g.drawPolygon(xp, yp, 3);
+    } else if (pullValue == Value.ERROR) {
+      // ERROR
+      GraphicsUtil.switchToWidth(g, 3);
+      g.drawLine(0, -34, 0, -26);
+      GraphicsUtil.switchToWidth(g, 2);
+      g.drawLine(-4, -38, 4, -30);
+      g.drawLine(-4, -30, 4, -38);
+    } else {
+      // GND
+      GraphicsUtil.switchToWidth(g, 3);
+      g.drawLine(0, -31, 0, -26);
+      GraphicsUtil.switchToWidth(g, 1);
+      g.drawLine(-8, -32, 8, -32);
+      g.drawLine(-5, -35, 5, -35);
+      g.drawLine(-2, -38, 2, -38);
+    }
     if (color && outColor != null) g.setColor(outColor);
+    GraphicsUtil.switchToWidth(g, 3);
     g.drawLine(0, -4, 0, 0);
     g.setColor(baseColor);
     GraphicsUtil.switchToWidth(g, 2);
