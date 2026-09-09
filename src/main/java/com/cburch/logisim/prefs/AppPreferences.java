@@ -1106,7 +1106,7 @@ public class AppPreferences {
   public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
       create(new PrefMonitorBoolean("searchDoubleShift", true));
 
-  /* Hotkey Settings */
+  /* Hotkeys Settings */
   /* Watch whether in headless mode */
   public static final int hotkeyMenuMask =
       GraphicsEnvironment.isHeadless()
