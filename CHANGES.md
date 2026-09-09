@@ -3,11 +3,13 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
   * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
   * Simplified Keyboard component buffer handling by removing redundant array-copy guards
     [#564] (@hewzhew).
+
   * Set default gate shape to rectangular (IEC) for Russian locale (@V-Zemlyakov).
   * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
   * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
