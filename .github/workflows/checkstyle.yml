@@ -30,11 +30,11 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes that matters for us..."
-      uses: dorny/paths-filter@v4
+      uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
       id: filter
       with:
         list-files: 'escape'
@@ -66,7 +66,7 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
     - name: "Lint changed files"
       run: |

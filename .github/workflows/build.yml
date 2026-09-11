@@ -27,11 +27,11 @@ jobs:
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changes in monitored locations"
-      uses: dorny/paths-filter@v4
+      uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
       id: filter
       with:
         filters: |
@@ -63,22 +63,22 @@ jobs:
 
     steps:
     - name: "Checkout sources"
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-      uses: actions/setup-java@v6
+      uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
       with:
         java-version: ${{ env.JDK_VERSION }}
         distribution: ${{ env.JDK_DISTRO }}
         # This is so Sonar has access to the full git history
         fetch-depth: 0
     - name: Cache SonarCloud packages
-      uses: actions/cache@v6
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Cache Gradle packages
-      uses: actions/cache@v6
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
