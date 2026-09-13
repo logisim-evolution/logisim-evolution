@@ -4,6 +4,8 @@
 
 * @dev (????-??-??)
   * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
+
+* v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
   * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
