@@ -49,7 +49,7 @@ public final class Value {
     }
   }
 
-  public static Value create_unsafe(int width, long error, long unknown, long value) {
+  public static Value createUnsafe(int width, long error, long unknown, long value) {
     int hashCode = Value.hashcode(width, error, unknown, value);
     Object obj = cache.get(hashCode);
     if (obj != null) {

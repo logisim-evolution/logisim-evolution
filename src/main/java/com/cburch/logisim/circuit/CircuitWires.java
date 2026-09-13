@@ -374,7 +374,7 @@ public class CircuitWires {
           error |= mask;
         }
       }
-      busVal = Value.create_unsafe(width, error, unknown, value);
+      busVal = Value.createUnsafe(width, error, unknown, value);
       dirty = false;
       return busVal;
     }
