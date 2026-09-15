@@ -23,7 +23,6 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.ColorUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
@@ -47,7 +46,7 @@ public class Text extends InstanceFactory {
   public static final Attribute<Font> ATTR_FONT =
       Attributes.forFont("font", S.getter("textFontAttr"));
   public static final Attribute<Color> ATTR_COLOR =
-      Attributes.forColor("color", S.getter("textColorAttr"));
+      new TextColorAttribute("color", S.getter("textColorAttr"));
   public static final Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
@@ -175,10 +174,8 @@ public class Text extends InstanceFactory {
     final var gfx = painter.getGraphics();
     gfx.translate(x, y);
     final var storedColor = painter.getAttributeValue(ATTR_COLOR);
-    final var useDarkColor =
-        !painter.isPrintView() && AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
     // Stored colors remain the reference for light canvases and printer view.
-    gfx.setColor(useDarkColor ? ColorUtil.getLuminanceInvertedColor(storedColor) : storedColor);
+    gfx.setColor(painter.isPrintView() ? storedColor : ColorUtil.getThemeTextColor(storedColor));
     paintGhost(painter);
     gfx.translate(-x, -y);
   }

@@ -61,6 +61,13 @@ public final class ColorUtil {
         color.getAlpha());
   }
 
+  /** Returns the displayed text color without changing the stored light-theme color. */
+  public static Color getThemeTextColor(Color color) {
+    return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+        ? getLuminanceInvertedColor(color)
+        : color;
+  }
+
   private static int adjustChannel(int channel, double adjustment) {
     return Math.clamp(Math.round(channel + adjustment), RGB_CHANNEL_MIN, RGB_CHANNEL_MAX);
   }
