@@ -1072,7 +1072,7 @@ class XmlReader {
       convertObsoletePinAttributes(doc, toolElt, wiringLibName);
     }
 
-    //prevents the following repairs to be applied when you open the program.
+    // prevents the following repairs to be applied when you open the program.
     if (version.compareTo(new LogisimVersion(0, 0, 0)) == 0) return;
 
     if (version.compareTo(new LogisimVersion(4, 1, 0, "dev")) < 0) {
