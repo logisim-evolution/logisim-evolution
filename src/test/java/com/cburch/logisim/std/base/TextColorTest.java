@@ -28,11 +28,14 @@ class TextColorTest {
   @ParameterizedTest
   @CsvSource({
     "#000000, #ffffff",
-    "#ff0000, #00ffff",
-    "#00ff00, #ff00ff",
-    "#0000ff, #ffff00",
+    "#ff0000, #ff9393",
+    "#00ff00, #009100",
+    "#0000ff, #dadaff",
+    "#ffff00, #252500",
+    "#404040, #bfbfbf",
+    "#808080, #7f7f7f",
     "#ffffff, #000000",
-    "#12345678, #edcba978"
+    "#12345678, #b3d5f778"
   })
   void themeSwitchChangesOnlyRenderedColor(String storedValue, String darkValue) {
     final var originalLookAndFeel = AppPreferences.LookAndFeel.get();

@@ -178,7 +178,7 @@ public class Text extends InstanceFactory {
     final var useDarkColor =
         !painter.isPrintView() && AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
     // Stored colors remain the reference for light canvases and printer view.
-    gfx.setColor(useDarkColor ? ColorUtil.getComplementaryColor(storedColor) : storedColor);
+    gfx.setColor(useDarkColor ? ColorUtil.getLuminanceInvertedColor(storedColor) : storedColor);
     paintGhost(painter);
     gfx.translate(-x, -y);
   }
