@@ -92,7 +92,7 @@ public class DualRam extends Ram {
         return;
       }
     }
-    
+
     final var addrBValue = state.getPortValue(DualRamAppearance.getAddrIndex(1, attrs));
     final var addrB = addrBValue.toLongValue();
     final var goodBAddr = addrBValue.isFullyDefined() && addrB >= 0;
@@ -110,17 +110,17 @@ public class DualRam extends Ram {
     final var weB = state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)) == Value.TRUE;
     final var triggerType = state.getAttributeValue(StdAttr.TRIGGER);
     final var async = triggerType.equals(StdAttr.TRIG_HIGH) || triggerType.equals(StdAttr.TRIG_LOW);
-    final var edgeA = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async 
+    final var edgeA = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async
         ? myState.setClock(0, state.getPortValue(DualRamAppearance.getWEIndex(0, attrs)), triggerType) :
         myState.setClock(0, state.getPortValue(DualRamAppearance.getClkIndex(0, attrs)), triggerType);
     final var writeEnabledA = weA && edgeA;
-    final var edgeB = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async 
+    final var edgeB = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) && async
         ? myState.setClock(1, state.getPortValue(DualRamAppearance.getWEIndex(1, attrs)), triggerType) :
         myState.setClock(1, state.getPortValue(DualRamAppearance.getClkIndex(1, attrs)), triggerType);
     final var writeEnabledB = weB && edgeB;
     final var writeCollision = (addrA == addrB) && writeEnabledA && writeEnabledB;
     if (writeCollision) {
-      DialogNotification.showDialogNotification(null, "Warning", 
+      DialogNotification.showDialogNotification(null, "Warning",
           S.get("dualWriteCollision", Long.toHexString(addrA)));
     }
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {

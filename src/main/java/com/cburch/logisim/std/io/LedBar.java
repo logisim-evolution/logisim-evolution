@@ -103,7 +103,7 @@ public class LedBar extends DotMatrixBase {
   public AttributeOption getAttributeItemSelect() {
     return INPUT_SELECT;
   }
-  
+
   @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path p) {
     return new LedBarShape(x, y, p);

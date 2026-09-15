@@ -108,7 +108,7 @@ public class Ram extends Mem {
           boolean needsLabel) {
     super(name, desc, generator, needsLabel);
   }
-  
+
   public Ram() {
     super(_ID, S.getter("ramComponent"), new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));

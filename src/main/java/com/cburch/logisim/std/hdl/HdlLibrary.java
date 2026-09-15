@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Contains the HDL-IP library.
- * This library contains components for simulating HDL entities in Logisim. 
+ * This library contains components for simulating HDL entities in Logisim.
  */
 public class HdlLibrary extends Library {
 

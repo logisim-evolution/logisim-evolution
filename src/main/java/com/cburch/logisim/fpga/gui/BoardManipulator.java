@@ -250,8 +250,8 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   }
 
   public Image getImage() {
-    return (image.getWidth() == IMAGE_WIDTH && image.getHeight() == IMAGE_HEIGHT) 
-           ? image 
+    return (image.getWidth() == IMAGE_WIDTH && image.getHeight() == IMAGE_HEIGHT)
+           ? image
            : image.getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, 4);
   }
 
@@ -362,7 +362,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       ioComps.removeComponent(edit, scale);
       defineRectangle = new SimpleRectangle(e, edit, scale);
     }
-    
+
     if (defineRectangle != null) {
       defineRectangle.resizeAndGetUpdate(e, scale);
       repaint();
