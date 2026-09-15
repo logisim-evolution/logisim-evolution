@@ -23,6 +23,8 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.ColorUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
@@ -172,7 +174,11 @@ public class Text extends InstanceFactory {
     final var y = loc.getY();
     final var gfx = painter.getGraphics();
     gfx.translate(x, y);
-    gfx.setColor(painter.getAttributeValue(ATTR_COLOR));
+    final var storedColor = painter.getAttributeValue(ATTR_COLOR);
+    final var useDarkColor =
+        !painter.isPrintView() && AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    // Stored colors remain the reference for light canvases and printer view.
+    gfx.setColor(useDarkColor ? ColorUtil.getComplementaryColor(storedColor) : storedColor);
     paintGhost(painter);
     gfx.translate(-x, -y);
   }

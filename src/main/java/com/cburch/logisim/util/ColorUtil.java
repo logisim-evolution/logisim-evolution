@@ -21,6 +21,8 @@ import javax.swing.UIManager;
  */
 public final class ColorUtil {
 
+  private static final int RGB_CHANNEL_MAX = 255;
+
   public static final Color MAGNIFYING_INTERIOR = new Color(255, 230, 230, 220);
 
   private ColorUtil() {
@@ -28,10 +30,14 @@ public final class ColorUtil {
   }
 
   /**
-   * Returns complementary color to provided one (i.e. white for black etc).
+   * Returns complementary color to provided one (i.e. white for black etc), preserving alpha.
    */
   public static Color getComplementaryColor(Color color) {
-    return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
+    return new Color(
+        RGB_CHANNEL_MAX - color.getRed(),
+        RGB_CHANNEL_MAX - color.getGreen(),
+        RGB_CHANNEL_MAX - color.getBlue(),
+        color.getAlpha());
   }
 
   /**
