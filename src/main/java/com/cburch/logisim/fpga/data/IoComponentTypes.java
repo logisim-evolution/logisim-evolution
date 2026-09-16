@@ -186,8 +186,8 @@ public enum IoComponentTypes {
 
   public static String getIoLabel(int nrPins, int id, IoComponentTypes comp) {
     return comp == IoComponentTypes.LocalBus
-       ? ReptarLocalBus.getIoLabel(id)
-       : (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
+        ? ReptarLocalBus.getIoLabel(id)
+        : (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
   }
 
   public static int getNrOfFPGAPins(IoComponentTypes comp) {
@@ -302,7 +302,7 @@ public enum IoComponentTypes {
           }
           default -> {
             partX = (float) width / (float) (5 * nrOfRows);
-            partY = (float) height / (float) 7; 
+            partY = (float) height / (float) 7;
             segmentWidth = (float) width / (float) nrOfRows;
           }
         }
@@ -512,7 +512,7 @@ public enum IoComponentTypes {
           }
           default -> {
             partX = (float) width / (float) (5 * nrOfRows);
-            partY = (float) height / (float) 7; 
+            partY = (float) height / (float) 7;
           }
         }
         for (var xIndex = 0; xIndex < 5; xIndex++) {

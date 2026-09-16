@@ -186,7 +186,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (appFont != null && !appFont.isBlank()) {
       fontName = appFont;
     }
-    
+
     var fontStyle = AppPreferences.getPreferredFontStyle(fontName);
     bottomTab.setFont(AppPreferences.getScaledFont(new Font(fontName, fontStyle, 9)));
     bottomTab.add(attrTable = new AttrTable(this));

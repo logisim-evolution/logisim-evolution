@@ -103,14 +103,14 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     final var rows = getRowCount(attrs.getValue(ATTR_ROWS));
     final var cols = getColumnCount(attrs.getValue(ATTR_COLUMNS));
-    
+
     var tempImage = new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
     var tempGraphics = tempImage.getGraphics();
     tempGraphics.setFont(DEFAULT_FONT);
 
-    int dynamicColWidth = tempGraphics.getFontMetrics().charWidth('W'); 
+    int dynamicColWidth = tempGraphics.getFontMetrics().charWidth('W');
     tempGraphics.dispose();
-    
+
     var width = 2 * BORDER + cols * dynamicColWidth;
 
     if (width < 30) width = 30;

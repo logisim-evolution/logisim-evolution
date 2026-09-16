@@ -215,7 +215,7 @@ public final class LogisimFileActions {
                     options,
                     options[0]);
 
-                if (response == 0) { 
+                if (response == 0) {
                   mergedCircuits.add(circ);
                 } else if (response == 1) { // Rename
                   final var renamed = new Circuit(suggestedName, mergelib, null);

@@ -46,7 +46,7 @@ public class SevenSegmentShape extends DynamicElement {
     return UnmodifiableList.create(
         new Attribute<?>[] {ATTR_SCALE, ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR});
   }
-  
+
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
@@ -132,7 +132,7 @@ public class SevenSegmentShape extends DynamicElement {
   public Element toSvgElement(Document doc) {
     return toSvgElement(doc.createElement("visible-sevensegment"));
   }
-  
+
   @Override
   public Element toSvgElement(Element ret) {
     ret = super.toSvgElement(ret);

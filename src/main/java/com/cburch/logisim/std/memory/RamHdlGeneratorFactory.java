@@ -31,7 +31,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     super();
     getWiresPortsDuringHDLWriting = true;
   }
-  
+
   private void getGenerationTimeWiresPortsLineEnables(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var nrOfaddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
@@ -79,7 +79,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(Port.INPUT, "we", 1, RamAppearance.getWEIndex(0, attrs))
         .add(Port.CLOCK, HdlPorts.getClockName(1), 1, RamAppearance.getClkIndex(0, attrs));
   }
-  
+
   private void getGenerationTimeWiresPortsByteEnables(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
@@ -147,7 +147,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       getGenerationTimeWiresPortsByteEnables(theNetlist, attrs);
     }
   }
-  
+
   private LineBuffer getModuleFunctionalityByteEnables(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
@@ -354,7 +354,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           contents
               .add("""
                   always @(posedge {{clock}})
-                    begin    
+                    begin
                   """);
           contents.add("    if (s_we{{1}} == 1'b1)", i);
           final var startIndex = i * 8;
@@ -422,9 +422,9 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
      * Note that in the worst case this "simulated" behavior takes up to 9 FPGA-clock cycles,
      * hence the tick frequency should be 5 times slower than the FPGA clock to have proper behavior
      * on the FPGA.
-     * 
-     * IMPORTANT: 
-     *  1) in case of a gated clock (hence the RAM is not connected to a clock component) this 
+     *
+     * IMPORTANT:
+     *  1) in case of a gated clock (hence the RAM is not connected to a clock component) this
      * HDL-description will NOT work on the FPGA and the simulation in logisim and on an FPGA are for
      * sure not identical!
      *  2) This module uses system Verilog features.
@@ -493,7 +493,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (dataLines == 1) {
         contents.add("      s_tickDelayReg(1)  <= s_tickDelayReg(0);");
       } else {
-        contents.add(String.format("      s_tickDelayReg(%d {{downto}} 1) <= s_tickDelayReg(%d {{downto}} 0);", 
+        contents.add(String.format("      s_tickDelayReg(%d {{downto}} 1) <= s_tickDelayReg(%d {{downto}} 0);",
             dataLines, dataLines - 1));
       }
       contents.add("""
@@ -503,7 +503,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents.add(String.format("      {{elsif}} (unsigned(s_addressOffsetReg) < to_unsigned(%d,%d)) {{then}}",
           dataLines, nrOfaddressLines + 1));
       contents.add(String.format("       s_addressOffsetReg <= std_logic_vector(unsigned(s_addressOffsetReg) + to_unsigned(1,%d));",
-          nrOfaddressLines + 1));             
+          nrOfaddressLines + 1));
       contents.add("""
                         {{end}} {{if}};
                      {{end}} {{if}};
@@ -577,7 +577,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents.add("""
                   always @(posedge clock)
                     if (s_ramWe == 1'b1) s_memContents[s_ramWriteAddress] <= s_ramDataIn;
-                  
+
                   always @(negedge clock)
                     s_ramDataOut <= s_memContents[s_ramReadAddress];
                   """);
@@ -616,7 +616,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add(String.format("    s_tickDelayReg[%d:1] <= s_tickDelayReg[%d:0];", dataLines, dataLines - 1));
       }
       contents.add(String.format("    s_addressOffsetReg <= (s_tickDelayReg[0] == 1'b1) ? %d'd0 :", nrOfaddressLines + 1));
-      contents.add(String.format("                          s_addressOffsetReg != %d'd%d ? s_addressOffsetReg + %d'd1 :", 
+      contents.add(String.format("                          s_addressOffsetReg != %d'd%d ? s_addressOffsetReg + %d'd1 :",
           nrOfaddressLines + 1, dataLines, nrOfaddressLines + 1));
       contents.add("""
                                             s_addressOffsetReg;
@@ -642,7 +642,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (dataLines == 1) {
         contents.add("""
                     assign dataOut = s_dataOutReg;
-                    
+
                     always @(posedge clock)
                       s_dataOutReg <= (s_tickDelayReg[1] == 1'b1) ? s_ramDataOut : s_dataOutReg;
                     """);
@@ -651,7 +651,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           contents.add(String.format("assign data%dOut = s_dataOut%dReg;", idx, idx));
         }
         contents.add("""
-                    
+
                     always @(posedge clock)
                       begin
                     """);
@@ -676,7 +676,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     return contents.empty();
   }
-  
+
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
@@ -685,7 +685,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       return getModuleFunctionalityByteEnables(theNetlist, attrs);
     }
   }
-  
+
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
@@ -696,7 +696,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
     final var isLineControlled = attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
-    return (separate && !asynch && !clearPin) 
+    return (separate && !asynch && !clearPin)
           || (isLineControlled && !clearPin);
   }
 }

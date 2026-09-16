@@ -4,6 +4,8 @@
 
 * @dev (????-??-??)
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
+
+* v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
   * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).

@@ -601,7 +601,7 @@ public class Loader implements LibraryLoader {
       textArea.setCaretPosition(0);
 
       final var scrollPane = new JScrollPane(textArea);
-      
+
       final var result = OptionPane.showOptionDialog(
           parent,
           scrollPane,
