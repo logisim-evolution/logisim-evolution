@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.base.Text;
 import java.nio.file.Files;
@@ -24,6 +25,34 @@ import org.junit.jupiter.api.io.TempDir;
 class TextPersistenceTest {
 
   @TempDir Path tempDir;
+
+  @Test
+  void darkThemeSavesAndReloadsOnlyTheLightColor() throws Exception {
+    final var originalTheme = AppPreferences.LookAndFeel.get();
+    try {
+      AppPreferences.LookAndFeel.set("TestDark");
+      final var loader = new Loader(null);
+      final var file = LogisimFile.createNew(loader, null);
+      file.addLibrary(loader.getBuiltin().getLibrary(BaseLibrary._ID));
+      final var attrs = Text.FACTORY.createAttributeSet();
+      final var storedColor = Text.ATTR_COLOR.parse("#0000ff78");
+      attrs.setValue(Text.ATTR_TEXT, "color");
+      attrs.setValue(Text.ATTR_COLOR, storedColor);
+      final var mutation = new CircuitMutation(file.getMainCircuit());
+      mutation.add(Text.FACTORY.createComponent(Location.create(100, 100, false), attrs));
+      mutation.execute();
+      final var path = tempDir.resolve("text-color.circ").toFile();
+
+      assertTrue(loader.save(file, path));
+      final var reloaded = new Loader(null).openLogisimFile(path);
+      final var reloadedAttrs = reloaded.getMainCircuit().getNonWires().iterator().next().getAttributeSet();
+      assertEquals(storedColor, reloadedAttrs.getValue(Text.ATTR_COLOR));
+      assertEquals("#dadaff78", Text.ATTR_COLOR.toDisplayString(reloadedAttrs.getValue(Text.ATTR_COLOR)));
+      assertTrue(Files.readString(path.toPath()).contains("#0000ff78"));
+    } finally {
+      AppPreferences.LookAndFeel.set(originalTheme);
+    }
+  }
 
   @Test
   void multilineTextSurvivesSaveAndReload() throws Exception {
