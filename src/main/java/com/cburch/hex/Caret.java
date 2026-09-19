@@ -307,8 +307,7 @@ public class Caret {
       final var loc = measures.toAddress(e.getX(), e.getY());
       setDot(loc, true);
 
-      // TODO should repeat dragged events when mouse leaves the
-      // component
+      // TODO: should repeat dragged events when mouse leaves the component
     }
 
     @Override

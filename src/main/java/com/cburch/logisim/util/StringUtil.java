@@ -57,7 +57,7 @@ public final class StringUtil {
   }
 
   public static Bounds estimateBounds(String text, Font font, int hAlign, int vAlign) {
-    // TODO - you can imagine being more clever here
+    // TODO: - you can imagine being more clever here
     if (text == null || text.length() == 0) text = "X"; // return Bounds.EMPTY_BOUNDS;
     var n = 0;
     var c = 0;

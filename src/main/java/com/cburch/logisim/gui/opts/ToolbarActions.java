@@ -108,7 +108,7 @@ class ToolbarActions {
     public Action append(Action other) {
       if (other instanceof MoveTool o) {
         if (this.toolbar == o.toolbar && this.dest == o.oldpos) {
-          // TODO if (this.oldpos == o.dest) return null;
+          // TODO: if (this.oldpos == o.dest) return null;
           return new MoveTool(toolbar, this.oldpos, o.dest);
         }
       }
