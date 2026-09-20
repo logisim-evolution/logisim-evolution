@@ -109,8 +109,6 @@ public class LedBar extends DotMatrixBase {
     return new LedBarShape(x, y, p);
   }
 
-  /* ****************************************************************** */
-
   public LedBar() {
     super(_ID, S.getter("ioLedBarComponent"), 8, 1, new LedBarHdlGeneratorFactory());
     setIcon(new LedBarIcon());
@@ -121,6 +119,4 @@ public class LedBar extends DotMatrixBase {
     setScaleY(3);
     setDrawBorder(false);
   }
-
-  /* ****************************************************************** */
 }
