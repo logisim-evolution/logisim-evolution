@@ -228,6 +228,9 @@ public final class LogisimFileActions {
                     mutation.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
                   }
                   mutation.execute();
+                  if (circ.getAppearance().hasCustomAppearance()) {
+                    renamed.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom());
+                  }
                   mergedCircuits.add(renamed);
                 }
                 // response == 2 or dialog closed -> cancel (do nothing)
@@ -368,7 +371,9 @@ public final class LogisimFileActions {
       for (final var circ : mergedCircuits) {
         if (circ.getAppearance().hasCustomAppearance()) {
           final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
-          newCirc.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom(), proj, newCirc);
+          if (newCirc != null) {
+            newCirc.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom());
+          }
         }
       }
       mergedCircuits.clear();
