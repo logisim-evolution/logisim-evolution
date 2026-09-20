@@ -219,14 +219,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   //
   public static int snapXToGrid(int x) {
     return x < 0
-      ? -((-x + 5) / 10) * 10
-      : ((x + 5) / 10) * 10;
+        ? -((-x + 5) / 10) * 10
+        : ((x + 5) / 10) * 10;
   }
 
   public static int snapYToGrid(int y) {
     return y < 0
-      ? -((-y + 5) / 10) * 10
-      : ((y + 5) / 10) * 10;
+        ? -((-y + 5) / 10) * 10
+        : ((y + 5) / 10) * 10;
   }
 
   public CanvasPane getCanvasPane() {

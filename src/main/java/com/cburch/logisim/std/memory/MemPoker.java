@@ -70,17 +70,17 @@ public class MemPoker extends InstancePoker {
       final var data = (MemState) state.getData();
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP ->
-          data.setScroll(data.getScroll() - data.getNrOfLineItems());
+            data.setScroll(data.getScroll() - data.getNrOfLineItems());
         case KeyEvent.VK_DOWN ->
-          data.setScroll(data.getScroll() + data.getNrOfLineItems());
+            data.setScroll(data.getScroll() + data.getNrOfLineItems());
         case KeyEvent.VK_LEFT ->
-          data.setScroll(data.getScroll() - data.getNrOfLineItems());
+            data.setScroll(data.getScroll() - data.getNrOfLineItems());
         case KeyEvent.VK_RIGHT ->
-          data.setScroll(data.getScroll() + data.getNrOfLineItems());
+            data.setScroll(data.getScroll() + data.getNrOfLineItems());
         case KeyEvent.VK_PAGE_UP ->
-          data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
         case KeyEvent.VK_PAGE_DOWN ->
-          data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
         default -> {
         }
       }
@@ -171,17 +171,17 @@ public class MemPoker extends InstancePoker {
       final var data = (MemState) state.getData();
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP ->
-          moveTo(data, data.getCursor() - data.getNrOfLineItems());
+            moveTo(data, data.getCursor() - data.getNrOfLineItems());
         case KeyEvent.VK_DOWN ->
-          moveTo(data, data.getCursor() + data.getNrOfLineItems());
+            moveTo(data, data.getCursor() + data.getNrOfLineItems());
         case KeyEvent.VK_LEFT ->
-          moveTo(data, data.getCursor() - 1);
+            moveTo(data, data.getCursor() - 1);
         case KeyEvent.VK_RIGHT ->
-          moveTo(data, data.getCursor() + 1);
+            moveTo(data, data.getCursor() + 1);
         case KeyEvent.VK_PAGE_UP ->
-          moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
         case KeyEvent.VK_PAGE_DOWN ->
-          moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
+            moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
         default -> {
         }
       }

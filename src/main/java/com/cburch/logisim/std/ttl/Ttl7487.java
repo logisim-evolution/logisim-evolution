@@ -25,12 +25,13 @@ import com.cburch.logisim.instance.InstanceState;
  * Alternative source (page 3-354, pdf page 405): http://bitsavers.org/components/ti/_dataBooks/1985_TI_The_TTL_Data_Book_Vol_2.pdf
  */
 public class Ttl7487 extends AbstractTtlGate {
+
   /**
-  * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
-  * prevent project files from loading.
-  *
-  * <p>Identifier value must MUST be unique string among all tools.
-  */
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
+   *
+   * <p>Identifier value must MUST be unique string among all tools.
+   */
   public static final String _ID = "7487";
 
   // input data (port number)

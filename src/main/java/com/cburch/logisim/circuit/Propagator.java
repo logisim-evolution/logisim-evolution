@@ -138,8 +138,8 @@ public class Propagator {
     root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
     final var simQueueType = AppPreferences.SIMULATION_QUEUE.get();
     toProcess = switch (simQueueType) {
-      case AppPreferences.SIM_QUEUE_LIST_OF_QUEUES, AppPreferences.SIM_QUEUE_TREE_OF_QUEUES
-          -> new QueueOfQueues<>(simQueueType);
+      case AppPreferences.SIM_QUEUE_LIST_OF_QUEUES, AppPreferences.SIM_QUEUE_TREE_OF_QUEUES ->
+          new QueueOfQueues<>(simQueueType);
       case AppPreferences.SIM_QUEUE_LINKED -> new LinkedQueue<>();
       case AppPreferences.SIM_QUEUE_SPLAY  -> new SplayQueue<>();
       // case AppPreferences.SIM_QUEUE_PRIORITY  -> new PriorityEventQueue<>();
