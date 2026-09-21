@@ -48,7 +48,7 @@ public class MemPoker extends InstancePoker {
               data.setScroll(data.getScroll() + data.getNrOfLineItems());
             }
           }
-          case '\u0008' -> {            // Backspace Delete
+          case '\b' -> {            // Backspace Delete
             data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
           }
           case '\u007F' -> {
@@ -146,7 +146,7 @@ public class MemPoker extends InstancePoker {
               moveTo(data, data.getCursor() + data.getNrOfLineItems());
             }
           }
-          case '\u0008' -> {  //  Backspace
+          case '\b' -> {  //  Backspace
             moveTo(data, data.getCursor() - 1);
 
           }
