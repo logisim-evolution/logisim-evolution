@@ -18,6 +18,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
+/** Built-in 74-series TTL devices. */
 public class TtlLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files. Do NOT change as it will

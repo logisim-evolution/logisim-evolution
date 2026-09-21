@@ -16,8 +16,10 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 
+/** VHDL and Verilog generator for the 74x148 priority encoder. */
 public class Ttl74148HdlGenerator extends AbstractHdlGeneratorFactory {
 
+  /** Creates an HDL generator whose unconnected inputs are pulled high. */
   public Ttl74148HdlGenerator() {
     super();
     myWires
@@ -46,14 +48,16 @@ public class Ttl74148HdlGenerator extends AbstractHdlGeneratorFactory {
   public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
-      contents.addVhdlKeywords().add("""
+      contents.addVhdlKeywords().add(
+          """
           nA2 <= s_code(2);
           nA1 <= s_code(1);
           nA0 <= s_code(0);
           nGS <= nEI {{or}} s_noInput;
           nEO <= nEI {{or}} ({{not}} s_noInput);
 
-          s_noInput <= nI0 {{and}} nI1 {{and}} nI2 {{and}} nI3 {{and}} nI4 {{and}} nI5 {{and}} nI6 {{and}} nI7;
+          s_noInput <= nI0 {{and}} nI1 {{and}} nI2 {{and}} nI3 {{and}}
+                       nI4 {{and}} nI5 {{and}} nI6 {{and}} nI7;
           s_code    <= s_priority {{when}} nEI = '0' {{else}} "111";
 
           s_priority <= "000" {{when}} nI7 = '0' {{else}}
@@ -66,7 +70,8 @@ public class Ttl74148HdlGenerator extends AbstractHdlGeneratorFactory {
                         "111";
           """);
     } else {
-      contents.add("""
+      contents.add(
+          """
           assign nA2 = s_code[2];
           assign nA1 = s_code[1];
           assign nA0 = s_code[0];
@@ -92,7 +97,9 @@ public class Ttl74148HdlGenerator extends AbstractHdlGeneratorFactory {
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
-    if (attrs == null) return false;
+    if (attrs == null) {
+      return false;
+    }
     return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

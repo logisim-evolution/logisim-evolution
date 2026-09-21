@@ -41,10 +41,8 @@ class Ttl74148HdlGeneratorTest {
   void vhdlDerivesGroupSelectAndEnableOutputFromTheIdleState() {
     final var hdl = functionality(HdlGeneratorFactory.VHDL);
 
-    assertTrue(
-        containsIgnoringCase(
-            hdl,
-            "s_noInput <= nI0 AND nI1 AND nI2 AND nI3 AND nI4 AND nI5 AND nI6 AND nI7;"));
+    assertTrue(containsIgnoringCase(hdl, "s_noInput <= nI0 AND nI1 AND nI2 AND nI3 AND"));
+    assertTrue(containsIgnoringCase(hdl, "nI4 AND nI5 AND nI6 AND nI7;"));
     assertTrue(containsIgnoringCase(hdl, "nGS <= nEI OR s_noInput;"));
     assertTrue(containsIgnoringCase(hdl, "nEO <= nEI OR (NOT s_noInput);"));
   }

@@ -64,9 +64,9 @@ public class Ttl74148 extends AbstractTtlGate {
   public static final byte VCC = 16;
 
   /** Data inputs ordered by the code they encode, so the last entry has the highest priority. */
-  private static final byte[] INPUTS = new byte[] { I0, I1, I2, I3, I4, I5, I6, I7 };
+  private static final byte[] INPUTS = new byte[] {I0, I1, I2, I3, I4, I5, I6, I7};
 
-  private static final byte[] OUTPUTS = new byte[] { A2, A1, A0, GS, EO };
+  private static final byte[] OUTPUTS = new byte[] {A2, A1, A0, GS, EO};
 
   private static final String[] PORT_NAMES = {
     "nI4 Data input 4",
@@ -85,12 +85,15 @@ public class Ttl74148 extends AbstractTtlGate {
     "nEO Enable output"
   };
 
+  /** Creates a 74148 8-line to 3-line priority encoder. */
   public Ttl74148() {
     super(_ID, (byte) 16, OUTPUTS, PORT_NAMES, new Ttl74148HdlGenerator());
   }
 
   /**
-   * IC pin numbers are datasheet based (1-indexed), but ports are 0-indexed and omit the power pins
+   * Converts a 1-based datasheet pin number to a 0-based Logisim port index.
+   *
+   * <p>Power pins are omitted from the port list.
    *
    * @param dsPinNr datasheet pin number
    * @return port number
@@ -113,54 +116,40 @@ public class Ttl74148 extends AbstractTtlGate {
         });
   }
 
-  private record LogicScope(InstanceState state) {
-    /**
-     * Predicate which is true when the specified active-low pin is asserted
-     *
-     * @param dsPinNr datasheet pin number
-     * @return true when the pin is driven to a logic low level
-     */
-    private boolean isAsserted(byte dsPinNr) {
-      return state.getPortValue(pinNrToPortNr(dsPinNr)) == Value.FALSE;
-    }
+  private static boolean isAsserted(InstanceState state, byte dsPinNr) {
+    return state.getPortValue(pinNrToPortNr(dsPinNr)) == Value.FALSE;
+  }
 
-    /**
-     * Drives the specified active-low pin
-     *
-     * @param dsPinNr  datasheet pin number
-     * @param asserted true to drive the pin low, false to drive it high
-     */
-    private void setAsserted(byte dsPinNr, boolean asserted) {
-      state.setPort(pinNrToPortNr(dsPinNr), asserted ? Value.FALSE : Value.TRUE, DELAY);
-    }
+  private static void setAsserted(InstanceState state, byte dsPinNr, boolean asserted) {
+    state.setPort(pinNrToPortNr(dsPinNr), asserted ? Value.FALSE : Value.TRUE, DELAY);
+  }
 
-    /**
-     * Finds the code of the highest-priority asserted data input
-     *
-     * @return the code to encode, or -1 when the device is disabled or no input is asserted
-     */
-    private int selectedInput() {
-      if (!isAsserted(EI)) return -1;
-      for (var code = INPUTS.length - 1; code >= 0; code--) {
-        if (isAsserted(INPUTS[code])) return code;
-      }
+  /**
+   * Finds the code of the highest-priority asserted data input.
+   *
+   * @return the code to encode, or -1 when the device is disabled or no input is asserted
+   */
+  private static int selectedInput(InstanceState state) {
+    if (!isAsserted(state, EI)) {
       return -1;
     }
-
-    public void propagate() {
-      final var code = selectedInput();
-      final var encoding = code >= 0;
-
-      setAsserted(A0, encoding && (code & 1) != 0);
-      setAsserted(A1, encoding && (code & 2) != 0);
-      setAsserted(A2, encoding && (code & 4) != 0);
-      setAsserted(GS, encoding);
-      setAsserted(EO, isAsserted(EI) && !encoding);
+    for (var code = INPUTS.length - 1; code >= 0; code--) {
+      if (isAsserted(state, INPUTS[code])) {
+        return code;
+      }
     }
+    return -1;
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
-    new LogicScope(state).propagate();
+    final var code = selectedInput(state);
+    final var encoding = code >= 0;
+
+    setAsserted(state, A0, encoding && (code & 1) != 0);
+    setAsserted(state, A1, encoding && (code & 2) != 0);
+    setAsserted(state, A2, encoding && (code & 4) != 0);
+    setAsserted(state, GS, encoding);
+    setAsserted(state, EO, isAsserted(state, EI) && !encoding);
   }
 }
