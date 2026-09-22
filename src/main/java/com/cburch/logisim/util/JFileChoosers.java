@@ -52,6 +52,85 @@ public final class JFileChoosers {
       }
       return super.getSelectedFile();
     }
+
+    @Override
+    public int showOpenDialog(java.awt.Component parent) {
+      if (MacCompatibility.isRunningOnMac()) {
+        final var file = showMacFileDialog(parent, java.awt.FileDialog.LOAD);
+        if (file != null) {
+          setSelectedFile(file);
+          return APPROVE_OPTION;
+        }
+        return CANCEL_OPTION;
+      }
+      return super.showOpenDialog(parent);
+    }
+
+    @Override
+    public int showSaveDialog(java.awt.Component parent) {
+      if (MacCompatibility.isRunningOnMac()) {
+        final var file = showMacFileDialog(parent, java.awt.FileDialog.SAVE);
+        if (file != null) {
+          setSelectedFile(file);
+          return APPROVE_OPTION;
+        }
+        return CANCEL_OPTION;
+      }
+      return super.showSaveDialog(parent);
+    }
+
+    private File showMacFileDialog(java.awt.Component parent, int mode) {
+      java.awt.Window parentWindow = null;
+      if (parent instanceof java.awt.Window win) {
+        parentWindow = win;
+      } else if (parent != null) {
+        parentWindow = javax.swing.SwingUtilities.getWindowAncestor(parent);
+      }
+
+      var title = getDialogTitle();
+      if (title == null) {
+        final var key = (mode == java.awt.FileDialog.LOAD)
+            ? "FileChooser.openDialogTitleText"
+            : "FileChooser.saveDialogTitleText";
+        title = javax.swing.UIManager.getString(key);
+      }
+      final java.awt.FileDialog fileDialog;
+      if (parentWindow instanceof java.awt.Frame frame) {
+        fileDialog = new java.awt.FileDialog(frame, title, mode);
+      } else if (parentWindow instanceof java.awt.Dialog dialog) {
+        fileDialog = new java.awt.FileDialog(dialog, title, mode);
+      } else {
+        fileDialog = new java.awt.FileDialog((java.awt.Frame) null, title, mode);
+      }
+
+      final var curDir = getCurrentDirectory();
+      if (curDir != null) {
+        fileDialog.setDirectory(curDir.getAbsolutePath());
+      }
+      final var selFile = getSelectedFile();
+      if (selFile != null) {
+        fileDialog.setFile(selFile.getName());
+      }
+
+      final var filter = getFileFilter();
+      if (filter != null && filter != getAcceptAllFileFilter()) {
+        fileDialog.setFilenameFilter((dir, name) -> {
+          final var f = new File(dir, name);
+          return f.isDirectory() || filter.accept(f);
+        });
+      }
+
+      fileDialog.setVisible(true);
+
+      if (fileDialog.getFile() != null) {
+        final var selected = new File(fileDialog.getDirectory(), fileDialog.getFile());
+        if (selected.getParentFile() != null) {
+          setCurrentDirectory(selected.getParentFile());
+        }
+        return selected;
+      }
+      return null;
+    }
   }
 
   public static JFileChooser create() {
