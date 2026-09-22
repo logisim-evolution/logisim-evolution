@@ -451,7 +451,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
   /**
    * Sets the mapping from pull port indexes to pull value for those ports/ends that should have a pull.
    * A null map means there is no pull for any End and is the default value.
-   * </p>This method assumes it will only be called while configuring a new InstanceComponent.
+   *
+   * <p>This method assumes it will only be called while configuring a new InstanceComponent.
    * If it must be called later, this method should be modified to notify CircuitWires so it
    * can void the Connectivity.
    *

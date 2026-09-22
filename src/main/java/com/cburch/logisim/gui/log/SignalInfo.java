@@ -324,7 +324,6 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   public static void paintIcon(Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
     if (comp == null) return;
     if (opt != null) {
-      // todo
       g.setColor(Color.MAGENTA);
       g.fillRect(x + 3, x + 3, 15, 15);
     } else {

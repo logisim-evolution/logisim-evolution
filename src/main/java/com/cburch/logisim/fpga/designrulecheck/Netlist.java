@@ -251,8 +251,8 @@ public class Netlist {
           return drcStatus;
         }
       }
-    } 
-    
+    }
+
     // if we already have good drc results we can leave
     if (drcStatus == DRC_PASSED) return DRC_PASSED;
 
@@ -1075,8 +1075,8 @@ public class Netlist {
               return false;
             }
             for (int endId = 1; endId < ends.size(); endId++) {
-              //If this is an end that is not connected to the root bus
-              //we can continue we already warned severly before.
+              // If this is an end that is not connected to the root bus
+              // we can continue we already warned severly before.
               if (sattrs.isNoConnect(endId)) continue;
               // we iterate through all bits to see if the current net is connected to this splitter
               if (thisNet.contains(ends.get(endId).getLocation())) {
@@ -1572,7 +1572,7 @@ public class Netlist {
   }
 
   public boolean markClockSourceComponents(List<String> hierarchyNames, List<Netlist> hierarchyNetlists, ClockSourceContainer clockSources) {
-    //First pass: we go down the hierarchy till the leaves
+    // First pass: we go down the hierarchy till the leaves
     for (final var sub : mySubCircuits) {
       final var subFact = (SubcircuitFactory) sub.getComponent().getFactory();
       final var newHierarchyNames = new ArrayList<>(hierarchyNames);

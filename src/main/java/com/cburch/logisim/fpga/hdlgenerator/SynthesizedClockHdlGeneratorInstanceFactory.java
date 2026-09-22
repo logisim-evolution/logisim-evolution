@@ -12,9 +12,9 @@ public class SynthesizedClockHdlGeneratorInstanceFactory {
       double preDivider) throws Exception {
     if (technology.endsWith("-7") && vendor == VendorSoftware.VENDOR_VIVADO && clockScalingRequested) {
       return new XilinxSeries7SynthesizedClockHdlGeneratorFactory(
-        clockFrequency,
-        preMultiplier,
-        preDivider);
+          clockFrequency,
+          preMultiplier,
+          preDivider);
     } else {
       return new SynthesizedClockHdlGeneratorFactory();
     }

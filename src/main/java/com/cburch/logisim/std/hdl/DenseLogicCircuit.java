@@ -72,7 +72,7 @@ public final class DenseLogicCircuit {
   public static final int SQOP_DFF = 0;
   /**
    * D-latch[D, E, Q]: Whenever cell[E] is high, set cell[Q] to cell[D].
-   * When reading from cell[D], it is coerced to be either high or low. 
+   * When reading from cell[D], it is coerced to be either high or low.
    */
   public static final int SQOP_LATCH = 1;
 
@@ -300,7 +300,7 @@ public final class DenseLogicCircuit {
     while (ptr < sequentialScript.length) {
       int seqType = sequentialScript[ptr++];
       switch (seqType) {
-        case SQOP_DFF: {
+        case SQOP_DFF -> {
           int d = sequentialScript[ptr++];
           int c = sequentialScript[ptr++];
           int q = sequentialScript[ptr++];
@@ -324,8 +324,8 @@ public final class DenseLogicCircuit {
               }
             }
           }
-        } break;
-        case SQOP_LATCH: {
+        }
+        case SQOP_LATCH -> {
           int d = sequentialScript[ptr++];
           int e = sequentialScript[ptr++];
           int q = sequentialScript[ptr++];
@@ -342,9 +342,8 @@ public final class DenseLogicCircuit {
               }
             }
           }
-        } break;
-        default:
-          throw new RuntimeException("invalid seq. opcode " + seqType);
+        }
+        default -> throw new RuntimeException("invalid seq. opcode " + seqType);
       }
     }
   }

@@ -78,22 +78,22 @@ public class SevenSegmentScanningGenericHdlGenerator {
                 ? LineBuffer.format("sevenSegScan{{1}} : {{2}}", identifier, getSpecificHDLName(typeId))
                 : getSpecificHDLName(typeId));
     switch (typeId) {
-      case SevenSegmentScanningDriving.SEVEN_SEG_DECODED: componentMap.add(
-          SevenSegmentScanningDecodedHdlGeneratorFactory.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, false)
-              .getWithIndent());
+      case SevenSegmentScanningDriving.SEVEN_SEG_DECODED:
+        componentMap.add(SevenSegmentScanningDecodedHdlGeneratorFactory.getGenericMap(
+            nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow, false)
+            .getWithIndent());
         break;
-      case SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI,
-        SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW: componentMap.add(
-            SevenSegmendScanningSelectedHdlGenerator.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow,
-                typeId == SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW)).getWithIndent();
+      case SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI, SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW:
+        componentMap.add(SevenSegmendScanningSelectedHdlGenerator.getGenericMap(nrOfRows, nrOfColumns, FpgaClockFrequency, isActiveLow,
+            typeId == SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW)).getWithIndent();
         break;
     }
     if (Hdl.isVerilog()) componentMap.add("   sevenSegScan{{1}}", identifier);
     switch (typeId) {
       case SevenSegmentScanningDriving.SEVEN_SEG_DECODED,
-        SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI,
-        SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW: componentMap.add(
-            SevenSegmendScanningSelectedHdlGenerator.getPortMap(identifier).getWithIndent());
+          SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_HI,
+          SevenSegmentScanningDriving.SEVEN_SEG_SCANNING_ACTIVE_LOW:
+        componentMap.add(SevenSegmendScanningSelectedHdlGenerator.getPortMap(identifier).getWithIndent());
     }
     return componentMap.empty().get();
   }

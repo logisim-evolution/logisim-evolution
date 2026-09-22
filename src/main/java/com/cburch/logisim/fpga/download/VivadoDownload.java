@@ -301,7 +301,7 @@ public class VivadoDownload implements VendorDownload {
 
   @Override
   public boolean isBoardConnected() {
-    // TODO Detect if a board is connected, and in case of multiple boards select the one that
+    // TODO: Detect if a board is connected, and in case of multiple boards select the one that
     // should be used
     return true;
   }

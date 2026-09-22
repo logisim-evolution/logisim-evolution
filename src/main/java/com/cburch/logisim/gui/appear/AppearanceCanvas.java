@@ -374,15 +374,15 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   public int snapX(int x) {
     return (x < 0)
-       ? -((-x + 5) / 10 * 10)
-       : (x + 5) / 10 * 10;
+         ? -((-x + 5) / 10 * 10)
+         : (x + 5) / 10 * 10;
   }
 
   @Override
   public int snapY(int y) {
     return (y < 0)
-       ? -((-y + 5) / 10 * 10)
-       : (y + 5) / 10 * 10;
+         ? -((-y + 5) / 10 * 10)
+         : (y + 5) / 10 * 10;
   }
 
   @Override
