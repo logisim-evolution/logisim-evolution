@@ -447,6 +447,7 @@ public class ProjectCircuitActions {
         exportFile.addVhdlContent(vhdl);
       }
       exportFile.setMainCircuit(targetCircuit);
+      exportFile.getOptions().copyFrom(proj.getLogisimFile().getOptions(), exportFile);
 
       try (final var out = new FileOutputStream(dest)) {
         exportFile.write(out, loader, dest);
