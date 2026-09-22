@@ -152,7 +152,7 @@ public class Ttl74390 extends AbstractTtlGate {
       data.setValue(half, Value.createKnown(WIDTH, 0));
     } else {
       final var bits = data.getValue(half).getAll();
-      if (divideByTwo) bits[0] = bits[0].not();
+      if (divideByTwo) bits[0] = toggle(bits[0]);
       if (divideByFive) advanceDivideByFive(bits);
       data.setValue(half, Value.create(bits));
     }
@@ -163,11 +163,30 @@ public class Ttl74390 extends AbstractTtlGate {
     state.setPort(Q3_PORTS[half], value.get(3), DELAY);
   }
 
-  /** Advances Q1..Q3 through the documented divide-by-5 sequence 0, 1, 2, 3, 4. */
+  /**
+   * Toggles the divide-by-2 bit. {@link Value#not()} turns unknown into error, so unknown stays
+   * unknown and error stays error.
+   */
+  private static Value toggle(Value bit) {
+    if (bit == Value.TRUE) return Value.FALSE;
+    if (bit == Value.FALSE) return Value.TRUE;
+    if (bit == Value.ERROR) return Value.ERROR;
+    return Value.UNKNOWN;
+  }
+
+  /**
+   * Advances Q1..Q3 through the documented divide-by-5 sequence 0, 1, 2, 3, 4. An error among
+   * those bits makes all three error. Any other undefined code, including the unspecified codes
+   * 5..7, makes them unknown.
+   */
   private static void advanceDivideByFive(Value[] bits) {
     final var q1 = bits[1];
     final var q2 = bits[2];
     final var q3 = bits[3];
+    if (q1 == Value.ERROR || q2 == Value.ERROR || q3 == Value.ERROR) {
+      setDivideByFive(bits, Value.ERROR);
+      return;
+    }
     if (!q1.isFullyDefined() || !q2.isFullyDefined() || !q3.isFullyDefined()) {
       setDivideByFive(bits, Value.UNKNOWN);
       return;
