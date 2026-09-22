@@ -22,3 +22,18 @@ and therefore will need referencing for any projects you use them in.
 
 As of present, libraries are only automatically imported on *startup*. By creating a new file through the user interface,
 only built-in libraries will be imported.
+
+## Loading a single library via the command line
+
+If you only need to load one or two libraries — for example while developing a `.jar` library and
+wanting to quickly test it without copying it into `logisim-defaults` — pass it directly with
+`--load-library`:
+
+```sh
+logisim-evolution --load-library path/to/my-lib.circ --load-library path/to/my-lib.jar
+```
+
+The option can be repeated to load several libraries, and accepts both `.circ` files and `.jar`
+files. For a `.jar` file, its manifest must declare a `Library-Class` attribute pointing at the
+library's entry class, the same way a JAR loaded through *Project → Load Library → Load JAR
+Library…* does.
