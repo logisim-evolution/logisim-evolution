@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import com.cburch.draw.actions.ModelTranslateAction;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
@@ -24,20 +23,18 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.gui.appear.CanvasActionAdapter;
 import com.cburch.draw.shapes.ImageShape;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
-import com.cburch.logisim.util.ImageUtil;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.EventSourceWeakSupport;
+import com.cburch.logisim.util.ImageUtil;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -374,66 +371,23 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     checkToFirePortsChanged(shapes);
   }
 
-  public void repairCustomAppearance(List<CanvasObject> oldCustomAppearanceElements, Project proj, Circuit circ) {
-    final var toBeRemoved = new ArrayList<CanvasObject>();
-    final var toBeAdded = new ArrayList<CanvasObject>();
-    final var apearanceToBeRemoved = new ArrayList<AppearanceElement>();
-    final var apearanceToBeAdded = new ArrayList<AppearanceElement>();
-    for (final var obj : getCustomObjectsFromBottom()) {
-      if (obj instanceof AppearanceElement element) {
-        apearanceToBeRemoved.add(element);
-      } else {
-        toBeRemoved.add(obj);
-      }
+  public void repairCustomAppearance(List<CanvasObject> oldCustomAppearanceElements) {
+    final var pinByLocation = new HashMap<Location, Instance>();
+    for (final var pin : circuitPins.getPins()) {
+      pinByLocation.put(pin.getLocation(), pin);
     }
+    final var cloned = new ArrayList<CanvasObject>(oldCustomAppearanceElements.size());
     for (final var obj : oldCustomAppearanceElements) {
-      if (obj instanceof AppearanceElement element) {
-        apearanceToBeAdded.add(element);
+      if (obj instanceof AppearancePort srcPort) {
+        final var targetPin = pinByLocation.get(srcPort.getPin().getLocation());
+        if (targetPin != null) {
+          cloned.add(new AppearancePort(srcPort.getLocation(), targetPin));
+        }
       } else {
-        toBeAdded.add(obj);
+        cloned.add(obj.clone());
       }
     }
-    for (final var obj : apearanceToBeRemoved) {
-      if (obj instanceof AppearanceAnchor oldAnchor) {
-        final var iterator = apearanceToBeAdded.iterator();
-        while (iterator.hasNext()) {
-          final var item = iterator.next();
-          if (item instanceof AppearanceAnchor newAnchor) {
-            final var translates = new HashSet<CanvasObject>();
-            translates.add(oldAnchor);
-            oldAnchor.setValue(AppearanceAnchor.FACING, newAnchor.getValue(AppearanceAnchor.FACING));
-            final var dx = newAnchor.getLocation().getX() - oldAnchor.getLocation().getX();
-            final var dy = newAnchor.getLocation().getY() - oldAnchor.getLocation().getY();
-            final var action = new ModelTranslateAction(this, translates, dx, dy);
-            proj.doAction(new CanvasActionAdapter(circ, action));
-            iterator.remove();
-            break;
-          }
-        }
-      }
-    }
-    for (final var obj : apearanceToBeRemoved) {
-      if (obj instanceof AppearancePort oldPort) {
-        final var iterator = apearanceToBeAdded.iterator();
-        while (iterator.hasNext()) {
-          final var item = iterator.next();
-          if (item instanceof AppearancePort newPort) {
-            if (newPort.getPin().getLocation().equals(oldPort.getPin().getLocation())) {
-              final var translates = new HashSet<CanvasObject>();
-              translates.add(oldPort);
-              final var dx = newPort.getLocation().getX() - oldPort.getLocation().getX();
-              final var dy = newPort.getLocation().getY() - oldPort.getLocation().getY();
-              final var action = new ModelTranslateAction(this, translates, dx, dy);
-              proj.doAction(new CanvasActionAdapter(circ, action));
-              iterator.remove();
-              break;
-            }
-          }
-        }
-      }
-    }
-    removeObjects(toBeRemoved);
-    addObjects(getCustomObjectsFromBottom().size() - 1, toBeAdded);
+    setObjectsForce(cloned);
   }
 
   public void removeDynamicElement(InstanceComponent c) {

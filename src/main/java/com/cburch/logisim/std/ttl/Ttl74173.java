@@ -53,7 +53,7 @@ public class Ttl74173 extends AbstractTtlGate {
   public static final byte CLK = 7;
   public static final byte CLR = 15;
 
-  //Outputs
+  // Outputs
   public static final byte Q1 = 3;
   public static final byte Q2 = 4;
   public static final byte Q3 = 5;

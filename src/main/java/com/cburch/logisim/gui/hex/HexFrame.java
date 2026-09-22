@@ -158,7 +158,7 @@ public class HexFrame extends LFrame.SubWindow {
 
     private void enableItems(LogisimMenuBar menubar) {
       final var sel = editor.selectionExists();
-      final var clip = true; // TODO editor.clipboardExists();
+      final var clip = true; // TODO: editor.clipboardExists();
       menubar.setEnabled(LogisimMenuBar.CUT, sel);
       menubar.setEnabled(LogisimMenuBar.COPY, sel);
       menubar.setEnabled(LogisimMenuBar.PASTE, clip);

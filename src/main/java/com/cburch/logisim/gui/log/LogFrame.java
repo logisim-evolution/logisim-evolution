@@ -103,8 +103,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
   }
 
-  // TODO should automatically repaint icons when component attr change
-  // TODO ? moving a component using Select tool removes it from selection
+  // TODO: should automatically repaint icons when component attr change
+  // TODO: ? moving a component using Select tool removes it from selection
   private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener, ProjectListener, LibraryListener {
     final Project proj;
 

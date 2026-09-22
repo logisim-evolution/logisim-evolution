@@ -25,30 +25,31 @@ import com.cburch.logisim.instance.InstanceState;
  * Alternative source (page 3-354, pdf page 405): http://bitsavers.org/components/ti/_dataBooks/1985_TI_The_TTL_Data_Book_Vol_2.pdf
  */
 public class Ttl7487 extends AbstractTtlGate {
+
   /**
-  * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
-  * prevent project files from loading.
-  *
-  * <p>Identifier value must MUST be unique string among all tools.
-  */
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
+   *
+   * <p>Identifier value must MUST be unique string among all tools.
+   */
   public static final String _ID = "7487";
 
-  //input data (port number)
+  // input data (port number)
   public static final byte A1 = 1;
   public static final byte A2 = 3;
   public static final byte A3 = 7;
   public static final byte A4 = 9;
-  //input control (port number)
+  // input control (port number)
   public static final byte B = 5;
   public static final byte C = 0;
 
-  //output (port number)
+  // output (port number)
   public static final byte Y1 = 2;
   public static final byte Y2 = 4;
   public static final byte Y3 = 6;
   public static final byte Y4 = 8;
 
-  //No Connect (datasheet pins)
+  // No Connect (datasheet pins)
   public static final byte NC1 = 4;
   public static final byte NC2 = 11;
 
@@ -74,20 +75,20 @@ public class Ttl7487 extends AbstractTtlGate {
   @Override
   public void propagateTtl(InstanceState state) {
     if (state.getPortValue(B) == Value.TRUE) {
-      //High or low output
+      // High or low output
       state.setPort(Y1, state.getPortValue(C).not(), DELAY);
       state.setPort(Y2, state.getPortValue(C).not(), DELAY);
       state.setPort(Y3, state.getPortValue(C).not(), DELAY);
       state.setPort(Y4, state.getPortValue(C).not(), DELAY);
     } else if (state.getPortValue(B) == Value.FALSE) {
       if (state.getPortValue(C) == Value.TRUE) {
-        //not inverted
+        // not inverted
         state.setPort(Y1, state.getPortValue(A1), DELAY);
         state.setPort(Y2, state.getPortValue(A2), DELAY);
         state.setPort(Y3, state.getPortValue(A3), DELAY);
         state.setPort(Y4, state.getPortValue(A4), DELAY);
       } else if (state.getPortValue(C) == Value.FALSE) {
-        //inverted
+        // inverted
         state.setPort(Y1, state.getPortValue(A1).not(), DELAY);
         state.setPort(Y2, state.getPortValue(A2).not(), DELAY);
         state.setPort(Y3, state.getPortValue(A3).not(), DELAY);

@@ -451,8 +451,6 @@ public class Startup implements AWTEventListener {
     return startup;
   }
 
-  /* ********************************************************************************************* */
-
   private static void preloadLocale(String[] args) {
     for (var i = 0; i < args.length; i++) {
       final var arg = args[i];
@@ -809,8 +807,6 @@ public class Startup implements AWTEventListener {
     startup.exitAfterStartup = true;
     return RC.OK;
   }
-
-  /* ********************************************************************************************* */
 
   private static boolean trySetLocale(String lang) {
     final var opts = S.getLocaleOptions();

@@ -219,14 +219,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   //
   public static int snapXToGrid(int x) {
     return x < 0
-      ? -((-x + 5) / 10) * 10
-      : ((x + 5) / 10) * 10;
+        ? -((-x + 5) / 10) * 10
+        : ((x + 5) / 10) * 10;
   }
 
   public static int snapYToGrid(int y) {
     return y < 0
-      ? -((-y + 5) / 10) * 10
-      : ((y + 5) / 10) * 10;
+        ? -((-y + 5) / 10) * 10
+        : ((y + 5) / 10) * 10;
   }
 
   public CanvasPane getCanvasPane() {
@@ -1093,7 +1093,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       if (attr == Options.ATTR_GATE_UNDEFINED) {
         final var circState = getCircuitState();
         circState.markComponentsDirty(getCircuit().getNonWires());
-        // TODO actually, we'd want to mark all components in
+        // TODO: actually, we'd want to mark all components in
         // subcircuits as dirty as well
       }
     }

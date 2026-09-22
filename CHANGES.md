@@ -5,6 +5,7 @@
 * @dev (????-??-??)
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
+  * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).

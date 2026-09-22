@@ -244,8 +244,6 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
   }
 
-  /* ******************************************************************************************** */
-
   private static class MyDialog extends JDialogOk {
     JInputComponent input;
     Object value;
@@ -283,8 +281,6 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
   }
 
-  /* ******************************************************************************************** */
-
   private static class NullAttrModel implements AttrTableModel {
 
     @Override
@@ -321,8 +317,6 @@ public class AttrTable extends JPanel implements LocaleListener {
       return new Dimension(1, ret.height);
     }
   }
-
-  /* ******************************************************************************************** */
 
   private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 
