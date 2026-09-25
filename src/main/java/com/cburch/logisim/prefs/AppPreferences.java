@@ -1219,6 +1219,9 @@ public class AppPreferences {
   public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_14 =
       create(new PrefMonitorKeyStroke("hotkeyToolSelect14", null, true, true));
 
+  public static final PrefMonitor<KeyStroke> HOTKEY_TOOL_SELECT_15 =
+      create(new PrefMonitorKeyStroke("hotkeyToolSelect15", null, true, true));
+
   public static final PrefMonitor<KeyStroke> HOTKEY_DIR_NORTH =
       create(new PrefMonitorKeyStroke("hotkeyDirNorth", KeyEvent.VK_UP, 0));
 
@@ -1324,6 +1327,7 @@ public class AppPreferences {
       HOTKEY_TOOL_SELECT_12.set(null);
       HOTKEY_TOOL_SELECT_13.set(null);
       HOTKEY_TOOL_SELECT_14.set(null);
+      HOTKEY_TOOL_SELECT_15.set(null);
       HOTKEY_PROJ_MOVE_UP.set(KeyStroke.getKeyStroke(
           KeyEvent.VK_U, InputEvent.SHIFT_DOWN_MASK | hotkeyMenuMask));
       HOTKEY_PROJ_MOVE_DOWN.set(KeyStroke.getKeyStroke(

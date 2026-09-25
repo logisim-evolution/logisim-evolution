@@ -24,7 +24,7 @@ import javax.swing.SwingUtilities;
 
 public class KeyboardToolSelection extends AbstractAction {
   private static final long serialVersionUID = 1L;
-  static final int TOOL_SELECTION_COUNT = 14;
+  static final int TOOL_SELECTION_COUNT = 15;
   private static final String ACTION_PREFIX = "ToolSelect";
   private static final List<PrefMonitor<KeyStroke>> TOOL_SELECTION_HOTKEYS =
       List.of(
@@ -41,7 +41,8 @@ public class KeyboardToolSelection extends AbstractAction {
           AppPreferences.HOTKEY_TOOL_SELECT_11,
           AppPreferences.HOTKEY_TOOL_SELECT_12,
           AppPreferences.HOTKEY_TOOL_SELECT_13,
-          AppPreferences.HOTKEY_TOOL_SELECT_14);
+          AppPreferences.HOTKEY_TOOL_SELECT_14,
+          AppPreferences.HOTKEY_TOOL_SELECT_15);
   private final Toolbar toolbar;
   private final int index;
 
