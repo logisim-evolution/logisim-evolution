@@ -52,10 +52,11 @@ class KeyboardToolSelectionTest {
   }
 
   @Test
-  void lastShortcutSelectsLastDefaultToolbarTool() {
+  void fifteenthShortcutSelectsFifteenthToolbarTool() {
+    final var toolCount = 15;
     final var items = new ArrayList<ToolbarItem>();
     final var selectableItems = new ArrayList<ToolbarItem>();
-    for (var i = 0; i < KeyboardToolSelection.TOOL_SELECTION_COUNT; i++) {
+    for (var i = 0; i < toolCount; i++) {
       final var item = new TestToolbarItem();
       selectableItems.add(item);
       items.add(item);
@@ -65,10 +66,10 @@ class KeyboardToolSelectionTest {
     }
     final var model = new TestToolbarModel(items);
     final var toolbar = new Toolbar(model);
-    final var hotkeys = createHotkeys();
+    final var hotkeys = createHotkeys(toolCount);
 
     try (var ignored = KeyboardToolSelection.register(toolbar, hotkeys)) {
-      final var last = KeyboardToolSelection.TOOL_SELECTION_COUNT - 1;
+      final var last = toolCount - 1;
       performBoundAction(toolbar, hotkeys.get(last).get());
 
       assertSame(selectableItems.get(last), model.selected);
@@ -126,8 +127,12 @@ class KeyboardToolSelectionTest {
   }
 
   private static List<PrefMonitor<KeyStroke>> createHotkeys() {
+    return createHotkeys(KeyboardToolSelection.TOOL_SELECTION_COUNT);
+  }
+
+  private static List<PrefMonitor<KeyStroke>> createHotkeys(int count) {
     final var hotkeys = new ArrayList<PrefMonitor<KeyStroke>>();
-    for (var i = 0; i < KeyboardToolSelection.TOOL_SELECTION_COUNT; i++) {
+    for (var i = 0; i < count; i++) {
       hotkeys.add(
           new TestKeyStrokePreference(
               "testToolSelect" + i,

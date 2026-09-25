@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed the missing configurable shortcut for selecting toolbar tool 15 [#3006] (@n335h-max).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
 
 * v5.0.0 (2026-09-12)
