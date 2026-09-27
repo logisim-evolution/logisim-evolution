@@ -719,6 +719,7 @@ public final class ProjectActions {
     var loader = proj.getLogisimFile().getLoader();
     var chooser = loader.createChooser();
     chooser.setFileFilter(Loader.LOGISIM_FILTER);
+    chooser.setDialogTitle(S.get("FileSaveAsItem"));
     if (loader.getMainFile() != null) {
       chooser.setSelectedFile(loader.getMainFile());
     }

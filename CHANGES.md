@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
 
 * v5.0.0 (2026-09-12)

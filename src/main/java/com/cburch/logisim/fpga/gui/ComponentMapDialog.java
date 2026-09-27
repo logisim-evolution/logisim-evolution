@@ -19,6 +19,7 @@ import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -242,7 +243,7 @@ public class ComponentMapDialog
   }
 
   private void load() {
-    final var fc = new JFileChooser(oldDirectory);
+    final var fc = JFileChoosers.createAt(new File(oldDirectory));
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     // FIXME: hardcoded string
     fc.setDialogTitle("Choose XML board description file to use");
