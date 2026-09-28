@@ -1100,7 +1100,6 @@ public class AppPreferences {
   public static final PrefMonitor<String> DIALOG_DIRECTORY =
       create(new PrefMonitorString("dialogDirectory", ""));
 
-  
   /* Opens the action search when Shift is tapped twice in quick succession. Kept switchable
    * because Shift is a working modifier on the canvas, so the gesture can misfire. */
   public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
