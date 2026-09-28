@@ -11,8 +11,8 @@ To do this, create a directory named `logisim-defaults` in the program directory
 - For a Gradle run (development environment), place `logisim-defaults` inside `build/classes/java/`.
   ![Where the logisim-defaults folder goes, if running from Gradle (development environment).](img/logisim-defaults-build.png)
 
-**Note:** The screenshots above show the development environment paths. For end users, who have installed Logisim-evolution using the installer,
-use the `app` directory as described in the first option.
+**Note:** The screenshots above show the development environment paths. For end users, who have installed Logisim-evolution 
+using the installer, use the `app` directory as described in the first option.
 
 Inside the `logisim-defaults` folder should be any `.circ` files which you would like to load automatically at startup.
 **Every circuit must have a unique name, and must not be called
