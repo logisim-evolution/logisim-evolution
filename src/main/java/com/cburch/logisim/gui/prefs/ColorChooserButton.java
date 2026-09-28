@@ -10,8 +10,11 @@
 package com.cburch.logisim.gui.prefs;
 
 import com.bric.colorpicker.ColorPickerDialog;
+import com.cburch.logisim.gui.generic.TextColorChooser;
 import com.cburch.logisim.gui.icons.BaseIcon;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
+import com.cburch.logisim.util.ColorUtil;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -34,6 +37,9 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
     this.frame = frame;
     setIcon(new ColorIcon());
     pref.addPropertyChangeListener(this);
+    if (pref == AppPreferences.TEXT_TOOL_COLOR) {
+      AppPreferences.LookAndFeel.addPropertyChangeListener(this);
+    }
     addActionListener(this);
   }
 
@@ -53,17 +59,23 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
   private class ColorIcon extends BaseIcon {
     @Override
     protected void paintIcon(Graphics2D g2) {
-      g2.setColor(new Color(myMonitor.get()));
+      final var storedColor = new Color(myMonitor.get());
+      g2.setColor(
+          myMonitor == AppPreferences.TEXT_TOOL_COLOR
+              ? ColorUtil.getThemeTextColor(storedColor)
+              : storedColor);
       g2.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
     }
 
     public void update(Frame frame) {
-      var col = new Color(myMonitor.get());
-      final var newCol = ColorPickerDialog.showDialog(frame, col, false);
+      final var col = new Color(myMonitor.get());
+      final var newCol =
+          myMonitor == AppPreferences.TEXT_TOOL_COLOR
+              ? TextColorChooser.showDialog(frame, col, false)
+              : ColorPickerDialog.showDialog(frame, col, false);
       if (newCol == null) return;
       if (!newCol.equals(col)) {
-        col = newCol;
-        myMonitor.set(col.getRGB());
+        myMonitor.set(newCol.getRGB());
       }
     }
   }

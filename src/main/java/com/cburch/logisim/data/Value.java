@@ -680,7 +680,7 @@ public final class Value {
     long value = this.value & mask;
     if (unsigned) {
       return new BigInteger(
-         1,
+          1,
           new byte[] {
             (byte) ((value >> 56) & 0xFFL),
             (byte) ((value >> 48) & 0xFFL),

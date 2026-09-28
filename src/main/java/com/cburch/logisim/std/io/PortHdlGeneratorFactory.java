@@ -93,7 +93,7 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
             if (!netData.equals("OPEN") && !netEnable.equals("OPEN")) {
               contents
                   .addVhdlKeywords()
-                  //'Z' instead of (others => 'Z') for 1-bit signals
+                  // 'Z' instead of (others => 'Z') for 1-bit signals
                   .add(
                       "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} 'Z';",
                       LOCAL_INOUT_BUBBLE_BUS_NAME,

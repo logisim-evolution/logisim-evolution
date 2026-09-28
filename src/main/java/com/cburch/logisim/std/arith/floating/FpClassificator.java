@@ -104,7 +104,7 @@ public class FpClassificator extends InstanceFactory {
     painter.drawPort(SUBNORMAL, "sn", Direction.WEST);
     painter.drawPort(NORMAL, "n", Direction.WEST);
     painter.drawPort(INFINITE, "∞", Direction.WEST);
-    //painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
+    // painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
     painter.drawPort(QUIET_NAN, "NaN", Direction.WEST); // change to qNaN if sNaN is added
 
     final var loc = painter.getLocation();

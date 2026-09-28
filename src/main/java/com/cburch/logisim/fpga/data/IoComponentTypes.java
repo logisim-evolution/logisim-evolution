@@ -416,24 +416,26 @@ public enum IoComponentTypes {
         var xPinNr = pinNr;
         var yPinNr = pinNr;
         switch (mapRotation) {
-          case ROTATION_CCW_90: yPinNr = nrOfPins - pinNr - 1;
-          case ROTATION_CW_90: {
+          case ROTATION_CCW_90:
+            yPinNr = nrOfPins - pinNr - 1;
+            // fall through
+          case ROTATION_CW_90:
             part = (float) height / (float) nrOfPins;
             boxXpos = x;
             boxYpos = y + (int) ((float) yPinNr * part);
             boxWidth = width;
             boxHeight = (int) ((float) (yPinNr + 1) * part) - (int) ((float) yPinNr * part);
             break;
-          }
-          case ROTATION_180: xPinNr = nrOfPins - pinNr - 1;
-          default: {
+          case ROTATION_180:
+            xPinNr = nrOfPins - pinNr - 1;
+            // fall through
+          default:
             part = (float) width / (float) nrOfPins;
             boxXpos = x + (int) ((float) xPinNr * part);
             boxYpos = y;
             boxWidth = (int) ((float) (xPinNr + 1) * part) - (int) (xPinNr * part);
             boxHeight = height;
             break;
-          }
         }
         g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
@@ -609,10 +611,9 @@ public enum IoComponentTypes {
         boxHeight = nextYPosition - yPosition;
         g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
-      default: {
+      default:
         g.fillRect(x, y, width, height);
         break;
-      }
     }
   }
 

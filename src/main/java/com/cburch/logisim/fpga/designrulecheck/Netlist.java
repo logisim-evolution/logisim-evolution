@@ -251,8 +251,8 @@ public class Netlist {
           return drcStatus;
         }
       }
-    } 
-    
+    }
+
     // if we already have good drc results we can leave
     if (drcStatus == DRC_PASSED) return DRC_PASSED;
 

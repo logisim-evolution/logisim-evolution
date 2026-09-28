@@ -241,7 +241,7 @@ public class SelectTool extends AbstractTool {
   public void keyTyped(Canvas canvas, KeyEvent e) {
     final var ch = e.getKeyChar();
     final var selected = canvas.getSelection();
-    if ((ch == '\u0008' || ch == '\u007F') && !selected.isEmpty()) {
+    if ((ch == '\b' || ch == '\u007F') && !selected.isEmpty()) {
       final var toRemove = new ArrayList<CanvasObject>();
       for (final var shape : selected.getSelected()) {
         if (shape.canRemove()) {

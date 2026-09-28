@@ -275,8 +275,9 @@ public class Caret {
           }
         }
 
-        case '\u0008' ->
+        case '\b' -> {
           movecursor(KeyEvent.VK_LEFT, shift);
+        }
         case '\u007f' -> {
           if (ctrlx) {
             movecursor(KeyEvent.VK_PAGE_UP, shift);
@@ -307,8 +308,7 @@ public class Caret {
       final var loc = measures.toAddress(e.getX(), e.getY());
       setDot(loc, true);
 
-      // TODO should repeat dragged events when mouse leaves the
-      // component
+      // TODO: should repeat dragged events when mouse leaves the component
     }
 
     @Override

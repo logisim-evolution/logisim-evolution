@@ -60,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO repropagate when rows/cols change
+// TODO: repropagate when rows/cols change
 
 public abstract class DotMatrixBase extends InstanceFactory implements DynamicElementProvider {
   protected static class State implements InstanceData, Cloneable {
