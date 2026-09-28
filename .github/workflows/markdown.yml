@@ -16,11 +16,11 @@ jobs:
     steps:
     # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
     # https://github.com/marketplace/actions/paths-changes-filter
     - name: "Look for changed doc related files..."
-      uses: dorny/paths-filter@v4
+      uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
       id: filter
       with:
         filters: |
@@ -30,7 +30,7 @@ jobs:
 
     # https://github.com/marketplace/actions/my-markdown-linter
     - name: "Running markdown linter..."
-      uses: ruzickap/action-my-markdown-linter@v1
+      uses: ruzickap/action-my-markdown-linter@abb659d26eea70aee77a555bd057b9c45ddd3332
       if: steps.filter.outputs.docs == 'true'
       with:
         # LICENSE is externally sourced and we're not going to fix it.

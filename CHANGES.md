@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Pinned GitHub Actions workflow dependencies to immutable commit SHAs (@koushikkallamadi).
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).

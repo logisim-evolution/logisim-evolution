@@ -44,7 +44,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -111,22 +111,22 @@ jobs:
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: 'Build Snap package'
         # https://github.com/snapcore/action-build
-        uses: snapcore/action-build@v1
+        uses: snapcore/action-build@b391f430cb2650fd359ed4d2cfe88b2c481800e0
         id: snapcraft
 
       - name: Review the built snap
         # https://github.com/snapcrafters/ci
-        uses: snapcrafters/ci/review-snap@main
+        uses: snapcrafters/ci/review-snap@cb43fba979fbb7388ec44f37b1e70d6cdb8edb8c
         if: success()
         with:
           snap: ${{ steps.snapcraft.outputs.snap }}
 
       - name: 'Upload *.snap artifact.'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
            path: ${{ steps.snapcraft.outputs.snap }}
@@ -134,7 +134,7 @@ jobs:
 
       - name: 'Pushing *.snap to snapcraft.io'
         # https://github.com/snapcore/action-publish
-        uses: snapcore/action-publish@v1
+        uses: snapcore/action-publish@9334eecb267cfd97a0ce3c8654215d095927252f
         if: success()
         env:
           # Obtain Snapcraft.io store token:
@@ -155,12 +155,12 @@ jobs:
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: 'main'
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -177,7 +177,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -194,7 +194,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_amd64.deb
@@ -212,7 +212,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -231,7 +231,7 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
@@ -249,12 +249,12 @@ jobs:
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: 'main'
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -270,7 +270,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *arm64.deb'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}_arm64.deb
@@ -288,7 +288,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *aarch64.rpm'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.aarch64.rpm
@@ -307,12 +307,12 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.ref_name }}
 
       - name: Set up aarch64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -326,14 +326,14 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload aarch64 DMG'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-aarch64.dmg
           name: ${{ needs.git_check.outputs.base_name }}-aarch64.dmg
 
       - name: Set up x86_64 JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -348,7 +348,7 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload x86_64 DMG'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
@@ -367,9 +367,9 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -378,7 +378,7 @@ jobs:
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
       - name: "Upload MSI"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
@@ -389,7 +389,7 @@ jobs:
         run: .\gradlew.bat createWindowsPortableZip -x checkstyleMain -x checkstyleTest
 
       - name: "Upload self-contained archive for Windows"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: success()
         with:
           path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-windows-amd64.zip
