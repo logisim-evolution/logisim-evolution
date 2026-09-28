@@ -228,6 +228,9 @@ public final class LogisimFileActions {
                     mutation.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
                   }
                   mutation.execute();
+                  if (circ.getAppearance().hasCustomAppearance()) {
+                    renamed.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom());
+                  }
                   mergedCircuits.add(renamed);
                 }
                 // response == 2 or dialog closed -> cancel (do nothing)
@@ -336,6 +339,9 @@ public final class LogisimFileActions {
         } else {
           proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
         }
+        if (circ.getAppearance().hasCustomAppearance()) {
+          newCircuit.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom());
+        }
       }
       final var availableTools = new HashMap<String, AddTool>();
       LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
@@ -362,13 +368,6 @@ public final class LogisimFileActions {
             }
           }
           proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
-        }
-      }
-      // Last pass, restore the custom appearance
-      for (final var circ : mergedCircuits) {
-        if (circ.getAppearance().hasCustomAppearance()) {
-          final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
-          newCirc.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom(), proj, newCirc);
         }
       }
       mergedCircuits.clear();
