@@ -45,8 +45,8 @@ public class FpClassificator extends InstanceFactory {
   private static final int SUBNORMAL = 3;
   private static final int NORMAL = 4;
   private static final int INFINITE = 5;
-  //FIXME: Consider implementing signaling NaN's detection.
-  //private static final int SIGNALING_NAN = 7;
+  // FIXME: Consider implementing signaling NaN's detection.
+  // private static final int SIGNALING_NAN = 7;
   private static final int QUIET_NAN = 6;
 
   public FpClassificator() {
@@ -64,7 +64,7 @@ public class FpClassificator extends InstanceFactory {
     ps[SUBNORMAL] = new Port(0, -10, Port.OUTPUT, 1);
     ps[NORMAL] = new Port(0, 0, Port.OUTPUT, 1);
     ps[INFINITE] = new Port(0, 10, Port.OUTPUT, 1);
-    //ps[SIGNALING_NAN] = new Port(0, 20, Port.OUTPUT, 1);
+    // ps[SIGNALING_NAN] = new Port(0, 20, Port.OUTPUT, 1);
     ps[QUIET_NAN] = new Port(0, 30, Port.OUTPUT, 1);
 
     ps[IN].setToolTip(S.getter("fpClassificatorInputTip"));
@@ -74,7 +74,7 @@ public class FpClassificator extends InstanceFactory {
     ps[SUBNORMAL].setToolTip(S.getter("fpClassificatorSubnormalTip"));
     ps[NORMAL].setToolTip(S.getter("fpClassificatorNormalTip"));
     ps[INFINITE].setToolTip(S.getter("fpClassificatorInfiniteTip"));
-    //ps[SIGNALING_NAN].setToolTip(S.getter("fpClassificatorSignalingNaNTip"));
+    // ps[SIGNALING_NAN].setToolTip(S.getter("fpClassificatorSignalingNaNTip"));
     ps[QUIET_NAN].setToolTip(S.getter("fpClassificatorNaNTip"));
 
     setPorts(ps);
@@ -104,8 +104,8 @@ public class FpClassificator extends InstanceFactory {
     painter.drawPort(SUBNORMAL, "sn", Direction.WEST);
     painter.drawPort(NORMAL, "n", Direction.WEST);
     painter.drawPort(INFINITE, "∞", Direction.WEST);
-    //painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
-    painter.drawPort(QUIET_NAN, "NaN", Direction.WEST); //change to qNaN if sNaN is added
+    // painter.drawPort(SIGNALING_NAN, "sNaN", Direction.WEST);
+    painter.drawPort(QUIET_NAN, "NaN", Direction.WEST); // change to qNaN if sNaN is added
 
     final var loc = painter.getLocation();
     final var x = loc.getX();
@@ -207,7 +207,7 @@ public class FpClassificator extends InstanceFactory {
     state.setPort(SUBNORMAL, isSubnormal ? Value.TRUE : Value.FALSE, delay);
     state.setPort(NORMAL, isNormal ? Value.TRUE : Value.FALSE, delay);
     state.setPort(INFINITE, isInfinite ? Value.TRUE : Value.FALSE, delay);
-    //state.setPort(SIGNALING_NAN, nan, delay);
+    // state.setPort(SIGNALING_NAN, nan, delay);
     state.setPort(QUIET_NAN, isNaN ? Value.TRUE : Value.FALSE, delay);
   }
 }

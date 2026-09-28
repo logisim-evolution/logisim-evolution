@@ -142,8 +142,8 @@ public class OutputStreamEscaper extends OutputStream {
   // converts any character to ascii string with C-like escapes
   public static String escape(char b) {
     return (b >= 0x20 && b <= 0x7E && b != '\\')
-      ? String.valueOf(b)
-      : escapeCode(b);
+        ? String.valueOf(b)
+        : escapeCode(b);
   }
 
   // converts a string to an ascii string with C-like escapes

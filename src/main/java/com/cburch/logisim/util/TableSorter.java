@@ -408,8 +408,8 @@ public class TableSorter extends AbstractTableModel {
   protected Icon getHeaderRendererIcon(int column, int size) {
     final var directive = getDirective(column);
     return (directive == EMPTY_DIRECTIVE)
-      ? null
-      : new Arrow(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
+        ? null
+        : new Arrow(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
   }
 
   private int[] getModelToView() {

@@ -357,8 +357,8 @@ public final class ProjectActions {
     }
 
     baseProject.doAction(LogisimFileActions.mergeFile(
-        mergelib, 
-        baseProject.getLogisimFile(), 
+        mergelib,
+        baseProject.getLogisimFile(),
         circuitsToMerge,
         includeDependencies));
   }
@@ -525,8 +525,8 @@ public final class ProjectActions {
    *
    * <p>It is the action listener for the File->Import project bundle... menu option.
    *
-   * @param proj the current project to perform the file->open action afterwards 
-   * @return true if success, false otherwise 
+   * @param proj the current project to perform the file->open action afterwards
+   * @return true if success, false otherwise
    */
   public static boolean doExtractAndRunProject(Project proj) {
     var ret = true;
@@ -631,7 +631,7 @@ public final class ProjectActions {
           zipFile.close();
         } catch (IOException e) {
           isCorrectFile = false;
-          OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError", 
+          OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError",
               String.format("%s\n%s", zipFileName, e.getMessage())));
         }
       } else {
@@ -647,7 +647,7 @@ public final class ProjectActions {
    * <p>It is the action listener for the File->Export project bundle... menu option.
    *
    * @param proj Project to be exported
-   * @return true if success, false otherwise 
+   * @return true if success, false otherwise
    */
   public static boolean doExportProject(Project proj) {
     var ret = true;
@@ -675,7 +675,7 @@ public final class ProjectActions {
         }
         final var path = Paths.get(zipFile);
         if (Files.exists(path)) {
-          isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
+          isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite",
               new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
         } else {
           isCorrectFile = true;
@@ -706,7 +706,7 @@ public final class ProjectActions {
     return ret;
   }
 
-  
+
   /**
    * Saves a Logisim project in a .circ file.
    *

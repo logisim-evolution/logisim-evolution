@@ -74,7 +74,7 @@ public class MiniFloat {
       return (byte) (sign_bit
           | 0x78 // max exponent + 1 (4 bits exponent field)
           | ((doppel & 0x0070_0000) >> 20) // preserve bits 22..20
-        );
+          );
     }
 
     float abs_f = Math.abs(f);

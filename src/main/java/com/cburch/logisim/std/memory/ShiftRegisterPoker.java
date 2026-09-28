@@ -67,7 +67,7 @@ public class ShiftRegisterPoker extends InstancePoker {
         this.loc = loc + 1;
         state.fireInvalidated();
       }
-    } else if (c == '\u0008') {
+    } else if (c == '\b') {
       if (loc > 0) {
         this.loc = loc - 1;
         state.fireInvalidated();

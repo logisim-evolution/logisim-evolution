@@ -81,6 +81,14 @@ class Clipboard {
   public static void set(Clipboard value) {
     final var old = current;
     current = value;
+    try {
+      final var sysClip = java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+      if (sysClip.isDataFlavorAvailable(java.awt.datatransfer.DataFlavor.imageFlavor)) {
+        sysClip.setContents(new java.awt.datatransfer.StringSelection(""), null);
+      }
+    } catch (Exception e) {
+      // ignore
+    }
     propertySupport.firePropertyChange(CONTENTS_PROPERTY, old, current);
   }
 

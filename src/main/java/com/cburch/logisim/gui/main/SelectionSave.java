@@ -38,8 +38,8 @@ class SelectionSave {
 
   private static boolean isSame(Component[] save, Collection<Component> sel) {
     return (save == null)
-      ? sel.isEmpty()
-      : toSet(save).equals(sel);
+        ? sel.isEmpty()
+        : toSet(save).equals(sel);
   }
 
   private static boolean isSame(Component[] a, Component[] b) {
