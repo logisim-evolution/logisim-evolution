@@ -9,6 +9,8 @@
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
   * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
+  * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
+    [#3008] (@xjx06127).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
