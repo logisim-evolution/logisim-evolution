@@ -62,7 +62,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.24.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
