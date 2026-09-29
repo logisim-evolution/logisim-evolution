@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
   * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color

@@ -20,6 +20,7 @@ import com.cburch.logisim.gui.prefs.PrefOptionList;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorBoolean;
+import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -280,7 +281,7 @@ public class FpgaOptions extends OptionsPanel {
   }
 
   private void selectWorkSpace(Component parentComponent) {
-    JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
+    JFileChooser fc = JFileChoosers.createAt(new File(AppPreferences.FPGA_Workspace.get()));
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     File test = new File(AppPreferences.FPGA_Workspace.get());
     if (test.exists()) {

@@ -799,27 +799,35 @@ tasks.register("createApp") {
     )
     func.runCommand(params, "Error while creating the .app directory.")
 
-    if ("x86_64".equals(arch)) {
-      val pListFilename = "${appDirName}/Contents/Info.plist"
-      val tempPList = "${dest}/Info.plist"
-      func.runCommand(listOf(
-          "awk",
-          "{print >\"${tempPList}\"};"
-              + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${tempPList}\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
-              + "}",
-          pListFilename,
-      ), "Error while patching Info.plist file.")
+    val languages = listOf("de", "el", "en", "es", "fr", "it", "ja", "nl", "pl", "pt", "ru", "zh")
+    val langXml = languages.joinToString("") { "<string>$it</string>" }
+    val pListFilename = "${appDirName}/Contents/Info.plist"
+    val tempPList = "${dest}/Info.plist"
+    func.runCommand(listOf(
+        "awk",
+        "{print >\"${tempPList}\"};"
+            + "/NSHighResolutionCapable/{"
+            + "print \"  <string>true</string>\" >\"${tempPList}\";"
+            + "print \"  <key>CFBundleLocalizations</key>\" >\"${tempPList}\";"
+            + "print \"  <array>${langXml}</array>\" >\"${tempPList}\";"
+            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
+            + "}",
+        pListFilename,
+    ), "Error while patching Info.plist file.")
 
-      func.runCommand(listOf(
-          "mv", tempPList, pListFilename
-      ), "Error while moving Info.plist into the .app directory.")
+    func.runCommand(listOf(
+        "mv", tempPList, pListFilename
+    ), "Error while moving Info.plist into the .app directory.")
 
-      func.runCommand(listOf(
-          "codesign", "--force", "--sign", "-", appDirName
-      ), "Error while executing: codesign")
+    for (lang in languages) {
+      val lprojDir = File("${appDirName}/Contents/Resources/${lang}.lproj")
+      lprojDir.mkdirs()
+      File(lprojDir, "InfoPlist.strings").writeText("/* Localized Bundle */\n")
     }
+
+    func.runCommand(listOf(
+        "codesign", "--force", "--sign", "-", appDirName
+    ), "Error while executing: codesign")
   }
 }
 
