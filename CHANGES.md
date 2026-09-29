@@ -4,10 +4,13 @@
 
 * @dev (????-??-??)
   * Added TTL 74148: 8-line to 3-line priority encoder (@Vadimatorik).
+  * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
+  * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
+  * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).

@@ -27,6 +27,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.util.Assembler;
 import com.cburch.logisim.soc.util.AssemblerInterface;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -179,7 +180,7 @@ public class AssemblerPanel extends JPanel
         } else saveFile(false);
       }
     }
-    JFileChooser chooser = new JFileChooser();
+    JFileChooser chooser = JFileChoosers.create();
     FileNameExtensionFilter filter =
         new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"), "S", "asm");
     chooser.setDialogTitle(parent.getParentTitle() + ": " + S.get("AsmPanReadAsmFile"));
@@ -215,7 +216,7 @@ public class AssemblerPanel extends JPanel
   private void saveFile(boolean AskFileName) {
     if (!documentChanged) return;
     if (AskFileName || textFile == null) {
-      JFileChooser chooser = new JFileChooser();
+      JFileChooser chooser = JFileChoosers.create();
       FileNameExtensionFilter filter =
           new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"), "S", "asm");
       chooser.setDialogTitle(parent.getParentTitle() + ": " + S.get("AsmPanSaveAsmFile"));

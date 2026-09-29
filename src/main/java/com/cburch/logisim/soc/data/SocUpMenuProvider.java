@@ -22,6 +22,7 @@ import com.cburch.logisim.soc.gui.AssemblerPanel;
 import com.cburch.logisim.soc.gui.ListeningFrame;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -185,7 +186,7 @@ public class SocUpMenuProvider implements ActionListener {
     }
 
     public void readElf(Instance instance, CircuitState circuitState) {
-      final var fc = new JFileChooser();
+      final var fc = JFileChoosers.create();
       fc.setDialogTitle(S.get("SocUpMenuSelectElfFile"));
       int retVal = fc.showOpenDialog(parentFrame);
       if (retVal != JFileChooser.APPROVE_OPTION) return;

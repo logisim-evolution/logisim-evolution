@@ -52,6 +52,129 @@ public final class JFileChoosers {
       }
       return super.getSelectedFile();
     }
+
+    private boolean shouldUseMacNativeDialog() {
+      if (!MacCompatibility.isRunningOnMac()) return false;
+      // Fall back to Swing when multiple format-selection filters
+      final var choosable = getChoosableFileFilters();
+      final boolean hasAcceptAll = isAcceptAllFileFilterUsed();
+      return hasAcceptAll || choosable.length <= 1;
+    }
+
+    @Override
+    public int showOpenDialog(java.awt.Component parent) {
+      if (shouldUseMacNativeDialog()) {
+        final var file = showMacFileDialog(parent, java.awt.FileDialog.LOAD);
+        if (file != null) {
+          setSelectedFile(file);
+          return APPROVE_OPTION;
+        }
+        return CANCEL_OPTION;
+      }
+      return super.showOpenDialog(parent);
+    }
+
+    @Override
+    public int showSaveDialog(java.awt.Component parent) {
+      if (shouldUseMacNativeDialog()) {
+        final int mode = (getFileSelectionMode() == DIRECTORIES_ONLY)
+            ? java.awt.FileDialog.LOAD
+            : java.awt.FileDialog.SAVE;
+        final var file = showMacFileDialog(parent, mode);
+        if (file != null) {
+          setSelectedFile(file);
+          return APPROVE_OPTION;
+        }
+        return CANCEL_OPTION;
+      }
+      return super.showSaveDialog(parent);
+    }
+
+    @Override
+    public int showDialog(java.awt.Component parent, String approveButtonText) {
+      if (shouldUseMacNativeDialog()) {
+        final int mode = (getDialogType() == SAVE_DIALOG
+            && getFileSelectionMode() != DIRECTORIES_ONLY)
+            ? java.awt.FileDialog.SAVE
+            : java.awt.FileDialog.LOAD;
+        final var file = showMacFileDialog(parent, mode);
+        if (file != null) {
+          setSelectedFile(file);
+          return APPROVE_OPTION;
+        }
+        return CANCEL_OPTION;
+      }
+      return super.showDialog(parent, approveButtonText);
+    }
+
+    private File showMacFileDialog(java.awt.Component parent, int mode) {
+      java.awt.Window parentWindow = null;
+      if (parent instanceof java.awt.Window win) {
+        parentWindow = win;
+      } else if (parent != null) {
+        parentWindow = javax.swing.SwingUtilities.getWindowAncestor(parent);
+      }
+
+      var title = getDialogTitle();
+      if (title == null) {
+        final var key = (mode == java.awt.FileDialog.LOAD)
+            ? "FileChooser.openDialogTitleText"
+            : "FileChooser.saveDialogTitleText";
+        title = javax.swing.UIManager.getString(key);
+      }
+      final java.awt.FileDialog fileDialog;
+      if (parentWindow instanceof java.awt.Frame frame) {
+        fileDialog = new java.awt.FileDialog(frame, title, mode);
+      } else if (parentWindow instanceof java.awt.Dialog dialog) {
+        fileDialog = new java.awt.FileDialog(dialog, title, mode);
+      } else {
+        fileDialog = new java.awt.FileDialog((java.awt.Frame) null, title, mode);
+      }
+
+      final var curDir = getCurrentDirectory();
+      if (curDir != null) {
+        fileDialog.setDirectory(curDir.getAbsolutePath());
+      }
+      final var selFile = getSelectedFile();
+      if (selFile != null) {
+        fileDialog.setFile(selFile.getName());
+      }
+
+      final var filter = getFileFilter();
+      if (filter != null && filter != getAcceptAllFileFilter()) {
+        fileDialog.setFilenameFilter((dir, name) -> {
+          final var f = new File(dir, name);
+          return f.isDirectory() || filter.accept(f);
+        });
+      }
+
+      final boolean dirMode = (getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY);
+      if (dirMode) {
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
+      }
+      try {
+        fileDialog.setVisible(true);
+      } finally {
+        if (dirMode) {
+          System.clearProperty("apple.awt.fileDialogForDirectories");
+        }
+      }
+
+      if (fileDialog.getFile() != null) {
+        final var selected = new File(fileDialog.getDirectory(), fileDialog.getFile());
+        if (selected.getParentFile() != null) {
+          setCurrentDirectory(selected.getParentFile());
+        }
+        return selected;
+      } else if (dirMode && fileDialog.getDirectory() != null) {
+        final var selected = new File(fileDialog.getDirectory());
+        if (selected.getParentFile() != null) {
+          setCurrentDirectory(selected.getParentFile());
+        }
+        return selected;
+      }
+      return null;
+    }
   }
 
   public static JFileChooser create() {
