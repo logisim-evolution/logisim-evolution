@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
+    [#1247] (@hewzhew).
   * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color
