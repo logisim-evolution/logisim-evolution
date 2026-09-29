@@ -7,6 +7,7 @@
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
+  * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
@@ -56,7 +57,6 @@
     * Corrected disjoint corners on Square Root arithmetic components.
     * Corrected disjoint corners on unpressed Button components.
     * Reduced line reordering errors in TikZ/SVG image exports.
-    * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Improved dark theme (FlatLaf Dark / Darcula) color synchronization:
     * Canvas background, grid dots, component outlines, icons, and signal wire
       colors now adapt to the active theme.
