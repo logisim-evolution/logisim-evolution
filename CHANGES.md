@@ -2,7 +2,7 @@
 
 # Changes #
 
-* @dev (????-??-??)<<<<<<< feature/mac-native-file-dialog
+* @dev (????-??-??)
   * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
   * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
