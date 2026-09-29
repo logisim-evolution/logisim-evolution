@@ -17,13 +17,13 @@ import com.cburch.logisim.instance.InstanceState;
  * TTL 74x148: 8-line to 3-line octal priority encoder
  * Model based on <a href="https://www.ti.com/lit/ds/symlink/sn74hc148.pdf">74HC148 datasheet</a>.
  *
- * <p>Every data, control and code pin of this device is active LOW, which the pin names denote with
- * an "n" prefix. The code outputs carry the complement of the binary number of the highest-priority
+ * <p>Every data, control and code pin of this device is active low, which the pin names denote with
+ * an "n" prefix. The code outputs carry the complement of the binary number of the highest priority
  * asserted data input, so an asserted nI0 and "no input asserted at all" produce the same code and
  * are told apart by nGS only.
  *
  * <p>A pin is treated as asserted only when it reads exactly {@link Value#FALSE}; unknown and error
- * values are treated as the inactive HIGH level. An unconnected device therefore behaves as if it
+ * values are treated as the inactive high level. An unconnected device therefore behaves as if it
  * were disabled.
  */
 public class Ttl74148 extends AbstractTtlGate {
@@ -125,7 +125,7 @@ public class Ttl74148 extends AbstractTtlGate {
   }
 
   /**
-   * Finds the code of the highest-priority asserted data input.
+   * Finds the code of the highest priority asserted data input.
    *
    * @return the code to encode, or -1 when the device is disabled or no input is asserted
    */
