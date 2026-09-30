@@ -1,0 +1,105 @@
+# This workflow triggers on workflow_run once fork-pr-build finishes, so it runs 
+# in the base repository's trusted context with secrets available. It downloads 
+# the build output and PR metadata, checks out the fork's code without executing 
+# it, and runs the scan:
+name: "Fork PR Sonar analysis"
+
+on:
+  workflow_run:
+    workflows: ["Fork PR build and tests"]
+    types: [completed]
+
+jobs:
+  sonar:
+    name: "SonarQube analysis"
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
+
+    steps:
+    - name: "Download PR information"
+      uses: actions/download-artifact@v4
+      with:
+        pattern: pr-info-*
+        path: ${{ runner.temp }}/pr-info
+        merge-multiple: true
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: "Extract and validate PR information"
+      id: pr-info
+      run: |
+        HEAD_SHA=$(cat "${{ runner.temp }}/pr-info/head-sha")
+        HEAD_REF=$(cat "${{ runner.temp }}/pr-info/head-ref")
+        PR_NUMBER=$(cat "${{ runner.temp }}/pr-info/pr-number")
+        BASE_REF=$(cat "${{ runner.temp }}/pr-info/base-ref")
+        [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid HEAD_SHA"; exit 1; }
+        [[ "$HEAD_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]] || { echo "Invalid HEAD_REF"; exit 1; }
+        [[ "$PR_NUMBER" =~ ^[0-9]+$ ]] || { echo "Invalid PR_NUMBER"; exit 1; }
+        [[ "$BASE_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]] || { echo "Invalid BASE_REF"; exit 1; }
+        echo "head-sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+        echo "head-ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
+        echo "pr-number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "base-ref=$BASE_REF" >> "$GITHUB_OUTPUT"
+
+    - name: "Checkout sources"
+      uses: actions/checkout@v7
+      with:
+        ref: ${{ steps.pr-info.outputs.head-sha }}
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: "Download compiled classes"
+      uses: actions/download-artifact@v4
+      with:
+        pattern: build-output-*
+        merge-multiple: true
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Do not replace this action with './gradlew sonar': it would execute
+    # fork-provided Gradle code in a workflow that has access to secrets.
+    - name: "Run SonarQube analysis"
+      uses: SonarSource/sonarqube-scan-action@v7
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=logisim-evolution_logisim-evolution
+          -Dsonar.organization=logisim-evolution
+          -Dsonar.sources=src/main/java,build/generated/logisim/java,build/generated/sources/srcgen
+          -Dsonar.tests=src/test/java
+          -Dsonar.java.binaries=build/classes/java/main
+          -Dsonar.java.test.binaries=build/classes/java/test
+          -Dsonar.pullrequest.key=${{ steps.pr-info.outputs.pr-number }}
+          -Dsonar.pullrequest.branch=${{ steps.pr-info.outputs.head-ref }}
+          -Dsonar.pullrequest.base=${{ steps.pr-info.outputs.base-ref }}
+          -Dsonar.pullrequest.provider=github
+          -Dsonar.pullrequest.github.repository=${{ github.repository }}
+          -Dsonar.scm.revision=${{ steps.pr-info.outputs.head-sha }}
+
+    - name: "Delete artifacts used in analysis"
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            run_id: context.payload.workflow_run.id,
+          });
+          for (const artifact of artifacts.data.artifacts) {
+            if (artifact.name.startsWith("build-output-") || artifact.name.startsWith("pr-info-")) {
+              await github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+              });
+            }
+          }

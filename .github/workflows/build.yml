@@ -17,6 +17,9 @@ jobs:
   analyze_sources:
     name: "Do we need to build the application?"
     runs-on: ubuntu-latest
+    # Fork pull requests are built by fork-pr-build.yml. Keeping this workflow in
+    # the trusted context prevents the Sonar token from being used for fork code.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
     outputs:
       # Export 'filter' step check result so next step can use it.
       run_build: ${{ steps.filter.outputs.src }}
@@ -64,13 +67,14 @@ jobs:
     steps:
     - name: "Checkout sources"
       uses: actions/checkout@v7
+      with:
+        # This is so Sonar has access to the full git history.
+        fetch-depth: 0
     - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
       uses: actions/setup-java@v6
       with:
         java-version: ${{ env.JDK_VERSION }}
         distribution: ${{ env.JDK_DISTRO }}
-        # This is so Sonar has access to the full git history
-        fetch-depth: 0
     - name: Cache SonarCloud packages
       uses: actions/cache@v6
       with:

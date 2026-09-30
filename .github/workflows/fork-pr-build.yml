@@ -1,0 +1,63 @@
+# This workflow builds and tests fork pull requests with no secret access, 
+# then uploads the build output and the PR metadata fork-pr-sonar needs as artifacts.
+name: "Fork PR build and tests"
+
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  JDK_VERSION: 21
+  JDK_DISTRO: 'temurin'
+
+jobs:
+  build:
+    name: "Gradle builder"
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.fork == true
+
+    steps:
+    - name: "Checkout sources"
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+      uses: actions/setup-java@v6
+      with:
+        java-version: ${{ env.JDK_VERSION }}
+        distribution: ${{ env.JDK_DISTRO }}
+
+    - name: "Build with Gradle"
+      run: |
+        chmod +x gradlew
+        ./gradlew build -x checkstyleMain -x checkstyleTest
+
+    - name: "Save compiled classes"
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output-${{ github.event.pull_request.number }}
+        retention-days: 1
+        path: |
+          build/classes/
+          build/generated/
+
+    - name: "Save PR information"
+      env:
+        HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        BASE_REF: ${{ github.event.pull_request.base.ref }}
+      run: |
+        mkdir -p pr-info
+        echo "$HEAD_REF" > pr-info/head-ref
+        echo "$HEAD_SHA" > pr-info/head-sha
+        echo "$PR_NUMBER" > pr-info/pr-number
+        echo "$BASE_REF" > pr-info/base-ref
+
+    - name: "Upload PR information"
+      uses: actions/upload-artifact@v4
+      with:
+        name: pr-info-${{ github.event.pull_request.number }}
+        path: pr-info/
+        retention-days: 1
