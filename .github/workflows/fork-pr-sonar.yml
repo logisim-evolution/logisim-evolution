@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: "Download PR information"
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4.1.3
       with:
         pattern: pr-info-*
         path: ${{ runner.temp }}/pr-info
@@ -55,7 +55,7 @@ jobs:
         persist-credentials: false
 
     - name: "Download compiled classes"
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4.1.3
       with:
         pattern: build-output-*
         merge-multiple: true
