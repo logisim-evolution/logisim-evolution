@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
+    [#1247] (@hewzhew).
   * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
     deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
   * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
