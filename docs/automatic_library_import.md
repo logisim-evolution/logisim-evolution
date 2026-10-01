@@ -1,6 +1,6 @@
-# Automatically Importing Logisim Libraries
+# Automatically Importing Logisim-evolution Libraries
 
-Logisim-evolution supports loading custom libraries at startup, contained in Logisim `.circ` files.
+Logisim-evolution supports loading custom libraries at startup, contained in Logisim-evolution `.circ` files.
 
 To do this, create a directory named `logisim-defaults` in the program directory used to start Logisim-evolution:
 
