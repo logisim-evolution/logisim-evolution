@@ -10,6 +10,7 @@
 package com.cburch.logisim.util;
 
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.proj.Projects;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
@@ -113,6 +114,9 @@ public final class JFileChoosers {
         parentWindow = win;
       } else if (parent != null) {
         parentWindow = javax.swing.SwingUtilities.getWindowAncestor(parent);
+      }
+      if (parentWindow == null) {
+        parentWindow = Projects.getTopFrame();
       }
 
       var title = getDialogTitle();
