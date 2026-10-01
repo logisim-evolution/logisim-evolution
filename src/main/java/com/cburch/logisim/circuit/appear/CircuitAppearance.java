@@ -79,20 +79,8 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public boolean hasCustomAppearance() {
     final var currentCustom = new ArrayList<>(getCustomObjectsFromBottom());
     final var defaultCustom = new ArrayList<>(defaultCustomAppearance);
-    var shapeIterator = currentCustom.iterator();
-    while (shapeIterator.hasNext()) {
-      final var shape = shapeIterator.next();
-      if (shape instanceof AppearancePort || shape instanceof AppearanceAnchor)
-        shapeIterator.remove();
-    }
-    shapeIterator = defaultCustom.iterator();
-    while (shapeIterator.hasNext()) {
-      final var shape = shapeIterator.next();
-      if (shape instanceof AppearancePort || shape instanceof AppearanceAnchor)
-        shapeIterator.remove();
-    }
     if (currentCustom.size() != defaultCustom.size()) return true;
-    shapeIterator = currentCustom.iterator();
+    var shapeIterator = currentCustom.iterator();
     while (shapeIterator.hasNext()) {
       final var currentShape = shapeIterator.next();
       var deleteIt = false;

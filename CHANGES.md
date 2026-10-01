@@ -5,6 +5,7 @@
 * @dev (????-??-??)
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
     circuit projects, image exports, and SoC software directories (@V-Zemlyakov).
+  * Preserved pin and anchor edits in custom circuit appearances when saving [#3025] (@hewzhew).
   * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
     [#1247] (@hewzhew).
   * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
