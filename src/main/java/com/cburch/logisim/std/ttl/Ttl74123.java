@@ -84,13 +84,13 @@ public class Ttl74123 extends AbstractTtlGate implements TickAware {
   private static final String[] PORT_NAMES = {
     "1A (negative-edge trigger)",
     "1B (positive-edge trigger)",
-    "1RD (direct reset, active LOW)",
-    "1Q\\ (active LOW)",
+    "1RD (direct reset, active low)",
+    "1Q\\ (active low)",
     "2Q",
     "2A (negative-edge trigger)",
     "2B (positive-edge trigger)",
-    "2RD (direct reset, active LOW)",
-    "2Q\\ (active LOW)",
+    "2RD (direct reset, active low)",
+    "2Q\\ (active low)",
     "1Q"
   };
   private static final int[] A_PORTS = {PORT_INDEX_1A, PORT_INDEX_2A};
