@@ -25,7 +25,7 @@ import java.awt.Graphics2D;
  * <p>Model based on the
  * <a href="https://assets.nexperia.com/documents/data-sheet/74HC_HCT390.pdf">74HC390 datasheet</a>.
  * Each half contains a divide-by-2 section ({@code nQ0}, falling edge of {@code nCP0}) and a
- * divide-by-5 section ({@code nQ1} through {@code nQ3}, falling edge of {@code nCP1}). A HIGH
+ * divide-by-5 section ({@code nQ1} through {@code nQ3}, falling edge of {@code nCP1}). A high
  * {@code nMR} asynchronously clears that half. Decade and bi-quinary operation use the external
  * connections described in the data sheet.
  */
