@@ -553,7 +553,7 @@ public class Implicant implements Comparable<Implicant> {
       }
     }
 
-    // TODO in caller: convert implicant to Row and val back to Entry[]
+    // TODO: in caller: convert implicant to Row and val back to Entry[]
     return ret;
   }
 

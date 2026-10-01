@@ -33,7 +33,7 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.util.XmlUtil;
 
 public class ProjectBundleManifest {
-  
+
   public static class infofileInformation {
     private final String logisimVersion;
     private final String mainCircuitFile;
@@ -57,14 +57,14 @@ public class ProjectBundleManifest {
   }
 
   /**
-   * This function writes the manifest file to a given zip-file 
+   * This function writes the manifest file to a given zip-file
    *
    * @param zipfile Zipfile to write to
    * @param info Logisim version with which this manifest was created and main-circuit-file
    * @throws IOException
    */
   public static void writeManifest(ZipOutputStream zipfile, infofileInformation info) throws IOException {
-    if (zipfile == null) return; 
+    if (zipfile == null) return;
     try {
       final var factory = XmlUtil.getHardenedBuilderFactory();
       final var parser = factory.newDocumentBuilder();
@@ -107,9 +107,9 @@ public class ProjectBundleManifest {
       System.err.println(e.getMessage());
     }
   }
-  
+
   /**
-   * This function reads the contents of the manifest-file from a given zip-file 
+   * This function reads the contents of the manifest-file from a given zip-file
    *
    * @param zipFile zipfile to read from
    * @param frame parrent frame of the caller
@@ -132,7 +132,7 @@ public class ProjectBundleManifest {
         OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleMisformatted")));
         return null;
       }
-      final var manifestNode = manifestNodes.item(0); 
+      final var manifestNode = manifestNodes.item(0);
       final var manifestInfo = manifestNode.getChildNodes();
       // first we find the version of the manifest to check if we can process
       final var nodeAttr = manifestNode.getAttributes();
@@ -142,7 +142,7 @@ public class ProjectBundleManifest {
       }
       final var attr0 = nodeAttr.item(0);
       final var attr1 = nodeAttr.item(1);
-      if (!"type".equals(attr0.getNodeName()) || !"bundle".equals(attr0.getNodeValue()) 
+      if (!"type".equals(attr0.getNodeName()) || !"bundle".equals(attr0.getNodeValue())
           || !"version".equals(attr1.getNodeName()) || !"1".equals(attr1.getNodeValue())) {
         OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleMisformatted")));
         return null;
@@ -162,7 +162,7 @@ public class ProjectBundleManifest {
                 final var fileNode = fileNodes.item(fileId);
                 if ("file".equals(fileNode.getNodeName())) {
                   final var fileAttrs = fileNode.getAttributes();
-                  if (fileAttrs.getLength() == 1 && "main".equals(fileAttrs.item(0).getNodeName()) 
+                  if (fileAttrs.getLength() == 1 && "main".equals(fileAttrs.item(0).getNodeName())
                       && "true".equals(fileAttrs.item(0).getNodeValue())) {
                     final var mainNodes = fileNode.getChildNodes();
                     if ((mainNodes.getLength() == 1) && (mainNodes.item(0) instanceof Text filename)) {
@@ -189,7 +189,7 @@ public class ProjectBundleManifest {
             }
           }
         }
-      }      
+      }
       if (!main.isEmpty() && !creator.isEmpty()) {
         return new infofileInformation(creator, main);
       }

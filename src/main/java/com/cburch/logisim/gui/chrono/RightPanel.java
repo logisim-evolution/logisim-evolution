@@ -233,12 +233,12 @@ public class RightPanel extends JPanel {
   }
 
   public void changeSpotlight(Signal oldSignal, Signal newSignal) {
-    if (oldSignal != null) {
+    if (oldSignal != null && oldSignal.idx >= 0 && oldSignal.idx < rows.size()) {
       final var waveform = rows.get(oldSignal.idx);
       waveform.flush();
       repaint(waveform.getBounds());
     }
-    if (newSignal != null) {
+    if (newSignal != null && newSignal.idx >= 0 && newSignal.idx < rows.size()) {
       final var waveform = rows.get(newSignal.idx);
       waveform.flush();
       repaint(waveform.getBounds());
@@ -472,6 +472,16 @@ public class RightPanel extends JPanel {
           fillColor = colors[1];
           lineColor = colors[2];
         }
+
+        if (x1 == x0) {
+          // sub-pixel segment: update state for next transition but don't draw
+          prevHi = hi;
+          prevLo = lo;
+          prevFill = fillColor;
+          if (!cur.advance()) break;
+          continue;
+        }
+
         // __________       _____ __________       ______
         //     \_____\_____/_____X_____/    \_____/
         //    |     |     |     |     |    |     |

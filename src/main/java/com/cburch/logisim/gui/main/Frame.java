@@ -186,7 +186,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (appFont != null && !appFont.isBlank()) {
       fontName = appFont;
     }
-    
+
     var fontStyle = AppPreferences.getPreferredFontStyle(fontName);
     bottomTab.setFont(AppPreferences.getScaledFont(new Font(fontName, fontStyle, 9)));
     bottomTab.add(attrTable = new AttrTable(this));
@@ -596,7 +596,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     final var title = new StringBuilder();
 
     title
-        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + "\u0020") : "")
+        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + " ") : "")
         .append(
             (circuit != null)
                 ? S.get("titleCircFileKnown", circuit.getName(), name)
@@ -606,11 +606,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
     if (project.isFileDirty()) {
-      title.append(String.format("\u0020[%s]", S.get("titleUnsavedProjectState").toUpperCase()));
+      title.append(String.format(" [%s]", S.get("titleUnsavedProjectState").toUpperCase()));
     }
 
     if (!BuildInfo.version.isStable()) {
-      title.append(String.format("\u0020(ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
+      title.append(String.format(" (ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
     }
 
     this.setTitle(title.toString().trim());

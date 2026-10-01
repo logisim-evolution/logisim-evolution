@@ -80,28 +80,23 @@ public class BasicZoomModel implements ZoomModel {
   public void setZoomFactor(double value, MouseEvent e) {
     final var oldValue = zoomFactor;
     if (value != oldValue) {
-      if (canvas == null) setZoomFactor(value);
-      // Attempt to maintain mouse position during zoom, using
-      // [m]ax, [v]alue, [e]xtent, and [r]elative position within it,
-      // to calculate target [n]ew[m]ax, [p]ercent and [n]ew[v]alue.
-      final var mx = canvas.getHorizontalScrollBar().getMaximum();
-      final var vx = canvas.getHorizontalScrollBar().getValue();
-      final var ex = canvas.getHorizontalScrollBar().getVisibleAmount();
-      final var rx = e.getX() - vx;
-      final var my = canvas.getVerticalScrollBar().getMaximum();
-      final var vy = canvas.getVerticalScrollBar().getValue();
-      final var ey = canvas.getVerticalScrollBar().getVisibleAmount();
-      final var ry = e.getY() - vy;
-      zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
-      final var nmx = mx * value / oldValue;
-      final var px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
-      final var nvx = (int) (nmx * px);
-      final var nmy = my * value / oldValue;
-      final var py = (vy / my) + (ey / my - ey / nmy) * (ry / ey);
-      final var nvy = (int) (nmy * py);
-      canvas.getHorizontalScrollBar().setValue(nvx);
-      canvas.getVerticalScrollBar().setValue(nvy);
+      if (canvas == null) {
+        setZoomFactor(value);
+        return;
+      }
+      final var viewport = canvas.getViewport();
+      // Capture the cursor position before zoom listeners resize and scroll the canvas.
+      final var cursor = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), viewport);
+      final var position = viewport.getViewPosition();
+      final var ratio = value / oldValue;
+      final var nextX = (int) Math.round((position.x + cursor.x) * ratio - cursor.x);
+      final var nextY = (int) Math.round((position.y + cursor.y) * ratio - cursor.y);
+
+      setZoomFactor(value);
+      // Update the scroll ranges before applying the position anchored at the cursor.
+      viewport.doLayout();
+      canvas.getHorizontalScrollBar().setValue(nextX);
+      canvas.getVerticalScrollBar().setValue(nextY);
     }
   }
 

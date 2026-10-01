@@ -3,7 +3,23 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Added TTL 74123: dual retriggerable monostable multivibrator with reset (@V-Zemlyakov).
+  * Added TTL 74123: dual retriggerable monostable multivibrator with reset (@Vadimatorik).
+  * Preserved pin and anchor edits in custom circuit appearances when saving [#3025] (@hewzhew).
+  * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
+    [#1247] (@hewzhew).
+  * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
+    deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
+  * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
+  * Added TTL 74148: 8-line to 3-line priority encoder (@Vadimatorik).
+  * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
+  * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
+  * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
+  * Added theme-aware text label colors and color selection, with previews of the rendered color
+    and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
+  * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
+  * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
+  * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
+    [#3008] (@xjx06127).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).

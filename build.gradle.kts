@@ -18,7 +18,7 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 
 plugins {
   checkstyle
-  id("io.github.ben-manes.versions") version "0.61.0"
+  id("io.github.ben-manes.versions") version "0.64.0"
   java
   application
   id("com.gradleup.shadow") version "9.6.1"
@@ -49,8 +49,8 @@ dependencies {
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:2.0.19")
-  implementation("org.slf4j:slf4j-simple:2.0.19")
+  implementation("org.slf4j:slf4j-api:2.0.20")
+  implementation("org.slf4j:slf4j-simple:2.0.20")
   implementation("com.formdev:flatlaf:3.7.2")
   implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
@@ -62,7 +62,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.24.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -799,27 +799,35 @@ tasks.register("createApp") {
     )
     func.runCommand(params, "Error while creating the .app directory.")
 
-    if ("x86_64".equals(arch)) {
-      val pListFilename = "${appDirName}/Contents/Info.plist"
-      val tempPList = "${dest}/Info.plist"
-      func.runCommand(listOf(
-          "awk",
-          "{print >\"${tempPList}\"};"
-              + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${tempPList}\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
-              + "}",
-          pListFilename,
-      ), "Error while patching Info.plist file.")
+    val languages = listOf("de", "el", "en", "es", "fr", "it", "ja", "nl", "pl", "pt", "ru", "zh")
+    val langXml = languages.joinToString("") { "<string>$it</string>" }
+    val pListFilename = "${appDirName}/Contents/Info.plist"
+    val tempPList = "${dest}/Info.plist"
+    func.runCommand(listOf(
+        "awk",
+        "{print >\"${tempPList}\"};"
+            + "/NSHighResolutionCapable/{"
+            + "print \"  <string>true</string>\" >\"${tempPList}\";"
+            + "print \"  <key>CFBundleLocalizations</key>\" >\"${tempPList}\";"
+            + "print \"  <array>${langXml}</array>\" >\"${tempPList}\";"
+            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
+            + "}",
+        pListFilename,
+    ), "Error while patching Info.plist file.")
 
-      func.runCommand(listOf(
-          "mv", tempPList, pListFilename
-      ), "Error while moving Info.plist into the .app directory.")
+    func.runCommand(listOf(
+        "mv", tempPList, pListFilename
+    ), "Error while moving Info.plist into the .app directory.")
 
-      func.runCommand(listOf(
-          "codesign", "--force", "--sign", "-", appDirName
-      ), "Error while executing: codesign")
+    for (lang in languages) {
+      val lprojDir = File("${appDirName}/Contents/Resources/${lang}.lproj")
+      lprojDir.mkdirs()
+      File(lprojDir, "InfoPlist.strings").writeText("/* Localized Bundle */\n")
     }
+
+    func.runCommand(listOf(
+        "codesign", "--force", "--sign", "-", appDirName
+    ), "Error while executing: codesign")
   }
 }
 
@@ -1052,8 +1060,8 @@ tasks {
 
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
-    // Checkstyle version to use
-    toolVersion = "10.3.4"
+    // Checkstyle version to use. Should match version in checkstyle workflow.
+    toolVersion = "13.9.0"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698

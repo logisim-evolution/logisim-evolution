@@ -333,14 +333,20 @@ public class Poly extends FillableCanvasObject {
 
   @Override
   public Handle moveHandle(HandleGesture gesture) {
+    final var oldHandles = handles;
     final var hs = getHandles(gesture);
     final var is = new Handle[hs.size()];
+    final var moved = gesture.getHandle();
+    Handle result = null;
     var i = 0;
     for (final var h : hs) {
+      if (oldHandles[i].equals(moved)) {
+        result = h;
+      }
       is[i++] = h;
     }
     setHandles(is);
-    return null;
+    return result;
   }
 
   @Override
