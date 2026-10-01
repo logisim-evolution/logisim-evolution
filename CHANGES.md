@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed ArrayIndexOutOfBoundsException during signal history deduplication and improved ChronoPanel buffer safety (@V-Zemlyakov).
   * Preserved pin and anchor edits in custom circuit appearances when saving [#3025] (@hewzhew).
   * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
     [#1247] (@hewzhew).
