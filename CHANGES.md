@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
+    deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
   * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
   * Added TTL 74148: 8-line to 3-line priority encoder (@Vadimatorik).
   * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).

@@ -17,6 +17,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -26,6 +27,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -227,11 +229,20 @@ public class ComponentSelector extends JTable {
       final var subcircs = new ArrayList<Component>();
       var changed = false;
       // TODO: hide from display any unselectable things that also have no children
-      for (final var c : circ.getNonWires()) {
+      final var nonWires = new ArrayList<>(circ.getNonWires());
+      nonWires.sort(compareComponents);
+      final var seenTunnelLabels = new HashSet<String>();
+      for (final var c : nonWires) {
         // For DRIVEABLE_CLOCKS do not recurse into subcircuits
         if (c.getFactory() instanceof SubcircuitFactory && mode != DRIVEABLE_CLOCKS) {
           subcircs.add(c);
           continue;
+        }
+        if (c.getFactory() instanceof Tunnel) {
+          final var label = c.getAttributeSet().getValue(StdAttr.LABEL);
+          if (label != null && !label.isEmpty() && !seenTunnelLabels.add(label)) {
+            continue; // skip duplicate tunnel labels within this circuit
+          }
         }
         final var log = (LoggableContract) c.getFeature(LoggableContract.class);
         if (log == null) continue;
