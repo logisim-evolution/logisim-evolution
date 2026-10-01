@@ -10,6 +10,7 @@
     deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
   * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
   * Added TTL 74148: 8-line to 3-line priority encoder (@Vadimatorik).
+  * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
   * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
   * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
