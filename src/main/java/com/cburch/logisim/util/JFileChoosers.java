@@ -10,21 +10,40 @@
 package com.cburch.logisim.util;
 
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.proj.Projects;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import javax.swing.JFileChooser;
 
 public final class JFileChoosers {
+
+  public enum DirectoryScope {
+    CIRCUITS,
+    IMAGE_EXPORT,
+    SOC_SOFTWARE
+  }
 
   private static final String[] PROP_NAMES = {
     null, "user.home", "user.dir", "java.home", "java.io.tmpdir"
   };
 
-  private static String currentDirectory = "";
+  private static final Map<DirectoryScope, String> currentDirectories =
+      Collections.synchronizedMap(new EnumMap<>(DirectoryScope.class));
 
   private JFileChoosers() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
+  private static PrefMonitor<String> getPrefMonitor(DirectoryScope scope) {
+    return switch (scope) {
+      case IMAGE_EXPORT -> AppPreferences.IMAGE_EXPORT_DIRECTORY;
+      case SOC_SOFTWARE -> AppPreferences.SOC_DIRECTORY;
+      default -> AppPreferences.DIALOG_DIRECTORY;
+    };
   }
 
   /*
@@ -36,20 +55,23 @@ public final class JFileChoosers {
    */
   private static class LogisimFileChooser extends JFileChooser {
     private static final long serialVersionUID = 1L;
+    private final DirectoryScope scope;
 
-    LogisimFileChooser() {
+    LogisimFileChooser(DirectoryScope scope) {
       super();
+      this.scope = (scope != null) ? scope : DirectoryScope.CIRCUITS;
     }
 
-    LogisimFileChooser(File initSelected) {
+    LogisimFileChooser(File initSelected, DirectoryScope scope) {
       super(initSelected);
+      this.scope = (scope != null) ? scope : DirectoryScope.CIRCUITS;
     }
 
     @Override
     public File getSelectedFile() {
       final var dir = getCurrentDirectory();
       if (dir != null) {
-        JFileChoosers.currentDirectory = dir.toString();
+        JFileChoosers.setCurrentDirectory(scope, dir.toString());
       }
       return super.getSelectedFile();
     }
@@ -166,15 +188,16 @@ public final class JFileChoosers {
 
       if (fileDialog.getFile() != null) {
         final var selected = new File(fileDialog.getDirectory(), fileDialog.getFile());
-        if (selected.getParentFile() != null) {
-          setCurrentDirectory(selected.getParentFile());
+        final var folder = dirMode ? selected : selected.getParentFile();
+        if (folder != null) {
+          setCurrentDirectory(folder);
+          JFileChoosers.setCurrentDirectory(scope, folder.toString());
         }
         return selected;
       } else if (dirMode && fileDialog.getDirectory() != null) {
         final var selected = new File(fileDialog.getDirectory());
-        if (selected.getParentFile() != null) {
-          setCurrentDirectory(selected.getParentFile());
-        }
+        setCurrentDirectory(selected);
+        JFileChoosers.setCurrentDirectory(scope, selected.toString());
         return selected;
       }
       return null;
@@ -182,24 +205,28 @@ public final class JFileChoosers {
   }
 
   public static JFileChooser create() {
+    return create(DirectoryScope.CIRCUITS);
+  }
+
+  public static JFileChooser create(DirectoryScope scope) {
+    if (scope == null) {
+      scope = DirectoryScope.CIRCUITS;
+    }
     RuntimeException first = null;
     for (final var prop : PROP_NAMES) {
       try {
         String dirname;
         if (prop == null) {
-          dirname = currentDirectory;
-          if ("".equals(dirname)) {
-            dirname = AppPreferences.DIALOG_DIRECTORY.get();
-          }
+          dirname = getCurrentDirectory(scope);
         } else {
           dirname = System.getProperty(prop);
         }
-        if ("".equals(dirname)) {
-          return new LogisimFileChooser();
+        if (dirname == null || "".equals(dirname)) {
+          return new LogisimFileChooser(scope);
         } else {
           final var dir = new File(dirname);
           if (dir.canRead()) {
-            return new LogisimFileChooser(dir);
+            return new LogisimFileChooser(dir, scope);
           }
         }
       } catch (RuntimeException t) {
@@ -211,16 +238,24 @@ public final class JFileChoosers {
     throw first;
   }
 
+  public static JFileChooser createFor(DirectoryScope scope) {
+    return create(scope);
+  }
+
   public static JFileChooser createAt(File openDirectory) {
+    return createAt(openDirectory, DirectoryScope.CIRCUITS);
+  }
+
+  public static JFileChooser createAt(File openDirectory, DirectoryScope scope) {
     if (openDirectory == null) {
-      return create();
+      return create(scope);
     } else {
       try {
-        return new LogisimFileChooser(openDirectory);
+        return new LogisimFileChooser(openDirectory, scope);
       } catch (RuntimeException t) {
         if (t.getCause() instanceof IOException) {
           try {
-            return create();
+            return create(scope);
           } catch (RuntimeException ignored) {
           }
         }
@@ -230,18 +265,60 @@ public final class JFileChoosers {
   }
 
   public static JFileChooser createSelected(File selected) {
+    return createSelected(selected, DirectoryScope.CIRCUITS);
+  }
+
+  public static JFileChooser createSelected(File selected, DirectoryScope scope) {
     if (selected == null) {
-      return create();
+      return create(scope);
     } else if (selected.isDirectory()) {
-      return createAt(selected);
+      return createAt(selected, scope);
     } else {
-      final var ret = createAt(selected.getParentFile());
+      final var ret = createAt(selected.getParentFile(), scope);
       ret.setSelectedFile(selected);
       return ret;
     }
   }
 
   public static String getCurrentDirectory() {
-    return currentDirectory;
+    return getCurrentDirectory(DirectoryScope.CIRCUITS);
+  }
+
+  public static String getCurrentDirectory(DirectoryScope scope) {
+    if (scope == null) {
+      scope = DirectoryScope.CIRCUITS;
+    }
+    var dir = currentDirectories.get(scope);
+    if (dir != null && !dir.isEmpty()) {
+      return dir;
+    }
+    dir = getPrefMonitor(scope).get();
+    if (dir != null && !dir.isEmpty()) {
+      return dir;
+    }
+    if (scope != DirectoryScope.CIRCUITS) {
+      return getCurrentDirectory(DirectoryScope.CIRCUITS);
+    }
+    return "";
+  }
+
+  public static void setCurrentDirectory(String dirname) {
+    setCurrentDirectory(DirectoryScope.CIRCUITS, dirname);
+  }
+
+  public static void setCurrentDirectory(DirectoryScope scope, String dirname) {
+    if (scope == null) {
+      scope = DirectoryScope.CIRCUITS;
+    }
+    if (dirname != null && !dirname.isEmpty()) {
+      currentDirectories.put(scope, dirname);
+      getPrefMonitor(scope).set(dirname);
+    }
+  }
+
+  public static void setCurrentDirectory(DirectoryScope scope, File dir) {
+    if (dir != null) {
+      setCurrentDirectory(scope, dir.getAbsolutePath());
+    }
   }
 }
