@@ -126,8 +126,12 @@ public class ExportImage {
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       chooser.setDialogTitle(S.get("exportImageDirectorySelect"));
     } else {
+      chooser.setDialogType(JFileChooser.SAVE_DIALOG);
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(S.get("exportImageFileSelect"));
+      if (!circuits.isEmpty()) {
+        chooser.setSelectedFile(new File(circuits.get(0).getName() + filter.getDefaultExtension()));
+      }
     }
     final var returnVal = chooser.showDialog(frame, S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;

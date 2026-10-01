@@ -27,6 +27,7 @@ import com.cburch.logisim.fpga.data.SimpleRectangle;
 import com.cburch.logisim.fpga.file.PngFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -377,7 +378,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   @Override
   public void mouseClicked(MouseEvent e) {
     if (!mapMode && image == null) {
-      final var fc = new JFileChooser();
+      final var fc = JFileChoosers.create();
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.setDialogTitle(S.get("BoardManipLoadPng"));
       fc.setFileFilter(PngFileFilter.PNG_FILTER);
