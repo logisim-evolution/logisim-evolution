@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Logisim Evolution
+Name=Logisim-evolution
 GenericName=Logisim Logic Circuit Simulator
 Comment=Digital Logic Circuit Simulator
 Exec=LogisimEvolution.sh

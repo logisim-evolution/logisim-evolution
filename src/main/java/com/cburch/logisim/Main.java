@@ -48,10 +48,10 @@ public class Main {
         FlatDarculaLaf.installLafInfo();
         FlatMacLightLaf.installLafInfo();
         FlatMacDarkLaf.installLafInfo();
-        
+
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
         AppPreferences.applyThemeColors();
-        
+
         // Apply global font preference
         final var appFont = AppPreferences.APP_FONT.get();
         if (appFont != null && !appFont.isBlank()) {
@@ -127,15 +127,15 @@ public class Main {
         // If the user selected a weighted font (e.g., Medium, Light), force PLAIN to avoid faux bolding.
         // Otherwise (standard font), respect the component's original style (Bold vs Plain).
         final var preferredStyle = AppPreferences.getPreferredFontStyle(appFont);
-        final var newStyle = (preferredStyle == Font.PLAIN) 
-            ? Font.PLAIN 
+        final var newStyle = (preferredStyle == Font.PLAIN)
+            ? Font.PLAIN
             : originalFont.getStyle();
-            
+
         defaults.put(key, new FontUIResource(appFont, newStyle, originalFont.getSize()));
       }
     }
 
-    UIManager.put("ToolTip.font", 
+    UIManager.put("ToolTip.font",
         new FontUIResource(appFont, AppPreferences.getPreferredFontStyle(appFont), AppPreferences.getScaled(12)));
   }
 }

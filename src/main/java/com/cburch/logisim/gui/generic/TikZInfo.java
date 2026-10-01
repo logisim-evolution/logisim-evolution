@@ -217,8 +217,8 @@ public class TikZInfo implements Cloneable {
     int height = Math.abs(y1 - y2);
     int xDiameter = Math.max(0, Math.min(arcWidth, width));
     int yDiameter = Math.max(0, Math.min(arcHeight, height));
-    //The previous two lines implement a just-in-case data normalization.
-    //The SVG standard asserts this behavior, so I've replicated it here.
+    // The previous two lines implement a just-in-case data normalization.
+    // The SVG standard asserts this behavior, so I've replicated it here.
     if ((xDiameter == 0) || (yDiameter == 0)) {
       addRectangle(x1, y1, x2, y2, filled, false);
       return;
@@ -344,7 +344,7 @@ public class TikZInfo implements Cloneable {
         }
         index++;
       } else if (obj.getClass() == TikZEllipse.class) {
-        //This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
+        // This non-instanceof check must be used so that we DON'T match with classes that extend TikZEllipse.
         final var ovalA = (TikZEllipse) obj;
         final var circular = ovalA.radX == ovalA.radY;
         var redundant = false;
@@ -1021,15 +1021,15 @@ public class TikZInfo implements Cloneable {
         contents.append("x radius=").append(rounded(xRadius)).append(", ");
         contents.append("y radius=").append(rounded(yRadius)).append("]");
         if (xRadius >= xHalf) {
-          //This if check could be a "==" due to the normalization in addRoundedRectangle(),
-          //but I'm using a ">=" here just in case of floating-point funny business.
+          // This if check could be a "==" due to the normalization in addRoundedRectangle(),
+          // but I'm using a ">=" here just in case of floating-point funny business.
           contents.append(quickPoint(-xHalf, -yGap));
           contents.append("arc[start angle=180, delta angle=180] --");
           contents.append(quickPoint(xHalf, yGap));
           contents.append("arc[start angle=0, delta angle=180] -- cycle;");
         } else if (yRadius >= yHalf) {
-          //This if check could be a "==" due to the normalization in addRoundedRectangle(),
-          //but I'm using a ">=" here just in case of floating-point funny business.
+          // This if check could be a "==" due to the normalization in addRoundedRectangle(),
+          // but I'm using a ">=" here just in case of floating-point funny business.
           contents.append(quickPoint(xGap, -yHalf));
           contents.append("arc[start angle=270, delta angle=180] --");
           contents.append(quickPoint(-xGap, yHalf));
@@ -1117,8 +1117,8 @@ public class TikZInfo implements Cloneable {
       double width = strokeWidth * BASIC_STROKE_WIDTH;
       contents.append(rounded(width)).append("pt, ").append(color);
       if (!circular && rotation != 0) {
-        //Circles look the same when rotated in any orientation.
-        //Therefore, only apply rotation handling for non-circular ellipses.
+        // Circles look the same when rotated in any orientation.
+        // Therefore, only apply rotation handling for non-circular ellipses.
         contents.append(", rotate around={").append(this.rotation).append(":")
             .append(getPoint(start)).append("}");
       }
@@ -1146,8 +1146,8 @@ public class TikZInfo implements Cloneable {
       final var width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", rounded(width));
       if (!circular && rotation != 0) {
-        //Circles look the same when rotated in any orientation.
-        //Therefore, only apply rotation handling for non-circular ellipses.
+        // Circles look the same when rotated in any orientation.
+        // Therefore, only apply rotation handling for non-circular ellipses.
         ne.setAttribute("transform", "translate(" + rounded(start.getX()) + " " + rounded(start.getY()) + ") rotate(" + rotation + ")");
       } else {
         ne.setAttribute("cx", rounded(start.getX()));
@@ -1489,8 +1489,8 @@ public class TikZInfo implements Cloneable {
     public void getSvgCommand(Document root, Element e) {
       final var ne = root.createElement("text");
       final String guessFont = usedFonts.get(fontIndex);
-      //Substitute Java system fonts with official CSS default font names,
-      //so that SVG renderers will actually pick the correct category of font.
+      // Substitute Java system fonts with official CSS default font names,
+      // so that SVG renderers will actually pick the correct category of font.
       final String correctFont = switch (guessFont) {
         case Font.MONOSPACED -> "monospace";
         case Font.SANS_SERIF -> "sans-serif";

@@ -62,10 +62,10 @@ public class MatrixKeypad extends InstanceFactory implements DynamicElementProvi
 
   @SuppressWarnings("unchecked")
   public static final Attribute<String>[] KEY_ATTRIBUTES_RAW = (Attribute<String>[]) new Attribute<?>[] {
-    null, null, null, ATTR_KEY_A,
-    null, null, null, ATTR_KEY_B,
-    null, null, null, ATTR_KEY_C,
-    ATTR_KEY_STAR, null, ATTR_KEY_HASH, ATTR_KEY_D
+      null, null, null, ATTR_KEY_A,
+      null, null, null, ATTR_KEY_B,
+      null, null, null, ATTR_KEY_C,
+      ATTR_KEY_STAR, null, ATTR_KEY_HASH, ATTR_KEY_D
   };
 
   private static final String[] KEY_LABELS_RAW = {

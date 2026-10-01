@@ -122,7 +122,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
       s.append(RV32imState.registerABINames[destination]).append(",");
     }
     s.append(RV32imState.getSprName(sprIndex)).append(",")
-        .append(operation < INSTR_CSRRWI 
+        .append(operation < INSTR_CSRRWI
               ? RV32imState.registerABINames[source]
               : String.format("0x%02X", source));
     return s.toString();

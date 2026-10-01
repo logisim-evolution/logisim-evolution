@@ -199,12 +199,12 @@ public class Hdl {
     if (distance == 0) return signal;
     if (arithmetic) {
       return isVhdl()
-        ? LineBuffer.formatHdl("({{1}}{{2}}0 => {{3}}({{1}})) & {{3}}{{4}}", width - 1, vectorLoopId(), signal, splitVector(width - 1, width - distance))
-        : LineBuffer.formatHdl("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
+          ? LineBuffer.formatHdl("({{1}}{{2}}0 => {{3}}({{1}})) & {{3}}{{4}}", width - 1, vectorLoopId(), signal, splitVector(width - 1, width - distance))
+          : LineBuffer.formatHdl("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     } else {
       return isVhdl()
-        ? LineBuffer.formatHdl("{{1}}{{2}}{{1}} & {{3}}{{4}", (distance == 1 ? "'" : "\""), "0".repeat(distance), signal, splitVector(width - 1, width - distance))
-        : LineBuffer.formatHdl("{ {{{1}}{1'b0}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
+          ? LineBuffer.formatHdl("{{1}}{{2}}{{1}} & {{3}}{{4}", (distance == 1 ? "'" : "\""), "0".repeat(distance), signal, splitVector(width - 1, width - distance))
+          : LineBuffer.formatHdl("{ {{{1}}{1'b0}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     }
   }
 
@@ -314,8 +314,8 @@ public class Hdl {
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
       return Hdl.isVhdl()
-        ? LineBuffer.format("X\"{{1}}\"", hexValue.toString())
-        : LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
+          ? LineBuffer.format("X\"{{1}}\"", hexValue.toString())
+          : LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
     }
     // final case, we have only single bits
     if (Hdl.isVhdl()) {

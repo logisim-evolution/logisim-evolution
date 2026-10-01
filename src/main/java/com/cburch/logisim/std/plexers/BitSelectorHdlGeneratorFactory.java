@@ -67,7 +67,7 @@ public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
     }
     return map;
   }
-  
+
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =

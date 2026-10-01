@@ -123,7 +123,7 @@ public class BlifCircuitComponent extends HdlCircuitComponent<BlifContentCompone
    * Contains the BLIF simulation state.
    */
   public class BlifCircuitState implements InstanceData {
-    public final DenseLogicCircuit circuit; 
+    public final DenseLogicCircuit circuit;
     public final byte[] cells;
     public final int[] auxData;
 

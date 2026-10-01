@@ -14,6 +14,7 @@ import static com.cburch.logisim.proj.Strings.S;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.BoardList;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -480,7 +481,7 @@ public class FpgaBoards implements ActionListener {
    * @return The selected file path or null if no file was chosen.
    */
   private String getBoardFile() {
-    final var fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
+    final var fc = JFileChoosers.createAt(new File(AppPreferences.FPGA_Workspace.get()));
     final var filter = new FileNameExtensionFilter("Board files", "xml", "xml");
     fc.setFileFilter(filter);
     fc.setFileSelectionMode(JFileChooser.FILES_ONLY);

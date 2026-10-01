@@ -324,8 +324,5 @@ public class PowerOnReset extends InstanceFactory {
     }
 
     state.setPort(0, Value.createKnown(BitWidth.ONE, ret.getValue() ? ret.gettstart() : ret.gettend()), 0);
-
-    // TODO Auto-generated method stub
-
   }
 }

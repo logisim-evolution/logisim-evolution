@@ -274,7 +274,7 @@ public class WiringTool extends Tool {
       canvas.setErrorMessage(S.getter("cannotModifyError"));
       return;
     }
-    
+
     Canvas.snapToGrid(e);
     start = Location.create(e.getX(), e.getY(), true);
     cur = start;
