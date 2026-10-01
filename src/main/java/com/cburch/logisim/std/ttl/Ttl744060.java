@@ -25,8 +25,8 @@ import java.awt.Graphics2D;
  * <p>Simulation follows the
  * <a href="https://www.onsemi.com/download/data-sheet/pdf/mc74hc4060a-d.pdf">MC74HC4060A</a> and
  * <a href="https://www.ti.com/lit/ds/symlink/cd74hc4060.pdf">CD74HC4060</a> data sheets, where output
- * {@code Qn} divides {@code RS} by {@code 2^n}. The counter advances on the HIGH-to-LOW transition
- * of {@code RS}. A HIGH {@code MR} asynchronously clears every stage. {@code Q1}, {@code Q2},
+ * {@code Qn} divides {@code RS} by {@code 2^n}. The counter advances on the high-to-low transition
+ * of {@code RS}. A high {@code MR} asynchronously clears every stage. {@code Q1}, {@code Q2},
  * {@code Q3} and {@code Q11} are not brought out. Nexperia's 74HC4060 data sheet uses output names
  * one lower for the same pins ({@code Q3} to {@code Q9} and {@code Q11} to {@code Q13}).
  * {@code RTC} and {@code CTC} are oscillator pins and stay unconnected: an external clock drives
