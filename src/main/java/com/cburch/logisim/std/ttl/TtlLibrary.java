@@ -18,6 +18,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
+/** Built-in 74-series TTL devices. */
 public class TtlLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files. Do NOT change as it will
@@ -64,6 +65,7 @@ public class TtlLibrary extends Library {
       new FactoryDescription(Ttl74125.class, S.getter("TTL74125"), "ttl.gif"),
       new FactoryDescription(Ttl74138.class, S.getter("TTL74138"), "ttl.gif"),
       new FactoryDescription(Ttl74139.class, S.getter("TTL74139"), "ttl.gif"),
+      new FactoryDescription(Ttl74148.class, S.getter("TTL74148"), "ttl.gif"),
       new FactoryDescription(Ttl74151.class, S.getter("TTL74151"), "ttl.gif"),
       new FactoryDescription(Ttl74153.class, S.getter("TTL74153"), "ttl.gif"),
       new FactoryDescription(Ttl74157.class, S.getter("TTL74157"), "ttl.gif"),

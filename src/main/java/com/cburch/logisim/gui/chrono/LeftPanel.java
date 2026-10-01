@@ -151,6 +151,13 @@ public class LeftPanel extends JTable {
     addMouseListener(
         new MouseAdapter() {
           @Override
+          public void mousePressed(MouseEvent e) {
+            if (rowAtPoint(e.getPoint()) < 0) {
+              clearSelection();
+            }
+          }
+
+          @Override
           public void mouseClicked(MouseEvent e) {
             if (!SwingUtilities.isRightMouseButton(e)) return;
             if (!(e.getComponent() instanceof JTable)) return;
@@ -271,14 +278,28 @@ public class LeftPanel extends JTable {
     requestFocusInWindow();
   }
 
+  @Override
+  public void changeSelection(int row, int col, boolean toggle, boolean extend) {
+    if (!toggle && !extend && isRowSelected(row) && getSelectedRowCount() == 1) {
+      clearSelection();
+    } else {
+      super.changeSelection(row, col, toggle, extend);
+    }
+  }
+
   public void setModel(Model m) {
     model = m;
     updateSignals();
   }
 
   public void changeSpotlight(Signal oldSignal, Signal newSignal) {
-    if (oldSignal != null) tableModel.fireTableRowsUpdated(oldSignal.idx, oldSignal.idx);
-    if (newSignal != null) tableModel.fireTableRowsUpdated(newSignal.idx, newSignal.idx);
+    final var count = getRowCount();
+    if (oldSignal != null && oldSignal.idx >= 0 && oldSignal.idx < count) {
+      tableModel.fireTableRowsUpdated(oldSignal.idx, oldSignal.idx);
+    }
+    if (newSignal != null && newSignal.idx >= 0 && newSignal.idx < count) {
+      tableModel.fireTableRowsUpdated(newSignal.idx, newSignal.idx);
+    }
   }
 
   public void updateSignals() {

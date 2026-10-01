@@ -18,6 +18,7 @@ import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -116,13 +117,28 @@ public class ClockSource extends JDialogOk {
   public static final CycleInfo DEFAULT_CYCLE_INFO = new CycleInfo(1, 1, 0);
 
   public static CycleInfo getCycleInfo(SignalInfo clockSource) {
+    if (clockSource == null) return DEFAULT_CYCLE_INFO;
     final var clk = clockSource.getComponent();
-    if (clk.getFactory() instanceof Clock) {
+    if (clk != null && clk.getFactory() instanceof Clock) {
       final var hi = clk.getAttributeSet().getValue(Clock.ATTR_HIGH);
       final var lo = clk.getAttributeSet().getValue(Clock.ATTR_LOW);
       final var phase = clk.getAttributeSet().getValue(Clock.ATTR_PHASE);
       return new CycleInfo(hi, lo, phase);
     }
     return DEFAULT_CYCLE_INFO;
+  }
+
+  public static boolean allEquivalent(List<SignalInfo> clocks) {
+    if (clocks == null || clocks.size() <= 1) {
+      return true;
+    }
+    final var first = getCycleInfo(clocks.get(0));
+    for (var i = 1; i < clocks.size(); i++) {
+      final var ci = getCycleInfo(clocks.get(i));
+      if (ci.hi != first.hi || ci.lo != first.lo || ci.phase != first.phase) {
+        return false;
+      }
+    }
+    return true;
   }
 }

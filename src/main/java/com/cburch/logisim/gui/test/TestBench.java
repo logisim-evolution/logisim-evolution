@@ -37,7 +37,6 @@ public class TestBench {
     try {
       this.proj = ProjectActions.doOpenNoWindow(mon, fileToOpen);
     } catch (LoadFailedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
       System.exit(-1);
     }
@@ -76,7 +75,7 @@ public class TestBench {
         if (label == null && checkMatchPinName(label)) continue;
 
         if (inst == null) {
-          /* TODO ERROR*/
+          /* TODO: ERROR*/
           return false;
           // throw new TestException(" has no matching pin");
         }
@@ -97,7 +96,7 @@ public class TestBench {
   private boolean startSimulator() {
     final var sim = proj == null ? null : proj.getSimulator();
     if (sim == null) {
-      // TODO ERROR
+      // TODO: ERROR
       // logger.error("FATAL ERROR - no simulator available");
       return false;
     }
@@ -106,7 +105,7 @@ public class TestBench {
     vhdlSim.enable();
     sim.setAutoPropagation(true);
     if (vhdlSim.getState() == State.STARTING) {
-      /* TODO Timeout */
+      /* TODO: Timeout */
       while (!vhdlSim.isRunning()) {
         Thread.yield();
       }

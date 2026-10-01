@@ -13,6 +13,9 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  JDK_VERSION: 21
+  JDK_DISTRO: 'temurin'
 jobs:
   analyze_sources:
     name: "Is there any Java source code to lint?"
@@ -68,11 +71,18 @@ jobs:
     - name: "Checkout sources"
       uses: actions/checkout@v7
 
+    - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+      uses: actions/setup-java@v6
+      with:
+        java-version: ${{ env.JDK_VERSION }}
+        distribution: ${{ env.JDK_DISTRO }}
+
     - name: "Lint changed files"
       run: |
         # Run CheckStyle
         # https://github.com/checkstyle/checkstyle/releases/
-        CHECKSTYLE_VERSION="10.3.4"
+        # Version should match the version in build.gradle.kts.
+        CHECKSTYLE_VERSION="13.9.0"
         JAR="checkstyle-${CHECKSTYLE_VERSION}-all.jar"
         URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/${JAR}"
 

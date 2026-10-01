@@ -10,6 +10,7 @@
 package com.cburch.logisim.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -179,6 +180,40 @@ public class TestVectorTest {
     // Verify the actual value is UNKNOWN
     assertEquals(Value.UNKNOWN, vector.data.get(0)[0]);
     assertEquals(Value.UNKNOWN, vector.data.get(1)[0]);
+  }
+
+  @Test
+  public void testXBitsAreUnknownValuesRatherThanWholeCellDontCare() throws IOException {
+    File testFile = new File(tempDir, "unknown_bits.txt");
+    try (FileWriter writer = new FileWriter(testFile)) {
+      writer.write("Binary[5] Hex[16] IgnoredOutput\n");
+      writer.write("101xx 0x1ax5 <DC>\n");
+    }
+
+    TestVector vector = new TestVector(testFile);
+    Value binary = vector.data.getFirst()[0];
+    Value hex = vector.data.getFirst()[1];
+
+    assertFalse(vector.isDontCare(0, 0));
+    assertFalse(vector.isDontCare(0, 1));
+    assertTrue(vector.isDontCare(0, 2));
+
+    assertEquals(Value.UNKNOWN, binary.get(0));
+    assertEquals(Value.UNKNOWN, binary.get(1));
+    assertEquals(Value.TRUE, binary.get(2));
+    assertEquals(Value.FALSE, binary.get(3));
+    assertEquals(Value.TRUE, binary.get(4));
+    for (int bit = 4; bit < 8; bit++) {
+      assertEquals(Value.UNKNOWN, hex.get(bit));
+    }
+
+    assertTrue(binary.compatible(Value.createKnown(5, 0b10100)));
+    assertTrue(binary.compatible(Value.createKnown(5, 0b10111)));
+    assertTrue(binary.compatible(Value.create(new Value[] {
+        Value.UNKNOWN, Value.TRUE, Value.TRUE, Value.FALSE, Value.TRUE
+    })));
+    assertFalse(binary.compatible(Value.createKnown(5, 0b10000)));
+    assertFalse(binary.compatible(Value.createError(BitWidth.create(5))));
   }
 
   @Test

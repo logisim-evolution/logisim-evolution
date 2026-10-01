@@ -30,6 +30,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.BasicStroke;
@@ -476,7 +477,7 @@ public class FpgaCommander
   public static void selectToolPath(char vendor) {
     String ToolPath = VendorSoftware.getToolPath(vendor);
     if (ToolPath == null) return;
-    JFileChooser fc = new JFileChooser(ToolPath);
+    JFileChooser fc = JFileChoosers.createAt(new File(ToolPath));
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     File test = new File(ToolPath);
     if (test.exists()) {

@@ -565,7 +565,7 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
-  //file preferences
+  // file preferences
   public static final PrefMonitor<Boolean> REMOVE_UNUSED_LIBRARIES =
       create(new PrefMonitorBoolean("removeUnusedLibs", false));
   // Window preferences
@@ -1105,7 +1105,7 @@ public class AppPreferences {
   public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
       create(new PrefMonitorBoolean("searchDoubleShift", true));
 
-  /* Hotkey Settings */
+  /* Hotkeys Settings */
   /* Watch whether in headless mode */
   public static final int hotkeyMenuMask =
       GraphicsEnvironment.isHeadless()

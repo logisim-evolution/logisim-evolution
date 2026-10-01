@@ -69,8 +69,8 @@ public class LogisimToolbarItem implements ToolbarItem {
   @Override
   public String getToolTip() {
     return toolTip != null
-      ? toolTip.toString()
-      : null;
+        ? toolTip.toString()
+        : null;
   }
 
   public void setToolTip(final StringGetter toolTip) {
