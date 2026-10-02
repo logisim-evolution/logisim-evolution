@@ -65,7 +65,7 @@
           <tr><td><code>7486</code></td><td>quad 2-input XOR gate</td></tr>
           <tr><td><code>7487</code></td><td>4-bit True/complement, zero/one elements</td></tr>
           <tr><td><code>7493</code></td><td>4-bit binary ripple counter</td></tr>
-          <tr><td><code>74123</code></td><td>dual retriggerable monostable multivibrator with reset</td></tr>
+          <tr><td><code>74123</code></td><td>dual retriggerable monostable multivibrator with reset. <a href="#ttl74123">Timing notes</a></td></tr>
           <tr><td><code>74125</code></td><td>quad bus buffer, three-state outputs, negative enable</td></tr>
           <tr><td><code>74138</code></td><td>3-line to 8-line decoder</td></tr>
           <tr><td><code>74139</code></td><td>Dual 2-line to 4-line decoder</td></tr>
@@ -102,6 +102,31 @@
           <tr><td><code>747266</code></td><td>quad 2-input XNOR gate</td></tr>
         </tbody>
       </table>
+      <h2 id="ttl74123">74123 pulse width</h2>
+      <p>
+        The 74123 is a digital model of a dual retriggerable monostable. It follows the datasheet
+        function table, but it does not simulate the analog capacitor. The external timing pins are
+        attributes, not wires. There is no HDL model, and the retrigger recovery time is not
+        modeled.
+      </p>
+      <p>
+        At 5 V the pulse width is <code>tW = 0.45 × Rext(kΩ) × Cext(pF)</code> nanoseconds, the
+        datasheet formula for a capacitor above 10 nF. That width is converted to simulator ticks
+        at the circuit tick frequency and is remembered when the pulse starts. A later change of R
+        or C applies on the next trigger. If the tick frequency is low, a short pulse lasts one
+        tick: at 1 Hz that is one second. Raise the tick frequency to observe a shorter pulse.
+      </p>
+      <p>
+        Choose a typical value from the drop-down, or type one. A prefixed value is an absolute
+        quantity, as in SPICE: <code>10k</code>, <code>1M</code>, <code>100n</code>,
+        <code>1u</code>, <code>1µF</code>, or <code>1.0e-6</code>. <code>M</code> means mega and
+        <code>m</code> means milli. A bare number keeps the saved-file unit: kiloohms or
+        picofarads. The accepted ranges are 2 kΩ to 1 MΩ and 10 nF to 1000 µF.
+      </p>
+      <p>
+        With 10 kΩ and 100 nF the pulse is about 450 µs. With 1 MΩ and 6.67 µF it is about 3 s,
+        which at a 1 Hz tick frequency is three ticks.
+      </p>
       <p><b>Back to</b> <a href="../index.html">Library Reference</a></p>
     </div>
   </body>

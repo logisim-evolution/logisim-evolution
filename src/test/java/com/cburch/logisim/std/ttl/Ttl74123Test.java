@@ -11,6 +11,7 @@ package com.cburch.logisim.std.ttl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.logisim.circuit.Circuit;
@@ -81,6 +82,33 @@ class Ttl74123Test {
     assertEquals(1, Ttl74123.widthTicks(10, 100_000, 1));
     assertEquals(1, Ttl74123.widthTicks(10, 100_000, 0));
     assertEquals(Integer.MAX_VALUE, Ttl74123.widthTicks(1000, 1_000_000_000, 1.0e12));
+  }
+
+  @Test
+  void timingValuesAcceptPrefixesAndSavedNumbers() {
+    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
+    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10"));
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10k"));
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10 kΩ"));
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "1.0e4"));
+    assertEquals(1000, Ttl74123RcAttribute.parse(resistor, "1M"));
+    assertEquals(1000, Ttl74123RcAttribute.parse(resistor, "1meg"));
+    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100000"));
+    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100n"));
+    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nF"));
+    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1u"));
+    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1µF"));
+    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1.0e-6"));
+    assertEquals(6_666_667, Ttl74123RcAttribute.parse(capacitor, "6.666667u"));
+    assertEquals("10 kΩ", Ttl74123RcAttribute.format(resistor, 10));
+    assertEquals("1 MΩ", Ttl74123RcAttribute.format(resistor, 1000));
+    assertEquals("100 nF", Ttl74123RcAttribute.format(capacitor, 100_000));
+    assertEquals("1000 µF", Ttl74123RcAttribute.format(capacitor, 1_000_000_000));
+    assertEquals(10, Ttl74123.REXT_1.parse(Ttl74123.REXT_1.toDisplayString(10)));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "1"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "1n"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "abc"));
   }
 
   @Test
