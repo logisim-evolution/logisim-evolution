@@ -186,7 +186,7 @@ public class SocUpMenuProvider implements ActionListener {
     }
 
     public void readElf(Instance instance, CircuitState circuitState) {
-      final var fc = JFileChoosers.create();
+      final var fc = JFileChoosers.create(JFileChoosers.DirectoryScope.SOC_SOFTWARE);
       fc.setDialogTitle(S.get("SocUpMenuSelectElfFile"));
       int retVal = fc.showOpenDialog(parentFrame);
       if (retVal != JFileChooser.APPROVE_OPTION) return;

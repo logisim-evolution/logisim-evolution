@@ -87,7 +87,8 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_SVG),
       ExportImage.getFilter(ExportImage.FORMAT_WAVEDROM)
     };
-    final var chooser = JFileChoosers.createSelected(getLastExported());
+    final var chooser =
+        JFileChoosers.createSelected(getLastExported(), JFileChoosers.DirectoryScope.IMAGE_EXPORT);
     chooser.setAcceptAllFileFilterUsed(false);
     for (final var ff : filters) {
       chooser.addChoosableFileFilter(ff);
