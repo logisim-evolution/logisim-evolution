@@ -704,6 +704,17 @@ public class CircuitState implements InstanceData {
       }
     }
 
+    for (Component source : circuit.getTickAware()) {
+      hasClocks = true;
+      if (!(source.getFactory() instanceof TickAware aware)) {
+        continue;
+      }
+      if (aware.tick(this, ticks, source)) {
+        markComponentAsDirty(source);
+        proj.getSimulator().addPendingInput(this, source);
+      }
+    }
+
     synchronized (dirtyLock) {
       if (substatesDirty) {
         substatesDirty = false;

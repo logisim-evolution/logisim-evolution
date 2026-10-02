@@ -286,6 +286,7 @@ public class Circuit {
   private LinkedHashSet<Component> comps = new LinkedHashSet<>(); // doesn't include wires
   CircuitWires wires = new CircuitWires();
   private final List<Component> clocks = new ArrayList<>();
+  private final List<Component> tickAware = new ArrayList<>();
   private final CircuitLocker locker;
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
@@ -684,6 +685,10 @@ public class Circuit {
     return clocks;
   }
 
+  List<Component> getTickAware() {
+    return tickAware;
+  }
+
   public Set<Component> getComponents() {
     return CollectionUtil.createUnmodifiableSetUnion(comps, wires.getWires());
   }
@@ -882,6 +887,8 @@ public class Circuit {
       final var factory = c.getFactory();
       if (factory instanceof Clock) {
         clocks.add(c);
+      } else if (factory instanceof TickAware) {
+        tickAware.add(c);
       } else if (factory instanceof Rom) {
         Rom.closeHexFrame(c);
       } else if (factory instanceof SubcircuitFactory subFactory) {
@@ -904,6 +911,7 @@ public class Circuit {
     comps = new LinkedHashSet<>();
     wires = new CircuitWires();
     clocks.clear();
+    tickAware.clear();
     myNetList.clear();
     isAnnotated = false;
     for (final var comp : oldComps) {
@@ -929,6 +937,8 @@ public class Circuit {
       factory.removeComponent(this, c, proj.getCircuitState(this));
       if (factory instanceof Clock) {
         clocks.remove(c);
+      } else if (factory instanceof TickAware) {
+        tickAware.remove(c);
       } else if (factory instanceof DynamicElementProvider) {
         DynamicElementProvider.removeDynamicElements(this, c);
       }
