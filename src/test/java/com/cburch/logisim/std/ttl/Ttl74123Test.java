@@ -111,6 +111,42 @@ class Ttl74123Test {
     assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "abc"));
   }
 
+  /** The attribute table writes the shown text back, so the display must parse to the same value. */
+  @Test
+  void timingValuesSurviveADisplayRoundTrip() {
+    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
+    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
+    assertEquals("10.001 nF", Ttl74123RcAttribute.format(capacitor, 10_001));
+    assertEquals("999.999 nF", Ttl74123RcAttribute.format(capacitor, 999_999));
+    assertEquals("1.5 µF", Ttl74123RcAttribute.format(capacitor, 1_500_000));
+    assertEquals("6.666667 µF", Ttl74123RcAttribute.format(capacitor, 6_666_667));
+
+    final int[] resistorValues = {2, 10, 100, 999, 1000};
+    for (final var stored : resistorValues) {
+      final var shown = Ttl74123RcAttribute.format(resistor, stored);
+      assertEquals(stored, Ttl74123RcAttribute.parse(resistor, shown));
+    }
+    final int[] capacitorValues = {
+      10_000, 10_001, 100_000, 999_999, 1_000_000, 1_500_000, 6_666_667, 1_000_000_000
+    };
+    for (final var stored : capacitorValues) {
+      final var shown = Ttl74123RcAttribute.format(capacitor, stored);
+      assertEquals(stored, Ttl74123RcAttribute.parse(capacitor, shown));
+    }
+
+    assertEquals("", Ttl74123.CEXT_1.toStandardString(null));
+    assertEquals("100000", Ttl74123.CEXT_1.toStandardString(100_000));
+  }
+
+  /** A hex float or a d/f literal suffix is not a resistor value, although Java would read it. */
+  @Test
+  void timingValuesRejectJavaNumberSyntax() {
+    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "0x1p3"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10d"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10D"));
+  }
+
   @Test
   void risingBTriggersWhenAIsLowAndResetIsHigh() {
     final var gate = gate();

@@ -15,6 +15,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.StringGetter;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Timing resistor or capacitor for a 74123, stored as kiloohms or picofarads.
@@ -38,6 +39,10 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
   private static final int[] CAPACITOR_PRESETS = {
     10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000
   };
+
+  /** {@link Double#parseDouble} also takes hex floats and a d/f literal suffix. These do not. */
+  private static final Pattern DECIMAL =
+      Pattern.compile("[+-]?(\\d+\\.?\\d*|\\.\\d+)([eE][+-]?\\d+)?");
 
   private final Kind kind;
 
@@ -79,7 +84,7 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
 
   @Override
   public String toStandardString(Integer value) {
-    return Integer.toString(value);
+    return value == null ? "" : Integer.toString(value);
   }
 
   static int parse(Kind kind, String raw) {
@@ -106,17 +111,14 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
     return (int) stored;
   }
 
+  /** Keeps every digit the unit needs, so {@link #parse} reads the text back as the same value. */
   static String format(Kind kind, int stored) {
     if (kind == Kind.RESISTOR) {
       return stored == 1000 ? "1 MΩ" : stored + " kΩ";
     }
-    if (stored % 1_000_000 == 0) {
-      return (stored / 1_000_000) + " µF";
-    }
-    if (stored % 1_000 == 0) {
-      return (stored / 1_000) + " nF";
-    }
-    return trim(stored / 1_000_000.0) + " µF";
+    return stored < 1_000_000
+        ? trim(stored / 1_000.0, 3) + " nF"
+        : trim(stored / 1_000_000.0, 6) + " µF";
   }
 
   private static NumberFormatException invalid(Kind kind, String raw) {
@@ -124,8 +126,8 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
         S.get(kind == Kind.RESISTOR ? "ttl74123RextInvalid" : "ttl74123CextInvalid", raw));
   }
 
-  private static String trim(double value) {
-    final var text = String.format(Locale.ROOT, "%.3f", value);
+  private static String trim(double value, int decimals) {
+    final var text = String.format(Locale.ROOT, "%." + decimals + "f", value);
     var end = text.length();
     while (end > 0 && text.charAt(end - 1) == '0') {
       end--;
@@ -183,11 +185,10 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
           prefixed = true;
         }
       }
-      try {
-        magnitude = Double.parseDouble(text);
-      } catch (NumberFormatException e) {
+      if (!DECIMAL.matcher(text).matches()) {
         throw new SyntaxException();
       }
+      magnitude = Double.parseDouble(text);
       if (!Double.isFinite(magnitude)) {
         throw new SyntaxException();
       }
