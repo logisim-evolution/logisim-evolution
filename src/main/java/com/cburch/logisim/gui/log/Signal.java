@@ -60,7 +60,7 @@ public class Signal {
   }
 
   public void extend(long duration) {
-    if (last == null) {
+    if (last == null || curSize == 0) {
       timeStart += duration;
     } else {
       final var i = (firstIndex + curSize - 1) % curSize;
@@ -69,16 +69,24 @@ public class Signal {
   }
 
   public void extend(Value v, long duration) {
+    if (v == null) {
+      extend(duration);
+      return;
+    }
     if (v.getWidth() != info.getWidth())
       System.out.printf(
           "*** notice: value width mismatch for %s: width=%d bits, newVal=%s (%d bits)\n",
           info, info.getWidth(), v, v.getWidth());
-    if (last != null && last.equals(v)) {
+    if (last != null && last.equals(v) && curSize > 0 && val.length > 0 && val[0].length > 0) {
       final var i = (firstIndex + curSize - 1) % curSize;
       dur[i / CHUNK][i % CHUNK] += duration;
       return;
     }
     last = v;
+    if (val.length == 0 || val[0].length == 0) {
+      val = new Value[1][CHUNK];
+      dur = new long[1][CHUNK];
+    }
     final var c = val.length;
     final var cap = CHUNK * (c - 1) + val[c - 1].length;
     if (curSize < cap) {
@@ -110,8 +118,10 @@ public class Signal {
   }
 
   public void replaceRecent(Value v, long duration) {
-    if (last == null || curSize == 0)
-      throw new IllegalStateException("signal should have at least " + duration + " ns of data");
+    if (v == null || last == null || curSize == 0 || val.length == 0 || val[0].length == 0) {
+      extend(v, duration);
+      return;
+    }
     final var i = (firstIndex + curSize - 1) % curSize;
     if (dur[i / CHUNK][i % CHUNK] == duration) {
       val[i / CHUNK][i % CHUNK] = v;
@@ -121,7 +131,7 @@ public class Signal {
         dur[j / CHUNK][j % CHUNK] += duration;
         curSize--;
         // special case: last chunk is now entirely empty, must be removed
-        if (i % CHUNK == 0) {
+        if (i % CHUNK == 0 && val.length > 1) {
           int c = val.length - 1;
           final var valueNew = new Value[c][];
           final var durNew = new long[c][];
@@ -140,17 +150,39 @@ public class Signal {
       dur[i / CHUNK][i % CHUNK] = duration;
       last = v;
     } else {
-      throw new IllegalStateException(
-          "signal data should be at least "
-              + duration
-              + " ns in duration,"
-              + " but only "
-              + dur[i / CHUNK][i % CHUNK]
-              + " in last signal");
+      long remaining = duration;
+      while (curSize > 0 && remaining > 0) {
+        final var li = (firstIndex + curSize - 1) % curSize;
+        final var lastDur = dur[li / CHUNK][li % CHUNK];
+        if (lastDur == 0) {
+          curSize--;
+        } else if (lastDur <= remaining) {
+          remaining -= lastDur;
+          curSize--;
+        } else {
+          dur[li / CHUNK][li % CHUNK] = lastDur - remaining;
+          remaining = 0;
+        }
+      }
+      if (curSize == 0) {
+        firstIndex = 0;
+        timeStart -= remaining;
+        extend(v, duration);
+      } else {
+        last = null;
+        extend(v, duration);
+      }
     }
   }
 
   private void retainOnly(int offset, int amt, int cap) {
+    if (amt == 0) {
+      val = new Value[1][CHUNK];
+      dur = new long[1][CHUNK];
+      firstIndex = 0;
+      curSize = 0;
+      return;
+    }
     // shift all values [from offset to offset+amt] left into new arrays
     // of size appropriate for eventual capacity cap
     final var c = (amt + CHUNK - 1) / CHUNK;
@@ -249,6 +281,11 @@ public class Signal {
     public Iterator() {
       position = 0;
       time = timeStart;
+      if (curSize == 0 || val.length == 0 || val[0].length == 0 || val[0][0] == null) {
+        value = null;
+        duration = 0;
+        return;
+      }
       final var i = firstIndex;
       final var width = info.getWidth();
       value = val[i / CHUNK][i % CHUNK].extendWidth(width, Value.FALSE);
@@ -265,7 +302,7 @@ public class Signal {
     }
 
     public boolean advance() {
-      if (position == curSize - 1) {
+      if (curSize == 0 || position >= curSize - 1) {
         value = null;
         duration = 0;
         return false;
@@ -296,7 +333,7 @@ public class Signal {
 
   // TODO: easily optimized
   public Value getValue(long t) { // always current width, even when width changes
-    if (t < timeStart) return null;
+    if (t < timeStart || curSize == 0 || val.length == 0 || dur.length == 0) return null;
     final var width = info.getWidth();
     var tt = timeStart;
     for (int p = 0; p < curSize; p++) {
