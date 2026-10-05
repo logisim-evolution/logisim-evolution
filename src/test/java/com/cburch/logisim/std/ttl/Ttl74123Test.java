@@ -98,6 +98,7 @@ class Ttl74123Test {
     assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100n"));
     assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nF"));
     assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1u"));
+    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1 u"));
     assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1µF"));
     assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1.0e-6"));
     assertEquals(6_666_667, Ttl74123RcAttribute.parse(capacitor, "6.666667u"));
@@ -136,6 +137,20 @@ class Ttl74123Test {
 
     assertEquals("", Ttl74123.CEXT_1.toStandardString(null));
     assertEquals("100000", Ttl74123.CEXT_1.toStandardString(100_000));
+  }
+
+  /** Upper-case F, P, N, U, and K are not SI prefixes. */
+  @Test
+  void timingValuesRejectUppercaseSiPrefixes() {
+    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
+    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
+    assertEquals(10_000, Ttl74123RcAttribute.parse(capacitor, "10000000f"));
+    assertEquals(10_000_000, Ttl74123RcAttribute.parse(capacitor, "10000000p"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10K"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "1U"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "100N"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000P"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000F"));
   }
 
   /** A hex float or a d/f literal suffix is not a resistor value, although Java would read it. */

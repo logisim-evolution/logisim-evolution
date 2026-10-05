@@ -21,8 +21,9 @@ import java.util.regex.Pattern;
  * Timing resistor or capacitor for a 74123, stored as kiloohms or picofarads.
  *
  * <p>The attribute table shows a few typical values and also accepts a typed value. A prefixed
- * value is an absolute ohm or farad quantity, as in {@code 10k} or {@code 100n}. A bare number
- * keeps the unit used in saved circuits: kiloohms or picofarads.
+ * value is an absolute ohm or farad quantity, as in {@code 10k} or {@code 100n}. The prefix
+ * letter keeps its SI case, so {@code k} is kilo and {@code M} is mega. A bare number keeps the
+ * unit used in saved circuits: kiloohms or picofarads.
  */
 final class Ttl74123RcAttribute extends Attribute<Integer> {
   enum Kind {
@@ -216,14 +217,15 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
     private static final long serialVersionUID = 1L;
   }
 
+  /** SI prefixes are case-sensitive, so {@code F}, {@code P}, {@code N}, {@code U}, and {@code K} are not accepted. */
   private static double scale(char prefix) {
     return switch (prefix) {
-      case 'f', 'F' -> 1e-15;
-      case 'p', 'P' -> 1e-12;
-      case 'n', 'N' -> 1e-9;
-      case 'u', 'U' -> 1e-6;
+      case 'f' -> 1e-15;
+      case 'p' -> 1e-12;
+      case 'n' -> 1e-9;
+      case 'u' -> 1e-6;
       case 'm' -> 1e-3;
-      case 'k', 'K' -> 1e3;
+      case 'k' -> 1e3;
       case 'M' -> 1e6;
       default -> 0;
     };
