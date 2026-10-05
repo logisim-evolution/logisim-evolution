@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>74123</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>74123</h1>
+      <p>
+        The 74123 is a digital model of a dual retriggerable monostable. It follows the datasheet
+        function table, but it does not simulate the analog capacitor. The external timing pins are
+        attributes, not wires. There is no HDL model, and the retrigger recovery time is not
+        modeled.
+      </p>
+      <p>
+        At 5 V the pulse width is <code>tW = 0.45 × Rext(kΩ) × Cext(pF)</code> nanoseconds, the
+        datasheet formula for a capacitor above 10 nF. That width is converted to simulator ticks
+        at the circuit tick frequency and is remembered when the pulse starts. A later change of R
+        or C applies on the next trigger. If the tick frequency is low, a short pulse lasts one
+        tick: at 1 Hz that is one second. Raise the tick frequency to observe a shorter pulse.
+      </p>
+      <p>
+        Choose a typical value from the drop-down, or type one. A prefixed value is an absolute
+        quantity: <code>10k</code>, <code>1M</code>, <code>100n</code>, <code>1 u</code>,
+        <code>1µF</code>, or <code>1.0e-6</code>. Prefix letters are case-sensitive:
+        <code>M</code> means mega and <code>m</code> means milli. The farad symbol is a capital
+        <code>F</code>, so <code>1fF</code> is one femtofarad and <code>1ff</code> is not. Spaces
+        are ignored. A bare number keeps the saved-file unit: kiloohms or picofarads. The accepted
+        ranges are 2 kΩ to 1 MΩ and 10 nF to 1000 µF.
+      </p>
+      <p>
+        With 10 kΩ and 100 nF the pulse is about 450 µs. With 1 MΩ and 6.67 µF it is about 3 s,
+        which at a 1 Hz tick frequency is three ticks.
+      </p>
+      <p><b>Back to</b> <a href="index.html">TTL library</a></p>
+    </div>
+  </body>
+</html>

@@ -139,6 +139,16 @@ class Ttl74123Test {
     assertEquals("100000", Ttl74123.CEXT_1.toStandardString(100_000));
   }
 
+  /** The farad symbol is a capital F, so {@code fF} is femtofarad and {@code ff} is not. */
+  @Test
+  void timingValuesRequireCapitalFaradSymbol() {
+    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
+    assertEquals(10_000, Ttl74123RcAttribute.parse(capacitor, "10000000fF"));
+    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100nF"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "100nf"));
+    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000ff"));
+  }
+
   /** Upper-case F, P, N, U, and K are not SI prefixes. */
   @Test
   void timingValuesRejectUppercaseSiPrefixes() {

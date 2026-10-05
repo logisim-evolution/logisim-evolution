@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
  *
  * <p>The attribute table shows a few typical values and also accepts a typed value. A prefixed
  * value is an absolute ohm or farad quantity, as in {@code 10k} or {@code 100n}. The prefix
- * letter keeps its SI case, so {@code k} is kilo and {@code M} is mega. A bare number keeps the
- * unit used in saved circuits: kiloohms or picofarads.
+ * letter keeps its SI case, so {@code k} is kilo and {@code M} is mega. The farad symbol is a
+ * capital {@code F}. A bare number keeps the unit used in saved circuits: kiloohms or picofarads.
  */
 final class Ttl74123RcAttribute extends Attribute<Integer> {
   enum Kind {
@@ -166,7 +166,7 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
       } else if (lower.endsWith("farad")) {
         text = text.substring(0, text.length() - 5);
         explicitUnit = true;
-      } else if (endsWithFaradUnit(text, lower)) {
+      } else if (endsWithFaradUnit(text)) {
         text = text.substring(0, text.length() - 1);
         explicitUnit = true;
       }
@@ -180,6 +180,7 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
       } else if (!text.isEmpty()) {
         final var prefix = text.charAt(text.length() - 1);
         final var scale = scale(prefix);
+        // scale == 0 is not a prefix. The character stays, and the decimal check rejects it.
         if (scale > 0) {
           factor = scale;
           text = text.substring(0, text.length() - 1);
@@ -202,15 +203,9 @@ final class Ttl74123RcAttribute extends Attribute<Integer> {
     }
   }
 
-  /** A trailing f/F is the farad unit after a prefix. A capital F after a digit is one farad. */
-  private static boolean endsWithFaradUnit(String text, String lower) {
-    if (lower.length() < 2 || lower.charAt(lower.length() - 1) != 'f') {
-      return false;
-    }
-    if (!Character.isDigit(lower.charAt(lower.length() - 2))) {
-      return true;
-    }
-    return text.charAt(text.length() - 1) == 'F';
+  /** A capital {@code F} is the farad symbol, so {@code fF} is femtofarad and {@code ff} is not. */
+  private static boolean endsWithFaradUnit(String text) {
+    return text.length() >= 2 && text.charAt(text.length() - 1) == 'F';
   }
 
   private static final class SyntaxException extends NumberFormatException {
