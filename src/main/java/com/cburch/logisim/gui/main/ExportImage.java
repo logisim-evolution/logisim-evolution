@@ -17,6 +17,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.Color;
@@ -119,8 +120,14 @@ public class ExportImage {
     if (filter == null) return;
 
     // Then display file chooser
-    final var loader = proj.getLogisimFile().getLoader();
-    final var chooser = loader.createChooser();
+    final var exportDir =
+        JFileChoosers.getCurrentDirectory(JFileChoosers.DirectoryScope.IMAGE_EXPORT);
+    final var initialDir =
+        (exportDir != null && !exportDir.isEmpty() && new File(exportDir).canRead())
+            ? new File(exportDir)
+            : proj.getLogisimFile().getLoader().getCurrentDirectory();
+    final var chooser =
+        JFileChoosers.createAt(initialDir, JFileChoosers.DirectoryScope.IMAGE_EXPORT);
     chooser.setAcceptAllFileFilterUsed(false);
     if (circuits.size() > 1) {
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -138,7 +145,11 @@ public class ExportImage {
 
     // Determine whether destination is valid
     final var dest = chooser.getSelectedFile();
-    chooser.setCurrentDirectory(dest.isDirectory() ? dest : dest.getParentFile());
+    final var selectedDir = dest.isDirectory() ? dest : dest.getParentFile();
+    if (selectedDir != null) {
+      chooser.setCurrentDirectory(selectedDir);
+      JFileChoosers.setCurrentDirectory(JFileChoosers.DirectoryScope.IMAGE_EXPORT, selectedDir);
+    }
     if (dest.exists()) {
       if (!dest.isDirectory()) {
         final var confirm =
