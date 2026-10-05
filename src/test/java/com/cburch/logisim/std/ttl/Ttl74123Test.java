@@ -139,6 +139,21 @@ class Ttl74123Test {
     assertEquals("100000", Ttl74123.CEXT_1.toStandardString(100_000));
   }
 
+  /** The words ohm, ohms, farad, and farads name the unit in any letter case. */
+  @Test
+  void timingValuesAcceptUnitWords() {
+    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
+    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10kohm"));
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10 kOhms"));
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10000 ohm"));
+    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10000 OHMS"));
+    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100nfarad"));
+    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nFarads"));
+    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1ufarad"));
+    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1 uFARADS"));
+  }
+
   /** The farad symbol is a capital F, so {@code fF} is femtofarad and {@code ff} is not. */
   @Test
   void timingValuesRequireCapitalFaradSymbol() {
