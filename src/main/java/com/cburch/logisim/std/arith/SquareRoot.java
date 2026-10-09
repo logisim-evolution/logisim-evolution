@@ -77,7 +77,7 @@ public class SquareRoot extends InstanceFactory {
   public static final int REM = 3;
 
   public SquareRoot() {
-    super(_ID, S.getter("squareRootComponent"));
+    super(_ID, S.getter("squareRootComponent"), new SquareRootHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH},
         new Object[] {BitWidth.create(8)});
