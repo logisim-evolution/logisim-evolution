@@ -127,7 +127,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     if (bds == null) {
       return false;
     }
-    return bds.contains(loc, 1);
+    return bds.contains(loc, 0);
   }
 
   public Icon getIcon() {
