@@ -25,6 +25,7 @@
   * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
     [#3008] (@xjx06127).
+  * Fixed French translation mistake for `selCutItem` (@LPe7).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
