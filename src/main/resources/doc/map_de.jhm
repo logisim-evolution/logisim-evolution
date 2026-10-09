@@ -185,6 +185,8 @@
 	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
 	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
 	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
+	<mapID target="ioex_ne555"           url="en/html/libs/ioextra/ne555.html" />
+
 	<mapID target="tcl"                 url="de/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="de/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="de/html/libs/tcl/generic.html" />
@@ -275,6 +277,8 @@
 	<mapID target="icon_digitalscope"    url="icons/1616/digitaloscilloscope.png" />	
 	<mapID target="icon_twowayswitch"    url="icons/1616/twowayswitch.png" />	
 	<mapID target="icon_twopinled"       url="icons/1616/twopinled.png" />	
+	<mapID target="icon_ne555"          url="icons/1616/ne555icon.png" />
+
 	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
 	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
 	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		

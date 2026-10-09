@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="changed" content="2026-10-05T00:00:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="en">
+  <title>NE555</title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
+    <h1>
+      <img class="iconlibs" src="../../../../icons/6464/ne555icon.png" alt="NE555 icon" width="32" height="32"
+        align="middle"> <em>NE555</em>
+    </h1>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Library:</strong></td>
+          <td><a href="index.html">Input/Output-Extra</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Behavior</h2>
+    <p>
+      Models the classic NE555 timer integrated circuit. Supports two operational modes:
+      <strong>Astable</strong> and <strong>Monostable</strong>. Timing is simulated in real time
+      coupled with the simulator engine.
+    </p>
+
+    <h2>Pins</h2>
+    <dl>
+      <dt>OUT</dt>
+      <dd>Digital 1-bit output delivering generated pulses.</dd>
+      <dt>TRIG</dt>
+      <dd>Active-low trigger input.</dd>
+    </dl>
+
+    <h2>Attributes</h2>
+    <dl>
+      <dt>Mode</dt>
+      <dd>Operational mode: <q>Astable</q> or <q>Monostable</q>.</dd>
+      <dt>Resistor R1 (Ohm)</dt>
+      <dd>Timing resistor R1 value (1&nbsp;k&Omega; to 10&nbsp;M&Omega;).</dd>
+      <dt>Capacitor C1 (&micro;F)</dt>
+      <dd>Timing capacitor C1 value (10&nbsp;&micro;F to 1000&nbsp;&micro;F).</dd>
+    </dl>
+
+    <h2>Timing Formulas</h2>
+    <ul>
+      <li><b>Astable:</b> <em>T (ms) = 0.693 &times; (1000 + 2 &times; R<sub>1</sub>[Ohm]) &times;
+          C<sub>1</sub>[&micro;F] / 1000</em></li>
+      <li><b>Monostable:</b> <em>T (ms) = 1.1 &times; R<sub>1</sub>[Ohm] &times; C<sub>1</sub>[&micro;F] / 1000</em>
+      </li>
+    </ul>
+
+    <h2>Frequency &amp; Timing Ranges</h2>
+    <ul>
+      <li><b>Astable:</b> oscillation frequency up to 48&nbsp;Hz (period from 21&nbsp;ms)</li>
+      <li><b>Monostable:</b> pulse width from 11&nbsp;ms</li>
+    </ul>
+
+    <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+  </div>
+</body>
+
+</html>
