@@ -42,6 +42,30 @@ public class TestVectorTest {
     assertEquals("A", vector.columnName[0]);
     assertEquals("B", vector.columnName[1]);
     assertEquals("C", vector.columnName[2]);
+    assertEquals(2, vector.lineNumbers[0]);
+    assertEquals(3, vector.lineNumbers[1]);
+  }
+
+  @Test
+  public void testSourceLineNumbersIncludeCommentsAndBlankLines() throws IOException {
+    File testFile = new File(tempDir, "lines.txt");
+    try (FileWriter writer = new FileWriter(testFile)) {
+      writer.write("# comment before header\n");
+      writer.write("\n");
+      writer.write("A B <set> <seq>\n");
+      writer.write("\n");
+      writer.write("0 1 1 1 # first vector\n");
+      writer.write("\n");
+      writer.write("# comment between vectors\n");
+      writer.write("1 0 1 2\n");
+    }
+
+    TestVector vector = new TestVector(testFile);
+    assertEquals(2, vector.data.size());
+    assertEquals(5, vector.lineNumbers[0]);
+    assertEquals(8, vector.lineNumbers[1]);
+    assertEquals(1, vector.setNumbers[1]);
+    assertEquals(2, vector.seqNumbers[1]);
   }
 
   @Test
