@@ -37,7 +37,10 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
     prefs.addPreferenceChangeListener(this);
   }
 
-  /** Returns the key used to persist this preference. */
+  /**
+   * Returns the key used to persist this preference. Subclasses may override this for
+   * context-specific preference storage.
+   */
   protected String getPreferenceKey() {
     return getIdentifier();
   }

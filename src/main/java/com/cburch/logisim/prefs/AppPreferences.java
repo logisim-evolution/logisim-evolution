@@ -71,6 +71,11 @@ public class AppPreferences {
     }
   }
 
+  /**
+   * Stores theme colors independently in Java Preferences. The current value is saved under the
+   * active LookAndFeel, while that theme's built-in value is kept separately for reset operations.
+   * Switching themes reloads only the selected theme's values from the preference XML.
+   */
   private static final class ThemeColorPreference extends PrintViewColorPreference {
     private static final String THEME_COLOR_PREFIX = "themeColors.";
     private static final String DEFAULT_COLOR_SEGMENT = ".defaults.";
@@ -784,7 +789,7 @@ public class AppPreferences {
         lafClassName.contains("Dark") || lafClassName.contains("Darcula"));
   }
 
-  // applies theme-appropriate grid/component/signal colors based on current LookAndFeel
+  // Refreshes derived signal colors after the current theme's preferences have been loaded.
   public static void applyThemeColors() {
     Value.trueColor = new Color(TRUE_COLOR.get());
     Value.falseColor = new Color(FALSE_COLOR.get());
@@ -800,7 +805,7 @@ public class AppPreferences {
     Value.clockFrequencyColor = new Color(CLOCK_FREQUENCY_COLOR.get());
   }
 
-  // restores default grid/component colors (theme-aware)
+  // Restores only the current theme's grid, component, and signal colors.
   public static void setDefaultGridColors() {
     resetThemeColor(CANVAS_BG_COLOR);
     resetThemeColor(GRID_BG_COLOR);
