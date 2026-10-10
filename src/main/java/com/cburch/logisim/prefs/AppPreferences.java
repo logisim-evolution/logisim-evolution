@@ -137,6 +137,9 @@ public class AppPreferences {
           && !isThemeDefault(legacyValue)) {
         prefs.put(themeKey, legacyValue);
       }
+      if (legacyValue != null) {
+        prefs.remove(getIdentifier());
+      }
       ensureThemeDefault();
     }
 
