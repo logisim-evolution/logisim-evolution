@@ -57,7 +57,7 @@ public class AppPreferences {
   // Export and print jobs may run off the EDT, so keep their palette override thread-local.
   private static final ThreadLocal<Boolean> PRINT_VIEW_COLORS = new ThreadLocal<>();
 
-  private static final class PrintViewColorPreference extends PrefMonitorInt {
+  private static class PrintViewColorPreference extends PrefMonitorInt {
     private final int printValue;
 
     private PrintViewColorPreference(String name, int printValue) {
@@ -68,6 +68,104 @@ public class AppPreferences {
     @Override
     public Integer get() {
       return Boolean.TRUE.equals(PRINT_VIEW_COLORS.get()) ? printValue : super.get();
+    }
+  }
+
+  /**
+   * Stores theme colors independently in Java Preferences. The current value is saved under the
+   * active LookAndFeel, while that theme's built-in value is kept separately for reset operations.
+   * Switching themes reloads only the selected theme's values from the preference XML.
+   */
+  private static final class ThemeColorPreference extends PrintViewColorPreference {
+    private static final String THEME_COLOR_PREFIX = "themeColors.";
+    private static final String DEFAULT_COLOR_SEGMENT = ".defaults.";
+
+    private final int lightDefault;
+    private final int darkDefault;
+    private final PropertyChangeListener themeListener;
+
+    private ThemeColorPreference(String name, int lightDefault, int darkDefault) {
+      super(name, lightDefault);
+      this.lightDefault = lightDefault;
+      this.darkDefault = darkDefault;
+      migrateLegacyPreference();
+      reload();
+      themeListener = event -> {
+        if (LookAndFeel.isSource(event)) {
+          reload();
+        }
+      };
+      LookAndFeel.addPropertyChangeListener(themeListener);
+    }
+
+    private static String themeName() {
+      final var lookAndFeel = LookAndFeel.get();
+      final var separator = lookAndFeel.lastIndexOf('.');
+      return separator < 0 ? lookAndFeel : lookAndFeel.substring(separator + 1);
+    }
+
+    private static String themePrefix() {
+      return THEME_COLOR_PREFIX + themeName() + ".";
+    }
+
+    private String getDefaultPreferenceKey() {
+      return themePrefix() + DEFAULT_COLOR_SEGMENT.substring(1) + getIdentifier();
+    }
+
+    private int getBuiltInDefault() {
+      return isDarkTheme(LookAndFeel.get()) ? darkDefault : lightDefault;
+    }
+
+    private void ensureThemeDefault() {
+      final var prefs = getPrefs();
+      final var key = getDefaultPreferenceKey();
+      if (prefs.get(key, null) == null) {
+        prefs.putInt(key, getBuiltInDefault());
+      }
+    }
+
+    private boolean isThemeDefault(String value) {
+      try {
+        final var color = Integer.parseInt(value);
+        return color == lightDefault || color == darkDefault;
+      } catch (NumberFormatException ignored) {
+        return false;
+      }
+    }
+
+    private void migrateLegacyPreference() {
+      final var prefs = getPrefs();
+      final var themeKey = getPreferenceKey();
+      final var legacyValue = prefs.get(getIdentifier(), null);
+      if (prefs.get(themeKey, null) == null
+          && legacyValue != null
+          && !isThemeDefault(legacyValue)) {
+        prefs.put(themeKey, legacyValue);
+      }
+      if (legacyValue != null) {
+        prefs.remove(getIdentifier());
+      }
+      ensureThemeDefault();
+    }
+
+    private void resetToDefault() {
+      set(getDefaultValue());
+    }
+
+    @Override
+    protected void reload() {
+      ensureThemeDefault();
+      super.reload();
+    }
+
+    @Override
+    protected String getPreferenceKey() {
+      return themePrefix() + getIdentifier();
+    }
+
+    @Override
+    protected int getDefaultValue() {
+      return getPrefs().getInt(getDefaultPreferenceKey(), getBuiltInDefault());
     }
   }
 
@@ -691,49 +789,8 @@ public class AppPreferences {
         lafClassName.contains("Dark") || lafClassName.contains("Darcula"));
   }
 
-  // applies theme-appropriate grid/component/signal colors based on current LookAndFeel
+  // Refreshes derived signal colors after the current theme's preferences have been loaded.
   public static void applyThemeColors() {
-    if (isDarkTheme(LookAndFeel.get())) {
-      CANVAS_BG_COLOR.set(DARK_CANVAS_BG_COLOR);
-      GRID_BG_COLOR.set(DARK_GRID_BG_COLOR);
-      GRID_DOT_COLOR.set(DARK_GRID_DOT_COLOR);
-      GRID_ZOOMED_DOT_COLOR.set(DARK_ZOOMED_DOT_COLOR);
-      COMPONENT_COLOR.set(DARK_COMPONENT_COLOR);
-      COMPONENT_SECONDARY_COLOR.set(DARK_COMPONENT_SECONDARY_COLOR);
-      COMPONENT_GHOST_COLOR.set(DARK_COMPONENT_GHOST_COLOR);
-      COMPONENT_ICON_COLOR.set(DARK_COMPONENT_ICON_COLOR);
-      KMAP_CELL_TEXT_COLOR.set(DARK_KMAP_CELL_TEXT_COLOR);
-      TABLE_CURSOR_COLOR.set(DARK_TABLE_CURSOR_COLOR);
-      TABLE_HIGHLIGHT_COLOR.set(DARK_TABLE_HIGHLIGHT_COLOR);
-      TABLE_SELECTION_COLOR.set(DARK_TABLE_SELECTION_COLOR);
-      TRUE_COLOR.set(DARK_TRUE_COLOR);
-      FALSE_COLOR.set(DARK_FALSE_COLOR);
-      UNKNOWN_COLOR.set(DARK_UNKNOWN_COLOR);
-      ERROR_COLOR.set(DARK_ERROR_COLOR);
-      NIL_COLOR.set(DARK_NIL_COLOR);
-      BUS_COLOR.set(DARK_BUS_COLOR);
-      STROKE_COLOR.set(DARK_STROKE_COLOR);
-    } else {
-      CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
-      GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
-      GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
-      GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
-      COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
-      COMPONENT_SECONDARY_COLOR.set(DEFAULT_COMPONENT_SECONDARY_COLOR);
-      COMPONENT_GHOST_COLOR.set(DEFAULT_COMPONENT_GHOST_COLOR);
-      COMPONENT_ICON_COLOR.set(DEFAULT_COMPONENT_ICON_COLOR);
-      KMAP_CELL_TEXT_COLOR.set(DEFAULT_KMAP_CELL_TEXT_COLOR);
-      TABLE_CURSOR_COLOR.set(DEFAULT_TABLE_CURSOR_COLOR);
-      TABLE_HIGHLIGHT_COLOR.set(DEFAULT_TABLE_HIGHLIGHT_COLOR);
-      TABLE_SELECTION_COLOR.set(DEFAULT_TABLE_SELECTION_COLOR);
-      TRUE_COLOR.set(DEFAULT_TRUE_COLOR);
-      FALSE_COLOR.set(DEFAULT_FALSE_COLOR);
-      UNKNOWN_COLOR.set(DEFAULT_UNKNOWN_COLOR);
-      ERROR_COLOR.set(DEFAULT_ERROR_COLOR);
-      NIL_COLOR.set(DEFAULT_NIL_COLOR);
-      BUS_COLOR.set(DEFAULT_BUS_COLOR);
-      STROKE_COLOR.set(DEFAULT_STROKE_COLOR);
-    }
     Value.trueColor = new Color(TRUE_COLOR.get());
     Value.falseColor = new Color(FALSE_COLOR.get());
     Value.unknownColor = new Color(UNKNOWN_COLOR.get());
@@ -748,29 +805,61 @@ public class AppPreferences {
     Value.clockFrequencyColor = new Color(CLOCK_FREQUENCY_COLOR.get());
   }
 
-  // restores default grid/component colors (theme-aware)
+  // Restores only the current theme's grid, component, and signal colors.
   public static void setDefaultGridColors() {
+    resetThemeColor(CANVAS_BG_COLOR);
+    resetThemeColor(GRID_BG_COLOR);
+    resetThemeColor(GRID_DOT_COLOR);
+    resetThemeColor(GRID_ZOOMED_DOT_COLOR);
+    resetThemeColor(COMPONENT_COLOR);
+    resetThemeColor(COMPONENT_SECONDARY_COLOR);
+    resetThemeColor(COMPONENT_GHOST_COLOR);
+    resetThemeColor(COMPONENT_ICON_COLOR);
+    resetThemeColor(KMAP_CELL_TEXT_COLOR);
+    resetThemeColor(TABLE_CURSOR_COLOR);
+    resetThemeColor(TABLE_HIGHLIGHT_COLOR);
+    resetThemeColor(TABLE_SELECTION_COLOR);
+    resetThemeColor(TRUE_COLOR);
+    resetThemeColor(FALSE_COLOR);
+    resetThemeColor(UNKNOWN_COLOR);
+    resetThemeColor(ERROR_COLOR);
+    resetThemeColor(NIL_COLOR);
+    resetThemeColor(BUS_COLOR);
+    resetThemeColor(STROKE_COLOR);
     applyThemeColors();
   }
 
+  private static void resetThemeColor(PrefMonitor<Integer> color) {
+    if (color instanceof ThemeColorPreference themeColor) {
+      themeColor.resetToDefault();
+    }
+  }
+
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
-      create(new PrefMonitorInt("canvasBgColor", DEFAULT_CANVAS_BG_COLOR));
+      create(new ThemeColorPreference("canvasBgColor", DEFAULT_CANVAS_BG_COLOR,
+          DARK_CANVAS_BG_COLOR));
   public static final PrefMonitor<Integer> GRID_BG_COLOR =
-      create(new PrefMonitorInt("gridBgColor", DEFAULT_GRID_BG_COLOR));
+      create(new ThemeColorPreference("gridBgColor", DEFAULT_GRID_BG_COLOR, DARK_GRID_BG_COLOR));
   public static final PrefMonitor<Integer> GRID_DOT_COLOR =
-      create(new PrefMonitorInt("gridDotColor", DEFAULT_GRID_DOT_COLOR));
+      create(new ThemeColorPreference("gridDotColor", DEFAULT_GRID_DOT_COLOR,
+          DARK_GRID_DOT_COLOR));
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
-      create(new PrefMonitorInt("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR));
+      create(new ThemeColorPreference("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR,
+          DARK_ZOOMED_DOT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_COLOR =
-      create(new PrintViewColorPreference("componentColor", DEFAULT_COMPONENT_COLOR));
+      create(new ThemeColorPreference("componentColor", DEFAULT_COMPONENT_COLOR,
+          DARK_COMPONENT_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_SECONDARY_COLOR =
       create(
-          new PrintViewColorPreference(
-              "componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR));
+          new ThemeColorPreference(
+              "componentSecondaryColor", DEFAULT_COMPONENT_SECONDARY_COLOR,
+              DARK_COMPONENT_SECONDARY_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_GHOST_COLOR =
-      create(new PrintViewColorPreference("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR));
+      create(new ThemeColorPreference("componentGhostColor", DEFAULT_COMPONENT_GHOST_COLOR,
+          DARK_COMPONENT_GHOST_COLOR));
   public static final PrefMonitor<Integer> COMPONENT_ICON_COLOR =
-      create(new PrintViewColorPreference("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR));
+      create(new ThemeColorPreference("componentIconColor", DEFAULT_COMPONENT_ICON_COLOR,
+          DARK_COMPONENT_ICON_COLOR));
   public static final PrefMonitor<Integer> TEXT_TOOL_COLOR =
       create(new PrefMonitorInt("textToolColor", DEFAULT_TEXT_TOOL_COLOR));
 
@@ -881,28 +970,30 @@ public class AppPreferences {
 
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
-      create(new PrefMonitorInt("SimTrueColor", DEFAULT_TRUE_COLOR));
+      create(new ThemeColorPreference("SimTrueColor", DEFAULT_TRUE_COLOR, DARK_TRUE_COLOR));
   public static final PrefMonitor<String> TRUE_CHAR =
       create(new PrefMonitorString("SimTrueChar", "1 "));
   public static final PrefMonitor<Integer> FALSE_COLOR =
-      create(new PrefMonitorInt("SimFalseColor", DEFAULT_FALSE_COLOR));
+      create(new ThemeColorPreference("SimFalseColor", DEFAULT_FALSE_COLOR, DARK_FALSE_COLOR));
   public static final PrefMonitor<String> FALSE_CHAR =
       create(new PrefMonitorString("SimFalseChar", "0 "));
   public static final PrefMonitor<Integer> UNKNOWN_COLOR =
-      create(new PrefMonitorInt("SimUnknownColor", DEFAULT_UNKNOWN_COLOR));
+      create(new ThemeColorPreference("SimUnknownColor", DEFAULT_UNKNOWN_COLOR,
+          DARK_UNKNOWN_COLOR));
   public static final PrefMonitor<String> UNKNOWN_CHAR =
       create(new PrefMonitorString("SimUnknownChar", "U "));
   public static final PrefMonitor<Integer> ERROR_COLOR =
-      create(new PrefMonitorInt("SimErrorColor", DEFAULT_ERROR_COLOR));
+      create(new ThemeColorPreference("SimErrorColor", DEFAULT_ERROR_COLOR, DARK_ERROR_COLOR));
   public static final PrefMonitor<String> ERROR_CHAR =
       create(new PrefMonitorString("SimErrorChar", "E "));
   public static final PrefMonitor<Integer> NIL_COLOR =
-      create(new PrefMonitorInt("SimNilColor", DEFAULT_NIL_COLOR));
+      create(new ThemeColorPreference("SimNilColor", DEFAULT_NIL_COLOR, DARK_NIL_COLOR));
   public static final PrefMonitor<String> DONTCARE_CHAR =
       create(new PrefMonitorString("SimDontCareChar", "- "));
-  public static final PrefMonitor<Integer> BUS_COLOR = create(new PrefMonitorInt("SimBusColor", DEFAULT_BUS_COLOR));
+  public static final PrefMonitor<Integer> BUS_COLOR =
+      create(new ThemeColorPreference("SimBusColor", DEFAULT_BUS_COLOR, DARK_BUS_COLOR));
   public static final PrefMonitor<Integer> STROKE_COLOR =
-      create(new PrefMonitorInt("SimStrokeColor", DEFAULT_STROKE_COLOR));
+      create(new ThemeColorPreference("SimStrokeColor", DEFAULT_STROKE_COLOR, DARK_STROKE_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_COLOR =
       create(new PrefMonitorInt("SimWidthErrorColor", DEFAULT_WIDTH_ERROR_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_CAPTION_COLOR =
@@ -914,13 +1005,17 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
       create(new PrefMonitorInt("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR));
   public static final PrefMonitor<Integer> KMAP_CELL_TEXT_COLOR =
-      create(new PrefMonitorInt("KmapCellTextColor", DEFAULT_KMAP_CELL_TEXT_COLOR));
+      create(new ThemeColorPreference("KmapCellTextColor", DEFAULT_KMAP_CELL_TEXT_COLOR,
+          DARK_KMAP_CELL_TEXT_COLOR));
   public static final PrefMonitor<Integer> TABLE_CURSOR_COLOR =
-      create(new PrefMonitorInt("TableCursorColor", DEFAULT_TABLE_CURSOR_COLOR));
+      create(new ThemeColorPreference("TableCursorColor", DEFAULT_TABLE_CURSOR_COLOR,
+          DARK_TABLE_CURSOR_COLOR));
   public static final PrefMonitor<Integer> TABLE_HIGHLIGHT_COLOR =
-      create(new PrefMonitorInt("TableHighlightColor", DEFAULT_TABLE_HIGHLIGHT_COLOR));
+      create(new ThemeColorPreference("TableHighlightColor", DEFAULT_TABLE_HIGHLIGHT_COLOR,
+          DARK_TABLE_HIGHLIGHT_COLOR));
   public static final PrefMonitor<Integer> TABLE_SELECTION_COLOR =
-      create(new PrefMonitorInt("TableSelectionColor", DEFAULT_TABLE_SELECTION_COLOR));
+      create(new ThemeColorPreference("TableSelectionColor", DEFAULT_TABLE_SELECTION_COLOR,
+          DARK_TABLE_SELECTION_COLOR));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
