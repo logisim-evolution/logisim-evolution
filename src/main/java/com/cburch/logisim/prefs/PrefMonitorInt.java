@@ -17,10 +17,10 @@ import java.util.prefs.PreferenceChangeEvent;
  */
 class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   /** Default integer value for this preference monitor. */
-  private final int dflt;
+  protected final int dflt;
 
   /** Current integer value of this preference monitor. */
-  private int value;
+  protected int value;
 
   /**
    * Constructs a new preference monitor for integer values.
@@ -33,8 +33,32 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
     this.dflt = dflt;
     this.value = dflt;
     final var prefs = AppPreferences.getPrefs();
-    set(prefs.getInt(name, dflt));
+    value = prefs.getInt(name, dflt);
     prefs.addPreferenceChangeListener(this);
+  }
+
+  /** Returns the key used to persist this preference. */
+  protected String getPreferenceKey() {
+    return getIdentifier();
+  }
+
+  /** Returns the fallback value used when the preference is not persisted. */
+  protected int getDefaultValue() {
+    return dflt;
+  }
+
+  /** Reloads the value from the current preference key. */
+  protected void reload() {
+    setValue(AppPreferences.getPrefs().getInt(getPreferenceKey(), getDefaultValue()));
+  }
+
+  /** Updates the in-memory value and notifies listeners. */
+  protected void setValue(int newValue) {
+    if (value != newValue) {
+      final var oldValue = value;
+      value = newValue;
+      AppPreferences.firePropertyChange(getIdentifier(), oldValue, newValue);
+    }
   }
 
   /**
@@ -55,14 +79,9 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   public void preferenceChange(PreferenceChangeEvent event) {
     final var prefs = event.getNode();
     final var prop = event.getKey();
-    final var name = getIdentifier();
-    if (prop.equals(name)) {
-      final var oldValue = value;
-      final var newValue = prefs.getInt(name, dflt);
-      if (newValue != oldValue) {
-        value = newValue;
-        AppPreferences.firePropertyChange(name, oldValue, newValue);
-      }
+    final var preferenceKey = getPreferenceKey();
+    if (prop.equals(preferenceKey)) {
+      setValue(prefs.getInt(preferenceKey, getDefaultValue()));
     }
   }
 
@@ -75,7 +94,10 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   public void set(Integer newValue) {
     final var newVal = newValue;
     if (value != newVal) {
-      AppPreferences.getPrefs().putInt(getIdentifier(), newVal);
+      final var oldValue = value;
+      value = newVal;
+      AppPreferences.getPrefs().putInt(getPreferenceKey(), newVal);
+      AppPreferences.firePropertyChange(getIdentifier(), oldValue, newVal);
     }
   }
 }
