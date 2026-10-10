@@ -77,6 +77,7 @@ public class AppPreferences {
 
     private final int lightDefault;
     private final int darkDefault;
+    private final PropertyChangeListener themeListener;
 
     private ThemeColorPreference(String name, int lightDefault, int darkDefault) {
       super(name, lightDefault);
@@ -84,11 +85,12 @@ public class AppPreferences {
       this.darkDefault = darkDefault;
       migrateLegacyPreference();
       reload();
-      LookAndFeel.addPropertyChangeListener(event -> {
+      themeListener = event -> {
         if (LookAndFeel.isSource(event)) {
           reload();
         }
-      });
+      };
+      LookAndFeel.addPropertyChangeListener(themeListener);
     }
 
     private static String themeName() {
