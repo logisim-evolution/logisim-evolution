@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
+    [#3066] (@Kejoki).
   * Showed source line numbers and applicable set/sequence numbers for failed command-line test vectors [#3060] (@goudan789).
   * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
