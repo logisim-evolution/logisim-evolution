@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed FPGA net tracing through unconnected splitter bits and resulting false short-circuit errors
+    [#3063] (@hewzhew).
   * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
     circuit projects, image exports, and SoC software directories (@V-Zemlyakov).
