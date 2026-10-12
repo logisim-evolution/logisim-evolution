@@ -4,7 +4,8 @@
 
 * @dev (????-??-??)
   * Added an infinite canvas to the schematic editor and the circuit-appearance editor, with free panning in all
-    directions, continuous cursor-anchored zoom, and support for components at negative coordinates (@onionbutties).
+    directions, continuous cursor-anchored zoom, and support for components at negative coordinates
+    [#3074] (@onionbutties).
   * Showed source line numbers and applicable set/sequence numbers for failed command-line test vectors [#3060] (@goudan789).
   * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
