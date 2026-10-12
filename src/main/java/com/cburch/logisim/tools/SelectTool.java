@@ -140,17 +140,9 @@ public class SelectTool extends Tool {
   }
 
 
-  private void computeDxDy(Project proj, MouseEvent e, Graphics g) {
-    final var bds = proj.getSelection().getBounds(g);
-    int dx;
-    int dy;
-    if (bds == Bounds.EMPTY_BOUNDS) {
-      dx = e.getX() - start.getX();
-      dy = e.getY() - start.getY();
-    } else {
-      dx = Math.max(e.getX() - start.getX(), -bds.getX());
-      dy = Math.max(e.getY() - start.getY(), -bds.getY());
-    }
+  private void computeDxDy(Project proj, MouseEvent e) {
+    int dx = e.getX() - start.getX();
+    int dy = e.getY() - start.getY();
 
     final var sel = proj.getSelection();
     if (sel.shouldSnap()) {
@@ -412,7 +404,7 @@ public class SelectTool extends Tool {
   public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
     if (state == MOVING) {
       final var proj = canvas.getProject();
-      computeDxDy(proj, e, g);
+      computeDxDy(proj, e);
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else if (state == RECT_SELECT) {
       final var proj = canvas.getProject();
@@ -487,7 +479,7 @@ public class SelectTool extends Tool {
     final var proj = canvas.getProject();
     if (state == MOVING) {
       setState(proj, IDLE);
-      computeDxDy(proj, e, g);
+      computeDxDy(proj, e);
       int dx = curDx;
       int dy = curDy;
       if (dx != 0 || dy != 0) {

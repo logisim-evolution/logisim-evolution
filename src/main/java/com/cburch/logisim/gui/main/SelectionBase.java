@@ -131,7 +131,6 @@ class SelectionBase {
     // determine translation offset where we can legally place the clipboard
     int dx;
     int dy;
-    final var bds = computeBounds(components);
     for (int index = 0; ; index++) {
       // compute offset to try: We try points along successively larger
       // squares radiating outward from 0,0
@@ -162,9 +161,7 @@ class SelectionBase {
         dy *= 10;
       }
 
-      if (bds.getX() + dx >= 0
-          && bds.getY() + dy >= 0
-          && !hasConflictTranslated(components, dx, dy, true)) {
+      if (!hasConflictTranslated(components, dx, dy, true)) {
         return copyComponents(components, dx, dy, translate);
       }
     }
@@ -294,14 +291,6 @@ class SelectionBase {
       int centerY = bds.getY() + bds.getHeight() / 2;
       int dx = ((int) Math.round((mousePos.x / zoomFactor - centerX) / 10)) * 10;
       int dy = ((int) Math.round((mousePos.y / zoomFactor - centerY) / 10)) * 10;
-      int newX = bds.getX() + dx;
-      int newY = bds.getY() + dy;
-      if (newX < 0) {
-        dx = dx - newX;
-      }
-      if (newY < 0) {
-        dy = dy - newY;
-      }
       newItem = copyComponents(comps, dx, dy, false);
     } else {
       newItem = copyComponents(comps, false);

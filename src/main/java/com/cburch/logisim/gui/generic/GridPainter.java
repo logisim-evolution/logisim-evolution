@@ -96,11 +96,22 @@ public class GridPainter implements PropertyChangeListener {
   }
 
   public void paintGrid(Graphics g) {
+    paintGrid(g, 0, 0);
+  }
+
+  /**
+   * Paints the grid so that its dots stay aligned with the given origin offset (in destination
+   * component pixels). Used by canvases that implement their own panning.
+   */
+  public void paintGrid(Graphics g, int offsetX, int offsetY) {
     if (!showGrid) return;
 
     final var clip = g.getClipBounds();
-    final var x0 = (clip.x / gridImageWidth) * gridImageWidth; // round down to multiple of w
-    final var y0 = (clip.y / gridImageWidth) * gridImageWidth;
+    // Round down to the nearest image tile that keeps a dot aligned with the offset.
+    final var x0 =
+        offsetX + Math.floorDiv(clip.x - offsetX, gridImageWidth) * gridImageWidth;
+    final var y0 =
+        offsetY + Math.floorDiv(clip.y - offsetY, gridImageWidth) * gridImageWidth;
     for (var x = 0; x < clip.width + gridImageWidth; x += gridImageWidth) {
       for (var y = 0; y < clip.height + gridImageWidth; y += gridImageWidth) {
         g.drawImage(gridImage, x0 + x, y0 + y, destination);

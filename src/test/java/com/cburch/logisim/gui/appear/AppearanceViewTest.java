@@ -33,15 +33,12 @@ import com.cburch.logisim.gui.main.AttrTableCircuitModel;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 class AppearanceViewTest {
 
@@ -84,104 +81,64 @@ class AppearanceViewTest {
         () -> {
           final var view = newAppearanceView();
           final var canvas = (AppearanceCanvas) view.getCanvas();
-          final var pane = view.getCanvasPane();
-
-          canvas.setPreferredSize(new Dimension(1000, 1000));
-          pane.setSize(200, 200);
-          pane.getViewport().setViewSize(canvas.getPreferredSize());
-          pane.doLayout();
-          pane.getHorizontalScrollBar().setValues(80, 200, 0, 1000);
-          pane.getVerticalScrollBar().setValues(90, 200, 0, 1000);
-          final var initialX = pane.getHorizontalScrollBar().getValue();
-          final var initialY = pane.getVerticalScrollBar().getValue();
 
           canvas.processMouseEvent(
               mouse(canvas, MouseEvent.MOUSE_PRESSED, 40, 40, MouseEvent.BUTTON2));
           canvas.processMouseMotionEvent(
               mouse(canvas, MouseEvent.MOUSE_DRAGGED, 10, 20, MouseEvent.NOBUTTON, 0));
 
-          assertTrue(pane.getHorizontalScrollBar().getValue() > initialX);
-          assertTrue(pane.getVerticalScrollBar().getValue() > initialY);
-        });
-  }
-
-  @ParameterizedTest
-  @CsvSource({
-    "1000, 5000, 350, 1800, -1, false",
-    "1000, 5000, 350, 1800, 1, false",
-    "5000, 1000, 2200, 350, -1, false",
-    "5000, 1000, 2200, 350, 1, false",
-    "5000, 5000, 2200, 1800, -1, false",
-    "5000, 5000, 2200, 1800, 1, false",
-    "5000, 5000, 7600, 7600, -1, false",
-    "5000, 5000, 7600, 7600, 1, false",
-    "1000, 5000, 350, 1800, -1, true",
-    "1000, 5000, 350, 1800, 1, true"
-  })
-  void mouseZoomKeepsScrolledAppearancePointUnderCursor(
-      int width, int height, int scrollX, int scrollY, int rotation, boolean fromCanvas)
-      throws Exception {
-    SwingUtilities.invokeAndWait(
-        () -> {
-          final var view = newAppearanceView(Bounds.create(0, 0, width, height));
-          final var canvas = (AppearanceCanvas) view.getCanvas();
-          final var pane = view.getCanvasPane();
-          final var viewport = pane.getViewport();
-          view.getZoomModel().setZoomFactor(1.5);
-          pane.setSize(400, 300);
-          pane.doLayout();
-          canvas.recomputeSize();
-          viewport.doLayout();
-          viewport.setViewPosition(new Point(scrollX, scrollY));
-
-          final var cursor = new Point(80, 140);
-          final var before = viewport.getViewPosition();
-          final var pointX = (before.x + cursor.x) / view.getZoomModel().getZoomFactor();
-          final var pointY = (before.y + cursor.y) / view.getZoomModel().getZoomFactor();
-          final var source = fromCanvas ? canvas : pane;
-          final var eventPoint = SwingUtilities.convertPoint(viewport, cursor, source);
-          final var event =
-              new MouseWheelEvent(
-                  source,
-                  MouseEvent.MOUSE_WHEEL,
-                  0,
-                  InputEvent.CTRL_DOWN_MASK,
-                  eventPoint.x,
-                  eventPoint.y,
-                  0,
-                  false,
-                  MouseWheelEvent.WHEEL_UNIT_SCROLL,
-                  1,
-                  rotation);
-          if (fromCanvas) {
-            view.getZoomModel().setZoomFactor(1.5 - rotation * 0.1, event);
-          } else {
-            pane.dispatchEvent(event);
-          }
-          viewport.doLayout();
-
-          final var zoom = view.getZoomModel().getZoomFactor();
-          final var after = viewport.getViewPosition();
-          assertEquals(1.5 - rotation * 0.1, zoom, 1.0e-6);
-          assertEquals(pointX, (after.x + cursor.x) / zoom, 1.0 / zoom);
-          assertEquals(pointY, (after.y + cursor.y) / zoom, 1.0 / zoom);
+          // The camera follows the cursor: dragging left/up moves the view origin negative.
+          assertEquals(new Point(-30, -20), canvas.getViewOrigin());
         });
   }
 
   @Test
-  void appearanceCanvasLeavesViewportPaddingForMiddleButtonPanning() {
+  void ctrlWheelZoomKeepsAppearancePointUnderCursor() throws Exception {
+    SwingUtilities.invokeAndWait(
+        () -> {
+          final var view = newAppearanceView(Bounds.create(0, 0, 5000, 5000));
+          final var canvas = (AppearanceCanvas) view.getCanvas();
+          final var pane = view.getCanvasPane();
+          pane.setSize(400, 300);
+          pane.doLayout();
+          view.getZoomModel().setZoomFactor(1.5);
+
+          final var cursor = new Point(80, 140);
+          final var zoomBefore = view.getZoomModel().getZoomFactor();
+          final var originBefore = canvas.getViewOrigin();
+          final var modelX = (cursor.x - originBefore.x) / zoomBefore;
+          final var modelY = (cursor.y - originBefore.y) / zoomBefore;
+
+          final var event =
+              new MouseWheelEvent(
+                  canvas,
+                  MouseEvent.MOUSE_WHEEL,
+                  0,
+                  InputEvent.CTRL_DOWN_MASK,
+                  cursor.x,
+                  cursor.y,
+                  0,
+                  false,
+                  MouseWheelEvent.WHEEL_UNIT_SCROLL,
+                  1,
+                  -1);
+          canvas.dispatchEvent(event);
+
+          final var zoomAfter = view.getZoomModel().getZoomFactor();
+          final var originAfter = canvas.getViewOrigin();
+          assertTrue(zoomAfter > zoomBefore);
+          assertEquals(modelX, (cursor.x - originAfter.x) / zoomAfter, 1.0 / zoomAfter);
+          assertEquals(modelY, (cursor.y - originAfter.y) / zoomAfter, 1.0 / zoomAfter);
+        });
+  }
+
+  @Test
+  void appearanceCanvasTracksViewportForInfinitePanning() {
     final var view = newAppearanceView();
     final var canvas = (AppearanceCanvas) view.getCanvas();
-    final var pane = view.getCanvasPane();
 
-    pane.setSize(200, 200);
-    pane.doLayout();
-    canvas.recomputeSize();
-
-    final var viewport = pane.getViewport().getExtentSize();
-    final var preferred = canvas.getPreferredSize();
-    assertTrue(preferred.width > viewport.width);
-    assertTrue(preferred.height > viewport.height);
+    assertTrue(canvas.getScrollableTracksViewportWidth());
+    assertTrue(canvas.getScrollableTracksViewportHeight());
   }
 
   @Test

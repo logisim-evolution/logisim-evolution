@@ -595,12 +595,6 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
               return;
             }
 
-            final var bds = comp.getBounds(gfx);
-            if (bds.getX() < 0 || bds.getY() < 0) {
-              canvas.setErrorMessage(S.getter("negativeCoordError"));
-              return;
-            }
-
             mutation.add(comp);
             added.add(comp);
           }

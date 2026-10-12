@@ -86,7 +86,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
@@ -706,18 +705,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private void rememberLayoutView(Object active) {
     if (active instanceof CircuitState state) {
       layoutViewMemory.remember(
-          state.getCircuit(), layoutZoomModel, layoutCanvasPane.getViewport().getViewPosition());
+          state.getCircuit(), layoutZoomModel, layoutCanvas.getViewOrigin());
     }
   }
 
   private void restoreLayoutView(Circuit circuit) {
     layoutCanvas.computeSize(true);
     if (layoutViewMemory.restore(
-        circuit,
-        layoutZoomModel,
-        position ->
-            restoreViewPosition(
-                layoutCanvasPane.getViewport(), layoutCanvas.getPreferredSize(), position))) {
+        circuit, layoutZoomModel, position -> layoutCanvas.setViewOrigin(position))) {
       return;
     }
 
@@ -739,16 +734,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         () -> {
           if (project.getCurrentCircuit() == circuit) {
             layoutCanvas.computeSize(true);
-            layoutCanvasPane.getViewport().setViewSize(layoutCanvas.getPreferredSize());
             layoutCanvas.center();
           }
         });
-  }
-
-  static void restoreViewPosition(JViewport viewport, java.awt.Dimension viewSize, Point position) {
-    if (viewport == null || viewSize == null || position == null) return;
-    viewport.setViewSize(viewSize);
-    viewport.setViewPosition(position);
   }
 
   @Override

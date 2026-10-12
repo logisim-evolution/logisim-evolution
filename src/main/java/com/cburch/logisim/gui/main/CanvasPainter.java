@@ -187,12 +187,16 @@ class CanvasPainter implements PropertyChangeListener {
     final var size = canvas.getSize();
     final double zoomFactor = canvas.getZoomFactor();
 
-    grid.paintGrid(g);
+    grid.paintGrid(g, canvas.getViewX(), canvas.getViewY());
     g.setColor(Color.black);
 
     final var gfxScaled = g.create();
-    if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
-      g2d.scale(zoomFactor, zoomFactor);
+    if (gfxScaled instanceof Graphics2D g2d) {
+      // The camera translates the whole circuit; the zoom scales on top of it.
+      g2d.translate(canvas.getViewX(), canvas.getViewY());
+      if (zoomFactor != 1.0) {
+        g2d.scale(zoomFactor, zoomFactor);
+      }
     }
     final var circ = proj.getCurrentCircuit();
     if (circ == null) {

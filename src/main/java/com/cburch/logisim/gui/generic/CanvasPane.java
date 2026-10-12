@@ -114,16 +114,24 @@ public class CanvasPane extends JScrollPane {
       final var prop = e.getPropertyName();
       if (prop.equals(ZoomModel.ZOOM)) {
         final var oldZoom = (Double) e.getOldValue();
-        var r = getViewport().getViewRect();
-        final var cx = (r.x + r.width / 2) / oldZoom;
-        final var cy = (r.y + r.height / 2) / oldZoom;
-
         final var newZoom = (Double) e.getNewValue();
-        r = getViewport().getViewRect();
-        final var hv = (int) (cx * newZoom) - r.width / 2;
-        final var vv = (int) (cy * newZoom) - r.height / 2;
-        getHorizontalScrollBar().setValue(hv);
-        getVerticalScrollBar().setValue(vv);
+
+        // Contents that do not track the viewport rely on scroll bars to keep the viewport center
+        // fixed while zooming. A canvas that tracks the viewport (i.e. the infinite canvas) pans
+        // itself and must therefore not be scrolled here.
+        if (!contents.getScrollableTracksViewportWidth()) {
+          var r = getViewport().getViewRect();
+          final var cx = (r.x + r.width / 2) / oldZoom;
+          final var cy = (r.y + r.height / 2) / oldZoom;
+
+          r = getViewport().getViewRect();
+          final var hv = (int) (cx * newZoom) - r.width / 2;
+          final var vv = (int) (cy * newZoom) - r.height / 2;
+          getHorizontalScrollBar().setValue(hv);
+          getVerticalScrollBar().setValue(vv);
+        }
+
+        contents.zoomFactorChanged(zoomModel, oldZoom, newZoom);
         contents.recomputeSize();
       } else if (prop.equals(ZoomModel.CENTER)) {
         contents.center();

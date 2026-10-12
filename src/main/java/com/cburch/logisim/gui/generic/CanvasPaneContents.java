@@ -33,4 +33,15 @@ public interface CanvasPaneContents extends Scrollable {
   void addMouseWheelListener(final MouseWheelListener listener);
 
   void center();
+
+  /**
+   * Called after the zoom factor has changed, before the contents are resized. Contents that
+   * implement their own panning (i.e. the infinite canvas) can use this to keep a point fixed
+   * while the zoom changes. The default implementation does nothing.
+   *
+   * @param model Zoom model that fired the change.
+   * @param oldZoom Zoom factor before the change.
+   * @param newZoom Zoom factor after the change.
+   */
+  default void zoomFactorChanged(final ZoomModel model, final double oldZoom, final double newZoom) {}
 }
