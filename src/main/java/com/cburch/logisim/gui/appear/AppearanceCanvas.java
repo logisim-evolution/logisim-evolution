@@ -27,46 +27,56 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CanvasPaneContents;
 import com.cburch.logisim.gui.generic.GridPainter;
+import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.proj.Project;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 public class AppearanceCanvas extends Canvas implements CanvasPaneContents, ActionDispatcher {
   private static final long serialVersionUID = 1L;
-  private static final int BOUNDS_BUFFER = 70;
-  // pixels shown in canvas beyond outermost boundaries
-  private static final int THRESH_SIZE_UPDATE = 10;
-  // don't bother to update the size if it hasn't changed more than this
+  /** Safety clamp so the camera origin cannot overflow its {@code int} representation. */
+  private static final int VIEW_ORIGIN_LIMIT = 1_000_000_000;
+  private static final double ZOOM_WHEEL_STEP = 1.1;
+  private static final double MIN_ZOOM = 0.01;
+  private static final double MAX_ZOOM = 100.0;
   private final CanvasTool selectTool;
   private final Listener listener;
   private final GridPainter grid;
   private Project proj;
   private CircuitState circuitState;
   private CanvasPane canvasPane;
-  private Bounds oldPreferredSize;
   private LayoutPopupManager popupManager;
+  // Infinite-canvas camera: component-pixel position where model coordinate (0,0) is drawn.
+  private int viewX = 0;
+  private int viewY = 0;
   private int panStartScreenX;
   private int panStartScreenY;
-  private int panStartScrollX;
-  private int panStartScrollY;
+  private int panStartViewX;
+  private int panStartViewY;
   private boolean middleButtonPanning;
   private Cursor cursorBeforeMiddleButtonPanning;
+  // Screen point (component pixels) that must stay fixed while the next zoom change is applied.
+  private Point zoomAnchorScreen = null;
 
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
     this.grid = new GridPainter(this);
     this.listener = new Listener();
-    this.oldPreferredSize = null;
     setSelection(new AppearanceSelection());
     setTool(selectTool);
+    addMouseWheelListener(this::handleWheel);
 
     CanvasModel model = super.getModel();
     if (model != null) model.addCanvasModelListener(listener);
@@ -85,40 +95,105 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void center() {
-    // do nothing
-  }
-
-  private void computeSize(boolean immediate) {
-    hidePopup();
-
     final var circState = circuitState;
-    Bounds bounds =
+    final var bounds =
         (circState == null)
             ? Bounds.create(0, 0, 50, 50)
             : circState.getCircuit().getAppearance().getAbsoluteBounds();
-    final var width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
-    final var height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
-    final var viewportSize = canvasPane == null ? null : canvasPane.getViewportSize();
-    final var paddedWidth =
-        viewportSize == null ? width : bounds.getX() + bounds.getWidth() + viewportSize.width;
-    final var paddedHeight =
-        viewportSize == null ? height : bounds.getY() + bounds.getHeight() + viewportSize.height;
-    Dimension dim =
-        (canvasPane == null)
-            ? new Dimension(width, height)
-            : canvasPane.supportPreferredSize(
-                Math.max(width, paddedWidth), Math.max(height, paddedHeight));
-    if (!immediate) {
-      final var old = oldPreferredSize;
-      if (old != null
-          && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
-          && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
-        return;
-      }
+    if (canvasPane == null || bounds.getWidth() == 0 || bounds.getHeight() == 0) {
+      setViewOrigin(0, 0);
+      return;
     }
-    oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
-    setPreferredSize(dim);
-    revalidate();
+    final var viewportSize = canvasPane.getViewportSize();
+    final var zoom = getZoomFactor();
+    final var centerX = bounds.getX() + bounds.getWidth() / 2.0;
+    final var centerY = bounds.getY() + bounds.getHeight() / 2.0;
+    setViewOrigin(
+        (int) Math.round(viewportSize.width / 2.0 - centerX * zoom),
+        (int) Math.round(viewportSize.height / 2.0 - centerY * zoom));
+  }
+
+  /** Moves the camera origin to the given component-pixel position. */
+  private void setViewOrigin(final Point origin) {
+    if (origin != null) setViewOrigin(origin.x, origin.y);
+  }
+
+  /** Moves the camera origin to the given component-pixel position. */
+  private void setViewOrigin(final int x, final int y) {
+    final var nx = Math.max(-VIEW_ORIGIN_LIMIT, Math.min(VIEW_ORIGIN_LIMIT, x));
+    final var ny = Math.max(-VIEW_ORIGIN_LIMIT, Math.min(VIEW_ORIGIN_LIMIT, y));
+    if (nx == viewX && ny == viewY) return;
+    viewX = nx;
+    viewY = ny;
+    repaint();
+  }
+
+  /** Current camera origin (component pixels). */
+  Point getViewOrigin() {
+    return new Point(viewX, viewY);
+  }
+
+  /** Pans the view by the given component-pixel delta (positive moves the content right/down). */
+  private void panBy(final int dx, final int dy) {
+    setViewOrigin(viewX + dx, viewY + dy);
+  }
+
+  /** Handles mouse-wheel zoom (Ctrl) and panning (plain / Shift). */
+  private void handleWheel(final MouseWheelEvent e) {
+    if (e.isControlDown()) {
+      final var zoom = getZoomFactor();
+      repairEvent(e, zoom);
+      doZoom(e.getPoint(), e.getWheelRotation() < 0);
+      e.consume();
+    } else {
+      final int amount = e.getWheelRotation() * 2 * (int) Math.round(10 * getZoomFactor());
+      if (e.isShiftDown()) {
+        panBy(-amount, 0);
+      } else {
+        panBy(0, -amount);
+      }
+      e.consume();
+    }
+  }
+
+  private void doZoom(final Point mouseLocation, final boolean zoomIn) {
+    final var model = grid.getZoomModel();
+    if (model == null || canvasPane == null) return;
+    final var oldZoom = getZoomFactor();
+    final var newZoom =
+        Math.max(
+            MIN_ZOOM,
+            Math.min(MAX_ZOOM, zoomIn ? oldZoom * ZOOM_WHEEL_STEP : oldZoom / ZOOM_WHEEL_STEP));
+    if (newZoom == oldZoom) return;
+    if (mouseLocation != null) {
+      zoomAnchorScreen =
+          new Point(
+              (int) Math.round(viewX + mouseLocation.x * oldZoom),
+              (int) Math.round(viewY + mouseLocation.y * oldZoom));
+    } else {
+      zoomAnchorScreen = null;
+    }
+    model.setZoomFactor(newZoom);
+  }
+
+  @Override
+  public void zoomFactorChanged(final ZoomModel model, final double oldZoom, final double newZoom) {
+    if (canvasPane == null || oldZoom <= 0.0 || newZoom <= 0.0) return;
+    final var viewportSize = canvasPane.getViewportSize();
+    final var anchor = zoomAnchorScreen;
+    final var screenX = (anchor != null) ? anchor.x : viewportSize.width / 2;
+    final var screenY = (anchor != null) ? anchor.y : viewportSize.height / 2;
+    final var circuitX = (screenX - viewX) / oldZoom;
+    final var circuitY = (screenY - viewY) / oldZoom;
+    zoomAnchorScreen = null;
+    setViewOrigin(
+        (int) Math.round(screenX - circuitX * newZoom),
+        (int) Math.round(screenY - circuitY * newZoom));
+  }
+
+  private void computeSize(boolean immediate) {
+    // The infinite canvas fills the viewport and pans itself, so a repaint is enough.
+    repaint();
   }
 
   @Override
@@ -199,12 +274,13 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public boolean getScrollableTracksViewportHeight() {
-    return false;
+    // The infinite canvas fills the viewport; panning is done through the camera, not scroll bars.
+    return true;
   }
 
   @Override
   public boolean getScrollableTracksViewportWidth() {
-    return false;
+    return true;
   }
 
   @Override
@@ -227,15 +303,18 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   protected void paintBackground(Graphics g) {
     super.paintBackground(g);
-    grid.paintGrid(g);
+    grid.paintGrid(g, viewX, viewY);
   }
 
   @Override
   protected void paintForeground(Graphics g) {
     final var zoom = grid.getZoomFactor();
     final var gfxScaled = g.create();
-    if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D g2d) {
-      g2d.scale(zoom, zoom);
+    if (gfxScaled instanceof Graphics2D g2d) {
+      g2d.translate(viewX, viewY);
+      if (zoom != 1.0 && zoom != 0.0) {
+        g2d.scale(zoom, zoom);
+      }
     }
     super.paintForeground(gfxScaled);
     gfxScaled.dispose();
@@ -263,24 +342,22 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void repaintCanvasCoords(int x, int y, int width, int height) {
+    // Coordinates arrive in model space; translate them through the camera and zoom.
     final var zoom = grid.getZoomFactor();
-    if (zoom != 1.0) {
-      x = (int) (x * zoom - 1);
-      y = (int) (y * zoom - 1);
-      width = (int) (width * zoom + 4);
-      height = (int) (height * zoom + 4);
-    }
-    super.repaintCanvasCoords(x, y, width, height);
+    final var newX = (int) Math.floor(viewX + x * zoom);
+    final var newY = (int) Math.floor(viewY + y * zoom);
+    width = (int) Math.ceil(viewX + (x + width) * zoom) - newX;
+    height = (int) Math.ceil(viewY + (y + height) * zoom) - newY;
+    super.repaintCanvasCoords(newX, newY, width, height);
   }
 
   private void repairEvent(MouseEvent e, double zoom) {
-    if (zoom != 1.0) {
-      final var oldx = e.getX();
-      final var oldy = e.getY();
-      final var newx = (int) Math.round(e.getX() / zoom);
-      final var newy = (int) Math.round(e.getY() / zoom);
-      e.translatePoint(newx - oldx, newy - oldy);
-    }
+    // Translate a component-pixel event into model coordinates.
+    final var oldx = e.getX();
+    final var oldy = e.getY();
+    final var newx = (int) Math.round((oldx - viewX) / zoom);
+    final var newy = (int) Math.round((oldy - viewY) / zoom);
+    e.translatePoint(newx - oldx, newy - oldy);
   }
 
   private boolean handleMiddleButtonPanEvent(MouseEvent e) {
@@ -289,8 +366,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
         middleButtonPanning = true;
         panStartScreenX = e.getXOnScreen();
         panStartScreenY = e.getYOnScreen();
-        panStartScrollX = canvasPane.getHorizontalScrollBar().getValue();
-        panStartScrollY = canvasPane.getVerticalScrollBar().getValue();
+        panStartViewX = viewX;
+        panStartViewY = viewY;
         cursorBeforeMiddleButtonPanning = getCursor();
         setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
       }
@@ -313,12 +390,9 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     if (!middleButtonPanning) {
       return false;
     }
-    canvasPane
-        .getHorizontalScrollBar()
-        .setValue(panStartScrollX + panStartScreenX - e.getXOnScreen());
-    canvasPane
-        .getVerticalScrollBar()
-        .setValue(panStartScrollY + panStartScreenY - e.getYOnScreen());
+    setViewOrigin(
+        panStartViewX + (e.getXOnScreen() - panStartScreenX),
+        panStartViewY + (e.getYOnScreen() - panStartScreenY));
     e.consume();
     return true;
   }
@@ -329,6 +403,9 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   public void setCanvasPane(CanvasPane value) {
     canvasPane = value;
+    // The infinite canvas fills the viewport and pans itself, so scroll bars are never needed.
+    canvasPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    canvasPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
     computeSize(true);
     popupManager = new LayoutPopupManager(value, this);
   }
@@ -338,6 +415,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     this.circuitState = circuitState;
     final var circuit = circuitState.getCircuit();
     setModel(circuit.getAppearance().getCustomAppearanceDrawing(), this);
+    SwingUtilities.invokeLater(this::center);
   }
 
   @Override
@@ -361,14 +439,24 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   public JPopupMenu showPopupMenu(MouseEvent e, CanvasObject clicked) {
     double zoom = grid.getZoomFactor();
-    int x = (int) Math.round(e.getX() * zoom);
-    int y = (int) Math.round(e.getY() * zoom);
+    int x = (int) Math.round(viewX + e.getX() * zoom);
+    int y = (int) Math.round(viewY + e.getY() * zoom);
     if (clicked != null && getSelection().isSelected(clicked)) {
       AppearanceEditPopup popup = new AppearanceEditPopup(this);
       popup.show(this, x, y);
       return popup;
     }
     return null;
+  }
+
+  @Override
+  protected int getViewOriginX() {
+    return viewX;
+  }
+
+  @Override
+  protected int getViewOriginY() {
+    return viewY;
   }
 
   @Override

@@ -83,6 +83,19 @@ public class Canvas extends JComponent {
     return 1.0; // subclass will have to override this
   }
 
+  /**
+   * Horizontal component-pixel position where model coordinate (0,0) is drawn. The default is 0;
+   * canvases that pan through a camera override this so overlays (e.g. tooltips) stay aligned.
+   */
+  protected int getViewOriginX() {
+    return 0;
+  }
+
+  /** Vertical counterpart of {@link #getViewOriginX()}. */
+  protected int getViewOriginY() {
+    return 0;
+  }
+
   protected void paintBackground(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
       final var g2 = (Graphics2D) g;
@@ -108,8 +121,8 @@ public class Canvas extends JComponent {
   private void paintTooltip(Graphics g) {
     if (tooltipLocation == null || tooltipName == null) return;
     g.setColor(Color.YELLOW);
-    final var x = (int) (tooltipLocation.getX() * getZoomFactor());
-    final var y = (int) (tooltipLocation.getY() * getZoomFactor());
+    final var x = (int) (tooltipLocation.getX() * getZoomFactor()) + getViewOriginX();
+    final var y = (int) (tooltipLocation.getY() * getZoomFactor()) + getViewOriginY();
     final var width =
         (int) ((tooltipName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH) * getZoomFactor());
     final var height =

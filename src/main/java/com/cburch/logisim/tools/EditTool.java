@@ -58,7 +58,7 @@ public class EditTool extends Tool {
       if (event.getAction() != CircuitEvent.ACTION_INVALIDATE) {
         lastX = -1;
         cache.clear();
-        updateLocation(lastCanvas, lastRawX, lastRawY, lastMods);
+        if (hasLastRaw) updateLocation(lastCanvas, lastRawX, lastRawY, lastMods);
       }
     }
 
@@ -66,7 +66,7 @@ public class EditTool extends Tool {
     public void selectionChanged(Event event) {
       lastX = -1;
       cache.clear();
-      updateLocation(lastCanvas, lastRawX, lastRawY, lastMods);
+      if (hasLastRaw) updateLocation(lastCanvas, lastRawX, lastRawY, lastMods);
     }
   }
 
@@ -83,6 +83,7 @@ public class EditTool extends Tool {
   private Canvas lastCanvas;
   private int lastRawX;
   private int lastRawY;
+  private boolean hasLastRaw; // whether lastRawX/Y hold a valid position
   private int lastX; // last coordinates where wiring was computed
   private int lastY;
   private int lastMods; // last modifiers for mouse event
@@ -90,6 +91,7 @@ public class EditTool extends Tool {
   private int pressX; // last coordinate where mouse was pressed
   private int pressY; // (used to determine when a short wire has been
   // clicked)
+  private boolean pressActive; // whether pressX/Y hold a valid press
 
   public EditTool(SelectTool select, WiringTool wiring) {
     this.listener = new Listener();
@@ -99,7 +101,8 @@ public class EditTool extends Tool {
     this.cache = new LinkedHashMap<>();
     this.lastX = -1;
     this.wireLoc = NULL_LOCATION;
-    this.pressX = -1;
+    this.pressActive = false;
+    this.hasLastRaw = false;
   }
 
   /* This function will try to rotate if the componenent allows it
@@ -229,16 +232,15 @@ public class EditTool extends Tool {
   }
 
   private boolean isClick(MouseEvent e) {
-    final var px = pressX;
-    if (px < 0) {
+    if (!pressActive) {
       return false;
     } else {
-      final var dx = e.getX() - px;
+      final var dx = e.getX() - pressX;
       final var dy = e.getY() - pressY;
       if (dx * dx + dy * dy <= 4) {
         return true;
       } else {
-        pressX = -1;
+        pressActive = false;
         return false;
       }
     }
@@ -340,13 +342,13 @@ public class EditTool extends Tool {
 
   @Override
   public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
-    pressX = -1;
+    pressActive = false;
     current.mouseEntered(canvas, g, e);
   }
 
   @Override
   public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {
-    pressX = -1;
+    pressActive = false;
     current.mouseExited(canvas, g, e);
   }
 
@@ -385,6 +387,7 @@ public class EditTool extends Tool {
     }
     pressX = e.getX();
     pressY = e.getY();
+    pressActive = true;
     current.mousePressed(canvas, g, e);
   }
 
@@ -443,6 +446,7 @@ public class EditTool extends Tool {
     lastCanvas = canvas;
     lastRawX = mx;
     lastRawY = my;
+    hasLastRaw = true;
     lastMods = mods;
     if (lastX == snapx && lastY == snapy && modsSame) { // already computed
       return wireLoc != NULL_LOCATION;
@@ -483,12 +487,10 @@ public class EditTool extends Tool {
   }
 
   private boolean updateLocation(Canvas canvas, KeyEvent e) {
-    int x = lastRawX;
-    if (x >= 0) {
-      return updateLocation(canvas, x, lastRawY, e.getModifiersEx());
-    } else {
+    if (!hasLastRaw) {
       return false;
     }
+    return updateLocation(canvas, lastRawX, lastRawY, e.getModifiersEx());
   }
 
   private boolean updateLocation(Canvas canvas, MouseEvent e) {

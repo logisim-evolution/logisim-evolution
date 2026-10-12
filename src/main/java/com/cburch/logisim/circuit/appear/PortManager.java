@@ -66,12 +66,6 @@ class PortManager {
       do {
         loc = loc.translate(dx, dy);
       } while (usedLocs.contains(loc));
-      if (loc.getX() >= 0 && loc.getY() >= 0) {
-        return loc;
-      }
-      do {
-        loc = loc.translate(-dx, -dy);
-      } while (usedLocs.contains(loc));
       return loc;
     }
 
@@ -98,8 +92,8 @@ class PortManager {
       y = bds.getY() + bds.getHeight() - 3;
       dX = 10;
     }
-    x = (x + 9) / 10 * 10; // round coordinates up to ensure they're on grid
-    y = (y + 9) / 10 * 10;
+    x = Math.floorDiv(x + 9, 10) * 10; // round coordinates up to ensure they're on grid
+    y = Math.floorDiv(y + 9, 10) * 10;
     var loc = Location.create(x, y, true);
     while (usedLocs.contains(loc)) {
       loc = loc.translate(dX, dY);

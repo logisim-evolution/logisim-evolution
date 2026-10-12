@@ -25,7 +25,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LibraryEvent;
@@ -36,6 +35,7 @@ import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CanvasPaneContents;
 import com.cburch.logisim.gui.generic.GridPainter;
+import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -60,8 +60,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -74,22 +72,19 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.Timer;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents, AdjustmentListener {
+public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents {
 
   public static final byte ZOOM_BUTTON_SIZE = 52;
   public static final byte ZOOM_BUTTON_MARGIN = 30;
   public static final Color HALO_COLOR = new Color(255, 0, 255);
-  // don't bother to update the size if it hasn't changed more than this
   static final double SQRT_2 = Math.sqrt(2.0);
   private static final long serialVersionUID = 1L;
-  // pixels shown in canvas beyond outermost boundaries
-  private static final int THRESH_SIZE_UPDATE = 10;
   private static final int BUTTONS_MASK =
       InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
   private static final int AUTO_PAN_MARGIN = 32;
@@ -105,6 +100,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
   public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
+  /** Multiplicative step used when zooming with the mouse wheel or the keyboard. */
+  private static final double ZOOM_WHEEL_STEP = 1.1;
+  /** Lower bound of the (otherwise unlimited) zoom range. */
+  private static final double MIN_ZOOM = 0.01;
+  /** Upper bound of the (otherwise unlimited) zoom range. */
+  private static final double MAX_ZOOM = 100.0;
+  /** Safety clamp so the camera origin cannot overflow its {@code int} representation. */
+  private static final int VIEW_ORIGIN_LIMIT = 1_000_000_000;
   // public static BufferedImage image;
   private final Project proj;
   private final Selection selection;
@@ -122,14 +125,23 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private Tool tempTool;
   private MouseMappings mappings;
   private CanvasPane canvasPane;
-  private Bounds oldPreferredSize;
   private volatile boolean inPaint = false; // only for within paintComponent
+  // Infinite-canvas camera: position (in component pixels) where circuit coordinate (0,0) is drawn.
+  private volatile int viewX = 0;
+  private volatile int viewY = 0;
+  // Middle-button drag panning state.
+  private boolean panning = false;
+  private int panStartScreenX;
+  private int panStartScreenY;
+  private int panStartViewX;
+  private int panStartViewY;
+  // Screen point (component pixels) that must stay fixed while the next zoom change is applied.
+  private Point zoomAnchorScreen = null;
 
   public Canvas(Project proj) {
     this.proj = proj;
     this.selection = new Selection(proj, this);
     this.painter = new CanvasPainter(this);
-    this.oldPreferredSize = null;
     this.paintCoordinator = new CanvasPaintCoordinator(this);
     this.mappings = proj.getOptions().getMouseMappings();
     this.canvasPane = null;
@@ -240,8 +252,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   public void setCanvasPane(final CanvasPane value) {
     canvasPane = value;
     canvasPane.setViewport(viewport);
-    canvasPane.getHorizontalScrollBar().addAdjustmentListener(this);
-    canvasPane.getVerticalScrollBar().addAdjustmentListener(this);
+    // The infinite canvas fills the viewport and pans itself, so scroll bars are never needed.
+    canvasPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    canvasPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
     viewport.setView(this);
     setOpaque(false);
     computeSize(true);
@@ -253,25 +266,17 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     final var bounds = (g != null)
         ? proj.getCurrentCircuit().getBounds(getGraphics())
         : proj.getCurrentCircuit().getBounds();
-    if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
-      setScrollBar(0, 0);
+    if (bounds.getHeight() == 0 || bounds.getWidth() == 0 || canvasPane == null) {
+      setViewOrigin(0, 0);
       return;
     }
-    final var xpos =
-        (int)
-            (Math.round(
-                bounds.getX() * getZoomFactor()
-                    - (canvasPane.getViewport().getSize().getWidth()
-                            - bounds.getWidth() * getZoomFactor())
-                        / 2));
-    final var ypos =
-        (int)
-            (Math.round(
-                bounds.getY() * getZoomFactor()
-                    - (canvasPane.getViewport().getSize().getHeight()
-                            - bounds.getHeight() * getZoomFactor())
-                        / 2));
-    setScrollBar(xpos, ypos);
+    final var viewportSize = canvasPane.getViewportSize();
+    final var zoom = getZoomFactor();
+    final var centerX = bounds.getX() + bounds.getWidth() / 2.0;
+    final var centerY = bounds.getY() + bounds.getHeight() / 2.0;
+    setViewOrigin(
+        (int) Math.round(viewportSize.width / 2.0 - centerX * zoom),
+        (int) Math.round(viewportSize.height / 2.0 - centerY * zoom));
   }
 
   public void closeCanvas() {
@@ -290,42 +295,18 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   }
 
   public void computeSize(final boolean immediate) {
-    if (proj.getCurrentCircuit() == null) return;
-    final var g = getGraphics();
-    final var bounds = (g != null)
-            ? proj.getCurrentCircuit().getBounds(getGraphics())
-            : proj.getCurrentCircuit().getBounds();
-    var height = 0;
-    var width = 0;
-    if (bounds != null && viewport != null) {
-      width = bounds.getX() + bounds.getWidth() + viewport.getWidth();
-      height = bounds.getY() + bounds.getHeight() + viewport.getHeight();
-    }
-    final var dim = (canvasPane == null)
-            ? new Dimension(width, height)
-            : canvasPane.supportPreferredSize(width, height);
-    if (!immediate) {
-      final var old = oldPreferredSize;
-      if (old != null
-          && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
-          && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
-        return;
-      }
-    }
-    oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
-    setPreferredSize(dim);
-    revalidate();
+    // An infinite canvas fills the viewport and pans itself, so it has no scrollable size to
+    // recompute. A repaint is enough to pick up any changed circuit extent.
+    repaint();
   }
 
   public Rectangle getViewableBaseRect() {
-    Rectangle viewableBase;
     if (canvasPane != null) {
-      viewableBase = canvasPane.getViewport().getViewRect();
-    } else {
-      final var bds = proj.getCurrentCircuit().getBounds();
-      viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
+      final var viewportSize = canvasPane.getViewportSize();
+      return new Rectangle(viewX, viewY, viewportSize.width, viewportSize.height);
     }
-    return viewableBase;
+    final var bds = proj.getCurrentCircuit().getBounds();
+    return new Rectangle(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
   }
 
   public Rectangle getViewableRect() {
@@ -388,9 +369,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
 
     final var zoom = getZoomFactor();
-    final var view = canvasPane.getViewport().getViewRect();
-    final var deltaX = autoPanDelta((int) Math.round(x * zoom), view.x, view.width);
-    final var deltaY = autoPanDelta((int) Math.round(y * zoom), view.y, view.height);
+    final var view = getViewableBaseRect();
+    final var deltaX = autoPanDelta((int) Math.round(viewX + x * zoom), view.x, view.width);
+    final var deltaY = autoPanDelta((int) Math.round(viewY + y * zoom), view.y, view.height);
     autoPanDeltaX = deltaX;
     autoPanDeltaY = deltaY;
 
@@ -432,13 +413,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       return;
     }
 
-    final var horizontal = canvasPane.getHorizontalScrollBar();
-    final var vertical = canvasPane.getVerticalScrollBar();
-    final var oldX = horizontal.getValue();
-    final var oldY = vertical.getValue();
-    horizontal.setValue(oldX + autoPanDeltaX);
-    vertical.setValue(oldY + autoPanDeltaY);
-    if (horizontal.getValue() == oldX && vertical.getValue() == oldY) {
+    final var oldX = viewX;
+    final var oldY = viewY;
+    setViewOrigin(viewX + autoPanDeltaX, viewY + autoPanDeltaY);
+    if (viewX == oldX && viewY == oldY) {
       stopAutoPan();
       return;
     }
@@ -480,16 +458,99 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     return painter.getHaloedComponent();
   }
 
+  /**
+   * Camera position accessor kept for backwards compatibility with the old scroll-bar based API.
+   * The value is the negated camera origin, so that callers adding a pointer delta keep working.
+   */
   public int getHorizontalScrollBar() {
-    return canvasPane.getHorizontalScrollBar().getValue();
+    return -viewX;
   }
 
+  /**
+   * Vertical camera position, negated to match the legacy scroll-bar API.
+   *
+   * @see #getHorizontalScrollBar()
+   */
   public int getVerticalScrollBar() {
-    return canvasPane.getVerticalScrollBar().getValue();
+    return -viewY;
+  }
+
+  /** Horizontal component (in pixels) where circuit coordinate (0,0) is currently drawn. */
+  public int getViewX() {
+    return viewX;
+  }
+
+  /** Vertical component (in pixels) where circuit coordinate (0,0) is currently drawn. */
+  public int getViewY() {
+    return viewY;
+  }
+
+  /** Current camera origin (component pixels). */
+  public Point getViewOrigin() {
+    return new Point(viewX, viewY);
+  }
+
+  /** Moves the camera origin to the given component-pixel position. */
+  public void setViewOrigin(final Point origin) {
+    if (origin != null) setViewOrigin(origin.x, origin.y);
+  }
+
+  /** Moves the camera origin to the given component-pixel position. */
+  public void setViewOrigin(final int x, final int y) {
+    final var nx = Math.max(-VIEW_ORIGIN_LIMIT, Math.min(VIEW_ORIGIN_LIMIT, x));
+    final var ny = Math.max(-VIEW_ORIGIN_LIMIT, Math.min(VIEW_ORIGIN_LIMIT, y));
+    if (nx == viewX && ny == viewY) return;
+    viewX = nx;
+    viewY = ny;
+    updateArrows();
+    repaint();
+  }
+
+  /** Pans the view by the given component-pixel delta (positive moves the content right/down). */
+  private void panBy(final int dx, final int dy) {
+    setViewOrigin(viewX + dx, viewY + dy);
+  }
+
+  /** Scrolls the view just enough to bring the given component-pixel point into the viewport. */
+  private void scrollPointVisible(final int px, final int py) {
+    if (canvasPane == null) return;
+    final var viewportSize = canvasPane.getViewportSize();
+    var dx = 0;
+    var dy = 0;
+    if (px < 0) {
+      dx = -px;
+    } else if (px >= viewportSize.width) {
+      dx = viewportSize.width - 1 - px;
+    }
+    if (py < 0) {
+      dy = -py;
+    } else if (py >= viewportSize.height) {
+      dy = viewportSize.height - 1 - py;
+    }
+    if (dx != 0 || dy != 0) panBy(dx, dy);
+  }
+
+  /** Starts middle-button drag panning. */
+  private void beginPan(final MouseEvent e) {
+    if (canvasPane == null) return;
+    panning = true;
+    panStartScreenX = e.getXOnScreen();
+    panStartScreenY = e.getYOnScreen();
+    panStartViewX = viewX;
+    panStartViewY = viewY;
+    setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    e.consume();
+  }
+
+  /** Stops middle-button drag panning and restores the tool cursor. */
+  private void endPan() {
+    panning = false;
+    final var tool = proj.getTool();
+    setCursor(tool == null ? Cursor.getDefaultCursor() : tool.getCursor());
   }
 
   public void setVerticalScrollBar(int posY) {
-    canvasPane.getVerticalScrollBar().setValue(posY);
+    setViewOrigin(viewX, -posY);
   }
 
   @Override
@@ -509,12 +570,13 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   @Override
   public boolean getScrollableTracksViewportHeight() {
-    return false;
+    // The infinite canvas fills the viewport; panning is done through the camera, not scroll bars.
+    return true;
   }
 
   @Override
   public boolean getScrollableTracksViewportWidth() {
-    return false;
+    return true;
   }
 
   @Override
@@ -531,8 +593,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   public String getToolTipText(final MouseEvent event) {
     boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
     if (showTips) {
-      Canvas.snapToGrid(event);
-      final var loc = Location.create(event.getX(), event.getY(), false);
+      final var zoom = getZoomFactor();
+      final var x = snapXToGrid((int) Math.round((event.getX() - viewX) / zoom));
+      final var y = snapYToGrid((int) Math.round((event.getY() - viewY) / zoom));
+      final var loc = Location.create(x, y, false);
       ComponentUserEvent e = null;
       for (final var comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
@@ -542,7 +606,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           }
           final var ret = maker.getToolTip(e);
           if (ret != null) {
-            unrepairMouseEvent(event);
             return ret;
           }
         }
@@ -623,38 +686,28 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   @Override
   public void repaint(int x, int y, int width, int height) {
+    // Coordinates are given in circuit space; translate them through the camera and zoom.
     final var zoom = getZoomFactor();
-    if (zoom < 1.0) {
-      final var newX = (int) Math.floor(x * zoom);
-      final var newY = (int) Math.floor(y * zoom);
-      width += x - newX;
-      height += y - newY;
-      x = newX;
-      y = newY;
-    } else if (zoom > 1.0) {
-      final var x1 = (int) Math.ceil((x + width) * zoom);
-      final var y1 = (int) Math.ceil((y + height) * zoom);
-      width = x1 - x;
-      height = y1 - y;
-    }
-    super.repaint(x, y, width, height);
+    final var newX = (int) Math.floor(viewX + x * zoom);
+    final var newY = (int) Math.floor(viewY + y * zoom);
+    width = (int) Math.ceil(viewX + (x + width) * zoom) - newX;
+    height = (int) Math.ceil(viewY + (y + height) * zoom) - newY;
+    super.repaint(newX, newY, width, height);
   }
 
   @Override
   public void repaint(Rectangle r) {
-    final var zoom = getZoomFactor();
-    if (zoom == 1.0) {
-      super.repaint(r);
-    } else {
-      this.repaint(r.x, r.y, r.width, r.height);
-    }
+    this.repaint(r.x, r.y, r.width, r.height);
   }
 
   private void repairMouseEvent(MouseEvent e) {
+    // Translate a component-pixel event into circuit coordinates.
     final var zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      zoomEvent(e, zoom);
-    }
+    final var oldx = e.getX();
+    final var oldy = e.getY();
+    final var newx = (int) Math.round((oldx - viewX) / zoom);
+    final var newy = (int) Math.round((oldy - viewY) / zoom);
+    e.translatePoint(newx - oldx, newy - oldy);
   }
 
   public void updateArrows() {
@@ -674,10 +727,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       viewport.repaint();
       return;
     }
-    var x = circBds.getX();
-    var y = circBds.getY();
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
+    final var x = circBds.getX();
+    final var y = circBds.getY();
     setArrows(x, y, x + circBds.getWidth(), y + circBds.getHeight());
   }
 
@@ -694,7 +745,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       final var bds = (g != null)
             ? proj.getCurrentCircuit().getBounds(getGraphics())
             : proj.getCurrentCircuit().getBounds();
-      viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
+      viewableBase = new Rectangle(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
     double zoom = getZoomFactor();
     if (zoom == 1.0) {
@@ -736,7 +787,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   }
 
   public void setHorizontalScrollBar(int posX) {
-    canvasPane.getHorizontalScrollBar().setValue(posX);
+    setViewOrigin(-posX, viewY);
   }
 
   public void setScrollBar(int posX, int posY) {
@@ -745,21 +796,13 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   }
 
   public void showPopupMenu(JPopupMenu menu, int x, int y) {
+    // x/y arrive in circuit coordinates.
     final var zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      x = (int) Math.round(x * zoom);
-      y = (int) Math.round(y * zoom);
-    }
+    x = (int) Math.round(viewX + x * zoom);
+    y = (int) Math.round(viewY + y * zoom);
     myListener.menuOn = true;
     menu.addPopupMenuListener(myListener);
     menu.show(this, x, y);
-  }
-
-  private void unrepairMouseEvent(MouseEvent e) {
-    final var zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      zoomEvent(e, 1.0 / zoom);
-    }
   }
 
   private void waitForRepaintDone() {
@@ -773,42 +816,41 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
   }
 
-  private void zoomEvent(MouseEvent e, double zoom) {
-    final var oldx = e.getX();
-    final var oldy = e.getY();
-    final var newx = (int) Math.round(e.getX() / zoom);
-    final var newy = (int) Math.round(e.getY() / zoom);
-    e.translatePoint(newx - oldx, newy - oldy);
-  }
-
   @Override
-  public void adjustmentValueChanged(AdjustmentEvent e) {
-    updateArrows();
+  public void zoomFactorChanged(final ZoomModel model, final double oldZoom, final double newZoom) {
+    if (canvasPane == null || oldZoom <= 0.0 || newZoom <= 0.0) return;
+    final var viewportSize = canvasPane.getViewportSize();
+    final var anchor = zoomAnchorScreen;
+    final var screenX = (anchor != null) ? anchor.x : viewportSize.width / 2;
+    final var screenY = (anchor != null) ? anchor.y : viewportSize.height / 2;
+    // Circuit coordinate that is currently under the anchor point...
+    final var circuitX = (screenX - viewX) / oldZoom;
+    final var circuitY = (screenY - viewY) / oldZoom;
+    zoomAnchorScreen = null;
+    // ...must end up under the same anchor point after the zoom change.
+    setViewOrigin(
+        (int) Math.round(screenX - circuitX * newZoom),
+        (int) Math.round(screenY - circuitY * newZoom));
   }
 
   private void doZoom(Point mouseLocation, boolean zoomIn) {
-    var zoomControl = proj.getFrame().getZoomControl();
-    final var oldView = getViewableBaseRect();
+    if (canvasPane == null) return;
     final var oldZoom = getZoomFactor();
-    if (zoomIn) {
-      zoomControl.zoomIn();
-    } else {
-      zoomControl.zoomOut();
-    }
+    final var newZoom =
+        Math.max(
+            MIN_ZOOM,
+            Math.min(MAX_ZOOM, zoomIn ? oldZoom * ZOOM_WHEEL_STEP : oldZoom / ZOOM_WHEEL_STEP));
+    if (newZoom == oldZoom) return;
     if (mouseLocation != null) {
-      final var newZoom = getZoomFactor();
-
-      final var mouseInViewX = ((mouseLocation.x * oldZoom) - oldView.x) / oldView.width;
-      final var mouseInViewY = ((mouseLocation.y * oldZoom) - oldView.y) / oldView.height;
-
-      final var newView = getViewableBaseRect();
-      final var newViewOffsetX = (mouseLocation.x * newZoom) - (newView.width * mouseInViewX);
-      final var newViewOffsetY = (mouseLocation.y * newZoom) - (newView.height * mouseInViewY);
-
-      viewport.doLayout();
-      setHorizontalScrollBar((int) Math.round(newViewOffsetX));
-      setVerticalScrollBar((int) Math.round(newViewOffsetY));
+      // Remember where the mouse currently sits so the zoom listener can keep it anchored.
+      zoomAnchorScreen =
+          new Point(
+              (int) Math.round(viewX + mouseLocation.x * oldZoom),
+              (int) Math.round(viewY + mouseLocation.y * oldZoom));
+    } else {
+      zoomAnchorScreen = null;
     }
+    proj.getFrame().getZoomModel().setZoomFactor(newZoom);
   }
 
   private class MyListener
@@ -843,8 +885,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         if (ml != null) { // Handle the Cursor not being on the component
           final var oldx = ml.x;
           final var oldy = ml.y;
-          final var newx = (int) Math.round(ml.getX() / getZoomFactor());
-          final var newy = (int) Math.round(ml.getY() / getZoomFactor());
+          final var newx = (int) Math.round((ml.getX() - viewX) / getZoomFactor());
+          final var newy = (int) Math.round((ml.getY() - viewY) / getZoomFactor());
           ml.translate(newx - oldx, newy - oldy);
         }
         switch (e.getKeyCode()) {
@@ -891,12 +933,19 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mouseDragged(MouseEvent e) {
+      if (panning) {
+        setViewOrigin(
+            panStartViewX + (e.getXOnScreen() - panStartScreenX),
+            panStartViewY + (e.getYOnScreen() - panStartScreenY));
+        e.consume();
+        return;
+      }
       if (dragTool != null) {
         dragTool.mouseDragged(Canvas.this, getGraphics(), e);
-        final var zoomModel = proj.getFrame().getZoomModel();
-        double zoomFactor = zoomModel.getZoomFactor();
-        scrollRectToVisible(
-            new Rectangle((int) (e.getX() * zoomFactor), (int) (e.getY() * zoomFactor), 1, 1));
+        final var zoom = getZoomFactor();
+        scrollPointVisible(
+            (int) Math.round(viewX + e.getX() * zoom),
+            (int) Math.round(viewY + e.getY() * zoom));
       }
     }
 
@@ -945,12 +994,15 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     public void mousePressed(MouseEvent e) {
       int button = e.getButton();
       if (button >= 4 && button <= 7) {
-        if (canvasPane != null) {
-          final var bar = canvasPane.getHorizontalScrollBar();
-          int direction = (button == 4 || button == 6) ? -1 : 1;
-          int scrollAmount = bar.getUnitIncrement() * 10 * direction;
-          bar.setValue(bar.getValue() + scrollAmount);
-        }
+        final int direction = (button == 4 || button == 6) ? -1 : 1;
+        final int scrollAmount = (int) Math.round(100 * getZoomFactor());
+        panBy(-direction * scrollAmount, 0);
+        return;
+      }
+
+      if (button == MouseEvent.BUTTON2) {
+        // Middle mouse button: drag to pan the infinite canvas.
+        beginPan(e);
         return;
       }
 
@@ -986,6 +1038,13 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mouseReleased(MouseEvent e) {
+      if (panning && e.getButton() == MouseEvent.BUTTON2) {
+        endPan();
+        if (e.getClickCount() == 2) {
+          center();
+        }
+        return;
+      }
       if ((e.getButton() == MouseEvent.BUTTON1
               && viewport.zoomButtonVisible
               && autoZoomButtonClicked(
@@ -1020,16 +1079,21 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       if (mwe.isControlDown()) {
         repairMouseEvent(mwe);
         doZoom(mwe.getPoint(), mwe.getWheelRotation() < 0);
+        mwe.consume();
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
         tool.keyPressed(Canvas.this, e);
+        mwe.consume();
       } else {
+        final int amount =
+            mwe.getWheelRotation() * 2 * (int) Math.round(10 * getZoomFactor());
         if (mwe.isShiftDown()) {
-          canvasPane.getHorizontalScrollBar().setValue(scrollValue(canvasPane.getHorizontalScrollBar(), mwe.getWheelRotation()));
+          panBy(-amount, 0);
         } else {
-          canvasPane.getVerticalScrollBar().setValue(scrollValue(canvasPane.getVerticalScrollBar(), mwe.getWheelRotation()));
+          panBy(0, -amount);
         }
+        mwe.consume();
       }
     }
 
@@ -1063,19 +1127,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       } else if (AppPreferences.CANVAS_BG_COLOR.isSource(event)) {
         setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
       }
-    }
-
-    private int scrollValue(JScrollBar bar, int val) {
-      if (val > 0) {
-        if (bar.getValue() < bar.getMaximum() + val * 2 * bar.getBlockIncrement()) {
-          return bar.getValue() + val * 2 * bar.getBlockIncrement();
-        }
-      } else {
-        if (bar.getValue() > bar.getMinimum() + val * 2 * bar.getBlockIncrement()) {
-          return bar.getValue() + val * 2 * bar.getBlockIncrement();
-        }
-      }
-      return 0;
     }
   }
 

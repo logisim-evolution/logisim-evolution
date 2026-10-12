@@ -95,7 +95,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       if (loc.getX() < bbox.getX() + bbox.getWidth()
           && loc.getY() + shape.getBounds().getHeight() >= bbox.getY() + bbox.getHeight())
         // if we are below the bounding box, move right and up
-        shape.translate(10, (bbox.getY() + 9) / 10 * 10 - loc.getY());
+        shape.translate(10, Math.floorDiv(bbox.getY() + 9, 10) * 10 - loc.getY());
     }
   }
 
