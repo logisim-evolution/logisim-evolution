@@ -17,10 +17,10 @@ import java.util.prefs.PreferenceChangeEvent;
  */
 class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   /** Default integer value for this preference monitor. */
-  protected final int dflt;
+  private final int dflt;
 
   /** Current integer value of this preference monitor. */
-  protected int value;
+  private int value;
 
   /**
    * Constructs a new preference monitor for integer values.
