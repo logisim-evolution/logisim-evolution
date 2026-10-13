@@ -3,7 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
-  *  * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
+  * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
     [#3076] (@hewzhew).
   * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages
