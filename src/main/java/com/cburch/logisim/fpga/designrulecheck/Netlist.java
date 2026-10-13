@@ -1189,6 +1189,8 @@ public class Netlist {
           if (end == 0) {
             // This is a main net, find the connected end.
             final var splitterEnd = busBitConnection[bitIndex];
+            // Endpoint 0 denotes an unconnected bit, not the combined end.
+            if (splitterEnd == 0) continue;
             /* Find the corresponding Net index */
             Byte netIndex = 0;
             for (var index = 0; index < bitIndex; index++) {
@@ -1444,6 +1446,8 @@ public class Netlist {
           if (end == 0) {
             /* this is a main net, find the connected end */
             final var splitterEnd = busBitConnection[bitIndex];
+            // Endpoint 0 denotes an unconnected bit, not the combined end.
+            if (splitterEnd == 0) continue;
             /* Find the corresponding Net index */
             Byte netIndex = 0;
             for (var index = 0; index < bitIndex; index++) {
@@ -1509,6 +1513,8 @@ public class Netlist {
           if (end == 0) {
             // This is a main net, find the connected end.
             var splitterEnd = busBitConnection[combinedBitIndex];
+            // Endpoint 0 denotes an unconnected bit, not the combined end.
+            if (splitterEnd == 0) continue;
             /* Find the corresponding Net index */
             Byte netIndex = 0;
             for (var index = 0; index < combinedBitIndex; index++) {
