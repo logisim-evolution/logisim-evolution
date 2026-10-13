@@ -425,8 +425,21 @@ public class CircuitState implements InstanceData {
     }
   }
 
+  // How far back markComponentAsDirty looks for the same component.
+  private static final int DIRTY_LOOKBACK = 16;
+
   public void markComponentAsDirty(Component comp) {
     synchronized (dirtyLock) {
+      // A component is marked once for every one of its input nets that
+      // changed in the same step, and each mark would run it again on the same
+      // inputs -- a 16-input gate fed by sixteen one-bit wires ran up to sixteen
+      // times. Running it once is the same result. The repeats land close
+      // together (one net marks all its sinks, then the next net does), so a
+      // short look back finds them.
+      final var n = dirtyComponents.size();
+      for (var i = n - 1; i >= 0 && i >= n - DIRTY_LOOKBACK; i--) {
+        if (dirtyComponents.get(i) == comp) return;
+      }
       dirtyComponents.add(comp);
     }
   }

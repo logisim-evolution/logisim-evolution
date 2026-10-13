@@ -842,6 +842,14 @@ public class Circuit {
     return false;
   }
 
+  /**
+   * A value that changes whenever anything in this circuit is connected or
+   * disconnected, and never repeats. isConnected() answers stay good while it holds.
+   */
+  public int getWiringVersion() {
+    return wires.points.getVersion();
+  }
+
   void mutatorAdd(Component c) {
     locker.checkForWritePermission("add", this);
 

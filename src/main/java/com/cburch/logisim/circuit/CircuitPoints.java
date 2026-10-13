@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class CircuitPoints {
   private static class LocationData {
@@ -31,8 +32,19 @@ class CircuitPoints {
   private final HashMap<Location, LocationData> map = new HashMap<>();
   private final HashMap<Location, WidthIncompatibilityData> incompatibilityData = new HashMap<>();
 
+  // A new value whenever an end is attached here or detached, drawn from
+  // one counter for every circuit, so a value is never seen twice -- not even
+  // after Circuit.mutatorClear() replaces its wires. Lets a component cache
+  // which of its ends are connected and know when to look again.
+  private static final AtomicInteger versions = new AtomicInteger();
+  private volatile int version = versions.incrementAndGet();
+
   public CircuitPoints() {
     // Do nothing.
+  }
+
+  int getVersion() {
+    return version;
   }
 
   //
@@ -64,6 +76,7 @@ class CircuitPoints {
     locData.components.add(comp);
     locData.ends.add(endData);
     computeIncompatibilityData(loc, locData);
+    version = versions.incrementAndGet();
   }
 
   private void computeIncompatibilityData(Location loc, LocationData locData) {
@@ -221,5 +234,6 @@ class CircuitPoints {
       locData.ends.remove(index);
       computeIncompatibilityData(loc, locData);
     }
+    version = versions.incrementAndGet();
   }
 }

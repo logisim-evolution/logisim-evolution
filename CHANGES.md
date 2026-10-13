@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Sped up simulation by running a queued component once per step and caching which of its ports are connected
+    [#3065] (@Kejoki).
   * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
     [#3076] (@hewzhew).
   * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages

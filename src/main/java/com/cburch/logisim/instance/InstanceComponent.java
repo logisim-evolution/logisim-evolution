@@ -11,6 +11,7 @@ package com.cburch.logisim.instance;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -62,6 +63,13 @@ public final class InstanceComponent implements Component, AttributeListener, To
   private InstanceStateImpl instanceState;
   private boolean doMarkInstance;
   private boolean doMarkLabel;
+
+  // Which ends have something else attached, and the circuit wiring
+  // version that was true at. A gate asks about every input each time it runs,
+  // and the wiring almost never changes while the simulation does.
+  private record Attached(int version, long ends) {}
+
+  private volatile Attached attached;
 
   public InstanceComponent(InstanceFactory factory, Location loc, AttributeSet attrs) {
     this.listeners = null;
@@ -341,6 +349,23 @@ public final class InstanceComponent implements Component, AttributeListener, To
   @Override
   public EndData getEnd(int index) {
     return endArray[index];
+  }
+
+  /** Circuit.isConnected() for one of this component's ends, cached until circ's wiring changes. */
+  boolean isPortConnected(Circuit circ, int index) {
+    if (index >= Long.SIZE) return circ.isConnected(getEnd(index).getLocation(), this);
+    final var version = circ.getWiringVersion();
+    var known = attached;
+    if (known == null || known.version() != version) {
+      var ends = 0L;
+      final var list = endList;
+      for (var i = 0; i < list.size() && i < Long.SIZE; i++) {
+        if (circ.isConnected(list.get(i).getLocation(), this)) ends |= 1L << i;
+      }
+      known = new Attached(version, ends);
+      attached = known;
+    }
+    return (known.ends() & (1L << index)) != 0;
   }
 
   //
