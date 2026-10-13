@@ -805,7 +805,7 @@ public class AppPreferences {
     Value.clockFrequencyColor = new Color(CLOCK_FREQUENCY_COLOR.get());
   }
 
-  // Restores only the current theme's grid, component, and signal colors.
+  // Restores only the current theme's grid, component, and simulation colors.
   public static void setDefaultGridColors() {
     resetThemeColor(CANVAS_BG_COLOR);
     resetThemeColor(GRID_BG_COLOR);
@@ -826,6 +826,11 @@ public class AppPreferences {
     resetThemeColor(NIL_COLOR);
     resetThemeColor(BUS_COLOR);
     resetThemeColor(STROKE_COLOR);
+    resetThemeColor(WIDTH_ERROR_COLOR);
+    resetThemeColor(WIDTH_ERROR_CAPTION_COLOR);
+    resetThemeColor(WIDTH_ERROR_HIGHLIGHT_COLOR);
+    resetThemeColor(WIDTH_ERROR_BACKGROUND_COLOR);
+    resetThemeColor(CLOCK_FREQUENCY_COLOR);
     applyThemeColors();
   }
 
@@ -994,16 +999,23 @@ public class AppPreferences {
       create(new ThemeColorPreference("SimBusColor", DEFAULT_BUS_COLOR, DARK_BUS_COLOR));
   public static final PrefMonitor<Integer> STROKE_COLOR =
       create(new ThemeColorPreference("SimStrokeColor", DEFAULT_STROKE_COLOR, DARK_STROKE_COLOR));
+  // These annotations retain the existing defaults in both light and dark themes,
+  // while user-selected colors and reset values are stored independently for each theme.
   public static final PrefMonitor<Integer> WIDTH_ERROR_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorColor", DEFAULT_WIDTH_ERROR_COLOR));
+      create(new ThemeColorPreference("SimWidthErrorColor", DEFAULT_WIDTH_ERROR_COLOR,
+          DEFAULT_WIDTH_ERROR_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_CAPTION_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorCaptionColor", DEFAULT_WIDTH_ERROR_CAPTION_COLOR));
+      create(new ThemeColorPreference("SimWidthErrorCaptionColor", DEFAULT_WIDTH_ERROR_CAPTION_COLOR,
+          DEFAULT_WIDTH_ERROR_CAPTION_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_HIGHLIGHT_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorHighlightColor", DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR));
+      create(new ThemeColorPreference("SimWidthErrorHighlightColor",
+          DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR, DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR));
   public static final PrefMonitor<Integer> WIDTH_ERROR_BACKGROUND_COLOR =
-      create(new PrefMonitorInt("SimWidthErrorBackgroundColor", DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR));
+      create(new ThemeColorPreference("SimWidthErrorBackgroundColor",
+          DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR, DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR));
   public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
-      create(new PrefMonitorInt("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR));
+      create(new ThemeColorPreference("SimClockFrequencyColor", DEFAULT_CLOCK_FREQUENCY_COLOR,
+          DEFAULT_CLOCK_FREQUENCY_COLOR));
   public static final PrefMonitor<Integer> KMAP_CELL_TEXT_COLOR =
       create(new ThemeColorPreference("KmapCellTextColor", DEFAULT_KMAP_CELL_TEXT_COLOR,
           DARK_KMAP_CELL_TEXT_COLOR));
