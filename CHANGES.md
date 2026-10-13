@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
+    [#3076] (@hewzhew).
   * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages
     [#3008] (@hewzhew).
   * Fixed FPGA net tracing through unconnected splitter bits and resulting false short-circuit errors

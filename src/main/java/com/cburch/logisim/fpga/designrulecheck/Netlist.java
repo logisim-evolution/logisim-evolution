@@ -1654,7 +1654,8 @@ public class Netlist {
         } else if (net.getBitWidth() == 1 && net.getSourceNets(0).size() > 1) {
           // We have to check if the net is connected to multiple drivers
           final var sourceNets = net.getSourceNets(0);
-          final var sourceConnections = new HashMap<Component, Integer>();
+          // Each output bit has its own ConnectionPoint, shared by all paths to that driver.
+          final var sourceConnections = new HashSet<ConnectionPoint>();
           final var segments = new HashSet<>(net.getWires());
           var foundShortCrcuit = false;
           final var error = new SimpleDrcContainer(myCircuit, S.get("NetList_ShortCircuit"), SimpleDrcContainer.LEVEL_FATAL, SimpleDrcContainer.MARK_WIRE | SimpleDrcContainer.MARK_INSTANCE);
@@ -1667,9 +1668,8 @@ public class Netlist {
               final var comp = source.getSource().getComp();
               for (final var seg : segments) error.addMarkComponent(seg);
               error.addMarkComponent(comp);
-              final var index = source.getIndex();
-              foundShortCrcuit |= (sourceConnections.containsKey(comp) && sourceConnections.get(comp) != index) || (sourceConnections.keySet().size() > 0);
-              sourceConnections.put(comp, index);
+              sourceConnections.add(source.getSource());
+              foundShortCrcuit |= sourceConnections.size() > 1;
             }
           }
           if (foundShortCrcuit) {
