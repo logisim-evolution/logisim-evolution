@@ -69,6 +69,10 @@ dependencies {
 
   // Fork: modern UI (Compose for Desktop, embedded into Swing via ComposePanel)
   implementation(compose.desktop.currentOs)
+  implementation(compose.desktop.windows_x64)
+  implementation(compose.desktop.linux_x64)
+  implementation(compose.desktop.macos_x64)
+  implementation(compose.desktop.macos_arm64)
   implementation(compose.material3)
 
   // NOTE: Be aware of reported issues with Eclipse and Batik

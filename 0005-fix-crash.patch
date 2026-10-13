@@ -1,0 +1,352 @@
+From 6bd344d92d795c63ccb0f20193cbb5e933f330f6 Mon Sep 17 00:00:00 2001
+From: Felix <flexy0630@gmail.com>
+Date: Tue, 6 Oct 2026 20:50:27 +0200
+Subject: [PATCH] Modern UI: fix native crash (drop compose WINDOW layers),
+ Swing tooltips/zoom menu
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01NETrfprDqN5JJBtXY5kXZ4
+---
+ .../logisim/gui/modern/ModernToolbar.kt       | 107 ++++++++++--------
+ .../com/cburch/logisim/gui/modern/ModernUi.kt |   8 --
+ .../logisim/gui/modern/ModernZoomBar.kt       |  69 ++++++-----
+ 3 files changed, 93 insertions(+), 91 deletions(-)
+
+diff --git a/src/main/kotlin/com/cburch/logisim/gui/modern/ModernToolbar.kt b/src/main/kotlin/com/cburch/logisim/gui/modern/ModernToolbar.kt
+index 26a41891..1b2b2779 100644
+--- a/src/main/kotlin/com/cburch/logisim/gui/modern/ModernToolbar.kt
++++ b/src/main/kotlin/com/cburch/logisim/gui/modern/ModernToolbar.kt
+@@ -9,9 +9,7 @@
+ 
+ package com.cburch.logisim.gui.modern
+ 
+-import androidx.compose.foundation.ExperimentalFoundationApi
+ import androidx.compose.foundation.Image
+-import androidx.compose.foundation.TooltipArea
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.border
+ import androidx.compose.foundation.clickable
+@@ -30,8 +28,8 @@ import androidx.compose.foundation.layout.width
+ import androidx.compose.foundation.shape.RoundedCornerShape
+ import androidx.compose.material3.MaterialTheme
+ import androidx.compose.material3.Surface
+-import androidx.compose.material3.Text
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.MutableState
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableIntStateOf
+@@ -56,10 +54,14 @@ import java.awt.BorderLayout
+ import java.awt.Component
+ import java.awt.Dimension
+ import java.awt.Graphics
++import java.awt.MouseInfo
+ import java.awt.RenderingHints
+ import java.awt.image.BufferedImage
+ import javax.swing.JPanel
++import javax.swing.Popup
++import javax.swing.PopupFactory
+ import javax.swing.SwingUtilities
++import javax.swing.Timer
+ import kotlin.math.ceil
+ import kotlin.math.max
+ 
+@@ -102,7 +104,7 @@ class ModernToolbar(private val toolbar: Toolbar) : JPanel(BorderLayout()) {
+     themeKey = key
+     val compose = ComposePanel()
+     compose.setContent {
+-      LogisimTheme(key.value) { ToolbarContent(state, toolbar, ::onItemClicked) }
++      LogisimTheme(key.value) { ToolbarContent(state, toolbar, ::onItemClicked, ::onHover) }
+     }
+     add(compose, BorderLayout.CENTER)
+   }
+@@ -114,6 +116,38 @@ class ModernToolbar(private val toolbar: Toolbar) : JPanel(BorderLayout()) {
+ 
+   private var retryScheduled = false
+ 
++  // ---- tooltips: shown as a regular Swing tooltip popup, so they are never clipped ----------
++  private var tipPopup: Popup? = null
++  private var pendingTip: String? = null
++  private val tipTimer = Timer(600) { showTip() }.apply { isRepeats = false }
++
++  private fun onHover(text: String?, hovered: Boolean) {
++    if (hovered) {
++      hideTip()
++      pendingTip = text
++      if (text.isNullOrBlank()) tipTimer.stop() else tipTimer.restart()
++    } else if (pendingTip == text) {
++      pendingTip = null
++      tipTimer.stop()
++      hideTip()
++    }
++  }
++
++  private fun showTip() {
++    val text = pendingTip ?: return
++    if (!isShowing) return
++    val p = MouseInfo.getPointerInfo()?.location ?: return
++    val tip = createToolTip()
++    tip.tipText = text
++    tipPopup = PopupFactory.getSharedInstance().getPopup(this, tip, p.x + 12, p.y + 20)
++    tipPopup?.show()
++  }
++
++  private fun hideTip() {
++    tipPopup?.hide()
++    tipPopup = null
++  }
++
+   /**
+    * Model queries can fail while the frame is still being constructed (the old Swing toolbar only
+    * asked lazily while painting). Treat failures as "not selected" and retry once the EDT is free.
+@@ -190,6 +224,9 @@ class ModernToolbar(private val toolbar: Toolbar) : JPanel(BorderLayout()) {
+   }
+ 
+   private fun onItemClicked(entry: ToolbarEntry) {
++    pendingTip = null
++    tipTimer.stop()
++    hideTip()
+     val model = toolbar.toolbarModel ?: return
+     val item = entry.item
+     if (item.isSelectable) {
+@@ -206,6 +243,7 @@ private fun ToolbarContent(
+     state: ToolbarState,
+     host: Component,
+     onClick: (ToolbarEntry) -> Unit,
++    onHover: (String?, Boolean) -> Unit,
+ ) {
+   Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
+     if (state.vertical) {
+@@ -214,7 +252,7 @@ private fun ToolbarContent(
+           verticalArrangement = Arrangement.spacedBy(BUTTON_GAP.dp),
+           horizontalAlignment = Alignment.CenterHorizontally,
+       ) {
+-        state.entries.forEach { ToolbarButton(it, state.revision, true, host, onClick) }
++        state.entries.forEach { ToolbarButton(it, state.revision, true, host, onClick, onHover) }
+       }
+     } else {
+       Row(
+@@ -222,13 +260,12 @@ private fun ToolbarContent(
+           horizontalArrangement = Arrangement.spacedBy(BUTTON_GAP.dp),
+           verticalAlignment = Alignment.CenterVertically,
+       ) {
+-        state.entries.forEach { ToolbarButton(it, state.revision, false, host, onClick) }
++        state.entries.forEach { ToolbarButton(it, state.revision, false, host, onClick, onHover) }
+       }
+     }
+   }
+ }
+ 
+-@OptIn(ExperimentalFoundationApi::class)
+ @Composable
+ private fun ToolbarButton(
+     entry: ToolbarEntry,
+@@ -236,6 +273,7 @@ private fun ToolbarButton(
+     vertical: Boolean,
+     host: Component,
+     onClick: (ToolbarEntry) -> Unit,
++    onHover: (String?, Boolean) -> Unit,
+ ) {
+   val colors = MaterialTheme.colorScheme
+ 
+@@ -257,47 +295,22 @@ private fun ToolbarButton(
+         else -> Color.Transparent
+       }
+ 
+-  val button: @Composable () -> Unit = {
+-    Box(
+-        modifier =
+-            Modifier.clip(shape)
+-                .background(background)
+-                .then(
+-                    if (entry.selected) Modifier.border(1.dp, colors.primary.copy(alpha = 0.6f), shape)
+-                    else Modifier
+-                )
+-                .hoverable(interaction)
+-                .clickable(enabled = entry.interactive) { onClick(entry) }
+-                .padding(BUTTON_PADDING.dp),
+-        contentAlignment = Alignment.Center,
+-    ) {
+-      ToolbarIcon(entry, revision, host)
+-    }
+-  }
++  LaunchedEffect(hovered) { onHover(entry.tooltip, hovered) }
+ 
+-  val tooltip = entry.tooltip
+-  if (tooltip.isNullOrBlank()) {
+-    button()
+-  } else {
+-    TooltipArea(
+-        tooltip = {
+-          Surface(
+-              shape = RoundedCornerShape(6.dp),
+-              color = colors.inverseSurface,
+-              shadowElevation = 4.dp,
+-          ) {
+-            Text(
+-                tooltip,
+-                color = colors.inverseOnSurface,
+-                style = MaterialTheme.typography.labelMedium,
+-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+-            )
+-          }
+-        },
+-        delayMillis = 600,
+-    ) {
+-      button()
+-    }
++  Box(
++      modifier =
++          Modifier.clip(shape)
++              .background(background)
++              .then(
++                  if (entry.selected) Modifier.border(1.dp, colors.primary.copy(alpha = 0.6f), shape)
++                  else Modifier
++              )
++              .hoverable(interaction)
++              .clickable(enabled = entry.interactive) { onClick(entry) }
++              .padding(BUTTON_PADDING.dp),
++      contentAlignment = Alignment.Center,
++  ) {
++    ToolbarIcon(entry, revision, host)
+   }
+ }
+ 
+diff --git a/src/main/kotlin/com/cburch/logisim/gui/modern/ModernUi.kt b/src/main/kotlin/com/cburch/logisim/gui/modern/ModernUi.kt
+index 3b8ecf24..6a800ea6 100644
+--- a/src/main/kotlin/com/cburch/logisim/gui/modern/ModernUi.kt
++++ b/src/main/kotlin/com/cburch/logisim/gui/modern/ModernUi.kt
+@@ -22,14 +22,6 @@ import javax.swing.JComponent
+ object ModernUi {
+   private const val PROPERTY = "logisim.modernUi"
+ 
+-  init {
+-    // Popups (dropdowns, tooltips) of small embedded ComposePanels would otherwise be clipped
+-    // to the panel bounds -> render them as separate undecorated windows.
+-    if (System.getProperty("compose.layers.type") == null) {
+-      System.setProperty("compose.layers.type", "WINDOW")
+-    }
+-  }
+-
+   @JvmStatic
+   fun isEnabled(): Boolean = System.getProperty(PROPERTY)?.toBooleanStrictOrNull() ?: true
+ 
+diff --git a/src/main/kotlin/com/cburch/logisim/gui/modern/ModernZoomBar.kt b/src/main/kotlin/com/cburch/logisim/gui/modern/ModernZoomBar.kt
+index 0f689802..749db0e0 100644
+--- a/src/main/kotlin/com/cburch/logisim/gui/modern/ModernZoomBar.kt
++++ b/src/main/kotlin/com/cburch/logisim/gui/modern/ModernZoomBar.kt
+@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.padding
+ import androidx.compose.foundation.layout.size
+ import androidx.compose.foundation.layout.widthIn
+ import androidx.compose.foundation.shape.RoundedCornerShape
+-import androidx.compose.material3.DropdownMenu
+-import androidx.compose.material3.DropdownMenuItem
+ import androidx.compose.material3.MaterialTheme
+ import androidx.compose.material3.Slider
+ import androidx.compose.material3.Surface
+@@ -53,7 +51,9 @@ import java.awt.BorderLayout
+ import java.awt.Dimension
+ import java.beans.PropertyChangeEvent
+ import java.beans.PropertyChangeListener
++import javax.swing.JMenuItem
+ import javax.swing.JPanel
++import javax.swing.JPopupMenu
+ import javax.swing.SwingUtilities
+ import kotlin.math.abs
+ import kotlin.math.max
+@@ -80,6 +80,8 @@ internal interface ZoomActions {
+   fun autoZoom()
+ 
+   fun toggleGrid()
++
++  fun showZoomMenu()
+ }
+ 
+ /**
+@@ -119,6 +121,24 @@ class ModernZoomBar(private val control: ZoomControl) : JPanel(BorderLayout()),
+           val m = model ?: return
+           m.showGrid = !m.showGrid
+         }
++
++        override fun showZoomMenu() {
++          val menu = JPopupMenu()
++          fun add(label: String, enabled: Boolean, action: () -> Unit) {
++            val item = JMenuItem(label)
++            item.isEnabled = enabled
++            item.addActionListener { action() }
++            menu.add(item)
++          }
++          add("×½", state.autoEnabled) { zoomToFactor(0.5) }
++          add("×1", state.enabled) { zoomToFactor(1.0) }
++          add("×2", state.enabled) { zoomToFactor(2.0) }
++          menu.addSeparator()
++          add("Fit", state.autoEnabled) { autoZoom() }
++          val size = menu.preferredSize
++          // open upwards, right-aligned (the zoom bar sits at the bottom of the window)
++          menu.show(this@ModernZoomBar, width - size.width - 40, -size.height)
++        }
+       }
+ 
+   init {
+@@ -178,7 +198,6 @@ class ModernZoomBar(private val control: ZoomControl) : JPanel(BorderLayout()),
+ @Composable
+ private fun ZoomBarContent(state: ZoomState, actions: ZoomActions) {
+   val colors = MaterialTheme.colorScheme
+-  var menuOpen by remember { mutableStateOf(false) }
+ 
+   Surface(color = colors.background, modifier = Modifier.fillMaxSize()) {
+     Row(
+@@ -203,39 +222,17 @@ private fun ZoomBarContent(state: ZoomState, actions: ZoomActions) {
+ 
+       GlyphButton(enabled = state.enabled, onClick = actions::zoomIn) { drawPlus(it) }
+ 
+-      Box {
+-        Text(
+-            state.label,
+-            style = MaterialTheme.typography.labelLarge,
+-            fontWeight = FontWeight.SemiBold,
+-            modifier =
+-                Modifier.widthIn(min = 44.dp)
+-                    .clip(RoundedCornerShape(8.dp))
+-                    .background(colors.surfaceContainerHigh)
+-                    .clickable(enabled = state.enabled) { menuOpen = true }
+-                    .padding(horizontal = 8.dp, vertical = 5.dp),
+-        )
+-        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+-          listOf("×½" to 0.5, "×1" to 1.0, "×2" to 2.0).forEach { (label, factor) ->
+-            DropdownMenuItem(
+-                text = { Text(label) },
+-                enabled = factor != 0.5 || state.autoEnabled,
+-                onClick = {
+-                  menuOpen = false
+-                  actions.zoomToFactor(factor)
+-                },
+-            )
+-          }
+-          DropdownMenuItem(
+-              text = { Text("Fit") },
+-              enabled = state.autoEnabled,
+-              onClick = {
+-                menuOpen = false
+-                actions.autoZoom()
+-              },
+-          )
+-        }
+-      }
++      Text(
++          state.label,
++          style = MaterialTheme.typography.labelLarge,
++          fontWeight = FontWeight.SemiBold,
++          modifier =
++              Modifier.widthIn(min = 44.dp)
++                  .clip(RoundedCornerShape(8.dp))
++                  .background(colors.surfaceContainerHigh)
++                  .clickable(enabled = state.enabled) { actions.showZoomMenu() }
++                  .padding(horizontal = 8.dp, vertical = 5.dp),
++      )
+ 
+       GlyphButton(enabled = state.enabled, selected = state.showGrid, onClick = actions::toggleGrid) {
+         drawGrid(it)
+-- 
+2.43.0
+

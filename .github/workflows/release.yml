@@ -1,0 +1,93 @@
+#
+# Fork release builder (Flexy06/logisim-evolution, modern-ui)
+#
+# Builds a cross-platform JAR (Windows/Linux/macOS) plus a portable
+# Windows ZIP (with bundled Java runtime) and attaches both to a GitHub
+# Release. Runs on pushing a tag "v*" or manually via "Run workflow".
+#
+name: "Release"
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v5.1.0-modern-ui.1)'
+        required: true
+        default: 'v5.1.0-modern-ui.1'
+
+permissions:
+  contents: write
+
+env:
+  JDK_VERSION: 21
+  JDK_DISTRO: 'temurin'
+  RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
+jobs:
+  jar:
+    name: "Cross-platform JAR"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JDK_DISTRO }}
+          java-version: ${{ env.JDK_VERSION }}
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build shadowJar
+        run: ./gradlew shadowJar --no-daemon
+      - name: Rename
+        run: |
+          mkdir dist
+          cp build/libs/*-all.jar "dist/logisim-evolution-modern-ui-${RELEASE_TAG}-all.jar"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jar
+          path: dist/*
+
+  windows:
+    name: "Windows portable ZIP"
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JDK_DISTRO }}
+          java-version: ${{ env.JDK_VERSION }}
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build portable ZIP
+        run: ./gradlew createWindowsPortableZip --no-daemon
+      - name: Rename
+        shell: bash
+        run: |
+          mkdir dist
+          cp build/dist/*windows*.zip "dist/logisim-evolution-modern-ui-${RELEASE_TAG}-windows-x64.zip" \
+            || cp $(find build -name '*windows*.zip' | head -1) "dist/logisim-evolution-modern-ui-${RELEASE_TAG}-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/*
+
+  release:
+    name: "Publish release"
+    needs: [ jar, windows ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
+          name: "Logisim Evolution – Modern UI ${{ env.RELEASE_TAG }}"
+          prerelease: true
+          body: |
+            Fork of Logisim Evolution with a modern UI (Compose + FlatLaf).
+
+            **Downloads**
+            - `…-windows-x64.zip` – portable, Java included. Unzip and start `logisim-evolution.exe`.
+            - `…-all.jar` – needs Java 21+. Start with `java -jar <file>.jar` (Windows, Linux, macOS).
+          files: dist/*
