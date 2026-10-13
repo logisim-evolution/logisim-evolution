@@ -32,7 +32,7 @@ creates uniquely named circuits instead of replacing existing circuits.
 
 The importer preserves module hierarchy, including independent state in each
 instance. Ports and component buses must be 1–64 bits wide. Supported operations
-include addition, subtraction, multiplication, Boolean logic, reductions,
+include addition, subtraction, multiplication, division, modulo, Boolean logic, reductions,
 comparisons, shifts, multiplexers, slices, concatenation, registers, latches,
 and the supported reset/enable forms. Parameterized modules are elaborated by
 Yosys before conversion.
