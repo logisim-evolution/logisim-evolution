@@ -300,9 +300,16 @@ final class WordNetlist {
     if (a.size() != y.size() || b.size() != y.size()) {
       throw new ImportException("Arithmetic width mismatch");
     }
-    add(name, "Arithmetic", attrs("width", y.size()), term(bus(a), -40, -10, -60, -10),
-        term(bus(b), -40, 10, -60, 10), term(bus(y, true), 0, 0, 20, 40),
-        term(bus(constant(0, name.equals("Multiplier") ? y.size() : 1)), -20, -20, -20, -40));
+    add(name.equals("Mod") ? "Divider" : name, "Arithmetic", attrs("width", y.size()), 
+      term(bus(a), -40, -10, -60, -10),
+      term(bus(b), -40, 10, -60, 10), 
+      term(bus(y, true), 
+          name.equals("Mod") ? -20 : 0,  // x1: shifted left to hit the rem port
+          name.equals("Mod") ? 20 : 0,   // y1: shifted down to hit the rem port
+          name.equals("Mod") ? -20 : 20, // x2: stub wire offset
+          name.equals("Mod") ? 40 : 40   // y2: stub wire offset
+      ),
+      term(bus(constant(0, (name.equals("Multiplier") || name.equals("Divider") || name.equals("Mod")) ? y.size() : 1)), -20, -20, -20, -40));
   }
 
   List<Object> compare(List<Object> a, List<Object> b, String relation, boolean signed) {
@@ -409,7 +416,7 @@ final class WordNetlist {
     var y = map(cell, "connections").containsKey("Y") ? connection(cell, "Y") : List.<Object>of();
     int width = y.size();
     switch (type) {
-      case "$add", "$sub", "$mul", "$and", "$or", "$xor", "$xnor", "$not", "$pos", "$neg" -> {
+      case "$add", "$sub", "$mul", "$and", "$div", "$mod", "$or", "$xor", "$xnor", "$not", "$pos", "$neg" -> {
         boolean unary = Set.of("$not", "$pos", "$neg").contains(type);
         boolean signed = param(cell, "A_SIGNED", 0).signum() != 0
             && (unary || param(cell, "B_SIGNED", 0).signum() != 0);
@@ -426,6 +433,8 @@ final class WordNetlist {
             case "$add" -> arithmetic("Adder", a, b, y);
             case "$sub" -> arithmetic("Subtractor", a, b, y);
             case "$mul" -> arithmetic("Multiplier", a, b, y);
+            case "$div" -> arithmetic("Divider", a, b, y);
+            case "$mod" -> arithmetic("Mod", a, b, y);
             default -> gate(type.substring(1).toUpperCase(Locale.ROOT) + " Gate", a, b, y);
           }
         }

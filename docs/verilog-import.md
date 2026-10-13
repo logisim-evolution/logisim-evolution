@@ -59,7 +59,7 @@ values, including those produced by memory expansion, require a reset-based
 design and are rejected.
 
 Unsupported cells report the module, instance and cell type. Current exclusions
-include division/modulo, tri-state/inout ports, black boxes, recursive hierarchy,
+include tri-state/inout ports, black boxes, recursive hierarchy,
 and other cells outside the supported mappings. Memory fallback is limited by
 Yosys: for example, incompatible write clocks can remain unmapped and are then
 rejected. SystemVerilog support is limited to the installed Yosys frontend.
