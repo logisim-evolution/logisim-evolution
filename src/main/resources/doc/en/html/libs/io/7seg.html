@@ -49,14 +49,20 @@
         Behavior
       </h2>
       <p>
-        Displays the values of its eight one-bit inputs. <q>Segments</q> are either colored or light gray depending on the inputs. The correspondence is as follows.
+        Displays the values of its inputs. <q>Segments</q> are either colored or light gray depending on the inputs. The correspondence is as follows.
       </p>
       <center>
         <img class="notscal" src="../../../../img-libs/io-segs.png" alt="#########">
       </center>(Manufacturers vary as to how they map inputs to segments; the correspondence used here is based on Texas Instruments' TIL321.)
+      <p>
+        By default each segment has its own 1-bit pin, described below. Set <b class="propertie">Input</b> to <q>Bus</q> to replace those pins with one bus, so several displays can sit directly beside each other for a multi-digit number. The bus is 7 bits wide when the decimal point is hidden and 8 bits wide when it is shown. Bit 0 is segment A, then B, C, D, E, F, and G. Bit 7 is the decimal point when the point is enabled. <b class="propertie">Bus side</b> places that pin on the top, bottom, left, or right; the digit stays upright. The default side is left.
+      </p>
       <h2>
         Pins
       </h2>
+      <p>
+        These pins are used when <b class="propertie">Input</b> is <q>Separate pins</q>. The decimal-point pin is present only when <b class="propertie">Has decimal point</b> is <q>yes</q>.
+      </p>
       <dl>
         <dt>
           North edge, first from left (input, bit width 1)
@@ -140,7 +146,19 @@
           <b class="propertie">Has decimal point:</b>
         </dt>
         <dd>
-          If <q>yes</q> the decimal point is available, if <q>no</q> the decimal point is hidden.
+          If <q>yes</q> the decimal point is available, if <q>no</q> the decimal point is hidden. This also selects a bus width of 8 or 7 when <b class="propertie">Input</b> is <q>Bus</q>.
+        </dd>
+        <dt>
+          <b class="propertie">Input</b>
+        </dt>
+        <dd>
+          <q>Separate pins</q> (the default) keeps one 1-bit input per segment. <q>Bus</q> replaces them with a single 7-bit or 8-bit input. Existing circuits stay on separate pins.
+        </dd>
+        <dt>
+          <b class="propertie">Bus side</b>
+        </dt>
+        <dd>
+          The side of the bus pin: top, bottom, left, or right. The default is left. The display is not rotated. The attribute is used only when <b class="propertie">Input</b> is <q>Bus</q>.
         </dd>
 		<dt>
           <b class="propertie">Label</b>

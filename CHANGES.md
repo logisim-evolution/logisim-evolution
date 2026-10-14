@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an optional bus input to the 7-Segment Display, with a selectable side (@Vadimatorik).
   * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
     circuit projects, image exports, and SoC software directories (@V-Zemlyakov).

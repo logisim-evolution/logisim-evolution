@@ -20,7 +20,7 @@
 
 <h2>Comportamento</h2>
 
-<p> Exibirá os valores de suas oito entradas de um bit. <q> Segmentos </q> ou serão
+<p> Exibirá os valores de suas entradas. <q> Segmentos </q> ou serão
 coloridos ou cinzas, dependendo das entradas. A correspondência é a que se segue.
 <center>
 <img src="../../../../img-libs/io-segs.png" width="82" height="127"></center>
@@ -58,6 +58,14 @@ correspondência usada aqui é baseada no Texas Instruments TIL321.)
 
 </dl>
 
+<p>Esses pinos são usados quando <b>Entrada</b> é <q>Pinos separados</q>.
+Com <b>Entrada</b> em <q>Barramento</q>, um único pino substitui os pinos
+individuais. A largura é 7 sem ponto decimal e 8 com ponto decimal. O bit 0 é
+o segmento A, depois B, C, D, E, F e G. O bit 7 é o ponto decimal quando ele
+está habilitado. <b>Lado do barramento</b> coloca o pino em cima, embaixo, à
+esquerda ou à direita; o padrão é à esquerda. O dígito não gira. Vários
+displays podem ficar lado a lado para mostrar um número de vários caracteres.</p>
+
 <h2>Atributos</h2>
 
 <dl>
@@ -76,6 +84,14 @@ elas estiverem desligados. </dd>
 <dt> Ativado em alto? </dt>
 <dd>Se <q>sim</q>, então os segmentos se acenderão se a entrada correspondente for 1.
 Se <q>não</q>, eles acenderão somente quando a entrada correspondente for 0. </dd>
+
+<dt>Entrada</dt>
+<dd><q>Pinos separados</q> (padrão) ou <q>Barramento</q>. Circuitos já salvos
+continuam com pinos separados.</dd>
+
+<dt>Lado do barramento</dt>
+<dd>Lado do pino do barramento: em cima, embaixo, à esquerda ou à direita.
+O padrão é à esquerda. Vale apenas quando <b>Entrada</b> é <q>Barramento</q>.</dd>
 
 </dl>
 

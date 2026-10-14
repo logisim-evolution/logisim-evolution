@@ -14,6 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
@@ -134,12 +135,34 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   public static final Attribute<Boolean> ATTR_DP =
       Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
+  /** Separate 1-bit pins. This is the default so existing circuits keep their wires. */
+  public static final AttributeOption INPUT_SEPARATE =
+      new AttributeOption("separate", S.getter("SevenSegInputSeparate"));
+
+  /** One bus of width 7, or 8 when the decimal point is enabled. */
+  public static final AttributeOption INPUT_BUS =
+      new AttributeOption("bus", S.getter("SevenSegInputBus"));
+
+  public static final Attribute<AttributeOption> ATTR_INPUT =
+      Attributes.forOption(
+          "inputmode",
+          S.getter("SevenSegInput"),
+          new AttributeOption[] {INPUT_SEPARATE, INPUT_BUS});
+
+  /**
+   * Side of the bus pin. The digit itself is not rotated. The value is stored in separate-pin mode
+   * as well, and is applied when the input mode is switched to a bus.
+   */
+  public static final Attribute<Direction> ATTR_BUS_SIDE =
+      Attributes.forDirection("busside", S.getter("SevenSegBusSide"));
+
+  static final int OFFSET_X = -5;
+  static final int OFFSET_Y = 0;
+  static final int WIDTH = 40;
+  static final int HEIGHT = 60;
+
   public SevenSegment() {
-    super(
-        _ID,
-        S.getter("sevenSegmentComponent"),
-        new AbstractSimpleIoHdlGeneratorFactory(false),
-        true);
+    super(_ID, S.getter("sevenSegmentComponent"), new SevenSegmentHdlGeneratorFactory(), true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,
@@ -147,6 +170,8 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           IoLibrary.ATTR_BACKGROUND,
           IoLibrary.ATTR_ACTIVE,
           ATTR_DP,
+          ATTR_INPUT,
+          ATTR_BUS_SIDE,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -159,19 +184,61 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           IoLibrary.DEFAULT_BACKGROUND,
           Boolean.TRUE,
           Boolean.TRUE,
+          INPUT_SEPARATE,
+          Direction.WEST,
           "",
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           false,
           new ComponentMapInformationContainer(0, 8, 0, null, getLabels(), null)
         });
-    setOffsetBounds(Bounds.create(-5, 0, 40, 60));
+    setOffsetBounds(Bounds.create(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
     setIcon(new SevenSegmentIcon(false));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
   }
 
+  static boolean isBusInput(AttributeSet attrs) {
+    return INPUT_BUS.equals(attrs.getValue(ATTR_INPUT));
+  }
+
+  static int segmentCount(AttributeSet attrs) {
+    return Boolean.TRUE.equals(attrs.getValue(ATTR_DP)) ? 8 : 7;
+  }
+
+  /**
+   * Packs segment bits in port order: bit 0 is A, then B, C, D, E, F, G, and bit 7 is the decimal
+   * point. A bit lights only when it is exactly {@link Value#TRUE}, matching the separate-pin mode.
+   */
+  static int segmentMask(Value[] bits) {
+    var summary = 0;
+    for (var i = 0; i < bits.length; i++) {
+      if (bits[i] == Value.TRUE) summary |= 1 << i;
+    }
+    return summary;
+  }
+
+  /** Connection point of the bus pin, in the component's offset coordinates. */
+  static int[] busPortPosition(Direction side) {
+    final var cx = OFFSET_X + WIDTH / 2;
+    final var cy = OFFSET_Y + HEIGHT / 2;
+    if (side == Direction.NORTH) return new int[] {cx, OFFSET_Y};
+    if (side == Direction.SOUTH) return new int[] {cx, OFFSET_Y + HEIGHT};
+    if (side == Direction.EAST) return new int[] {OFFSET_X + WIDTH, cy};
+    return new int[] {OFFSET_X, cy};
+  }
+
   private void updatePorts(Instance instance) {
-    final var hasDp = instance.getAttributeValue(ATTR_DP);
+    final var attrs = instance.getAttributeSet();
+    if (isBusInput(attrs)) {
+      updateBusPort(instance);
+    } else {
+      updateSeparatePorts(instance);
+    }
+    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(segmentCount(attrs), getLabels());
+  }
+
+  private void updateSeparatePorts(Instance instance) {
+    final var hasDp = Boolean.TRUE.equals(instance.getAttributeValue(ATTR_DP));
     final var ps = new Port[hasDp ? 8 : 7];
     ps[Segment_A] = new Port(20, 0, Port.INPUT, 1);
     ps[Segment_B] = new Port(30, 0, Port.INPUT, 1);
@@ -192,7 +259,15 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       ps[DP].setToolTip(S.getter("DecimalPoint"));
     }
     instance.setPorts(ps);
-    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(hasDp ? 8 : 7, getLabels());
+  }
+
+  private void updateBusPort(Instance instance) {
+    final var side = instance.getAttributeValue(ATTR_BUS_SIDE);
+    final var at = busPortPosition(side == null ? Direction.WEST : side);
+    final var width = segmentCount(instance.getAttributeSet());
+    final var port = new Port(at[0], at[1], Port.INPUT, width);
+    port.setToolTip(S.getter("SevenSegBusTip"));
+    instance.setPorts(new Port[] {port});
   }
 
   @Override
@@ -254,7 +329,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       computeTextField(instance);
     } else if (attr == StdAttr.LABEL_LOC) {
       computeTextField(instance);
-    } else if (attr == ATTR_DP) {
+    } else if (attr == ATTR_DP || attr == ATTR_INPUT) {
+      updatePorts(instance);
+    } else if (attr == ATTR_BUS_SIDE && isBusInput(instance.getAttributeSet())) {
       updatePorts(instance);
     }
   }
@@ -264,15 +341,26 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     drawBase(painter, painter.getAttributeValue(ATTR_DP));
   }
 
+  private static Value[] inputBits(InstanceState state) {
+    final var attrs = state.getAttributeSet();
+    final var width = segmentCount(attrs);
+    final var bits = new Value[width];
+    if (isBusInput(attrs)) {
+      final var bus = state.getPortValue(0);
+      for (var i = 0; i < width; i++) {
+        bits[i] = bus == null ? Value.UNKNOWN : bus.get(i);
+      }
+    } else {
+      for (var i = 0; i < width; i++) {
+        bits[i] = state.getPortValue(i);
+      }
+    }
+    return bits;
+  }
+
   @Override
   public void propagate(InstanceState state) {
-    var summary = 0;
-    final var max = state.getAttributeValue(ATTR_DP) ? 8 : 7;
-    for (var i = 0; i < max; i++) {
-      Value val = state.getPortValue(i);
-      if (val == Value.TRUE) summary |= 1 << i;
-    }
-    Object value = summary;
+    final Object value = segmentMask(inputBits(state));
     final var data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));
