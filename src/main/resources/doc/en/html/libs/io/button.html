@@ -48,13 +48,16 @@
         Behavior
       </h2>
       <p>
-        Outputs 0 normally; but when the user is pressing the the button using the Poke Tool, the output is 1.
+        Outputs 0 normally; but while the user is pressing the button using the Poke Tool, the output is 1.
+        If a trigger key is assigned, holding that key does the same thing, provided the canvas has focus and the Poke Tool is selected.
+        Several buttons can be held down together by holding their keys at the same time.
+        The key produces the same output change as holding the mouse.
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        A button has only one pin, a 1-bit output, which is 0 except when the user is pressing the button using the Poke Tool, when it is 1.
+        A button has only one pin, a 1-bit output, which is 0 except while the user is pressing the button with the Poke Tool or with its trigger key, when it is 1.
       </p>
       <h2>
         Attributes
@@ -74,6 +77,18 @@
         </dt>
         <dd>
           The color with which to display the button.
+        </dd>
+        <dt>
+          Trigger key
+        </dt>
+        <dd>
+          A letter (A–Z) or digit (0–9) that presses the button while the key is held.
+          The character is drawn on the button.
+          The canvas must have focus and the Poke Tool must be selected.
+          Each key can belong to only one button in the same circuit; the same key may be used again in another circuit.
+          (none) leaves the button controlled only by the mouse.
+          Digits on the numeric keypad use the same mapping as the number row.
+          Ctrl, Alt, and Meta chords are not used, so ordinary keyboard commands keep working.
         </dd>
         <dt>
           Label
@@ -105,6 +120,9 @@
       </h2>
       <p>
         When the mouse button is pressed, the component's output will be 1. Upon releasing the mouse button, the output reverts back to 0.
+        Holding the button's trigger key does the same while the canvas has focus and the Poke Tool is selected.
+        Releasing the key, moving focus off the canvas, or selecting another tool releases buttons that were held from the keyboard.
+        A button held only with the mouse stays pressed.
       </p>
       <h2>
         Text Tool Behavior

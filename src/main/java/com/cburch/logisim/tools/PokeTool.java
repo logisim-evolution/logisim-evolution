@@ -24,15 +24,20 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.io.ButtonKeyDispatcher;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PokeTool extends Tool {
   /**
@@ -132,6 +137,15 @@ public class PokeTool extends Tool {
   private static final Cursor move = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
   private final Listener listener;
+  private final Set<Component> keyboardHeldButtons = new HashSet<>();
+  private final FocusAdapter canvasFocusListener =
+      new FocusAdapter() {
+        @Override
+        public void focusLost(FocusEvent event) {
+          releaseKeyboardButtons(listeningCanvas);
+        }
+      };
+  private Canvas listeningCanvas;
   private Circuit pokedCircuit;
   private Component pokedComponent;
   private Caret pokeCaret;
@@ -142,7 +156,20 @@ public class PokeTool extends Tool {
   }
 
   @Override
+  public void select(Canvas canvas) {
+    if (listeningCanvas == canvas) return;
+    if (listeningCanvas != null) listeningCanvas.removeFocusListener(canvasFocusListener);
+    listeningCanvas = canvas;
+    if (canvas != null) canvas.addFocusListener(canvasFocusListener);
+  }
+
+  @Override
   public void deselect(Canvas canvas) {
+    releaseKeyboardButtons(canvas);
+    if (listeningCanvas != null) {
+      listeningCanvas.removeFocusListener(canvasFocusListener);
+      listeningCanvas = null;
+    }
     removeCaret(true);
     canvas.setHighlightedWires(WireSet.EMPTY);
   }
@@ -179,6 +206,7 @@ public class PokeTool extends Tool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
+    if (dispatchButtonKey(canvas, e, true)) return;
     if (pokeCaret != null) {
       pokeCaret.keyPressed(e);
       canvas.getProject().repaintCanvas();
@@ -187,6 +215,7 @@ public class PokeTool extends Tool {
 
   @Override
   public void keyReleased(Canvas canvas, KeyEvent e) {
+    if (dispatchButtonKey(canvas, e, false)) return;
     if (pokeCaret != null) {
       pokeCaret.keyReleased(e);
       canvas.getProject().repaintCanvas();
@@ -195,10 +224,26 @@ public class PokeTool extends Tool {
 
   @Override
   public void keyTyped(Canvas canvas, KeyEvent e) {
+    if (ButtonKeyDispatcher.consumeTyped(canvas.getCircuit(), e)) return;
     if (pokeCaret != null) {
       pokeCaret.keyTyped(e);
       canvas.getProject().repaintCanvas();
     }
+  }
+
+  private boolean dispatchButtonKey(Canvas canvas, KeyEvent event, boolean pressed) {
+    final var handled =
+        ButtonKeyDispatcher.dispatch(
+            canvas.getCircuit(), canvas.getCircuitState(), event, pressed, keyboardHeldButtons);
+    if (handled) canvas.getProject().repaintCanvas();
+    return handled;
+  }
+
+  private void releaseKeyboardButtons(Canvas canvas) {
+    if (keyboardHeldButtons.isEmpty()) return;
+    final var state = canvas == null ? null : canvas.getCircuitState();
+    ButtonKeyDispatcher.releaseHeld(state, keyboardHeldButtons);
+    if (canvas != null && canvas.getProject() != null) canvas.getProject().repaintCanvas();
   }
 
   @Override

@@ -11,7 +11,9 @@ package com.cburch.logisim.std.io;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Wire;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
@@ -34,7 +36,10 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -56,6 +61,14 @@ public class Button extends InstanceFactory {
           "press",
           S.getter("buttonPressAttr"),
           new AttributeOption[] {BUTTON_PRESS_ACTIVE, BUTTON_PRESS_PASSIVE});
+  public static final AttributeOption KEY_NONE =
+      new AttributeOption("none", S.getter("buttonKeyNone"));
+  private static final String KEY_DIGITS = "0123456789";
+  private static final String KEY_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  private static final AttributeOption[] KEY_OPTIONS = createKeyOptions();
+  public static final Attribute<AttributeOption> ATTR_KEY =
+      Attributes.forOption("key", S.getter("buttonKeyAttr"), KEY_OPTIONS);
+  private static final float TRIGGER_GLYPH_SIZE = 10f;
 
   public static class Logger extends InstanceLogger {
     @Override
@@ -85,26 +98,12 @@ public class Button extends InstanceFactory {
   public static class Poker extends InstancePoker {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
-      setValue(
-          state,
-          state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.FALSE : Value.TRUE);
+      setPressed(state, true);
     }
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      setValue(
-          state,
-          state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.TRUE : Value.FALSE);
-    }
-
-    private void setValue(InstanceState state, Value val) {
-      final var data = (InstanceDataSingleton) state.getData();
-      if (data == null) {
-        state.setData(new InstanceDataSingleton(val));
-      } else {
-        data.setValue(val);
-      }
-      state.getInstance().fireInvalidated();
+      setPressed(state, false);
     }
   }
 
@@ -117,6 +116,7 @@ public class Button extends InstanceFactory {
           StdAttr.FACING,
           IoLibrary.ATTR_COLOR,
           ATTR_PRESS,
+          ATTR_KEY,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -128,6 +128,7 @@ public class Button extends InstanceFactory {
           Direction.EAST,
           Color.WHITE,
           BUTTON_PRESS_ACTIVE,
+          KEY_NONE,
           "",
           Direction.WEST,
           StdAttr.DEFAULT_LABEL_FONT,
@@ -180,6 +181,123 @@ public class Button extends InstanceFactory {
         data.setValue(data.getValue() == Value.TRUE ? Value.FALSE : Value.TRUE);
       }
       state.getInstance().fireInvalidated();
+    }
+  }
+
+  /**
+   * Sets the button level as if the user were holding or releasing it. A repeat of the same level
+   * does not invalidate the instance.
+   *
+   * @return true when the stored level changed
+   */
+  public static boolean setPressed(InstanceState state, boolean pressed) {
+    final var next = level(state, pressed);
+    final var data = (InstanceDataSingleton) state.getData();
+    if (data == null) {
+      if (next.equals(level(state, false))) return false;
+      state.setData(new InstanceDataSingleton(next));
+    } else if (next.equals(data.getValue())) {
+      return false;
+    } else {
+      data.setValue(next);
+    }
+    state.getInstance().fireInvalidated();
+    return true;
+  }
+
+  static Value level(InstanceState state, boolean pressed) {
+    final var activeOnPress = state.getAttributeValue(ATTR_PRESS) != BUTTON_PRESS_PASSIVE;
+    return pressed == activeOnPress ? Value.TRUE : Value.FALSE;
+  }
+
+  public static AttributeOption keyOption(String token) {
+    if (token == null) return null;
+    for (final var option : KEY_OPTIONS) {
+      if (token.equals(option.toString())) return option;
+    }
+    return null;
+  }
+
+  static String tokenForKeyCode(int keyCode) {
+    if (keyCode >= KeyEvent.VK_A && keyCode <= KeyEvent.VK_Z) {
+      return String.valueOf((char) keyCode);
+    }
+    if (keyCode >= KeyEvent.VK_0 && keyCode <= KeyEvent.VK_9) {
+      return String.valueOf((char) keyCode);
+    }
+    if (keyCode >= KeyEvent.VK_NUMPAD0 && keyCode <= KeyEvent.VK_NUMPAD9) {
+      return String.valueOf((char) ('0' + (keyCode - KeyEvent.VK_NUMPAD0)));
+    }
+    return null;
+  }
+
+  static String tokenForKeyChar(char keyChar) {
+    if (keyChar >= 'a' && keyChar <= 'z') {
+      return String.valueOf((char) (keyChar - 'a' + 'A'));
+    }
+    if ((keyChar >= 'A' && keyChar <= 'Z') || (keyChar >= '0' && keyChar <= '9')) {
+      return String.valueOf(keyChar);
+    }
+    return null;
+  }
+
+  public static boolean isKeyUsedByOther(Circuit circuit, Component self, AttributeOption key) {
+    if (circuit == null || key == null || KEY_NONE.toString().equals(key.toString())) return false;
+    final var token = key.toString();
+    for (final var comp : circuit.getNonWires()) {
+      if (comp == self || !(comp.getFactory() instanceof Button)) continue;
+      final var other = comp.getAttributeSet().getValue(ATTR_KEY);
+      if (other != null && token.equals(other.toString())) return true;
+    }
+    return false;
+  }
+
+  public static void clearDuplicateKey(Circuit circuit, Component added) {
+    if (circuit == null || added == null || !(added.getFactory() instanceof Button)) return;
+    final var key = added.getAttributeSet().getValue(ATTR_KEY);
+    if (key != null && isKeyUsedByOther(circuit, added, key)) {
+      added.getAttributeSet().setValue(ATTR_KEY, KEY_NONE);
+    }
+  }
+
+  private static AttributeOption[] createKeyOptions() {
+    final var options = new AttributeOption[1 + KEY_DIGITS.length() + KEY_LETTERS.length()];
+    var index = 0;
+    options[index++] = KEY_NONE;
+    for (var i = 0; i < KEY_DIGITS.length(); i++) {
+      options[index++] = fixedOption(KEY_DIGITS.substring(i, i + 1));
+    }
+    for (var i = 0; i < KEY_LETTERS.length(); i++) {
+      options[index++] = fixedOption(KEY_LETTERS.substring(i, i + 1));
+    }
+    return options;
+  }
+
+  private static AttributeOption fixedOption(String token) {
+    return new AttributeOption(token, new FixedLabel(token));
+  }
+
+  private static void drawTriggerGlyph(
+      Graphics g, AttributeOption trigger, Color ink, int x, int y, int width, int height) {
+    if (trigger == null || KEY_NONE.toString().equals(trigger.toString())) return;
+    final var previousFont = g.getFont();
+    g.setColor(ink);
+    g.setFont(previousFont.deriveFont(Font.BOLD, TRIGGER_GLYPH_SIZE));
+    GraphicsUtil.drawCenteredText(
+        g, trigger.toString(), x + (width - DEPTH) / 2, y + (height - DEPTH) / 2);
+    g.setFont(previousFont);
+  }
+
+  private static final class FixedLabel implements StringGetter {
+    private final String value;
+
+    private FixedLabel(String value) {
+      this.value = value;
+    }
+
+    @Override
+    public String toString() {
+      return value;
     }
   }
 
@@ -264,6 +382,7 @@ public class Button extends InstanceFactory {
       g.drawPolygon(xp, yp, xp.length);
     }
 
+    drawTriggerGlyph(g, painter.getAttributeValue(ATTR_KEY), baseColor, x, y, w, h);
     g.translate(depress, depress);
     painter.drawLabel();
     g.translate(-depress, -depress);
