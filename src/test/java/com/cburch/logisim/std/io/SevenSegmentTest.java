@@ -15,6 +15,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
@@ -55,21 +56,44 @@ class SevenSegmentTest {
 
   @Test
   void busSideChoosesOnePinAndKeepsTheDigitUpright() {
-    assertBus(true, Direction.WEST, SevenSegment.OFFSET_X, SevenSegment.OFFSET_Y + SevenSegment.HEIGHT / 2, 8);
-    assertBus(true, Direction.EAST, SevenSegment.OFFSET_X + SevenSegment.WIDTH, 30, 8);
-    assertBus(true, Direction.NORTH, 15, SevenSegment.OFFSET_Y, 8);
-    assertBus(false, Direction.SOUTH, 15, SevenSegment.OFFSET_Y + SevenSegment.HEIGHT, 7);
+    assertBus(true, Direction.WEST, SevenSegment.BUS_OFFSET_X, 30, 8);
+    assertBus(true, Direction.EAST, SevenSegment.BUS_OFFSET_X + SevenSegment.BUS_WIDTH, 30, 8);
+    assertBus(true, Direction.NORTH, 20, SevenSegment.BUS_OFFSET_Y, 8);
+    assertBus(false, Direction.SOUTH, 20, SevenSegment.BUS_OFFSET_Y + SevenSegment.BUS_HEIGHT, 7);
+  }
+
+  @Test
+  void busOutlineAndPinLieOnTheWiringGrid() {
+    final var factory = new SevenSegment();
+    final var separate = attributes(true, false, Direction.WEST);
+    assertEquals(Bounds.create(-5, 0, 40, 60), factory.getOffsetBounds(separate));
+
+    final var bus = attributes(true, true, Direction.NORTH);
+    final var bds = factory.getOffsetBounds(bus);
+    assertEquals(Bounds.create(-10, 0, 50, 60), bds);
+    assertOnGrid(bds.getX(), bds.getY());
+    assertOnGrid(bds.getWidth(), bds.getHeight());
+    assertOnGrid(bds.getX() + bds.getWidth(), bds.getY() + bds.getHeight());
+
+    final var comp = placed(bus);
+    final var end = comp.getEnds().get(0).getLocation();
+    assertOnGrid(end.getX(), end.getY());
+    assertEquals(20, end.getX());
+    assertEquals(0, end.getY());
   }
 
   @Test
   void changingTheBusSideMovesOnlyTheBusPin() {
     final var attrs = attributes(true, true, Direction.WEST);
     final var comp = placed(attrs);
-    assertEquals(Location.create(SevenSegment.OFFSET_X, 30, false), comp.getEnds().get(0).getLocation());
+    assertEquals(Location.create(SevenSegment.BUS_OFFSET_X, 30, false), comp.getEnds().get(0).getLocation());
     attrs.setValue(SevenSegment.ATTR_BUS_SIDE, Direction.NORTH);
     assertEquals(1, comp.getEnds().size());
-    assertEquals(Location.create(15, 0, false), comp.getEnds().get(0).getLocation());
+    assertEquals(Location.create(20, 0, false), comp.getEnds().get(0).getLocation());
     assertEquals(BitWidth.create(8), comp.getEnds().get(0).getWidth());
+    assertEquals(
+        Bounds.create(-10, 0, 50, 60),
+        comp.getBounds().translate(-comp.getLocation().getX(), -comp.getLocation().getY()));
   }
 
   @Test
@@ -90,6 +114,11 @@ class SevenSegmentTest {
     final var fromBus = new Value[8];
     for (var i = 0; i < fromBus.length; i++) fromBus[i] = bus.get(i);
     assertEquals(SevenSegment.segmentMask(bits), SevenSegment.segmentMask(fromBus));
+  }
+
+  private static void assertOnGrid(int x, int y) {
+    assertEquals(0, Math.floorMod(x, SevenSegment.GRID));
+    assertEquals(0, Math.floorMod(y, SevenSegment.GRID));
   }
 
   private static void assertBus(boolean decimalPoint, Direction side, int x, int y, int width) {
