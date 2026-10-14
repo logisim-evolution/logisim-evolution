@@ -3,7 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="changed" content="2026-10-05T00:00:00.000000000">
+  <meta name="changed" content="2026-10-14T00:00:00.000000000">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta http-equiv="Content-Language" content="en">
   <title>NE555</title>
@@ -44,10 +44,23 @@
     <dl>
       <dt>Mode</dt>
       <dd>Operational mode: <q>Astable</q> or <q>Monostable</q>.</dd>
-      <dt>Resistor R1 (Ohm)</dt>
-      <dd>Timing resistor R1 value (1&nbsp;k&Omega; to 10&nbsp;M&Omega;).</dd>
-      <dt>Capacitor C1 (&micro;F)</dt>
-      <dd>Timing capacitor C1 value (10&nbsp;&micro;F to 1000&nbsp;&micro;F).</dd>
+      <dt>Resistor R1 (1 k&Omega; to 10 M&Omega;)</dt>
+      <dd>
+        Timing resistor R1. Choose a typical value or type one. A prefixed value is an absolute
+        quantity, as in <code>10k</code>, <code>71.66 k&Omega;</code>, or <code>1M</code>.
+        Prefix letters are case-sensitive: <code>M</code> is mega and <code>m</code> is milli.
+        The words <code>ohm</code> and <code>ohms</code> are accepted in any case. Spaces are
+        ignored. A bare number is ohms, which is also the unit saved in the circuit file.
+        The value has to land on a whole ohm, so <code>71.66k</code> is 71660&nbsp;&Omega;.
+      </dd>
+      <dt>Capacitor C1 (10 &micro;F to 1000 &micro;F)</dt>
+      <dd>
+        Timing capacitor C1. A prefixed value is an absolute quantity, as in <code>10u</code>
+        or <code>10 &micro;F</code>. The farad symbol is a capital <code>F</code>, and the words
+        <code>farad</code> and <code>farads</code> are accepted in any case. A bare number is
+        microfarads. The value has to land on a whole microfarad, so <code>10.5&micro;F</code>
+        is rejected.
+      </dd>
     </dl>
 
     <h2>Timing Formulas</h2>

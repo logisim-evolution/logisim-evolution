@@ -15,7 +15,9 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.TickAware;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.EngineeringAttribute;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstancePainter;
@@ -61,18 +63,51 @@ public class Ttl74123 extends AbstractTtlGate implements TickAware {
   /** Timing factor from the datasheet: tW(ns) = K × Rext(kΩ) × Cext(pF), K = 0.45 at 5 V. */
   public static final double PULSE_WIDTH_FACTOR_SECONDS = 0.45e-9;
 
+  private static final int REXT_MIN_KOHM = 2;
+  private static final int REXT_MAX_KOHM = 1000;
+  private static final int CEXT_MIN_PF = 10_000;
+  private static final int CEXT_MAX_PF = 1_000_000_000;
+  private static final int[] REXT_PRESETS = {2, 10, 100, 1000};
+  private static final int[] CEXT_PRESETS = {
+    10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000
+  };
+
   /** External resistor for section 1. Typical choices are 10 kΩ, 100 kΩ, and 1 MΩ. */
-  public static final Ttl74123RcAttribute REXT_1 =
-      Ttl74123RcAttribute.resistor("1Rext", S.getter("ttl74123Rext1"));
+  public static final Attribute<Integer> REXT_1 =
+      Attributes.forEngineering(
+          "1Rext",
+          S.getter("ttl74123Rext1"),
+          EngineeringAttribute.Unit.KILOOHM,
+          REXT_MIN_KOHM,
+          REXT_MAX_KOHM,
+          REXT_PRESETS);
   /** External capacitor for section 1. Typical choices run from 10 nF to 1000 µF. */
-  public static final Ttl74123RcAttribute CEXT_1 =
-      Ttl74123RcAttribute.capacitor("1Cext", S.getter("ttl74123Cext1"));
+  public static final Attribute<Integer> CEXT_1 =
+      Attributes.forEngineering(
+          "1Cext",
+          S.getter("ttl74123Cext1"),
+          EngineeringAttribute.Unit.PICOFARAD,
+          CEXT_MIN_PF,
+          CEXT_MAX_PF,
+          CEXT_PRESETS);
   /** External resistor for section 2. Typical choices are 10 kΩ, 100 kΩ, and 1 MΩ. */
-  public static final Ttl74123RcAttribute REXT_2 =
-      Ttl74123RcAttribute.resistor("2Rext", S.getter("ttl74123Rext2"));
+  public static final Attribute<Integer> REXT_2 =
+      Attributes.forEngineering(
+          "2Rext",
+          S.getter("ttl74123Rext2"),
+          EngineeringAttribute.Unit.KILOOHM,
+          REXT_MIN_KOHM,
+          REXT_MAX_KOHM,
+          REXT_PRESETS);
   /** External capacitor for section 2. Typical choices run from 10 nF to 1000 µF. */
-  public static final Ttl74123RcAttribute CEXT_2 =
-      Ttl74123RcAttribute.capacitor("2Cext", S.getter("ttl74123Cext2"));
+  public static final Attribute<Integer> CEXT_2 =
+      Attributes.forEngineering(
+          "2Cext",
+          S.getter("ttl74123Cext2"),
+          EngineeringAttribute.Unit.PICOFARAD,
+          CEXT_MIN_PF,
+          CEXT_MAX_PF,
+          CEXT_PRESETS);
 
   private static final int DELAY = 4;
   private static final int HALVES = 2;
