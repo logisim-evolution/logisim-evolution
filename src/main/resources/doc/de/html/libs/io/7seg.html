@@ -21,7 +21,7 @@
 
 <h2>Verhalten</h2>
 
-<p>Displays the values of its eight one-bit inputs. <q>Segments</q> are either
+<p>Displays the values of its inputs. <q>Segments</q> are either
 colored or light gray depending on the inputs. The correspondence is as
 follows.
 <center><img src="../../../../img-libs/io-segs.png" width="82" height="127"></center>
@@ -59,6 +59,15 @@ TIL321.)</p>
 
 </dl>
 
+<p>Diese Pins gelten, wenn <b>Eingang</b> auf <q>Einzelne Pins</q> steht.
+Ist <b>Eingang</b> auf <q>Bus</q> gesetzt, ersetzt ein einzelner Eingang die
+einzelnen Pins. Die Breite ist 7 ohne Dezimalpunkt und 8 mit Dezimalpunkt.
+Bit 0 ist Segment A, danach B, C, D, E, F und G. Bit 7 ist der Dezimalpunkt,
+wenn er eingeschaltet ist. <b>Bus-Seite</b> legt den Pin oben, unten, links
+oder rechts an; die Voreinstellung ist links. Die Ziffer selbst dreht sich
+nicht. So können mehrere Anzeigen direkt nebeneinander eine mehrstellige Zahl
+zeigen.</p>
+
 <h2>Attribute</h2>
 
 <dl>
@@ -77,6 +86,16 @@ they are off.</dd>
 <dt>Active On High?</dt>
 <dd>If <q>yes</q>, then the segments light when the corresponding input is 1.
 If <q>no</q>, they light when the corresponding input is 0.</dd>
+
+<dt>Eingang</dt>
+<dd><q>Einzelne Pins</q> (Voreinstellung) oder <q>Bus</q>. Bestehende Schaltungen
+bleiben bei einzelnen Pins.</dd>
+
+<dt>Bus-Seite</dt>
+<dd>Seite des Bus-Pins: oben, unten, links oder rechts. Voreinstellung ist links.
+Der Pin liegt auf einem 10-Pixel-Rasterpunkt; der Rahmen wird dazu etwas breiter,
+damit auch die linke und rechte Kante auf dem Raster liegen.
+Wirkt nur, wenn <b>Eingang</b> auf <q>Bus</q> steht.</dd>
 
 </dl>
 
