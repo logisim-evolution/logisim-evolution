@@ -32,7 +32,7 @@ public final class ButtonKeyDispatcher {
       KeyEvent event,
       boolean pressed,
       Set<Component> keyboardHeld) {
-    final var button = mappedButton(circuit, event, true);
+    final var button = mappedButton(circuit, event);
     if (button == null || circuitState == null) return false;
     final var state = circuitState.getInstanceState(button);
     if (pressed) {
@@ -47,7 +47,7 @@ public final class ButtonKeyDispatcher {
 
   /** Consumes a typed character that belongs to a mapped key, without changing button state. */
   public static boolean consumeTyped(Circuit circuit, KeyEvent event) {
-    final var button = mappedButton(circuit, event, false);
+    final var button = mappedButton(circuit, event);
     if (button == null) return false;
     event.consume();
     return true;
@@ -65,12 +65,9 @@ public final class ButtonKeyDispatcher {
     keyboardHeld.clear();
   }
 
-  private static Component mappedButton(Circuit circuit, KeyEvent event, boolean fromKeyCode) {
+  private static Component mappedButton(Circuit circuit, KeyEvent event) {
     if (circuit == null || event == null || isCommandChord(event)) return null;
-    final var token =
-        fromKeyCode
-            ? Button.tokenForKeyCode(event.getKeyCode())
-            : Button.tokenForKeyChar(event.getKeyChar());
+    final var token = Button.tokenFor(event);
     if (token == null) return null;
     Component match = null;
     for (final var comp : circuit.getNonWires()) {

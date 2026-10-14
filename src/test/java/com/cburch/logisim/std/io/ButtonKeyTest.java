@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.io;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,6 +73,20 @@ class ButtonKeyTest {
     assertTrue(fixture.release(KeyEvent.VK_A, 'a', held));
     assertSame(Value.FALSE, fixture.level(first));
     assertSame(Value.TRUE, fixture.level(second));
+  }
+
+  @Test
+  void russianLayoutLetterUsesTheLatinLetterOnTheSameKey() {
+    final var fixture = new Fixture();
+    final var button = fixture.add("A", 0, false);
+    final var event = keyEvent(KeyEvent.KEY_PRESSED, 0, KeyEvent.VK_UNDEFINED, '\u0444');
+
+    assertTrue(
+        ButtonKeyDispatcher.dispatch(
+            fixture.circuit, fixture.state, event, true, new HashSet<>()));
+    assertSame(Value.TRUE, fixture.level(button));
+    assertEquals("A", Button.tokenFor(KeyEvent.VK_UNDEFINED, KeyEvent.CHAR_UNDEFINED, 0x01000444));
+    assertEquals("F", Button.tokenFor(KeyEvent.VK_UNDEFINED, '\u0430', 0));
   }
 
   @Test

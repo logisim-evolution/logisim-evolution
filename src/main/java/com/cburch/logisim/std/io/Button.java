@@ -65,6 +65,10 @@ public class Button extends InstanceFactory {
       new AttributeOption("none", S.getter("buttonKeyNone"));
   private static final String KEY_DIGITS = "0123456789";
   private static final String KEY_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  /** Cyrillic letters in QWERTY order, so the Latin letter printed on the key still matches. */
+  private static final String CYRILLIC_LAYOUT = "йцукенгшщзфывапролдячсмить";
+  private static final String LATIN_FOR_CYRILLIC_LAYOUT = "qwertyuiopasdfghjklzxcvbnm";
+  private static final int UNICODE_EXTENDED_KEY_BASE = 0x01000000;
   private static final AttributeOption[] KEY_OPTIONS = createKeyOptions();
   public static final Attribute<AttributeOption> ATTR_KEY =
       Attributes.forOption("key", S.getter("buttonKeyAttr"), KEY_OPTIONS);
@@ -218,6 +222,21 @@ public class Button extends InstanceFactory {
     return null;
   }
 
+  static String tokenFor(KeyEvent event) {
+    if (event == null) return null;
+    return tokenFor(event.getKeyCode(), event.getKeyChar(), event.getExtendedKeyCode());
+  }
+
+  static String tokenFor(int keyCode, char keyChar, int extendedKeyCode) {
+    final var fromCode = tokenForKeyCode(keyCode);
+    if (fromCode != null) return fromCode;
+    final var fromExtended = tokenForKeyCode(extendedKeyCode);
+    if (fromExtended != null) return fromExtended;
+    final var fromChar = tokenForCharacter(keyChar);
+    if (fromChar != null) return fromChar;
+    return tokenForCharacter(characterFromExtendedKeyCode(extendedKeyCode));
+  }
+
   static String tokenForKeyCode(int keyCode) {
     if (keyCode >= KeyEvent.VK_A && keyCode <= KeyEvent.VK_Z) {
       return String.valueOf((char) keyCode);
@@ -228,17 +247,30 @@ public class Button extends InstanceFactory {
     if (keyCode >= KeyEvent.VK_NUMPAD0 && keyCode <= KeyEvent.VK_NUMPAD9) {
       return String.valueOf((char) ('0' + (keyCode - KeyEvent.VK_NUMPAD0)));
     }
+    if (keyCode >= '\u0400' && keyCode <= '\u04FF') {
+      return tokenForCharacter((char) keyCode);
+    }
     return null;
   }
 
-  static String tokenForKeyChar(char keyChar) {
+  static String tokenForCharacter(char keyChar) {
+    if (keyChar == KeyEvent.CHAR_UNDEFINED) return null;
     if (keyChar >= 'a' && keyChar <= 'z') {
       return String.valueOf((char) (keyChar - 'a' + 'A'));
     }
     if ((keyChar >= 'A' && keyChar <= 'Z') || (keyChar >= '0' && keyChar <= '9')) {
       return String.valueOf(keyChar);
     }
-    return null;
+    final var index = CYRILLIC_LAYOUT.indexOf(Character.toLowerCase(keyChar));
+    if (index < 0) return null;
+    return String.valueOf(Character.toUpperCase(LATIN_FOR_CYRILLIC_LAYOUT.charAt(index)));
+  }
+
+  private static char characterFromExtendedKeyCode(int extendedKeyCode) {
+    if (extendedKeyCode < UNICODE_EXTENDED_KEY_BASE) return KeyEvent.CHAR_UNDEFINED;
+    final var unicode = extendedKeyCode - UNICODE_EXTENDED_KEY_BASE;
+    if (unicode > Character.MAX_VALUE) return KeyEvent.CHAR_UNDEFINED;
+    return (char) unicode;
   }
 
   public static boolean isKeyUsedByOther(Circuit circuit, Component self, AttributeOption key) {
