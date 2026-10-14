@@ -210,6 +210,9 @@ public final class VerilogImportDialog extends JDialog {
       protected void done() {
         try {
           var result = get();
+          if (project.getLogisimFile() != destination) {
+            throw new ImportException("Destination project changed during import");
+          }
           project.doAction(result.action(S.get("verilogImportAction")));
           appendLog(S.get("verilogSuccess", result.circuits().size(), result.componentCount()));
         } catch (CancellationException exception) {

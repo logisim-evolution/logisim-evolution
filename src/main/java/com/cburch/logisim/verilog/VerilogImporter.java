@@ -35,6 +35,15 @@ public final class VerilogImporter {
     }
 
     public Action action(String description) {
+      // Project.doAction records its undo entry before invoking the action.
+      // Reject stale names here, before that history can be changed.
+      var names = reservedNames(destination);
+      for (var circuit : circuits) {
+        if (names.contains(circuit.getName().toLowerCase(Locale.ROOT))) {
+          throw new ImportException(
+              "Circuit name became unavailable during import: " + circuit.getName());
+        }
+      }
       return new ImportAction(this, description);
     }
   }

@@ -33,12 +33,18 @@ public final class SynthesisChecks {
     }
   }
 
-  static void run(Path workspace, String executable) throws Exception {
-    var out = workspace.resolve("build/logisim-import/synthesis-checks");
+  static void run(Path out, String executable) throws Exception {
     Files.createDirectories(out);
     for (String name : List.of("word_pipeline", "native_memory", "hierarchy", "memory",
              "multiplier", "add_sub", "buffer", "display_controller")) {
-      var source = workspace.resolve("examples/" + name + "/" + name + ".v");
+      var source = out.resolve(name + ".v");
+      try (var input =
+               SynthesisChecks.class.getResourceAsStream("/verilog/sources/" + name + ".v")) {
+        if (input == null) {
+          throw new java.io.IOException("Missing Verilog fixture " + name);
+        }
+        Files.copy(input, source, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+      }
       var file = LogisimFile.createNew(new Loader(null), null);
       var options = options(executable, source, name, YosysRunner.Memories.AUTO);
       var result =
@@ -58,7 +64,7 @@ public final class SynthesisChecks {
     var source = directory.resolve("top.v");
     Files.writeString(source,
         "`include \"width.vh\"\nmodule top(input [`WIDTH-1:0] a, output [`WIDTH-1:0] y); leaf "
-        + "u(a,y); endmodule\n");
+            + "u(a,y); endmodule\n");
     var options = new YosysRunner.Options(executable, List.of(source, leaf), "top", List.of(inc),
         List.of("INCREMENT=3"), directory, false, "error", YosysRunner.Memories.AUTO);
     var file = LogisimFile.createNew(new Loader(null), null);

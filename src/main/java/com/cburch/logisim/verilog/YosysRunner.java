@@ -136,8 +136,8 @@ public final class YosysRunner {
       messages.accept("Mapping registers and memories...");
       execute(options, directory,
           "read_json " + quoted(source)
-              + "\nopt\nmemory -nomap -nordff\nopt_clean\ncheck\nwrite_json " + quoted(mapped)
-              + "\n",
+              + "\ntribuf\nopt\nmemory -nomap -nordff\nopt_clean\ncheck\nwrite_json "
+              + quoted(mapped) + "\n",
           messages);
       design = new YosysDesign(read(mapped), design.top);
       boolean fallback = false;

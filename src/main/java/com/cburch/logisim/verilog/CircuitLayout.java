@@ -178,7 +178,7 @@ final class CircuitLayout {
     for (var port : netlist.ports) {
       appearance.add(new AppearancePort(
           point(port.x(), port.y()), Instance.getInstanceFor(portComponents.get(port.name()))));
-      appearance.add(new Text(port.input() ? 5 : 120, port.y() - 5, port.name()));
+      appearance.add(new Text(port.input() ? 5 : 120, port.y() - 5, port.label()));
     }
     appearance.add(new AppearanceAnchor(point(0, 0)));
     circuit.getStaticAttributes().setValue(

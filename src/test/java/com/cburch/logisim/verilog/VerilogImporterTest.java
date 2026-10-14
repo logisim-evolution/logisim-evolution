@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.io.TempDir;
 
 class VerilogImporterTest {
@@ -18,15 +19,44 @@ class VerilogImporterTest {
 
   @Test
   void importsReferenceDesignsAndSimulatesAfterSaveReload() throws Exception {
+    boolean wasHeadless = Main.headless;
     Main.headless = true;
-    copy("cases.json");
-    var manifest = temporary.resolve("cases.json");
-    for (var value : YosysJson.array(YosysJson.read(manifest).get("cases"))) {
-      var name = YosysJson.object(value).get("name").toString();
-      copy(name + ".json");
-      copy(name + ".txt");
+    try {
+      copy("cases.json");
+      var manifest = temporary.resolve("cases.json");
+      for (var value : YosysJson.array(YosysJson.read(manifest).get("cases"))) {
+        var name = YosysJson.object(value).get("name").toString();
+        copy(name + ".json");
+        copy(name + ".txt");
+      }
+      ImportChecks.batch(manifest);
+    } finally {
+      Main.headless = wasHeadless;
     }
-    ImportChecks.batch(manifest);
+  }
+
+  @Test
+  void resolvesTriStateDriversAndBidirectionalPorts() throws Exception {
+    boolean wasHeadless = Main.headless;
+    Main.headless = true;
+    try {
+      TristateChecks.json(temporary);
+    } finally {
+      Main.headless = wasHeadless;
+    }
+  }
+
+  @Test
+  @EnabledIfEnvironmentVariable(named = "YOSYS", matches = ".+")
+  void synthesizesVerilogWithExternalYosys() throws Exception {
+    boolean wasHeadless = Main.headless;
+    Main.headless = true;
+    try {
+      SynthesisChecks.run(temporary, System.getenv("YOSYS"));
+      TristateChecks.synthesis(temporary, System.getenv("YOSYS"));
+    } finally {
+      Main.headless = wasHeadless;
+    }
   }
 
   private void copy(String name) throws IOException {
