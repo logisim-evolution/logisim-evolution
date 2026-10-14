@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
+    [#3066] (@Kejoki).
   * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
     [#3076] (@hewzhew).
   * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages
