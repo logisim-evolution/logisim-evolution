@@ -9,6 +9,7 @@ package com.cburch.logisim.verilog;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
-/** Standalone entry point also used by JUnit and the Python reference-vector bridge. */
+/** Standalone entry point for the reference-design checks also exercised by JUnit. */
 public final class ImportChecks {
   private ImportChecks() {}
 
@@ -89,29 +90,33 @@ public final class ImportChecks {
     int before = file.getCircuitCount();
     require(before == 1, "Conversion modified destination before commit");
     var project = new Project(file);
-    var original = project.getCurrentCircuit();
-    var action = result.action("Import Verilog");
-    project.doAction(action);
-    require(
-        file.getCircuitCount() == before + result.circuits().size(), "Missing imported circuits");
-    require(project.getCurrentCircuit() == result.top(), "Top was not selected");
-    project.undoAction();
-    require(file.getCircuitCount() == before, "Undo left circuits behind");
-    require(project.getCurrentCircuit() == original, "Undo lost previous selection");
-    project.redoAction();
-    require(file.getCircuitCount() == before + result.circuits().size(), "Redo failed");
-    file.setMainCircuit(result.top());
-    try (var stream = Files.newOutputStream(path)) {
-      file.write(stream, file.getLoader());
+    try {
+      var original = project.getCurrentCircuit();
+      var action = result.action("Import Verilog");
+      project.doAction(action);
+      require(
+          file.getCircuitCount() == before + result.circuits().size(), "Missing imported circuits");
+      require(project.getCurrentCircuit() == result.top(), "Top was not selected");
+      project.undoAction();
+      require(file.getCircuitCount() == before, "Undo left circuits behind");
+      require(project.getCurrentCircuit() == original, "Undo lost previous selection");
+      project.redoAction();
+      require(file.getCircuitCount() == before + result.circuits().size(), "Redo failed");
+      file.setMainCircuit(result.top());
+      try (var stream = Files.newOutputStream(path)) {
+        file.write(stream, file.getLoader());
+      }
+      var loaded = new Loader(null).openLogisimFile(path.toFile());
+      require(loaded.getCircuitCount() == file.getCircuitCount(), "Save/reload lost hierarchy");
+      for (var circuit : loaded.getCircuits()) {
+        var conflicts = circuit.getWidthIncompatibilityData();
+        require(conflicts == null || conflicts.isEmpty(), "Save/reload width conflict");
+      }
+      System.out.println(
+          "Passed: import, undo/redo, save/reload; " + result.componentCount() + " components");
+    } finally {
+      project.getSimulator().shutDown();
     }
-    var loaded = new Loader(null).openLogisimFile(path.toFile());
-    require(loaded.getCircuitCount() == file.getCircuitCount(), "Save/reload lost hierarchy");
-    for (var circuit : loaded.getCircuits()) {
-      var conflicts = circuit.getWidthIncompatibilityData();
-      require(conflicts == null || conflicts.isEmpty(), "Save/reload width conflict");
-    }
-    System.out.println(
-        "Passed: import, undo/redo, save/reload; " + result.componentCount() + " components");
   }
 
   static void batch(Path manifest) throws Exception {
@@ -145,7 +150,7 @@ public final class ImportChecks {
     String valid = "{\"modules\":{\"top\":{" + module + "}}}";
     for (var bad :
         List.of(valid.replace("\"cells\":{}", "\"cells\":{\"bad\":{\"type\":\"$unsupported\"}}"),
-            valid.replace("\"input\"", "\"inout\""),
+            valid.replace("\"input\"", "\"invalid-direction\""),
             valid.replace("\"bits\":[2]", "\"bits\":[\"x\"]"),
             valid.replace("\"bits\":[2]",
                 "\"bits\":["
@@ -167,61 +172,96 @@ public final class ImportChecks {
     var result = VerilogImporter.readJson(
         input, "top", "error", file, VerilogImporter.reservedNames(file), s -> {});
     var project = new Project(file);
-    project.doAction(result.action("Import"));
-    var again = VerilogImporter.readJson(
-        input, "top", "error", file, VerilogImporter.reservedNames(file), s -> {});
-    require(!again.top().getName().equals(result.top().getName()), "Repeated import reused name");
-    project.doAction(again.action("Import again"));
-    require(file.getCircuitCount() == 3, "Repeated import replaced a circuit");
-    project.undoAction();
-    require(file.getCircuitCount() == 2, "Undo removed earlier import");
-    Files.delete(input);
-    System.out.println("Passed invalid-design atomicity and repeated imports");
+    try {
+      var stale = VerilogImporter.readJson(
+          input, "top", "error", file, VerilogImporter.reservedNames(file), s -> {});
+      project.doAction(result.action("Import"));
+      int undoCount = project.getUndoActions().size();
+      try {
+        project.doAction(stale.action("Stale import"));
+        throw new AssertionError("Accepted stale circuit names");
+      } catch (ImportException expected) {
+        require(project.getUndoActions().size() == undoCount, "Failed import changed undo history");
+      }
+      var again = VerilogImporter.readJson(
+          input, "top", "error", file, VerilogImporter.reservedNames(file), s -> {});
+      require(!again.top().getName().equals(result.top().getName()), "Repeated import reused name");
+      project.doAction(again.action("Import again"));
+      require(file.getCircuitCount() == 3, "Repeated import replaced a circuit");
+      project.undoAction();
+      require(file.getCircuitCount() == 2, "Undo removed earlier import");
+      Files.delete(input);
+      System.out.println("Passed invalid-design atomicity and repeated imports");
+    } finally {
+      project.getSimulator().shutDown();
+    }
   }
 
   static int simulate(LogisimFile file, String top, Path vectors) throws Exception {
     var project = new Project(file);
-    var circuit = file.getCircuit(top);
-    var state = CircuitState.createRootState(project, circuit, Thread.currentThread());
-    var propagator = state.getPropagator();
-    var pins = new HashMap<String, Component>();
-    for (var component : circuit.getNonWires()) {
-      if (component.getFactory() instanceof Pin) {
-        pins.put(component.getAttributeSet().getValue(StdAttr.LABEL), component);
-      }
-    }
-    var lines = Files.readAllLines(vectors);
-    var header = lines.getFirst().trim().split("\\s+");
-    for (var label : header) {
-      require(pins.containsKey(label), "Missing pin " + label);
-    }
-    propagator.propagate();
-    for (int row = 1; row < lines.size(); row++) {
-      var values = lines.get(row).trim().split("\\s+");
-      for (int i = 0; i < header.length; i++) {
-        var component = pins.get(header[i]);
-        var instance = Instance.getInstanceFor(component);
-        if (Pin.FACTORY.isInputPin(instance)) {
-          var pinState = state.getInstanceState(component);
-          Pin.FACTORY.driveInputPin(pinState,
-              Value.createKnown(Pin.FACTORY.getWidth(instance), Long.parseUnsignedLong(values[i])));
-          pinState.fireInvalidated();
+    try {
+      var circuit = file.getCircuit(top);
+      var state = CircuitState.createRootState(project, circuit, Thread.currentThread());
+      var propagator = state.getPropagator();
+      var pins = new HashMap<String, Component>();
+      for (var component : circuit.getNonWires()) {
+        if (component.getFactory() instanceof Pin) {
+          pins.put(component.getAttributeSet().getValue(StdAttr.LABEL), component);
         }
+      }
+      var lines = Files.readAllLines(vectors);
+      var header = lines.getFirst().trim().split("\\s+");
+      for (var label : header) {
+        require(pins.containsKey(label), "Missing pin " + label);
       }
       propagator.propagate();
-      require(!propagator.isOscillating(), "Oscillation at " + vectors + ":" + row);
-      for (int i = 0; i < header.length; i++) {
-        var component = pins.get(header[i]);
-        var instance = Instance.getInstanceFor(component);
-        if (!Pin.FACTORY.isInputPin(instance)) {
-          var actual = Pin.FACTORY.getValue(state.getInstanceState(component));
-          var expected =
-              Value.createKnown(Pin.FACTORY.getWidth(instance), Long.parseUnsignedLong(values[i]));
-          require(actual.equals(expected),
-              vectors + " row " + row + " " + header[i] + ": " + actual + " expected " + expected);
+      for (int row = 1; row < lines.size(); row++) {
+        var values = lines.get(row).trim().split("\\s+");
+        for (int i = 0; i < header.length; i++) {
+          var component = pins.get(header[i]);
+          var instance = Instance.getInstanceFor(component);
+          if (Pin.FACTORY.isInputPin(instance)) {
+            var pinState = state.getInstanceState(component);
+            Pin.FACTORY.driveInputPin(
+                pinState, vectorValue(values[i], Pin.FACTORY.getWidth(instance)));
+            pinState.fireInvalidated();
+          }
+        }
+        propagator.propagate();
+        require(!propagator.isOscillating(), "Oscillation at " + vectors + ":" + row);
+        for (int i = 0; i < header.length; i++) {
+          var component = pins.get(header[i]);
+          var instance = Instance.getInstanceFor(component);
+          if (!Pin.FACTORY.isInputPin(instance)) {
+            var actual = Pin.FACTORY.getValue(state.getInstanceState(component));
+            var expected = vectorValue(values[i], Pin.FACTORY.getWidth(instance));
+            require(actual.equals(expected),
+                vectors + " row " + row + " " + header[i] + ": " + actual + " expected "
+                    + expected);
+          }
         }
       }
+      return lines.size() - 1;
+    } finally {
+      project.getSimulator().shutDown();
     }
-    return lines.size() - 1;
+  }
+
+  private static Value vectorValue(String text, BitWidth width) {
+    if (!text.startsWith("b")) {
+      return Value.createKnown(width, Long.parseUnsignedLong(text));
+    }
+    require(text.length() == width.getWidth() + 1, "Vector width mismatch: " + text);
+    var bits = new Value[width.getWidth()];
+    for (int i = 0; i < bits.length; i++) {
+      bits[i] = switch (Character.toLowerCase(text.charAt(text.length() - 1 - i))) {
+        case '0' -> Value.FALSE;
+        case '1' -> Value.TRUE;
+        case 'z', 'x' -> Value.UNKNOWN;
+        case 'e' -> Value.ERROR;
+        default -> throw new AssertionError("Invalid vector digit: " + text);
+      };
+    }
+    return Value.create(bits);
   }
 }

@@ -36,13 +36,20 @@ final class WordNetlist {
   final List<Port> ports = new ArrayList<>();
   final Map<String, Integer> widths = new LinkedHashMap<>();
   final Map<List<Object>, String> vectors = new LinkedHashMap<>();
-  final Set<List<Object>> sources = new LinkedHashSet<>();
+  final List<List<Object>> sources = new ArrayList<>();
   final Map<Object, Object> aliases = new HashMap<>();
+  // Inout ports expose separate sense and drive pins at subcircuit boundaries.
+  // Only local drivers feed the drive pin; feeding the resolved bus back out
+  // would retain a stale value after the last driver releases it.
+  private final Map<Object, Object> inoutDrives = new LinkedHashMap<>();
+  private final Set<Object> resolvedBits = new HashSet<>();
   final Map<String, Object> module;
   final YosysDesign design;
   final String undefined;
   private final Set<String> labels = new HashSet<>();
   private long nextBit = -1;
+  private int inputCount;
+  private int outputCount;
 
   WordNetlist(YosysDesign design, String name, String undefined, Map<String, String> names) {
     this.design = design;
@@ -59,23 +66,57 @@ final class WordNetlist {
             "Nonzero initial register value on " + entry.getKey() + "; use a reset sequence");
       }
     }
-    int inputs = 0;
-    int outputs = 0;
+    var declaredInouts = new HashMap<Object, String>();
+    for (var entry : map(module, "ports").entrySet()) {
+      var port = object(entry.getValue());
+      if ("inout".equals(port.get("direction"))) {
+        for (var bit : bits(port.get("bits"))) {
+          var previous = declaredInouts.putIfAbsent(bit, entry.getKey());
+          if (previous != null) {
+            throw new ImportException(
+                "Aliased inout ports are unsupported: " + previous + " and " + entry.getKey());
+          }
+          inoutDrives.computeIfAbsent(bit, key -> fresh(1).getFirst());
+          resolvedBits.add(bit);
+          resolvedBits.add(inoutDrives.get(bit));
+        }
+      }
+    }
+    for (var value : map(module, "cells").values()) {
+      var cell = object(value);
+      var type = cell.get("type").toString();
+      var connections = map(cell, "connections");
+      if (Set.of("$tribuf", "$_TBUF_").contains(type)
+          || (type.equals("$mux")
+              && connections.values().stream().anyMatch(v -> array(v).contains("z")))) {
+        resolvedBits.addAll(bits(connections.get("Y")));
+      }
+      if (design.modules.containsKey(type)) {
+        for (var entry : map(design.module(type), "ports").entrySet()) {
+          var direction = object(entry.getValue()).get("direction");
+          if (("inout".equals(direction)
+                  || ("output".equals(direction) && design.tristateModules.contains(type)))
+              && connections.containsKey(entry.getKey())) {
+            resolvedBits.addAll(bits(connections.get(entry.getKey())));
+          }
+        }
+      }
+    }
     for (var entry : map(module, "ports").entrySet()) {
       var port = object(entry.getValue());
       String direction = port.get("direction").toString();
-      if (!direction.equals("input") && !direction.equals("output")) {
-        throw new ImportException("Unsupported inout port " + entry.getKey());
+      if (!Set.of("input", "output", "inout").contains(direction)) {
+        throw new ImportException("Unsupported port direction " + direction);
       }
-      boolean input = direction.equals("input");
       var bits = bits(port.get("bits"));
-      var label = uniqueName(entry.getKey(), labels);
-      ports.add(new Port(entry.getKey(), label, input, input ? 0 : 200,
-          input ? 20 + 40 * inputs++ : 40 + 40 * outputs++));
-      var config = attrs("appearance", "classic", "label", label, "width", bits.size(), "facing",
-          input ? "east" : "west", "type", input ? "input" : "output");
-      elements.add(new Element("Pin", "Wiring", config,
-          List.of(term(bus(bits, input), 0, 0, -20, 0)), 60, 0, entry.getKey()));
+      if (direction.equals("inout")) {
+        var driven = bits.stream().map(inoutDrives::get).toList();
+        addPort(entry.getKey() + "/sense", entry.getKey() + "_in", bits, true, true);
+        addPort(entry.getKey() + "/drive", entry.getKey() + "_out", driven, false, false);
+        controlledBuffer(driven, constant(1, 1), bits, true);
+      } else {
+        addPort(entry.getKey(), entry.getKey(), bits, direction.equals("input"), false);
+      }
     }
     for (var entry : map(module, "cells").entrySet()) {
       checkCancelled();
@@ -95,7 +136,25 @@ final class WordNetlist {
             name + "." + entry.getKey() + " (" + type + "): " + exception.getMessage());
       }
     }
-    connectBuses();
+    if (!resolvedBits.isEmpty() || vectors.keySet().stream().anyMatch(v -> v.contains("z"))) {
+      connectResolvedBuses();
+    } else {
+      connectBuses();
+    }
+  }
+
+  private void addPort(String key, String name, List<Object> bits, boolean input, boolean sense) {
+    var label = uniqueName(name, labels);
+    ports.add(new Port(key, label, input, input ? 0 : 200,
+        input ? 20 + 40 * inputCount++ : 40 + 40 * outputCount++));
+    var config = attrs("appearance", "classic", "label", label, "width", bits.size(), "facing",
+        input ? "east" : "west", "type", input ? "input" : "output");
+    if (sense) {
+      config.put("behavior", "tristate");
+    }
+    var net = input ? sourceBus(bits, !sense) : bus(bits);
+    elements.add(
+        new Element("Pin", "Wiring", config, List.of(term(net, 0, 0, -20, 0)), 60, 0, key));
   }
 
   static String uniqueName(String name, Set<String> used) {
@@ -124,7 +183,7 @@ final class WordNetlist {
         }
         result.add(number);
       } else if (bit instanceof String text && Set.of("0", "1", "x", "z").contains(text)) {
-        if (text.equals("x") || text.equals("z")) {
+        if (text.equals("x")) {
           if (undefined.equals("error")) {
             throw new ImportException("Undefined value requires an explicit zero/one policy");
           }
@@ -170,20 +229,37 @@ final class WordNetlist {
   }
 
   String bus(List<Object> bits, boolean source) {
+    if (source) {
+      return sourceBus(bits, true);
+    }
     checkWidth(bits.size());
     bits = List.copyOf(bits);
-    if (source) {
-      if (bits.stream().anyMatch(b -> b instanceof String)
-          || new HashSet<>(bits).size() != bits.size() || !sources.add(bits)) {
-        throw new ImportException("Repeated or constant-driven output bus");
-      }
-    }
     if (!vectors.containsKey(bits)) {
       var name = "b" + vectors.size();
       vectors.put(bits, name);
       widths.put(name, bits.size());
     }
     return vectors.get(bits);
+  }
+
+  private String sourceBus(List<Object> bits, boolean localDriver) {
+    var driven = bits.stream().map(b -> localDriver ? inoutDrives.getOrDefault(b, b) : b).toList();
+    if (driven.stream().anyMatch(b -> b instanceof String)
+        || new HashSet<>(driven).size() != driven.size()) {
+      throw new ImportException("Repeated or constant-driven output bus");
+    }
+    sources.add(driven);
+    return bus(driven);
+  }
+
+  private void controlledBuffer(
+      List<Object> data, List<Object> enable, List<Object> output, boolean sense) {
+    if (data.size() != output.size() || enable.size() != 1) {
+      throw new ImportException("Tri-state buffer width mismatch");
+    }
+    add("Controlled Buffer", "Gates", attrs("width", output.size()),
+        term(bus(data), -20, 0, -40, 0), term(bus(enable), -10, 10, -10, 30),
+        term(sourceBus(output, !sense), 0, 0, 20, 40));
   }
 
   static Map<String, String> attrs(Object... values) {
@@ -213,8 +289,9 @@ final class WordNetlist {
       throw new ImportException("Connection width mismatch");
     }
     for (int i = 0; i < source.size(); i++) {
-      if (!source.get(i).equals(target.get(i))) {
-        aliases.put(target.get(i), source.get(i));
+      var destination = inoutDrives.getOrDefault(target.get(i), target.get(i));
+      if (!source.get(i).equals(destination)) {
+        aliases.put(destination, source.get(i));
       }
     }
   }
@@ -300,6 +377,7 @@ final class WordNetlist {
     if (a.size() != y.size() || b.size() != y.size()) {
       throw new ImportException("Arithmetic width mismatch");
     }
+    
     add(name.equals("Mod") ? "Divider" : name, "Arithmetic", attrs("width", y.size()), 
       term(bus(a), -40, -10, -60, -10),
       term(bus(b), -40, 10, -60, 10), 
@@ -416,7 +494,10 @@ final class WordNetlist {
     var y = map(cell, "connections").containsKey("Y") ? connection(cell, "Y") : List.<Object>of();
     int width = y.size();
     switch (type) {
-      case "$add", "$sub", "$mul", "$and", "$div", "$mod", "$or", "$xor", "$xnor", "$not", "$pos", "$neg" -> {
+      case "$tribuf", "$_TBUF_" ->
+        controlledBuffer(
+            connection(cell, "A"), connection(cell, type.equals("$tribuf") ? "EN" : "E"), y, false);
+      case "$add", "$sub", "$mul", "$div", "$mod", "$and", "$or", "$xor", "$xnor", "$not", "$pos", "$neg" -> {
         boolean unary = Set.of("$not", "$pos", "$neg").contains(type);
         boolean signed = param(cell, "A_SIGNED", 0).signum() != 0
             && (unary || param(cell, "B_SIGNED", 0).signum() != 0);
@@ -605,6 +686,7 @@ final class WordNetlist {
     int outputs = 0;
     for (var entry : childPorts.entrySet()) {
       var port = object(entry.getValue());
+      boolean inout = "inout".equals(port.get("direction"));
       boolean input = "input".equals(port.get("direction"));
       int width = array(port.get("bits")).size();
       var data = cn.containsKey(entry.getKey()) ? bits(cn.get(entry.getKey())) : List.<Object>of();
@@ -613,6 +695,11 @@ final class WordNetlist {
       }
       if (data.size() != width) {
         throw new ImportException("Submodule port width mismatch: " + entry.getKey());
+      }
+      if (inout) {
+        resolvedBits.addAll(data);
+        int row = 20 + 40 * inputs++;
+        terms.add(term(bus(data), 0, row, -20, row));
       }
       int x = input ? 0 : 200;
       int row = input ? 20 + 40 * inputs++ : 40 + 40 * outputs++;
@@ -652,6 +739,71 @@ final class WordNetlist {
       }
     }
     add("Splitter", "Wiring", config, terms.toArray(Terminal[] ::new));
+  }
+
+  /** Connects shared driver buses through bidirectional splitters, preserving native resolution. */
+  private void connectResolvedBuses() {
+    var resolved = new HashSet<Object>();
+    for (var bit : resolvedBits) {
+      resolved.add(canonical(bit));
+    }
+    var driven = new HashSet<Object>();
+    for (var source : sources) {
+      for (var bit : source) {
+        var key = canonical(bit);
+        if (!driven.add(key) && !resolved.contains(key)) {
+          throw new ImportException("Multiple drivers for bit " + bit);
+        }
+      }
+    }
+    var pending = new ArrayList<>(vectors.keySet());
+    var scalars = new LinkedHashSet<Object>();
+    for (var vector : pending) {
+      checkCancelled();
+      var groups = new ArrayList<List<Object>>();
+      var positions = new ArrayList<List<Integer>>();
+      for (int i = 0; i < vector.size(); i++) {
+        var bit = canonical(vector.get(i));
+        scalars.add(bit);
+      }
+      // A repeated scalar cannot be assigned to a multi-bit splitter branch:
+      // extract each lane separately, then join equal scalar nets electrically.
+      for (int i = 0; i < vector.size(); i++) {
+        var bit = canonical(vector.get(i));
+        groups.add(List.of(bit));
+        positions.add(List.of(i));
+      }
+      if (vector.size() != 1 || !vector.equals(groups.getFirst())) {
+        splitter(vector, groups, positions);
+      }
+    }
+    for (var bit : scalars) {
+      if (driven.contains(bit)) {
+        continue;
+      }
+      String value;
+      if (bit instanceof String text) {
+        value = text;
+      } else if (resolved.contains(bit)) {
+        value = "z";
+      } else if (undefined.equals("error")) {
+        throw new ImportException("Undriven bit " + bit);
+      } else {
+        value = undefined;
+      }
+      var net = bus(List.of(bit));
+      if (value.equals("z")) {
+        // A disabled native buffer contributes high impedance. Keep the zero
+        // control source separate from this net so it cannot drive the bus.
+        var zero = fresh(1);
+        add("Constant", "Wiring", attrs("width", 1, "value", "0x0"), term(bus(zero), 0, 0, -20, 0));
+        add("Controlled Buffer", "Gates", attrs("width", 1), term(bus(zero), -20, 0, -40, 0),
+            term(bus(zero), -10, 10, -10, 30), term(net, 0, 0, 20, 40));
+      } else {
+        add("Constant", "Wiring", attrs("width", 1, "value", "0x" + value),
+            term(net, 0, 0, -20, 0));
+      }
+    }
   }
 
   private void connectBuses() {

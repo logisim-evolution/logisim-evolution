@@ -6,6 +6,7 @@
  */
 package com.cburch.logisim.verilog;
 
+import static com.cburch.logisim.verilog.YosysJson.array;
 import static com.cburch.logisim.verilog.YosysJson.checkCancelled;
 import static com.cburch.logisim.verilog.YosysJson.flag;
 import static com.cburch.logisim.verilog.YosysJson.map;
@@ -18,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** Validated reachable module hierarchy, with children preceding parents. */
 final class YosysDesign {
@@ -25,6 +27,7 @@ final class YosysDesign {
   final Map<String, Object> modules;
   final String top;
   final List<String> order = new ArrayList<>();
+  final Set<String> tristateModules = new LinkedHashSet<>();
 
   YosysDesign(Map<String, Object> json, String requested) {
     this.json = json;
@@ -97,6 +100,24 @@ final class YosysDesign {
       }
       for (var child : new ArrayList<>(children).reversed()) {
         stack.push(new Visit(child, false));
+      }
+    }
+    // Children are visited first, so this also covers tri-state outputs that
+    // pass through ordinary output ports at several hierarchy levels.
+    for (var name : order) {
+      var module = module(name);
+      boolean tristate = map(module, "ports").values().stream().anyMatch(value -> {
+        var port = object(value);
+        return "inout".equals(port.get("direction")) || array(port.get("bits")).contains("z");
+      });
+      for (var value : map(module, "cells").values()) {
+        var cell = object(value);
+        var type = cell.get("type").toString();
+        tristate |= Set.of("$tribuf", "$_TBUF_").contains(type) || tristateModules.contains(type)
+            || map(cell, "connections").values().stream().anyMatch(v -> array(v).contains("z"));
+      }
+      if (tristate) {
+        tristateModules.add(name);
       }
     }
   }
