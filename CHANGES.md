@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
   * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
