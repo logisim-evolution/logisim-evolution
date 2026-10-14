@@ -29,19 +29,17 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.proj.Project;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Functional tests for the 74HC123 dual retriggerable monostable. */
 class Ttl74123Test {
-  /** Datasheet point Rext = 10 kΩ, Cext = 100 nF is 450 µs, which is 9 ticks at 20 kHz. */
-  private static final double DATASHEET_TICK_HZ = 20_000;
-  /**
-   * Unit tests have no simulator, so the component uses 1 Hz. These parts last 9 ticks at that
-   * rate and stay inside the attribute limits.
-   */
-  private static final int NINE_TICK_REXT_KOHM = 1000;
-  private static final int NINE_TICK_CEXT_PF = 20_000_000;
-  private static final int PULSE_TICKS = 9;
+  /** Datasheet point Rext = 10 kΩ, Cext = 100 nF, which is also the component default. */
+  private static final long PULSE_NANOS = 450_000L;
+
+  /** Clock read by the component while a test propagates or pauses. */
+  private long now;
   private static final int GND_PORT = 10;
   private static final int VCC_PORT = 11;
   private static final int[] OUTPUT_PORTS = {
@@ -50,6 +48,17 @@ class Ttl74123Test {
     Ttl74123.PORT_INDEX_2Q,
     Ttl74123.PORT_INDEX_2QBAR
   };
+
+  @BeforeEach
+  void installClock() {
+    now = 0;
+    Ttl74123.setClock(() -> now);
+  }
+
+  @AfterEach
+  void restoreClock() {
+    Ttl74123.setClock(null);
+  }
 
   @Test
   void logicalPortsFollowTheDatasheetPinout() {
@@ -75,13 +84,16 @@ class Ttl74123Test {
   }
 
   @Test
-  void widthTicksMatchesTheDatasheetExample() {
-    assertEquals(PULSE_TICKS, Ttl74123.widthTicks(10, 100_000, DATASHEET_TICK_HZ));
-    assertEquals(
-        PULSE_TICKS, Ttl74123.widthTicks(NINE_TICK_REXT_KOHM, NINE_TICK_CEXT_PF, 1));
-    assertEquals(1, Ttl74123.widthTicks(10, 100_000, 1));
-    assertEquals(1, Ttl74123.widthTicks(10, 100_000, 0));
-    assertEquals(Integer.MAX_VALUE, Ttl74123.widthTicks(1000, 1_000_000_000, 1.0e12));
+  void widthNanosMatchesTheDatasheetExample() {
+    assertEquals(PULSE_NANOS, Ttl74123.widthNanos(10, 100_000));
+    assertEquals(9_000_000_000L, Ttl74123.widthNanos(1000, 20_000_000));
+    assertEquals(1L, Ttl74123.widthNanos(0, 0));
+    assertEquals(450_000_000_000L, Ttl74123.widthNanos(1000, 1_000_000_000));
+    assertEquals("450 µs", Ttl74123.formatWidth(PULSE_NANOS));
+    assertEquals("9 µs", Ttl74123.formatWidth(9_000L));
+    assertEquals("1.5 ms", Ttl74123.formatWidth(1_500_000L));
+    assertEquals("9 s", Ttl74123.formatWidth(9_000_000_000L));
+    assertEquals("500 ns", Ttl74123.formatWidth(500L));
   }
 
   @Test
@@ -191,17 +203,17 @@ class Ttl74123Test {
   void risingBTriggersWhenAIsLowAndResetIsHigh() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
 
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
     assertPulse(state, 1, Value.TRUE);
     assertPulse(state, 2, Value.FALSE);
-    assertFalse(gate.expire(state, 108));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
-    assertTrue(gate.expire(state, 109));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
     assertPulse(state, 1, Value.FALSE);
   }
@@ -250,21 +262,21 @@ class Ttl74123Test {
   void retriggerRestartsTheCapturedWidth() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
-    state.setTickCount(104);
+    now = 5_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.FALSE);
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
-    assertFalse(gate.expire(state, 112));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
-    assertTrue(gate.expire(state, 113));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
     assertPulse(state, 1, Value.FALSE);
   }
@@ -273,7 +285,7 @@ class Ttl74123Test {
   void stableInputLevelsDoNotAbortAnActivePulse() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
@@ -283,8 +295,8 @@ class Ttl74123Test {
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
 
-    assertFalse(gate.expire(state, 108));
-    assertTrue(gate.expire(state, 109));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
     assertPulse(state, 1, Value.FALSE);
   }
@@ -293,24 +305,51 @@ class Ttl74123Test {
   void timingAttributesApplyOnTheNextTrigger() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
     state.getAttributeSet().setValue(Ttl74123.CEXT_1, 10_000);
-    assertFalse(gate.expire(state, 101));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
 
-    assertTrue(gate.expire(state, 109));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
-    state.setTickCount(200);
+    now = 2_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.FALSE);
     gate.propagate(state);
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
-    assertFalse(gate.expire(state, 200));
-    assertTrue(gate.expire(state, 201));
+    final var shortened = Ttl74123.widthNanos(10, 10_000);
+    assertFalse(gate.expire(state, now + shortened - 1));
+    assertTrue(gate.expire(state, now + shortened));
+  }
+
+  @Test
+  void stoppedSimulationFreezesTheRemainingPulse() {
+    final var gate = gate();
+    final var state = arm(gate, false, false);
+    now = 1_000;
+    state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
+    gate.propagate(state);
+
+    now = 1_000 + 100_000;
+    gate.setSimulationRunning(state, false);
+    assertFalse(gate.expire(state, now + PULSE_NANOS));
+    gate.propagate(state);
+    assertPulse(state, 1, Value.TRUE);
+
+    final var resumeAt = 50_000_000L;
+    now = resumeAt;
+    gate.setSimulationRunning(state, true);
+    final var remaining = PULSE_NANOS - 100_000;
+    assertFalse(gate.expire(state, resumeAt + remaining - 1));
+    gate.propagate(state);
+    assertPulse(state, 1, Value.TRUE);
+    assertTrue(gate.expire(state, resumeAt + remaining));
+    gate.propagate(state);
+    assertPulse(state, 1, Value.FALSE);
   }
 
   @Test
@@ -398,17 +437,9 @@ class Ttl74123Test {
     return new Ttl74123();
   }
 
-  private static void useNineTickTiming(TestInstanceState state) {
-    state.getAttributeSet().setValue(Ttl74123.REXT_1, NINE_TICK_REXT_KOHM);
-    state.getAttributeSet().setValue(Ttl74123.CEXT_1, NINE_TICK_CEXT_PF);
-    state.getAttributeSet().setValue(Ttl74123.REXT_2, NINE_TICK_REXT_KOHM);
-    state.getAttributeSet().setValue(Ttl74123.CEXT_2, NINE_TICK_CEXT_PF);
-  }
-
   /** Records a stable input level so the next transition can be recognized as an edge. */
   private static TestInstanceState arm(Ttl74123 gate, boolean inputA, boolean inputB) {
     final var state = new TestInstanceState(gate, false);
-    useNineTickTiming(state);
     state.setPortValue(Ttl74123.PORT_INDEX_1A, inputA ? Value.TRUE : Value.FALSE);
     state.setPortValue(Ttl74123.PORT_INDEX_1B, inputB ? Value.TRUE : Value.FALSE);
     state.setPortValue(Ttl74123.PORT_INDEX_1RD, Value.TRUE);
@@ -457,10 +488,6 @@ class Ttl74123Test {
 
     private void setPortValue(int portIndex, Value value) {
       portValues.put(portIndex, value);
-    }
-
-    private void setTickCount(int ticks) {
-      tickCount = ticks;
     }
 
     @Override
