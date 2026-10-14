@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits with      hierarchy, arithmetic, registers, memories, tri-state signals, and bidirectional ports. [#1616] (@f3rhd).
   * Fixed FPGA net tracing through unconnected splitter bits and resulting false short-circuit errors
     [#3063] (@hewzhew).
   * Showed source line numbers and applicable set/sequence numbers for failed command-line test vectors [#3060] (@goudan789).
