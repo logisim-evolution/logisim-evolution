@@ -49,7 +49,7 @@
       </h2>
       <p>
         Outputs 0 normally; but while the user is pressing the button using the Poke Tool, the output is 1.
-        If a trigger key is assigned, holding that key does the same thing, provided the canvas has focus and the Poke Tool is selected.
+        If a trigger key is assigned, holding that key does the same thing while the circuit layout is shown. The pointer tool and the Poke Tool both accept it, and the canvas does not have to be the focused control.
         Several buttons can be held down together by holding their keys at the same time.
         The key produces the same output change as holding the mouse.
       </p>
@@ -84,7 +84,8 @@
         <dd>
           A letter (A–Z) or digit (0–9) that presses the button while the key is held.
           The character is drawn on the button.
-          The canvas must have focus and the Poke Tool must be selected.
+          It works while the main window is showing the circuit layout, including just after the key is chosen in the properties table.
+          It is ignored while typing in a text field, while the text tool or a component-placement tool is active, and while a menu is open.
           Each key can belong to only one button in the same circuit; the same key may be used again in another circuit.
           (none) leaves the button controlled only by the mouse.
           Digits on the numeric keypad use the same mapping as the number row.
@@ -120,9 +121,9 @@
       </h2>
       <p>
         When the mouse button is pressed, the component's output will be 1. Upon releasing the mouse button, the output reverts back to 0.
-        Holding the button's trigger key does the same while the canvas has focus and the Poke Tool is selected.
-        Releasing the key, moving focus off the canvas, or selecting another tool releases buttons that were held from the keyboard.
-        A button held only with the mouse stays pressed.
+        Holding the button's trigger key does the same without clicking the button.
+        Releasing the key releases it. A button held only with the mouse stays pressed.
+        Moving into a text field, switching to the text tool, or leaving the window releases keys that were holding buttons.
       </p>
       <h2>
         Text Tool Behavior
