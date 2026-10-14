@@ -4,7 +4,18 @@
 
 * @dev (????-??-??)
   * Added facing and a selectable grid thickness to the LED Bar [#3085] (@Vadimatorik).
+  * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
+  * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
+    [#3066] (@Kejoki).
+  * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
+    [#3076] (@hewzhew).
+  * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages
+    [#3008] (@hewzhew).
+  * Fixed FPGA net tracing through unconnected splitter bits and resulting false short-circuit errors
+    [#3063] (@hewzhew).
+  * Showed source line numbers and applicable set/sequence numbers for failed command-line test vectors [#3060] (@goudan789).
   * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
+  * Added NE555 Timer IC component with Astable and Monostable modes to Extra I/O library (@V-Zemlyakov).
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
     circuit projects, image exports, and SoC software directories (@V-Zemlyakov).
   * Added TTL 74123: dual retriggerable monostable multivibrator with reset (@Vadimatorik).
@@ -26,6 +37,7 @@
   * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
     [#3008] (@xjx06127).
+  * Fixed French translation mistake for `selCutItem` (@LPe7).
 
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
