@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
@@ -67,6 +68,12 @@ public class DipSwitch extends InstanceFactory {
         i = (e.getX() - loc.getX() - 5) / 10;
       }
       val.toggleBit(i);
+      // A physical switch stays where you left it. When this component is set to
+      // remember, record the new pattern in the saved attribute so it survives a
+      // simulation reset and a save/load round trip.
+      if (state.getAttributeValue(ATTR_RESET) == RESET_LAST) {
+        state.getInstance().getAttributeSet().setValue(ATTR_POSITIONS, val.getValue());
+      }
       state.getInstance().fireInvalidated();
     }
   }
@@ -79,6 +86,10 @@ public class DipSwitch extends InstanceFactory {
     public State(int value, int size) {
       Value = value;
       this.size = size;
+    }
+
+    public int getValue() {
+      return Value;
     }
 
     public boolean isBitSet(int bitindex) {
@@ -126,6 +137,44 @@ public class DipSwitch extends InstanceFactory {
   public static final Attribute<BitWidth> ATTR_SIZE =
       Attributes.forBitWidth("number", S.getter("nrOfSwitch"), MIN_SWITCH, MAX_SWITCH);
 
+  // Switch positions that can survive a reset and a file load.
+  //
+  // The live positions are simulation state (InstanceData): discarded on reset
+  // and never written to the .circ file. ATTR_POSITIONS keeps them as a bit
+  // mask in an attribute, which is saved with the circuit, and ATTR_RESET
+  // decides what a reset or a fresh load does with it. "open", the default and
+  // the behaviour before these attributes existed, and "closed" set every
+  // switch; "last" keeps the saved positions. Option names are written into
+  // .circ files - do NOT change them or saved circuits will fail to load.
+
+  private static final AttributeOption RESET_LAST =
+      new AttributeOption("last", "last", S.getter("dipResetLast"));
+  private static final AttributeOption RESET_OPEN =
+      new AttributeOption("open", "open", S.getter("dipResetOpen"));
+  private static final AttributeOption RESET_CLOSED =
+      new AttributeOption("closed", "closed", S.getter("dipResetClosed"));
+
+  public static final Attribute<AttributeOption> ATTR_RESET =
+      Attributes.forOption(
+          "resetbehavior",
+          S.getter("dipResetBehavior"),
+          new AttributeOption[] {RESET_OPEN, RESET_CLOSED, RESET_LAST});
+
+  public static final Attribute<Integer> ATTR_POSITIONS =
+      Attributes.forHexInteger("positions", S.getter("dipPositions"));
+
+  /** Bit mask covering n switches. Guards n == 32, where 1 << 32 is 1, not 0. */
+  private static int mask(int n) {
+    return (n >= 32) ? -1 : ((1 << n) - 1);
+  }
+
+  /** Value a freshly created State starts from, per the reset attribute. */
+  private static int initialValue(int n, AttributeOption mode, Integer saved) {
+    if (mode == RESET_CLOSED) return mask(n);
+    if (mode == RESET_LAST) return ((saved == null) ? 0 : saved) & mask(n);
+    return 0;
+  }
+
   public DipSwitch() {
     super(_ID, S.getter("DipSwitchComponent"), new AbstractSimpleIoHdlGeneratorFactory(true), true);
     var dipSize = 8;
@@ -138,6 +187,8 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.LABEL_COLOR,
           StdAttr.LABEL_VISIBILITY,
           ATTR_SIZE,
+          ATTR_RESET,
+          ATTR_POSITIONS,
           StdAttr.MAPINFO
         },
         new Object[] {
@@ -148,6 +199,8 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
           BitWidth.create(dipSize),
+          RESET_OPEN,
+          0,
           new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null)
         });
     setFacingAttribute(StdAttr.FACING);
@@ -229,12 +282,18 @@ public class DipSwitch extends InstanceFactory {
     final var segmentWidth = 10;
 
     var state = (State) painter.getData();
-    if (state == null || state.size != painter.getAttributeValue(ATTR_SIZE).getWidth()) {
-      final var val = (state == null) ? 0 : state.Value;
-      state = new State(val, painter.getAttributeValue(ATTR_SIZE).getWidth());
+    final int n = painter.getAttributeValue(ATTR_SIZE).getWidth();
+    if (state == null || state.size != n) {
+      final var val =
+          (state == null)
+              ? initialValue(
+                  n,
+                  painter.getAttributeValue(ATTR_RESET),
+                  painter.getAttributeValue(ATTR_POSITIONS))
+              : state.Value & mask(n);
+      state = new State(val, n);
       painter.setData(state);
     }
-    int n = painter.getAttributeValue(ATTR_SIZE).getWidth();
 
     final var facing = painter.getAttributeValue(StdAttr.FACING);
     final var loc = painter.getLocation();
@@ -289,9 +348,14 @@ public class DipSwitch extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     var pins = (State) state.getData();
-    if (pins == null || pins.size != state.getAttributeValue(ATTR_SIZE).getWidth()) {
-      int val = (pins == null) ? 0 : pins.Value;
-      pins = new State(val, state.getAttributeValue(ATTR_SIZE).getWidth());
+    final int n = state.getAttributeValue(ATTR_SIZE).getWidth();
+    if (pins == null || pins.size != n) {
+      final int val =
+          (pins == null)
+              ? initialValue(
+                  n, state.getAttributeValue(ATTR_RESET), state.getAttributeValue(ATTR_POSITIONS))
+              : pins.Value & mask(n);
+      pins = new State(val, n);
       state.setData(pins);
     }
     for (var i = 0; i < pins.size; i++) {
