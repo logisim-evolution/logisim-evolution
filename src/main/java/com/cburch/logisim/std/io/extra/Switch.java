@@ -14,6 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -34,6 +35,7 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -81,6 +83,10 @@ public class Switch extends InstanceFactory {
     }
   }
 
+  /** When true, south and west facings draw the rocker and 0/1 marks rotated by 180°. */
+  public static final Attribute<Boolean> ATTR_ROTATE_LABELS =
+      Attributes.forBoolean("rotateLabels", S.getter("switchRotateLabels"));
+
   private static final int DEPTH = 3;
 
   public Switch() {
@@ -88,6 +94,7 @@ public class Switch extends InstanceFactory {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
+          ATTR_ROTATE_LABELS,
           StdAttr.WIDTH,
           IoLibrary.ATTR_COLOR,
           StdAttr.LABEL,
@@ -95,7 +102,13 @@ public class Switch extends InstanceFactory {
           StdAttr.LABEL_FONT
         },
         new Object[] {
-          Direction.EAST, BitWidth.ONE, Color.WHITE, "", Direction.NORTH, StdAttr.DEFAULT_LABEL_FONT
+          Direction.EAST,
+          Boolean.FALSE,
+          BitWidth.ONE,
+          Color.WHITE,
+          "",
+          Direction.NORTH,
+          StdAttr.DEFAULT_LABEL_FONT
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new SwitchIcon());
@@ -128,6 +141,10 @@ public class Switch extends InstanceFactory {
     } else if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_RIGHT | Instance.AVOID_LEFT);
     }
+  }
+
+  static boolean rotatesArtwork(Direction facing, boolean rotateLabels) {
+    return rotateLabels && (facing == Direction.SOUTH || facing == Direction.WEST);
   }
 
   private void paint(InstancePainter painter, boolean ghost) {
@@ -173,130 +190,144 @@ public class Switch extends InstanceFactory {
         else g.drawLine(px, py, px + 10, py);
         GraphicsUtil.switchToWidth(g, 1);
       }
+    }
 
-      if (facing == Direction.NORTH || facing == Direction.SOUTH) { // horizontal
-        // grey polygon x points
-        xp = new int[] {x, x + w - DEPTH, x + w, x + w, x};
-        // grey polygon y points
-        yp = new int[] {y + DEPTH, y, y + DEPTH, y + h, y + h};
-        // white polygon x points
-        xr = new int[] {x, x + w - DEPTH, x + w - DEPTH, x};
-        // white polygon y points
-        yr = new int[] {y + DEPTH, y, y + h - DEPTH, y + h};
+    Graphics body = g;
+    Graphics2D rotatedBody = null;
+    if (rotatesArtwork(
+        facing, Boolean.TRUE.equals(painter.getAttributeValue(ATTR_ROTATE_LABELS)))) {
+      rotatedBody = (Graphics2D) g.create();
+      rotatedBody.rotate(Math.PI, x + w / 2.0, y + h / 2.0);
+      body = rotatedBody;
+    }
+    try {
+      if (active) {
+        if (facing == Direction.NORTH || facing == Direction.SOUTH) { // horizontal
+          // grey polygon x points
+          xp = new int[] {x, x + w - DEPTH, x + w, x + w, x};
+          // grey polygon y points
+          yp = new int[] {y + DEPTH, y, y + DEPTH, y + h, y + h};
+          // white polygon x points
+          xr = new int[] {x, x + w - DEPTH, x + w - DEPTH, x};
+          // white polygon y points
+          yr = new int[] {y + DEPTH, y, y + h - DEPTH, y + h};
 
-      } else { // vertical
-        xp = new int[] {x + DEPTH, x + w, x + w, x + DEPTH, x};
-        yp = new int[] {y, y, y + h, y + h, y + DEPTH};
-        xr = new int[] {x, x + w - DEPTH, x + w, x + DEPTH};
-        yr = new int[] {y + DEPTH, y + DEPTH, y + h, y + h};
+        } else { // vertical
+          xp = new int[] {x + DEPTH, x + w, x + w, x + DEPTH, x};
+          yp = new int[] {y, y, y + h, y + h, y + DEPTH};
+          xr = new int[] {x, x + w - DEPTH, x + w, x + DEPTH};
+          yr = new int[] {y + DEPTH, y + DEPTH, y + h, y + h};
+        }
+        if (!ghost) {
+          body.setColor(color.darker());
+          body.fillPolygon(xp, yp, xp.length);
+          body.setColor(color);
+          body.fillPolygon(xr, yr, xr.length);
+        } else {
+          body.setColor(new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()));
+          body.fillPolygon(xp, yp, xp.length);
+        }
+        body.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+        body.drawPolygon(xp, yp, xp.length);
+        body.drawPolygon(xr, yr, xr.length);
+        if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+          body.drawLine(
+              x + ((w - DEPTH) / 2),
+              y + (DEPTH / 2) + 1,
+              x + ((w - DEPTH) / 2),
+              y + h - (DEPTH / 2) - 1);
+          body.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
+          body.drawLine(
+              x + ((w - DEPTH) / 6),
+              y + ((h - DEPTH) / 2) + (DEPTH - DEPTH / 6),
+              x + ((w - DEPTH) / 3),
+              y + ((h - DEPTH) / 2) + (DEPTH - DEPTH / 3));
+          body.drawOval(
+              x + ((w - DEPTH) * 3 / 4) - (circle / 2),
+              y + ((h - DEPTH) / 2 - (circle / 2)) + 1 + (DEPTH / 4),
+              circle,
+              circle - 1);
+        } else {
+          body.drawLine(x + w - DEPTH, y + DEPTH, x + w, y);
+          body.drawLine(
+              x + (DEPTH / 2) + 1,
+              y + ((h - DEPTH) / 2) + DEPTH,
+              x + w - (DEPTH / 2) - 1,
+              y + ((h - DEPTH) / 2) + DEPTH);
+          body.drawLine(
+              x + ((w - DEPTH) / 2) + (DEPTH - DEPTH / 6),
+              y + ((h - DEPTH) * 5 / 6) + DEPTH,
+              x + ((w - DEPTH) / 2) + (DEPTH - DEPTH / 3),
+              y + ((h - DEPTH) * 2 / 3) + DEPTH);
+          body.drawOval(
+              x + (DEPTH / 4) + ((w - DEPTH - circle) / 2) + 1,
+              y + ((h - DEPTH) / 4 - (circle / 2)) + DEPTH,
+              circle - 1,
+              circle);
+        }
+      } else { // case false output
+        if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+          xp = new int[] {x, x + DEPTH, x + w, x + w, x};
+          yp = new int[] {y + DEPTH, y, y + DEPTH, y + h, y + h};
+          xr = new int[] {x + DEPTH, x + w, x + w, x + DEPTH};
+          yr = new int[] {y, y + DEPTH, y + h, y + h - DEPTH};
+        } else {
+          xp = new int[] {x + DEPTH, x + w, x + w, x + DEPTH, x};
+          yp = new int[] {y, y, y + h, y + h, y + h - DEPTH};
+          xr = new int[] {x + DEPTH, x + w, x + w - DEPTH, x};
+          yr = new int[] {y, y, y + h - DEPTH, y + h - DEPTH};
+        }
+        if (!ghost) {
+          body.setColor(color.darker());
+          body.fillPolygon(xp, yp, xp.length);
+          body.setColor(color);
+          body.fillPolygon(xr, yr, xr.length);
+        } else {
+          body.setColor(new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()));
+          body.fillPolygon(xp, yp, xp.length);
+        }
+        body.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+        body.drawPolygon(xp, yp, xp.length);
+        body.drawPolygon(xr, yr, xr.length);
+        if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+          // diagonal line inside gray polygon
+          body.drawLine(x + DEPTH, y + h - DEPTH, x, y + h);
+          body.drawLine(
+              x + ((w - DEPTH) / 2) + DEPTH,
+              y + (DEPTH / 2) + 1,
+              x + ((w - DEPTH) / 2) + DEPTH,
+              y + h - (DEPTH / 2) - 1);
+          body.drawLine(
+              x + DEPTH + (w / 6),
+              y + ((h - DEPTH) / 2) + (DEPTH / 6),
+              x + DEPTH + (w / 3),
+              y + ((h - DEPTH) / 2) + (DEPTH / 3));
+          body.drawOval(
+              x + ((w - DEPTH) * 3 / 4) - (circle / 2) + DEPTH,
+              y + ((h - DEPTH) / 2 - (circle / 2)) + (DEPTH * 3 / 4) + 1,
+              circle,
+              circle - 1);
+        } else {
+          body.drawLine(
+              x + (DEPTH / 2) + 1,
+              y + ((h - DEPTH) / 2),
+              x + w - (DEPTH / 2) - 1,
+              y + ((h - DEPTH) / 2));
+          body.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
+          body.drawLine(
+              x + ((w - DEPTH) / 2) + (DEPTH / 6),
+              y + ((h - DEPTH) * 5 / 6),
+              x + ((w - DEPTH) / 2) + (DEPTH / 3),
+              y + ((h - DEPTH) * 2 / 3));
+          body.drawOval(
+              x + (DEPTH * 3 / 4) + ((w - DEPTH - circle) / 2) + 1,
+              y + ((h - DEPTH) / 4 - (circle / 2)),
+              circle - 1,
+              circle);
+        }
       }
-      if (!ghost) {
-        g.setColor(color.darker());
-        g.fillPolygon(xp, yp, xp.length);
-        g.setColor(color);
-        g.fillPolygon(xr, yr, xr.length);
-      } else {
-        g.setColor(new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()));
-        g.fillPolygon(xp, yp, xp.length);
-      }
-      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-      g.drawPolygon(xp, yp, xp.length);
-      g.drawPolygon(xr, yr, xr.length);
-      if (facing == Direction.NORTH || facing == Direction.SOUTH) {
-        g.drawLine(
-            x + ((w - DEPTH) / 2),
-            y + (DEPTH / 2) + 1,
-            x + ((w - DEPTH) / 2),
-            y + h - (DEPTH / 2) - 1);
-        g.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
-        g.drawLine(
-            x + ((w - DEPTH) / 6),
-            y + ((h - DEPTH) / 2) + (DEPTH - DEPTH / 6),
-            x + ((w - DEPTH) / 3),
-            y + ((h - DEPTH) / 2) + (DEPTH - DEPTH / 3));
-        g.drawOval(
-            x + ((w - DEPTH) * 3 / 4) - (circle / 2),
-            y + ((h - DEPTH) / 2 - (circle / 2)) + 1 + (DEPTH / 4),
-            circle,
-            circle - 1);
-      } else {
-        g.drawLine(x + w - DEPTH, y + DEPTH, x + w, y);
-        g.drawLine(
-            x + (DEPTH / 2) + 1,
-            y + ((h - DEPTH) / 2) + DEPTH,
-            x + w - (DEPTH / 2) - 1,
-            y + ((h - DEPTH) / 2) + DEPTH);
-        g.drawLine(
-            x + ((w - DEPTH) / 2) + (DEPTH - DEPTH / 6),
-            y + ((h - DEPTH) * 5 / 6) + DEPTH,
-            x + ((w - DEPTH) / 2) + (DEPTH - DEPTH / 3),
-            y + ((h - DEPTH) * 2 / 3) + DEPTH);
-        g.drawOval(
-            x + (DEPTH / 4) + ((w - DEPTH - circle) / 2) + 1,
-            y + ((h - DEPTH) / 4 - (circle / 2)) + DEPTH,
-            circle - 1,
-            circle);
-      }
-    } else { // case false output
-      if (facing == Direction.NORTH || facing == Direction.SOUTH) {
-        xp = new int[] {x, x + DEPTH, x + w, x + w, x};
-        yp = new int[] {y + DEPTH, y, y + DEPTH, y + h, y + h};
-        xr = new int[] {x + DEPTH, x + w, x + w, x + DEPTH};
-        yr = new int[] {y, y + DEPTH, y + h, y + h - DEPTH};
-      } else {
-        xp = new int[] {x + DEPTH, x + w, x + w, x + DEPTH, x};
-        yp = new int[] {y, y, y + h, y + h, y + h - DEPTH};
-        xr = new int[] {x + DEPTH, x + w, x + w - DEPTH, x};
-        yr = new int[] {y, y, y + h - DEPTH, y + h - DEPTH};
-      }
-      if (!ghost) {
-        g.setColor(color.darker());
-        g.fillPolygon(xp, yp, xp.length);
-        g.setColor(color);
-        g.fillPolygon(xr, yr, xr.length);
-      } else {
-        g.setColor(new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()));
-        g.fillPolygon(xp, yp, xp.length);
-      }
-      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-      g.drawPolygon(xp, yp, xp.length);
-      g.drawPolygon(xr, yr, xr.length);
-      if (facing == Direction.NORTH || facing == Direction.SOUTH) {
-        // diagonal line inside gray polygon
-        g.drawLine(x + DEPTH, y + h - DEPTH, x, y + h);
-        g.drawLine(
-            x + ((w - DEPTH) / 2) + DEPTH,
-            y + (DEPTH / 2) + 1,
-            x + ((w - DEPTH) / 2) + DEPTH,
-            y + h - (DEPTH / 2) - 1);
-        g.drawLine(
-            x + DEPTH + (w / 6),
-            y + ((h - DEPTH) / 2) + (DEPTH / 6),
-            x + DEPTH + (w / 3),
-            y + ((h - DEPTH) / 2) + (DEPTH / 3));
-        g.drawOval(
-            x + ((w - DEPTH) * 3 / 4) - (circle / 2) + DEPTH,
-            y + ((h - DEPTH) / 2 - (circle / 2)) + (DEPTH * 3 / 4) + 1,
-            circle,
-            circle - 1);
-      } else {
-        g.drawLine(
-            x + (DEPTH / 2) + 1,
-            y + ((h - DEPTH) / 2),
-            x + w - (DEPTH / 2) - 1,
-            y + ((h - DEPTH) / 2));
-        g.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
-        g.drawLine(
-            x + ((w - DEPTH) / 2) + (DEPTH / 6),
-            y + ((h - DEPTH) * 5 / 6),
-            x + ((w - DEPTH) / 2) + (DEPTH / 3),
-            y + ((h - DEPTH) * 2 / 3));
-        g.drawOval(
-            x + (DEPTH * 3 / 4) + ((w - DEPTH - circle) / 2) + 1,
-            y + ((h - DEPTH) / 4 - (circle / 2)),
-            circle - 1,
-            circle);
-      }
+    } finally {
+      if (rotatedBody != null) rotatedBody.dispose();
     }
     if (!ghost) {
       painter.drawLabel();

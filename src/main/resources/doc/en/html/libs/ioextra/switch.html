@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta name="changed" content="2026-10-15T00:00:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>Switch</title>
@@ -45,6 +45,14 @@
       <dl>
         <dt>Facing</dt>
         <dd>The direction from the input toward the output.</dd>
+        <dt>Rotate labels</dt>
+        <dd>
+          Yes rotates the rocker and the 0 and 1 marks by 180° when Facing is West or South.
+          East and North keep the original drawing, so changing this attribute does not alter
+          those two facings. No leaves the marks fixed for each axis, as in previous versions.
+          The default is No, and existing circuits keep that appearance. The input and output
+          pins do not move.
+        </dd>
         <dt>Data Bits</dt>
         <dd>The bit width of the input and output.</dd>
         <dt>Color</dt>
