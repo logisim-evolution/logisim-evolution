@@ -28,6 +28,16 @@ drawn.</p>
 libraries, label components can be placed anywhere on the canvas;
 they do not snap to the grid.</p>
 
+<p>If the whole label, or one line of a multiline label, is wrapped in
+<code>$...$</code>, Logisim draws a formula instead of the source text.
+The recognized notation is <code>\text{...}</code>, <code>\overline{...}</code>,
+<code>\cdot</code>, <code>\oplus</code>, subscripts <code>_{...}</code>, and the
+signs <code>+</code>, <code>=</code>, <code>(</code>, and <code>)</code>. For example,
+<code>$\text{Y}=\text{B}\cdot\overline{\text{C}}+\text{A}\cdot\text{B}$</code>
+is drawn as a logic equation. While the label is being edited, the source text
+is shown. A command Logisim does not recognize is left as ordinary text. The
+label bounds follow the drawn formula, which is narrower than the source string.</p>
+
 <h2>Pins</h2>
 
 <p>None.</p>

@@ -57,6 +57,10 @@ public class TikZWriter extends Graphics2D {
     MyInfo.setSvgMode(mode);
   }
 
+  public boolean isSvgMode() {
+    return MyInfo.isSvgMode();
+  }
+
   @Override
   public void draw(Shape s) {
     MyInfo.addBezier(s, false);
