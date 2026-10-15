@@ -1249,6 +1249,7 @@ public class CircuitWires {
     }
 
     // make note of updates from simulator
+    final var driverChanged = new HashSet<ValuedBus>();
     var npoints = dirtyPoints.size();
     for (var k = 0; k < npoints; k++) { // for each point of interest
       final var ev = dirtyPoints.get(k);
@@ -1273,8 +1274,12 @@ public class CircuitWires {
             if (Value.equal(old, val)) continue;
             bc.drivenValue = val;
             s.markDirty(vb);
-            for (final var dep : vb.dependentBuses) {
-              s.markDirty(dep);
+            driverChanged.add(vb);
+            if (vb.dependentBuses != null) {
+              for (final var dep : vb.dependentBuses) {
+                s.markDirty(dep);
+                driverChanged.add(dep);
+              }
             }
             break;
           }
@@ -1304,6 +1309,18 @@ public class CircuitWires {
       final var val = vb.recalculate();
       if (Value.equal(old, val)) continue;
       circState.setValueByWire(val, vb.locations, vb.connections);
+    }
+    // A bidirectional component can be holding the wire at its current value, so a
+    // change in some other driver does not move busVal. It still has to propagate
+    // again: a closed switch that drove ERROR must notice when the losing driver
+    // floats and pass the remaining value.
+    for (final var changed : driverChanged) {
+      if (changed.connections == null) continue;
+      for (final var connection : changed.connections) {
+        if (connection.isBidirectional) {
+          circState.markComponentAsDirty(connection.component);
+        }
+      }
     }
     s.numDirty = 0;
   }

@@ -103,6 +103,36 @@ class SwitchContactTest {
   }
 
   @Test
+  void closedContactRecoversAfterOneDriverReleases() throws InterruptedException {
+    close(true);
+    drive(left, Value.FALSE);
+    drive(right, Value.UNKNOWN);
+    settle();
+    assertEquals(Value.FALSE, state.getValue(leftPoint));
+    assertEquals(Value.FALSE, state.getValue(rightPoint));
+
+    drive(right, Value.TRUE);
+    settle();
+    assertEquals(Value.ERROR, state.getValue(leftPoint));
+    assertEquals(Value.ERROR, state.getValue(rightPoint));
+
+    drive(left, Value.UNKNOWN);
+    settle();
+    assertEquals(Value.TRUE, state.getValue(leftPoint));
+    assertEquals(Value.TRUE, state.getValue(rightPoint));
+
+    drive(left, Value.FALSE);
+    settle();
+    assertEquals(Value.ERROR, state.getValue(leftPoint));
+    assertEquals(Value.ERROR, state.getValue(rightPoint));
+
+    drive(right, Value.UNKNOWN);
+    settle();
+    assertEquals(Value.FALSE, state.getValue(leftPoint));
+    assertEquals(Value.FALSE, state.getValue(rightPoint));
+  }
+
+  @Test
   void opposingDriversConflictWhileClosed() throws InterruptedException {
     close(true);
     drive(left, Value.TRUE);
