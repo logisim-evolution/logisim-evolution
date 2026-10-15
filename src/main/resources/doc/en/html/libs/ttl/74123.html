@@ -31,7 +31,9 @@
         <code>F</code>, so <code>1fF</code> is one femtofarad and <code>1ff</code> is not. The words
         <code>ohm</code>, <code>ohms</code>, <code>farad</code>, and <code>farads</code> are also
         accepted in any case, as in <code>10 kohm</code> or <code>100 nfarad</code>. Spaces are
-        ignored. A bare number keeps the saved-file unit: kiloohms or picofarads. The accepted
+        ignored. A bare number keeps the saved-file unit: kiloohms or picofarads. A prefixed
+        quantity is accepted only when it equals a whole number of that unit, so
+        <code>6.666667u</code> is 6666667 pF and <code>10.4k</code> is rejected. The accepted
         ranges are 2 kΩ to 1 MΩ and 10 nF to 1000 µF.
       </p>
       <p>
