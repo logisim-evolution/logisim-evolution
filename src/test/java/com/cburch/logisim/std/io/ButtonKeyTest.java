@@ -22,12 +22,11 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.proj.Project;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +35,7 @@ class ButtonKeyTest {
   void activeButtonGoesHighWhileKeyIsHeldAndLowOnRelease() {
     final var fixture = new Fixture();
     final var button = fixture.add("A", 0, false);
-    final var held = new HashSet<Component>();
+    final var held = newHeld();
 
     assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
     assertSame(Value.TRUE, fixture.level(button));
@@ -54,7 +53,7 @@ class ButtonKeyTest {
     final var button = fixture.add("A", 0, true);
 
     assertSame(Value.TRUE, fixture.level(button));
-    assertTrue(fixture.press(KeyEvent.VK_A, 'A', new HashSet<>()));
+    assertTrue(fixture.press(KeyEvent.VK_A, 'A', newHeld()));
     assertSame(Value.FALSE, fixture.level(button));
   }
 
@@ -63,7 +62,7 @@ class ButtonKeyTest {
     final var fixture = new Fixture();
     final var first = fixture.add("A", 0, false);
     final var second = fixture.add("B", 40, false);
-    final var held = new HashSet<Component>();
+    final var held = newHeld();
 
     assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
     assertTrue(fixture.press(KeyEvent.VK_B, 'b', held));
@@ -83,7 +82,7 @@ class ButtonKeyTest {
 
     assertTrue(
         ButtonKeyDispatcher.dispatch(
-            fixture.circuit, fixture.state, event, true, new HashSet<>()));
+            fixture.circuit, fixture.state, event, true, newHeld()));
     assertSame(Value.TRUE, fixture.level(button));
     assertEquals("A", Button.tokenFor(KeyEvent.VK_UNDEFINED, KeyEvent.CHAR_UNDEFINED, 0x01000444));
     assertEquals("F", Button.tokenFor(KeyEvent.VK_UNDEFINED, '\u0430', 0));
@@ -94,7 +93,7 @@ class ButtonKeyTest {
     final var fixture = new Fixture();
     final var button = fixture.add("1", 0, false);
 
-    assertTrue(fixture.press(KeyEvent.VK_NUMPAD1, '1', new HashSet<>()));
+    assertTrue(fixture.press(KeyEvent.VK_NUMPAD1, '1', newHeld()));
     assertSame(Value.TRUE, fixture.level(button));
   }
 
@@ -107,7 +106,7 @@ class ButtonKeyTest {
 
     assertFalse(
         ButtonKeyDispatcher.dispatch(
-            fixture.circuit, fixture.state, event, true, new HashSet<>()));
+            fixture.circuit, fixture.state, event, true, newHeld()));
     assertFalse(event.isConsumed());
     assertSame(Value.FALSE, fixture.level(button));
   }
@@ -120,7 +119,7 @@ class ButtonKeyTest {
 
     assertFalse(
         ButtonKeyDispatcher.dispatch(
-            fixture.circuit, fixture.state, event, true, new HashSet<>()));
+            fixture.circuit, fixture.state, event, true, newHeld()));
     assertFalse(event.isConsumed());
   }
 
@@ -161,12 +160,12 @@ class ButtonKeyTest {
   void keyReleaseDoesNotLiftAButtonHeldOnlyByTheMouse() {
     final var fixture = new Fixture();
     final var button = fixture.add("A", 0, false);
-    Button.setPressed(fixture.state.getInstanceState(button), true);
+    Button.setMousePressed(fixture.state.getInstanceState(button), true);
     final var event = keyEvent(KeyEvent.KEY_RELEASED, 0, KeyEvent.VK_A, 'a');
 
     assertTrue(
         ButtonKeyDispatcher.dispatch(
-            fixture.circuit, fixture.state, event, false, new HashSet<>()));
+            fixture.circuit, fixture.state, event, false, newHeld()));
     assertSame(Value.TRUE, fixture.level(button));
   }
 
@@ -175,11 +174,11 @@ class ButtonKeyTest {
     final var fixture = new Fixture();
     final var keyed = fixture.add("A", 0, false);
     final var mouseOnly = fixture.add(null, 40, false);
-    final var held = new HashSet<Component>();
+    final var held = newHeld();
 
     assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
-    Button.setPressed(fixture.state.getInstanceState(mouseOnly), true);
-    ButtonKeyDispatcher.releaseHeld(fixture.state, held);
+    Button.setMousePressed(fixture.state.getInstanceState(mouseOnly), true);
+    ButtonKeyDispatcher.releaseHeld(held);
 
     assertSame(Value.FALSE, fixture.level(keyed));
     assertSame(Value.TRUE, fixture.level(mouseOnly));
@@ -196,9 +195,68 @@ class ButtonKeyTest {
 
     assertFalse(
         ButtonKeyDispatcher.dispatch(
-            fixture.circuit, fixture.state, event, true, new HashSet<>()));
+            fixture.circuit, fixture.state, event, true, newHeld()));
     assertSame(Value.FALSE, fixture.level(first));
     assertSame(Value.FALSE, fixture.level(second));
+  }
+
+  @Test
+  void releasingAWhileCtrlIsHeldClearsTheKeyboardHold() {
+    final var fixture = new Fixture();
+    final var button = fixture.add("A", 0, false);
+    final var held = newHeld();
+
+    assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
+    final var release =
+        keyEvent(KeyEvent.KEY_RELEASED, InputEvent.CTRL_DOWN_MASK, KeyEvent.VK_A, 'a');
+
+    assertTrue(
+        ButtonKeyDispatcher.dispatch(fixture.circuit, fixture.state, release, false, held));
+    assertSame(Value.FALSE, fixture.level(button));
+    assertTrue(held.isEmpty());
+  }
+
+  @Test
+  void releaseUsesTheCircuitStateCapturedWhenTheKeyWentDown() {
+    final var fixture = new Fixture();
+    final var button = fixture.add("A", 0, false);
+    final var held = newHeld();
+    assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
+
+    final var other = new Circuit("other", fixture.file, fixture.project);
+    fixture.file.addCircuit(other);
+    final var otherState = CircuitState.createRootState(fixture.project, other);
+    final var release = keyEvent(KeyEvent.KEY_RELEASED, 0, KeyEvent.VK_A, 'a');
+
+    assertTrue(ButtonKeyDispatcher.dispatch(other, otherState, release, false, held));
+    assertSame(Value.FALSE, fixture.level(button));
+  }
+
+  @Test
+  void mouseAndKeyHoldsStayDownUntilBothAreReleased() {
+    final var fixture = new Fixture();
+    final var button = fixture.add("A", 0, false);
+    final var state = fixture.state.getInstanceState(button);
+    final var held = newHeld();
+
+    Button.setMousePressed(state, true);
+    assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
+    assertTrue(fixture.release(KeyEvent.VK_A, 'a', held));
+    assertSame(Value.TRUE, fixture.level(button));
+
+    Button.setMousePressed(state, false);
+    assertSame(Value.FALSE, fixture.level(button));
+
+    assertTrue(fixture.press(KeyEvent.VK_A, 'a', held));
+    Button.setMousePressed(state, true);
+    Button.setMousePressed(state, false);
+    assertSame(Value.TRUE, fixture.level(button));
+    assertTrue(fixture.release(KeyEvent.VK_A, 'a', held));
+    assertSame(Value.FALSE, fixture.level(button));
+  }
+
+  private static Map<String, ButtonKeyDispatcher.HeldPress> newHeld() {
+    return new HashMap<>();
   }
 
   private static void add(Circuit circuit, Component component) {
@@ -240,20 +298,19 @@ class ButtonKeyTest {
       return factory.createComponent(Location.create(x, 0, true), attrs);
     }
 
-    private boolean press(int keyCode, char keyChar, Set<Component> held) {
+    private boolean press(int keyCode, char keyChar, Map<String, ButtonKeyDispatcher.HeldPress> held) {
       final var event = keyEvent(KeyEvent.KEY_PRESSED, 0, keyCode, keyChar);
       return ButtonKeyDispatcher.dispatch(circuit, state, event, true, held);
     }
 
-    private boolean release(int keyCode, char keyChar, Set<Component> held) {
+    private boolean release(
+        int keyCode, char keyChar, Map<String, ButtonKeyDispatcher.HeldPress> held) {
       final var event = keyEvent(KeyEvent.KEY_RELEASED, 0, keyCode, keyChar);
       return ButtonKeyDispatcher.dispatch(circuit, state, event, false, held);
     }
 
     private Value level(Component button) {
-      final var data = (InstanceDataSingleton) state.getData(button);
-      if (data == null) return Button.level(state.getInstanceState(button), false);
-      return (Value) data.getValue();
+      return Button.outputLevel(state.getInstanceState(button));
     }
   }
 }

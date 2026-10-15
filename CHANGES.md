@@ -3,7 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Buttons can be held from the keyboard while the circuit layout is shown [#961] (@Vadimatorik).
+  * Buttons can be held from the keyboard while the Poke tool is selected and the canvas has focus [#961] (@Vadimatorik).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).

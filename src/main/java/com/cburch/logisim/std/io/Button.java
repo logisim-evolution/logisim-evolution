@@ -25,7 +25,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.ButtonIcon;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceDataSingleton;
+import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceLogger;
 import com.cburch.logisim.instance.InstancePainter;
@@ -87,10 +87,7 @@ public class Button extends InstanceFactory {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      final var defaultButtonState =
-          state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
-      return data == null ? defaultButtonState : (Value) data.getValue();
+      return outputLevel(state);
     }
 
     @Override
@@ -102,12 +99,12 @@ public class Button extends InstanceFactory {
   public static class Poker extends InstancePoker {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
-      setPressed(state, true);
+      setMousePressed(state, true);
     }
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      setPressed(state, false);
+      setMousePressed(state, false);
     }
   }
 
@@ -174,39 +171,44 @@ public class Button extends InstanceFactory {
       if (circuitState == null) return;
       final var state = circuitState.getInstanceState(instance.getComponent());
       if (state == null) return;
-      final var data = (InstanceDataSingleton) state.getData();
-      if (data == null) {
-        state.setData(
-            new InstanceDataSingleton(
-                state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE
-                    ? Value.TRUE
-                    : Value.FALSE));
-      } else {
-        data.setValue(data.getValue() == Value.TRUE ? Value.FALSE : Value.TRUE);
-      }
       state.getInstance().fireInvalidated();
     }
   }
 
-  /**
-   * Sets the button level as if the user were holding or releasing it. A repeat of the same level
-   * does not invalidate the instance.
-   *
-   * @return true when the stored level changed
-   */
-  public static boolean setPressed(InstanceState state, boolean pressed) {
-    final var next = level(state, pressed);
-    final var data = (InstanceDataSingleton) state.getData();
-    if (data == null) {
-      if (next.equals(level(state, false))) return false;
-      state.setData(new InstanceDataSingleton(next));
-    } else if (next.equals(data.getValue())) {
+  /** Mouse and keyboard holds are independent: the button stays down while either remains. */
+  public static boolean setMousePressed(InstanceState state, boolean pressed) {
+    return setSource(state, true, pressed);
+  }
+
+  public static boolean setKeyPressed(InstanceState state, boolean pressed) {
+    return setSource(state, false, pressed);
+  }
+
+  private static boolean setSource(InstanceState state, boolean mouseSource, boolean pressed) {
+    final var existing = state.getData();
+    final Hold hold;
+    if (existing instanceof Hold current) {
+      hold = current;
+    } else if (!pressed) {
       return false;
     } else {
-      data.setValue(next);
+      hold = new Hold();
+      state.setData(hold);
+    }
+    if (mouseSource) {
+      if (hold.mouse == pressed) return false;
+      hold.mouse = pressed;
+    } else {
+      if (hold.key == pressed) return false;
+      hold.key = pressed;
     }
     state.getInstance().fireInvalidated();
     return true;
+  }
+
+  static Value outputLevel(InstanceState state) {
+    final var held = state.getData() instanceof Hold hold && (hold.mouse || hold.key);
+    return level(state, held);
   }
 
   static Value level(InstanceState state, boolean pressed) {
@@ -344,13 +346,7 @@ public class Button extends InstanceFactory {
     final var h = bds.getHeight();
     final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
 
-    Value val;
-    if (painter.getShowState()) {
-      final var data = (InstanceDataSingleton) painter.getData();
-      val = data == null ? defaultButtonState : (Value) data.getValue();
-    } else {
-      val = defaultButtonState;
-    }
+    final var val = painter.getShowState() ? outputLevel(painter) : defaultButtonState;
 
     var color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
     if (!painter.shouldDrawColor()) {
@@ -423,10 +419,20 @@ public class Button extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    final var data = (InstanceDataSingleton) state.getData();
-    final var defaultButtonState =
-        state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
-    final var val = data == null ? defaultButtonState : (Value) data.getValue();
-    state.setPort(0, val, 1);
+    state.setPort(0, outputLevel(state), 1);
+  }
+
+  static final class Hold implements InstanceData, Cloneable {
+    private boolean mouse;
+    private boolean key;
+
+    @Override
+    public Object clone() {
+      try {
+        return super.clone();
+      } catch (CloneNotSupportedException exception) {
+        return null;
+      }
+    }
   }
 }

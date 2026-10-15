@@ -17,32 +17,30 @@ import com.cburch.logisim.tools.PokeTool;
 import com.cburch.logisim.tools.SelectTool;
 import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.WiringTool;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.junit.jupiter.api.Test;
 
 class ButtonKeyRouterTest {
   @Test
-  void pointerAndPokeAcceptTriggerKeys() {
-    assertTrue(ButtonKeyRouter.allowsTool(new EditTool(new SelectTool(), new WiringTool())));
+  void onlyThePokeToolAcceptsTriggerKeys() {
     assertTrue(ButtonKeyRouter.allowsTool(new PokeTool()));
-  }
-
-  @Test
-  void textToolDoesNotAcceptTriggerKeys() {
+    assertFalse(ButtonKeyRouter.allowsTool(new EditTool(new SelectTool(), new WiringTool())));
     assertFalse(ButtonKeyRouter.allowsTool(new TextTool()));
+    assertFalse(ButtonKeyRouter.allowsTool(null));
   }
 
   @Test
-  void propertiesTableAcceptsTriggerKeysButTextFieldsDoNot() {
-    assertTrue(ButtonKeyRouter.allowsFocus(new JPanel()));
-    assertTrue(ButtonKeyRouter.allowsFocus(null));
-    assertFalse(ButtonKeyRouter.allowsFocus(new JTextField()));
-  }
+  void onlyCanvasFocusAcceptsTriggerKeys() {
+    final var canvas = new JPanel();
+    final var child = new JPanel();
+    canvas.add(child);
+    final var properties = new JPanel();
 
-  @Test
-  void closedComboAcceptsTriggerKeys() {
-    assertTrue(ButtonKeyRouter.allowsFocus(new JComboBox<>(new String[] {"1", "2"})));
+    assertTrue(ButtonKeyRouter.allowsFocus(canvas, canvas));
+    assertTrue(ButtonKeyRouter.allowsFocus(child, canvas));
+    assertFalse(ButtonKeyRouter.allowsFocus(properties, canvas));
+    assertFalse(ButtonKeyRouter.allowsFocus(null, canvas));
+    assertFalse(ButtonKeyRouter.allowsFocus(new JTextField(), canvas));
   }
 }

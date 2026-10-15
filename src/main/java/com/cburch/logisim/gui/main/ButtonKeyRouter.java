@@ -9,31 +9,26 @@
 
 package com.cburch.logisim.gui.main;
 
-import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.proj.ProjectEvent;
+import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.io.ButtonKeyDispatcher;
-import com.cburch.logisim.tools.AddTool;
-import com.cburch.logisim.tools.TextTool;
+import com.cburch.logisim.tools.PokeTool;
 import com.cburch.logisim.tools.Tool;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashSet;
-import java.util.Set;
-import javax.swing.JComboBox;
-import javax.swing.JPopupMenu;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 
 /**
- * Delivers button trigger keys while the circuit layout is showing.
- *
- * <p>The properties table keeps focus after a trigger key is chosen, and the pointer tool, not the
- * Poke tool, is usually selected. Listening only to the canvas KeyListener misses that case.
+ * Delivers button trigger keys only while the Poke tool is selected and the layout canvas has
+ * focus, as agreed in issue 961.
  */
-final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
+final class ButtonKeyRouter implements KeyEventDispatcher, ProjectListener, AutoCloseable {
   private final Frame frame;
-  private final Set<Component> keyboardHeld = new HashSet<>();
+  private final Map<String, ButtonKeyDispatcher.HeldPress> keyboardHeld = new HashMap<>();
   private final PropertyChangeListener focusListener = event -> releaseIfContextLost();
   private boolean closed;
 
@@ -43,6 +38,7 @@ final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
     manager.addKeyEventDispatcher(this);
     manager.addPropertyChangeListener("focusOwner", focusListener);
     manager.addPropertyChangeListener("focusedWindow", focusListener);
+    frame.getCanvas().getProject().addProjectListener(this);
   }
 
   @Override
@@ -53,7 +49,20 @@ final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
     manager.removeKeyEventDispatcher(this);
     manager.removePropertyChangeListener("focusOwner", focusListener);
     manager.removePropertyChangeListener("focusedWindow", focusListener);
+    frame.getCanvas().getProject().removeProjectListener(this);
     releaseHeld();
+  }
+
+  @Override
+  public void projectChanged(ProjectEvent event) {
+    if (closed) return;
+    final var action = event.getAction();
+    if (action == ProjectEvent.ACTION_SET_CURRENT) {
+      releaseHeld();
+    } else if (action == ProjectEvent.ACTION_SET_TOOL
+        && !allowsTool(frame.getCanvas().getProject().getTool())) {
+      releaseHeld();
+    }
   }
 
   @Override
@@ -64,15 +73,16 @@ final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
       return false;
     }
     final var canvas = frame.getCanvas();
-    final var circuit = canvas.getCircuit();
-    final var state = canvas.getCircuitState();
     final var handled =
         switch (event.getID()) {
           case KeyEvent.KEY_PRESSED ->
-              ButtonKeyDispatcher.dispatch(circuit, state, event, true, keyboardHeld);
+              ButtonKeyDispatcher.dispatch(
+                  canvas.getCircuit(), canvas.getCircuitState(), event, true, keyboardHeld);
           case KeyEvent.KEY_RELEASED ->
-              ButtonKeyDispatcher.dispatch(circuit, state, event, false, keyboardHeld);
-          case KeyEvent.KEY_TYPED -> ButtonKeyDispatcher.consumeTyped(circuit, event);
+              ButtonKeyDispatcher.dispatch(
+                  canvas.getCircuit(), canvas.getCircuitState(), event, false, keyboardHeld);
+          case KeyEvent.KEY_TYPED ->
+              ButtonKeyDispatcher.consumeTyped(canvas.getCircuit(), event);
           default -> false;
         };
     if (handled) canvas.getProject().repaintCanvas();
@@ -80,15 +90,12 @@ final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
   }
 
   static boolean allowsTool(Tool tool) {
-    return tool != null && !(tool instanceof TextTool) && !(tool instanceof AddTool);
+    return tool instanceof PokeTool;
   }
 
-  static boolean allowsFocus(java.awt.Component focus) {
-    if (focus instanceof JTextComponent) return false;
-    if (focus != null && SwingUtilities.getAncestorOfClass(JPopupMenu.class, focus) != null) {
-      return false;
-    }
-    return !(focus instanceof JComboBox<?> combo && combo.isPopupVisible());
+  static boolean allowsFocus(java.awt.Component focus, java.awt.Component canvas) {
+    if (focus == null || canvas == null) return false;
+    return focus == canvas || SwingUtilities.isDescendingFrom(focus, canvas);
   }
 
   private boolean allowsCurrentContext() {
@@ -96,7 +103,7 @@ final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
     final var canvas = frame.getCanvas();
     if (canvas.getCircuit() == null || !allowsTool(canvas.getProject().getTool())) return false;
     final var focus = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-    return allowsFocus(focus);
+    return allowsFocus(focus, canvas);
   }
 
   private boolean eventIsInThisFrame() {
@@ -113,8 +120,7 @@ final class ButtonKeyRouter implements KeyEventDispatcher, AutoCloseable {
 
   private void releaseHeld() {
     if (keyboardHeld.isEmpty()) return;
-    final var canvas = frame.getCanvas();
-    ButtonKeyDispatcher.releaseHeld(canvas.getCircuitState(), keyboardHeld);
-    canvas.getProject().repaintCanvas();
+    ButtonKeyDispatcher.releaseHeld(keyboardHeld);
+    frame.getCanvas().getProject().repaintCanvas();
   }
 }
