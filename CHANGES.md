@@ -3,7 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the editor and in TikZ export [#2942] (@Vadimatorik).
+  * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
+    editor and in TikZ export [#2942] (@Vadimatorik).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).

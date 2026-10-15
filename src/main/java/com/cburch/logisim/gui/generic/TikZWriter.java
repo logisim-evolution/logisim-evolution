@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.gui.generic;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -17,8 +16,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Rectangle;
@@ -256,12 +253,13 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public FontRenderContext getFontRenderContext() {
-    /* TODO: just stubs, not related to LaTeX */
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice gd = ge.getDefaultScreenDevice();
-    GraphicsConfiguration config = gd.getDefaultConfiguration();
-    Canvas c = new Canvas(config);
-    return c.getFontMetrics(MyInfo.getFont()).getFontRenderContext();
+    // AI: a screen device throws HeadlessException on CI. A 1x1 image still supplies a font context.
+    final var graphics = scratchGraphics();
+    try {
+      return graphics.getFontMetrics(MyInfo.getFont()).getFontRenderContext();
+    } finally {
+      graphics.dispose();
+    }
   }
 
   @Override
@@ -301,12 +299,18 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public FontMetrics getFontMetrics(Font f) {
-    /* TODO: just stubs, not related to LaTeX */
-    final var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    final var gd = ge.getDefaultScreenDevice();
-    final var config = gd.getDefaultConfiguration();
-    final var c = new Canvas(config);
-    return c.getFontMetrics(f);
+    // AI: same headless-safe image as getFontRenderContext; disposing the image leaves the cached metrics usable.
+    final var graphics = scratchGraphics();
+    try {
+      return graphics.getFontMetrics(f);
+    } finally {
+      graphics.dispose();
+    }
+  }
+
+  // AI: BufferedImage does not need a display, so formula measurement works in the headless Gradle build.
+  private static Graphics2D scratchGraphics() {
+    return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
   }
 
   @Override
