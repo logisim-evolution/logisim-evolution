@@ -190,6 +190,14 @@ public class InstancePainter implements InstanceState {
         : Value.UNKNOWN;
   }
 
+  @Override
+  public Value getValueExcept(int portIndex) {
+    final var s = context.getCircuitState();
+    return (comp != null && s != null)
+        ? s.getValueExcept(comp, comp.getEnd(portIndex).getLocation())
+        : Value.UNKNOWN;
+  }
+
   //
   // methods related to the circuit state
   //

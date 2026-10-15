@@ -25,16 +25,19 @@
 
       <h2>Behavior</h2>
       <p>
-        Models a manually operated switch. When closed, it passes the input value to the output.
-        When open, the output is unknown. A newly placed switch is open.
+        Models a manually operated contact. When closed, the two ends are connected and a value
+        can pass in either direction. When open, the switch does not drive either end, so a value
+        on one end does not reach the other. A newly placed switch is open.
       </p>
 
       <h2>Pins</h2>
       <dl>
-        <dt>Input</dt>
-        <dd>An input whose width is selected by the <q>Data Bits</q> attribute.</dd>
-        <dt>Output</dt>
-        <dd>The input value when the switch is closed, or an unknown value when it is open.</dd>
+        <dt>Ends</dt>
+        <dd>
+          The two ends of the contact. Their width is selected by the <q>Data Bits</q> attribute.
+          Neither end is an input or an output: whichever side is driven supplies the other while
+          the switch is closed.
+        </dd>
       </dl>
 
       <h2>Attributes</h2>
@@ -44,14 +47,9 @@
       </p>
       <dl>
         <dt>Facing</dt>
-        <dd>The direction from the input toward the output.</dd>
-        <dt>Rotate labels</dt>
         <dd>
-          Yes rotates the rocker and the 0 and 1 marks by 180° when Facing is West or South.
-          East and North keep the original drawing, so changing this attribute does not alter
-          those two facings. No leaves the marks fixed for each axis, as in previous versions.
-          The default is No, and existing circuits keep that appearance. The input and output
-          pins do not move.
+          The direction in which the body is drawn. East and west stand the rocker on end; north
+          and south lay it flat. Turning the switch does not choose which end is the source.
         </dd>
         <dt>Data Bits</dt>
         <dd>The bit width of the input and output.</dd>

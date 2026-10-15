@@ -384,6 +384,16 @@ public class CircuitState implements InstanceData {
     return substates;
   }
 
+  /**
+   * Resolved value at {@code loc} ignoring whatever {@code component} is driving there. Other
+   * drivers, splitters, and pull resistors still count. Returns a floating value when the wire
+   * state is not available yet.
+   */
+  public Value getValueExcept(Component component, Location loc) {
+    final var except = CircuitWires.getValueExcept(this, component, loc);
+    return except != null ? except : Value.createUnknown(circuit.getWidth(loc));
+  }
+
   public Value getValue(Location p) {
     Value value = null;
     if (p.x >= 0 && p.y >= 0

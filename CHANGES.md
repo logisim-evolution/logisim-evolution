@@ -3,8 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Added a Switch attribute that rotates the rocker and the 0/1 marks for south and west facing
-    [#659] (@Vadimatorik).
+  * Made the Input/Output-Extra Switch a bidirectional contact: either end can drive the other when
+    it is closed, and an open switch no longer forces a value [#659] (@Vadimatorik).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).

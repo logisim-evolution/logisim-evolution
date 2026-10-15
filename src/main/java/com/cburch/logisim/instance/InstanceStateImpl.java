@@ -91,6 +91,12 @@ public class InstanceStateImpl implements InstanceState {
   }
 
   @Override
+  public Value getValueExcept(int portIndex) {
+    final var data = component.getEnd(portIndex);
+    return circuitState.getValueExcept(component, data.getLocation());
+  }
+
+  @Override
   public Project getProject() {
     return circuitState.getProject();
   }
