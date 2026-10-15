@@ -91,11 +91,6 @@ final class TtlTestInstanceState implements InstanceState {
   }
 
   @Override
-  public Value getValueExcept(int portIndex) {
-    return getPortValue(portIndex);
-  }
-
-  @Override
   public Project getProject() {
     return null;
   }

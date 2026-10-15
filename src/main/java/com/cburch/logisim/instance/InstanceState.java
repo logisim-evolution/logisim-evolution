@@ -33,9 +33,6 @@ public interface InstanceState {
 
   Value getPortValue(int portIndex);
 
-  /** Wire value at this port, ignoring the value this component itself is driving. */
-  Value getValueExcept(int portIndex);
-
   Project getProject();
 
   int getTickCount();

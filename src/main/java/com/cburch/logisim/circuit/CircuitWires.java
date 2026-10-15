@@ -198,31 +198,25 @@ public class CircuitWires {
 
     Value threadValue() {
       if (threadVal != null) return threadVal;
-      threadVal = threadValueExcept(null, null);
-      return threadVal;
-    }
-
-    /** Resolved bit, using {@code excludedLocal} in place of one bus's driven value. */
-    Value threadValueExcept(ValuedBus excluded, Value excludedLocal) {
-      var result = Value.UNKNOWN;
+      threadVal = Value.UNKNOWN;
       for (var i = 0; i < steps; i++) {
-        final var vb = bus[i];
+        ValuedBus vb = bus[i];
         final var pos = position[i];
-        final var v = vb == excluded ? excludedLocal : vb.localDrivenValue;
-        if (v != null && v != Value.NIL) {
-          result = result.combine(v.get(pos));
+        final var v = vb.localDrivenValue;
+        if (v != Value.NIL) {
+          threadVal = threadVal.combine(v.get(pos));
         }
       }
-      if (result == Value.UNKNOWN) {
+      if (threadVal == Value.UNKNOWN) {
         if (pullUp) {
-          result = Value.TRUE;
+          threadVal = Value.TRUE;
         } else if (pullDown) {
-          result = Value.FALSE;
+          threadVal = Value.FALSE;
         } else if (pullError) {
-          result = Value.ERROR;
+          threadVal = Value.ERROR;
         }
       }
-      return result;
+      return threadVal;
     }
   }
 
@@ -384,48 +378,6 @@ public class CircuitWires {
       dirty = false;
       return busVal;
     }
-
-    /**
-     * Resolved value at {@code loc} as if {@code exclude} were not driving that point. Other
-     * drivers, splitter threads, and pull resistors still count.
-     */
-    Value valueExcept(Component exclude, Location loc) {
-      if (width <= 0) return Value.NIL;
-      final var localExcept = combineExcept(exclude, loc);
-      if (dependentBuses == null || dependentBuses.length == 0) {
-        if (pullVal == null) return localExcept;
-        return localExcept.pullEachBitTowards(pullVal);
-      }
-      if (width == 1) {
-        return threads[0].threadValueExcept(this, localExcept);
-      }
-      long error = 0;
-      long unknown = 0;
-      long value = 0;
-      for (var i = 0; i < width; i++) {
-        final var mask = 1L << i;
-        final var bit = threads[i].threadValueExcept(this, localExcept);
-        if (bit == Value.TRUE) {
-          value |= mask;
-        } else if (bit == Value.UNKNOWN) {
-          unknown |= mask;
-        } else if (bit != Value.FALSE) {
-          error |= mask;
-        }
-      }
-      return Value.createUnsafe(width, error, unknown, value);
-    }
-
-    private Value combineExcept(Component exclude, Location loc) {
-      Value result = null;
-      for (final var connection : connections) {
-        if (connection.component.equals(exclude) && connection.location.equals(loc)) continue;
-        final var driven = connection.drivenValue;
-        if (driven == null || driven == Value.NIL) continue;
-        result = result == null ? driven : result.combine(driven);
-      }
-      return result == null ? Value.createUnknown(BitWidth.create(width)) : result;
-    }
   }
 
   State newState(CircuitState circState) { // for cloning CircuitState
@@ -508,12 +460,6 @@ public class CircuitWires {
         }
       }
       return null;
-    }
-
-    Value valueExcept(Component exclude, Location loc) {
-      final var vb = busAt.get(loc);
-      if (vb == null) return null;
-      return vb.valueExcept(exclude, loc);
     }
 
     void markClean(ValuedBus vb) {
@@ -919,12 +865,6 @@ public class CircuitWires {
     }
   }
 
-  static Value getValueExcept(CircuitState state, Component exclude, Location loc) {
-    final var wires = state.getWireData();
-    if (wires == null) return null;
-    return wires.valueExcept(exclude, loc);
-  }
-
   static Value getBusValue(CircuitState state, Location loc) {
     final var s = state.getWireData();
     if (s == null) {
@@ -1249,7 +1189,6 @@ public class CircuitWires {
     }
 
     // make note of updates from simulator
-    final var driverChanged = new HashSet<ValuedBus>();
     var npoints = dirtyPoints.size();
     for (var k = 0; k < npoints; k++) { // for each point of interest
       final var ev = dirtyPoints.get(k);
@@ -1274,12 +1213,8 @@ public class CircuitWires {
             if (Value.equal(old, val)) continue;
             bc.drivenValue = val;
             s.markDirty(vb);
-            driverChanged.add(vb);
-            if (vb.dependentBuses != null) {
-              for (final var dep : vb.dependentBuses) {
-                s.markDirty(dep);
-                driverChanged.add(dep);
-              }
+            for (final var dep : vb.dependentBuses) {
+              s.markDirty(dep);
             }
             break;
           }
@@ -1309,18 +1244,6 @@ public class CircuitWires {
       final var val = vb.recalculate();
       if (Value.equal(old, val)) continue;
       circState.setValueByWire(val, vb.locations, vb.connections);
-    }
-    // A bidirectional component can be holding the wire at its current value, so a
-    // change in some other driver does not move busVal. It still has to propagate
-    // again: a closed switch that drove ERROR must notice when the losing driver
-    // floats and pass the remaining value.
-    for (final var changed : driverChanged) {
-      if (changed.connections == null) continue;
-      for (final var connection : changed.connections) {
-        if (connection.isBidirectional) {
-          circState.markComponentAsDirty(connection.component);
-        }
-      }
     }
     s.numDirty = 0;
   }

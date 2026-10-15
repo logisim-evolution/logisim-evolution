@@ -569,11 +569,6 @@ class RamLineEnableTest {
     }
 
     @Override
-    public Value getValueExcept(int portIndex) {
-      return getPortValue(portIndex);
-    }
-
-    @Override
     public Project getProject() {
       return null;
     }

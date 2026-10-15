@@ -56,9 +56,7 @@ public class Switch extends InstanceFactory {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      final var data = (InstanceDataSingleton) state.getData();
-      final var closed = data != null && Boolean.TRUE.equals(data.getValue());
-      return closed ? Value.TRUE : Value.FALSE;
+      return state.getPortValue(1);
     }
   }
 
@@ -304,43 +302,30 @@ public class Switch extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    final var width = state.getAttributeValue(StdAttr.WIDTH);
-    final var floating = Value.createUnknown(width);
     final var data = (InstanceDataSingleton) state.getData();
     final var closed = data != null && Boolean.TRUE.equals(data.getValue());
-    final var passed = closed ? passedValue(state, width) : floating;
-    state.setPort(0, passed, 1);
+    final var width = state.getAttributeValue(StdAttr.WIDTH);
+    // Only the output is driven. Facing selects that end. The input is never
+    // written, so a pull on the output can define an open switch, and a value
+    // on the output cannot flow backwards.
+    final var passed = closed ? state.getPortValue(0) : Value.createUnknown(width);
     state.setPort(1, passed, 1);
-  }
-
-  private static Value passedValue(InstanceState state, BitWidth width) {
-    final var left = normalize(state.getValueExcept(0), width);
-    final var right = normalize(state.getValueExcept(1), width);
-    final var joined = left.combine(right);
-    return joined == Value.NIL ? Value.createUnknown(width) : joined;
-  }
-
-  private static Value normalize(Value value, BitWidth width) {
-    if (value == null || value == Value.NIL) return Value.createUnknown(width);
-    if (value.getWidth() == width.getWidth()) return value;
-    return value.extendWidth(width.getWidth(), Value.UNKNOWN);
   }
 
   private void updateports(Instance instance) {
     final var width = instance.getAttributeValue(StdAttr.WIDTH);
     final var dir = instance.getAttributeValue(StdAttr.FACING);
-    final var contact = S.getter("switchContactTip");
-    final var far =
+    final var input =
         dir == Direction.EAST
-            ? new Port(-20, 0, Port.INOUT, width)
+            ? new Port(-20, 0, Port.INPUT, width)
             : dir == Direction.WEST
-                ? new Port(20, 0, Port.INOUT, width)
+                ? new Port(20, 0, Port.INPUT, width)
                 : dir == Direction.NORTH
-                    ? new Port(0, 20, Port.INOUT, width)
-                    : new Port(0, -20, Port.INOUT, width);
-    far.setToolTip(contact);
-    final var near = new Port(0, 0, Port.INOUT, width);
-    near.setToolTip(contact);
-    instance.setPorts(new Port[] {far, near});
+                    ? new Port(0, 20, Port.INPUT, width)
+                    : new Port(0, -20, Port.INPUT, width);
+    input.setToolTip(S.getter("pinInputName"));
+    final var output = new Port(0, 0, Port.OUTPUT, width);
+    output.setToolTip(S.getter("pinOutputName"));
+    instance.setPorts(new Port[] {input, output});
   }
 }
