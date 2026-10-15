@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Kept the Input/Output-Extra Switch directional. Facing chooses the output end, a closed switch
+    drives that end from the input, and an open switch leaves it floating so a pull-up still works
+    [#659] (@Vadimatorik).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).

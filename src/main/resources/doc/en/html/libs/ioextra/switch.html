@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta name="changed" content="2026-10-15T00:00:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>Switch</title>
@@ -25,16 +25,24 @@
 
       <h2>Behavior</h2>
       <p>
-        Models a manually operated switch. When closed, it passes the input value to the output.
-        When open, the output is unknown. A newly placed switch is open.
+        Models a manually operated switch. When closed, it copies the input value to the output.
+        When open, it drives nothing on the output, so a pull resistor connected there can define
+        the wire. A value on the output does not flow back to the input. A newly placed switch is
+        open.
       </p>
 
       <h2>Pins</h2>
       <dl>
         <dt>Input</dt>
-        <dd>An input whose width is selected by the <q>Data Bits</q> attribute.</dd>
+        <dd>
+          The end opposite the facing direction. Its width is selected by the <q>Data Bits</q>
+          attribute. The switch reads this end and does not drive it.
+        </dd>
         <dt>Output</dt>
-        <dd>The input value when the switch is closed, or an unknown value when it is open.</dd>
+        <dd>
+          The end at the component's facing anchor. When the switch is closed, this end is driven
+          with the input value. When the switch is open, this end floats.
+        </dd>
       </dl>
 
       <h2>Attributes</h2>
@@ -44,7 +52,11 @@
       </p>
       <dl>
         <dt>Facing</dt>
-        <dd>The direction from the input toward the output.</dd>
+        <dd>
+          The direction from the input toward the output. East places the input on the left and
+          the output on the right. This chooses which end is written; the switch does not conduct
+          both ways.
+        </dd>
         <dt>Data Bits</dt>
         <dd>The bit width of the input and output.</dd>
         <dt>Color</dt>

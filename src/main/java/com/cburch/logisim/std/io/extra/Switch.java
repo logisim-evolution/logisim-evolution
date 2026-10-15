@@ -11,13 +11,11 @@ package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
@@ -31,7 +29,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
-import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -162,18 +159,7 @@ public class Switch extends InstanceFactory {
     }
 
     Graphics g = painter.getGraphics();
-    if (active) { // case true output
-      if (facing == Direction.NORTH || facing == Direction.WEST) {
-        Location p = painter.getLocation();
-        int px = p.getX();
-        int py = p.getY();
-        GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-        g.setColor(Value.trueColor);
-        if (facing == Direction.NORTH) g.drawLine(px, py, px, py + 10);
-        else g.drawLine(px, py, px + 10, py);
-        GraphicsUtil.switchToWidth(g, 1);
-      }
-
+    if (active) {
       if (facing == Direction.NORTH || facing == Direction.SOUTH) { // horizontal
         // grey polygon x points
         xp = new int[] {x, x + w - DEPTH, x + w, x + w, x};
@@ -316,29 +302,30 @@ public class Switch extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-    Value val =
-        (data == null || !(Boolean) data.getValue())
-            ? Value.createUnknown(state.getAttributeValue(StdAttr.WIDTH))
-            : state.getPortValue(0);
-    state.setPort(1, val, 1);
+    final var data = (InstanceDataSingleton) state.getData();
+    final var closed = data != null && Boolean.TRUE.equals(data.getValue());
+    final var width = state.getAttributeValue(StdAttr.WIDTH);
+    // Only the output is driven. Facing selects that end. The input is never
+    // written, so a pull on the output can define an open switch, and a value
+    // on the output cannot flow backwards.
+    final var passed = closed ? state.getPortValue(0) : Value.createUnknown(width);
+    state.setPort(1, passed, 1);
   }
 
   private void updateports(Instance instance) {
-    Port[] ps = new Port[2];
-    BitWidth b = instance.getAttributeValue(StdAttr.WIDTH);
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
-    ps[0] =
+    final var width = instance.getAttributeValue(StdAttr.WIDTH);
+    final var dir = instance.getAttributeValue(StdAttr.FACING);
+    final var input =
         dir == Direction.EAST
-            ? new Port(-20, 0, Port.INPUT, b)
+            ? new Port(-20, 0, Port.INPUT, width)
             : dir == Direction.WEST
-                ? new Port(20, 0, Port.INPUT, b)
+                ? new Port(20, 0, Port.INPUT, width)
                 : dir == Direction.NORTH
-                    ? new Port(0, 20, Port.INPUT, b)
-                    : new Port(0, -20, Port.INPUT, b);
-    ps[0].setToolTip(S.getter("pinInputName"));
-    ps[1] = new Port(0, 0, Port.OUTPUT, b);
-    ps[1].setToolTip(S.getter("pinOutputName"));
-    instance.setPorts(ps);
+                    ? new Port(0, 20, Port.INPUT, width)
+                    : new Port(0, -20, Port.INPUT, width);
+    input.setToolTip(S.getter("pinInputName"));
+    final var output = new Port(0, 0, Port.OUTPUT, width);
+    output.setToolTip(S.getter("pinOutputName"));
+    instance.setPorts(new Port[] {input, output});
   }
 }
