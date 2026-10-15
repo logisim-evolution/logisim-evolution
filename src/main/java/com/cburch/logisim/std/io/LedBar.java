@@ -24,10 +24,16 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.LedBarIcon;
+import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.StdAttr;
+import java.awt.Color;
 
 /** LED cluster */
 public class LedBar extends DotMatrixBase {
@@ -44,6 +50,13 @@ public class LedBar extends DotMatrixBase {
       Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
   public static final Attribute<BitWidth> ATTR_MATRIX_COLS =
       Attributes.forBitWidth("matrixcols", S.getter("ioLedBarSegments"), 1, Value.MAX_WIDTH);
+
+  /** Short side of the bar, in grid cells. 3 matches every circuit saved before this attribute. */
+  public static final int DEFAULT_THICKNESS = 3;
+
+  public static final Attribute<Integer> ATTR_THICKNESS =
+      Attributes.forIntegerRange(
+          "thickness", S.getter("ioLedBarThickness"), 1, 8);
 
   protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
       Attributes.forOption(
@@ -109,6 +122,40 @@ public class LedBar extends DotMatrixBase {
     return new LedBarShape(x, y, p);
   }
 
+  /**
+   * East keeps the historical horizontal bar: segments run to the right, and in One Wire mode bit 0
+   * is the rightmost segment. Other facings rotate that layout around the anchor.
+   */
+  @Override
+  protected Direction facingOf(AttributeSet attrs) {
+    if (attrs == null || !attrs.containsAttribute(StdAttr.FACING)) {
+      return Direction.EAST;
+    }
+    final var facing = attrs.getValue(StdAttr.FACING);
+    return facing == null ? Direction.EAST : facing;
+  }
+
+  @Override
+  protected int scaleY(AttributeSet attrs) {
+    if (attrs != null && attrs.containsAttribute(ATTR_THICKNESS)) {
+      final var thickness = attrs.getValue(ATTR_THICKNESS);
+      if (thickness != null) {
+        return thickness;
+      }
+    }
+    return super.scaleY(attrs);
+  }
+
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    super.instanceAttributeChanged(instance, attr);
+    if (attr == StdAttr.FACING || attr == ATTR_THICKNESS) {
+      instance.recomputeBounds();
+      instance.computeLabelTextField(Instance.AVOID_LEFT);
+      updatePorts(instance);
+    }
+  }
+
   public LedBar() {
     super(_ID, S.getter("ioLedBarComponent"), 8, 1, new LedBarHdlGeneratorFactory());
     setIcon(new LedBarIcon());
@@ -116,7 +163,48 @@ public class LedBar extends DotMatrixBase {
     ATTR_DOT_SHAPE.setHidden(true);
     ATTR_MATRIX_ROWS.setHidden(true);
 
-    setScaleY(3);
+    // Factory scale remains the historical thickness for anything that still reads the field.
+    // Each instance uses ATTR_THICKNESS instead.
+    setScaleY(DEFAULT_THICKNESS);
     setDrawBorder(false);
+    setFacingAttribute(StdAttr.FACING);
+    setAttributes(
+        new Attribute<?>[] {
+          getAttributeInputType(),
+          StdAttr.FACING,
+          ATTR_THICKNESS,
+          getAttributeColumns(),
+          getAttributeRows(),
+          StdAttr.SELECT_LOC,
+          IoLibrary.ATTR_ON_COLOR,
+          IoLibrary.ATTR_OFF_COLOR,
+          ATTR_PERSIST,
+          getAttributeShape(),
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_COLOR,
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
+        },
+        new Object[] {
+          getAttributeItemColumn(),
+          Direction.EAST,
+          DEFAULT_THICKNESS,
+          BitWidth.create(8),
+          BitWidth.create(1),
+          StdAttr.SELECT_BOTTOM_LEFT,
+          Color.GREEN,
+          Color.gray,
+          0,
+          getDefaultShape(),
+          "",
+          Direction.NORTH,
+          StdAttr.DEFAULT_LABEL_FONT,
+          StdAttr.DEFAULT_LABEL_COLOR,
+          true,
+          new ComponentMapInformationContainer(
+              0, 8, 0, null, getLabels(1, 8), null)
+        });
   }
 }

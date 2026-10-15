@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="changed" content="2026-08-11T00:00:00.000000000">
+    <meta name="changed" content="2026-10-14T00:00:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>LED Bar</title>
@@ -25,7 +25,9 @@
 
       <h2>Behavior</h2>
       <p>
-        Displays a horizontal row of LED segments. A segment uses the <q>On Color</q> when its
+        Displays a row of LED segments. By default the row is horizontal and three grid cells
+        thick. <q>Facing</q> turns the row, including to vertical, and <q>Thickness</q> sets how
+        many grid cells the short side occupies. A segment uses the <q>On Color</q> when its
         input is 1 and the <q>Off Color</q> when its input is 0. An unknown or error input is shown
         using the simulator's error color.
       </p>
@@ -37,8 +39,9 @@
         <dd>Provides one 1-bit input for each segment.</dd>
         <dt>One Wire</dt>
         <dd>
-          Provides one multi-bit input whose width equals the number of segments. Bit 0 controls
-          the rightmost segment.
+          Provides one multi-bit input whose width equals the number of segments. Bit 0 controls the
+          segment at the end the bar faces: the rightmost segment when facing east, the top segment
+          when facing north, the leftmost when facing west, and the bottom when facing south.
         </dd>
       </dl>
 
@@ -46,6 +49,18 @@
       <dl>
         <dt>Input Format</dt>
         <dd>Selects between separate 1-bit inputs and one multi-bit input.</dd>
+        <dt>Facing</dt>
+        <dd>
+          Direction of the bar. East is the historical horizontal layout, with segments running to
+          the right. North and south place the bar vertically. The arrow keys rotate a selected
+          bar.
+        </dd>
+        <dt>Thickness</dt>
+        <dd>
+          Short side of the bar, in grid cells, from 1 to 8. The default is 3, which is the size of
+          bars saved before this attribute existed. Values 2 and 4 line the bar up with components
+          laid out on a 2-cell or 4-cell pitch, including several vertical bars placed side by side.
+        </dd>
         <dt>Segments</dt>
         <dd>Sets the number of LED segments. The default is 8.</dd>
         <dt>Select Location</dt>
