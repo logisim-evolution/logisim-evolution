@@ -10,6 +10,7 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.util.FormulaText;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -62,7 +63,9 @@ public class TextField {
   public void draw(Graphics g) {
     final var old = g.getFont();
     if (font != null) g.setFont(font);
-    if (multiline) {
+    if (FormulaText.containsFormula(text)) {
+      FormulaText.draw(g, text, x, y, halign, valign);
+    } else if (multiline) {
       GraphicsUtil.drawText(g, text, x, y, halign, valign);
     } else {
       var drawX = x;
@@ -97,6 +100,14 @@ public class TextField {
   }
 
   public Bounds getBounds(Graphics g) {
+    if (FormulaText.containsFormula(text)) {
+      if (g == null) return Bounds.create(x, y, 0, 0);
+      final var old = g.getFont();
+      if (font != null) g.setFont(font);
+      final var bounds = Bounds.create(FormulaText.getBounds(g, text, x, y, halign, valign));
+      g.setFont(old);
+      return bounds;
+    }
     if (multiline) {
       return Bounds.create(GraphicsUtil.getTextBounds(g, font, text, x, y, halign, valign));
     }
