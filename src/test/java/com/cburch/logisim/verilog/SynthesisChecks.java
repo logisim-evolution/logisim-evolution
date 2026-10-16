@@ -123,8 +123,8 @@ public final class SynthesisChecks {
     ImportChecks.simulate(file, result.top().getName(), vectors);
     final var mixedSource = source;
     expectFailure(
-        ()
-            -> YosysRunner.synthesize(
+        () ->
+            YosysRunner.synthesize(
                 options(executable, mixedSource, "mixed", YosysRunner.Memories.NATIVE), s -> {}),
         "Multiple write ports");
     var logic = YosysRunner.synthesize(
@@ -157,19 +157,19 @@ public final class SynthesisChecks {
     Files.writeString(source, "module bad(this is not verilog\n");
     final var badSource = source;
     expectFailure(
-        ()
-            -> YosysRunner.synthesize(
+        () ->
+            YosysRunner.synthesize(
                 options(executable, badSource, "bad", YosysRunner.Memories.AUTO), s -> {}),
         "Yosys failed");
     expectFailure(
-        ()
-            -> YosysRunner.synthesize(options(directory.resolve("missing-yosys").toString(),
+        () ->
+            YosysRunner.synthesize(options(directory.resolve("missing-yosys").toString(),
                                           badSource, "bad", YosysRunner.Memories.AUTO),
                 s -> {}),
         "Cannot run program");
     expectFailure(
-        ()
-            -> options(executable, badSource, "bad; shell injected", YosysRunner.Memories.AUTO),
+        () ->
+            options(executable, badSource, "bad; shell injected", YosysRunner.Memories.AUTO),
         "Top must");
     System.out.println("Passed synthesis failure, missing executable and identifier validation");
 

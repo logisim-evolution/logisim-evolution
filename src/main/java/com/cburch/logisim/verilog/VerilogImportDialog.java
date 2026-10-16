@@ -182,7 +182,7 @@ public final class VerilogImportDialog extends JDialog {
           lines(sources.getText()).stream().map(Path::of).toList(), top.getText().strip(),
           lines(includes.getText()).stream().map(Path::of).toList(), lines(defines.getText()),
           Path.of(directory.getText().strip()), systemVerilog.isSelected(),
-          new String[] {"error", "0", "1"}[undefined.getSelectedIndex()],
+            new String[] {"error", "0", "1"}[undefined.getSelectedIndex()],
           YosysRunner.Memories.values()[memories.getSelectedIndex()]);
     } catch (RuntimeException exception) {
       appendLog(exception.getMessage());

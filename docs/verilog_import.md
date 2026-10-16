@@ -32,7 +32,7 @@ creates uniquely named circuits instead of replacing existing circuits.
 
 The importer preserves module hierarchy, including independent state in each
 instance. Ports and component buses must be 1–64 bits wide. Supported operations
-include addition, subtraction, multiplication, divison, modulo, Boolean logic, reductions,
+include addition, subtraction, multiplication, division, modulo, Boolean logic, reductions,
 comparisons, shifts, multiplexers, slices, concatenation, registers, latches,
 and the supported reset/enable forms. Parameterized modules are elaborated by
 Yosys before conversion.
@@ -125,4 +125,4 @@ YOSYS=/path/to/yosys ./gradlew test --tests com.cburch.logisim.verilog.VerilogIm
 
 Without `YOSYS`, the reference-vector test still runs and the external synthesis
 test is skipped. Both tests use temporary output directories and all source
-fixtures are included in the repository;
+fixtures are included in the repository.

@@ -369,7 +369,7 @@ final class WordNetlist {
     terms.add(term(bus(y, true), 0, 0, 20, sy + 30));
     add("Multiplexer", "Plexers",
         attrs("width", y.size(), "select", select.size(), "enable", false, "size", 40),
-        terms.toArray(Terminal[] ::new));
+        terms.toArray(Terminal[]::new));
     return y;
   }
 
@@ -377,17 +377,17 @@ final class WordNetlist {
     if (a.size() != y.size() || b.size() != y.size()) {
       throw new ImportException("Arithmetic width mismatch");
     }
-    
-    add(name.equals("Mod") ? "Divider" : name, "Arithmetic", attrs("width", y.size()), 
-      term(bus(a), -40, -10, -60, -10),
-      term(bus(b), -40, 10, -60, 10), 
-      term(bus(y, true), 
+
+    add(name.equals("Mod") ? "Divider" : name, "Arithmetic", attrs("width", y.size()),
+        term(bus(a), -40, -10, -60, -10),
+        term(bus(b), -40, 10, -60, 10),
+        term(bus(y, true),
           name.equals("Mod") ? -20 : 0,  // x1: shifted left to hit the rem port
           name.equals("Mod") ? 20 : 0,   // y1: shifted down to hit the rem port
           name.equals("Mod") ? -20 : 20, // x2: stub wire offset
           name.equals("Mod") ? 40 : 40   // y2: stub wire offset
       ),
-      term(bus(constant(0, (name.equals("Multiplier") || name.equals("Divider") || name.equals("Mod")) ? y.size() : 1)), -20, -20, -20, -40));
+        term(bus(constant(0, (name.equals("Multiplier") || name.equals("Divider") || name.equals("Mod")) ? y.size() : 1)), -20, -20, -20, -40));
   }
 
   List<Object> compare(List<Object> a, List<Object> b, String relation, boolean signed) {
@@ -403,7 +403,7 @@ final class WordNetlist {
     }
     add("Comparator", "Arithmetic",
         attrs("width", a.size(), "mode", signed ? "twosComplement" : "unsigned"),
-        terms.toArray(Terminal[] ::new));
+        terms.toArray(Terminal[]::new));
     var result = outputs.get(switch (relation) {
       case "gt", "le" -> 0;
       case "eq", "ne" -> 1;
@@ -495,7 +495,7 @@ final class WordNetlist {
     int width = y.size();
     switch (type) {
       case "$tribuf", "$_TBUF_" ->
-        controlledBuffer(
+          controlledBuffer(
             connection(cell, "A"), connection(cell, type.equals("$tribuf") ? "EN" : "E"), y, false);
       case "$add", "$sub", "$mul", "$div", "$mod", "$and", "$or", "$xor", "$xnor", "$not", "$pos", "$neg" -> {
         boolean unary = Set.of("$not", "$pos", "$neg").contains(type);
@@ -581,7 +581,7 @@ final class WordNetlist {
         add("Demultiplexer", "Plexers",
             attrs("width", a.size(), "select", s.size(), "enable", false, "tristate", false,
                 "disabled", "0"),
-            terms.toArray(Terminal[] ::new));
+            terms.toArray(Terminal[]::new));
       }
       case "$eq", "$ne", "$lt", "$le", "$gt", "$ge" -> {
         var a = connection(cell, "A");
@@ -660,7 +660,7 @@ final class WordNetlist {
       case "$_BUF_" -> alias(connection(cell, "A"), y);
       case "$_NOT_" -> gate("NOT Gate", connection(cell, "A"), null, y);
       case "$_AND_", "$_OR_", "$_XOR_", "$_XNOR_", "$_NAND_", "$_NOR_" ->
-        gate(type.substring(2, type.length() - 1) + " Gate", connection(cell, "A"),
+          gate(type.substring(2, type.length() - 1) + " Gate", connection(cell, "A"),
             connection(cell, "B"), y);
       case "$_MUX_" -> mux(connection(cell, "A"), connection(cell, "B"), connection(cell, "S"), y);
       default -> throw new ImportException("Unsupported cell type " + type);
@@ -706,7 +706,7 @@ final class WordNetlist {
       terms.add(term(bus(data, !input), x, row, input ? x - 20 : x + 20, input ? row : row + 10));
     }
     add(names.get(type), null, attrs("label", uniqueName(name, labels)),
-        terms.toArray(Terminal[] ::new));
+        terms.toArray(Terminal[]::new));
   }
 
   private Object canonical(Object bit) {
@@ -738,7 +738,7 @@ final class WordNetlist {
             term(bus(groups.get(i)), 20, -10 * (groups.size() - i), 40 + 10 * i, 30 + 10 * i));
       }
     }
-    add("Splitter", "Wiring", config, terms.toArray(Terminal[] ::new));
+    add("Splitter", "Wiring", config, terms.toArray(Terminal[]::new));
   }
 
   /** Connects shared driver buses through bidirectional splitters, preserving native resolution. */
