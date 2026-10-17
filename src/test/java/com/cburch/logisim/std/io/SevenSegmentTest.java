@@ -56,44 +56,46 @@ class SevenSegmentTest {
 
   @Test
   void busSideChoosesOnePinAndKeepsTheDigitUpright() {
-    assertBus(true, Direction.WEST, SevenSegment.BUS_OFFSET_X, 30, 8);
-    assertBus(true, Direction.EAST, SevenSegment.BUS_OFFSET_X + SevenSegment.BUS_WIDTH, 30, 8);
-    assertBus(true, Direction.NORTH, 20, SevenSegment.BUS_OFFSET_Y, 8);
-    assertBus(false, Direction.SOUTH, 20, SevenSegment.BUS_OFFSET_Y + SevenSegment.BUS_HEIGHT, 7);
+    assertEquals(10, SevenSegment.busHorizontalGridPoint());
+    assertBus(true, Direction.WEST, 0, 30, 8);
+    assertBus(true, Direction.EAST, 30, 30, 8);
+    assertBus(true, Direction.NORTH, 10, 0, 8);
+    assertBus(false, Direction.SOUTH, 10, 60, 7);
   }
 
   @Test
-  void busOutlineAndPinLieOnTheWiringGrid() {
+  void busModeKeepsTheOutlineAndLandsOnTheWiringGrid() {
     final var factory = new SevenSegment();
     final var separate = attributes(true, false, Direction.WEST);
-    assertEquals(Bounds.create(-5, 0, 40, 60), factory.getOffsetBounds(separate));
-
     final var bus = attributes(true, true, Direction.NORTH);
-    final var bds = factory.getOffsetBounds(bus);
-    assertEquals(Bounds.create(-10, 0, 50, 60), bds);
-    assertOnGrid(bds.getX(), bds.getY());
-    assertOnGrid(bds.getWidth(), bds.getHeight());
-    assertOnGrid(bds.getX() + bds.getWidth(), bds.getY() + bds.getHeight());
+    final var outline = Bounds.create(-5, 0, 40, 60);
+    assertEquals(outline, factory.getOffsetBounds(separate));
+    assertEquals(outline, factory.getOffsetBounds(bus));
 
     final var comp = placed(bus);
+    assertEquals(outline, offsetOf(comp));
     final var end = comp.getEnds().get(0).getLocation();
     assertOnGrid(end.getX(), end.getY());
-    assertEquals(20, end.getX());
+    assertEquals(10, end.getX());
     assertEquals(0, end.getY());
+
+    bus.setValue(SevenSegment.ATTR_INPUT, SevenSegment.INPUT_SEPARATE);
+    assertEquals(outline, offsetOf(comp));
+    assertEquals(8, comp.getEnds().size());
   }
 
   @Test
   void changingTheBusSideMovesOnlyTheBusPin() {
     final var attrs = attributes(true, true, Direction.WEST);
     final var comp = placed(attrs);
-    assertEquals(Location.create(SevenSegment.BUS_OFFSET_X, 30, false), comp.getEnds().get(0).getLocation());
+    final var outline = Bounds.create(-5, 0, 40, 60);
+    assertEquals(Location.create(0, 30, false), comp.getEnds().get(0).getLocation());
+    assertEquals(outline, offsetOf(comp));
     attrs.setValue(SevenSegment.ATTR_BUS_SIDE, Direction.NORTH);
     assertEquals(1, comp.getEnds().size());
-    assertEquals(Location.create(20, 0, false), comp.getEnds().get(0).getLocation());
+    assertEquals(Location.create(10, 0, false), comp.getEnds().get(0).getLocation());
     assertEquals(BitWidth.create(8), comp.getEnds().get(0).getWidth());
-    assertEquals(
-        Bounds.create(-10, 0, 50, 60),
-        comp.getBounds().translate(-comp.getLocation().getX(), -comp.getLocation().getY()));
+    assertEquals(outline, offsetOf(comp));
   }
 
   @Test
@@ -114,6 +116,10 @@ class SevenSegmentTest {
     final var fromBus = new Value[8];
     for (var i = 0; i < fromBus.length; i++) fromBus[i] = bus.get(i);
     assertEquals(SevenSegment.segmentMask(bits), SevenSegment.segmentMask(fromBus));
+  }
+
+  private static Bounds offsetOf(Component comp) {
+    return comp.getBounds().translate(-comp.getLocation().getX(), -comp.getLocation().getY());
   }
 
   private static void assertOnGrid(int x, int y) {

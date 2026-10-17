@@ -47,10 +47,6 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   public static final String _ID = "7-Segment Display";
 
   static void drawBase(InstancePainter painter, boolean drawPoint) {
-    drawBase(painter, drawPoint, 5);
-  }
-
-  static void drawBase(InstancePainter painter, boolean drawPoint, int xInset) {
     ensureSegments();
     final var data = (InstanceDataSingleton) painter.getData();
     int summ = (data == null ? 0 : (Integer) data.getValue());
@@ -58,7 +54,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     int desired = active == null || active ? 1 : 0;
 
     final var bds = painter.getBounds();
-    final var x = bds.getX() + xInset;
+    final var x = bds.getX() + 5;
     final var y = bds.getY();
 
     final var g = painter.getGraphics();
@@ -172,15 +168,6 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   static final int WIDTH = 40;
   static final int HEIGHT = 60;
 
-  /**
-   * Bus body. Every edge is on the wiring grid, so the single pin can sit on an edge and still
-   * accept a wire. The outline is five pixels wider on each side than the separate-pin body.
-   */
-  static final int BUS_OFFSET_X = -10;
-  static final int BUS_OFFSET_Y = 0;
-  static final int BUS_WIDTH = 50;
-  static final int BUS_HEIGHT = 60;
-
   public SevenSegment() {
     super(_ID, S.getter("sevenSegmentComponent"), new SevenSegmentHdlGeneratorFactory(), true);
     setAttributes(
@@ -237,33 +224,34 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return summary;
   }
 
-  /** Same rounding as {@code Canvas.snapXToGrid}: nearest multiple of {@link #GRID}. */
-  static int snapToGrid(int value) {
-    return value < 0
-        ? -((-value + GRID / 2) / GRID) * GRID
-        : ((value + GRID / 2) / GRID) * GRID;
+  /**
+   * Horizontal grid point for the top and bottom bus pin. The body's middle is halfway between two
+   * grid points, so {@code ceil(middle / 20) * 10} is used instead of the geometric center.
+   */
+  static int busHorizontalGridPoint() {
+    final var middle = OFFSET_X + WIDTH / 2.0;
+    return (int) (Math.ceil(middle / (GRID * 2.0)) * GRID);
+  }
+
+  /** First grid point at or inside an edge. Positive {@code intoBody} points toward the interior. */
+  static int gridPointInside(int edge, int intoBody) {
+    final var cells = edge / (double) GRID;
+    final var snapped = intoBody > 0 ? Math.ceil(cells) : Math.floor(cells);
+    return (int) (snapped * GRID);
   }
 
   /**
-   * Connection point of the bus pin, in offset coordinates. The point is on the chosen edge and on
-   * the wiring grid. The horizontal middle of the body falls between two grid points, so the top
-   * and bottom pins use the nearest grid point rather than the geometric center.
+   * Connection point of the bus pin, in offset coordinates. The outline does not change. Top and
+   * bottom use {@link #busHorizontalGridPoint()}. Left and right use the nearest grid point inside
+   * the outline, because those edges are half a cell off the wiring grid.
    */
   static int[] busPortPosition(Direction side) {
-    final var x = snapToGrid(BUS_OFFSET_X + BUS_WIDTH / 2);
-    final var y = snapToGrid(BUS_OFFSET_Y + BUS_HEIGHT / 2);
-    if (side == Direction.NORTH) return new int[] {x, BUS_OFFSET_Y};
-    if (side == Direction.SOUTH) return new int[] {x, BUS_OFFSET_Y + BUS_HEIGHT};
-    if (side == Direction.EAST) return new int[] {BUS_OFFSET_X + BUS_WIDTH, y};
-    return new int[] {BUS_OFFSET_X, y};
-  }
-
-  @Override
-  public Bounds getOffsetBounds(AttributeSet attrs) {
-    if (attrs != null && isBusInput(attrs)) {
-      return Bounds.create(BUS_OFFSET_X, BUS_OFFSET_Y, BUS_WIDTH, BUS_HEIGHT);
-    }
-    return Bounds.create(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT);
+    final var x = busHorizontalGridPoint();
+    final var y = OFFSET_Y + HEIGHT / 2;
+    if (side == Direction.NORTH) return new int[] {x, OFFSET_Y};
+    if (side == Direction.SOUTH) return new int[] {x, OFFSET_Y + HEIGHT};
+    if (side == Direction.EAST) return new int[] {gridPointInside(OFFSET_X + WIDTH, -1), y};
+    return new int[] {gridPointInside(OFFSET_X, 1), y};
   }
 
   private void updatePorts(Instance instance) {
@@ -368,11 +356,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       computeTextField(instance);
     } else if (attr == StdAttr.LABEL_LOC) {
       computeTextField(instance);
-    } else if (attr == ATTR_INPUT) {
-      instance.recomputeBounds();
-      updatePorts(instance);
-      computeTextField(instance);
-    } else if (attr == ATTR_DP) {
+    } else if (attr == ATTR_INPUT || attr == ATTR_DP) {
       updatePorts(instance);
     } else if (attr == ATTR_BUS_SIDE && isBusInput(instance.getAttributeSet())) {
       updatePorts(instance);
@@ -381,10 +365,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    final var bds = painter.getBounds();
-    // Keep the glyph fixed relative to the anchor when bus mode widens the outline.
-    final var xInset = painter.getLocation().getX() - bds.getX();
-    drawBase(painter, painter.getAttributeValue(ATTR_DP), xInset);
+    drawBase(painter, painter.getAttributeValue(ATTR_DP));
   }
 
   private static Value[] inputBits(InstanceState state) {
