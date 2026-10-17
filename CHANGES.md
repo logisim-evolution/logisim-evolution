@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits. [#1616] (@f3rhd).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
