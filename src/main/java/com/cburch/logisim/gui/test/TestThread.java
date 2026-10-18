@@ -78,7 +78,14 @@ public class TestThread extends UniquelyNamedThread {
       System.out.print((row + 1) + " \r");
       if (report != null && !report.isEmpty()) {
         System.out.println();
-        System.err.println(S.get("testFailed", Integer.toString(row + 1)));
+        final var vectorNumber = Integer.toString(row + 1);
+        final var lineNumber = Integer.toString(vector.lineNumbers[row]);
+        final var location = vector.setNumbers[row] > 0
+            ? S.get("testVectorLocationWithSetSeq", vectorNumber,
+                Integer.toString(vector.setNumbers[row]), Integer.toString(vector.seqNumbers[row]),
+                lineNumber)
+            : S.get("testVectorLocation", vectorNumber, lineNumber);
+        System.err.println(S.get("testFailed", location));
         for (final var e1 : report) System.out.println("  " + e1);
       }
     });
