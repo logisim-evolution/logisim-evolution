@@ -15,7 +15,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.TickAware;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
@@ -62,18 +61,18 @@ public class Ttl74123 extends AbstractTtlGate implements TickAware {
   /** Timing factor from the datasheet: tW(ns) = K × Rext(kΩ) × Cext(pF), K = 0.45 at 5 V. */
   public static final double PULSE_WIDTH_FACTOR_SECONDS = 0.45e-9;
 
-  /** External resistor for section 1, in kiloohms. Datasheet range at 5 V is 2 to 1000. */
-  public static final Attribute<Integer> REXT_1 =
-      Attributes.forIntegerRange("1Rext", S.getter("ttl74123Rext1"), 2, 1000);
-  /** External capacitor for section 1, in picofarads. Linear formula applies above 10 nF. */
-  public static final Attribute<Integer> CEXT_1 =
-      Attributes.forIntegerRange("1Cext", S.getter("ttl74123Cext1"), 10_000, 1_000_000_000);
-  /** External resistor for section 2, in kiloohms. Datasheet range at 5 V is 2 to 1000. */
-  public static final Attribute<Integer> REXT_2 =
-      Attributes.forIntegerRange("2Rext", S.getter("ttl74123Rext2"), 2, 1000);
-  /** External capacitor for section 2, in picofarads. Linear formula applies above 10 nF. */
-  public static final Attribute<Integer> CEXT_2 =
-      Attributes.forIntegerRange("2Cext", S.getter("ttl74123Cext2"), 10_000, 1_000_000_000);
+  /** External resistor for section 1. Typical choices are 10 kΩ, 100 kΩ, and 1 MΩ. */
+  public static final Ttl74123RcAttribute REXT_1 =
+      Ttl74123RcAttribute.resistor("1Rext", S.getter("ttl74123Rext1"));
+  /** External capacitor for section 1. Typical choices run from 10 nF to 1000 µF. */
+  public static final Ttl74123RcAttribute CEXT_1 =
+      Ttl74123RcAttribute.capacitor("1Cext", S.getter("ttl74123Cext1"));
+  /** External resistor for section 2. Typical choices are 10 kΩ, 100 kΩ, and 1 MΩ. */
+  public static final Ttl74123RcAttribute REXT_2 =
+      Ttl74123RcAttribute.resistor("2Rext", S.getter("ttl74123Rext2"));
+  /** External capacitor for section 2. Typical choices run from 10 nF to 1000 µF. */
+  public static final Ttl74123RcAttribute CEXT_2 =
+      Ttl74123RcAttribute.capacitor("2Cext", S.getter("ttl74123Cext2"));
 
   private static final int DELAY = 4;
   private static final int HALVES = 2;
