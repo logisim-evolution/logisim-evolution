@@ -180,7 +180,7 @@ public class AssemblerPanel extends JPanel
         } else saveFile(false);
       }
     }
-    JFileChooser chooser = JFileChoosers.create();
+    JFileChooser chooser = JFileChoosers.create(JFileChoosers.DirectoryScope.SOC_SOFTWARE);
     FileNameExtensionFilter filter =
         new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"), "S", "asm");
     chooser.setDialogTitle(parent.getParentTitle() + ": " + S.get("AsmPanReadAsmFile"));
@@ -216,7 +216,7 @@ public class AssemblerPanel extends JPanel
   private void saveFile(boolean AskFileName) {
     if (!documentChanged) return;
     if (AskFileName || textFile == null) {
-      JFileChooser chooser = JFileChoosers.create();
+      JFileChooser chooser = JFileChoosers.create(JFileChoosers.DirectoryScope.SOC_SOFTWARE);
       FileNameExtensionFilter filter =
           new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"), "S", "asm");
       chooser.setDialogTitle(parent.getParentTitle() + ": " + S.get("AsmPanSaveAsmFile"));
