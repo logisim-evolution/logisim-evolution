@@ -939,6 +939,22 @@ public class Startup implements AWTEventListener {
 
     Toolkit.getDefaultToolkit()
         .addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
+    // Warm up file choosers in background to avoid first-open delay.
+    final var warmupThread = new Thread(() -> {
+      try {
+        new JFileChooser();
+        if (MacCompatibility.isRunningOnMac()) {
+          final var fd = new java.awt.FileDialog((java.awt.Frame) null);
+          fd.addNotify();
+          fd.dispose();
+        }
+      } catch (Throwable ignored) {
+      }
+    }, "FileChooser-Warmup");
+    warmupThread.setDaemon(true);
+    warmupThread.setPriority(Thread.MIN_PRIORITY);
+    warmupThread.start();
+
     // pre-load the two basic component libraries, just so that the time
     // taken is shown separately in the progress bar.
     if (showSplash) {
