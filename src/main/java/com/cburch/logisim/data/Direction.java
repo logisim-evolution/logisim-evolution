@@ -19,7 +19,7 @@ public class Direction implements AttributeOptionInterface {
     if (str.equals(WEST.name)) return WEST;
     if (str.equals(NORTH.name)) return NORTH;
     if (str.equals(SOUTH.name)) return SOUTH;
-    throw new NumberFormatException("illegal direction '" + str + "'");
+    throw new NumberFormatException(S.get("optionNotAmongChoicesError"));
   }
 
   public static final Direction EAST =
