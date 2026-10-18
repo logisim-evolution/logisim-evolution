@@ -165,7 +165,11 @@ public class Attributes {
 
     @Override
     public Double parse(String value) {
-      return Double.valueOf(value);
+      try {
+        return Double.valueOf(value);
+      } catch (NumberFormatException e) {
+        throw new NumberFormatException(S.get("numberFormatError", value));
+      }
     }
   }
 
@@ -203,34 +207,32 @@ public class Attributes {
 
     @Override
     public Integer parse(String value) {
-      value = value.toLowerCase();
-      if (value.startsWith("-")) {
-        value = value.substring(1);
-        if (value.startsWith("0x")) {
-          value = value.substring(2);
-          return Integer.parseInt("-" + value, 16);
-        } else if (value.startsWith("0b")) {
-          value = value.substring(2);
-          return Integer.parseInt("-" + value, 2);
-        } else if (value.startsWith("0") && value.length() > 1) {
-          value = value.substring(1);
-          return Integer.parseInt("-" + value, 8);
+      try {
+        final var raw = value.toLowerCase();
+        if (raw.startsWith("-")) {
+          final var s = raw.substring(1);
+          if (s.startsWith("0x")) {
+            return Integer.parseInt("-" + s.substring(2), 16);
+          } else if (s.startsWith("0b")) {
+            return Integer.parseInt("-" + s.substring(2), 2);
+          } else if (s.startsWith("0") && s.length() > 1) {
+            return Integer.parseInt("-" + s.substring(1), 8);
+          } else {
+            return Integer.parseInt("-" + s, 10);
+          }
         } else {
-          return Integer.parseInt("-" + value, 10);
+          if (raw.startsWith("0x")) {
+            return Integer.parseUnsignedInt(raw.substring(2), 16);
+          } else if (raw.startsWith("0b")) {
+            return Integer.parseUnsignedInt(raw.substring(2), 2);
+          } else if (raw.startsWith("0") && raw.length() > 1) {
+            return Integer.parseUnsignedInt(raw.substring(1), 8);
+          } else {
+            return Integer.parseUnsignedInt(raw, 10);
+          }
         }
-      } else {
-        if (value.startsWith("0x")) {
-          value = value.substring(2);
-          return Integer.parseUnsignedInt(value, 16);
-        } else if (value.startsWith("0b")) {
-          value = value.substring(2);
-          return Integer.parseUnsignedInt(value, 2);
-        } else if (value.startsWith("0") && value.length() > 1) {
-          value = value.substring(1);
-          return Integer.parseUnsignedInt(value, 8);
-        } else {
-          return Integer.parseUnsignedInt(value, 10);
-        }
+      } catch (NumberFormatException e) {
+        throw new NumberFormatException(S.get("integerFormatError", value));
       }
     }
 
@@ -253,34 +255,32 @@ public class Attributes {
 
     @Override
     public Long parse(String value) {
-      value = value.toLowerCase();
-      if (value.startsWith("-")) {
-        value = value.substring(1);
-        if (value.startsWith("0x")) {
-          value = value.substring(2);
-          return Long.parseLong("-" + value, 16);
-        } else if (value.startsWith("0b")) {
-          value = value.substring(2);
-          return Long.parseLong("-" + value, 2);
-        } else if (value.startsWith("0") && value.length() > 1) {
-          value = value.substring(1);
-          return Long.parseLong("-" + value, 8);
+      try {
+        final var raw = value.toLowerCase();
+        if (raw.startsWith("-")) {
+          final var s = raw.substring(1);
+          if (s.startsWith("0x")) {
+            return Long.parseLong("-" + s.substring(2), 16);
+          } else if (s.startsWith("0b")) {
+            return Long.parseLong("-" + s.substring(2), 2);
+          } else if (s.startsWith("0") && s.length() > 1) {
+            return Long.parseLong("-" + s.substring(1), 8);
+          } else {
+            return Long.parseLong("-" + s, 10);
+          }
         } else {
-          return Long.parseLong("-" + value, 10);
+          if (raw.startsWith("0x")) {
+            return Long.parseUnsignedLong(raw.substring(2), 16);
+          } else if (raw.startsWith("0b")) {
+            return Long.parseUnsignedLong(raw.substring(2), 2);
+          } else if (raw.startsWith("0") && raw.length() > 1) {
+            return Long.parseUnsignedLong(raw.substring(1), 8);
+          } else {
+            return Long.parseUnsignedLong(raw, 10);
+          }
         }
-      } else {
-        if (value.startsWith("0x")) {
-          value = value.substring(2);
-          return Long.parseUnsignedLong(value, 16);
-        } else if (value.startsWith("0b")) {
-          value = value.substring(2);
-          return Long.parseUnsignedLong(value, 2);
-        } else if (value.startsWith("0") && value.length() > 1) {
-          value = value.substring(1);
-          return Long.parseUnsignedLong(value, 8);
-        } else {
-          return Long.parseUnsignedLong(value, 10);
-        }
+      } catch (NumberFormatException e) {
+        throw new NumberFormatException(S.get("integerFormatError", value));
       }
     }
 
@@ -303,7 +303,11 @@ public class Attributes {
 
     @Override
     public Integer parse(String value) {
-      return Integer.valueOf(value);
+      try {
+        return Integer.valueOf(value);
+      } catch (NumberFormatException e) {
+        throw new NumberFormatException(S.get("integerFormatError", value));
+      }
     }
   }
 
@@ -338,10 +342,15 @@ public class Attributes {
 
     @Override
     public Integer parse(String value) {
-      int v = (int) Long.parseLong(value);
-      if (v < start) throw new NumberFormatException("integer must be at least " + start);
-      if (v > end) throw new NumberFormatException("integer must be at most " + end);
-      return v;
+      final long v;
+      try {
+        v = Long.parseLong(value);
+      } catch (NumberFormatException e) {
+        throw new NumberFormatException(S.get("integerFormatError", value));
+      }
+      if (v < start) throw new NumberFormatException(S.get("integerRangeAtLeastError", String.valueOf(start)));
+      if (v > end) throw new NumberFormatException(S.get("integerRangeAtMostError", String.valueOf(end)));
+      return (int) v;
     }
   }
 
@@ -380,7 +389,7 @@ public class Attributes {
           return val;
         }
       }
-      throw new NumberFormatException("value not among choices");
+      throw new NumberFormatException(S.get("optionNotAmongChoicesError"));
     }
 
     @Override

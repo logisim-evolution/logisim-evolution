@@ -53,10 +53,11 @@ public class VgaMenu implements ActionListener, MenuExtender {
   }
 
   public void exportC() {
-    JFileChooser fc = JFileChoosers.create();
+    JFileChooser fc = JFileChoosers.create(JFileChoosers.DirectoryScope.SOC_SOFTWARE);
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     int result = fc.showDialog(frame, S.get("SelectDirectoryToStoreC"));
     if (result == JFileChooser.APPROVE_OPTION) {
+      JFileChoosers.setCurrentDirectory(JFileChoosers.DirectoryScope.SOC_SOFTWARE, fc.getSelectedFile());
       VgaState myState = instance.getAttributeValue(VgaAttributes.VGA_STATE);
       if (myState == null) throw new NullPointerException("BUG in VgaMenu.java");
       String compName =
