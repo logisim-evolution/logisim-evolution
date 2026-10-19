@@ -31,7 +31,8 @@ import java.util.Arrays;
  * {@code STR} is a level: while it is high the storage register follows the shift register, and a
  * low {@code STR} holds storage. {@code OE} high drives storage onto {@code QP0}..{@code QP7};
  * any other level releases those pins. {@code QS1} and {@code QS2} stay driven. TI names the same
- * pins {@code STROBE}, {@code DATA} and {@code Q0}..{@code Q7}. Nanosecond delays are not modeled.
+ * pins {@code STROBE}, {@code DATA} and {@code Q0}..{@code Q7}. On the package, {@code QP4}
+ * to {@code QP7} are pins 14, 13, 12 and 11. Nanosecond delays are not modeled.
  */
 public class Ttl744094 extends AbstractTtlGate {
   /**
@@ -55,10 +56,10 @@ public class Ttl744094 extends AbstractTtlGate {
   public static final byte GND = 8;
   public static final byte QS1 = 9;
   public static final byte QS2 = 10;
-  public static final byte QP4 = 11;
-  public static final byte QP5 = 12;
-  public static final byte QP6 = 13;
-  public static final byte QP7 = 14;
+  public static final byte QP7 = 11;
+  public static final byte QP6 = 12;
+  public static final byte QP5 = 13;
+  public static final byte QP4 = 14;
   public static final byte OE = 15;
   public static final byte VCC = 16;
 
@@ -74,15 +75,15 @@ public class Ttl744094 extends AbstractTtlGate {
     "QP3",
     "QS1",
     "QS2",
-    "QP4",
-    "QP5",
-    "QP6",
     "QP7",
+    "QP6",
+    "QP5",
+    "QP4",
     "OE (Output enable, active high)"
   };
   private static final String[] PIN_NAMES = {
     "STR", "D", "CP", "QP0", "QP1", "QP2", "QP3", null,
-    "QS1", "QS2", "QP4", "QP5", "QP6", "QP7", "OE", null
+    "QS1", "QS2", "QP7", "QP6", "QP5", "QP4", "OE", null
   };
 
   /** Creates a 744094 shift-and-store register with three-state parallel outputs. */

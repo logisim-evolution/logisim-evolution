@@ -42,10 +42,10 @@ class Ttl744094Test {
     assertPort(hiddenPower, Ttl744094.QP3, 130, 30, EndData.OUTPUT_ONLY);
     assertPort(hiddenPower, Ttl744094.QS1, 150, -30, EndData.OUTPUT_ONLY);
     assertPort(hiddenPower, Ttl744094.QS2, 130, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl744094.QP4, 110, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl744094.QP5, 90, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl744094.QP6, 70, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl744094.QP7, 50, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl744094.QP7, 110, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl744094.QP6, 90, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl744094.QP5, 70, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl744094.QP4, 50, -30, EndData.OUTPUT_ONLY);
     assertPort(hiddenPower, Ttl744094.OE, 30, -30, EndData.INPUT_ONLY);
 
     final var shownPower = createInstance(gate, true);
@@ -109,6 +109,7 @@ class Ttl744094Test {
     pulse(gate, state);
     assertParallel(state, 0x5A);
     assertEquals(Value.TRUE, level(state, Ttl744094.QS1));
+    assertEquals(Value.TRUE, level(state, Ttl744094.QS2));
   }
 
   @Test
@@ -152,6 +153,21 @@ class Ttl744094Test {
     gate.propagate(state);
     assertParallelUnknown(state);
     assertEquals(Value.TRUE, level(state, Ttl744094.QS2));
+
+    setLevel(state, Ttl744094.OE, Value.TRUE);
+    gate.propagate(state);
+    assertParallel(state, 0xA5);
+
+    setLevel(state, Ttl744094.OE, Value.FALSE);
+    setLevel(state, Ttl744094.D, Value.FALSE);
+    pulse(gate, state);
+    assertParallelUnknown(state);
+    assertEquals(Value.FALSE, level(state, Ttl744094.QS1));
+    assertEquals(Value.FALSE, level(state, Ttl744094.QS2));
+
+    setLevel(state, Ttl744094.OE, Value.TRUE);
+    gate.propagate(state);
+    assertParallel(state, 0x4A);
   }
 
   @Test
