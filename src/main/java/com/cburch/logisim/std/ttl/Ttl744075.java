@@ -62,8 +62,8 @@ public class Ttl744075 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
     final var g = painter.getGraphics();
-    final int bottom = y + height - PIN_HEIGHT;
-    final int top = y + PIN_HEIGHT;
+    final var bottom = y + height - PIN_HEIGHT;
+    final var top = y + PIN_HEIGHT;
     // 1A, 1B, 1C and 1Y are bottom pins 3 to 6.
     paintOrToPin(g, x + 100, y + 44, x + 110, bottom, new int[] {x + 50, x + 70, x + 90}, bottom);
     // 3A, 3B and 3C are top pins 11 to 13, and 3Y is top pin 10.
@@ -93,14 +93,14 @@ public class Ttl744075 extends AbstractTtlGate {
       int outputPinY,
       int[] inputX,
       int inputPinY) {
-    final int width = 16;
-    final int height = 12;
+    final var width = 16;
+    final var height = 12;
     Drawgates.paintOr(g, outX, outY, width, height, false, false);
     g.drawPolyline(
         new int[] {outX, outputPinX, outputPinX}, new int[] {outY, outY, outputPinY}, 3);
-    final int inputEdge = outX - width;
+    final var inputEdge = outX - width;
     for (var i = 0; i < inputX.length; i++) {
-      final int entry = outY - 4 + i * 4;
+      final var entry = outY - 4 + i * 4;
       g.drawPolyline(
           new int[] {inputX[i], inputX[i], inputEdge}, new int[] {inputPinY, entry, entry}, 3);
     }

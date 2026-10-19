@@ -143,20 +143,22 @@ class Ttl744075Test {
     final var gate = new Ttl744075();
     final var state = new TtlTestInstanceState(gate, false);
 
-    for (final var unsettled : new Value[] {Value.UNKNOWN, Value.ERROR}) {
-      driveAllLow(state);
-      state.setPortValue(Ttl744075.PORT_INDEX_1A, unsettled);
-      gate.propagate(state);
-      assertEquals(Value.ERROR, state.getPortValue(Ttl744075.PORT_INDEX_1Y));
-      assertOtherOutputs(state, Ttl744075.PORT_INDEX_1Y, Value.FALSE);
+    for (final var pins : GATES) {
+      for (final var unsettled : new Value[] {Value.UNKNOWN, Value.ERROR}) {
+        driveAllLow(state);
+        state.setPortValue(pins[2], unsettled);
+        gate.propagate(state);
+        assertEquals(Value.ERROR, state.getPortValue(pins[3]));
+        assertOtherOutputs(state, pins[3], Value.FALSE);
 
-      driveAllLow(state);
-      state.setPortValue(Ttl744075.PORT_INDEX_1A, Value.TRUE);
-      state.setPortValue(Ttl744075.PORT_INDEX_1B, unsettled);
-      state.setPortValue(Ttl744075.PORT_INDEX_1C, Value.ERROR);
-      gate.propagate(state);
-      assertEquals(Value.TRUE, state.getPortValue(Ttl744075.PORT_INDEX_1Y));
-      assertOtherOutputs(state, Ttl744075.PORT_INDEX_1Y, Value.FALSE);
+        driveAllLow(state);
+        state.setPortValue(pins[0], Value.TRUE);
+        state.setPortValue(pins[1], unsettled);
+        state.setPortValue(pins[2], Value.ERROR);
+        gate.propagate(state);
+        assertEquals(Value.TRUE, state.getPortValue(pins[3]));
+        assertOtherOutputs(state, pins[3], Value.FALSE);
+      }
     }
   }
 
