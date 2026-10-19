@@ -225,6 +225,26 @@ class Ttl744017Test {
   }
 
   @Test
+  void countOutsideTheDecadeStaysUnknown() {
+    final var gate = new Ttl744017();
+    final var state = new TtlTestInstanceState(gate, false);
+    reset(gate, state);
+    final var data = new TtlRegisterData(WIDTH);
+    data.setValue(Value.createKnown(WIDTH, 10));
+    state.setData(data);
+
+    gate.propagate(state);
+    assertOutputs(state, Value.UNKNOWN);
+
+    pulseCp0(gate, state);
+    assertOutputs(state, Value.UNKNOWN);
+
+    state.setPortValue(Ttl744017.PORT_INDEX_MR, Value.TRUE);
+    gate.propagate(state);
+    assertCount(state, 0);
+  }
+
+  @Test
   void invalidExposedPowerInputsMakeOutputsUnknown() {
     final var gate = new Ttl744017();
     final var state = new TtlTestInstanceState(gate, true);
