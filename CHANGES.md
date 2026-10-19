@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added TTL 744094: 8-bit shift-and-store register with three-state outputs (@Vadimatorik).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
