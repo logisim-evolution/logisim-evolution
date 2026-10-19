@@ -118,6 +118,41 @@ class Ttl74259Test {
   }
 
   @Test
+  void addressableLatchAccumulatesAOneAtEveryAddress() {
+    final var gate = new Ttl74259();
+    final var state = new TtlTestInstanceState(gate, false);
+    reset(gate, state);
+
+    var mask = 0;
+    for (var address = 0; address < OUTPUTS.length; address++) {
+      drive(state, address, Value.TRUE, Value.FALSE, Value.TRUE);
+      gate.propagate(state);
+      mask |= 1 << address;
+      assertMask(state, mask);
+    }
+    assertMask(state, 0xFF);
+
+    drive(state, 3, Value.FALSE, Value.FALSE, Value.TRUE);
+    gate.propagate(state);
+    assertMask(state, 0xF7);
+  }
+
+  @Test
+  void demultiplexerDropsThePreviousOutputWhenTheAddressChanges() {
+    final var gate = new Ttl74259();
+    final var state = new TtlTestInstanceState(gate, false);
+    reset(gate, state);
+
+    drive(state, 0, Value.TRUE, Value.FALSE, Value.FALSE);
+    gate.propagate(state);
+    assertMask(state, 0x01);
+
+    drive(state, 1, Value.TRUE, Value.FALSE, Value.FALSE);
+    gate.propagate(state);
+    assertMask(state, 0x02);
+  }
+
+  @Test
   void memoryHoldsWhileDataAndAddressChange() {
     final var gate = new Ttl74259();
     final var state = new TtlTestInstanceState(gate, false);
@@ -227,17 +262,17 @@ class Ttl74259Test {
   }
 
   @Test
-  void startupFollowsTheMemoryPreference() {
+  void startupFollowsTheMemoryPreference() throws InterruptedException {
     final var previous = AppPreferences.Memory_Startup_Unknown.get();
     try {
-      AppPreferences.Memory_Startup_Unknown.set(false);
+      setStartupUnknown(false);
       final var cleared = new Ttl74259();
       final var clearedState = new TtlTestInstanceState(cleared, false);
       drive(clearedState, 0, Value.TRUE, Value.TRUE, Value.TRUE);
       cleared.propagate(clearedState);
       assertMask(clearedState, 0x00);
 
-      AppPreferences.Memory_Startup_Unknown.set(true);
+      setStartupUnknown(true);
       final var unknown = new Ttl74259();
       final var unknownState = new TtlTestInstanceState(unknown, false);
       drive(unknownState, 0, Value.FALSE, Value.TRUE, Value.TRUE);
@@ -271,6 +306,21 @@ class Ttl74259Test {
     power(state, Value.TRUE, Value.TRUE);
     gate.propagate(state);
     assertAll(state, Value.UNKNOWN);
+  }
+
+  /**
+   * Preference updates reach the cached value on the preferences listener thread, so a write is not
+   * visible to the next component until that cache matches.
+   */
+  private static void setStartupUnknown(boolean unknown) throws InterruptedException {
+    AppPreferences.Memory_Startup_Unknown.set(unknown);
+    final var deadline = System.nanoTime() + 1_000_000_000L;
+    while (AppPreferences.Memory_Startup_Unknown.get() != unknown) {
+      if (System.nanoTime() > deadline) {
+        assertEquals(unknown, AppPreferences.Memory_Startup_Unknown.get());
+      }
+      Thread.sleep(10);
+    }
   }
 
   private static void reset(Ttl74259 gate, TtlTestInstanceState state) {
