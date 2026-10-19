@@ -12,6 +12,7 @@ package com.cburch.logisim.std.arith.floating;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -39,14 +40,14 @@ public class FpMinMax extends InstanceFactory {
   public static final String _ID = "FPMinMax";
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int MIN = 2;
-  private static final int MAX = 3;
-  private static final int ERR = 4;
+  static final int IN0 = 0;
+  static final int IN1 = 1;
+  static final int MIN = 2;
+  static final int MAX = 3;
+  static final int ERR = 4;
 
   public FpMinMax() {
-    super(_ID, S.getter("fpMinMaxComponent"));
+    super(_ID, S.getter("fpMinMaxComponent"), new FpMinMaxHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -77,6 +78,11 @@ public class FpMinMax extends InstanceFactory {
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     instance.fireInvalidated();
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth());
   }
 
   @Override

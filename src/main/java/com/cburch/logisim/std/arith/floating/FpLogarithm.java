@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -60,13 +61,13 @@ public class FpLogarithm extends InstanceFactory {
           });
 
   static final int PER_DELAY = 1;
-  private static final int ALOG = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
-  private static final int BASE = 3;
+  static final int ALOG = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
+  static final int BASE = 3;
 
   public FpLogarithm() {
-    super(_ID, S.getter("fpLogarithmComponent"));
+    super(_ID, S.getter("fpLogarithmComponent"), new FpLogarithmHdlGeneratorFactory());
     setAttributes(
       new Attribute[] {StdAttr.FP_WIDTH, LOG_MODE},
       new Object[] {BitWidth.create(32), LOGXY});
@@ -109,6 +110,11 @@ public class FpLogarithm extends InstanceFactory {
 
     instance.setPorts(ps);
   }
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), FpLogarithmHdlGeneratorFactory.mode(attrs));
+  }
+
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();

@@ -12,6 +12,7 @@ package com.cburch.logisim.std.arith.floating;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -39,18 +40,18 @@ public class FpClassificator extends InstanceFactory {
   public static final String _ID = "FPClassificator";
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int NEGATIVE = 1;
-  private static final int ZERO = 2;
-  private static final int SUBNORMAL = 3;
-  private static final int NORMAL = 4;
-  private static final int INFINITE = 5;
+  static final int IN = 0;
+  static final int NEGATIVE = 1;
+  static final int ZERO = 2;
+  static final int SUBNORMAL = 3;
+  static final int NORMAL = 4;
+  static final int INFINITE = 5;
   // FIXME: Consider implementing signaling NaN's detection.
   // private static final int SIGNALING_NAN = 7;
-  private static final int QUIET_NAN = 6;
+  static final int QUIET_NAN = 6;
 
   public FpClassificator() {
-    super(_ID, S.getter("fpClassificatorComponent"));
+    super(_ID, S.getter("fpClassificatorComponent"), new FpClassificatorHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -40, 40, 80));
@@ -91,6 +92,11 @@ public class FpClassificator extends InstanceFactory {
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     instance.fireInvalidated();
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth());
   }
 
   @Override
