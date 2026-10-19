@@ -216,6 +216,98 @@ class Ttl74595Test {
   }
 
   @Test
+  void heldClockAndFallingEdgeShiftOnlyOnTheNextRise() {
+    final var gate = new Ttl74595();
+    final var state = cleared(gate);
+
+    setLevel(state, Ttl74595.SER, Value.TRUE);
+    setLevel(state, Ttl74595.SRCLK, Value.TRUE);
+    gate.propagate(state);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74595.QHP));
+
+    setLevel(state, Ttl74595.SER, Value.FALSE);
+    gate.propagate(state);
+    setLevel(state, Ttl74595.SRCLK, Value.FALSE);
+    gate.propagate(state);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74595.QHP));
+
+    setLevel(state, Ttl74595.SRCLK, Value.TRUE);
+    gate.propagate(state);
+    setLevel(state, Ttl74595.SRCLK, Value.FALSE);
+    gate.propagate(state);
+    pulse(gate, state, Ttl74595.RCLK);
+    assertParallel(state, 0x02);
+
+    setLevel(state, Ttl74595.SER, Value.TRUE);
+    pulse(gate, state, Ttl74595.SRCLK);
+    setLevel(state, Ttl74595.RCLK, Value.TRUE);
+    gate.propagate(state);
+    assertParallel(state, 0x05);
+
+    setLevel(state, Ttl74595.SER, Value.FALSE);
+    pulse(gate, state, Ttl74595.SRCLK);
+    assertParallel(state, 0x05);
+    setLevel(state, Ttl74595.RCLK, Value.FALSE);
+    gate.propagate(state);
+    assertParallel(state, 0x05);
+
+    setLevel(state, Ttl74595.RCLK, Value.TRUE);
+    gate.propagate(state);
+    setLevel(state, Ttl74595.RCLK, Value.FALSE);
+    gate.propagate(state);
+    assertParallel(state, 0x0A);
+  }
+
+  @Test
+  void tiedClocksKeepStorageOneShiftBehindForAWholeByte() {
+    final var gate = new Ttl74595();
+    final var state = cleared(gate);
+    var shift = 0;
+    var store = 0;
+
+    for (var bit = 0; bit < 8; bit++) {
+      final var serial = ((0x59 >> bit) & 1) == 0 ? Value.FALSE : Value.TRUE;
+      setLevel(state, Ttl74595.SER, serial);
+      riseBoth(gate, state);
+      store = shift;
+      shift = ((shift << 1) | (serial == Value.TRUE ? 1 : 0)) & 0xFF;
+      assertParallel(state, store);
+      assertEquals((shift & 0x80) == 0 ? Value.FALSE : Value.TRUE, level(state, Ttl74595.QHP));
+    }
+    assertParallel(state, 0x4D);
+    assertEquals(Value.TRUE, level(state, Ttl74595.QHP));
+  }
+
+  @Test
+  void outputEnableReleasesWhileSerialOutIsLowAndClearCopiesZeros() {
+    final var gate = new Ttl74595();
+    final var state = cleared(gate);
+    shiftByte(gate, state, 0x59);
+    pulse(gate, state, Ttl74595.RCLK);
+    assertParallel(state, 0x9A);
+
+    setLevel(state, Ttl74595.SRCLR, Value.FALSE);
+    gate.propagate(state);
+    assertEquals(Value.FALSE, level(state, Ttl74595.QHP));
+    assertParallel(state, 0x9A);
+
+    setLevel(state, Ttl74595.OE, Value.TRUE);
+    gate.propagate(state);
+    assertParallelUnknown(state);
+    assertEquals(Value.FALSE, level(state, Ttl74595.QHP));
+
+    setLevel(state, Ttl74595.OE, Value.FALSE);
+    gate.propagate(state);
+    assertParallel(state, 0x9A);
+
+    pulse(gate, state, Ttl74595.RCLK);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74595.QHP));
+  }
+
+  @Test
   void invalidExposedPowerInputsMakeOutputsUnknown() {
     final var gate = new Ttl74595();
     final var state = new TtlTestInstanceState(gate, true);
