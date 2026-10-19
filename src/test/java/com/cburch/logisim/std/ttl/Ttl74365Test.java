@@ -87,6 +87,13 @@ class Ttl74365Test {
       setHigh(outputEnable2High, Ttl74365.OE2);
       buffer.propagate(outputEnable2High);
       assertReleased(outputEnable2High);
+
+      final var bothEnablesHigh = enabled(buffer);
+      setData(bothEnablesHigh, pattern);
+      setHigh(bothEnablesHigh, Ttl74365.OE1);
+      setHigh(bothEnablesHigh, Ttl74365.OE2);
+      buffer.propagate(bothEnablesHigh);
+      assertReleased(bothEnablesHigh);
     }
   }
 
