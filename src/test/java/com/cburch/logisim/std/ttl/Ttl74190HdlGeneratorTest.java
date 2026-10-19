@@ -41,10 +41,12 @@ class Ttl74190HdlGeneratorTest {
     assertTrue(containsIgnoringCase(hdl, "if (nPL = '0') then"));
     assertTrue(containsIgnoringCase(hdl, "s_count <= s_data;"));
     assertTrue(containsIgnoringCase(hdl, "elsif (rising_edge(clock)) then"));
-    assertTrue(containsIgnoringCase(hdl, "s_terminal <= '1' when nCE = '0' and"));
-    assertTrue(containsIgnoringCase(hdl, "(s_at_max = '1' or s_at_min = '1') else '0';"));
+    assertTrue(containsIgnoringCase(hdl, "s_visible(0) = '1' and"));
+    assertTrue(containsIgnoringCase(hdl, "s_visible(3) = '1' else '0';"));
+    assertTrue(containsIgnoringCase(hdl, "s_terminal <= '1' when s_at_max = '1' or s_at_min = '1'"));
     assertTrue(
-        containsIgnoringCase(hdl, "nRC <= '0' when s_terminal = '1' and clock = '0' else '1';"));
+        containsIgnoringCase(
+            hdl, "nRC <= '0' when s_terminal = '1' and nCE = '0' and clock = '0' else '1';"));
   }
 
   @Test
@@ -59,7 +61,10 @@ class Ttl74190HdlGeneratorTest {
     assertTrue(hdl.contains("assign s_visible = (nPL == 0 || s_loading == 1) ? s_data : s_count;"));
     assertTrue(hdl.contains("if (nPL == 0) begin"));
     assertTrue(hdl.contains("always @(posedge clock or nPL)"));
-    assertTrue(hdl.contains("assign nRC = ((s_terminal == 1) && (clock == 0)) ? 1'b0 : 1'b1;"));
+    assertTrue(hdl.contains("assign s_at_max = (DU == 0) && s_visible[0] && s_visible[3];"));
+    assertTrue(
+        hdl.contains(
+            "assign nRC = ((s_terminal == 1) && (nCE == 0) && (clock == 0)) ? 1'b0 : 1'b1;"));
   }
 
   @Test

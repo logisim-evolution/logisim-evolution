@@ -76,12 +76,12 @@ public class Ttl74190HdlGenerator extends AbstractHdlGeneratorFactory {
         s_next <= s_count {{when}} {{tick}} = '0' {{or}} nCE = '1' {{else}}
                   s_up {{when}} DU = '0' {{else}}
                   s_down;
-        s_at_max <= '1' {{when}} DU = '0' {{and}} s_visible = "1001" {{else}} '0';
+        s_at_max <= '1' {{when}} DU = '0' {{and}} s_visible(0) = '1' {{and}}
+                    s_visible(3) = '1' {{else}} '0';
         s_at_min <= '1' {{when}} DU = '1' {{and}} s_visible = "0000" {{else}} '0';
-        s_terminal <= '1' {{when}} nCE = '0' {{and}}
-                      (s_at_max = '1' {{or}} s_at_min = '1') {{else}} '0';
+        s_terminal <= '1' {{when}} s_at_max = '1' {{or}} s_at_min = '1' {{else}} '0';
         TC <= s_terminal;
-        nRC <= '0' {{when}} s_terminal = '1' {{and}} {{CLK}} = '0' {{else}} '1';
+        nRC <= '0' {{when}} s_terminal = '1' {{and}} nCE = '0' {{and}} {{CLK}} = '0' {{else}} '1';
         Q0 <= s_visible(0);
         Q1 <= s_visible(1);
         Q2 <= s_visible(2);
@@ -112,11 +112,11 @@ public class Ttl74190HdlGenerator extends AbstractHdlGeneratorFactory {
         assign s_visible = (nPL == 0 || s_loading == 1) ? s_data : s_count;
         assign s_next = ({{tick}} == 0 || nCE == 1) ? s_count :
                         (DU == 0 ? s_up : s_down);
-        assign s_at_max = (DU == 0) && (s_visible == 4'b1001);
+        assign s_at_max = (DU == 0) && s_visible[0] && s_visible[3];
         assign s_at_min = (DU == 1) && (s_visible == 4'b0000);
-        assign s_terminal = (nCE == 0) && (s_at_max || s_at_min);
+        assign s_terminal = s_at_max || s_at_min;
         assign TC = s_terminal;
-        assign nRC = ((s_terminal == 1) && ({{CLK}} == 0)) ? 1'b0 : 1'b1;
+        assign nRC = ((s_terminal == 1) && (nCE == 0) && ({{CLK}} == 0)) ? 1'b0 : 1'b1;
         assign Q0 = s_visible[0];
         assign Q1 = s_visible[1];
         assign Q2 = s_visible[2];

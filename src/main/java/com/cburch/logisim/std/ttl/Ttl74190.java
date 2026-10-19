@@ -26,9 +26,11 @@ import java.awt.Graphics2D;
  * <a href="https://www.ti.com/lit/ds/symlink/cd74hc190.pdf">CD74HC190</a> and Philips 74HC/HCT190
  * data sheets. Parallel load is transparent and overrides the clock. The counter advances on the
  * rising edge of the clock when load is high and count enable is low. A low up/down input counts
- * up. Terminal count is high only at 9 while counting up, or at 0 while counting down, and only
- * while count enable is low. The ripple clock is low only while terminal count is high and the
- * clock is low. The next-state table, including the illegal codes 10 to 15, is Figure 3 of the TI
+ * up. Terminal count is the gate term measured on a 74HC190: while counting up it is QA and QD, so
+ * codes 9, 11, 13 and 15 all assert it, and while counting down it is the all-zero word. Count
+ * enable does not clear that output. The ripple clock is low only while terminal count is high,
+ * count enable is low and the clock is low. The next-state table, including codes 10 to 15, is
+ * Figure 3 of the TI
  * data sheet. Nanosecond delays are not modeled.
  *
  * <p>An unknown or error input changes an output only when the two substitutions disagree. An error
@@ -249,8 +251,8 @@ public class Ttl74190 extends AbstractTtlGate {
       final var down = bitHigh(mask, 1);
       final var clockHigh = bitHigh(mask, 2);
       final var code = (mask >> 3) & 0xF;
-      final var terminal = enabled && (down ? code == 0 : code == 9);
-      final var rippleHigh = !(terminal && !clockHigh);
+      final var terminal = down ? code == 0 : (code & 0x9) == 0x9;
+      final var rippleHigh = !(terminal && enabled && !clockHigh);
       choice.accept((terminal ? 1 : 0) | (rippleHigh ? 2 : 0), errorIn(sources));
     }
     return choice.value();

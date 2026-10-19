@@ -67,11 +67,20 @@ class Ttl74190Test {
     }
 
     load(gate, state, 4);
-    set(state, Ttl74190.CP, Value.TRUE);
+    set(state, Ttl74190.DU, Value.FALSE);
+    set(state, Ttl74190.CE, Value.FALSE);
+    set(state, Ttl74190.CP, Value.FALSE);
     set(state, Ttl74190.PL, Value.FALSE);
+    setData(state, 9);
+    gate.propagate(state);
+    assertCount(state, 9);
+    assertFlags(state, true, false);
+
+    set(state, Ttl74190.CP, Value.TRUE);
     setData(state, 12);
     gate.propagate(state);
     assertCount(state, 12);
+    assertFlags(state, false, true);
   }
 
   @Test
@@ -81,19 +90,25 @@ class Ttl74190Test {
 
     for (var code = 0; code < 16; code++) {
       load(gate, state, code);
-      set(state, Ttl74190.DU, Value.FALSE);
-      set(state, Ttl74190.CE, Value.FALSE);
-      rise(gate, state);
+      arm(gate, state, Value.FALSE);
+      assertCount(state, code);
+      assertFlags(state, countsUpToTerminal(code), !countsUpToTerminal(code));
+      set(state, Ttl74190.CP, Value.TRUE);
+      gate.propagate(state);
       assertCount(state, COUNT_UP[code]);
+      assertFlags(state, countsUpToTerminal(COUNT_UP[code]), true);
       fall(gate, state);
     }
 
     for (var code = 0; code < 16; code++) {
       load(gate, state, code);
-      set(state, Ttl74190.DU, Value.TRUE);
-      set(state, Ttl74190.CE, Value.FALSE);
-      rise(gate, state);
+      arm(gate, state, Value.TRUE);
+      assertCount(state, code);
+      assertFlags(state, code == 0, code != 0);
+      set(state, Ttl74190.CP, Value.TRUE);
+      gate.propagate(state);
       assertCount(state, COUNT_DOWN[code]);
+      assertFlags(state, COUNT_DOWN[code] == 0, true);
       fall(gate, state);
     }
   }
@@ -167,7 +182,41 @@ class Ttl74190Test {
 
     set(state, Ttl74190.CE, Value.TRUE);
     gate.propagate(state);
-    assertFlags(state, false, true);
+    assertCount(state, 0);
+    assertFlags(state, true, true);
+  }
+
+  @Test
+  void terminalCountFollowsQaAndQdUpAndZeroDownWithoutTheEnable() {
+    final var gate = new Ttl74190();
+    final var state = hold(gate);
+    set(state, Ttl74190.DU, Value.FALSE);
+    set(state, Ttl74190.CE, Value.TRUE);
+    set(state, Ttl74190.CP, Value.FALSE);
+
+    for (var code = 0; code < 16; code++) {
+      load(gate, state, code);
+      set(state, Ttl74190.CE, Value.TRUE);
+      gate.propagate(state);
+      final var terminal = (code & 0x9) == 0x9;
+      assertFlags(state, terminal, true);
+    }
+
+    for (var code : new int[] {9, 11, 13, 15}) {
+      load(gate, state, code);
+      set(state, Ttl74190.CE, Value.FALSE);
+      gate.propagate(state);
+      assertFlags(state, true, false);
+    }
+
+    load(gate, state, 0);
+    set(state, Ttl74190.DU, Value.TRUE);
+    set(state, Ttl74190.CE, Value.TRUE);
+    gate.propagate(state);
+    assertFlags(state, true, true);
+    set(state, Ttl74190.CE, Value.FALSE);
+    gate.propagate(state);
+    assertFlags(state, true, false);
   }
 
   @Test
@@ -291,6 +340,18 @@ class Ttl74190Test {
     setData(state, code);
     gate.propagate(state);
     set(state, Ttl74190.PL, Value.TRUE);
+    gate.propagate(state);
+  }
+
+  private static boolean countsUpToTerminal(int code) {
+    return (code & 0x9) == 0x9;
+  }
+
+  /** Count enable low and the clock low, so a terminal state drives the ripple clock low. */
+  private static void arm(Ttl74190 gate, TtlTestInstanceState state, Value direction) {
+    set(state, Ttl74190.DU, direction);
+    set(state, Ttl74190.CE, Value.FALSE);
+    set(state, Ttl74190.CP, Value.FALSE);
     gate.propagate(state);
   }
 
