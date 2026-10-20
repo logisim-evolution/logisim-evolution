@@ -160,15 +160,80 @@ class Ttl74640Test {
   @Test
   void unknownSourceBitBecomesAnErrorOnTheDrivenBus() {
     final var gate = new Ttl74640();
-    final var state = new TtlTestInstanceState(gate, false);
-    present(state, 0x00, 0x00, Value.TRUE, Value.FALSE);
-    state.setPortValue(Ttl74640.PORT_INDEX_A1, Value.UNKNOWN);
-    gate.propagate(state);
+    final var invalid = new Value[] {Value.UNKNOWN, Value.ERROR};
 
-    assertEquals(Value.ERROR, state.getPortValue(Ttl74640.PORT_INDEX_B1));
-    for (var bit = 1; bit < 8; bit++) {
-      assertEquals(Value.TRUE, state.getPortValue(BUS_B[bit]), "B" + (bit + 1));
+    for (final var source : invalid) {
+      final var towardB = new TtlTestInstanceState(gate, false);
+      present(towardB, 0x00, 0x00, Value.TRUE, Value.FALSE);
+      towardB.setPortValue(Ttl74640.PORT_INDEX_A1, source);
+      gate.propagate(towardB);
+      assertEquals(Value.ERROR, towardB.getPortValue(Ttl74640.PORT_INDEX_B1));
+      for (var bit = 1; bit < 8; bit++) {
+        assertEquals(Value.TRUE, towardB.getPortValue(BUS_B[bit]), "B" + (bit + 1));
+      }
+
+      final var towardA = new TtlTestInstanceState(gate, false);
+      present(towardA, 0x00, 0x00, Value.FALSE, Value.FALSE);
+      towardA.setPortValue(Ttl74640.PORT_INDEX_B1, source);
+      gate.propagate(towardA);
+      assertEquals(Value.ERROR, towardA.getPortValue(Ttl74640.PORT_INDEX_A1));
+      for (var bit = 1; bit < 8; bit++) {
+        assertEquals(Value.TRUE, towardA.getPortValue(BUS_A[bit]), "A" + (bit + 1));
+      }
     }
+  }
+
+  /**
+   * Same vectors as the passing Arduino bench, on one instance: both directions, then high-Z, then
+   * a new word after the buses were released. The part does not keep the previous word.
+   */
+  @Test
+  void benchSequenceDrivesTheComplementAndThenReleasesTheBuses() {
+    final var gate = new Ttl74640();
+    final var state = new TtlTestInstanceState(gate, false);
+    final var patterns = new int[] {0x00, 0xFF, 0x55, 0xAA};
+
+    for (final var pattern : patterns) {
+      present(state, pattern, 0x00, Value.TRUE, Value.FALSE);
+      gate.propagate(state);
+      assertBus(state, BUS_B, pattern ^ 0xFF);
+      assertBusUnknown(state, BUS_A);
+    }
+    for (var bit = 0; bit < 8; bit++) {
+      present(state, 1 << bit, 0x00, Value.TRUE, Value.FALSE);
+      gate.propagate(state);
+      assertBus(state, BUS_B, (~(1 << bit)) & 0xFF);
+    }
+
+    for (final var pattern : patterns) {
+      present(state, 0x00, pattern, Value.FALSE, Value.FALSE);
+      gate.propagate(state);
+      assertBus(state, BUS_A, pattern ^ 0xFF);
+      assertBusUnknown(state, BUS_B);
+    }
+    for (var bit = 0; bit < 8; bit++) {
+      present(state, 0x00, 1 << bit, Value.FALSE, Value.FALSE);
+      gate.propagate(state);
+      assertBus(state, BUS_A, (~(1 << bit)) & 0xFF);
+    }
+
+    for (final var direction : new Value[] {Value.TRUE, Value.FALSE}) {
+      present(state, 0x00, 0x00, direction, Value.TRUE);
+      gate.propagate(state);
+      assertBusUnknown(state, BUS_A);
+      assertBusUnknown(state, BUS_B);
+      present(state, 0xFF, 0xFF, direction, Value.TRUE);
+      gate.propagate(state);
+      assertBusUnknown(state, BUS_A);
+      assertBusUnknown(state, BUS_B);
+    }
+
+    present(state, 0x0F, 0x00, Value.TRUE, Value.FALSE);
+    gate.propagate(state);
+    assertBus(state, BUS_B, 0xF0);
+    present(state, 0x00, 0xF0, Value.FALSE, Value.FALSE);
+    gate.propagate(state);
+    assertBus(state, BUS_A, 0x0F);
   }
 
   @Test
