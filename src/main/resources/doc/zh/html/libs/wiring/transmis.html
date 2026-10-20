@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      传输门
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/transmis.png" alt="#########" width="32" height="32"> <em> 传输门</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">接线</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.7.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        传输门有三个输入端：<em>源极</em>（source）、<em>N 栅</em>（n-gate）与 <em>P 栅</em>（p-gate）；以及一个输出端：<em>漏极</em>（drain）。
+        图示中，<em>源极</em> 与 <em>漏极</em> 之间用两块极板连接；Logisim-evolution 用箭头表示从输入到输出的传输方向。
+        两个 <em>栅</em> 输入端分别连接到与源漏极板平行的极板：<em>P 栅</em> 线上带圆圈，<em>N 栅</em> 线上不带圆圈。
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td align="center">
+                <em>P 栅</em>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td valign="middle">
+                <em>源极</em>
+              </td>
+              <td valign="middle" align="center">
+                <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" width="64" height="64">
+              </td>
+              <td valign="middle">
+                <em>漏极</em>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td align="center">
+                <em>N 栅</em>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+
+      <p>
+        传输门本质上是两只互补晶体管的组合。实际上，在 Logisim-evolution 里只用一只晶体管也能实现同样的逻辑行为。
+        但在真实电路中，由于传输电压衰减等电气效应较复杂（Logisim-evolution 并不模拟这些细节），设计者有时更倾向使用成对匹配的晶体管。
+      </p>
+      <p>
+        <em>N 栅</em> 与 <em>P 栅</em> 的值通常应互为相反。
+        当 <em>P 栅</em> 为 0 且 <em>N 栅</em> 为 1 时，<em>源极</em> 的值会传到 <em>漏极</em>；
+        当 <em>P 栅</em> 为 1 且 <em>N 栅</em> 为 0 时，连接断开，<em>漏极</em> 悬空。
+        其他情况下，<em>漏极</em> 输出错误值，除非 <em>源极</em> 本身悬空，此时 <em>漏极</em> 也悬空。下表为其汇总。
+      </p>
+
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace">
+                P 栅
+              </th>
+              <th class="tspace">
+                N 栅
+              </th>
+              <th class="tspace">
+                漏极
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td align="center">
+                源极
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td class="space">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="space">
+                全部
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td class="space">
+                全部
+              </td>
+              <td class="space">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="space">
+                *
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        * 若 <em>源极</em> 为高阻（<b class="uvalue">U</b>），则 <em>漏极</em> 为高阻（<b class="uvalue">U</b>）；否则 <em>漏极</em> 为错误（<b class="evalue">E</b>）。
+      </p>
+      <p>
+        <b class="note">注意：</b>由于 Logisim-evolution 使用 <b class="uvalue">U</b>（高阻）与 <b class="evalue">E</b>（错误）作为标记，因此本文也沿用这两个符号，而不是其他文档中更常见的 Z（高阻）与 X（错误）。
+      </p>
+      <p>
+        若 <b class="propertie">数据位宽</b> 大于 1，则两个 <em>栅</em> 输入仍为 1 位，但其取值会同时作用于 <em>源极</em> 输入的每一位。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+	  <p>
+        该组件共有 4 个引脚：3 个输入（<q>源极</q>、<q>P 栅</q>、<q>N 栅</q>）和 1 个输出（<q>漏极</q>），见上图。
+	  </p>
+      <dl>
+        <dt>
+          西侧：源极
+        </dt>
+        <dd>
+          组件的 <em>源极</em> 输入：当 <em>P 栅</em> 与 <em>N 栅</em> 满足导通条件时，会传到输出端。位宽与 <b class="propertie">数据位宽</b> 一致。
+        </dd>
+        <dt>
+          北侧：P 栅
+        </dt>
+        <dd>
+          组件的 <em>P 栅</em> 输入，用于控制传输。通常与 <em>N 栅</em> 取相反值。位宽恒为 1。
+        </dd>
+        <dt>
+          南侧：N 栅
+        </dt>
+        <dd>
+          组件的 <em>N 栅</em> 输入，用于控制传输。通常与 <em>P 栅</em> 取相反值。位宽恒为 1。
+        </dd>
+        <dt>
+          东侧：漏极
+        </dt>
+        <dd>
+          组件输出：当 <em>P 栅</em> 为 <b class="zerov">0</b> 且 <em>N 栅</em> 为 <b class="unov">1</b> 时，输出等于 <em>源极</em>；
+          当 <em>P 栅</em> 为 <b class="unov">1</b> 且 <em>N 栅</em> 为 <b class="zerov">0</b> 时，输出悬空（<b class="uvalue">U</b>）。
+          其他情况下输出为错误值（<b class="evalue">E</b>）。位宽与 <b class="propertie">数据位宽</b> 一致。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <b class="propertie">数据位宽</b> 属性，方向键可修改 <b class="propertie">朝向</b> 属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            输出相对于输入的位置。
+          </dd>
+          <dt>
+            <b class="propertie">选择端位置</b>
+          </dt>
+          <dd>
+            栅极输入的位置。
+          </dd>
+          <dt>
+            <b class="propertie">数据位宽</b>
+          </dt>
+          <dd>
+            组件输入/输出的位宽。
+          </dd>
+        </dl>
+      </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

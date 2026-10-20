@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-02-11T07:26:01.212000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Le menu contextuel et les fichiers
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Le menu contextuel et les fichiers
+      </h1>
+      <h2>
+        Le menu contextuel
+      </h2>
+      <p>
+        Le menu contextuel des composants mémoires comprend quatre options de plus que celles communes à tous les composants:
+      </p>
+      <dl>
+        <dt>
+          <b>Modifier le contenu :</b>
+        </dt>
+        <dd>
+          Afficher un <a href="mem-hex.html">éditeur hexadécimal</a> pour éditer le contenu de la mémoire.
+        </dd>
+        <dt>
+          <b>Effacer le contenu :</b>
+        </dt>
+        <dd>
+          Réinitialise les ROM à 0 et pour les RAM à 0 ou aléatoirement selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>. 
+        </dd>
+        <dt>
+          <b>Charger l'image ... :</b>
+        </dt>
+        <dd>
+          Réinitialise toutes les valeurs en mémoire en fonction des valeurs trouvées dans un fichier. Le format du fichier est reconnu automatiquement et si ce n'est pas le cas une fenêtre s'ouvre pour une sélection appropriée.
+        </dd>
+        <dt>
+          <b>Sauvegarder l'image ... :</b>
+        </dt>
+        <dd>
+          Stocke toutes les valeurs en mémoire dans un fichier en utilisant un des formats décrits ci-dessous.
+        </dd>
+      </dl>
+      <h2>
+        Les formats de fichier
+      </h2>
+      <ul>
+        <li>
+          <b><a href="mem-v2raw.html">v2.0 raw</a></b> Version historique de logisim permet un codage "run.length".
+        </li>
+        <li>
+          <b><a href="mem-v3word.html">v3.0 hex words plain</a></b> Proche de la version v2.0 et structuré en mots
+        </li>
+        <li>
+          <b><a href="mem-v3word.html#addr">v3.0 hex words addressed</a></b> Comme précédemment avec la possibilité de définir une adresse de départ pour chaque ligne du fichier.
+        </li>
+        <li>
+          <b><a href="mem-v3byte.html">v3.0 hex bytes plain big-endian</a></b><br>
+          <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> Organisé en flux d'octets.
+        </li>
+        <li>
+          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a></b><br>
+          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a></b> Organisé en flux d'octets comme précédemment avec la possibilité de définir une adresse.
+        </li>
+        <li>
+          <b><a href="mem-vbinary.html#">Binary data big-endian</a></b><br>
+          <b><a href="mem-vbinary.html#">Binary data little-endian</a></b> 
+		  Image de la mémoire brute et non codée en hexadécimale.
+		 
+        </li>
+        <li>
+          <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br>
+          <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b>Fichier codé ASCII avec code escape, comme en C pour les caractères non imprimables.
+        </li>
+        </ul>
+        <p>
+          <b>Suite:</b> <a href="mem-filepanel.html">panneau du fichier mémoire</a>.
+        </p>
+    </div>
+  </body>
+</html>

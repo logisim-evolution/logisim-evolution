@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-07T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Das Simulationsmenü
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Das Simulationsmenü
+      </h1>
+      <dl>
+        <dt>
+          <strong>Simulation aktiviert</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-E</b>
+        </dt>
+        <dd>
+          <p>
+            Wenn dieses Kästchen aktiviert ist, sind die angezeigten Schaltkreise "live", d.h. die Werte, die sich im Schaltkreis fortpflanzen, werden jedes Mal aktualisiert, wenn das Schiebewerkzeug benutzt oder der Schaltkreis verändert wird. 
+          </p>
+          <p>
+		    Der Menüpunkt wird automatisch deaktiviert, wenn eine <a href="../prop/oscillate.html">Oszillation</a> erkannt wird. 
+          </p>
+        </dd>
+		<strong>Simulation weiterschalten</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-I</b>
+        </dt>
+        <dd>
+          <p>
+            Erweitert die Simulation um einen Schritt. Während eines Schrittes kann z.B. ein Signal in eine Tür eintreten, aber der Türausgang zeigt erst im nächsten Simulationsschritt einen Signalwechsel an. Um zu erkennen, welche Punkte im Gesamtkreislauf sich geändert haben, werden alle Punkte, deren Werte sich ändern, durch einen blauen Kreis gekennzeichnet. Wenn ein Unter-Schaltung Punkte enthält, die geändert wurden (oder seine Unter-Schaltung rekursiv), dann wird er mit einer blauen Linie eingekreist.
+          </p>
+        </dd>
+        <dt>
+        <dt>
+          <strong>Simulation zurücksetzen</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-R</b>
+        </dt>
+        <dd>
+          <p>
+            Löscht alles über den aktuellen Schaltzustand, als hätten Sie die Datei gerade erst wieder geöffnet. Wenn Sie sich den Zustand eines Teilschaltkreises ansehen, werden alle Zustände der Hierarchie gelöscht. 
+          </p>
+        </dd>
+        <dt>
+          <strong>VHDL Simulation aktiviert</strong>
+        </dt>
+        <dd>
+          <p>
+            noch nicht belegt
+          </p>
+        </dd>
+        <dt>
+          <strong>VHDL simulator new starten</strong>
+        </dt>
+        <dd>
+          <p>
+            noch nicht belegt
+          </p>
+        </dd>
+        <dt>
+		<dt>
+          <strong>Absteigen</strong>
+		  <!-- Ausfahrt aus Ansicht  -->
+        </dt>
+        <dd>
+          <p>
+		   Wenn Sie den Zustand eines Subcircuits untersucht haben, um ihn über sein lokales Menü zu <a href="../subcirc/sub-debug.html">debuggen</a>. Mit dem Menü <b class=menu>|&nbsp;Absteigen&nbsp;|</b> können Sie die Ansicht des Zustandes der übergeordneten Schaltkreise in der Hierarchie anzeigen lassen. Die Namen dieser werden in Menüpunkten dargestellt.
+          </p>
+        </dd>
+        <dt>
+          <strong>Aufsteigen</strong>
+		  <!-- Eingabe in Ansicht -->
+        </dt>
+        <dd>
+          <p>
+            In ähnlicher Weise ermöglicht das Menü <b class=menu>|&nbsp;Aufsteigen&nbsp;|</b> die Rückkehr zur Ansicht der unteren Schaltkreise in der Hierarchie. Die Schaltungen werden als Menüpunkte dargestellt. 
+          </p>
+        </dd>
+        <dt>
+          <strong>Tick Halbzyklus</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-T</b>
+        </dt>
+        <dd>
+          <p>
+            Die Uhren in der Simulation um einen Tick vorstellen bei Verwendung des Schritt-für-Schritt-Modus. Eine Uhr, die mit einer High/Low Dauer von 1 Tick eingestellt ist, wird dann um einen halben Zyklus laufen.
+          </p>
+        </dd>
+	    <strong>Aktivieren Sie den vollständigen Zyklus</strong>&nbsp;&nbsp;<b class="tkeybd">F2</b>
+		<!-- Tick vollständigen Zyklus -->
+        </dt>
+        <dd>
+          <p>
+           Gleiche Funktion wie vorher, aber um zwei Ticks vorwärts. Eine Uhr, die mit einer High-/Low-Dauer von 1 Tick eingestellt ist, geht dann einen kompletten Zyklus vor.<br>		   
+		   Die anderen Uhren im Projekt bewegen sich gleichzeitig im Verhältnis zu ihren Parametern. 
+          </p>
+        </dd>
+        <dt>
+          <strong>Weiterschalten aktivieren</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-K</b>
+        </dt>
+        <dd>
+          <p>
+           Aktivieren Sie die Uhren. Dies wirkt sich nur dann aus, wenn die Schaltung Uhrenbausteine (in der Schaltungsbibliothek) enthält. Die Option ist standardmäßig deaktiviert.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltfrequenz</strong>
+        </dt>
+        <dd>
+          <p>
+            Hiermit können Sie die Frequenz der Tics auswählen. Zum Beispiel bedeutet 8 Hz, dass Ticks achtmal pro Sekunde auftreten werden. Ein Tick ist die grundlegende Maßeinheit für die Geschwindigkeit von Uhren.  
+           </p>
+       <p align="center">
+            <img class="notscal" src="../../../../img-guide/clock.png" alt="#########">
+          </p>
+		  <b class=note>Beispiel :</b> aufwärts = 2, abwärts = 2, Takt = Frequenz tick / ( 2 + 2 )
+          </p>
+          <p>
+            <b class=note>Hinweis</b>: Die Frequenz der Taktperioden wird langsamer sein als die Aktivierungsgeschwindigkeit (tic): der schnellstmögliche Takt hat einen hohen Zyklus bei einem tic und einen niedrigen Zyklus bei einem tic. Ein solcher Takt hätte eine Frequenz von 4 Hz (ein voller Zyklus aufwärts/abwärts), wenn die Tickfrequenz 8 Hz 
+          </p>
+        </dd>
+		<dt>
+          <strong>Loggen...</strong>
+        </dt>
+        <dd>
+          <p>
+		    <a href="../log/index.html">Logging-Modul</a>, das die Aufzeichnung und Speicherung von Schaltungswerten im Verlauf der Simulation erleichtert.
+          </p>
+        </dd>
+		 <dd>
+		 <dt>
+		   <strong>Testvektor...</strong>
+		 </dt>
+          <p>
+		    <a href="../verify/test.html">Testvektor-Fenster</a> Ermöglicht es Ihnen, Ihre Schaltkreise mit einer Testvektor-Datei zu testen, die die Ein- und Ausgänge des Schaltkreises zeigt.
+          </p>
+        </dd>
+        <dt>
+		 <dt>
+          <strong>Assembly viewer</strong>
+        </dt>
+        <dd>
+          <p>
+            The <a href="../assembly/index.html">Assembly viewer</a> window displays an address value stored in a register and the assembly language instruction at that address.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <strong>Nächste:</strong> <a href="winhelp.html">Die Menüs Fenster und Hilfe</a>.
+      </p>
+    </div>
+  </body>
+</html>

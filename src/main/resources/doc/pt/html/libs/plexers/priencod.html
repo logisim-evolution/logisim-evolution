@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Codificador de prioridades</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/priencod.gif" width="32" height="32">
+<em>Codificador de prioridades</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Plexers</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/priencod.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O componente tem um número de entradas em sua face oeste, com a primeira
+rotulada com <q> 0 </q> e as outras numeradas a partir daí. O componente determinará
+os índices das entradas cujos valores estarão em 1, e emitirá o maior índice.
+Por exemplo, se as entradas 0, 2, 5 e 6 estiverem todos um, então o codificador de 
+prioridades emitirá o valor 110. Se não houver entradas em 1, ou se o componente for
+desativado, a saída do codificador de prioridades será flutuante. </p>
+
+<p> O codificador de prioridade é projetado de modo que uma série de codificadores 
+possam ser encadeados para acomodar entradas adicionais. Em particular, o componente
+permite apenas uma entrada e uma saída habilitadas. Sempre que a habilitação for 0,
+o componente estará desativado, e o resultado será ter todos os bits flutuantes. 
+A saída habilitada será 1 quando o componente for ativado e nenhum das entradas
+indexadas forem iguais a 1. Assim, você pode ter dois codificadores de prioridades e 
+ligar saída habilitada do primeiro à entrada para habilitação do segundo. Mas se nenhuma
+das entradas indexadas do primeiro for 1, todas as suas saídas serão flutuantes, e 
+o segundo será desativado. Porém se nenhum das entradas indexadas do primeiro for 1, 
+então sua saída terá todos os bits flutuantes, e o segundo codificador de prioridades
+será ativado e irá identificar a entrada com a mais alta prioridade com um 1. </p>
+
+<p> Uma saída adicional do codificador de prioridades estará sempre em 1 quando
+estiver ativado e encontrar uma das entradas indexadas em 1. Quando
+houver encadeamento de codificadores de prioridades, essa saída poderá ser usada 
+para identificar qual dos codificadores foi acionado. </p>
+
+<h2> Pinos (componente supondo voltado para leste) </h2>
+
+<dl>
+
+<dt> Na face oeste, quantidade variável (entradas, com largura de 1 bit) </dt>
+<dd> Valores de entrada, indexados a partir de 0 no extremo superior/oeste da borda. 
+</dd>
+
+<dt> Na face leste, pino superior (de saída, com largura de bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Saída: o maior índice entre as entradas com valor igual a 1 - ou todos os
+bits flutuantes se não houver entradas em 1, ou se o componente estiver desativado 
+via Habilitar Entrada. </dd>
+
+<dt> Na face leste, pino inferior (de saída, com largura de 1 bit) </dt>
+<dd> Grupo Sinal: 1, se o componente estiver habilitado e pelo menos uma entrada 
+indexada tiver valor igual a 1, caso contrário, essa saída será 0. </dd>
+
+<dt> Na face sul (entrada, com largura de 1 bit) </dt>
+<dd> Habilitar Entrada: se for 0, o componente estará desativado; caso contrário,
+o componente estará habilitado. </dd>
+
+<dt> Na face norte (saída, com largura de 1 bit) </dt>
+<dd> Habilitar Saída: 1, se este componente estiver ativado e 
+nenhuma das entradas indexadas estiver em 1, caso contrário a saída será 0 </dd>.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '1' a '4' poderão ter o seu atributo <q> Bits Selecionados </q> alterado,
+e as teclas com setas poderão alterar o seu atributo <q> Direção </q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (especificará qual a saída relativa à entrada). </dd>
+
+<dt> Bits selecionados </dt>
+<dd> A largura em bits da entrada primária do componente.
+O número de entradas indexadas pelo codificador de prioridades será 
+2<sup><small><var> Bits Selecionados </var></small></sup>.
+</dd>
+
+<dt> Saída desabilitada </dt>
+<dd> Especificará qual deverá ser o valor de cada bit das saídas quando o 
+componente estiver desabilitado (ou seja, quando o pino de habilitação estiver
+em 0). Opções incluem zero e flutuante; e neste caso, as saídas estarão 
+efetivamente desconectadas de quaisquer outras portas.
+</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Outil Sélection
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../img-guide/toolselect.png" alt="#########"> <em>Outil Sélection</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Base</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Permets de placer des composants individuels dans la sélection en cours. Il existe un certain nombre d’actions possibles avec cet outil.
+      </p>
+      <ul>
+        <li>Le fait d'appuyer sur le bouton de la souris alors qu'il se trouve dans un composant actuellement sélectionné commence un glissement en déplaçant tous les composants de la sélection.
+          <p>
+            Par défaut, Logisim calculera un moyen d’ajouter de nouveaux fils afin qu’aucune connexion existante ne soit perdue pendant le déplacement. (Parfois, cela supprime ou raccourcit les câbles existants). Si vous effectuez un déplacement où vous ne souhaitez pas que ces modifications soient effectuées, vous pouvez appuyer sur la touche Maj pendant le déplacement. Si vous souhaitez désactiver complètement ce comportement, accédez à Project &amp; gt; Options, sélectionnez l'onglet Canevas et décochez la case <q>Conserver les connexions lors du déplacement</q> ; dans ce cas, les connexions ne sont calculées que lorsque la touche Maj <em>est</em> .
+          </p>
+          <p>
+            Le fait de faire glisser une sélection peut entraîner un comportement inattendu des fils: si vous faites glisser une sélection comprenant des fils sur d'autres fils, tous les fils sont fusionnés et les fils fusionnés sont placés dans la sélection. Par conséquent, si vous faites glisser la sélection une seconde fois, les câbles précédemment situés à l'emplacement ne seront pas laissés pour compte. Ce comportement est nécessaire pour conserver le comportement attendu des câbles dans Logisim. Et cela ne constitue généralement pas un problème majeur: Logisim va sélectionner la totalité de la liste en cours de chute, et vous ne devez pas la déposer avant d’être sûr qu’elle se trouve au bon endroit.
+          </p>
+        </li>
+        <li>Sinon, cliquer sur la souris dans un composant supprime tous les composants de la sélection actuelle et sélectionne à la place le ou les composants contenant l'emplacement cliqué.
+        </li>
+        <li>Tout en maintenant la touche Maj enfoncée dans un composant, vous activez la présence de ce composant dans la sélection. Si plusieurs composants incluent le même emplacement, la présence de tous les composants sera modifiée. Rien de tout cela ne se produira cependant si un clic-clic est associé à un autre outil (via la <a href="../../guide/opts/opts-mouse.html">onglet Souris</a> de la fenêtre d'options du projet).
+        </li>
+        <li>Faire glisser la souris en commençant par un emplacement non contenu dans un composant supprime tous les composants de la sélection actuelle et lance une sélection rectangulaire. Tous les composants contenus dans le rectangle seront placés dans la sélection.
+        </li>
+        <li>Glisser-déplacer la souris en commençant par un emplacement non contenu dans un composant déclenche une sélection rectangulaire. La présence dans la sélection de tous les composants contenus dans le rectangle sera modifiée. Cela ne se produira cependant pas si un clic-clic est associé à un autre outil.
+        </li>
+      </ul>
+      <p>
+        Après avoir sélectionné les éléments souhaités dans la sélection, vous pouvez bien sûr couper / copier / coller / supprimer tous les éléments via le <a href="../../guide/menu/edit.html">menu Edition</a> .
+      </p>
+      <p>
+        Le comportement de Logisim lors du collage du presse-papiers dans un circuit est quelque peu particulier: il ne placera pas immédiatement les composants dans le circuit; au lieu de cela, la sélection sera une collection de "fantômes", qui seront déposés dans le circuit dès qu'ils seront déplacés vers un autre emplacement ou retirés de la sélection. (Ce comportement particulier est nécessaire, car le collage fusionnera sinon les fils de la sélection dans le circuit en cours, et les câbles y seront déplacés avec le presse-papiers collé si l'utilisateur veut déplacer les composants collés ailleurs.)
+      </p>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Aucun. La sélection d'un composant affichera cependant ses attributs. Avec plusieurs composants sélectionnés, les attributs partagés par tous sont affichés, vides s'ils ont des valeurs différentes et avec la valeur qu'ils ont tous en commun. (Les fils sont ignorés s'il y a des non-fils dans la sélection.) Les modifications apportées à la valeur d'attribut affectent tous les composants sélectionnés.
+      </p>
+      <p>
+        <a href="../index.html">Retour dans <em>Référence de la bibliothèque</em></a>
+      </p>
+    </div>
+  </body>
+</html>

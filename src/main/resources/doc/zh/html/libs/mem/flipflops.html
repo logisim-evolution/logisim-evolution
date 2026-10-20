@@ -1,0 +1,488 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T06:18:42.262000000" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   D/T/J-K/S-R 触发器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/dflipflop.png" width="32"/>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/tflipflop.png" width="32"/>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/jkflipflop.png" width="32"/>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/srflipflop.png" width="32"/>
+    <em>
+     D/T/J-K/S-R 触发器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <a href="index.html">
+        存储器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 1
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <table>
+       <tbody>
+        <tr>
+         <th>
+         </th>
+         <th width="50">
+          D
+         </th>
+         <th width="50">
+          T
+         </th>
+         <th width="50">
+          J-K
+         </th>
+         <th width="50">
+          S-R
+         </th>
+        </tr>
+        <tr>
+         <td align="left" valign="middle">
+          经典 Logisim:
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ldflipflops.png" width="64"/>
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ltflipflops.png" width="64"/>
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/ljkflipflops.png" width="64"/>
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/lsrflipflops.png" width="64"/>
+         </td>
+        </tr>
+        <tr>
+         <td align="left" valign="middle">
+          Logisim-evolution:
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/hdflipflops.png" width="64"/>
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/htflipflops.png" width="64"/>
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/hjkflipflops.png" width="64"/>
+         </td>
+         <td>
+          <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/hsrflipflops.png" width="64"/>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    行为
+   </h2>
+   <p>
+    每个触发器存储 1 位数据，并通过东侧的 <var>Q</var> 输出端给出该值。通常可通过西侧的输入来控制其状态：当各触发器上以三角形标记的<strong>时钟</strong>输入从 0 上升到 1（或按属性配置为其它触发方式）时，触发器会在该上升沿按下表所示更新其存储值。
+   </p>
+   <center>
+    <table>
+     <tbody>
+      <tr>
+       <th>
+        D 触发器
+       </th>
+       <th>
+        T 触发器
+       </th>
+       <th>
+        J-K 触发器
+       </th>
+       <th>
+        S-R 触发器
+       </th>
+      </tr>
+      <tr>
+       <td align="center" valign="top">
+        <table>
+         <tbody>
+          <tr>
+           <th>
+            <var>
+             D
+            </var>
+           </th>
+           <th>
+            <var>
+             Q
+            </var>
+           </th>
+          </tr>
+          <tr>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            0
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            1
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </td>
+       <td align="center" valign="top">
+        <table>
+         <tbody>
+          <tr>
+           <th>
+            <var>
+             T
+            </var>
+           </th>
+           <th>
+            <var>
+             Q
+            </var>
+           </th>
+          </tr>
+          <tr>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            <var>
+             Q
+            </var>
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            <var>
+             Q
+            </var>
+            '
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </td>
+       <td align="center" valign="top">
+        <table>
+         <tbody>
+          <tr>
+           <th>
+            <var>
+             J
+            </var>
+           </th>
+           <th>
+            <var>
+             K
+            </var>
+           </th>
+           <th>
+            <var>
+             Q
+            </var>
+           </th>
+          </tr>
+          <tr>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            <var>
+             Q
+            </var>
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            0
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            1
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            <var>
+             Q
+            </var>
+            '
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </td>
+       <td align="center" valign="top">
+        <table>
+         <tbody>
+          <tr>
+           <th>
+            <var>
+             S
+            </var>
+           </th>
+           <th>
+            <var>
+             R
+            </var>
+           </th>
+           <th>
+            <var>
+             Q
+            </var>
+           </th>
+          </tr>
+          <tr>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            <var>
+             Q
+            </var>
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            0
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            0
+           </td>
+           <td align="center">
+            1
+           </td>
+          </tr>
+          <tr>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            1
+           </td>
+           <td align="center">
+            <em>
+             ??
+            </em>
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </center>
+   <p>
+    另一种描述这些触发器不同行为的方法，是用文字进行说明。
+   </p>
+   <ul>
+    <li>
+     <p>
+      <strong>
+       D 触发器：
+      </strong>
+      当时钟触发时，触发器存储的值更新为该瞬间 <var>D</var> 输入（<em>数据</em>）的值。
+     </p>
+    </li>
+    <li>
+     <p>
+      <strong>
+       T 触发器：
+      </strong>
+      当时钟触发时，触发器存储的值是翻转还是保持不变，取决于 <var>T</var> 输入（<em>翻转</em>）为 1 还是为 0。
+     </p>
+    </li>
+    <li>
+     <p>
+      <strong>
+       J-K 触发器：
+      </strong>
+      当时钟触发时，若 <var>J</var> 与 <var>K</var> 均为 1，则存储值翻转；若二者均为 0，则保持不变；若二者不同，则当 <var>J</var>（<em>Jump</em>）为 1 时输出变为 1，当 <var>K</var>（<em>Kill</em>）为 1 时输出变为 0。
+     </p>
+    </li>
+    <li>
+     <p>
+      <strong>
+       S-R 触发器：
+      </strong>
+      当时钟触发时，若 <var>R</var> 与 <var>S</var> 均为 0，则保持不变；若 <var>R</var> 输入（<em>Reset</em>）为 1，则输出变为 0；若 <var>S</var> 输入（<em>Set</em>）为 1，则输出变为 1。若两个输入均为 1，则行为未指定。（在 Logisim-evolution 中，触发器中的值保持不变。）
+     </p>
+    </li>
+   </ul>
+   <p>
+    默认情况下，时钟在上升沿触发——也就是时钟输入从 0 变为 1 的瞬间。不过，“触发方式”属性允许将其改为下降沿（时钟从 1 变为 0）、高电平（时钟为 1 的整个期间）或低电平（时钟为 0 的整个期间）。由于触发器在被要求以不确定的时长进行翻转时会表现得不可预测，T 与 J-K 触发器不提供电平触发选项。
+   </p>
+   <h2>
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     西侧（三角形标记，输入，位宽 1）
+    </dt>
+    <dd>
+     时钟输入：当该输入值从 0 切换到 1 的瞬间（上升沿）时，触发器会根据西侧的其它输入更新其存储值。只要该输入保持为 0 或 1，西侧的其它输入就不会产生任何影响。
+    </dd>
+    <dt>
+     西侧其它标记引脚（输入，位宽 1）
+    </dt>
+    <dd>
+     这些输入用于控制触发器在时钟上升沿触发瞬间如何更新其存储值。其具体行为取决于触发器类型；上表已概括了这些行为。
+    </dd>
+    <dt>
+     东侧上端（标记为 <var>Q</var>，输出，位宽 1）
+    </dt>
+    <dd>
+     输出触发器当前存储的值。
+    </dd>
+    <dt>
+     东侧下端（输出，位宽 1）
+    </dt>
+    <dd>
+     输出触发器当前存储值的反码（补码）。
+    </dd>
+    <dt>
+     南侧东端（输入，位宽 1）
+    </dt>
+    <dd>
+     异步复位：当为 0 或未定义时无效；只要为 1，触发器的值就会被固定为 0。这一过程是异步的——即不考虑当前时钟输入值。只要该输入为 1，其它输入均不起作用。
+    </dd>
+    <dt>
+     南侧西端或北侧（输入，位宽 1）
+    </dt>
+    <dd>
+     异步置位：当为 0 或未定义时无效；当为 1 时，触发器的值就会被固定为 1。这一过程是异步的——即不考虑当前时钟输入值。只要该输入为 1，其它输入均不起作用，但异步复位输入具有更高优先级。
+    </dd>
+   </dl>
+   <h2>
+    属性
+   </h2>
+   <dl>
+    <dt>
+     触发方式
+    </dt>
+    <dd>
+     配置如何解释时钟输入。<q>上升沿</q>表示时钟从 0 上升到 1 的瞬间更新；<q>下降沿</q>表示时钟从 1 下降到 0 的瞬间更新；<q>高电平</q>表示只要时钟输入为 1 就持续更新；<q>低电平</q>表示只要时钟输入为 0 就持续更新。注意：后两项对 T 与 J-K 触发器不可用。
+    </dd>
+    <dt>
+     标签
+    </dt>
+    <dd>
+     触发器标签中显示的文本。
+    </dd>
+    <dt>
+     标签字体
+    </dt>
+    <dd>
+     用于渲染标签的字体。
+    </dd>
+    <dt>
+     外观
+    </dt>
+    <dd>
+     经典 Logisim：以 Logisim 传统样式呈现触发器；Logisim-HolyCross / Logisim-Evolutions：以 IEC 风格的新样式呈现触发器。
+    </dd>
+   </dl>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    使用手形工具单击触发器会翻转其中存储的位，除非异步置位/复位输入当前固定了触发器的值。
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    允许编辑与组件关联的标签。
+   </p>
+   <p>
+    <a href="../index.html">
+     返回
+     <em>
+      库参考手册
+     </em>
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Soustracteur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/subtractor.png" alt="#########" width="32" height="32" align="middle"> <em>Soustracteur</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduit:</strong>
+            </td>
+            <td>
+              2.0 Beta 11
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/subtractor.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Propriétés
+      </h2>
+      <p>
+        Ce composant soustrait les valeurs entrant par les entrées ouest (le supérieur moins le inférieur) et sort la différence sur la sortie est. Le composant est conçu de manière à pouvoir être cascadé avec d'autres soustracteurs pour fournir une soustraction de plus de bits que ce qui est possible avec un seul soustracteur : L'entrée d'emprunt fournit une valeur d'un bit à emprunter de la différence (si l'entrée d'emprunt est spécifiée), et une sortie d'emprunt indique si le composant doit emprunter un bit d'ordre supérieur pour compléter la soustraction sans dépassement de capacité (en supposant une soustraction non signée).
+      </p>
+      <p>
+	    En interne, le soustracteur effectue simplement un NOT au sens du bit sur le diminuteur, et l'ajoute au diminuende  ainsi que le NOT de l'entrée d'emprunt. (Le <em>diminuende </em> est le premier opérande (entrée supérieure) de la soustraction, et le <em>diminuteur</em> est le second (entrée inférieure). Et oui en frnaçais ces termes désuets exitent aussi : diminuende − diminuteur  = différence).
+      </p>
+      <p>
+        Si l'un des opérandes contient des bits flottants ou des bits d'erreur, le composant effectue une soustraction partielle. C'est-à-dire qu'il calculera autant de bits de poids faible que possible. Mais au-dessus du bit flottant ou d'erreur, le résultat aura des bits flottants ou d'erreur.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+           Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Le minimum de la soustraction, c'est-à-dire le nombre à partir duquel il faut soustraire (diminuende).
+        </dd>
+        <dt>
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Le soustractif de la soustraction, c'est-à-dire le nombre à soustraire du diminuende (diminuteur).
+        </dd>
+        <dt>
+          Bord nord, étiqueté <var>b in</var> (entrée, largeur de bit 1)
+        </dt>
+        <dd>
+         Si 1, alors 1 est emprunté sur la différence. Si la valeur est inconnue (c'est-à-dire flottante), on suppose qu'elle est égale à 0.
+        </dd>
+        <dt>
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Les <var>dataBits</var> bits inférieurs de la différence des deux valeurs provenant du bord ouest, moins le <var>b</var><sub><var>in</var></sub> bit.
+        </dd>
+        <dt>
+          Bord sud, étiqueté <var>b out</var> (sortie, largeur de bit 1)
+        </dt>
+        <dd>
+          Le bit d'emprunt calculé pour la différence. Si les valeurs soustraites en tant que valeurs non signées donnent une valeur négative, alors ce bit sera 1 ; sinon, il sera 0.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	   <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit des valeurs à soustraire et du résultat.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

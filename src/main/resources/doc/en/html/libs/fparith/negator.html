@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Floating Point Negator</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="Negator icon" width="32" height="32" align="middle">
+        <em>Floating Point Negator</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Floating Point Arithmetic</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Behavior</h2>
+      <p>
+        This component changes the sign of the floating-point value on its west input and places
+        the negated value on the east output. The <var>ERR</var> output is 1 when the result is NaN
+        and 0 otherwise.
+      </p>
+      <p>
+        An input containing unknown or error bits is converted to NaN, so it produces a NaN result
+        and sets <var>ERR</var> to 1.
+      </p>
+      <h2>Pins</h2>
+      <dl>
+        <dt>West edge (input, bit width matches Float size)</dt>
+        <dd>The floating-point value to negate.</dd>
+        <dt>East edge (output, bit width matches Float size)</dt>
+        <dd>The negated floating-point value.</dd>
+        <dt>South edge (output, bit width 1)</dt>
+        <dd><var>ERR</var>: 1 if the result is NaN; otherwise 0.</dd>
+      </dl>
+      <h2>Attributes</h2>
+      <div class="attliste">
+        <dl>
+          <dt><b class="propertie">Float size</b></dt>
+          <dd>The floating-point width of the input and result: 8, 16, 32, or 64 bits.</dd>
+        </dl>
+      </div>
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+      <h2>Text Tool Behavior</h2>
+      <p>None.</p>
+      <p><b>Back to</b> <a href="index.html">Floating Point Arithmetic library</a></p>
+    </div>
+  </body>
+</html>

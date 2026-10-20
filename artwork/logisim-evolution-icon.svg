@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 25.2.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 77 77"
+   xml:space="preserve"
+   sodipodi:docname="logisim-evolution-icon-src.svg"
+   inkscape:version="1.1 (ce6663b3b7, 2021-05-25)"
+   inkscape:export-filename="/home/carlos/dev/projects/logisim-evolution/artwork/logisim-icon-512.png"
+   inkscape:export-xdpi="644.13"
+   inkscape:export-ydpi="644.13"
+   width="77"
+   height="77"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:inkscape0="https://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi0="https://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"><title
+   id="title73562">Logisim-evolution project icon</title><defs
+   id="defs1028" /><sodipodi:namedview
+   id="namedview1026"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   showgrid="false"
+   inkscape:zoom="5.18667"
+   inkscape:cx="-17.93058"
+   inkscape:cy="45.019251"
+   inkscape:window-width="2509"
+   inkscape:window-height="1585"
+   inkscape:window-x="174"
+   inkscape:window-y="154"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="layer11"
+   showguides="true"
+   inkscape:guide-bbox="true"><sodipodi:guide
+     position="70.179904,68.996159"
+     orientation="0,-1"
+     id="guide51052" /><sodipodi:guide
+     position="26.076461,23.784106"
+     orientation="0,-1"
+     id="guide51054" /><sodipodi:guide
+     position="114.23515,46.14913"
+     orientation="0,-1"
+     id="guide52163" /></sodipodi:namedview>
+<style
+   type="text/css"
+   id="style989">
+	.st0{fill:#00B0A7;}
+	.st1{fill:#6E2585;}
+	.st2{fill:#FFFFFF;}
+	.st3{display:none;opacity:0.25;}
+	.st4{display:inline;fill:#FFFFFF;}
+</style>
+
+
+
+<g
+   class="st3"
+   id="g1005">
+	<path
+   class="st4"
+   d="m 46.2,23.5 c 13.5,0 26.2,6.1 34.6,16.7 L 84.6,37 C 67.7,15.8 36.8,12.3 15.6,29.2 12.7,31.5 10.1,34.1 7.8,37 l 3.8,3.2 C 20,29.6 32.7,23.5 46.2,23.5 Z"
+   id="path997" />
+	<path
+   class="st4"
+   d="m 46.2,40.2 c 8.6,0 16.8,4 22,10.9 L 72,47.9 C 65.8,39.9 56.3,35.1 46.2,35.1 36.1,35.1 26.6,39.9 20.5,47.9 l 3.8,3.2 C 29.5,44.2 37.6,40.2 46.2,40.2 Z"
+   id="path999" />
+	<path
+   class="st4"
+   d="m 46.2,56.8 c 3.8,0 7.4,2 9.3,5.3 l 3.8,-3.3 c -2.9,-4.4 -7.8,-7 -13.1,-7 -5.3,0 -10.1,2.7 -13.1,7 l 3.8,3.3 c 1.9,-3.3 5.5,-5.3 9.3,-5.3 z"
+   id="path1001" />
+	<circle
+   class="st4"
+   cx="46.200001"
+   cy="67.699997"
+   r="5.3000002"
+   id="circle1003" />
+</g>
+
+
+
+
+
+
+
+
+
+<g
+   inkscape:groupmode="layer"
+   id="layer11"
+   inkscape:label="gate 1"
+   style="display:inline"><g
+     id="g72614"
+     transform="matrix(2.910034,0,0,2.910034,-234.8567,72.122477)"
+     style="display:inline;stroke-width:1.2988"
+     inkscape:export-filename="/home/carlos/dev/projects/logisim-evolution/artwork/logisim-icon-64.png"
+     inkscape:export-xdpi="80.51664"
+     inkscape:export-ydpi="80.51664"><circle
+       style="opacity:1;fill:#d00000;fill-opacity:1;stroke:#008000;stroke-width:0.649396;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path71594"
+       cx="93.935913"
+       cy="-11.553981"
+       r="12.786353" /><path
+       class="st0"
+       d="m 105.84217,-11.553981 c 0,6.588125 -5.31813,11.90625 -11.906254,11.90625 -6.588125,0 -11.90625,-5.318125 -11.90625,-11.90625 0,-6.588125 5.318125,-11.90625 11.90625,-11.90625 2.191,0.0088 4.243351,0.607665 6.006345,1.645783 3.516869,2.070865 5.882279,5.8898 5.899909,10.260467 z"
+       id="path991-3"
+       style="display:inline;fill:#008000;fill-opacity:1;stroke:#5b2929;stroke-width:0.343639;stroke-opacity:1"
+       sodipodi:nodetypes="csscsc" /><path
+       class="st2"
+       d="m 93.935916,0.749144 c -6.799792,0 -12.303125,-5.503334 -12.303125,-12.303125 0,-6.799792 5.503333,-12.303125 12.303125,-12.303125 6.799794,0 12.303124,5.503333 12.303124,12.303125 0,6.799791 -5.50333,12.303125 -12.303124,12.303125 z m 0,-23.8125 c -6.35,0 -11.509375,5.159375 -11.509375,11.509375 0,6.35 5.159375,11.509375 11.509375,11.509375 6.350004,0 11.509374,-5.159375 11.509374,-11.509375 0,-6.35 -5.15937,-11.509375 -11.509374,-11.509375 z"
+       id="path995-8"
+       style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:0.343639;stroke-opacity:1" /><g
+       inkscape0:label="Layer 1"
+       inkscape0:groupmode="layer"
+       id="g9094-8"
+       transform="matrix(0.46923086,0,0,0.46923086,2.91317,-198.59611)"
+       style="display:inline;stroke-width:0.732344"><g
+         id="g9092-3"
+         transform="matrix(0.1061068,0,0,0.1061068,156.44586,342.20134)"
+         style="stroke-width:0.732344"><path
+           sodipodi0:nodetypes="cscscsc"
+           id="path9090-1"
+           d="m 236.45571,380.51302 c 0,0 40.16262,75.69466 42.4264,150.51273 2.02031,65.76093 -38.38579,151.52288 -38.38579,151.52288 0,0 129.47042,-6.60826 200.51528,-57.57869 58.23726,-41.78175 99.50003,-91.92388 99.50003,-91.92388 0,0 -36.75872,-49.27214 -112.63202,-100.00511 -32.15512,-21.50064 -73.84699,-34.27657 -110.10913,-41.83108 -44.80145,-9.3335 -81.31477,-10.69685 -81.31477,-10.69685 z"
+           style="fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:26.0861;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           sodipodi:nodetypes="cccscssc" /><path
+           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:26.0861;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 540.89972,533.04606 46.86658,0.30737"
+           id="path50746-89" /><path
+           style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:26.0861;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 146.47752,411.80692 106.1322,0.30737"
+           id="path50746-7-6" /><path
+           style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:26.0861;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 146.88279,652.06994 110.95229,0.30737"
+           id="path50746-8-4" /></g></g></g></g><metadata
+   id="metadata73560"><rdf:RDF><cc:Work
+       rdf:about=""><dc:title>Logisim-evolution project icon</dc:title><dc:creator><cc:Agent><dc:title>Marcin Orlowski &lt;http://MarcinOrlowski.com&gt;</dc:title></cc:Agent></dc:creator><dc:date>2021-08-21</dc:date><dc:rights><cc:Agent><dc:title>Marcin Orlowski</dc:title></cc:Agent></dc:rights><dc:source>http://MarcinOrlowski.com/</dc:source><cc:license
+         rdf:resource="http://creativecommons.org/licenses/by/4.0/" /><dc:subject><rdf:Bag><rdf:li>logisim-evolution icon</rdf:li></rdf:Bag></dc:subject></cc:Work><cc:License
+       rdf:about="http://creativecommons.org/licenses/by/4.0/"><cc:permits
+         rdf:resource="http://creativecommons.org/ns#Reproduction" /><cc:permits
+         rdf:resource="http://creativecommons.org/ns#Distribution" /><cc:requires
+         rdf:resource="http://creativecommons.org/ns#Notice" /><cc:requires
+         rdf:resource="http://creativecommons.org/ns#Attribution" /><cc:permits
+         rdf:resource="http://creativecommons.org/ns#DerivativeWorks" /></cc:License></rdf:RDF></metadata></svg>

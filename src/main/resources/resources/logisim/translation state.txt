@@ -1,0 +1,16 @@
+Translation state 06.2021 For V3.5
+
+                    DE    EL     ES     FR     IT     NL	 PL     PT     RU     JA
+analyze.properties  99%   53%    99%   100%    99%    99%    99%    99%    99%    98%
+circuit.properties  98%   55%    98%   100%    98%    99%    98%    96%    98%    98%
+data.properties    100%  100%   100%   100%   100%   100%   100%   100%   100%   100%
+draw.properties    100%   80%   100%   100%   100%   100%   100%    97%   100%   100% 
+file.properties    100%   69%   100%   100%   100%   100%   100%   100%   100%   100%
+fpga.properties     41%    0%    41%    92%    42%    50%    98%    41%    42%    98%
+gui.properties      76%   60%    83%   100%    76%    83%    85%    83%    84%    88%
+hdl.properties     100%    0%   100%   100%   100%   100%   100%   100%   100%   100%
+proj.properties    100%   54%   100%   100%   100%   100%   100%   100%   100%   100%
+soc.properties     100%    0%   100%   100%   100%   100%    96%   100%   100%    99%
+std.properties      95%   56%    93%   100%    95%   100%    95%    95%    96%    97%
+tools.properties   100%   88%   100%   100%   100%   100%    94%   100%   100%   100%
+util.properties    100%   40%   100%   100%   100%   100%    98%   100%   100%   100%

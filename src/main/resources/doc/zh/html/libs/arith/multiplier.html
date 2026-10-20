@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Multiplier -->
+   乘法器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img  class="iconlibs" src="../../../../icons/6464/multiplier.png" alt="#########" width="32" height="32" align="middle"> <em>Multiplier</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/multiplier.png" width="32"/>
+    <em>
+     乘法器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <a href="index.html">
+        运算器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 20
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/multiplier.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    行为
+   </h2>
+   <p>
+    该组件将西侧输入的两个数值相乘，并在东侧输出乘积。它支持级联，以处理位宽超过单个乘法器所能支持范围的被乘数：进位输入提供一个可加到乘积中的多位数值（若已指定），进位输出则给出乘积结果的高半部分，可作为输入送入下一级乘法器。
+   </p>
+   <p>
+    若被乘数、乘数或进位输入包含悬空位或错误位，则组件会进行部分相乘：尽可能计算低位结果；在出现悬空/错误位之上的更高位，结果将相应变为悬空位或错误位。注意：若进位输入的所有位均为未知（即完全悬空），则按全 0 处理。
+   </p>
+   <h2>
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     西侧上端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     乘数之一。
+    </dd>
+    <dt>
+     西侧下端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     另一个乘数。
+    </dd>
+    <dt>
+     北侧（标记为 <var>c in</var>，输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     加到乘积中的进位值。若该值的所有位均为未知（即悬空），则按 0 处理。
+    </dd>
+    <dt>
+     东侧（输出，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     西侧两个输入相乘后，再加上 <var>c</var><sub><var>in</var></sub> 的结果的低 <var>数据位宽</var> 位。
+    </dd>
+    <dt>
+     南侧（标记为 <var>c out</var>，输出，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     乘积的高 <var>数据位宽</var> 位。
+    </dd>
+   </dl>
+   <h2>
+    属性
+   </h2>
+   <p>
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <b class="propertie">
+       数据位宽
+      </b>
+     </dt>
+     <dd>
+      乘数及输出结果的位宽。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <p>
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

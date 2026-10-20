@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Schritt 5: Der Einzelschrittmodus
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <b>Früher:</b> <a href="tutor-test.html">Schritt 4: Testen der Schaltung</a>
+      </p>
+      <h2>
+        Schritt 5: Der Einzelschrittmodus
+      </h2>
+      <p>
+        Unter bestimmten Studienbedingungen oder bei subtilen Problemen im Zusammenhang mit der Ausbreitung der Signale ist es sehr nützlich, diese Phänomene beobachten zu können. Logisim simuliert auf eine leicht naive Weise die Ausbreitung in Gates. (die Gatter haben alle die gleiche Ausbreitungsverzögerung), aber es erlaubt trotzdem, die Hauptprobleme in Bezug auf diese Parameter zu beobachten.
+      </p>
+      <p>
+        Für das Beispiel werde ich Ihnen nur die für diese Übung notwendigen Tastenkombinationen geben; beachten Sie, dass es für jede Tastenkombination ein gleichwertiges Untermenü im Menü gibt <b class=menu>|&nbsp;Simulieren&nbsp;|</b>.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-step1.png" alt="#########">
+      </p>
+      <p>
+        Wenn Sie die obige Schaltung aufbauen, werden Sie feststellen, dass jede Änderung von 0 auf 1 des Eingangs <var>e</var> das Flip-Flop D stört.
+      </p>
+      <p>
+	    Um das Phänomen zu beobachten, gehen Sie wie folgt vor: Bringen Sie den Schaltkreis in den Zustand, in dem <var>e</var> gleich 0 ist. Führen Sie dann <b class="tkeybd">Strg -E</b> aus, um die automatische Simulation zu deaktivieren. Drücken Sie den Eingang <var>e</var>, um ihn auf 1 zu schalten. Es passiert nichts, das ist normal. Dann die Kombination <b class="tkeybd">Strg-I</b> verwenden und beobachten. Machen Sie das so oft wie nötig. 
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-step2.png" alt="#########">
+      </p>
+      <p>
+        Sie werden blaue Kreise an einigen Fadenenden bemerken, diese zeigen an, dass sich der Zustand dieses Fadens in diesem Schritt der Simulation ändert. Sie können den kurzen Durchgang durch 1 des Ausgangs des UND-Gatters beobachten. 
+      </p>
+      <p>
+        Mit dieser Methode ist es auch möglich, die asynchrone Zähleroperation oder die Ausbreitung von Holdback in einem Addierer zu beobachten.
+      </p>
+      <p align="center">
+        <img src="../../../../img-guide/tutorial-step3.gif" alt="#########">
+      </p>
+      <p>
+        Nun, da Sie mit dem Tutorial fertig sind, können Sie mit Logisim experimentieren, indem Sie Ihre eigenen Schaltungen bauen. Wenn Sie Schaltungen mit anspruchsvolleren Funktionen bauen wollen, dann sollten Sie durch das restliche Hilfesystem navigieren, um zu sehen, was Sie sonst noch tun können. Logisim ist ein leistungsfähiges Programm, mit dem Sie große Schaltungen aufbauen und testen können; dieser Schritt-für-Schritt-Lernprozess kratzt nur an der Oberfläche.
+      </p>
+      <p>
+        <b>Weiter:</b> <a href="../index.html">Benutzerhandbuch</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-12-16T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Tutorial: Testar seu circuito
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <b>Anterior:</b><a href="tutor-text.html">Acrescentar texto </a>
+      </p>
+      <h2>
+        Passo 4: Testar seu circuito
+      </h2>
+      <p>
+        Nosso passo final será testar o circuito para garantir que ele realmente realiza o que pretendemos. O Logisim já está simulando o circuito. Vamos dar uma olhada novamente aonde estávamos.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-7-all2.png" alt="#########">
+      </p>
+      <p>
+        Observar que os pinos de entrada contêm zeros, e assim também o pino de saída. Isso já nos diz que o circuito já calcula um 0 quando ambas as entradas são iguais a 0.
+      </p>
+      <p>
+        Agora tentaremos outra combinação das entrada. Selecione a ferramenta <b class=propertie>"Testar"</b>(Poke) (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">) e começaremos a alterar as entradas, clicando sobre elas. Cada vez que fizer isso sobre a entrada, seu valor será alternado. Por exemplo, poderíamos fazer isso (<var>y</var>).
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-8-test.png" alt="#########">
+      </p>
+      <p>
+        Quando você mudar o valor de entrada, o Logisim irá mostrar-lhe que os valores seguirão pelos fios marcando-os com a cor verde-claro para indicar um valor 1 ou verde-escuro (quase preto) para indicar um valor 0. Você também poderá ver que o valor de saída foi alterado para 1.
+      </p>
+      <p>
+        Até agora, nós testamos as duas primeiras linhas da nossa tabela-verdade, e as saídas (0 e 1) corresponderão aos resultados desejados.
+      </p>
+      <center>
+        <table class=truthtable>
+          <tbody>
+           <tr>
+              <th class="tspace">
+                &nbsp;x&nbsp;
+              </th>
+              <th class="tspace">
+                &nbsp;y&nbsp;
+              </th>
+              <th class="tspace">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class=zerov>
+                0
+              </td>
+              <td class=zerov>
+                0
+              </td>
+              <td class=zerov>
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class=unov>
+                1
+              </td>
+              <td class=zerov>
+                0
+              </td>
+              <td class=unov>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class=zerov>
+                0
+              </td>
+              <td class=unov>
+                1
+              </td>
+              <td class=unov>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class=unov>
+                1
+              </td>
+              <td class=unov>
+                1
+              </td>
+              <td class=zerov>
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Ao testar combinações diferentes, poderemos verificar as outras duas linhas. Se todos elas corresponderem, então terminamos: o circuito funciona!
+      </p>
+      <p>
+        Para arquivar o seu trabalho concluído, talvez você queira salvar ou imprimir seu circuito. O menu <b class=menu>|&nbsp;Arquivo&nbsp;|</b> permitirá isso, e é claro que também lhe permitirá sair do Logisim. Mas por que parar agora?
+      </p>
+      <p>
+        Agora que você está terminando o tutorial, poderá experimentar o Logisim construindo seus próprios circuitos. Se você quiser construir circuitos com recursos mais sofisticados, então você deverá navegar através das outras opções do sistema de ajuda para ver o que mais você poderá fazer. Logisim é um programa poderoso, que lhe permitirá construir e testar circuitos maiores; esse procedimento passo-a-passo apenas fez arranhões na superfície.
+      </p>
+      <p>
+	    <b>Próximo:</b> <a href="tutor-step.html">Etapa 5: Tutorial: passo a passo</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-11T00:20:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Простой счётчик кода Грея
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Простой счётчик кода Грея
+      </h1>
+      <p>
+        Часто нам требуются компоненты, которые не являются исключительно комбинационными по своей сути, то есть должны обладать внутренней памятью для хранения состояния. При проектировании таких элементов есть важная архитектурная тонкость: сам класс компонента не может напрямую хранить переменные состояния, поскольку один и тот же тип компонента может многократно использоваться на холсте схемы (напрямую или внутри подсхем, вызываемых в нескольких местах).
+      </p>
+      <p>
+        Решением этой проблемы является создание отдельного класса для хранения текущего состояния элемента и привязка его объектов к конкретным экземплярам на холсте через состояние родительской схемы. В данном примере, реализующем тактируемый по фронту 4-битный счётчик кода Грея, мы объявим класс <tt>CounterData</tt> для представления внутреннего состояния счётчика (в дополнение к стандартному фабричному классу, наследующему <tt>InstanceFactory</tt>). Объект <tt>CounterData</tt> будет сохранять как текущее значение счётчика, так и последнее зафиксированное состояние тактового входа (для корректного обнаружения фронта тактового сигнала).
+      </p>
+      <h2>
+        Класс CounterData
+      </h2>
+      <pre>package com.cburch.gray;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.instance.InstanceState;
+
+/** Представляет состояние счётчика. */
+class CounterData implements InstanceData, Cloneable {
+    /** Получает состояние, связанное с этим счётчиком в состоянии схемы,
+     * генерируя его при необходимости.
+     */
+    public static CounterData get(InstanceState state, BitWidth width) {
+        CounterData ret = (CounterData) state.getData();
+        if(ret == null) {
+            // Если объект состояния ещё не существует, инициализируем его
+            // значениями по умолчанию и добавляем в состояние схемы для
+            // последующего использования при распространении сигналов.
+            ret = new CounterData(null, Value.createKnown(width, 0));
+            state.setData(ret);
+        } else if(!ret.value.getBitWidth().equals(width)) {
+            ret.value = ret.value.extendWidth(width.getWidth(), Value.FALSE);
+        }
+        return ret;
+    }
+
+    /** Последнее зафиксированное значение на тактовом входе. */
+    private Value lastClock;
+    
+    /** Текущее выходное значение счётчика. */
+    private Value value;
+
+    /** Конструирует состояние с заданными параметрами. */
+    public CounterData(Value lastClock, Value value) {
+        this.lastClock = lastClock;
+        this.value = value;
+    }
+
+    /** Возвращает копию данного объекта состояния. */
+    public Object clone() {
+        // Мы можем просто вернуть результат super.clone(): единственными переменными класса
+        // являются неизменяемые объекты Value, поэтому нас не беспокоит, что оригинал
+        // и клон будут ссылаться на одни и те же объекты Value. Если бы у нас были
+        // изменяемые переменные экземпляра, их пришлось бы клонировать отдельно.
+        try { return super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
+    
+    /** Обновляет последнее состояние тактового сигнала и возвращает true при обнаружении фронта. */
+    public boolean updateClock(Value value) {
+        Value old = lastClock;
+        lastClock = value;
+        return old == Value.FALSE &amp;&amp; value == Value.TRUE;
+    }
+    
+    /** Возвращает текущее значение счётчика. */
+    public Value getValue() {
+        return value;
+    }
+    
+    /** Задаёт новое текущее значение счётчика. */
+    public void setValue(Value value) {
+        this.value = value;
+    }
+}
+</pre>
+      <h2>
+        Класс SimpleCounter
+      </h2>
+      <pre>package com.cburch.gray;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.instance.InstanceFactory;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
+
+/** Создаёт простой счётчик, последовательно перебирающий 4-битные значения кода Грея.
+ * Этот пример показывает, как компонент может сохранять своё внутреннее состояние.
+ * Вся логика работы с состоянием вынесена в отдельный класс CounterData. */
+class SimpleGrayCounter extends InstanceFactory {
+    private static final BitWidth BIT_WIDTH = BitWidth.create(4);
+    
+    // Снова обратите внимание, что мы не объявляем переменные экземпляра для хранения
+    // состояния внутри самой фабрики. Мы не можем сделать этого, так как создаётся
+    // ровно один объект SimpleGrayCounter для управления всеми экземплярами на холсте.
+    
+    public SimpleGrayCounter() {
+        super("Gray Counter (Simple)");
+        setOffsetBounds(Bounds.create(-30, -15, 30, 30));
+        setPorts(new Port[] {
+                new Port(-30, 0, Port.INPUT, 1),
+                new Port(  0, 0, Port.OUTPUT, BIT_WIDTH.getWidth()),
+        });
+    }
+
+    public void propagate(InstanceState state) {
+        // Запрашиваем объект состояния, связанный с данным экземпляром компонента.
+        // Метод CounterData.get создаст новый объект состояния, если он ещё не был инициализирован.
+        CounterData cur = CounterData.get(state, BIT_WIDTH);
+
+        boolean trigger = cur.updateClock(state.getPort(0));
+        if(trigger) cur.setValue(GrayIncrementer.nextGray(cur.getValue()));
+        state.setPort(1, cur.getValue(), 9);
+        
+        // (Может возникнуть соблазн считывать текущее значение счётчика напрямую
+        // через state.getPort(1). Это ошибочный путь, так как сторонние элементы
+        // могут подавать свои сигналы на эту же линию связи, искажая реальное
+        // значение. Мы обязаны сохранять актуальное состояние внутри экземпляра).
+    }
+
+    public void paintInstance(InstancePainter painter) {
+        painter.drawBounds();
+        painter.drawClock(0, Direction.EAST); // нарисовать треугольник тактового входа на порту 0
+        painter.drawPort(1); // нарисовать порт 1 в виде точки
+        
+        // Отображаем текущее значение счётчика по центру прямоугольника.
+        // Пропускаем отрисовку, если контекст не требует отображения состояния
+        // (например, при подготовке схемы к выводу на печать).
+        if(painter.getShowState()) {
+            CounterData state = CounterData.get(painter, BIT_WIDTH);
+            Bounds bds = painter.getBounds();
+            GraphicsUtil.drawCenteredText(painter.getGraphics(),
+                    StringUtil.toHexString(BIT_WIDTH.getWidth(), state.getValue().toIntValue()),
+                    bds.getX() + bds.getWidth() / 2,
+                    bds.getY() + bds.getHeight() / 2);
+        }
+    }
+}
+</pre>
+      <p>
+        <b>Далее:</b> <a href="counter.html">Счётчик кода Грея</a>.
+      </p>
+    </div>
+  </body>
+</html>

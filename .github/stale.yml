@@ -1,0 +1,65 @@
+#
+# Logisim-evolution
+# StaleBot configuration
+# https://github.com/probot/stale
+#
+# Role:
+# Monitor PRs and Issues tagged "incubating", then first pings the authors for an update
+# and eventually closes ticket/PR if no there's still no activity detected after a ping.
+
+# Limit to only `issues` or `pulls`
+#only: pulls
+
+# Number of days of inactivity before Issue/PR becomes stale
+daysUntilStale: 14
+# Number of days of inactivity before a stale Issue/PR is closed
+daysUntilClose: 7
+# Only issues or pull requests with all of these labels are check if stale. Defaults to `[]` (disabled)
+onlyLabels: []
+# Issues with these labels will never be considered stale
+exemptLabels:
+  - pinned
+  - security
+
+# Set to true to ignore issues in a project (defaults to false)
+exemptProjects: false
+# Set to true to ignore issues in a milestone (defaults to false)
+exemptMilestones: false
+# Set to true to ignore issues with an assignee (defaults to false)
+exemptAssignees: false
+
+# Label to use when marking as stale
+staleLabel: wontfix
+
+# Comment to post when marking as stale. Set to `false` to disable
+markComment: false
+# Comment to post when closing a stale issue. Set to `false` to disable
+closeComment: false
+
+# Optionally, specify configuration settings that are specific to just 'issues' or 'pulls':
+
+pulls:
+  daysUntilStale: 14
+  daysUntilClose: 7
+  markComment: >
+    This PR has been automatically marked as stale because it has not had recent
+    activity. Please update the PR with recent works or close if it was abandoned.
+    The PR will be closed after 7 days if no further activity occurs.
+  closeComment: >
+    This PR has been automatically closed. Feel free to still comment and even reopen it
+    with a comment if you think it should not be closed, there was a reason for a delay,
+    the work is still ongoing or for any other reason you find valid.
+
+issues:
+  daysUntilStale: 21
+  daysUntilClose: 7
+  onlyLabels:
+    - incubating
+  markComment: >
+    This ticket has been automatically marked as stale because it has not had recent
+    activity. Please update the PR with recent works or close if it was abandoned.
+    The PR will be closed after 7 days if no further activity occurs.
+  closeComment: >
+    This ticket has been automatically closed. Feel free to still comment and even reopen it
+    with a comment if you think it should not be closed or for any other reason you find valid.
+

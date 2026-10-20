@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-12-15T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Einführung: Testen der Schaltung
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <b>Früher:</b> <a href="tutor-text.html">Schritt 3: Text hinzufügen</a>
+      </p>
+      <h2>
+        Schritt 4: Testen der Schaltung
+      </h2>
+      <p>
+        Der letzte Schritt ist das Testen der Schaltung, um zu sehen, ob diese wirklich wie geplant funktioniert. Zu diesem Zeitpunkt simuliert Logisim bereits das Verhalten der Schaltung. Lassen Sie uns noch einmal ansehen, wo wir gerade waren.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-7-all2.png" alt="#########">
+      </p>
+      <p>
+        Beachten Sie, daß beide Eingänge auf 0 gesetzt sind, und auch am Ausgang haben wir eine 0. Dies zeigt uns, daß unsere Schaltung schon eine 0 ausrechnet, wenn beide Eingänge auf 0 gesetzt sind.
+      </p>
+      <p>
+        Jetzt probieren wir eine andere Eingangskombination. Wählen Sie das <b class=propertie>Schaltwerkzeug</b> (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">) aus, und schalten Sie die Eingänge um, indem Sie diese anklicken. Jedes Mal, wenn Sie einen Eingang anklicken, wird sich dessen Wert ändern. Wir können also zum Beispiel den unteren Eingang anklicken (<var>y</var>).
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/tutorial-8-test.png" alt="#########">
+      </p>
+      <p>
+        Sobald Sie den Wert am Eingang ändern, wird Logisim Ihnen anzeigen, welche Werte auf den einzelnen Leitungen geführt werden. Eine hellgrüne Leitung zeigt eine 1 an, eine dunkelgrüne (fast schwarze) Leitung eine 0. Sie können auch sehen, daß sich der Wert am Ausgang der Schaltung auf 1 geändert hat.
+      </p>
+      <p>
+        Bisher haben wir somit die ersten zwei Zeilen der Wahrheitstabelle getestet, und die Ausgangswerte (0 und 1) entsprechen unseren Erwartungen.
+      </p>
+      <center>
+        <table class=truthtable>
+          <tbody>
+            <tr>
+              <th class="tspace">
+                &nbsp;x&nbsp;
+              </th>
+              <th class="tspace">
+                &nbsp;y&nbsp;
+              </th>
+              <th class="tspace">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class=zerov>
+                0
+              </td>
+              <td class=zerov>
+                0
+              </td>
+              <td class=zerov>
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class=unov>
+                1
+              </td>
+              <td class=zerov>
+                0
+              </td>
+              <td class=unov>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class=zerov>
+                0
+              </td>
+              <td class=unov>
+                1
+              </td>
+              <td class=unov>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class=unov>
+                1
+              </td>
+              <td class=unov>
+                1
+              </td>
+              <td class=zerov>
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table><br>
+      </center>
+      <p>
+        Durch Schalten der Eingänge durch die verschiedenen Kombinationen können wir auch die restlichen zwei Zeilen überprüfen. Wenn alles stimmt, sind wir fertig: Die Schaltung funktioniert!
+      </p>
+      <p>
+        Um unsere Arbeit zu archivieren, können Sie die Schaltung speichern oder ausdrucken. Die entsprechenden Funktionen finden Sie im menü <b class=menu>|&nbsp;Datei&nbsp;|</b>, das auch einen Punkt zum Beenden von Logisim enthält. Aber warum sollten wir jetzt aufhören?
+      </p><!--
+<p>Nachdem Sie jetzt die Einführung abgeschlossen haben, können Sie weiter mit Logisim experimentieren und eigene Schaltungen aufbauen. Wenn Sie Schaltungen mit komplexeren Funktionen aufbauen wollen, dann sollten Sie auch den Rest des Hilfesystems durchblättern, um zu sehen, welche Möglichkeiten Ihnen Logisim bietet. Logisim ist ein leistungsfähiges Programm, mit dem Sie riesige Schaltungen aufbauen und testen können. Diese Schritt-für-Schritt-Einführung kann nur die Oberfläche ankratzen.</p>
+-->
+      <p>
+        <b>Weiter:</b> <a href="tutor-step.html">Schritt 5: Der Einzelschrittmodus</a>
+      </p>
+    </div>
+  </body>
+</html>

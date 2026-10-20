@@ -1,0 +1,106 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Divisor</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/divider.gif" width="32" height="32">
+<em>Divisor</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Aritmética</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 22</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/divider.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esse componente divide dois valores que vierem através das entradas a oeste e
+fornecerá o quociente na saída a leste. O componente é projetado de forma
+a poder ser conectado a outros divisores tratar um dividendo com mais bits que
+o possível apenas um único divisor. A entrada superior fornecerá com os bits mais 
+significativos dentre os <var> Bits de Dados</var> do dividendo
+(se isso tiver sido especificado), e os bits em <var>rem</var> serão o resto inteiro 
+da divisão, que pode ser enviado para a entrada <var>superior</var> em outro divisor.
+</p>
+
+<p> Se o divisor for 0, nenhuma divisão será feita (ou seja, supõe-se o divisor
+no mínimo igual a 1). 
+</p>
+
+<p> O divisor executará essencialmente uma divisão sem sinal. Ou seja, o
+resto estará sempre entre 0 e <var> divisor </var>-1. O quociente será sempre um 
+número inteiro de modo que
+</p>
+<center>
+ <var>quociente </var> * <var> divisor </var> +  <var>resto</var> = <var> dividendo </var>.
+</center>
+<p> Se, no entanto, o  <var>quociente</var> não couber nos <var> Bits de Dados </var>,
+apenas os bits menos significativos serão reportados. O componente não oferecerá método 
+algum para o acesso aos bits mais significativos dos <var> Bits de Dados </var>. 
+</p>
+
+<p> Se qualquer um dos operandos contiver algum bit flutuante, ou com erro,
+então o componente terá as saídas ou inteiramente flutuantes ou
+integralmente com valores de erro. 
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, extremo norte (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Os bits menos significativos dentre os <var> Bits de Dados </var> do dividendo 
+(ou seja, o primeiro operando para a divisão).
+
+<dt> Na face oeste, extremo sul (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> O divisor (ou seja, o segundo operando para a divisão).
+
+<dt> Na face norte, marcado por <var>upper</var> (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Os bits mais significativos dentre os <var> Bits de Dados </var> do dividendo
+(ou seja, o primeiro operando para a divisão).
+
+<dt> Na face  leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Os bits menos significativos dentre os <var> Bits de Dados </var> do quociente,
+conforme especificado acima.
+
+<dt> Na face sul, marcado por <var>rem</var> (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> O resto da divisão. Esse valor estará sempre entre 0 e <var>divisor</var>-1.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits dos valores a serem divididos e o resultado.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

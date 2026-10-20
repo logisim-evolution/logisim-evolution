@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Floating Point Converter</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1><strong>FP&rarr;FP</strong> <em>Floating Point Converter</em></h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Floating Point Arithmetic</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Behavior</h2>
+      <p>
+        This component converts a floating-point value between independently selected input and
+        output formats. The letters drawn beside the ports identify the format: <b>M</b> for 8-bit
+        minifloat, <b>H</b> for binary16, <b>F</b> for binary32, and <b>D</b> for binary64.
+      </p>
+      <p>
+        Narrowing conversion rounds to the output precision. A finite value may overflow to
+        infinity or underflow to a subnormal value or zero. The conversion is numeric rather than
+        bit-preserving, so a NaN payload may be normalized even when both sizes are the same.
+      </p>
+      <p>
+        The <var>ERR</var> output is 1 when the input is NaN and 0 otherwise. An input containing
+        unknown or error bits is converted to NaN. Overflow to infinity does not set
+        <var>ERR</var>.
+      </p>
+      <h2>Pins</h2>
+      <dl>
+        <dt>West edge (input, bit width matches Input float size)</dt>
+        <dd>The floating-point value to convert.</dd>
+        <dt>East edge (output, bit width matches Output float size)</dt>
+        <dd>The value represented in the selected output format.</dd>
+        <dt>South edge (output, bit width 1)</dt>
+        <dd><var>ERR</var>: 1 if the input is NaN; otherwise 0.</dd>
+      </dl>
+      <h2>Attributes</h2>
+      <div class="attliste">
+        <dl>
+          <dt><b class="propertie">Input float size</b></dt>
+          <dd>The input format: 8, 16, 32, or 64 bits.</dd>
+          <dt><b class="propertie">Output float size</b></dt>
+          <dd>The output format: 8, 16, 32, or 64 bits.</dd>
+        </dl>
+      </div>
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+      <h2>Text Tool Behavior</h2>
+      <p>None.</p>
+      <p><b>Back to</b> <a href="index.html">Floating Point Arithmetic library</a></p>
+    </div>
+  </body>
+</html>

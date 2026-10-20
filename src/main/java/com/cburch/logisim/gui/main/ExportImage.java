@@ -1,0 +1,460 @@
+/*
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ *
+ * https://github.com/logisim-evolution/
+ *
+ * This is free software released under GNU GPLv3 license
+ */
+
+package com.cburch.logisim.gui.main;
+
+import static com.cburch.logisim.gui.Strings.S;
+
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.comp.ComponentDrawContext;
+import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.generic.TikZWriter;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.util.UniquelyNamedThread;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ExportImage {
+
+  public static final int FORMAT_GIF = 0;
+  public static final int FORMAT_PNG = 1;
+  public static final int FORMAT_JPG = 2;
+  public static final int FORMAT_TIKZ = 3;
+  public static final int FORMAT_SVG = 4;
+  public static final int FORMAT_WAVEDROM = 5;
+  static final Logger logger = LoggerFactory.getLogger(ExportImage.class);
+
+  private static final int SLIDER_DIVISIONS = 6;
+  private static final int BORDER_SIZE = 5;
+
+  private ExportImage() {}
+
+  public static ImageFileFilter getFilter(int fmt) {
+    switch (fmt) {
+      case FORMAT_GIF:
+        return new ImageFileFilter(fmt, S.getter("exportGifFilter"), new String[] {"gif"});
+      case FORMAT_PNG:
+        return new ImageFileFilter(fmt, S.getter("exportPngFilter"), new String[] {"png"});
+      case FORMAT_JPG:
+        return new ImageFileFilter(
+            fmt,
+            S.getter("exportJpgFilter"),
+            new String[] {"jpg", "jpeg", "jpe", "jfi", "jfif", "jfi"});
+      case FORMAT_TIKZ:
+        return new ImageFileFilter(fmt, S.getter("exportTikZFilter"), new String[] {"tex"});
+      case FORMAT_SVG:
+        return new ImageFileFilter(fmt, S.getter("exportSvgFilter"), new String[] {"svg"});
+      case FORMAT_WAVEDROM:
+        return new ImageFileFilter(fmt, S.getter("exportWaveDromFilter"), new String[] {"json"});
+      default:
+        logger.error("Unexpected image format; aborted!");
+        return null;
+    }
+  }
+
+  public static void doExport(Project proj) {
+    // First display circuit/parameter selection dialog
+    final var frame = proj.getFrame();
+    final var list = new CircuitJList(proj, true);
+    if (list.getModel().getSize() == 0) {
+      OptionPane.showMessageDialog(
+          proj.getFrame(),
+          S.get("exportEmptyCircuitsMessage"),
+          S.get("exportEmptyCircuitsTitle"),
+          OptionPane.YES_NO_OPTION);
+      return;
+    }
+    final var options = new OptionsPanel(list);
+    int action =
+        OptionPane.showConfirmDialog(
+            frame,
+            options,
+            S.get("exportImageSelect"),
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    if (action != OptionPane.OK_OPTION) return;
+    final var circuits = list.getSelectedCircuits();
+    final var scale = options.getScale();
+    final var printerView = options.getPrinterView();
+    if (circuits.isEmpty()) return;
+
+    final var fmt = options.getImageFormat();
+    final var filter = getFilter(fmt);
+    if (filter == null) return;
+
+    // Then display file chooser
+    final var loader = proj.getLogisimFile().getLoader();
+    final var chooser = loader.createChooser();
+    chooser.setAcceptAllFileFilterUsed(false);
+    if (circuits.size() > 1) {
+      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      chooser.setDialogTitle(S.get("exportImageDirectorySelect"));
+    } else {
+      chooser.setFileFilter(filter);
+      chooser.setDialogTitle(S.get("exportImageFileSelect"));
+    }
+    final var returnVal = chooser.showDialog(frame, S.get("exportImageButton"));
+    if (returnVal != JFileChooser.APPROVE_OPTION) return;
+
+    // Determine whether destination is valid
+    final var dest = chooser.getSelectedFile();
+    chooser.setCurrentDirectory(dest.isDirectory() ? dest : dest.getParentFile());
+    if (dest.exists()) {
+      if (!dest.isDirectory()) {
+        final var confirm =
+            OptionPane.showConfirmDialog(
+                proj.getFrame(),
+                S.get("confirmOverwriteMessage"),
+                S.get("confirmOverwriteTitle"),
+                OptionPane.YES_NO_OPTION);
+        if (confirm != OptionPane.YES_OPTION) return;
+      }
+    } else {
+      if (circuits.size() > 1) {
+        final var created = dest.mkdir();
+        if (!created) {
+          OptionPane.showMessageDialog(
+              proj.getFrame(),
+              S.get("exportNewDirectoryErrorMessage"),
+              S.get("exportNewDirectoryErrorTitle"),
+              OptionPane.YES_NO_OPTION);
+          return;
+        }
+      }
+    }
+
+    // Create the progress monitor
+    final var monitor = new ProgressMonitor(frame, S.get("exportImageProgress"), null, 0, 10000);
+    monitor.setMillisToDecideToPopup(100);
+    monitor.setMillisToPopup(200);
+    monitor.setProgress(0);
+
+    // And start a thread to actually perform the operation
+    // (This is run in a thread so that Swing will update the
+    // monitor.)
+    new ExportThread(
+            frame,
+            frame.getCanvas(),
+            dest,
+            filter,
+            circuits,
+            scale,
+            printerView,
+            frame.getCanvas().getBackground(),
+            monitor)
+        .start();
+  }
+
+  static void paintExportBackground(
+      Graphics g,
+      int width,
+      int height,
+      int format,
+      boolean printerView,
+      Color canvasBackground) {
+    final var vectorFormat = format == FORMAT_TIKZ || format == FORMAT_SVG;
+    if (!printerView || !vectorFormat) {
+      g.setColor(printerView ? Color.WHITE : canvasBackground);
+      g.fillRect(0, 0, width, height);
+    }
+    g.setColor(Color.BLACK);
+  }
+
+  private static class ExportThread extends UniquelyNamedThread {
+    final Frame frame;
+    final Canvas canvas;
+    final File dest;
+    final ImageFileFilter filter;
+    final List<Circuit> circuits;
+    final double scale;
+    final boolean printerView;
+    final Color canvasBackground;
+    final ProgressMonitor monitor;
+
+    ExportThread(
+        Frame frame,
+        Canvas canvas,
+        File dest,
+        ImageFileFilter f,
+        List<Circuit> circuits,
+        double scale,
+        boolean printerView,
+        Color canvasBackground,
+        ProgressMonitor monitor) {
+      super("ExportThread");
+      this.frame = frame;
+      this.canvas = canvas;
+      this.dest = dest;
+      this.filter = f;
+      this.circuits = circuits;
+      this.scale = scale;
+      this.printerView = printerView;
+      this.canvasBackground = canvasBackground;
+      this.monitor = monitor;
+    }
+
+    private void export(Circuit circuit) {
+      final var bds = circuit.getBounds(canvas.getGraphics()).expand(BORDER_SIZE);
+      final var width = (int) Math.round(bds.getWidth() * scale);
+      final var height = (int) Math.round(bds.getHeight() * scale);
+      Graphics g;
+      Graphics base;
+      final var img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+      if (filter.type == FORMAT_TIKZ || filter.type == FORMAT_SVG) {
+        final var tz = new TikZWriter();
+        tz.setSvgMode(filter.type == FORMAT_SVG);
+        base = tz;
+        g = base.create();
+      } else {
+        base = img.getGraphics();
+        g = base.create();
+      }
+      paintExportBackground(g, width, height, filter.type, printerView, canvasBackground);
+      if (g instanceof Graphics2D g2d) {
+        g2d.scale(scale, scale);
+        g.translate(-bds.getX(), -bds.getY());
+      } else {
+        OptionPane.showMessageDialog(frame, S.get("couldNotCreateImage"));
+        monitor.close();
+      }
+
+      final var circuitState = canvas.getProject().getCircuitState(circuit);
+      final var context =
+          new ComponentDrawContext(canvas, circuit, circuitState, base, g, printerView);
+      circuit.draw(context, null);
+
+      final File where;
+      if (dest.isDirectory()) {
+        where = new File(dest, circuit.getName() + filter.extensions[0]);
+      } else if (filter.accept(dest)) {
+        where = dest;
+      } else {
+        String newName = dest.getName() + filter.extensions[0];
+        where = new File(dest.getParentFile(), newName);
+      }
+      try {
+        switch (filter.type) {
+          case FORMAT_GIF -> ImageIO.write(img, "GIF", where);
+          case FORMAT_PNG -> ImageIO.write(img, "PNG", where);
+          case FORMAT_JPG -> ImageIO.write(img, "JPEG", where);
+          case FORMAT_TIKZ -> ((TikZWriter) g).writeFile(where);
+          case FORMAT_SVG -> ((TikZWriter) g).writeSvg(width, height, where);
+        }
+      } catch (Exception e) {
+        OptionPane.showMessageDialog(frame, S.get("couldNotCreateFile"));
+        e.printStackTrace();
+        monitor.close();
+        return;
+      }
+      g.dispose();
+      monitor.close();
+    }
+
+    @Override
+    public void run() {
+      for (final var circ : circuits) {
+        export(circ);
+      }
+    }
+  }
+
+  public static class ImageFileFilter extends FileFilter {
+    private final int type;
+    private final String[] extensions;
+    private final StringGetter desc;
+
+    public ImageFileFilter(int type, StringGetter desc, String[] exts) {
+      this.type = type;
+      this.desc = desc;
+      extensions = new String[exts.length];
+      for (var i = 0; i < exts.length; i++) {
+        extensions[i] = "." + exts[i].toLowerCase();
+      }
+    }
+
+    @Override
+    public boolean accept(File f) {
+      final var name = f.getName().toLowerCase();
+      for (final var extension : extensions) {
+        if (name.endsWith(extension)) return true;
+      }
+      return f.isDirectory();
+    }
+
+    @Override
+    public String getDescription() {
+      return desc.toString();
+    }
+
+    public String getDefaultExtension() {
+      return extensions[0];
+    }
+
+    public int getType() {
+      return type;
+    }
+  }
+
+  private static class OptionsPanel extends JPanel implements ChangeListener {
+    private static final long serialVersionUID = 1L;
+    final JSlider slider;
+    final JLabel curScale;
+    final JCheckBox printerView;
+    final JRadioButton formatPng;
+    final JRadioButton formatGif;
+    final JRadioButton formatJpg;
+    final JRadioButton formatTikZ;
+    final JRadioButton formatSvg;
+    final GridBagLayout gridbag;
+    final GridBagConstraints gbc;
+    final Dimension curJim;
+
+    @SuppressWarnings("rawtypes")
+    OptionsPanel(JList list) {
+      // set up components
+      formatPng = new JRadioButton("PNG");
+      formatGif = new JRadioButton("GIF");
+      formatJpg = new JRadioButton("JPEG");
+      formatTikZ = new JRadioButton("TikZ");
+      formatSvg = new JRadioButton("SVG");
+      ButtonGroup bgroup = new ButtonGroup();
+      bgroup.add(formatPng);
+      bgroup.add(formatGif);
+      bgroup.add(formatJpg);
+      bgroup.add(formatTikZ);
+      bgroup.add(formatSvg);
+      formatTikZ.addChangeListener(this);
+      formatSvg.addChangeListener(this);
+      formatPng.setSelected(true);
+
+      slider = new JSlider(JSlider.HORIZONTAL, -3 * SLIDER_DIVISIONS, 3 * SLIDER_DIVISIONS, 0);
+      slider.setMajorTickSpacing(10);
+      slider.addChangeListener(this);
+      curScale = new JLabel("222%");
+      curScale.setHorizontalAlignment(SwingConstants.RIGHT);
+      curScale.setVerticalAlignment(SwingConstants.CENTER);
+      final var d = curScale.getPreferredSize();
+      curJim =
+          new Dimension(
+              AppPreferences.getScaled(d.width + (d.width >> 1)),
+              AppPreferences.getScaled(d.height));
+      curJim.height = Math.max(curJim.height, slider.getPreferredSize().height);
+      stateChanged(null);
+
+      printerView = new JCheckBox();
+      printerView.setSelected(true);
+
+      // set up panel
+      gridbag = new GridBagLayout();
+      gbc = new GridBagConstraints();
+      setLayout(gridbag);
+
+      // now add components into panel
+      gbc.gridy = 0;
+      gbc.gridx = GridBagConstraints.RELATIVE;
+      gbc.anchor = GridBagConstraints.NORTHWEST;
+      gbc.insets = new Insets(5, 0, 5, 0);
+      gbc.fill = GridBagConstraints.NONE;
+      addGb(new JLabel(S.get("labelCircuits") + " "));
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      addGb(new JScrollPane(list));
+      gbc.fill = GridBagConstraints.NONE;
+
+      gbc.gridy++;
+      addGb(new JLabel(S.get("labelImageFormat") + " "));
+      final var formatsPanel = new Box(BoxLayout.Y_AXIS);
+      formatsPanel.add(formatPng);
+      formatsPanel.add(formatGif);
+      formatsPanel.add(formatJpg);
+      formatsPanel.add(formatTikZ);
+      formatsPanel.add(formatSvg);
+      addGb(formatsPanel);
+
+      gbc.gridy++;
+      addGb(new JLabel(S.get("labelScale") + " "));
+      addGb(slider);
+      addGb(curScale);
+
+      gbc.gridy++;
+      addGb(new JLabel(S.get("labelPrinterView") + " "));
+      addGb(printerView);
+    }
+
+    private void addGb(JComponent comp) {
+      gridbag.setConstraints(comp, gbc);
+      add(comp);
+    }
+
+    int getImageFormat() {
+      if (formatGif.isSelected()) return FORMAT_GIF;
+      if (formatJpg.isSelected()) return FORMAT_JPG;
+      if (formatTikZ.isSelected()) return FORMAT_TIKZ;
+      if (formatSvg.isSelected()) return FORMAT_SVG;
+      return FORMAT_PNG;
+    }
+
+    boolean getPrinterView() {
+      return printerView.isSelected();
+    }
+
+    double getScale() {
+      return Math.pow(2.0, (double) slider.getValue() / SLIDER_DIVISIONS);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+      final var scale = getScale();
+      curScale.setText((int) Math.round(100.0 * scale) + "%");
+      if (curJim != null) curScale.setPreferredSize(curJim);
+      if (e == null) return;
+      if (e.getSource().equals(formatTikZ) || e.getSource().equals(formatSvg)) {
+        if (formatTikZ.isSelected() || formatSvg.isSelected()) {
+          curScale.setEnabled(false);
+          slider.setEnabled(false);
+          slider.setValue(0);
+          curScale.setText(100 + "%");
+          if (curJim != null) curScale.setPreferredSize(curJim);
+        } else {
+          curScale.setEnabled(true);
+          slider.setEnabled(true);
+        }
+      }
+    }
+  }
+}

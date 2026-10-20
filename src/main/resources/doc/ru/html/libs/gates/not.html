@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-16T23:45:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Элемент НЕ
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/iecnotgate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/ansnotgate.png" alt="#########" width="32" height="32">&nbsp; 
+		<em>Элемент НЕ</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Библиотека:</strong>
+            </td>
+            <td>
+              <a href="index.html">Элементы</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Введён в:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Внешний вид:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI:
+                    </th>
+                    <th>
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Поведение
+      </h2>
+      <p>
+        Элемент НЕ выдаёт на выходе инвертированное значение своего входа. Способ представления данных на выходе определяется атрибутом <b class="propertie">Выходное значение</b>. Таблица истинности для элемента НЕ приведена ниже.
+      </p>
+      <center>
+        <table class="encapsul">
+          <tbody>
+		    <tr>
+              <th class="tspace">
+                &nbsp;Вход&nbsp;
+              </th>
+              <th class="tspace" colspan="3">
+                &nbsp;Выход&nbsp;
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace"></th>
+              <th class="tspace">
+                &nbsp;&nbsp;0/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                0/плав.
+              </th>
+              <th class="tspace">
+                плав./1
+              </th>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Если на входе присутствует неинициализированное значение (<b class="uvalue">U</b>) или ошибка (<b class="evalue">E</b>), то на выходе будет значение ошибки (<b class="evalue">E</b>).
+      </p>
+      <p>
+        Многоразрядный элемент «НЕ» (инвертор) выполняет указанное преобразование побитово для каждого разряда своего входа.
+      </p>
+      <h2>
+        Контакты (предполагается, что компонент направлен вправо)
+      </h2>
+      <dl>
+        <dt>
+          Левая сторона (вход):
+        </dt>
+        <dd>
+          Вход компонента. Разрядность соответствует атрибуту <b class="propertie">Биты данных</b>.
+        </dd>
+        <dt>
+          Правая сторона (выход):
+        </dt>
+        <dd>
+          Выход, значение которого противоположно входному значению. Разрядность соответствует атрибуту <b class="propertie">Биты данных</b>. Режим представления данных определяется атрибутом <b class="propertie">Выходное значение</b>.
+        </dd>
+      </dl>
+      <h2>
+        Атрибуты
+      </h2>
+      <p>
+        Когда компонент выбран или добавляется, комбинации клавиш от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> изменяют его атрибут <b class="propertie">Биты данных</b>, а клавиши со стрелками изменяют его направление (<b class="propertie">Направление</b>).
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Направление</b>
+          </dt>
+          <dd>
+            Направление компонента (его выхода относительно входа).
+          </dd>
+          <dt>
+            <b class="propertie">Биты данных</b>
+          </dt>
+          <dd>
+            Разрядность входа и выхода компонента.
+          </dd>
+          <dt>
+            <b class="propertie">Размер элемента</b>
+          </dt>
+          <dd>
+            Определяет, отрисовывать ли увеличенную или уменьшенную версию компонента.
+          </dd>
+          <dt>
+            <b class="propertie">Выходное значение</b>
+          </dt>
+          <dd>
+            Указывает, как логические 0 и 1 преобразуются в выходные значения. По умолчанию ложный результат (0) передается низким уровнем напряжения (<b class="zerov">0</b>), а истинный (1) — высоким уровнем напряжения (<b class="unov">1</b>), но одно из этих значений может быть заменено на высокоимпедансное состояние (Z). Это позволяет организовывать проводные соединения ИЛИ/И, как описано в <a href="basic.html">документации на элементы И/ИЛИ/И-НЕ/ИЛИ-НЕ</a>.
+          </dd>
+          <dt>
+            <b class="propertie">Метка</b>
+          </dt>
+          <dd>
+            Текст метки, связанной с элементом.
+          </dd>
+          <dt>
+            <b class="propertie">Шрифт метки</b>
+          </dt>
+          <dd>
+            Шрифт для отображения текста метки.
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Поведение инструмента «Нажатие»
+      </h2>
+      <p>
+        Нет.
+      </p>
+      <p>
+        <b>Назад к</b> <a href="../index.html">Справке по библиотеке</a>
+      </p>
+    </div>
+  </body>
+</html>

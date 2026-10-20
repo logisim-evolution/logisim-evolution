@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Gatterlaufzeiten
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Gatterlaufzeiten
+      </h1>
+      <p>
+        Als ein Beispiel für den Grad der Verfeinerung des Logisim-Algorithmus, betrachten Sie die folgende Schaltung. 
+      </p>
+   <p align="center">
+        <img class="notscal" src="../../../../img-guide/prop-const0.png" alt="#########">
+      </p>
+      <p>
+        Diese "offensichtlich" immer 0 ausgeben. Aber NICHT Gatter reagieren in der Realität nicht sofort auf ihre Eingänge, und auch nicht in Logisim. Wenn der Eingang dieser Schaltung von 0 auf 1 wechselt, sieht das UND-Gatter daher kurzzeitig zwei Eingänge 1 und gibt kurzzeitig eine 1 aus. Auf dem Bildschirm wird man sie nicht sehen. Aber der Effekt ist zu beobachten, wenn wir den Ausgang des UND-Gatters als Eingang in den Takt eines D-Flip-Flops verwenden.
+      </p>
+   <p align="center">
+        <img class="notscal" src="../../../../img-guide/prop-using-const0.png" alt="#########">
+      </p>
+      <p>
+        Wenn der Eingang 0 zu einer 1 wird, führt dies zu einer momentanen 1 im D-Flip-Flop, so dass der Wert des Flip-Flops jedes Mal umschaltet, wenn der Eingang der Schaltung von 0 auf 1 wechselt.
+      </p>
+      <p>
+        Jede Komponente hat eine Verzögerung, die mit ihr verbunden ist. Komplexere Komponenten, die in Logisim eingebaut sind, haben in der Regel größere Verzögerungen, aber diese Verzögerungen sind etwas willkürlich und spiegeln möglicherweise nicht die Realität wider.
+      </p>
+   <p align="center">
+        <img class="notscal" src="../../../../img-guide/propagat.gif" alt="#########"><br>
+		Logisim world<br><br>
+		<img class="notscal" src="../../../../img-guide/reallife2.png" alt="#########"><br>
+		Real world
+      </p>
+      <p>
+        Aus technischer Sicht ist es relativ einfach, diesen Grad an Raffinesse in einer einzigen Schaltung zu bewältigen. Der Umgang mit Gate-Verzögerungen über Teilschaltungen hinweg ist allerdings etwas komplexer. Logisim versucht, dies korrekt zu lösen, indem alle primitiven Ausbreitungswerte der Komponenten in einem einzigen Schema zusammengefasst werden, unabhängig davon, in welcher Teilschaltung die Komponente liegt.
+      </p>
+      <p>
+        Mit der Registerkarte <a href="../opts/opts-simulate.html">Simulation</a> des <a href="../opts/index.html">Projektoptionsfensters</a> können Sie Logisim so konfigurieren, dass die Ausbreitung einer Komponente gelegentlich zufällig verzögert wird. Damit sollen die Ungleichungen realer Schaltungen simuliert werden. Insbesondere ein SAR-Latch mit zwei NOR-Gattern wird ohne diese Zufälligkeit oszillieren, da die beiden Gatter ihre Eingänge nacheinander verarbeiten. Diese Zufälligkeit ist standardmäßig deaktiviert. 
+      </p>
+      <p>
+        Beachten Sie bitte, dass ich nicht sagen will, dass Logisim Gate Delays immer gut behandelt. Aber zumindest versucht er es.
+      </p>
+      <p>
+        <strong>Nächste:</strong> <a href="oscillate.html">Schwingungsfehler</a>.
+      </p>
+    </div>
+  </body>
+</html>

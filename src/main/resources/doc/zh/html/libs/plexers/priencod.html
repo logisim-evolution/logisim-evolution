@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      优先级编码器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/priencod.png" alt="#########" height="32" width="32"> <em>优先级编码器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">复用器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.3.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/priencod.png" alt="#########" height="64" width="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        优先级编码器的西侧有若干输入端，标号从 <q>0</q> 开始。
+        优先级编码器会在输入为 1 的端口中，找到编号最大的端口，并输出其编号。
+        例如，若输入 0、2、5、6 均为 1，则优先级编码器输出 110。
+        若没有任何输入为 1，或编码器被禁用，则输出为高阻。
+      </p>
+      <p>
+        优先级编码器支持通过级联的方式扩展输入数量，可以通过使能输入与使能输出实现。
+        当使能输入为 0 时，编码器被禁用，主输出为高阻。
+        当编码器启用且所有编号输入都不为 1 时，使能输出为 1。
+        因此可以将两个优先编码器串接：把第一个编码器的“使能输出”连接到第二个的“使能输入”。
+        如果第一个编码器的任一编号输入为 1，则第二个编码器会被禁用，其输出为高阻；
+        反之，若第一个没有任何编号输入为 1，则它的主输出为高阻，同时使能输出为 1，从而启用第二个编码器，由第二个编码器找出为 1 的最高优先级输入。
+      </p>
+      <p>
+        优先级编码器还有一个附加输出：当编码器启用且在任一编号输入上检测到 1 时，该输出为 1。
+        在级联场景中，可用它判断是哪一级编码器被触发。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东）
+      </h2>
+      <dl>
+        <dt>
+          西侧（输入，数量可变，位宽 1）
+        </dt>
+        <dd>
+          输入端，从该侧的上端（或西端）起编号为 0。
+        </dd>
+        <dt>
+          东侧上端（输出，位宽与“选择位数”一致）
+        </dt>
+        <dd>
+          主输出：输出为 1 的输入中编号最大的那个；若没有任何输入为 1，或通过“使能输入”将组件禁用，则输出为高阻。
+        </dd>
+        <dt>
+          东侧下端（输出，位宽 1）
+        </dt>
+        <dd>
+          组选择：当编码器启用且至少有一个编号输入为 1 时输出 1；否则输出 0。
+        </dd>
+        <dt>
+          南侧（输入，位宽 1）
+        </dt>
+        <dd>
+          使能输入：为 0 时禁用编码器；否则启用。
+        </dd>
+        <dt>
+          北侧（输出，位宽 1）
+        </dt>
+        <dd>
+          使能输出：当编码器启用且所有编号输入都不为 1 时输出 1；否则输出 0。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 <b class="tkeybd">1</b>–<b class="tkeybd">4</b> 可修改 <q>选择位数</q> 属性，方向键可修改 <q>朝向</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          朝向
+        </dt>
+        <dd>
+          组件方向（其输出相对于输入的位置）。
+        </dd>
+        <dt>
+          选择位数
+        </dt>
+        <dd>
+          主输出的位宽。优先编码器的编号输入数量为 2<sup><small><var>选择位数</var></small></sup>。
+        </dd>
+        <dt>
+          禁用时输出
+        </dt>
+        <dd>
+          使能端为 0 时，各输出位应呈现的值。可选项包括 0 和高阻；若选择高阻，则输出等同于与其它端口断开连接。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

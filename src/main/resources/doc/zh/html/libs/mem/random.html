@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T06:18:42.262000000" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   随机数生成器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <img alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/random.png" width="32"/>
+    <em>
+     随机数生成器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <a href="index.html">
+        存储器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.3.0
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/random.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    行为
+   </h2>
+   <p>
+    该组件生成伪随机数序列。当组件使能时，每次时钟按触发方式触发，都会使序列前进到下一个数。该组件使用的伪随机算法是线性同余发生器：从种子 <var>r</var><sub><small>0</small></sub> 开始，下一个数 <var>r</var><sub><small>1</small></sub> 由下式给出：
+   </p>
+   <center>
+    <var>r</var><sub><small>1</small></sub> = (25,214,903,917 <var>r</var><sub><small>0</small></sub> + 11) mod 2<sup><small>48</small></sup>
+   </center>
+   <p>
+    再下一个数 <var>r</var><sub><small>2</small></sub> 由 <var>r</var><sub><small>1</small></sub> 通过同样的计算得到，依此类推。该序列是 48 位（bit）整数序列，其输出端的数值是将当前种子的低 12 位丢弃后，再取其低位部分（位数由“数据位宽”属性配置）得到的结果。
+   </p>
+   <p>
+    除了时钟输入外，该元件还包含一个 <var>使能</var> 输入：当 <var>使能</var> 为 0 时，时钟输入会被忽略；以及一个 <var>复位</var> 输入：它会将元件的数值异步重置为初始种子 <var>r</var><sub><small>0</small></sub>。
+   </p>
+   <p>
+    初始种子可由用户配置。若种子配置为 0（默认值），则种子会基于当前时间生成；当通过 <var>复位</var> 输入发出重置指令时，元件会根据新的当前时间重新计算一个新的种子。
+   </p>
+   <h2>
+    引脚（以经典外观为例）
+   </h2>
+   <dl>
+    <dt>
+     东侧，标记为 <var>Q</var>（输出，位宽与数据位属性匹配）
+    </dt>
+    <dd>
+     输出元件当前存储的数值。
+    </dd>
+    <dt>
+     南侧，左边引脚（在 Logisim-evolution 外观中位于西侧下方），带三角形标记（输入，位宽 1）
+    </dt>
+    <dd>
+     时钟：当该输入按<b class="property">触发方式</b>属性所指定的方式触发时，元件会前进到序列中的下一个数。
+    </dd>
+    <dt>
+     西侧引脚（在 Logisim-evolution 外观中位于西侧中间，标记为 <var>EN</var>）（输入，位宽 1）
+    </dt>
+    <dd>
+     使能：当该输入未连接或为 1 时，元件处于使能；若为 0，则忽略时钟输入。
+    </dd>
+    <dt>
+     南侧，右边引脚，标记为 <var>0</var>（在 Logisim-evolution 外观中位于西侧上方，标记为 <var>R</var>）（输入，位宽 1）
+    </dt>
+    <dd>
+     复位：当该输入为 1 时，伪随机序列会异步复位到初始种子。（若种子为 0，则这次产生的新种子与上一次使用的初始种子不同。）
+    </dd>
+   </dl>
+   <h2>
+    属性
+   </h2>
+   <p>
+    当元件被选中或正在放置时，Alt-0 到 Alt-9 可修改其 <q>数据位宽</q> 属性。
+   </p>
+   <dl>
+    <dt>
+     数据位宽
+    </dt>
+    <dd>
+     元件输出数值的位宽。
+    </dd>
+    <dt>
+     种子
+    </dt>
+    <dd>
+     伪随机序列的起始值。若该值为 0（默认），则起始值基于随机序列开始时的时间生成。
+    </dd>
+    <dt>
+     触发方式
+    </dt>
+    <dd>
+     配置如何解释时钟输入。<q>上升沿</q>表示时钟从 0 上升到 1 的瞬间更新；<q>下降沿</q>表示时钟从 1 下降到 0 的瞬间更新。
+    </dd>
+    <dt>
+     标签
+    </dt>
+    <dd>
+     与组件关联的标签文本。
+    </dd>
+    <dt>
+     标签字体
+    </dt>
+    <dd>
+     用于渲染标签的字体。
+    </dd>
+   </dl>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    无。
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    编辑与组件关联的标签。
+   </p>
+   <p>
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

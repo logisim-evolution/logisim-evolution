@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Horloge
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/clock.png" alt="#########" width="32" height="32"> 
+		<em>Horloge</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Câblage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 13 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0)
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/clock.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Lorloge émet un signal rectangulaire régulier de 0 et de 1 selon sa planification tant que l'option <b class="menu">tic activés</b> du <a href="../../guide/menu/simulate.html">Menu simulation</a> est active. (Cette option est désactivée par défaut).<br>
+        Un "tic" est l'unité de temps de Logisim, la vitesse à laquelle les impulsions de l'horloge se produisent  est paramétrée dans le sous-menu <b class="menu">Fréquence des tics</b> du menu <b class="menu">Simulation</b>.
+      </p>
+      <p>
+        Le rapport cyclique de l'horloge peut être configuré à l'aide de ses attributs de <b class="propertie">durée haute</b> et de <b class="propertie">durée basse</b>.
+      </p>
+	  <p>
+		Dans le mode <a href="../../guide/tutorial/tutor-step.html">pas à pas</a> les horloges avancent d'un tic à chaque action sur la touche. 
+	  </p>
+      <p>
+        <b class="note">Note</b> :La simulation des horloges par Logisim est assez irréaliste: dans des circuits réels, de multiples horloges dériveront les unes par rapport aux autres et ne fonctionnent jamais exactement au même rythme. Mais dans Logisim, toutes les horloges fonctionnent au même rythme.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        Une horloge ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel de l'horloge. L'emplacement de cette broche est spécifié dans l'attribut <b class="propertie">Orientation</b>.<br>
+		La valeur de l'horloge basculera en fonction de ses paramètres chaque fois que les tics seront activés, et elle avancera d'un tic chaque fois que l'on cliquera dessus à l'aide de l'outil Poke. 
+      </p>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+           <b class="propertie">Orientation</b>
+        </dt>
+        <dd>
+          Le côté du composant dessiné où doit se trouver sa broche de sortie.
+        </dd>
+        <dt>
+           <b class="propertie">Durée haute</b>
+        </dt>
+        <dd>
+          La durée en tic de cycle haut (1) de l'horloge.
+        </dd>
+        <dt>
+           <b class="propertie">Durée basse</b>
+        </dt>
+        <dd>
+          La durée en tic de cycle bas (0) de l'horloge.
+        </dd>
+        <dt>
+           <b class="propertie">Label</b>
+        </dt>
+		 <dd>
+          La durée en tic de cycle bas (0) de l'horloge.
+        </dd>
+        <dt>
+           <b class="propertie">Déclage de phase</b>
+        </dt>
+        <dd>
+          Le déphasage en tick de l'horloge. Ci-dessous deux hologes identiques dont une (en gris) a un déphasage de 1 tic.<br>
+		  <center>
+		  <img src="../../../../img-libs/clockshift.png" alt="#########" >
+		  </center>
+        </dd>
+        <dt>
+           <b class="propertie">Position du Label</b>
+        </dt>
+        <dd>
+          Le positionnement de l'étiquette par rapport au composant.
+        </dd>
+        <dt>
+           <b class="propertie">Police du label</b>
+        </dt>
+        <dd>
+          La police avec laquelle présenter l'étiquette.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser 
+      </h2>
+      <p>
+        En cliquant sur un composant d'horloge, vous faite avancer l'ensemble des horloges de un tic.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Permets de modifier l'étiquette associée au composant.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Registrador</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/register.gif" width="32" height="32">
+<em>Registrador</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/register.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Um registrador serve para guardar um único valor multibit, que será mostrado em
+hexadecimal dentro de seu retângulo, e emitido em sua saída <var> Q </var> saída. 
+Quando a entrada de <i>clock</i> (marcada por um triângulo na face sul), assim indicar,
+o valor armazenado no registrador será alterado para o valor na entrada
+<var> D </var> naquele instante. Exatamente quando a entrada de <i>clock</i> indicará
+a situação para que isso aconteça será configurado através do atributo Gatilho. </p>
+
+<p> A entrada <var> Reset </var> levará o valor no registrador para 0 (em todos os bits)
+de forma assíncrona, ou seja, enquanto essa entrada for 1, o valor ficará fixo em 0, 
+independente da entrada de <i>clock</i>. </p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face leste, marcado por <var> Q </var> (saída, com largura em bits 
+de acordo com o atributo Bits de Dados) </dt>
+<dd> Emitirá o valor atualmente armazenado pelo registrador. </dd>
+
+<dt> Na face oeste, marcado por <var> D </var> (entrada, (saída, com largura em bits 
+de acordo com o atributo Bits de Dados) </dt>
+<dd> Entrada de Dados: no instante em que o valor do clock variar de 0 para 1,
+o valor no registrador irá mudar para o valor da entrada <var> D </var> naquele 
+instante. </dd>
+
+<dt> Na face oeste, marcado por <var> en </var> (entrada, com largura de 1 bit) </dt>
+<dd> Enable: quando for 0, os gatilhos de clock serão ignorados. O valor atual
+continuará a aparecer na saída. Os gatilhos de <i>clock</i> estarão ativados quando essa
+entrada for 1 ou indefinida. </dd>
+
+<dt> Na face sul, indicada por um triângulo (entrada, com largura de 1 bit) </dt>
+<dd> Entrada do <i>Clock</i>: no instante em que o valor da entrada variar de 0 para
+1 (borda de subida), o valor no registrador será atualizado para o valor
+da entrada <var> D </var>. </dd>
+
+<dt> Na face sul, marcado por <var> 0 </var> (entrada, com largura de 1 bit) </dt>
+<dd> Reset assíncrono: quando for 0 ou indefinido, essa entrada não terá efeito.
+Enquanto ele permanecer em 1, o valor de registrador ficará fixo em 0. Isso ocorrerá
+assíncronamente - ou seja, sem levar em conta o valor atual da entrada de <i>clock</i>.
+Enquanto se mantiver em 1, as outras entradas não terão qualquer efeito. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits do valor armazenado no registrador. </dd>
+
+<dt> Gatilho </dt>
+<dd> Serve para configurar como a entrada de <i>clock</i> será interpretada.
+O valor <q> Borda de Subida </q> serve para indicar que o registrador deverá 
+atualizar o seu valor no instante em o <i>clock</i> variar de 0 para 1. O valor
+<q> Borda de Descida </q> indicará que ele deverá realizar a atualização 
+no instante em que o <i>clock</i> variar de 1 para 0. O valor <q> Nível Alto </q>
+indicará que o registrador deverá atualizar continuamente, enquanto a entrada
+de <i>clock</i> for igual a 1. E o valor <q> Nivel Baixo </q> indicará que ele deverá
+realizar a atualização continuamente enquanto a entrada de <i>clock</i> for 0. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado ao componente. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Ao clicar sobre o registrador mudará o foco do teclado para esse componente
+(indicado por um retângulo vermelho), e ao digitar dígitos hexadecimais poderá
+alterar o valor armazenado no registrador.
+</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

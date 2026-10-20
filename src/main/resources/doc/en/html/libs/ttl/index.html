@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>TTL library</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>TTL library</h1>
+      <p>
+        The TTL library contains digital functional models of 74-series integrated circuits in
+        dual in-line packages. Select a model by its device number. The descriptions below match
+        the names shown in the component catalog.
+      </p>
+      <p>
+        By default, the power pins are hidden and treated as correctly powered. Enable the
+        <b class="propertie">Enable Vcc and Gnd ports</b> attribute to expose them. The
+        <b class="propertie">Show the internal structure</b> attribute displays the internal logic
+        for components that provide that view.
+      </p>
+      <p>
+        These components model digital logic, not electrical characteristics or physical timing.
+        Refer to the manufacturer's data sheet for the exact pinout, truth table, operating limits,
+        and other device-specific details.
+      </p>
+      <h2>Available models</h2>
+      <table border="1" cellpadding="4">
+        <thead>
+          <tr><th>Model</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>7400</code></td><td>quad 2-input NAND gate</td></tr>
+          <tr><td><code>7402</code></td><td>quad 2-input NOR gate (right-to-left)</td></tr>
+          <tr><td><code>7404</code></td><td>hex inverter</td></tr>
+          <tr><td><code>7408</code></td><td>quad 2-input AND gate</td></tr>
+          <tr><td><code>7410</code></td><td>triple 3-input NAND gate</td></tr>
+          <tr><td><code>7411</code></td><td>triple 3-input AND gate</td></tr>
+          <tr><td><code>7413</code></td><td>dual 4-input NAND gate(Schmitt trigger)</td></tr>
+          <tr><td><code>7414</code></td><td>hex inverter (Schmitt trigger)</td></tr>
+          <tr><td><code>7418</code></td><td>dual 4-input NAND gate(Schmitt trigger)</td></tr>
+          <tr><td><code>7419</code></td><td>hex inverter (Schmitt trigger)</td></tr>
+          <tr><td><code>7420</code></td><td>dual 4-input NAND gate</td></tr>
+          <tr><td><code>7421</code></td><td>dual 4-input AND gate</td></tr>
+          <tr><td><code>7424</code></td><td>quad 2-input NAND gate (Schmitt trigger)</td></tr>
+          <tr><td><code>7427</code></td><td>triple 3-input NOR gate</td></tr>
+          <tr><td><code>7430</code></td><td>single 8-input NAND gate</td></tr>
+          <tr><td><code>7432</code></td><td>quad 2-input OR gate</td></tr>
+          <tr><td><code>7434</code></td><td>hex buffer gate</td></tr>
+          <tr><td><code>7436</code></td><td>quad 2-input NOR gate</td></tr>
+          <tr><td><code>7438</code></td><td>quad 2-input NAND gate (open-collector)</td></tr>
+          <tr><td><code>7442</code></td><td>BCD to decimal decoder</td></tr>
+          <tr><td><code>7443</code></td><td>Excess-3 to decimal decoder</td></tr>
+          <tr><td><code>7444</code></td><td>Gray to decimal decoder</td></tr>
+          <tr><td><code>7447</code></td><td>BCD to 7-segment decoder</td></tr>
+          <tr><td><code>7451</code></td><td>dual AND-OR-INVERT gate</td></tr>
+          <tr><td><code>7454</code></td><td>Four wide AND-OR-INVERT gate</td></tr>
+          <tr><td><code>7458</code></td><td>dual AND-OR gate</td></tr>
+          <tr><td><code>7464</code></td><td>4-2-3-2 AND-OR-INVERT gate</td></tr>
+          <tr><td><code>7474</code></td><td>dual D-Flipflops with preset and clear</td></tr>
+          <tr><td><code>7476</code></td><td>dual J-K Flipflops with preset and clear</td></tr>
+          <tr><td><code>7485</code></td><td>4-bit magnitude comparator</td></tr>
+          <tr><td><code>7486</code></td><td>quad 2-input XOR gate</td></tr>
+          <tr><td><code>7487</code></td><td>4-bit True/complement, zero/one elements</td></tr>
+          <tr><td><code>7493</code></td><td>4-bit binary ripple counter</td></tr>
+          <tr><td><code>74125</code></td><td>quad bus buffer, three-state outputs, negative enable</td></tr>
+          <tr><td><code>74138</code></td><td>3-line to 8-line decoder</td></tr>
+          <tr><td><code>74139</code></td><td>Dual 2-line to 4-line decoder</td></tr>
+          <tr><td><code>74151</code></td><td>8-line to 1 line data selector</td></tr>
+          <tr><td><code>74153</code></td><td>dual 4-line to 1 line data selector</td></tr>
+          <tr><td><code>74157</code></td><td>quad 2-line to 1 line data selector</td></tr>
+          <tr><td><code>74158</code></td><td>quad 2-line to 1 line data selector, inverted output</td></tr>
+          <tr><td><code>74161</code></td><td>4-bit sync counter with async clear</td></tr>
+          <tr><td><code>74163</code></td><td>4-bit sync counter with sync clear</td></tr>
+          <tr><td><code>74164</code></td><td>8-bit serial-to-parallel shift register</td></tr>
+          <tr><td><code>74165</code></td><td>8-bit parallel-to-serial shift register</td></tr>
+          <tr><td><code>74166</code></td><td>8-bit parallel-to-serial shift register with asynchronous clear</td></tr>
+          <tr><td><code>74173</code></td><td>4-bit D-type registers with 3-state outputs</td></tr>
+          <tr><td><code>74175</code></td><td>quad D-flipflop, asynchronous reset</td></tr>
+          <tr><td><code>74181</code></td><td>arithmetic logic unit</td></tr>
+          <tr><td><code>74182</code></td><td>look-ahead carry generator</td></tr>
+          <tr><td><code>74192</code></td><td>4-bit up/down decade counter</td></tr>
+          <tr><td><code>74193</code></td><td>4-bit up/down binary counter</td></tr>
+          <tr><td><code>74194</code></td><td>4-bit bidirectional universal shift register</td></tr>
+          <tr><td><code>74240</code></td><td>octal buffers with three-state inverted outputs</td></tr>
+          <tr><td><code>74241</code></td><td>octal buffers with three-state outputs and complementary enables</td></tr>
+          <tr><td><code>74244</code></td><td>octal buffers with three-state outputs</td></tr>
+          <tr><td><code>74245</code></td><td>octal bus transceivers with three-state outputs</td></tr>
+          <tr><td><code>74266</code></td><td>quad 2-input XNOR gate (open-collector)</td></tr>
+          <tr><td><code>74273</code></td><td>octal D-Flipflop with clear</td></tr>
+          <tr><td><code>74283</code></td><td>4-bit binary full adder</td></tr>
+          <tr><td><code>74299</code></td><td>8-bit universal shift register with three-state outputs</td></tr>
+          <tr><td><code>74377</code></td><td>octal D-Flipflop with enable</td></tr>
+          <tr><td><code>74381</code></td><td>arithmetic logic unit (ALU)</td></tr>
+          <tr><td><code>74541</code></td><td>Octal buffers with three-state outputs</td></tr>
+          <tr><td><code>74670</code></td><td>4-by-4 register file with three-state outputs</td></tr>
+          <tr><td><code>747266</code></td><td>quad 2-input XNOR gate</td></tr>
+        </tbody>
+      </table>
+      <p><b>Back to</b> <a href="../index.html">Library Reference</a></p>
+    </div>
+  </body>
+</html>

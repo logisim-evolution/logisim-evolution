@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-06T07:26:01.212000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Imprimer
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Imprimer
+      </h1>
+      <p>
+        Lorsque vous choisissez <b class=menu>|&nbsp;Imprimer ...&nbsp;|</b>, Logisim affiche une boîte de dialogue permettant de configurer ce qui est imprimé.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/menu-4-printertab.png" alt="#########">
+      </p>
+      <h2>
+        Configuration de l'impression
+      </h2>
+      <ul>
+        <li>
+          <b>Circuits:</b> Une liste où vous pouvez sélectionner un ou plusieurs circuits à imprimer. (Les circuits vides ne sont pas affichés comme options.) Logisim imprimera un circuit par page. Si le circuit est trop grand pour la page, l'image sera réduite pour s'adapter.
+        </li>
+        <li>
+          <b>Entête:</b> Texte qui devrait apparaître centré en haut de chaque page. Les substitutions suivantes seront apportées au texte.
+          <blockquote>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <tt>%n</tt>
+                  </td>
+                  <td>
+                    Nom du circuit sur la page
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <tt>%p</tt>
+                  </td>
+                  <td>
+                    Numéro de page
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <tt>%P</tt>
+                  </td>
+                  <td>
+                    Nombre de page total
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <tt>%%</tt>
+                  </td>
+                  <td>
+                    Un seul signe de pourcentage ('%')
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </blockquote>
+        </li>
+        <li>
+          <b>Faire pivoter pour s'adapter:</b> Si cette case est cochée, lorsque le circuit est trop grand pour tenir sur la page, Logisim fera pivoter chaque circuit de 90 degrés afin de réduire le besoin de réduction de l'image.
+        </li>
+        <li>
+          <b>Vue de l'impression:</b> Modifie le style de l'image produite avec les informations d'état ou seulement le schéma.        <p align="center">nter>
+          <img src="../../../../img-guide/exportex0.png" alt="#########">
+        </p>
+		<p>Cette option est aussi disponible dans les "<a href="../prefs/pref-layout.html">préférences d'application</a>" dans l'onglet disposition. Cela modifiera l'affichage dans l'espace de travail.</p>
+        </li>
+      </ul>
+      <p>
+        Après avoir cliqué sur <b class="button">&nbsp;D'accord&nbsp;</b>, Logisim affichera la boîte de dialogue standard de mise en page avant d’imprimer les circuits.
+      </p>
+    </div>
+  </body>
+</html>

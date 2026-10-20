@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Slider</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/slider.png" alt="Slider icon"
+            width="32" height="32" align="middle"> <em>Slider</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output-Extra</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Outputs an unsigned value selected by dragging the slider knob. For a width of <var>n</var>
+        bits, the output ranges from 0 through 2<sup><var>n</var></sup> − 1. The current value is
+        displayed using the selected radix.
+      </p>
+
+      <h2>Pins</h2>
+      <p>
+        The component has one output. Its width is selected by <q>Data Bits</q> and can range from
+        1 through 8 bits.
+      </p>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Facing</dt>
+        <dd>The direction in which the component faces.</dd>
+        <dt>Data Bits</dt>
+        <dd>The bit width of the output, from 1 through 8 bits.</dd>
+        <dt>Radix</dt>
+        <dd>The radix used to display the current value.</dd>
+        <dt>Color</dt>
+        <dd>The color used to fill the slider body.</dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+        <dt>Label Visible</dt>
+        <dd>Controls whether the label is displayed.</dd>
+        <dt>Direction</dt>
+        <dd>
+          Selects whether values increase from left to right or from right to left. Changing this
+          attribute preserves the current value by moving the knob to the mirrored position.
+        </dd>
+      </dl>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>Drag the slider knob to select the output value.</p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>

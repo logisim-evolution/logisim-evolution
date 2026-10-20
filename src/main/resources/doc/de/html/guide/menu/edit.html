@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-07T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Das Bearbeiten menü
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Das Bearbeiten menü
+      </h1>
+      <dl>
+        <dt>
+          <strong><i>XX</i> zurücknehmen</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-Z</b>
+        </dt>
+        <dd>
+          <p>
+            Nimmt die zuletzt vorgenommenen Änderungen zurück, die sich darauf beziehen, wie die Schaltung gespeichert werden würde. Beachten Sie, daß dies keine Änderungen am Zustand der Schaltung einschließt (wie mit dem Schaltwerkzeug durchgeführte Änderungen).
+          </p>
+        </dd>
+		 <dt>
+          <strong>Wiederherstellen <i>XX</i></strong>&nbsp;&nbsp;<b class="tkeybd">Strg-R</b>
+        </dt>
+        <dd>
+          <p>
+            Permets de revenir sur une annulation du menu précédent.
+          </p>
+        </dd>
+        <dt>
+          <strong>Ausschneiden</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-X</b>
+        </dt>
+        <dd>
+          <p>
+            Entfernt die aktuell ausgewählten Elemente der Schaltung und platziert diese in der Zwischenablage von Logisim.
+          </p>
+          <p>
+            <b class=note>Hinweis:</b> Diese Zwischenablage von Logisim wird unabhängig von der Zwischenablage von Windows verwaltet, was bedeutet, daß das Ausschneiden/Kopieren/Einfügen nicht zwischen Logisim und anderen Programmen funktioniert, noch nicht einmal zwischen verschiedenen Instanzen von Logisim. Wenn aber verschiedene Projekte in ein und demselben Logisim-Prozess geöffnet sind, dann sollte das Ausschneiden/Kopieren/Einfügen zwischen diesen Projekten möglich sein.
+          </p>
+        </dd>
+        <dt>
+          <strong>Kopieren</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-C</b>
+        </dt>
+        <dd>
+          <p>
+            Kopiert die aktuell ausgewählten Elemente der Schaltung in die Zwischenablage von Logisim. (Beachten Sie die Hinweise unter dem Punkt Ausschneiden.)
+          </p>
+        </dd>
+        <dt>
+          <strong>Einfügen</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-V</b>
+        </dt>
+        <dd>
+          <p>
+            Übernimmt den Inhalt der Zwischenablage von Logisim als aktuelle Auswahl in die Schaltung. (Beachten Sie die Hinweise unter dem Punkt Ausschneiden.)
+          </p>
+          <p>
+            Die eingefügten Elemente werden nicht unmittelbar eingefügt, vielmehr erscheinen Sie als hellgraue Auswahl. Die Elemente werden erst dann in die Schaltung ``eingefügt'', wenn Sie die Auswahl verschieben oder ändern, so daß die Elemente sich nicht mehr innerhalb der Auswahl befinden.
+          </p>
+          <p>
+            Der Grund für dieses Verhalten liegt in einer anderen Eigenschaft von Logisim: Logisim muß alle Verbindungsleitungen unmittelbar zusammenführen, sobald diese in eine Schaltung eingefügt werden, und dies ändert die bereits in der Schaltung befindlichen Leitungen. Aber wenn Sie Leitungen aus der Zwischenablage einfügen, möchten Sie diese eventuell an einer anderen Stelle einfügen, und das unmittelbare Zusammenführen könnte Ihren Vorstellungen widersprechen.
+          </p>
+        </dd>
+        <dt>
+          <strong>Löschen</strong>&nbsp;&nbsp;<b class="tkeybd">Löschen</b>
+        </dt>
+        <dd>
+          <p>
+            Entfernt alle Elemente der aktuellen Auswahl, ohne diese in die Zwischenablage zu übernehmen.
+          </p>
+        </dd>
+        <dt>
+          <strong>Duplizieren</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-D</b>
+        </dt>
+        <dd>
+          <p>
+            Erstellt eine Kopie aller Elemente in der aktuellen Auswahl. Der Effekt ist derselbe, wie das Ausführen von Kopieren und Einfügen, abgesehen davon, daß hier die Zwischenablage nicht verändert wird.
+          </p>
+        </dd>
+        <dt>
+          <strong>Alles auswählen</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-A</b>
+        </dt>
+        <dd>
+          <p>
+            Wählt alle Elemente der aktuellen Schaltung aus.
+          </p>
+        </dd>
+        <dt>
+          <strong>Auswahl anheben</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-Oben</b>
+        </dt>
+        <dd>
+          <p>
+            Diese Funktion ist nur bei der Bearbeitung des Aussehens einer Schaltung verfügbar, und erlaubt das Anheben der ausgewählten Objekte, so daß diese über anderen, überlappenden Objekten gezeichnet werden. Wenn das ausgewählte Objekt durch mehrere andere Objekte verdeckt ist, so wird es mit jedem Aufruf dieser Funktion nur um eine Ebene angehoben. Verwenden Sie die Funktion mehrmals, bis das Objekt so dargestellt wird, wie Sie es wünschen.
+          </p>
+          <p>
+            (Festzustellen, ob zwei beliebige Objekte überlappen, ist schwierig. Logisim benutzt einen Algorithmus zur zufälligen Auswahl mehrerer Punkte in jedem der beiden Objekte, um dann zu überprüfen, ob der Punkt sich auch in dem anderen Objekt befindet. Wenn die Überlappung nur klein ist, weniger als 5% von beiden Objekten, kann diese Methode versagen.)
+          </p>
+        </dd>
+        <dt>
+          <strong>Auswahl absenken</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-Unten</b>
+        </dt>
+        <dd>
+          <p>
+            Diese Funktion ist nur bei der Bearbeitung des Aussehens einer Schaltung verfügbar, und erlaubt das Absenken der ausgewählten Objekte, so daß diese unter anderen, überlappenden Objekten gezeichnet werden. Wenn das ausgewählte Objekt durch mehrere andere Objekte überschneidet, so wird es mit jedem Aufruf dieser Funktion nur um eine Ebene abgesenkt. Verwenden Sie die Funktion mehrmals, bis das Objekt so dargestellt wird, wie Sie es wünschen.
+          </p>
+        </dd>
+        <dt>
+          <strong>Nach oben</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-Umschalt-Oben</b>
+        </dt>
+        <dd>
+          <p>
+            Diese Funktion ist nur bei der Bearbeitung des Aussehens einer Schaltung verfügbar, und erlaubt das Anheben der ausgewählten Objekte, so daß diese über allen anderen, überlappenden Objekten gezeichnet werden. (Ankerpunkte und Pins sind Ausnahmen — diese sind immer ganz oben.)
+          </p>
+        </dd>
+        <dt>
+          <strong>Nach unten</strong>&nbsp;&nbsp;<b class="tkeybd">Strg-Umschalt-Unten</b>
+        </dt>
+        <dd>
+          <p>
+            Diese Funktion ist nur bei der Bearbeitung des Aussehens einer Schaltung verfügbar, und erlaubt das Absenken der ausgewählten Objekte, so daß diese unter allen anderen, überlappenden Objekten gezeichnet werden.
+          </p>
+        </dd>
+        <dt>
+          <strong>Knoten hinzufügen</strong>
+        </dt>
+        <dd>
+          <p>
+            Diese Funktion ist nur bei der Bearbeitung des Aussehens einer Schaltung verfügbar, und wenn ein Punkt auf einer Linie, einem Linienzug oder Vieleck ausgewählt ist. Dann fügt diese Funktion einen neuen Knotenpunkt zu dieser Struktur hinzu. Vor dem Hinzufügen wird der Punkt als Rhombus gezeichnet.
+          </p>
+        </dd>
+        <dt>
+          <strong>Knoten entfernen</strong>
+        </dt>
+        <dd>
+          <p>
+            Diese Funktion ist nur bei der Bearbeitung des Aussehens einer Schaltung verfügbar, und wenn ein Punkt auf einer Linie, einem Linienzug oder Vieleck ausgewählt ist. Dann löscht diese Funktion den aktuell markierten Knotenpunkt. Vor dem Entfernen wird der ausgewählte Knotenpunkt als Rhombus in einem Quadrat angezeigt. Logisim läßt es nicht zu, einen Knotenpunkt aus einem Vieleck mit nur drei Punkten oder einem Linienzug mit nur zwei Punkten zu entfernen.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <strong>Weiter:</strong> <a href="project.html">Das Projektmenü</a>.
+      </p>
+    </div>
+  </body>
+</html>

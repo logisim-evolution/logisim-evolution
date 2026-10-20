@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2021-05-22T11:23:21.315000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      工具栏
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1 id="tb1">
+        工具栏
+      </h1>
+      <p>
+        Logisim-evolution 有多个工具栏。主工具栏是<a href="../opts/opts-toolbar.html">可配置的</a>，可快速访问最常用的工具。这些工具在资源管理器窗格中也始终可用。
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tools10.png" alt="#########"><br>
+        布局视图中的主工具栏
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tools11.png" alt="#########"><br>
+        外观视图中的主工具栏
+      </p>
+      <p>
+        资源管理器窗格顶部还会根据当前视图显示不同的辅助工具栏，如下所示。
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tools31.png" alt="#########">  <img class="notscal" src="../../../../img-guide/tools32.png" alt="#########">
+      </p>
+      <h2 id="tb2">
+        主工具栏
+      </h2>
+      <p>
+        主工具栏会随当前编辑视图切换：在布局视图中显示电路设计工具，在<a href="../subcirc/sub-personalise.html">外观视图</a>中显示符号绘图工具。
+      </p>
+      <h3>
+        布局视图中的工具栏
+      </h3>
+      <p>
+        在布局视图中，可以通过 <b class="menu">| 项目 |</b> → <b class="menu">| 选项 |</b> 菜单中的 <b class="menu">| 工具栏 |</b> 选项卡自定义主工具栏。具体配置见<a href="../opts/opts-toolbar.html">工具栏选项卡</a>页面。下面简要介绍默认工具栏中的常用工具；关于所有工具的更多信息，请参阅<a href="../../libs/index.html">库参考</a>。
+      </p>
+      <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/base/poke.html"><img class="inbullet" src="../../../../img-guide/toolpoke.png" alt="手形" border="1"></a>
+            </td>
+            <td>
+              <strong>手形工具：</strong> <b class="tkeybd">Ctrl-1</b> 在仿真时操作组件或查看当前值。例如，单击输入引脚、按钮或开关可以改变其值；单击导线可以显示该导线承载的信号值。更多信息请参阅<a href="../../libs/base/index.html">基础库</a>中的<a href="../../libs/base/poke.html">手形工具</a>。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/base/edit.html"><img class="inbullet" src="../../../../img-guide/toolselect.png" alt="#########" border="1"></a>
+            </td>
+            <td>
+              <strong>编辑工具：</strong> <b class="tkeybd">Ctrl-2</b> 设计电路时最常用的工具，用于选择、移动组件，也可从引脚或导线端点拖出新导线。更多信息请参阅<a href="../../libs/base/index.html">基础库</a>中的<a href="../../libs/base/edit.html">编辑工具</a>。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/base/wiring.html"><img class="inbullet" src="../../../../img-guide/toolcabel.png" alt="#########" border="1"></a>
+            </td>
+            <td>
+              <strong>布线工具：</strong> <b class="tkeybd">Ctrl-3</b> 专门用于在画布中绘制导线线段。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/base/text.html"><img class="inbullet" src="../../../../img-guide/tooltext.png" alt="#########" border="1"></a>
+            </td>
+            <td>
+              <strong>文本工具：</strong> <b class="tkeybd">Ctrl-4</b> 在电路图中放置文本，并修改组件标签。更多信息请参阅<a href="../../libs/base/index.html">基础库</a>中的<a href="../../libs/base/text.html">文本工具</a>。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/wiring/pin.html">
+			  <img class="inbullet" src="../../../../img-guide/toolpininput.png" alt="toolpininput.png" border="1">
+			  <img class="inbullet" src="../../../../img-guide/toolpinoutput.png" alt="toolpinoutput.png" border="1"></a>
+            </td>
+            <td>
+              <strong>引脚工具：</strong> <b class="tkeybd">Ctrl-5 / Ctrl-6</b> 分别放置输入引脚和输出引脚。引脚的功能和属性详见<a href="../../libs/wiring/index.html">线路库</a>中的<a href="../../libs/wiring/pin.html">引脚</a>页面。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <a href="../../libs/gates/not.html"><img class="inbullet" src="../../../../img-guide/toolnotgate.png" alt="notGate" border="1"></a>
+			  <a href="../../libs/gates/basic.html"><img class="inbullet" src="../../../../img-guide/toolandgate.png" alt="andGate.png" border="1"></a>
+            </td>
+            <td>
+              <strong>逻辑门工具：</strong> <b class="tkeybd">Ctrl-7 / Ctrl-8 / Ctrl-9 / Ctrl-0</b> 可快速放置非门、与门、或门、异或门等常用逻辑门。更多逻辑门请参阅<a href="../../libs/gates/index.html">逻辑门库</a>。
+            </td>
+          </tr>
+         <tr>
+            <td class="toolslist" valign="top">
+             <a href="../../libs/mem/flipflops.html"><img class="inbullet" src="../../../../img-guide/tooldflipflop.png" alt="tooldflipflop.png" border="1"></a>
+            </td>
+            <td>
+              <strong>D 触发器工具：</strong> 在电路图中放置 D 触发器。D 触发器在<a href="../../libs/mem/flipflops.html">触发器</a>页面中介绍。
+            </td>
+          </tr>
+         <tr>
+            <td class="toolslist" valign="top">
+               <a href="../../libs/mem/register.html"><img class="inbullet" src="../../../../img-guide/toolregister.png" alt="toolregister.png" border="1"></a>
+            </td>
+            <td>
+              <strong>寄存器工具：</strong> 在电路图中放置寄存器。寄存器在<a href="../../libs/mem/register.html">寄存器</a>页面中介绍。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>
+        外观视图中的工具栏
+      </h3>
+      <p>
+        在外观视图中，可以绘制当前电路作为子电路时显示的符号。这个工具栏提供形状、文字、端口与动态组件等绘图工具；更多使用信息请参阅<a href="../subcirc/sub-personalise.html">自定义外观</a>。
+      </p>
+      <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/toolselect.png" alt="toolselect.png" border="1">
+            </td>
+            <td>
+              <strong>选择工具：</strong> 选择、移动、复制、粘贴外观符号中的对象。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooltext.png" alt="tooltext.png" border="1">
+            </td>
+            <td>
+              <strong>文本工具：</strong> 插入或编辑外观中的文本。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawline.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>线段工具：</strong> 绘制直线段。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawcurv.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>曲线工具：</strong> 绘制贝塞尔曲线。第一次 <b class="tkeybd">单击</b> 并拖动确定起点和起始方向，第二次 <b class="tkeybd">单击</b> 并拖动确定终点和曲率。单击曲线会显示控制点；按住 <b class="tkeybd">Shift</b> 调整中间控制点可保持曲线对称；按住 <b class="tkeybd">Alt</b> 单击中间控制点可让曲线穿过该控制点。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawplin.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>折线工具：</strong> 绘制一系列相连线段。每次 <b class="tkeybd">单击</b> 添加一个顶点，<b class="tkeybd">双击</b> 结束绘制。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawrect.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>矩形工具：</strong> 拖动对角线绘制矩形；按住 <b class="tkeybd">Shift</b> 可绘制正方形。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawrrct.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>圆角矩形工具：</strong> 拖动对角线绘制圆角矩形；按住 <b class="tkeybd">Shift</b> 可绘制圆角正方形。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawoval.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>椭圆工具：</strong> 拖动外接矩形绘制椭圆；按住 <b class="tkeybd">Shift</b> 可绘制圆。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawpoly.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>多边形工具：</strong> 逐点绘制多边形。每次 <b class="tkeybd">单击</b> 添加一个顶点，<b class="tkeybd">双击</b> 结束绘制。
+            </td>
+			</tr>
+			<tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/tooldrawdyncomp.png" alt="#########" border="1">
+            </td>
+
+
+			<td>
+              <strong>动态组件：</strong> 在子电路外观中放置可反映内部组件状态的动态组件。<b class="tkeybd">单击</b> 后会打开组件选择窗口。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="tb4">
+        资源管理器窗格顶部工具栏
+      </h2>
+      <p>
+        资源管理器窗格顶部会根据当前视图显示两组按钮。电路列表视图中显示项目管理按钮，主要对应 <a href="../menu/project.html"><b class="menu">| 项目 |</b></a> 菜单中的操作。
+      </p>
+      <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/projadd.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>添加电路：</strong> 向项目中添加一个新的空电路。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/projvhdl.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>添加 VHDL 实体：</strong> 向项目中添加一个新的 VHDL 实体。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/projup.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>上移当前电路：</strong> 在项目层次结构中上移当前电路。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/projdown.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>下移当前电路：</strong> 在项目层次结构中下移当前电路。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/projdesign.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>切换布局/外观视图：</strong> 在编辑电路布局和编辑电路外观之间切换。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/projdel.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>删除当前电路：</strong> 从项目中删除当前电路。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        仿真树视图中显示仿真控制按钮，对应 <a href="../menu/simulate.html"><b class="menu">| 仿真 |</b></a> 菜单中的操作。
+      </p>
+      <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/simplay.png" alt="#########" border="1">
+			  <img class="inbullet" src="../../../../img-guide/simplay1.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>运行/停止仿真：</strong> <b class="tkeybd">Ctrl-E</b> 连续运行或停止仿真器。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/simstep.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>单步仿真：</strong> <b class="tkeybd">Ctrl-I</b> 让仿真向前传播一步。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/simtplay.png" alt="#########" border="1">
+			  <img class="inbullet" src="../../../../img-guide/simtplay1.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>启用/禁用自动节拍：</strong> <b class="tkeybd">Ctrl-K</b> 启用或停止时钟自动节拍。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/simalfcycle.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>步进半个时钟周期：</strong> <b class="tkeybd">Ctrl-T</b> 让时钟前进半个周期，也就是一次电平翻转。
+            </td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="inbullet" src="../../../../img-guide/simfullcycle.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>步进一个时钟周期：</strong> <b class="tkeybd">F2</b> 让时钟前进一个完整周期。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        更多信息请参阅<a href="../menu/simulate.html">仿真菜单</a>。
+      </p>
+      <p>
+        <b>下一节：</b> <a href="gui-attribut.html">属性表</a>。
+      </p>
+    </div>
+  </body>
+</html>

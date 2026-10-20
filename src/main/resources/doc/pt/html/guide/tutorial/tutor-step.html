@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Tutorial: modo passo a passo
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <b>Anterior:</b> <a href="tutor-test.html">Passo 4: Testar seu circuito </a>
+      </p>
+      <h2>
+        Passo 5: O modo passo a passo
+      </h2>
+      <p>
+        Em determinadas circunstâncias de estudo ou em caso de problema sutil relacionado com a propagação dos sinais, é muito útil poder observar estes fenómenos. Logisim simula de uma forma ligeiramente ingénua a propagação em Portas. (os Portas têm todos o mesmo atraso de propagação), mas ainda permite observar os principais problemas relacionados com estes parâmetros.
+      </p>
+      <p>
+        Pour l'exemple, je ne vous donne que les combinaisons de touches nécessaires pour cet exercice ; sachez que pour chaque combinaison de touches, il y a un sous-menu équivalent dans le menu  <b class=menu>|&nbsp;Simular&nbsp;|</b>.
+      </p>
+      <p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-step1.png" alt="#########">
+      </p>
+      </p>
+      <p>
+	    Se construir o circuito acima verá que cada alteração de 0 para 1 da entrada <var>e</var> perturba o flip-flop D.
+      </p>
+      <p>
+	    Para observar o fenômeno, proceda da seguinte forma : Traga o circuito para o estado em que <var>e</var> é 0. Depois faça <b class="tkeybd">Ctrl-E</b> para desactivar a simulação automática. Carregue na entrada e para a mudar para 1. Nada acontece, é normal. Em seguida, use a combinação <b class="tkeybd">Ctr-I</b> e observe. Faça-o tantas vezes quantas forem necessárias.
+      </p>
+      <p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-step2.png" alt="#########">
+      </p>
+      </p>
+      <p>
+        Você notará círculos azuis em algumas extremidades da linha, estes indicam que há uma mudança no estado desta linha nesta etapa da simulação. Você pode observar a breve passagem por 1 da saída da porta AND.
+      </p>
+      <p>
+        Este método também permite observar a operação assíncrona do contador ou a propagação do Carry em um Somador.
+      </p>
+      <p align="center">
+        <img src="../../../../img-guide/tutorial-step3.gif" alt="#########">
+      </p>
+      <p>
+        Agora que já terminou o tutorial, pode experimentar o Logisim construindo os seus próprios circuitos. Se quiseres construir circuitos com características mais sofisticadas, então deves navegar pelo resto do sistema de ajuda para ver o que mais podes fazer. Logisim é um programa poderoso, que te permite construir e testar circuitos enormes; este processo de aprendizagem passo a passo apenas risca a superfície.
+      </p>
+      <p>
+        <b>Voltar para</b> <a href="../index.html">Guia do Usuárior</a>
+      </p>
+    </div>
+  </body>
+</html>

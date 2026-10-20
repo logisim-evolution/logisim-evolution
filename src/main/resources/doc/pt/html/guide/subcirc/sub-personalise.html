@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-01-16T07:25:12.532000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Personalizar a aparência
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Personalizar a aparência
+      </h1>
+      <p>
+        A forma padrão é muito útil, e de fato Logisim existiu por muitos anos, sem outra opção. Se, no entanto, preferir que o subcircuito seja desenhado de forma diferente, você poderá selecionar <b class=menu>|&nbsp;projeto&nbsp;|</b>→<b class=menu>|&nbsp;Editar Forma do Circuito&nbsp;|</b>, e Logisim mudará da interface de "<i>edição de desenho</i>" para a interface de "<i>edição de aparência</i>" do circuito. Você também pode clicar no ícone na extrema direita (<img class="icontxt" src="../../../../img-guide/projdesign.png" alt="#########" width=16 height=16>) de la <a href="../gui/gui-toolsbar.html#tb4"> da barra de ferramentas</a> do Explorer.<br>		
+		Abaixo, editaremos a aparência do multiplexador 2:1, para que seja desenhada como de costume por um trapézio, em vez de um retângulo.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-5-custom-appear.png" alt="#########">
+      </p>
+      <p>
+        Ao alterar a aparência do multiplexador 2:1 desenhado acima, você provavelmente terá que reajustar a fiação dos circuitos que utilizam o multiplexador. Depois disso, o layout do multiplexador 4:1 se parece naturalmente com este.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-6-custom-layout.png" alt="#########">
+      </p>
+      <p>
+        O editor de forma (aparência) é como um programa para desenho tradicional, mas há alguns símbolos especiais para indicar como o desenho funcionará quando colocado em um <i>layout</i> de circuito. Esses símbolos especiais não poderão ser removidos.
+      </p>
+      </p>
+      <ul>
+        <li>
+          <p>
+            O círculo verde com uma linha que vem de fora, chamaremos de <q>âncora.</q> Há exatamente uma âncora em cada subcircuito. Cada componente em um circuito tem um único ponto para identificar a sua localização; um usuário verá isso ao criar um novo componente. O clique do mouse identificará apenas um local e, o componente será colocado em relação a ele (geralmente com a saída principal na posição do mouse). A âncora identificará a localização relativa ao desenho global do mouse quando o subcircuito for criado.
+          </p>
+          <p>
+            A âncora também identificará a direção em sua aparência, conforme indicado pela direção da linha de pontos da âncora de seu círculo. Ao colocar um subcircuito em um <i>layout</i>, o usuário poderá mudar a face do subcircuito, a âncora indicará a direção em que a aparência será orientada. No nosso exemplo, a âncora será voltada para o leste, e cada instância do subcircuito no multiplexador 4:1 também estará voltada para o leste, então eles serão todos desenhados com a mesma orientação que a aparência do multiplexador 2:1.</b>
+          </p>
+        </li>
+        <li>
+          <p>
+            Os círculos azuis e quadrados com pontos são as <q>portas</q> dos subcircuitos Haverá exatamente tantas portas quantos os pinos de entrada e saída no circuito. Portas correspondentes às entradas serão desenhadas como quadrados, enquanto as portas correspondentes às saídas serão desenhados como círculos. Cada porta indicará como uma conexão para o circuito corresponderá a um pino de entrada ou saída dentro do <i>layout</i>.
+          </p>
+          <p>
+            Quando você selecionar uma porta, o Logisim indicará o pino correspondente fazendo sobressair um diagrama em miniatura do layout no canto inferior direito da janela, com o(s) pino(s) correspondente(s) desenhado(s) em azul. Isso não acontecerá quando todas as portas estiverem selecionados.
+          </p>
+        </li>
+      </ul>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-7-custom-layout.png" alt="#########">
+      </p>
+      <p>
+        Podemos mudar o zoom da imagem com uma <b class="tkeybd">Ctrl+Roda de rato</b> ou usando os botões da lupa ou o botão deslizante na parte inferior esquerda do espaço de trabalho. A taxa é exibida.
+      </p>
+      <p>
+      	A barra de ferramentas contém aquelas para adicionar formas adicionais, conforme listado abaixo com descrições de como as teclas (<b class="tkeybd">Ctrl,Alt,shift</b>) modificam o comportamento da ferramenta. Estas chaves podem ser combinadas umas com as outras.
+      </p>
+      <blockquote>
+        <b class="tkeybd">Ctrl</b>: alinha os pontos finais na grelha.<br>
+        <b class="tkeybd">Shift</b>: orientar as linhas num ângulo múltiplo de 45° ou tornar as figuras simétricas (quadrado, quadrado arredondado, círculo).<br>
+        <b class="tkeybd">Alt</b>: Tira os números do centro. 
+      </blockquote>
+      <p>
+        Abaixo está uma pequena apresentação de cada ferramenta.
+      </p>
+       <table class=toolslist>
+        <tbody>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/toolselect.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta de Seleção :</strong> Selecionar, mover, copiar, colar e formas.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/text.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta de Texto :</strong> Adicionar ou editar texto.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawline.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta da linha :</strong> Criar um segmento de linha.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawcurv.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta Curva :</strong> CCriar uma curva Bézier quadrática. Para o primeira arraste, onde você especificará os parâmetros da curva. Depois clique para indicar a localização de três pontos de controlo. <b class="tkeybd">shift</b> et click no ponto de controle central impõem uma curva simétrica. <b class="tkeybd">Alt</b> et click no ponto central desenha a curva através do ponto de controle (sob o mouse).
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawplin.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>ferramenta Polyline:</strong> Criar uma seqüência de linhas conectadas, cada  <b class="tkeybd">cliqk</b> inicia um novo segmento. Um <b class="tkeybd">duplo-click</b> termina a sequência.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawrect.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta retangular :</strong> Cria um rectângulo ou quadrado (<b class="tkeybd">Shift</b>) arrastando de um canto para o canto oposto.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawrrct.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta retangular :</strong> Cria um rectângulo ou quadrado (<b class="tkeybd">Shift</b>) com uma aresta arredondada arrastando de um canto para o canto oposto.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawoval.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta oval :</strong> Cria um círculo ou oval (<b class="tkeybd">Shift</b>) deslizando de um canto do seu contorno para o canto oposto.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawpoly.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta Polígono :</strong> Criar um polígono arbitrário. cada <b class="tkeybd">click</b> inicia um novo lado. Um <b class="tkeybd">duplo-click</b> termina a sequência.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=intxt src="../../../../img-guide/shownstate.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ferramenta de componente dinâmico :</strong> 
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <b>Próximo:</b> <a href="sub-debug.html">Depuração de subcircuitos. </a>.
+      </p>
+    </div>
+  </body>
+</html>

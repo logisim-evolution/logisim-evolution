@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-07T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Das Projektmenü
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Das Projektmenü
+      </h1>
+      <dl>
+        <dt>
+          <strong>Schaltung hinzufügen...</strong>
+        </dt>
+        <dd>
+          <p>
+            Fügt eine neue Schaltung in das aktuelle Projekt ein. Logisim wird darauf bestehen, dass Sie einen Namen für die neue Schaltung angeben. Der Name darf nicht mit einer im Projekt vorhandenen Schaltung übereinstimmen.
+          </p>
+        </dd>
+		<dt>
+          <strong>VHDL-Einheit hinzufügen...</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+		<dt>
+          <strong>VHDL-Einheit importieren...</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+        <dt>
+          <strong>Bibliothek laden</strong>
+        </dt>
+        <dd>
+          <p>
+		    Laden Sie eine  <a href="../gui/gui-explore.html">Bibliothek</a> in das Projekt. Sie können drei Arten von Bibliotheken laden, wie an anderer Stelle im <a href="../gui/gui-explore.html#lib">Benutzerhandbuch</a> erklärt wird.
+          </p>
+        </dd>
+        <dt>
+          <strong>Bibliotheken entfernen...</strong>
+        </dt>
+        <dd>
+          <p>
+            Entfernen Sie die aktuellen Buchhandlungen aus dem Projekt. Logisim erlaubt es nicht, die vom Projekt verwendeten Bibliotheken zu entladen, einschließlich der Bibliotheken mit Komponenten, die in den Schaltkreisen des Projekts erscheinen, sowie der Bibliotheken mit Werkzeugen, die in der Symbolleiste erscheinen oder mit der Maus abgebildet werden.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltung nach oben</strong>
+        </dt>
+        <dd>
+          <p>
+            Déplace le circuit actuellement affiché dans la liste des circuits du projet d'un niveau supérieur, comme indiqué dans la fenêtre d'exploration.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltung nach unten</strong>
+        </dt>
+        <dd>
+          <p>
+            Verschiebt den aktuell angezeigten Schaltkreis in der Liste der im Explorerfenster sichtbaren Projektschaltkreise um eine Zeile nach unten.
+          </p>
+        </dd>
+        <dt>
+          <strong>Als Hauptschaltung festlegen</strong>
+        </dt>
+        <dd>
+          <p>
+            Definieren Sie den aktuell angezeigten Schaltkreis als <b>Hauptkreis</b> des Projektes. Dieser Menüpunkt wird ausgegraut, wenn der aktuelle Schaltkreis bereits der Hauptschaltkreis des Projekts ist. Hauptschaltkreis: Bedeutet einfach, dass er beim Öffnen des Projekts zuerst angezeigt wird.
+        </dd>
+		<dt>
+          <strong>Schaltung entfernen</strong>
+        </dt>
+        <dd>
+          <p>
+            Entfernt den aktuell angezeigten Schaltkreis aus dem Projekt. Logisim verhindert das Löschen von Schaltkreisen, die als Unter-Schaltkreise verwendet werden und verhindert das Löschen des letzten Schaltkreises eines Projektes.
+          </p>
+        </dd>
+        <dt>
+          <strong>Aussehen wiederherstellen</strong>
+        </dt>
+        <dd>
+          <p>
+		    Wenn Sie das Erscheinungsbild der Schaltung verändert haben, kehrt dieser Menüpunkt zum Standarddesign zurück. Der Menüpunkt ist nur bei der Bearbeitung des Erscheinungsbildes der Schaltung aktiviert. Das Erscheinungsbild des Standarddesigns kann über die Eigenschaft <b class=propertie>Neues Aussehen</b> der Bibliothek geändert werden.
+          </p>
+        </dd>
+        <!--
+		<dt>
+          <strong>View Toolbox</strong>
+        </dt>
+        <dd>
+          <p>
+            Changes the explorer pane to displaying a list of the project's circuits and the libraries that have been loaded.
+          </p>
+        </dd>
+		-->
+		<!--
+        <dt>
+          <strong>View Simulation Tree</strong>
+        </dt>
+        <dd>
+          <p>
+            Changes the explorer pane to displaying the hierarchy of subcircuits in the current simulation.
+          </p>
+        </dd>
+		-->
+        <dt>
+          <strong>Schaltungslayout bearbeiten</strong>
+        </dt>
+        <dd>
+          <p>
+            Wechselt den Arbeitsbereich zur Anzeige der Schaltplanbearbeitung. Dieser Menüpunkt wird aktiviert, wenn der Arbeitsbereich den Erscheinungsbild-Editor anzeigt.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltungsaussehen bearbeiten</strong>
+        </dt>
+        <dd>
+          <p>
+            Ermöglicht es Ihnen, die Darstellung der Schaltung zu ändern, wenn sie als Teilschaltung in einer anderen Schaltung verwendet wird. Mit diesem Menüpunkt können Sie ein anderes Erscheinungsbild für den Subcircuit zeichnen. Ändert den Arbeitsbereich so, dass <a href="../subcirc/sub-appear.html">Erscheinungseditor.</a> angezeigt wird.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltung analysieren</strong>
+        </dt>
+        <dd>
+          <p>
+		    <b class=note>Hinweis:</b> Dieses Menü kann in einigen Versionen von logisim-evolution deaktiviert werden. Sie kann durch Kommandozeilenoptionen wieder aktiviert werden.<br>
+			Berechnet eine Wahrheitstabelle und boolesche Ausdrücke entsprechend der aktuellen Schaltung und zeigt sie im Fenster <a href="../analyze/index.html">kombinatorische Analyse</a> an. Der Analyseprozess ist nur für kombinatorische Schaltungen gültig. Eine vollständige Beschreibung des Analyseprozesses ist im Abschnitt <a href="../analyze/ana-open.html">Kombinatorische Analyse</a> beschrieben.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltungsstatistik ermitteln</strong>
+        </dt>
+        <dd>
+          <p>
+            Zeigt ein Dialogfeld mit Statistiken über die von der aktuell angezeigten Schaltung verwendeten Komponenten an. Der Dialog enthält eine fünfspaltige Tabelle:
+          </p>
+       <p align="center">
+            <img src="../../../img-guide/project-stat.png" alt="#########">
+          </p>
+          <ul>
+            <li>Bauteil: der Name der Komponente.
+            </li>
+            <li>Bibliothek: Name der Bibliothek, aus der die Komponente präsentiert wird.
+            </li>
+            <li>Einfach: die Anzahl, wie oft diese Komponente direkt in der angezeigten Schaltung erscheint.
+            </li>
+            <li>Eindeutig: Anzahl der Auftritte dieses Bauteils in der Schaltungshierarchie, wobei jeder Teilschaltkreis in der Hierarchie nur einmal gezählt wird.
+            </li>
+            <li>Rekursiv: Anzahl der Auftritte dieses Bauteils in der Schaltungshierarchie, wobei wir jeden Teilschaltkreis so oft zählen, wie er in der Hierarchie auftaucht.
+            </li>
+          </ul>
+          <p>
+		    Die Unterscheidung zwischen "Einfach" und "Rekursiv" ist einfacher zu erklären, wenn man den 4:1-Multiplexer betrachtet, der mit drei 2:1-Multiplexern aufgebaut ist, wie in Abschnitt <a href="../subcirc/sub-using.html">User Sub-Circuits</a>. Der 2:1-Multiplexer enthält zwei UND-Gatter (und die 4:1-Schaltung enthält keine), so dass die "eindeutige" Zahl, die die UND-Gatter zählt, 2 wäre; aber wenn Sie den 4:1-Multiplexer nach diesem Diagramm bauen würden, bräuchten Sie tatsächlich 2 UND-Gatter für jeden der drei 2:1-Multiplexer, so dass die "rekursive" Zahl 6 wäre.
+          </p>
+          <p>
+            Wenn Sie Schaltungen aus einer geladenen Logisim-Bibliothek verwenden, werden diese Komponenten als <q>"Black Boxes"</q> betrachtet: der Inhalt der Schaltungen der Bibliothek wird nicht in die eindeutigen und rekursiven Konten aufgenommen.
+          </p>
+        </dd>
+        <dt>
+          <strong>Optionen...</strong>
+        </dt>
+        <dd>
+          <p>
+		    Öffnet das Fenster von <a href="../opts/index.html">Projektoptionen</a>.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <b>Nächste:</b> <a href="simulate.html">Das Menü Simulieren</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Controlled Buffer/Inverter
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+	   <table>
+        <tbody>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/anscontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/anscontrolledinverter.png" alt="#########" height="32" width="32"><br>
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledinverter.png" alt="#########" height="32" width="32">
+            </td>
+            <td valign="center">
+              <h1>
+                <em>Controlled Buffer/Inverter</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Gates</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+			<td valign="top">
+              <table>
+                <tbody>
+				  <tr>
+				     <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anscontrolledbuffer.png" alt="#########" height="64" width="64">
+                    </td>
+					<td>
+                      <img class="appearancelibs" src="../../../../img-libs/anscontrolledinverter.png" alt="#########" height="64" width="64">
+                    </td>
+				  </tr>
+			
+                </tbody>
+              </table>
+			  </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The controlled buffer and inverter often called <em>three-state buffers/inverters</em>, each have a one-bit "control" input pin on the south side. The value at this control pin affects how the component behaves:
+      </p>
+      <ul>
+        <li>When the value on this pin is <b class="unov">1</b> then the component behaves just like the respective component a <a href="buffer.html">buffer</a> or a <a href="not.html">inverter</a> (NOT gate).
+        </li>
+        <li>When the value is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>) the component's output is floating (<b class="uvalue">U</b>).
+        </li>
+        <li>When the value is an error value (<b class="evalue">E</b>) (such as would occur when two conflicting values are being fed into the input) then the output is also an error value (<b class="evalue">E</b>).
+        </li>
+      </ul>
+	  <p>
+	    <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace" colspan="2">
+                Inputs
+              </th>
+              <th class="tspace" colspan="2">
+                Outputs
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+                In
+              </th>
+              <th class="tspace">
+                En.
+              </th>
+              <th class="tspace">
+                Buf.
+              </th>
+              <th class="tspace">
+                Inv.
+              </th>
+            </tr>
+            <tr>
+              <td class="tspace">
+                All
+              </td>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                All
+              </td>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                <b class="uvalue">U</b>
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                <b class="evalue">E</b>
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                All
+              </td>
+              <td class="tspace">
+                <b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  </p>
+      <p>
+        Controlled buffers can be useful when you have a wire (often called a <em>bus</em>) whose value should match the output of one of several components. By placing a controlled buffer between each component output and the bus, you can control whether that component's output is fed onto the bus or not.
+      </p>
+      <h2>
+        Pins (assuming component faces east, control line right-handed)
+      </h2>
+	  <div class="attliste">
+      <dl>
+        <dt class="lib">
+          West edge:
+        </dt>
+        <dd>
+          The component input that will be used to compute the output if the control input is <b class="unov">1</b>. Bit width matches  <b class="propertie">Data Bits</b> attribute.
+        </dd>
+        <dt class="lib">
+          South edge:
+        </dd>
+        <dd>
+          The component's control input. Bit width 1.
+        </dd>
+        <dt class="lib">
+          East edge:
+        </dt>
+        <dd>
+          The component's output, which will be floating (<b class="uvalue">U</b>) if the control input is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>), the error value (<b class="evalue">E</b>) if the control input is the error value (<b class="evalue">E</b>), and will be computed based on the west-side input if the control input is <b class="unov">1</b>.  Bit width matches  <b class="propertie">Data Bits</b> attribute.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        When the component is selected or being added <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits </b>attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt class="lib">
+          Facing
+        </dt>
+        <dd>
+          The direction of the component, its output relative to input.
+        </dd>
+        <dt class="lib">
+          Data Bits
+        </dt>
+        <dd>
+          The bit width of the component's inputs and outputs.
+        </dd>
+       <dt class="lib">
+          Gate Size
+        </dt>
+        <dd>
+          (Controlled inverter only) Determines whether to draw a larger or a smaller version of the component.
+        </dd>
+        <dt class="lib">
+          Control Line Location
+        </dt>
+        <dd>
+          The location of the control line, imagining we are facing the output from the input: If the component faces east and is <q>right-handed,</q> the control line is to the south; but if it is <q>left-handed,</q> the control line is to the north.
+        </dd>
+        <dt class="lib">
+          Label
+        </dt>
+        <dd>
+          The text within the label associated with the gate.
+        </dd>
+        <dt class="lib">
+          Label Font
+        </dt>
+        <dd>
+          The font with which to render the label.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        Allows the label associated with the gate to be edited.
+      </p>
+      <p>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
+      </p>
+    </div>
+  </body>
+</html>

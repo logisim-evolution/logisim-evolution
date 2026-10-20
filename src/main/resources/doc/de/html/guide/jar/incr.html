@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>Gray-Kode-Inkrementierer
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Gray-Kode-Inkrementierer</h1>
+
+<p>Jedes Bauelement in ein einer Bibliothek wird durch die Erstellung einer Unterklasse von <code>InstanceFactory</code> aus dem <code>com.cburch.logisim.instance</code> Paket definiert. Diese Unterklasse enthält den gesamten, benötigten Kode.</p>
+
+<p>(An dieser Stelle beschreiben wir die API der aktuellen Version von Logisim. Es gibt Bibliotheken, die für frühere Versionen von Logisim entwickelt wurden, wo Bauelemente durch die Definition von zwei Klassen erstellt wurden: eine Erweiterung von <code>Component</code> und eine Erweiterung von <code>ComponentFactory</code>. Die Version 2.3.0 führte die sehr viel einfachere <code>InstanceFactory</code>-API ein, die andere Methode ist seitdem veraltet.)</p>
+
+<p>Drei Pakete von Logisim definieren die meisten Klassen, die für die Erstellung von Bauelementbibliotheken benötigt werden.</p>
+<dl>
+
+<dt><code>com.cburch.logisim.instance</code></dt>
+<dd><p>Enthält Klassen, die speziellen Bezug zur Erstellung von Bauelementen haben, darunter die Klassen <code>InstanceFactory</code>, <code>InstanceState</code>, <code>InstancePainter</code> und <code>Instance</code>.</p></dd>
+
+<dt><code>com.cburch.logisim.data</code></dt>
+<dd><p>Enthält Klassen zu Datenelementen, die mit den Bauelementen verknüpft sind, wie die Klasse <code>Bounds</code> für begrenzende Rechtecke oder die Klasse  <code>Value</code> für die Werte, die auf einer Leitung existieren können.</p></dd>
+
+<dt><code>com.cburch.logisim.tools</code></dt>
+<dd><p>Enthält Klassen zur Definition von Bibliotheken.</p></dd>
+
+</dl>
+
+<h2>Über Gray-Kodes</h2>
+
+<p>Bevor wir weitergehen, soll an dieser Stelle kurz auf die Gray-Kodes eingegangen werden, auf denen die Beispiele aufbauen. Es ist nicht unbedingt wichtig zu verstehen, wie diese Beispiele im Detail funktionieren. Daher können Sie auch den folgenden Kode überspringen - natürlich auch dann, wenn Sie sich bereits mit Gray-Kodes auskennen.</p>
+
+<p>Der Gray-Kode (benannt nach Frank Gray) ist eine Methode eine Gruppe von <var>n</var>-Bits zu durchlaufen, wobei sich immer nur ein Bit pro Schritt ändert. Als Beispiel können Sie den folgenden 4-bit Gray-Kode betrachten.</p>
+
+<blockquote><table><tbody>
+<tr><td valign="top">000<u>0</u>
+<br>00<u>0</u>1
+<br>001<u>1</u>
+<br>0<u>0</u>10
+</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top">011<u>0</u>
+<br>01<u>1</u>1
+<br>010<u>1</u>
+<br><u>0</u>100
+</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top">110<u>0</u>
+<br>11<u>0</u>1
+<br>111<u>1</u>
+<br>1<u>1</u>10
+</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top">101<u>0</u>
+<br>10<u>1</u>1
+<br>100<u>1</u>
+<br><u>1</u>000
+</td></tr></tbody></table></blockquote>
+
+<p>In jeder Zeile ist jeweils das Bit unterstrichen, das sich im nächsten Schritt ändern wird. Zum Beispiel folgt auf 0000 der Wert 0001, in dem das letzte Bit umgeschaltet wurde, daher ist das letzte Bit unterstrichen.</p>
+
+<p>Keines der eingebauten Bauelemente in Logisim arbeitet mit Gray-Kodes. Aber manchmal sind Gray-Kodes für Elektroniker von Bedeutung. Ein solches Beispiel findet sich längs der Achsen von Karnaughdiagrammen.</p>
+
+<h2>GrayIncrementer</h2>
+
+<p>Dies ist ein minimales Beispiel zur Veranschaulichung der wesentlichen Bestandteile der Definition eines Bauelements. Dieses Bauelement ist ein Inkrementierer, das einen Wert von einem Mehrbit-Eingang nimmt und den nächsten Gray-Kode der Sequenz berechnet.</p>
+
+<pre>
+package com.cburch.gray;
+
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.InstanceFactory;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
+
+/** Dieses Bauelement nimmt einen Mehrbit-Wert und berechnet den darauf folgenden Wert aus
+ * im Gray-Kode. Zum Beispiel folgt auf 0100 der Wert 1100. */
+class GrayIncrementer extends InstanceFactory {
+    /* Beachten Sie, daß es keine Instanyvariablen gibt. Es wird nur eine Instanz dieser
+     * Klasse erzeugt, die alle Instanzen des Bauelements verwaltet. Alle
+     * Informationen die mit individuellen Instanzen zusammenhängen, sollten durch 
+     * Attribute behandelt werden. Für den GrayIncrementer besitzt jede Instanz eine Bitbreite
+     * mit der gearbeitet wird, daher gibt es ein entsprechendes Attribut. */
+
+    / ** Der Konstruktor konfiguriert die Fabrik. */
+    GrayIncrementer() {
+        super("Gray Code Incrementer");
+        
+        /* Auf diese Weise können die Attribute des GrayIncrementers initialisiert werden. Hier
+         * haben wir nur ein Attribut - die Bitbreite - deren Vorgabe
+         * 4 ist. Die Klasse StdAttr definiert zahlreiche gebräuchliche 
+         * Attribute, einschließlcih der Bitbreite. wenn möglich
+         * empfiehlt es sich, die Attribute aus StdAttr zu verwenden: Ein Anwender kann dann mehrere
+         * Bauelemente (selbst aus verschiedenen Bibliotheken) mit gemeinsamen Attributen auswählen,
+         * und dann diese dann gleichzeitig verändern. */
+        setAttributes(new Attribute[] { StdAttr.WIDTH },
+                new Object[] { BitWidth.create(4) });
+        
+        /* Die "offset bounds" bezeichnen die Lage des umgrenzenden Rechtecks
+         * relativ zur Position der Maus. Hier wird unser Bauelement 
+         * 30x30 groß, und wir verankern es an dessen primären Ausgang
+         * (wie für Logisim typisch), der sich in der Mitte der
+         * östlichen Kante befindet. Daher befindet sich die obere linke Ecke des umgrenzenden Rechtecks 30 Punkte
+         * westlich und 15 Punkte nördlich der Mausposition. */
+        setOffsetBounds(Bounds.create(-30, -15, 30, 30));
+        
+        /* Die Ports sind die Positionen, an denen Leitungen an dem Bauteil
+         * angeschlossen werden können. Jedes Port-Objekt besagt, wo dieser Port relativ zum Ankerpunkt des
+         * Bauelements befindet, ob es sich um einen
+         * Eingang/Ausgang/Beides handelt, und schließlich die erwartete Bitbreite des Ports.
+         * Die Bitbreite kann eine Konstante (wie 1) oder ein Attribut (wie in diesem Beispiel) sein.
+         */
+        setPorts(new Port[] {
+                new Port(-30, 0, Port.INPUT, StdAttr.WIDTH),
+                new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH),
+            });
+    }
+
+    /** Berechnet den aktuellen Ausgabewert des Bauelements. Diese Methode wird jedes Mal aufgerufen,
+     * wenn einer der Eingänge seinen Wert ändert. Sie kann auch unter anderen Umständen
+     * aufgerufen werden, auch wenn es keinen Grund gibt, eine Änderung zu
+     * erwarten. */
+    public void propagate(InstanceState state) {
+        // Zunächst wird der Wert vom Eingang eingelesen. Beachten Sie, daß beim Aufruf
+        // von setPorts der Eingang am Index 0 des Parameterfeldes 
+        // definiert wurde, daher benutzen wir hier 0 als Parameter.
+        Value in = state.getPort(0);
+        
+        // Jetzt wir der Ausgangswert berechnet. Dies wurde in eine Hilfsmethode ausgelagert,
+        // weil die anderen Bauelemente dieser Bibliothek dieselben Routinen benötigen.
+        Value out = nextGray(in);
+        
+        // Schließlich wird dieser Wert an den Ausgang weitergegeben. Der erste Parameter
+        // ist 1, weil der Ausgang in unserer Liste der Ports am Index 1 definiert worden ist
+        // (siehe setPorts weiter oben). Der zweite Parameter ist hier der
+        // Wert, der an den Ausgang gesendet werden soll. Und der letzte Parameter ist die Verzögerung
+        //  - die Anzahl der Schritte, die bis zur Aktualisierung des Ausgangs vergehen sollen,
+        // nach der Änderung am Eingang.
+        state.setPort(1, out, out.getWidth() + 1);
+    }
+
+    /** Bezeichnet, wie eine einzelne Instanz auf der Arbeitsfläche dargestellt wird. */
+    public void paintInstance(InstancePainter painter) {
+        / /  InstancePainter enthält mehrere bequeme Methoden
+        // zum Zeichnen, die wir hier benutzen. Häufig würden Sie
+        // dessen Objekt Graphics (painter.getGraphics) aufrufen, so daß Sie direkt
+        // aus der Arbeitsfläche zeichnen können.
+        painter.drawRectangle(painter.getBounds(), "G+1");
+        painter.drawPorts();
+    }
+    
+    /** Berechnet den nächsten Gray-Wert nach prev aus der Folge. Diese statische
+     * Methode dreht nur einige Bits um, es hat nicht viel mit Logisim
+     * zu tun, abgesehen von der Manipulation der Objekte Value und BitWidth */
+    static Value nextGray(Value prev) {
+        BitWidth bits = prev.getBitWidth();
+        if(!prev.isFullyDefined()) return Value.createError(bits);
+        int x = prev.toIntValue();
+        int ct = (x &gt;&gt; 16) ^ x; // compute parity of x
+        ct = (ct &gt;&gt; 8) ^ ct;
+        ct = (ct &gt;&gt; 4) ^ ct;
+        ct = (ct &gt;&gt; 2) ^ ct;
+        ct = (ct &gt;&gt; 1) ^ ct;
+        if((ct &amp; 1) == 0) { // if parity is even, flip 1's bit
+            x = x ^ 1;
+        } else { // ansonsten kippe das Bit gerade oberhalb der letzten 1
+            int y = x ^ (x &amp; (x - 1)); // berechne die letzte 1
+            y = (y &lt;&lt; 1) &amp; bits.getMask();
+            x = (y == 0 ? 0 : x ^ y);
+        }
+        return Value.createKnown(bits, x);
+    }
+}
+</pre>
+
+<p>Dieses Beispiel alleine ist nicht genug, um ein funktionierendes JAR-Archiv zu erstellen. Sie müssen darüberhinaus eine Bibliotheksklasse erstellen, wie auf der nächsten Seite näher erklärt wird.</p>
+
+<p><strong>Weiter:</strong> <a href="library.html">Bibliotheksklasse</a>.</p>
+</div></body></html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html  lang="pt">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Resistor para Ajuste
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
+		<em>Resistor para Ajuste</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Biblioteca:</strong>
+            </td>
+            <td>
+              <a href="index.html">Base</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introdução:</strong>
+            </td>
+            <td>
+              2.5.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Aparência:</strong>
+            </td>
+            <td valign="top">
+			<table>
+                <tbody>
+                  <tr>
+                    <th colspan="2">
+                      ANSI:
+                    </th>
+                    <th colspan="2">
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportamento
+      </h2>
+      <p>
+        Quando conectado a um ponto, esse componente terá efeito apenas quando o valor nesse ponto for flutuante (<b class="uvalue">U</b>). Nesse caso, o resistor de ajuste fará com que a conexão concorde com valor especificado pelo atributo <b class="propertie">Direção de Ajuste</b>.
+      </p>
+      <p>
+        Se estiver conectado a um valor multibit, então cada bit que estiver flutuando será ajustado para a direção especificada, enquanto os bits, que não estiverem flutuando, não serão alterados.
+      </p>
+      <h2>
+        Pinos
+      </h2>
+      <p>
+        O resitor possui apenas um pino, que será uma saída e terá largura em bits inferida do componente ao qual estiver conectado.
+      </p>
+      <h2>
+        Atributos
+      </h2>
+      <p>
+        Quando o componente for selecionado ou estiver sendo acrescentado, as teclas com setas poderão alterar o seu atributo <b class="propertie">Direção</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Direção</b>
+        </dt>
+        <dd>
+          A direção do pino do componente em relação ao seu centro.
+        </dd>
+        <dt>
+          <b class="propertie">Direção para Ajuste</b>
+        </dt>
+        <dd>
+          Serve para especificar para qual valor um sinal flutuante deverá ser ajustado. Isso poderá ser para  <b class="zerov">0</b>, <b class="unov">1</b> ou valor de erro (<b class="evalue">E</b>).
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportamento da ferramenta Testar
+      </h2>
+      <p>
+        Nenhum.
+      </p>
+      <h2>
+        Comportamento da ferramenta Texto
+      </h2>
+      <p>
+        Nenhum.
+      </p>
+      <p>
+       <b>Voltar à </b><a href="../index.html">Referência para bibliotecas</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+v0: 
+
+--------------------------------
+v1: 07.04.2014 KGS
+-inversion dip switch (1->8, 2->7, 3->6...)
+-Ajout btn sp3/sp6 reset J5
+
+v2: 23.04.2014
+-Ajout connecteur 80P ! Ne pas utiliser
+
+v3: ??.??.2014
+-Version fonctionnelle utilisée dans logisim. Avec connecteur 80P
+
+v4: 17.08.2015
+-Ajout connecteur 80P sur l'image.
+
+
+

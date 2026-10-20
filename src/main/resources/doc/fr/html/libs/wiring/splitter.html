@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Répartiteur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> 
+		<em>Répartiteur (Splitter)</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Câblage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:&nbsp;</strong>
+            </td>
+            <td>
+              2.0 bêta 1 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0)
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="notscal" src="../../../../img-libs/splitter.png" alt="#########">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Le répartiteur (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous-ensembles distincts, soit combiner des sous-ensembles en une connexion multibits,
+        voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la <a class=refguide href="../../guide/feature/fet-splitting.html">section "Répartiteur"</a> du <a href="../index.html">Guide de l'utilisateur</a>.
+      </p>
+      <p>
+        Logisim traite spécialement les terminaisons lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les
+        fils).
+      </p>
+      <p>
+        <b class="note">Remarque:</b> le terme <em>Splitter</em>, utilisé en anglais est un terme non standard, à ma connaissance, unique à Logisim. Je ne connais aucun terme standard pour un tel concept. le seul terme que j'ai entendu utiliser est <em>ripper (découdre/défonceuse) de bus</em>, mais ce
+        terme est inutilement violent à mon goût.
+      </p>
+      <h2>
+        Pin
+      </h2>
+      <p>
+        Pour distinguer les différents points de connexion d’une terminaison, nous désignons le point de connexion d'un côté qui regroupe en un seul câble tous les fils : le <b>bus</b>, et nous désignons les multiples points de connexion de l’autre côté comme : les <b>terminaisons</b>. (voir
+        figure ci-dessous)
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td valign="top">
+                Bus
+              </td>
+              <td>
+                <img src="../../../../img-libs/splitter-right.png" alt="#########">
+              </td>
+              <td>
+                Terminaisons
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <dl>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Bus </b>:
+        </dt>
+        <dd>
+          la largeur en bit du bus correspond à l'attribut <b class="propertie">Largeur de bits</b> et c'est la valeur dénombrant tous les conducteurs transitant par le bus.
+        </dd>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Terminaison</b> :
+        </dt>
+        <dd>
+          La largeur de bit des terminaisons est determinée par la largeur de bit du bus divisé (division entière) par le nombre de terminaisons. Dans les autres cas, les largeurs seront réparties de manière fractionnaire équilibrée.<br>
+          Par exemple un bus de 10bits avec 4 terminaisons aura deux terminaisons de 3bits et deux terminaisons de deux bits.
+        </dd>
+        <dd></dd>
+      </dl>
+      
+	  <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, les chiffres <b class="tkeybd">0</b> à <b class="tkeybd">9</b> modifient l'attribut <b class="propertie">Terminaisons</b>, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifient à la fois les attributs <b class="propertie">Terminaisons</b> et <b class="propertie">Largeur de bit</b> et les touches fléchées modifient l'attribut <b class="propertie">Orientation</b>.
+      </p>
+	  	  <div class="attliste">
+      <dl>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Orientation</b>
+        </dt>
+        <dd>
+          Précide de quel côté du composant dessiné doivent se trouver les broches de terminaisons
+        </dd>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Terminaisons</b>
+        </dt>
+        <dd>
+          Nombre de terminaisons
+        </dd>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Largeur en bit</b>
+        </dt>
+        <dd>
+          Largeur en bit du bus
+        </dd>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Apparence</b>
+        </dt>
+        <dd>
+          Prend en charge différentes manières de représenter le séparateur dans le circuit. (Voir figure ci-dessous) L'option <q>Gauche</q> (par défaut) dessine une colonne vertébrale à gauche du bus (si on le considère comme une entrée), avec une ligne étiquetée provenant du dos pour chaque
+          terminaison. L'option <q>Droite</q> dessine la colonne vertébrale à droite du bus. L'option <q>Centrée</q> centre la colonne vertébrale de manière à ce qu'elle soit à peu près égale à gauche et à droite. Et l'option <q>Héritage</q> dessine des lignes diagonales à chaque extrémité, sans
+          étiquettes. Cette option est principalement destinée à la compatibilité avec les versions antérieures à la version 2.7.0, qui constituaient la seule option pour l'apparence du séparateur.
+          <center>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img class="notscal" src="../../../../img-libs/splitter-left.png" alt="#########" align="middle">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-libs/splitter-right.png" alt="#########" align="middle">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-libs/splitter-center.png" alt="#########" align="middle">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-libs/splitter-legacy.png" alt="#########" align="middle">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    A gauche
+                  </td>
+                  <td>
+                    A droite
+                  </td>
+                  <td>
+                    Au centre
+                  </td>
+                  <td>
+                    Héritage
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </center>
+        </dd>
+        <dd></dd>
+		<dt>
+          <b class="propertie">Espacement</b>
+      </dt>
+      <dd>
+	    Détermine l'espacement entre les terminaisons.
+      <dt>
+        <dt>
+           <b class="propertie">Bit <var>x</var></b>
+        </dt>
+        <dd>
+          Détermine l'index de la terminaison auquel correspond le bit <var>x</var> du bus. Les terminaisons sont indexées à partir de 0 en haut (pour un séparateur orienté est ou ouest) ou de 0 à gauche / ouest (pour un séparateur orienté nord ou sud). Un terminaison peut ne pas être connectée à
+          un bit du bus par contre il n'y a aucun moyen pour q'un bit du bus soit connecté à plusieurs terminaisons.
+          <p>
+            Parfois, vous pouvez vous éviter de triturer chaque attribut Bit <var>x</var> en faisant apparaître le menu contextuel d’un Répartiteur (généralement en cliquant dessus avec le bouton droit de la souris). Le menu contextuel comprend des options intitulées <q>Distribuer en ordre
+            croissant</q> et <q>Distribuer en ordre décroissant</q>. L'option Distribuer en ordre croissant (par defaut) distribue les bits afin que chaque extrémité partagée reçoive le même nombre de bits à partir de la fin. L'option Distribuer en ordre decroissant fait de même mais commence par
+            la fin avec le no le plus grand. Si le nombre de terminaisons ne divise pas exactement le nombre de bits du bus, les bits sont distribués sur les terminaisons de manière aussi uniforme que possible.
+          </p>
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

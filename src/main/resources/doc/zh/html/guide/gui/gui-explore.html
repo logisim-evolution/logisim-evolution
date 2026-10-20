@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2021-05-22T11:23:41.815000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      资源管理器窗格
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        资源管理器窗格
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td width="40%">
+              <img src="../../../img-guide/gui-0-explor.png" alt="#########">
+            </td>
+            <td valign="top">
+              资源管理器窗格有两个功能。它可以在<a href="../subcirc/sub-debug.html">仿真</a>视图中显示正在仿真的电路，也可以像这里一样，在列表上方显示电路、下方显示以文件夹图标表示的库。这些库包含项目中可用的工具。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        要访问库中的组件，可以通过 <b class="tkeybd">双击</b>对应的文件夹或 <b class="tkeybd">单击</b>小三角来打开库，然后 <b class="tkeybd">单击</b>所需工具。随后将鼠标光标移动到画布上，工具的虚线轮廓会跟随鼠标光标，直到在画布上单击并将其放置到所选位置。
+      </p>
+      <p>
+        下图中已经打开“逻辑门”库，并从中选择了与非门工具。此时 Logisim 已准备好将与非门添加到电路中。
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/gui-1-nand-select.png" alt="#########">
+      </p>
+      <p>
+        浏览“逻辑门”库中的选项可以发现，前面其实不需要自行搭建异或电路：它已内置于 Logisim 中。
+      </p>
+      <p>
+        创建项目时，项目会自动包含几个库：
+      </p>
+      <ul>
+        <li>
+          <b>线路：</b> 与导线直接交互的组件。
+        </li>
+        <li>
+          <b>逻辑门：</b> 执行简单逻辑功能的组件。
+        </li>
+        <li>
+          <b>复用器：</b> 更复杂的组合组件，如多路复用器和译码器。
+        </li>
+        <li>
+          <b>运算器：</b> 执行算术运算的组件。
+        </li>
+        <li>
+          <b>存储器：</b> 记住数据的组件，如触发器、寄存器和 RAM。
+        </li>
+        <li>
+          <b>输入/输出：</b> 用于与用户交互的组件。
+        </li>
+
+		<li>
+          <b>TTL：</b> 经典的 74 系列 TTL 组件，采用 DIL 封装。
+        </li>
+        <li>
+          <b>TCL：</b> 由 TCL 脚本定义行为的组件。
+        </li>
+        <li>
+          <b>HDL-IP：</b> 由硬件描述语言定义的组件。
+        </li>
+        <li>
+          <b>BFH 宏功能：</b> 目前暂无文档。
+        </li>
+		<li>
+          <b>输入/输出扩展：</b> 额外的用户交互组件。
+        </li>
+		<li>
+          <b>片上系统组件：</b> 用于片上系统功能仿真的组件。
+        </li>
+
+      </ul>
+	  <h2 id="lib">
+	    库
+	  </h2>
+      <p>
+        Logisim 也允许通过菜单 <b class="menu">| 项目 |</b> → <b class="menu">| 加载库 |</b>，或在项目资源管理器的根文件夹上打开上下文菜单来添加更多库。Logisim 有三类库。
+      </p>
+      <ul>
+        <li>
+          <strong>内置库</strong> 是随 Logisim 分发的库。这些库在 <a href="../../libs/index.html">库参考</a> 中有文档说明。
+        </li>
+        <li>
+          <strong>Logisim 库</strong> 是在 Logisim 中构建、并以 Logisim 项目文件保存到磁盘的库。可以在单个项目中开发一组电路（如本指南的 <a href="../subcirc/index.html">子电路</a> 部分所述），然后将这组电路作为库用于其他项目。
+        </li>
+        <li>
+          <strong>JAR 库</strong> 是用 Java 开发但不随 Logisim 分发的库。可以下载他人编写的 JAR 库，也可以按照本指南的 <a href="../jar/index.html">JAR 库</a> 部分自行编写。开发 JAR 库比开发 Logisim 库困难得多，但组件可以更加复杂，包括属性、与用户交互等功能。内置库（除基础库以外）使用与 JAR 库相同的 API 编写，因此很好地展示了 JAR 库可以支持的功能范围。
+          <p>
+            有些 JAR 库在分发时不包含关于从哪个 Java 类开始的信息。加载此类 JAR 时，Logisim 会提示输入类名。该类名应由 JAR 文件的分发者提供。
+          </p>
+        </li>
+      </ul>
+      <p>
+        要移除库，请选择菜单 <b class="menu">| 项目 |</b> → <b class="menu">| 卸载库… |</b>。如果某个库包含电路中正在使用的组件、工具栏中出现的组件，或已映射到鼠标按钮的组件，Logisim 会阻止卸载该库。
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../img-guide/gui-2-remlib.png" alt="#########">
+      </p>
+      <p>
+        也可以在要卸载的库上打开上下文菜单来完成此操作。
+      </p>
+      <p>
+        顺便说一下，从技术上讲，库包含的是工具，而不是组件。因此，在基础库中，可以看到 <b class="propertie">手形工具</b>（<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">）、<b class="propertie">编辑工具</b>（<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">），以及其他不直接对应单个组件的工具。不过，大多数库只包含用于添加单个组件的工具。
+
+      </p>
+      <p>
+        <b>下一节：</b> <a href="gui-toolsbar.html">工具栏</a>。
+      </p>
+    </div>
+  </body>
+</html>

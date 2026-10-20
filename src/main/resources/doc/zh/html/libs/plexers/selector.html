@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      位选择器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+       <img class="iconlibs" src="../../../../icons/6464/bitselector.png" alt="#########" height="32" width="32"> <em>位选择器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">复用器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0.5
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/selector.png" alt="#########" height="64" width="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        对一组多位输入信号，从最低位开始按等宽分组，并输出由选择输入指定的一组。
+      </p>
+      <p>
+        例如，8 位输入为 01010101，若输出为 3 位，则第 0 组为最低 3 位 101，第 1 组为接下来的 3 位 010，第 2 组为再往上的 3 位 001。（超过最高位的部分用 0 补齐。）
+        选择输入为 2 位，用于选择输出哪一组；若选择输入为 3，则输出为 000。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东）
+      </h2>
+      <dl>
+        <dt>
+          西侧（输入，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          数据输入，用于从中选取位组输出。
+        </dd>
+        <dt>
+          东侧（输出，位宽与“输出位宽”一致）
+        </dt>
+        <dd>
+          由选择输入选出的位组。
+        </dd>
+        <dt>
+          南侧（输入，位宽为“数据位宽/输出位宽”的商，向上取整）
+        </dt>
+        <dd>
+          选择输入：决定将哪一组位送到输出端。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 <b class="tkeybd">0</b>–<b class="tkeybd">9</b> 可修改 <q>输出位宽</q>，
+        <b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <q>数据位宽</q>，
+        方向键可修改 <q>朝向</q>。
+      </p>
+      <dl>
+        <dt>
+          朝向
+        </dt>
+        <dd>
+          组件方向（其输出相对于输入的位置）。
+        </dd>
+        <dt>
+          数据位宽
+        </dt>
+        <dd>
+          数据输入的位宽。
+        </dd>
+        <dt>
+          输出位宽
+        </dt>
+        <dd>
+          输出端的位宽。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

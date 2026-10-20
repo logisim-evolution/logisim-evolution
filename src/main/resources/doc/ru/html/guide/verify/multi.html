@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-08T01:58:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Проверка нескольких файлов
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Проверка нескольких файлов
+      </h1>
+      <p>
+        В случае проведения занятий в классе у вас будет много файлов, которые вам нужно проверить на эквивалентность, и вам не захочется вручную просматривать результаты работы для решения каждого учащегося.
+      </p>
+      <h2>
+        Встраивание сравнения в схему
+      </h2>
+      <p>
+        Один из подходов заключается в создании проверяющей схемы, которая непосредственно выполняет сравнение. В таком случае мы создаём дополнительную схему в проверяющем файле, содержащем схему с решением. Во всю нашу проверяющую схему мы включаем и подсхему из <b><tt>adder-master.circ</tt></b>, и подсхему из схемы с решением. Мы соединяем их так, что получается только один выход, на котором 1, пока две подсхемы дают на выходе согласованные значения.
+      </p>
+      <blockquote>
+        <img src="../../../../img-guide/verify-adder-test2.png" alt="#########">
+      </blockquote>
+      <p>
+        Теперь мы можем просто запускать Logisim-evolution, подставляя каждый проверяемый файл. Для каждого правильного решения в консоль будет выводиться только «1».
+      </p>
+      <h2>
+        Использование перенаправления и сценариев оболочки
+      </h2>
+      <p>
+        Если вы ладите с командной строкой, вы можете создать свой собственный скрипт для решения этой задачи. Здесь мы будем использовать перенаправление потока (оператор &gt;), чтобы сохранять текстовые результаты работы каждой схемы в файл. Например, мы могли бы ввести следующие две команды, чтобы записать данные эталонной схемы и проверяемой схемы.
+      </p>
+      <blockquote>
+        <div class=forcode>
+          <tt>java -jar logisim-evolution.jar test.circ -tty table &gt; out-master.txt</tt>
+        </div>
+        <div class=forcode>
+          <tt>java -jar logisim-evolution.jar test.circ -tty&nbsp;table -sub master.circ query.circ &gt; out-query.txt</tt>
+        </div>
+      </blockquote>
+      <p>
+        Теперь мы создали два разных файла. Мы можем сравнить два файла с помощью программы, написанной для таких целей. Под Linux или MacOS X вы можете использовать утилиты командной строки <b>cmp</b> или <b>diff</b>.В Windows можно использовать утилиту командной строки <b>fc</b> или приложение WinMerge.
+      </p>
+      <p>
+        Для обработки нескольких проверяемых файлов вы можете написать простую программу типа сценария оболочки для поочерёдного прохода по файлам и их сравнения. Вот как бы я сделал это под Linux в <b>bash</b>:
+      </p>
+      <blockquote>
+        <tt>RUN_TEST="java -jar logisim-evolution.jar test.circ -tty table"<br>
+        ${RUN_TEST} &gt; out-master.txt<br>
+        for QUERY_FILE in query*.circ<br>
+        do<br>
+        &nbsp;&nbsp;if&nbsp;${RUN_TEST}&nbsp;-sub&nbsp;master.circ&nbsp;${QUERY_FILE}&nbsp;|&nbsp;cmp&nbsp;-s&nbsp;out-master.txt<br>
+        &nbsp;&nbsp;then<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;OK"<br>
+        &nbsp;&nbsp;else<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;different"<br>
+        &nbsp;&nbsp;fi<br>
+        done</tt>
+      </blockquote>
+      <p>
+        <b>Далее:</b> <a href="../index.html">Руководство пользователя</a>.
+      </p>
+    </div>
+  </body>
+</html>

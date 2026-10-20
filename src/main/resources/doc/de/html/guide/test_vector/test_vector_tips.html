@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>Tips and Best Practices</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+
+<h1>Tips and Best Practices</h1>
+
+<p>Here are some tips for effectively using the Test Vector feature:</p>
+
+<ol>
+    <li><strong>Use bit width in headers</strong>: Specify the bit width of each input/output pin in the header, even if it's 1 bit. This is required for multi-bit values.</li>
+    <li><strong>Use underscores for readability</strong>: You can use underscores (<code>_</code>) anywhere in numeric values. Underscores are ignored during parsing. Examples: <code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>, <code>1_234</code>, or <code>-5_000</code>.</li>
+    <li><strong>Use spaces between values and headers for alignment</strong>: Alighning the starting position of the values and headers improves readability and makes it easier to identify the values and headers. Without doing this it is very easy to mix up which value belongs to which header, thus get really confused when the test fails but the circuit seems to be working correctly.</li>
+    <li><strong>Use sequences for stateful circuits</strong>: If your circuit has memory (flip-flops, registers, counters), use sequential tests to verify state transitions.</li>
+    <li><strong>Use don't care for partial verification</strong>: When testing complex circuits, use <code>&lt;DC&gt;</code> for outputs you're not currently verifying.</li>
+    <li><strong>Use floating for tri-state testing</strong>: Use <code>&lt;float&gt;</code> to test circuits with tri-state outputs or high-impedance states.</li>
+    <li><strong>Organize with sets</strong>: Use the <code>&lt;set&gt;</code> column to group related tests into sequences. Tests with the same <code>&lt;set&gt;</code> number run together in <code>&lt;seq&gt;</code> order, with circuit state preserved between steps.</li>
+    <li><strong>Mix combinational and sequential</strong>: You can mix combinational tests (seq=0) with sequential tests in the same file.</li>
+</ol>
+
+<h2>Backward Compatibility</h2>
+
+<p>All existing test vector files continue to work without modification. The new features are optional:</p>
+
+<ul>
+    <li>If <code>&lt;set&gt;</code> and <code>&lt;seq&gt;</code> columns are not present, all tests are combinational (default behavior)</li>
+    <li>If special values <code>&lt;DC&gt;</code> and <code>&lt;float&gt;</code> are not used, normal value comparison applies</li>
+    <li>The original file format is fully supported</li>
+</ul>
+
+<p>
+	<b>Previous:</b> <a href="test_vector_cmdline.html">Command Line Usage</a> | <b>Next:</b> <a href="index.html">Test Vectors</a>.
+</p>
+
+</body>
+</html>
+

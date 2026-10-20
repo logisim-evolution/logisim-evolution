@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- The Selection tab -->
+   选择选项卡
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- The Selection tab -->
+    选择选项卡
+   </h1>
+   <p>
+    <!-- The Selection tab allows you to select which values should be included in the log. The window below corresponds to the following circuit. -->
+    “选择”选项卡允许您选择应包含在日志中的值。 下面的窗口对应于以下电路。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/log-counter.png"/>
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/log-selection.png"/>
+   </p>
+   <p>
+    <!-- The tab is divided into three vertical areas. The first (leftmost) is a list of all components in the circuit whose values can be logged. Among the built-in libraries, the following types of components support logging.<br> -->
+    该选项卡分为三个垂直区域。 第一个（最左边）是电路中可以记录其值的所有组件的列表。 在内置库中，以下类型的组件支持日志记录。
+    <br/>
+   </p>
+   <blockquote>
+    <!-- Wiring library: Pin, Probe, and Clock components<br>        I/O library: Button and LED components<br>        Memory library: All components except ROM -->
+    接线库：引脚、探头和时钟组件
+    <br/>
+    I/O 库：按钮和 LED 组件
+    <br/>
+    内存库：除 ROM 之外的所有组件
+    <!-- </blockquote>For components which have labels associated with them, their names correspond to the labels; other components' names specify their type and their location within the circuit.<br> -->
+   </blockquote>
+   对于具有与其关联的标签的组件，它们的名称对应于标签； 其他组件的名称指定了它们的类型及其在电路中的位置。
+   <br/>
+   <!-- Any subcircuits will also appear in the list; they cannot be selected for logging, but eligible components within them can be. Note that the RAM component requires you to choose which memory address(es) should be logged; it allows logging only for the first 256 addresses. -->
+   任何子电路也会出现在列表中； 无法选择它们进行日志记录，但可以选择其中符合条件的组件。 请注意，RAM 组件要求您选择应记录哪个内存地址； 它只允许记录前 256 个地址。
+   <p>
+    <!-- The last (rightmost) vertical area lists those components that have been selected. Also, it indicates the radix (base) in which the component's multi-bit values will be logged; the radix does not have a significant effect on one-bit values. -->
+    最后一个（最右边）垂直区域列出了已选择的组件。 此外，它还指示将记录组件的多位值的基数（基数）； 基数对一位值没有显着影响。
+   </p>
+   <p>
+    <!-- L'horloge <var>sysclk</var> doit y figurer, elle ne sera pas affichée dans le graphe. -->
+    <var>
+     sysclk
+    </var>
+    时钟必须出现在那里，它不会显示在图表中。
+   </p>
+   <p>
+    <!-- The middle column of buttons allows the manipulation of the items within the selection. -->
+    中间一列按钮允许操作所选内容中的项目。
+   </p>
+   <ul>
+    <li>
+     <!-- <b class="button">Add&gt;&gt;</b> adds the currently selected item(s) on the left side into the selection. Il est actif seulement pour les composants éligibles. -->
+     <b class="button">
+      添加&gt;&gt;
+     </b>
+     将左侧当前选定的项目添加到选择中。 它仅对符合条件的组件有效。
+    </li>
+    <li>
+     <!-- <b class="button">Change Radix</b> cycles the radix for the currently selected component in the selection between 2 (binary), 10 (decimal), and 16 (hexadecimal). -->
+     <b class="button">
+      更改基数
+     </b>
+     在 2（二进制）、10（十进制）和 16（十六进制）之间循环选择当前选定组件的基数。
+    </li>
+    <li>
+     <!-- <b class="button">Move Up</b> moves the currently selected component in the selection forward one spot. -->
+     <b class="button">
+      上移
+     </b>
+     将当前选择的组件向前移动一位。
+    </li>
+    <li>
+     <!-- <b class="button">Move Down</b> moves the currently selected component in the selection back one spot. -->
+     <b class="button">
+      下移
+     </b>
+     将当前选择的组件向后移动一位。
+    </li>
+    <li>
+     <!-- <b class="button">&lt;&lt; Remove</b> removes the currently selected component in the selection. -->
+     <b class="button">
+      &lt;&lt; Remove
+     </b>
+     删除选择中当前选定的组件。
+    </li>
+   </ul>
+   <p>
+    <!-- The fourth part below allows you to define if you want a time display above the graph. For this it is necessary to check the box <b class=reffig>"Time reference"</b> and select the signal that will be the reference. The frequency will define the displayed time scale. This does not solve the speed of execution of the circuit simulation. For example below we have selected the signal <b class=reffig>B0</b> and a frequency of 100hz. -->
+    下面的第四部分允许您定义是否要在图表上方显示时间。 为此，需要选中
+    <b class="refig">
+     “时间参考”
+    </b>
+    框并选择将作为参考的信号。 频率将定义显示的时间尺度。 这并没有解决电路仿真的执行速度问题。 例如，下面我们选择了信号
+    <b class="refig">
+     B0
+    </b>
+    和频率 100hz。
+   </p>
+   <p align="center">
+    <img alt="#########" src="../../../img-guide/log-graph1.png"/>
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="timetable.html">Timetable window</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="timetable.html">
+     时间表窗口
+    </a>
+    。
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documentation language="en">
+  <topic id="mem_guide" title="Memory components" path="en/html/guide/mem/index.html">
+    <topic id="mem_poke" title="Memory poke" path="en/html/guide/mem/mem-poke.html" />
+    <topic id="mem_hex" title="Editeur hexadécimal" path="en/html/guide/mem/mem-hex.html" />
+    <topic id="mem_menu" title="Pop-up menus and files" path="en/html/guide/mem/mem-menu.html" />
+    <topic
+        id="mem_filetabel"
+        title="Memory file panel"
+        path="en/html/guide/mem/mem-filepanel.html" />
+    <topic id="mem_v2raw" title="File v2raw" path="en/html/guide/mem/mem-v2raw.html" />
+    <topic id="mem_v3word" title="File v3word" path="en/html/guide/mem/mem-v3word.html" />
+    <topic id="mem_v3byte" title="File v3byte" path="en/html/guide/mem/mem-v3byte.html" />
+    <topic id="mem_binary" title="File binary" path="en/html/guide/mem/mem-vbinary.html" />
+    <topic id="mem_ascii" title="File ASCII" path="en/html/guide/mem/mem-vascii.html" />
+  </topic>
+</documentation>

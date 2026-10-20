@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<helpSets>
+  <helpSet
+      language="en"
+      title="Logisim - Help"
+      map="map_en.jhm"
+      tocLanguage="en"
+      tocLabel="Table Of Contents"
+      toc="en/contents.xml"
+      searchLabel="Search"
+      search="search_lookup_en"
+      favoritesLabel="Favorites" />
+  <helpSet
+      language="de"
+      title="Logisim - Help"
+      map="map_de.jhm"
+      tocLanguage="de"
+      tocLabel="Table Of Contents"
+      toc="de/contents.xml"
+      searchLabel="Search"
+      search="search_lookup_de"
+      favoritesLabel="Favorites" />
+  <helpSet
+      language="fr"
+      title="Logisim - Help"
+      map="map_fr.jhm"
+      tocLanguage="fr"
+      tocLabel="Table Of Contents"
+      toc="fr/contents.xml"
+      searchLabel="Search"
+      search="search_lookup_fr"
+      favoritesLabel="Favorites" />
+  <helpSet
+      language="pt"
+      title="Logisim - Help"
+      map="map_pt.jhm"
+      tocLanguage="en"
+      tocLabel="Table Of Contents"
+      toc="en/contents.xml"
+      searchLabel="Search"
+      search="search_lookup_pt"
+      favoritesLabel="Favorites" />
+  <helpSet
+      language="ru"
+      title="Logisim - Help"
+      map="map_ru.jhm"
+      tocLanguage="ru"
+      tocLabel="Table Of Contents"
+      toc="ru/contents.xml"
+      searchLabel="Search"
+      search="search_lookup_ru"
+      favoritesLabel="Favorites" />
+  <helpSet
+      language="zh"
+      title="Logisim - 帮助"
+      map="map_zh.jhm"
+      tocLanguage="zh"
+      tocLabel="目录"
+      toc="zh/contents.xml"
+      searchLabel="查找"
+      search="search_lookup_en"
+      favoritesLabel="收藏" />
+</helpSets>

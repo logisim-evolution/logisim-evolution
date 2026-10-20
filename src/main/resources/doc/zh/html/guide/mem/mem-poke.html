@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Poking memory -->
+   记忆戳
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <b>
+     上一节:
+    </b>
+    <a href="mem-filepanel.html">
+     内存文件面板
+    </a>
+   </p>
+   <h1>
+    <!-- Poking memory -->
+    记忆戳
+   </h1>
+   <p>
+    <!-- You can manipulate the contents of memory using the <b class=propertie>Poke</b> Tool (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">), but the interface for this is severely limited by space constraints: For more than the simplest editing, you will probably find <a href="mem-hex.html">the integrated hex editor</a> far more convenient. -->
+    您可以使用
+    <b class="propertie">
+     Poke
+    </b>
+    工具 (
+    <img alt="#########" class="icontxt" src="../../../../icons/1616/toolpoke.png"/>
+    ），但其界面受到空间限制的严重限制：对于不仅仅是最简单的编辑，您可能会发现
+    <a href="mem-hex.html">
+     ）集成的十六进制编辑器
+    </a>
+    更加方便。
+   </p>
+   <p>
+    <!-- Nonetheless, to view and edit values within the circuit, the Poke Tool has two modes of operation: You can edit the address displayed, and you can edit an individual value. -->
+    尽管如此，要查看和编辑电路中的值，Poke Tool 有两种操作模式：您可以编辑显示的地址，也可以编辑单个值。
+   </p>
+   <h2>
+    <!-- Address selection -->
+    地址选择
+   </h2>
+   <p>
+    <!-- To edit the address displayed, click outside the display rectangle. Logisim will draw a red rectangle around the top address. -->
+    要编辑显示的地址，请在显示矩形外部单击。 Logisim-evolution 将在顶部地址周围绘制一个红色矩形。
+   </p>
+   <p align="center">
+    <img alt="pokememadr" class="notscal" src="../../../../img-guide/pokememadr.png"/>
+   </p>
+   <ul>
+    <li>
+     <p>
+      <!-- Typing hexadecimal digits will change the top address accordingly. -->
+      键入十六进制数字将相应地更改顶部地址。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- Typing the <b class="tkeybd">Enter key</b> will scroll down one line. -->
+      键入
+      <b class="tkeybd">
+       Enter 键
+      </b>
+      将向下滚动一行。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- Typing the <b class="tkeybd">Backspace key</b> will scroll up one line. -->
+      键入
+      <b class="tkeybd">
+       退格键
+      </b>
+      将向上滚动一行。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- Typing the <b class="tkeybd">space bar</b> will scroll down one page (four lines). -->
+      键入
+      <b class="tkeybd">
+       空格键
+      </b>
+      将向下滚动一页（四行）。
+     </p>
+    </li>
+   </ul>
+   <h2>
+    <!-- Modification of data -->
+    数据修改
+   </h2>
+   <p>
+    <!-- To edit a particular value, click the value within the display rectangle. Logisim will draw a red rectangle around that address. -->
+    要编辑特定值，请单击显示矩形内的值。 Logisim-evolution 将在该地址周围绘制一个红色矩形。
+   </p>
+   <p align="center">
+    <img alt="pokememdata" class="notscal" src="../../../../img-guide/pokememdata.png"/>
+   </p>
+   <ul>
+    <li>
+     <p>
+      <!-- Typing hexadecimal digits will change the value at the address currently being edited. -->
+      键入十六进制数字将更改当前正在编辑的地址处的值。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- The <b class="tkeybd">Enter key</b> or <b class="tkeybd">Ctrl+Down arrow</b> ill scroll the cursor down one line. -->
+      <b class="tkeybd">
+       Enter 键
+      </b>
+      或
+      <b class="tkeybd">
+       Ctrl+向下箭头
+      </b>
+      会将光标向下滚动一行。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- The <b class="tkeybd">Backspace key</b> or <b class="tkeybd">Ctrl+Left Arrow</b> will scroll the cursor one cell backwards.  -->
+      <b class="tkeybd">
+       退格键
+      </b>
+      或
+      <b class="tkeybd">
+       Ctrl+向左箭头
+      </b>
+      会将光标向后滚动一个单元格。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- The <b class="tkeybd">Space key</b> or <b class="tkeybd">Ctrl+right Arrow</b> will scroll the cursor one cell forward. -->
+      <b class="tkeybd">
+       空格键
+      </b>
+      或
+      <b class="tkeybd">
+       Ctrl+右箭头
+      </b>
+      会将光标向前滚动一个单元格。
+     </p>
+    </li>
+    <li>
+     <p>
+      <!-- The <b class="tkeybd">mouse wheel</b> or <b class="tkeybd">Ctrl+up arrow</b>, <b class="tkeybd">Ctrl+Down arrow</b> moves the cursor up/down a line. -->
+      <b class="tkeybd">
+       鼠标滚轮
+      </b>
+      或
+      <b class="tkeybd">
+       Ctrl+向上箭头
+      </b>
+      、
+      <b class="tkeybd">
+       Ctrl+向下箭头
+      </b>
+      移动 光标向上/向下移动一行。
+     </p>
+    </li>
+    <li>
+     <p>
+     </p>
+    </li>
+    )
+   </ul>
+   <p>
+    <!-- <strong>Next:</strong> <a href="mem-menu.html">Pop-up menus and files</a>. -->
+    <strong>
+     下一节:
+    </strong>
+    <a href="mem-v2raw.html">
+     文件 v2raw
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Negator -->
+   求负器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> <em>Negator</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/negator.png" width="32"/>
+    <em>
+     求负器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <a href="index.html">
+        运算器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 22
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/negator.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    行为
+   </h2>
+   <p>
+    该组件计算输入值的二进制补码负值（即取负）。其实现方式为：保持从最低位到最低位 1（含该位）为止的所有低位不变，并对更高位的所有位逐位取反。
+   </p>
+   <p>
+    若待求负的数值恰好是当前位宽下可表示的最小负值，则其相反数无法用补码表示；在这种情况下，输出仍保持为该最小负值本身。
+   </p>
+   <h2>
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     西侧（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     需要取负的输入值。
+    </dd>
+    <dt>
+     东侧（标记为 -<var>x</var>，输出，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     输入值的相反数。若输入为 <var>dataBits</var> 位所能表示的最小负值，则输出与输入相同。
+    </dd>
+   </dl>
+   <h2>
+    属性
+   </h2>
+   <p>
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <b class="propertie">
+       数据位宽
+      </b>
+     </dt>
+     <dd>
+      组件输入与输出的位宽。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <p>
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

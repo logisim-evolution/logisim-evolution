@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Substituir bibliotecas
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Substituir bibliotecas
+      </h1>
+      <p>
+        Agora suponha que tenhamos dois circuitos do Logisim que deveriam fazer a mesma coisa. Como instrutor, você poderia ter pedido aos seus alunos concluírem uma tarefa. Você tem um arquivo que contém sua solução, mas também vários arquivos de alunos contendo seus trabalhos. Talvez a tarefa tenha sido construir um somador de dois bits.
+      </p>
+      <p>
+        Imaginarei dois arquivos, chamados <tt><b>adder-master.circ</b></tt> e <tt><b>adder-query.circ</b></tt>. Cada arquivo conterá um circuito chamado <b class="propertie">2-bit adder</b> (é importante que o circuito para teste seja chamado exatamente igual), cuja aparência poderá ser a seguinte.
+      </p>
+      <blockquote>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <tt>adder-master.circ</tt>
+              </td>
+              <td>
+                <tt>adder-query.circ</tt>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="../../../../img-guide/verify-adder-master.png" alt="#########">
+              </td>
+              <td>
+                <img src="../../../../img-guide/verify-adder-query.png" alt="#########">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </blockquote>
+      <p>
+        Como você poderá ver, o circuito principal usará o somador predefinido no Logisim, enquanto o circuito para teste usará dois subcircuitos representando uma meia-soma e uma soma-completa (os quais serão constituídos apenas por portas simples). Para os fins do nosso exemplo, o circuito para teste terá um erro estúpido: O <var>carry</var> da meia-soma não estará conectado à soma completa.
+      </p>
+      <p>
+        Nós construíremos o nosso circuito de teste em um arquivo diferente. Lá, carregaremos <tt><b>adder-master.circ</b></tt> como uma biblioteca do Logisim <b class=menu>|&nbsp;Projeto&nbsp;|</b>→<b class=menu>|&nbsp;Carregar Biblioteca&nbsp;|</b>→ <b class=menu>|&nbsp;Biblioteca do Logisim ...&nbsp;|</b>, e inserir seu somador de 2 bits como um subcircuito. Nós poderíamos executar esse circuito diretamente para obter a saída desejada para uma solução perfeita.
+      </p>
+      <blockquote>
+        <tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table</tt>
+      </blockquote>
+      <p>
+        Mas queremos executar o circuito usando <tt></b>adder-query.circ</b></tt> ao invés de <tt></b>adder-master.circ</b></tt> como o da biblioteca carregada. A abordagem ingênua seria abrir Logisim e carregar essa biblioteca de uma vez; ou você poderá simplesmente remover o <<tt></b>adder-master.circ</b></tt> e renomear <tt><b>adder-query.circ</b></tt> para ser chamado de <tt><b>adder-master.circ</b></tt> em vez disso. Mas Logisim inclui uma prática opção <b class=porpertie>-sub</b> que substituirá temporariamente um arquivo por outro durante a sessão - sem fazer quaisquer alterações em disco.
+      </p>
+      <blockquote>
+        <tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ</tt>
+      </blockquote>
+      <p>
+		O arquivo de saída que será gerado desta forma é mostrado abaixo. É claro que é diferente do que vimos na seção anterior, porque a biblioteca comum para os circuitos <tt><b>adder2</b></tt> foi substituída no circuito de teste pela biblioteca <tt><b>query.circ</b></tt> errônea. 
+      </p>
+      <blockquote>
+        <pre>00      00      0E0
+01      00      0E1
+10      00      EE0
+11      00      EE1
+00      01      0E1
+01      01      0E0
+10      01      EE1
+11      01      EE0
+00      10      EE0
+01      10      EE1
+10      10      1E0
+11      10      1E1
+00      11      EE1
+01      11      EE0
+10      11      1E1
+11      11      1E0
+</pre>
+      </blockquote>
+      <p>
+        <strong>Próximo:</strong>&nbsp;<a href="other.html">Outras opções para verificações</a>.
+      </p>
+    </div>
+  </body>
+</html>

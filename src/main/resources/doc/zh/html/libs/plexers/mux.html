@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      多路复用器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/multiplexer.png" alt="#########" height="32" width="32">
+        <em>多路复用器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">复用器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 11
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/mux.png" alt="#########" height="64" width="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        将西侧众多输入中的一路复制到东侧输出；南侧选择输入的取值决定了选择哪一路输入。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东，选择端在下方偏左）
+      </h2>
+      <dl>
+        <dt>
+          西侧（输入，数量可变，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          数据输入端，其中一路会被送往输出。各输入从北侧开始编号为 0。
+        </dd>
+        <dt>
+          东侧（输出，位宽与“数据位宽”一致）
+        </dt>
+        <dd>
+          输出值等于西侧输入中编号与南侧选择输入值相同的那一路。
+          若选择输入中包含任意未指定位，则输出高阻。
+        </dd>
+        <dt>
+          南侧左端（灰色圆点标记处，输入，位宽与“选择位数”一致）
+        </dt>
+        <dd>
+          选择输入：该输入的值决定将哪一路西侧输入送到东侧输出。
+        </dd>
+        <dt>
+          南侧右端（输入，位宽 1）
+        </dt>
+        <dd>
+          使能：为 0 时，无论数据与选择输入为何值，输出均为高阻。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 <b class="tkeybd">1</b>–<b class="tkeybd">4</b> 可修改 <q>选择位数</q>，
+        <b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <q>数据位宽</q>，
+        方向键可修改 <q>朝向</q>。
+      </p>
+      <dl>
+        <dt>
+          朝向
+        </dt>
+        <dd>
+          组件方向（其输出相对于输入的位置）。
+        </dd>
+        <dt>
+          选择端位置
+        </dt>
+        <dd>
+          选择线与使能线相对于组件的位置。
+        </dd>
+        <dt>
+          选择位数
+        </dt>
+        <dd>
+          南侧选择输入的位宽。多路复用器的输入数量为 2<sup><var>选择位数</var></sup>。
+        </dd>
+        <dt>
+          数据位宽
+        </dt>
+        <dd>
+          通过多路复用器传递的数据位宽。
+        </dd>
+        <dt>
+          禁用时输出
+        </dt>
+        <dd>
+          使能端为 0 时，各输出位应呈现的值。可选项包括 0 和高阻；若选择高阻，则输出等同于与其它端口断开连接。
+        </dd>
+        <dt>
+          启用使能
+        </dt>
+        <dd>
+          当该属性为 <q>是</q> 时，组件带有使能输入端。
+          该属性主要用于兼容旧版 Logisim-evolution 中未提供使能输入的电路。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

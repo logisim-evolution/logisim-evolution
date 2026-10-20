@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      非门
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/iecnotgate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/ansnotgate.png" alt="#########" width="32" height="32">&nbsp;
+		<em>非门</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">逻辑门</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI：
+                    </th>
+                    <th>
+                      IEC：
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        非门输出其输入值的反码。输出端如何表示该数据由 <b class="propertie">输出值</b> 属性决定。非门的真值表如下。
+      </p>
+      <center>
+        <table class="encapsul">
+          <tbody>
+		     <tr>
+              <th class="tspace">
+                &nbsp;输入&nbsp;
+              </th>
+              <th class="tspace" colspan="3">
+                &nbsp;输出&nbsp;
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace"></th>
+              <th class="tspace">
+                &nbsp;&nbsp;0/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                0/高阻
+              </th>
+              <th class="tspace">
+                高阻/1
+              </th>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        若输入为悬空（<b class="uvalue">U</b>）或错误值（<b class="evalue">E</b>），则输出为错误值（<b class="evalue">E</b>）。
+      </p>
+      <p>
+        多位非门会对输入的每一位分别执行上述变换。
+      </p>
+
+      <h2>
+        引脚（假设组件朝东）
+      </h2>
+      <dl>
+        <dt>
+          西侧：
+        </dt>
+        <dd>
+          组件输入端。位宽由 <b class="propertie">数据位宽</b> 属性决定。
+        </dd>
+        <dt>
+          东侧：
+        </dt>
+        <dd>
+          组件输出端，其值为输入值的反码。位宽由 <b class="propertie">数据位宽</b> 属性决定。
+          输出的表现形式由 <b class="propertie">输出值</b> 属性定义。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <b class="propertie">数据位宽</b> 属性，方向键可修改 <b class="propertie">朝向</b> 属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            输出相对于输入的位置。
+          </dd>
+          <dt>
+            <b class="propertie">数据位宽</b>
+          </dt>
+          <dd>
+            组件输入与输出的位宽。
+          </dd>
+          <dt>
+            <b class="propertie">门大小</b>
+          </dt>
+          <dd>
+            决定绘制大号或小号外形。
+          </dd>
+          <dt>
+            <b class="propertie">输出值</b>
+          </dt>
+          <dd>
+            指定逻辑假/真如何映射为输出值。默认情况下，
+            假为低电平（<b class="zerov">0</b>），真为高电平（<b class="unov">1</b>）；
+            其中之一也可以改为高阻值，以支持线与、线或连接，详见
+            <a href="basic.html">与/或/与非/或非门</a> 文档中的示例。
+          </dd>
+          <dt>
+            <b class="propertie">标签</b>
+          </dt>
+          <dd>
+            与该逻辑门关联的标签文本。
+          </dd>
+          <dt>
+            <b class="propertie">标签字体</b>
+          </dt>
+          <dd>
+            标签的显示字体。
+          </dd>
+        </dl>
+      </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        可编辑该逻辑门的标签。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

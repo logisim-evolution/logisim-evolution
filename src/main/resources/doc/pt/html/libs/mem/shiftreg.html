@@ -1,0 +1,137 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Registrador de Deslocamento</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/shiftreg.gif" width="32" height="32">
+<em>Registrador de Deslocamento</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/shiftreg.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esse registrador é constituído por vários estágios, onde a cada variação do 
+<i>clock</i> fará com que um estágio receba o valor do estágio anterior, enquanto 
+um novo valor será carregado no primeiro estágio. O componente também poderá 
+opcionalmente oferecer a carga e o armazenamento em paralelo para todos os estágios.
+</p>
+
+<p> A entrada <var>Limpar (clear)</var> reiniciará todos os estágios com valor 
+igual a 0 assincronamente; ou seja, enquanto a entrada <var>Limpar (clear)</var> 
+for igual a 1, todos os valores serão iguais a 0, independente da entrada do 
+<i>clock</i>.
+</p>
+
+<h2>Pinos</h2>
+
+<p> Um asterisco (*) marcará os pinos que existirão somente quando o atributo
+Carga em Paralelo estiver habilitado.
+</p>
+
+<dl>
+
+<dt> Na face oeste, pino superior (entrada, com largura de 1 bit)</dt>
+<dd> Deslocar: se for 1 ou desconectado, todos os estágios avançarão ao gatilho 
+do <i>clock</i>; mas se for 0, não haverá avanço. Essa entrada será ignorada 
+se a entrada Carga for 1.
+</dd>
+
+<dt> Na face oeste, pino central (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Dado: quando houver avanço dos estágios, o valor encontrado nessa entrada
+será carregado no primeiro estágio. </dd>
+
+<dt> Na face oeste, pino inferior marcado com um triângulo (entrada, 
+com largura de 1 bit)</dt>
+<dd> <i>Clock</i>: no instante em que sofrer variação, conforme especificado 
+pelo atributo Gatilho, o componente poderá avançar os estágios ou carregar novos 
+valores. </dd>
+
+<dt>*Na face norte, pino à esquerda (entrada, com largura de 1 bit)</dt>
+<dd> Carga: se for 1, os valores encontrados nos outros pinos na face norte
+serão carregados em todos os estágios na próxima variação do <i>clock</i>. Se for 0
+ou desconectado, não haverá carga. </dd>
+
+<dt>*Na face norte, outros pinos (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Dado: esses valores serão carregados em todos os estágios quando houver
+variação do <i>clock</i> e enquanto <var>Carga</var> estiver em 1. A entrada 
+mais à esquerda corresponderá ao valor mais recente. </dd>
+
+<dt> Na face sul, pino à esquerda (entrada, com largura de 1 bit)</dt>
+<dd> Limpar (<i>clear</i>): se for 1, todos os estágios serão levados para zero
+assincronamente, e todas as outras entradas serão ignoradas. </dd>
+
+<dt>*Na face sul, outros pins (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Saída: Emitirá o valor armazenado em cada estágio, com o estágio mais
+recente refletido nos pinos mais à esquerda (próximo à entrada
+<var>Limpar (<i>clear</i>)</var>). </dd>
+
+<dt> Face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Saída: Emitirá o valor armazenado no estágio final (mais antigo).</dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Número de Estágios</q>,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits do valor armazenado em cada estágio. </dd>
+
+<dt> Número de Estágios </dt>
+<dd> O número de estágios incluídos no componente. </dd>
+
+<dt> Carga em Paralelo </dt>
+<dd> Se <q>sim,</q> então o componente incluirá entradas e saídas facilitando o
+acesso em paralelo a todos os valores dos estágios. </dd>
+
+<dt> Gatilho </dt>
+<dd> Serve para configurar como a entrada de <i>clock</i> será interpretada. O valor
+<q> Borda de Subida </q> serve para indicar que o registrador deverá
+atualizar seu valor no instante em o <i>clock</i> variar de 0 para 1. O valor
+<q> Borda de Descida </q> indicará que ele deverá realizar a atualização 
+no instante em que o <i>clock</i> variar de 1 para 0. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado ao componente. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Se o atributo Carga em Paralelo for não, ou se o atributo Bits de Dados
+for maior que 4, então o acionamento do registrador não terá efeito. Do contrário,
+ao clicar sobre o componente, o foco do teclado estará sobre o estágio selecionado
+(indicado por um retângulo vermelho), e ao digitar um dígito hexadecimal, o valor
+desse estágio irá mudar.
+</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

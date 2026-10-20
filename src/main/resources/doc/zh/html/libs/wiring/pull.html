@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      上/下拉电阻
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
+		<em> 上/下拉电阻</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">接线</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.5.0（在基础库中引入，2.7.0 中移至线路库）
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                     <th colspan="2">
+                      ANSI：
+                    </th>
+                    <th colspan="2">
+                      IEC：
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        当连接到某个节点时，只有在该节点的值为悬空值（<b class="uvalue">U</b>）时，该组件才会生效。此时，电阻会根据其 <b class="propertie">方向</b> 属性，将所连接的导线拉向指定的值。
+      </p>
+      <p>
+        如果连接的是多位信号，则其中处于悬空状态的各个位会按指定方向被拉动，而非悬空的位保持不变。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        该电阻只有一个引脚，为输出端，其位宽由所连接的组件自动决定。
+      </p>
+      <h2>
+        属性
+      </h2>
+
+      <p>
+        当组件被选中或正在放置时，可使用方向键改变其 <b class="propertie">朝向</b> 属性。
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+           <b class="propertie">朝向</b>
+        </dt>
+        <dd>
+          引脚相对于组件中心的位置方向。
+        </dd>
+        <dt>
+           <b class="propertie">方向</b>
+        </dt>
+        <dd>
+          指定悬空值应被拉到的目标值，可以是 <b class="zerov">0</b>、<b class="unov">1</b>，或 <b class="evalue">错误</b>。
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+
+    </div>
+  </body>
+</html>

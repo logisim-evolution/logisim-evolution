@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T15:08:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      引脚
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32">&nbsp;
+        <img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32" height="32">&nbsp;
+        <em>引脚</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>所属库：</strong>
+            </td>
+            <td>
+              <a href="index.html">接线</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 1（最初位于基础库，在 2.7.0 中移动到线路库）
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan="2">
+                      箭头
+                    </th>
+                    <th colspan="2">
+                      经典 Logisim
+                    </th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <th valign="middle" align="left">
+                      输入引脚：
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th valign="middle" align="left">
+                      输出引脚：
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        引脚既可以作为电路的输入，也可以作为电路的输出，这取决于其
+        <b class="propertie">类型</b> 属性。
+        上方示例展示了 Logisim-evolution 会根据
+        <b class="propertie">外观</b> 属性，以不同的图形来表示输入引脚与输出引脚。<br>
+        在“箭头”外观中，输入引脚的连接端位于箭头尖端一侧，输出引脚的连接端位于矩形一侧。
+        在“经典”外观中，输出引脚以圆形或圆角矩形表示，而输入引脚以正方形或矩形表示。<br>
+        无论采用哪种外观，组件内部都会显示正在发送或接收的数值各个位的状态
+        （打印视图除外，在打印视图中组件只显示引脚的数据位宽）。
+      </p>
+      <p>
+        引脚是与电路交互时非常方便的组件；对初学者来说，通常只需要按这种用途使用它即可。
+        但在使用多个子电路搭建电路时（参见《<a href="../../index.html">用户指南</a>》中的
+        “<a class="refguide" href="../../guide/subcirc/index.html">子电路</a>”章节），
+        引脚还用于定义电路与子电路之间的接口。<br>
+        当某个电路布局被作为子电路放入其他电路时，该布局中放置的引脚组件决定了
+        子电路组件上所显示的引脚。
+        此时，父电路在子电路组件这些引脚位置发送或接收的数值，
+        会传递到子电路内部布局中对应的引脚。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        引脚组件本身只有一个引脚。
+        输出引脚应连接到其他组件的输入端，输入引脚则连接到其他组件的输出端。
+        无论哪种情况，其位宽均与 <b class="propertie">数据位宽</b> 属性一致，
+        引脚位置由 <b class="propertie">朝向</b> 属性决定。
+      </p>
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，
+        可以使用
+        <b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b>
+        修改其
+        <b class="propertie">数据位宽</b>
+        属性。
+        快速连续按键可以输入更大的数值，
+        例如依次按下 <b class="tkeybd">Alt-1</b>、<b class="tkeybd">Alt-2</b>
+        将得到数值 12。
+        方向键用于修改其
+        <b class="propertie">朝向</b>
+        属性。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            引脚相对于组件中心的位置方向。
+          </dd>
+          <dt>
+            <b class="propertie">类型</b>
+          </dt>
+          <dd>
+            指定该组件是输出引脚还是输入引脚。
+          </dd>
+          <dt>
+            <b class="propertie">数据位宽</b>
+          </dt>
+          <dd>
+            该引脚所处理数值的位数。
+          </dd>
+          <dt>
+            <b class="propertie">行为</b>
+          </dt>
+          <dd>
+            <b class="propertie">行为</b> 属性仅适用于输入引脚。
+            该属性用于指定未知（悬空）值 <b class="uvalue">U</b> 的处理方式。
+            若设置为“简单”或“三态”，<b class="uvalue">U</b> 值将原样传入电路布局；
+            “上拉”会在传入电路前将 <b class="uvalue">U</b> 转换为 <b class="unov">1</b>；
+            “下拉”则会将 <b class="uvalue">U</b> 转换为 <b class="zerov">0</b>。<br><br>
+            该属性还决定在引脚未从父电路接收数值时，用户可以输入哪些值。
+            “三态”允许输入 <b class="uvalue">U</b> 值，其他设置不允许。
+          </dd>
+          <dt>
+            <b class="propertie">标签</b>
+          </dt>
+          <dd>
+            与组件关联的标签文本。
+          </dd>
+          <dt>
+            <b class="propertie">标签字体</b>
+          </dt>
+          <dd>
+            用于渲染标签的字体。
+          </dd>
+          <dt>
+            <b class="propertie">进制</b>
+          </dt>
+          <dd>
+            用于指定数值显示时所采用的进制。<br>
+            以二进制 1010 为例：<br>
+            &emsp;二进制：<b>1010<sub>b</sub></b><br>
+            &emsp;八进制：<b>12<sub>o</sub></b><br>
+            &emsp;有符号十进制：<b>-6<sub>s</sub></b><br>
+            &emsp;无符号十进制：<b>10<sub>u</sub></b><br>
+            &emsp;十六进制：<b>A<sub>h</sub></b><br>
+            &emsp;浮点数：<b>6.0E-07<sub>f</sub></b>（位宽为 16）<br>
+            &emsp;浮点数：<b>1.4E-44<sub>f</sub></b>（位宽为 32）<br>
+            &emsp;浮点数：<b>4.9E-323<sub>f</sub></b>（位宽为 64）<br>
+            &emsp;浮点数：<b>NaN<sub>f</sub></b>（位宽不是 16、32 或 64）
+          </dd>
+          <dt>
+            <b class="propertie">外观</b>
+          </dt>
+          <dd>
+            提供两种外观类型：Logisim 经典外观和箭头形状。
+            参见页面顶部的示例。
+          </dd>
+          <dt>
+            <b class="propertie">复位值</b>
+          </dt>
+          <dd>
+            对于非三态行为的输入引脚，可以指定一个复位值。
+            该值以十六进制表示，并在仿真器复位时加载到引脚中。
+            若输入引脚的行为是三态，则在复位时其所有位都会被设置为未知（悬空）<b class="uvalue">U</b>。
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        单击输出引脚不会产生任何效果，但会显示该引脚的属性。
+      </p>
+      <p>
+        单击输入引脚会切换被单击的那一位。
+        如果该引脚是三态引脚，则对应的位会在三种状态之间循环切换。<br>
+        若进制为浮点数，则会显示一个小型输入窗口。
+      </p>
+      <p>
+        但是，如果用户正在查看子电路的状态
+        （如《用户指南》中“<a href="../../guide/subcirc/sub-debug.html">调试子电路</a>”所述），
+        则该引脚的值会固定为子电路从父电路接收到的值。
+        若要更改该值，必须先断开子电路状态与父电路状态之间的关联，
+        Logisim-evolution 会提示用户确认是否确实要执行此操作。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        可编辑与组件关联的标签文本。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

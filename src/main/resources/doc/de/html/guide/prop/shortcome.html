@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-09T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Schwachstellen
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Schwachstellen
+      </h1>
+      <p>
+        Logisims Ausbreitungsalgorithmus ist mehr als ausgereift genug für fast alle Ausbildungszwecke; aber er ist nicht ausgereift genug für den industriellen Schaltungsentwurf. Um von den meisten verdammenden zu den wenigsten verdammenden zu gelangen, sind die Unzulänglichkeiten von Logisims Ausbreitungstechnik zu nennen: 
+      </p>
+      <ul>
+        <li>
+          <p>
+            Abgesehen von der Frage der Gate-Verzögerungen kümmert sich Logisim nicht besonders um Zeitfragen. Er ist sehr idealisiert, so dass ein Paar NOR-Gatter in einer S-R-Latch-Konfiguration unendlich lange im Lockstep toggeln wird, anstatt dass die Schaltung schließlich in einen stabilen Zustand übergeht.
+          </p>
+        </li>
+        <li>
+          <p>
+            Logisim kann keine Teilschaltungen simulieren, deren Pins sich manchmal als Eingänge und manchmal als Ausgänge verhalten. Mit Java gebaute Komponenten können jedoch solche Pins haben: Innerhalb der eingebauten Bibliotheken enthält der RAM-Schaltkreis der Speicherbibliothek einen D-Pin, der sich sowohl als Eingang als auch als Ausgang verhalten kann.
+          </p>
+        </li>
+        <li>
+          <p>
+            Logisim bricht seine Simulation nach einer festen Anzahl von Iterationen ab, wobei angenommen wird, dass ein Schwingungsfehler vorliegt. Es ist denkbar, dass eine große Schaltung, die nicht schwingt, zu Problemen führen kann.
+          </p>
+        </li>
+        <li>
+          <p>
+            Logisim unternimmt nichts bezüglich der Unterscheidung von Spannungspegeln: Ein Bit kann nur an, aus, unspezifiziert oder fehlerhaft sein.
+          </p>
+        </li>
+        <li>
+          <p>
+            Es gibt auch noch weitere Mängel, die ich ausgelassen habe, weil sie so unklar sind, dass, wenn man sich ihrer bewusst wäre, es offensichtlich wäre, dass Logisim nicht annähernd an dieses Niveau heranreicht. Als extremes Beispiel habe ich einen Freund, der für einen großen Chiphersteller arbeitet, und sein Job ist es, sich über "Blasen" in den nanometerbreiten Drähten der Chips zu sorgen, die wachsen und zu einer zufälligen Trennung führen.
+
+          </p>
+        </li>
+        <li>
+          <p>
+            Auch darüber hinaus bin ich kein Schaltungsentwurfsspezialist; es kann also durchaus Fehler in der Ausbreitungstechnik geben, die mir nicht bekannt sind. Ich begrüße Korrekturen von Experten.
+        </li>
+      </ul>
+      <p>
+        <strong>Weiter:</strong> <em><a href="../index.html">Leitfaden für Benutzer von Logisim</a></em>.
+      </p>
+    </div>
+  </body>
+</html>

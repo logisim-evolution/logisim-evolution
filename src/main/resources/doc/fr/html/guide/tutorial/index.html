@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-01-16T07:38:34.756000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Tutoriel pour débuter
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Tutoriel pour débuter
+      </h1>
+      <p>
+        Bienvenue à <b>Logisim-evolution</b> !
+      </p>
+      <p>
+        Logisim-evolution vous permet de dessiner et simuler des circuits digitaux. Il est destiné à être utilisé comme un outil d'enseignement, pour vous aider à apprendre comment de tels circuits fonctionnent.
+      </p>
+      <p>
+        Comme premier exercice pratique, construisons un circuit XOR: c'est un circuit qui prend deux entrées (que nous appellerons <var>x</var> et <var>y</var>) et dont la sortie est 0 si les deux entrées sont identiques et à 1 si elles sont différentes. La table de vérité suivante illustre ce fonctionnement.
+      </p>
+      <center>
+        <table class=truthtable>
+          <tbody>
+            <tr>
+              <th class="tspace">
+                &nbsp;x&nbsp;
+              </th>
+              <th class="tspace">
+                &nbsp;y&nbsp;
+              </th>
+              <th class="tspace">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class=zerov>
+                0
+              </td>
+              <td class=zerov>
+                0
+              </td>
+              <td class=zerov>
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class=unov>
+                1
+              </td>
+              <td class=zerov>
+                0
+              </td>
+              <td class=unov>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class=zerov>
+                0
+              </td>
+              <td class=unov>
+                1
+              </td>
+              <td class=unov>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class=unov>
+                1
+              </td>
+              <td class=unov>
+                1
+              </td>
+              <td class=zerov>
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-xor-circ.png" alt="#########"><br>
+        Nous pouvons dessiner un tel circuit sur le papier.
+      </p>
+      <p>
+        Mais justement, parce que c'est sur du papier, cela ne signifie pas que c'est fonctionnel. Pour vérifier notre travail, nous allons le dessiner dans Logisim et le tester et comme bonus supplémentaire, nous obtiendrons un circuit qui aura une présentation bien meilleure à ce que nous aurions pu dessiner à la main.
+      </p>
+      <blockquote>
+        <a href="tutor-orient.html">Etape 0: S'orienter</a><br>
+        <a href="tutor-gates.html">Etape 1: Ajouter des portes logiques</a><br>
+        <a href="tutor-wires.html">Etape 2: Ajouter des câbles</a><br>
+        <a href="tutor-text.html">Etape 3: Ajouter du texte</a><br>
+        <a href="tutor-test.html">Etape 4: Tester le circuit</a><br>
+        <a href="tutor-step.html">Etape 5: Le mode pas à pas</a>
+      </blockquote>
+      <p>
+        Bonne chance avec votre construction de circuits!
+      </p>
+      <p>
+        <b>Suite:</b> <a href="tutor-orient.html">Etape 0: S'orienter</a>
+      </p>
+    </div>
+  </body>
+</html>

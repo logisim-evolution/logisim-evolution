@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-07T07:26:01.212000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Le menu projet
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Le menu projet
+      </h1>
+      <dl>
+        <dt>
+          <strong>Ajouter Circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Ajoute un nouveau circuit dans le projet en cours. Logisim insistera pour que vous spécifiiez un nom pour le nouveau circuit. Le nom ne doit correspondre à aucun circuit existant dans le projet.
+          </p>
+        </dd>
+		<dt>
+          <strong>Ajouter une entité VHDL..</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+		<dt>
+          <strong>Importer une entité VHDL..</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+		<dt>
+          <strong>Charger une librairie</strong>
+        </dt>
+        <dd>
+          <p>
+            Charge <a href="../gui/gui-explore.html">une librairie</a> dans le projet. Vous pouvez charger trois types de librairies, comme expliqué ailleurs dans le <a href="../gui/gui-explore.html#lib">Guide de l'utilisateur.</a>.
+          </p>
+        </dd>
+        <dt>
+          <strong>Enlever les libraires</strong>
+        </dt>
+        <dd>
+          <p>
+            Décharge les librairies actuelles du projet. Logisim ne vous permet pas de décharger les librairies utilisées par le projet, y compris les librairies contenant des composants apparaissant dans les circuits de projet, ainsi que celles contenant des outils qui apparaissent dans la barre d'outils ou qui sont mappées à la souris.
+          </p>
+        </dd>
+        <dt>
+          <strong>Monter le Circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Déplace le circuit actuellement sélectionné d'un d'une ligne vers le haut dans la liste des circuits du projet visible dans le volet de l'explorateur.
+          </p>
+        </dd>
+        <dt>
+          <strong>Descendre le Circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Déplace le circuit actuellement affiché d'une ligne vers le bas dans la liste des circuits du projet visible dans le volet de l'explorateur.
+          </p>
+        </dd>
+        <dt>
+          <strong>Définir comme circuit principal</strong>
+        </dt>
+        <dd>
+          <p>
+            Définis le circuit actuellement affiché comme étant le <b>circuit principal</b> du projet. Cet élément de menu sera grisé si le circuit actuel est déjà le circuit principal du projet. Circuit principal: signifie simplement qu'il sera affiché en premier lorsque l'on ouvre le projet.
+          </p>
+        </dd>
+        <dt>
+          <strong>Supprimer le circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Supprime le circuit actuellement affiché du projet. Logisim vous empêchera de supprimer des circuits utilisés comme sous-circuits et vous empêchera de supprimer le dernier circuit d'un projet.
+          </p>
+        </dd>
+        <dt>
+          <strong>Revenir à l'apparence par défaut</strong>
+        </dt>
+        <dd>
+          <p>
+            Si vous avez modifié l'apparence du circuit, cet élément de menu ramène l'apparence par défaut. L'élément de menu est activé uniquement lors de l'édition de l'apparence du circuit. L'aspect de l'apparence par défaut peut être modifié par la propriété <b class=propertie>Apparence</b> de la librairie.
+          </p>
+        </dd>
+<!--
+		<dt>
+          <strong>Afficher la barre d'outils</strong>
+        </dt>
+        <dd>
+          <p>
+            Modifie le volet de l'explorateur pour afficher une liste des circuits du projet et des bibliothèques chargées.
+          </p>
+        </dd>
+        <dt>
+          <strong>Afficher l'arborescence de simulation</strong>
+        </dt>
+        <dd>
+          <p>
+            Modifie le volet de l'explorateur pour afficher la hiérarchie des sous-circuits dans la simulation en cours.
+          </p>
+        </dd>
+-->
+        <dt>
+          <strong>Editer le dessin du Circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Modifie l'espace de travail pour qu'il affiche l'édition du schéma du circuit. C'est ce que fait le programme au démarrage, et puisque vous éditerez très probablement la disposition des circuits le plus souvent en utilisant Logisim lui-même, cet élément de menu sera normalement désactivé.
+          </p>
+        </dd>
+        <dt>
+          <strong>Editer l'apparence du circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Permets de modifier la représentation du circuit lorsqu'il est utilisé comme sous-circuit dans un autre circuit. Cette option de menu vous permet de dessiner une apparence différente pour le sous-circuit. Modifie l'espace de travail pour qu'il affiche <a href="../subcirc/sub-appear.html">l'éditeur d'apparence.</a>
+          </p>
+        </dd>
+        <dt>
+          <strong>Analyser le circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            <b class=note>Note:</b> Ce menu peut être désactivé dans certaines versions de logisim-evolution. Il peut être réactivé par des options de la ligne de commande.<br>
+            <br>
+            Calcule une table de vérité et des expressions booléennes correspondant au circuit en cours, en les affichant dans la fenêtre <a href="../analyze/index.html">d'analyse combinatoire</a>. Le processus d'analyse ne sera valable que pour les circuits combinatoires. Une description complète du processus d’analyse est décrite dans la section <a href="../analyze/ana-open.html">Analyse combinatoire</a>.
+          </p>
+        </dd>
+        <dt>
+          <strong>Statistique du circuit</strong>
+        </dt>
+        <dd>
+          <p>
+            Affiche une boîte de dialogue contenant des statistiques sur les composants utilisés par le circuit actuellement affiché. Le dialogue comprend un tableau à cinq colonnes:
+          </p>
+          <p align="center">
+            <img src="../../../img-guide/project-stat.png" alt="#########">
+          </p>
+          <ul>
+            <li>Composant: le nom du composant.
+            </li>
+            <li>Librairie: Nom de la Librairie à partir de laquelle le composant est présenté.
+            </li>
+            <li>Simple: nombre de fois où ce composant apparaît directement dans le circuit visualisé.
+            </li>
+            <li>Unique: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où chaque sous-circuit de la hiérarchie est compté une seule fois.
+            </li>
+            <li>Récursif: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où nous comptons chaque sous-circuit autant de fois qu'il apparaît dans la hiérarchie.
+            </li>
+          </ul>
+          <p>
+            La distinction entre "Unique" et "Recursive" est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1 comme dans la section <a href="../subcirc/sub-using.html">Utiliser des sous-circuits</a> . Le multiplexeur 2:1 contient deux portes ET (et le circuit 4:1 n'en contient aucune), de sorte que le nombre "Unique" dénombrant les portes ET serait 2; mais si vous deviez construire le multiplexeur 4:1 en utilisant ce diagramme, vous auriez réellement besoin de 2 portes ET pour chacun des trois multiplexeurs 2:1, donc le nombre "récursif" est 6.
+          </p>
+          <p>
+            Si vous utilisez des circuits d'une bibliothèque Logisim chargée, ces composants sont considérés comme des "boîtes noires": le contenu des circuits de la bibliothèque n'est pas inclus dans les comptes uniques et récursifs.
+          </p>
+        </dd>
+        <dt>
+          <strong>Options...</strong>
+        </dt>
+        <dd>
+          <p>
+            Ouvre la fenêtre des <a href="../opts/index.html">Options de projet</a>.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <b>Suite:</b> <a href="simulate.html">Le menu Simulation</a>.
+      </p>
+    </div>
+  </body>
+</html>

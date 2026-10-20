@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="373"
+   height="135.5"
+   viewBox="0 0 98.689577 35.851043"
+   version="1.1"
+   id="svg64115"
+   inkscape:version="1.1 (ce6663b3b7, 2021-05-25)"
+   sodipodi:docname="logisim-evolution-logo.svg"
+   inkscape:export-filename="/home/carlos/dev/projects/logisim-evolution/artwork/logisim-evolution-logo.png"
+   inkscape:export-xdpi="263.54959"
+   inkscape:export-ydpi="263.54959"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:inkscape0="https://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi0="https://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd">
+  <title
+     id="title71625">Logisim-evolution project logo</title>
+  <sodipodi:namedview
+     id="namedview64117"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="1.9350293"
+     inkscape:cx="62.272959"
+     inkscape:cy="161.49626"
+     inkscape:window-width="2886"
+     inkscape:window-height="1553"
+     inkscape:window-x="416"
+     inkscape:window-y="328"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g68170"
+     borderlayer="false" />
+  <defs
+     id="defs64112" />
+  <g
+     inkscape:label="circuit"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <path
+       id="path12162"
+       stroke-linecap="square"
+       d="m 9.5695404,32.378192 c 0,0.29368 -0.237066,0.52916 -0.529166,0.52916 -0.2921,0 -0.529167,-0.23548 -0.529167,-0.52916 0,-0.29105 0.237067,-0.52917 0.529167,-0.52917 0.2921,0 0.529166,0.23812 0.529166,0.52917 z m -6.2177046,2.91041 v -5.82083 l 5.0233756,2.91042 z m 6.2177046,-2.91041 H 11.95079 m -11.28260058,-0.0021 2.68364638,0.0021"
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264583;stroke-opacity:1"
+       sodipodi:nodetypes="ssssscccccccc" />
+    <path
+       id="rect9115"
+       stroke-linecap="square"
+       d="m 16.447929,28.51609 v 0.0164 c 0.581818,1.00938 0.917839,2.17514 0.917839,3.42318 0,1.24777 -0.336021,2.41353 -0.917839,3.42238 v 0.0159 h 3.563673 c 2.542645,0 4.762499,-1.38509 5.953124,-3.43826 -1.190625,-2.05343 -3.410479,-3.43958 -5.953124,-3.43958 z m 9.525,3.43958 h 2.381249 M 14.728137,30.23588 h 2.38125 m -4.994038,3.43958 h 3.237913 1.756125"
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264583;stroke-opacity:1"
+       sodipodi:nodetypes="ccsccscccccccccc" />
+    <path
+       id="path6087"
+       stroke-linecap="square"
+       d="m 37.879179,33.67546 h -5.027083 v -6.87863 l 5.027083,-5.3e-4 c 1.89865,0 3.439583,1.54093 3.439583,3.43958 0,1.89865 -1.540933,3.43958 -3.439583,3.43958 z m 3.439583,-3.43958 h 6.752043 M 30.470846,28.51609 h 2.38125 m -2.38125,3.43958 h 2.38125"
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       sodipodi:nodetypes="scccsscccccc" />
+    <path
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 28.354178,31.95567 h 2.645835"
+       id="path64555-7-7-8-1" />
+    <path
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 12.083234,33.807175 V 32.246902"
+       id="path64555-4-2" />
+    <path
+       id="path64555-4-4"
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264583px;stroke-linecap:square;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 30.338194,28.515393 V 26.819895 M 0.66818942,26.815195 H 30.338194" />
+    <path
+       id="path64555-4-5"
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264583px;stroke-linecap:square;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 14.658476,30.236425 v -1.725701 m -13.99028658,-1e-6 H 14.658476" />
+    <path
+       id="path69319-9-2"
+       style="display:inline;fill:none;stroke:#717171;stroke-width:0.264581px;stroke-linecap:square;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 44.848275,35.336754 h 53.363262 m -53.365674,-1.3e-5 v -2.115389" />
+    <path
+       id="path10210"
+       stroke-linecap="square"
+       d="m 85.202518,26.79298 v 0.01852 c 0.582084,1.008063 0.918105,2.174875 0.918105,3.421063 0,1.248833 -0.336021,2.415645 -0.918105,3.423708 v 0.01587 h 3.563938 c 2.542646,0 4.7625,-1.383771 5.953125,-3.439583 -1.190625,-2.053167 -3.410479,-3.439584 -5.953125,-3.439584 z m -1.322916,0.01852 c 0.581818,1.008063 0.917839,2.174875 0.917839,3.421063 0,1.248833 -0.336021,2.415645 -0.917839,3.423708 m 11.90625,-3.421063 c 0,0.291042 -0.238125,0.529167 -0.529167,0.529167 -0.291042,0 -0.529167,-0.238125 -0.529167,-0.529167 0,-0.293687 0.238125,-0.529166 0.529167,-0.529166 0.291042,0 0.529167,0.235479 0.529167,0.529166 z m 0,-0.0026 h 2.38125 M 64.629061,28.512772 H 84.54106 M 61.359457,31.952355 H 84.54106"
+       style="fill:none;stroke:#717171;stroke-width:0.264583;stroke-opacity:1"
+       sodipodi:nodetypes="ccsccscsccscssssscccccc" />
+    <circle
+       style="fill:none;fill-opacity:0.872884;stroke:#717171;stroke-width:0.264999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path70973"
+       cx="60.661064"
+       cy="31.912426"
+       r="0.53481007" />
+    <circle
+       style="display:inline;fill:none;fill-opacity:0.872884;stroke:#717171;stroke-width:0.264999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path70973-6"
+       cx="44.853722"
+       cy="27.43767"
+       r="0.53481007" />
+    <circle
+       style="display:inline;fill:none;fill-opacity:0.872884;stroke:#717171;stroke-width:0.264999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path70973-6-1"
+       cx="44.857136"
+       cy="32.660507"
+       r="0.53481007" />
+    <circle
+       style="display:inline;fill:none;fill-opacity:0.872884;stroke:#717171;stroke-width:0.264999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path70973-6-1-6"
+       cx="55.440472"
+       cy="32.660507"
+       r="0.53481007" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer10"
+     inkscape:label="texts"
+     style="display:none">
+    <g
+       inkscape:groupmode="layer"
+       id="layer8"
+       inkscape:label="logisim"
+       style="display:inline">
+      <text
+         xml:space="preserve"
+         style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
+         x="-1.1271147"
+         y="24.227375"
+         id="text34859-5"><tspan
+           sodipodi:role="line"
+           id="tspan34857-9"
+           style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
+           x="-1.1271147"
+           y="24.227375">LOGISIM</tspan></text>
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer9"
+       inkscape:label="evolution">
+      <text
+         xml:space="preserve"
+         style="font-size:18.3444px;line-height:1.25;font-family:'a dripping marker';-inkscape-font-specification:'a dripping marker';letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff0000;stroke-width:0.264583"
+         x="38.08284"
+         y="43.758877"
+         id="text41880-7"
+         transform="rotate(-14.065357)"
+         inkscape:transform-center-x="-3.776291"
+         inkscape:transform-center-y="5.4092766"><tspan
+           sodipodi:role="line"
+           id="tspan41878-5"
+           style="font-size:18.3444px;fill:#d10000;fill-opacity:1;stroke-width:0.264583"
+           x="38.08284"
+           y="43.758877">evolution</tspan></text>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g68178"
+     inkscape:label="texts copy"
+     style="display:inline">
+    <g
+       inkscape:groupmode="layer"
+       id="layer7"
+       inkscape:label="o"
+       style="display:inline">
+      <g
+         id="g70812"
+         transform="matrix(0.7699465,0,0,0.7699465,-51.549006,20.772594)"
+         style="stroke-width:1.2988">
+        <g
+           id="g72614"
+           transform="matrix(0.83333326,0,0,0.83333326,15.927696,-0.96668307)"
+           style="stroke-width:1.55856">
+          <circle
+             style="opacity:1;fill:#d00000;fill-opacity:1;stroke:#008000;stroke-width:0.779275;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+             id="path71594"
+             cx="93.935913"
+             cy="-11.553981"
+             r="12.786353" />
+          <path
+             class="st0"
+             d="m 105.84217,-11.553981 c 0,6.588125 -5.31813,11.90625 -11.906254,11.90625 -6.588125,0 -11.90625,-5.318125 -11.90625,-11.90625 0,-6.588125 5.318125,-11.90625 11.90625,-11.90625 2.191,0.0088 4.243351,0.607665 6.006345,1.645783 3.516869,2.070865 5.882279,5.8898 5.899909,10.260467 z"
+             id="path991"
+             style="display:inline;fill:#008000;fill-opacity:1;stroke:#5b2929;stroke-width:0.412367;stroke-opacity:1"
+             sodipodi:nodetypes="csscsc" />
+          <path
+             class="st2"
+             d="m 93.935916,0.749144 c -6.799792,0 -12.303125,-5.503334 -12.303125,-12.303125 0,-6.799792 5.503333,-12.303125 12.303125,-12.303125 6.799794,0 12.303124,5.503333 12.303124,12.303125 0,6.799791 -5.50333,12.303125 -12.303124,12.303125 z m 0,-23.8125 c -6.35,0 -11.509375,5.159375 -11.509375,11.509375 0,6.35 5.159375,11.509375 11.509375,11.509375 6.350004,0 11.509374,-5.159375 11.509374,-11.509375 0,-6.35 -5.15937,-11.509375 -11.509374,-11.509375 z"
+             id="path995"
+             style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:0.412367;stroke-opacity:1" />
+          <g
+             inkscape0:label="Layer 1"
+             inkscape0:groupmode="layer"
+             id="g9094"
+             transform="matrix(0.46923086,0,0,0.46923086,2.91317,-198.59611)"
+             style="display:inline;stroke-width:0.878813">
+            <g
+               id="g9092"
+               transform="matrix(0.1061068,0,0,0.1061068,156.44586,342.20134)"
+               style="stroke-width:0.878813">
+              <path
+                 sodipodi0:nodetypes="cscscsc"
+                 id="path9090"
+                 d="m 236.45571,380.51302 c 0,0 40.16262,75.69466 42.4264,150.51273 2.02031,65.76093 -38.38579,151.52288 -38.38579,151.52288 0,0 129.47042,-6.60826 200.51528,-57.57869 58.23726,-41.78175 99.50003,-91.92388 99.50003,-91.92388 0,0 -36.75872,-49.27214 -112.63202,-100.00511 -32.15512,-21.50064 -73.84699,-34.27657 -110.10913,-41.83108 -44.80145,-9.3335 -81.31477,-10.69685 -81.31477,-10.69685 z"
+                 style="fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 sodipodi:nodetypes="cccscssc" />
+              <path
+                 style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 d="m 540.89972,533.04606 46.86658,0.30737"
+                 id="path50746" />
+              <path
+                 style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 d="m 146.47752,411.80692 106.1322,0.30737"
+                 id="path50746-7" />
+              <path
+                 style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 d="m 146.88279,652.06994 110.95229,0.30737"
+                 id="path50746-8" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g68170"
+       inkscape:label="gisim"
+       style="display:inline">
+      <text
+         xml:space="preserve"
+         style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
+         x="30.093723"
+         y="24.227375"
+         id="text68168"><tspan
+           sodipodi:role="line"
+           id="tspan68166"
+           style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
+           x="30.093723"
+           y="24.227375">GISIM</tspan></text>
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g68184"
+       inkscape:label="L"
+       style="display:inline">
+      <text
+         xml:space="preserve"
+         style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
+         x="-1.1271147"
+         y="24.227375"
+         id="text68182"><tspan
+           sodipodi:role="line"
+           id="tspan68180"
+           style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
+           x="-1.1271147"
+           y="24.227375">L</tspan></text>
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g68176"
+       inkscape:label="evolution"
+       style="display:inline">
+      <text
+         xml:space="preserve"
+         style="font-size:18.3444px;line-height:1.25;font-family:'a dripping marker';-inkscape-font-specification:'a dripping marker';letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff0000;stroke-width:0.264583"
+         x="38.08284"
+         y="43.758877"
+         id="text68174"
+         transform="rotate(-14.065357)"
+         inkscape:transform-center-x="-3.776291"
+         inkscape:transform-center-y="5.4092766"><tspan
+           sodipodi:role="line"
+           id="tspan68172"
+           style="font-size:18.3444px;fill:#d10000;fill-opacity:1;stroke-width:0.264583"
+           x="38.08284"
+           y="43.758877">evolution</tspan></text>
+    </g>
+  </g>
+  <metadata
+     id="metadata71623">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Logisim-evolution project logo</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Marcin Orlowski &lt;http://MarcinOrlowski.com&gt;</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Marcin Orlowski</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>logisim-evolution logo</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

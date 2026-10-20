@@ -1,0 +1,55 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2020-01-10T06:18:10.521000000">
+    <meta name="changed" content="2020-01-10T07:26:01.212000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      v2.0 raw
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+        <h1>
+        v2.0 raw
+      </h1>
+    <div class="maindiv"><p>
+        Le format utilisé pour ce fichier image est intentionnellement simple. Cela vous permet d'écrire un programme, tel qu'un assembleur, qui génère des images mémoire qui peuvent ensuite être chargées. Par exemple si nous avions une mémoire comme ci-dessous :
+		</p>
+        <p align="center">
+        <img class="notscal" src="../../../../img-guide/memraw.png" alt="#########">
+        </p>
+		<p>
+		 Et ensuite toutes les valeurs sont à zéro. L'image résultante dans le fichier sera la suivante.
+      </p>
+      <blockquote>
+        <pre>v2.0 raw
+12 22 45 67 12*80  23 a2 bb
+ce 4f 6a cc 45 7*cc 12 24</pre>
+      </blockquote>
+      <p>
+        La première ligne identifie le format de fichier utilisé . Les valeurs suivantes, en hexadécimal, répertorient les données à partir de l'adresse 0. Les fins de ligne ne sont pas interprétées. Les valeurs dans ce fichier sont toujours présentées en hexadécimal (sans indication 0x). 
+      </p>
+      <p>
+        Le fichier image peut utiliser un codage "run-length". Quand une valeur est répétée de multiple fois. Par exemple: <TT>80</TT> douze fois de suite est représenté par <TT>12*80</TT> . Notez que le nombre de répétitions est écrit en base 10. 
+      </p>
+      <p>
+        Vous pouvez placer des commentaires dans le fichier en utilisant le symbole '#'. Tous les caractères dans la ligne à partir du symbole '#' seront ignorés par Logisim.
+      </p>
+	  <p>
+	    Si longueur de l'ensemble des données du fichier est plus courte que l'espace mémoire les cellules restantes seront initialisées à 0 pour les ROM et pour les RAM selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>, à 0 ou aléatoirement.
+      </p>
+	  <p>
+	    Si la largeur du mot mémoire en bit est inférieure à la largeur des mots de données du fichier. Les bits de poids fort en trop seront ignorés. 
+	  </p>
+	   <p align="center">
+        <img src="../../../../img-guide/memraw1.png" alt="#########" height=130  width=480">
+        </p>
+      <p>
+        <b>Suite:</b> <a href="mem-menu.html">Menu contextuel et fichiers</a>.
+      </p>
+    </div>
+  </body>
+</html>

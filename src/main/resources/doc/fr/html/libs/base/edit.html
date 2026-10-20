@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Outil Editer
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    &lt;
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../img-guide/toolselect.png" alt="#########"> <em>Outil Editer</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Base</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.3.0
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        <b>L'outil Editer</b> permet à l'utilisateur de réorganiser sur les dessins les composants existants et d'ajouter des câbles. Cet outil est une sorte de super outil qui regroupe les fonction de l'outil sélection et câblage. L'effet de l'outil Editer varie selon l'endroit ou l'utilisateur clic avec la souris.
+      </p>
+      <h3>
+        La sélection
+      </h3>
+      <p>
+        Comme dans la plupart des programmes de dessins Logisim permet de sélectionner des éléments de celui-ci pour les déplacer,les copier les supprimer ou les modifier.
+      </p>
+      <p>
+        <b>Un simple clic-droit</b> sur un composant ou un fil non déjà marqué sélectionne celui-ci. Si une autre sélection est active, elle sera libérée et seul le dernier composant cliqué sera sélectionné.<br>
+        Si l'on commence l'opération clic-droit-glissé sur une partie du dessin ou il n'y pas de composant cela déclenche une sélection rectangulaire et tous les composants couverts par ce rectangle seront sélectionnés.<br>
+        Si on maintient le bouton gauche enfoncé ou si l'on clic-droit sur une sélection celle-ci peut être immédiatement déplacée par un glisser sur le dessin.<br>
+      </p><b>Un Maj-Clic-droit</b> sur un composant rajoute celui-ci à la sélection en cours. Si l'on effectue un Maj-Clic-glissé cela déclenche une sélection rectangulaire et tous les composants couverts par cette sélection seront rajoutés à la sélection active.
+      <p>
+        <b>Un clic-gauche</b> ou un <b>Ctrl-clic</b> affiche le menu contextuel du composant ou de la sélection au-dessous du curseur de la souris.
+      </p>
+      <p>
+        <b>Un ALt+clic</b> sur un segment de fil permet de le déplacer en conservant le câblage. Si vous effectuez cette action en dehors d'un câblage, un petit cercle vert sera affiché et vous pourrez en glissant la souris établir un nouveau câblage depuis ce point.
+      </p>
+      <p>
+        <b>Note:</b> Certains points du dessin ont un comportement particulier sur un clic-droit, ils ne déclenche pas de sélection. Mais commence un câblage. Il s'agit des extrémités des fils et des connexions des composants. Un petit cercle vert s'affiche quand cela se produit.
+      </p>
+      <p>
+        Par la suite en plus des possibilités communes du <a href="../../guide/menu/edit.html">menu éditer</a> ( copier Ctrl-C, couper Ctrl-X, coller Ctrl-V et effacer Del/Delete ) certaines touches ont un effet avec l'outil d'édition.
+      </p>
+      <ul>
+        <li>
+          <p>
+            Les touches fléchées modifient l'attribut Orientation pour tous les composants de la sélection qui ont un tel attribut
+          </p>
+        </li>
+        <li>
+          <p>
+            Les touches Del Delete (Supprimer) et Retour arrière suppriment l'ensemble des composants sélectionnés.
+          </p>
+        </li>
+        <li>
+          <p>
+            Les touches Insérer et Ctrl-D créeront une copie des composants actuellement sélectionnés.
+          </p>
+        </li>
+      </ul>
+      <p>
+        Par défaut, Logisim calculera un moyen d'ajouter de nouvelles connexions de sorte qu'aucune connexion existante ne soit perdue pendant le déplacement. (Parfois, cela supprime ou raccourcit les câbles existants.) Si vous effectuez un déplacement où vous ne souhaitez pas que ces modifications soient effectuées, vous pouvez appuyer sur la touche Maj pendant le déplacement. Si vous voulez désactiver entièrement ce comportement, allez dans le menu Project &amp; gt; Options, sélectionnez l'onglet Canevas et décochez la case <q>Conserver les connexions lors du déplacement</q> ; dans ce cas, les connexions ne sont calculées que lorsque la touche Maj est enfoncée.
+      </p>
+      <p>
+        Si vous avez sélectionné plusieurs composants en utilisant l'outil d'édition, alors la table d'attribut ne présentera que les attributs communs aux différents composants sélectionnés (à l'exclusion des câbles). Si les composants sélectionnés n'ont pas la même valeur pour un attribut, alors la valeur pour cet attribut sera un espace blanc. Vous pouvez changer la valeur pour tous les attributs sélectionnés en une fois en l'éditant.
+      </p>
+      <p>
+        Le Comportement de Logisim lors de la duplication d'une sélection ou du collage du presse-papiers dans un circuit est quelque peu particulier: il ne placera pas immédiatement les composants dans le circuit; au lieu de cela, la sélection sera une collection de "fantômes", qui seront déposés dans le circuit dès qu'ils seront déplacés vers un autre emplacement ou retirés de la sélection. (Ce Comportement particulier est nécessaire, car dans un cas contraire le collage fusionnerait les fils de la sélection dans le circuit actuel, et les câbles qui s'y trouveraient seraient déplacés avec le Presse-papier collé si l'utilisateur veut déplacer cette sélection ailleurs.)
+      </p>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <a href="../index.html">Retour dans <em>Référence de la bibliothèque</em></a>
+      </p>
+    </div>
+  </body>
+</html>

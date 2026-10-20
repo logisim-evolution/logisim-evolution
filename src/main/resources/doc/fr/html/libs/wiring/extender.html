@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Extension de bit
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+         <img class="iconlibs" src="../../../../icons/6464/extender.png" alt="#########" width="32" height="32"> <em>Extension de bit</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Câblage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.5.0 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0)
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+ <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        L'extenseur de bits modifie la largeur de bit d'une connexion. Si sa largeur est réduite, elle est simplement tronquée pour conserver les bits de poids le plus faible. Si sa largeur de bit est augmentée, les bits de poids faible ne sont pas modifiés, et vous avez le choix pour les bits de poids fort supplémentaires: ils peuvent êtres soit tous à 0 soit tous à 1 ou tous égale au <q>bit de signe</q> (le bit le plus élevé de l'entrée) ou encore êtres déterminés par une entrée de commande supplémentaire.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest :Entrée, la largeur de bit est définie par l'attribut Largeur de bit en entrée
+        </dt>
+        <dd>
+          <p>
+            L'entrée multibits dont la valeur doit être transformée.
+          </p>
+        </dd>
+        <dt>
+          Bord Est :Sortie, la largeur de bit est définie par l'attribut Largeur de bit en sortie
+        </dt>
+        <dd>
+          <p>
+            La sortie transformée.
+          </p>
+        </dd>
+        <dt>
+          Bord Nord :Entrée, largeur de bit 1
+        </dt>
+        <dd>
+          <p>
+            Spécifie quels devraient être les bits supplémentaires dans la sortie. Cette broche est disponible uniquement lorsque l'attribut Type d'extension est <q>Entrée.</q>
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">0</b> à <b class="tkeybd">9</b> modifie l'attribut  <b class="propertie">Largeur de bit en entrée</b>,<b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut  <b class="propertie">Largeur de bit en sortie</b>
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+           <b class="propertie">Largeur de bit en entrée</b>
+        </dt>
+        <dd>
+          Décrit plus haut.
+        </dd>
+        <dt>
+           <b class="propertie">Largeur de bit en sortie</b>
+        </dt>
+        <dd>
+          Décrit plus haut.
+        </dd>
+        <dt>
+           <b class="propertie">Type d'extension</b>
+        </dt>
+        <dd>
+          Dans le cas d'une extension de la largeur, cette option permet de déterminer l'état des bits supplémentaire. Si <q>zéro</q> ou <q>un,</q> les bits supplémentaires seront égale à 0 ou à 1 en conséquence. Si <q>Signe</q> , les bits supplémentaires sont ajustés pour correspondre au bit de poids fort de l’entrée. Et si <q>Entrée,</q> La valeur d'une seconde entrée de un bit sur son côté est utilisée pour définir les bits supplémentaires.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-26T07:25:23.245000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Options de la ligne de commande
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Options de la ligne de commande
+      </h1>
+      <p>
+        Vous pouvez configurer de nombreuses préférences d'application de Logisim via les options de ligne de commande. Cela peut être particulièrement utile dans un laboratoire d'ordinateurs composés poste d'étude où vous souhaitez que Logisim démarre la même chose pour les étudiants à chaque fois, indépendamment de la configuration du programme fait par l'étudiant précédent.
+      </p>
+      <p>
+        La syntaxe globale de la ligne de commande est la suivante.
+      </p>
+      <blockquote>
+        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
+</pre>
+      </blockquote>
+      <p>
+        Les fichiers supplémentaires facultatifs nommés sur la ligne de commande seront ouverts en tant que fenêtres distinctes dans Logisim.
+      </p>
+      <p>
+        L'exemple suivant démarre Logisim dans sa configuration de base.
+      </p>
+      <blockquote>
+        <pre>java -jar <i><b>jarFileName</b> </i><b>-plain -gates shaped -locale en</b>
+</pre>
+      </blockquote>
+      <p>
+        Les options prises en charge sont les suivantes.
+      </p>
+      <dl>
+        <dd></dd>
+        <dt>
+          <tt>-plain</tt>
+        </dt>
+        <dt>
+          <tt>-empty</tt>
+        </dt>
+        <dt>
+          <tt>-template <b><i>templateFile</i></b></tt>
+        </dt>
+        <dd>
+          <p>
+            Configure le modèle à utiliser par Logisim.<br>
+            Utilise modèle standard, modèle vide, modèle utilisateur
+          </p>
+        </dd>
+        <dt>
+          <tt>-gates <em>[<b>shaped</b>|<b>rectangular</b>]</em></tt>
+        </dt>
+        <dd>
+          <p>
+            Configure le style de symbole de porte à utiliser.
+          </p>
+        </dd>
+        <dt>
+          <tt>-locale <i><b>localeIdentifier</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Configure la traduction à utiliser. Au moment d'écrire ces lignes, les paramètres régionaux pris en charge incluent:
+          </p>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <tt>de</tt> Allemand
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>el</tt> Grec
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>en</tt> Anglais
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>es</tt> Espagnol
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>fr</tt> Français
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>pt</tt> Portugais
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>ru</tt> Russe
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>it</tt> Italien
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>nl</tt> Néerlandais
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+        <dd></dd>
+        <dt>
+          <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
+        </dt>
+        <dd>
+          <p>
+            Cela ne concerne que les langues qui utilisent des caractères en dehors du jeu de caractères ASCII 7 bits; cela inclurait les langues utilisant des caractères accentués et n'inclurait pas l'anglais. Si <em>no</em> , les caractères en dehors du jeu de caractères ASCII 7 bits sont remplacés par des équivalents appropriés au langage; cela serait utile pour les combinaisons Java / OS où ces caractères ne sont pas bien pris en charge.
+          </p>
+        </dd>
+        <dt>
+          <tt>-clearprops</tt>
+        </dt>
+        <dd>
+          <p>
+            Effacer toutes les préférences de l'application au démarrage, Logisim agira comme s'il était exécuté sur le système hôte pour la première fois.
+          </p>
+        </dd>
+        <dt>
+          <tt>-nosplash</tt>
+        </dt>
+        <dd>
+          <p>
+            Masque l'écran de démarrage de Logisim .
+          </p>
+        </dd>
+        <dt>
+          <tt>-help</tt>
+        </dt>
+        <dd>
+          <p>
+            Affiche un résumé des options de la ligne de commande.
+          </p>
+        </dd>
+        <dt>
+          <tt>-version</tt>
+        </dt>
+        <dd>
+          <p>
+            Affiche le numéro de version de Logisim.
+          </p>
+        </dd>
+        <dt>
+          <tt>-analyze</tt>
+        </dt>
+        <dd>
+          <p>
+            Affiche les menus analyse combinatoire.
+          </p>
+        </dd>
+        <dt>
+          <tt>-load <i><b>filename</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Charge une image dans les RAM (fonctionne seulement avec -tty). Plus d'information dans <a href="../verify/other.html">Autres options de vérifications</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Charger le fichier en remplaçant le fichier de bibliothèque (file1) par le le fichier de bibliothèque (file2). Plus d'information dans <a href="../verify/sub.html">Substituer des librairies</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-tty</tt> <i>[<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]</i>
+        </dt>
+        <dd>
+          <p>
+            Exécuter sans interface graphique. Plus d'information dans <a href="../verify/other.html">Autres options de vérifications</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
+        </dt>
+        <dd>
+          Exécute les tests de <b>circuitname</b> dans <b>projectfile</b> en focntion des vecteurs dans <b>vectorfile</b>. Plus d'information dans <a href="../verify/test.html">Fenêtre Vecteur de test</a>
+        </dd>
+        <dt>
+          <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Ouvre Logisim avec une fenêtre dimensionnée selon les paramètres W (largeur) et H (hauteur) ou avec l'angle supérieur gauche positioné selon les paramètres X,Y.<br>
+            Exemple : -geom 600x400+100+100
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Options non documentées
+      </h2>
+      <dl>
+        <dt>
+          <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt>
+        </dt>
+      </dl>
+      <p>
+        <b>Suite:</b> <a href="../index.html">Guide de l'utilisateur</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-03-16T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Gate delays -->
+   门延迟
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Gate delays -->
+    门延迟
+   </h1>
+   <p>
+    <!-- As an example of the level of sophistication of Logisim's algorithm, consider the following circuit. -->
+    作为 Logisim-evolution 算法复杂程度的示例，请考虑以下电路。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/prop-const0.png"/>
+   </p>
+   <p>
+    <!-- This "obviously" always outputs 0. But NOT gates don't react instantaneously to their inputs in reality, and neither do they in Logisim. As a result, when this circuit's input changes from 0 to 1, the AND gate will briefly see two 1 inputs, and it will emit a 1 briefly. You won't see it on the screen. But the effect is observable when we use the AND gate's output as an input into the clock of a D flip-flop. -->
+    这“显然”总是输出 0。但 NOT 门在现实中不会对其输入立即做出反应，在 Logisim 中也不会。 因此，当该电路的输入从 0 变为 1 时，与门将短暂看到两个 1 输入，并短暂发出 1。 您不会在屏幕上看到它。 但当我们使用与门的输出作为 D 触发器时钟的输入时，效果是可以观察到的。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/prop-using-const0.png"/>
+   </p>
+   <p>
+    <!-- Poking the 0 input to become 1 leads to an instantaneous 1 going into the D flip-flop, and thus the flip-flop's value will toggle every time the circuit input goes from 0 to 1. The detailed sequence can also be observed thanks to the <a href="../tutorial/tutor-step.html">step-by-step</a> mode of the simulation. -->
+    将 0 输入变为 1 会导致瞬时 1 进入 D 触发器，因此每次电路输入从 0 变为 1 时，触发器的值都会切换。还可以通过以下方式观察详细的序列：
+    <a href="../tutorial/tutor-step.html">
+     step-by-step
+    </a>
+    模拟模式。
+   </p>
+   <p>
+    <!-- Every component has a delay associated with it. More sophisticated components built into Logisim tend to have larger delays, but these delays are somewhat arbitrary and may not reflect reality. -->
+    每个组件都有与之相关的延迟。 Logisim-evolution 中内置的更复杂的组件往往具有更大的延迟，但这些延迟有些随意，可能无法反映现实。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/propagat.gif"/>
+    <br/>
+    Logisim world
+    <br/>
+    <br/>
+    <img alt="#########" class="notscal" src="../../../../img-guide/reallife2.png"/>
+    <br/>
+    Real world
+   </p>
+   <p>
+    <!-- From a technical point of view, it is relatively easy to deal with this level of sophistication in a single circuit. Dealing with gate delays well across subcircuits, though, is a bit more complex; Logisim does attempt to address this correctly by placing all primitive component's propagation values into a single schedule regardless of the subcircuit in which the component lies. -->
+    从技术角度来看，在单个电路中处理这种复杂程度相对容易。 然而，处理跨子电路的门延迟要复杂一些。 Logisim-evolution 确实尝试通过将所有原始组件的传播值放入单个调度中来正确解决此问题，而不管组件位于哪个子电路中。
+   </p>
+   <p>
+    <!-- Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation tab</a>, you can configure Logisim to add a random, occasional delay to a component's propagation. This is intended to simulate the unevenness of real circuits. In particular, an R-S latch built using two NOR gates will oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is disabled by default. -->
+    通过
+    <a href="../opts/index.html">
+     项目选项
+    </a>
+    窗口的
+    <a href="../opts/opts-simulate.html">
+     模拟选项卡
+    </a>
+    ，您可以 配置 Logisim-evolution 为组件的传播添加随机、偶尔的延迟。 这是为了模拟真实电路的不均匀性。 特别是，使用两个 NOR 门构建的 R-S 锁存器将在没有这种随机性的情况下振荡，因为两个门将同步处理其输入。 默认情况下禁用此随机性。
+   </p>
+   <p>
+    <!-- Note that I'm stopping short of saying that Logisim always addresses gate delays well. But at least it tries. -->
+    请注意，我并没有说 Logisim-evolution 总是能很好地解决门延迟问题。 但至少它尝试过。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="oscillate.html">Oscillation errors</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="oscillate.html">
+     振荡错误
+    </a>
+    。
+   </p>
+  </div>
+ </body>
+</html>

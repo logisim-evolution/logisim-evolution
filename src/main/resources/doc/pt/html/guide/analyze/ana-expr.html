@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-02-07T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Criar expressões
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Criar expressões
+      </h1>
+      <p>
+        Para cada variável de saída, a janela Análise Combinacional manterá duas estruturas - uma coluna correspondente na tabela-verdade, e uma expressão lógica - que especificará a forma como cada entrada se relacionará com a sua saída. Você poderá editar tanto a tabela-verdade ou a expressão, que isso mudará a outra automaticamente, conforme necessário, para mantê-las coerentes.
+      </p>
+      <p>
+        Como veremos a seguir, as expressões lógicas (ou booleanas) são particularmente úteis, pois a janela Análise Combinacional as usará quando for construir um circuito que corresponda ao estado atual.
+      </p>
+      <p>
+        Você poderá visualizar e editar as expressões usando as duas últimas guias da janela: a  <b class="button">Expressão</b> e a <b class="button">Minimizada</b>.
+      </p>
+      <h2>
+        A guia Expressão
+      </h2>
+      <p align="center">
+        <img src="../../../img-guide/analyze-expression.png" alt="#########">
+      </p>
+      <p>
+        A guia <b class="button">Expressão</b> permite visualizar e editar as expressões correntes associadas a cada variável de saída. Possui um seletor <b class="button">Notação:</b> e uma lista de expressões matemáticas para o circuito.
+      </p>
+	  <p>
+	    O selector <b class=b button id=not>Notação :</b> altera o modo de notação das expressões de saída. Permite-lhe cinco tipos de notação :
+	  <dl>
+	  <dt><b class="button">Matemática </b> :</dt><dd>   A barra acima representa a negação, o - a função AND e o + a função OR.</dd>
+	  <dt><b class="button">Lógico </b> :</dt><dd> O ¬ representa a negação, o ˄ a função AND e o ˅ a função OR</dd>
+	  <dt><b class="button">Lógica Alternativa </b> :</dt><dd> O ~ representa a negação, o ˄ a função AND e o ˅ a função OR.</dd>
+	  <dt><b class="button">Programação com booleans </b> :</dt><dd> O ! representa a negação, o && a função AND e o || a função OR.</dd>
+	  <dt><b class="button">Programação com bits </b> :</dt><dd> O ~ representa a negação, o & a função AND e o | a função OR.</dd>
+	  </dl>
+	  </p>
+       Logo abaixo do seletor, as expressões são exibidas em uma lista. Você pode editar a expressão no painel de texto, clicando duas vezes na linha da expressão.
+	  </p>
+	  <p>
+		Note que sua tabela de verdade será irremediavelmente alterada se você editar as expressões e vice versae recipro.
+	  </p>
+      <p>
+        Além dos sinais de multiplicação e adição em lugar das portas AND e OR, uma expressão poderá conter qualquer tipo de operadores lógicos em C/Java, bem como as próprias palavras (AND, OR, NOT).
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <th>
+                maior precedência:
+              </th>
+              <td align="center">
+                <tt>~</tt> <tt>!</tt>
+              </td>
+              <th>
+                NOT
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <td align="center">
+                (nada) <tt>&amp;</tt> <tt>&amp;&amp;</tt>
+              </td>
+              <th>
+                AND
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <td align="center">
+                <tt>^</tt>
+              </td>
+              <th>
+                XOR
+              </th>
+            </tr>
+            <tr>
+              <th>
+                menor precedência:
+              </th>
+              <td align="center">
+                <tt>+</tt> <tt>|</tt> <tt>||</tt>
+              </td>
+              <th>
+                OR
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Os exemplos a seguir são representações válidas de uma mesma expressão. Você também poderá misturar os operadores.
+      </p>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <tt>~a (b + c)</tt>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <tt>!a &amp;&amp; (b || c)</tt>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <tt>NOT a AND (b OR c)</tt>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Em geral, os parênteses sobre uma sequência de ANDs (ou ORs ou XORs) não importam. (Em particular, se criar um circuito correspondente no Logisim, ele irá ignorá-los.)
+      </p>
+      <h2>
+        A guia Minimizada (Minimized)
+      </h2>
+      <p align="center">
+        <img src="../../../img-guide/analyze-minimized.png" alt="#########">
+      </p>
+      <p>
+       O último guia exibe a expressão mínima de uma das colunas da tabela da verdade. Neste painel são apresentados quatro selectores, a mesa karnaught e a expressão mínima.
+      </p>
+      <p>
+        Com o seletor superior <b class="button">Saida:</b>, você pode selecionar a saída minimizada de uma coluna da tabela que você deseja exibir.
+      </p>
+      <p>
+       O seguinte selector <<b class="button">Formato:</b> permite-lhe indicar se pretende produzir uma <b>  soma de produtos </b> ou uma <b> produtos de somas</b>.
+      </p>
+	  <p>
+	    o selector <b class="button">Estilo:</b> modifica a apresentação das variáveis nas margens da tabela. Seja com valores binários ou com linhas sobre valores verdadeiros
+	  </p>
+	  	  <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                     <img class="notscal" src="../../../../img-guide/analyze-numline1.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                   Numerado
+                  </td>
+              </tbody>
+            </table>
+          </div>
+		  <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                     <img class="notscal" src="../../../../img-guide/analyze-numline2.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                   Forradas
+                  </td>
+              </tbody>
+            </table>
+          </div>
+	  <p>
+	   o selector <b class="button">Notação:</b> tem a mesma propriedade do painel <a href="#not">Expressão (ver acima)</a>
+	  </p>
+	  <p>
+		Se houver quatro entradas ou menos, um mapa de Karnaugh correspondente à variável irá aparecer abaixo do seletor. Você poderá clicar no mapa de Karnaugh para alterar os valores na tabela-verdade. O mapa de Karnaugh também apresentará os termos selecionados para a expressão minimizada por meio de retângulos arredondados, sólidos, semitransparentes. 
+	  </p>
+	  <p>
+	    Embaixo estará a expressão minimizada, formatada como mostrado na guia Expressão (Expression). O Logisim usa o algoritmo de Quine-McCluskey para calcular a expressão minimizada. Isso é equivalente a um mapa de Karnaugh, mas se aplica a qualquer número de variáveis de entrada.
+	  </p>
+      <p>
+        O botão Definir Como Expressão (Set As Expression) permitirá selecionar a expressão minimizada como aquela correspondente à variável. Isso geralmente não será necessário, já que editar a tabela-verdade resultará no uso da expressão minimizada para a coluna alterada, mas se você digitar uma expressão através da guia apropriada, esta também poderá ser uma maneira conveniente para se alterar a expressão minimizada correspondente.
+      </p>
+      <p>
+        <b>Próximo:</b> <a href="ana-gen.html">Gerar um circuito</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Decodificador</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/decoder.gif" width="32" height="32">
+<em>Decodificador</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Plexers</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 11</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/decoder.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Emitirá 1 em apenas em uma saída; a saída em 1 dependerá do valor corrente
+recebido através da entrada na face sul. </p>
+
+<h2> Pinos (componente supondo voltado para leste) </h2>
+
+<dl>
+
+<dt> Na face leste, quantidade variável (saídas, com largura de 1 bit) </dt>
+<dd> As saídas são numeradas começando em 0 na face norte. Cada saída
+será 1 se o seu número coincidir com o valor atual recebido pela
+seleção da entrada na face sul; caso contrário, seu valor será zero ou
+flutuante, dependendo do valor do atributo <i>Tri-state</i>?.
+Se a selecção da entrada contiver quaisquer bits não especificados, 
+todas as saídas serão flutuantes. </dd>
+
+<dt> Na face sul (entrada, largura de acordo com o atributo Bits Selecionados) </dt>
+<dd> Entrada selecionada: o valor dessa entrada determinará quais as
+saídas serão iguais a 1. </dd>
+
+
+</dl>
+
+<h2> Atributos </h2>
+
+<p> Quando o componente for selecionado ou estiver sendo adicionado,
+os dígitos de '1' a '4' irão alterar os seus <q> Bits Selecionados</q>
+e as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (especificará qual dos lados terá as saídas). </dd>
+
+<dt> Bits selecionados </dt>
+<dd> A largura em bits da entrada selecionada do componente na face sul.
+O número de saídas para o decodificador será 
+2<sup><small><var> Bits Selecionados </var></small></sup>.
+</dd>
+
+<dt> Tri-state? </dt>
+<dd> Especificará se as saídas não selecionadas deverão ser flutuantes (Sim) ou
+zero (Não). </dd>
+
+<dt> Saída desabilitada </dt>
+<dd> Especificará qual deverá ser o valor de cada bit das saídas quando o 
+componente estiver desabilitado (ou seja, quando o pino de habilitação estiver
+em 0). Opções incluem zero e flutuante; e neste caso, as saídas estarão 
+efetivamente desconectadas de quaisquer outras portas.
+</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

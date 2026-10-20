@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      寄存器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/register.png" alt="#########" width="32" height="32"> <em>寄存器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">存储器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th width="50">
+                      经典
+                    </th>
+                    <th width="50">
+                      Logisim-evolution
+                    </th>
+                  </tr>
+                  <tr>     
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lregister.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/hregister.png" alt="#########" width="64" height="64">
+                    </td>					
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        寄存器用于存储一个多位数值，该数值以十六进制形式显示在组件的矩形区域中，并通过 <var>Q</var> 输出端口输出。当时钟输入（在南侧边缘以三角形标识）满足触发条件时，寄存器中存储的值会更新为该时刻 <var>D</var> 输入端口上的值。具体在何种时刻进行更新，由 <q>触发方式</q>属性进行配置。
+      </p>
+      <p>
+        <var>复位</var> 输入端口用于将寄存器的值异步复位为 0（全零）。也就是说，只要 <var>复位</var> 为 1，寄存器的值就会被强制固定为 0，而不受时钟输入的影响。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          东侧边缘，标记为 <var>Q</var>（输出，位宽与<q>数据位宽</q>属性一致）
+        </dt>
+        <dd>
+          输出当前寄存器中存储的值。
+        </dd>
+
+        <dt>
+          西侧边缘，标记为 <var>D</var>（输入，位宽与<q>数据位宽</q>属性一致）
+        </dt>
+        <dd>
+          数据输入：在时钟信号从 0 上升到 1 的瞬间，寄存器的值将更新为该时刻 <var>D</var> 输入端口上的值。
+        </dd>
+
+        <dt>
+          西侧边缘，标记为 <var>en</var> 或 <var>WE</var>（输入，位宽为 1）
+        </dt>
+        <dd>
+          使能端：当该输入为 0 时，所有时钟触发都会被忽略，输出端保持当前值不变；当该输入为 1 或未定义时，时钟触发有效。
+        </dd>
+
+        <dt>
+          南侧边缘（Logisim-evolution 中位于西侧边缘底部），以三角形标识（输入，位宽为 1）
+        </dt>
+        <dd>
+          时钟输入：在该输入信号从 0 上升到 1（即上升沿）的瞬间，寄存器的值将更新为 <var>D</var> 输入端口的值。
+        </dd>
+
+        <dt>
+          南侧边缘，标记为 <var>0</var> 或 <var>R</var>（输入，位宽为 1）
+        </dt>
+        <dd>
+          异步复位：当该输入为 0 或未定义时不起作用；只要该输入为 1，寄存器的值就会被强制固定为 0。该过程是异步的，即不依赖于当前的时钟输入状态。在该输入为 1 时，其它所有输入均不起作用。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，可通过 Alt-0 到 Alt-9 快捷键修改其 <q>数据位宽</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          数据位宽
+        </dt>
+        <dd>
+          寄存器中存储数值的位宽。
+        </dd>
+
+        <dt>
+          触发方式
+        </dt>
+        <dd>
+          配置时钟输入的解释方式：<q>上升沿</q> 表示在时钟信号从 0 上升到 1 的瞬间更新；<q>下降沿</q> 表示在时钟信号从 1 下降到 0 的瞬间更新；<q>高电平</q> 表示只要时钟输入为 1 就持续更新；<q>低电平</q> 表示只要时钟输入为 0 就持续更新。
+        </dd>
+
+        <dt>
+          标签
+        </dt>
+        <dd>
+          与寄存器关联的标签文本。
+        </dd>
+
+        <dt>
+          标签字体
+        </dt>
+        <dd>
+          用于绘制标签文本的字体。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        单击寄存器会使其获得键盘焦点（以红色矩形标识），此时输入十六进制数字即可修改寄存器中存储的值。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        可用于编辑与该组件关联的标签文本。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

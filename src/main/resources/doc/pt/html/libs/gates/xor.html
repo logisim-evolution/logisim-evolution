@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Portas XOR/XNOR/Paridade Ímpar/Paridade Par</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<table><tr><td>
+<img align="center" src="../../../../icons/xorGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/xnorGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityOddGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityEvenGate.gif" width="32" height="32"><br>
+<img align="center" src="../../../../icons/xorGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/xnorGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityOddGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityEvenGate.gif" width="32" height="32">
+</td><td valign="center"><h1><em>Portas XOR/XNOR/Paridade Ímpar/Paridade Par</em></h1></table>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1 para XOR/Paridade Ímpar/Par; 2.0 Beta 6 para XNOR</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/xor.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Portas XOR/XNOR/Paridade Ímpar/Paridade Par servem para calcular as respectivas
+funções das entradas, e emitir o resultado à saída.
+</p>
+
+<p> Por padrão, todos as entradas que não estiverem conectadas serão consideradas
+desligadas e, portanto, ignoradas - isso é, se a entrada realmente não tiver algo
+ligado a ela, nem mesmo um fio.
+Dessa forma, você poderá inserir um porta com 5 entradas, mas se conectar somente
+duas entradas, ele irá funcionar como uma porta de 2 entradas; isso irá aliviá-lo do
+trabalho de ter de se preocupar com a configuração do número de entradas cada vez
+que você criar uma porta.
+(Se todas as entradas estiverem desconectadas, a saída será o valor de erro <em>X</em>.)
+Alguns usuários, no entanto, preferem que o Logisim insista que todas as entradas
+devam estar ligado, pois isso corresponde melhor às portas do mundo real.
+Você poderá permitir esse comportamento, se usar em Projeto &gt; Opções ...
+na guia Simulação, o item de menu <q> Erro para entradas indefinidas </q> para
+<q> Saída de Porta Quando Indefinida. </q>
+</p>
+
+<p> A tabela-verdade para portas com duas entradas é a que se segue. </p>
+
+<center><table>
+<tr><th><var>x</var></th><th><var>y</var></th><th>XOR</th>
+	<th>XNOR</th><th>Odd</th><th>Even</th></tr>
+<tr><td align="center">0</td><td align="center">0</td>
+  <td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td><td align="center">1</td></tr>
+<tr><td align="center">0</td><td align="center">1</td>
+  <td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">1</td>
+  <td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td><td align="center">1</td></tr>
+</table></center>
+<p> Como você pode ver, a porta Paridade Ímpar e o porta XOR se comportam
+de forma idêntica com duas entradas, da mesma forma, o fazem as portas
+Paridade Par e XNOR.
+Mas, se houver mais de duas entradas especificadas, a porta XOR emitirá
+1 apenas quando houver exatamente uma entrada igual a 1, enquanto a porta 
+Paridade Ímpar irá emitir 1 apenas se houver um número ímpar de entradas iguais a 1.
+O porta XNOR irá emitir 1 só quando <em>não</em> houver exatamente uma entrada
+igual a 1, enquanto a porta Paridade Par irá emitir 1 se houver uma quantidade
+par de entradas iguais a 1. As portas XOR e XNOR incluem um atributo chamado
+Comportamento para Entradas Múltiplas que lhes permite serem configuradas para usar o
+comportamento das portas Paridade Ímpar e até mesmo o da Paridade Par. 
+</p>
+
+<p> Se alguma entrada for um valor de erro (por exemplo, se os valores estiverem
+entrando em conflito em uma mesma conexão) ou flutuante, a saída também o será.
+</p>
+
+<p> As versões multibit de cada porta executarão a mesma operação descrita acima 
+bit a bit sobre suas entradas. </p>
+
+<strong> Nota: </strong> Muitas autoridades alegam que a porta XOR convencional
+deve ter comportamento equivalente ao da Paridade Ímpar, mas não há não um acordo 
+sobre isso. O comportamento padrão do Logisim para as portas XOR é baseado
+no padrão IEEE 91. É também coerente significado intuitivo subjacente ao 
+<em> termo ou exclusivo </em>: um garçom perguntando se você quer um prato de 
+purê de batatas, cenouras, ervilhas, ou couve-flor só aceitará uma escolha, 
+e não três, independentemente do que algumas autoridades possam dizer.
+(Devo admitir, porém, que eu não sujeitei essa declaração a um teste rigoroso.)
+Você poderá configurar as portas XOR e XNOR para usar a paridade, alterando o seu 
+atributo ao <q> Comportamento para Entradas Múltiplas </q>.
+</p>
+
+<h2>Pinos (supondo o component voltado para leste)</h2>
+
+<dl>
+
+<dt> Na face oeste (entradas, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> <p> As entradas para o componente. Haverá tantos delas quanto o
+especificado pelo atributo Número de Entradas. 
+</p>
+
+<p> Observar que se você estiver usando portas convencionais, o lado oeste das 
+portas XOR e XNOR será curvo. No entanto, os pinos de entrada estarão sobre uma linha.
+O Logisim irá traçar marcas curtas para indicar essas entradas; se você ultrapassar
+essas indicações, ele irá supor que a intenção seria apenas atingi-los.
+Em "Prévia da Impressão", essas marcas não serão desenhadas a menos que estejam
+conectados a fios. </p> </dd>
+
+<dt> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> <p> A porta de saída, cujo valor será calculado com base nos valores atuais
+das entradas conforme descrito acima. </p> </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Número de Entradas </q>,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>,
+e as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (a posição das saídas em relação às entradas). </dd>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits das entradas e das saídas do componente. </dd>
+
+<dt> Tamanho da Porta </dt>
+<dd> Serve para determinar se é para desenhar uma versão maior ou menor do
+componente. Isso não afetará o número de entradas, o que será especificada
+pelo atributo Número de Entradas. No entanto, se o número de entradas for maior que 3
+(para o formato menor) ou 5 (para o formato maior), então a porta será desenhada 
+com <q> "asas" </q> para acomodar as entradas adicionais além daquelas normalmente
+oferecidas. </dd>
+
+<dt> Número de Entradas </dt>
+<dd> Serve para determinar quantos pinos o componente terá em sua face oeste. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado à porta. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+<dt> Comportamento para Entradas Múltiplas (XOR e XNOR apenas) </dt>
+<dd> Quando houver três ou mais entradas, as saídas das portas XOR/XNOR
+serão baseadas se apenas uma entrada for igual a 1 (padrão),
+ou em um número ímpar de entradas forem iguais a 1. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

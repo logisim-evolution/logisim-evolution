@@ -1,0 +1,522 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-08-04T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Portes ET(AND) /OU(OR)/ET NON(NAND)/OU NON(NOR)
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/ansandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansorgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansnandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansnorgate.png" alt="#########" width="32" height="32"><br>
+              <img class="iconlibs" src="../../../../icons/6464/iecandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecorgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecnandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecnorgate.png" alt="#########" width="32" height="32">
+            </td>
+            <td>
+              <h1>
+                <em>Portes<br>ET, OU<br>ET NON, OU NON</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Portes</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th width="50">
+                      ET<br>(AND)
+                    </th>
+                    <th width="50">
+                      OU<br>(OR)
+                    </th>
+                    <th width="50">
+                      ET NON<br>(NAND)
+                    </th>
+                    <th width="50">
+                      OU NON<br>(NOR)
+                    </th>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      ANSI:
+                    </th>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansnandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansnorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      IEC:
+                    </th>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecnandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecnorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Les portes ET, OU, ET NON et OU NON calculent chacune la fonction respective des entrées, et émettent le résultat sur la sortie.
+      </p>
+      <p>
+        Par défaut, les entrées qui ne sont pas connectées,pas même un fil, sont ignorées. De cette façon, vous pouvez insérer une porte à 5 entrées, mais n'attacher que deux entrées et elle fonctionnera comme une porte à 2 entrées; cela vous évite d'avoir à vous soucier de configurer le nombre d'entrées à chaque fois que vous créez une porte.<br>Si toutes les entrées ne sont pas connectées, la sortie sera la valeur d'erreur (<b class="evalue">E</b>). Certains utilisateurs, cependant, préfèrent que Logisim-evolution insiste pour que toutes les entrées soient connectées, car c'est ce qui correspond aux portes du monde réel. Vous pouvez activer ce Comportement en allant dans l'élément de menu   <b class=menu>|&nbsp;Projet&nbsp;|</b> &gt; <b class=menu>|&nbsp;Options...&nbsp;|</b> et en sélectionnant l'onglet <b class=menu>|&nbsp;Simulation&nbsp;|</b> et en sélectionnant le choix <q>Ignorer les entrées indéfinies</q> pour le paramètre <q>Sortie des portes quand indéfinie</q>
+      </p>
+      <p>
+        La table de vérité à deux entrées pour les portes est la suivante. La lettre <b class="evalue">E</b> représente la valeur d'erreur, et la lettre <b class="uvalue">U</b> représente la valeur flottante.
+      </p>
+      <center>
+        <table class="encapsul" border="0">
+          <tbody>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        ET (AND)
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        OU (OR)
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &nbsp;
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        ET NON<br>(NAND)
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td></td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        OU NON<br>(NOR)
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        En bref, ces composants fonctionnent comme prévu tant que toutes les entrées sont soit 0 ou 1. Si une entrée est flottante (<b class="uvalue">U</b>) ou une  valeur d'erreur (<b class="evalue">E</b>), le composant la traite à la fois comme 0 <em>et</em> 1 et si la sortie n'est pas modifiée dans les deux cas, la sortie conservera sa valeur. (comme lorsqu'une porte ET a une entrée qui est définitivement 0 et une seconde entrée douteuse); mais si la sortie change selon que l'entrée est traitée en 0 ou 1, la sortie prendra la valeur  d'erreur (<b class="evalue">E</b>).
+      </p>
+      <p>
+        Les versions multibits de chaque porte effectueront leur transformation un bit par bit sur leurs entrées.
+      </p>
+      <h2>
+        Pins (en supposant que le composant est orienté vers l'est)
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest :
+        </dt>
+        <dd>
+            Les entrées dans le composant. Il y en aura autant que ce qui est spécifié dans l'attribut <b class="propertie">Nombre d'entrées</b> et largeur de bit selon l'attribut <b class="propertie">Largeur de données</b>.
+          <p>
+            Notez que si vous utilisez des portes formées, le côté ouest des portes OU et NOR sera incurvé. Néanmoins, les broches d'entrée sont en ligne. Logisim dessinera de courts tronçons pour illustrer cela ; et si vous dépassez un tronçon, il supposera silencieusement que vous n'aviez pas l'intention de le dépasser. Dans la "vue imprimante", ces tronçons ne seront pas dessinés, sauf s'ils sont connectés à des fils.
+          </p>
+        </dd>
+        <dt>
+          Bord est :
+        </dt>
+        <dd>
+            La sortie de la porte, dont la valeur est calculée sur la base des entrées actuelles comme décrite ci-dessus et la largeur de bit selon l'attribut <b class="propertie">Largeur de données</b>. 
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les chiffres <b class="tkeybd">0</b> à <b class="tkeybd">9</b> modifient son attribut <b class="propertie">Nombre d'entrées</b>, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifient son attribut <b class="propertie">Largeur de données</b> et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Orientation</b>
+          </dt>
+          <dd>
+            La direction du composant (sa sortie par rapport à ses entrées).
+          </dd>
+          <dt>
+            <b class="propertie">Largeur de données</b>
+          </dt>
+          <dd>
+            La largeur de bit des entrées et sorties du composant.
+          </dd>
+		   <dt>
+            <b class="propertie">Dimension dessins</b>
+          </dt>
+          <dd>
+            Détermine s'il faut dessiner une version plus large ou plus étroite du composant. Cela n'affecte pas le nombre d'entrées, qui est spécifié par l'attribut <b class="propertie">Nombre d'entrées</b>. Cependant, si des portes façonnées sont sélectionnées, alors la porte sera dessinée avec des <q>ailes</q> pour accueillir des entrées supplémentaires au-delà de ce que la forme accueille naturellement.
+          </dd>
+          <dt>
+            <b class="propertie">Nombre d'entrées</b>
+          </dt>
+          <dd>
+            Détermine le nombre de broches à avoir pour le composant sur son côté ouest.
+          </dd>
+          <dt>
+            <b class="propertie">Valeur de sortie</b>
+          </dt>
+          <dd>
+            Indique comment les résultats faux et vrais doivent être traduits en valeurs de sortie. Par défaut, faux est représenté par une tension faible (<b class="zerov">0</b>) et vrai par une tension élevée (<b class="unov">1</b>), mais l'un ou l'autre peut être remplacé par une valeur haute impédance (<q>flottant</q>). Cela permet des connexions de type ou-câblé et et-câblé, comme illustré ci-dessous : À gauche, l'attribut Valeur de sortie des tampons est flottant/1 et la résistance tire à 0, ce qui donne le Comportement ou-câblé; à droite, l'attribut Valeur de sortie des tampons est 0/flottant et la résistance tire à 1, ce qui donne le Comportement et-câblé.
+            <center>
+              <img src="../../../../img-libs/wand-wor.png" alt="#########" width="220" height="91">
+            </center>
+          </dd>
+          <dt>
+            <b class="propertie">Étiquette</b>
+          </dt>
+          <dd>
+            Le texte de l'étiquette associée à la porte.
+          </dd>
+          <dt>
+            <b class="propertie">Police des étiquettes</b>
+          </dt>
+          <dd>
+            La police avec laquelle l'étiquette doit être rendue.
+          </dd>
+          <dt>
+            <b class="propertie">Inverseur <var>x</var></b>
+          </dt>
+          <dd>
+            Si <q>Oui</q>, l'entrée est niée avant d'être introduite dans la porte. Les entrées sont comptées de haut en bas si l'orientation est est ou ouest, et elles sont comptées de gauche à droite si l'orientation est nord ou sud.
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Permets de modifier l'étiquette associée à la porte.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

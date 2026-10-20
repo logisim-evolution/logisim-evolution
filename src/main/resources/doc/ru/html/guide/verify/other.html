@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-08T01:58:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>Другие параметры проверки</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Другие параметры проверки</h1>
+
+<p>Есть несколько дополнительных параметров, связанных с выполнением из командной строки.</p>
+
+      <h2>
+        The <tt>--load</tt> command-line parameter
+      </h2>
+      <p>
+        A more complex circuit might include RAM or ROM components that need to be loaded with a program or data in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM or ROM components in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.)
+      </p>
+      <blockquote>
+	  <div class=forcode>
+        <tt>java -jar logisim-filename.jar cpu.circ --tty table --load ram-image.txt --load rom-image.txt myRom </tt>
+		</div>
+      </blockquote>
+      <p>
+        The <tt>--tty</tt> parameters (see below) must be immediately after <tt>--tty</tt>, and the memory image's filename must be immediately after <tt>--load</tt>). The filename may be followed by the label of the memory component that should be loaded. There may be as many <tt>--load</tt> options as you need. The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>.
+      </p>
+      <p>
+        Logisim searches for memory recursively, so this will still work if the memory is nested within a subcircuit. Logisim will attempt to load the same file into every RAM or ROM that it can find with a matching label. If no label is provided, the same file is loaded into every RAM or ROM component other than those with labels matching other <tt>--load</tt> options. In the example above, the <tt>ram-image.txt</tt> is loaded into every RAM and ROM component in the simulation tree other than those that have the label <tt>myRom</tt>. All RAM and ROM components that have the label <tt>myRom</tt> will be loaded from the <tt>rom-image.txt</tt> file. The order of the <tt>--load</tt> options does not matter.
+      </p>
+
+<h2>Аргументы для параметра <tt>--tty</tt></h2>
+
+<p>До сих пор в наших примерах мы всегда использовали <q><tt>--tty&nbsp;table</tt></q> чтобы указать, что должна быть отображена таблица выходных значений. Вы можете настроить поведение по-другому, перечислив один или более аргументов, разделённых запятыми. Например, вы можете написать <q><tt>--tty&nbsp;table,halt,speed</tt></q>, и программа осуществит все три поведения, описанных ниже. (Порядок, в котором они перечислены, не имеет значения.)</p>
+
+<dl>
+
+<dt><tt>halt</tt></dt>
+<dd><p>После окончания моделирования выводится сообщение из одной строки, объясняющее, почему кончилось моделирование. Ситуации ошибки - такие как обнаруженное возбуждение - отображаются в любом случае.</p></dd>
+
+<dt><tt>speed</tt></dt>
+<dd><p>Если вы используете <tt>speed</tt> в сочетании с <q><tt>--tty</tt></q>, то после завершения моделирования Logisim покажет информацию о том, как быстро была моделирована схема, например:</p>
+
+<blockquote><tt>714 Гц (509 тактов за 712 миллисекунд)</tt></blockquote>
+
+<p>Обратите внимание, что отображение информации в ходе моделирования сильно его замедляет. В одном из сравнений одна и та же схема и образ выполнились при 714&nbsp;Гц только с опцией <tt>speed</tt>, но при 490&nbsp;Гц с опцией <tt>table</tt>.</p></dd>
+
+<dt><tt>stats</tt></dt>
+<dd><p>Показывает таблицу с символами табуляции в качестве разделителей, содержащую статистику компонентов, используемых главной в проекте схемой верхнего уровня. Таблица включает четыре столбца:</p>
+<ul>
+<li>Уникальных: сколько раз компонент встречается в иерархии схемы, при условии, что каждая подсхема в иерархии считается только один раз.</li>
+<li>Рекурсивно: сколько раз компонент встречается в иерархии схемы, при условии, что каждая подсхема считается столько раз, сколько она встречается в иерархии.</li>
+<li>Компонент: название компонента.</li>
+<li>Библиотека: название библиотеки, из которой взят компонент.</li>
+</ul>
+<p>Различие между <q>Уникальных</q> и <q>Рекурсивно</q> объясняется в разделе <q><a href="../menu/project.html">Меню Проект</a></q>. Если файл использует схемы из загруженной библиотеки Logisim, то эти компоненты считаются <q>чёрными ящиками</q>: содержимое схем библиотеки не включается в количество уникальных и подсчитанных рекурсивно.</p>
+
+<p>(Эта возможность может быть полезна для преподавателей, дающих студентам задания строить проекты, используя подмножество библиотек Logisim.)</p></dd>
+
+<dt><tt>table</tt></dt>
+<dd><p>(уже обсуждался)</p></dd>
+
+<dt><tt>tty</tt></dt>
+<dd><p>Компоненты Терминал отправляют свои символы на экран (в стандартный поток stdout), а вводимые с клавиатуры символы передаются всем компонентам Клавиатура в схеме. Эти компоненты учитываются, даже если они вложены глубоко в иерархию подсхем.</p></dd>
+
+<p><strong>Далее:</strong>&nbsp;<a href="multi.html">Проверка нескольких файлов</a>.</p>
+
+</div></body></html>

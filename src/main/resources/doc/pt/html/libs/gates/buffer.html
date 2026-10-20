@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="pt">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-08-09T06:18:42.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Buffer
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/ansbuffergate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/iecbuffergate.png" alt="#########" width="32" height="32">&nbsp; 
+		<em>Buffer</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Biblioteca:</strong>
+            </td>
+            <td>
+              <a href="index.html">Base</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introdução:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Aparência:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI:
+                    </th>
+                    <th>
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportamento
+      </h2>
+      <p>
+        O <i>buffer</i> simplesmente passa para a saída à direita o conteúdo recebido na entrada do lado esquerdo. A forma como os dados são apresentados na saída é definida pelo atributo <b class="propertie">Valor de saída</b>. A tabela-verdade para o <i>buffer</i> de um bit é a que se segue.
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace">
+			    Entrada
+			  </th>
+              <th class="tspace" colspan="3">
+			    Saída
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+              </th>
+              <th class="tspace">
+                &nbsp;&nbsp;O/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                O/flu.
+              </th>
+              <th class="tspace">
+                flu./1
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                <b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Se a entrada não for especificada (ou seja, flutuante <b class="uvalue">U</b>), então a saída também não será especificada. Se a entrada for um valor de erro (<b class="evalue">E</b>), a saída também o será.
+      </p>
+      <p>
+        <i>Buffers</i> são os componentes de menor importância dentre os disponíveis pelo Logisim; sua presença na biblioteca Gates é uma questão de completude (um componente para cada valor de um bit possível na tabela-verdade), pois é interessante proporcionar uma funcionalidade equivalente a um elemento real. Ainda assim, pode ser ocasionalmente útil para garantir que valores se propaguem em apenas uma direção ao longo de uma conexão.
+      </p>
+      <h2>
+        Pinos (supondo o component voltado para leste)
+      </h2>
+      <dl>
+        <dt>
+          Na face oeste :
+        </dt>
+        <dd>
+          A entrada para o componente. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
+        </dd>
+        <dt>
+          Na face leste :
+        </dt>
+        <dd>
+          A saída, que sempre concordará com a entrada do lado esquerdo. om largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>. O modo de apresentação dos dados é definido pelo atributo <b class="propertie">Valor de saída</b>.
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        Quando o componente for selecionado ou estiver sendo acrescentado, <b class="tkeybd">Alt-0</b> até <b class="tkeybd">ALT-9</b> irão alterar o seu atributo <b class="propertie">Bits de Dados</b>, e as teclas com setas poderão alterar o seu atributo <b class="propertie">Posição</b>.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Posição</b>
+          </dt>
+          <dd>
+            A Posição do componente (a posição das saídas em relação às entradas).
+          </dd>
+          <dt>
+            <b class="propertie">Bits de Dados</b>
+          </dt>
+          <dd>
+            A largura em bits da entrada e da saída do componente.
+          </dd>
+		  <dt>
+            <b class="propertie">Valor de saída</b>
+          </dt>
+          <dd>
+		  Especifica como os resultados falsos e verdadeiros devem ser traduzidos em valores de saída. 
+          Por defeito, falso é indicado por uma baixa voltagem (<b class="zerov">0</b>) e verdadeiro por uma alta voltagem (<b class="unov">1</b>), mas ambos podem ser substituídos por uma alta impedância (<q>floating</q> <b class="uvalue">U</b>). 
+          Isto permite ligações "or-connected" e "and-connected", como ilustrado no <a href="basic.html">documentação sobre AND/OR/NAND/NOR gates</a>.
+          </dd>
+          <dt>
+            <b class="propertie">Rótulo</b>
+          </dt>
+          <dd>
+            O texto para o rótulo associado à porta.
+          </dd>
+          <dt>
+            <b class="propertie">Fonte do Rótulo</b>
+          </dt>
+          <dd>
+            A fonte com a qual o rótulo será mostrado.
+          </dd>
+        </dl>
+        <h2>
+          Comportamento da ferramenta Testar
+        </h2>
+        <p>
+          Nenhum.
+        </p>
+        <h2>
+          Comportamento da ferramenta Texto
+        </h2>
+        <p>
+          Permite que o rótulo associado à porta seja editado.
+        </p>
+        <p>
+          <b>Voltar à </b><a href="../index.html">Referência para bibliotecas</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

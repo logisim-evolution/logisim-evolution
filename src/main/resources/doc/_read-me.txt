@@ -1,0 +1,27 @@
+Organization of these files
+
+The "doc_xx.hs" files are the java help configuration by language.
+
+The "map_xx.jhm" files contain the configuration of the help tree in conjunction with the .\xx\contents.xml file .
+
+The "search_lookup_xx" folder contains the keyword search base of the help.
+
+(xx = abbreviated language (fr/en/it...)
+
+
+The "icons" folder contains the icons for the doc
+
+The folder "img-guide" contains the images of the guide without translation required
+
+The "img-libs" folder contains the images of the library without translation needed.
+
+The files of, el,en,fr,pt,ru,it,nl are the linguistic parts of the documentation 
+
+In each of these linguistic files, we find : 
+an "img-guide" folder containing the images of the library with the required translation.
+
+An "html" folder containing the html documentation files for the language defined by the parent folder.
+
+There are also two : 
+contents.xml : is used by javahelp to build the guide tree
+jindexer-stops.txt : this file specifies the words that should not be included in the full text search of the help.

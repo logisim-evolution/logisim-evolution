@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-01-15T06:45:12.725000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Créer des faisceaux de câbles
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Créer des faisceaux de câbles
+      </h1>
+      <p>
+        Dans un simple circuit Logisim, la plupart des câbles ne sont composés que d'un fil et ne transportent qu'un seul bit. Mais Logisim permet également de créer des groupes de câbles (nappes de câbles,bus) qui transportent plusieurs bits. Le nombre de bits circulant le long de ces nappes est désigné par la propriété <strong>largeur données</strong> de ce câble.
+      </p>
+      <p>
+        Chaque entrée/sortie de chaque composant dans un circuit a une largeur de bit associée. Souvent la largeur est de 1, et il n'y a pas moyen de changer cela, mais plusieurs composants de la librairie de Logisim incluent des attributs qui vous permettent de changer la largeur de données des entrées et sorties.
+      </p>
+      <p>
+        La saisie d'écran ci-dessous illustre un circuit simple pour trouver la combinaison d'un groupe AND d'une largeur de trois bits. Notez comment la sortie à trois bits représente la combinaison AND des deux entrées de trois bits. Tous les composants du schéma ont été réglés via l'attribut <b class=propertie>Largeur donnée</b> pour gérer des données trois bits.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/feature-2-bundles-create.png" alt="#########">
+      </p>
+      <p>
+        Tous les composants dans Logisim définissent une largeur en bit pour chaque entrée et sortie. Par contraste, la largeur d'un câble est non définie: par contre, la largeur du câble s'adapte automatiquement aux composants auxquels il est attaché. Si un câble relie deux composants avec des largeurs en bits différentes, Logisim affiche une erreur "Largeur incompatible" et indique l'emplacement du conflit avec des câbles orange. Dans l'exemple ci-dessous, la largeur en bits de la connexion de sortie a été modifiée à 1, et Logisim signale l'erreur et indique la largeur des données de chaque côté de la connexion. 
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../img-guide/feature-3-bundles-error.png" alt="#########">
+      </p>
+      <p>
+        Les câbles qui relient des points incompatibles (représenté en orange) ne transportent aucune valeur.
+      </p>
+      <p>
+        Pour les câbles à un seul bit, vous pouvez voir d'un seul coup d'oeil quelle valeur est transportée par le câble. Logisim les colorise avec du vert clair ou foncé en fonction de la valeur. Ce n'est pas le cas pour des câbles multibits: ils sont simplement noirs. Vous pouvez malgré tout sonder le câble en cliquant dessus avec l'outil <b class=propertie>"pousser"</b>. (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">).
+      </p>
+      <p align="center">
+        <img src="../../../../img-guide/feature-4-bundles-probe.png" alt="#########">
+      </p>
+      <p>
+        Cet affichage de la sonde est utile pour déboguer les circuits utilisant des nappes de câbles.
+      </p>
+      <p>
+        <b>Suite:</b> <a href="fet-splitting.html">Répartiteur</a>.
+      </p>
+    </div>
+  </body>
+</html>

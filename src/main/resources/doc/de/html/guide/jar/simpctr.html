@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>Einfacher Gray-Kode-Zähler
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Einfacher Gray-Kode-Zähler</h1>
+
+<p>Häufig benötigt man Bauelemente, die nicht rein-kombinatorisch sind - mit anderen Worten, Bauelemente, die einen internen Speicher besitzen. Es gibt hier aber eine Kleinigkeit bei der Erstellung dieser Bauelemente zu beachten: diese Bauelemente können ihren Zustand nicht direkt selber speichern, denn ein und dasselbe Bauelement kann mehrfach in einer Schaltung auftauchen. Zwar kann es nicht direkt mehrmals in einer Schaltung auftauchen, aber es kann mehrmals vorhanden sein, wenn es in einer Unterschaltung benutzt wird, die ihrerseits mehrmals verwendet wird.</p>
+
+<p>Die Lösung ist es, hier eine neue Klasse zu erstellen, die den aktuellen Zustand des Objekts repräsentiert, und Instanzen hiervon mit den Bauelementen über den Zustand der Mutterschaltung zu verknüpfen. In diesem Beispiel werden wir einen flankengetriggerten 4-Bit-Gray-Kode-Zähler konstruieren. Hierzu definieren wir eine Klasse <code>CounterData</code>, die den Zustand des Zählers repräsentiert, zusätzlich zur <code>InstanceFactory</code> Unterklasse, die wir gerade betrachtet haben. Das Objekt <code>CounterData</code> merkt sich sowohl den aktuellen Wert des Zählers, als auch den letzten Zustand des Takteingangs (um steigende Flanken zu erkennen).</p>
+
+<h2>CounterData</h2>
+
+<pre>
+package com.cburch.gray;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.instance.InstanceState;
+
+/** Repräsentiert den aktuellen Zustand des Zählers. */
+class CounterData implements InstanceData, Cloneable {
+    /** Fragt den Zustand ab, der mit diesem Zähler im aktuellen Zustand der Schaltung verknüpft ist,
+     * wenn notwendig wird dieser Zustand erstellt.
+     */
+    public static CounterData get(InstanceState state, BitWidth width) {
+        CounterData ret = (CounterData) state.getData();
+        if(ret == null) {
+            // Wenn es noch nicht existiert, werden wir es mit unseren Vorgabewerten
+            // initialisieren und im aktuellen Zustand der Schaltung einfügen, so daß
+            // in weiteren Aufrufen abgefragt werden kann.
+            ret = new CounterData(null, Value.createKnown(width, 0));
+            state.setData(ret);
+        } else if(!ret.value.getBitWidth().equals(width)) {
+            ret.value = ret.value.extendWidth(width.getWidth(), Value.FALSE);
+        }
+        return ret;
+    }
+
+    /** Der zuletzt gesehene Zustand des Takteingangs */
+    private Value lastClock;
+    
+    /** Der aktuelle Wert, den der Zähler ausgibt. */
+    private Value value;
+
+    /** Erstelle einen Zustand mit den gegebenen Werten. */
+    public CounterData(Value lastClock, Value value) {
+        this.lastClock = lastClock;
+        this.value = value;
+    }
+
+    /** Liefert eine Kopie des Objekts zurück. */
+    public Object clone() {
+        // Wir können benutzen, was super.clone() zurückliefert: die einzigen Instanzenvariablen sind
+        // Value-Objekte, die unveränderlich sind, daher ist es unwesentlich, daß Kopie und
+        // Original auf dieselben Value-Objekte verweisen. Hätten wir veränderliche Instanzen-
+        // variables, dann müßten wir diese natürlich klonen.
+        try { return super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
+    
+    /** Aktualisiert das vorige Taktsignal und liefert true zurück, wenn getriggert. */
+    public boolean updateClock(Value value) {
+        Value old = lastClock;
+        lastClock = value;
+        return old == Value.FALSE &amp;&amp; value == Value.TRUE;
+    }
+    
+    /** Liefert den aktuellen Wert des Zählers zurück. */
+    public Value getValue() {
+        return value;
+    }
+    
+    /** Aktualisiert den aktuellen Wert des Zählers. */
+    public void setValue(Value value) {
+        this.value = value;
+    }
+}
+</pre>
+
+<h2>SimpleCounter</h2>
+
+<pre>
+package com.cburch.gray;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.instance.InstanceFactory;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
+
+/** Erzeugt einen einfachen Zähler, der einen vierstelligen Gray-Kode durchläuft. Dieses
+ * Beispiel zeigt, wie ein Bauelement den eigenen internen Zustand verwalten kann. Der
+ * gesamte auf den Zustand bezogene Kode findet sich in der Klasse CounterData. */
+class SimpleGrayCounter extends InstanceFactory {
+    private static final BitWidth BIT_WIDTH = BitWidth.create(4);
+    
+    // Beachten Sie bitte wieder, daß wir keine Instanzenvariablen haben, die sich auf den Zustand
+    // einer individuellen Instanz beziehen. Wir können dies hier nicht unterbringen, weil nur ein einziges 
+    // Objekt SimpleGrayCounter erzeugt werden wird, dessen Aufgabe es ist, alle
+    // Instanzen in allen Schaltungen zu verwalten.
+    
+    public SimpleGrayCounter() {
+        super("Gray Counter (Simple)");
+        setOffsetBounds(Bounds.create(-30, -15, 30, 30));
+        setPorts(new Port[] {
+                new Port(-30, 0, Port.INPUT, 1),
+                new Port(  0, 0, Port.OUTPUT, BIT_WIDTH.getWidth()),
+        });
+    }
+
+    public void propagate(InstanceState state) {
+        // Hier besorgen wir uns den Zustand dieses Bauelements durch eine
+        // Hilfsmethode. Der Zusatnd befindet sich in einem CounterData-Objekt, wo auch
+        // die Hilfsmethode definiert wurde. Die Hilfsmethode wird ein 
+        // CounterData-Objekt erzeugen, falls dieses noch nicht existiert.
+        CounterData cur = CounterData.get(state, BIT_WIDTH);
+
+        boolean trigger = cur.updateClock(state.getPort(0));
+        if(trigger) cur.setValue(GrayIncrementer.nextGray(cur.getValue()));
+        state.setPort(1, cur.getValue(), 9);
+        
+        // (Sie könnten versucht sein, den Wert des Zählers über 
+        // state.getPort(1) zu ermitteln. DIes wäre aber falsch, denn ein anderes Bauelement
+        // könnte einen Wert an denselben Punkt zwingen, was
+        // den tatsächlichen Wert korrumpieren würde. Wir müssen den aktuellen Wert wirklich in 
+        // der Instanz speichern.)
+    }
+
+    public void paintInstance(InstancePainter painter) {
+        painter.drawBounds();
+        painter.drawClock(0, Direction.EAST); // zeichne ein Dreieck an Port 0
+        painter.drawPort(1); // Zeichne Port 1 als einfachen Punkt
+        
+        // Zeige den aktuellen Wert zentriert im Rechteck an.
+        // Wenn jedoch der Kontext besagt, daß der Wert nicht angezeigt werden soll, (z.B. beim Drucken)
+        // dann überspringe dies.
+        if(painter.getShowState()) {
+            CounterData state = CounterData.get(painter, BIT_WIDTH);
+            Bounds bds = painter.getBounds();
+            GraphicsUtil.drawCenteredText(painter.getGraphics(),
+                    StringUtil.toHexString(BIT_WIDTH.getWidth(), state.getValue().toIntValue()),
+                    bds.getX() + bds.getWidth() / 2,
+                    bds.getY() + bds.getHeight() / 2);
+        }
+    }
+}
+</pre>
+
+<p><strong>Weiter:</strong> <a href="counter.html">Gray-Kode-Zähler</a>.</p>
+</div></body></html>

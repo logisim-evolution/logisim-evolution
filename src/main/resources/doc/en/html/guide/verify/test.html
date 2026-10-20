@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-21T17:28:04.263000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Test Vector Window
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+    <!-- redirect to the new test vector section after 5 seconds -->
+    <script type="text/javascript">
+      // This method will only display text in a webview that supports javascript and 
+      // will be invisible in a webview that does not support javascript
+      function redirect() {
+        var countdownElement = document.getElementById("redirect");
+        // For compatibility with old webviews, we will just fire 5 timeouts to redirect
+        countdownElement.textContent = "Attempting to redirect in 5 seconds...";
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 4 seconds...";
+        }, 1000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 3 seconds...";
+        }, 2000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 2 seconds...";
+        }, 3000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect in 1 second...";
+        }, 4000);
+        setTimeout(function() {
+          countdownElement.textContent = "Attempting to redirect now...";
+          window.location.href = "../test_vector/index.html";
+        }, 5000);
+      }
+    </script>
+  </head>
+  <body onload="redirect()">
+    <div class="maindiv">
+      <span style="font-size: 3em;">This content has been moved to it's own <a href="../test_vector/index.html">Test Vector Section</a> page.</span>
+    </div>
+    <div><h2 id="redirect">&nbsp;</h2></div>
+  </body>
+</html>

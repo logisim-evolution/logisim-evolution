@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-12-31T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Para criar cabos
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Para criar cabos
+      </h1>
+      <p>
+        Em circuitos simples do Logisim, a maioria das conexões têm um único bit; mas também lhe será permitido criar cabos que enfeixem fios empacotando múltiplos bits. O número de bits que viajam ao longo de um cabo será especificado pela sua <strong>bits de dados</strong>.
+      </p>
+      <p>
+        Cada entrada e saída em cada componente de um circuito tem uma largura de bits associada a ela. Na maioria das vezes a largura do bit será 1, e não haverá como mudar isso, mas muitos dos componentes predefinidos do Logisim incluem atributos cujas as larguras de bits de suas entradas e saídas poderão ser escolhidas.
+      </p>
+      <p>
+        A tela abaixo apresenta um circuito simples onde se encontra uma operação AND de duas entradas de três bits cada. Observe que os três bits da saída resultam dessas entradas. Todos os componentes tiveram seus atributos Bits de Dados alterados para lidar com três bits, na tela, como exemplo, alguns dos atributos da porta AND também são mostrados, e dentre eles atributo dos <b class=propertie>bits de dados</b> igual a 3.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/feature-2-bundles-create.png" alt="#########">
+      </p>
+      <p>
+        Todos os componentes no Logisim possuem uma largura definida para cada bit de entrada e saída. Por outro lado, a largura em bits de uma conexão é indefinida. Ela se adaptará aos componentes a que estiver ligada. Se um fio conectar dois componentes que exijam larguras diferentes, o Logisim irá reclamar que são "larguras incompatíveis" e indicará onde com indicações em cor laranja. Abaixo, o atributo de bits de dados (Data Bits) do pino de saída foi alterado para 1, e por isso o Logisim reclama que não pode conectar um valor de três bits com outro de um bit apenas.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../img-guide/feature-3-bundles-error.png" alt="#########">
+      </p>
+      <p>
+        Conexões entre elementos incompatíveis (desenhadas em cor laranja) não transportarão sinais.
+      </p>
+      <p>
+        Para conexões de um único bit, é possível ver logo o que o fio transporta através das cores verde-claro ou verde-escuro do Logisim, dependendo do valor. Ele não apresentará valores para as conexões multi-bit: elas ficarão simplesmente em preto. Você poderá, no entanto, examinar a conexão, clicando com a ferramenta Testar (Poke) (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">).
+      </p>
+      <p align="center">
+        <img  src="../../../../img-guide/feature-4-bundles-probe.png" alt="#########">
+      </p>
+      <p>
+        Esse recurso para sondagem é útil para depuração de circuitos usando cabos.
+      </p>
+      <p>
+        <strong>Próximo:</strong> <a href="fet-splitting.html">Distribuidores (Splitters)</a>.
+      </p>
+    </div>
+  </body>
+</html>

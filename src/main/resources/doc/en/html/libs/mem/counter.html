@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Counter</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+<div class="maindiv">
+    <h1>
+        <img class="iconlibs" src="../../../../icons/6464/counter.png" alt="#########" width="32" height="32">
+        <em>Counter</em>
+    </h1>
+
+    <table>
+        <tbody>
+        <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Memory</a></td>
+            <td rowspan="3">
+                <img class="appearancelibshaut" src="../../../../img-libs/lcounter.png" alt="#########" style="width: 80px !important; height: 160px !important;">
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Introduced:</strong></td>
+            <td>2.3.0</td>
+        </tr>
+        <tr>
+            <td valign="top"><strong>Appearance:</strong></td>
+            <td valign="top">
+                <img class="appearancelibs" src="../../../../img-libs/counter.png" alt="#########" width="64" height="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Behavior</h2>
+    <p>
+        The counter holds a single value, emitted on the output <var>Q</var>. The value updates on the clock trigger
+        (triangle on the south edge) based on the <var>Load</var>, <var>Enable(ct)</var>, and <var>Up Down (UD)</var> inputs.
+    </p>
+
+    <center>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Load</th>
+                <th>Enable(ct)</th>
+                <th>Up Down (UD)</th>
+                <th>Trigger Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center">not 1</td>
+                <td align="center">0</td>
+                <td align="center">any</td>
+                <td>The counter remains unchanged.</td>
+            </tr>
+            <tr>
+                <td align="center">not 1</td>
+                <td align="center">not 0</td>
+                <td align="center">not 0</td>
+                <td>The counter <b>increments</b>.</td>
+            </tr>
+            <tr>
+                <td align="center">not 1</td>
+                <td align="center">not 0</td>
+                <td align="center">0</td>
+                <td>The counter <b>decrements</b>.</td>
+            </tr>
+            <tr>
+                <td align="center">1</td>
+                <td align="center">any</td>
+                <td align="center">any</td>
+                <td>The counter <b>loads</b> the value found at the <var>D</var> input.</td>
+            </tr>
+            </tbody>
+        </table>
+    </center>
+
+    <p>
+        The <var>Reset</var> input (south edge, labeled <b>R</b> or <b>0</b>) resets the counter's value to 0 asynchronously.
+        As long as the <var>Reset</var> input is 1, the value is pinned to 0, regardless of the clock or other inputs.
+    </p>
+
+    <h2>Pins</h2>
+    <p>
+        The following pin descriptions apply to both the <b>Classic</b> and <b>Logisim-evolution</b> appearances.
+        Note that the Logisim-evolution appearance uses standard IEC/IEEE symbolic notation.
+    </p>
+
+    <dl>
+        <dt>East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute)</dt>
+        <dd>Outputs the value currently stored by the counter.</dd>
+
+        <dt>East edge, lower pin (output, bit width 1)</dt>
+        <dd>
+            <b>Carry (shown as 3CT=MAX / 4CT=0):</b> This output is 1 whenever the counter is at its maximum value and counting up,
+            or when it is at 0 and counting down. The <var>Load</var> and <var>Enable(ct)</var> inputs do not directly affect this output.
+        </dd>
+
+        <dt>West edge, top pin (input, bit width 1)</dt>
+        <dd>
+            <b>Load (shown as M1):</b> When this is 1, the counter will load the value found at the <var>D</var> input at the next clock trigger,
+            regardless of the <var>Enable(ct)</var> input.
+        </dd>
+
+        <dt>West edge, middle pin labeled <var>D</var> (input, bit width matches Data Bits attribute)</dt>
+        <dd>Data: Input for the value to be loaded when <var>Load</var> is active.</dd>
+
+        <dt>West edge, lower pin labeled <var>ct</var> (input, bit width 1)</dt>
+        <dd>
+            <b>Enable(ct) (shown as G5):</b> When this is any value other than 0, the counter increments or decrements on the clock trigger,
+            provided the <var>Load</var> input is not 1.
+        </dd>
+
+        <dt>North edge, labeled <var>UD</var> (input, bit width 1)</dt>
+        <dd>
+            <b>Up/Down (shown as M3/M4):</b> When this is any value other than 0, the counter counts up. When 0, it counts down.
+            This input dictates direction when <var>Load</var> is not 1 and <var>Enable(ct)</var> is not 0.
+        </dd>
+
+        <dt>South edge, indicated with a triangle (input, bit width 1)</dt>
+        <dd>
+            <b>Clock (shown as C6 / 2,3,5+ / 2,4,5-):</b> Triggered as specified by the Trigger attribute.
+            In the Logisim-evolution symbol, the multiple notations reflect internal dependencies on count/load modes.
+        </dd>
+
+        <dt>South edge, labeled 0 or R (input, bit width 1)</dt>
+        <dd><b>Reset (shown as R):</b> While this is 1, the counter is asynchronously pinned to 0.</dd>
+    </dl>
+
+    <h2>Attributes</h2>
+    <p>
+        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+    </p>
+    <dl>
+        <dt>Data Bits</dt>
+        <dd>The bit width of the value emitted by the component.</dd>
+
+        <dt>Maximum Value</dt>
+        <dd>The maximum value, at which point the counter will set its carry output.</dd>
+
+        <dt>Action On Overflow</dt>
+        <dd>
+            The behavior when the counter attempts to increment beyond the maximum value or decrement beyond 0.
+            Possible actions: <b>Wrap around</b>, <b>Stay at value</b>, <b>Continue counting</b>, or <b>Load next value</b>.
+        </dd>
+
+        <dt>Trigger</dt>
+        <dd>Configures how the clock input is interpreted (rising or falling edge).</dd>
+
+        <dt>Label / Label Font</dt>
+        <dd>The text and font associated with the component's label.</dd>
+    </dl>
+
+    <h2>Poke Tool Behavior</h2>
+    <p>Clicking the counter brings keyboard focus, and typing hexadecimal digits will change the value stored in the counter.</p>
+
+    <h2>Text Tool Behavior</h2>
+    <p>Allows the label associated with the component to be edited.</p>
+
+    <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+</div>
+</body>
+</html>

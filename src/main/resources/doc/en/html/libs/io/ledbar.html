@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>LED Bar</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/ledbar.png" alt="LED Bar icon"
+            width="32" height="32" align="middle"> <em>LED Bar</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Displays a horizontal row of LED segments. A segment uses the <q>On Color</q> when its
+        input is 1 and the <q>Off Color</q> when its input is 0. An unknown or error input is shown
+        using the simulator's error color.
+      </p>
+
+      <h2>Pins</h2>
+      <p>The pins depend on the <q>Input Format</q> attribute.</p>
+      <dl>
+        <dt>Separated</dt>
+        <dd>Provides one 1-bit input for each segment.</dd>
+        <dt>One Wire</dt>
+        <dd>
+          Provides one multi-bit input whose width equals the number of segments. Bit 0 controls
+          the rightmost segment.
+        </dd>
+      </dl>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Input Format</dt>
+        <dd>Selects between separate 1-bit inputs and one multi-bit input.</dd>
+        <dt>Segments</dt>
+        <dd>Sets the number of LED segments. The default is 8.</dd>
+        <dt>Select Location</dt>
+        <dd>Places the input pins on the bottom/left or top/right side of the component.</dd>
+        <dt>On Color</dt>
+        <dd>Selects the color of a segment whose input is 1.</dd>
+        <dt>Off Color</dt>
+        <dd>Selects the color of a segment whose input is 0.</dd>
+        <dt>Light Persistence</dt>
+        <dd>
+          Keeps a segment lit for the selected number of simulation ticks after its input becomes
+          0. A value of 0 disables persistence.
+        </dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Location</dt>
+        <dd>The location of the label relative to the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+        <dt>Label Color</dt>
+        <dd>The color used to draw the label.</dd>
+        <dt>Label Visible</dt>
+        <dd>Controls whether the label is displayed.</dd>
+      </dl>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>

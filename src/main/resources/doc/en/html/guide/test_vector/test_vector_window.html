@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>The Test Vector window</title>
+	<link rel="stylesheet" type="text/css" href="../../style.css">
+	<link rel="stylesheet" type="text/css" href="codefix.css">
+</head>
+<body>
+	<div class="maindiv">
+
+<h1>The Test Vector window</h1>
+
+<p>The Test Vector window is similar to the Table tab of the Logging
+window. You can load a test vector from a file, and Logisim will start
+running tests on the current circuit. Like the logging window, there
+is only one test vector window for the project, and the table will
+change to reflect whichever circuit is being simulated in the project
+window. Note, however, that the Test Vector module runs a separate
+copy of the circuit simulator, and so does not interfere with, and is
+not influenced by, the simulation in the project window.</p>
+
+<p>For the example, we will test the circuit below. This circuit gives the results of five logic functions from two inputs. It contains an error because the bottom NAND gate should be an AND gate.</p>
+
+<p align="center">
+	<img class="notscal" src="../../../../img-guide/vector-test.png" alt="Example circuit with five logic functions">
+</p>
+
+<p>The test vector file looks like this:</p>
+
+<blockquote>
+	<pre class="code">
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10
+1 1 0 0 0 1 1 11
+</pre>
+</blockquote>
+
+<p>To run the test, select the menu <b class="menu">|&nbsp; Simulate &nbsp;|</b>→<b class="menu">|&nbsp; Test vector &nbsp;|</b> then use the <b class="button">Load Vector</b> button. Select the vector file you built. The simulation is executed immediately and a table is displayed with the result.</p>
+
+<p align="center">
+	<img src="../../../img-guide/vector-result.png" alt="Test Vector window showing results with errors flagged in red">
+</p>
+
+<p>Any incorrect outputs will be flagged in red. Hover the mouse over
+the red box to see what the output should have been, according to the
+test vector. Rows with incorrect outputs are sorted to the top of the
+window.</p>
+
+<p>The file format is simple. You can use the Logging module (with
+"Include Header Line" selected in the file output tab) to get started,
+since in most cases the Logging module outputs the same format as used
+by the Test Vector module.</p>
+
+<h2>Interactive Test Execution</h2>
+
+<p>Each row in the Test Vector window has two buttons that allow you to manually interact with individual tests:</p>
+
+<ul>
+<li><b>"Show" button</b> (first column): This button previews the circuit state without checking outputs.
+<ul>
+<li><b>Combinational tests (seq=0)</b>: Resets the circuit, sets the input values, and propagates signals.
+Only the clicked row is highlighted in green to show it was executed.</li>
+<li><b>Sequential tests (seq&gt;0)</b>: Resets the circuit, then runs all prior sequential steps in the set
+(from seq 1 up to the target step), propagating after each step. All executed sequential steps are highlighted
+in green to show the execution path.</li>
+</ul>
+The Show button does not verify outputs against expected values - it only shows what the circuit state would be.</li>
+
+<li><b>"Set" button</b> (second column): This button sets input values and may execute tests.
+<ul>
+<li><b>Combinational tests (seq=0)</b>: Resets the circuit, applies the test inputs, then propagates signals. Only the clicked row is highlighted in green to indicate it was executed.</li>
+<li><b>Sequential tests (seq&gt;0)</b>: Does NOT reset the circuit and does NOT run any other tests.
+Simply sets the input values for that single step only, then propagates signals. Only the clicked row is
+highlighted in green. This allows you to manually step through a sequence by setting individual step values
+without resetting or running previous steps.</li>
+</ul>
+</li>
+
+<li>For either button, if you turn off Auto-Propagation in the Simulation menu, it will not propagate the last step in the sequence (or the only step in the combinational test), stopping after setting the input pins. This allows you to single-step the circuit through the propagation of that line.
+</li>
+</ul>
+
+<p><b>Highlighting behavior:</b></p>
+<ul>
+<li>When the Show button is clicked on a combinational test, only that single row is highlighted in green.</li>
+<li>When the Show button is clicked on a sequential test, all sequential steps (seq &gt; 0) up to and including
+the target step are highlighted in green.</li>
+<li>When the Set button is clicked, only the clicked row is highlighted in green, regardless of whether it's
+combinational or sequential.</li>
+<li>Highlighting is cleared when a new vector file is loaded or when the circuit simulator is reset.</li>
+</ul>
+
+<p>
+	<b>Previous:</b> <a href="index.html">Test Vectors</a> | <b>Next:</b> <a href="test_vector_file_format.html">Test Vector File Format</a>.
+</p>
+	</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Floating Point Multiplier</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/multiplier.png" alt="Multiplier icon" width="32" height="32" align="middle">
+        <em>Floating Point Multiplier</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Floating Point Arithmetic</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Behavior</h2>
+      <p>
+        In <b class="propertie">Multiply</b> mode, this component multiplies the two
+        floating-point values on its west inputs and places the product on the east output.
+      </p>
+      <p>
+        In <b class="propertie">Fused Multiply and Add</b> mode, a third input appears on the north
+        edge. The component computes <var>a</var> &times; <var>b</var> + <var>c</var> as a fused
+        operation, with one final rounding to the selected floating-point size instead of rounding
+        the multiplication separately.
+      </p>
+      <p>
+        The <var>ERR</var> output is 1 when the product or fused result is NaN and 0 otherwise. An
+        input containing unknown or error bits is converted to NaN.
+      </p>
+      <h2>Pins</h2>
+      <dl>
+        <dt>West edge, north end (input, bit width matches Float size)</dt>
+        <dd>The first factor, <var>a</var>.</dd>
+        <dt>West edge, south end (input, bit width matches Float size)</dt>
+        <dd>The second factor, <var>b</var>.</dd>
+        <dt>North edge (input, bit width matches Float size)</dt>
+        <dd>
+          The addend, <var>c</var>. This pin is present only when <b class="propertie">Multiplier
+          Mode</b> is <b class="propertie">Fused Multiply and Add</b>.
+        </dd>
+        <dt>East edge (output, bit width matches Float size)</dt>
+        <dd>The product <var>a</var> &times; <var>b</var>, or the fused result <var>a</var> &times; <var>b</var> + <var>c</var>.</dd>
+        <dt>South edge (output, bit width 1)</dt>
+        <dd><var>ERR</var>: 1 if the result is NaN; otherwise 0.</dd>
+      </dl>
+      <h2>Attributes</h2>
+      <div class="attliste">
+        <dl>
+          <dt><b class="propertie">Float size</b></dt>
+          <dd>The floating-point width of all inputs and the result: 8, 16, 32, or 64 bits.</dd>
+          <dt><b class="propertie">Multiplier Mode</b></dt>
+          <dd>
+            <b class="propertie">Multiply</b> selects two-input multiplication.
+            <b class="propertie">Fused Multiply and Add</b> adds the north input and performs only
+            one final rounding.
+          </dd>
+        </dl>
+      </div>
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+      <h2>Text Tool Behavior</h2>
+      <p>None.</p>
+      <p><b>Back to</b> <a href="index.html">Floating Point Arithmetic library</a></p>
+    </div>
+  </body>
+</html>

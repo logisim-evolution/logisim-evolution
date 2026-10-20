@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh-CN">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh-CN">
+    <title>计数器</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+<div class="maindiv">
+    <h1>
+        <img class="iconlibs" src="../../../../icons/6464/counter.png" alt="#########" width="32" height="32">
+        <em>计数器</em>
+    </h1>
+
+    <table>
+        <tbody>
+        <tr>
+            <td><strong>库：</strong></td>
+            <td><a href="index.html">存储器</a></td>
+            <td rowspan="3">
+                <img class="appearancelibshaut" src="../../../../img-libs/lcounter.png" alt="#########" style="width: 80px !important; height: 160px !important;">
+            </td>
+        </tr>
+        <tr>
+            <td><strong>引入版本：</strong></td>
+            <td>2.3.0</td>
+        </tr>
+        <tr>
+            <td valign="top"><strong>外观：</strong></td>
+            <td valign="top">
+                <img class="appearancelibs" src="../../../../img-libs/counter.png" alt="#########" width="64" height="64">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>行为</h2>
+    <p>
+        计数器保存一个单一数值，并通过输出端 <var>Q</var> 输出。
+        该数值在时钟触发（南侧的三角形）时更新，
+        更新方式取决于 <var>Load</var>、<var>Enable(ct)</var> 和 <var>Up Down (UD)</var> 输入信号。
+    </p>
+
+    <center>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Load</th>
+                <th>Enable(ct)</th>
+                <th>Up Down (UD)</th>
+                <th>触发时的动作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center">0 或 Z</td>
+                <td align="center">0</td>
+                <td align="center">X</td>
+                <td>计数器保持不变</td>
+            </tr>
+            <tr>
+                <td align="center">0 或 Z</td>
+                <td align="center">1 或 Z</td>
+                <td align="center">1 或 Z</td>
+                <td>计数器<b>递增</b></td>
+            </tr>
+            <tr>
+                <td align="center">0 或 Z</td>
+                <td align="center">1 或 Z</td>
+                <td align="center">0</td>
+                <td>计数器<b>递减</b></td>
+            </tr>
+            <tr>
+                <td align="center">1</td>
+                <td align="center">X</td>
+                <td align="center">X</td>
+                <td>计数器<b>加载</b> <var>D</var> 输入端的数值</td>
+            </tr>
+            </tbody>
+        </table>
+    </center>
+
+    <p>
+        <var>Reset</var> 输入（南侧，标记为 <b>R</b> 或 <b>0</b>）用于异步地将计数器值重置为 0。
+        只要 <var>Reset</var> 为 1，计数器的值就会被置为 0，与时钟或其他输入无关。
+    </p>
+
+    <h2>引脚</h2>
+    <p>
+        以下引脚说明同时适用于 <b>经典</b> 和 <b>Logisim-evolution</b> 外观。
+        注意：Logisim-evolution 外观使用的是标准 IEC/IEEE 符号表示法。
+    </p>
+
+    <dl>
+        <dt>东侧，标记为 <var>Q</var>（输出，位宽与数据位宽属性一致）</dt>
+        <dd>输出计数器当前存储的数值。</dd>
+
+        <dt>东侧，下方引脚（输出，位宽为 1）</dt>
+        <dd>
+            <b>进位（Logisim-evolution 外观中标记为 3CT=MAX 或 4CT=0）：</b>
+            当计数器向上计数且等于最大值时，或向下技术且等于 0 时，该输出为 1。
+            <var>Load</var> 和 <var>Enable(ct)</var> 输入不会直接影响该输出。
+        </dd>
+
+        <dt>西侧，上方引脚（输入，位宽 1）</dt>
+        <dd>
+            <b>Load (Logisim-evolution 外观中标记为 M1)：</b>
+            当该输入为 1 时，无论 <var>Enable(ct)</var> 输入为何值，
+            计数器会在下一次时钟触发时加载 <var>D</var> 输入端的值。
+        </dd>
+
+        <dt>西侧，中间引脚，标记为 <var>D</var>（输入，位宽与数据位宽属性一致）</dt>
+        <dd>数据：当 <var>Load</var> 有效时要加载的输入值。</dd>
+
+        <dt>西侧，下方引脚，标记为 <var>ct</var>（输入，位宽 1）</dt>
+        <dd>
+            <b>Enable(ct)（Logisim-evolution 外观中标记为 G5）：</b>
+            当该输入为 1 或未连接时，只要 <var>Load</var> 为 0，
+            计数器将在时钟触发时递增或递减。
+        </dd>
+
+        <dt>北侧，标记为 <var>UD</var>（输入，位宽 1）</dt>
+        <dd>
+            <b>向上/向下（Logisim-evolution 外观中标记为 M3/M4）：</b>
+            当为 1 或 Z 时，计数器向上计数；当为 0 时，计数器向下计数。
+            在 <var>Load</var> 为 0 且 <var>Enable(ct)</var> 为 1 时，该输入决定计数方向。
+        </dd>
+
+        <dt>南侧，三角形标记（输入，位宽 1）</dt>
+        <dd>
+            <b>时钟（Logisim-evolution 外观中标记为 2,3,5+/C6 或 2,4,5-）：</b>根据触发方式属性的设置进行触发。
+        </dd>
+
+        <dt>南侧，标记为 0 或 R（输入，位宽 1）</dt>
+        <dd><b>复位（Logisim-evolution 外观中标记为 R）：</b>当该输入为 1 时，计数器会被异步置为 0。</dd>
+    </dl>
+
+    <h2>属性</h2>
+    <p>
+        当组件被选中或正在放置时，按下 Alt-0 到 Alt-9 可以修改其 <q>数据位宽</q> 属性。
+    </p>
+    <dl>
+        <dt>数据位宽</dt>
+        <dd>组件输出数值的位宽。</dd>
+
+        <dt>最大值</dt>
+        <dd>计数器的最大值，达到该值时进位输出会置位。</dd>
+
+        <dt>溢出时行为</dt>
+        <dd>
+            当计数器递增超过最大值或递减小于 0 时的行为。
+            包括：<b>回绕</b>、<b>保持不变</b>、<b>继续计数</b> 或 <b>加载下一个值</b>。
+        </dd>
+
+        <dt>触发方式</dt>
+        <dd>配置时钟输入的触发方式（上升沿或下降沿）。</dd>
+
+        <dt>标签 / 标签字体</dt>
+        <dd>组件标签所使用的文本和字体。</dd>
+    </dl>
+
+    <h2>手形工具行为</h2>
+    <p>点击计数器会获得键盘焦点，输入十六进制数字即可修改计数器中存储的值。</p>
+
+    <h2>文本工具行为</h2>
+    <p>用于编辑与该组件关联的标签文本。</p>
+
+    <p><a href="../index.html">返回<em>库手册</em></a></p>
+</div>
+</body>
+</html>

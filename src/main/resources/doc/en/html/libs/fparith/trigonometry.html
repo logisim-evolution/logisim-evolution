@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Floating Point Trigonometry</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1><strong>sin/cos</strong> <em>Floating Point Trigonometry</em></h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Floating Point Arithmetic</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Behavior</h2>
+      <p>
+        This component applies three related functions to the floating-point value on its west
+        input. Standard trigonometric inputs and inverse-trigonometric results use radians. The
+        three results are rounded to the selected floating-point size.
+      </p>
+      <dl>
+        <dt><b class="propertie">Standard trigonometry</b></dt>
+        <dd>The north, center, and south outputs are sin(<var>x</var>), tan(<var>x</var>), and cos(<var>x</var>).</dd>
+        <dt><b class="propertie">Inverse trigonometry</b></dt>
+        <dd>The north, center, and south outputs are asin(<var>x</var>), atan(<var>x</var>), and acos(<var>x</var>).</dd>
+        <dt><b class="propertie">Hyperbolic trigonometry</b></dt>
+        <dd>The north, center, and south outputs are sinh(<var>x</var>), tanh(<var>x</var>), and cosh(<var>x</var>).</dd>
+      </dl>
+      <p>
+        The <var>ERR</var> output is 1 when the input is NaN and 0 otherwise. It does not indicate
+        NaN results produced from a finite or infinite input; for example, asin(2) and acos(2) are
+        NaN while <var>ERR</var> remains 0. An input containing unknown or error bits is converted
+        to NaN.
+      </p>
+      <h2>Pins</h2>
+      <dl>
+        <dt>West edge (input, bit width matches Float size)</dt>
+        <dd>The value <var>x</var> supplied to all three selected functions.</dd>
+        <dt>East edge, north end (output, bit width matches Float size)</dt>
+        <dd>The sine, inverse-sine, or hyperbolic-sine result.</dd>
+        <dt>East edge, center (output, bit width matches Float size)</dt>
+        <dd>The tangent, inverse-tangent, or hyperbolic-tangent result.</dd>
+        <dt>East edge, south end (output, bit width matches Float size)</dt>
+        <dd>The cosine, inverse-cosine, or hyperbolic-cosine result.</dd>
+        <dt>South edge (output, bit width 1)</dt>
+        <dd><var>ERR</var>: 1 if the input is NaN; otherwise 0.</dd>
+      </dl>
+      <h2>Attributes</h2>
+      <div class="attliste">
+        <dl>
+          <dt><b class="propertie">Float size</b></dt>
+          <dd>The floating-point width of the input and all results: 8, 16, 32, or 64 bits.</dd>
+          <dt><b class="propertie">Function Type</b></dt>
+          <dd>Selects standard, inverse, or hyperbolic trigonometry.</dd>
+        </dl>
+      </div>
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+      <h2>Text Tool Behavior</h2>
+      <p>None.</p>
+      <p><b>Back to</b> <a href="index.html">Floating Point Arithmetic library</a></p>
+    </div>
+  </body>
+</html>

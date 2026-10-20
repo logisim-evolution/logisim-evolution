@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Inverseur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/negator.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Inverseur</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 22
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/negator.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Calcule la négation du complément à deux de l'entrée. Cette négation est effectuée en conservant tous les bits d'ordre inférieur jusqu'au 1 d'ordre inférieur, et en complétant tous les bits au-dessus.
+      </p>
+      <p>
+         Si la valeur à nier se trouve être la valeur la moins négative, alors sa négation (qui ne peut pas être représentée sous forme de complément à deux), est toujours la valeur la moins négative.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+           La valeur à inverser.
+        </dd>
+        <dt>
+          Bord est, étiqueté -<var>x</var> (sortie, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          La négation de l'entrée. Si l'entrée se trouve être la valeur la moins négative représentable en <var>dataBits</var> bits, cependant, alors la sortie correspond à l'entrée.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+		<b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit de l'entrée et de la sortie du composant.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

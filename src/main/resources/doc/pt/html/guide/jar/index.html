@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>Bibliotecas JAR</title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Bibliotecas JAR</h1>
+
+<h2>Uso de bibliotecas JAR</h2>
+
+<p> O Logisim tem dois tipos de componentes de circuito: os que
+são concebidos dentro Logisim como combinações de outros; e os primitivos,
+que são escritos em Java. Os circuitos do Logisim são mais fáceis de projetar, 
+mas eles não podem oferecer suporte mais sofisticado à interação com o usuário, 
+e são relativamente ineficientes.
+</p>
+
+<p> O Logisim contém uma coleção bastante completa de bibliotecas predefinidas
+de componentes em Java, mas poderá também acomodar bibliotecas adicionais escritas
+por você ou por outros. Uma vez em posse do código de uma biblioteca, você poderá
+importá-lo em seu projeto ao clicar em Projeto no painel de explorador (linha superior)
+e escolher carregar a biblioteca (Load Library > JAR Library)... Então, o Logisim
+pedirá para você selecionar o arquivo JAR.
+(Em algumas circunstâncias, você poderá ter que digitar o nome da classe inicial,
+quando solicitado, isso deverá ser previsto pelo desenvolvedor da biblioteca.
+No entanto, um desenvolvedor normalmente deverá configurar a biblioteca JAR para
+evitar isso (ao incluir no <q> manifesto </q> do arquivo JAR um atributo
+Library-Class especificando o principal nome da classe).)
+</p>
+
+<h2>Criar bibliotecas JAR</h2>
+
+<p> O restante desta seção será dedicado a uma série de exemplos
+bem comentados que ilustram como desenvolver bibliotecas do Logisim. 
+Você só deverá tentar fazer isso, se for um programador Java experiente. 
+Além desses exemplos, você irá encontrar documentação bastante escassa.
+</p>
+
+Você poderá baixar um arquivo JAR que lhe permitirá importar esses exemplos
+do <i>website</i> do Logisim na seção Links. Esse arquivo JAR também conterá 
+o código-fonte desses exemplos.
+</p>
+
+<dl>
+
+<dt> <a href="incr.html"> Incrementador em código de Gray</a> </dt>
+<dd> <p> Ilustra os elementos essenciais de qualquer tipo de componente
+por meio de um exemplo simples de um componente que tem uma entrada multibit
+e calcula o valor do próximo código de Gray que o segue.
+</p> </dd>
+
+<dt> <a href="library.html"> Biblioteca de classes </a> </dt>
+<dd> <p> Ilustra como definir uma biblioteca. Este é o ponto de entrada
+para qualquer arquivo JAR - a classe cujo nome o usuário fornecerá quando
+for carregar a biblioteca JAR.
+</p> </dd>
+
+<a <dt> href="simpctr.html"> Contador simples em código Gray </a> </dt>
+<dd> <p> Ilustra como fazer um componente que tem estado interno;
+em particular, um contador de 8 bits que itera em código de Gray.
+</p> </dd>
+
+<dt> <a href="counter.html"> Contador em código de Gray </a> </dt>
+<dd> <p> Demonstra um componente completo, bem mais sofisticado, com o qual
+o usuário poderá interagir. Ele implementa um contador em código de Gray, onde o
+número de bits guardado é customizável, e onde o usuário poderá editar o valor
+corrente, ao clicar nele com a ferramenta Testar e digitar um novo valor.
+</p>
+
+<a <dt> href="guide.html"> Orientações </a>
+<dd> Informações gerais para as bibliotecas com desenvolvimento por terceiros. </p>
+
+</dl>
+
+<h2>License</h2>
+
+<p>The code in this example JAR library is released under the MIT license,
+a more permissive license than the GPL, under which the rest of Logisim is
+released.</p>
+
+<p>Copyright (c) 2009, Carl Burch.</p>
+
+<p>Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.</p>
+
+<p><strong>Próximo:</strong> <a href="incr.html">Incrementador em código de Gray</a>.</p>
+</div>
+</body>
+</html>

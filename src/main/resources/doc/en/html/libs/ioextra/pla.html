@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Programmable Logic Array</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/pla.png"
+            alt="Programmable Logic Array icon" width="32" height="32" align="middle">
+        <em>Programmable Logic Array</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output-Extra</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Implements a programmable sum-of-products function. Each row in the editor is an AND
+        term. A row can select the normal or complemented form of each input bit; the second plane
+        connects selected AND terms to output OR gates. The configured matrix is stored with the
+        circuit.
+      </p>
+      <p>
+        An AND term with no selected input literal produces an error value. An output with no
+        connected AND term also produces an error value. When chip select is inactive, every
+        output bit is unknown.
+      </p>
+
+      <h2>Pins</h2>
+      <dl>
+        <dt>Input</dt>
+        <dd>A bus whose width is selected by <q>Input Bit Width</q>.</dd>
+        <dt>Output</dt>
+        <dd>A bus whose width is selected by <q>Output Bit Width</q>.</dd>
+        <dt>sel (1 bit)</dt>
+        <dd>
+          Chip select. Its active level is selected by <q>Select</q>; the default is
+          active low.
+        </dd>
+      </dl>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Input Bit Width</dt>
+        <dd>Selects from 1 through 32 input bits.</dd>
+        <dt>Number of And Gates</dt>
+        <dd>Selects from 1 through 32 product terms.</dd>
+        <dt>Output Bit Width</dt>
+        <dd>Selects from 1 through 32 output bits.</dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+        <dt>Label Visible</dt>
+        <dd>Controls whether the label is displayed.</dd>
+        <dt>Contents</dt>
+        <dd>Opens the programmable matrix editor.</dd>
+        <dt>Select</dt>
+        <dd>Selects whether the chip-select input is active low or active high.</dd>
+      </dl>
+
+      <h2>Editing the Matrix</h2>
+      <p>
+        Click <q>Contents</q> in the attribute table, or use <q>Edit Contents…</q> in the
+        component's context menu. In the input plane, click the intersection with an input or its
+        complement to add or remove that literal. In the output plane, click an intersection to
+        connect or disconnect an AND term from an output. Selecting one polarity of an input
+        automatically clears the other polarity in the same term. The context menu also provides
+        <q>Clear Contents</q>.
+      </p>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>None. Use the Contents attribute or the component's context menu to edit the matrix.</p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>

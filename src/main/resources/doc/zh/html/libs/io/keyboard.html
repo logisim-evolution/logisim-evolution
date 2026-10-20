@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      键盘
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/keyboard.png" alt="#########" width="32" height="32" align="middle"> <em>键盘</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">输入/输出</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.2.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibslarge" src="../../../../img-libs/keyboard.png" alt="#########" width="128" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        该组件允许电路读取用户从键盘输入字符（字符必须能用 7 位 ASCII 码表示）。使用<q>手形工具</q>单击该组件后，用户即可输入字符；输入的字符会累积到一个缓冲区中。在任意时刻，缓冲区最左侧字符的 ASCII 值都会从最右侧输出端输出。当时钟输入被触发时，缓冲区最左侧字符会从缓冲区移除，随后新的最左侧字符会从最右侧输出端输出。
+      </p>
+      <p>
+        缓冲区支持的字符包括所有可打印 ASCII 字符，以及空格、换行、退格和 Ctrl-L。另外，按下左方向键与右方向键可在缓冲区内移动光标；按下 Delete 键会删除光标右侧的字符（若存在）。
+      </p>
+      <p>
+        该组件在一定意义上是异步的：当缓冲区为空且用户输入一个字符时，该字符会立即作为输出送出，而无需等待时钟脉冲。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          西侧边缘，以三角形标识（输入，位宽为 1）
+        </dt>
+        <dd>
+          时钟：当 <q>读使能</q> 引脚不为 0 且该输入被触发时，缓冲区最左侧字符会被删除，输出将更新以反映缓冲区的新状态。
+        </dd>
+
+        <dt>
+          南侧边缘，最左侧引脚（输入，位宽为 1）
+        </dt>
+        <dd>
+          读使能：当该输入为 1（或悬空或错误值）时，一个时钟沿将会消耗缓冲区最左侧字符；当读使能为 0 时，时钟输入会被忽略。
+        </dd>
+
+        <dt>
+          南侧边缘，从左数第 2 个引脚（输入，位宽为 1）
+        </dt>
+        <dd>
+          清空：当为 1 时，缓冲区会被清空，并且不再接受后续输入的字符。
+        </dd>
+
+        <dt>
+          南侧边缘，从右数第 2 个引脚（输出，位宽为 1）
+        </dt>
+        <dd>
+          可用：当缓冲区至少包含 1 个字符时为 1；当缓冲区为空时为 0。
+        </dd>
+
+        <dt>
+          南侧边缘，最右侧引脚（输出，位宽为 7）
+        </dt>
+        <dd>
+          数据：输出缓冲区最左侧字符的 7 位 ASCII 码；若缓冲区为空，则输出 0。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <dl>
+        <dt>
+          缓冲区长度
+        </dt>
+        <dd>
+          缓冲区一次可容纳的字符数量。
+        </dd>
+
+        <dt>
+          触发方式
+        </dt>
+        <dd>
+          若为 <q>上升沿</q>，则当时钟输入从 0 变为 1 时（且读使能允许），会消耗缓冲区最左侧字符；若为 <q>下降沿</q>，则在时钟输入从 1 变为 0 时发生该操作。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        在组件上按下鼠标按钮可使该组件获得键盘焦点，并显示一个竖线光标。
+      </p>
+      <p>
+        此后输入的每个字符都会被插入到缓冲区中，前提是缓冲区未达到容量上限，且该字符属于组件支持的范围：7 位 ASCII 码内的可打印字符，以及空格、退格、换行与 Ctrl-L。此外，用户可通过左/右方向键改变光标在缓冲区中的位置，并可通过 Delete 键删除光标右侧的缓冲区字符（若存在）。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

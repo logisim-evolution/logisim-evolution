@@ -1,0 +1,94 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Demultiplexer</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/demultiplexer.gif" width="32" height="32">
+<em>Demultiplexer</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Auswahlschaltungen</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 11</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/demux.png" width="44" height="62"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>Copies the input on the west edge onto exactly one of the outputs on
+the east edge; which of these outputs is specified via the
+current value received through the input on the south edge.
+I find it useful to think of a demultiplexer as analogous to a railroad
+switch, controlled by the select input.</p>
+
+<p>(Incidentally, some authorities spell this
+<em>demultiplex<strong>o</strong>r</em>,
+but <em>demultiplex<strong>e</strong>r</em> is the predominant
+spelling.)</p>
+
+<h2>Pins (wenn das Bauelement nach Osten zeigt)</h2>
+
+<dl>
+
+<dt>West edge (input, bit width matches Data Bits attribute)</dt>
+<dd>The value to be routed to one of the outputs on the east edge.</dd>
+
+<dt>East edge, variable number (outputs, bit width matches Data Bits
+attribute)</dt>
+<dd>The outputs are numbered starting with 0 on the north. An output
+will match the west input if its number matches the value currently
+received through the select input on the south; otherwise, its value
+will be either all-zeroes or all-floating, depending on the value of
+the Three-State? attribute.
+If the select input contains any unspecified bits, then all outputs are
+floating.</dd>
+
+<dt>South edge (input, bit width matches Select Bits attribute)</dt>
+<dd>Select input: The value of this input determines to which output on
+the east edge to route the value received on the west edge.</dd>
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+the digits '1' through '4' alter its <q>Select Bits</q> attribute,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute,
+and the arrow keys alter its <q>Facing</q> attribute.</p>
+
+<dl>
+
+<dt>Ausrichtung</dt>
+<dd>The direction of the component (specifying which side has the outputs).</dd>
+
+<dt>Auswahlleitungen</dt>
+<dd>The bit width of the component's select input on its south edge.
+The number of outputs for the demultiplexer will be
+2<sup><var>selectBits</var></sup>.</dd>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the data being routed through the demultiplexer.</dd>
+
+<dt>Three-state?</dt>
+<dd>Specifies whether the unselected outputs should be floating (Yes) or
+zero (No).</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

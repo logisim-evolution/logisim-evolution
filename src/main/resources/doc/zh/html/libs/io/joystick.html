@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      摇杆
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/joystick.png" alt="#########" width="32" height="32" align="middle"> <em>摇杆</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">输入/输出</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.2.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/joystick.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        用户可以在圆角方形区域内拖动红色摇杆帽（旋钮），输出会随之更新，用于表示摇杆帽当前的 <var>x</var> 与 <var>y</var> 坐标。该组件可以模拟经典街机游戏时代常见的摇杆。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          西侧边缘，上方引脚（输出，位宽与<q>位宽</q>属性一致）
+        </dt>
+        <dd>
+          表示摇杆帽的 <var>x</var> 坐标。该输出应被解释为一个无符号整数，其取值永远不会为 0：因此，数值 1 表示最左侧，而该位宽所能表示的最大值表示最右侧。当摇杆处于静止（中心）位置时，其输出位模式为 10...00。
+        </dd>
+
+        <dt>
+          西侧边缘，下方引脚（输出，位宽与<q>位宽</q>属性一致）
+        </dt>
+        <dd>
+          表示摇杆帽的 <var>y</var> 坐标，其取值范围与 <var>x</var> 坐标引脚类似。当摇杆被拉到最上方时，该输出值为 1；当摇杆被拉到最下方时，该输出为所选位宽对应的最大值。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，可通过 Alt-2 到 Alt-5 快捷键修改其 <q>位宽</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          位宽
+        </dt>
+        <dd>
+          用于表示摇杆帽各坐标值所使用的位数。
+        </dd>
+
+        <dt>
+          颜色
+        </dt>
+        <dd>
+          摇杆帽在屏幕上绘制时使用的颜色。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        在摇杆区域内按下鼠标按钮，会将摇杆帽移动到该位置并更新输出。拖动鼠标会持续移动摇杆帽并更新输出，同时保证摇杆帽始终保持在摇杆区域内。松开鼠标按钮后，摇杆帽会恢复到静止位置。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

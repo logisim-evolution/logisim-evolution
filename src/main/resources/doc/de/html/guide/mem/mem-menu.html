@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Kontextmenüs und Dateien
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+     <div class="maindiv">
+      <h1>
+        Kontextmenüs und Dateien
+      </h1>
+	  <h2>
+        Kontextmenüs
+      </h2>
+      <p>
+        Abgesehen von den üblichen Punkten enthält das Kontextmenü für Speicherbauelemente vier weitere Optionen:
+      </p>
+      <dl>
+	    <dt>
+          <b>Inhalt bearbeiten...:</b>
+        </dt>
+        <dd>
+		  Öffnet den <a href="mem-hex.html">Hex-Editor</a> um den Speicherinhalt zu bearbeiten.
+        </dd>
+		<dt>
+		  <b>Inhalt löschen :</b>
+		</dt>
+		<dd>
+		  Setzt alle Werte im Speicher auf 0.
+		</dd>
+		<dt>
+		  <b>Speicherabbild laden...:</b>
+		</dt>
+		<dd>
+		  Setzt alle Werte des Speichers auf die Werte aus einer Datei. Das Dateiformat ist weiter unten beschrieben.
+		</dd>
+		<dt>
+		  <b>Speicherabbild speichern...:</b>
+		</dt>
+		<dd>
+		   Speichert alle Daten aus dem Speicher in dem unten beschriebenen Dateiformat.
+		</dd>
+      </dl>
+      <h2>
+        Die Dateiformate
+      </h2>
+      <ul>
+        <li>
+          <b><a href="mem-v2raw.html">v2.0 raw</a></b> Historische Version von Logisim erlaubt Lauflängenkodierung-Kodierung.
+        </li>
+        <li>
+          <b><a href="mem-v3word.html">v3.0 hex words plain</a></b> Nahe an der wortstrukturierten Version von v2.0.
+        </li>
+        <li>
+          <b><a href="mem-v3word.html#addr">v3.0 hex words addressed</a></b> Wie bisher mit der Möglichkeit, für jede Zeile der Datei eine Startadresse zu definieren.
+        </li>
+        <li>
+          <b><a href="mem-v3byte.html">v3.0 hex bytes plain big-endian</a></b><br>
+          <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> In Byteströmen organisiert.
+        </li>
+        <li>
+          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a></b><br>
+          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a></b> Wie bisher im Byte-Fluss organisiert mit der Möglichkeit, eine Adresse zu definieren.
+        </li>
+        <li>
+          <b><a href="mem-vbinary.html#">Binary data big-endian</a></b><br>
+          <b><a href="mem-vbinary.html#">Binary data little-endian</a></b> Unkodiertes Speicherabbild.
+        </li>
+        <li>
+          <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br>
+          <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> ASCII-kodierte Datei mit Escape-Code, wie in C für nicht druckbare Zeichen.
+        </li>
+        </ul>
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+<!--	  
+        Das Dateiformat für Speicherabbilder wurde bewußt einfach gehalten. Dies erlaubt es Ihnen, eigene Programme, wie z.B. einen Assembler, zu schreiben, das Speicherabbilder erzeugt. Als ein Beispiel für das Dateiformat können wir den Fall eines Speichers mit 256 Byte betrachten, dessen fünf erste Speicherstellen auf 2, 3, 0, 20 und -1 gesetzt sind, während alle folgenden Speicherstellen Nullen enthalten. Ein entsprechendes Speicherabbild sieht dann wie folgt aus:
+      </p>
+      <blockquote>
+        <pre>v2.0 raw
+02
+03
+00
+14
+ff
+</pre>
+      </blockquote>
+      <p>
+        Die erste Zeile identifiziert das benutzte Dateiformat (zur Zeit gibt es nur ein unterstütztes Dateiformat). Die folgenden Einträge bilden eine Liste der hexadezimalen Werte, die beginnend mit der Adresse 0 in den Speicher geschrieben werden. Mehrere Werte dürfen in einer Zeile stehen. Wenn der Speicher mehr Speicherstellen hat, als Werte in der Datei vorhanden sind, füllt Logisim die verbleibenden Positionen mit Nullen.
+      </p>
+      <p>
+        Das Dateiformat unterstützt eine Lauflängenkodierung: anstatt sechzehn Mal nacheinander den Wert <tt>00</tt> zu schreiben, können Sie dies mit <tt>16*00</tt> abkürzen. Beachten Sie, daß die Anzahl der Wiederholungen im Dezimalformat (mit der Basis 10) dargestellt wird. Beim Speichern von Dateien verwendet Logisim diese Lauflängenkodierung ab einer viermaligen Wiederholung desselben Wertes.
+      </p>
+      <p>
+        Mit dem '#'-Zeichen können Sie Kommentare in die Dateien einbetten: Alle Zeichen, die in einer Zeile auf eine solche Raute folgen, werden von Logisim ignoriert.
+      </p>
+-->
+      <p>
+        <b>Weiter:</b> <a href="../index.html">Benutzerhandbuch</a>.
+      </p>
+    </div>
+  </body>
+</html>

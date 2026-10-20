@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>Befehlszeilen-Optionen
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Befehlszeilen-Optionen
+      </h1>
+      <p>
+        Sie können viele von Logisims Anwendungseinstellungen über Kommandozeilenoptionen konfigurieren. Dies kann besonders in einem Labor mit Computern für einzelne Studenten nützlich sein, wo Sie möchten, dass Logisim für die Studenten jedes Mal das gleiche Programm startet, unabhängig davon, wie die vorherigen Studenten das Programm konfiguriert haben.
+      </p>
+      <p>
+        Die allgemeine Befehlszeilensyntax lautet wie folgt.
+      </p>
+      <blockquote>
+        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
+</pre>
+      </blockquote>
+      <p>
+        Die auf der Befehlszeile genannten optionalen Zusatzdateien werden als separate Fenster innerhalb von Logisim geöffnet.
+      </p>
+      <p>
+        Das folgende Beispiel startet Logisim in seiner Grundkonfiguration.
+      </p>
+      <blockquote>
+        <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
+</pre>
+      </blockquote>
+      <p>
+        Zu den unterstützten Optionen gehören die folgenden.
+      </p>
+      <dl>
+        <dt>
+          <tt>-plain</tt>
+        </dt>
+        <dt>
+          <tt>-empty</tt>
+        </dt>
+        <dt>
+          <tt>-template <b><i>templateFile</i></b></tt>
+        </dt>
+        <dd>
+          <p>
+            Konfiguriert die zu verwendende Vorlage für Logisim.
+          </p>
+        </dd>
+        <dt>
+          <tt>-gates <i>[<b>shaped</b>|<b>rectangular</b>]</i></tt>
+        </dt>
+        <dd>
+          <p>
+            Konfiguriert den zu verwendenden Gate-Typ.
+          </p>
+        </dd>
+        <dt>
+          <tt>-locale <i><b>localeIdentifier</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Konfiguriert, welche Übersetzung verwendet werden soll. Zum Zeitpunkt der Erstellung dieses Dokuments sind die unterstützten Gebietsschemata enthalten:
+          </p>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <tt>de</tt> Deutsch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>el</tt> Griechisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>en</tt> Englisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>es</tt> Spanisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>fr</tt> Französisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>pt</tt> Portugiesisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>ru</tt> Russisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>it</tt> Italienisch
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>nl</tt> Niederländisch
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+        <dt>
+          <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
+        </dt>
+        <dd>
+          <p>
+            Dies ist nur für Sprachen relevant, die Zeichen außerhalb des 7-Bit-ASCII-Zeichensatzes verwenden; dazu gehören auch Sprachen, die Akzentzeichen verwenden, und nicht Englisch. Wenn <i>nein</i>, werden Zeichen außerhalb des 7-Bit-ASCII-Zeichensatzes durch Äquivalente ersetzt, die der Sprache entsprechen; dies wäre für Java/OS-Kombinationen nützlich, bei denen solche Zeichen nicht gut unterstützt werden.
+          </p>
+        </dd>
+        <dt>
+          <tt>-clearprops</tt>
+        </dt>
+        <dd>
+          <p>
+            Löschen Sie alle Anwendungseinstellungen beim Start, so dass Logisim sich so verhält, als ob es zum ersten Mal auf dem Hostsystem ausgeführt wird.
+          </p>
+        </dd>
+        <dt>
+          <tt>-nosplash</tt>
+        </dt>
+        <dd>
+          <p>
+            Blendet den Logisim-Einstiegsbildschirm aus.
+          </p>
+        </dd>
+        <dt>
+          <tt>-help</tt>
+        </dt>
+        <dd>
+          <p>
+            Zeigt eine Zusammenfassung der Befehlszeilenoptionen an.
+          </p>
+        </dd>
+        <dt>
+          <tt>-version</tt>
+        </dt>
+        <dd>
+          <p>
+            Zeigt die Logisim-Versionsnummer an.
+          </p>
+        </dd>
+        <dt>
+          <tt>-analyze</tt>
+        </dt>
+        <dd>
+          <p>
+            Zeigt die Menüs der kombinatorischen Analyse an.
+          </p>
+        </dd>
+        <dt>
+          <tt>-load <i><b>filename</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Ein Bild in den RAM laden (funktioniert nur mit -tty)
+          </p>
+        </dd>
+        <dt>
+          <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            laden Sie die Datei, indem Sie die Bibliotheksdatei (Datei1) durch die Bibliotheksdatei (Datei2) ersetzen. Weitere Informationen in <a href="../verify/sub.html">Ersetzen von Bibliotheken</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-tty</tt> [<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]
+        </dt>
+        <dd>
+          <p>
+            Ohne GUI ausführen. Weitere Informationen in <a href="../verify/other.html">Andere Überprüfung</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Führen Sie die Tests <b>Schaltungsname</b> in <b>Projektdatei</b> basierend auf den Vektoren in <b>Vektordatei</b> aus. Weitere Informationen in <a href="../verify/test.html">Fenster-Text-Vektor</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Öffnet Logisim mit einem Fenster, das nach den Parametern W (Breite) und H (Höhe) bemessen ist, oder mit der linken oberen Ecke, die nach den Parametern X,Y positioniert ist.<br>
+            Beispiel: -geom 600x400+100+100
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Undokumentierte Optionen
+      </h2>
+      <dl>
+        <dt>
+          <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-testvector</tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-questa<i>[<b>yes</b>|<b>no</b>]</i></tt>
+        </dt>
+        <dd></dd>
+      </dl>
+
+<p><strong>Weiter:</strong> <em><a href="../index.html">Leitfaden für Benutzer von Logisim</a></em>.</p>
+</div></body></html>

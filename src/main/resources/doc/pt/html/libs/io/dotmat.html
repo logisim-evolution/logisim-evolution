@@ -1,0 +1,116 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Matriz de LED</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/dotmat.gif" width="32" height="32">
+<em>Matriz de LED</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Entrada/Saída</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.2.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/dotmat.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Exibirá uma pequena matriz de pixels, cujos valores serão determinados pelas entradas
+atuais. A matriz poderá ter até 32 linhas e 32 colunas. </p>
+
+<h2> Pinos </h2>
+
+<p> A interface para o componente irá variar dependendo do valor do atributo
+Formato da Entrada. Ele tem três valores possíveis. </p>
+
+<dl>
+
+<dt> Colunas </dt>
+<dd> As entradas serão alinhadas ao longo da face sul do componente, com uma
+entrada multibit para cada coluna da matriz. Cada entrada tem tantos bits
+quanto existirem linhas na matriz, com o bit de mais baixa ordem correspondente ao
+pixel mais ao final de cada coluna. Um valor igual a 1 indicará que o pixel 
+correspondente deverá ser ligado, enquanto um valor igual a 0 indicará que o pixel 
+deverá permanecer apagado. Se algum bit de uma coluna for flutuante ou erro, 
+então todos os pixels da coluna ficarão acesos. </dd>
+
+<dt> Linhas </dt>
+<dd> As entradas serão alinhadas ao longo da face oeste do componente, com uma
+entrada multibit para cada linha da matriz. Cada entrada terá tantos bits quantos
+forem as colunas na matriz, com o bit de mais baixa ordem correspondente ao pixel
+mais à direita na linha. Tal como acontece com o formato de colunas, um valor igual a 1
+indicará que o pixel correspondente deverá ser ligado, e um valor igual a 0 indicará
+que o pixel deverá se manter apagado. Se algum bit de uma linha for flutuante ou erro,
+então, todos os pixels da linha ficarão acesos. </dd>
+
+<dt> Selecionar Linhas/Colunas </dt>
+<dd> Há duas entradas na face oeste do componente. A entrada multibit superior
+terá tantos bits quantos forem as colunas na matriz, com o bit de mais baixa ordem
+correspondente à coluna mais à direita. A entrada multibit inferior terá tantos
+bits quanto as linhas da matriz, com o bit de mais baixa ordem correspondente
+para o final de cada linha. Se algum bit for flutuante ou erro, todos os pixels 
+da matriz estarão acesos. Normalmente, no entanto, um pixel em uma certa linha-coluna
+ficará aceso, se o bit correspondente à coluna na entrada superior for 1 e
+o bit da linha correspondente na entrada inferior também for 1.
+Por exemplo, para uma matriz 5x7, se a primeira entrada for 01010 e a segunda for
+0111010, então, a segunda e a quarta coluna estarão acesas para a segunda, a terceira,
+a quarta e a sexta linha, o resultado aparecerá como um par de pontos de exclamação.
+(Esse formato de entrada pode parecer pouco intuitivo, mas matrizes de LED são 
+vendidas exatamente com essa interface. A Lite-On vende componentes como esse, 
+por exemplo.) </dd>
+
+</dl>
+
+<h2> Atributos </h2>
+
+<dl>
+
+<dt> Formato da Entrada (somente leitura após o componente ser criado) </dt>
+<dd> Serve para selecionar como os pinos corresponderão aos pixels, 
+como descrito acima. </dd>
+
+<dt> Colunas da Matriz </dt>
+<dd> Serve para selecionar quantas colunas estarão na matriz, o que poderá variar de 1 a
+32. </dd>
+
+<dt> Linhas da Matriz </dt>
+<dd> Serve para selecionar quantas linhas estarão na matriz, o que poderá variar de 1 a
+32. </dd>
+
+<dt> Cor se Ligado </dt>
+<dd> Serve para selecionar a cor de um pixel quando for <q> aceso. </q> </dd>
+
+<dt> Cor se Desligado </dt>
+<dd> Serve para selecionar a cor de um pixel quando estiver <q> apagado. </q> </dd>
+
+<dt> Persistência da Luz </dt>
+<dd> Quando for diferente de 0, um pixel <q> aceso </q> permanecerá aceso
+pelo número de alternâncias do <i>clock</i> após quantidade da entrada do componente 
+indicar que o pixel deverá ficar <q> apagado. </q> </dd>
+
+<dt> Forma dos pontos </dt>
+<dd> A opção quadrado significa que cada pixel será desenhado como um quadrado 10x10, 
+preenchendo o componente, sem lacunas entre os pixels. A opção círculo significa que cada 
+pixel será desenhado como um círculo de diâmetro-8, com intervalos entre cada círculo. 
+O círculo é a opção mais difícil de interpretar, mas é mais se aproxima dos
+componentes do tipo matriz de LEDs comerciais. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

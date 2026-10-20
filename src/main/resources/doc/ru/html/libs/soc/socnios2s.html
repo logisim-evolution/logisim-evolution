@@ -1,0 +1,740 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="created" content="2018-10-23T06:18:10.521000000">
+  <meta name="changed" content="2026-07-08T01:58:00.000000000">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <title>
+    Имитационная модель процессора Nios2s
+  </title>
+  <link rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+  <div class="maindiv">
+    <h1>
+      <img class="iconlibs" src="../../../../icons/6464/up.png" alt="nios2" title="nios2 simulator"> Имитационная модель
+      Nios2s
+    </h1>
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Библиотека:</strong>
+          </td>
+          <td>
+            <a href="index.html">Компоненты SoC</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Появился в версии:</strong>
+          </td>
+          <td>
+            3.2
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <strong>Внешний вид:</strong>
+          </td>
+          <td valign="top">
+            <img class="notscal" src="../../../../img-libs/nios2.png" alt="nios2" title="nios2"><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>
+      Поведение
+    </h2>
+    <p>
+      Имитационная модель процессора Nios2 — это полноценная имитационная модель архитектуры команд (ISA)
+      микропроцессорного ядра Intel Nios II (за исключением f-версии). Её можно использовать для демонстрации выполнения
+      программы на встроенной системе. Обратите внимание, что хотя эта модель выполняет одну инструкцию за такт, данное
+      моделирование не является потактно-точным, поскольку в нём не учитываются такие аспекты, как задержки кэша, задержки
+      из-за зависимости данных, циклы ожидания шины и т.д. Он обеспечивает функциональное моделирование для демонстрации
+      разработки систем на кристалле (SoC) на этапах, когда физическое оборудование ещё недоступно.
+    </p>
+    <h2>
+      Контакты
+    </h2>
+    <p>
+      На верхней стороне компонента имитационной модели процессора Nios2 расположены сигналы интерфейса пользовательских
+      инструкций (custom instructions), где вы можете подключить собственные аппаратные ускорители пользовательских
+      инструкций для использования при моделировании. Пожалуйста, обратитесь к документации Intel по пользовательским
+      инструкциям Nios II для получения информации об их использовании.
+    </p>
+    <p>
+      На левой стороне компонента имитационной модели процессора Nios2 расположены следующие входы:
+    </p>
+    <ul>
+      <li>
+        <strong><em>Reset</em></strong>: вход сброса компонента имитационной модели процессора Nios2, который
+        асинхронно сбрасывает процессор при уровне «1» и разрешает работу процессора при уровне «0».
+      </li>
+      <li>
+        <strong><em>Clock</em></strong>: тактовый вход компонента имитационной модели процессора Nios2. При каждом
+        переходе из низкого уровня в высокий (фронте) на этом входе происходит выборка и выполнение новой инструкции.
+      </li>
+      <li>
+        <strong><em>IRQ[0..31]</em></strong>: имитационная модель процессора Nios2 предоставляет до 32 входов прерываний
+        (определяется атрибутом количества линий прерываний). Каждое из этих прерываний имеет активный высокий уровень.
+        Пожалуйста, обратитесь к документации Intel по поведению прерываний для корректной подачи сигналов на эти входы.
+      </li>
+    </ul>
+    <h2>
+      Атрибуты
+    </h2>
+    <p>
+      Компонент имитационной модели процессора Nios2 поддерживает следующие атрибуты:
+    </p>
+    <ul>
+      <li>
+        <strong><em>Вектор сброса (Reset vector)</em></strong>: этот атрибут задаёт адрес в памяти для первой
+        инструкции, выполняемой при активации контакта Reset. Как правило, указанное здесь значение должно быть адресом
+        точки входа вашей программы. Обратите внимание, что все адреса представляют собой 32-разрядные значения.
+      </li>
+      <li>
+        <strong><em>Вектор исключения (Exception vector)</em></strong>: при обнаружении прерывания (см. контакты IRQ
+        выше) или программного исключения имитационная модель процессора Nios2 начнет выполнять программу с этого
+        адреса. Как правило, указанное здесь значение должно быть адресом обработчика прерываний в вашей программе.
+      </li>
+      <li>
+        <strong><em>Вектор отладки (Break vector)</em></strong>: задаёт адрес в памяти для подпрограммы отладки,
+        выполняемой при обнаружении инструкции break.
+      </li>
+      <li>
+        <strong><em>Количество линий прерываний</em></strong>: задаёт количество доступных внешних контактов прерываний
+        IRQ. Значение может быть от 0 (нет линий прерываний) до 32 (максимальное количество).
+      </li>
+      <li>
+        <strong><em>Отображение состояния (State visible)</em></strong>: при отключении отображения состояния (значение
+        «Нет») скорость моделирования может быть увеличена (см. примечание по скорости моделирования в описании
+        библиотеки).
+      </li>
+      <li>
+        <em><strong>Метка (Label)</strong></em>: имя компонента. Обратите внимание, что метка используется во многих
+        местах для ссылки на данный компонент. Если метка не задана, компонент будет обозначаться как «<em>Nios2s
+          simulator @x,y</em>», где <em>x</em> и <em>y</em> — абсолютные координаты точки привязки компонента на холсте.
+      </li>
+      <li>
+        <em><strong>Шрифт метки (Label font)</strong></em>: с помощью этого атрибута можно настроить шрифт метки.
+      </li>
+      <li>
+        <strong><em>Отображение метки (Label visible)</em></strong>: определяет, будет ли метка видна на схеме.
+      </li>
+      <li>
+        <em><strong>Подключенная шина (Connected Bus)</strong></em>: этот атрибут позволяет подключить имитационную модель
+        процессора Nios2 к <a href="socbus.html">компоненту шины</a>. Для успешного моделирования необходимо подключить
+        ваш процессор к такому компоненту.
+      </li>
+    </ul>
+    <h2>
+      Отображаемые компоненты
+    </h2>
+    <p>
+      Имитационная модель процессора Nios2 имеет несколько компонентов состояния, которые отображаются, когда атрибут
+      <em><strong>Отображение состояния</strong></em> установлен в значение <em><strong>Да</strong></em>. Большинство из
+      них также можно визуализировать в отдельном окне, когда сам компонент скрыт внутри подсхемы (см. контекстное меню
+      подсхемы ниже). Доступны следующие компоненты:
+    </p>
+    <ol>
+      <li>Регистровый файл. Процессор Nios2 содержит 32 регистра общего назначения (r0..r31). Текущие значения этих
+        регистров отображаются в левой верхней области с заголовком <em><strong>Регистровый файл</strong></em>. Если
+        значение регистра отображается в виде последовательности вопросительных знаков, это означает, что значение
+        неизвестно (стандартное поведение процессора при запуске). При записи нового значения в регистр соответствующая
+        строка подсвечивается синим цветом.
+      </li>
+      <li>Счётчик команд (PC). Счётчик команд хранит текущий адрес, с которого будет производиться выборка следующей
+        инструкции.
+      </li>
+      <li>Регистр состояния (status). Хранит информацию о текущем состоянии процессора Nios2. Описание полей см. в
+        документации Intel по процессору Nios II.
+      </li>
+      <li>Регистр состояния исключения (estatus). Хранит копию регистра состояния при входе в обработчик
+        прерывания/исключения.
+      </li>
+      <li>Регистр состояния отладки (bstatus). Хранит копию регистра состояния при выполнении инструкции break.
+      </li>
+      <li>Окно трассировки выполнения. Окно трассировки показывает последние 21 инструкцию, выполненную процессором
+        Nios2. Последняя выполненная инструкция отображается сверху. Окно трассировки предоставляет три вида
+        информации:<br>
+        <ol>
+          <li>Адрес счётчика команд (PC), с которого была выбрана инструкция.
+          </li>
+          <li>Двоичный код операции (opcode) выбранной инструкции.
+          </li>
+          <li>Ассемблерный мнемокод инструкции (если код операции распознан).
+          </li>
+        </ol>Этот компонент обновляется при каждой выборке инструкции.
+      </li>
+      <li>Индикатор состояния IRQ, маски IRQ и ожидающих прерываний. Отображается в случае, если атрибут
+        <strong><em>Количество линий прерываний</em></strong> больше 0. Для каждого контакта прерывания верхний квадрат
+        показывает текущий физический уровень линии IRQ, квадрат под ним показывает соответствующий бит маски в регистре
+        ienable, а нижний квадрат показывает, ожидает ли обработки немаскированное прерывание. <em>Примечание:</em> этот
+        индикатор не отображает состояние глобального разрешения прерываний, находящегося в регистре status.
+      </li>
+      <li>Индикатор подключенной шины. В левом нижнем углу компонента расположен индикатор подключения к <a
+          href="socbus.html">компоненту шины</a>. При успешном подключении индикатор становится зелёным и выводит метку
+        подключенной шины. Этот индикатор недоступен в режиме отдельного окна и не скрывается атрибутом
+        <strong><em>Отображение состояния</em></strong>.
+      </li>
+      <li>Компонент управления моделированием. Справа от индикатора подключенной шины расположен компонент управления
+        моделированием. См. подробное описание <a href="socsimcontrol.html">здесь</a>.
+      </li>
+    </ol>
+    <h2>
+      Динамические элементы
+    </h2>
+    <p>
+      Компонент имитационной модели процессора Nios2 предоставляет <a href="socsimcontrol.html">контроллер моделирования
+        SoC</a> в качестве <a href="../../guide/subcirc/dynamic_components.html">динамического компонента</a>.
+    </p>
+    <h2>
+      Пункты меню
+    </h2>
+    <p>
+      При нажатии правой кнопкой мыши на графическое обозначение имитационной модели процессора Nios2 открывается
+      контекстное меню. В это меню добавлены три уникальных пункта:
+    </p>
+    <ol>
+      <li>
+        <em><strong>Открыть ассемблер (Open assembler)</strong></em>. Открывает встроенный <a
+          href="assembler.html">ассемблер</a>, в котором можно писать собственные ассемблерные программы и запускать их
+        на процессоре Nios2.
+      </li>
+      <li>
+        <em><strong>Считать ELF-файл (Read elf file)</strong></em>. Открывает окно выбора файла для загрузки
+        скомпилированного исполняемого ELF-файла (например, полученного с помощью кросс-компилятора GCC для Nios II).
+        Содержимое файла загружается в память проекта, вектор сброса процессора устанавливается на точку входа
+        загруженной программы, а имитационная модель инициализируется в состоянии сброса. Загрузка ELF-файла не изменяет значение
+        атрибута <em><strong>Вектор сброса</strong></em>.
+      </li>
+      <li>
+        <strong><em>Показать загруженную программу (Show loaded program)</em></strong>. Доступен только если программа
+        была загружена через ассемблер или ELF-файл. Открывает <a href="disassembler.html">дизассемблер</a>.
+      </li>
+    </ol>
+    <h2>
+      Пункты меню родительской схемы
+    </h2>
+    <p>
+      Если имитационная модель процессора Nios2 находится внутри подсхемы, она добавляет четыре пункта в контекстное меню
+      этой подсхемы при её использовании в родительской схеме:
+    </p>
+    <ol>
+      <li>
+        <em><strong>&lt;имя&gt;: Открыть ассемблер</strong></em>. Открывает встроенный <a
+          href="assembler.html">ассемблер</a>.
+      </li>
+      <li>
+        <em><strong>&lt;имя&gt;: Считать ELF-файл</strong></em>. Открывает окно выбора ELF-файла.
+      </li>
+      <li>
+        <em><strong>&lt;имя&gt;: Показать состояние CPU</strong></em>. Открывает отдельное окно с компонентами состояния
+        процессора (пункты 1–7 из раздела «Отображаемые компоненты»).
+      </li>
+      <li>
+        <em><strong>&lt;имя&gt;: Показать загруженную программу</strong></em>. Открывает <a
+          href="disassembler.html">дизассемблер</a>.
+      </li>
+    </ol>
+    <p>
+      В этих пунктах меню <em><strong>&lt;имя&gt;</strong></em> — это метка имитационной модели процессора Nios2. Если
+      метка не задана, имя генерируется автоматически в виде <strong>Nios2@x,y</strong>, где <strong>x</strong> и
+      <strong>y</strong> — координаты точки привязки имитационной модели Nios2 внутри подсхемы.
+    </p>
+    <h2>
+      Поддерживаемые инструкции
+    </h2>
+    <table style="width: 854px;" border="1">
+      <tbody>
+        <tr>
+          <td rowspan="1" colspan="6">
+            <em>Арифметические и логические инструкции</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            and
+          </td>
+          <td style="text-align: center;">
+            or
+          </td>
+          <td style="text-align: center;">
+            xor
+          </td>
+          <td style="text-align: center;">
+            nor
+          </td>
+          <td style="text-align: center;">
+            sub
+          </td>
+          <td style="text-align: center;">
+            mul
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            div
+          </td>
+          <td style="text-align: center;">
+            divu
+          </td>
+          <td style="text-align: center;">
+            mulxss
+          </td>
+          <td style="text-align: center;">
+            mulxuu
+          </td>
+          <td style="text-align: center;">
+            mulxsu
+          </td>
+          <td style="text-align: center;">
+            andi
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            ori
+          </td>
+          <td style="text-align: center;">
+            xori
+          </td>
+          <td style="text-align: center;">
+            andhi
+          </td>
+          <td style="text-align: center;">
+            orhi
+          </td>
+          <td style="text-align: center;">
+            xorhi
+          </td>
+          <td style="text-align: center;">
+            addi
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            subi
+          </td>
+          <td style="text-align: center;">
+            muli
+          </td>
+          <td style="text-align: center;">
+            nop
+          </td>
+          <td style="text-align: center;">
+            mov
+          </td>
+          <td style="text-align: center;">
+            movhi
+          </td>
+          <td style="text-align: center;">
+            movi
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            movui
+          </td>
+          <td style="text-align: center;">
+            movia
+          </td>
+          <td style="text-align: center;" rowspan="1" colspan="4">
+            <br>
+          </td>
+        </tr>
+        <tr align="left">
+          <td rowspan="1" colspan="6">
+            <em>Инструкции сравнения</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            cmpeq
+          </td>
+          <td style="text-align: center;">
+            cmpne
+          </td>
+          <td style="text-align: center;">
+            cmpge
+          </td>
+          <td style="text-align: center;">
+            cmpgeu
+          </td>
+          <td style="text-align: center;">
+            cmplt
+          </td>
+          <td style="text-align: center;">
+            cmpltu
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            cmpgt
+          </td>
+          <td style="text-align: center;">
+            cmpgtu
+          </td>
+          <td style="text-align: center;">
+            cmple
+          </td>
+          <td style="text-align: center;">
+            cmpleu
+          </td>
+          <td style="text-align: center;">
+            cmpeqi
+          </td>
+          <td style="text-align: center;">
+            cmpnei
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            cmpgei
+          </td>
+          <td style="text-align: center;">
+            cmpgeui
+          </td>
+          <td style="text-align: center;">
+            cmplti
+          </td>
+          <td style="text-align: center;">
+            cmpltui
+          </td>
+          <td style="text-align: center;">
+            cmpgti
+          </td>
+          <td style="text-align: center;">
+            cmpgtui
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            cmplei
+          </td>
+          <td style="text-align: center;">
+            cmpleui
+          </td>
+          <td style="text-align: center;" rowspan="1" colspan="4">
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" colspan="6">
+            <em>Пользовательские инструкции</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            custom
+          </td>
+          <td rowspan="1" colspan="5">
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" colspan="6">
+            <em>Инструкции передачи данных</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            ldw
+          </td>
+          <td style="text-align: center;">
+            ldh
+          </td>
+          <td style="text-align: center;">
+            ldhu
+          </td>
+          <td style="text-align: center;">
+            ldb
+          </td>
+          <td style="text-align: center;">
+            ldbu
+          </td>
+          <td style="text-align: center;">
+            ldwio
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            ldhio
+          </td>
+          <td style="text-align: center;">
+            ldhuio
+          </td>
+          <td style="text-align: center;">
+            ldbio
+          </td>
+          <td style="text-align: center;">
+            ldbuio
+          </td>
+          <td style="text-align: center;">
+            stw
+          </td>
+          <td style="text-align: center;">
+            sth
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            stb
+          </td>
+          <td style="text-align: center;">
+            stwio
+          </td>
+          <td style="text-align: center;">
+            sthio
+          </td>
+          <td style="text-align: center;">
+            stbio
+          </td>
+          <td style="text-align: center;" rowspan="1" colspan="2">
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" colspan="6">
+            <em>Другие инструкции управления</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            trap
+          </td>
+          <td style="text-align: center;">
+            eret
+          </td>
+          <td style="text-align: center;">
+            break
+          </td>
+          <td style="text-align: center;">
+            bret
+          </td>
+          <td style="text-align: center;">
+            rdctl
+          </td>
+          <td style="text-align: center;">
+            wrctl
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            flushd
+          </td>
+          <td style="text-align: center;">
+            flushda
+          </td>
+          <td style="text-align: center;">
+            flushi
+          </td>
+          <td style="text-align: center;">
+            initd
+          </td>
+          <td style="text-align: center;">
+            initda
+          </td>
+          <td style="text-align: center;">
+            initi
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            flushp
+          </td>
+          <td style="text-align: center;">
+            sync
+          </td>
+          <td style="text-align: center;" rowspan="1" colspan="4">
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" colspan="6">
+            <em>Инструкции управления программой</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="height: 19px; text-align: center;">
+            callr
+          </td>
+          <td style="text-align: center;">
+            ret
+          </td>
+          <td style="text-align: center;">
+            jmp
+          </td>
+          <td style="text-align: center;">
+            call
+          </td>
+          <td style="text-align: center;">
+            jmpi
+          </td>
+          <td style="text-align: center;">
+            br
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            bge
+          </td>
+          <td style="text-align: center;">
+            bgeu
+          </td>
+          <td style="text-align: center;">
+            blt
+          </td>
+          <td style="text-align: center;">
+            bltu
+          </td>
+          <td style="text-align: center;">
+            beq
+          </td>
+          <td style="text-align: center;">
+            bne
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            bgt
+          </td>
+          <td style="text-align: center;">
+            bgtu
+          </td>
+          <td style="text-align: center;">
+            ble
+          </td>
+          <td style="text-align: center;">
+            bleu
+          </td>
+          <td style="text-align: center;" rowspan="1" colspan="2">
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" colspan="6">
+            <em>Инструкции сдвига и циклического сдвига</em>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            rol
+          </td>
+          <td style="text-align: center;">
+            ror
+          </td>
+          <td style="text-align: center;">
+            sll
+          </td>
+          <td style="text-align: center;">
+            sra
+          </td>
+          <td style="text-align: center;">
+            srl
+          </td>
+          <td style="text-align: center;">
+            roli
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            slli
+          </td>
+          <td style="text-align: center;">
+            srai
+          </td>
+          <td style="text-align: center;">
+            srli
+          </td>
+          <td style="text-align: center;" rowspan="1" colspan="3">
+            <br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>
+      Поддерживаемые регистры управления
+    </h2>
+    <table style="width: 852px; height: 157px;" border="1">
+      <tbody>
+        <tr>
+          <td style="width: 111px; text-align: center;">
+            <strong>Регистр</strong>
+          </td>
+          <td style="text-align: center;">
+            <strong>Имя</strong>
+          </td>
+          <td style="text-align: center;">
+            <strong>Примечания</strong>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            0
+          </td>
+          <td style="text-align: center;">
+            status
+          </td>
+          <td>
+            Только константа <em>RSIE</em> в значении 1 и <em>PIE</em>.
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            1
+          </td>
+          <td style="text-align: center; width: 130.583px;">
+            estatus
+          </td>
+          <td style="width: 588.45px;">
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            2
+          </td>
+          <td style="text-align: center;">
+            bstatus
+          </td>
+          <td>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            3
+          </td>
+          <td style="text-align: center;">
+            ienable
+          </td>
+          <td>
+            Количество битов зависит от значения атрибута <strong><em>Количество линий прерываний</em></strong>.
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            4
+          </td>
+          <td style="text-align: center;">
+            ipending
+          </td>
+          <td>
+            Количество битов зависит от значения атрибута <strong><em>Количество линий прерываний</em></strong>.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <a href="index.html">Назад к <em>Библиотеке SoC</em></a>
+    </p>
+  </div>
+</body>
+
+</html>

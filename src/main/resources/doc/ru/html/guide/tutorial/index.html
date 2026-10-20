@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-18T01:22:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Руководство для начинающих
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Руководство для начинающих
+      </h1>
+      <p>
+        Добро пожаловать в <b>Logisim-evolution</b>!
+      </p>
+      <p>
+        Logisim-evolution позволяет вам проектировать и моделировать цифровые схемы. Программа задумана как образовательный инструмент, помогающий понять принципы работы цифровых устройств.
+      </p>
+      <p>
+        Чтобы попрактиковаться в использовании Logisim, давайте построим схему «Исключающее ИЛИ» (XOR) — то есть схему, которая имеет два входа (назовём их <var>x</var> и <var>y</var>) и выдаёт на выходе 0, если значения на входах одинаковы, и 1, если они различны. Это иллюстрирует следующая таблица истинности.
+      </p>
+      <center>
+        <table class="truthtable">
+          <tbody>
+            <tr>
+              <th class="tspace">
+                &nbsp;x&nbsp;
+              </th>
+              <th class="tspace">
+                &nbsp;y&nbsp;
+              </th>
+              <th class="tspace">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/tutorial-xor-circ.png" alt="#########"><br>
+        Мы могли бы спроектировать такую схему на бумаге.
+      </p>
+      <p>
+        Но то, что схема нарисована на бумаге, ещё не гарантирует её правильность. Чтобы проверить нашу работу, мы нарисуем её в Logisim и промоделируем. В качестве приятного бонуса мы получим схему, которая выглядит гораздо аккуратнее, чем нарисованная от руки.
+      </p>
+      <p>
+        <a href="tutor-orient.html">Шаг 0: Начало работы</a><br>
+        <a href="tutor-gates.html">Шаг 1: Добавление логических элементов</a><br>
+        <a href="tutor-wires.html">Шаг 2: Добавление проводников</a><br>
+        <a href="tutor-text.html">Шаг 3: Добавление текста</a><br>
+        <a href="tutor-test.html">Шаг 4: Тестирование схемы</a><br>
+        <a href="tutor-step.html">Шаг 5: Пошаговый режим</a>
+      </p>
+      <p>
+        Приятного проектирования схем!
+      </p>
+      <p>
+        <b>Далее:</b> <a href="tutor-orient.html">Шаг 0: Начало работы</a>
+      </p>
+    </div>
+  </body>
+</html>

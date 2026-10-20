@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2019-12-31T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:22" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   Splitters
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <p>
+    <b>
+     上一节:
+    </b>
+    <a href="fet-creating.html">
+     创建捆绑包
+    </a>
+   </p>
+   <h1>
+    <!-- Splitters -->
+    分线器
+   </h1>
+   <p>
+    <!-- When you work with multi-bit values, you will often want to route different bits in different directions. The Wiring library's <b class=propertie>splitter</b> tool (<img class=intxt src="../../../../img-guide/splitter1.png" alt="#########">) allows you to accomplish this. -->
+    当您使用多位值时，您通常会希望在不同方向上路由不同的位。 线路库的
+    <b class="propertie">
+     分线器
+    </b>
+    tool (
+    <img alt="#########" class="intxt" src="../../../../img-guide/splitter1.png"/>
+    ) 可以让您完成此任务。
+   </p>
+   <p>
+    <!-- For example, suppose we want a circuit that computes the bitwise AND of the two nibbles of its eight-bit input (the upper four bits and the lower four bits). We will have an eight-bit value coming from the input pin, and we want to split that into two four-bit values. In the below circuit, we have used a splitter to accomplish this: The 8-bit input comes into the splitter, which divides the 8 bits into two 4-bit values, which are then fed into the AND gate and from there to the output. -->
+    例如，假设我们需要一个电路来计算其八位输入的两个半字节（高四位和低四位）的按位与。 我们将有一个来自输入引脚的八位值，我们希望将其拆分为两个四位值。 在下面的电路中，我们使用分线器来完成此操作：8 位输入进入分线器，它将 8 位分成两个 4 位值，然后将其输入与门并从那里到输出 。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/bundles-splitter-circ.png"/>
+   </p>
+   <p>
+    <!-- In this example, the splitter <b>splits</b> an incoming value into multiple outgoing values. But splitters can also work the other way: It can <b>combine</b> multiple values into a single value. In fact, they are non-directional: They can send values one way at one time and another way later, and they can even do both at the same time, as in the below example where a value travels eastward through the two splitters, then is routed back westward through them again, and then back eastward where it finally reaches its output. -->
+    在此示例中，分线器将传入值
+    <b>
+     拆分
+    </b>
+    为多个传出值。 但拆分器也可以以另一种方式工作：它可以
+    <b>
+     将多个值组合
+    </b>
+    为一个值。 事实上，它们是无方向性的：它们可以一次以一种方式发送值，然后以另一种方式接收值，甚至可以同时执行这两种操作，如下例所示，其中值通过两个分线器向东传播，然后 再次向西穿过它们，然后向东返回，最终到达输出。
+   </p>
+   <p align="center">
+    <img alt="#########" class="notscal" src="../../../../img-guide/bundles-splitter-2way.png"/>
+   </p>
+   <p>
+    <!-- The key to understanding splitters is their attributes. In the following, the term <b>Split End</b> refers to one of the multiple wires on one side, while the term <b>data bus</b> refers to the single wire on the other side. -->
+    理解分线器的关键是它们的属性。 在下文中，术语
+    <b>
+     Split End
+    </b>
+    是指一侧的多根导线中的一根，而术语
+    <b>
+     数据总线
+    </b>
+    是指另一侧的单根导线。
+   </p>
+   <ul>
+    <!-- <li>The <b class=propertie>Facing</b> attribute tells where the split ends should be relative to the Fan Out. -->
+    <li>
+     <b class="propertie">
+      方向
+     </b>
+     属性指示分叉端相对于总线端的位置。
+     <div>
+      <table>
+       <tbody>
+        <tr>
+         <td valign="top">
+          <!-- Data bus -->
+          数据总线
+         </td>
+         <td>
+          <br/>
+          <img align="middle" alt="#########" class="notscal" src="../../../../img-guide/splitter-right.png"/>
+         </td>
+         <td>
+          <!-- Split End -->
+          分叉末端
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </li>
+    <!-- <li>The <b class=propertie>Fan Out</b> attribute specifies how many split ends there are.
+        </li> -->
+    <li>
+     <b class="propertie">
+      支路
+     </b>
+     属性指定分叉末端的数量。
+    </li>
+    <!-- <li>The <b class=propertie>Bit Width In</b> attribute specifies the bit width of the combined end. -->
+    <li>
+     <b class="propertie">
+      位宽度输入
+     </b>
+     属性指定数据总线端的位宽度。
+    </li>
+    <!-- <li>The <b class=propertie>Appearence</b> defines how the split end is drawn relative to its data bus.<br> -->
+    <li>
+     <b class="property">
+      外观
+     </b>
+     定义分叉端相对于其数据总线的绘制方式。
+     <br/>
+     <div class="twodiv">
+      <table>
+       <tbody>
+        <tr>
+         <td>
+          <img align="middle" alt="#########" class="notscal" src="../../../../img-libs/splitter-right.png"/>
+         </td>
+         <td>
+          <img align="middle" alt="#########" class="notscal" src="../../../../img-libs/splitter-left.png"/>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <!-- Right -->
+          右
+         </td>
+         <td>
+          <!-- Left -->
+          左
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <div class="twodiv">
+      <table>
+       <tbody>
+        <tr>
+         <td>
+          <img align="middle" alt="#########" class="notscal" src="../../../../img-guide/splitter-center.png"/>
+         </td>
+         <td>
+          <img align="middle" alt="#########" class="notscal" src="../../../../img-guide/splitter-legacy.png"/>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <!-- Center -->
+          居中
+         </td>
+         <td>
+          <!-- Legacy -->
+          传统
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </li>
+    <!-- <li>The <b class=propertie>Spacing</b> specifies the space between the split end. -->
+    <li>
+     <b class="property">
+      间距
+     </b>
+     指定分叉端之间的间距。
+    </li>
+    <li>
+     <!-- The <b class=propertie>Bit <var>x</var></b> attributes define which separate split end corresponds to which bit <b>x</b> of the data bus. It is modifiable and allows you to organize the order of split end by hand. If several bits correspond to the same split end (first example above), then the relative order will be the same as in the bus. Logisim distributors cannot have a bus bit linked to more than one split end. -->
+     <b class="propertie">
+      位
+      <var>
+       x
+      </var>
+     </b>
+     属性定义哪个单独的分叉端对应于数据总线的哪个位
+     <b>
+      x
+     </b>
+     。 它是可修改的，允许您手动组织分叉末端的顺序。 如果多个位对应于相同的分叉端（上面的第一个示例），则相对顺序将与总线中的相同。 Logisim-evolution 分配器的总线位不能连接到多个分叉端。
+    </li>
+   </ul>
+   <p>
+    <!-- Note that any change to the Fan Out or Bit Width In attributes will reset all Bit <var>x</var> attributes so that they will distribute the bits of the combined value as evenly as possible among the split ends. -->
+    请注意，对“支路”或“位宽输入”属性的任何更改都将重置所有位
+    <var>
+     x
+    </var>
+    属性，以便它们在分叉端之间尽可能均匀地分配组合值的位。
+   </p>
+   <p>
+    <!-- <b>Next:</b> <a href="fet-colors.html">Wire colors</a>. -->
+    <b>
+     下一节:
+    </b>
+    <a href="fet-colors.html">
+     导线的颜色
+    </a>
+    .
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+   <p>
+   </p>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,97 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Subtrator</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/subtractor.gif" width="32" height="32">
+<em>Subtrator</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Aritmética</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 11</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/subtractor.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esse componente subtrairá os valores que vierem através das entradas a oeste
+(o superior menos o inferior) e fornecerá na saída leste a diferença. O componente
+é projetado de modo a poder ser conectado a outros subtratores para subtrair mais
+bits do que for possível com um único subtractor. A entrada <i>borrow-in</i> fornecerá um
+valor de um bit que deverá ser tomado emprestado fora da diferença (se o empréstimo
+tivier sido especificado), e um <i>borrow-out</i> indicará se o componente precisar pedir
+um bit de mais alta ordem para completar a subtração sem <i>underflow</i> (supondo
+subtração sem sinal).
+</p>
+
+<p> Internamente, o subtrator simplesmente executará uma negação (NOT) bit a bit no
+subtraendo, e irá adicioná-lo ao minuendo, juntamente com a negação da entrada
+relativa ao <i>borrow-in</i>. (O <em>minuendo</em> é o primeiro operando (entrada superior),
+e o <em>subtraendo</em> será o segundo (entrada inferior). Acontece que gosto dos termos antiquados.)
+</p>
+
+<p> Se um dos operandos contiver algum bit flutuante, ou de erro, então o componente
+irá executar uma subtração parcial. Ou seja, irá calcular usando os bits de mais baixa
+ordem possíveis. Porém, acima do bit flutuante, ou de erro, o resultado terá bits
+flutuante ou de erro.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, extremo norte (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> O minuendo da subtração, ou seja, o número a partir do qual se irá subtrair.
+
+<dt> Na face oeste, extremo sul (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> O subtraendo da subtração, ou seja, o número que será subtraído do minuendo.
+
+<dt> Na face norte, marcado <var>b in</var> (entrada, com largura de 1 bit) </dt>
+<dd> Se for 1, então 1 será emprestado fora da diferença. Se o valor for
+desconhecido (ou seja, flutuante), então será tomado como sendo igual a 0.
+
+<dt> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Os bits menos significativos dos <var> Bits de Dados </var> da diferença dentre
+os dois valores oriundos da face oeste, menos o <var>b</var><sub><var>in</var></sub>.
+
+<dt> Na face sul, marcado <var>b out</var> (saída, com largura de 1 bit) </dt>
+<dd> O bit de empréstimo calculado para a diferença. Se os valores subtraídos
+como valores sem sinal produzirem um valor negativo, então esse bit será 1;
+caso contrário, será 0.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits dos valores a serem subtraídos e do resultado.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

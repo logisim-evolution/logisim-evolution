@@ -1,0 +1,12 @@
+<configuration>
+  <appender name="logisim-standard" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="trace">
+    <appender-ref ref="logisim-standard" />
+  </root>
+</configuration>
+

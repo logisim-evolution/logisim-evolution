@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-07T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      O menu Simular
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        O menu Simular
+      </h1>
+      <dl>
+        <dt>
+          <strong>Simulação ativada</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-E</b>
+        </dt>
+        <dd>
+          Se marcada, os circuitos serão vistos "ao vivo". Isso é, os valores de propagação através do circuito serão atualizado a cada teste ou alteração no circuito.
+          <p>
+            A opção será automaticamente desmarcada se <a href="../prop/oscillate.html">oscilação no circuito</a> for detectada.
+          </p>
+        </dd>
+		 <dt>
+          <strong>Simulação passo-a-passo</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-I</b>
+        </dt>
+        <dd>
+          <p>
+            Avançar a <a href="../tutorial/tutor-step.html">simulação um passo</a> à frente. Por exemplo, um sinal pode acabar entrando em uma porta durante uma etapa, mas a porta não irá mostrar um sinal diferente até o próximo passo da simulação. Para ajudar a identificar quais pontos mudaram no circuito em geral, todos os pontos cujos
+            valores forem modificados serão indicados por um círculo azul; se um subcircuito contiver todos os seus pontos alterados (ou em seus subcircuitos, recursivamente), então ele será desenhado com um contorno azul.
+          </p>
+        </dd>
+        <dt>
+          <strong>Reiniciar simulação</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b>
+        </dt>
+        <dd>
+          <p>
+            Limpar tudo sobre o estado atual do circuito, de modo que será como se você tivesse acabado de abrir o arquivo novamente. Se você estiver vendo o estado de um subcircuito, a hierarquia inteira será eliminada.
+          </p>
+        </dd>
+        <dt>
+          <strong>Simulação VHDL ativada</strong>
+        </dt>
+        <dd>
+          <p>
+            não documentado neste momento
+          </p>
+        </dd>
+        <dt>
+          <strong>Reiniciar simulação VHDL</strong>
+        </dt>
+        <dd>
+          <p>
+            não documentado neste momento
+          </p>
+        </dd>
+        <dt>
+          <strong>Ir ao-estado</strong>
+		  <!-- recuperar a visão -->
+        </dt>
+        <dd>
+          <p>
+            Quando você <a href="../subcirc/sub-debug.html">desviar para um estado de um subcircuito</a> , através do menu <i>pop-up</i>, a opção <b class=menu>|&nbsp;Ir para estado</b> listará os circuitos acima daquele em foco. Se selecionar um deles, o circuito correspondente será mostrado.
+          </p>
+        </dd>
+        <dt>
+          <strong>Continuar do estado</strong>
+		  <!-- Ir para a visão -->
+        </dt>
+        <dd>
+          <p>
+            Se você já entrou em um estado de subcircuito e depois desviou-se para fora, esse submenu listará os subcircuitos subjacentes aos atuais. Se selecionar um deles, o circuito correspondente será mostrado.
+          </p>
+        </dd>
+        <dt>
+         <strong>Metade do ciclo de carrapatos</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-T</b>
+		 <!-- carrapato demi-ciclo -->
+        </dt>
+        <dd>
+          <p>
+			Avança os relógios na simulação em um tick quando se usa o modo passo-a-passo. Um relógio com uma duração alta/baixa de 1 tick avançará então meio ciclo.<br>  
+			Isto pode ser útil quando você quer avançar os relógios manualmente, especialmente quando o relógio não está no mesmo circuito que o que você está vendo atualmente.
+          </p>
+        </dd>
+		<dt>
+        <strong>Macar Ciclo Completo</strong>&nbsp;&nbsp;<b class="tkeybd">F2</b>
+		<!-- Tick ciclo completo -->
+        </dt>
+        <dd>
+          <p>
+             A mesma função que antes, mas avança por dois impulsos. Um relógio ajustado com uma duração alta/baixa de 1 tick irá então avançar um ciclo completo.<br> Os outros relógios do projeto avançam simultaneamente em proporção aos seus parâmetros.
+          </p>
+        </dd>
+        <dt>
+          <strong>Pulsos habilitado</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-K</b>
+        </dt>
+        <dd>
+          <p>
+           Activar os relógios. Isto só terá um efeito se o circuito contiver componentes de relógio. (na biblioteca Conexão). A opção é desabilitada por padrão.
+          </p>
+        </dd>
+        <dt>
+          <strong>Frequência de pulso (Tick Frequency)</strong>
+        </dt>
+        <dd>
+          <p>
+             Permite-lhe seleccionar a frequência do pulso.. Por exemplo, 8 Hz significa que as variações ocorrerão oito vezes por segundo. Um pulso (<b>tick</b>) é a unidade básica de medida para a velocidade do relógios.
+          </p>
+		  <p align="center">
+            <img class="notscal" src="../../../../img-guide/clock.png" alt="#########">
+          </p>
+		  <b class=note>Exemplo:</b> nível alto = 2, nível baixo = 2, Clock = período tic / ( 2 + 2) 
+          <p>
+            <b class=note>Nota:</b> A frequência dos períodos de relógio será mais lenta que a velocidade de activação (tic): o relógio mais rápido possível terá um ciclo alto a um tic e um ciclo baixo a um tic. Tal relógio teria uma frequência de 4 Hz (um ciclo completo acima/abaixo) se a frequência do tick for 8 Hz
+          </p>
+        </dd>
+        <dt>
+          <strong>Chronograma...</strong>
+        </dt>
+        <dd>
+          <p>
+            Entrar no <a href="../log/index.html">módulo Registro</a>, o que facilitará o anotar e guardar valores automaticamente em um circuito a medida em que a simulação avançar.
+          </p>
+        </dd>
+		 <dt>
+          <strong>Vector para teste...</strong>
+        </dt>
+        <dd>
+          <p>
+            <a href="../verify/test.html">a janela do Test Vector</a> a <a href="../verify/test.html">janela Vector para teste...</a> Permite-lhe verificar os seus circuitos com um ficheiro vectorial de teste que mostra as entradas e saídas do circuito.
+          </p>
+        </dd>
+		<dt>
+          <strong>Assembly viewer</strong>
+        </dt>
+        <dd>
+          <p>
+            The <a href="../assembly/index.html">Assembly viewer</a> window displays an address value stored in a register and the assembly language instruction at that address.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <strong>Próximo:</strong> <a href="winhelp.html">Menus Janela e Ajuda</a>.
+      </p>
+    </div>
+  </body>
+</html>

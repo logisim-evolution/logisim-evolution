@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE map
+    PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
+	"http://java.sun.com/products/javahelp/map_2_0.dtd">
+<map version="2.0">
+	<mapID target="toplevelfolder"      url="img-guide/helptree-top.gif" />
+	<mapID target="chapter"             url="img-guide/helptree-section.gif" />
+	<mapID target="topic"               url="img-guide/helptree-page.gif" />
+	<mapID target="top"                 url="fr/html/guide/index.html" />
+
+<!-- Guide -->
+	<mapID target="guide"               url="fr/html/guide/index.html" />
+	<mapID target="tutorial"            url="fr/html/guide/tutorial/index.html" />
+	<mapID target="tutorial_orient"     url="fr/html/guide/tutorial/tutor-orient.html" />
+	<mapID target="tutorial_gates"      url="fr/html/guide/tutorial/tutor-gates.html" />
+	<mapID target="tutorial_wires"      url="fr/html/guide/tutorial/tutor-wires.html" />
+	<mapID target="tutorial_text"       url="fr/html/guide/tutorial/tutor-text.html" />
+	<mapID target="tutorial_test"       url="fr/html/guide/tutorial/tutor-test.html" />
+	<mapID target="tutorial_step"       url="fr/html/guide/tutorial/tutor-step.html" />	
+	<mapID target="gui"                 url="fr/html/guide/gui/index.html" />
+    <mapID target="gui_canvas"          url="fr/html/guide/gui/gui-canvas.html"/> 
+    <mapID target="gui_menu"            url="fr/html/guide/gui/gui-menu.html"/>
+	<mapID target="gui_explore"         url="fr/html/guide/gui/gui-explore.html" /> 
+    <mapID target="gui_toolsbar"        url="fr/html/guide/gui/gui-toolsbar.html"/>
+	<mapID target="gui-attribut"        url="fr/html/guide/gui/gui-attribut.html" />
+	<mapID target="gui-attrcomp"        url="fr/html/guide/gui/gui-attrcomp.html" />
+	<mapID target="subcirc"             url="fr/html/guide/subcirc/index.html" />
+	<mapID target="subcirc_creating"    url="fr/html/guide/subcirc/sub-creating.html" />
+	<mapID target="subcirc_using"       url="fr/html/guide/subcirc/sub-using.html" />
+	<mapID target="subcirc_appear"      url="fr/html/guide/subcirc/sub-appear.html" />
+    <mapID target="subcirc_personalise" url="fr/html/guide/subcirc/sub-personalise.html"/>
+	<mapID target="subcirc_debug"       url="fr/html/guide/subcirc/sub-debug.html" />
+	<mapID target="subcirc_library"     url="fr/html/guide/subcirc/sub-library.html" />
+	<mapID target="features"            url="fr/html/guide/feature/index.html" />
+	<mapID target="features_creating"   url="fr/html/guide/feature/fet-creating.html" />
+	<mapID target="features_splitting"  url="fr/html/guide/feature/fet-splitting.html" />
+	<mapID target="features_colors"     url="fr/html/guide/feature/fet-colors.html" />
+	<mapID target="features_autolabel"  url="fr/html/guide/feature/fet-autolabel.html" />
+	<mapID target="features_matrix"     url="fr/html/guide/feature/fet-matrix.html" />
+    <mapID target="mem_guide"           url="fr/html/guide/mem/index.html"/>
+    <mapID target="mem_poke"            url="fr/html/guide/mem/mem-poke.html" />
+    <mapID target="mem_menu"            url="fr/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_filetabel"       url="fr/html/guide/mem/mem-filepanel.html"/>
+    <mapID target="mem_hex"             url="fr/html/guide/mem/mem-hex.html"/>  
+    <mapID target="mem_v2raw"           url="fr/html/guide/mem/mem-v2raw.html"/>  
+    <mapID target="mem_v3word"          url="fr/html/guide/mem/mem-v3word.html"/> 
+    <mapID target="mem_v3byte"          url="fr/html/guide/mem/mem-v3byte.html"/> 
+    <mapID target="mem_binary"          url="fr/html/guide/mem/mem-vbinary.html"/>
+    <mapID target="mem_ascii"           url="fr/html/guide/mem/mem-vascii.html"/>
+	<mapID target="test_vector"         url="fr/html/guide/test_vector/index.html" />
+	<mapID target="test_vector_window"  url="fr/html/guide/test_vector/test_vector_window.html" />
+	<mapID target="test_vector_file_format" url="fr/html/guide/test_vector/test_vector_file_format.html" />
+	<mapID target="test_vector_special_values" url="fr/html/guide/test_vector/test_vector_special_values.html" />
+	<mapID target="test_vector_sequential" url="fr/html/guide/test_vector/test_vector_sequential.html" />
+	<mapID target="test_vector_cmdline" url="fr/html/guide/test_vector/test_vector_cmdline.html" />
+	<mapID target="test_vector_tips"    url="fr/html/guide/test_vector/test_vector_tips.html" />
+	<mapID target="analyze"             url="fr/html/guide/analyze/index.html" />
+	<mapID target="analyze_open"        url="fr/html/guide/analyze/ana-open.html" />
+	<mapID target="analyze_table"       url="fr/html/guide/analyze/ana-table.html" />
+	<mapID target="analyze_expr"        url="fr/html/guide/analyze/ana-expr.html" />
+	<mapID target="analyze_gen"         url="fr/html/guide/analyze/ana-gen.html" />
+    <mapID target="analyze_expimp"      url="fr/html/guide/analyze/ana-expimp.html" />
+	<mapID target="log"                 url="fr/html/guide/log/index.html" />
+	<mapID target="log_selection"       url="fr/html/guide/log/selection.html" />
+	<mapID target="log_timetable"       url="fr/html/guide/log/timetable.html" />
+	<mapID target="verify"              url="fr/html/guide/verify/index.html" />
+	<mapID target="verify_sub"          url="fr/html/guide/verify/sub.html" />
+	<mapID target="verify_other"        url="fr/html/guide/verify/other.html" />
+	<mapID target="verify_multi"        url="fr/html/guide/verify/multi.html" />
+    <mapID target="verify_test"         url="fr/html/guide/verify/test.html"/>
+	<mapID target="prefs"               url="fr/html/guide/prefs/index.html" />
+	<mapID target="prefs_template"      url="fr/html/guide/prefs/pref-template.html" />
+	<mapID target="prefs_intl"          url="fr/html/guide/prefs/pref-intl.html" />
+	<mapID target="prefs_window"        url="fr/html/guide/prefs/pref-window.html" />
+	<mapID target="prefs_layout"        url="fr/html/guide/prefs/pref-layout.html" />
+	<mapID target="prefs_exp"           url="fr/html/guide/prefs/pref-exp.html" />
+	<mapID target="prefs_fpga"          url="en/html/guide/prefs/pref-fpgacommander.html" />
+	<mapID target="prefs_cmdline"       url="en/html/guide/prefs/pref-cmdline.html" />
+	<mapID target="opts"                url="fr/html/guide/opts/index.html" />
+	<mapID target="opts_simulate"       url="fr/html/guide/opts/opts-simulate.html" />
+	<mapID target="opts_toolbar"        url="fr/html/guide/opts/opts-toolbar.html" />
+	<mapID target="opts_mouse"          url="fr/html/guide/opts/opts-mouse.html" />
+	<mapID target="prop"                url="fr/html/guide/prop/index.html" />
+	<mapID target="prop_delays"         url="fr/html/guide/prop/delays.html" />
+	<mapID target="prop_oscillate"      url="fr/html/guide/prop/oscillate.html" />
+	<mapID target="prop_shortcome"      url="fr/html/guide/prop/shortcome.html" />
+	<mapID target="hdl-ip"              url="fr/html/guide/hdl_ip/index.html" />
+	<mapID target="hdl-ip_vhdlcomp"     url="fr/html/guide/hdl_ip/vhdlcomp.html" />
+	<mapID target="hdl-ip_questa"       url="fr/html/guide/hdl_ip/questa.html" />
+	<mapID target="hdl-ip_simulation"   url="fr/html/guide/hdl_ip/simulation.html" />
+	<mapID target="hdl-ip_testbenchs"   url="fr/html/guide/hdl_ip/testbenchs.html" />
+	<mapID target="jar"                 url="fr/html/guide/jar/index.html" />
+	<mapID target="jar_incr"            url="fr/html/guide/jar/incr.html" />
+	<mapID target="jar_library"         url="fr/html/guide/jar/library.html" />
+	<mapID target="jar_simpctr"         url="fr/html/guide/jar/simpctr.html" />
+	<mapID target="jar_counter"         url="fr/html/guide/jar/counter.html" />
+	<mapID target="jar_guide"           url="fr/html/guide/jar/guide.html" />
+	<mapID target="menu"                url="fr/html/guide/menu/index.html" />
+	<mapID target="menu_file"           url="fr/html/guide/menu/file.html" />
+	<mapID target="menu_edit"           url="fr/html/guide/menu/edit.html" />
+	<mapID target="menu_project"        url="fr/html/guide/menu/project.html" />
+	<mapID target="menu_simulate"       url="fr/html/guide/menu/simulate.html" />
+	<mapID target="menu_fpga"           url="en/html/guide/menu/fpga.html" />
+	<mapID target="menu_winhelp"        url="fr/html/guide/menu/winhelp.html" />
+	<mapID target="menu_exportab"       url="fr/html/guide/menu/exportab.html" />
+	<mapID target="menu_printertab"     url="fr/html/guide/menu/printertab.html" />
+	<mapID target="menu_assembly"       url="fr/html/guide/assembly/index.html"/>
+	<mapID target="about"               url="fr/html/guide/about/index.html" />
+	<mapID target="about_gpl"           url="fr/html/guide/about/gpl.html" />
+	<mapID target="about_gpl_tr"        url="fr/html/guide/about/gpl-fr.html" />
+	
+<!-- for testing and validation -->	
+	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
+	<mapID target="Translation_status"  url="index.html" />
+
+<!-- Librairie -->
+	<mapID target="libs"                url="fr/html/libs/index.html" />
+	<mapID target="wiring"              url="fr/html/libs/wiring/index.html" />
+	<mapID target="wiring_splitter"     url="fr/html/libs/wiring/splitter.html" />
+	<mapID target="wiring_pin"          url="fr/html/libs/wiring/pin.html" />
+	<mapID target="wiring_probe"        url="fr/html/libs/wiring/probe.html" />
+	<mapID target="wiring_tunnel"       url="fr/html/libs/wiring/tunnel.html" />
+	<mapID target="wiring_pull"         url="fr/html/libs/wiring/pull.html" />
+	<mapID target="wiring_clock"        url="fr/html/libs/wiring/clock.html" />
+    <mapID target="wiring_por"          url="fr/html/libs/wiring/poweronreset.html"/>	
+	<mapID target="wiring_constant"     url="fr/html/libs/wiring/constant.html" />
+	<mapID target="wiring_const01"      url="fr/html/libs/wiring/const01.html" />
+	<mapID target="wiring_notconnect"   url="fr/html/libs/wiring/notconnect.html" />
+	<mapID target="wiring_transist"     url="fr/html/libs/wiring/transist.html" />
+	<mapID target="wiring_transmis"     url="fr/html/libs/wiring/transmis.html" />
+	<mapID target="wiring_extender"     url="fr/html/libs/wiring/extender.html" />
+	<mapID target="gates"               url="fr/html/libs/gates/index.html" />
+	<mapID target="gates_not"           url="fr/html/libs/gates/not.html" />
+	<mapID target="gates_buffer"        url="fr/html/libs/gates/buffer.html" />
+	<mapID target="gates_basic"         url="fr/html/libs/gates/basic.html" />
+	<mapID target="gates_xor"           url="en/html/libs/gates/xor.html" />
+	<mapID target="gates_controlled"    url="en/html/libs/gates/controlled.html" />
+	<mapID target="gates_PLA"           url="en/html/libs/gates/pla.html" />
+	<mapID target="plexers"             url="en/html/libs/plexers/index.html" />
+	<mapID target="plexers_mux"         url="en/html/libs/plexers/mux.html" />
+	<mapID target="plexers_demux"       url="en/html/libs/plexers/demux.html" />
+	<mapID target="plexers_decoder"     url="en/html/libs/plexers/decoder.html" />
+	<mapID target="plexers_priencod"    url="en/html/libs/plexers/priencod.html" />
+	<mapID target="plexers_selector"    url="en/html/libs/plexers/selector.html" />
+	<mapID target="arith"               url="en/html/libs/arith/index.html" />
+	<mapID target="arith_adder"         url="en/html/libs/arith/adder.html" />
+	<mapID target="arith_subtractor"    url="en/html/libs/arith/subtractor.html" />
+	<mapID target="arith_multiplier"    url="en/html/libs/arith/multiplier.html" />
+	<mapID target="arith_divider"       url="en/html/libs/arith/divider.html" />
+	<mapID target="arith_negator"       url="en/html/libs/arith/negator.html" />
+	<mapID target="arith_comparator"    url="en/html/libs/arith/comparator.html" />
+	<mapID target="arith_shifter"       url="en/html/libs/arith/shifter.html" />
+	<mapID target="arith_bitadder"      url="en/html/libs/arith/bitadder.html" />
+	<mapID target="arith_bitfinder"     url="en/html/libs/arith/bitfinder.html" />
+	<mapID target="mem"                 url="en/html/libs/mem/index.html" />
+	<mapID target="mem_flipflops"       url="en/html/libs/mem/flipflops.html" />
+	<mapID target="mem_register"        url="en/html/libs/mem/register.html" />
+	<mapID target="mem_counter"         url="en/html/libs/mem/counter.html" />
+	<mapID target="mem_shiftreg"        url="en/html/libs/mem/shiftreg.html" />
+	<mapID target="mem_random"          url="en/html/libs/mem/random.html" />
+	<mapID target="mem_ram"             url="en/html/libs/mem/ram.html" />
+	<mapID target="mem_rom"             url="en/html/libs/mem/rom.html" />
+	<mapID target="io"                  url="en/html/libs/io/index.html" />
+	<mapID target="io_button"           url="en/html/libs/io/button.html" />
+	<mapID target="io_joystick"         url="en/html/libs/io/joystick.html" />
+	<mapID target="io_keyboard"         url="en/html/libs/io/keyboard.html" />
+	<mapID target="io_led"              url="en/html/libs/io/led.html" />
+	<mapID target="io_ledbar"           url="en/html/libs/io/ledbar.html" />
+	<mapID target="io_7seg"             url="en/html/libs/io/7seg.html" />
+	<mapID target="io_hexdig"           url="en/html/libs/io/hexdig.html" />
+	<mapID target="io_dotmat"           url="en/html/libs/io/dotmat.html" />
+	<mapID target="io_tty"              url="en/html/libs/io/tty.html" />	
+	<mapID target="io_telnet"           url="en/html/libs/io/telnet.html" />
+	<mapID target="io_realtimeclock"    url="en/html/libs/io/realtimeclock.html" />
+	<mapID target="io_matrixkeypad"     url="en/html/libs/io/matrixkeypad.html" />
+    <mapID target="io_Port_IO"          url="en/html/libs/io/Port_io.html" />	
+	<mapID target="io_Repetar"          url="en/html/libs/io/repetar.html" />	
+	<mapID target="io_videorvb"         url="en/html/libs/io/videorvb.html" />
+	<mapID target="ioex"                 url="en/html/libs/ioextra/index.html" />
+	<mapID target="ioex_switch"          url="en/html/libs/ioextra/switch.html" />
+	<mapID target="ioex_buzzer"          url="en/html/libs/ioextra/buzzer.html" />
+	<mapID target="ioex_slider"          url="en/html/libs/ioextra/slider.html" />
+	<mapID target="ioex_digitalscope"    url="en/html/libs/ioextra/digitalscope.html" />
+	<mapID target="ioex_plarom"          url="en/html/libs/ioextra/pla.html" />
+	<mapID target="ioex_twowayswitch"    url="en/html/libs/ioextra/twowayswitch.html" />
+	<mapID target="ioex_twopinled"       url="en/html/libs/ioextra/twopinled.html" />
+	<mapID target="tcl"                 url="en/html/libs/tcl/index.html" />
+    <mapID target="tcl_reds_console"    url="en/html/libs/tcl/reds_console.html" />
+    <mapID target="tcl_generic"         url="en/html/libs/tcl/generic.html" />
+    <mapID target="soc"                 url="en/html/libs/soc/index.html" />
+    <mapID target="nios2_sim"           url="en/html/libs/soc/nios2.html" />
+    <mapID target="socbus"              url="en/html/libs/soc/socbus.html" />
+    <mapID target="assembler"           url="en/html/libs/soc/assembler.html" />
+    <mapID target="disassembler"        url="en/html/libs/soc/disassembler.html" />
+    <mapID target="socsimcontrol"       url="en/html/libs/soc/socsimcontrol.html" />
+	
+<!-- Icon help tree -->
+	<mapID target="icon_poke"        url="icons/1616/poke.png" />
+	<mapID target="icon_edit"        url="icons/1616/select.png" />
+	<mapID target="icon_select"      url="icons/1616/select.png" />
+	<mapID target="icon_wiring"      url="icons/1616/wiring.png" />
+	<mapID target="icon_text"        url="icons/1616/text.png" />
+	<mapID target="icon_menu"        url="icons/1616/menu.png" />
+	
+	<mapID target="icon_splitter"    url="icons/1616/splitter.png" />
+	<mapID target="icon_pin"         url="icons/1616/pininput.png" />
+	<mapID target="icon_probe"       url="icons/1616/probe.png" />
+	<mapID target="icon_tunnel"      url="icons/1616/tunnel.png" />
+	<mapID target="icon_pull"        url="icons/1616/anspull.png" />
+	<mapID target="icon_clock"       url="icons/1616/clock.png" />
+    <mapID target="icon_por"         url="icons/1616/por.png"/>
+	<mapID target="icon_constant"    url="icons/1616/constant.png" />	
+	<mapID target="icon_const01"     url="icons/1616/ground.png" />	
+	<mapID target="icon_notconnect"  url="icons/1616/notconnect.png" />	
+	<mapID target="icon_transist"    url="icons/1616/trans0.png" />
+	<mapID target="icon_transmis"    url="icons/1616/transmis.png" />	
+	<mapID target="icon_extender"    url="icons/1616/extender.png" />
+
+	<mapID target="icon_not"         url="icons/1616/ansnotgate.png" />
+	<mapID target="icon_buffer"      url="icons/1616/ansbuffergate.png" />
+	<mapID target="icon_basic"       url="icons/1616/ansandgate.png" />
+	<mapID target="icon_xor"         url="icons/1616/ansxorgate.png" />
+	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
+	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
+	<mapID target="icon_pla"         url="icons/1616/pla0.png" />
+	
+	<mapID target="icon_mux"         url="icons/1616/multiplexer.png" />
+	<mapID target="icon_demux"       url="icons/1616/demultiplexer.png" />
+	<mapID target="icon_decoder"     url="icons/1616/decoder.png" />
+	<mapID target="icon_priencod"    url="icons/1616/priencod.png" />
+	<mapID target="icon_selector"    url="icons/1616/bitselector.png" />
+	
+	<mapID target="icon_adder"       url="icons/1616/adder.png" />
+	<mapID target="icon_subtractor"  url="icons/1616/subtractor.png" />
+	<mapID target="icon_multiplier"  url="icons/1616/multiplier.png" />
+	<mapID target="icon_divider"     url="icons/1616/divider.png" />
+	<mapID target="icon_negator"     url="icons/1616/negator.png" />
+	<mapID target="icon_comparator"  url="icons/1616/comparator.png" />
+	<mapID target="icon_shifter"     url="icons/1616/shifter.png" />
+	<mapID target="icon_bitadder"    url="icons/1616/bitadder.png" />
+	<mapID target="icon_bitfinder"   url="icons/1616/bitfindr.png" />
+	
+	<mapID target="icon_flipflops"   url="icons/1616/dflipflop.png" />
+	<mapID target="icon_register"    url="icons/1616/register.png" />
+	<mapID target="icon_counter"     url="icons/1616/counter.png" />
+	<mapID target="icon_shiftreg"    url="icons/1616/shiftreg.png" />
+	<mapID target="icon_random"      url="icons/1616/random.png" />
+	<mapID target="icon_ram"         url="icons/1616/ram.png" />
+	<mapID target="icon_rom"         url="icons/1616/rom.png" />
+	
+	<mapID target="icon_button"      url="icons/1616/button.png" />
+	<mapID target="icon_dipswitch"   url="icons/1616/dipswitch.png" />
+	<mapID target="icon_joystick"    url="icons/1616/joystick.png" />
+	<mapID target="icon_keyboard"    url="icons/1616/keyboard.png" />
+	<mapID target="icon_led"         url="icons/1616/led.png" />
+	<mapID target="icon_rgbled"      url="icons/1616/rgbled.png" />
+	<mapID target="icon_7seg"        url="icons/1616/7seg.png" />
+	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
+	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
+	<mapID target="icon_tty"         url="icons/1616/tty.png" />
+	<mapID target="icon_telnet"      url="icons/1616/telnet.png" />
+	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
+	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
+	<mapID target="icon_videorgb"    url="icons/1616/rgbvideo.png" />	
+
+	<mapID target="icon_ttl"         url="icons/1616/ttl.png" />	
+	<mapID target="icon_reds_console" url="icons/1616/tcl.png" />	
+	<mapID target="icon_generic"     url="icons/1616/tcl.png" />	
+	<mapID target="icon_binbcd"      url="icons/1616/bfh.png" />	
+	<mapID target="icon_bcdtoseven"  url="icons/1616/bfh.png" />	
+	<mapID target="icon_switch"      url="icons/1616/switch.png" />	
+	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
+	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
+	<mapID target="icon_digitalscope"    url="icons/1616/digitaloscilloscope.png" />	
+	<mapID target="icon_twowayswitch"    url="icons/1616/twowayswitch.png" />	
+	<mapID target="icon_twopinled"       url="icons/1616/twopinled.png" />	
+	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
+	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
+	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		
+
+	<mapID target="icon_vhdl"        url="icons/1616/vhdl.png" />
+    <mapID target="up_icon"          url="icons/1616/up.png"/>
+    <mapID target="socbus_icon"      url="icons/1616/socbus.png"/>
+	
+
+</map>

@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Divider -->
+   除法器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img  class="iconlibs" src="../../../../icons/6464/divider.png" alt="#########" width="32" height="32" align="middle"> <em>Divider</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/divider.png" width="32"/>
+    <em>
+     除法器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <a href="index.html">
+        运算器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 22
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/divider.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    行为
+   </h2>
+   <p>
+    该组件将西侧输入的两个数值相除，并在东侧输出商。该组件支持级联，以处理位宽超过单个除法器所能支持范围的被除数：上端输入提供被除数的高 <var>数据位宽</var> 位（若已连接），而南侧输出 <var>rem</var> 给出余数，该余数可作为另一个除法器的 <var>upper</var> 输入继续参与运算。
+   </p>
+   <p>
+    如果除数为 0，则不执行除法运算（即，视除数为 1）。
+   </p>
+   <p>
+    除法器本质上执行无符号除法：余数始终位于 0 与 <var>除数</var>-1 之间，且商始终为整数，因此满足
+   </p>
+   <center>
+    <var>商</var> × <var>除数</var> + <var>余数</var> = <var>被除数</var>。
+   </center>
+   但若 <var>商</var> 无法在 <var>数据位宽</var> 位内表示，则仅输出其低 <var>数据位宽</var> 位；组件不提供访问更高位商值的方式。
+   <p>
+    如果任一操作数包含悬空位或错误位，则组件的所有输出都会整体变为悬空值或错误值。
+   </p>
+   <h2>
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     西侧上端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     被除数的低 <var>数据位宽</var> 位。
+    </dd>
+    <dt>
+     西侧下端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     除数。
+    </dd>
+    <dt>
+     北侧（标记为 <var>upper</var>，输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     被除数的高 <var>数据位宽</var> 位。
+    </dd>
+    <dt>
+     东侧（输出，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     商的低 <var>数据位宽</var> 位。
+    </dd>
+    <dt>
+     南侧（标记为 <var>rem</var>，输出，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     除法得到的余数，其值始终介于 0 与 <var>除数</var>-1 之间。
+    </dd>
+   </dl>
+   <h2>
+    属性
+   </h2>
+   <p>
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <b class="propertie">
+       数据位宽
+      </b>
+     </dt>
+     <dd>
+      被除数、除数以及输出结果的位宽。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <p>
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

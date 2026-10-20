@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-08-09T06:18:42.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Tampon
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/ansbuffergate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/iecbuffergate.png" alt="#########" width="32" height="32">&nbsp;  
+		 <em>Tampon</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Gates</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI:
+                    </th>
+                    <th>
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Le tampon transmet simplement à sa sortie droite toute entrée qu'il reçoit du côté gauche. La propriété <b class="propertie">Valeur de sortie</b> permet de modifier le comportement de la sortie selon trois modes. La table de vérité d'un tampon à un bit est la suivante. 
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace">
+			    Entrée
+			  </th>
+              <th class="tspace" colspan="3">
+                Sorties
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+              </th>
+              <th class="tspace">
+                &nbsp;&nbsp;O/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                O/flt.
+              </th>
+              <th class="tspace">
+                flt./1
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Dans tous les cas si l'entrée est non spécifiée (c'est-à-dire flottante <b class="uvalue">U</b>), la sortie sera également non spécifiée. Si l'entrée est une valeur d'erreur (<b class="evalue">E</b>), alors la sortie le sera aussi.
+      </p>
+      <p>
+        Les tampons sont les plus inutiles des composants de portes fournis dans Logisim; leur présence dans la bibliothèque Gates est autant une question d'exhaustivité, un composant pour chaque table de vérité à une entrée possible qu'une question de fonctionnalité utile. Néanmoins, il peut être occasionnellement utile de s'assurer que les valeurs se propagent dans une seule direction le long d'un fil.
+      </p>
+      <h2>
+        Pins (en supposant que le composant est orienté vers l'est)
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest :
+        </dt>
+        <dd>
+          L'entrée dans le composant sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>.
+        </dd>
+        <dt>
+          Bord est :
+        </dt>
+        <dd>
+          La sortie, qui correspond toujours à l'entrée sur le côté gauche. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>. Le mode de présentation des données sur la sortie est défini par l'attribut <b class="propertie">Valeur de sortie</b>.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Orientation</b>
+          </dt>
+          <dd>
+            La direction du composant (sa sortie par rapport à son entrée).
+          </dd>
+          <dt>
+            <b class="propertie">largeur de données</b>
+          </dt>
+          <dd>
+            La largeur de bit des entrées et sorties du composant.
+          </dd>
+          <dt>
+            <b class="propertie">Valeur de sortie</b>
+          </dt>
+          <dd>
+		  Indique comment les résultats faux et vrais doivent être traduits sur la sortie. Par défaut, faux est indiqué par une tension faible (<b class="zerov">0</b>) et vrai par une tension élevée (<b class="unov">1</b>), mais l'un ou l'autre peut être remplacé par une valeur à haute impédance (flottante <b class="uvalue">U</b>). Cela permet des connexions de type ou-câblé et et-câblé, comme illustré dans la <a href="basic.html">documentation sur les portes AND/OR/NAND/NOR</a>.
+          </dd>
+          <dt>
+            <b class="propertie">Étiquette</b>
+          </dt>
+          <dd>
+            Le texte de l'étiquette associée à la porte.
+          </dd>
+          <dt>
+            <b class="propertie">Police des étiquettes</b>
+          </dt>
+          <dd>
+            La police avec laquelle l'étiquette doit être rendue.
+          </dd>
+        </dl>
+        <h2>
+          Comportement de l'outil pousser 
+        </h2>
+        <p>
+          Aucun.
+        </p>
+        <h2>
+          Comportement de l'outil text 
+        </h2>
+        <p>
+          Permets de modifier l'étiquette associée à la porte.
+        </p>
+        <p>
+          <b>Retour à</b>  <a href="../index.html">Référence de la bibliothèque</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

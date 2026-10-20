@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      16 进制数码显示
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/hexdig.png" alt="#########"> <em>十六进制数字显示器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">输入/输出</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.2.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/hexdig.png" alt="Working" width="64" height="64">
+              <img class="appearancelibs" src="../../../../img-libs/hexdigoff.png" alt="No valid input" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        使用 7 段数码管显示与 4 位输入对应的十六进制数字。若任意输入位不是 0/1（例如悬空或错误值），则显示保持为空白（所有段均熄灭）。另有一个独立的 1 位输入用于控制小数点的显示。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          南侧边缘，从左数第 1 个（输入，位宽为 4）
+        </dt>
+        <dd>
+          该输入被解释为一个无符号的 4 位数，并显示其对应的十六进制数字。
+        </dd>
+
+        <dt>
+          南侧边缘，从左数第 2 个（输入，位宽为 1）
+        </dt>
+        <dd>
+          控制小数点。若该引脚未连接，则小数点保持熄灭。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">点亮颜色</b>
+        </dt>
+        <dd>
+          段与小数点在点亮时使用的绘制颜色。（默认：红色）
+        </dd>
+
+        <dt>
+          <b class="propertie">熄灭颜色</b>
+        </dt>
+        <dd>
+          段与小数点在熄灭时使用的绘制颜色。（默认：灰色）
+        </dd>
+
+        <dt>
+          <b class="propertie">背景颜色</b>
+        </dt>
+        <dd>
+          显示器背景的绘制颜色。（默认：透明）
+        </dd>
+
+        <dt>
+          <b class="propertie">有小数点</b>
+        </dt>
+        <dd>
+          若为 <q>是</q>，则显示小数点；若为 <q>否</q>，则隐藏小数点。
+        </dd>
+
+        <dt>
+          <b class="propertie">标签</b>
+        </dt>
+        <dd>
+          与该组件关联的标签文本。
+        </dd>
+
+        <dt>
+          <b class="propertie">标签位置</b>
+        </dt>
+        <dd>
+          标签相对于组件的位置。
+        </dd>
+
+        <dt>
+          <b class="propertie">标签字体</b>
+        </dt>
+        <dd>
+          用于绘制标签文本的字体。
+        </dd>
+
+        <dt>
+          <b class="propertie">标签可见</b>
+        </dt>
+        <dd>
+          是否显示标签。
+        </dd>
+      </dl>
+      </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Gerador Aleatório</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/random.gif" width="32" height="32">
+<em>Gerador Aleatório</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/random.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Este componente itera através de uma sequência de números pseudo-aleatórios, que
+avançará para o próximo valor na seqüência cada vez que o <i>clock</i> for gatilhado
+enquanto o componente estiver ativado. Tecnicamente falando, o algoritmo
+usadoa para calcular a sequência é um gerador pseudo-linear congruencial: a partir de
+uma semente
+<var>r</var><sub><small>0</small></sub>, o próximo valor
+<var>r</var><sub><small>1</small></sub> será o número</p>
+<center>
+<var>r</var><sub><small>1</small></sub> =
+(25,214,903,917 <var>r</var><sub><small>0</small></sub> + 11)
+mod 2<sup><small>48</small></sup>
+</center>
+<p> O próximo valor <var>r</var><sub><small>2</small></sub>
+será computado a partir de <var>r</var><sub><small>1</small></sub>
+usando o mesmo cálculo, e assim por diante. Essa sequência é de números de 48 bits;
+o valor produzido pelo componente será formado pelos bits de mais baixa ordem 
+como configurado pelo seu atributo de Bits de Dados, após dispensar os 12 primeiros
+bits de mais baixa ordem da semente atual. </p>
+
+<p> Além da entrada de <i>clock</i>, o componente também inclui uma entrada para 
+habilitação <var> Enable </var>, que fará a entrada de <i>clock</i> ser ignorada 
+quando seu valor for 0, e a entrada <var> Reset </var>, que redefinirá o valor do 
+componente de forma assíncrona ao valor inicial da semente <var>r</var><sub>
+<small>0</small> </sub>.
+</p>
+
+<p> A semente inicial é configurável pelo usuário. Se ela estiver configurada em 0 
+(o padrão), então a semente será baseada no tempo atual, quando instruído
+pela entrada de <var>Reset</var>, o componente iniciará com a mesma semente usada
+anteriormente. Ele adquirirá uma nova semente somente quando toda a simulação 
+for reiniciada. 
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face leste, marcado por <var> Q </var> (saída, com largura em bits
+de acordo com o atributo Bits de Dados) </dt>
+<dd> Emitirá o valor atualmente armazenado pelo registrador. </dd>
+
+<dt> Na face oeste, pino superior, marcado por um triângulo (entrada, 
+com largura de 1 bit) </dt>
+<dd> <i>Clock</i>: no instante em que essa entrada for acionada, conforme
+especificado pelo atributo Gatilho, o componente passará ao próximo número 
+na sequência. </dd>
+
+<dt> Na face oeste, pino inferior (entrada, com largura de 1 bit) </dt>
+<dd> <i>Enable</i>: O componente estará ativado enquanto essa entrada estiver
+desconectada ou igual a 1; mas se for 0, então a entrada de clock será ignorada. </dd>
+
+<dt> Na face sul (entrada, com largura de 1 bit) </dt>
+<dd> <i>Reset</i>: quando for 1, a sequência pseudoaleatória assincronamente 
+retornará para o valor inicial da semente. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits do valor armazenado no registrador. </dd>
+
+<dt> Semente </dt>
+<dd> O valor inicial usado para a sequência pseudoaleatoria. Se for 0
+(o padrão), então o valor inicial será baseado no tempo atual em que a 
+simulação iniciar. </dd>
+
+<dt> Gatilho </dt>
+<dd> Serve para configurar como a entrada de <i>clock</i> deverá ser interpretada.
+O valor <q> Borda de Subida </q> indicará que o componente deverá atualizar 
+seu valor no instante em que o <i>clock</i> variar de 0 para 1. O valor
+<q> Borda de Descida </q> indicará que ele deverá ser atualizado no instante 
+em que o <i>clock</i> variar de 1 para 0. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado ao componente. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

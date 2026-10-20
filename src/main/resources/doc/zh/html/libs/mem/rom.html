@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      ROM
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/rom.png" alt="#########" width="32" height="32"> <em>ROM</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">存储器</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.1.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/rom.png" alt="#########" width="160">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        ROM 组件用于存储最多 16,777,216 个数值（由 <q>地址位宽</q> 属性指定），每个数值最多可包含 64 位（由 <q>数据位宽</q> 属性指定）。电路可以读取 ROM 中当前存储的数值，但不能通过电路逻辑对其进行修改。用户可以使用 <q>手形工具</q> 交互式地修改单个存储单元的值，也可以通过 <q>菜单工具</q> 一次性修改整个 ROM 的内容。
+      </p>
+      <p>
+        与 RAM 组件不同，ROM 组件的当前内容作为组件属性存储，并会保存在 Logisim-evolution 创建的电路文件中。如果某个包含 ROM 组件的子电路被多次实例化，这些子电路实例会引用该子电路定义中的同一份 ROM 内容。彼此独立的 ROM 组件则拥有各自的内容。
+      </p>
+      <p>
+        当前存储的数值会显示在组件内部。显示区域左侧以灰色列出各个地址；在显示区域内，每个存储值均以十六进制形式显示。当前选中地址对应的数值将以反色显示（白字黑底）。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <dl>
+        <dt>
+          西侧边缘，标记为 <var>A</var>（输入，位宽与<q>地址位宽</q>属性一致）
+        </dt>
+        <dd>
+          用于选择当前电路正在访问的存储地址。
+        </dd>
+
+        <dt>
+          东侧边缘，标记为 <var>D</var>（输出，位宽与<q>数据位宽</q>属性一致）
+        </dt>
+        <dd>
+          在 <var>D</var> 引脚上输出当前所选地址处存储的值。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 0–9 可修改其 <q>地址位宽</q> 属性，Alt-0 到 Alt-9 可修改其 <q>数据位宽</q> 属性。
+      </p>
+      <dl>
+        <dt>
+          地址位宽
+        </dt>
+        <dd>
+          地址信号的位宽。ROM 中可存储的数值数量为 2<sup><var>地址位宽</var></sup>。
+        </dd>
+
+        <dt>
+          数据位宽
+        </dt>
+        <dd>
+          存储器中每个数值的位宽。
+        </dd>
+
+        <dt>
+          内容
+        </dt>
+        <dd>
+          存储器中的具体内容。
+        </dd>
+      </dl>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        参见《<em>用户指南</em>》中的
+        <a href="../../guide/mem/mem-poke.html">内存内容修改</a>。
+      </p>
+
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+
+      <h2>
+        菜单工具行为
+      </h2>
+      <p>
+        参见《<em>用户指南</em>》中的
+        <a href="../../guide/mem/mem-menu.html">弹出菜单与文件</a>。
+      </p>
+
+      <p>
+        <a href="../index.html">返回 <em>库参考手册</em></a>
+      </p>
+    </div>
+  </body>
+</html>

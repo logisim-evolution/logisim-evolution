@@ -1,0 +1,465 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-12T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      与/或/与非/或非门
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <!-- 图标保持不变 -->
+            </td>
+            <td valign="center">
+              <h1>
+                <em>与/或/与非/或非门</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>库：</strong></td>
+            <td><a href="index.html">逻辑门</a></td>
+          </tr>
+          <tr>
+            <td><strong>引入版本：</strong></td>
+            <td>2.0 Beta 1</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>外观：</strong></td>
+            <td valign="top">
+              <!-- 表格结构保持不变 -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>行为</h2>
+      <p>
+        与/或/与非/或非门分别计算输入对应的逻辑函数，并输出结果。
+      </p>
+
+      <p>
+        默认情况下，任何未连接的输入（连着导线视作有连接）都会被忽略。
+        因此，如果放置一个 5 输入的逻辑门，但只连接其中两个输入，它的行为就和一个 2 输入门一致。<br>
+        但如果所有输入都未连接，则输出为错误值（<b class="evalue">E</b>）。
+        如果您希望强制要求所有输入都必须连接，可以通过菜单 <b class="menu">|&nbsp;项目&nbsp;|</b> &gt;
+        <b class="menu">|&nbsp;选项…&nbsp;|</b>，在
+        <b class="menu">|&nbsp;仿真&nbsp;|</b> 选项卡中，
+        将 <q>未定义时的门输出</q> 设置为
+        <q>对未定义的输入给出错误值</q> 来启用该行为。
+      </p>
+
+      <p>
+        以下是这些逻辑门在双输入情况下的真值表。
+        字母 <b class="evalue">E</b> 表示错误值，
+        字母 <b class="uvalue">U</b> 表示悬空值。
+      </p>
+
+      <center>
+        <table class="encapsul" border="0">
+          <tbody>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        与门
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        或门
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &nbsp;
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        与非门
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td></td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        或非门
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+
+      <p>
+        简而言之，只要所有输入都是 0 或 1，逻辑门的行为就完全符合预期。
+        如果某个输入既不是 0 也不是 1，而是悬空值（<b class="uvalue">U</b>）
+        或错误值（<b class="evalue">E</b>），
+        那么逻辑门会将该输入同时视为 0 <em>和</em> 1，具体规则如下：
+        如果无论该输入被当作 0 还是 1，输出结果都相同
+        （例如，与门的一个输入为 0，另一个输入不确定，输出结果一定为 0），
+        那么该结果就是输出值；
+        但如果输出结果取决于该输入是 0 还是 1，
+        则输出为错误值（<b class="evalue">E</b>）。
+      </p>
+
+      <p>
+        各种逻辑门的多位版本会对其输入按位执行对应的一位逻辑运算。
+      </p>
+
+      <h2>引脚（假设组件朝东）</h2>
+      <dl>
+        <dt>西侧：</dt>
+        <dd>
+          组件的输入端。输入数量由 <b class="propertie">输入端口数</b> 属性指定。
+          位宽由 <b class="propertie">数据位宽</b> 属性决定。
+          <p>
+            注意，如果使用ANSI形状的逻辑门，或门和或非门的西侧会是弧形的，但输入引脚仍然沿直线排列。
+          </p>
+        </dd>
+
+        <dt>东侧：</dt>
+        <dd>
+          逻辑门的输出端，数值按上述规则计算。
+          位宽由 <b class="propertie">数据位宽</b> 属性决定。
+        </dd>
+      </dl>
+
+      <h2>属性</h2>
+      <p>
+        当组件被选中或正在放置时，
+        数字键 <b class="tkeybd">0</b> 到 <b class="tkeybd">9</b>
+        用于修改 <b class="propertie">输入端口数</b> 属性，
+        <b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b>
+        用于修改 <b class="propertie">数据位宽</b> 属性，
+        方向键用于修改 <b class="propertie">朝向</b> 属性。
+      </p>
+
+      <div class="attliste">
+        <dl>
+          <dt><b class="propertie">朝向</b></dt>
+          <dd>输出相对于输入的方向。</dd>
+
+          <dt><b class="propertie">数据位宽</b></dt>
+          <dd>组件输入和输出的位宽。</dd>
+
+          <dt><b class="propertie">门尺寸</b></dt>
+          <dd>
+            决定组件绘制为较宽或较窄的版本。
+            该属性不会影响输入数量，输入数量由
+            <b class="propertie">输入端口数</b> 属性指定。
+            如果选择了ANSI形状，
+            当输入数量超过形状本身所能容纳的数量时，
+            逻辑门会绘制出“翼状”结构以容纳额外的输入。
+          </dd>
+
+          <dt><b class="propertie">输入端口数</b></dt>
+          <dd>决定组件西侧包含多少个输入引脚。</dd>
+
+          <dt><b class="propertie">输出值</b></dt>
+          <dd>
+            指定逻辑假和逻辑真如何映射为输出值。
+            默认情况下，假对应低电平（0），真对应高电平（1），
+            但高低电平之一的值也可以设置为高阻值，从而实现线或、线与。
+            例如下图左侧，输出设置为 高阻/1，下拉到 0，形成“线或”；
+            右侧中，输出设置为 0/高阻，上拉到 1，形成“线与”。
+            <center>
+              <img src="../../../../img-libs/wand-wor.png" alt="#########" width="220" height="91">
+            </center>
+          </dd>
+
+          <dt><b class="propertie">标签</b></dt>
+          <dd>与逻辑门关联的标签文本。</dd>
+
+          <dt><b class="propertie">标签字体</b></dt>
+          <dd>用于绘制标签的字体。</dd>
+
+          <dt><b class="propertie">对 <var>x</var> 取反</b></dt>
+          <dd>
+            如果设为 <q>是</q>，则在输入送入逻辑门之前先对其取反。
+            当组件朝东或朝西时，输入按从上到下编号；
+            当组件朝北或朝南时，输入按从左到右编号。
+          </dd>
+        </dl>
+      </div>
+
+      <h2>探针工具行为</h2>
+      <p>无。</p>
+
+      <h2>文本工具行为</h2>
+      <p>编辑与逻辑门关联的标签。</p>
+
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

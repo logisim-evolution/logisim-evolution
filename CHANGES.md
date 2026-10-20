@@ -1,0 +1,317 @@
+[![Logisim-evolution](docs/img/logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
+
+# Changes #
+
+* @dev (????-??-??)
+
+* v5.0.0 (2026-09-12)
+  * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
+  * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
+  * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
+  * Simplified Keyboard component buffer handling by removing redundant array-copy guards
+    [#564] (@hewzhew).
+  * Set default gate shape to rectangular (IEC) for Russian locale (@V-Zemlyakov).
+  * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
+  * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
+  * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
+  * Added contributor guidance and an online component overview for the TTL library.
+  * Fixed packaged runtimes failing to launch when Java accessibility support is configured
+    [#2398] (@hewzhew).
+  * Added "Find Action" omni-search, letting menu actions be found and run by typing part of their
+    name, with fuzzy and acronym matching (e.g. "expim" or "ei" find "Export Image"). It opens from
+    the Help menu, from Ctrl+Shift+A (configurable under Preferences > Hotkey settings), or by
+    tapping Shift twice (switchable under Preferences > Window). It is built as a hub over pluggable
+    search providers, so further sources of results can be added without changing the dialog. Its
+    Add provider can select components for placement from the project's open libraries.
+  * Fixed FlatLaf "restricted native access" warning on newer Java versions.
+  * Fixed HDL generator tests failing when the "Use upper case for VHDL keywords" preference is
+    disabled (@MarcinOrlowski)
+  * Improved file merging and export capabilities:
+    * Added ability to selectively merge individual circuits and subcircuit dependencies from a Logisim file.
+    * Added ability to export individual circuits along with dependent subcircuits into standalone Logisim files.
+    * Added conflict resolution dialog to replace, rename, or skip conflicting circuits.
+  * Added support for opening project files by dragging them into the application window.
+  * Added a Window menu option to hide or show the navigation pane.
+  * Added configurable shortcuts for selecting the default toolbar tools.
+  * Added ability to load multiple RAM or ROM memories from the command line
+  * Added an opt-in RAM data-bus mode where inactive output-enable drives separate outputs to high-impedance.
+  * Added Real-Time Clock component.
+  * Added Floating Point Constant component.
+  * Added FPGA HDL support for the Bit Finder component [#2890] (@hewzhew).
+  * Added 444 RGB (12 bit) color mode to the RGB Video component.
+  * Modified paste behavior to paste at current mouse location if it is on canvas.
+  * Added multiline Text Tool labels using Shift+Enter or multiline clipboard text.
+  * Fixed a regression that caused TestVector to fail when the circuit had subcircuits.
+  * Fixed TTL 7447 BI/RBO port to be an input/output port to allow cascading of blanking mode.
+  * Added TTL 7476: dual J-K Flip-flop with preset and clear.
+  * Added TTL 7493: 4-bit binary ripple counter.
+  * Added TTL 7438: quad dual-input NAND gate, open collector.
+  * Added TTL 74173: 4-bit D-type registers with 3-state outputs.
+  * Improved drawing appearance:
+    * Corrected font choice for default fonts in TikZ image exports.
+    * Corrected disjoint corners on Square Root arithmetic components.
+    * Corrected disjoint corners on unpressed Button components.
+    * Reduced line reordering errors in TikZ/SVG image exports.
+  * Improved dark theme (FlatLaf Dark / Darcula) color synchronization:
+    * Canvas background, grid dots, component outlines, icons, and signal wire
+      colors now adapt to the active theme.
+    * Look and feel switching applies globally to all open windows without requiring
+      a restart.
+    * Fixed gate negation bubbles, K-map text, expression overlines, and splitter
+      bit-range labels to be visible on dark backgrounds.
+    * Replaced hard-coded hex color literals with named `DEFAULT_*`/`DARK_*` constants
+      in class `AppPreferences`.
+  * Added separate light and dark code editor theme preferences for HDL and assembly editors.
+  * Improved Timing Diagram recording and exports:
+    * Corrected vector and GIF exports.
+    * Corrected reset offsets, non-50% duty-cycle clocks, real-time traces, and RAM memory traces.
+  * Improved custom circuit appearance editing and dynamic appearance elements:
+    * Circuit attributes are shown when no item is selected.
+    * Dynamic elements preserve nested paths and can display nested Probe/Register values correctly.
+    * Corrected drag selection, selected-object attributes, and automatic switching to custom appearance.
+  * Improved memory and hex editor tools:
+    * Added a go-to-address control to the hex editor.
+    * Limited generated save previews for large memories.
+    * Clarified RAM and Dual Port RAM simulation reset behavior labels.
+    * Corrected memory display layout in exported graphics.
+    * Wide Counter components use compact grouped state rows in evolution appearance.
+    * RAM line-enable inputs now only write when enabled. Existing projects relying on unconnected
+      line-enable inputs may need to connect those inputs explicitly.
+    * Random Generator now uses xoshiro256++ to produce full-width 64-bit pseudorandom values in
+      simulation and generated HDL.
+  * Added HDL-language-aware label and circuit-name validation: VHDL remains case-insensitive,
+    Verilog permits case-distinct names, and selecting no HDL permits non-HDL identifiers.
+  * Fixed several HDL and FPGA generation issues, including wide Random generator HDL, PortIO bubble
+    ranges, scanning I/O constraints, and Xilinx download placeholder handling.
+  * Fixed FPGA component mappings losing their board highlights when the mapping dialog is reopened
+    [#2933] (@hewzhew).
+  * Fixed output-only Port I/O components being reported as multiple drivers during FPGA netlist
+    generation, and corrected the symmetric input-only endpoint direction [#2537] (@henriquejsza).
+  * Improved project editing stability:
+    * Layout zoom and scroll position are remembered separately for each circuit during a session.
+    * Circuits without a remembered view initially fit the window at up to 100% zoom and are centered.
+    * Moving components preserves component state.
+    * RAM components continue to notify their circuit of memory changes after being moved [#2873]
+      (@henriquejsza).
+    * Floating subcircuit inputs now propagate floating values.
+    * Nested library tools resolve correctly.
+    * Text label editing handles menu-shortcut actions and in-place undo/redo consistently.
+    * No-op text edits no longer create undo actions.
+  * Improved VHDL editing and simulation UI:
+    * VHDL entity appearance is configured through entity properties.
+    * VHDL code view no longer paints a circuit canvas without a circuit.
+    * VHDL simulator log split pane remains recoverable after being maximized.
+    * Added a VHDL standard preference for QuestaSim/ModelSim validation and simulation.
+    * VHDL co-simulation now analyzes project-local entities in library order and preserves their
+      canonical names for dependency resolution [#1350] (@hewzhew).
+  * Improved command-line output and localization:
+    * Command-line help now honors the selected locale.
+    * Invalid command-line option values now return a nonzero exit status.
+    * Intel/Altera FPGA downloads can select an exact Quartus cable with `--fpga-cable`.
+    * TTY table output includes bit widths in headers.
+    * Updated the command-line option reference to match the current interface [#1546] (@hewzhew).
+    * Localized the Assembly Viewer.
+  * Added and updated documentation for Telnet, FPGA Commander reports, the board editor, JAR
+    libraries, wire values, transistor behavior, and unused-library save options.
+  * Added a default text-tool color preference and synchronized string-option preference updates.
+  * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
+  * Added a Github Action check ensuring PRs also provide updated changelog (@MarcinOrlowski).
+  * Fixed `Line.matches()` comparing transposed coordinates, causing identical lines to be treated
+    as different and some different lines as identical [#2939] (@henriquejsza).
+  * Added a Github Action check ensuring pull requests reference the open ticket they address (@MarcinOrlowski).
+  * Added a Github Action locking merged pull requests and the tickets they closed (@MarcinOrlowski).
+  * Fixed the DEB package refusing to install on Debian 12 and Ubuntu 22.04, by listing the
+    pre-`t64` library names as alternative dependencies [#2959] (@MarcinOrlowski).
+  * Many other bug fixes.
+
+* v4.1.0 (2026-02-15)
+  * Increased number of components which may be displayed on custom circuit appearances and increased
+    options for existing ones.
+  * Bug fixes:
+    * Fixed more synchronization issues with simulation tree and propagator.
+    * Fixed INOUT port issue in TTL74245.
+    * Fixed several other minor issues.
+  * Enhanced TestVector for sequential circuits. See user's guide for details.
+  * Enhanced Video resolution choices.
+  * Allow more components to show in State (register) tab.
+  * Enhanced Undo and Redo functionality:
+    * Added "Undo History" dropdown menu to view and select specific undo actions.
+    * Added "Redo History" dropdown menu to view and select specific redo actions.
+    * Added "Clear Undo/Redo History" menu item with confirmation dialog.
+    * Limited undo and redo history to a maximum of 64 actions.
+    * Retained standard single-step undo and redo functionality via menu item.
+  * Enhanced Counter component:
+    * Counter state can now be displayed in "State" tab alongside registers.
+    * Counter state can now drive "Assembly viewer" address.
+  * Corrected appearance of OR gates in TikZ/SVG image exports.
+  * Corrected font choice for default fonts in SVG image exports.
+  * Reduced filesize of TikZ/SVG image exports.
+  * Enhanced SoC component labels.
+  * Enhanced Chinese localization.
+  * Added DMA copy engine component (SocDma) in the System On Chip library.
+
+* v4.0.0 (2025-09-07)
+  * Updated VHDL and created Verilog generator for RAM component with byte-enables
+  * Added VHDL and Verilog for the RAM component with line-enables
+  * fixed clasic appearance shift-register bug
+  * Added automatic custom Logisim library loading at startup.
+    * Created unit tests for loading custom Logisim libraries at startup.
+    * Updated documentation for the automatic loading of custom Logisim libraries.
+  * New take on project export/import. A zip-file is generated which can include a user provided "README.md".
+  * Added Telnet component.
+  * Added Metal graphics acceleration option.
+  * Added option to hide/show toolbar
+  * Improved drawing appearance.
+    * Fixed TTY appearance bug while changing various zoom levels.
+    * Corrected appearance of NOT gates in TikZ/SVG image export.
+    * Corrected disjoint corners in arrow-style Pins.
+    * Improved output of rectangles with rounded corners in TikZ image export.
+  * Fixed Undo/Redo issues.
+  * Fixed Power-on-Reset propagation issue.
+  * Redesigned simulation engine to fix synchronization issues and increase speed.
+    * Fixed synchronization and efficiency issues in wires and propagation.
+    * Fixed synchronization and efficiency issues in propagation listeners.
+    * Limited redraws to about 20 frames per second to reduce overhead.
+    * Allows users to choose a simulation queue, which changes the efficiency of the simulator depending on circuit design.
+  * Simplified Type and Behavior attributes of Pins.
+    * This change will break circuits with input pins that need to pull floating values to 0 but do not
+      have the Pull Down setting. To fix it, set the Behavior attribute to Pull Down.
+    * Updated Pin documentation.
+  * Subcircuits with clock input(s) are now drawn with a clock symbol.
+  * Added TTL 74194: 4-bit bidirectional universal shift register.
+  * Improved the English, French, and German localization. Smaller fixes were done to the other languages as well.
+
+* v3.9.0 (2024-08-15)
+  * Updated Java requirement to Java 21.
+  * Added an autosave feature along with preferences for it.
+  * Added a new preference to allow the user to choose the action keys for many functions.
+  * Changed RAM default output from error to undefined [#1747]
+  * Added support for scanning 7-segment display on FPGA-boards
+  * Added first support for the openFpga toolchain for the ecp5 famely
+    Note that this is experimental for the moment, so use it at your own risk.
+  * Improved Chinese localization
+    * Changed language code from `cn` to `zh`.
+    * Chinese users (also including those who use other forks of Logisim
+      that are using `cn` language code) will be required to manually modify language settings.
+  * Fixed select port positioning on Multiplexer to be more consistent in some cases [#1734]
+  * Fixed appearance of LSe desktop icon [#1662]
+  * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
+  * Introduced user-defined color for components.
+  * Made component icons more uniform.
+  * Added architecture designation to macOS build.
+  * Fixed Karnaugh map color index bug.
+  * Attribute sheet now honors application color theme.
+  * Attribute sheet now displays HEX value of color properties.
+  * Added TTL 7487: 4-bit True/complement, zero/one elements
+  * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
+  * Added TTL 74151: 8-line to 1 line data selector
+  * Added TTL 74153: dual 4-line to 1 line data selector
+  * Added TTL 74181: arithmetic logic unit
+  * Added TTL 74182: look-ahead carry generator
+  * Added TTL 74299: 8-bit universal shift register with three-state outputs
+  * Added TTL 74381: arithmetic logic unit
+  * Added TTL 74541: Octal buffers with three-state outputs
+  * Added TTL 74670: 4-by-4 register file with three-state outputs
+  * Added 16 bit floating point support for floating point arithmetic
+  * Added partial support for VHDL time units
+  * Fixed the problem of keys getting assigned to focusing on the cell of the table in
+    "properties" section along with its actual intent
+
+* v3.8.0 (2022-10-02)
+  * Added reset value attribute to input pins
+  * Fixed boolean algebra minimal form bug
+  * Fixed random fill Rom bug
+  * Added TTL 74164, 74192 and 74193.
+  * Fixed off grid components bug that could lead to OutOfMemory error.
+  * Removed autolabler for tunnels, such that all get the same label in case of renaming.
+  * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
+  * Sub-circuit can now be deleted with `DELETE` key, along with `BACKSPACE` used so far.
+  * Fixed `Simulate` -> `Timing Diagram` not opening when using "Nimbus" look and feel.
+  * Fixed pressing `CTRL`+`0` selecting the wrong element in the toolbar.
+  * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
+  * Fixed TTL 74139, 7447 outputting inverted logic
+  * Fixed TTL 74175, CLR inverted
+  * Fixed TTL 7436 pin arrangement
+  * Added TTL 74138: 3-line to 8-line decoder
+  * Added TTL 74240, 74241, 74244: octal buffers with three-state outputs.
+  * Added TTL 74245: octal bus transceivers with three-state outputs.
+  * Moved TTL 74266 to 747266, correctly reimplemented 74266 with open-collector outputs.
+  * Fixed TTL 74165, correct order of inputs, load asynchronously
+  * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
+  * Removed fixed LM_Licence setting
+
+* v3.7.2 (2021-11-09)
+  * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
+  * Fixed Gradle builder failing to compile LSe if sources were not checked out from Git.
+  * You can now swap the placement of main canvas and component tree/properties pane.
+  * Several bug fixes.
+
+* v3.7.1 (2021-10-21)
+  * Logisim has now an internal font-chooser to comply to the font-values used.
+  * Several bug fixes.
+
+* v3.7.0 (2021-10-12)
+  * Reworked the slider component in the I/O extra library.
+  * Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
+  * Completely rewritten command line argument parser:
+    * All options have both short and long version now,
+    * All long arguments require `--` prefix i.e. `--version`,
+    * All short arguments require single `-` as prefix i.e. `-v`,
+    * `-clearprefs` is now `--clear-prefs`,
+    * `-clearprops` option is removed (use `--clear-prefs` instead),
+    * `-geom` is now `--geometry`,
+    * `-nosplash` is now `--no-splash` or `-ns`,
+    * `-sub` is now `--substitute` or `-s`,
+    * `-testvector` is now `--test-vector` or `-w`,
+    * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
+    * `-questa` is removed.
+  * PortIO HDL generator and component bug-fixed.
+  * Cleanup/rework of the HDL-generation.
+  * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
+  * Fixed startup crash related to incorrectly localized date format.
+  * Added a setting to select lower- or upper-case VHDL keywords.
+  * Added project export feature.
+  * Cleaned-up the written .circ file.
+  * Cleaned-up the library tree of loaded projects.
+
+* v3.6.1 (2021-09-27)
+  * Fixed bug in LED-array
+
+* v3.6.0 (2021-09-05)
+  * Introducing project logo.
+  * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
+  * Added TTL74x34 hex buffer gate.
+  * Made pins' tooltips more descriptive for 74161.
+  * Added new component LED Bar.
+  * Added 74157 and 74158: Quad 2-line to1-line selectors.
+  * Added option to configure canvas' and grid's colors.
+  * Added DIP switch state visual feedback for ON state.
+  * Augmented direction verbal labels (East, North, etc), with corresponding arrow symbols.
+  * Application title string now adds app name/version at the very end of the title.
+  * Added option to configure size of connection pin markers.
+  * Added TTL 74x139: dual 2-line to 4-lines decoders.
+  * Fixed missing port on DotMatrix.
+  * Combined `Select Location` from Plexers and `Gate Location` from Wiring to one attribute.
+    * Breaks backwards comparability for Transistors and Transmission Gates.
+      When opening old .circ files, they will have the default `Select Location` ("Bottom/Left").
+  * Replace DarkLaf with FlatLaf for better compatibility.
+  * Adds "Rotate Left" context menu action.
+  * Display "Too few inputs for table" if Karnaugh Map has only 1 input.
+  * HexDisplay is stays blank if no valid data is fed instead of showing "H" [#365].
+  * Project's "Dirty" (unsaved) state is now also reflected by adding `*` marker to the window title.
+  * Support for `AnimatedIcon` has been completely removed.
+  * Canvas Zoom controls new offer wider range of zoom and three level of granularity.
+  * Added predefined quick zoom buttons.
+  * Tons of code cleanup and internal improvements.
+  * Added duplicated component placement on same location refusal
+  * Fixed pin duplication on load in case a custom apearance is used for a circuit
+  * Added LED-array support for FPGA-boards
+  * Improved partial placement on FPGA-boards for multi-pin components
+  * Fixed several small bugs
+  * Each circuit will now remember, restore, and save:
+    * The last tick-frequency used for simulation
+    * The last download frequency used
+  * Removed obsolete VHDL-Architecture attribute from circuit
+
+* v3.5.0 (2021-05-25)
+  * Many code-cleanups, bug fixes and again the chronogram.

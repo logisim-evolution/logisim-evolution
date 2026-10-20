@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Shifter -->
+   移位器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/shifter.png" alt="#########" width="32" height="32" align="middle"> <em>Shifter</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/shifter.png" width="32"/>
+    <em>
+     移位器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <a href="index.html">
+        运算器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.3.0
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/shifter.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    行为
+   </h2>
+   <p>
+    该组件包含两个输入：<var>data</var> 与 <var>dist</var>，以及一个输出端。输出结果为将 <var>data</var> 按 <var>dist</var> 指定的位数进行移位后的值。<var>data</var> 与输出具有相同的位宽。组件支持以下几种移位类型：
+   </p>
+   <ul>
+    <li>
+     逻辑左移：将 <var>data</var> 中的所有位向高位方向移动 <var>dist</var> 位，低位补 0。例如，11001011 逻辑左移 2 位得到 00101100（最高两位被丢弃）。
+    </li>
+    <li>
+     逻辑右移：将 <var>data</var> 中的所有位向低位方向移动 <var>dist</var> 位，高位补 0。例如，11001011 逻辑右移 2 位得到 00110010（最低两位被丢弃）。
+    </li>
+    <li>
+     算术右移：将 <var>data</var> 中的所有位向低位方向移动 <var>dist</var> 位，高位用原最高位的值进行填充。例如，11001011 算术右移 2 位得到 11110010。
+    </li>
+    <li>
+     循环左移：将 <var>data</var> 中的所有位向高位方向移动 <var>dist</var> 位，移出的高位重新回绕到低位。例如，11001011 循环左移 2 位得到 00101111。
+    </li>
+    <li>
+     循环右移：将 <var>data</var> 中的所有位向低位方向移动 <var>dist</var> 位，移出的低位重新回绕到高位。例如，11001011 循环右移 2 位得到 11110010。
+    </li>
+   </ul>
+   <p>
+    注意：如果 <var>dist</var> 输入中包含悬空位或错误位，则由于无法确定移位距离，输出将全部为错误值。
+   </p>
+   <h2>
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     西侧上端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     需要进行移位操作的数据输入 <var>data</var>。
+    </dd>
+    <dt>
+     西侧下端（输入，位宽按规则计算）
+    </dt>
+    <dd>
+     移位距离输入 <var>dist</var>，表示对 <var>data</var> 进行移位的位数。该输入的位宽应为能表示从 0 到“数据位宽减 1”的最小位数，即 ⌈log₂(数据位宽)⌉。例如，当数据位宽为 8 时，需要 3 位；当为 9 时，需要 4 位。
+    </dd>
+    <dt>
+     东侧（输出，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     按指定移位类型和移位距离得到的结果。
+    </dd>
+   </dl>
+   <h2>
+    属性
+   </h2>
+   <p>
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <b class="propertie">
+       数据位宽
+      </b>
+     </dt>
+     <dd>
+      <var>data</var> 输入端及输出端的位宽。
+     </dd>
+     <dt>
+      <b class="propertie">
+       移位类型
+      </b>
+     </dt>
+     <dd>
+      指定移位方式，可选：逻辑左移、逻辑右移、算术右移、循环左移或循环右移。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    手形工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <h2>
+    文本工具行为
+   </h2>
+   <p>
+    无
+   </p>
+   <p>
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

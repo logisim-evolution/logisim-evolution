@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      隧道
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/tunnel.png" alt="#########" width="32" height="32"> 
+		<em> 隧道</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">接线</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.5.0（在基础库中引入，2.7.0 中移至线路库）
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="notscal" src="../../../../img-libs/tunnel.png" alt="#########">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        隧道组件类似导线，用于把多个节点连在一起；但它不需要把连接线画出来。
+        需要连接电路中相距较远的节点，但又不想让大量导线把图弄得很乱时，隧道就很有用。下面的示例展示了其用法。
+      </p>
+      <center>
+        <img src="../../../../img-libs/tunnel-demo.png" alt="#########">
+      </center>
+      <p>
+        上图中，有三个隧道的标签都是 <em>Clk_A</em>，因此它们所连接的三个节点彼此相连。
+        图中另外一个隧道使用了另一个标签 <em>R_W</em>，则它们属于另一组隧道。<br>
+		下面的示例展示了：受控缓冲器启用后与下方引脚冲突，从而产生错误。
+	  </p>
+      <center>
+        <img src="../../../../img-libs/tunnel-demo1.gif" alt="#########">
+      </center>
+      <p>
+        当受控缓冲器的下方输入为 <b class="zerov">0</b> 时，它会输出悬空值。通常悬空值对应的导线为蓝色，但这里因为通过隧道连接到底部引脚，底部引脚为 <b class="unov">1</b>，所以显示为亮绿色。<br>
+        当缓冲器的控制端变为 <b class="unov">1</b> 时，隧道会把该值传到其他节点，此时与底部引脚上的 <b class="unov">1</b> 发生冲突，从而触发错误，可看到红色导线（<b class="evalue">E</b>）贯穿三个隧道。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <p>
+        隧道只有一个引脚，位宽与其 <b class="propertie">数据位宽</b> 属性一致。该引脚既不是输入也不是输出，同名隧道会像导线一样透明互连。
+      </p>
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可修改 <b class="propertie">数据位宽</b> 属性，方向键可修改 <b class="propertie">朝向</b> 属性。
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">朝向</b>
+        </dt>
+        <dd>
+          隧道指向的方向。
+        </dd>
+        <dt>
+          <b class="propertie">数据位宽</b>
+        </dt>
+        <dd>
+          隧道的位宽。
+        </dd>
+        <dt>
+          <b class="propertie">标签</b>
+        </dt>
+        <dd>
+          隧道的标签文本。该隧道会与所有标签完全相同的隧道互连。
+        </dd>
+        <dt>
+          <b class="propertie">标签字体</b>
+        </dt>
+        <dd>
+          标签的显示字体。
+        </dd>
+      </dl>
+	  </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        可编辑隧道的标签。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

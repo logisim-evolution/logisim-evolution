@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2026-01-12T09:31:24" name="changed"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Comparator -->
+   比较器
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> <em>Comparator</em> -->
+    <img align="middle" alt="#########" class="iconlibs" height="32" src="../../../../icons/6464/comparator.png" width="32"/>
+    <em>
+     比较器
+    </em>
+   </h1>
+   <table>
+    <tbody>
+     <tr>
+      <td>
+       <!-- <strong>Library:</strong> -->
+       <strong>
+        库:
+       </strong>
+      </td>
+      <td>
+       <!-- <a href="index.html">Arithmetic</a> -->
+       <a href="index.html">
+        运算器
+       </a>
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <!-- <strong>Introduced:</strong> -->
+       <strong>
+        引入版本：
+       </strong>
+      </td>
+      <td>
+       2.0 Beta 22
+      </td>
+     </tr>
+     <tr>
+      <td valign="top">
+       <!-- <strong>Appearance:</strong> -->
+       <strong>
+        外观：
+       </strong>
+      </td>
+      <td valign="top">
+       <img alt="#########" class="appearancelibs" height="64" src="../../../../img-libs/comparator.png" width="64"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <h2>
+    <!-- Behavior -->
+    行为
+   </h2>
+   <p>
+    <!-- Compares two values, either as unsigned values or as two's-complement values, depending on the Numeric Type attribute. Normally, one of the outputs will be 1, and the other two outputs will be 0. -->
+    比较两个数值：按无符号数还是按补码进行比较，取决于“数值类型”属性。通常，三个输出中会有一个为 1，其余两个为 0。
+   </p>
+   <p>
+    <!-- The comparison is performed starting at the most significant bits in each number and descending downward in parallel until a location is found where the two values disagree. If, however, an error value or a floating value is encountered during this descent, then all outputs will match that error or floating value. -->
+    比较从两数的最高有效位开始，并行向低位逐位检查，直到发现两者不一致为止。但若在此过程中遇到错误值或悬空值，则所有输出都会变为相同的错误值或悬空值。
+   </p>
+   <h2>
+    <!-- Pins -->
+    引脚
+   </h2>
+   <dl>
+    <dt>
+     <!-- West edge, north end (input, bit width matches Data Bits attribute) -->
+     西侧上端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     <!-- The first of the two values to be compared. -->
+     参与比较的第一个数值。
+    </dd>
+    <dt>
+     <!-- West edge, south end (input, bit width matches Data Bits attribute) -->
+     西侧下端（输入，位宽与“数据位宽”一致）
+    </dt>
+    <dd>
+     <!-- The second of the two values to be compared. -->
+     参与比较的第二个数值。
+    </dd>
+    <dt>
+     <!-- East edge, labeled <tt>&gt;</tt> (output, bit width 1) -->
+     东侧（标记为 <tt>&gt;</tt>，输出，位宽 1）
+    </dt>
+    <dd>
+     <!-- 1 if the first input is greater than the second input, 0 if the first input is less than or equal the second input. -->
+     若第一个输入大于第二个输入，则为 1；若第一个输入小于或等于第二个输入，则为 0。
+    </dd>
+    <dt>
+     <!-- East edge, labeled <tt>=</tt> (output, bit width 1) -->
+     东侧（标记为 <tt>=</tt>，输出，位宽 1）
+    </dt>
+    <dd>
+     <!-- 1 if the first input equals the second input, 0 if the first input is not equal the second input. -->
+     若两个输入相等，则为 1；若不相等，则为 0。
+    </dd>
+    <dt>
+     <!-- East edge, labeled <tt>&lt;</tt> (output, bit width 1) -->
+     东侧（标记为 <tt>&lt;</tt>，输出，位宽 1）
+    </dt>
+    <dd>
+     <!-- 1 if the first input is less than the second input, 0 if the first input is greater than or equal the second input. -->
+     若第一个输入小于第二个输入，则为 1；若第一个输入大于或等于第二个输入，则为 0。
+    </dd>
+   </dl>
+   <h2>
+    <!-- Attributes -->
+    属性
+   </h2>
+   <p>
+    <!-- When the component is selected or being added, <b class="tkeybd">Alt-0</b> throught <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. -->
+    当组件被选中或正在放置时，<b class="tkeybd">Alt-0</b> 到 <b class="tkeybd">Alt-9</b> 可修改其 <b class="propertie">数据位宽</b> 属性。
+   </p>
+   <div class="attliste">
+    <dl>
+     <dt>
+      <!-- <b class="propertie">Data Bits</b> -->
+      <b class="propertie">
+       数据位宽
+      </b>
+     </dt>
+     <dd>
+      <!-- The bit width of the component's inputs. -->
+      组件输入的位宽。
+     </dd>
+    </dl>
+    <dl>
+     <dt>
+      <b class="propertie">
+       数值类型
+      </b>
+     </dt>
+     <dd>
+      组件输入的数值类型。可选值包括：补码和无符号。
+     </dd>
+    </dl>
+   </div>
+   <h2>
+    <!-- Poke Tool Behavior -->
+    手形工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <h2>
+    <!-- Text Tool Behavior -->
+    文本工具行为
+   </h2>
+   <p>
+    <!-- None. -->
+    无
+   </p>
+   <p>
+    <!-- <b>Back to</b> <a href="../index.html">Library Reference</a> -->
+    <b>
+     返回
+    </b>
+    <a href="../index.html">
+     库参考手册
+    </a>
+   </p>
+  </div>
+ </body>
+</html>

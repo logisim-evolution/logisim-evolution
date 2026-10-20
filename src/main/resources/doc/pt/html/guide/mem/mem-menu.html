@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Menus contextual e arquivos
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Menus contextual e arquivos
+      </h1>
+	   <h2>
+        O menu contextual
+      </h2>
+      <p>
+        O menu de contexto para componentes de memória inclui mais quatro opções do que as comuns a todos os componentes:
+      </p>
+	  <dl>
+        <dt>
+          <b>Editar conteúdo :</b>
+        </dt>
+        <dd>
+          Abrir um <a href="mem-hex.html">editor hexadecimal</a> para editar o conteúdo de memória.
+        </dd>
+        <dt>
+          <b>Limpar conteúdo :</b>
+        </dt>
+        <dd>
+          Redefine as ROMs para 0 e para RAMs para 0 ou aleatoriamente, dependendo das configurações nas <a href="../opts/index.html">Opções do Projeto</a>. 
+        </dd>
+        <dt>
+          <b>arregar imagem... :</b>
+        </dt>
+        <dd>
+          Reinicia todos os valores na memória para os valores encontrados em um arquivo. O formato do arquivo é reconhecido automaticamente e se não for o caso, abre-se uma janela para uma seleção apropriada.
+        </dd>
+        <dt>
+          <b>Salvar imagem... :</b>
+        </dt>
+        <dd>
+          Armazena todos os valores na memória em um arquivo usando um dos formatos descritos abaixo.
+        </dd>
+      </dl>
+	  <h2>
+         Os formatos de arquivo
+      </h2>
+      <ul>
+        <li>
+          <b><a href="mem-v2raw.html">v2.0 raw</a></b> VVersão histórica do logisim permite a codificação "run.length" Formatos de arquivo
+        </li>
+        <li>
+          <b><a href="mem-v3word.html">v3.0 hex words plain</a></b> Próximo da versão v2.0 
+           estruturado em palavras
+        </li>
+        <li>
+          <b><a href="mem-v3word.html#addr">v3.0 hex words addressed</a></b> Como antes, com a possibilidade de definir um endereço de início para cada linha do arquivo.
+        </li>
+        <li>
+          <b><a href="mem-v3byte.html">v3.0 hex bytes plain big-endian</a></b><br>
+          <b><a href="mem-v3byte.html#addr">v3.0 hex bytes plain little-endian</a></b> Organizado em fluxos de bytes.
+        </li>
+        <li>
+          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a></b><br>
+          <b><a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a></b> Organizado em fluxo de bytes como antes, com a possibilidade de definir um endereço.
+        </li>
+        <li>
+          <b><a href="mem-vbinary.html#">Binary data big-endian</a></b><br>
+          <b><a href="mem-vbinary.html#">Binary data little-endian</a></b> imagem da memória não codificada em hexadecimal.
+        </li>
+        <li>
+          <b><a href="mem-vascii.html">Ascii byte escape big-endian</a></b><br>
+          <b><a href="mem-vascii.html">Ascii byte escape little-endian</a></b> Arquivo codificado em ASCII com código de escape, como em C para caracteres não imprimíveis.
+        </li>
+        </ul>
+<!--
+      <p>
+        O formato de arquivo usado para arquivos de imagem é intencionalmente simples; isso lhe permitirá escrever um programa, como um montador, que gerará imagens de conteúdos que poderão ser carregados na memória. Como exemplo desse formato de arquivo, se tivermos uma memória de 256-bytes cujos cinco primeiros bytes de 2, 3, 0, 20, e -1, e todos os valores subsequentes forem 0, a imagem em arquivo texto teria o seguinte conteúdo:
+      </p>
+      <blockquote>
+        <pre>v2.0 raw
+02
+03
+00
+14
+ff
+</pre>
+      </blockquote>
+      <p>
+        A primeira linha identifica o formato de arquivo usado (atualmente, só existe um formato de arquivo reconhecido). Valores subsequentes listados em hexadecimal, a partir de endereço 0. Você poderá colocar vários desses em uma mesma linha. Se houver mais posições de memória que as identificadas no arquivo, o Logisim irá carregar 0 nessas outras posições.
+      </p>
+      <p>
+        O arquivo de imagem poderá usar codificação do tipo <i>run-length</i>. Por exemplo, ao invés de listar o valor <tt>00</tt> dezesseis vezes em sequência, o arquivo poderá incluir <tt>16*00</tt>. Alerto que o número de repetições é escrito em base 10. Arquivos produzidos pelo Logisim usarão essa codificação para todos os casos com pelo menos quatro valores.
+      </p>
+      <p>
+        Você poderá colocar comentários no arquivo usando o símbolo '#'. Todos os caracteres na linha a partir do símbolo "#" serão ignorado pelo Logisim.
+      </p>
+-->	
+	  <p>
+        <b>Próximo:</b> <a href="mem-hex.html">Editor hexadecimal</a>.
+      </p>
+    </div>
+  </body>
+</html>

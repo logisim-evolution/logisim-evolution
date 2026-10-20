@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      分线器
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32">
+        <em> 分线器</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">接线</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              2.0 Beta 1（在基础库中引入，2.7.0 中移至线路库）
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="notscal" src="../../../../img-libs/splitter.png" alt="#########" width="24" height="44">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>
+        行为
+      </h2>
+      <p>
+        分线器用于在多位信号与其若干位子集之间建立对应关系。它既可以将一个多位信号拆分为若干部分，也可以将多个部分合并为一个多位信号，甚至可以同时完成这两种操作。关于分线器的更完整说明，请参见 <a class="refguide" href="../../guide/feature/fet-splitting.html">分线器</a> 章节。
+      </p>
+      <p>
+        分线器和导线都没有传播延迟。
+      </p>
+      <p>
+        <b class="note">注意：</b><em>分线器（splitter）</em> 这一术语并非标准电子学术语，是 Logisim 特有的。
+      </p>
+
+      <h2>
+        引脚
+      </h2>
+      <p>
+        为了区分分线器的多个连接点，我们将一侧的单个连接点称为 <em>合并端</em>，另一侧的多个连接点称为 <em>分支端</em>（见下图）。
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td valign="top">
+                合并端
+              </td>
+              <td>
+                <img src="../../../../img-libs/splitter-right.png" alt="#########">
+              </td>
+              <td>
+                分支端
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <dl>
+        <dt>
+          <b class="propertie">合并端：</b>
+        </dt>
+        <dd>
+          合并端的位宽由 <b class="propertie">输入位宽</b> 属性决定，表示通过该总线的所有导线数量。
+        </dd>
+        <dt>
+          <b class="propertie">分支端：</b>
+        </dt>
+        <dd>
+          每个分支端的位宽由对应的 <b class="propertie">位 <var>x</var></b> 属性决定。
+        </dd>
+      </dl>
+
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，数字键 <b class="tkeybd">0</b>–<b class="tkeybd">9</b> 可修改 <b class="propertie">扇出</b>，
+        <b class="tkeybd">Alt-0</b>–<b class="tkeybd">Alt-9</b> 可同时修改 <b class="propertie">扇出</b> 和 <b class="propertie">输入位宽</b>，
+        方向键用于修改 <b class="propertie">朝向</b>。
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">朝向</b>
+          </dt>
+          <dd>
+            分支端相对于合并端的位置方向。
+          </dd>
+          <dt>
+            <b class="propertie">扇出</b>
+          </dt>
+          <dd>
+            分支端的数量。
+          </dd>
+          <dt>
+            <b class="propertie">输入位宽</b>
+          </dt>
+          <dd>
+            合并端的位宽。
+          </dd>
+          <dt>
+            <b class="propertie">外观</b>
+          </dt>
+          <dd>
+            用于指定分线器在电路中的绘制方式。
+            <q>左手型</q>（默认）表示分支端从合并端向左延伸；
+            <q>右手型</q> 表示分支端从合并端向右延伸；
+            <q>居中</q> 表示分支端向左右大致等距延伸；
+            <q>传统</q> 表示为每个分线端绘制不带标签的延伸线，主要用于兼容 2.7.0 之前的版本。
+            <center>
+              <table>
+                <tbody>
+                  <tr>
+                    <td><img class="notscal" src="../../../../img-libs/splitter-left.png" alt="#########"></td>
+                    <td><img class="notscal" src="../../../../img-libs/splitter-right.png" alt="#########"></td>
+                    <td><img class="notscal" src="../../../../img-libs/splitter-center.png" alt="#########"></td>
+                    <td><img class="notscal" src="../../../../img-libs/splitter-legacy.png" alt="#########"></td>
+                  </tr>
+                  <tr>
+                    <td>左手型</td>
+                    <td>右手型</td>
+                    <td>居中</td>
+                    <td>传统</td>
+                  </tr>
+                </tbody>
+              </table>
+            </center>
+          </dd>
+          <dt>
+            <b class="propertie">间距</b>
+          </dt>
+          <dd>
+            分支端之间的间距。
+          </dd>
+          <dt>
+            <b class="propertie">位 <var>x</var></b>
+          </dt>
+          <dd>
+            指定合并端中的第 <var>x</var> 位对应到哪个分支端。
+            分支端的编号从 0 开始：当朝向为东西时自上而下编号，当朝向为南北时自左向右编号。
+            某一位可以不对应任何分支端，但不能同时对应多个分支端。
+          </dd>
+        </dl>
+      </div>
+
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

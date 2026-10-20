@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-12-31T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Distribuidores (Splitters)
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Distribuidores (Splitters)
+      </h1>
+      <p>
+        Quando você trabalhar com valores multi-bit, muitas vezes poderá querer rotear bits em direções diferentes. A ferramenta Distribuidor (Splitter (<img class=intxt src="../../../../img-guide/splitter1.png" alt="#########">)) da biblioteca Base lhe permitirá fazer isso.
+      </p>
+      <p>
+        Por exemplo, suponha que queiramos construir um circuito que calcula bit a bit a conjunção de dois nibbles (meio byte) de uma entrada de oito bits (os quatro bits superiores e os quatro bits inferiores). Teremos um valor de oito bits no pinos de entrada, e é desejável dividi-lo em dois valores de quatro bits. No circuito abaixo, usaremos um distribuidor para conseguir isso: a entrada de 8 bits irá conectar-se ao distribuidor (que se assemelha a um pé de pássaro), que dividirá os 8 bits em dois conjuntos de 4 bits, que irão para a porta AND e de lá para a saída.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/bundles-splitter-circ.png" alt="#########">
+      <p>
+      <p>
+        Nesse exemplo, a distribuição acontecerá na verdade ao se separar um valor de entrada em vários de saída. Mas os distribuidores também poderão combinar vários valores em um só. Na verdade, eles não têm direção preferencial: podem enviar sinais em um sentido em dado instante, e em outro sentido mais tarde, e ainda poderão fazer as duas coisas ao mesmo tempo, como no exemplo abaixo, onde um sinal será transmitido para o leste através de dois distribuidores, e em seguida, será encaminhado de volta para o oeste através deles, e novamente para leste, onde finalmente chegará a sua saída.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
+      <p>
+      <p>
+        A chave para o entendimento dos distribuidores são seus atributos. A seguir, o termo <b>terminações</b> refere-se às múltiplas conexões de um lado, enquanto o termo <b>barramento de dados</b> refere-se à extremidade do único fio do outro lado.
+      </p>
+      <ul>
+        <li>O atributo <b class=propertie>Posição</b> dirá a posição relativa das terminações considerando-se a extremidade combinada.
+		<div>
+            <table>
+              <tbody>
+                <tr>
+                  <td valign="top">
+                    Barramento de dados 
+                  </td>
+                  <td>
+                    <br>
+                    <img class="notscal" src="../../../../img-libs/splitter-right.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    Terminações
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li>O atributo <b class=propertie>Nbr. Terminações</b> especificará quantas terminações existem.
+        </li>
+        <li>O atributo <b class=propertie>Largura feixe</b> especificará a quantidade de bits combinados.
+        </li>
+		<li>L'attribut <b class=propertie>Forma</b> define como o componente é desenhado em relação ao seu barramento de dados .<br>
+          <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-right.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-left.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    A esquerda
+                  </td>
+                  <td>
+                    A direita
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-center.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-legacy.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    central
+                  </td>
+                  <td>
+                    Legacy
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+		  </li>
+		   <li>O atributo <b class=propertie>Espaçamento</b> define a distância entre os Terminações.
+        </li>
+        <li>
+		 Os atributos <b class=propertie>bit <var>x</var></b> definem que terminação separada corresponde a que bit <var>x</var> do barramento de dados. Ele pode ser alterado e permite que a ordem das terminações seja disposta manualmente. Se vários bits correspondem à mesma Ramificações (primeiro exemplo acima), então a ordem relativa será a mesma que no ônibus. Os distribuidores Logisim não podem ter um só pedaço do autocarro ligado a vários Ramificações. 
+        </li>
+      </ul>
+      <p>
+        Observar que qualquer alteração nos atributos <b class=propertie>Nbr. ramificações</b> ou <b class=propertie>Largura feixe</b> irá recompor todas os atributos <var>Bit x</var> de modo que eles possam distribuir os bits combinados da maneira mais uniforme possível entre as ramificações.
+      </p>
+      <p>
+        <strong>Próximo:</strong> <a href="fet-colors.html">Cores das conexões</a>.
+      </p>
+    </div>
+  </body>
+</html>

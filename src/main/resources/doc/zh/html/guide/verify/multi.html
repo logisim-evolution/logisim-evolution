@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh">
+ <head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="2018-10-23T06:18:10.521000000" name="created"/>
+  <meta content="2023-12-12T09:31:21" name="changed" translator="gocpicnic"/>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta content="zh" http-equiv="Content-Language"/>
+  <title>
+   <!-- Testing multiple files -->
+   测试多个文件
+  </title>
+  <link href="../../style.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body>
+  <div class="maindiv">
+   <h1>
+    <!-- Testing multiple files -->
+    测试多个文件
+   </h1>
+   <p>
+    <!-- In the classroom example, you will have many files that you wish to test for their equivalence, and you won't want to read the output for each of the student's solutions. -->
+    在课堂示例中，您将拥有许多文件，您希望测试它们的等效性，并且您不想读取每个学生解决方案的输出。
+   </p>
+   <h2>
+    <!-- Building comparison into the circuit -->
+    将比较构建到电路中
+   </h2>
+   <p>
+    <!-- One approach is to build a test circuit that does the comparison directly. Here, we create an additional circuit within the testing file that contains our solution circuit. In our overall testing circuit, we include both the subcircuit from <tt><b>master.circ</b></tt> and the subcircuit from the solution circuit located directly into the nested circuit. We wire it so that there is just one output, which is 1 as long as the two subcircuits agree. -->
+    一种方法是构建一个直接进行比较的测试电路。 在这里，我们在包含解决方案电路的测试文件中创建一个附加电路。 在我们的整体测试电路中，我们将
+    <tt>
+     <b>
+      master.circ
+     </b>
+    </tt>
+    中的子电路和直接位于嵌套电路中的解决方案电路中的子电路包括在内。 我们对其进行接线，以便只有一个输出，只要两个子电路一致，该输出就是 1。
+   </p>
+   <blockquote>
+    <img alt="#########" src="../../../../img-guide/verify-adder-test2.png"/>
+   </blockquote>
+   <p>
+    <!-- Now we can simply run Logisim substituting each query file. For any correct solution, the only output will be "1". -->
+    现在我们可以简单地运行 Logisim-evolution 替换每个查询文件。 对于任何正确的解决方案，唯一的输出将是“1”。
+   </p>
+   <h2>
+    <!-- Using redirection and shell scripts -->
+    使用重定向和 shell 脚本
+   </h2>
+   <p>
+    <!-- If you're quite comfortable with the command line, you can build your own shell script to accomplish this. Here, we'll use redirection (the &gt; operator) to save the output of each circuit into a file. For instance, we might issue the following two commands to collect the output of the master circuit and the query circuit. -->
+    如果您对命令行非常熟悉，则可以构建自己的 shell 脚本来完成此任务。 在这里，我们将使用重定向（&gt; 运算符）将每个电路的输出保存到文件中。 例如，我们可以发出以下两个命令来收集主电路和查询电路的输出。
+   </p>
+   <blockquote>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-evolution.jar test.circ -tty table &gt; out-master.txt
+     </tt>
+    </div>
+    <div class="forcode">
+     <tt>
+      java -jar logisim-evolution.jar test.circ -tty table -sub master.circ query.circ &gt; out-query.txt
+     </tt>
+    </div>
+   </blockquote>
+   <p>
+    <!-- Now we've created two different files. We can then compare the two output files using a program built for that purpose. Under Linux or MacOS X, you might want to use the <b>cmp</b> or <b>diff</b> command-line utilities. Under Windows, you might want to use command-line utilities <b>fc</b> or WinMerge. -->
+    现在我们创建了两个不同的文件。 然后，我们可以使用为此目的构建的程序来比较两个输出文件。 在 Linux 或 MacOS X 下，您可能需要使用
+    <b>
+     cmp
+    </b>
+    或
+    <b>
+     diff
+    </b>
+    命令行实用程序。 在 Windows 下，您可能需要使用命令行实用程序
+    <b>
+     fc
+    </b>
+    或 WinMerge。
+   </p>
+   <p>
+    <!-- To process several query files, you would like want to build a simple program such as a shell script to iterate through each and comparing the output. Here is how I would do it under Linux's <b>bash</b>: -->
+    要处理多个查询文件，您可能需要构建一个简单的程序（例如 shell 脚本）来迭代每个查询文件并比较输出。 以下是我在 Linux 的
+    <b>
+     bash
+    </b>
+    下的操作方法：
+   </p>
+   <blockquote>
+    <tt>
+     RUN_TEST="java -jar logisim-filename.jar adder-test.circ -tty table"
+     <br/>
+     ${RUN_TEST} &gt; output-master.txt
+     <br/>
+     for QUERY_FILE in query*.circ
+     <br/>
+     do
+     <br/>
+     if ${RUN_TEST} -sub ^master.circ ${QUERY_FILE} | cmp -s output-master.txt
+     <br/>
+     then
+     <br/>
+     echo "${QUERY_FILE} OK"
+     <br/>
+     else
+     <br/>
+     echo "${QUERY_FILE} different"
+     <br/>
+     fi
+     <br/>
+     done
+    </tt>
+   </blockquote>
+   <p>
+    <!-- <b>Next:</b> <a href="test.html">Test Vector</a>. -->
+    <b>
+     下一步：
+    </b>
+    <a href="test.html">
+     测试向量
+    </a>
+    。
+   </p>
+  </div>
+ </body>
+</html>

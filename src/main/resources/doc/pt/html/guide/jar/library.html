@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>Classe Library</title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Class Library</h1>
+
+<p> O ponto de acesso para uma biblioteca JAR é uma classe derivada que estende a
+classe original <code> Library </code>. O trabalho principal da biblioteca é
+listar as ferramentas que estão disponíveis através da biblioteca, na maioria das vezes,
+as ferramentas são todas aquelas necessárias para se adicionar os vários componentes
+definidos - ou seja, instâncias da classe <code> AddTool </code> ao se trabalhar
+com  diferentes fábricas de componentes.
+</p>
+
+<h2>Components</h2>
+
+<pre>
+package com.cburch.gray;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.Library;
+
+/** The library of components that the user can access. */
+public class Components extends Library {
+    /** The list of all tools contained in this library. Technically,
+     * libraries contain tools, which is a slightly more general concept
+     * than components; practically speaking, though, you'll most often want
+     * to create AddTools for new components that can be added into the circuit.
+     */
+    private List&lt;AddTool&gt; tools;
+    
+    /** Constructs an instance of this library. This constructor is how
+     * Logisim accesses first when it opens the JAR file: It looks for
+     * a no-arguments constructor method of the user-designated class.
+     */
+    public Components() {
+        tools = Arrays.asList(new AddTool[] {
+                new AddTool(new GrayIncrementer()),
+                new AddTool(new SimpleGrayCounter()),
+                new AddTool(new GrayCounter()),
+        });
+    }
+    
+    /** Returns the name of the library that the user will see. */ 
+    public String getDisplayName() {
+        return "Gray Tools";
+    }
+    
+    /** Returns a list of all the tools available in this library. */
+    public List&lt;AddTool&gt; getTools() {
+        return tools;
+    }
+}
+</pre>
+
+<p><strong>Próximo:</strong> <a href="simpctr.html">Contador simples em código de Gray</a>.</p>
+</div>
+</body>
+</html>

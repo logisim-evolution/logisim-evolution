@@ -1,0 +1,612 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Transistor
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" height="32" width="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" height="32" width="32">
+		<em>Transistor</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Câblage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.7.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+			<table>
+                <tbody>
+				  <tr>
+				    <th>P-type
+					</th>
+					<th>
+					</th>
+					<th>N-type
+					</th>
+				  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                    </td>
+					<td>&nbsp;
+					</td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Un transistor a deux entrées, appelées <b>gate</b> et <b>source</b> , et une sortie, appelée <b>drain</b> . Schématisé, l'entrée <b>source</b> et la sortie <b>drain</b> sont connectées par une plaque, Logisim dessine une pointe de flèche pour indiquer la direction du flux entre l'entrée et la sortie. L'entrée de <b>gate</b> est connectée à une plaque parallèle à celle qui relie la <b>source</b> au <b>drain</b>.
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td align="center">
+                <b>gate</b>
+              </td>
+              <td></td>
+              <td>
+                &nbsp; &nbsp;
+              </td>
+              <td></td>
+              <td align="center">
+                <b>gate</b>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td valign="bottom">
+                <b>source</b>
+              </td>
+              <td valign="middle" align="center">
+                <img src="../../../../img-libs/trans1.png" alt="#########">
+              </td>
+              <td valign="bottom">
+                <b>drain</b>
+              </td>
+              <td></td>
+              <td valign="bottom">
+                <b>source</b>
+              </td>
+              <td valign="middle" align="center">
+                <img src="../../../../img-libs/trans0.png" alt="#########">
+              </td>
+              <td valign="bottom">
+                <b>drain</b>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td align="center">
+               <b>N-Type</b>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td align="center">
+               <b>P-Type</b>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </center><p>Logisim prend en charge deux types de transistors, avec des comportements légèrement différents décrits ci-dessous. Le transistor de type P est indiqué par un cercle reliant l'entrée <b>gate</b> à sa plaque, tandis que le transistor de type N n'a pas de tel cercle.
+      <p>
+        Selon la valeur trouvée sur <b>gate</b> , la valeur de la <b>source</b> peut être transmise au <b>drain</b> . La détermination de la transmission ou de la déconnexion dépend du type de transistor: Un transistor de type P (indiqué par un cercle sur la ligne <b>gate</b> ) transmet lorsque <b>gate</b> est égal à 0, tandis qu'un type transistor N (qui n'a pas de tel cercle) transmet lorsque <b>gate</b> est 1. Le Comportement est résumé par les tableaux suivants. Notez la transmission des états Erreur et Haute impédance.
+      </p>
+        <center>
+      <table class="encapsul">
+        <tbody>
+		  <tr>
+		   <th colspan=3>
+		     P-type
+		   </th>
+		   <td>
+		   </td>
+		   <th colspan=3>
+		     N-Type
+		   </th>
+		  </tr>
+		  <tr>
+		   <td>
+		   </td>
+		   <td class="center">
+		   G
+		   </td>
+		   <td>
+		   </td>
+		    <td>	
+			
+		   </td>
+		   <td>
+		   
+		   </td>
+		   <td class="center">
+		   G
+		   </td>
+		   <td>
+		   
+		   </td>
+		  </tr>
+		  <tr>
+		   <td class="right">
+		     S
+		   </td>
+		   <td>
+		   <p align="center">
+		      <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+		   </p>
+		   </td>
+		    <td class="left">
+		     D
+		   </td>
+		   <td>
+		   </td>
+		    <td class="right">
+		     S
+		   </td>
+		   <td>
+		   <p align="center">
+		      <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+		   </p>
+		   </td>
+		    <td class="left">
+		     D
+		   </td>
+		  </tr>
+          <tr>
+            <td colspan=3>
+              <table class="truthtable">
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan="5">
+                      Gate
+                    </th>
+                  </tr>
+                  <tr>
+                    <th rowspan="6">
+                      Source
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="tzerov"></td>
+                    <td class="tzerov">
+                      0
+                    </td>
+                    <td class="tunov">
+                      1
+                    </td>
+                    <td class="tuvalue">
+                      U
+                    </td>
+                    <td class="tevalue">
+                      E
+                    </td>
+                  </tr>
+                  <tr>
+                     <td class="tzerov">
+                      0
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tunov">
+                      1
+                    </td>
+                    <td class="unov">
+                      1
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tuvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tevalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+			<td>
+			  &nbsp;&nbsp;&nbsp;&nbsp;
+			</d>
+            <td  colspan=3>
+              <table class="truthtable">
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan="5">
+                      Gate
+                    </th>
+                  </tr>
+                  <tr>
+                    <th rowspan="6">
+                      Source
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="tzerov">
+					</td>
+                    <td class="tzerov">
+                      0
+                    </td>
+                    <td class="tunov">
+                      1
+                    </td>
+                    <td class="tuvalue">
+                      U
+                    </td>
+                    <td class="tevalue">
+                      E
+                    </td>
+                  </tr>
+                   <tr>
+                    <td class="tzerov">
+                      0
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="zerov">
+                      0
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                  </tr>
+                  <tr>
+                     <td class="tunov">
+                      1
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tuvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tevalue">
+                      E
+                    </td>
+                    <td class="uvalue">
+                      U
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                    <td class="evalue">
+                      E
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+	  </center>
+      <p>
+       Qui se résume
+      </p>	   
+      <center>
+         <table class="encapsul">
+          <tbody>
+            <tr>
+              <td>
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="2">
+                        P-type
+                      </th>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+					  <p align="center">
+                        <img class="appearancelibs" src="../../../../img-libs/trans0.png" alt="#########" width="64" height="64">
+                      </p>
+					  </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th class="tspace">
+					    Gate
+                      </th>
+                      <th class="tspace">
+                        Drain
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="space">
+                        Source
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="uvalue">
+                        U
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="space">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="space">
+                        *
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
+              <td>
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="2">
+                        <b>N-type</b>
+                      </th>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+					  <p align="center">
+                        <img class="appearancelibs" src="../../../../img-libs/trans1.png" alt="#########" width="64" height="64">
+                      </p>
+					  </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th class="tspace">
+                        Gate
+                      </th>
+                      <th class="tspace">
+                        Drain
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="uvalue">
+                        U
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td align="center">
+                        Source
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="space">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="space">
+                        *
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+	  
+      <p>
+        * Si <b>source</b> est Haute impédance <b class=uvalue>U</b>, <b>drain</b> est Haute impédance <b class=uvalue>U</b> autrement <b>drain</b> est en erreur <b class=evalue>E</b>.
+      </p>
+	  </center>
+      <p>
+        <b class=note>Note:</b>Etant donné que Logisim utilise les marqueurs <b class=uvalue>U</b> (haute impédance / indéfini) et <b class=evalue>E</b> (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents
+      </p>
+      <p>
+        Si l'attribut <b class="propertie">Largeur données</b> est supérieur à 1, l'entrée <b>gate</b> est toujours d'un seul bit, mais sa valeur est appliquée simultanément à chacun des bits de l'entrée <b>source</b> .
+      </p>
+      <p>
+        Un transistor de type N se comporte de manière très similaire à un <a href="../gates/controlled.html">buffer contrôlé</a> . La principale différence est qu'un transistor est destiné à des conceptions de circuits plus élémentaires.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        Ce composant possède trois broches, deux sont en entrée <q>Source</q> et <q>Gate</q> et une en sortie <q>Drain</q>
+      </p>
+      <dl>
+        <dt>
+          source
+        </dt>
+        <dd>
+          l'état sera transmis à la sortie si elle est déclenchée par l'entrée <b>gate</b> . La largeur de bit est définie par l'attribut Largeur de données.
+        </dd>
+        <dt>
+          Gate
+        </dt>
+        <dd>
+          Cette entrée commande la transmission selon le type de transistor. Si c'est un type P la transmission est effective si l'état est bas (0). Si c'est un type N la transmission est effective si l'état est haut(1). La largeur de bite est toujours de 1
+        </dd>
+        <dt>
+          Drain
+        </dt>
+        <dd>
+          Cette sortie reprend l'état de l'entrée le transistor est activé par l'entrée Gate. Sinon elle est dans un état haute impédance (indéfini). Voir les figures ci-dessus pour plus de précisions
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut  <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut  <b class="propertie">Orientation</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Type</b>
+        </dt>
+        <dd>
+          Détermine le type de transistor : P-type ou N-type.
+        </dd>
+        <dt>
+          <b class="propertie">Orientation</b>
+        </dt>
+        <dd>
+          Le côté du composant dessiné où doit se trouver sa broche de sortie <b>drain</b>.
+        </dd>
+        <dd></dd>
+        <dt>
+          <b class="propertie">Position de la porte</b>
+        </dt>
+        <dd>
+          Disposition haut/gauche ou Bas/Droite de l'entrée <b>gate</b>.
+        </dd>
+        <dt>
+          <b class="propertie">Largeur de données</b>
+        </dt>
+        <dd>
+          Largeur en bit de l'entrée <b>source</b> et de la sortie <b>drain</b>. L'entrée <b>gate</b> a toujours une largeur de 1 bit.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>&gt;
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Multiplicateur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img  class="iconlibs" src="../../../../icons/6464/multiplier.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Multiplicateur</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 20
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/multiplier.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Ce composant multiplie deux valeurs entrant par les entrées ouest et sort le produit sur la sortie est. Le composant est conçu de manière à pouvoir être cascadé avec d'autres multiplicateurs pour multiplier un multiplicande avec plus de bits qu'il n'est possible avec un seul multiplicateur : L'entrée carry-in fournit une valeur multibit à ajouter au produit (si elle est spécifiée), et une sortie carry-out fournit la moitié supérieure du résultat du produit, qui peut être introduite dans un autre multiplicateur.
+      </p>
+      <p>
+        Si le multiplicande, le multiplicateur ou l'entrée de retenue contiennent des bits flottants ou des bits d'erreur, le composant effectue une multiplication partielle. C'est-à-dire qu'il calculera autant de bits de poids faible que possible. Mais au-dessus du bit flottant ou d'erreur, le résultat aura des bits flottants ou d'erreur. Notez que si l'entrée de retenue est complètement flottante, alors elle sera supposée être entièrement nulle.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Le multiplicande (c'est-à-dire le premier des deux nombres à multiplier).
+        </dd>
+        <dt>
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Le multiplicateur (c'est-à-dire le deuxième des deux nombres à multiplier).
+        </dd>
+        <dt>
+          Bord nord, étiqueté <var>c in</var> (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Une valeur de report à ajouter au produit. Si tous les bits de la valeur sont inconnus (c'est-à-dire flottants), ils sont supposés être égaux à 0.
+        </dd>
+        <dt>
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Les <var>dataBits</var> bits inférieurs du produit des deux valeurs provenant du bord ouest, plus la valeur <var>c</var><sub><var>in</var></sub>.
+        </dd>
+        <dt>
+          Bord sud, étiqueté <var>c out</var> (sortie, la largeur des bits correspond à l'attribut Largeur de données)
+        </dt>
+        <dd>
+          Les <var>dataBits</var> bits supérieurs du produit.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	  <div class="attliste">	  
+      <dl>
+        <dt>
+          <b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit de l'entrée et de la sortie du composant.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

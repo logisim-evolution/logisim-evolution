@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-05-15T07:25:12.532000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Anpassen des Erscheinungsbildes. 
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Anpassen des Erscheinungsbildes.
+      </h1>
+      <p>
+        Das Standarddesign ist weit verbreitet und existiert in Logisim schon seit vielen Jahren ohne weitere Optionen. Wenn Sie es jedoch vorziehen, dass der Unterkreis anders gezeichnet wird, können Sie <b class=menu>|&nbsp;Projkt&nbsp;|</b>→<b class=menu>|&nbsp;Schaltunglayout bearbeiten&nbsp;|</b> wählen, und Logisims Oberfläche wechselt von der normalen Layout-Bearbeitungsoberfläche zu einer Schnittstelle zum Zeichnen des Erscheinungsbildes der Schaltung. Sie können auch auf das Symbol ganz rechts (<img class="icontxt" src="../../../../img-guide/projdesign.png" alt="#########" width=16 height=16>)
+        Sie können auch auf das Symbol ganz rechts in der oberen <a href="../gui/gui-toolsbar.html#tb4">Symbolleiste</a> des Übersichts-Fensters klicken. <br>
+		
+		Im Folgenden bearbeiten wir das Aussehen des 2:1-Multiplexers, so dass er nicht mit einem Rechteck, sondern mit dem üblichen Trapez gezeichnet wird.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-5-custom-appear.png" alt="#########">
+      </p>
+      <p>
+        Mit dem Aussehen für den 2:1-Multiplexer wie oben gezeichnet, würde das Layout für den 4:1-Multiplexer dann wie folgt aussehen. 
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-6-custom-layout.png" alt="#########">
+      </p>
+      <p>
+        Der Erscheinungsbild-Editor ist wie ein traditionelles Zeichenprogramm, aber es gibt ein paar spezielle Symbole, die anzeigen, wie die Zeichnung funktioniert, wenn sie in das Layout einer Schaltung platziert wird. Diese speziellen Symbole können nicht entfernt werden.
+      </p>
+      <ul>
+        <li>
+          <p>
+            Der grüne Kreis mit einer Linie, die aus ihm herauskommt, die wir den <b>Anker</b> (<img class=intxt src="../../../../img-guide/anchor.png" alt="#########">) nennen. Es gibt genau einen Anker in jedem Sub-Circuit-Auftritt. Jede Komponente in einem Schaltkreis hat einen einzigen Punkt, der seine Position identifiziert; ein Benutzer sieht dies, wenn er eine neue Komponente erstellt: Der Mausklick identifiziert nur eine einzige Stelle, und die Komponente wird relativ zu dieser platziert (normalerweise mit dem primären Ausgang an der Stelle der Maus). Der Anker identifiziert die Position der Maus relativ zur Gesamtzeichnung, wenn der Teilschaltkreis erstellt wird. 
+          </p>
+          <p>
+            Der Anker zeigt auch die Ausrichtung des Bauteils an, wenn es in die Zeichnung eingefügt wird, Sie ist das Zentrum der Rotation. Die Orientierung wird durch die Richtung der Linie angezeigt die aus dem Kreis heraus zeigen. 
+			In der Zeichnung des Unterkreis ist es möglich, die Orientierung des Ankers in den Eigenschaften zu ändern. Dies zeigt an, welche Ausrichtung das Symbol hat, wenn es auf einer Schaltung platziert wird. In unserem Beispiel ist der Anker der <b class=reffig>Mux_2to1</b>-Unterschaltung nach Osten ausgerichtet und jede Instanz der Multiplexer-Unterschaltung ist in der Zeichnung der <b class=reffig>Mux_4to1</b>-Unterschaltung ebenfalls nach Osten ausgerichtet.
+          </p>
+        </li>
+        <li>
+          <p>
+		    Die blauen Kreise <img class=intxt src="../../../../img-guide/pinoutput.png" alt="#########">) und die Quadrate mit einem Punkt (<img class=intxt src="../../../../img-guide/pininput.png" alt="#########">) sind die Anschlüsse des Teilkreises. Es gibt genau so viele Symbole, wie es Ein- und Ausgangspins gibt. Die Eingangsanschlüsse sind durch Quadrate und die Ausgangsanschlüsse durch Kreise gekennzeichnet. Jedes Symbol zeigt an, wie ein mit der Schaltung verbundener Draht einem Eingangs- oder Ausgangspin im Layout entspricht.
+          </p>
+        </li>
+      </ul>
+      <p>
+        Wenn Sie eine Verbindung auswählen, zeigt Logisim den entsprechenden Pin an, indem ein Miniaturdiagramm des Layouts in einem Fenster unten rechts und der entsprechende Pin blau gezeichnet wird. Dies geschieht nicht, wenn alle Verbindungen ausgewählt sind.  
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-7-custom-layout.png" alt="#########">
+      </p>
+	  <p>
+	    Wir können den Zoom des Bildes mit einem  <b class="tkeybd">Strg+Mausrad</b> oder mit den Lupentasten oder dem Schieberegler unten links im Arbeitsbereich verändern. Die Rate wird angezeigt.
+	  </p>
+      <p>
+	    Die Symbolleiste enthält Werkzeuge zum Hinzufügen zusätzlicher Formen, wie unten gezeigt. Einige Tasten (<b class="tkeybd">Strg,Alt,Umschalt</b>) haben einen Einfluss auf die Art und Weise, wie Formen gezeichnet werden. Diese Tasten können miteinander kombiniert werden.
+      </p>
+	   <blockquote>
+        <b class="tkeybd">Strg</b>: Arichtet die Endpunkte auf dem Gitter aus.<br>
+        <b class="tkeybd">Umschalttaste</b>: Die Linien in einem Winkel von einem Vielfachen von 45° ausrichten oder die Figuren symmetrisch machen (Quadrat, gerundetes Quadrat, Kreis).<br>
+        <b class="tkeybd">Alt</b>: Zeichnet die Figuren aus ihrer Mitte. 
+      </blockquote>
+      <p>
+        Unten finden Sie eine kleine Präsentation der einzelnen Werkzeuge.
+      </p>
+      <table class=toolslist>
+        <tbody>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/toolselect.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Auswahlwerkzeug :</strong>Symbole auswählen, verschieben, kopieren und einfügen.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/text.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Text-Werkzeug :</strong> Einen Text hinzufügen, einfügen oder bearbeiten.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+             <img class=inbullet src="../../../../img-guide/drawline.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Linie Werkzeug :</strong> Erzeugt ein Liniensegment.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawcurv.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Kurvenwerkzeug::</strong> Erstellt eine Bezierkurve.Das erste <b class="tkeybd">Klicken</b> und Ziehen legt den Anfang der Linie fest, das zweite Klicken und Ziehen beendet die Linie und definiert die Krümmung. Ein <b class="tkeybd">Klick</b> auf die Linie zeigt Ihnen die drei Kontrollpunkte an. Mit der <b class="tkeybd">Umschalttaste</b> und dem <b class="tkeybd">Klick</b> auf den zentralen Kontrollpunkt wird eine symmetrische Kurve aufgetragen. Mit <b class="tkeybd">Alt</b> und <b class="tkeybd">Klick</b> auf den Mittelpunkt wird die Kurve durch den Kontrollpunkt (unter der Maus) gezeichnet.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawplin.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Polylinien-Werkzeug</strong> Erzeugt eine Sequenz von verbundenen Leitungen, jeder  <b class="tkeybd">Klick</b> beginnt eine neue Zeile. Ein <b class="tkeybd">Doppelklick</b> beendet die Sequenz. 
+			 </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawrect.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Rechteckigem Werkzeug</strong> Erstellt ein Rechteck oder Quadrat (<b class="tkeybd">Umschalttaste</b>) durch Ziehen von einer Ecke in die gegenüberliegende Ecke. 
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawrrct.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Rechteckigem Werkzeug</strong>  Erstellt ein Rechteck oder Quadrat (<b class="tkeybd">Umschalttaste</b>) mit abgerundeter Kante durch Ziehen von einer Ecke in die gegenüberliegende Ecke.  
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawoval.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Ovales Werkzeug</strong>  Erstellt ein Oval oder einen Kreis (<b class="tkeybd">Umschalttaste</b>), indem es von einer Ecke seines Umrisses in die gegenüberliegende Ecke gleitet.
+            </td>
+          </tr>
+          <tr>
+            <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawpoly.png" alt="#########" border="1">
+            </td>
+            <td>
+              <strong>Polygonwerkzeug</strong> Erstellt ein Polygon, jeder <b class="tkeybd">Klick</b> startet eine neue Seite. Ein <b class="tkeybd">Doppelklick</b> beendet die Sequenz. 
+            </td>
+          </tr>
+		  <tr>
+		    <td class=toolslist valign="top">
+              <img class=inbullet src="../../../../img-guide/drawdyncomp.png" alt="#########" border="1">
+            </td>
+			<td>
+			  <strong>Dynamische Komponenten</strong> Place un composant dynamique. <b class="tkeybd">Klick</b> öffnet sich ein Fenster zur Auswahl von Komponenten in den Teilstromkreisen.
+              
+            </td>
+	      </tr>
+        </tbody>
+      </table>
+      <p>
+        <b>Der Nächste:</b> <a href="sub-debug.html">Fehlersuche in Teilschaltungen</a>.
+      </p>
+    </div>
+  </body>
+</html>

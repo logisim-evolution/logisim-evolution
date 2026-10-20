@@ -1,0 +1,12 @@
+v4:
+Port80 poles comporte désormais 78 poles. Car, on ne peut pas relier une pin au gnd.
+Dans logisim, les connecteurs commencent à l'index 0
+
+Le connecteur mezz2 est composé d'un port de 10poles. mezz 1 est composé de 6pins.
+
+v5:
+Ajout du dip switch
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Le connecteur 80 poles ne fonctionne pas. Impossible de savoir pouquoi.

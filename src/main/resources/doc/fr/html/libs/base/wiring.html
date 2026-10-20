@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      l'outil câblage.
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div>
+      <h1>
+        <img class="iconlibs" src="../../../../icons/wiring.gif" alt="#########"> <em>l'outil câblage.</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Base</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        L'outil de câblage est l'outil permettant de créer des segments de fil porteurs d'une valeur d'un point d'extrémité à l'autre. Les fils adaptent automatiquement leur largeur de bit déduite des composants auxquels ils sont finalement attachés. S'il n'est attaché à aucun composant, le fil sera dessiné en gris pour indiquer que sa largeur de bit est inconnue; S'i il y a un conflit entre les deux extrémités, le fil sera dessiné en orange pour indiquer le conflit, et le fil sera inopérant jusqu'à ce que l'utilisateur résolve le conflit.
+      </p>
+      <p>
+        Un simple glissement de la souris peut créer plusieurs segments de fil. Le processus précis est un peu déroutant dans sa description; mais en pratique, cela fonctionne de manière assez intuitive: si vous demandez un segment de câble particulier à l'aide de l'outil de câblage, ce segment sera séparé chaque fois qu'il rencontre une broche pour un composant existant ou lorsqu'il atteint l'extrémité d'un segment de fil existant. De plus, si un point d'extrémité d'un des nouveaux segments de fil se trouve quelque part au milieu d'un fil existant, ce fil sera divisé en plusieurs segments.
+      </p>
+      <p>
+        Pour certains composants qui dessinent des traits courts auxquels des fils peuvent se connecter (comme une <a href="../gates/basic.html">porte OR</a> ou un <a href="../gates/commandated.html">buffer contrôlé</a> ), Logisim corrigera silencieusement les tentatives de création de fils dépassant légèrement l'extrémité du trait.
+      </p>
+      <p>
+        Vous pouvez également raccourcir un segment de fil existant à l'aide de l'outil de câblage, en utilisant un glissement qui commence ou se termine à une extrémité du segment, et qui chevauche le segment existant.
+      </p>
+      <p>
+        Les fils sont soit horizontaux soit verticaux.
+      </p>
+      <p>
+        Les fils sont également non directionnels; c'est-à-dire qu'ils transportent des valeurs de l'une ou l'autre extrémité. En effet, un fil peut porter des valeurs dans les deux sens simultanément; le fil central dans l'exemple ci-dessous le fait.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
+      </p>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        L'outil de câblage n'a pas lui-même d'attributs, mais les fils qu'il crée en ont.
+      </p>
+      <dl>
+        <dt>
+          Direction
+        </dt>
+        <dd>
+          Indique si le câble est horizontal ou vertical. La valeur de cet attribut ne peut pas être modifiée.
+        </dd>
+        <dt>
+          Longueur
+        </dt>
+        <dd>
+          Indique combien de pixels le fil est long. La valeur de cet attribut ne peut pas être modifiée.
+        </dd>
+      </dl>
+      <h2>
+        Comportement de l'outil Pousser.
+      </h2>
+      <p>
+        Lorsque vous cliquez sur un segment de fil existant à l'aide de l'outil pousser, Logisim affiche la valeur actuelle passant par ce fil. Le comportement est particulièrement utile pour les fils multibits, dont la couleur noire ne fournit aucun retour visuel sur les valeurs que transporte le fil.
+      </p>
+      <p>
+        Pour les valeurs multibits, vous pouvez configurer exactement l'affichage de la valeur (en binaire, décimal ou hexadécimal, par exemple) à l'aide de la <a href="../../guide/prefs/pref-layout.html">mise en page volet</a> de la boîte de dialogue Préférences Logisim.
+      </p>
+      <p>
+        <a href="../index.html">Retour dans <em>Référence de la bibliothèque</em></a>
+      </p>
+    </div>
+  </body>
+</html>

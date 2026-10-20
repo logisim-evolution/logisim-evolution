@@ -1,0 +1,115 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Zufallsgenerator</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/random.gif" width="32" height="32">
+<em>Zufallsgenerator</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Memory</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/random.png" width="34" height="44"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>This component iterates through a pseudorandom sequence of numbers, which
+steps forward to the following number in the sequence each time the clock is
+triggered while the component is enabled. Technically speaking, the algorithm
+used to compute the pseudorandom sequence is a linear
+congruential generator: Starting from a seed
+<var>r</var><sub><small>0</small></sub>, the following number
+<var>r</var><sub><small>1</small></sub> is the number</p>
+<center>
+<var>r</var><sub><small>1</small></sub> =
+(25,214,903,917 <var>r</var><sub><small>0</small></sub> + 11)
+mod 2<sup><small>48</small></sup>
+</center>
+<p>The next value <var>r</var><sub><small>2</small></sub>
+is computed from <var>r</var><sub><small>1</small></sub>
+using the same computation, and so forth. This sequence is of 48-bit numbers;
+the value seen from the component is the low-order bits as configured
+by its Data Bits attribute, after first throwing out the lower 12 bits of
+the current seed.</p>
+
+<p>Besides the clock input, the component also includes an <var>enable</var>
+input, which leads the clock input to be ignored when <var>enable</var> is 0,
+and the <var>reset</var> input, which resets the component's value asynchronously
+to the initial seed <var>r</var><sub><small>0</small></sub>.</p>
+
+<p>The initial seed is user-configurable. If it is configured at 0 (which is
+the default), then the seed is based on the current time; when instructed
+to reset through the <var>reset</var> input, the component starts with the
+same seed based on the past time. It acquires a new seed only when the entire
+simulation is reset.</p> 
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute)</dt>
+<dd>Outputs the value currently stored by the component.</dd>
+
+<dt>West edge, top pin, labeled with a triangle (input, bit width 1)</dt>
+<dd>Clock: At the instant that this is triggered as specified by the Trigger
+attribute, the component steps to the following number in its sequence.</dd>
+
+<dt>West edge, bottom pin (input, bit width 1)</dt>
+<dd>Enable: The component is enabled when this input is disconnected or 1;
+but if it is 0, then the clock input is ignored.</dd>
+
+<dt>Südseite (Eingang, Bitbreite 1)</dt>
+<dd>Reset: When this is 1, the pseudorandom sequence asynchronously resets to
+its initial seed.</dd>
+
+</dl>
+
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.</p>
+
+<dl>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the value emitted by the component.</dd>
+
+<dt>Seed</dt>
+<dd>The starting value used for the pseudorandom sequence. If this is 0
+(the default), then the starting value is based on the time that the current
+simulation began.</dd>
+
+<dt>Trigger</dt>
+<dd>Configures how the clock input is interpreted. The value <q>rising edge</q>
+indicates that the component should update its value at the instant when the
+clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should
+update at the instant the clock falls from 1 to 0.</dd>
+
+<dt>Label</dt>
+<dd>The text within the label associated with the component.</dd>
+
+<dt>Label Font</dt>
+<dd>The font with which to render the label.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Allows the label associated with the component to be edited.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

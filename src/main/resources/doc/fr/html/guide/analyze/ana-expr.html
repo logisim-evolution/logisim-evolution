@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-02-07T07:12:22.242000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Création d'expressions
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Créer des expressions
+      </h1>
+      <p>
+        Pour chaque variable de sortie, la fenêtre d'analyse combinatoire maintient deux structures: la colonne concernée dans la table de vérité et une expression booléenne. Chaque structure définit comment la sortie dépend de ses entrées. Vous pouvez éditer soit la table de vérité soit l'expression. L'un ou l'autre sera automatiquement mis à jour pour rester consistant.
+      </p>
+      <p>
+        Comme nous allons le voir sur la page suivante, les expressions booléennes sont particulièrement utiles dans la mesure ou la fenêtre d'analyse combinatoire utilisera ces dernières quand il sera nécessaire d'élaborer le circuit correspondant à la configuration courante.
+      </p>
+      <p>
+        Vous pouvez voir et éditer les expressions en utilisant les deux derniers onglets de la fenêtre: l'onglet <b class="button">expressions</b> et l'onglet <b class="button">Karnaugh</b>.
+      </p>
+      <h2>
+        L'onglet Expression
+      </h2>
+      <p align="center">
+        <img src="../../../img-guide/analyze-expression.png" alt="#########">
+      </p>
+	  <p>
+	    L'onglet <b class="button">Expressions</b> vous permet de visualiser et éditer l'expression courante pour chaque variable de sortie. Il présente un sélecteur <b class="button">Notation :</b> et une liste des expressions mathématiques du circuit.
+      <p>
+        Le sélecteur <b class="button" id="not">Notation :</b> modifie le mode de notation des expressions de sortie. Il vous permet cinq types de notation :
+      </p>
+      <dl>
+        <dt>
+          <b class="button">Mathématique</b> :
+        </dt>
+        <dd>
+          Le surligné représente la négation, Le &#x2219; la fonction ET et le + la fonction OR. &#x2295; la fonction XOR
+        </dd>
+        <dt>
+          <b class="button">Logique</b> :
+        </dt>
+        <dd>
+          Le ¬ représente la négation, le &#x2227; la fonction ET et le &#x2228; la fonction OU. &#x22bb; la fonction XOR.
+        </dd>
+        <dt>
+          <b class="button">Logique alternative</b> :
+        </dt>
+        <dd>
+          Le ~ représente la négation, Le &#x2227; la fonction ET et le &#x2228; la fonction OR. &#x2262; la fonction XOR
+        </dd>
+        <dt>
+          <b class="button">Programmation avec des booléens</b> :
+        </dt>
+        <dd>
+          Le ! représente la négation, Le &amp;&amp; la fonction ET et le || la fonction OR. != la fonction XOR
+        </dd>
+        <dt>
+          <b class="button">Programmation avec des bits</b> :
+        </dt>
+        <dd>
+          Le ~ représente la négation, Le &amp; la fonction ET et le | la fonction OR. ^ la fonction XOR
+        </dd>
+      </dl>
+      <p>
+        Juste en dessous du sélecteur, les expressions sont affichées dans une liste. Vous pouvez éditer l'expression dans le panneau de texte en effectuant un double clic sur la ligne de celle-ci.
+      </p>
+      <p>
+        Notez que votre table de vérité sera modifiée de manière irrémédiable si vous éditez les expressions et vice versa.
+      </p>
+      <p>
+        En plus des + et · représentant des AND et des OR, une expression entrée peut contenir des opérateurs logiques C/JAVA ainsi que des mots.
+      </p>
+      <p align="center"></p>
+      <table>
+        <tbody>
+          <tr>
+            <th>
+              Priorité la plus haute
+            </th>
+            <td align="center">
+              <tt>~</tt> <tt>!</tt> <tt>'</tt>
+            </td>
+            <th>
+              NOT
+            </th>
+          </tr>
+          <tr>
+            <th></th>
+            <td align="center">
+              (none) <tt>&amp;</tt> <tt>&amp;&amp;</tt>
+            </td>
+            <th>
+              AND
+            </th>
+          </tr>
+          <tr>
+            <th></th>
+            <td align="center">
+              <tt>^</tt> <tt>&#x2295;</tt>
+            </td>
+            <th>
+              XOR
+            </th>
+          </tr>
+          <tr>
+            <th>
+              Priorité la plus basse
+            </th>
+            <td align="center">
+              <tt>+</tt> <tt>|</tt> <tt>||</tt>
+            </td>
+            <th>
+              OR
+            </th>
+          </tr>
+        </tbody>
+      </table>
+	  <P>
+	  Les exemples suivants sont tous des représentations valides de la même expression. Il est d'ailleurs aussi possible de mélanger les opérateurs.
+      </p>
+	  <table>
+        <tbody>
+          <tr>
+            <td>
+              <tt>a' (b + c)</tt>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <tt>!a &amp;&amp; (b || c)</tt>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <tt>NOT a AND (b OR c)</tt>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        En général, des parenthèses dans une séquence de AND de OR ou de XOR n'ont aucun effet. En particulier, quand Logisim génère un circuit, il ignore ces parenthèses.
+      </p>
+      <h2>
+        L'onglet Karnaugh
+      </h2>
+      <p align="center">
+        <img src="../../../img-guide/analyze-minimized.png" alt="#########">
+      </p>
+      <p>
+        Le dernier onglet affiche l'expression minimale d'une des colonnes de la table de vérité. Sur ce panneau on trouve présenté quatre sélecteurs, la table de karnaught et l'expression minimale.
+      </p>
+      <p>
+        Le sélecteur du haut <b class="button">Sortie:</b>, vous pouvez sélectionner la sortie minimisée d'une colonne de la table que vous souhaitez afficher.
+      </p>
+      <p>
+        Le sélecteur suivant <b class="button">Format:</b> permets d'indiquer si vous souhaitez produire une <b>somme des produits</b> ou un <b>produit des sommes</b>.
+      </p>
+      <p>
+        le sélecteur <b class="button">Style:</b> modifie la présentation des variables sur les bords de la table. Soit avec des valeurs binaires soit avec des lignes sur les valeurs vraies.
+      </p>
+      <div class="twodiv">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <img class="notscal" src="../../../../img-guide/analyze-numline1.png" alt="#########" align="middle">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Numéroté
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="twodiv">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <img class="notscal" src="../../../../img-guide/analyze-numline2.png" alt="#########" align="middle">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Doublé
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        le sélecteur <b class="button">Notation:</b> à la la même propriété que celui du panneau <a href="#not">Expression (voir plus haut)</a>
+      </p>
+      <p>
+        la table de Karnaugh apparaîtra au centre du panneau. Vous pouvez cliquer la table de Karnaugh pour changer les valeurs correspondantes dans la table de vérité. La table de Karnaugh affichera également les termes sélectionnés pour l'expression minimisée avec un rectangle arrondi superposé semi-transparent.
+      </p>
+      <p>
+        En dessous, vous trouverez l'expression minimisée elle-même, formatée de la même manière que dans l'onglet Expression. Logisim utilise l'algorithme de Quine-McCluskey pour élaborer l'expression minimisée. Ceci est équivalent à une table de Karnaugh, mais appliqué à un nombre quelconque de variables en entrée.
+      </p>
+      <p>
+        Le bouton <b class="button">Définir comme expression</b> vous permet de définir l'expression minimisée comme l'expression correspondant à la variable. Comme les modifications à la table de vérité induisent l'expression minimisée pour la colonne en question ceci ne sera habituellement pas nécessaire, mais si vous entrez une expression dans l'onglet Expression, alors c'est une possibilité intéressante de basculer dans l'expression minimisée correspondante.
+      </p>
+      <p>
+        <b>Suite:</b> <a href="ana-gen.html">Générer un circuit</a>.
+      </p>
+    </div>
+  </body>
+</html>

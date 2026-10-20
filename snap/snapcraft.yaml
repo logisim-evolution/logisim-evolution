@@ -1,0 +1,82 @@
+#
+# Control file to build SNAP package of LSe
+# https://github.com/logisim-evolution/logisim-evolution
+# https://snapcraft.io/
+#
+# Marcin Orlowski
+#
+
+name: logisim-evolution
+title: Logisim Evolution
+summary: Digital logic design tool and simulator
+description: |
+ Logisim-evolution is educational software for designing and simulating digital logic circuits.
+ Logisim-evolution is free, open-source, and cross-platform.
+
+ Project highlights:
+  * easy to use circuit designer,
+  * logic circuit simulations,
+  * chronogram (to see the evolution of signals in your circuit),
+  * electronic board integration (schematics can be simulated on real hardware),
+  * VHDL components (components behavior can be specified in VHDL!),
+  * TCL/TK console (interfaces between the circuit and the user),
+  * huge library of components (LEDs, TTLs, switches, SoCs),
+  * supports multiple languages,
+  * and more!
+website: https://github.com/logisim-evolution/logisim-evolution
+contact: https://github.com/logisim-evolution/logisim-evolution/issues
+issues: https://github.com/logisim-evolution/logisim-evolution/issues
+source-code: https://github.com/logisim-evolution/logisim-evolution
+license: GPL-3.0
+adopt-info: logisim-evolution
+icon: snap/gui/logisim-icon-128.png
+
+base: core24
+grade: stable
+confinement: strict
+compression: lzo
+
+platforms:
+  amd64:
+  arm64:
+
+apps:
+  logisim-evolution:
+    extensions: [gnome]
+    command: usr/bin/logisim-evolution-wrapper
+    plugs:
+      - desktop
+      - desktop-legacy
+      - gsettings
+      - home
+      - opengl
+      - unity7
+      - wayland
+      - x11
+      - removable-media
+
+parts:
+  logisim-evolution:
+    plugin: gradle
+    source: .
+    gradle-task: shadowJar
+    gradle-parameters:
+      - -x
+      - test
+      - --console=plain
+    override-pull: |
+      craftctl default
+      LSE_VERSION="$(cat gradle.properties | grep '^version\s*=.*' | awk '{print $3}')"
+      craftctl set version="${LSE_VERSION}"
+    build-packages:
+      - gradle
+      - openjdk-21-jdk
+    stage-packages:
+      - openjdk-21-jre
+    organize:
+      jar/logisim-evolution-*-all.jar: jar/logisim-evolution.jar
+
+  local-parts:
+    plugin: dump
+    source: ./snap/local
+    source-type: local

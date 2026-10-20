@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>Bibliotheksklasse
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Bibliotheksklasse</h1>
+
+<p>Der Startpunkt einer JAR-Bibliothek ist eine Klasse, die die <code>Library</code>-Klasse erweitert. Die Hauptaufgabe ist es, die Werkzeuge aufzulisten, die durch die Bibliothek zur Verfügung gestellt werden. Meistens wird es sich um Werkzeuge handeln, die verschiedene Bauelemente zu einer Schaltung hinzufügen, d.h. Instanzen der  <code>AddTool</code>-Klasse, die mit verschiedenen Komponentenfabriken zusammenarbeiten.</p>
+
+<h2>Components</h2>
+
+<pre>
+package com.cburch.gray;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.Library;
+
+/** Die Bauteilebibliothek, die für den Anwender zugänglich ist. */
+public class Components extends Library {
+    /** Die Liste aller Werkzeuge in der Bibliothek. Technisch
+     * enthalten Bibliotheken Werkzeuge, was ein etwas allgemeinerer Begriff als
+     * Bauelemente ist. In der Praxis werden Sie aber wohl am häufigsten
+     * AddTools zum Einfügen neuer Bauelemente in die Schaltung erstellen wollen.
+     */
+    private List&lt;AddTool&gt; tools;
+    
+    /** Erstellt eine Instanz dieser Bibliothek. Über diesen Konstruktor 
+     * greift Logisim zuerst zu, wenn eine JAR-Datei geladen wird: Es sucht nach
+     * einer Konstruktormethode ohne Argumente für die vom Benutzer angegebene Klasse.
+     */
+    public Components() {
+        tools = Arrays.asList(new AddTool[] {
+                new AddTool(new GrayIncrementer()),
+                new AddTool(new SimpleGrayCounter()),
+                new AddTool(new GrayCounter()),
+        });
+    }
+    
+    /** Gibt den Namen der Bibliothek zurück, der dem Benutzer angezeigt wird. */ 
+    public String getDisplayName() {
+        return "Gray Tools";
+    }
+    
+    /** Gibt eine Liste aller Werkzeuge der Bibliothek zurück. */
+    public List&lt;AddTool&gt; getTools() {
+        return tools;
+    }
+}
+</pre>
+
+<p><strong>Weiter:</strong> <a href="simpctr.html">Einfacher Gray-Kode-Zähler</a>.</p>
+</div></body></html>

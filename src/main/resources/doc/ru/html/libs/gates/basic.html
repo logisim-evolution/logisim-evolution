@@ -1,0 +1,517 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-07-16T23:45:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Элементы И/ИЛИ/И-НЕ/ИЛИ-НЕ
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/ansandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansorgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansnandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ansnorgate.png" alt="#########" width="32" height="32"><br>
+              <img class="iconlibs" src="../../../../icons/6464/iecandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecorgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecnandgate.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/iecnorgate.png" alt="#########" width="32" height="32">
+            </td>
+            <td valign="center">
+              <h1>
+                <em>Элементы И/ИЛИ/И-НЕ/ИЛИ-НЕ</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Библиотека:</strong>
+            </td>
+            <td>
+              <a href="index.html">Элементы</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Введён в:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Внешний вид:</strong>
+            </td>
+            <td valign="top">
+		      <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th width="50">
+                      И
+                    </th>
+                    <th width="50">
+                      ИЛИ
+                    </th>
+                    <th width="50">
+                      И-НЕ
+                    </th>
+                    <th width="50">
+                      ИЛИ-НЕ
+                    </th>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      ANSI:
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansnandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansnorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      IEC:
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecnandgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecnorgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Поведение
+      </h2>
+      <p>
+        Элементы И, ИЛИ, И-НЕ и ИЛИ-НЕ вычисляют соответствующую логическую функцию от входных значений и выдают результат на выход.
+      </p>
+      <p>
+        По умолчанию любые неподключенные входы игнорируются — это применимо, если к выводу действительно ничего не подключено, даже проводник. Таким образом, вы можете добавить элемент с 5 входами, но подключить только два входа, и он будет работать как 2-входовой элемент. Это избавляет вас от необходимости настраивать количество входов при каждом размещении элемента на холсте.<br>
+        Если не подключен ни один из входов, на выходе формируется значение ошибки (<b class="evalue">E</b>). Некоторые пользователи предпочитают, чтобы Logisim требовал обязательного подключения всех входов, так как это соответствует физическим микросхемам. Вы можете включить это поведение в меню <b class="menu">|&nbsp;Проект&nbsp;|</b> &gt; <b class="menu">|&nbsp;Параметры…&nbsp;|</b> на вкладке <b class="menu">|&nbsp;Моделирование&nbsp;|</b>, выбрав значение <q>Ошибка для неопределённых входов</q> в настройке <q>Выход элемента при неопределённости</q>.
+      </p>
+      <p>
+        Ниже приведены таблицы истинности для двухвходовых элементов. Символ <b class="evalue">E</b> обозначает значение ошибки, а символ <b class="uvalue">U</b> — неинициализированное значение.
+      </p>
+      <center>
+        <table class="encapsul" border="0">
+          <tbody>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        И
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        ИЛИ
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &nbsp;
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        И-НЕ
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td></td>
+              <td>
+                <table class="truthtable">
+                  <tbody>
+                    <tr>
+                      <th colspan="4">
+                        ИЛИ-НЕ
+                      </th>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        -
+                      </td>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tzerov">
+                        0
+                      </td>
+                      <td class="unov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tunov">
+                        1
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tspace">
+                        <b class="uvalue">U</b>/<b class="evalue">E</b>
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                      <td class="zerov">
+                        0
+                      </td>
+                      <td class="evalue">
+                        E
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Короче говоря, эти компоненты работают ожидаемым образом, пока на всех входах присутствуют логические 0 или 1. Если на входе оказывается неинициализированное значение (<b class="uvalue">U</b>) или ошибка (<b class="evalue">E</b>), то элемент рассматривает это значение одновременно как 0 <em>и</em> 1. Если результат на выходе в обоих случаях совпадает (например, если на одном из входов элемента И гарантированно присутствует 0, а состояние второго входа не определено), то на выходе установится это значение. Если же результат зависит от того, является входное значение нулем или единицей, на выходе формируется значение ошибки (<b class="evalue">E</b>).
+      </p>
+      <p>
+        Многоразрядные версии каждого элемента выполняют указанное преобразование побитово для каждого разряда своих входов.
+      </p>
+      <h2>
+        Контакты (предполагается, что компонент направлен вправо)
+      </h2>
+      <dl>
+        <dt>
+          Левая сторона (входы):
+        </dt>
+        <dd>
+          Входы компонента. Их количество определяется атрибутом <b class="propertie">Количество входов</b>. Разрядность соответствует атрибуту <b class="propertie">Биты данных</b>.
+          <p>
+            Обратите внимание, что при использовании фигурных (ANSI) элементов левая сторона элементов ИЛИ и ИЛИ-НЕ будет изогнутой. Тем не менее, входные контакты расположены в ряд. Logisim отрисовывает короткие отрезки проводников, иллюстрирующие это; если при подключении вы случайно выйдете за пределы отрезка, программа сочтет это за корректное соединение без вывода предупреждений. При использовании «Вида для печати» эти отрезки не отображаются, если к ним не подключены проводники.
+          </p>
+        </dd>
+        <dt>
+          Правая сторона (выход):
+        </dt>
+        <dd>
+          Выход элемента, значение на котором вычисляется на основании текущих значений на входах, как описано выше. Разрядность соответствует атрибуту <b class="propertie">Биты данных</b>.
+        </dd>
+      </dl>
+      <h2>
+        Атрибуты
+      </h2>
+      <p>
+        Когда компонент выбран или добавляется, цифровые клавиши от <b class="tkeybd">0</b> до <b class="tkeybd">9</b> изменяют его атрибут <b class="propertie">Количество входов</b>, комбинации клавиш от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> изменяют его атрибут <b class="propertie">Биты данных</b>, а клавиши со стрелками изменяют его направление (<b class="propertie">Направление</b>).
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Направление</b>
+        </dt>
+        <dd>
+          Направление компонента (его выхода относительно входов).
+        </dd>
+        <dt>
+          <b class="propertie">Биты данных</b>
+        </dt>
+        <dd>
+          Разрядность входов и выходов компонента.
+        </dd>
+        <dt>
+          <b class="propertie">Размер элемента</b>
+        </dt>
+        <dd>
+          Определяет, следует ли отрисовывать широкую (увеличенную) или узкую (уменьшенную) версию компонента. Это не влияет на количество входов, которое задаётся атрибутом <b class="propertie">Количество входов</b>. Однако, если выбрано отображение фигурных элементов, то элемент будет отрисован со вспомогательными <q>крыльями</q>, чтобы разместить входы, выходящие за пределы его стандартного размера.
+        </dd>
+        <dt>
+          <b class="propertie">Количество входов</b>
+        </dt>
+        <dd>
+          Определяет количество входных контактов на левой стороне компонента.
+        </dd>
+        <dt>
+          <b class="propertie">Выходное значение</b>
+        </dt>
+        <dd>
+          Указывает, как логические 0 и 1 преобразуются в выходные значения. По умолчанию ложный результат (0) передается низким уровнем напряжения (<b class="zerov">0</b>), а истинный (1) — высоким уровнем напряжения (<b class="unov">1</b>), но одно из этих значений может быть заменено на высокоимпедансное состояние (Z). Это позволяет создавать соединения типа «монтажное ИЛИ» и «монтажное И», как показано ниже: слева у буферов атрибут «Выходное значение» равен «Z/1» (высокоимпедансное/1), а подтягивающий резистор подключен к 0, что реализует логику монтажного ИЛИ; справа у буферов атрибут «Выходное значение» равен «0/Z» (0/высокоимпедансное), а подтягивающий резистор подключен к 1, что реализует логику монтажного И.
+          <center>
+            <img src="../../../../img-libs/wand-wor.png" alt="#########" width="220" height="91">
+          </center>
+        </dd>
+        <dt>
+         <b class="propertie">Метка</b>
+        </dt>
+        <dd>
+          Текст метки, связанной с элементом.
+        </dd>
+        <dt>
+          <b class="propertie">Шрифт метки</b>
+        </dt>
+        <dd>
+          Шрифт для отображения текста метки.
+        </dd>
+        <dt>
+          <b class="propertie">Инвертировать <var>x</var></b>
+        </dt>
+        <dd>
+          Если установлено значение «Да», то значение на данном входе инвертируется перед подачей на логическую схему элемента. Входы нумеруются сверху вниз, если элемент направлен вправо или влево, и слева направо — если он направлен вверх или вниз.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Поведение инструмента «Нажатие»
+      </h2>
+      <p>
+        Нет.
+      </p>
+      <p>
+        <b>Назад к</b> <a href="../index.html">Справке по библиотеке</a>
+      </p>
+    </div>
+  </body>
+</html>

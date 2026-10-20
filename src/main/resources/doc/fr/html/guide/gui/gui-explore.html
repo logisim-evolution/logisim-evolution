@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-02-07T07:12:22.242000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Le panneau de navigation
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Le panneau de navigation
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td style="width:200px">
+              <img src="../../../img-guide/gui-0-explor.png" alt="#########">
+            </td>
+            <td valign="top">
+              Le panneau de navigation a deux fonctions. Il peut présenter les circuits en cours de simulation dans la vue <a href="../subcirc/sub-debug.html">simulation</a> ou comme ici les circuits dans le haut de la liste et les librairies plus bas représentées par des icônes de dossiers. Ces librairies regroupent les outils que vous pouvez utiliser dans vos réalisations.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Pour accéder aux composants d'une bibliothèque, il suffit d'ouvrir la librairie (un <b class="tkeybd">clic-droit</b> sur la petite cle ou un <b class="tkeybd">double-clic</b> sur le dossier) puis de sélectionner l'outil (un <b class="tkeybd">clic-droit</b> sur l'outil). Puis déplacer le curseur de la souris sur le canevas et la un dessin fantôme de l'outil suivra le curseur de la souris jusque a ce que vous effectuiez le dernier clic sur la surface pour le déposer a l'emplacement choisi.
+      </p>
+      <p>
+        Ci-dessous vous voyez ouverte la librairie des portes logique et la porte NAND est sélectionnée. Le fantôme de la porte suit le curseur. Au prochain clic la porte sera insérée dans le circuit.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/gui-1-nand-select.png" alt="#########">
+      </p>
+	 <p>Maintenant, si vous regardez la sélection dans la bibliothèque de portes, vous remarquerez que nous n'aurions pas eu à développer de circuits XOR: une telle porte fait déjà partie de Logisim.</p>
+      <p>
+        Logisim inclut un certain nombre de librairies à la création d'un projet. Elles sont représentées succinctement ici:
+      </p>
+      <ul>
+        <li>
+          <b>Câblage :</b> Les composants nécessaires aux éléments de câblage.
+        </li>
+        <li>
+          <b>Portes logiques :</b> Les composants qui réalisent de simples fonctions logiques.
+        </li>
+        <li>
+          <b>De/Multiplexeurs..:</b> Des composants combinatoires plus complexes comme des multiplexeurs et des décodeurs.
+        </li>
+        <li>
+          <b>Arithmétique :</b> Des composants qui effectuent des opérations arithmétiques.
+        </li>
+        <li>
+          <b>Mémoire...</b>: Les composants qui mémorisent des informations comme des bascules, des registres et de la RAM et ROM.
+        </li>
+        <li>
+          <b>Entrée/Sortie :</b> Des composants qui sont là pour permettre des interactions avec l'utilisateur.
+        </li>
+		<li>
+          <b>TTL :</b> Les composant classiques de la famille TTL 74xxx avec le boitirt DIL.
+        </li>
+        <li>
+          <b>TCL :</b> Non documenté
+        </li>
+        <li>
+          <b>HDL-IP :</b> Non documenté
+        </li>
+        
+          <b>BFH mega function :</b> Non documenté
+        </li>
+		<li>
+          <b>Input/Output-Extra :</b> Non documenté
+        </li>
+		<li>
+          <b>System On Chip components :</b> Composant inclus dans plusieurs architectures de FPGAs
+        </li>
+		
+      </ul>
+	  <h2 ID=lib>
+	    Librairies
+	  </h2>
+      <p>
+        Logisim vous permet d'ajouter d'autres librairies en utilisant le menu <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;Charger une librairie&nbsp;|</b> ou en effectuant un <b class="tkeybd">clic-gauche</b> sur le dossier de la racine de l'explorateur de projet. Vous aurez le choix entre trois catégories de librairies.
+      </p>
+      <ul>
+        <li>
+          <strong>Les librairies intégrées</strong> sont des librairies qui sont distribuées avec Logisim. Ces dernières sont documentées dans <a href="../../libs/index.html">Librairie de référence</a>.
+        </li>
+        <li>
+          <strong>Les librairies Logisim</strong> sont des projets construits dans Logisim et sauvegardées comme des projets logisim. Vous pouvez développer un ensemble de circuits dans un seul projet (comme décrit dans la section <a href="../subcirc/index.html">Design hiérarchique</a> de ce guide) et utiliser cet ensemble de circuits comme une librairie dans d'autres projets.
+        </li>
+        <li>
+          <strong>Les librairies JAR</strong> sont des librairies développées en Java, mais qui ne sont pas distribuées avec Logisim. Vous pouvez télécharger une librairie écrite par quelqu'un d'autre, ou vous pouvez écrire votre propre librairie, comme expliqué dans la section <a href="../jar/index.html">Librairies Jar</a> de ce guide. Développer une librairie JAR est bien plus difficile que de développer une librairie Logisim, mais le composant peut être bien plus riche en incluant des attributs et des interactions avec l'utilisateur. Les librairies intégrées (autres que <b class=propertie>"Base"</b>) sont écrites en utilisant les mêmes API que les librairies JAR. Elles démontrent les possibilités, en matière de fonctionnalité, qu'une librairie JAR peut supporter.
+          <p>
+            Certaines des librairies JAR sont distribuées sans aucune information au sujet de la classe java initial. Quand un tel JAR est chargé, Logisim vous demandera alors d'indiquer le nom de cette classe. Ce nom de la classe devrait être fourni par celui qui distribue le fichier JAR.
+          </p>
+        </li>
+      </ul>
+      <p>
+        Pour supprimer une librairie, choisissez depuis le menu <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;enlever Librairie ...&nbsp;|</b>. Une fenêtre de sélection sera affichée (ci-dessous). Logisim vous empêchera d'enlever des librairies qui contiennent des composants actuellement utilisés dans le circuit, qui apparaissent dans la barre d'outils ou qui sont liées aux événements de souris.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../img-guide/gui-2-remlib.png" alt="#########">
+      </p>
+      <p>
+        Il est aussi possible de le faire en exécutant un <b class="tkeybd">clic-gauche</b> sur la librairie à désactiver.
+      </p>
+      <p>
+        Par ailleurs, une librairie d'un point de vue technique contient des outils, et non des composants. Par conséquent, dans la librairie de base vous trouvez l'outil <b class=propertie>"Pousser"</b> (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">), l'outil  <b class=propertie>"Editer"</b> (<img class="icontxt" src="../../../../icons/1616/toolselect.png" alt="#########">), et d'autres outils qui ne correspondent pas directement à des composants particuliers. La plupart des librairies contiennent des outils pour ajouter des composants à nos circuits.
+        <!-- Toutes les librairies a l'exception de <b class=propertie>"Base"</b> sont ainsi.-->
+      </p>
+      <p>
+        <b>Suite:</b> <a href="gui-toolsbar.html">Les barres d'outils</a>.
+      </p>
+    </div>
+  </body>
+</html>

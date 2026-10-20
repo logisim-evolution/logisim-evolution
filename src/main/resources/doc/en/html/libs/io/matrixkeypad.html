@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Matrix Keypad</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs"
+            src="../../../../icons/6464/matrixkeypad.png"
+            alt="Matrix Keypad icon" width="32" height="32" align="middle">
+        <em>Matrix Keypad</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Models a 4-by-4 matrix keypad. Pressing a key connects its row input to its column output,
+        allowing a circuit to scan the keypad in the same way as a physical row-column keypad.
+        Releasing the mouse button releases the key.
+      </p>
+      <p>The <q>Operating mode</q> attribute selects one of two electrical behaviors.</p>
+      <dl>
+        <dt>Raw Matrix</dt>
+        <dd>
+          While the keys are not pressed, the outputs (rows) are in a high-impedance state (Z).
+          Pressing a key passes the signal from the corresponding input (column) to the corresponding output (row).
+        </dd>
+        <dt>Pmod KYPD (Internal Pull-Up)</dt>
+        <dd>
+          By default, the outputs (rows) are held at logic 1. Pressing a key passes the signal from the
+          corresponding input (column) to the corresponding output (row). This mode uses the fixed Pmod KYPD
+          layout (with symbols 0, F, E, and D on the bottom row).
+        </dd>
+      </dl>
+
+      <h2>Pins</h2>
+      <p>
+        Four 1-bit inputs (columns) are located along the bottom edge, and four 1-bit outputs (rows) are 
+        located along the right edge. While pressed, each key connects the intersecting input and output 
+        at its position.
+      </p>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Operating mode</dt>
+        <dd>Selects Raw Matrix or Pmod KYPD behavior as described above.</dd>
+        <dt>Display size</dt>
+        <dd>Selects the normal or large keypad appearance.</dd>
+        <dt>Key 'A', 'B', 'C', 'D', '*', and '#' Symbol</dt>
+        <dd>
+          Customizes the displayed symbols for these six keys in Raw Matrix mode. Pmod KYPD mode
+          uses fixed labels and hides these attributes.
+        </dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Location</dt>
+        <dd>The location of the label relative to the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+        <dt>Label Color</dt>
+        <dd>The color used to draw the label.</dd>
+        <dt>Label Visible</dt>
+        <dd>Controls whether the label is displayed.</dd>
+      </dl>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>
+        Press and hold a key to connect the corresponding input (column) to the output (row). The key remains pressed
+        until the mouse button is released.
+      </p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-02-07T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Erstellen von Ausdrücken
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Erstellen von Ausdrücken
+      </h1>
+      <p>
+        Für jede Ausgangsvariable enthält das Fenster zur kombinatorischen Analyse zwei Strukturen - die entsprechende Spalte in der Wahrheitstabelle und ein boolescher Ausdruck - die angeben, wie jede Ausgabe mit den Eingängen zusammenhängt. Sie können die Wahrheitstabelle oder den booleschen Ausdruck bearbeiten, die jeweils andere Struktur wird automatisch entsprechend aktualisiert
+      </p>
+      <p>
+        Wie wir auf der nächsten Seite sehen werden, sind die booleschen Ausdrücke besonders wichtig, denn die kombinatorische Analyse von Logisim geht von diesen aus, wenn die Schaltung automatisch konstruiert werden soll.
+      </p>
+      <p>
+        Sie können sich die Ausdrücke mit Hilfe der letzten beiden letzten Registerkarten <b class="button">Ausdruck</b> und <b class="button">Minimierung</b> ansehen und bearbeiten.
+      </p>
+      <h2>
+        Die Registerkarte "Ausdruck"
+      </h2>
+    <p align="center">
+        <img src="../../../img-guide/analyze-expression.png" alt="#########">
+      </p>
+      <p>
+        Auf der Registerkarte Ausdrücke können Sie den aktuellen Ausdruck für jede Ausgabevariable anzeigen und bearbeiten.
+		Es enthält einen <b class="button">Notation:</b>-Selektor und eine Liste der mathematischen Ausdrücke der Schaltung. 
+      </p>
+      <p>
+	    Der Selektor <b class="button" id="not">Notation: </b> ändert den Notationsmodus der Ausgabeausdrücke. Sie können aus fünf Notationstypen wählen: 
+	  </p>
+	  <dl>
+        <dt>
+          <b class="button">Mathematisch</b> :
+        </dt>
+        <dd>
+          Die hervorgehobene stellt die Negation, die &#x2219; die UND-Funktion und die + die ODER-Funktion dar. &#x2295; die XOR-Funktion
+        </dd>
+        <dt>
+          <b class="button">Logisch</b> :
+        </dt>
+        <dd>
+          Das ¬ steht für die Negation, die &#x2227; für die UND-Funktion und die &#x2228; für die ODER-Funktion. &#x22bb; die XOR-Funktion.
+        </dd>
+        <dt>
+          <b class="button">Alternative logische</b> :
+        </dt>
+        <dd>
+          as &#x223c; steht für die Negation, die &#x2227;  für die UND-Funktion und die &#x2228;  für die ODER-Funktion. &#x2262; die XOR-Funktion
+        </dd>
+        <dt>
+          <b class="button">Programmierung mit Boolean's</b> :
+        </dt>
+        <dd>
+          Das != stellt die Negation, die UND-Funktion und das || die ODER-Funktion dar. != die XOR-Funktion.
+        </dd>
+        <dt>
+          <b class="button">Programmierung mit Bits</b> :
+        </dt>
+        <dd>
+          Das ~ steht für die Negation, das & für die UND-Funktion und das | für die ODER-Funktion. ^ steht für die XOR-Funktion.
+        </dd>
+      </dl>
+	  <p>
+	    Direkt unterhalb des Selektors werden die Ausdrücke in einer Liste angezeigt. Sie können den Ausdruck in der Texttafel bearbeiten, indem Sie auf die Zeile des Ausdrucks doppelklicken.
+	  </p>
+      <p>
+        Beachten Sie, dass Ihre Wahrheitstabelle unwiderruflich verändert wird, wenn Sie die Ausdrücke bearbeiten und umgekehrt.
+      </p>
+      <p>
+        Zusätzlich zu Multiplikation und Addition für AND und OR darf der von Ihnen eingegebene Ausdruck die unter C/Java üblichen, logischen Operatoren, als auch die entsprechenden Wörter selbst verwendet werden.
+      </p>
+      <center>
+        <table>
+          <tbody>
+            <tr>
+              <th>
+                höchste Priorität
+              </th>
+              <td align="center">
+                <tt>~</tt> <tt>!</tt>
+              </td>
+              <th>
+                NOT
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <td align="center">
+                (kein Zeichen) <tt>&amp;</tt> <tt>&amp;&amp;</tt>
+              </td>
+              <th>
+                AND
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <td align="center">
+                <tt>^</tt> <tt>&#x2295;</tt>
+                <tt>^</tt> <tt>&#x2295;</tt>
+              </td>
+              <th>
+                XOR
+              </th>
+            </tr>
+            <tr>
+              <th>
+                niedrigste Priorität
+              </th>
+              <td align="center">
+                <tt>+</tt> <tt>|</tt> <tt>||</tt>
+              </td>
+              <th>
+                OR
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </center>Die folgenden Beispiele sind allesamt gültige Darstellungen desselben Ausdrucks. Sie dürfen die Ausdrücke auch mischen.
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <tt>~a (b + c)</tt>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <tt>!a &amp;&amp; (b || c)</tt>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <tt>NOT a AND (b OR c)</tt>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+	  <p>
+	   Im allgemeinen spielen Klammern innerhalb einer Folge von AND-Verknpfungen (oder OR oder XOR) keine Rolle. (Bei der Erstellung einer entsprechenden Schaltung wird Logisim derartige Klammern ignorieren.)
+	  </p>
+      <h2>
+        Die Registerkarte "Minimierung"
+      </h2>
+    <p align="center">
+        <img src="../../../img-guide/analyze-minimized.png" alt="#########">
+      </p>
+      <p>
+        Die letzte Registerkarte stellt einen minimalen Produktsummenausdruck für jeweils eine Spalte der Wahrheitstabelle dar. Auf dieser Tafel werden vier Selektoren, die Karnaught-Tabelle und der Minimalausdruck vorgestellt. 
+      </p>
+      <p>
+        Der oberste Selektor "Ausgang:", Sie können die minimierte Ausgabe einer Spalte der Tabelle, die Sie anzeigen möchten, auswählen. 
+      </p>
+	  <p>
+	    Der folgende Selektor "Format:" ermöglicht es Ihnen, anzugeben, ob Sie eine Summe von Produkten oder ein Produkt von Summen erzeugen wollen. 
+	  </p>
+	  <p>
+	    Der Selektor "Stil:" ändert die Darstellung der Variablen an den Rändern der Tabelle. Entweder mit binären Werten oder mit Linien auf wahren Werten.  
+	  </p>
+	   <div class="twodiv">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <img class="notscal" src="../../../../img-guide/analyze-numline1.png" alt="#########" align="middle">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Nummeriert
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="twodiv">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <img class="notscal" src="../../../../img-guide/analyze-numline2.png" alt="#########" align="middle">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Ausgekleidet
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+	  <p>
+	    der Selektor <b class="button">Notation:</b> hat die gleiche Eigenschaft wie das Panel <a href="#not"> Ausdruck (siehe oben)</a>
+	  </p>
+	  <p>
+	    Die Tabelle von Karnaugh wird in der Mitte der Tafel erscheinen. Sie können auf die Karnaugh-Tabelle klicken, um die entsprechenden Werte in der Wahrheitstabelle zu ändern. Die Karnaugh-Tabelle zeigt auch die für den minimierten Ausdruck ausgewählten Begriffe mit einem überlagerten halbtransparenten abgerundeten Rechteck an. 
+	  </p>
+      <p>
+	    Unten finden Sie den minimierten Ausdruck selbst, formatiert auf die gleiche Weise wie im Register Ausdruck. Logisim verwendet den Quine-McCluskey-Algorithmus für die Berechnung des kleinstmöglichen Ausdrucks. Das Ergebnis entspricht dem eines Karnaughdiagrammes, kann aber für eine beliebige Anzahl von Eingängen berechnet werden.
+	  </p> 
+	  <p>
+        Mittels der Schaltfläche <b class="button">Schaltung aufbauen</b> übernehmen Sie den dargestellten, kleinstmöglichen Ausdruck als Ausdruck für den gewählten Ausgang. Normalerweise wird dies nicht notwendig sein, weil Bearbeitungen der Wahrheitstabelle automatisch zu einem kleinstmöglichen Ausdruck der entsprechenden Spalte führen. Wenn Sie aber einen Ausdruck im über die Registerkarte "Ausdruck" bearbeitet haben, so können Sie diesen in eine kleinstmögliche Form bringen lassen. 
+      </p>
+      <p>
+        <b>Weiter:</b> <a href="ana-gen.html">Das Erstellen einer Schaltung</a>.
+      </p>
+    </div>
+  </body>
+</html> 

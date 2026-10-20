@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="pt">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Buffer/Inversor Controlado
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/anscontrolledbuffer.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/anscontrolledinverter.png" alt="#########" width="32" height="32"><br>
+			  <img class="iconlibs" src="../../../../icons/6464/ieccontrolledbuffer.png" alt="#########" width="32" height="32"> 
+			  <img class="iconlibs" src="../../../../icons/6464/ieccontrolledinverter.png" alt="#########" width="32" height="32">
+            </td>
+            <td valign="center">
+              <h1>
+                <em>Buffer/Inversor Controlado</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Biblioteca:</strong>
+            </td>
+            <td>
+              <a href="index.html">Portas</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introdução:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Aparência:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/anscontrolledbuffer.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/anscontrolledinverter.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportamento
+      </h2>
+      <p>
+        O <i>buffer</i> e o inversor controlados, são muitas vezes chamados de <em>buffers/inversores tri-state</em>, cada um tem uma entrada para um bit de "controle". O valor desse pino afetará a forma como o componente se comportará:
+      </p>
+      <ul>
+        <li>Quando o valor nesse pino for <b class="unov">1</b>, então o componente se comporta exatamente como o equivalente não controlado um <a href="buffer.html">buffer</a> ou um <a href="not.html">inversor</a> (porta NOT).
+        </li>
+        <li>Quando o valor for <b class="zerov">0</b> ou flutuante (<b class="uvalue">U</b>), então o valor da saída componente será flutuante (<b class="uvalue">U</b>).
+        </li>
+        <li>Quando o valor for um valor de erro  (<b class="evalue">E</b>) (e isso pode ocorrer caso dois valores conflitantes estejam alimentando a entrada), então a saída será um valor de erro (<b class="evalue">E</b>).
+        </li>
+      </ul>
+	  	  <p>
+	       <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace" colspan="2">
+			    Entradas
+			  </th>
+              <th class="tspace" colspan="2">
+                Saídas
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+			     Ent.
+              </th>
+              <th class="tspace">
+                 Ctrl.
+              </th>
+              <th class="tspace">
+                Buf.
+              </th>
+              <th class="tspace">
+                Inv.
+              </th>
+            </tr>
+            <tr>
+              <td class="tspace">
+                Todas
+              </td>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                Todas
+              </td>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                <b class="uvalue">U</b>
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                <b class="evalue">E</b>
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tspace">
+                Todas
+              </td>
+              <td class="tspace">
+                <b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  </p>
+      <p>
+        Um <i>buffer</i> controlado pode ser útil quando você tiver uma conexão (muitas vezes chamado de <em>barramento (<i>bus</i>)</em>), cujo valor deverá corresponder a saída de um dentre vários componentes. Ao se colocar um <i>buffer</i> controlado entre cada saída de componente e o barramento, você poderá controlar se uma a saída deverá alimentar o barramento, ou não.
+      </p>
+      <h2>
+        Pinos (supondo o componente voltado para leste, linha de controle à direita)
+      </h2>
+	  <div class="attliste">
+      <dl>
+        <dt class="lib">
+          Na face oeste:
+        </dt>
+        <dd>
+          A entrada do componente que será usada para calcular a saída se a entrada de controle for <b class="unov">1</b>. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
+        </dd>
+        <dt class="lib">
+          Na face sul:
+        </dt>
+        <dd>
+          Entrada de controle do componente. Com largura de 1 bit
+        </dd>
+        <dt class="lib">
+          Na face leste:
+        </dt>
+        <dd>
+          Saída do componente, a qual estará flutuando (<b class="uvalue">U</b>) se a entrada de controle for <b class="zerov">0</b> ou flutuante (<b class="uvalue">U</b>); ou igual ao o valor de erro (<b class="evalue">E</b>), se a entrada de controle também estiver com erro (<b class="evalue">E</b>); ou será calculada com base na entrada, a oeste, se a entrada de controle for <b class="unov">1</b>. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Atributos
+      </h2>
+      <p>
+        Quando o componente for selecionado ou estiver sendo acrescentado, <b class="tkeybd">Alt-0</b> até <b class="tkeybd">Alt-9</b> irão alterar o seu atributo <b class="propertie">Bits de Dados</b>, e as teclas com setas poderão alterar o seu atributo <b class="propertie">Posição</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt class="lib">
+         Posição
+        </dt>
+        <dd>
+          A posição do componente, a posição das saídas em relação às entradas.
+        </dd>
+        <dt class="lib">
+          Bits de Dados
+        </dt>
+        <dd>
+          A largura em bits da entrada e da saída do componente.
+        </dd>
+        <dt class="lib">
+          Tamanho da Porta
+        </dt>
+        <dd>
+          Serve para determinar se é para desenhar uma versão maior ou menor do componente (aplicável apenas ao inversor controlado).
+        </dd>
+        <dt class="lib">
+          Posição da Linha de Controle
+        </dt>
+        <dd>
+          A posição da linha de controle, imaginando-se que a saída seja vista a partir da entrada: se o componente estiver voltado para a leste, e for escolhida a direção para a <q>direita</q>, a linha de controle estará voltada para baixo; mas se for escolhida a direção para a <q>esquerda</q>, a linha de controle estará para cima.
+        </dd>
+        <dt class="lib">
+          Rótulo
+        </dt>
+        <dd>
+          O texto para o rótulo associado à porta.
+        </dd>
+        <dt class="lib">
+          Fonte do Rótulo
+        </dt>
+        <dd>
+          A fonte com a qual o rótulo será mostrado.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportamento da ferramenta Testar
+      </h2>
+      <p>
+        Nenhum.
+      </p>
+      <h2>
+        Comportamento da ferramenta Texto
+      </h2>
+      <p>
+        Permite que o rótulo associado à porta seja editado.
+      </p>
+      <p>
+        <b>Voltar à</b> <a href="../index.html">Referência para bibliotecas</a>
+      </p>
+    </div>
+  </body>
+</html>

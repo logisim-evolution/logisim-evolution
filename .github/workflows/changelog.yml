@@ -1,0 +1,240 @@
+# Ensures every pull request that touches the code also documents itself in
+# CHANGES.md, in the topmost (unreleased) section, and that the added entry
+# credits its author with their GitHub handle.
+#
+# The check is skipped for PRs that touch neither the code nor the project
+# infrastructure (i.e. docs or translations only), for Dependabot, and for PRs
+# explicitly marked as not needing an entry by putting NO_CHANGELOG_ENTRY in
+# the PR description.
+#
+# The author credit part is waived by NO_CHANGELOG_AUTHOR_CREDIT, either put
+# in the PR description (waives it for that PR only), or set as a repository
+# variable (Settings -> Secrets and variables -> Actions -> Variables), which
+# waives it repository wide with no need to touch this workflow. The entry
+# itself is still required either way.
+#
+# Marcin Orlowski
+
+name: "Changelog"
+
+on:
+  pull_request:
+    branches: [ main ]
+    # "edited" so adding NO_CHANGELOG_* to the description re-runs the check.
+    types: [ opened, synchronize, reopened, edited ]
+
+permissions:
+  contents: read
+
+env:
+  # Set this repository variable to any value but "false"/"no"/"0" to stop
+  # requiring changelog entries to credit their author. Unset (the default)
+  # means the credit is required.
+  NO_CHANGELOG_AUTHOR_CREDIT: ${{ vars.NO_CHANGELOG_AUTHOR_CREDIT }}
+
+jobs:
+  changelog:
+    name: "CHANGES.md entry"
+    runs-on: ubuntu-latest
+
+    steps:
+    # https://github.com/marketplace/actions/checkout
+    - name: "Checkout sources"
+      uses: actions/checkout@v7
+      with:
+        # Full history, as we diff the PR against its base commit.
+        fetch-depth: 0
+
+    - name: "Is the check opted out of?"
+      id: optout
+      env:
+        PR_BODY: ${{ github.event.pull_request.body }}
+        PR_USER: ${{ github.event.pull_request.user.login }}
+      run: |
+        skip="false"
+        reason=""
+
+        if grep -qF 'NO_CHANGELOG_ENTRY' <<< "${PR_BODY}"; then
+          skip="true"
+          reason="PR description contains NO_CHANGELOG_ENTRY"
+        elif [[ "${PR_USER}" == "dependabot[bot]" ]]; then
+          skip="true"
+          reason="PR comes from Dependabot"
+        fi
+
+        # Waives the author credit requirement for this PR only. The entry
+        # itself is still required.
+        skip_credit="false"
+        if grep -qF 'NO_CHANGELOG_AUTHOR_CREDIT' <<< "${PR_BODY}"; then
+          skip_credit="true"
+        fi
+
+        {
+          echo "skip=${skip}"
+          echo "skip_credit=${skip_credit}"
+        } >> "${GITHUB_OUTPUT}"
+
+        [[ "${skip}" == "true" ]] && echo "Skipping: ${reason}."
+        exit 0
+
+    # https://github.com/marketplace/actions/paths-changes-filter
+    - name: "Look for changes that matters for us…"
+      uses: dorny/paths-filter@v4
+      id: filter
+      if: steps.optout.outputs.skip == 'false'
+      with:
+        # Needed by the negated ("!") patterns below. Without it, they would be
+        # treated as ordinary patterns and match everything they exclude.
+        predicate-quantifier: 'some-with-excludes'
+        filters: |
+          code:
+            - added|modified|deleted: 'src/**'
+            - added|modified|deleted: 'buildSrc/**'
+            - added|modified|deleted: 'build.gradle*'
+            - added|modified|deleted: 'settings.gradle*'
+            - added|modified|deleted: 'gradle/libs.versions.toml'
+            - added|modified|deleted: '.github/**'
+            - added|modified|deleted: 'support/**'
+            - added|modified|deleted: 'snap/**'
+            # Documentation and translations need no changelog entry, even
+            # though they live under src/**.
+            - '!src/main/resources/doc/**'
+            - '!src/main/resources/resources/logisim/strings/**'
+          # NOTE: do not name this filter "changes", as that name is already
+          # taken by paths-filter's own output listing all matched filters.
+          changelog:
+            - added|modified: 'CHANGES.md'
+
+    - name: "Verify CHANGES.md was updated"
+      if: steps.optout.outputs.skip == 'false' && steps.filter.outputs.code == 'true'
+      env:
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        CHANGES_TOUCHED: ${{ steps.filter.outputs.changelog }}
+        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        SKIP_CREDIT: ${{ steps.optout.outputs.skip_credit }}
+      run: |
+        set -euo pipefail
+
+        declare -r CHANGELOG="CHANGES.md"
+
+        fail() {
+          echo "*********************************************************"
+          echo "* FIXME! ${1}"
+          shift
+          for msg in "${@}"; do
+            echo "* ${msg}"
+          done
+          echo "*"
+          echo "* If the change really needs no entry (typo fix, internal"
+          echo "* cleanup, etc.), put NO_CHANGELOG_ENTRY in the PR description."
+          echo "* If unsure, add changelog entry. That's the most common case."
+          echo "*********************************************************"
+          exit 1
+        }
+
+        # Bails out on a missing or misplaced changelog entry.
+        fail_entry() {
+          fail "${1}" \
+            "" \
+            "This pull request changes the code, so it is expected to" \
+            "describe the change in the topmost (@dev) section of" \
+            "${CHANGELOG}, i.e.:" \
+            "" \
+            "  * @dev (????-??-??)" \
+            "    * Fixed the frobnicator not working (@${PR_AUTHOR})."
+        }
+
+        if [[ "${CHANGES_TOUCHED}" != "true" ]]; then
+          fail_entry "No ${CHANGELOG} entry found in this pull request."
+        fi
+
+        # Bounds of the topmost (unreleased) section of the changelog. Sections
+        # are top level list items, i.e. "* @dev (????-??-??)", "* v4.1.0 (...)".
+        section_start="$(grep -n -m 1 '^\* ' "${CHANGELOG}" | cut -d: -f1 || true)"
+        if [[ -z "${section_start}" ]]; then
+          fail_entry "Cannot find any release section in ${CHANGELOG}."
+        fi
+
+        section_end="$(awk -v start="${section_start}" \
+          'NR > start && /^\* / { print NR - 1; exit }' "${CHANGELOG}")"
+        # No further section? Then the unreleased one spans up to the last line.
+        [[ -z "${section_end}" ]] && section_end="$(wc -l < "${CHANGELOG}")"
+
+        echo "Unreleased section spans lines ${section_start}-${section_end} of ${CHANGELOG}:"
+        sed -n "${section_start}p" "${CHANGELOG}"
+
+        # Line numbers (in the PR's version of the file) of all non-blank lines
+        # this PR adds to the changelog.
+        added_lines="$(git diff --unified=0 "${BASE_SHA}" -- "${CHANGELOG}" | awk '
+          /^@@/ {
+            # "@@ -old,cnt +new,cnt @@" - we only care about the new file side.
+            match($0, /\+[0-9]+/)
+            line = substr($0, RSTART + 1, RLENGTH - 1) + 0
+            next
+          }
+          /^\+\+\+/ { next }
+          /^\+/ {
+            if ($0 !~ /^\+[[:space:]]*$/) print line
+            line++
+            next
+          }
+          /^[^-\\]/ { line++ }
+        ')"
+
+        if [[ -z "${added_lines}" ]]; then
+          fail_entry "${CHANGELOG} is touched, but no new entry text was added."
+        fi
+
+        # Of the added lines, these are the ones in the unreleased section.
+        entry_lines=()
+        for line in ${added_lines}; do
+          if [[ "${line}" -ge "${section_start}" && "${line}" -le "${section_end}" ]]; then
+            entry_lines+=("${line}")
+          fi
+        done
+
+        if [[ "${#entry_lines[@]}" -eq 0 ]]; then
+          fail_entry "${CHANGELOG} was modified, but not in the topmost (unreleased) section."
+        fi
+
+        echo "Changelog entry added:"
+        for line in "${entry_lines[@]}"; do
+          sed -n "${line}p" "${CHANGELOG}"
+        done
+
+        if [[ "${SKIP_CREDIT}" == "true" ]]; then
+          echo "Author credit waived by the PR description."
+          exit 0
+        fi
+
+        # Being a "NO_..." switch, any value but the negative ones waives it.
+        case "${NO_CHANGELOG_AUTHOR_CREDIT,,}" in
+          "" | "false" | "no" | "0")
+            # credit required
+            ;;
+          *)
+            echo "Author credit waived repository wide."
+            exit 0
+            ;;
+        esac
+
+        # Entries are expected to credit their author, so look for the PR author's
+        # handle in the very lines this PR adds. GitHub logins are case insensitive
+        # and made of [A-Za-z0-9-] only
+        for line in "${entry_lines[@]}"; do
+          if sed -n "${line}p" "${CHANGELOG}" | grep -qiE "@${PR_AUTHOR}([^A-Za-z0-9-]|$)"; then
+            echo "Entry credits @${PR_AUTHOR}."
+            exit 0
+          fi
+        done
+
+        fail "Your ${CHANGELOG} entry does not credit changes author." \
+          "" \
+          "Entries are expected to mention the GitHub handle of the pull" \
+          "request author, so contributors get credited, i.e.:" \
+          "" \
+          "  * Fixed the frobnicator not working (@${PR_AUTHOR})." \
+          "" \
+          "Please add \"@${PR_AUTHOR}\" to the entry you added to the @dev" \
+          "section, or put NO_CHANGELOG_AUTHOR_CREDIT in the PR description" \
+          "if you prefer not to be credited."

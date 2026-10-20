@@ -1,0 +1,104 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Teclado</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/keyboard.gif" width="32" height="32">
+<em>Teclado</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Entrada/Saída</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.2.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/keyboard.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esse componente permitirá ao circuito ler o que for digitado no teclado -
+contanto que as teclas sejam representáveis no código ASCII de 7 bits.
+Depois de clicar no componente usando a ferramenta Testar (Poke), o usuário poderá 
+digitar caracteres, que serão armazenados em um <i>buffer</i>. Sempre que necessário,
+o valor ASCII do caractere mais a esquerda no <i>buffer</i> será enviado para a saída
+mais à direita. Quando a entrada de <i>clock</i> for disparada, o caracteres mais à
+esquerda será suprimida do <i>buffer</i> e o caractere mais à esquerda será enviado
+para a saída da direita. </p>
+
+<p> Os caracteres armazenáveis no buffer serão todos os caracteres ASCII imprimíveis,
+como o espaço, nova linha, <i>backspace</i>, e <i>control-L</i>. Além disso, 
+as setas para a esquerda e a direita moverão o cursor dentro do <i>buffer</i>, 
+e a tecla <i>backspace</i> apagará o caractere à direita do cursor (se houver). </p>
+
+<p> O componente é assíncrono no sentido que quando o buffer estiver vazio e
+o usuário digitar um caractere, esse será enviado imediatamente para uma saída,
+sem esperar por um pulso de <i>clock</i>. </p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, marcada por um triângulo (entrada, com largura de 1 bit) </dt>
+<dd> <i>Clock</i> - quando for ativado, e enquanto o pino de leitura não for 0, 
+o caractere mais à esquerda do <i>buffer</i> será excluído, e as saídas serão 
+atualizadas para refletir novo status do <i>buffer</i>. </dd>
+
+<dt> Na face sul, o pino mais à esquerda (entrada, com largura de 1 bit) </dt>
+<dd> Ativar Leitura - quando 1 (ou flutuante, ou erro), quando houver uma variação de
+borda do sinal de <i>clock</i> o caractere mais à esquerda do <i>buffer</i> será consumido.
+A entrada de <i>clock</i> será ignorada quando o Ativar Leitura for 0. </dd>
+
+<dt> Na face sul, o segundo pino mais à esquerda (entrada, com largura de 1 bit) </dt>
+<dd> Limpar - se for 1, o <i>buffer</i> será esvaziado e não aceitará mais caracteres. 
+</dd>
+
+<dt> Na face sul, o segundo pino mais à direita (saída, com largura de 1 bit) </dt>
+<dd> Disponível - será 1 quando o buffer contiver pelo menos um caractere
+e será 0 quando o <i>buffer</i> estiver vazio. </dd>
+
+<dt> Na face sul, o pino mais à direita (saída, com largura de 7 bits) </dt>
+<dd> Dados - código ASCII com 7-bits para o caractere mais à esquerda no buffer;
+ou 0, se o <i>buffer</i> estiver vazio. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<dl>
+
+<dt> Tamanho do <i>Buffer</i> </dt>
+<dd> O número de caracteres que o <i>buffer</i> poderá conter. </dd>
+
+<dt> Gatillho </dt>
+<dd> Se o valor for <q> Borda de Subida</q>, então, quando o valor do <i>clock</i>
+variar de 0 para 1, o caractere mais à esquerda será consumido (quando ativado 
+pela entrada Habilitar Leitura). Se for <q> Borda de Descida</q>, isso
+acontecerá quando o <i>clock</i> mudar de 1 para 0. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Ao pressionar o botão do mouse mudará o foco do teclado para esse componente, 
+e um cursor na forma de barra vertical será exibido. </p>
+
+<p> Cada caractere digitado será inserido no buffer, enquanto este não atingir 
+a sua capacidade e o caractere for um daqueles aceitáveis pelo componente: 
+os caracteres imprimíveis em código ASCII de 7 bits, como espaço, <i>backspace</i>,
+nova linha, e <i>control-L</i>. Além disso, o usuário poderá usar as setas para a
+esquerda e para a direita para alterar a posição do cursor no <i>buffer</i>, e o
+usuário poderá usar a tecla Delete para apagar o caractere no <i>buffer</i>
+(se houver) à direita do cursor. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

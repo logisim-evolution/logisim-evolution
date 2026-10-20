@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="zh">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2026-01-11T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>
+      上电复位
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/por.png" alt="#########" width="32" height="32"> 
+		<em> 上电复位</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>库：</strong>
+            </td>
+            <td>
+              <a href="index.html">接线</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>引入版本：</strong>
+            </td>
+            <td>
+              ...
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>外观：</strong>
+            </td>
+            <td valign="top">
+              <img class="notscal" src="../../../../img-libs/por.png" alt="#########">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        行为
+      </h2>
+      <p>
+        该组件会在仿真开始时，持续输出一个电平信号，持续时间由属性 <b class="propertie">上电复位时间</b> 定义。
+        此过程会在以下两种情况触发：一是项目打开时，二是单击 <a href="../../guide/menu/simulate.html">重置仿真</a> 菜单时。
+        在 <b class="menu">仿真 | 单步传播</b> 的模式下，信号会在延时结束后发生跳变，
+        但会与按键（<b class="tkeybd">Ctrl-I</b>）操作保持同步。
+      </p>
+      <h2>
+        引脚
+      </h2>
+      <p>
+        该组件只有一个 1 位引脚，其值表示复位信号当前的状态。该引脚的位置由属性 <b class="propertie">朝向</b> 指定。
+      </p>
+      <h2>
+        属性
+      </h2>
+      <p>
+        当组件被选中或正在放置时，可以用方向键改变其 <b class="propertie">朝向</b> 属性；该属性决定输出引脚位于图形的哪一侧。
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">朝向</b>
+        </dt>
+        <dd>
+          引脚相对于组件中心的位置方向。
+        </dd>
+        <dt>
+          <b class="propertie">绘制尺寸</b>
+        </dt>
+        <dd>
+          组件在画布中绘制图形的大小。
+        </dd>
+        <dt>
+          <b class="propertie">上电复位跳变</b>
+        </dt>
+        <dd>
+          复位信号的方向，是从高电平跳变到低电平，还是从低电平跳变到高电平。
+        </dd>
+        <dt>
+          <b class="propertie">上电复位时间</b>
+        </dt>
+        <dd>
+          信号在多少秒后跳变，完成复位。
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        手形工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <h2>
+        文本工具行为
+      </h2>
+      <p>
+        无。
+      </p>
+      <p>
+        <b>返回</b> <a href="../index.html">库参考手册</a>
+      </p>
+    </div>
+  </body>
+</html>

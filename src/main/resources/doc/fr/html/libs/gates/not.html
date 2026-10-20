@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-08-08T06:15:23.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Porte Non
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/iecnotgate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/ansnotgate.png" alt="#########" width="32" height="32">&nbsp;  
+		<em>Porte Non</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Portes</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI:
+                    </th>
+                    <th>
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        La porte Non émet le complément de l'entrée qu'elle reçoit. La propriété <b class="propertie">Valeur de sortie</b> permet de modifier le comportement de la sortie selon trois modes. La table de vérité d'une porte non est la suivante. 
+      </p>
+      <center>
+        <table>
+          <tbody>
+		    <th class="tspace">
+                Entrée
+              </th>
+              <th class="tspace" colspan="3">
+                Sortie
+            </th>
+            <tr>
+              <th class="tspace"></th>
+              <th class="tspace">
+                &nbsp;&nbsp;O/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                O/flt.
+              </th>
+              <th class="tspace">
+                flt./1
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Si l'entrée est flottante (<b class="uvalue">U</b>) ou une valeur d'erreur (<b class="evalue">E</b>) alors la sortie sera une valeur d'erreur (<b class="evalue">E</b>).
+      </p>
+      <p>
+        Une porte NOT multibits effectuera la transformation ci-dessus par bit sur son entrée.
+      </p>
+      <h2>
+        Pins (en supposant que le composant est orienté vers l'est)
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest :
+        </dt>
+        <dd>
+          L'entrée du composant. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>.
+        </dd>
+        <dt>
+          Bord est :
+        </dt>
+        <dd>
+          La sortie, dont la valeur est le complément de la valeur d'entrée. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>. Le mode de présentation des données est défini par l'attribut <b class="propertie">Valeur de sortie</b>.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+	    Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Orientation</b>
+          </dt>
+          <dd>
+            Le côté du composant dessiné où doit se trouver sa broche de sortie. 
+          </dd>
+          <dt>
+            <b class="propertie">Data Bits</b>
+          </dt>
+          <dd>
+            La largeur en bit placé sur le(s) entrée(s) ou sortie(s). 
+          </dd>
+          <dt>
+            <b class="propertie">Taille de la porte</b>
+          </dt>
+          <dd>
+            Détermine s'il faut dessiner une version plus grande ou plus petite du composant.
+          </dd>
+          <dt>
+            <b class="propertie">Valeur de sortie</b>
+          </dt>
+          <dd>
+		  Indique comment les résultats faux et vrais doivent être traduits en valeurs de sortie. Par défaut, faux est indiqué par une tension faible (<b class="zerov">0</b>) et vraie par une tension élevée (<b class="unov">1</b>), mais l'un ou l'autre peuvent être remplacé par une valeur à haute impédance (<q>flottant</q> <b class="uvalue">U</b>) à la place. Cela permet des connexions de type ou-câblé et et-câblé, comme illustré dans la <a href="basic.html">documentation sur les portes AND/OR/NAND/NOR</a>.
+          </dd>
+          <dt>
+            <b class="propertie">Étiquette</b>
+          </dt>
+          <dd>
+            Le texte de l'étiquette associée à la porte.
+          </dd>
+          <dt>
+            <b class="propertie">Police des étiquettes</b>
+          </dt>
+          <dd>
+            La police avec laquelle l'étiquette doit être rendue.
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Comportement de l'outil pousser 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Permets de modifier l'étiquette associée à la porte.
+      </p>
+      <p>
+        <b>Retour à</b>  <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="changed" content="2026-08-22T00:00:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Buzzer</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/buzzer.png" alt="Buzzer icon"
+            width="32" height="32" align="middle"> <em>Buzzer</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Library:</strong></td>
+            <td><a href="index.html">Input/Output-Extra</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Behavior</h2>
+      <p>
+        Produces a continuous audio waveform while <q>Enable</q> is 1. Frequencies from 20 Hz
+        through 20,000 Hz are audible. An unknown frequency uses 440 Hz; frequencies outside the
+        audible range produce no sound. Removing the component or stopping its circuit stops the
+        sound.
+      </p>
+
+      <h2>Pins</h2>
+      <dl>
+        <dt>Frequency (14 bits)</dt>
+        <dd>
+          Selects the frequency using the unit chosen by <q>Frequency</q>: Hz or decihertz
+          (0.1 Hz).
+        </dd>
+        <dt>Enable (1 bit)</dt>
+        <dd>Sound is generated only while this input is 1.</dd>
+        <dt>Volume</dt>
+        <dd>
+          Selects the amplitude from silence at 0 to the maximum at the largest value supported by
+          the configured <q>Volume Bit Width</q>.
+        </dd>
+        <dt>Duty Cycle (8 bits)</dt>
+        <dd>
+          Selects the high portion of a square-wave period from 0/256 through 255/256. An unknown
+          value uses 128/256. This input does not affect sine, triangle, sawtooth, or noise output.
+        </dd>
+      </dl>
+
+      <h2>Attributes</h2>
+      <dl>
+        <dt>Facing</dt>
+        <dd>The direction in which the component faces.</dd>
+        <dt>Select Location</dt>
+        <dd>Selects the side on which the duty-cycle input is placed.</dd>
+        <dt>Frequency</dt>
+        <dd>Selects Hz or dHz (0.1 Hz) as the frequency input unit.</dd>
+        <dt>Volume Bit Width</dt>
+        <dd>The bit width of the volume input.</dd>
+        <dt>Waveform</dt>
+        <dd>Selects sine, square, triangle, sawtooth, or noise.</dd>
+        <dt>Channel</dt>
+        <dd>Routes the sound to both stereo channels, the left channel, or the right channel.</dd>
+        <dt>Smooth Level</dt>
+        <dd>Selects how many smoothing passes are applied to non-sine waveforms.</dd>
+        <dt>Smooth Window Width</dt>
+        <dd>Selects the window width used by each smoothing pass.</dd>
+        <dt>Label</dt>
+        <dd>The text associated with the component.</dd>
+        <dt>Label Font</dt>
+        <dd>The font used to draw the label.</dd>
+      </dl>
+
+      <h2>Poke Tool Behavior</h2>
+      <p>None.</p>
+
+      <h2>Text Tool Behavior</h2>
+      <p>Allows the label associated with the component to be edited.</p>
+
+      <p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+    </div>
+  </body>
+</html>

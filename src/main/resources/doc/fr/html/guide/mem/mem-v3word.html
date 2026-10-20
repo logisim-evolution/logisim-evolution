@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2020-01-10T06:18:10.521000000">
+    <meta name="changed" content="2020-01-10T07:26:01.212000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      v3.0 hex words plain
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <h1>
+      v3.0 hex words plain
+    </h1>
+    <div class="maindiv">
+      <p>
+        Ce format ressemble beaucoup à <a href="mem-v2raw.html">v2.0 raw</a>
+      </p>
+	  <p>
+	     Les mots de données sont présentés en hexadécimal et séparé par un caractère espace. Celui-ci est important, il permet le bon alignement des données.
+	  </p>
+	    <blockquote>
+        <pre>
+v3.0 hex words addressed
+000 00a 00a 00a fdd 077 fc0 008
+070 05a fe4 fcd 076 ff0 fec 067
+002 f85 f8b ffe 021 016 f9e fc6</pre>
+		Mémoire de 24 mots de 12 bits
+        </blockquote>
+	  <p>
+	    Les retours de ligne de son pas interprété. A l'exception des espaces et de la première ligne, il n'y a pas de règles de mise en page.
+	  </p>
+	  <p>
+	    Vous pouvez placer des commentaires dans le fichier en utilisant le symbole '#'. Tous les caractères dans la ligne à partir du symbole '#' seront ignorés par Logisim. Un double espace aura le même effet. 
+	  </p>
+      <p>
+        Il n'est pas nécessaire de préciser le préfix 0x avant les données, cependant s'ils existent ils seront simplement ignorés. 
+      </p>
+      <p>
+        Si les mots du fichier sont plus larges que ceux de la mémoire, les bits de poids fort surnuméraire seront ignorés.
+      </p>
+      <p>
+       Si la longueur de l'ensemble des données du fichier est plus courte que l'espace mémoire, les cellules restantes seront initialisées à 0 et pour les RAM selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>, à 0 ou aléatoirement. 
+      </p>
+	  
+	  <h1 id='addr'>
+        v3.0 hex words addressed
+      </h1>
+      <p>
+        Ce format est identique au précédent avec les mêmes caractéristiques. En plus une indication de l'adresse au début des lignes. L'adresse est donnée en hexadécimale et suivit du caractère <b>:</b>
+      </p>
+	  <p>
+	    <blockquote>
+        <pre>
+v3.0 hex words addressed
+00: 000 00a 00a 00a fdd 077 fc0 008 
+08: 070 05a fe4 fcd 076 ff0 fec 067
+18: fc1 010 035 049 030 07a fd6 f9f</pre>
+		Mémoire de 32 mots de 12 bits
+        </blockquote>
+      </p>
+	  <p>
+	 Dans cet exemple les 8 mots à l'adresse 0x10 ne sont pas précisés. Ces cellules seront initialisées à 0 et pour les RAM selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>, à 0 ou aléatoirement. 
+	  </p>
+	  <p>
+	    <p align="center">
+        <img class="notscal" src="../../../../img-guide/memwordaddr.png" alt="#########">
+        </p>
+	  </p>
+	  <p>
+        <b>Suite:</b> <a href="mem-menu.html">Le menu contextuel et les fichiers</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>TTY</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/tty.gif" width="32" height="32">
+<em>TTY</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Entrada/Saída</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.2.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/tty.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esse componente implementa um terminal burro muito simples. Ele recebe uma sequência
+de códigos ASCII e exibe cada caractere imprimível. Quando a linha atual
+estiver completa, o cursor se moverá para a linha seguinte, possivelmente movendo todas 
+as linhas correntes para cima se o cursor já estiver na última linha. As únicas
+sequências de controle oferecidas são: <i>backspace</i> (ASCII 8), que eliminará o último
+caractere na última linha, a menos que essa já esteja vazia; nova linha (ASCII 10), que
+moverá o cursor para o início da linha seguinte, haverá rolagem de linhas, se necessário;
+e alimentação de formulário (ASCII 12, digitando-se <i>control-L</i>), que limpará a tela.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, pino superior (entrada, com largura de 7 bits) </dt>
+<dd> Dados - esse é o valor ASCII do próximo caractere que entrar no terminal. </dd>
+
+<dt> Na face oeste, pino inferior marcado pelo triângulo (entrada, com largura de 1 bit) </dt>
+<dd> <i>Clock</i> - quando ativado, enquanto pino para habilitar a escrita não for 0, o
+valor ASCII corrente na entrada de dados será processado pelo terminal. </dd>
+
+<dt> Na face sul, pino mais à esquerda (entrada, com largura de 1 bit) </dt>
+<dd> Habilitar escrita - quando em 1 (ou flutuante, ou de erro), uma variação de borda
+do sinal de <i>clock</i> resultará no processamento de um novo caractere a partir da entrada
+de dados. As entradas de <i>clock</i> e de dados serão ignoradas quando seu valor for 0. 
+</dd>
+
+<dt> Na face sul, segundo pino da esquerda (entrada, com largura de 1 bit) </dt>
+<dd> Limpar - se 1, o terminal será limpo de todos os dados e todas as outras entradas
+serão ignoradas. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<dl>
+
+<dt> Linhas </dt>
+<dd> O número de linhas exibidas no terminal. </dd>
+
+<dt> Colunas </dt>
+<dd> O número máximo de caracteres exibidos em cada linha do terminal. </dd>
+
+<dt> Gatilho </dt>
+<dd> Se o valor for <q> Borda de Subida, </q>, então, quando o <i>clock</i> variar de
+0 para 1, a entrada de dados será processado (quando ativado pelas entradas
+Habilitar Escrita e Limpar Entradas).
+Se for <q> Borda de Descida, </q>, então isso acontecerá quando o <i>clock</i> variar de
+de 1 para 0. </dd>
+
+<dt> Cor </dt>
+<dd> A cor com a qual o texto aparecerá no terminal. </dd>
+
+<dt> Cor de Fundo </dt>
+<dd> A cor com que desenhar o fundo do terminal. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>JAR-Bibliotheken
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>JAR-Bibliotheken</h1>
+
+<h2>Verwendung von JAR-Bibliotheken</h2>
+
+<p>Logisim kennt zwei Arten von Bauelementen: solche, die in Logisim als Kombination anderer Bauelemente konstruiert wurden, und die in Java programmierten Grundbauelemente. Schaltungen in Logisim sind einfacher zu entwerfen, aber diese unterstützen keine anspruchsvollen Interaktionen mit dem Anwender. Außerdem sind sie als Bauelement verhältnismäßig ineffizient.</p>
+
+<p>Logisim enthält eine ziemlich umfangreiche Bibliothek von eingebauten Java-Bauelementen, es lassen sich aber auch Bibliotheken laden, die von Ihnen selbst oder anderen erstellt worden sind. Wenn Sie eine Bibliothek heruntergeladen haben, können Sie diese in Ihr aktuelles Projekt importieren, indem Sie im Übersichtsfenster Ihr Projekt anklicken (die oberste Zeile) und dort den Punkt "Bibliothek laden &amp;gt; JAR-Bibliothek" auswählen. Diesen Punkt erreichen Sie auch über "Projekt &amp;gt; Bibliothek laden" aus dem Hauptmenü. Dann wird Logisim Sie auffordern, die entsprechende JAR-Datei auszuwählen. (In einigen Fällen werden Sie aufgefordert, den Namen der Startklasse in der Bibliothek anzugeben. Diese Angabe sollten Sie vom Programmierer bekommen haben. Meistens aber wird der Entwickler die JAR-Bibliothek bereits so konfiguriert haben, daß dies nicht nötig ist (indem eine <q>manifest</q>-Datei im JAR-Archiv angelegt wurde, dessenLibrary-Class-Attribut den Namen der Hauptklasse angibt).)</p>
+
+<h2>Erstellen von JAR-Bibliotheken</h2>
+
+<p>Der Rest dieses Abschnitts widmet sich einer Serie gut dokumentierter Beispiele, die aufzeigen, wie Sie eigene Logisim-Bibliotheken entwickeln können. Um erfolgreich eigene Bibliotheken zu entwickeln, sollten Sie sich in der Java-Programmierung auskennen. Die Dokumentation, die über diese Beispiele hinausgeht ist etwas dürftig.</p>
+
+<p>Ein JAR-Archiv mit den folgenden Beispielen können Sie von der Homepage von Logisim herunterladen, Sie finden die Datei im Abschnitt "Links". Diese JAR-Datei enthält auch den Quellkode zu den folgenden Beispielen.</p>
+
+<dl>
+
+<dt><a href="incr.html">Gray-Kode-Inkrementierer</a></dt>
+<dd><p>Zeigt die wesentlichen Teile eines Bauelements an einem einfachen Beispiel. Dieses Bauelement nimmt einen Mehrbit-Wert an einem Eingang entgegen und berechnet den darauf folgenden Gray-Kode.</p></dd>
+
+<dt><a href="library.html">Bibliotheksklasse</a></dt>
+<dd><p>Zeigt, wie eine Bibliothek definiert wird. Dieses ist der Einstiegspunkt für jede JAR-Datei - die Klasse, deren Name der Anwender angibt, wenn er die JAR-Datei lädt.</p></dd>
+
+<dt><a href="simpctr.html">Einfacher Gray-Kode-Zähler</a></dt>
+<dd><p>Zeigt, wie ein Bauelement mit einem internen Zustand aufgebaut ist, am Beispiel eines 8-Bit-Zählers mit Gray-Kode-Ausgabe.</p></dd>
+
+<dt><a href="counter.html">Gray-Kode-Zähler</a></dt>
+<dd><p>Veranschaulicht ein komplettes und ziemlich anspruchsvolles Bauelement mit Interaktion mit dem Benutzer. Es wird ein Gray-Kode-Zähler mit variabler Bitbreite implementiert, dessen Bitbreite konfiguriert werden kann. Außerdem kann der Benutzer den aktuellen Wert mit dem Schaltwerkzeug und durch Eingabe eines Wertes verändern.</p>
+
+<dt><a href="guide.html">Richtlinien</a>
+<dd>Allgemeine Informationen für die Entwicklung externer Bibliotheken</p>
+
+</dl>
+
+<h2>Lizenz</h2>
+
+<p>Der Kode in diesem Beispiel einer JAR-Bibliothek ist unter der MIT-Lizenz veröffentlicht, einer großzügigeren Lizenz als die GPL, welche für den Rest von Logisim gilt.</p>
+
+<p>Copyright (c) 2009, Carl Burch.</p>
+
+<p>Hiermit wird die Erlaubnis erteilt, kostenlos, für jede Person, eine Kopie dieser Software und der zugehörigen Dokumentationen (die "Software") zu erhalten, die Software uneingeschränkt zu benutzen, einschließlich und ohne Einschränkung der Rechte zur Verwendung, dem Kopieren, Ändern, Zusammenführen, Veröffentlichen, Verbreiten, Lizenzieren und / oder Verkaufen von Kopien der Software, sowie Personen, denen die Software geliefert wird, dies unter den folgenden Bedingungen zu gestatten:</p>
+
+<p>Der obige Urheberrechtsvermerk und diese Genehmigung soll in alle Kopien oder Teile der Software aufgenommen werden.</p>
+
+<p>DIE SOFTWARE WIRD WIE BESEHEN AUSGELIEFERT, OHNE GARANTIE JEGLICHER ART, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF DIE GARANTIE DER EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG DER RECHTE DRITTER. IN KEINEM FALL SIND DIE AUTOREN ODER URHEBERRECHTSINHABER VERANTWORTLICH FÜR ANSPRÜCHE, SCHÄDEN ODER ANDERE HAFTUNGEN, ALS FOLGE VON ODER IM ZUSAMMENHANG MIT DER SOFTWARE, DEREN BENUTZUNG ODER IN ANDEREM BEZUG ZUR SOFTWARE.</p>
+
+<p><strong>Weiter:</strong> <a href="incr.html">Gray-Kode-Inkrementierer</a>.</p>
+</div></body></html>

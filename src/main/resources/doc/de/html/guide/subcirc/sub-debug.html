@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2019-12-26T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Fehlersuche in Teilschaltungen
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Fehlersuche in Teilschaltungen
+      </h1>
+      <p>
+	    Beim Testen komplexer Schaltungen werden Sie wahrscheinlich Fehler finden. Um festzustellen, was falsch ist, ist die Fähigkeit, das Geschehen in den Teilschaltungen zu erforschen, während der Hauptstromkreis läuft, eine große Hilfe. Um in den Zustand des Subcircuits zu gelangen, können Sie eine der drei folgenden Techniken anwenden. 
+	  </p>
+       <p>	  
+		Am einfachsten ist es wahrscheinlich, die Simulationshierarchie durch Klicken auf den Reiter <b class="button">&nbsp;Simulieren&nbsp;</b> anzuzeigen. Die zweite Möglichkeit ist die Auswahl des Menüs <b class=menu>|&nbsp;Projekt&nbsp;|</b>→<b class=menu>| Simulationsbaum anzeigen&nbsp;|</b>
+		. Dies ändert den Explorer-Bereich, um die Hierarchie der simulierten Teilschaltungen anzuzeigen.
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/subcirc-hierarchy.png" alt="#########">
+      </p>
+      <p>
+	    Ein <b class="tkeybd">Doppelklick</b> auf ein Element in dieser Hierarchie zeigt an, was innerhalb dieses Subcircuits geschieht.
+      </p>
+      <p>
+        Die dritte Möglichkeit, einen Subcircuit einzugeben, ist das Aufrufen seines Popup-Menüs durch einen <b class="tkeybd">Rechtsklick</b> oder <b class="tkeybd">Strg-Klick</b> und die Auswahl der Option <b class=menu>|&nbsp;<i>"Schaltungsname"</i>&nbsp;anzehen&nbsp;|</b> . 
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/subcirc-8-delve.png" alt="#########">
+      </p>
+      <p>
+	    Und der dritte Weg ist, sich zuerst zu vergewissern, dass das Schaltwerkzeug (<img class="icontxt" src="../../../../icons/1616/toolpoke.png" alt="#########">) ausgewählt ist und dann auf den zu analysierenden Sub-Circuit zu klicken. Eine Lupe erscheint in der Mitte des Sub-Circuit und ein <b class="tkeybd">Doppelklick</b> auf die Lupe zeigt den Zustand des Sub-Circuit an. 
+      </p>
+      <p align="center">
+        <img class="notscal" src="../../../../img-guide/subcirc-delve.png" alt="#########">
+      </p>
+      <p>
+        In jedem Fall werden Sie, sobald Sie sich den Teilschaltkreis visualisiert haben, feststellen, dass die Werte der Pins im Teilschaltkreis mit den Werten übereinstimmen, die von dem enthaltenden Schaltkreis durch sie gesendet werden.
+      </p>
+      <p align="center">
+        <img src="../../../../img-guide/subcirc-delve2.png" alt="#########">
+      </p>
+      <p>
+	    Im Subcircuit dürfen Sie den Schaltplan ändern.
+        Wenn die Änderungen die Ausgänge des Teilkreises betreffen, werden die Änderungen an den Schaltkreis weitergegeben, der den Teilkreis enthält.
+        Eine Ausnahme: Die Eingänge der Teilschaltung werden durch die Werte bestimmt, die von der Superschaltung in die Schaltung eingespeist werden, so dass es keinen Sinn macht, diese Werte zu toggeln.
+        Wenn Sie jedoch versuchen, den Zustand des Eingangs eines Subcircuits zu ändern, erscheint ein Dialogfenster mit der Frage : <b class=refquest>Der Pin ist mit dem Zustand des Supercircuits verbunden. Einen neuen Schaltzustand erzeugen ?</b><br>Klicken Sie auf Nein, um die Umschaltanforderung abzubrechen, klicken Sie auf Ja, um eine Kopie des angezeigten Zustands, getrennt von der externen Schaltung, mit umgeschaltetem Eingangspin zu erstellen. 
+      </p>
+      <p>
+	    Wenn Sie die Anzeige und/oder Bearbeitung beendet haben, können Sie zum übergeordneten Schaltkreis zurückkehren, indem Sie entweder auf den übergeordneten Schaltkreis im Explorer-Fenster doppelklicken oder über das Menü <b class=menu>|&nbsp;Simulieren&nbsp;|</b>→ <b class=menu>|&nbsp;Absteigen&nbsp;<i>"Schaltungsname"</i>&nbsp;|</b>.
+      </p>
+      <p>
+        <b>Next:</b> <a href="sub-library.html">Logisim libraries</a>.
+      </p>
+    </div>
+  </body>
+</html>

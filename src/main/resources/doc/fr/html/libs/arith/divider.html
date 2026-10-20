@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Diviseur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img  class="iconlibs" src="../../../../icons/6464/divider.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Diviseur</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 22
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/divider.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Ce composant divise deux valeurs entrant par les entrées ouest et sort le quotient sur la sortie est. Le composant est conçu de sorte qu'il peut être cascadé avec d'autres diviseurs pour fournir un support un dividende avec plus de bits que ce qui est possible avec un seul diviseur : L'entrée supérieure fournit les <var>dataBits</var> bits supérieurs du dividende (s'il est spécifié tout court), et les <var>rem</var> bits fournissent le reste, qui peut être alimenté comme entrée <var>supérieure</var> dans un autre diviseur.
+      </p>
+      <p>
+        Si le diviseur est 0, aucune division n'est effectuée (c'est-à-dire que le diviseur est supposé être 1).
+      </p>
+      <p>
+        Le diviseur effectue essentiellement une division non signée. C'est-à-dire que le reste sera toujours compris entre 0 et <var>diviseur</var>-1. Le quotient sera toujours un nombre entier, de sorte que
+      </p>
+      <center>
+        <var>quotient</var> * <var>diviseur</var> + <var>reste</var> = <var>dividende</var> .
+      </center>Si, toutefois, le <var>quotient</var> ne tient pas dans les <var>dataBits</var> bits, alors seuls les <var>dataBits</var> bits inférieurs seront rapportés. Le composant ne fournit aucune méthode pour accéder aux <var>dataBits</var> bits supérieurs.
+      <p>
+        Si l'un des opérandes contient des bits flottants ou des bits d'erreur, les sorties du composant seront soit entièrement flottantes, soit entièrement des valeurs d'erreur.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Les <var>dataBits</var> bits inférieurs du dividende (c'est-à-dire le premier opérande pour la division).
+        </dd>
+        <dt>
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Le diviseur (c'est-à-dire le deuxième opérande pour la division)
+        </dd>
+        <dt>
+          Bord nord, étiqueté <var>supérieur</var> (entrée, largeur de bit correspondant à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Les <var>dataBits</var> bits supérieurs du dividende (c'est-à-dire le premier opérande pour la division).
+        </dd>
+        <dt>
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Les <var>dataBits</var> bits inférieurs du quotient, comme spécifié ci-dessus.
+        </dd>
+        <dt>
+          Bord sud, étiqueté <var>rem</var> (sortie, la largeur des bits correspond à l'attribut Largeur de données)
+        </dt>
+        <dd>
+          Le reste de la division. Cette valeur sera toujours comprise entre 0 et <var>diviseur</var>-1.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit des valeurs à diviser et du résultat.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

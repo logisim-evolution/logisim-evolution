@@ -1,0 +1,98 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>ROM</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/6464/rom.png" width="32" height="32">
+<em>ROM</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.1.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/rom.png" width="160"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O componente ROM pode armazenar até 16,777,216 valores (especificado pelo
+atributo Largura em Bits do Endereço), cada um deles com até 64 bits (especificado
+pleo atributo Largura em Bits de Dados). Um circuito poderá acessar os valores
+correntes guardados na ROM, mas não poderá alterá-los. O usuário poderá modificá-los
+interativamente via a ferramenta Testar, ou poderá alterá-los completamente via
+ferramenta Menu.
+</p>
+
+<!-- TODO: Translate this updated ROM behavior note. -->
+<p>Unlike the RAM component, the ROM component's current contents are stored
+as an attribute of the component and are saved in circuit files created by
+Logisim. If a subcircuit containing a ROM component is instantiated multiple
+times, those subcircuit instances refer to the same ROM contents from the
+subcircuit definition. Independent ROM components have their own contents.</p>
+
+<p> Os valores correntes serão mostrados no componente. Os endereços apresentados
+serão listados em cinza à esquerda. Na parte de dentro, cada valor será listado
+em hexadecimal. O endereço atual do endereço selecionado será mostrado em texto
+negativo (branco sobre preto). 
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt><var>A</var> Na face oeste (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Serve para selecionar quais os valores estarão sendo acessados atualmente
+pelo circuito. </dd>
+
+<dt><var>D</var> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Serve para emitir o valor do endereço atualmente selecionado
+pelo <var>pino D</var>. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Número de Entradas</q>,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>.
+</p>
+
+<dl>
+
+<dt> Largura em Bits do Endereço </dt>
+<dd> A largura em bits do endereço. O número de valores armazenados na
+ROM será 2<sup><var>Largura em Bits do Endereço</var></sup>.</dd>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits de cada valor individual na memória. </dd>
+
+<dt> Conteúdo </dt>
+<dd> Guardará os conteúdos da memória.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p>Ver <a href="../../guide/mem/mem-poke.html">Testar memória</a>
+no <em>Guia do Usuário</em>.</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<h2>Comportamento da ferramenta Menu</h2>
+
+<p>Ver <a href="../../guide/mem/mem-menu.html">Menus <i>pop-up</i> e Arquivos</a>
+no <em>Guia do Usuário</em>.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>
