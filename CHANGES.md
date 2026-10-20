@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added ascending splitter bit redistribution from the Properties pane [#3093] (@mvanhorn).
   * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
