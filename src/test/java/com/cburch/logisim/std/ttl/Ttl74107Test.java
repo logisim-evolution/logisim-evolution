@@ -231,6 +231,59 @@ class Ttl74107Test {
   }
 
   @Test
+  void resetOfOneHalfLeavesTheOtherHalfSet() {
+    final var gate = new Ttl74107();
+    final var state = resetBoth(gate);
+    fall(gate, state, HALVES[0], Value.TRUE, Value.FALSE);
+    fall(gate, state, HALVES[1], Value.TRUE, Value.FALSE);
+    assertBoth(state, Value.TRUE, Value.FALSE);
+
+    state.setPortValue(HALVES[0][R], Value.FALSE);
+    gate.propagate(state);
+    assertHalf(state, HALVES[0], Value.FALSE, Value.TRUE);
+    assertHalf(state, HALVES[1], Value.TRUE, Value.FALSE);
+  }
+
+  @Test
+  void releasingResetOnAFallingEdgeAppliesJk() {
+    final var gate = new Ttl74107();
+    final var state = resetBoth(gate);
+    final var half = HALVES[0];
+    state.setPortValue(half[J], Value.TRUE);
+    state.setPortValue(half[K], Value.FALSE);
+    state.setPortValue(half[R], Value.FALSE);
+    state.setPortValue(half[CP], Value.TRUE);
+    gate.propagate(state);
+    assertHalf(state, half, Value.FALSE, Value.TRUE);
+
+    state.setPortValue(half[R], Value.TRUE);
+    state.setPortValue(half[CP], Value.FALSE);
+    gate.propagate(state);
+    assertHalf(state, half, Value.TRUE, Value.FALSE);
+  }
+
+  @Test
+  void unknownKHoldsADeterminedZeroAndBothClocksStepTogether() {
+    final var gate = new Ttl74107();
+    final var state = resetBoth(gate);
+
+    fall(gate, state, HALVES[0], Value.FALSE, Value.UNKNOWN);
+    assertHalf(state, HALVES[0], Value.FALSE, Value.TRUE);
+
+    state.setPortValue(HALVES[0][J], Value.TRUE);
+    state.setPortValue(HALVES[0][K], Value.FALSE);
+    state.setPortValue(HALVES[1][J], Value.TRUE);
+    state.setPortValue(HALVES[1][K], Value.FALSE);
+    state.setPortValue(HALVES[0][CP], Value.TRUE);
+    state.setPortValue(HALVES[1][CP], Value.TRUE);
+    gate.propagate(state);
+    state.setPortValue(HALVES[0][CP], Value.FALSE);
+    state.setPortValue(HALVES[1][CP], Value.FALSE);
+    gate.propagate(state);
+    assertBoth(state, Value.TRUE, Value.FALSE);
+  }
+
+  @Test
   void invalidExposedPowerInputsMakeOutputsUnknown() {
     final var gate = new Ttl74107();
     final var state = new TtlTestInstanceState(gate, true);
