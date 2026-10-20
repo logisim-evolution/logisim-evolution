@@ -141,11 +141,24 @@ class Ttl74688Test {
     comparator.propagate(errorBit);
     assertTrue(isHigh(errorBit, Ttl74688.PQ));
 
+    final var unknownPair = enabled(comparator);
+    setWords(unknownPair, 0x00, 0x00);
+    unknownPair.setPortValue(Ttl74688.pinNrToPortNr(Ttl74688.P4), Value.UNKNOWN);
+    unknownPair.setPortValue(Ttl74688.pinNrToPortNr(Ttl74688.Q4), Value.UNKNOWN);
+    comparator.propagate(unknownPair);
+    assertTrue(isHigh(unknownPair, Ttl74688.PQ));
+
     final var unknownEnable = enabled(comparator);
     setWords(unknownEnable, 0x55, 0x55);
     unknownEnable.setPortValue(Ttl74688.pinNrToPortNr(Ttl74688.E), Value.UNKNOWN);
     comparator.propagate(unknownEnable);
     assertTrue(isHigh(unknownEnable, Ttl74688.PQ));
+
+    final var errorEnable = enabled(comparator);
+    setWords(errorEnable, 0x55, 0x55);
+    errorEnable.setPortValue(Ttl74688.pinNrToPortNr(Ttl74688.E), Value.ERROR);
+    comparator.propagate(errorEnable);
+    assertTrue(isHigh(errorEnable, Ttl74688.PQ));
 
     final var floating = new TtlTestInstanceState(comparator, false);
     comparator.propagate(floating);
@@ -172,6 +185,34 @@ class Ttl74688Test {
     cascade(highOrder, lowOrder);
     comparator.propagate(lowOrder);
     assertTrue(isHigh(lowOrder, Ttl74688.PQ));
+
+    setWords(highOrder, 0x3C, 0x3C);
+    setWords(lowOrder, 0x0F, 0x0E);
+    comparator.propagate(highOrder);
+    assertTrue(isLow(highOrder, Ttl74688.PQ));
+    cascade(highOrder, lowOrder);
+    comparator.propagate(lowOrder);
+    assertTrue(isHigh(lowOrder, Ttl74688.PQ));
+  }
+
+  @Test
+  void everyWordPairFollowsTheIdentityTable() {
+    final var comparator = new Ttl74688();
+    final var enabledState = enabled(comparator);
+    final var disabled = enabled(comparator);
+    setHigh(disabled, Ttl74688.E);
+
+    for (var wordP = 0; wordP < 256; wordP++) {
+      for (var wordQ = 0; wordQ < 256; wordQ++) {
+        setWords(enabledState, wordP, wordQ);
+        comparator.propagate(enabledState);
+        assertEquals(wordP == wordQ, isLow(enabledState, Ttl74688.PQ));
+
+        setWords(disabled, wordP, wordQ);
+        comparator.propagate(disabled);
+        assertTrue(isHigh(disabled, Ttl74688.PQ));
+      }
+    }
   }
 
   @Test
