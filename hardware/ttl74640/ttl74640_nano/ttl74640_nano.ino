@@ -8,12 +8,14 @@
  * which is Nexperia A0/B0. Each data pin has a 100k pulldown, so a floating pin
  * reads low until the internal pull-up is enabled. nOE is raised before the pin
  * modes change, so the Nano and the chip never drive the same line.
+ * DIR is on D13: the onboard LED pulls that pin down, so a floating level
+ * there cannot be told from a low. D13 is only ever an output.
  */
 
-const uint8_t PIN_DIR = 2;
+const uint8_t PIN_DIR = 13;
 const uint8_t PIN_nOE = 3;
 const uint8_t PIN_A[8] = {4, 5, 6, 7, 8, 9, 10, 11};
-const uint8_t PIN_B[8] = {A5, A4, A3, A2, A1, A0, 13, 12};
+const uint8_t PIN_B[8] = {A5, A4, A3, A2, A1, A0, 2, 12};
 
 const uint8_t LEVEL_LOW = 0;
 const uint8_t LEVEL_HIGH = 1;
