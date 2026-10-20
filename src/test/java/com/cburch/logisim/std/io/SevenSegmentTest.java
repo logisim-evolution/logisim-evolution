@@ -57,8 +57,8 @@ class SevenSegmentTest {
   @Test
   void busSideChoosesOnePinAndKeepsTheDigitUpright() {
     assertEquals(10, SevenSegment.busHorizontalGridPoint());
-    assertBus(true, Direction.WEST, 0, 30, 8);
-    assertBus(true, Direction.EAST, 30, 30, 8);
+    assertBus(true, Direction.WEST, -10, 30, 8);
+    assertBus(true, Direction.EAST, 40, 30, 8);
     assertBus(true, Direction.NORTH, 10, 0, 8);
     assertBus(false, Direction.SOUTH, 10, 60, 7);
   }
@@ -89,7 +89,7 @@ class SevenSegmentTest {
     final var attrs = attributes(true, true, Direction.WEST);
     final var comp = placed(attrs);
     final var outline = Bounds.create(-5, 0, 40, 60);
-    assertEquals(Location.create(0, 30, false), comp.getEnds().get(0).getLocation());
+    assertEquals(Location.create(-10, 30, false), comp.getEnds().get(0).getLocation());
     assertEquals(outline, offsetOf(comp));
     attrs.setValue(SevenSegment.ATTR_BUS_SIDE, Direction.NORTH);
     assertEquals(1, comp.getEnds().size());

@@ -233,25 +233,28 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return (int) (Math.ceil(middle / (GRID * 2.0)) * GRID);
   }
 
-  /** First grid point at or inside an edge. Positive {@code intoBody} points toward the interior. */
-  static int gridPointInside(int edge, int intoBody) {
+  /**
+   * First grid point at or outside an edge. Positive {@code outward} points away from the interior.
+   */
+  static int gridPointOutside(int edge, int outward) {
     final var cells = edge / (double) GRID;
-    final var snapped = intoBody > 0 ? Math.ceil(cells) : Math.floor(cells);
+    final var snapped = outward > 0 ? Math.ceil(cells) : Math.floor(cells);
     return (int) (snapped * GRID);
   }
 
   /**
    * Connection point of the bus pin, in offset coordinates. The outline does not change. Top and
-   * bottom use {@link #busHorizontalGridPoint()}. Left and right use the nearest grid point inside
-   * the outline, because those edges are half a cell off the wiring grid.
+   * bottom use {@link #busHorizontalGridPoint()} and stay on the edge. Left and right are drawn
+   * just outside the border, on the nearest grid point, because those edges are half a cell off the
+   * wiring grid.
    */
   static int[] busPortPosition(Direction side) {
     final var x = busHorizontalGridPoint();
     final var y = OFFSET_Y + HEIGHT / 2;
     if (side == Direction.NORTH) return new int[] {x, OFFSET_Y};
     if (side == Direction.SOUTH) return new int[] {x, OFFSET_Y + HEIGHT};
-    if (side == Direction.EAST) return new int[] {gridPointInside(OFFSET_X + WIDTH, -1), y};
-    return new int[] {gridPointInside(OFFSET_X, 1), y};
+    if (side == Direction.EAST) return new int[] {gridPointOutside(OFFSET_X + WIDTH, 1), y};
+    return new int[] {gridPointOutside(OFFSET_X, -1), y};
   }
 
   private void updatePorts(Instance instance) {
