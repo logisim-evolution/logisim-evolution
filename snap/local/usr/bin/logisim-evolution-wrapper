@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the configure hook which sets defaults for any config options
+"${SNAP}/meta/hooks/configure"
+
+# Define an array of JVM options
+opts=(
+    "-Djava.util.prefs.userRoot=${SNAP_USER_DATA}"
+)
+
+# Run logisim-evolution with the gathered arguments
+exec java "${opts[@]}" -jar "${SNAP}/jar/logisim-evolution.jar" "$@"
