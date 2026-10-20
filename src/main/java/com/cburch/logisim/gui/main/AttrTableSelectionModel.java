@@ -164,6 +164,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
           return;
         }
       }
+      if (!ButtonKeyValidator.shouldApply(circuit, comps, attr, value)) return;
       AutoLabel labeler = null;
       if (attr.equals(StdAttr.LABEL)) {
         labeler = new AutoLabel((String) value, circuit);

@@ -39,6 +39,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import com.cburch.logisim.std.io.Button;
 import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -882,6 +883,9 @@ public class Circuit {
                 || labels.contains(CircuitLabelValidator.labelKey(label, labelIdentity)))) {
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
         }
+      }
+      if (c.getFactory() instanceof Button) {
+        Button.clearDuplicateKey(this, c);
       }
       wires.add(c);
       final var factory = c.getFactory();
