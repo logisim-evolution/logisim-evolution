@@ -210,6 +210,39 @@ class Ttl74374Test {
   }
 
   @Test
+  void errorDataBitIsStoredAndDriven() {
+    final var gate = new Ttl74374();
+    final var state = new TtlTestInstanceState(gate, false);
+    enable(state);
+    setData(state, 0xFF);
+    state.setPortValue(Ttl74374.PORT_INDEX_D1, Value.ERROR);
+    rise(gate, state);
+
+    assertEquals(Value.ERROR, state.getPortValue(Ttl74374.PORT_INDEX_Q1));
+    for (var bit = 1; bit < OUTPUTS.length; bit++) {
+      assertEquals(Value.TRUE, state.getPortValue(OUTPUTS[bit]), "Q" + (bit + 1));
+    }
+  }
+
+  @Test
+  void errorClockDoesNotLoad() {
+    final var gate = new Ttl74374();
+    final var state = new TtlTestInstanceState(gate, false);
+    enable(state);
+    setData(state, 0x0F);
+    rise(gate, state);
+
+    setData(state, 0xF0);
+    state.setPortValue(Ttl74374.PORT_INDEX_CLK, Value.ERROR);
+    gate.propagate(state);
+    assertOutputs(state, 0x0F);
+
+    state.setPortValue(Ttl74374.PORT_INDEX_CLK, Value.FALSE);
+    gate.propagate(state);
+    assertOutputs(state, 0x0F);
+  }
+
+  @Test
   void invalidExposedPowerInputsReleaseTheOutputsWithoutClearingTheRegister() {
     final var gate = new Ttl74374();
     final var state = new TtlTestInstanceState(gate, true);
