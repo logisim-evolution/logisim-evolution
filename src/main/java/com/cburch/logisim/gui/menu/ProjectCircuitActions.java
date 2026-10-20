@@ -235,6 +235,18 @@ public class ProjectCircuitActions {
     }
   }
 
+  public static void doMoveVhdl(Project proj, VhdlContent vhdl, int delta) {
+    final var tool = proj.getLogisimFile().getAddTool(vhdl);
+    if (tool != null) {
+      final var oldPos = proj.getLogisimFile().indexOfVhdl(vhdl);
+      final var newPos = oldPos + delta;
+      final var toolsCount = proj.getLogisimFile().getTools().size();
+      if (newPos >= 0 && newPos < toolsCount) {
+        proj.doAction(LogisimFileActions.moveCircuit(tool, newPos));
+      }
+    }
+  }
+
   public static void doRemoveCircuit(Project proj, Circuit circuit) {
     if (proj.getLogisimFile().getCircuits().size() == 1) {
       OptionPane.showMessageDialog(
