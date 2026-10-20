@@ -146,6 +146,75 @@ class Ttl74594Test {
   }
 
   @Test
+  void shiftContinuesWhileStorageClearIsHeld() {
+    final var gate = new Ttl74594();
+    final var state = cleared(gate);
+    shiftByte(gate, state, 0x59);
+    pulse(gate, state, Ttl74594.RCLK);
+    assertParallel(state, 0x9A);
+    assertEquals(Value.TRUE, level(state, Ttl74594.QHP));
+
+    setLevel(state, Ttl74594.RCLR, Value.FALSE);
+    gate.propagate(state);
+    setLevel(state, Ttl74594.SER, Value.FALSE);
+    pulse(gate, state, Ttl74594.SRCLK);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+
+    setLevel(state, Ttl74594.RCLR, Value.TRUE);
+    gate.propagate(state);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+
+    pulse(gate, state, Ttl74594.RCLK);
+    assertParallel(state, 0x34);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+  }
+
+  @Test
+  void storageClearOverridesATiedClock() {
+    final var gate = new Ttl74594();
+    final var state = cleared(gate);
+    setLevel(state, Ttl74594.SER, Value.TRUE);
+    pulse(gate, state, Ttl74594.SRCLK);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+
+    setLevel(state, Ttl74594.SER, Value.FALSE);
+    setLevel(state, Ttl74594.RCLR, Value.FALSE);
+    gate.propagate(state);
+    riseBoth(gate, state);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+
+    setLevel(state, Ttl74594.RCLR, Value.TRUE);
+    gate.propagate(state);
+    assertParallel(state, 0x00);
+    pulse(gate, state, Ttl74594.RCLK);
+    assertParallel(state, 0x02);
+  }
+
+  @Test
+  void serialInputIsSampledOnTheRisingEdge() {
+    final var gate = new Ttl74594();
+    final var state = cleared(gate);
+
+    setLevel(state, Ttl74594.SRCLK, Value.TRUE);
+    gate.propagate(state);
+    setLevel(state, Ttl74594.SER, Value.TRUE);
+    gate.propagate(state);
+    setLevel(state, Ttl74594.SRCLK, Value.FALSE);
+    gate.propagate(state);
+    pulse(gate, state, Ttl74594.RCLK);
+    assertParallel(state, 0x00);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+
+    pulse(gate, state, Ttl74594.SRCLK);
+    pulse(gate, state, Ttl74594.RCLK);
+    assertParallel(state, 0x01);
+    assertEquals(Value.FALSE, level(state, Ttl74594.QHP));
+  }
+
+  @Test
   void bothClearsEmptyBothRegisters() {
     final var gate = new Ttl74594();
     final var state = cleared(gate);
