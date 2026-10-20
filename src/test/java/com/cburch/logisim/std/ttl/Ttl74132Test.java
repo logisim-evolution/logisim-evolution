@@ -106,20 +106,43 @@ class Ttl74132Test {
     final var gate = new Ttl74132();
     final var state = new TtlTestInstanceState(gate, false);
 
-    for (final var unsettled : new Value[] {Value.UNKNOWN, Value.ERROR}) {
-      driveAllLow(state);
-      state.setPortValue(Ttl74132.PORT_INDEX_1A, Value.FALSE);
-      state.setPortValue(Ttl74132.PORT_INDEX_1B, unsettled);
-      gate.propagate(state);
-      assertEquals(Value.TRUE, state.getPortValue(Ttl74132.PORT_INDEX_1Y));
-      assertOtherOutputs(state, Ttl74132.PORT_INDEX_1Y, Value.TRUE);
+    for (final var pins : GATES) {
+      for (final var unsettled : new Value[] {Value.UNKNOWN, Value.ERROR}) {
+        driveAllLow(state);
+        state.setPortValue(pins[0], Value.FALSE);
+        state.setPortValue(pins[1], unsettled);
+        gate.propagate(state);
+        assertEquals(Value.TRUE, state.getPortValue(pins[2]));
+        assertOtherOutputs(state, pins[2], Value.TRUE);
 
-      driveAllLow(state);
-      state.setPortValue(Ttl74132.PORT_INDEX_1A, Value.TRUE);
-      state.setPortValue(Ttl74132.PORT_INDEX_1B, unsettled);
-      gate.propagate(state);
-      assertEquals(Value.ERROR, state.getPortValue(Ttl74132.PORT_INDEX_1Y));
-      assertOtherOutputs(state, Ttl74132.PORT_INDEX_1Y, Value.TRUE);
+        driveAllLow(state);
+        state.setPortValue(pins[0], unsettled);
+        state.setPortValue(pins[1], Value.FALSE);
+        gate.propagate(state);
+        assertEquals(Value.TRUE, state.getPortValue(pins[2]));
+        assertOtherOutputs(state, pins[2], Value.TRUE);
+
+        driveAllLow(state);
+        state.setPortValue(pins[0], Value.TRUE);
+        state.setPortValue(pins[1], unsettled);
+        gate.propagate(state);
+        assertEquals(Value.ERROR, state.getPortValue(pins[2]));
+        assertOtherOutputs(state, pins[2], Value.TRUE);
+
+        driveAllLow(state);
+        state.setPortValue(pins[0], unsettled);
+        state.setPortValue(pins[1], Value.TRUE);
+        gate.propagate(state);
+        assertEquals(Value.ERROR, state.getPortValue(pins[2]));
+        assertOtherOutputs(state, pins[2], Value.TRUE);
+
+        driveAllLow(state);
+        state.setPortValue(pins[0], unsettled);
+        state.setPortValue(pins[1], unsettled);
+        gate.propagate(state);
+        assertEquals(Value.ERROR, state.getPortValue(pins[2]));
+        assertOtherOutputs(state, pins[2], Value.TRUE);
+      }
     }
   }
 
