@@ -95,6 +95,8 @@ class WindowOptions extends OptionsPanel {
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
           new PrefBoolean(
               AppPreferences.SEARCH_DOUBLE_SHIFT, S.getter("windowSearchDoubleShift")),
+          new PrefBoolean(
+              AppPreferences.MIDDLE_DOUBLE_CLICK_CENTER, S.getter("windowMiddleDoubleClickCenter")),
         };
 
     canvasPlacement =
