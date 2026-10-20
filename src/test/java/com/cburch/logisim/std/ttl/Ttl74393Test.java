@@ -162,6 +162,28 @@ class Ttl74393Test {
     state.setPortValue(Ttl74393.PORT_INDEX_1CP, Value.FALSE);
     gate.propagate(state);
     assertCount(state, COUNTER1_PORTS, 0);
+
+    state.setPortValue(Ttl74393.PORT_INDEX_1CP, Value.TRUE);
+    gate.propagate(state);
+    state.setPortValue(Ttl74393.PORT_INDEX_1CP, Value.ERROR);
+    gate.propagate(state);
+    state.setPortValue(Ttl74393.PORT_INDEX_1CP, Value.FALSE);
+    gate.propagate(state);
+    assertCount(state, COUNTER1_PORTS, 0);
+    assertCount(state, COUNTER2_PORTS, 0);
+
+    clock(gate, state, Ttl74393.PORT_INDEX_1CP, 4);
+    state.setPortValue(Ttl74393.PORT_INDEX_1CP, Value.TRUE);
+    gate.propagate(state);
+    state.setPortValue(Ttl74393.PORT_INDEX_1MR, Value.TRUE);
+    gate.propagate(state);
+    assertCount(state, COUNTER1_PORTS, 0);
+    state.setPortValue(Ttl74393.PORT_INDEX_1MR, Value.FALSE);
+    gate.propagate(state);
+    assertCount(state, COUNTER1_PORTS, 0);
+    state.setPortValue(Ttl74393.PORT_INDEX_1CP, Value.FALSE);
+    gate.propagate(state);
+    assertCount(state, COUNTER1_PORTS, 1);
     assertCount(state, COUNTER2_PORTS, 0);
   }
 
