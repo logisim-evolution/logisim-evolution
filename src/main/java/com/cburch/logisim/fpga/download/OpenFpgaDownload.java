@@ -141,7 +141,7 @@ public class OpenFpgaDownload  implements VendorDownload {
           .add("ghdl {{1}}", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
           .add("synth_ecp5 -json {{1}}", JSON_FILE);
     } else {
-      for (final var vfile : entities) content.add("read -sv {{1}}", vfile);
+      for (final var vfile : entities) content.add("read -vlog2k {{1}}", vfile);
       content
           .add("hierarchy -top {{1}}", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
           .add("synth_ecp5 -json {{1}}", JSON_FILE);
