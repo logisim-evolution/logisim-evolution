@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
   * Shared engineering notation for the 74123 and NE555 resistance and capacitance attributes
     [#3084] (@Vadimatorik).
   * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits. [#1616] (@f3rhd).
