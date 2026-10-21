@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed selecting splitter bit ends by typing their number in the attribute table [#3096] (@Physanto).
   * Added an optional bus input to the 7-Segment Display, with a selectable side (@Vadimatorik).
   * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
