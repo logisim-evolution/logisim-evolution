@@ -7,6 +7,8 @@
     editor and in TikZ export [#2942] (@Vadimatorik).
   * Extended label formulas with modulus, comparisons, bare subscripts, and superscripts
     [#2942] (@Vadimatorik).
+  * Added an optional bus input to the 7-Segment Display, with a selectable side (@Vadimatorik).
+  * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
