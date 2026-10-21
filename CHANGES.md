@@ -36,6 +36,9 @@
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
+  * Custom canvas, grid, component, signal, width-error, and clock-frequency color
+    preferences are now stored independently for each theme; resetting colors affects
+    only the active theme [#3053] (@META-Xiao).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
   * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
