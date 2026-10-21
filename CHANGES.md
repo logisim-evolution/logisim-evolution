@@ -3,7 +3,6 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Added TTL 74107: dual negative-edge J-K flip-flops with reset (@Vadimatorik).
   * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
@@ -40,6 +39,7 @@
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
 
+  * Added TTL 74107: dual negative-edge J-K flip-flops with reset (@Vadimatorik).
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
