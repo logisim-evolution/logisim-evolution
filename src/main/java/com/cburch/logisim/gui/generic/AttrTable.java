@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.LinkedList;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -434,7 +435,10 @@ public class AttrTable extends JPanel implements LocaleListener {
       }
 
       var editor = row.getEditor(parent);
-      if (editor instanceof JComboBox box) {
+      if (editor instanceof JButton button) {
+        button.addActionListener(event -> cancelCellEditing());
+        button.addFocusListener(this);
+      } else if (editor instanceof JComboBox box) {
         box.addActionListener(this);
         editor.addFocusListener(this);
         rowIndexes = table.getSelectedRows();
@@ -531,6 +535,10 @@ public class AttrTable extends JPanel implements LocaleListener {
       // edited value as the value of the editor.
       if (stoppedCellEditing) {
         return false;
+      }
+      if (currentEditor instanceof JButton) {
+        cancelCellEditing();
+        return true;
       }
       stoppedCellEditing = true;
       fireEditingStopped();
