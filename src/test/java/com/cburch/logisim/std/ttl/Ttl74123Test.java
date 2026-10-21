@@ -98,105 +98,106 @@ class Ttl74123Test {
 
   @Test
   void timingValuesAcceptPrefixesAndSavedNumbers() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10k"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10 kΩ"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "1.0e4"));
-    assertEquals(1000, Ttl74123RcAttribute.parse(resistor, "1M"));
-    assertEquals(1000, Ttl74123RcAttribute.parse(resistor, "1meg"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100000"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100n"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nF"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1u"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1 u"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1µF"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1.0e-6"));
-    assertEquals(6_666_667, Ttl74123RcAttribute.parse(capacitor, "6.666667u"));
-    assertEquals("10 kΩ", Ttl74123RcAttribute.format(resistor, 10));
-    assertEquals("1 MΩ", Ttl74123RcAttribute.format(resistor, 1000));
-    assertEquals("100 nF", Ttl74123RcAttribute.format(capacitor, 100_000));
-    assertEquals("1000 µF", Ttl74123RcAttribute.format(capacitor, 1_000_000_000));
-    assertEquals(10, Ttl74123.REXT_1.parse(Ttl74123.REXT_1.toDisplayString(10)));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "1"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "1n"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "abc"));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10, resistor.parse("10"));
+    assertEquals(10, resistor.parse("10k"));
+    assertEquals(10, resistor.parse("10 kΩ"));
+    assertEquals(10, resistor.parse("1.0e4"));
+    assertEquals(1000, resistor.parse("1M"));
+    assertEquals(1000, resistor.parse("1meg"));
+    assertEquals(100_000, capacitor.parse("100000"));
+    assertEquals(100_000, capacitor.parse("100n"));
+    assertEquals(100_000, capacitor.parse("100 nF"));
+    assertEquals(1_000_000, capacitor.parse("1u"));
+    assertEquals(1_000_000, capacitor.parse("1 u"));
+    assertEquals(1_000_000, capacitor.parse("1µF"));
+    assertEquals(1_000_000, capacitor.parse("1.0e-6"));
+    assertEquals(6_666_667, capacitor.parse("6.666667u"));
+    assertEquals("10 kΩ", resistor.toDisplayString(10));
+    assertEquals("1 MΩ", resistor.toDisplayString(1000));
+    assertEquals("100 nF", capacitor.toDisplayString(100_000));
+    assertEquals("1000 µF", capacitor.toDisplayString(1_000_000_000));
+    assertEquals(10, resistor.parse(resistor.toDisplayString(10)));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("1"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10.4k"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("1n"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("abc"));
   }
 
   /** The attribute table writes the shown text back, so the display must parse to the same value. */
   @Test
   void timingValuesSurviveADisplayRoundTrip() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals("10.001 nF", Ttl74123RcAttribute.format(capacitor, 10_001));
-    assertEquals("999.999 nF", Ttl74123RcAttribute.format(capacitor, 999_999));
-    assertEquals("1.5 µF", Ttl74123RcAttribute.format(capacitor, 1_500_000));
-    assertEquals("6.666667 µF", Ttl74123RcAttribute.format(capacitor, 6_666_667));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals("10.001 nF", capacitor.toDisplayString(10_001));
+    assertEquals("999.999 nF", capacitor.toDisplayString(999_999));
+    assertEquals("1.5 µF", capacitor.toDisplayString(1_500_000));
+    assertEquals("6.666667 µF", capacitor.toDisplayString(6_666_667));
 
     final int[] resistorValues = {2, 10, 100, 999, 1000};
     for (final var stored : resistorValues) {
-      final var shown = Ttl74123RcAttribute.format(resistor, stored);
-      assertEquals(stored, Ttl74123RcAttribute.parse(resistor, shown));
+      assertEquals(stored, resistor.parse(resistor.toDisplayString(stored)));
+      assertEquals(stored, resistor.parse(resistor.toStandardString(stored)));
     }
     final int[] capacitorValues = {
       10_000, 10_001, 100_000, 999_999, 1_000_000, 1_500_000, 6_666_667, 1_000_000_000
     };
     for (final var stored : capacitorValues) {
-      final var shown = Ttl74123RcAttribute.format(capacitor, stored);
-      assertEquals(stored, Ttl74123RcAttribute.parse(capacitor, shown));
+      assertEquals(stored, capacitor.parse(capacitor.toDisplayString(stored)));
+      assertEquals(stored, capacitor.parse(capacitor.toStandardString(stored)));
     }
 
-    assertEquals("", Ttl74123.CEXT_1.toStandardString(null));
-    assertEquals("100000", Ttl74123.CEXT_1.toStandardString(100_000));
+    assertEquals("", capacitor.toStandardString(null));
+    assertEquals("100000", capacitor.toStandardString(100_000));
   }
 
   /** The words ohm, ohms, farad, and farads name the unit in any letter case. */
   @Test
   void timingValuesAcceptUnitWords() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10kohm"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10 kOhms"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10000 ohm"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10000 OHMS"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100nfarad"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nFarads"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1ufarad"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1 uFARADS"));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10, resistor.parse("10kohm"));
+    assertEquals(10, resistor.parse("10 kOhms"));
+    assertEquals(10, resistor.parse("10000 ohm"));
+    assertEquals(10, resistor.parse("10000 OHMS"));
+    assertEquals(100_000, capacitor.parse("100nfarad"));
+    assertEquals(100_000, capacitor.parse("100 nFarads"));
+    assertEquals(1_000_000, capacitor.parse("1ufarad"));
+    assertEquals(1_000_000, capacitor.parse("1 uFARADS"));
   }
 
   /** The farad symbol is a capital F, so {@code fF} is femtofarad and {@code ff} is not. */
   @Test
   void timingValuesRequireCapitalFaradSymbol() {
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10_000, Ttl74123RcAttribute.parse(capacitor, "10000000fF"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100nF"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "100nf"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000ff"));
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10_000, capacitor.parse("10000000fF"));
+    assertEquals(100_000, capacitor.parse("100nF"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("100nf"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("10000000ff"));
   }
 
   /** Upper-case F, P, N, U, and K are not SI prefixes. */
   @Test
   void timingValuesRejectUppercaseSiPrefixes() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10_000, Ttl74123RcAttribute.parse(capacitor, "10000000f"));
-    assertEquals(10_000_000, Ttl74123RcAttribute.parse(capacitor, "10000000p"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10K"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "1U"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "100N"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000P"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000F"));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10_000, capacitor.parse("10000000f"));
+    assertEquals(10_000_000, capacitor.parse("10000000p"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10K"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("1U"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("100N"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("10000000P"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("10000000F"));
   }
 
   /** A hex float or a d/f literal suffix is not a resistor value, although Java would read it. */
   @Test
   void timingValuesRejectJavaNumberSyntax() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "0x1p3"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10d"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10D"));
+    final var resistor = Ttl74123.REXT_1;
+    assertThrows(NumberFormatException.class, () -> resistor.parse("0x1p3"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10d"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10D"));
   }
 
   @Test

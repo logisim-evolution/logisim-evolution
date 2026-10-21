@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Shared engineering notation for the 74123 and NE555 resistance and capacitance attributes
+    [#3084] (@Vadimatorik).
   * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits. [#1616] (@f3rhd).
   * Added ascending splitter bit redistribution from the Properties pane [#3093] (@mvanhorn).
   * Fixed selecting splitter bit ends by typing their number in the attribute table [#3096] (@Physanto).
