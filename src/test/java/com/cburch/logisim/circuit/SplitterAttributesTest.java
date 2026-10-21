@@ -10,9 +10,11 @@
 package com.cburch.logisim.circuit;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
+import javax.swing.JComboBox;
 import org.junit.jupiter.api.Test;
 
 class SplitterAttributesTest {
@@ -44,6 +46,35 @@ class SplitterAttributesTest {
     attrs.setValue(SplitterAttributes.ATTR_FANOUT, 3);
 
     assertArrayEquals(new byte[] {1, 2, 3, 3, 3}, attrs.bitEnd);
+  }
+
+  @Test
+  void typingDigitsSelectsBitEndByNumber() {
+    final var combo = bitEndEditor(16);
+    final var keys = combo.getKeySelectionManager();
+
+    // Option 0 is "None", so bit end N is option N + 1.
+    assertEquals(2, keys.selectionForKey('1', combo.getModel()));
+    // Digits typed in quick succession make a multi-digit number.
+    assertEquals(13, keys.selectionForKey('2', combo.getModel()));
+  }
+
+  @Test
+  void typingLetterStillSelectsByLabel() {
+    final var combo = bitEndEditor(4);
+    final var keys = combo.getKeySelectionManager();
+    final var noneKey = combo.getItemAt(0).toString().charAt(0);
+
+    assertEquals(0, keys.selectionForKey(noneKey, combo.getModel()));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static JComboBox<?> bitEndEditor(int fanout) {
+    final var attrs = new SplitterAttributes();
+    attrs.setValue(SplitterAttributes.ATTR_WIDTH, BitWidth.create(fanout));
+    attrs.setValue(SplitterAttributes.ATTR_FANOUT, fanout);
+    final var attr = (Attribute<Integer>) attrs.getBitOutAttribute(0);
+    return (JComboBox<?>) attr.getCellEditor(null, attrs.getValue(attr));
   }
 
   @SuppressWarnings("unchecked")
