@@ -1,4 +1,5 @@
 # Reference fixtures
+
 The Java tests import each design, exercise undo/redo, save and reload the
 resulting `.circ`, and simulate all vectors. Coverage includes hierarchy with
 independent state, signed arithmetic, shifts, bus permutations, reset priority,
