@@ -30,6 +30,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.tools.Pokable;
 import com.cburch.logisim.util.StringGetter;
 
 import java.util.WeakHashMap;
@@ -123,12 +124,29 @@ public class Ram extends Mem {
 
   @Override
   void configurePorts(Instance instance) {
-    RamAppearance.configurePorts(instance);
+    if (RamMultiPortAppearance.isMultiPort(instance.getAttributeSet())) {
+      RamMultiPortAppearance.configurePorts(instance);
+    } else {
+      RamAppearance.configurePorts(instance);
+    }
   }
 
   @Override
   public AttributeSet createAttributeSet() {
-    return new RamAttributes();
+    // Only the plain RAM component offers the multi-port option. Dual RAM (a subclass of Ram)
+    // and ROM keep their original attribute set.
+    return new RamAttributes(getClass() == Ram.class);
+  }
+
+  @Override
+  protected Object getInstanceFeature(Instance instance, Object key) {
+    // The inline poker of the single-port RAM only knows the first port, so it would edit the
+    // wrong pins in multi-port mode. Disable it there and let the user edit the contents with the
+    // regular memory window instead.
+    if (key == Pokable.class && RamMultiPortAppearance.isMultiPort(instance.getAttributeSet())) {
+      return null;
+    }
+    return super.getInstanceFeature(instance, key);
   }
 
   @Override
@@ -186,6 +204,9 @@ public class Ram extends Mem {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
+    if (RamMultiPortAppearance.isMultiPort(attrs)) {
+      return RamMultiPortAppearance.getBounds(attrs);
+    }
     return RamAppearance.getBounds(attrs);
   }
 
@@ -212,6 +233,7 @@ public class Ram extends Mem {
     super.instanceAttributeChanged(instance, attr);
     if ((attr == Mem.DATA_ATTR)
         || (attr == Mem.ADDR_ATTR)
+        || (attr == RamAttributes.ATTR_PORTS)
         || (attr == RamAttributes.ATTR_DBUS)
         || (attr == StdAttr.TRIGGER)
         || (attr == RamAttributes.ATTR_ByteEnables)
@@ -226,7 +248,9 @@ public class Ram extends Mem {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    if (RamAppearance.classicAppearance(painter.getAttributeSet())) {
+    if (RamMultiPortAppearance.isMultiPort(painter.getAttributeSet())) {
+      RamMultiPortAppearance.paint(painter);
+    } else if (RamAppearance.classicAppearance(painter.getAttributeSet())) {
       RamAppearance.drawRamClassic(painter);
     } else {
       RamAppearance.drawRamEvolution(painter);
@@ -236,6 +260,10 @@ public class Ram extends Mem {
   @Override
   public void propagate(InstanceState state) {
     final var attrs = state.getAttributeSet();
+    if (RamMultiPortAppearance.isMultiPort(attrs)) {
+      propagateMultiPort(state);
+      return;
+    }
     final var myState = (RamState) getState(state);
 
     // first we check the clear pin
@@ -270,6 +298,175 @@ public class Ram extends Mem {
       propagateLineEnables(state, addr, goodAddr, addrValue.isErrorValue());
     } else {
       propagateByteEnables(state, addr, goodAddr, addrValue.isErrorValue());
+    }
+  }
+
+  /**
+   * Propagation path used when more than one independent access port is configured.
+   *
+   * <p>All ports share the same memory contents. Ports are processed in ascending order, therefore
+   * when two ports write the same address on the same propagation the port with the highest index
+   * wins. This is deterministic and does not show any dialog while simulating.
+   */
+  private void propagateMultiPort(InstanceState state) {
+    final var attrs = state.getAttributeSet();
+    final var myState = (RamState) getState(state);
+    final var ports = RamMultiPortAppearance.getNrPorts(attrs);
+    final var lines = RamMultiPortAppearance.getDataLines(attrs);
+
+    // The clear pin is shared by every port.
+    if (Boolean.TRUE.equals(attrs.getValue(RamAttributes.CLEAR_PIN))) {
+      final var clrIndex = RamMultiPortAppearance.getClrIndex(0, attrs);
+      if (clrIndex >= 0 && Value.TRUE.equals(state.getPortValue(clrIndex))) {
+        myState.getContents().clear();
+        final var dataBits = state.getAttributeValue(DATA_ATTR);
+        for (var p = 0; p < ports; p++) {
+          for (var l = 0; l < lines; l++) {
+            state.setPort(
+                RamMultiPortAppearance.getDataOutIndex(p, l, attrs),
+                Value.createKnown(dataBits, 0),
+                DELAY);
+          }
+        }
+        return;
+      }
+    }
+
+    // Track the last address of every port. Port 0 also drives the scrolling of the memory view.
+    for (var p = 0; p < ports; p++) {
+      final var addrValue = state.getPortValue(RamMultiPortAppearance.getAddrIndex(p, attrs));
+      final var addr = addrValue.toLongValue();
+      if (addrValue.isFullyDefined() && addr >= 0 && addr != myState.getCurrent(p)) {
+        myState.setCurrent(p, addr);
+        if (p == 0) myState.scrollToShow(addr);
+      }
+    }
+
+    final var lineMode = RamMultiPortAppearance.isLineMode(attrs);
+    for (var p = 0; p < ports; p++) {
+      final var addrValue = state.getPortValue(RamMultiPortAppearance.getAddrIndex(p, attrs));
+      final var addr = addrValue.toLongValue();
+      final var goodAddr = addrValue.isFullyDefined() && addr >= 0;
+      if (lineMode) {
+        propagateMultiPortLine(state, p, addr, goodAddr, addrValue.isErrorValue());
+      } else {
+        propagateMultiPortByte(state, p, addr, goodAddr, addrValue.isErrorValue());
+      }
+    }
+  }
+
+  private void propagateMultiPortLine(
+      InstanceState state, int port, long addr, boolean goodAddr, boolean errorValue) {
+    final var attrs = state.getAttributeSet();
+    final var myState = (RamState) getState(state);
+    final var lines = RamMultiPortAppearance.getDataLines(attrs);
+    final var misaligned = addr % lines != 0;
+    final var misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
+
+    final Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
+    final var clkIndex = RamMultiPortAppearance.getClkIndex(port, attrs);
+    final var triggered =
+        clkIndex >= 0 && myState.setClock(port, state.getPortValue(clkIndex), trigger);
+    final var writeEnabled =
+        triggered
+            && state.getPortValue(RamMultiPortAppearance.getWEIndex(port, attrs)) == Value.TRUE;
+
+    if (writeEnabled && goodAddr && !misalignError) {
+      for (var i = 0; i < lines; i++) {
+        if (lines > 1
+            && !Value.TRUE.equals(
+                state.getPortValue(RamMultiPortAppearance.getLEIndex(port, i, attrs)))) {
+          continue;
+        }
+        final long dataValue =
+            state
+                .getPortValue(RamMultiPortAppearance.getDataInIndex(port, i, attrs))
+                .toLongValue();
+        myState.getContents().set(addr + i, dataValue);
+      }
+    }
+
+    final var width = state.getAttributeValue(DATA_ATTR);
+    for (var i = 0; i < lines; i++) {
+      final var outIndex = RamMultiPortAppearance.getDataOutIndex(port, i, attrs);
+      if (goodAddr && !misalignError) {
+        final long val = myState.getContents().get(addr + i);
+        state.setPort(outIndex, Value.createKnown(width, val), DELAY);
+      } else if (errorValue || (goodAddr && misalignError)) {
+        state.setPort(outIndex, Value.createError(width), DELAY);
+      } else {
+        state.setPort(outIndex, Value.createUnknown(width), DELAY);
+      }
+    }
+  }
+
+  private void propagateMultiPortByte(
+      InstanceState state, int port, long addr, boolean goodAddr, boolean errorValue) {
+    final var attrs = state.getAttributeSet();
+    final var myState = (RamState) getState(state);
+    final var oldMemValue = myState.getContents().get(myState.getCurrent(port));
+    var newMemValue = oldMemValue;
+
+    final Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
+    final var async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
+    final var weValue = state.getPortValue(RamMultiPortAppearance.getWEIndex(port, attrs));
+    final var clkIndex = RamMultiPortAppearance.getClkIndex(port, attrs);
+    final var edge =
+        !async && clkIndex >= 0 && myState.setClock(port, state.getPortValue(clkIndex), trigger);
+    final var weAsync =
+        (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE))
+            || (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
+    final var weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
+
+    if (goodAddr && weTriggered) {
+      final long dataInValue =
+          state.getPortValue(RamMultiPortAppearance.getDataInIndex(port, 0, attrs)).toLongValue();
+      final var bytes = RamMultiPortAppearance.getBytesPerWord(attrs);
+      if (bytes == 0) {
+        newMemValue = dataInValue;
+      } else {
+        for (var b = 0; b < bytes; b++) {
+          final long mask = 0xFFL << (b * 8);
+          final long andMask = ~mask;
+          if (state.getPortValue(RamMultiPortAppearance.getBEIndex(port, b, attrs)).equals(Value.TRUE)) {
+            newMemValue &= andMask;
+            newMemValue |= (dataInValue & mask);
+          }
+        }
+      }
+      myState.getContents().set(addr, newMemValue);
+    }
+
+    final var dataBits = state.getAttributeValue(DATA_ATTR);
+    final var oeIndex = RamMultiPortAppearance.getOEIndex(port, attrs);
+    final var outputNotEnabled =
+        oeIndex >= 0 && state.getPortValue(oeIndex).equals(Value.FALSE);
+    if (outputNotEnabled) {
+      // Multi-port mode always uses separate data buses, so the previous value stays driven.
+      return;
+    }
+
+    final var outIndex = RamMultiPortAppearance.getDataOutIndex(port, 0, attrs);
+    if (errorValue) {
+      state.setPort(outIndex, Value.createError(dataBits), DELAY);
+      return;
+    }
+    if (!goodAddr) {
+      state.setPort(outIndex, Value.createUnknown(dataBits), DELAY);
+      return;
+    }
+
+    final var asyncRead = async || Boolean.TRUE.equals(attrs.getValue(Mem.ASYNC_READ));
+    if (asyncRead) {
+      state.setPort(outIndex, Value.createKnown(dataBits, newMemValue), DELAY);
+      return;
+    }
+    if (edge) {
+      if (attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE)) {
+        state.setPort(outIndex, Value.createKnown(dataBits, newMemValue), DELAY);
+      } else {
+        state.setPort(outIndex, Value.createKnown(dataBits, oldMemValue), DELAY);
+      }
     }
   }
 
@@ -407,6 +604,15 @@ public class Ram extends Mem {
 
   @Override
   public int[] clockPinIndex(netlistComponent comp) {
-    return new int[] {RamAppearance.getClkIndex(0, comp.getComponent().getAttributeSet())};
+    final var attrs = comp.getComponent().getAttributeSet();
+    if (RamMultiPortAppearance.isMultiPort(attrs)) {
+      final var nrClocks = RamMultiPortAppearance.getNrClkPorts(attrs);
+      final var ret = new int[nrClocks];
+      for (var i = 0; i < nrClocks; i++) {
+        ret[i] = RamMultiPortAppearance.getClkIndex(i, attrs);
+      }
+      return ret;
+    }
+    return new int[] {RamAppearance.getClkIndex(0, attrs)};
   }
 }
