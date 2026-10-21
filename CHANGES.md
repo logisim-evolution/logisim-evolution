@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added TTL 744075: triple 3-input OR gate (@Vadimatorik).
   * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
   * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
   * Shared engineering notation for the 74123 and NE555 resistance and capacitance attributes
