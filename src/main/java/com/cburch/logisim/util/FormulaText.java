@@ -31,6 +31,9 @@ public final class FormulaText {
 
   private static final String CDOT = "⋅";
   private static final String OPLUS = "⊕";
+  private static final String NOT_EQUAL = "≠";
+  private static final String LESS_OR_EQUAL = "≤";
+  private static final String GREATER_OR_EQUAL = "≥";
   private static final float SUBSCRIPT_SCALE = 0.7f;
   private static final int SUBSCRIPT_DROP_DIVISOR = 3;
   private static final int OVERLINE_GAP_DIVISOR = 8;
@@ -140,8 +143,8 @@ public final class FormulaText {
         cursor.next();
         continue;
       }
-      if (ch == '_') {
-        if (!appendSubscript(cursor, children)) return null;
+      if (ch == '_' || ch == '^') {
+        if (!appendScript(cursor, children, ch == '^')) return null;
         continue;
       }
       if (ch == '\\') {
@@ -173,18 +176,47 @@ public final class FormulaText {
     return new RowNode(List.copyOf(children));
   }
 
-  private static boolean appendSubscript(Cursor cursor, List<Node> children) {
+  private static boolean appendScript(Cursor cursor, List<Node> children, boolean superscript) {
     if (children.isEmpty()) {
       cursor.fail();
       return false;
     }
     cursor.next();
-    if (!consumeOpeningBrace(cursor)) return false;
-    final var sub = parseSequence(cursor, true);
-    if (sub == null) return false;
+    final var script = parseScriptBody(cursor);
+    if (script == null) return false;
     final var base = children.remove(children.size() - 1);
-    children.add(new SubscriptNode(base, sub));
+    if (superscript) children.add(new SuperscriptNode(base, script));
+    else children.add(new SubscriptNode(base, script));
     return true;
+  }
+
+  private static Node parseScriptBody(Cursor cursor) {
+    skipWhitespace(cursor);
+    if (!cursor.hasNext()) {
+      cursor.fail();
+      return null;
+    }
+    if (cursor.peek() == '{') {
+      cursor.next();
+      return parseSequence(cursor, true);
+    }
+    return parseAtom(cursor);
+  }
+
+  private static Node parseAtom(Cursor cursor) {
+    skipWhitespace(cursor);
+    if (!cursor.hasNext()) {
+      cursor.fail();
+      return null;
+    }
+    final var ch = cursor.peek();
+    if (ch == '\\') return parseCommand(cursor);
+    if (!isLiteral(ch)) {
+      cursor.fail();
+      return null;
+    }
+    cursor.next();
+    return new TextNode(Character.toString(ch));
   }
 
   private static Node parseCommand(Cursor cursor) {
@@ -194,6 +226,9 @@ public final class FormulaText {
       case "overline" -> parseOverlineCommand(cursor);
       case "cdot" -> new TextNode(CDOT);
       case "oplus" -> new TextNode(OPLUS);
+      case "ne", "neq" -> new TextNode(NOT_EQUAL);
+      case "le", "leq" -> new TextNode(LESS_OR_EQUAL);
+      case "ge", "geq" -> new TextNode(GREATER_OR_EQUAL);
       default -> {
         cursor.fail();
         yield null;
@@ -259,13 +294,21 @@ public final class FormulaText {
   }
 
   private static boolean isLiteral(char ch) {
-    return Character.isLetterOrDigit(ch) || ch == '+' || ch == '=' || ch == '(' || ch == ')';
+    return Character.isLetterOrDigit(ch)
+        || ch == '+'
+        || ch == '='
+        || ch == '('
+        || ch == ')'
+        || ch == '|'
+        || ch == '<'
+        || ch == '>';
   }
 
   private static Box measure(Node node, Graphics g, Font font) {
     if (node instanceof TextNode text) return measureText(text.value, g, font);
     if (node instanceof OverlineNode overline) return measureOverline(overline.inner, g, font);
     if (node instanceof SubscriptNode subscript) return measureSubscript(subscript, g, font);
+    if (node instanceof SuperscriptNode superscript) return measureSuperscript(superscript, g, font);
     if (node instanceof RowNode row) return measureRow(row.children, g, font);
     throw new IllegalStateException("Unknown formula node");
   }
@@ -290,6 +333,15 @@ public final class FormulaText {
     final var ascent = Math.max(base.ascent, sub.ascent - drop);
     final var descent = Math.max(base.descent, drop + sub.descent);
     return new SubscriptBox(base, sub, drop, base.width + sub.width, ascent, descent);
+  }
+
+  private static Box measureSuperscript(SuperscriptNode node, Graphics g, Font font) {
+    final var base = measure(node.base, g, font);
+    final var sup = measure(node.sup, g, subscriptFont(font));
+    final var rise = Math.max(1, base.ascent / SUBSCRIPT_DROP_DIVISOR);
+    final var ascent = Math.max(base.ascent, rise + sup.ascent);
+    final var descent = Math.max(base.descent, sup.descent - rise);
+    return new SuperscriptBox(base, sup, rise, base.width + sup.width, ascent, descent);
   }
 
   private static Box measureRow(List<Node> children, Graphics g, Font font) {
@@ -330,7 +382,8 @@ public final class FormulaText {
     };
   }
 
-  private sealed interface Node permits TextNode, OverlineNode, SubscriptNode, RowNode {}
+  private sealed interface Node
+      permits TextNode, OverlineNode, SubscriptNode, SuperscriptNode, RowNode {}
 
   private record Parsed(String source, Node node) {}
 
@@ -339,6 +392,8 @@ public final class FormulaText {
   private record OverlineNode(Node inner) implements Node {}
 
   private record SubscriptNode(Node base, Node sub) implements Node {}
+
+  private record SuperscriptNode(Node base, Node sup) implements Node {}
 
   private record RowNode(List<Node> children) implements Node {}
 
@@ -454,6 +509,25 @@ public final class FormulaText {
     void draw(Graphics g, int x, int baseline) {
       base.draw(g, x, baseline);
       sub.draw(g, x + base.width, baseline + drop);
+    }
+  }
+
+  private static final class SuperscriptBox extends Box {
+    private final Box base;
+    private final Box sup;
+    private final int rise;
+
+    private SuperscriptBox(Box base, Box sup, int rise, int width, int ascent, int descent) {
+      super(width, ascent, descent);
+      this.base = base;
+      this.sup = sup;
+      this.rise = rise;
+    }
+
+    @Override
+    void draw(Graphics g, int x, int baseline) {
+      base.draw(g, x, baseline);
+      sup.draw(g, x + base.width, baseline - rise);
     }
   }
 
