@@ -144,6 +144,15 @@ public class Ttl74259 extends AbstractTtlGate {
     g.drawLine((x + 50), (y + 7), (x + 50), (y + 13));
     g.drawLine((x + 50), (y + 13), (x + 64), (y + 13));
     g.drawLine((x + 64), (y + 13), (x + 64), (y + 28));
+    structureBubble(g, (x + 50), (y + 7));
+    g.drawLine((x + 10), (y + height - 7), (x + 10), (y + 30));
+    GraphicsUtil.drawCenteredText(g, "A", (x + 10), (y + 30));
+    g.drawLine((x + 30), (y + height - 7), (x + 30), (y + 30));
+    GraphicsUtil.drawCenteredText(g, "A", (x + 30), (y + 30));
+    g.drawLine((x + 50), (y + height - 7), (x + 50), (y + 30));
+    GraphicsUtil.drawCenteredText(g, "A", (x + 50), (y + 30));
+    g.drawLine((x + 70), (y + 7), (x + 70), (y + 30));
+    GraphicsUtil.drawCenteredText(g, "D", (x + 70), (y + 30));
     g.drawLine((x + 30), (y + 7), (x + 30), (y + 30));
     structureBubble(g, (x + 30), (y + 7));
   }
