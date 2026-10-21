@@ -55,6 +55,7 @@
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
 
+  * Added TTL 74393: dual 4-bit binary ripple counter (@Vadimatorik).
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
