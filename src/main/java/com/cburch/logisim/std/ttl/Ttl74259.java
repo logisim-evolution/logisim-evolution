@@ -9,6 +9,9 @@
 
 package com.cburch.logisim.std.ttl;
 
+import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Graphics;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
@@ -99,16 +102,50 @@ public class Ttl74259 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    super.paintBase(painter, true, false);
-    Drawgates.paintPortNamesByPin(
-        painter,
-        x,
-        y,
-        height,
-        new String[] {
-          "A0", "A1", "A2", "Q0", "Q1", "Q2", "Q3", null,
-          "Q4", "Q5", "Q6", "Q7", "D", "LE", "MR", null
-        });
+    final var g = painter.getGraphics();
+    super.paintBase(painter, false, false);
+    g.setColor(Color.BLACK);
+    final var rawState = painter.getData();
+    final TtlRegisterData stored = rawState instanceof TtlRegisterData ? (TtlRegisterData) rawState : null;
+    g.drawRect((x + 64), (y + height - 28), 12, 14);
+    g.drawLine((x + 70), ((y + height - 28)) + 14, (x + 70), (y + height - 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 70), ((y + height - 28)) + 8);
+    structureDot(g, (x + 70), ((y + height - 28)) + 7, stored, 0, 0);
+    g.drawRect((x + 84), (y + height - 28), 12, 14);
+    g.drawLine((x + 90), ((y + height - 28)) + 14, (x + 90), (y + height - 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 90), ((y + height - 28)) + 8);
+    g.drawRect((x + 104), (y + height - 28), 12, 14);
+    g.drawLine((x + 110), ((y + height - 28)) + 14, (x + 110), (y + height - 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 110), ((y + height - 28)) + 8);
+    g.drawRect((x + 124), (y + height - 28), 12, 14);
+    g.drawLine((x + 130), ((y + height - 28)) + 14, (x + 130), (y + height - 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 130), ((y + height - 28)) + 8);
+    g.drawRect((x + 144), (y + 12), 12, 14);
+    g.drawLine((x + 150), (y + 12), (x + 150), (y + 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 150), ((y + 12)) + 8);
+    g.drawRect((x + 124), (y + 12), 12, 14);
+    g.drawLine((x + 130), (y + 12), (x + 130), (y + 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 130), ((y + 12)) + 8);
+    g.drawRect((x + 104), (y + 12), 12, 14);
+    g.drawLine((x + 110), (y + 12), (x + 110), (y + 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 110), ((y + 12)) + 8);
+    g.drawRect((x + 84), (y + 12), 12, 14);
+    g.drawLine((x + 90), (y + 12), (x + 90), (y + 7));
+    GraphicsUtil.drawCenteredText(g, "L", (x + 90), ((y + 12)) + 8);
+    g.drawLine((x + 64), (y + 28), (x + 156), (y + 28));
+    g.drawLine((x + 70), (y + 28), (x + 70), (y + 26));
+    g.drawLine((x + 90), (y + 28), (x + 90), (y + 26));
+    g.drawLine((x + 110), (y + 28), (x + 110), (y + 26));
+    g.drawLine((x + 130), (y + 28), (x + 130), (y + 26));
+    g.drawLine((x + 150), (y + 28), (x + 150), (y + 26));
+    g.drawLine((x + 130), (y + 28), (x + 130), (y + 26));
+    g.drawLine((x + 110), (y + 28), (x + 110), (y + 26));
+    g.drawLine((x + 90), (y + 28), (x + 90), (y + 26));
+    g.drawLine((x + 50), (y + 7), (x + 50), (y + 13));
+    g.drawLine((x + 50), (y + 13), (x + 64), (y + 13));
+    g.drawLine((x + 64), (y + 13), (x + 64), (y + 28));
+    g.drawLine((x + 30), (y + 7), (x + 30), (y + 30));
+    structureBubble(g, (x + 30), (y + 7));
   }
 
   @Override
@@ -194,4 +231,40 @@ public class Ttl74259 extends AbstractTtlGate {
   private static Value input(InstanceState state, byte pin) {
     return state.getPortValue(pinNrToPortNr(pin));
   }
+
+  private static int structureX(int originX, int pins, int pin) {
+    if (pin <= pins / 2) {
+      return originX + (pin - 1) * 20 + 10;
+    }
+    return originX + (pins - pin) * 20 + 10;
+  }
+
+  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
+    if (pin <= pins / 2) {
+      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
+    }
+    return originY + AbstractTtlGate.PIN_HEIGHT;
+  }
+
+  private static void structureBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 2, centerY - 2, 4, 4);
+  }
+
+  private static void structureDot(
+      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
+    if (data == null) {
+      return;
+    }
+    final var value = data.getValue(word);
+    if (bit < 0 || bit >= value.getWidth()) {
+      return;
+    }
+    final var bitValue = value.get(bit);
+    g.setColor(bitValue.getColor());
+    g.fillOval(centerX - 3, centerY - 3, 6, 6);
+    g.setColor(Color.WHITE);
+    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
+    g.setColor(Color.BLACK);
+  }
+
 }
