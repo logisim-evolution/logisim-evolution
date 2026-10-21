@@ -105,6 +105,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
   public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
+  private static final float FONT_SIZE = 12f;
   // public static BufferedImage image;
   private final Project proj;
   private final Selection selection;
@@ -136,6 +137,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     this.tickCounter = new TickCounter();
     this.autoPanTimer = new Timer(AUTO_PAN_DELAY, event -> autoPanPreview());
     this.autoPanTimer.setCoalesce(true);
+
+    // font size scales with OS display scaling on some OSes (not Windows)
+    // so force a fixed font size, without forcing a whole font
+    this.setFont(this.getFont().deriveFont(FONT_SIZE));
 
     setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
     addMouseListener(myListener);
