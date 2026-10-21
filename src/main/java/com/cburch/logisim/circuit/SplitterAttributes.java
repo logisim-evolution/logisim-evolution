@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import javax.swing.ComboBoxModel;
 
 public class SplitterAttributes extends AbstractAttributeSet {
   public static class BitOutAttribute extends Attribute<Integer> {
@@ -60,6 +61,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       final var combo = new ComboBox<>(options);
       combo.setSelectedIndex(index);
       combo.setMaximumRowCount(options.length);
+      combo.setKeySelectionManager(new BitOutKeySelectionManager());
       return combo;
     }
 
@@ -122,6 +124,34 @@ public class SplitterAttributes extends AbstractAttributeSet {
         }
         return ret;
       }
+    }
+  }
+
+  /**
+   * Selects bit ends by their number when digits are typed, as their labels no longer start with
+   * it (e.g. "Output 1"). Other keys are matched against the labels as usual.
+   */
+  private static class BitOutKeySelectionManager extends ComboBox.MultiCharSelectionManager {
+    private String digits = "";
+    private long lastDigit;
+
+    @Override
+    public int selectionForKey(char ch, ComboBoxModel<?> model) {
+      if (ch < '0' || ch > '9') return super.selectionForKey(ch, model);
+
+      final var now = System.currentTimeMillis();
+      if (now > lastDigit + 500) digits = "";
+      lastDigit = now;
+      digits += ch;
+
+      for (var i = 0; i < model.getSize(); i++) {
+        if (model.getElementAt(i) instanceof BitOutOption option
+            && option.value >= 0
+            && String.valueOf(option.value).startsWith(digits)) {
+          return i;
+        }
+      }
+      return -1;
     }
   }
 
