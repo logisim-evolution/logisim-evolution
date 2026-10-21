@@ -4,6 +4,14 @@
 
 * @dev (????-??-??)
   * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
+  * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
+  * Shared engineering notation for the 74123 and NE555 resistance and capacitance attributes
+    [#3084] (@Vadimatorik).
+  * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits. [#1616] (@f3rhd).
+  * Added ascending splitter bit redistribution from the Properties pane [#3093] (@mvanhorn).
+  * Fixed selecting splitter bit ends by typing their number in the attribute table [#3096] (@Physanto).
+  * Added an optional bus input to the 7-Segment Display, with a selectable side (@Vadimatorik).
+  * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
@@ -33,6 +41,9 @@
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
+  * Custom canvas, grid, component, signal, width-error, and clock-frequency color
+    preferences are now stored independently for each theme; resetting colors affects
+    only the active theme [#3053] (@META-Xiao).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
   * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide

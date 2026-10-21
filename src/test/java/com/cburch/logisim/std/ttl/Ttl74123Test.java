@@ -29,19 +29,17 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.proj.Project;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Functional tests for the 74HC123 dual retriggerable monostable. */
 class Ttl74123Test {
-  /** Datasheet point Rext = 10 kΩ, Cext = 100 nF is 450 µs, which is 9 ticks at 20 kHz. */
-  private static final double DATASHEET_TICK_HZ = 20_000;
-  /**
-   * Unit tests have no simulator, so the component uses 1 Hz. These parts last 9 ticks at that
-   * rate and stay inside the attribute limits.
-   */
-  private static final int NINE_TICK_REXT_KOHM = 1000;
-  private static final int NINE_TICK_CEXT_PF = 20_000_000;
-  private static final int PULSE_TICKS = 9;
+  /** Datasheet point Rext = 10 kΩ, Cext = 100 nF, which is also the component default. */
+  private static final long PULSE_NANOS = 450_000L;
+
+  /** Clock read by the component while a test propagates or pauses. */
+  private long now;
   private static final int GND_PORT = 10;
   private static final int VCC_PORT = 11;
   private static final int[] OUTPUT_PORTS = {
@@ -50,6 +48,17 @@ class Ttl74123Test {
     Ttl74123.PORT_INDEX_2Q,
     Ttl74123.PORT_INDEX_2QBAR
   };
+
+  @BeforeEach
+  void installClock() {
+    now = 0;
+    Ttl74123.setClock(() -> now);
+  }
+
+  @AfterEach
+  void restoreClock() {
+    Ttl74123.setClock(null);
+  }
 
   @Test
   void logicalPortsFollowTheDatasheetPinout() {
@@ -75,133 +84,137 @@ class Ttl74123Test {
   }
 
   @Test
-  void widthTicksMatchesTheDatasheetExample() {
-    assertEquals(PULSE_TICKS, Ttl74123.widthTicks(10, 100_000, DATASHEET_TICK_HZ));
-    assertEquals(
-        PULSE_TICKS, Ttl74123.widthTicks(NINE_TICK_REXT_KOHM, NINE_TICK_CEXT_PF, 1));
-    assertEquals(1, Ttl74123.widthTicks(10, 100_000, 1));
-    assertEquals(1, Ttl74123.widthTicks(10, 100_000, 0));
-    assertEquals(Integer.MAX_VALUE, Ttl74123.widthTicks(1000, 1_000_000_000, 1.0e12));
+  void widthNanosMatchesTheDatasheetExample() {
+    assertEquals(PULSE_NANOS, Ttl74123.widthNanos(10, 100_000));
+    assertEquals(9_000_000_000L, Ttl74123.widthNanos(1000, 20_000_000));
+    assertEquals(1L, Ttl74123.widthNanos(0, 0));
+    assertEquals(450_000_000_000L, Ttl74123.widthNanos(1000, 1_000_000_000));
+    assertEquals("450 µs", Ttl74123.formatWidth(PULSE_NANOS));
+    assertEquals("9 µs", Ttl74123.formatWidth(9_000L));
+    assertEquals("1.5 ms", Ttl74123.formatWidth(1_500_000L));
+    assertEquals("9 s", Ttl74123.formatWidth(9_000_000_000L));
+    assertEquals("500 ns", Ttl74123.formatWidth(500L));
   }
 
   @Test
   void timingValuesAcceptPrefixesAndSavedNumbers() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10k"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10 kΩ"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "1.0e4"));
-    assertEquals(1000, Ttl74123RcAttribute.parse(resistor, "1M"));
-    assertEquals(1000, Ttl74123RcAttribute.parse(resistor, "1meg"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100000"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100n"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nF"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1u"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1 u"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1µF"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1.0e-6"));
-    assertEquals(6_666_667, Ttl74123RcAttribute.parse(capacitor, "6.666667u"));
-    assertEquals("10 kΩ", Ttl74123RcAttribute.format(resistor, 10));
-    assertEquals("1 MΩ", Ttl74123RcAttribute.format(resistor, 1000));
-    assertEquals("100 nF", Ttl74123RcAttribute.format(capacitor, 100_000));
-    assertEquals("1000 µF", Ttl74123RcAttribute.format(capacitor, 1_000_000_000));
-    assertEquals(10, Ttl74123.REXT_1.parse(Ttl74123.REXT_1.toDisplayString(10)));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "1"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "1n"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "abc"));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10, resistor.parse("10"));
+    assertEquals(10, resistor.parse("10k"));
+    assertEquals(10, resistor.parse("10 kΩ"));
+    assertEquals(10, resistor.parse("1.0e4"));
+    assertEquals(1000, resistor.parse("1M"));
+    assertEquals(1000, resistor.parse("1meg"));
+    assertEquals(100_000, capacitor.parse("100000"));
+    assertEquals(100_000, capacitor.parse("100n"));
+    assertEquals(100_000, capacitor.parse("100 nF"));
+    assertEquals(1_000_000, capacitor.parse("1u"));
+    assertEquals(1_000_000, capacitor.parse("1 u"));
+    assertEquals(1_000_000, capacitor.parse("1µF"));
+    assertEquals(1_000_000, capacitor.parse("1.0e-6"));
+    assertEquals(6_666_667, capacitor.parse("6.666667u"));
+    assertEquals("10 kΩ", resistor.toDisplayString(10));
+    assertEquals("1 MΩ", resistor.toDisplayString(1000));
+    assertEquals("100 nF", capacitor.toDisplayString(100_000));
+    assertEquals("1000 µF", capacitor.toDisplayString(1_000_000_000));
+    assertEquals(10, resistor.parse(resistor.toDisplayString(10)));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("1"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10.4k"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("1n"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("abc"));
   }
 
   /** The attribute table writes the shown text back, so the display must parse to the same value. */
   @Test
   void timingValuesSurviveADisplayRoundTrip() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals("10.001 nF", Ttl74123RcAttribute.format(capacitor, 10_001));
-    assertEquals("999.999 nF", Ttl74123RcAttribute.format(capacitor, 999_999));
-    assertEquals("1.5 µF", Ttl74123RcAttribute.format(capacitor, 1_500_000));
-    assertEquals("6.666667 µF", Ttl74123RcAttribute.format(capacitor, 6_666_667));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals("10.001 nF", capacitor.toDisplayString(10_001));
+    assertEquals("999.999 nF", capacitor.toDisplayString(999_999));
+    assertEquals("1.5 µF", capacitor.toDisplayString(1_500_000));
+    assertEquals("6.666667 µF", capacitor.toDisplayString(6_666_667));
 
     final int[] resistorValues = {2, 10, 100, 999, 1000};
     for (final var stored : resistorValues) {
-      final var shown = Ttl74123RcAttribute.format(resistor, stored);
-      assertEquals(stored, Ttl74123RcAttribute.parse(resistor, shown));
+      assertEquals(stored, resistor.parse(resistor.toDisplayString(stored)));
+      assertEquals(stored, resistor.parse(resistor.toStandardString(stored)));
     }
     final int[] capacitorValues = {
       10_000, 10_001, 100_000, 999_999, 1_000_000, 1_500_000, 6_666_667, 1_000_000_000
     };
     for (final var stored : capacitorValues) {
-      final var shown = Ttl74123RcAttribute.format(capacitor, stored);
-      assertEquals(stored, Ttl74123RcAttribute.parse(capacitor, shown));
+      assertEquals(stored, capacitor.parse(capacitor.toDisplayString(stored)));
+      assertEquals(stored, capacitor.parse(capacitor.toStandardString(stored)));
     }
 
-    assertEquals("", Ttl74123.CEXT_1.toStandardString(null));
-    assertEquals("100000", Ttl74123.CEXT_1.toStandardString(100_000));
+    assertEquals("", capacitor.toStandardString(null));
+    assertEquals("100000", capacitor.toStandardString(100_000));
   }
 
   /** The words ohm, ohms, farad, and farads name the unit in any letter case. */
   @Test
   void timingValuesAcceptUnitWords() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10kohm"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10 kOhms"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10000 ohm"));
-    assertEquals(10, Ttl74123RcAttribute.parse(resistor, "10000 OHMS"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100nfarad"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100 nFarads"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1ufarad"));
-    assertEquals(1_000_000, Ttl74123RcAttribute.parse(capacitor, "1 uFARADS"));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10, resistor.parse("10kohm"));
+    assertEquals(10, resistor.parse("10 kOhms"));
+    assertEquals(10, resistor.parse("10000 ohm"));
+    assertEquals(10, resistor.parse("10000 OHMS"));
+    assertEquals(100_000, capacitor.parse("100nfarad"));
+    assertEquals(100_000, capacitor.parse("100 nFarads"));
+    assertEquals(1_000_000, capacitor.parse("1ufarad"));
+    assertEquals(1_000_000, capacitor.parse("1 uFARADS"));
   }
 
   /** The farad symbol is a capital F, so {@code fF} is femtofarad and {@code ff} is not. */
   @Test
   void timingValuesRequireCapitalFaradSymbol() {
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10_000, Ttl74123RcAttribute.parse(capacitor, "10000000fF"));
-    assertEquals(100_000, Ttl74123RcAttribute.parse(capacitor, "100nF"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "100nf"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000ff"));
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10_000, capacitor.parse("10000000fF"));
+    assertEquals(100_000, capacitor.parse("100nF"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("100nf"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("10000000ff"));
   }
 
   /** Upper-case F, P, N, U, and K are not SI prefixes. */
   @Test
   void timingValuesRejectUppercaseSiPrefixes() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    final var capacitor = Ttl74123RcAttribute.Kind.CAPACITOR;
-    assertEquals(10_000, Ttl74123RcAttribute.parse(capacitor, "10000000f"));
-    assertEquals(10_000_000, Ttl74123RcAttribute.parse(capacitor, "10000000p"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10K"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "1U"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "100N"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000P"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(capacitor, "10000000F"));
+    final var resistor = Ttl74123.REXT_1;
+    final var capacitor = Ttl74123.CEXT_1;
+    assertEquals(10_000, capacitor.parse("10000000f"));
+    assertEquals(10_000_000, capacitor.parse("10000000p"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10K"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("1U"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("100N"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("10000000P"));
+    assertThrows(NumberFormatException.class, () -> capacitor.parse("10000000F"));
   }
 
   /** A hex float or a d/f literal suffix is not a resistor value, although Java would read it. */
   @Test
   void timingValuesRejectJavaNumberSyntax() {
-    final var resistor = Ttl74123RcAttribute.Kind.RESISTOR;
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "0x1p3"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10d"));
-    assertThrows(NumberFormatException.class, () -> Ttl74123RcAttribute.parse(resistor, "10D"));
+    final var resistor = Ttl74123.REXT_1;
+    assertThrows(NumberFormatException.class, () -> resistor.parse("0x1p3"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10d"));
+    assertThrows(NumberFormatException.class, () -> resistor.parse("10D"));
   }
 
   @Test
   void risingBTriggersWhenAIsLowAndResetIsHigh() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
 
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
     assertPulse(state, 1, Value.TRUE);
     assertPulse(state, 2, Value.FALSE);
-    assertFalse(gate.expire(state, 108));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
-    assertTrue(gate.expire(state, 109));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
     assertPulse(state, 1, Value.FALSE);
   }
@@ -250,21 +263,21 @@ class Ttl74123Test {
   void retriggerRestartsTheCapturedWidth() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
-    state.setTickCount(104);
+    now = 5_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.FALSE);
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
-    assertFalse(gate.expire(state, 112));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
-    assertTrue(gate.expire(state, 113));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
     assertPulse(state, 1, Value.FALSE);
   }
@@ -273,7 +286,7 @@ class Ttl74123Test {
   void stableInputLevelsDoNotAbortAnActivePulse() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
@@ -283,8 +296,8 @@ class Ttl74123Test {
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
 
-    assertFalse(gate.expire(state, 108));
-    assertTrue(gate.expire(state, 109));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
     assertPulse(state, 1, Value.FALSE);
   }
@@ -293,24 +306,51 @@ class Ttl74123Test {
   void timingAttributesApplyOnTheNextTrigger() {
     final var gate = gate();
     final var state = arm(gate, false, false);
-    state.setTickCount(100);
+    now = 1_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
 
     state.getAttributeSet().setValue(Ttl74123.CEXT_1, 10_000);
-    assertFalse(gate.expire(state, 101));
+    assertFalse(gate.expire(state, now + PULSE_NANOS - 1));
     gate.propagate(state);
     assertPulse(state, 1, Value.TRUE);
 
-    assertTrue(gate.expire(state, 109));
+    assertTrue(gate.expire(state, now + PULSE_NANOS));
     gate.propagate(state);
-    state.setTickCount(200);
+    now = 2_000;
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.FALSE);
     gate.propagate(state);
     state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
     gate.propagate(state);
-    assertFalse(gate.expire(state, 200));
-    assertTrue(gate.expire(state, 201));
+    final var shortened = Ttl74123.widthNanos(10, 10_000);
+    assertFalse(gate.expire(state, now + shortened - 1));
+    assertTrue(gate.expire(state, now + shortened));
+  }
+
+  @Test
+  void stoppedSimulationFreezesTheRemainingPulse() {
+    final var gate = gate();
+    final var state = arm(gate, false, false);
+    now = 1_000;
+    state.setPortValue(Ttl74123.PORT_INDEX_1B, Value.TRUE);
+    gate.propagate(state);
+
+    now = 1_000 + 100_000;
+    gate.setSimulationRunning(state, false);
+    assertFalse(gate.expire(state, now + PULSE_NANOS));
+    gate.propagate(state);
+    assertPulse(state, 1, Value.TRUE);
+
+    final var resumeAt = 50_000_000L;
+    now = resumeAt;
+    gate.setSimulationRunning(state, true);
+    final var remaining = PULSE_NANOS - 100_000;
+    assertFalse(gate.expire(state, resumeAt + remaining - 1));
+    gate.propagate(state);
+    assertPulse(state, 1, Value.TRUE);
+    assertTrue(gate.expire(state, resumeAt + remaining));
+    gate.propagate(state);
+    assertPulse(state, 1, Value.FALSE);
   }
 
   @Test
@@ -398,17 +438,9 @@ class Ttl74123Test {
     return new Ttl74123();
   }
 
-  private static void useNineTickTiming(TestInstanceState state) {
-    state.getAttributeSet().setValue(Ttl74123.REXT_1, NINE_TICK_REXT_KOHM);
-    state.getAttributeSet().setValue(Ttl74123.CEXT_1, NINE_TICK_CEXT_PF);
-    state.getAttributeSet().setValue(Ttl74123.REXT_2, NINE_TICK_REXT_KOHM);
-    state.getAttributeSet().setValue(Ttl74123.CEXT_2, NINE_TICK_CEXT_PF);
-  }
-
   /** Records a stable input level so the next transition can be recognized as an edge. */
   private static TestInstanceState arm(Ttl74123 gate, boolean inputA, boolean inputB) {
     final var state = new TestInstanceState(gate, false);
-    useNineTickTiming(state);
     state.setPortValue(Ttl74123.PORT_INDEX_1A, inputA ? Value.TRUE : Value.FALSE);
     state.setPortValue(Ttl74123.PORT_INDEX_1B, inputB ? Value.TRUE : Value.FALSE);
     state.setPortValue(Ttl74123.PORT_INDEX_1RD, Value.TRUE);
@@ -457,10 +489,6 @@ class Ttl74123Test {
 
     private void setPortValue(int portIndex, Value value) {
       portValues.put(portIndex, value);
-    }
-
-    private void setTickCount(int ticks) {
-      tickCount = ticks;
     }
 
     @Override
