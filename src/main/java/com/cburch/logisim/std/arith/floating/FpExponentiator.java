@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -57,13 +58,13 @@ public class FpExponentiator extends InstanceFactory {
           });
 
   static final int PER_DELAY = 1;
-  private static final int EXPO = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
-  private static final int BASE = 3;
+  static final int EXPO = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
+  static final int BASE = 3;
 
   public FpExponentiator() {
-    super(_ID, S.getter("fpExponentiatorComponent"));
+    super(_ID, S.getter("fpExponentiatorComponent"), new FpExponentiatorHdlGeneratorFactory());
     setAttributes(
       new Attribute[] {StdAttr.FP_WIDTH, EXP_MODE},
       new Object[] {BitWidth.create(32), ARB});
@@ -106,6 +107,11 @@ public class FpExponentiator extends InstanceFactory {
 
     instance.setPorts(ps);
   }
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), FpExponentiatorHdlGeneratorFactory.mode(attrs));
+  }
+
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();

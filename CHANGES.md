@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Add (v)hdl for all floating point units that are currently in std. (@zOnlyKroks)
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
     editor and in TikZ export [#2942] (@Vadimatorik).

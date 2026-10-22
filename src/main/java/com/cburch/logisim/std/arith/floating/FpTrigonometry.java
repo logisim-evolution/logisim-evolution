@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -56,14 +57,14 @@ public class FpTrigonometry extends InstanceFactory {
           });
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int SIN = 1;
-  private static final int TAN = 2;
-  private static final int COS = 3;
-  private static final int ERR = 4;
+  static final int IN = 0;
+  static final int SIN = 1;
+  static final int TAN = 2;
+  static final int COS = 3;
+  static final int ERR = 4;
 
   public FpTrigonometry() {
-    super(_ID, S.getter("fpTrigonometryComponent"));
+    super(_ID, S.getter("fpTrigonometryComponent"), new FpTrigonometryHdlGeneratorFactory());
     setAttributes(
       new Attribute[] {StdAttr.FP_WIDTH, TRIG_MODE},
       new Object[] {BitWidth.create(32), TRIG});
@@ -84,6 +85,11 @@ public class FpTrigonometry extends InstanceFactory {
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
 
     setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), FpTrigonometryHdlGeneratorFactory.mode(attrs));
   }
 
   @Override
