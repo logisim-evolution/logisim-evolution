@@ -350,7 +350,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     return viewable;
   }
 
-  private void computeViewportContents() {
+  void computeViewportContents() {
     final var exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
     if (exceptions == null || exceptions.size() == 0) {
       viewport.setWidthMessage(null);
@@ -358,9 +358,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
     viewport.setWidthMessage(
         S.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
+    viewport.clearArrows();
     for (final var ex : exceptions) {
       final var p = ex.getPoint(0);
-      setArrows(p.getX(), p.getY(), p.getX(), p.getY());
+      setArrows(p.getX(), p.getY(), p.getX(), p.getY(), false, false);
     }
   }
 
@@ -385,6 +386,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   public StringGetter getErrorMessage() {
     return viewport.errorMessage;
+  }
+
+  MyViewport getViewport() {
+    return viewport;
   }
 
   public void updatePreviewAutoPan(int x, int y) {
@@ -687,9 +692,15 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   }
 
   public void setArrows(int x0, int y0, int x1, int y1) {
+    setArrows(x0, y0, x1, y1, true, true);
+  }
+
+  public void setArrows(int x0, int y0, int x1, int y1, boolean clear, boolean repaint) {
     /* Disable for VHDL content */
     if (proj.getCurrentCircuit() == null) return;
-    viewport.clearArrows();
+    if (clear) {
+      viewport.clearArrows();
+    }
     Rectangle viewableBase;
     Rectangle viewable;
     if (canvasPane != null) {
@@ -729,7 +740,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
     if (isEast && !viewport.isSoutheast && !viewport.isNortheast) viewport.setEast(true);
     if (isWest && !viewport.isSouthwest && !viewport.isNorthwest) viewport.setWest(true);
-    viewport.repaint();
+    if (repaint) {
+      viewport.repaint();
+    }
   }
 
   void setHaloedComponent(Circuit circ, Component comp) {
@@ -1248,7 +1261,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
   }
 
-  private class MyViewport extends JViewport {
+  class MyViewport extends JViewport {
 
     private static final long serialVersionUID = 1L;
     StringGetter errorMessage = null;
