@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Add (v)hdl for all floating point units that are currently in std.
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
