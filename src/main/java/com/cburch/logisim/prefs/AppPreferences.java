@@ -692,6 +692,16 @@ public class AppPreferences {
                   Direction.WEST.toString()},
               Direction.EAST.toString()));
 
+  public static final String ZOOM_FIT_TO_WINDOW = "fitToWindow";
+  public static final String ZOOM_LAST_USED = "lastUsed";
+  public static final String[] CIRCUIT_OPEN_ZOOM_OPTIONS = {
+    ZOOM_FIT_TO_WINDOW, ZOOM_LAST_USED
+  };
+  public static final PrefMonitor<String> CIRCUIT_OPEN_ZOOM =
+      create(
+          new PrefMonitorStringOpts(
+              "circuitOpenZoom", CIRCUIT_OPEN_ZOOM_OPTIONS, ZOOM_FIT_TO_WINDOW));
+
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
@@ -1183,6 +1193,7 @@ public class AppPreferences {
 
   public static void resetWindow() {
     CANVAS_PLACEMENT.set(Direction.EAST.toString());
+    CIRCUIT_OPEN_ZOOM.set(ZOOM_FIT_TO_WINDOW);
     WINDOW_EXPLORER_VISIBLE.set(true);
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);

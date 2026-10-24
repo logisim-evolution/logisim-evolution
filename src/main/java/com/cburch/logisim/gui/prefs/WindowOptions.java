@@ -43,6 +43,7 @@ class WindowOptions extends OptionsPanel {
   private final PrefBoolean[] checks;
   private final PrefOptionList canvasPlacement;
   private final PrefOptionList toolbarPlacement;
+  private final PrefOptionList circuitOpenZoom;
 
   private final JButton resetWindowLayoutButton;
   private final ColorChooserButton canvasBgColor;
@@ -118,11 +119,25 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
 
+    circuitOpenZoom =
+        new PrefOptionList(
+            AppPreferences.CIRCUIT_OPEN_ZOOM,
+            S.getter("windowCircuitOpenZoom"),
+            new PrefOption[] {
+              new PrefOption(
+                  AppPreferences.ZOOM_FIT_TO_WINDOW, S.getter("windowCircuitOpenZoomFit")),
+              new PrefOption(
+                  AppPreferences.ZOOM_LAST_USED, S.getter("windowCircuitOpenZoomLast"))
+            });
+
     panel.add(canvasPlacement.getJLabel());
     panel.add(canvasPlacement.getJComboBox());
 
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
+
+    panel.add(circuitOpenZoom.getJLabel());
+    panel.add(circuitOpenZoom.getJComboBox());
 
     canvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
     canvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
@@ -307,7 +322,9 @@ class WindowOptions extends OptionsPanel {
     for (final var check : checks) {
       check.localeChanged();
     }
+    canvasPlacement.localeChanged();
     toolbarPlacement.localeChanged();
+    circuitOpenZoom.localeChanged();
     zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     editorThemeLabel.setText(S.get("windowEditorTheme"));

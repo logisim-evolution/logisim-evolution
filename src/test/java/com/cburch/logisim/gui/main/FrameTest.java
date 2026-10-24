@@ -13,8 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.data.Location;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.wiring.Pin;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
@@ -128,6 +134,62 @@ class FrameTest {
           assertEquals(new Dimension(1000, 800), viewport.getViewSize());
           assertEquals(new Point(325, 175), viewport.getViewPosition());
         });
+  }
+
+  @Test
+  void initialLayoutZoomUsesFitToWindowByDefault() {
+    final var originalPref = AppPreferences.CIRCUIT_OPEN_ZOOM.get();
+    try {
+      AppPreferences.CIRCUIT_OPEN_ZOOM.set(AppPreferences.ZOOM_FIT_TO_WINDOW);
+      final var circuit = new Circuit("main", null, null);
+      final var mutation = new CircuitMutation(circuit);
+      final var pin1 =
+          Pin.FACTORY.createComponent(Location.create(0, 0, true), Pin.FACTORY.createAttributeSet());
+      final var pin2 =
+          Pin.FACTORY.createComponent(
+              Location.create(2000, 1000, true), Pin.FACTORY.createAttributeSet());
+      mutation.add(pin1);
+      mutation.add(pin2);
+      mutation.execute();
+
+      final var zoomOptions = List.of(5.0, 100.0, 1000.0);
+      final var zoom =
+          Frame.determineInitialZoom(
+              circuit, null, new Dimension(1000, 500), zoomOptions);
+      assertTrue(zoom < 1.0);
+    } finally {
+      AppPreferences.CIRCUIT_OPEN_ZOOM.set(originalPref);
+    }
+  }
+
+  @Test
+  void initialLayoutZoomUsesLastSavedZoomWhenPreferenceSet() {
+    final var originalPref = AppPreferences.CIRCUIT_OPEN_ZOOM.get();
+    final var originalZoom = AppPreferences.LAYOUT_ZOOM.get();
+    try {
+      AppPreferences.CIRCUIT_OPEN_ZOOM.set(AppPreferences.ZOOM_LAST_USED);
+      AppPreferences.LAYOUT_ZOOM.set(1.5);
+
+      final var circuit = new Circuit("main", null, null);
+      final var mutation = new CircuitMutation(circuit);
+      final var pin1 =
+          Pin.FACTORY.createComponent(Location.create(0, 0, true), Pin.FACTORY.createAttributeSet());
+      final var pin2 =
+          Pin.FACTORY.createComponent(
+              Location.create(2000, 1000, true), Pin.FACTORY.createAttributeSet());
+      mutation.add(pin1);
+      mutation.add(pin2);
+      mutation.execute();
+
+      final var zoomOptions = List.of(5.0, 100.0, 1000.0);
+      final var zoom =
+          Frame.determineInitialZoom(
+              circuit, null, new Dimension(1000, 500), zoomOptions);
+      assertEquals(1.5, zoom, 1.0e-6);
+    } finally {
+      AppPreferences.CIRCUIT_OPEN_ZOOM.set(originalPref);
+      AppPreferences.LAYOUT_ZOOM.set(originalZoom);
+    }
   }
 
   private static Object allocateWithoutConstructor(Class<?> type) throws Exception {

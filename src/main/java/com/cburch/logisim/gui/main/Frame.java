@@ -21,6 +21,7 @@ import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LibraryEvent;
@@ -59,7 +60,9 @@ import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
@@ -724,14 +727,30 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     SwingUtilities.invokeLater(() -> initializeLayoutView(circuit));
   }
 
+  static double determineInitialZoom(
+      Circuit circuit,
+      Graphics graphics,
+      Dimension viewportSize,
+      List<Double> zoomOptions) {
+    if (AppPreferences.ZOOM_LAST_USED.equals(AppPreferences.CIRCUIT_OPEN_ZOOM.get())) {
+      final var zoom = AppPreferences.LAYOUT_ZOOM.get();
+      return (zoom != null && zoom > 0.0) ? zoom : 1.0;
+    }
+    final var bounds =
+        (circuit == null)
+            ? Bounds.EMPTY_BOUNDS
+            : (graphics == null ? circuit.getBounds() : circuit.getBounds(graphics));
+    return ZoomControl.computeInitialZoomFactor(bounds, viewportSize, zoomOptions);
+  }
+
   private void initializeLayoutView(Circuit circuit) {
     if (circuit == null || project.getCurrentCircuit() != circuit) return;
 
     final var graphics = layoutCanvas.getGraphics();
-    final var bounds = graphics == null ? circuit.getBounds() : circuit.getBounds(graphics);
     final var initialZoom =
-        ZoomControl.computeInitialZoomFactor(
-            bounds,
+        determineInitialZoom(
+            circuit,
+            graphics,
             layoutCanvasPane.getViewport().getSize(),
             layoutZoomModel.getZoomOptions());
     layoutZoomModel.setZoomFactor(initialZoom);
