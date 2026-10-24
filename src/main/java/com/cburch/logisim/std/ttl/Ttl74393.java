@@ -106,9 +106,9 @@ public class Ttl74393 extends AbstractTtlGate {
   }
 
   /**
-   * One ripple chain. Each stage is a small clocked box. The clock stays on the pin side of the
-   * row and stops at a falling-edge bubble, so it never runs through the box. Reset is a bus on
-   * the far side of the row, with a stub to each box edge.
+   * One ripple chain, following the 74HC393 logic diagram. Every clock pin has one falling-edge
+   * bubble, and the wire runs through the middle of that bubble. Each flip-flop has a single Q
+   * node: the package pin and the next clock both leave that node.
    */
   private static void drawRipple(
       Graphics g,
@@ -122,54 +122,52 @@ public class Ttl74393 extends AbstractTtlGate {
       TtlRegisterData stored,
       int word) {
     final var boxWidth = 10;
-    final var boxHeight = 8;
-    final var top = alongTop ? y + 11 : y + height - 19;
+    final var boxHeight = 10;
+    final var top = alongTop ? y + 12 : y + height - 22;
     final var mid = top + boxHeight / 2;
     final var pinY = alongTop ? y + PIN_HEIGHT : y + height - PIN_HEIGHT;
+    final var towardPins = alongTop ? pinY + 2 : pinY - 2;
     for (var stage = 0; stage < outputs.length; stage++) {
       final var center = x + outputs[stage];
       final var left = center - boxWidth / 2;
+      final var right = left + boxWidth;
       g.drawRect(left, top, boxWidth, boxHeight);
-      g.drawLine(left, mid - 3, left + 4, mid);
-      g.drawLine(left, mid + 3, left + 4, mid);
-      final var outputEdge = alongTop ? top : top + boxHeight;
-      g.drawLine(center, outputEdge, center, pinY);
+      g.drawLine(left + 2, mid - 2, left + 5, mid);
+      g.drawLine(left + 2, mid + 2, left + 5, mid);
+      drawBit(g, left + 7, mid, stored, word, stage);
+      final var dotX = right + 2;
+      g.drawLine(right, mid, dotX, mid);
+      g.drawLine(dotX, mid, dotX, towardPins);
+      g.drawLine(dotX, towardPins, center, towardPins);
+      g.drawLine(center, towardPins, center, pinY);
       if (stage + 1 < outputs.length) {
         final var nextLeft = x + outputs[stage + 1] - boxWidth / 2;
-        g.drawLine(left + boxWidth, mid, nextLeft, mid);
+        g.drawLine(dotX, mid, nextLeft, mid);
+        drawClockBubble(g, nextLeft, mid);
       }
-      drawBit(g, left + 6, mid, stored, word, stage);
+      g.fillOval(dotX - 1, mid - 1, 3, 3);
     }
 
     final var firstLeft = x + outputs[0] - boxWidth / 2;
-    final var bubbleLeft = firstLeft - 4;
     final var clockX = x + clockOffset;
-    final var bypass = alongTop ? top + boxHeight + 8 : top - 8;
-    final var rail = alongTop ? top + boxHeight + 3 : top - 3;
-    g.drawLine(clockX, pinY, clockX, bypass);
-    g.drawLine(clockX, bypass, bubbleLeft, bypass);
-    drawRiseAcrossRail(g, bubbleLeft, bypass, mid, rail);
-    g.drawOval(bubbleLeft, mid - 2, 4, 4);
+    g.drawLine(clockX, pinY, clockX, mid);
+    g.drawLine(clockX, mid, firstLeft, mid);
+    drawClockBubble(g, firstLeft, mid);
 
+    final var rail = alongTop ? top + boxHeight + 4 : top - 4;
     final var resetX = x + resetOffset;
-    final var hopPeak = bubbleLeft - 4;
+    final var resetEdge = alongTop ? top + boxHeight : top;
     g.drawLine(resetX, pinY, resetX, rail);
-    g.drawLine(resetX, rail, hopPeak - 2, rail);
-    g.drawLine(hopPeak + 2, rail, x + outputs[outputs.length - 1], rail);
+    g.drawLine(resetX, rail, x + outputs[outputs.length - 1], rail);
     for (var output : outputs) {
-      final var resetEdge = alongTop ? top + boxHeight : top;
       g.drawLine(x + output, rail, x + output, resetEdge);
+      g.fillOval(x + output - 1, rail - 1, 3, 3);
     }
   }
 
-  /** Clock rise jumps the reset bus. The bus is open under the jump, so the two nets do not meet. */
-  private static void drawRiseAcrossRail(Graphics g, int riseX, int fromY, int toY, int railY) {
-    final var radius = 4;
-    final var top = Math.min(fromY, toY);
-    final var bottom = Math.max(fromY, toY);
-    g.drawLine(riseX, top, riseX, railY - radius);
-    g.drawLine(riseX, railY + radius, riseX, bottom);
-    g.drawArc(riseX - radius, railY - radius, radius * 2, radius * 2, 90, 180);
+  /** Bubble centered on the clock wire that enters the flip-flop at {@code inputX}. */
+  private static void drawClockBubble(Graphics g, int inputX, int mid) {
+    g.drawOval(inputX - 4, mid - 2, 4, 4);
   }
 
   private static void drawBit(
