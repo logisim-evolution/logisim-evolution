@@ -993,7 +993,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
                   e.getX() * getZoomFactor() - getHorizontalScrollBar(),
                   e.getY() * getZoomFactor() - getVerticalScrollBar())
               && viewport.zoomButtonColor != DEFAULT_ZOOM_BUTTON_COLOR)
-          || e.getButton() == MouseEvent.BUTTON2 && e.getClickCount() == 2) {
+          || (e.getButton() == MouseEvent.BUTTON2
+              && e.getClickCount() == 2
+              && AppPreferences.MIDDLE_DOUBLE_CLICK_CENTER.getBoolean())) {
         center();
         setCursor(proj.getTool().getCursor());
       }

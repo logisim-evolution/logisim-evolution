@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added a preference to turn off centering the canvas on a middle-button double-click
+    [#3077] (@Edward-griffin00, @CrispeyJoel).
   * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
   * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
     [#3066] (@Kejoki).
