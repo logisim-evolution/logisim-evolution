@@ -55,6 +55,7 @@ public class Ttl74393 extends AbstractTtlGate {
   private static final int BITS = 4;
   private static final int STAGE_MASK = (1 << BITS) - 1;
   private static final int DELAY = 4;
+  private static final int BUBBLE_SIZE = 4;
   private static final BitWidth WIDTH = BitWidth.create(BITS);
   private static final byte[] OUTPUT_PINS = {3, 4, 5, 6, 8, 9, 10, 11};
   private static final String[] PORT_NAMES = {
@@ -106,9 +107,8 @@ public class Ttl74393 extends AbstractTtlGate {
   }
 
   /**
-   * One ripple chain, following the 74HC393 logic diagram. Every clock pin has one falling-edge
-   * bubble, and the wire runs through the middle of that bubble. Each flip-flop has a single Q
-   * node: the package pin and the next clock both leave that node.
+   * One ripple chain, following the 74HC393 logic diagram. Every clock wire stops on the edge of
+   * its falling-edge bubble. A Q node is drawn only where that output also clocks the next stage.
    */
   private static void drawRipple(
       Graphics g,
@@ -142,16 +142,16 @@ public class Ttl74393 extends AbstractTtlGate {
       g.drawLine(center, towardPins, center, pinY);
       if (stage + 1 < outputs.length) {
         final var nextLeft = x + outputs[stage + 1] - boxWidth / 2;
-        g.drawLine(dotX, mid, nextLeft, mid);
+        g.drawLine(dotX, mid, nextLeft - BUBBLE_SIZE, mid);
         drawClockBubble(g, nextLeft, mid);
+        drawNode(g, dotX, mid);
       }
-      g.fillOval(dotX - 1, mid - 1, 3, 3);
     }
 
     final var firstLeft = x + outputs[0] - boxWidth / 2;
     final var clockX = x + clockOffset;
     g.drawLine(clockX, pinY, clockX, mid);
-    g.drawLine(clockX, mid, firstLeft, mid);
+    g.drawLine(clockX, mid, firstLeft - BUBBLE_SIZE, mid);
     drawClockBubble(g, firstLeft, mid);
 
     final var rail = alongTop ? top + boxHeight + 4 : top - 4;
@@ -161,13 +161,18 @@ public class Ttl74393 extends AbstractTtlGate {
     g.drawLine(resetX, rail, x + outputs[outputs.length - 1], rail);
     for (var output : outputs) {
       g.drawLine(x + output, rail, x + output, resetEdge);
-      g.fillOval(x + output - 1, rail - 1, 3, 3);
+      drawNode(g, x + output, rail);
     }
   }
 
-  /** Bubble centered on the clock wire that enters the flip-flop at {@code inputX}. */
+  /** Bubble whose right side touches the clock input. The wire stops at its left side. */
   private static void drawClockBubble(Graphics g, int inputX, int mid) {
-    g.drawOval(inputX - 4, mid - 2, 4, 4);
+    g.drawOval(inputX - BUBBLE_SIZE, mid - BUBBLE_SIZE / 2, BUBBLE_SIZE, BUBBLE_SIZE);
+  }
+
+  /** Junction dot centered on the crossing of two wires. */
+  private static void drawNode(Graphics g, int x, int y) {
+    g.fillOval(x - 2, y - 2, 4, 4);
   }
 
   private static void drawBit(
