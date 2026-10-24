@@ -132,19 +132,26 @@ public class Ttl74393 extends AbstractTtlGate {
       final var left = center - boxWidth / 2;
       final var right = left + boxWidth;
       g.drawRect(left, top, boxWidth, boxHeight);
-      g.drawLine(left + 2, mid - 2, left + 5, mid);
-      g.drawLine(left + 2, mid + 2, left + 5, mid);
+      g.drawLine(left + 1, mid - 2, left + 4, mid);
+      g.drawLine(left + 1, mid + 2, left + 4, mid);
       drawBit(g, left + 7, mid, stored, word, stage);
-      final var dotX = right + 2;
-      g.drawLine(right, mid, dotX, mid);
-      g.drawLine(dotX, mid, dotX, towardPins);
-      g.drawLine(dotX, towardPins, center, towardPins);
+      // The tap sits just below the lead and clear of the box, so the dot does not cover the body.
+      final var nodeX = right + 3;
+      final var nodeY = mid + 2;
+      g.drawLine(right, mid, nodeX, mid);
+      g.drawLine(nodeX, mid, nodeX, towardPins);
+      g.drawLine(nodeX, towardPins, center, towardPins);
       g.drawLine(center, towardPins, center, pinY);
       if (stage + 1 < outputs.length) {
         final var nextLeft = x + outputs[stage + 1] - boxWidth / 2;
-        g.drawLine(dotX, mid, nextLeft - BUBBLE_SIZE, mid);
+        final var bubbleEdge = nextLeft - BUBBLE_SIZE;
+        final var riseX = bubbleEdge - 2;
+        g.drawLine(nodeX, mid, nodeX, nodeY);
+        g.drawLine(nodeX, nodeY, riseX, nodeY);
+        g.drawLine(riseX, nodeY, riseX, mid);
+        g.drawLine(riseX, mid, bubbleEdge, mid);
         drawClockBubble(g, nextLeft, mid);
-        drawNode(g, dotX, mid);
+        drawTap(g, nodeX, nodeY);
       }
     }
 
@@ -173,6 +180,11 @@ public class Ttl74393 extends AbstractTtlGate {
   /** Junction dot centered on the crossing of two wires. */
   private static void drawNode(Graphics g, int x, int y) {
     g.fillOval(x - 2, y - 2, 4, 4);
+  }
+
+  /** Small tap dot. A 2×2 oval is centered on the integer crossing. */
+  private static void drawTap(Graphics g, int x, int y) {
+    g.fillOval(x - 1, y - 1, 2, 2);
   }
 
   private static void drawBit(
