@@ -106,8 +106,9 @@ public class Ttl74393 extends AbstractTtlGate {
   }
 
   /**
-   * One ripple chain. Flip-flops stay clear of the wires: the clock runs in the gaps, and reset is
-   * a bus just outside the boxes.
+   * One ripple chain. Each stage is a small clocked box. The clock stays on the pin side of the
+   * row and stops at a falling-edge bubble, so it never runs through the box. Reset is a bus on
+   * the far side of the row, with a stub to each box edge.
    */
   private static void drawRipple(
       Graphics g,
@@ -120,48 +121,55 @@ public class Ttl74393 extends AbstractTtlGate {
       int resetOffset,
       TtlRegisterData stored,
       int word) {
-    final var boxWidth = 8;
-    final var boxHeight = 10;
-    final var top = alongTop ? y + 10 : y + height - 20;
+    final var boxWidth = 10;
+    final var boxHeight = 8;
+    final var top = alongTop ? y + 11 : y + height - 19;
     final var mid = top + boxHeight / 2;
     final var pinY = alongTop ? y + PIN_HEIGHT : y + height - PIN_HEIGHT;
     for (var stage = 0; stage < outputs.length; stage++) {
       final var center = x + outputs[stage];
       final var left = center - boxWidth / 2;
       g.drawRect(left, top, boxWidth, boxHeight);
-      g.drawLine(left, mid - 2, left + 3, mid);
-      g.drawLine(left, mid + 2, left + 3, mid);
+      g.drawLine(left, mid - 3, left + 4, mid);
+      g.drawLine(left, mid + 3, left + 4, mid);
       final var outputEdge = alongTop ? top : top + boxHeight;
       g.drawLine(center, outputEdge, center, pinY);
       if (stage + 1 < outputs.length) {
         final var nextLeft = x + outputs[stage + 1] - boxWidth / 2;
         g.drawLine(left + boxWidth, mid, nextLeft, mid);
       }
-      drawBit(g, center, mid, stored, word, stage);
+      drawBit(g, left + 6, mid, stored, word, stage);
     }
 
     final var firstLeft = x + outputs[0] - boxWidth / 2;
+    final var bubbleLeft = firstLeft - 4;
     final var clockX = x + clockOffset;
-    final var clockLane = alongTop ? pinY + 2 : pinY - 2;
-    g.drawLine(clockX, pinY, clockX, clockLane);
-    g.drawLine(clockX, clockLane, firstLeft - 2, clockLane);
-    g.drawLine(firstLeft - 2, clockLane, firstLeft - 2, mid);
-    g.drawLine(firstLeft - 2, mid, firstLeft, mid);
-    final var bubbleY = alongTop ? mid - 6 : mid + 2;
-    g.drawOval(firstLeft - 4, bubbleY, 4, 4);
+    final var bypass = alongTop ? top + boxHeight + 8 : top - 8;
+    final var rail = alongTop ? top + boxHeight + 3 : top - 3;
+    g.drawLine(clockX, pinY, clockX, bypass);
+    g.drawLine(clockX, bypass, bubbleLeft, bypass);
+    drawRiseAcrossRail(g, bubbleLeft, bypass, mid, rail);
+    g.drawOval(bubbleLeft, mid - 2, 4, 4);
 
-    final var rail = alongTop ? top + boxHeight + 4 : top - 4;
     final var resetX = x + resetOffset;
-    final var resetBend = alongTop ? pinY + 4 : pinY - 4;
-    final var resetRise = clockX + 8;
-    g.drawLine(resetX, pinY, resetX, resetBend);
-    g.drawLine(resetX, resetBend, resetRise, resetBend);
-    g.drawLine(resetRise, resetBend, resetRise, rail);
-    g.drawLine(resetRise, rail, x + outputs[outputs.length - 1], rail);
+    final var hopPeak = bubbleLeft - 4;
+    g.drawLine(resetX, pinY, resetX, rail);
+    g.drawLine(resetX, rail, hopPeak - 2, rail);
+    g.drawLine(hopPeak + 2, rail, x + outputs[outputs.length - 1], rail);
     for (var output : outputs) {
       final var resetEdge = alongTop ? top + boxHeight : top;
       g.drawLine(x + output, rail, x + output, resetEdge);
     }
+  }
+
+  /** Clock rise jumps the reset bus. The bus is open under the jump, so the two nets do not meet. */
+  private static void drawRiseAcrossRail(Graphics g, int riseX, int fromY, int toY, int railY) {
+    final var radius = 4;
+    final var top = Math.min(fromY, toY);
+    final var bottom = Math.max(fromY, toY);
+    g.drawLine(riseX, top, riseX, railY - radius);
+    g.drawLine(riseX, railY + radius, riseX, bottom);
+    g.drawArc(riseX - radius, railY - radius, radius * 2, radius * 2, 90, 180);
   }
 
   private static void drawBit(
@@ -175,7 +183,7 @@ public class Ttl74393 extends AbstractTtlGate {
     }
     final var bitValue = value.get(bit);
     g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 2, centerY - 2, 4, 4);
+    g.fillOval(centerX - 1, centerY - 1, 3, 3);
     g.setColor(Color.BLACK);
   }
 
