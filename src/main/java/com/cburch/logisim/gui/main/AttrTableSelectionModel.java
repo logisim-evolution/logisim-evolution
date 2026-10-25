@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitException;
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -21,6 +22,7 @@ import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.generic.AttrTableModelRow;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -42,6 +44,28 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     this.frame = frame;
     updateAttributeSet();
     frame.getCanvas().getSelection().addListener(this);
+  }
+
+  private Splitter selectedSplitter() {
+    final var components = frame.getCanvas().getSelection().getComponents();
+    return components.size() == 1 && components.iterator().next() instanceof Splitter splitter
+        ? splitter : null;
+  }
+
+  @Override
+  public int getRowCount() {
+    return super.getRowCount() + (selectedSplitter() != null ? 1 : 0);
+  }
+
+  @Override
+  public AttrTableModelRow getRow(int index) {
+    final var splitter = selectedSplitter();
+    if (index == super.getRowCount() && splitter != null) {
+      final var circuit = frame.getCanvas().getCircuit();
+      return new SplitterDistributionRow(project, circuit, splitter,
+          () -> selectedSplitter() == splitter && frame.getCanvas().getCircuit() == circuit);
+    }
+    return super.getRow(index);
   }
 
   @Override
@@ -122,6 +146,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   @Override
   public void selectionChanged(final Event event) {
     updateAttributeSet();
+    fireStructureChanged();
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {
       frame.setAttrTableModel(this);

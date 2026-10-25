@@ -1,0 +1,84 @@
+{
+  "cases": [
+    {
+      "name": "00_test_bus_hierarchy_and_independent_register_state",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "01_test_mux_demux_and_onehot_mux",
+      "top": "top",
+      "undefined": "0"
+    },
+    {
+      "name": "02_test_mux_demux_and_onehot_mux",
+      "top": "top",
+      "undefined": "1"
+    },
+    {
+      "name": "03_test_register_reset_priorities_polarity_and_latch",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "04_test_signed_arithmetic_logic_comparison_and_shifts",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "05_test_slices_permutations_constants_and_concat",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "06_test_word_pipeline_fourteen_bits",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "07_test_multiple_reads_share_writes",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "08_test_ram_bounds_prevent_wrapping_writes",
+      "top": "top",
+      "undefined": "0"
+    },
+    {
+      "name": "09_test_ram_writes_masks_and_independent_read_address",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "10_test_ram_writes_masks_and_independent_read_address",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "11_test_ram_writes_masks_and_independent_read_address",
+      "top": "top",
+      "undefined": "error"
+    },
+    {
+      "name": "12_test_rom_contents_offsets_bounds_and_undef",
+      "top": "top",
+      "undefined": "0"
+    },
+    {
+      "name": "13_test_rom_contents_offsets_bounds_and_undef",
+      "top": "top",
+      "undefined": "1"
+    },
+    {
+      "name": "14_test_rom_contents_offsets_bounds_and_undef",
+      "top": "top",
+      "undefined": "1"
+    },
+    {
+      "name": "15_test_synthesized_large_memory",
+      "top": "native_memory",
+      "undefined": "0"
+    }
+  ]
+}
