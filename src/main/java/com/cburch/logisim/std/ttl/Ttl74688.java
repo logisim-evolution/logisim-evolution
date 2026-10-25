@@ -146,17 +146,19 @@ public class Ttl74688 extends AbstractTtlGate {
     }
     drawAndFacingLeft(g, andTip, andTop, andBottom);
 
-    final var enableBottom = andMid + 6;
     final var enableTop = andMid - 6;
-    final var enableBack = andTip - 4;
+    final var enableBottom = andMid + 6;
+    final var enableBack = andTip - 8;
     final var enableTip = enableBack - (enableBottom - enableTop) / 2;
     drawAndFacingLeft(g, enableTip, enableTop, enableBottom);
     g.drawLine(andTip, andMid, enableBack, andMid);
 
+    // nE joins the same input side as the eight-bit result, with one active-low bubble.
     final var enableX = x + 10;
-    final var enableEntry = enableTip + (enableBack - enableTip) / 2;
-    g.drawOval(enableEntry - 2, enableBottom, 4, 4);
-    g.drawLine(enableEntry, enableBottom + 4, enableX, enableBottom + 4);
+    final var entryY = andMid + 4;
+    g.drawOval(enableBack, entryY - 2, 4, 4);
+    g.drawLine(enableBack + 2, entryY + 2, enableBack + 2, enableBottom + 4);
+    g.drawLine(enableBack + 2, enableBottom + 4, enableX, enableBottom + 4);
     g.drawLine(enableX, enableBottom + 4, enableX, pinBottom);
 
     final var outputX = x + 30;
