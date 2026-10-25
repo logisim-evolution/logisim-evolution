@@ -146,24 +146,27 @@ public class Ttl74688 extends AbstractTtlGate {
     }
     drawAndFacingLeft(g, andTip, andTop, andBottom);
 
-    // Upper AND points toward the output pin. Both inputs share its flat side.
-    final var enableLeft = x + 12;
-    final var enableRight = x + 28;
+    // Output points at the pin. Both inputs share the flat side, and the output
+    // axis is the midpoint between those two contacts.
+    final var nEIn = x + 14;
+    final var resultIn = x + 20;
+    final var span = 16;
+    final var outX = (nEIn + resultIn) / 2;
+    final var enableLeft = outX - span / 2;
+    final var enableRight = enableLeft + span;
     final var enableBack = y + 22;
-    final var enableTipY = enableBack - (enableRight - enableLeft) / 2;
+    final var enableTipY = enableBack - span / 2;
     drawAndFacingUp(g, enableLeft, enableTipY, enableRight);
-    g.drawLine(andTip, andMid, enableLeft + 8, andMid);
-    g.drawLine(enableLeft + 8, andMid, enableLeft + 8, enableBack);
+    g.drawLine(andTip, andMid, resultIn, andMid);
+    g.drawLine(resultIn, andMid, resultIn, enableBack);
 
     final var enableX = x + 10;
-    final var nEIn = enableLeft + 2;
     g.drawOval(nEIn - 2, enableBack, 4, 4);
     g.drawLine(nEIn, enableBack + 4, nEIn, y + 34);
     g.drawLine(nEIn, y + 34, enableX, y + 34);
     g.drawLine(enableX, y + 34, enableX, pinBottom);
 
     final var outputX = x + 30;
-    final var outX = enableLeft + (enableRight - enableLeft) / 2;
     g.drawOval(outX - 2, enableTipY - 4, 4, 4);
     g.drawLine(outX, enableTipY - 4, outputX, enableTipY - 4);
     g.drawLine(outputX, enableTipY - 4, outputX, pinTop);
