@@ -118,74 +118,65 @@ public class Ttl74688 extends AbstractTtlGate {
   }
 
   /**
-   * Eight equality cells, one per P/Q pair. Their results share one rail. Active-low enable and the
-   * active-low equal output meet that rail; both bubbles sit on the pins.
+   * Eight separate equality results enter one gate, together with active-low nE. The gate output
+   * is the active-low P=Q pin. The results are not tied together.
    */
   private static void drawComparator(Graphics g, int x, int y, int height) {
     final var pinTop = y + PIN_HEIGHT;
     final var pinBottom = y + height - PIN_HEIGHT;
-    final var rail = y + 30;
-    final var outputX = x + 30;
+    final var gateLeft = x + 16;
+    final var gateTop = y + 16;
+    final var gateWidth = 16;
+    final var gateHeight = 28;
+    final var gateRight = gateLeft + gateWidth;
+    final var gateBottom = gateTop + gateHeight;
+    // Rightmost cell uses the lane nearest its row, so most runs do not have to cross.
+    final int[] upperCenters = {60, 100, 140, 180};
+    final int[] upperLanes = {29, 26, 23, 20};
+    final int[] lowerCenters = {40, 80, 120, 160};
+    final int[] lowerLanes = {31, 34, 37, 40};
+    for (var i = 0; i < upperCenters.length; i++) {
+      final var center = x + upperCenters[i];
+      drawEqualCell(g, center, y + 10, false, pinTop);
+      final var lane = y + upperLanes[i];
+      g.drawLine(center, y + 18, center, lane);
+      g.drawLine(gateRight, lane, center, lane);
+    }
+    for (var i = 0; i < lowerCenters.length; i++) {
+      final var center = x + lowerCenters[i];
+      drawEqualCell(g, center, y + 42, true, pinBottom);
+      final var lane = y + lowerLanes[i];
+      g.drawLine(center, y + 42, center, lane);
+      g.drawLine(gateRight, lane, center, lane);
+    }
+    g.drawRect(gateLeft, gateTop, gateWidth, gateHeight);
     final var enableX = x + 10;
-    final int[] lower = {40, 80, 120, 160};
-    final int[] upper = {60, 100, 140, 180};
-    for (var center : lower) {
-      drawEqualCell(g, x + center, y + 36, true, pinBottom);
-      g.drawLine(x + center, y + 36, x + center, rail);
-      drawNode(g, x + center, rail);
-    }
-    for (var stage = 0; stage < upper.length; stage++) {
-      final var center = x + upper[stage];
-      drawEqualCell(g, center, y + 14, false, pinTop);
-      g.drawLine(center, y + 24, center, rail);
-      if (stage + 1 < upper.length) {
-        drawNode(g, center, rail);
-      }
-    }
-    g.drawLine(outputX, rail, x + upper[upper.length - 1], rail);
+    final var enableIn = gateLeft + 8;
     g.drawOval(enableX - 2, pinBottom - 4, 4, 4);
-    g.drawLine(enableX, pinBottom - 4, enableX, rail);
-    g.drawLine(enableX, rail, outputX, rail);
-    drawNode(g, outputX, rail);
-    g.drawLine(outputX, rail, outputX, pinTop + 4);
+    g.drawLine(enableX, pinBottom - 4, enableX, gateBottom + 2);
+    g.drawLine(enableX, gateBottom + 2, enableIn, gateBottom + 2);
+    g.drawLine(enableIn, gateBottom + 2, enableIn, gateBottom);
+    final var outputX = x + 30;
+    g.drawLine(outputX, gateTop, outputX, pinTop + 4);
     g.drawOval(outputX - 2, pinTop, 4, 4);
   }
 
   /** One P/Q pair. Both leads are the same length and the equals mark is centered in the cell. */
   private static void drawEqualCell(
       Graphics g, int center, int top, boolean inputsFromBottom, int pinY) {
-    final var cell = 10;
-    final var left = center - cell / 2;
-    g.drawRect(left, top, cell, cell);
-    g.drawLine(center - 3, top + 4, center + 3, top + 4);
-    g.drawLine(center - 3, top + 6, center + 3, top + 6);
-    final var laneGap = 3;
-    final var entry = 3;
-    final var lowPin = center - 10;
-    final var highPin = center + 10;
-    if (inputsFromBottom) {
-      final var bottom = top + cell;
-      final var lane = bottom + laneGap;
-      g.drawLine(lowPin, pinY, lowPin, lane);
-      g.drawLine(lowPin, lane, center - entry, lane);
-      g.drawLine(center - entry, lane, center - entry, bottom);
-      g.drawLine(highPin, pinY, highPin, lane);
-      g.drawLine(highPin, lane, center + entry, lane);
-      g.drawLine(center + entry, lane, center + entry, bottom);
-    } else {
-      final var lane = top - laneGap;
-      g.drawLine(lowPin, pinY, lowPin, lane);
-      g.drawLine(lowPin, lane, center - entry, lane);
-      g.drawLine(center - entry, lane, center - entry, top);
-      g.drawLine(highPin, pinY, highPin, lane);
-      g.drawLine(highPin, lane, center + entry, lane);
-      g.drawLine(center + entry, lane, center + entry, top);
+    final var size = 8;
+    g.drawRect(center - size / 2, top, size, size);
+    g.drawLine(center - 2, top + 3, center + 2, top + 3);
+    g.drawLine(center - 2, top + 5, center + 2, top + 5);
+    final var edge = inputsFromBottom ? top + size : top;
+    final var lane = inputsFromBottom ? edge + 2 : edge - 2;
+    for (var side : new int[] {-1, 1}) {
+      final var pin = center + side * 10;
+      final var entry = center + side * 2;
+      g.drawLine(pin, pinY, pin, lane);
+      g.drawLine(pin, lane, entry, lane);
+      g.drawLine(entry, lane, entry, edge);
     }
-  }
-
-  /** Junction dot centered on a wire crossing. Every node is this size. */
-  private static void drawNode(Graphics g, int centerX, int centerY) {
-    g.fillOval(centerX - 1, centerY - 1, 2, 2);
   }
 
   @Override
