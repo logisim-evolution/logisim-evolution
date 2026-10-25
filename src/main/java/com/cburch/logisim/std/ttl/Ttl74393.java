@@ -132,26 +132,20 @@ public class Ttl74393 extends AbstractTtlGate {
       final var left = center - boxWidth / 2;
       final var right = left + boxWidth;
       g.drawRect(left, top, boxWidth, boxHeight);
-      g.drawLine(left + 1, mid - 2, left + 4, mid);
-      g.drawLine(left + 1, mid + 2, left + 4, mid);
-      drawBit(g, left + 7, mid, stored, word, stage);
-      // The tap sits just below the lead and clear of the box, so the dot does not cover the body.
+      g.drawLine(left, mid - 2, left + 3, mid);
+      g.drawLine(left, mid + 2, left + 3, mid);
+      drawBit(g, center, mid, stored, word, stage);
+      // One straight Q lead. The tap is on that axis, clear of the box.
       final var nodeX = right + 3;
-      final var nodeY = mid + 2;
       g.drawLine(right, mid, nodeX, mid);
       g.drawLine(nodeX, mid, nodeX, towardPins);
       g.drawLine(nodeX, towardPins, center, towardPins);
       g.drawLine(center, towardPins, center, pinY);
       if (stage + 1 < outputs.length) {
         final var nextLeft = x + outputs[stage + 1] - boxWidth / 2;
-        final var bubbleEdge = nextLeft - BUBBLE_SIZE;
-        final var riseX = bubbleEdge - 2;
-        g.drawLine(nodeX, mid, nodeX, nodeY);
-        g.drawLine(nodeX, nodeY, riseX, nodeY);
-        g.drawLine(riseX, nodeY, riseX, mid);
-        g.drawLine(riseX, mid, bubbleEdge, mid);
+        g.drawLine(nodeX, mid, nextLeft - BUBBLE_SIZE, mid);
         drawClockBubble(g, nextLeft, mid);
-        drawTap(g, nodeX, nodeY);
+        drawNode(g, nodeX, mid);
       }
     }
 
@@ -166,9 +160,13 @@ public class Ttl74393 extends AbstractTtlGate {
     final var resetEdge = alongTop ? top + boxHeight : top;
     g.drawLine(resetX, pinY, resetX, rail);
     g.drawLine(resetX, rail, x + outputs[outputs.length - 1], rail);
-    for (var output : outputs) {
-      g.drawLine(x + output, rail, x + output, resetEdge);
-      drawNode(g, x + output, rail);
+    for (var stage = 0; stage < outputs.length; stage++) {
+      final var output = x + outputs[stage];
+      g.drawLine(output, rail, output, resetEdge);
+      // The rail ends at the last stage, so that corner is not a junction.
+      if (stage + 1 < outputs.length) {
+        drawNode(g, output, rail);
+      }
     }
   }
 
@@ -177,14 +175,9 @@ public class Ttl74393 extends AbstractTtlGate {
     g.drawOval(inputX - BUBBLE_SIZE, mid - BUBBLE_SIZE / 2, BUBBLE_SIZE, BUBBLE_SIZE);
   }
 
-  /** Junction dot centered on the crossing of two wires. */
+  /** Junction dot centered on the crossing of two wires. Every node uses this size. */
   private static void drawNode(Graphics g, int x, int y) {
     g.fillOval(x - 2, y - 2, 4, 4);
-  }
-
-  /** Small tap dot. A 2×2 oval is centered on the integer crossing. */
-  private static void drawTap(Graphics g, int x, int y) {
-    g.fillOval(x - 1, y - 1, 2, 2);
   }
 
   private static void drawBit(
@@ -198,7 +191,7 @@ public class Ttl74393 extends AbstractTtlGate {
     }
     final var bitValue = value.get(bit);
     g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 1, centerY - 1, 3, 3);
+    g.fillOval(centerX - 2, centerY - 2, 4, 4);
     g.setColor(Color.BLACK);
   }
 
