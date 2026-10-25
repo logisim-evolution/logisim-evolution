@@ -25,10 +25,10 @@ public class LedBarShape extends DotMatrixBaseShape {
 
   @Override
   protected int matrixScaleY() {
-    if (path.leaf().getAttributeSet().containsAttribute(LedBar.ATTR_THICKNESS)) {
-      final var thickness = path.leafGetAttributeValue(LedBar.ATTR_THICKNESS);
-      if (thickness != null) {
-        return thickness;
+    if (path.leaf().getAttributeSet().containsAttribute(LedBar.ATTR_HEIGHT)) {
+      final var height = path.leafGetAttributeValue(LedBar.ATTR_HEIGHT);
+      if (height != null) {
+        return height;
       }
     }
     return super.matrixScaleY();

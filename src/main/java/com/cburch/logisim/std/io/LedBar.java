@@ -51,12 +51,11 @@ public class LedBar extends DotMatrixBase {
   public static final Attribute<BitWidth> ATTR_MATRIX_COLS =
       Attributes.forBitWidth("matrixcols", S.getter("ioLedBarSegments"), 1, Value.MAX_WIDTH);
 
-  /** Short side of the bar, in grid cells. 3 matches every circuit saved before this attribute. */
-  public static final int DEFAULT_THICKNESS = 3;
+  /** Height of the unrotated bar, in grid cells. 3 matches circuits saved before this attribute. */
+  public static final int DEFAULT_HEIGHT = 3;
 
-  public static final Attribute<Integer> ATTR_THICKNESS =
-      Attributes.forIntegerRange(
-          "thickness", S.getter("ioLedBarThickness"), 1, 8);
+  public static final Attribute<Integer> ATTR_HEIGHT =
+      Attributes.forIntegerRange("height", S.getter("ioLedBarHeight"), 1, 8);
 
   protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
       Attributes.forOption(
@@ -137,10 +136,10 @@ public class LedBar extends DotMatrixBase {
 
   @Override
   protected int scaleY(AttributeSet attrs) {
-    if (attrs != null && attrs.containsAttribute(ATTR_THICKNESS)) {
-      final var thickness = attrs.getValue(ATTR_THICKNESS);
-      if (thickness != null) {
-        return thickness;
+    if (attrs != null && attrs.containsAttribute(ATTR_HEIGHT)) {
+      final var height = attrs.getValue(ATTR_HEIGHT);
+      if (height != null) {
+        return height;
       }
     }
     return super.scaleY(attrs);
@@ -149,7 +148,7 @@ public class LedBar extends DotMatrixBase {
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     super.instanceAttributeChanged(instance, attr);
-    if (attr == StdAttr.FACING || attr == ATTR_THICKNESS) {
+    if (attr == StdAttr.FACING || attr == ATTR_HEIGHT) {
       instance.recomputeBounds();
       instance.computeLabelTextField(Instance.AVOID_LEFT);
       updatePorts(instance);
@@ -163,16 +162,16 @@ public class LedBar extends DotMatrixBase {
     ATTR_DOT_SHAPE.setHidden(true);
     ATTR_MATRIX_ROWS.setHidden(true);
 
-    // Factory scale remains the historical thickness for anything that still reads the field.
-    // Each instance uses ATTR_THICKNESS instead.
-    setScaleY(DEFAULT_THICKNESS);
+    // Factory scale remains the historical height for anything that still reads the field.
+    // Each instance uses ATTR_HEIGHT instead.
+    setScaleY(DEFAULT_HEIGHT);
     setDrawBorder(false);
     setFacingAttribute(StdAttr.FACING);
     setAttributes(
         new Attribute<?>[] {
           getAttributeInputType(),
           StdAttr.FACING,
-          ATTR_THICKNESS,
+          ATTR_HEIGHT,
           getAttributeColumns(),
           getAttributeRows(),
           StdAttr.SELECT_LOC,
@@ -190,7 +189,7 @@ public class LedBar extends DotMatrixBase {
         new Object[] {
           getAttributeItemColumn(),
           Direction.EAST,
-          DEFAULT_THICKNESS,
+          DEFAULT_HEIGHT,
           BitWidth.create(8),
           BitWidth.create(1),
           StdAttr.SELECT_BOTTOM_LEFT,

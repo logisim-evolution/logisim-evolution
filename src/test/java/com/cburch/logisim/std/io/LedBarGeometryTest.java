@@ -25,7 +25,7 @@ class LedBarGeometryTest {
     final var attrs = bar.createAttributeSet();
 
     assertEquals(Direction.EAST, attrs.getValue(StdAttr.FACING));
-    assertEquals(LedBar.DEFAULT_THICKNESS, attrs.getValue(LedBar.ATTR_THICKNESS));
+    assertEquals(LedBar.DEFAULT_HEIGHT, attrs.getValue(LedBar.ATTR_HEIGHT));
     assertEquals(Bounds.create(-5, -30, 80, 30), bar.getOffsetBounds(attrs));
 
     final var origin = Location.create(100, 100, true);
@@ -37,29 +37,29 @@ class LedBarGeometryTest {
   }
 
   @Test
-  void thicknessChangesOnlyTheShortSide() {
+  void heightChangesOnlyTheVerticalSide() {
     final var bar = new LedBar();
     final var attrs = bar.createAttributeSet();
 
-    attrs.setValue(LedBar.ATTR_THICKNESS, 2);
+    attrs.setValue(LedBar.ATTR_HEIGHT, 2);
     assertEquals(Bounds.create(-5, -20, 80, 20), bar.getOffsetBounds(attrs));
 
-    attrs.setValue(LedBar.ATTR_THICKNESS, 4);
+    attrs.setValue(LedBar.ATTR_HEIGHT, 4);
     assertEquals(Bounds.create(-5, -40, 80, 40), bar.getOffsetBounds(attrs));
   }
 
   @Test
-  void verticalBarsOfThicknessTwoAndFourTileOnTheGrid() {
+  void verticalBarsOfHeightTwoAndFourTileOnTheGrid() {
     final var bar = new LedBar();
     final var attrs = bar.createAttributeSet();
     attrs.setValue(StdAttr.FACING, Direction.NORTH);
 
-    attrs.setValue(LedBar.ATTR_THICKNESS, 2);
+    attrs.setValue(LedBar.ATTR_HEIGHT, 2);
     final var narrow = bar.getOffsetBounds(attrs);
     assertEquals(20, narrow.getWidth());
     assertEquals(0, narrow.getX() + narrow.getWidth());
 
-    attrs.setValue(LedBar.ATTR_THICKNESS, 4);
+    attrs.setValue(LedBar.ATTR_HEIGHT, 4);
     final var wide = bar.getOffsetBounds(attrs);
     assertEquals(40, wide.getWidth());
     assertEquals(0, wide.getX() + wide.getWidth());
