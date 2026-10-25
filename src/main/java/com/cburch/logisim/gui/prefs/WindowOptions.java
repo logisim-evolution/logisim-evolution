@@ -349,6 +349,7 @@ class WindowOptions extends OptionsPanel {
         if (newIndex != index && newIndex >= 0 && newIndex < lookAndFeelInfos.length) {
           index = newIndex;
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
+          // The theme preference listeners have loaded this theme's colors before this refresh.
           AppPreferences.applyThemeColors();
           applyLookAndFeelGlobally(lookAndFeelInfos[index].getClassName());
           updateEditorThemeSelection();
@@ -378,6 +379,7 @@ class WindowOptions extends OptionsPanel {
       } else if (e.getActionCommand().equals(cmdResetGridColors)) {
         //        AppPreferences.resetWindow();
         final var nowOpen = Projects.getOpenProjects();
+        // Reset only the colors stored for the currently selected theme.
         AppPreferences.setDefaultGridColors();
         for (final var proj : nowOpen) {
           proj.getFrame().repaint();
