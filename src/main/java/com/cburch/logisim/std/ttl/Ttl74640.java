@@ -119,106 +119,107 @@ public class Ttl74640 extends AbstractTtlGate {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
-    g.drawLine((x + 30), (y + height - 7), (x + 30), (y + 36));
-    g.drawLine((x + 30), (y + 36), (x + 40), (y + 36));
-    g.drawLine((x + 50), (y + 7), (x + 50), (y + 22));
-    g.drawLine((x + 50), (y + 22), (x + 40), (y + 22));
-    g.drawLine((x + 36), (y + 32), (x + 44), (y + 32));
-    g.drawLine((x + 36), (y + 32), (x + 40), (y + 26));
-    g.drawLine((x + 44), (y + 32), (x + 40), (y + 26));
-    g.drawLine((x + 36), (y + 28), (x + 44), (y + 28));
-    g.drawLine((x + 36), (y + 28), (x + 40), (y + 34));
-    g.drawLine((x + 44), (y + 28), (x + 40), (y + 34));
-    structureBubble(g, (x + 40), (y + 24));
-    structureBubble(g, (x + 40), (y + 36));
-    g.drawLine((x + 50), (y + height - 7), (x + 50), (y + 36));
-    g.drawLine((x + 50), (y + 36), (x + 60), (y + 36));
-    g.drawLine((x + 70), (y + 7), (x + 70), (y + 22));
-    g.drawLine((x + 70), (y + 22), (x + 60), (y + 22));
-    g.drawLine((x + 56), (y + 32), (x + 64), (y + 32));
-    g.drawLine((x + 56), (y + 32), (x + 60), (y + 26));
-    g.drawLine((x + 64), (y + 32), (x + 60), (y + 26));
-    g.drawLine((x + 56), (y + 28), (x + 64), (y + 28));
-    g.drawLine((x + 56), (y + 28), (x + 60), (y + 34));
-    g.drawLine((x + 64), (y + 28), (x + 60), (y + 34));
-    structureBubble(g, (x + 60), (y + 24));
-    structureBubble(g, (x + 60), (y + 36));
-    g.drawLine((x + 70), (y + height - 7), (x + 70), (y + 36));
-    g.drawLine((x + 70), (y + 36), (x + 80), (y + 36));
-    g.drawLine((x + 90), (y + 7), (x + 90), (y + 22));
-    g.drawLine((x + 90), (y + 22), (x + 80), (y + 22));
-    g.drawLine((x + 76), (y + 32), (x + 84), (y + 32));
-    g.drawLine((x + 76), (y + 32), (x + 80), (y + 26));
-    g.drawLine((x + 84), (y + 32), (x + 80), (y + 26));
-    g.drawLine((x + 76), (y + 28), (x + 84), (y + 28));
-    g.drawLine((x + 76), (y + 28), (x + 80), (y + 34));
-    g.drawLine((x + 84), (y + 28), (x + 80), (y + 34));
-    structureBubble(g, (x + 80), (y + 24));
-    structureBubble(g, (x + 80), (y + 36));
-    g.drawLine((x + 90), (y + height - 7), (x + 90), (y + 36));
-    g.drawLine((x + 90), (y + 36), (x + 100), (y + 36));
-    g.drawLine((x + 110), (y + 7), (x + 110), (y + 22));
-    g.drawLine((x + 110), (y + 22), (x + 100), (y + 22));
-    g.drawLine((x + 96), (y + 32), (x + 104), (y + 32));
-    g.drawLine((x + 96), (y + 32), (x + 100), (y + 26));
-    g.drawLine((x + 104), (y + 32), (x + 100), (y + 26));
-    g.drawLine((x + 96), (y + 28), (x + 104), (y + 28));
-    g.drawLine((x + 96), (y + 28), (x + 100), (y + 34));
-    g.drawLine((x + 104), (y + 28), (x + 100), (y + 34));
-    structureBubble(g, (x + 100), (y + 24));
-    structureBubble(g, (x + 100), (y + 36));
-    g.drawLine((x + 110), (y + height - 7), (x + 110), (y + 36));
-    g.drawLine((x + 110), (y + 36), (x + 120), (y + 36));
-    g.drawLine((x + 130), (y + 7), (x + 130), (y + 22));
-    g.drawLine((x + 130), (y + 22), (x + 120), (y + 22));
-    g.drawLine((x + 116), (y + 32), (x + 124), (y + 32));
-    g.drawLine((x + 116), (y + 32), (x + 120), (y + 26));
-    g.drawLine((x + 124), (y + 32), (x + 120), (y + 26));
-    g.drawLine((x + 116), (y + 28), (x + 124), (y + 28));
-    g.drawLine((x + 116), (y + 28), (x + 120), (y + 34));
-    g.drawLine((x + 124), (y + 28), (x + 120), (y + 34));
-    structureBubble(g, (x + 120), (y + 24));
-    structureBubble(g, (x + 120), (y + 36));
-    g.drawLine((x + 130), (y + height - 7), (x + 130), (y + 36));
-    g.drawLine((x + 130), (y + 36), (x + 140), (y + 36));
-    g.drawLine((x + 150), (y + 7), (x + 150), (y + 22));
-    g.drawLine((x + 150), (y + 22), (x + 140), (y + 22));
-    g.drawLine((x + 136), (y + 32), (x + 144), (y + 32));
-    g.drawLine((x + 136), (y + 32), (x + 140), (y + 26));
-    g.drawLine((x + 144), (y + 32), (x + 140), (y + 26));
-    g.drawLine((x + 136), (y + 28), (x + 144), (y + 28));
-    g.drawLine((x + 136), (y + 28), (x + 140), (y + 34));
-    g.drawLine((x + 144), (y + 28), (x + 140), (y + 34));
-    structureBubble(g, (x + 140), (y + 24));
-    structureBubble(g, (x + 140), (y + 36));
-    g.drawLine((x + 150), (y + height - 7), (x + 150), (y + 36));
-    g.drawLine((x + 150), (y + 36), (x + 160), (y + 36));
-    g.drawLine((x + 170), (y + 7), (x + 170), (y + 22));
-    g.drawLine((x + 170), (y + 22), (x + 160), (y + 22));
-    g.drawLine((x + 156), (y + 32), (x + 164), (y + 32));
-    g.drawLine((x + 156), (y + 32), (x + 160), (y + 26));
-    g.drawLine((x + 164), (y + 32), (x + 160), (y + 26));
-    g.drawLine((x + 156), (y + 28), (x + 164), (y + 28));
-    g.drawLine((x + 156), (y + 28), (x + 160), (y + 34));
-    g.drawLine((x + 164), (y + 28), (x + 160), (y + 34));
-    structureBubble(g, (x + 160), (y + 24));
-    structureBubble(g, (x + 160), (y + 36));
-    g.drawLine((x + 170), (y + height - 7), (x + 170), (y + 36));
-    g.drawLine((x + 170), (y + 36), (x + 180), (y + 36));
-    g.drawLine((x + 190), (y + 7), (x + 190), (y + 22));
-    g.drawLine((x + 190), (y + 22), (x + 180), (y + 22));
-    g.drawLine((x + 176), (y + 32), (x + 184), (y + 32));
-    g.drawLine((x + 176), (y + 32), (x + 180), (y + 26));
-    g.drawLine((x + 184), (y + 32), (x + 180), (y + 26));
-    g.drawLine((x + 176), (y + 28), (x + 184), (y + 28));
-    g.drawLine((x + 176), (y + 28), (x + 180), (y + 34));
-    g.drawLine((x + 184), (y + 28), (x + 180), (y + 34));
-    structureBubble(g, (x + 180), (y + 24));
-    structureBubble(g, (x + 180), (y + 36));
-    g.drawLine((x + 10), (y + height - 7), (x + 10), (y + 30));
-    GraphicsUtil.drawCenteredText(g, "DIR", (x + 24), (y + 30));
-    g.drawLine((x + 30), (y + 7), (x + 30), (y + 18));
-    structureBubble(g, (x + 30), (y + 7));
+    drawBuffers(g, x, y, height);
+  }
+
+  /**
+   * Two rows of three-state inverters, one each way, as in the 74HC640 logic diagram. Each output
+   * wire stops on its bubble. Enable taps use one node size, and the bus has no node at its end.
+   */
+  private static void drawBuffers(Graphics g, int x, int y, int height) {
+    final var pin = AbstractTtlGate.PIN_HEIGHT;
+    g.drawPolyline(
+        new int[] {x + 10, x + 10, x + 17, x + 17},
+        new int[] {y + height - pin, y + 10, y + 10, y + 13},
+        4);
+    g.drawOval(x + 16, y + 13, 2, 2);
+    drawNode(g, x + 10, y + height - 10);
+    g.drawPolyline(
+        new int[] {x + 10, x + 17, x + 17},
+        new int[] {y + height - 10, y + height - 10, y + height - 15},
+        3);
+
+    g.drawPolyline(
+        new int[] {x + 30, x + 30, x + 27, x + 23, x + 23},
+        new int[] {y + pin, y + height - 13, y + height - 10, y + height - 10, y + height - 13},
+        5);
+    g.drawOval(x + 22, y + height - 15, 2, 2);
+    drawNode(g, x + 30, y + 10);
+    g.drawPolyline(
+        new int[] {x + 30, x + 23, x + 23},
+        new int[] {y + 10, y + 10, y + 13},
+        3);
+    g.drawOval(x + 22, y + 13, 2, 2);
+
+    g.drawPolyline(
+        new int[] {x + 15, x + 15, x + 25, x + 25},
+        new int[] {y + height - 20, y + height - 15, y + height - 15, y + height - 20},
+        4);
+    GraphicsUtil.drawCenteredArc(g, x + 20, y + height - 20, 5, 0, 180);
+    g.drawPolyline(
+        new int[] {x + 20, x + 20, x + 175},
+        new int[] {y + height - 25, y + height - 28, y + height - 28},
+        3);
+
+    for (var i = x + 30; i < x + 190; i += 20) {
+      g.drawPolyline(
+          new int[] {i, i + 3, i + 10, i + 10},
+          new int[] {y + height - pin, y + height - 10, y + height - 10, y + height - 17},
+          4);
+      g.drawPolyline(
+          new int[] {i + 6, i + 10, i + 14, i + 6},
+          new int[] {y + height - 17, y + height - 23, y + height - 17, y + height - 17},
+          4);
+      g.drawOval(i + 8, y + height - 27, 4, 4);
+      if (i < x + 170) {
+        drawNode(g, i + 5, y + height - 28);
+      }
+      g.drawPolyline(
+          new int[] {i + 5, i + 5, i + 8},
+          new int[] {y + height - 28, y + height - 21, y + height - 21},
+          3);
+      g.drawPolyline(
+          new int[] {i + 10, i + 10, i + 16, i + 20},
+          new int[] {y + height - 27, y + 16, y + 10, y + 10},
+          4);
+      drawNode(g, i + 20, y + 10);
+    }
+
+    g.drawPolyline(
+        new int[] {x + 15, x + 15, x + 25, x + 25},
+        new int[] {y + 20, y + 15, y + 15, y + 20},
+        4);
+    GraphicsUtil.drawCenteredArc(g, x + 20, y + 20, 5, 180, 180);
+    g.drawPolyline(
+        new int[] {x + 20, x + 20, x + 185},
+        new int[] {y + 25, y + 28, y + 28},
+        3);
+
+    for (var i = x + 50; i < x + 210; i += 20) {
+      g.drawLine(i, y + pin, i, y + 17);
+      g.drawPolyline(
+          new int[] {i + 4, i, i - 4, i + 4},
+          new int[] {y + 17, y + 23, y + 17, y + 17},
+          4);
+      g.drawOval(i - 2, y + 23, 4, 4);
+      if (i < x + 190) {
+        drawNode(g, i - 5, y + 28);
+      }
+      g.drawPolyline(
+          new int[] {i - 5, i - 5, i - 2},
+          new int[] {y + 28, y + 21, y + 21},
+          3);
+      g.drawPolyline(
+          new int[] {i, i, i - 6, i - 10},
+          new int[] {y + 27, y + height - 16, y + height - 10, y + height - 10},
+          4);
+      drawNode(g, i - 10, y + height - 10);
+    }
+  }
+
+  /** Junction dot centered on a wire crossing. Every node is this size. */
+  private static void drawNode(Graphics g, int centerX, int centerY) {
+    g.fillOval(centerX - 1, centerY - 1, 2, 2);
   }
 
   /**
@@ -277,41 +278,6 @@ public class Ttl74640 extends AbstractTtlGate {
     for (final var port : ports) {
       state.setPort(port, Value.UNKNOWN, DELAY);
     }
-  }
-
-  private static int structureX(int originX, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originX + (pin - 1) * 20 + 10;
-    }
-    return originX + (pins - pin) * 20 + 10;
-  }
-
-  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
-    }
-    return originY + AbstractTtlGate.PIN_HEIGHT;
-  }
-
-  private static void structureBubble(Graphics g, int centerX, int centerY) {
-    g.drawOval(centerX - 2, centerY - 2, 4, 4);
-  }
-
-  private static void structureDot(
-      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
-    if (data == null) {
-      return;
-    }
-    final var value = data.getValue(word);
-    if (bit < 0 || bit >= value.getWidth()) {
-      return;
-    }
-    final var bitValue = value.get(bit);
-    g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 3, centerY - 3, 6, 6);
-    g.setColor(Color.WHITE);
-    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
-    g.setColor(Color.BLACK);
   }
 
 }
