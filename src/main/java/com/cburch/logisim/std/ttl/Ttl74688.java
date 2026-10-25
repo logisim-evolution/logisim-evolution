@@ -146,26 +146,27 @@ public class Ttl74688 extends AbstractTtlGate {
     }
     drawAndFacingLeft(g, andTip, andTop, andBottom);
 
-    final var enableTop = andMid - 6;
-    final var enableBottom = andMid + 6;
-    final var enableBack = andTip - 8;
-    final var enableTip = enableBack - (enableBottom - enableTop) / 2;
-    drawAndFacingLeft(g, enableTip, enableTop, enableBottom);
-    g.drawLine(andTip, andMid, enableBack, andMid);
+    // Upper AND points toward the output pin. Both inputs share its flat side.
+    final var enableLeft = x + 12;
+    final var enableRight = x + 28;
+    final var enableBack = y + 22;
+    final var enableTipY = enableBack - (enableRight - enableLeft) / 2;
+    drawAndFacingUp(g, enableLeft, enableTipY, enableRight);
+    g.drawLine(andTip, andMid, enableLeft + 8, andMid);
+    g.drawLine(enableLeft + 8, andMid, enableLeft + 8, enableBack);
 
-    // nE joins the same input side as the eight-bit result, with one active-low bubble.
     final var enableX = x + 10;
-    final var entryY = andMid + 4;
-    g.drawOval(enableBack, entryY - 2, 4, 4);
-    g.drawLine(enableBack + 2, entryY + 2, enableBack + 2, enableBottom + 4);
-    g.drawLine(enableBack + 2, enableBottom + 4, enableX, enableBottom + 4);
-    g.drawLine(enableX, enableBottom + 4, enableX, pinBottom);
+    final var nEIn = enableLeft + 2;
+    g.drawOval(nEIn - 2, enableBack, 4, 4);
+    g.drawLine(nEIn, enableBack + 4, nEIn, y + 34);
+    g.drawLine(nEIn, y + 34, enableX, y + 34);
+    g.drawLine(enableX, y + 34, enableX, pinBottom);
 
     final var outputX = x + 30;
-    g.drawOval(enableTip - 4, andMid - 2, 4, 4);
-    g.drawLine(enableTip - 4, andMid, enableTip - 4, y + 16);
-    g.drawLine(enableTip - 4, y + 16, outputX, y + 16);
-    g.drawLine(outputX, y + 16, outputX, pinTop);
+    final var outX = enableLeft + (enableRight - enableLeft) / 2;
+    g.drawOval(outX - 2, enableTipY - 4, 4, 4);
+    g.drawLine(outX, enableTipY - 4, outputX, enableTipY - 4);
+    g.drawLine(outputX, enableTipY - 4, outputX, pinTop);
   }
 
   /** AND gate with its output tip on the left and the input back on the right. */
@@ -173,6 +174,13 @@ public class Ttl74688 extends AbstractTtlGate {
     final var span = bottom - top;
     g.drawArc(tipX, top, span, span, 90, 180);
     g.drawLine(tipX + span / 2, top, tipX + span / 2, bottom);
+  }
+
+  /** AND gate with its output tip toward the top pins and the input back below that. */
+  private static void drawAndFacingUp(Graphics g, int left, int tipY, int right) {
+    final var span = right - left;
+    g.drawArc(left, tipY, span, span, 0, 180);
+    g.drawLine(left, tipY + span / 2, right, tipY + span / 2);
   }
 
   /** One equality result, from the cell to its own input on the AND gate. */
