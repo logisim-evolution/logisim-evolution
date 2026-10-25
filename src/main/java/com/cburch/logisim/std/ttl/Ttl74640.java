@@ -164,23 +164,24 @@ public class Ttl74640 extends AbstractTtlGate {
     for (var i = x + 30; i < x + 190; i += 20) {
       g.drawPolyline(
           new int[] {i, i + 3, i + 10, i + 10},
-          new int[] {y + height - pin, y + height - 10, y + height - 10, y + height - 17},
+          new int[] {y + height - pin, y + height - 10, y + height - 10, y + height - 14},
           4);
       g.drawPolyline(
           new int[] {i + 6, i + 10, i + 14, i + 6},
-          new int[] {y + height - 17, y + height - 23, y + height - 17, y + height - 17},
+          new int[] {y + height - 14, y + height - 20, y + height - 14, y + height - 14},
           4);
-      g.drawOval(i + 8, y + height - 27, 4, 4);
+      // Two-pixel bubble on the tip, clear of the enable rail above it.
+      g.drawOval(i + 9, y + height - 22, 2, 2);
       if (i < x + 170) {
         drawNode(g, i + 5, y + height - 28);
       }
       g.drawPolyline(
           new int[] {i + 5, i + 5, i + 8},
-          new int[] {y + height - 28, y + height - 21, y + height - 21},
+          new int[] {y + height - 28, y + height - 17, y + height - 17},
           3);
       g.drawPolyline(
           new int[] {i + 10, i + 10, i + 16, i + 20},
-          new int[] {y + height - 27, y + 16, y + 10, y + 10},
+          new int[] {y + height - 22, y + 16, y + 10, y + 10},
           4);
       drawNode(g, i + 20, y + 10);
     }
@@ -196,22 +197,23 @@ public class Ttl74640 extends AbstractTtlGate {
         3);
 
     for (var i = x + 50; i < x + 210; i += 20) {
-      g.drawLine(i, y + pin, i, y + 17);
+      g.drawLine(i, y + pin, i, y + 14);
       g.drawPolyline(
           new int[] {i + 4, i, i - 4, i + 4},
-          new int[] {y + 17, y + 23, y + 17, y + 17},
+          new int[] {y + 14, y + 20, y + 14, y + 14},
           4);
-      g.drawOval(i - 2, y + 23, 4, 4);
+      // Two-pixel bubble on the tip, clear of the enable rail below it.
+      g.drawOval(i - 1, y + 20, 2, 2);
       if (i < x + 190) {
         drawNode(g, i - 5, y + 28);
       }
       g.drawPolyline(
           new int[] {i - 5, i - 5, i - 2},
-          new int[] {y + 28, y + 21, y + 21},
+          new int[] {y + 28, y + 16, y + 16},
           3);
       g.drawPolyline(
           new int[] {i, i, i - 6, i - 10},
-          new int[] {y + 27, y + height - 16, y + height - 10, y + height - 10},
+          new int[] {y + 22, y + height - 16, y + height - 10, y + height - 10},
           4);
       drawNode(g, i - 10, y + height - 10);
     }
