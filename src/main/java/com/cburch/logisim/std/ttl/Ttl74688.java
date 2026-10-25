@@ -10,6 +10,7 @@
 package com.cburch.logisim.std.ttl;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.data.Value;
@@ -115,75 +116,88 @@ public class Ttl74688 extends AbstractTtlGate {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
-    g.drawRect((x + 35), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 40), (y + 28));
-    g.drawLine((x + 30), (y + height - 7), (x + 30), (y + height - 13));
-    g.drawLine((x + 30), (y + height - 13), (x + 40), (y + height - 13));
-    g.drawLine((x + 40), (y + height - 13), (x + 40), (y + 34));
-    g.drawLine((x + 50), (y + height - 7), (x + 50), (y + height - 13));
-    g.drawLine((x + 50), (y + height - 13), (x + 40), (y + height - 13));
-    g.drawLine((x + 40), (y + height - 13), (x + 40), (y + 22));
-    g.drawRect((x + 75), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 80), (y + 28));
-    g.drawLine((x + 70), (y + height - 7), (x + 70), (y + height - 13));
-    g.drawLine((x + 70), (y + height - 13), (x + 80), (y + height - 13));
-    g.drawLine((x + 80), (y + height - 13), (x + 80), (y + 34));
-    g.drawLine((x + 90), (y + height - 7), (x + 90), (y + height - 13));
-    g.drawLine((x + 90), (y + height - 13), (x + 80), (y + height - 13));
-    g.drawLine((x + 80), (y + height - 13), (x + 80), (y + 22));
-    g.drawRect((x + 115), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 120), (y + 28));
-    g.drawLine((x + 110), (y + height - 7), (x + 110), (y + height - 13));
-    g.drawLine((x + 110), (y + height - 13), (x + 120), (y + height - 13));
-    g.drawLine((x + 120), (y + height - 13), (x + 120), (y + 34));
-    g.drawLine((x + 130), (y + height - 7), (x + 130), (y + height - 13));
-    g.drawLine((x + 130), (y + height - 13), (x + 120), (y + height - 13));
-    g.drawLine((x + 120), (y + height - 13), (x + 120), (y + 22));
-    g.drawRect((x + 155), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 160), (y + 28));
-    g.drawLine((x + 150), (y + height - 7), (x + 150), (y + height - 13));
-    g.drawLine((x + 150), (y + height - 13), (x + 160), (y + height - 13));
-    g.drawLine((x + 160), (y + height - 13), (x + 160), (y + 34));
-    g.drawLine((x + 170), (y + height - 7), (x + 170), (y + height - 13));
-    g.drawLine((x + 170), (y + height - 13), (x + 160), (y + height - 13));
-    g.drawLine((x + 160), (y + height - 13), (x + 160), (y + 22));
-    g.drawRect((x + 175), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 180), (y + 28));
-    g.drawLine((x + 190), (y + 7), (x + 190), (y + 13));
-    g.drawLine((x + 190), (y + 13), (x + 180), (y + 13));
-    g.drawLine((x + 180), (y + 13), (x + 180), (y + 34));
-    g.drawLine((x + 170), (y + 7), (x + 170), (y + 13));
-    g.drawLine((x + 170), (y + 13), (x + 180), (y + 13));
-    g.drawLine((x + 180), (y + 13), (x + 180), (y + 22));
-    g.drawRect((x + 135), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 140), (y + 28));
-    g.drawLine((x + 150), (y + 7), (x + 150), (y + 13));
-    g.drawLine((x + 150), (y + 13), (x + 140), (y + 13));
-    g.drawLine((x + 140), (y + 13), (x + 140), (y + 34));
-    g.drawLine((x + 130), (y + 7), (x + 130), (y + 13));
-    g.drawLine((x + 130), (y + 13), (x + 140), (y + 13));
-    g.drawLine((x + 140), (y + 13), (x + 140), (y + 22));
-    g.drawRect((x + 95), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 100), (y + 28));
-    g.drawLine((x + 110), (y + 7), (x + 110), (y + 13));
-    g.drawLine((x + 110), (y + 13), (x + 100), (y + 13));
-    g.drawLine((x + 100), (y + 13), (x + 100), (y + 34));
-    g.drawLine((x + 90), (y + 7), (x + 90), (y + 13));
-    g.drawLine((x + 90), (y + 13), (x + 100), (y + 13));
-    g.drawLine((x + 100), (y + 13), (x + 100), (y + 22));
-    g.drawRect((x + 55), (y + 22), 10, 12);
-    GraphicsUtil.drawCenteredText(g, "=", (x + 60), (y + 28));
-    g.drawLine((x + 70), (y + 7), (x + 70), (y + 13));
-    g.drawLine((x + 70), (y + 13), (x + 60), (y + 13));
-    g.drawLine((x + 60), (y + 13), (x + 60), (y + 34));
-    g.drawLine((x + 50), (y + 7), (x + 50), (y + 13));
-    g.drawLine((x + 50), (y + 13), (x + 60), (y + 13));
-    g.drawLine((x + 60), (y + 13), (x + 60), (y + 22));
-    g.drawLine((x + 30), (y + 7), (x + 30), (y + 40));
-    structureBubble(g, (x + 30), (y + 7));
-    GraphicsUtil.drawCenteredText(g, "=", (x + 30), (y + 40));
-    g.drawLine((x + 10), (y + height - 7), (x + 10), (y + 16));
-    structureBubble(g, (x + 10), (y + height - 7));
+    drawComparator(g, x, y, height);
+  }
+
+  /**
+   * Compact form of the 74HC688 logic diagram. Each bit is an equality cell. The cells share one
+   * rail into a gate with active-low enable and an active-low equal output.
+   */
+  private static void drawComparator(Graphics g, int x, int y, int height) {
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    final var rail = y + 30;
+    final var gateLeft = x + 14;
+    final var gateTop = y + 22;
+    final var gateWidth = 12;
+    final var gateHeight = 16;
+    final var gateRight = gateLeft + gateWidth;
+    final var gateBottom = gateTop + gateHeight;
+    final var gateMidX = gateLeft + gateWidth / 2;
+    final int[] lower = {40, 80, 120, 160};
+    final int[] upper = {60, 100, 140, 180};
+    for (var center : lower) {
+      drawEqualCell(g, x + center, y + 36, true, pinBottom);
+      g.drawLine(x + center, y + 36, x + center, rail);
+      drawNode(g, x + center, rail);
+    }
+    for (var stage = 0; stage < upper.length; stage++) {
+      final var center = x + upper[stage];
+      drawEqualCell(g, center, y + 14, false, pinTop);
+      g.drawLine(center, y + 24, center, rail);
+      if (stage + 1 < upper.length) {
+        drawNode(g, center, rail);
+      }
+    }
+    g.drawLine(gateRight, rail, x + upper[upper.length - 1], rail);
+    g.drawRect(gateLeft, gateTop, gateWidth, gateHeight);
+
+    final var enableX = x + 10;
+    g.drawLine(enableX, pinBottom, enableX, gateBottom + 4);
+    g.drawLine(enableX, gateBottom + 4, gateMidX, gateBottom + 4);
+    g.drawOval(gateMidX - 2, gateBottom, 4, 4);
+
+    g.drawOval(gateMidX - 2, gateTop - 4, 4, 4);
+    g.drawLine(gateMidX, gateTop - 4, gateMidX, y + 12);
+    g.drawLine(gateMidX, y + 12, x + 30, y + 12);
+    g.drawLine(x + 30, y + 12, x + 30, pinTop);
+  }
+
+  /** One P/Q pair. Inputs come from the pin side; the equal result leaves the inner side. */
+  private static void drawEqualCell(
+      Graphics g, int center, int top, boolean inputsFromBottom, int pinY) {
+    final var left = center - 5;
+    final var cell = 10;
+    g.drawRect(left, top, cell, cell);
+    final var previous = g.getFont();
+    g.setFont(previous.deriveFont(Font.PLAIN, 8f));
+    GraphicsUtil.drawCenteredText(g, "=", center, top + cell / 2);
+    g.setFont(previous);
+    final var near = center - 2;
+    final var far = center + 2;
+    final var lowPin = center - 10;
+    final var highPin = center + 10;
+    if (inputsFromBottom) {
+      final var bottom = top + cell;
+      g.drawLine(lowPin, pinY, lowPin, bottom + 4);
+      g.drawLine(lowPin, bottom + 4, near, bottom + 4);
+      g.drawLine(near, bottom + 4, near, bottom);
+      g.drawLine(highPin, pinY, highPin, bottom + 2);
+      g.drawLine(highPin, bottom + 2, far, bottom + 2);
+      g.drawLine(far, bottom + 2, far, bottom);
+    } else {
+      g.drawLine(lowPin, pinY, lowPin, top - 2);
+      g.drawLine(lowPin, top - 2, near, top - 2);
+      g.drawLine(near, top - 2, near, top);
+      g.drawLine(highPin, pinY, highPin, top - 4);
+      g.drawLine(highPin, top - 4, far, top - 4);
+      g.drawLine(far, top - 4, far, top);
+    }
+  }
+
+  /** Junction dot centered on a wire crossing. Every node is this size. */
+  private static void drawNode(Graphics g, int centerX, int centerY) {
+    g.fillOval(centerX - 1, centerY - 1, 2, 2);
   }
 
   @Override
@@ -213,41 +227,6 @@ public class Ttl74688 extends AbstractTtlGate {
 
   private static void setLow(InstanceState state, byte dsPinNr, boolean low) {
     state.setPort(pinNrToPortNr(dsPinNr), low ? Value.FALSE : Value.TRUE, DELAY);
-  }
-
-  private static int structureX(int originX, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originX + (pin - 1) * 20 + 10;
-    }
-    return originX + (pins - pin) * 20 + 10;
-  }
-
-  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
-    }
-    return originY + AbstractTtlGate.PIN_HEIGHT;
-  }
-
-  private static void structureBubble(Graphics g, int centerX, int centerY) {
-    g.drawOval(centerX - 2, centerY - 2, 4, 4);
-  }
-
-  private static void structureDot(
-      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
-    if (data == null) {
-      return;
-    }
-    final var value = data.getValue(word);
-    if (bit < 0 || bit >= value.getWidth()) {
-      return;
-    }
-    final var bitValue = value.get(bit);
-    g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 3, centerY - 3, 6, 6);
-    g.setColor(Color.WHITE);
-    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
-    g.setColor(Color.BLACK);
   }
 
 }
