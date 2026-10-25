@@ -10,9 +10,7 @@
 package com.cburch.logisim.std.ttl;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
-import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -120,20 +118,15 @@ public class Ttl74688 extends AbstractTtlGate {
   }
 
   /**
-   * Compact form of the 74HC688 logic diagram. Each bit is an equality cell. The cells share one
-   * rail into a gate with active-low enable and an active-low equal output.
+   * Eight equality cells, one per P/Q pair. Their results share one rail. Active-low enable and the
+   * active-low equal output meet that rail; both bubbles sit on the pins.
    */
   private static void drawComparator(Graphics g, int x, int y, int height) {
     final var pinTop = y + PIN_HEIGHT;
     final var pinBottom = y + height - PIN_HEIGHT;
     final var rail = y + 30;
-    final var gateLeft = x + 14;
-    final var gateTop = y + 22;
-    final var gateWidth = 12;
-    final var gateHeight = 16;
-    final var gateRight = gateLeft + gateWidth;
-    final var gateBottom = gateTop + gateHeight;
-    final var gateMidX = gateLeft + gateWidth / 2;
+    final var outputX = x + 30;
+    final var enableX = x + 10;
     final int[] lower = {40, 80, 120, 160};
     final int[] upper = {60, 100, 140, 180};
     for (var center : lower) {
@@ -149,49 +142,44 @@ public class Ttl74688 extends AbstractTtlGate {
         drawNode(g, center, rail);
       }
     }
-    g.drawLine(gateRight, rail, x + upper[upper.length - 1], rail);
-    g.drawRect(gateLeft, gateTop, gateWidth, gateHeight);
-
-    final var enableX = x + 10;
-    g.drawLine(enableX, pinBottom, enableX, gateBottom + 4);
-    g.drawLine(enableX, gateBottom + 4, gateMidX, gateBottom + 4);
-    g.drawOval(gateMidX - 2, gateBottom, 4, 4);
-
-    g.drawOval(gateMidX - 2, gateTop - 4, 4, 4);
-    g.drawLine(gateMidX, gateTop - 4, gateMidX, y + 12);
-    g.drawLine(gateMidX, y + 12, x + 30, y + 12);
-    g.drawLine(x + 30, y + 12, x + 30, pinTop);
+    g.drawLine(outputX, rail, x + upper[upper.length - 1], rail);
+    g.drawOval(enableX - 2, pinBottom - 4, 4, 4);
+    g.drawLine(enableX, pinBottom - 4, enableX, rail);
+    g.drawLine(enableX, rail, outputX, rail);
+    drawNode(g, outputX, rail);
+    g.drawLine(outputX, rail, outputX, pinTop + 4);
+    g.drawOval(outputX - 2, pinTop, 4, 4);
   }
 
-  /** One P/Q pair. Inputs come from the pin side; the equal result leaves the inner side. */
+  /** One P/Q pair. Both leads are the same length and the equals mark is centered in the cell. */
   private static void drawEqualCell(
       Graphics g, int center, int top, boolean inputsFromBottom, int pinY) {
-    final var left = center - 5;
     final var cell = 10;
+    final var left = center - cell / 2;
     g.drawRect(left, top, cell, cell);
-    final var previous = g.getFont();
-    g.setFont(previous.deriveFont(Font.PLAIN, 8f));
-    GraphicsUtil.drawCenteredText(g, "=", center, top + cell / 2);
-    g.setFont(previous);
-    final var near = center - 2;
-    final var far = center + 2;
+    g.drawLine(center - 3, top + 4, center + 3, top + 4);
+    g.drawLine(center - 3, top + 6, center + 3, top + 6);
+    final var laneGap = 3;
+    final var entry = 3;
     final var lowPin = center - 10;
     final var highPin = center + 10;
     if (inputsFromBottom) {
       final var bottom = top + cell;
-      g.drawLine(lowPin, pinY, lowPin, bottom + 4);
-      g.drawLine(lowPin, bottom + 4, near, bottom + 4);
-      g.drawLine(near, bottom + 4, near, bottom);
-      g.drawLine(highPin, pinY, highPin, bottom + 2);
-      g.drawLine(highPin, bottom + 2, far, bottom + 2);
-      g.drawLine(far, bottom + 2, far, bottom);
+      final var lane = bottom + laneGap;
+      g.drawLine(lowPin, pinY, lowPin, lane);
+      g.drawLine(lowPin, lane, center - entry, lane);
+      g.drawLine(center - entry, lane, center - entry, bottom);
+      g.drawLine(highPin, pinY, highPin, lane);
+      g.drawLine(highPin, lane, center + entry, lane);
+      g.drawLine(center + entry, lane, center + entry, bottom);
     } else {
-      g.drawLine(lowPin, pinY, lowPin, top - 2);
-      g.drawLine(lowPin, top - 2, near, top - 2);
-      g.drawLine(near, top - 2, near, top);
-      g.drawLine(highPin, pinY, highPin, top - 4);
-      g.drawLine(highPin, top - 4, far, top - 4);
-      g.drawLine(far, top - 4, far, top);
+      final var lane = top - laneGap;
+      g.drawLine(lowPin, pinY, lowPin, lane);
+      g.drawLine(lowPin, lane, center - entry, lane);
+      g.drawLine(center - entry, lane, center - entry, top);
+      g.drawLine(highPin, pinY, highPin, lane);
+      g.drawLine(highPin, lane, center + entry, lane);
+      g.drawLine(center + entry, lane, center + entry, top);
     }
   }
 
