@@ -10,8 +10,10 @@
 package com.cburch.logisim.std.ttl;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
@@ -118,58 +120,70 @@ public class Ttl74688 extends AbstractTtlGate {
   }
 
   /**
-   * Eight separate equality results enter one gate, together with active-low nE. The gate output
-   * is the active-low P=Q pin. The results are not tied together.
+   * Each pair keeps its own wire into an AND of all eight comparisons. A second gate passes that
+   * result only while nE is low. The output bubble makes nP=Q active low.
    */
   private static void drawComparator(Graphics g, int x, int y, int height) {
     final var pinTop = y + PIN_HEIGHT;
     final var pinBottom = y + height - PIN_HEIGHT;
-    final var gateLeft = x + 16;
-    final var gateTop = y + 16;
-    final var gateWidth = 16;
-    final var gateHeight = 28;
-    final var gateRight = gateLeft + gateWidth;
-    final var gateBottom = gateTop + gateHeight;
-    // Rightmost cell uses the lane nearest its row, so most runs do not have to cross.
+    final var andLeft = x + 22;
+    final var andTop = y + 20;
+    final var andWidth = 12;
+    final var andHeight = 20;
+    final var andRight = andLeft + andWidth;
+    // The cell nearest the gate takes the lane nearest that row, so bit wires do not cross.
     final int[] upperCenters = {60, 100, 140, 180};
-    final int[] upperLanes = {29, 26, 23, 20};
+    final int[] upperLanes = {23, 25, 27, 29};
     final int[] lowerCenters = {40, 80, 120, 160};
-    final int[] lowerLanes = {31, 34, 37, 40};
+    final int[] lowerLanes = {37, 35, 33, 31};
     for (var i = 0; i < upperCenters.length; i++) {
       final var center = x + upperCenters[i];
-      drawEqualCell(g, center, y + 10, false, pinTop);
-      final var lane = y + upperLanes[i];
-      g.drawLine(center, y + 18, center, lane);
-      g.drawLine(gateRight, lane, center, lane);
+      drawEqualCell(g, center, y + 14, false, pinTop);
+      routeToGate(g, center, y + 20, y + upperLanes[i], andRight);
     }
     for (var i = 0; i < lowerCenters.length; i++) {
       final var center = x + lowerCenters[i];
-      drawEqualCell(g, center, y + 42, true, pinBottom);
-      final var lane = y + lowerLanes[i];
-      g.drawLine(center, y + 42, center, lane);
-      g.drawLine(gateRight, lane, center, lane);
+      drawEqualCell(g, center, y + 40, true, pinBottom);
+      routeToGate(g, center, y + 40, y + lowerLanes[i], andRight);
     }
-    g.drawRect(gateLeft, gateTop, gateWidth, gateHeight);
+    g.drawRect(andLeft, andTop, andWidth, andHeight);
+    drawLabel(g, "&", andLeft + andWidth / 2, andTop + andHeight / 2);
+
+    final var enableLeft = x + 8;
+    final var enableTop = y + 26;
+    final var enableWidth = 10;
+    final var enableHeight = 10;
+    final var enableRight = enableLeft + enableWidth;
+    final var linkY = y + 31;
+    g.drawLine(andLeft, linkY, enableRight, linkY);
+    g.drawRect(enableLeft, enableTop, enableWidth, enableHeight);
+
     final var enableX = x + 10;
-    final var enableIn = gateLeft + 8;
     g.drawOval(enableX - 2, pinBottom - 4, 4, 4);
-    g.drawLine(enableX, pinBottom - 4, enableX, gateBottom + 2);
-    g.drawLine(enableX, gateBottom + 2, enableIn, gateBottom + 2);
-    g.drawLine(enableIn, gateBottom + 2, enableIn, gateBottom);
+    g.drawLine(enableX, pinBottom - 4, enableX, enableTop + enableHeight);
     final var outputX = x + 30;
-    g.drawLine(outputX, gateTop, outputX, pinTop + 4);
+    final var leaveX = enableLeft + enableWidth / 2;
+    g.drawLine(leaveX, enableTop, leaveX, y + 14);
+    g.drawLine(leaveX, y + 14, outputX, y + 14);
+    g.drawLine(outputX, y + 14, outputX, pinTop + 4);
     g.drawOval(outputX - 2, pinTop, 4, 4);
+  }
+
+  /** One equality result, from the cell to its own input on the AND gate. */
+  private static void routeToGate(Graphics g, int center, int cellEdge, int lane, int gateEdge) {
+    g.drawLine(center, cellEdge, center, lane);
+    g.drawLine(gateEdge, lane, center, lane);
   }
 
   /** One P/Q pair. Both leads are the same length and the equals mark is centered in the cell. */
   private static void drawEqualCell(
       Graphics g, int center, int top, boolean inputsFromBottom, int pinY) {
-    final var size = 8;
+    final var size = 6;
     g.drawRect(center - size / 2, top, size, size);
-    g.drawLine(center - 2, top + 3, center + 2, top + 3);
-    g.drawLine(center - 2, top + 5, center + 2, top + 5);
+    g.drawLine(center - 2, top + 2, center + 2, top + 2);
+    g.drawLine(center - 2, top + 4, center + 2, top + 4);
     final var edge = inputsFromBottom ? top + size : top;
-    final var lane = inputsFromBottom ? edge + 2 : edge - 2;
+    final var lane = inputsFromBottom ? edge + 3 : edge - 3;
     for (var side : new int[] {-1, 1}) {
       final var pin = center + side * 10;
       final var entry = center + side * 2;
@@ -177,6 +191,13 @@ public class Ttl74688 extends AbstractTtlGate {
       g.drawLine(pin, lane, entry, lane);
       g.drawLine(entry, lane, entry, edge);
     }
+  }
+
+  private static void drawLabel(Graphics g, String text, int centerX, int centerY) {
+    final var previous = g.getFont();
+    g.setFont(previous.deriveFont(Font.PLAIN, 8f));
+    GraphicsUtil.drawCenteredText(g, text, centerX, centerY);
+    g.setFont(previous);
   }
 
   @Override
