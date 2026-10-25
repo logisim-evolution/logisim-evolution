@@ -10,10 +10,8 @@
 package com.cburch.logisim.std.ttl;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
@@ -126,11 +124,11 @@ public class Ttl74688 extends AbstractTtlGate {
   private static void drawComparator(Graphics g, int x, int y, int height) {
     final var pinTop = y + PIN_HEIGHT;
     final var pinBottom = y + height - PIN_HEIGHT;
-    final var andLeft = x + 22;
     final var andTop = y + 20;
-    final var andWidth = 12;
-    final var andHeight = 20;
-    final var andRight = andLeft + andWidth;
+    final var andBottom = y + 40;
+    final var andBack = x + 34;
+    final var andTip = andBack - (andBottom - andTop) / 2;
+    final var andMid = andTop + (andBottom - andTop) / 2;
     // The cell nearest the gate takes the lane nearest that row, so bit wires do not cross.
     final int[] upperCenters = {60, 100, 140, 180};
     final int[] upperLanes = {23, 25, 27, 29};
@@ -139,34 +137,40 @@ public class Ttl74688 extends AbstractTtlGate {
     for (var i = 0; i < upperCenters.length; i++) {
       final var center = x + upperCenters[i];
       drawEqualCell(g, center, y + 14, false, pinTop);
-      routeToGate(g, center, y + 20, y + upperLanes[i], andRight);
+      routeToGate(g, center, y + 20, y + upperLanes[i], andBack);
     }
     for (var i = 0; i < lowerCenters.length; i++) {
       final var center = x + lowerCenters[i];
       drawEqualCell(g, center, y + 40, true, pinBottom);
-      routeToGate(g, center, y + 40, y + lowerLanes[i], andRight);
+      routeToGate(g, center, y + 40, y + lowerLanes[i], andBack);
     }
-    g.drawRect(andLeft, andTop, andWidth, andHeight);
-    drawLabel(g, "&", andLeft + andWidth / 2, andTop + andHeight / 2);
+    drawAndFacingLeft(g, andTip, andTop, andBottom);
 
-    final var enableLeft = x + 8;
-    final var enableTop = y + 26;
-    final var enableWidth = 10;
-    final var enableHeight = 10;
-    final var enableRight = enableLeft + enableWidth;
-    final var linkY = y + 31;
-    g.drawLine(andLeft, linkY, enableRight, linkY);
-    g.drawRect(enableLeft, enableTop, enableWidth, enableHeight);
+    final var enableBottom = andMid + 6;
+    final var enableTop = andMid - 6;
+    final var enableBack = andTip - 4;
+    final var enableTip = enableBack - (enableBottom - enableTop) / 2;
+    drawAndFacingLeft(g, enableTip, enableTop, enableBottom);
+    g.drawLine(andTip, andMid, enableBack, andMid);
 
     final var enableX = x + 10;
-    g.drawOval(enableX - 2, pinBottom - 4, 4, 4);
-    g.drawLine(enableX, pinBottom - 4, enableX, enableTop + enableHeight);
+    final var enableEntry = enableTip + (enableBack - enableTip) / 2;
+    g.drawOval(enableEntry - 2, enableBottom, 4, 4);
+    g.drawLine(enableEntry, enableBottom + 4, enableX, enableBottom + 4);
+    g.drawLine(enableX, enableBottom + 4, enableX, pinBottom);
+
     final var outputX = x + 30;
-    final var leaveX = enableLeft + enableWidth / 2;
-    g.drawLine(leaveX, enableTop, leaveX, y + 14);
-    g.drawLine(leaveX, y + 14, outputX, y + 14);
-    g.drawLine(outputX, y + 14, outputX, pinTop + 4);
-    g.drawOval(outputX - 2, pinTop, 4, 4);
+    g.drawOval(enableTip - 4, andMid - 2, 4, 4);
+    g.drawLine(enableTip - 4, andMid, enableTip - 4, y + 16);
+    g.drawLine(enableTip - 4, y + 16, outputX, y + 16);
+    g.drawLine(outputX, y + 16, outputX, pinTop);
+  }
+
+  /** AND gate with its output tip on the left and the input back on the right. */
+  private static void drawAndFacingLeft(Graphics g, int tipX, int top, int bottom) {
+    final var span = bottom - top;
+    g.drawArc(tipX, top, span, span, 90, 180);
+    g.drawLine(tipX + span / 2, top, tipX + span / 2, bottom);
   }
 
   /** One equality result, from the cell to its own input on the AND gate. */
@@ -180,8 +184,8 @@ public class Ttl74688 extends AbstractTtlGate {
       Graphics g, int center, int top, boolean inputsFromBottom, int pinY) {
     final var size = 6;
     g.drawRect(center - size / 2, top, size, size);
-    g.drawLine(center - 2, top + 2, center + 2, top + 2);
-    g.drawLine(center - 2, top + 4, center + 2, top + 4);
+    g.drawLine(center - 1, top + 2, center + 1, top + 2);
+    g.drawLine(center - 1, top + 4, center + 1, top + 4);
     final var edge = inputsFromBottom ? top + size : top;
     final var lane = inputsFromBottom ? edge + 3 : edge - 3;
     for (var side : new int[] {-1, 1}) {
@@ -191,13 +195,6 @@ public class Ttl74688 extends AbstractTtlGate {
       g.drawLine(pin, lane, entry, lane);
       g.drawLine(entry, lane, entry, edge);
     }
-  }
-
-  private static void drawLabel(Graphics g, String text, int centerX, int centerY) {
-    final var previous = g.getFont();
-    g.setFont(previous.deriveFont(Font.PLAIN, 8f));
-    GraphicsUtil.drawCenteredText(g, text, centerX, centerY);
-    g.setFont(previous);
   }
 
   @Override
