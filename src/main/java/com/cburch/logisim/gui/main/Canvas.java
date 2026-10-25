@@ -105,6 +105,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
   public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
+  private static final float FONT_SIZE = 12f;
   // public static BufferedImage image;
   private final Project proj;
   private final Selection selection;
@@ -136,6 +137,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     this.tickCounter = new TickCounter();
     this.autoPanTimer = new Timer(AUTO_PAN_DELAY, event -> autoPanPreview());
     this.autoPanTimer.setCoalesce(true);
+
+    // font size scales with OS display scaling on some OSes (not Windows)
+    // so force a fixed font size, without forcing a whole font
+    this.setFont(this.getFont().deriveFont(FONT_SIZE));
 
     setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
     addMouseListener(myListener);
@@ -345,7 +350,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     return viewable;
   }
 
-  private void computeViewportContents() {
+  void computeViewportContents() {
     final var exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
     if (exceptions == null || exceptions.size() == 0) {
       viewport.setWidthMessage(null);
@@ -353,9 +358,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
     viewport.setWidthMessage(
         S.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
+    viewport.clearArrows();
     for (final var ex : exceptions) {
       final var p = ex.getPoint(0);
-      setArrows(p.getX(), p.getY(), p.getX(), p.getY());
+      setArrows(p.getX(), p.getY(), p.getX(), p.getY(), false, false);
     }
   }
 
@@ -380,6 +386,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   public StringGetter getErrorMessage() {
     return viewport.errorMessage;
+  }
+
+  MyViewport getViewport() {
+    return viewport;
   }
 
   public void updatePreviewAutoPan(int x, int y) {
@@ -682,9 +692,15 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   }
 
   public void setArrows(int x0, int y0, int x1, int y1) {
+    setArrows(x0, y0, x1, y1, true, true);
+  }
+
+  public void setArrows(int x0, int y0, int x1, int y1, boolean clear, boolean repaint) {
     /* Disable for VHDL content */
     if (proj.getCurrentCircuit() == null) return;
-    viewport.clearArrows();
+    if (clear) {
+      viewport.clearArrows();
+    }
     Rectangle viewableBase;
     Rectangle viewable;
     if (canvasPane != null) {
@@ -724,7 +740,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
     if (isEast && !viewport.isSoutheast && !viewport.isNortheast) viewport.setEast(true);
     if (isWest && !viewport.isSouthwest && !viewport.isNorthwest) viewport.setWest(true);
-    viewport.repaint();
+    if (repaint) {
+      viewport.repaint();
+    }
   }
 
   void setHaloedComponent(Circuit circ, Component comp) {
@@ -1243,7 +1261,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
   }
 
-  private class MyViewport extends JViewport {
+  class MyViewport extends JViewport {
 
     private static final long serialVersionUID = 1L;
     StringGetter errorMessage = null;
