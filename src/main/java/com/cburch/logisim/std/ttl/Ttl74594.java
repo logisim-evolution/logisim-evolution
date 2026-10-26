@@ -15,8 +15,8 @@ import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Arrays;
 
@@ -113,88 +113,115 @@ public class Ttl74594 extends AbstractTtlGate {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
-    g.drawRect((x + 14), (y + 11), 12, 12);
-    g.drawLine((x + 30), (y + 7), (x + 30), (y + 13));
-    g.drawLine((x + 30), (y + 13), (x + 20), (y + 13));
-    g.drawLine((x + 20), (y + 13), (x + 20), (y + 11));
-    g.drawLine((x + 14), (((y + 11)) + 6) - 3, ((x + 14)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 14), (((y + 11)) + 6) + 3, ((x + 14)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 30), (y + 11), 12, 12);
-    g.drawLine((x + 10), (y + height - 7), (x + 10), (y + height - 13));
-    g.drawLine((x + 10), (y + height - 13), (x + 36), (y + height - 13));
-    g.drawLine((x + 36), (y + height - 13), (x + 36), ((y + 11)) + 12);
-    g.drawLine((x + 30), (((y + 11)) + 6) - 3, ((x + 30)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 30), (((y + 11)) + 6) + 3, ((x + 30)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 46), (y + 11), 12, 12);
-    g.drawLine((x + 30), (y + height - 7), (x + 30), (y + height - 13));
-    g.drawLine((x + 30), (y + height - 13), (x + 52), (y + height - 13));
-    g.drawLine((x + 52), (y + height - 13), (x + 52), ((y + 11)) + 12);
-    g.drawLine((x + 46), (((y + 11)) + 6) - 3, ((x + 46)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 46), (((y + 11)) + 6) + 3, ((x + 46)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 62), (y + 11), 12, 12);
-    g.drawLine((x + 50), (y + height - 7), (x + 50), (y + height - 13));
-    g.drawLine((x + 50), (y + height - 13), (x + 68), (y + height - 13));
-    g.drawLine((x + 68), (y + height - 13), (x + 68), ((y + 11)) + 12);
-    g.drawLine((x + 62), (((y + 11)) + 6) - 3, ((x + 62)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 62), (((y + 11)) + 6) + 3, ((x + 62)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 78), (y + 11), 12, 12);
-    g.drawLine((x + 70), (y + height - 7), (x + 70), (y + height - 13));
-    g.drawLine((x + 70), (y + height - 13), (x + 84), (y + height - 13));
-    g.drawLine((x + 84), (y + height - 13), (x + 84), ((y + 11)) + 12);
-    g.drawLine((x + 78), (((y + 11)) + 6) - 3, ((x + 78)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 78), (((y + 11)) + 6) + 3, ((x + 78)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 94), (y + 11), 12, 12);
-    g.drawLine((x + 90), (y + height - 7), (x + 90), (y + height - 13));
-    g.drawLine((x + 90), (y + height - 13), (x + 100), (y + height - 13));
-    g.drawLine((x + 100), (y + height - 13), (x + 100), ((y + 11)) + 12);
-    g.drawLine((x + 94), (((y + 11)) + 6) - 3, ((x + 94)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 94), (((y + 11)) + 6) + 3, ((x + 94)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 110), (y + 11), 12, 12);
-    g.drawLine((x + 110), (y + height - 7), (x + 110), (y + height - 13));
-    g.drawLine((x + 110), (y + height - 13), (x + 116), (y + height - 13));
-    g.drawLine((x + 116), (y + height - 13), (x + 116), ((y + 11)) + 12);
-    g.drawLine((x + 110), (((y + 11)) + 6) - 3, ((x + 110)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 110), (((y + 11)) + 6) + 3, ((x + 110)) + 4, ((y + 11)) + 6);
-    g.drawRect((x + 126), (y + 11), 12, 12);
-    g.drawLine((x + 130), (y + height - 7), (x + 130), (y + height - 13));
-    g.drawLine((x + 130), (y + height - 13), (x + 132), (y + height - 13));
-    g.drawLine((x + 132), (y + height - 13), (x + 132), ((y + 11)) + 12);
-    g.drawLine((x + 126), (((y + 11)) + 6) - 3, ((x + 126)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 126), (((y + 11)) + 6) + 3, ((x + 126)) + 4, ((y + 11)) + 6);
-    g.drawLine((x + 26), ((y + 11)) + 6, (x + 26), ((y + 11)) + 6);
-    g.drawLine((x + 42), ((y + 11)) + 6, (x + 42), ((y + 11)) + 6);
-    g.drawLine((x + 58), ((y + 11)) + 6, (x + 58), ((y + 11)) + 6);
-    g.drawLine((x + 74), ((y + 11)) + 6, (x + 74), ((y + 11)) + 6);
-    g.drawLine((x + 90), ((y + 11)) + 6, (x + 90), ((y + 11)) + 6);
-    g.drawLine((x + 106), ((y + 11)) + 6, (x + 106), ((y + 11)) + 6);
-    g.drawLine((x + 122), ((y + 11)) + 6, (x + 122), ((y + 11)) + 6);
-    g.drawLine((x + 110), (y + 7), (x + 110), (y + 13));
-    g.drawLine((x + 110), (y + 13), (x + 9), (y + 13));
-    g.drawLine((x + 9), (y + 13), (x + 9), ((y + 11)) + 6);
-    g.drawLine((x + 20), (y + 27), (x + 132), (y + 27));
-    g.drawLine((x + 20), (y + 27), (x + 20), (y + 11));
-    g.drawLine((x + 20), (y + 27), (x + 20), ((y + 11)) + 14);
-    g.drawLine((x + 36), (y + 27), (x + 36), (y + 11));
-    g.drawLine((x + 36), (y + 27), (x + 36), ((y + 11)) + 14);
-    g.drawLine((x + 52), (y + 27), (x + 52), (y + 11));
-    g.drawLine((x + 52), (y + 27), (x + 52), ((y + 11)) + 14);
-    g.drawLine((x + 68), (y + 27), (x + 68), (y + 11));
-    g.drawLine((x + 68), (y + 27), (x + 68), ((y + 11)) + 14);
-    g.drawLine((x + 84), (y + 27), (x + 84), (y + 11));
-    g.drawLine((x + 84), (y + 27), (x + 84), ((y + 11)) + 14);
-    g.drawLine((x + 100), (y + 27), (x + 100), (y + 11));
-    g.drawLine((x + 100), (y + 27), (x + 100), ((y + 11)) + 14);
-    g.drawLine((x + 116), (y + 27), (x + 116), (y + 11));
-    g.drawLine((x + 116), (y + 27), (x + 116), ((y + 11)) + 14);
-    g.drawLine((x + 132), (y + 27), (x + 132), (y + 11));
-    g.drawLine((x + 132), (y + 27), (x + 132), ((y + 11)) + 14);
-    g.drawLine((x + 130), (y + 7), (x + 130), (y + 13));
-    g.drawLine((x + 130), (y + 13), (x + 20), (y + 13));
-    g.drawLine((x + 20), (y + 13), (x + 20), (y + 27));
-    structureBubble(g, (x + 130), (y + 7));
-    g.drawLine((x + 50), (y + 7), (x + 50), (y + 13));
-    g.drawLine((x + 50), (y + 13), (x + 22), (y + 13));
-    g.drawLine((x + 22), (y + 13), (x + 22), (y + 20));
+    drawStructure(g, x, y, height);
+  }
+
+  /**
+   * Logic diagram from the data sheet. SER, SRCLK and SRCLR meet the top edge of the shift
+   * register, and QH' leaves its last stage. All eight stages cross into the storage register,
+   * which has its own clock and clear and drives QA..QH. A clock mark is the flip-flop triangle,
+   * with its point inside the block. The serial wire hops over the storage controls.
+   */
+  private static void drawStructure(Graphics g, int x, int y, int height) {
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    final var shiftClockX = pinX(x, 11);
+    final var shiftClearX = pinX(x, 10);
+    final var shiftLeft = shiftClockX - 14;
+    final var shiftRight = shiftClearX + 10;
+    final var shiftTop = y + 19;
+    final var shiftBottom = y + 31;
+    final var shiftMid = shiftTop + (shiftBottom - shiftTop) / 2;
+    final var storeLeft = pinX(x, 1) - 4;
+    final var storeRight = pinX(x, 7) + 4;
+    final var storeBottom = pinBottom - 6;
+    final var storeTop = storeBottom - 8;
+    final var serX = pinX(x, 14);
+    final var serY = y + 12;
+    final var serEntryX = shiftLeft + 8;
+    final var storeClearX = pinX(x, 13);
+    final var storeClockX = pinX(x, 12);
+    final var busX = shiftLeft + (shiftRight - shiftLeft) / 2;
+
+    g.drawRect(shiftLeft, shiftTop, shiftRight - shiftLeft, shiftBottom - shiftTop);
+    g.drawRect(storeLeft, storeTop, storeRight - storeLeft, storeBottom - storeTop);
+    final var clockDepth = 4;
+    labelBlock(g, "SHIFT", 6, shiftLeft, shiftTop + clockDepth, shiftRight, shiftBottom);
+    labelBlock(g, "STORE", 6, storeLeft, storeTop, storeRight, storeBottom);
+
+    wire(g, serX, pinTop, serX, serY);
+    wire(g, serX, serY, storeClearX - 3, serY);
+    drawHop(g, storeClearX, serY);
+    wire(g, storeClearX + 3, serY, storeClockX - 3, serY);
+    drawHop(g, storeClockX, serY);
+    wire(g, storeClockX + 3, serY, serEntryX, serY, serEntryX, shiftTop);
+
+    wire(g, storeClearX, pinTop, storeClearX, storeTop - 4);
+    drawBubble(g, storeClearX, storeTop);
+    wire(g, storeClockX, pinTop, storeClockX, storeTop);
+    drawClock(g, storeClockX, storeTop);
+    wire(g, shiftClockX, pinTop, shiftClockX, shiftTop);
+    drawClock(g, shiftClockX, shiftTop);
+    wire(g, shiftClearX, pinTop, shiftClearX, shiftTop - 4);
+    drawBubble(g, shiftClearX, shiftTop);
+    wire(g, shiftRight, shiftMid, x + 150, shiftMid, x + 150, pinTop);
+
+    final var busMid = shiftBottom + (storeTop - shiftBottom) / 2;
+    g.drawLine(busX, shiftBottom, busX, storeTop);
+    g.drawLine(busX - 2, busMid - 1, busX + 2, busMid + 1);
+    final var previous = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
+    drawGlyphCenter(g, "8", busX - 6, busMid);
+    g.setFont(previous);
+
+    wire(g, x + 30, storeTop, x + 30, pinTop);
+    for (var pin = 1; pin <= 7; pin++) {
+      final var px = x + (pin - 1) * 20 + 10;
+      g.drawLine(px, storeBottom, px, pinBottom);
+    }
+  }
+
+  /** Places the ink of {@code text} so its bounds are centered on {@code x}, {@code y}. */
+  private static void drawGlyphCenter(Graphics g, String text, int x, int y) {
+    final var bounds = g.getFontMetrics().getStringBounds(text, g);
+    final var baselineX = (int) Math.round(x - bounds.getX() - bounds.getWidth() / 2.0);
+    final var baselineY = (int) Math.round(y - bounds.getY() - bounds.getHeight() / 2.0);
+    g.drawString(text, baselineX, baselineY);
+  }
+
+  /** Datasheet pin center. Pins 1..8 run along the lower edge, 9..16 back along the upper edge. */
+  private static int pinX(int originX, int pin) {
+    return pin <= 8 ? originX + (pin - 1) * 20 + 10 : originX + (16 - pin) * 20 + 10;
+  }
+  private static void drawHop(Graphics g, int centerX, int y) {
+    g.drawArc(centerX - 3, y - 3, 6, 6, 0, 180);
+  }
+
+  /** Orthogonal wire through the given points. */
+  private static void wire(Graphics g, int... points) {
+    for (var i = 2; i < points.length; i += 2) {
+      g.drawLine(points[i - 2], points[i - 1], points[i], points[i + 1]);
+    }
+  }
+
+  /** Active-low input. The bubble touches the block edge. */
+  private static void drawBubble(Graphics g, int x, int edgeY) {
+    g.drawOval(x - 2, edgeY - 4, 4, 4);
+  }
+
+  /** Flip-flop clock. The base lies on the block edge and the point is inside. */
+  private static void drawClock(Graphics g, int x, int edgeY) {
+    g.drawLine(x - 3, edgeY, x, edgeY + 4);
+    g.drawLine(x + 3, edgeY, x, edgeY + 4);
+  }
+
+  /** Centers the ink of {@code name} in the rectangle, not the font baseline. */
+  private static void labelBlock(
+      Graphics g, String name, int size, int left, int top, int right, int bottom) {
+    final var previous = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, size));
+    drawGlyphCenter(g, name, left + (right - left) / 2, top + (bottom - top) / 2);
+    g.setFont(previous);
   }
 
   @Override
@@ -278,41 +305,6 @@ public class Ttl74594 extends AbstractTtlGate {
       copy.storage = storage.clone();
       return copy;
     }
-  }
-
-  private static int structureX(int originX, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originX + (pin - 1) * 20 + 10;
-    }
-    return originX + (pins - pin) * 20 + 10;
-  }
-
-  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
-    }
-    return originY + AbstractTtlGate.PIN_HEIGHT;
-  }
-
-  private static void structureBubble(Graphics g, int centerX, int centerY) {
-    g.drawOval(centerX - 2, centerY - 2, 4, 4);
-  }
-
-  private static void structureDot(
-      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
-    if (data == null) {
-      return;
-    }
-    final var value = data.getValue(word);
-    if (bit < 0 || bit >= value.getWidth()) {
-      return;
-    }
-    final var bitValue = value.get(bit);
-    g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 3, centerY - 3, 6, 6);
-    g.setColor(Color.WHITE);
-    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
-    g.setColor(Color.BLACK);
   }
 
 }
