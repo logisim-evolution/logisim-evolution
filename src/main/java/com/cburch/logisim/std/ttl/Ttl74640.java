@@ -166,17 +166,18 @@ public class Ttl74640 extends AbstractTtlGate {
           new int[] {i, i + 3, i + 10, i + 10},
           new int[] {y + height - pin, y + height - 10, y + height - 10, y + height - 14},
           4);
-      g.drawPolyline(
-          new int[] {i + 6, i + 10, i + 14, i + 6},
-          new int[] {y + height - 14, y + height - 20, y + height - 14, y + height - 14},
-          4);
+      g.drawPolygon(
+          new int[] {i + 6, i + 10, i + 14},
+          new int[] {y + height - 14, y + height - 20, y + height - 14},
+          3);
       // Two-pixel bubble on the tip, clear of the enable rail above it.
       g.drawOval(i + 9, y + height - 22, 2, 2);
       if (i < x + 170) {
         drawNode(g, i + 5, y + height - 28);
       }
+      // Stop on the slanted side. One pixel further would enter the triangle.
       g.drawPolyline(
-          new int[] {i + 5, i + 5, i + 8},
+          new int[] {i + 5, i + 5, i + 7},
           new int[] {y + height - 28, y + height - 17, y + height - 17},
           3);
       g.drawPolyline(
@@ -198,17 +199,18 @@ public class Ttl74640 extends AbstractTtlGate {
 
     for (var i = x + 50; i < x + 210; i += 20) {
       g.drawLine(i, y + pin, i, y + 14);
-      g.drawPolyline(
-          new int[] {i + 4, i, i - 4, i + 4},
-          new int[] {y + 14, y + 20, y + 14, y + 14},
-          4);
+      g.drawPolygon(
+          new int[] {i + 4, i, i - 4},
+          new int[] {y + 14, y + 20, y + 14},
+          3);
       // Two-pixel bubble on the tip, clear of the enable rail below it.
       g.drawOval(i - 1, y + 20, 2, 2);
       if (i < x + 190) {
         drawNode(g, i - 5, y + 28);
       }
+      // Stop on the slanted side. One pixel further would enter the triangle.
       g.drawPolyline(
-          new int[] {i - 5, i - 5, i - 2},
+          new int[] {i - 5, i - 5, i - 3},
           new int[] {y + 28, y + 16, y + 16},
           3);
       g.drawPolyline(
