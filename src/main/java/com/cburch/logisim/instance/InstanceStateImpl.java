@@ -108,6 +108,7 @@ public class InstanceStateImpl implements InstanceState {
   @Override
   public boolean isPortConnected(int index) {
     final var circ = circuitState.getCircuit();
+    if (component instanceof InstanceComponent comp) return comp.isPortConnected(circ, index);
     final var loc = component.getEnd(index).getLocation();
     return circ.isConnected(loc, component);
   }
