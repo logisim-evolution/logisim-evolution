@@ -5,6 +5,24 @@
 * @dev (????-??-??)
   * Sped up simulation by running a queued component once per step and caching which of its ports are connected
     [#3065] (@Kejoki).
+  * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
+  * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
+    editor and in TikZ export [#2942] (@Vadimatorik).
+  * Extended label formulas with modulus, comparisons, bare subscripts, and superscripts
+    [#2942] (@Vadimatorik).
+  * Added TTL 744075: triple 3-input OR gate (@Vadimatorik).
+  * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
+  * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
+  * Shared engineering notation for the 74123 and NE555 resistance and capacitance attributes
+    [#3084] (@Vadimatorik).
+  * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits. [#1616] (@f3rhd).
+  * Added ascending splitter bit redistribution from the Properties pane [#3093] (@mvanhorn).
+  * Fixed selecting splitter bit ends by typing their number in the attribute table [#3096] (@Physanto).
+  * Added an optional bus input to the 7-Segment Display, with a selectable side (@Vadimatorik).
+  * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
+  * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
+  * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
+    [#3066] (@Kejoki).
   * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
     [#3076] (@hewzhew).
   * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages
@@ -13,6 +31,7 @@
     [#3063] (@hewzhew).
   * Showed source line numbers and applicable set/sequence numbers for failed command-line test vectors [#3060] (@goudan789).
   * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
+  * Added NE555 Timer IC component with Astable and Monostable modes to Extra I/O library (@V-Zemlyakov).
   * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
     circuit projects, image exports, and SoC software directories (@V-Zemlyakov).
   * Added TTL 74123: dual retriggerable monostable multivibrator with reset (@Vadimatorik).
@@ -30,12 +49,17 @@
   * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
   * Added theme-aware text label colors and color selection, with previews of the rendered color
     and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
+  * Custom canvas, grid, component, signal, width-error, and clock-frequency color
+    preferences are now stored independently for each theme; resetting colors affects
+    only the active theme [#3053] (@META-Xiao).
   * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
   * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
 
+  * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
+  * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
