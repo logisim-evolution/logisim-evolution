@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed the Multiplier VHDL/Verilog generators: the VHDL did not compile, and every numeric type
+    (unsigned, signed/unsigned, signed) generated the wrong arithmetic [#3130] (@BhavayGoyal).
   * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
