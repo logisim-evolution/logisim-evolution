@@ -10,6 +10,7 @@
 package com.cburch.logisim.std.ttl;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.data.Value;
@@ -109,35 +110,32 @@ public class Ttl74257 extends AbstractTtlGate {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
-    g.drawLine((x + 30), (y + 34), (x + 50), (y + 18));
-    g.drawLine((x + 70), (y + 34), (x + 50), (y + 18));
-    g.drawLine((x + 30), (y + 34), (x + 70), (y + 34));
-    g.drawLine((x + 50), (y + 18), (x + 70), (y + height - 7));
-    g.drawLine((x + 30), (y + height - 7), (x + 30), (y + 34));
-    g.drawLine((x + 50), (y + height - 7), (x + 50), (y + 34));
-    g.drawLine((x + 90), (y + 34), (x + 110), (y + 18));
-    g.drawLine((x + 130), (y + 34), (x + 110), (y + 18));
-    g.drawLine((x + 90), (y + 34), (x + 130), (y + 34));
-    g.drawLine((x + 110), (y + 18), (x + 130), (y + height - 7));
-    g.drawLine((x + 90), (y + height - 7), (x + 90), (y + 34));
-    g.drawLine((x + 110), (y + height - 7), (x + 110), (y + 34));
-    g.drawLine((x + 110), (y + 34), (x + 130), (y + 18));
-    g.drawLine((x + 150), (y + 34), (x + 130), (y + 18));
-    g.drawLine((x + 110), (y + 34), (x + 150), (y + 34));
-    g.drawLine((x + 130), (y + 18), (x + 150), (y + 7));
-    g.drawLine((x + 110), (y + 7), (x + 110), (y + 34));
-    g.drawLine((x + 130), (y + 7), (x + 130), (y + 34));
-    g.drawLine((x + 50), (y + 34), (x + 70), (y + 18));
-    g.drawLine((x + 90), (y + 34), (x + 70), (y + 18));
-    g.drawLine((x + 50), (y + 34), (x + 90), (y + 34));
-    g.drawLine((x + 70), (y + 18), (x + 90), (y + 7));
-    g.drawLine((x + 50), (y + 7), (x + 50), (y + 34));
-    g.drawLine((x + 70), (y + 7), (x + 70), (y + 34));
-    g.drawLine((x + 10), (y + height - 7), (x + 10), (y + 16));
-    GraphicsUtil.drawCenteredText(g, "S", (x + 10), (y + 16));
-    g.drawLine((x + 30), (y + 7), (x + 30), (y + 40));
-    structureBubble(g, (x + 30), (y + 7));
+    final var top = y + 18;
+    final var bottom = y + height - 18;
+    g.drawRect(x + 6, top, 148, bottom - top);
+    final var previousFont = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 9));
+    GraphicsUtil.drawCenteredText(g, "MUX", x + 80, (top + bottom) / 2);
+    g.setFont(previousFont);
+    for (var pin = 1; pin <= 16; pin++) {
+      if (pin == 8 || pin == 16) {
+        continue;
+      }
+      final var lower = pin <= 8;
+      final var pinX = lower ? x + (pin - 1) * 20 + 10 : x + (16 - pin) * 20 + 10;
+      final var pinY = lower ? y + height - AbstractTtlGate.PIN_HEIGHT : y + AbstractTtlGate.PIN_HEIGHT;
+      final var edge = lower ? bottom : top;
+      if (pin == 15) {
+        final var bubbleY = lower ? edge + 4 : edge - 4;
+        g.drawLine(pinX, pinY, pinX, lower ? bubbleY + 2 : bubbleY - 2);
+        g.drawOval(pinX - 2, bubbleY - 2, 4, 4);
+      } else {
+        g.drawLine(pinX, pinY, pinX, edge);
+      }
+    }
   }
+
+
 
   @Override
   public void propagateTtl(InstanceState state) {
