@@ -59,6 +59,7 @@
 
   * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
   * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
+  * Added TTL 74688: 8-bit identity comparator (@Vadimatorik).
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
