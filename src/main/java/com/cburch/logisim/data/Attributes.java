@@ -575,6 +575,22 @@ public class Attributes {
     return new IntegerRangeAttribute(name, disp, start, end);
   }
 
+  /**
+   * Resistance or capacitance stored as an integer number of {@code unit}. A bare number uses that
+   * unit. A prefixed value is an absolute ohm or farad quantity.
+   *
+   * @param presets typical values for an editable combo box, or null for a plain text field
+   */
+  public static EngineeringAttribute forEngineering(
+      String name,
+      StringGetter disp,
+      EngineeringAttribute.Unit unit,
+      int minimum,
+      int maximum,
+      int[] presets) {
+    return EngineeringAttribute.create(name, disp, unit, minimum, maximum, presets);
+  }
+
   public static Attribute<Location> forLocation(String name) {
     return forLocation(name, getter(name));
   }

@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.EngineeringAttribute;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
@@ -66,10 +67,27 @@ public class NE555 extends InstanceFactory {
   public static final int MAX_C1_UF = 1000;
   public static final int DEFAULT_C1_UF = 10;
 
-  public static final Attribute<Integer> ATTR_R1 = Attributes.forIntegerRange(
-      "r1", S.getter("ne555ResistorR1Attr"), MIN_R1_OHM, MAX_R1_OHM);
-  public static final Attribute<Integer> ATTR_C1 = Attributes.forIntegerRange(
-      "c1", S.getter("ne555CapacitorC1Attr"), MIN_C1_UF, MAX_C1_UF);
+  private static final int[] R1_PRESETS = {
+    MIN_R1_OHM, 10_000, DEFAULT_R1_OHM, 100_000, 1_000_000, MAX_R1_OHM
+  };
+  private static final int[] C1_PRESETS = {DEFAULT_C1_UF, 100, MAX_C1_UF};
+
+  public static final Attribute<Integer> ATTR_R1 =
+      Attributes.forEngineering(
+          "r1",
+          S.getter("ne555ResistorR1Attr"),
+          EngineeringAttribute.Unit.OHM,
+          MIN_R1_OHM,
+          MAX_R1_OHM,
+          R1_PRESETS);
+  public static final Attribute<Integer> ATTR_C1 =
+      Attributes.forEngineering(
+          "c1",
+          S.getter("ne555CapacitorC1Attr"),
+          EngineeringAttribute.Unit.MICROFARAD,
+          MIN_C1_UF,
+          MAX_C1_UF,
+          C1_PRESETS);
 
   private static final double DEFAULT_VCC = 5.0;
   private static final double TIMER_INTERVAL_SEC = 0.010;
@@ -503,8 +521,8 @@ public class NE555 extends InstanceFactory {
     final var r1Clamped = (r1Ohm == null) ? DEFAULT_R1_OHM : Math.max(MIN_R1_OHM, Math.min(MAX_R1_OHM, r1Ohm));
     final var c1Clamped = (c1Uf  == null) ? DEFAULT_C1_UF  : Math.max(MIN_C1_UF,  Math.min(MAX_C1_UF,  c1Uf));
 
-    final var r1Label = (r1Clamped >= 1000) ? (r1Clamped / 1000 + "k") : (r1Clamped + "Ω");
-    final var c1Label = c1Clamped + "µF";
+    final var r1Label = ATTR_R1.toDisplayString(r1Clamped);
+    final var c1Label = ATTR_C1.toDisplayString(c1Clamped);
 
     final var centerX = x + w / 2;
     final var centerY = y + h / 2;
