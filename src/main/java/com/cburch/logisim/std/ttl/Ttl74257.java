@@ -137,6 +137,8 @@ public class Ttl74257 extends AbstractTtlGate {
 
 
 
+
+
   @Override
   public void propagateTtl(InstanceState state) {
     final var outputEnable = state.getPortValue(pinNrToPortNr(OE));
