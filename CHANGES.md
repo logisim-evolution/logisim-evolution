@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Kept the Input/Output-Extra Switch directional. Facing chooses the output end, a closed switch
+    drives that end from the input, and an open switch leaves it floating so a pull-up still works
+    [#659] (@Vadimatorik).
   * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
