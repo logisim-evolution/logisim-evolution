@@ -113,6 +113,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final MainMenuListener menuListener;
   private final Toolbar toolbar;
   private final KeyboardToolSelection.Registration keyboardToolSelection;
+  private final ButtonKeyRouter buttonKeyRouter;
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
@@ -254,6 +255,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     menuListener.register(mainPanel);
     keyboardToolSelection = KeyboardToolSelection.register(toolbar);
+    buttonKeyRouter = new ButtonKeyRouter(this);
 
     project.setFrame(this);
     if (project.getTool() == null) {
@@ -1072,6 +1074,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     @Override
     public void windowClosed(WindowEvent e) {
       keyboardToolSelection.close();
+      buttonKeyRouter.close();
     }
 
     @Override
