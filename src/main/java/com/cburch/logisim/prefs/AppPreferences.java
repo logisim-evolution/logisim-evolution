@@ -917,6 +917,11 @@ public class AppPreferences {
       create(new PrefMonitorBooleanConvert("oldIO", true));
 
   public static double getAutoScaleFactor() {
+    if (System.getenv("GDK_SCALE") != null
+        || System.getenv("GDK_DPI_SCALE") != null
+        || System.getenv("QT_SCALE_FACTOR") != null) {
+      return 1.0;
+    }
     return (((!GraphicsEnvironment.isHeadless())
         ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
         : 0)
