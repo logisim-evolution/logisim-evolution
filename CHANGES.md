@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Added TTL 74594: 8-bit shift register with output register (@Vadimatorik).
+  * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
     editor and in TikZ export [#2942] (@Vadimatorik).
@@ -56,6 +57,7 @@
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
+
   * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
   * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
 * v5.0.0 (2026-09-12)
