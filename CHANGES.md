@@ -39,6 +39,9 @@
   * Preserved pin and anchor edits in custom circuit appearances when saving [#3025] (@hewzhew).
   * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
     [#1247] (@hewzhew).
+  * Fixed a NullPointerException that stopped the clock when an I/O-extra PlaRom was placed in a
+    subcircuit, by reading its output width from the component attribute during clock discovery
+    [#1247] (@henriquejsza).
   * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
     deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
   * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
