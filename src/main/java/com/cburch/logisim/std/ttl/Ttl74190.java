@@ -132,130 +132,115 @@ public class Ttl74190 extends AbstractTtlGate {
   }
 
   /**
-   * Stages sit on the Q pins. Clock, load and direction stay on rails above the boxes. Terminal
-   * count and the ripple clock leave a separate gate in the gap between Q0 and Q2.
+   * Four BCD stages and the terminal-count block. Clock, direction and data enter on the top,
+   * load and Q leave on the bottom. nCE and nRC leave pin column 70 along the axis of a 2×2 bubble.
+   * nPL is one vertical from pin 11 into the load rail.
    */
   private static void drawCounter(Graphics g, int x, int y, int height) {
     final var pinTop = y + AbstractTtlGate.PIN_HEIGHT;
     final var pinBottom = y + height - AbstractTtlGate.PIN_HEIGHT;
-    final int[] bits = {1, 0, 2, 3};
-    final int[] outputs = {Q1, Q0, Q2, Q3};
-    final var stageTop = y + 34;
-    final var stageBottom = y + 46;
-    final var stageMid = stageTop + (stageBottom - stageTop) / 2;
-    final var half = 5;
-    final var loadRail = y + 12;
-    final var directionRail = y + 20;
-    final var clockRail = y + 26;
-    final var dataLane = y + 9;
-    final int[] center = new int[outputs.length];
-    for (var i = 0; i < outputs.length; i++) {
-      center[i] = pinX(x, outputs[i]);
+    final var top = y + 23;
+    final var bottom = y + 37;
+    final var labelY = y + 30;
+    final int[] left = {x + 34, x + 54, x + 94, x + 114};
+    final int[] clockX = {x + 40, x + 60, x + 100, x + 120};
+
+    final var previousFont = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 6));
+    for (var bit = 0; bit < left.length; bit++) {
+      g.drawRect(left[bit], top, 12, bottom - top);
+      GraphicsUtil.drawCenteredText(g, Integer.toString(bit), clockX[bit], labelY);
+      g.drawLine(clockX[bit] - 2, top, clockX[bit], top + 3);
+      g.drawLine(clockX[bit] + 2, top, clockX[bit], top + 3);
     }
-    for (var i = 0; i < center.length; i++) {
-      g.drawRect(center[i] - half, stageTop, half * 2, stageBottom - stageTop);
-      g.drawLine(center[i] - 3, clockRail, center[i], stageTop);
-      g.drawLine(center[i] + 3, clockRail, center[i], stageTop);
-      final var previousFont = g.getFont();
-      g.setFont(new Font(Font.DIALOG, Font.PLAIN, 8));
-      GraphicsUtil.drawCenteredText(g, Integer.toString(bits[i]), center[i], stageMid + 1);
-      g.setFont(previousFont);
-      g.drawLine(center[i], stageBottom, center[i], pinBottom);
+    g.drawRect(x + 74, top, 14, bottom - top);
+    GraphicsUtil.drawCenteredText(g, "TC", x + 81, labelY);
+    g.setFont(previousFont);
+
+    final var clockRail = y + 19;
+    g.drawLine(clockX[0], clockRail, clockX[clockX.length - 1], clockRail);
+    for (var stage : clockX) {
+      g.drawLine(stage, clockRail, stage, top);
     }
+    g.drawLine(x + 81, clockRail, x + 81, top);
+    g.drawLine(pinX(x, CP), pinTop, pinX(x, CP), clockRail);
+    drawNode(g, pinX(x, CP), clockRail);
+    drawNode(g, clockX[1], clockRail);
+    drawNode(g, x + 81, clockRail);
+    drawNode(g, clockX[2], clockRail);
 
-    g.drawLine(center[0], clockRail, center[center.length - 1], clockRail);
-    final var clockX = pinX(x, CP);
-    g.drawLine(clockX, pinTop, clockX, clockRail);
-    drawNode(g, clockX, clockRail);
-    drawNode(g, center[2], clockRail);
-
-    final var loadLeft = center[0] - half;
-    final var loadRight = center[center.length - 1] - half;
-    g.drawLine(loadLeft, loadRail, loadRight, loadRail);
-    for (var i = 0; i < center.length; i++) {
-      final var edge = center[i] - half;
-      g.drawLine(edge, loadRail, edge, stageTop);
-      if (i > 0 && i < center.length - 1) {
-        drawNode(g, edge, loadRail);
-      }
+    // D/U is a straight run up its pin column. It does not jog around nRC.
+    final var directionRail = y + 15;
+    g.drawLine(x + 36, directionRail, x + 116, directionRail);
+    for (var stage : new int[] {x + 36, x + 56, x + 96, x + 116, x + 77}) {
+      g.drawLine(stage, directionRail, stage, top);
     }
-    final var loadX = pinX(x, PL);
-    g.drawLine(loadX, pinTop, loadX, loadRail - 4);
-    g.drawOval(loadX - 2, loadRail - 4, 4, 4);
-    drawNode(g, loadX, loadRail);
+    g.drawLine(pinX(x, DU), pinBottom, pinX(x, DU), directionRail);
+    drawNode(g, x + 56, directionRail);
+    drawNode(g, x + 77, directionRail);
+    drawNode(g, pinX(x, DU), directionRail);
+    drawNode(g, x + 96, directionRail);
 
-    final var directionLeft = center[0] + half;
-    final var directionRight = center[center.length - 1] + half;
-    g.drawLine(directionLeft, directionRail, directionRight, directionRail);
-    for (var i = 0; i < center.length; i++) {
-      final var edge = center[i] + half;
-      g.drawLine(edge, directionRail, edge, stageTop);
-      if (i > 0 && i < center.length - 1) {
-        drawNode(g, edge, directionRail);
-      }
+    final var dataLane = y + 11;
+    g.drawLine(pinX(x, D0), pinTop, pinX(x, D0), y + 30);
+    g.drawLine(pinX(x, D0), y + 30, x + 34, y + 30);
+    g.drawLine(pinX(x, D1), pinBottom, pinX(x, D1), y + 49);
+    g.drawLine(pinX(x, D1), y + 49, x + 22, y + 49);
+    g.drawLine(x + 22, dataLane, x + 22, y + 49);
+    g.drawLine(x + 22, dataLane, x + 64, dataLane);
+    g.drawLine(x + 64, dataLane, x + 64, top);
+    g.drawLine(pinX(x, D2), pinTop, pinX(x, D2), dataLane);
+    g.drawLine(x + 104, dataLane, pinX(x, D2), dataLane);
+    g.drawLine(x + 104, dataLane, x + 104, top);
+    g.drawLine(pinX(x, D3), pinTop, pinX(x, D3), y + 30);
+    g.drawLine(x + 126, y + 30, pinX(x, D3), y + 30);
+
+    // One nPL vertical. The stage drops leave that rail; none runs beside it.
+    final var loadRail = y + 43;
+    final int[] loadX = {x + 38, x + 58, x + 98, x + 118};
+    g.drawLine(loadX[0], loadRail, loadX[loadX.length - 1], loadRail);
+    for (var stage : loadX) {
+      g.drawLine(stage, bottom + 2, stage, loadRail);
+      g.drawOval(stage - 1, bottom, 2, 2);
     }
-    final var directionX = pinX(x, DU);
-    g.drawLine(directionX, pinBottom, directionX, directionRail);
-    drawNode(g, directionX, directionRail);
+    g.drawLine(pinX(x, PL), pinTop, pinX(x, PL), loadRail);
+    drawNode(g, loadX[1], loadRail);
+    drawNode(g, loadX[2], loadRail);
+    drawNode(g, pinX(x, PL), loadRail);
 
-    final var enableX = pinX(x, CE);
-    g.drawLine(enableX, pinBottom, enableX, clockRail + 4);
-    g.drawOval(enableX - 2, clockRail, 4, 4);
+    g.drawLine(x + 46, y + 30, pinX(x, Q0), y + 30);
+    g.drawLine(pinX(x, Q0), y + 30, pinX(x, Q0), pinBottom);
+    final var outputLane = y + 47;
+    g.drawLine(x + 62, bottom, x + 62, outputLane);
+    g.drawLine(pinX(x, Q1), outputLane, x + 62, outputLane);
+    g.drawLine(pinX(x, Q1), outputLane, pinX(x, Q1), pinBottom);
+    g.drawLine(x + 102, bottom, x + 102, outputLane);
+    g.drawLine(x + 102, outputLane, pinX(x, Q2), outputLane);
+    g.drawLine(pinX(x, Q2), outputLane, pinX(x, Q2), pinBottom);
+    g.drawLine(x + 122, bottom, x + 122, outputLane);
+    g.drawLine(x + 122, outputLane, pinX(x, Q3), outputLane);
+    g.drawLine(pinX(x, Q3), outputLane, pinX(x, Q3), pinBottom);
 
-    wireData(g, pinX(x, D1), pinBottom, center[0] - half, stageMid);
-    wireData(g, pinX(x, D0), pinTop, center[1] - half, dataLane, stageTop);
-    wireData(g, pinX(x, D2), pinTop, center[2] - half, dataLane, stageTop);
-    wireData(g, pinX(x, D3), pinTop, center[3] - half, dataLane, stageTop);
-
-    final var termLeft = x + 74;
-    final var termTop = stageTop;
-    final var termWidth = 12;
-    final var termHeight = stageBottom - stageTop;
-    g.drawRect(termLeft, termTop, termWidth, termHeight);
-    final var busY = stageBottom + 3;
-    g.drawLine(center[0], busY, center[center.length - 1], busY);
-    for (var stage : center) {
-      drawNode(g, stage, busY);
-    }
-    final var busUp = termLeft + termWidth / 2;
-    g.drawLine(busUp, busY, busUp, stageBottom);
-    drawNode(g, busUp, busY);
-    final var termX = pinX(x, TC);
-    final var rippleX = pinX(x, RC);
-    final var outLane = y + 16;
-    g.drawLine(termLeft + 3, termTop, termLeft + 3, outLane);
-    g.drawLine(termLeft + 3, outLane, termX, outLane);
-    g.drawLine(termX, outLane, termX, pinTop);
-    g.drawOval(termLeft + 7, termTop - 4, 4, 4);
-    g.drawLine(termLeft + 9, termTop - 4, termLeft + 9, outLane);
-    g.drawLine(termLeft + 9, outLane, rippleX, outLane);
-    g.drawLine(rippleX, outLane, rippleX, pinTop);
+    // Bubbles touch the left edge of TC. The pin column turns into each axis.
+    final var bubbleX = x + 73;
+    g.drawLine(pinX(x, RC), pinTop, pinX(x, RC), y + 28);
+    g.drawLine(pinX(x, RC), y + 28, bubbleX - 1, y + 28);
+    g.drawOval(bubbleX - 1, y + 27, 2, 2);
+    g.drawLine(pinX(x, CE), y + 34, pinX(x, CE), pinBottom);
+    g.drawLine(pinX(x, CE), y + 34, bubbleX - 1, y + 34);
+    g.drawOval(bubbleX - 1, y + 33, 2, 2);
+    g.drawLine(pinX(x, TC), pinTop, pinX(x, TC), dataLane);
+    g.drawLine(x + 85, dataLane, pinX(x, TC), dataLane);
+    g.drawLine(x + 85, dataLane, x + 85, top);
   }
 
   private static int pinX(int x, int pin) {
     return pin <= GND ? x + (pin - 1) * 20 + 10 : x + (VCC - pin) * 20 + 10;
   }
 
-  /** Bottom data pin into the left side of its stage. */
-  private static void wireData(Graphics g, int pinX, int pinY, int edgeX, int laneY) {
-    g.drawLine(pinX, pinY, pinX, laneY);
-    g.drawLine(pinX, laneY, edgeX, laneY);
-  }
-
-  /** Top data pin along a lane above the rails, then down the left edge to the stage corner. */
-  private static void wireData(Graphics g, int pinX, int pinY, int edgeX, int laneY, int edgeY) {
-    g.drawLine(pinX, pinY, pinX, laneY);
-    g.drawLine(pinX, laneY, edgeX, laneY);
-    g.drawLine(edgeX, laneY, edgeX, edgeY);
-  }
-
   private static void drawNode(Graphics g, int x, int y) {
-    g.fillOval(x - 2, y - 2, 4, 4);
+    g.fillOval(x - 1, y - 1, 2, 2);
   }
-
-
-
-
 
   @Override
   public void propagateTtl(InstanceState state) {
