@@ -1218,6 +1218,11 @@ public class AppPreferences {
   public static final PrefMonitor<Boolean> SEARCH_DOUBLE_SHIFT =
       create(new PrefMonitorBoolean("searchDoubleShift", true));
 
+  /* Recenters the canvas when the middle mouse button is double clicked. Kept switchable
+  * because panning can trigger it by accident. */
+  public static final PrefMonitor<Boolean> MIDDLE_DOUBLE_CLICK_CENTER =
+      create(new PrefMonitorBoolean("middleDoubleClickCenter", true));
+
   /* Hotkeys Settings */
   /* Watch whether in headless mode */
   public static final int hotkeyMenuMask =

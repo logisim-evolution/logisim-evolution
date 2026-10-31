@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added a preference to turn off centering the canvas on a middle-button double-click
+    [#3077] (@Edward-griffin00, @CrispeyJoel).
   * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
@@ -370,3 +372,4 @@
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
+
