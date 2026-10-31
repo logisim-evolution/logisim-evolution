@@ -316,9 +316,8 @@ public class ValueTable extends JPanel {
           if (model == null) return;
 
           // Get the viewport to convert coordinates if needed
-          java.awt.Point viewPos = scrollPane.getViewport().getViewPosition();
-          int x = e.getX(); // X is relative to TableBody panel, no adjustment needed
-          int y = e.getY() + viewPos.y; // Adjust Y for vertical scroll position
+          int x = e.getX();
+          int y = e.getY();
 
           // Refresh data to ensure rowStart is current
           refreshData(y, y + cellHeight);
