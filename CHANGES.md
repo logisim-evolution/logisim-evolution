@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed Shifter HDL generation bit selectors and VHDL arithmetic shift right sign extension [#3138] (@Hrushikesh-ramilla).
   * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
