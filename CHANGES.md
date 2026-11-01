@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed elements drawn in black with dark themes: the subcircuit clock symbol, Classic and HolyCross
+    subcircuit outlines and icons, the Test Vector table, the timing diagram ruler and signal list, and
+    the zoom and compile icons [#3154] (@iSlavok).
   * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
