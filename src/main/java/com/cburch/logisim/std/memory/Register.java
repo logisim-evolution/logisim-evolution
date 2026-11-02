@@ -40,6 +40,7 @@ import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
 
 public class Register extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -280,7 +281,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
   @Override
   public String getHDLName(AttributeSet attrs) {
     final var CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase(Locale.ROOT));
     if ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
         || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)) {
       CompleteName.append("_FLIP_FLOP");

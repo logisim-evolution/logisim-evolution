@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionInterface {
 
@@ -54,7 +55,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   @Override
   public String getAsmInstruction() {
     if (!valid) return null;
-    return AsmOpcodes[operation].toLowerCase();
+    return AsmOpcodes[operation].toLowerCase(Locale.ROOT);
   }
 
   @Override
@@ -102,7 +103,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    if (getInstructions().contains(instruction.toUpperCase(Locale.ROOT))) return 4;
     return -1;
   }
 
@@ -110,7 +111,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT))) operation = i;
     if (operation < 0) {
       valid = false;
       return false;

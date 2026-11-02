@@ -563,7 +563,7 @@ public class AppPreferences {
    * @return Font.PLAIN if the font name suggests a specific weight, otherwise Font.BOLD.
    */
   public static int getPreferredFontStyle(String fontName) {
-    String font = fontName.toLowerCase();
+    String font = fontName.toLowerCase(Locale.ROOT);
     if (font.contains("medium") || font.contains("light")
         || font.contains("thin") || font.contains("regular")
         || font.contains("semibold") || font.contains("extrabold")) {
@@ -917,6 +917,11 @@ public class AppPreferences {
       create(new PrefMonitorBooleanConvert("oldIO", true));
 
   public static double getAutoScaleFactor() {
+    if (System.getenv("GDK_SCALE") != null
+        || System.getenv("GDK_DPI_SCALE") != null
+        || System.getenv("QT_SCALE_FACTOR") != null) {
+      return 1.0;
+    }
     return (((!GraphicsEnvironment.isHeadless())
         ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
         : 0)
