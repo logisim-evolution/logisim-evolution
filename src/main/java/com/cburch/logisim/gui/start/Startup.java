@@ -34,6 +34,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
+import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.LocaleManager;
@@ -45,6 +46,7 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarFile;
 import javax.help.JHelp;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -107,6 +110,9 @@ public class Startup implements AWTEventListener {
      (if no label is provided, File is loaded into every RAM/ROM) */
   private final HashMap<String, File> memoryLoadFiles = new HashMap<>();
 
+  /* JAR and Logisim (.circ) libraries to load into the project opened at startup */
+  private final ArrayList<File> librariesToLoad = new ArrayList<>();
+
   private File saveFile;
   private int ttyFormat = 0;
   // from other sources
@@ -159,6 +165,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_HELP_LONG = "help";
   private static final String ARG_LOAD_SHORT = "l";
   private static final String ARG_LOAD_LONG = "load";
+  private static final String ARG_LOAD_LIB_LONG = "load-lib";
   private static final String ARG_SAVE_LONG = "save";
   private static final String ARG_GEOMETRY_SHORT = "m";
   private static final String ARG_GEOMETRY_LONG = "geometry";
@@ -330,6 +337,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
+    addOption(opts, "argLoadLibOption", ARG_LOAD_LIB_LONG, 1);
     addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
@@ -396,6 +404,7 @@ public class Startup implements AWTEventListener {
         case ARG_TTY_LONG -> handleArgTty(startup, opt);
         case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
         case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+        case ARG_LOAD_LIB_LONG -> handleArgLoadLib(startup, opt);
         case ARG_SAVE_LONG -> handleArgSave(startup, opt);
         case ARG_GATES_LONG -> handleArgGates(startup, opt);
         case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
@@ -445,6 +454,10 @@ public class Startup implements AWTEventListener {
     }
     if (startup.saveFile != null && !startup.isTty) {
       logger.error(S.get("saveNeedsTtyError"));
+      return null;
+    }
+    if (!startup.librariesToLoad.isEmpty() && startup.isTty) {
+      logger.error(S.get("loadLibNeedsGuiError"));
       return null;
     }
 
@@ -554,6 +567,24 @@ public class Startup implements AWTEventListener {
     }
     startup.memoryLoadFiles.put(label, new File(optArgs[0]));
 
+    return RC.OK;
+  }
+
+  private static RC handleArgLoadLib(Startup startup, Option opt) {
+    final var file = new File(opt.getValue());
+    if (!file.isFile()) {
+      logger.error(S.get("argLoadLibMissingError", file));
+      return RC.ERROR;
+    }
+    if (!file.canRead()) {
+      logger.error(S.get("argLoadLibCannotReadError", file));
+      return RC.ERROR;
+    }
+    if (!Loader.JAR_FILTER.accept(file) && !Loader.LOGISIM_FILTER.accept(file)) {
+      logger.error(S.get("argLoadLibUnsupportedError", file));
+      return RC.ERROR;
+    }
+    startup.librariesToLoad.add(file);
     return RC.OK;
   }
 
@@ -844,6 +875,48 @@ public class Startup implements AWTEventListener {
 
   List<File> getFilesToOpen() {
     return filesToOpen;
+  }
+
+  List<File> getLibrariesToLoad() {
+    return librariesToLoad;
+  }
+
+  /**
+   * Returns the library class name declared by the "Library-Class" attribute
+   * in the manifest of the given JAR file.
+   *
+   * @param jarFile JAR file to inspect.
+   *
+   * @return Fully qualified class name, or {@code null} if the JAR cannot be read
+   *     or does not declare a library class.
+   */
+  static String getJarLibraryClassName(File jarFile) {
+    try (final var jar = new JarFile(jarFile)) {
+      final var manifest = jar.getManifest();
+      return (manifest == null) ? null : manifest.getMainAttributes().getValue("Library-Class");
+    } catch (IOException e) {
+      return null;
+    }
+  }
+
+  private void loadCommandLineLibraries(Project proj) {
+    final var loader = proj.getLogisimFile().getLoader();
+    for (final var libFile : librariesToLoad) {
+      final Library lib;
+      if (Loader.JAR_FILTER.accept(libFile)) {
+        final var className = getJarLibraryClassName(libFile);
+        if (className == null) {
+          logger.error(S.get("argLoadLibNoClassError", libFile));
+          continue;
+        }
+        lib = loader.loadJarLibrary(libFile, className);
+      } else {
+        lib = loader.loadLogisimLibrary(libFile);
+      }
+      if (lib != null && !proj.getLogisimFile().getLibraries().contains(lib)) {
+        proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
+      }
+    }
   }
 
   HashMap<String, File> getMemoryLoadFiles() {
@@ -1140,6 +1213,10 @@ public class Startup implements AWTEventListener {
 
     if (proj != null)
       proj.doAction(LogisimFileActions.loadLibraries(defaultLibraries, proj.getLogisimFile()));
+
+    if (proj != null && !librariesToLoad.isEmpty()) {
+      loadCommandLineLibraries(proj);
+    }
 
     for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);
