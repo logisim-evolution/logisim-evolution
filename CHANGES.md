@@ -56,6 +56,7 @@
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
+  * Added TTL 74374: octal positive-edge D flip-flop with three-state outputs (@Vadimatorik).
   * Added TTL 744094: 8-bit shift-and-store register with three-state outputs (@Vadimatorik).
   * Added TTL 744017: Johnson decade counter with 10 decoded outputs (@Vadimatorik).
   * Added TTL 74595: 8-bit serial-in, parallel-out shift register with output latch (@Vadimatorik).
