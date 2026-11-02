@@ -57,9 +57,13 @@
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
   * Added TTL 744017: Johnson decade counter with 10 decoded outputs (@Vadimatorik).
+  * Added TTL 74595: 8-bit serial-in, parallel-out shift register with output latch (@Vadimatorik).
+  * Added TTL 74190: synchronous presettable BCD up/down counter (@Vadimatorik).
 
   * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
   * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
+  * Fixed TTL 74173 clear operation. [#3146] (@davidhutchens)
+
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
