@@ -10,6 +10,7 @@
 package com.cburch.logisim.soc.rv32im;
 
 import com.cburch.logisim.soc.data.AssemblerHighlighter;
+import java.util.Locale;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
@@ -21,14 +22,14 @@ public class RV32imSyntaxHighlighter extends AssemblerHighlighter {
       map.put(RV32imState.registerABINames[i], Token.OPERATOR);
     }
     for (var i = 0; i < RV32imState.implementedSprNames.length; i++) {
-      map.put(RV32imState.implementedSprNames[i].toLowerCase(), Token.OPERATOR);
+      map.put(RV32imState.implementedSprNames[i].toLowerCase(Locale.ROOT), Token.OPERATOR);
     }
     map.put("pc", Token.OPERATOR);
     for (var i = 0; i < 32; i++) {
       map.put("x" + i, Token.OPERATOR);
     }
     for (var opcode : RV32imState.ASSEMBLER.getOpcodes()) {
-      map.put(opcode.toLowerCase(), Token.RESERVED_WORD);
+      map.put(opcode.toLowerCase(Locale.ROOT), Token.RESERVED_WORD);
     }
     return map;
   }

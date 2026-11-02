@@ -47,6 +47,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Locale;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -512,7 +513,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   };
 
   public static int getRegisterIndex(String name) {
-    final var regName = name.toLowerCase();
+    final var regName = name.toLowerCase(Locale.ROOT);
     for (int i = 0; i < registerABINames.length; i++)
       if (registerABINames[i].equals(regName)) return i;
     if (regName.startsWith("x") && regName.length() < 4) {
@@ -675,13 +676,13 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
 
   public static int getSprArrayIndex(String name) {
-    return Arrays.asList(implementedSprNames).indexOf(name.toUpperCase());
+    return Arrays.asList(implementedSprNames).indexOf(name.toUpperCase(Locale.ROOT));
   }
 
   public static String getSprName(int index) {
     int sprIndex = getSprArrayIndex(index);
     return sprIndex != -1
-          ? implementedSprNames[sprIndex].toLowerCase()
+          ? implementedSprNames[sprIndex].toLowerCase(Locale.ROOT)
           : String.format("0x%03X", index);
   }
 

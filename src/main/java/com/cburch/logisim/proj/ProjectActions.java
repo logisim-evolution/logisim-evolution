@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -120,7 +121,7 @@ public final class ProjectActions {
       isOk = false;
       errors.put(FILE_NAME_FORMAT_ERROR, S.get("InvalidFileFormatError"));
     }
-    if (forbiddenNames.contains(filename.toUpperCase())) {
+    if (forbiddenNames.contains(filename.toUpperCase(Locale.ROOT))) {
       isOk = false;
       errors.put(FILE_NAME_KEYWORD_ERROR, S.get("UsedLibraryToolnameError"));
     }
@@ -610,7 +611,7 @@ public final class ProjectActions {
                 if (libraryFile == null
                     || !extractedLibraryFiles.add(libraryFile)
                     || (!libraryFile.toString().endsWith(Loader.LOGISIM_EXTENSION)
-                        && !libraryFile.toString().toLowerCase().endsWith(".jar"))) {
+                        && !libraryFile.toString().toLowerCase(Locale.ROOT).endsWith(".jar"))) {
                   continue;
                 }
                 Files.createDirectories(libDir);
