@@ -112,45 +112,70 @@ public class Ttl74595 extends AbstractTtlGate {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
-    final var previousFont = g.getFont();
-    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 8));
-    g.drawRect(x + 20, y + 14, 120, 12);
-    g.drawRect(x + 20, y + height - 28, 120, 12);
-    g.drawLine(x + 80, y + 26, x + 80, y + height - 28);
-    g.drawLine(x + 24, y + height - 16, x + 24, y + height - 7);
-    g.drawLine(x + 30, y + height - 16, x + 30, y + height - 7);
-    g.drawLine(x + 50, y + height - 16, x + 50, y + height - 7);
-    g.drawLine(x + 70, y + height - 16, x + 70, y + height - 7);
-    g.drawLine(x + 90, y + height - 16, x + 90, y + height - 7);
-    g.drawLine(x + 110, y + height - 16, x + 110, y + height - 7);
-    g.drawLine(x + 130, y + height - 16, x + 130, y + height - 7);
-    g.drawLine(x + 136, y + height - 28, x + 136, y + 26);
-    g.drawLine(x + 136, y + 26, x + 140, y + 26);
-    g.drawLine(x + 140, y + 26, x + 144, y + 26);
-    g.drawLine(x + 144, y + 26, x + 144, y + 10);
-    g.drawLine(x + 144, y + 10, x + 150, y + 10);
-    g.drawLine(x + 150, y + 10, x + 150, y + 7);
-    g.drawLine(x + 30, y + height - 28, x + 30, y + 26);
-    g.drawLine(x + 30, y + 26, x + 20, y + 26);
-    g.drawLine(x + 20, y + 26, x + 16, y + 26);
-    g.drawLine(x + 16, y + 26, x + 16, y + 10);
-    g.drawLine(x + 16, y + 10, x + 30, y + 10);
-    g.drawLine(x + 30, y + 10, x + 30, y + 7);
-    g.drawLine(x + 110, y + 7, x + 110, y + 9);
-    g.drawLine(x + 110, y + 9, x + 14, y + 9);
-    g.drawLine(x + 14, y + 9, x + 14, y + 14);
-    g.drawLine(x + 14, y + 14, x + 20, y + 14);
-    g.drawLine(x + 90, y + 7, x + 90, y + 9);
-    g.drawLine(x + 90, y + 9, x + 14, y + 9);
-    g.drawLine(x + 14, y + 9, x + 14, y + height - 28);
-    g.drawLine(x + 14, y + height - 28, x + 20, y + height - 28);
-    g.drawLine(x + 70, y + 7, x + 70, y + 14);
-    GraphicsUtil.drawCenteredText(g, "SHIFT", x + 80, y + 20);
-    GraphicsUtil.drawCenteredText(g, "STORE", x + 80, y + height - 22);
-    g.setFont(previousFont);
+    drawStructure(g, x, y, height);
   }
 
+  /**
+   * Logic diagram from the data sheet. SER, SRCLK and active-low SRCLR enter the shift register,
+   * and QH' leaves its last stage. An eight-bit bus copies the shift register into storage on
+   * RCLK. Storage drives QA..QH through three-state buffers. OE meets an active-low enable buffer
+   * whose output ends on the slanted side of each channel. QH' bypasses storage and OE.
+   */
+  private static void drawStructure(Graphics g, int x, int y, int height) {
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    final var shiftLeft = x + 100;
+    final var shiftTop = y + 14;
+    final var shiftBottom = y + 23;
+    final var storeLeft = x + 6;
+    final var storeTop = y + 35;
+    final var storeBottom = y + 43;
+    final var railY = y + 51;
 
+    g.drawRect(shiftLeft, shiftTop, 40, shiftBottom - shiftTop);
+    g.drawRect(storeLeft, storeTop, 130, storeBottom - storeTop);
+    drawTriangle(g, x + 26, y + 27, x + 34, y + 27, x + 30, y + 23);
+    drawTriangle(g, x + 143, y + 27, x + 149, y + 27, x + 146, y + 31);
+    for (var px : new int[] {10, 30, 50, 70, 90, 110, 130}) {
+      drawTriangle(g, x + px - 4, y + 45, x + px + 4, y + 45, x + px, y + 49);
+    }
+
+    final var previous = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 3));
+    // Dialog 3: SHIFT is 9×5 and STORE is 10×5, both inside the block and clear of the clock mark.
+    GraphicsUtil.drawCenteredText(g, "SHIFT", x + 120, y + 18);
+    GraphicsUtil.drawCenteredText(g, "STORE", x + 71, y + 38);
+    GraphicsUtil.drawCenteredText(g, "8", x + 106, y + 27);
+    g.setFont(previous);
+
+    wire(g, x + 50, pinTop, x + 50, y + 17, shiftLeft, y + 17);
+    wire(g, x + 110, pinTop, x + 110, shiftTop);
+    drawClockTop(g, x + 110, shiftTop);
+    wire(g, x + 130, pinTop, x + 130, y + 12);
+    drawBubble(g, x + 130, y + 13);
+    wire(g, x + 140, y + 21, x + 150, y + 21, x + 150, pinTop);
+    wire(g, x + 90, pinTop, x + 90, y + 13, x + 4, y + 13, x + 4, y + 39, storeLeft, y + 39);
+    drawClockSide(g, storeLeft, y + 39);
+    wire(g, x + 112, shiftBottom, x + 112, storeTop);
+    g.drawLine(x + 110, y + 26, x + 114, y + 28);
+
+    wire(g, x + 70, pinTop, x + 70, y + 9, x + 146, y + 9, x + 146, y + 25);
+    drawBubble(g, x + 146, y + 26);
+    wire(g, x + 146, y + 31, x + 146, y + 33, x + 40, y + 33, x + 40, y + 25, x + 32, y + 25);
+    wire(g, x + 146, y + 33, x + 146, railY, x + 20, railY);
+    drawNode(g, x + 146, y + 33);
+
+    wire(g, x + 30, pinTop, x + 30, y + 23);
+    wire(g, x + 18, storeTop, x + 18, y + 29, x + 30, y + 29, x + 30, y + 27);
+    for (var px : new int[] {10, 30, 50, 70, 90, 110, 130}) {
+      wire(g, x + px, storeBottom, x + px, y + 45);
+      wire(g, x + px, y + 49, x + px, pinBottom);
+      wire(g, x + px + 10, railY, x + px + 10, y + 47, x + px + 2, y + 47);
+      if (px > 10) {
+        drawNode(g, x + px + 10, railY);
+      }
+    }
+  }
 
   @Override
   public void propagateTtl(InstanceState state) {
@@ -230,39 +255,39 @@ public class Ttl74595 extends AbstractTtlGate {
     }
   }
 
-  private static int structureX(int originX, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originX + (pin - 1) * 20 + 10;
+  /** Orthogonal wire through the given points. */
+  private static void wire(Graphics g, int... points) {
+    for (var i = 2; i < points.length; i += 2) {
+      g.drawLine(points[i - 2], points[i - 1], points[i], points[i + 1]);
     }
-    return originX + (pins - pin) * 20 + 10;
   }
 
-  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
-    }
-    return originY + AbstractTtlGate.PIN_HEIGHT;
+  /** Closed buffer or inverter triangle. */
+  private static void drawTriangle(
+      Graphics g, int x0, int y0, int x1, int y1, int x2, int y2) {
+    g.drawPolygon(new int[] {x0, x1, x2}, new int[] {y0, y1, y2}, 3);
   }
 
-  private static void structureBubble(Graphics g, int centerX, int centerY) {
-    g.drawOval(centerX - 2, centerY - 2, 4, 4);
+  /** Active-low mark. Even 2×2 oval, center on the wire axis. */
+  private static void drawBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
   }
 
-  private static void structureDot(
-      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
-    if (data == null) {
-      return;
-    }
-    final var value = data.getValue(word);
-    if (bit < 0 || bit >= value.getWidth()) {
-      return;
-    }
-    final var bitValue = value.get(bit);
-    g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 3, centerY - 3, 6, 6);
-    g.setColor(Color.WHITE);
-    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
-    g.setColor(Color.BLACK);
+  /** Junction of three branches. The oval center is the common point. */
+  private static void drawNode(Graphics g, int centerX, int centerY) {
+    g.fillOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  /** Clock mark on the top edge. The point is inside the block. */
+  private static void drawClockTop(Graphics g, int centerX, int edgeY) {
+    g.drawLine(centerX - 3, edgeY, centerX, edgeY + 4);
+    g.drawLine(centerX + 3, edgeY, centerX, edgeY + 4);
+  }
+
+  /** Clock mark on the left edge. The point is inside the block. */
+  private static void drawClockSide(Graphics g, int edgeX, int centerY) {
+    g.drawLine(edgeX, centerY - 3, edgeX + 4, centerY);
+    g.drawLine(edgeX, centerY + 3, edgeX + 4, centerY);
   }
 
 }
