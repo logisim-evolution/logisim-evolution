@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed elements drawn in black with dark themes: the subcircuit clock symbol, Classic and HolyCross
+    subcircuit outlines and icons, the Test Vector table, the timing diagram ruler and signal list, and
+    the zoom and compile icons [#3154] (@iSlavok).
   * Fixed Shifter HDL generation bit selectors and VHDL arithmetic shift right sign extension [#3138] (@Hrushikesh-ramilla).
   * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
