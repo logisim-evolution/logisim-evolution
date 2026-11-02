@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import javax.imageio.ImageIO;
@@ -68,7 +69,7 @@ public class ImageUtil {
     byte[] fileContent = Files.readAllBytes(file.toPath());
     String mimeType = Files.probeContentType(file.toPath());
     if (mimeType == null || !mimeType.startsWith("image/")) {
-      String name = file.getName().toLowerCase();
+      String name = file.getName().toLowerCase(Locale.ROOT);
       if (name.endsWith(".png"))
         mimeType = "image/png";
       else if (name.endsWith(".jpg") || name.endsWith(".jpeg"))
@@ -330,7 +331,7 @@ public class ImageUtil {
         final var files = (List<File>) sysClip.getData(DataFlavor.javaFileListFlavor);
         if (files != null) {
           for (final var file : files) {
-            final var name = file.getName().toLowerCase();
+            final var name = file.getName().toLowerCase(Locale.ROOT);
             if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")
                 || name.endsWith(".gif") || name.endsWith(".bmp") || name.endsWith(".wbmp")) {
               final var buf = loadBufferedImageInternal(file.getAbsolutePath());

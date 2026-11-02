@@ -38,6 +38,7 @@ import com.cburch.logisim.std.io.SevenSegmentScanningGenericHdlGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 
 public abstract class DownloadBase {
 
@@ -47,8 +48,8 @@ public abstract class DownloadBase {
   protected double preMultiplier = 1.0;
   protected double preDivider = 1.0;
   static final String[] HDLPaths = {
-    HdlGeneratorFactory.VERILOG.toLowerCase(),
-    HdlGeneratorFactory.VHDL.toLowerCase(),
+    HdlGeneratorFactory.VERILOG.toLowerCase(Locale.ROOT),
+    HdlGeneratorFactory.VHDL.toLowerCase(Locale.ROOT),
     "scripts",
     "sandbox",
     "ucf",

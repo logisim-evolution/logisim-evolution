@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed VHDL generation, HDL names and assembler opcodes when the default locale is Turkish
+    (@emincan2000).
   * Fixed elements drawn in black with dark themes: the subcircuit clock symbol, Classic and HolyCross
     subcircuit outlines and icons, the Test Vector table, the timing diagram ruler and signal list, and
     the zoom and compile icons [#3154] (@iSlavok).

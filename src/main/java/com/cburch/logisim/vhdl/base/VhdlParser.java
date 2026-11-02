@@ -15,6 +15,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
@@ -306,7 +307,7 @@ public class VhdlParser {
         && !type.equalsIgnoreCase("time")) {
       throw new IllegalVhdlContentException(S.get("genericTypeException") + ": " + type);
     }
-    type = type.toLowerCase();
+    type = type.toLowerCase(Locale.ROOT);
     var dval = 0;
     if (type.equals("positive")) {
       dval = 1;

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import javax.swing.JFrame;
 
@@ -259,8 +260,8 @@ public class CsvInterpretor {
         }
         final var bitIndex = Integer.parseInt(index);
 
-        if (bitspresent.containsKey(name.toLowerCase())) {
-          final var sels = bitspresent.get(name.toLowerCase());
+        if (bitspresent.containsKey(name.toLowerCase(Locale.ROOT))) {
+          final var sels = bitspresent.get(name.toLowerCase(Locale.ROOT));
           if (bitIndex >= sels.size() || !sels.get(bitIndex + 1)) {
             OptionPane.showMessageDialog(
                 parent,
@@ -286,7 +287,7 @@ public class CsvInterpretor {
             sels.add(false);
           }
           sels.add(true);
-          bitspresent.put(name.toLowerCase(), sels);
+          bitspresent.put(name.toLowerCase(Locale.ROOT), sels);
           if (processingInputs) {
             inputs.add(variable);
           } else {

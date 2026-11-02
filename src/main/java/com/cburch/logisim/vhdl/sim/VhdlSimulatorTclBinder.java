@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import org.slf4j.Logger;
@@ -120,7 +121,7 @@ public class VhdlSimulatorTclBinder {
                   }
 
                   /* Only add logs that contains "error" to the message box */
-                  if (line.toLowerCase().contains("error")) errorMessage.append("\n").append(line);
+                  if (line.toLowerCase(Locale.ROOT).contains("error")) errorMessage.append("\n").append(line);
 
                   if (line.contains("TCL_BINDER_RUNNING")) {
                     running = true;

@@ -563,7 +563,7 @@ public class AppPreferences {
    * @return Font.PLAIN if the font name suggests a specific weight, otherwise Font.BOLD.
    */
   public static int getPreferredFontStyle(String fontName) {
-    String font = fontName.toLowerCase();
+    String font = fontName.toLowerCase(Locale.ROOT);
     if (font.contains("medium") || font.contains("light")
         || font.contains("thin") || font.contains("regular")
         || font.contains("semibold") || font.contains("extrabold")) {

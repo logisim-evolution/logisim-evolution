@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -259,7 +260,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     if (tag == null || tag.isEmpty()) {
       return false;
     }
-    if (tag.toLowerCase().startsWith("xml")) {
+    if (tag.toLowerCase(Locale.ROOT).startsWith("xml")) {
       return false;
     }
     return tag.matches("^[a-zA-Z_:][a-zA-Z0-9._:-]*$");

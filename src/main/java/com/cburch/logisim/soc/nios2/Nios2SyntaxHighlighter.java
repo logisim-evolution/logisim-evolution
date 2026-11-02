@@ -10,6 +10,7 @@
 package com.cburch.logisim.soc.nios2;
 
 import com.cburch.logisim.soc.data.AssemblerHighlighter;
+import java.util.Locale;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
@@ -27,7 +28,7 @@ public class Nios2SyntaxHighlighter extends AssemblerHighlighter {
       map.put("ctl" + i, Token.OPERATOR);
     }
     for (String opcode : Nios2State.ASSEMBLER.getOpcodes())
-      map.put(opcode.toLowerCase(), Token.RESERVED_WORD);
+      map.put(opcode.toLowerCase(Locale.ROOT), Token.RESERVED_WORD);
     return map;
   }
 }
