@@ -16,6 +16,7 @@ import com.cburch.logisim.analyze.model.Var.Bit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class Expression {
   public interface Visitor<T> {
@@ -218,7 +219,7 @@ public abstract class Expression {
 
     @Override
     public String toString() {
-      String key = name().toLowerCase() + "Notation";
+      String key = name().toLowerCase(Locale.ROOT) + "Notation";
       return S.get(key);
     }
   }

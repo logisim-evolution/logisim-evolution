@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
@@ -56,6 +57,8 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -225,6 +228,30 @@ public abstract class DotMatrixBase extends InstanceFactory implements DynamicEl
     scaleY = val;
   }
 
+  /**
+   * Cells along X, in grid cells. Subclasses may read this from the instance so each component can
+   * differ.
+   */
+  protected int scaleX(AttributeSet attrs) {
+    return scaleX;
+  }
+
+  /**
+   * Cells along Y, in grid cells. Subclasses may read this from the instance so each component can
+   * differ.
+   */
+  protected int scaleY(AttributeSet attrs) {
+    return scaleY;
+  }
+
+  /**
+   * Direction of the unrotated drawing. {@link Direction#EAST} leaves the historical layout in
+   * place. Other directions rotate that layout around the anchor.
+   */
+  protected Direction facingOf(AttributeSet attrs) {
+    return Direction.EAST;
+  }
+
   public DotMatrixBase(
       String name, StringGetter displayName, int cols, int rows, HdlGeneratorFactory generator) {
     super(name, displayName, generator, true);
@@ -297,19 +324,31 @@ public abstract class DotMatrixBase extends InstanceFactory implements DynamicEl
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
+    final var bounds = getUnrotatedOffsetBounds(attrs);
+    final var facing = facingOf(attrs);
+    if (facing == Direction.EAST) {
+      return bounds;
+    }
+    return bounds.rotate(Direction.EAST, facing, 0, 0);
+  }
+
+  protected Bounds getUnrotatedOffsetBounds(AttributeSet attrs) {
     Object input = attrs.getValue(getAttributeInputType());
     final var cols = attrs.getValue(getAttributeColumns()).getWidth();
     final var rows = attrs.getValue(getAttributeRows()).getWidth();
+    final var dotScaleX = scaleX(attrs);
+    final var dotScaleY = scaleY(attrs);
     if (input.equals(getAttributeItemColumn())) {
       return Bounds.create(
-          -5 * scaleX, -10 * scaleY * rows, 10 * scaleX * cols, 10 * scaleY * rows);
+          -5 * dotScaleX, -10 * dotScaleY * rows, 10 * dotScaleX * cols, 10 * dotScaleY * rows);
     } else if (input.equals(getAttributeItemRow())) {
-      return Bounds.create(0, -5 * scaleY, 10 * scaleX * cols, 10 * scaleY * rows);
+      return Bounds.create(0, -5 * dotScaleY, 10 * dotScaleX * cols, 10 * dotScaleY * rows);
     } else { // input == INPUT_SELECT
       if (rows == 1) {
-        return Bounds.create(0, -5 * scaleY, 10 * scaleX * cols, 10 * scaleY * rows);
+        return Bounds.create(0, -5 * dotScaleY, 10 * dotScaleX * cols, 10 * dotScaleY * rows);
       } else {
-        return Bounds.create(0, -5 * scaleY * rows + 5, 10 * scaleX * cols, 10 * scaleY * rows);
+        return Bounds.create(
+            0, -5 * dotScaleY * rows + 5, 10 * dotScaleX * cols, 10 * dotScaleY * rows);
       }
     }
   }
@@ -350,22 +389,22 @@ public abstract class DotMatrixBase extends InstanceFactory implements DynamicEl
     }
   }
 
-  protected void drawCircle(Graphics g, int x, int y) {
-    g.fillOval((x + 1) * scaleX, (y + 1) * scaleY, 8 * scaleX, 8 * scaleY);
+  protected void drawCircle(Graphics g, int x, int y, int dotScaleX, int dotScaleY) {
+    g.fillOval((x + 1) * dotScaleX, (y + 1) * dotScaleY, 8 * dotScaleX, 8 * dotScaleY);
   }
 
-  protected void drawSquare(Graphics g, int x, int y) {
-    g.fillRect(x, y, 10 * scaleX, 10 * scaleY);
+  protected void drawSquare(Graphics g, int x, int y, int dotScaleX, int dotScaleY) {
+    g.fillRect(x, y, 10 * dotScaleX, 10 * dotScaleY);
   }
 
-  protected void drawPaddedSquare(Graphics g, int x, int y) {
+  protected void drawPaddedSquare(Graphics g, int x, int y, int dotScaleX, int dotScaleY) {
     final var paddingY = 2;
     final var paddingX = 2;
     g.fillRect(
-        x + (paddingX * scaleX),
-        y + (paddingY * scaleY),
-        (10 - (2 * paddingX)) * scaleX,
-        (10 - (2 * paddingY)) * scaleY);
+        x + (paddingX * dotScaleX),
+        y + (paddingY * dotScaleY),
+        (10 - (2 * paddingX)) * dotScaleX,
+        (10 - (2 * paddingY)) * dotScaleY);
   }
 
   @Override
@@ -376,9 +415,14 @@ public abstract class DotMatrixBase extends InstanceFactory implements DynamicEl
 
     final var data = getState(painter);
     final var ticks = painter.getTickCount();
-    final var bounds = painter.getBounds();
+    final var attrs = painter.getAttributeSet();
+    final var bounds = getUnrotatedOffsetBounds(attrs);
+    final var dotScaleX = scaleX(attrs);
+    final var dotScaleY = scaleY(attrs);
+    final var facing = facingOf(attrs);
     final var showState = painter.getShowState();
     final var g = painter.getGraphics();
+    final var loc = painter.getLocation();
 
     final var rows = data.rows;
     final var cols = data.cols;
@@ -387,46 +431,66 @@ public abstract class DotMatrixBase extends InstanceFactory implements DynamicEl
     // so we draw ports first, then happily paint over it.
     painter.drawPorts();
 
-    g.setColor(Color.DARK_GRAY);
-    g.fillRect(bounds.getX(), bounds.getY(), cols * 10 * scaleX, rows * 10 * scaleY);
-
-    for (var j = 0; j < rows; j++) {
-      for (var i = 0; i < cols; i++) {
-        int x = bounds.getX() + 10 * i * scaleX;
-        int y = bounds.getY() + 10 * j * scaleY;
-
-        if (!showState) {
-          g.setColor(Color.GRAY);
-          drawCircle(g, x, y);
-          continue;
-        }
-
-        final var val = data.get(j, i, ticks);
-        Color c;
-        if (val == Value.TRUE) {
-          c = onColor;
-        } else if (val == Value.FALSE) {
-          c = offColor;
-        } else {
-          c = Value.errorColor;
-        }
-        g.setColor(c);
-        if (SHAPE_SQUARE.equals(shape)) {
-          drawSquare(g, x, y);
-        } else if (SHAPE_PADDED_SQUARE.equals(shape)) {
-          drawPaddedSquare(g, x, y);
-        } else {
-          // SHAPE_CIRCLE is default shape
-          drawCircle(g, x, y);
-        }
+    AffineTransform previous = null;
+    if (g instanceof Graphics2D g2) {
+      previous = g2.getTransform();
+      g2.translate(loc.getX(), loc.getY());
+      // Location.rotate is counterclockwise on screen; Graphics2D positive angles are clockwise.
+      if (facing != Direction.EAST) {
+        g2.rotate(-facing.toRadians());
       }
+    } else {
+      g.translate(loc.getX(), loc.getY());
     }
 
-    if (drawBorder) {
+    try {
       g.setColor(Color.DARK_GRAY);
-      GraphicsUtil.switchToWidth(g, 2);
-      g.drawRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-      GraphicsUtil.switchToWidth(g, 1);
+      g.fillRect(bounds.getX(), bounds.getY(), cols * 10 * dotScaleX, rows * 10 * dotScaleY);
+
+      for (var j = 0; j < rows; j++) {
+        for (var i = 0; i < cols; i++) {
+          int x = bounds.getX() + 10 * i * dotScaleX;
+          int y = bounds.getY() + 10 * j * dotScaleY;
+
+          if (!showState) {
+            g.setColor(Color.GRAY);
+            drawCircle(g, x, y, dotScaleX, dotScaleY);
+            continue;
+          }
+
+          final var val = data.get(j, i, ticks);
+          Color c;
+          if (val == Value.TRUE) {
+            c = onColor;
+          } else if (val == Value.FALSE) {
+            c = offColor;
+          } else {
+            c = Value.errorColor;
+          }
+          g.setColor(c);
+          if (SHAPE_SQUARE.equals(shape)) {
+            drawSquare(g, x, y, dotScaleX, dotScaleY);
+          } else if (SHAPE_PADDED_SQUARE.equals(shape)) {
+            drawPaddedSquare(g, x, y, dotScaleX, dotScaleY);
+          } else {
+            // SHAPE_CIRCLE is default shape
+            drawCircle(g, x, y, dotScaleX, dotScaleY);
+          }
+        }
+      }
+
+      if (drawBorder) {
+        g.setColor(Color.DARK_GRAY);
+        GraphicsUtil.switchToWidth(g, 2);
+        g.drawRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+        GraphicsUtil.switchToWidth(g, 1);
+      }
+    } finally {
+      if (previous != null) {
+        ((Graphics2D) g).setTransform(previous);
+      } else {
+        g.translate(-loc.getX(), -loc.getY());
+      }
     }
     painter.drawLabel();
   }
@@ -456,38 +520,52 @@ public abstract class DotMatrixBase extends InstanceFactory implements DynamicEl
   }
 
   protected void updatePorts(Instance instance) {
+    final var attrs = instance.getAttributeSet();
     Object input = instance.getAttributeValue(getAttributeInputType());
     final var rows = instance.getAttributeValue(getAttributeRows()).getWidth();
     final var cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
     final var selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
+    final var dotScaleY = scaleY(attrs);
     Port[] ps;
     if (input == getAttributeItemColumn()) {
       ps = new Port[cols];
       for (var i = 0; i < cols; i++) {
         ps[i] =
-            new Port(
+            portAt(
+                attrs,
                 10 * i,
-                selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : rows * -10 * scaleY,
-                Port.INPUT,
+                selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : rows * -10 * dotScaleY,
                 rows);
       }
     } else if (input == getAttributeItemRow()) {
       ps = new Port[rows];
       for (var i = 0; i < rows; i++) {
         ps[i] =
-            new Port(
-                selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10, 10 * i, Port.INPUT, cols);
+            portAt(
+                attrs,
+                selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10,
+                10 * i,
+                cols);
       }
     } else {
       if (rows <= 1) {
-        ps =
-            new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
+        ps = new Port[] {portAt(attrs, 0, 0, cols), portAt(attrs, 10 * cols, 0, rows)};
       } else {
         final var dx = selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10;
-        ps = new Port[] {new Port(dx, 0, Port.INPUT, cols), new Port(dx, 10, Port.INPUT, rows)};
+        ps = new Port[] {portAt(attrs, dx, 0, cols), portAt(attrs, dx, 10, rows)};
       }
     }
     instance.setPorts(ps);
+  }
+
+  private Port portAt(AttributeSet attrs, int dx, int dy, int bits) {
+    final var facing = facingOf(attrs);
+    if (facing != Direction.EAST) {
+      final var rotated = Location.create(dx, dy, false).rotate(Direction.EAST, facing, 0, 0);
+      dx = rotated.getX();
+      dy = rotated.getY();
+    }
+    return new Port(dx, dy, Port.INPUT, bits);
   }
 
   @Override

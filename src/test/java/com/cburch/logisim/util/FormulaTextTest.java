@@ -137,13 +137,17 @@ class FormulaTextTest {
       assertEquals(bare.height, braced.height);
       assertTrue(following.width > bare.width);
       assertTrue(grouped.width < following.width);
-      assertTrue(superscript.height > plain.height);
+      // The raised script can fit inside the font ascent, so the line box need not grow.
+      assertTrue(superscript.width > letter.width);
+      assertTrue(superscript.height >= plain.height);
       assertTrue(both.width > bare.width);
-      assertTrue(both.height > bare.height);
+      assertTrue(both.height >= bare.height);
       assertTrue(commandScript.width > letter.width);
       assertTrue(textScript.width > letter.width);
       assertEquals(plainScript.width, overlinedScript.width);
       assertTrue(drawnInk("$A_\\overline{B}$") > drawnInk("$A_B$"));
+      assertTrue(topInk("$A^2$") < topInk("$A$"));
+      assertTrue(topInk("$A_s^2$") < topInk("$A_s$"));
     } finally {
       graphics.dispose();
     }
@@ -252,13 +256,27 @@ class FormulaTextTest {
   }
 
   private static int drawnInk(String source) {
+    return inkCount(formulaImage(source));
+  }
+
+  private static int topInk(String source) {
+    final var image = formulaImage(source);
+    for (var y = 0; y < image.getHeight(); y++) {
+      for (var x = 0; x < image.getWidth(); x++) {
+        if ((image.getRGB(x, y) >>> 24) != 0) return y;
+      }
+    }
+    return image.getHeight();
+  }
+
+  private static BufferedImage formulaImage(String source) {
     final var image = new BufferedImage(180, 90, BufferedImage.TYPE_INT_ARGB);
     final var canvas = image.createGraphics();
     canvas.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 28));
     canvas.setColor(Color.BLACK);
     FormulaText.draw(canvas, source, 8, 55, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
     canvas.dispose();
-    return inkCount(image);
+    return image;
   }
 
   private static int inkCount(BufferedImage image) {

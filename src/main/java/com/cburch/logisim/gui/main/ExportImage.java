@@ -30,6 +30,7 @@ import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -319,13 +320,13 @@ public class ExportImage {
       this.desc = desc;
       extensions = new String[exts.length];
       for (var i = 0; i < exts.length; i++) {
-        extensions[i] = "." + exts[i].toLowerCase();
+        extensions[i] = "." + exts[i].toLowerCase(Locale.ROOT);
       }
     }
 
     @Override
     public boolean accept(File f) {
-      final var name = f.getName().toLowerCase();
+      final var name = f.getName().toLowerCase(Locale.ROOT);
       for (final var extension : extensions) {
         if (name.endsWith(extension)) return true;
       }
