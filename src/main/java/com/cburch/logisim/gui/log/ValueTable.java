@@ -369,8 +369,9 @@ public class ValueTable extends JPanel {
       super.paintComponent(g);
 
       final var sz = getSize();
+      final var fg = getForeground();
 
-      g.setColor(Color.BLACK);
+      g.setColor(fg);
       g.setFont(BODY_FONT);
 
       final var columns = model == null ? 0 : model.getColumnCount();
@@ -399,7 +400,6 @@ public class ValueTable extends JPanel {
         int y = top + firstRow * cellHeight;
         g.setColor(Color.GRAY);
         g.drawLine(x - COLUMN_SEP / 2, clip.y, x - COLUMN_SEP / 2, clip.y + clip.height);
-        g.setColor(Color.BLACK);
         final var cellWidth = columnWidth[col];
         final var radix = model.getColumnValueRadix(col);
 
@@ -411,7 +411,9 @@ public class ValueTable extends JPanel {
 
           g.setColor(cell.bg == null ? bg : cell.bg);
           g.fillRect(x - COLUMN_SEP / 2 + 1, y, cellWidth + COLUMN_SEP - 1, cellHeight);
-          g.setColor(Color.BLACK);
+          // Cells with their own background use light colors, so keep their text black.
+          final var cellFg = cell.fg != null ? cell.fg : cell.bg != null ? Color.BLACK : fg;
+          g.setColor(cellFg);
 
           if (cell.value != null) {
             final var label =
@@ -419,12 +421,7 @@ public class ValueTable extends JPanel {
                     ? ((Value) cell.value).toDisplayString(radix)
                     : (String) cell.value);
             final var width = bodyMetric.stringWidth(label);
-
-            if (cell.fg != null) g.setColor(cell.fg);
-
             g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
-
-            if (cell.fg != null) g.setColor(Color.BLACK);
           }
           y += cellHeight;
         }
@@ -481,7 +478,7 @@ public class ValueTable extends JPanel {
       for (var i = 0; i < columns; i++) {
         g.setColor(Color.GRAY);
         g.drawLine(x - COLUMN_SEP / 2, 0, x - COLUMN_SEP / 2, cellHeight);
-        g.setColor(Color.BLACK);
+        g.setColor(getForeground());
         final var label = model.getColumnName(i);
         final var cellWidth = columnWidth[i];
         final var width = headerMetric.stringWidth(label);

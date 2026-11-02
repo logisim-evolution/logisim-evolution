@@ -172,6 +172,7 @@ public class DefaultEvolutionAppearance {
         final var locs = UnmodifiableList.create(pts);
         final var clk = new Poly(false, locs);
         clk.updateValue(DrawAttr.STROKE_WIDTH, 2);
+        clk.updateValue(DrawAttr.STROKE_COLOR, color);
         dest.add(clk);
       }
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
