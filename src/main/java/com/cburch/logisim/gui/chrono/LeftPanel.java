@@ -89,6 +89,8 @@ public class LeftPanel extends JTable {
       if (ret instanceof final JLabel label && value instanceof final SignalInfo item) {
         label.setBorder(rowInsets);
         label.setBackground(chronoPanel.rowColors(item, isSelected)[0]);
+        // Unselected rows have a light background in every theme.
+        label.setForeground(isSelected ? table.getForeground() : Color.BLACK);
         label.setIcon(item.icon);
       }
       return ret;
@@ -107,6 +109,8 @@ public class LeftPanel extends JTable {
         label.setBorder(rowInsets);
         label.setIcon(null);
         label.setBackground(chronoPanel.rowColors(s.info, isSelected)[0]);
+        // Unselected rows have a light background in every theme.
+        label.setForeground(isSelected ? table.getForeground() : Color.BLACK);
         label.setHorizontalAlignment(JLabel.CENTER);
       }
       return ret;

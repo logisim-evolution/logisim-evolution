@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class VendorSoftware {
   public static final char VENDOR_ALTERA = 0;
@@ -163,7 +164,7 @@ public class VendorSoftware {
     String osname = System.getProperty("os.name");
     if (osname == null) throw new IllegalArgumentException("no os.name");
     else {
-      if (osname.toLowerCase().contains("windows")) {
+      if (osname.toLowerCase(Locale.ROOT).contains("windows")) {
         for (int i = 0; i < progsArray.length; i++) {
           progsArray[i] += windowsExtension;
         }

@@ -14,6 +14,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 public class Parser {
@@ -181,7 +182,7 @@ public class Parser {
         int index = model.getInputs().bits.indexOf(token.text);
         if (index < 0) {
           // ok; but maybe this is an  a python-like (spelled out) operator
-          final var opText = token.text.toUpperCase();
+          final var opText = token.text.toUpperCase(Locale.ROOT);
           if (opText.equals("NOT")) {
             token.type = TOKEN_NOT;
             token.precedence = Expression.Notation.NOT_PRECEDENCE;
