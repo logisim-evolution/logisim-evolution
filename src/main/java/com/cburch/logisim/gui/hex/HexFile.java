@@ -46,6 +46,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -941,7 +942,7 @@ public class HexFile {
       for (var i = 1; i < t.length; i++) {
         final var tag = t[i];
 
-        final var key = switch (tag.toLowerCase()) {
+        final var key = switch (tag.toLowerCase(Locale.ROOT)) {
           case "hex", "raw" -> "radix";
           case "bytes", "words" -> "size";
           case "plain", "addressed" -> "style";

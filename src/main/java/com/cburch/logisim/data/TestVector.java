@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
@@ -172,7 +173,7 @@ public class TestVector {
         }
 
         // Check for special values
-        final var tUpper = t.toUpperCase();
+        final var tUpper = t.toUpperCase(Locale.ROOT);
         if ("<DC>".equals(tUpper)) {
           dcFlags[pinIndex] = true;
           vals[pinIndex] = Value.UNKNOWN; // Placeholder, won't be compared
@@ -226,7 +227,7 @@ public class TestVector {
 
       for (var i = 0; i < n; i++) {
         final var t = (String) curLine.nextElement();
-        final var tUpper = t.toUpperCase();
+        final var tUpper = t.toUpperCase(Locale.ROOT);
 
         // Check for special columns
         if ("<SET>".equals(tUpper)) {

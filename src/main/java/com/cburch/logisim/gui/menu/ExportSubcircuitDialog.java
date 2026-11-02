@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -177,7 +178,7 @@ public class ExportSubcircuitDialog extends JDialog implements ActionListener {
 
   private boolean validateNames() {
     final var usedNames = new HashSet<String>();
-    usedNames.add(mainCircuit.getName().trim().toLowerCase());
+    usedNames.add(mainCircuit.getName().trim().toLowerCase(Locale.ROOT));
 
     for (int i = 0; i < currentExportNames.length; i++) {
       final var name = currentExportNames[i] == null ? "" : currentExportNames[i].trim();
@@ -185,7 +186,7 @@ public class ExportSubcircuitDialog extends JDialog implements ActionListener {
         showError(S.get("circuitNameMissingError"));
         return false;
       }
-      final var lowerName = name.toLowerCase();
+      final var lowerName = name.toLowerCase(Locale.ROOT);
       if (usedNames.contains(lowerName)) {
         showError(name + ": " + S.get("circuitNameExists"));
         return false;

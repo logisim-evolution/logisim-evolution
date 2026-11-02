@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -170,7 +171,7 @@ public class FpgaClockPanel extends JPanel implements ActionListener, LocaleList
   }
 
   public double getTickFrequency() {
-    String TickIndex = frequenciesList.getSelectedItem().toString().trim().toUpperCase();
+    String TickIndex = frequenciesList.getSelectedItem().toString().trim().toUpperCase(Locale.ROOT);
     int i = 0;
     /* first pass, find the number */
     StringBuilder number = new StringBuilder();

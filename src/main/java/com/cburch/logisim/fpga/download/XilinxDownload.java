@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class XilinxDownload implements VendorDownload {
 
@@ -77,7 +78,7 @@ public class XilinxDownload implements VendorDownload {
     this.HdlType = hdlType;
     this.writeToFlash = writeToFlash;
 
-    final var part = boardInfo.fpga.getPart().toUpperCase();
+    final var part = boardInfo.fpga.getPart().toUpperCase(Locale.ROOT);
     isCpld = part.startsWith("XC2C") || part.startsWith("XA2C") || part.startsWith("XCR3") || part.startsWith("XC9500") || part.startsWith("XA9500");
     bitfileExt = isCpld ? "jed" : "bit";
   }
@@ -185,7 +186,7 @@ public class XilinxDownload implements VendorDownload {
             .pair("fileExt", bitfileExt)
             .pair("fileBaseName", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
             .pair("mcsFile", scriptPath + File.separator + MCS_FILE)
-            .pair("hdlType", HdlType.toUpperCase());
+            .pair("hdlType", HdlType.toUpperCase(Locale.ROOT));
 
     for (var entity : entities) contents.add("{{hdlType}} work \"{{1}}\"", entity);
     for (var arch : architectures) contents.add("{{hdlType}} work \"{{1}}\"", arch);
@@ -395,7 +396,7 @@ public class XilinxDownload implements VendorDownload {
       command
           .add(xilinxVendor.getBinaryPath(6))
           .add("-p")
-          .add("{{1}}-{{2}}-{{3}}", fpga.getPart().toUpperCase(), fpga.getSpeedGrade(), fpga.getPackage().toUpperCase())
+          .add("{{1}}-{{2}}-{{3}}", fpga.getPart().toUpperCase(Locale.ROOT), fpga.getSpeedGrade(), fpga.getPackage().toUpperCase(Locale.ROOT))
           .add("-intstyle")
           .add("ise")
           /* TODO: do correct termination type */

@@ -15,6 +15,7 @@ import com.cburch.logisim.util.ColorUtil;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -69,7 +70,7 @@ public class HdlColorRenderer extends JLabel implements TableCellRenderer {
       final var alpha = value.length() == 7 ? 255 : Integer.valueOf(value.substring(7, 9), 16);
       final var bgColor = new Color(red, green, blue, alpha);
       setCellColors(bgColor);
-      setText(value.toUpperCase());
+      setText(value.toUpperCase(Locale.ROOT));
       setHorizontalAlignment(JLabel.CENTER);
     } else {
       if (isSelected) {

@@ -15,6 +15,7 @@ import com.cburch.hdl.HdlModel.PortDescription;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -195,7 +196,7 @@ public class VhdlParser {
     if (result.groupCount() != 1) {
       throw new IllegalVhdlContentException(S.get("lineDeclarationException"));
     }
-    type.append(getType(result.group(1).toLowerCase()));
+    type.append(getType(result.group(1).toLowerCase(Locale.ROOT)));
 
     return 1;
   }
@@ -219,7 +220,7 @@ public class VhdlParser {
 
     int width;
     final var type = new StringBuilder();
-    if (line.toLowerCase().contains("std_logic_vector")) {
+    if (line.toLowerCase(Locale.ROOT).contains("std_logic_vector")) {
       width = parseVector(local, type);
     } else {
       width = parseLine(local, type);
@@ -248,7 +249,7 @@ public class VhdlParser {
 
     int width;
     final var type = new StringBuilder();
-    if (line.toLowerCase().contains("std_logic_vector")) {
+    if (line.toLowerCase(Locale.ROOT).contains("std_logic_vector")) {
       width = parseVector(local, type);
     } else {
       width = parseLine(local, type);
@@ -295,7 +296,7 @@ public class VhdlParser {
     if (result.groupCount() != 3) {
       throw new IllegalVhdlContentException(S.get("vectorDeclarationException"));
     }
-    type.append(getType(result.group(1).toLowerCase()));
+    type.append(getType(result.group(1).toLowerCase(Locale.ROOT)));
 
     return Integer.parseInt(result.group(2)) - Integer.parseInt(result.group(3)) + 1;
   }

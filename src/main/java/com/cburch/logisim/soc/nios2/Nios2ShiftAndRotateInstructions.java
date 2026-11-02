@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterface {
 
@@ -48,7 +49,7 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
 
   public Nios2ShiftAndRotateInstructions() {
     for (int i = 0; i < AsmOpcodes.length; i++) {
-      Opcodes.add(AsmOpcodes[i].toLowerCase());
+      Opcodes.add(AsmOpcodes[i].toLowerCase(Locale.ROOT));
       OpxCodes.add(AsmOpxs[i]);
     }
   }
@@ -122,13 +123,13 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
-    if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
+    if (!Opcodes.contains(instr.getOpcode().toLowerCase(Locale.ROOT))) return false;
     if (instr.getNrOfParameters() != 3) {
       instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
       return false;
     }
     valid = true;
-    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase());
+    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase(Locale.ROOT));
     valid &= Nios2Support.isCorrectRegister(instr, 0);
     sourceC = Nios2Support.getRegisterIndex(instr, 0);
     valid &= Nios2Support.isCorrectRegister(instr, 1);
@@ -196,7 +197,7 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-    if (Opcodes.contains(instruction.toLowerCase())) return 4;
+    if (Opcodes.contains(instruction.toLowerCase(Locale.ROOT))) return 4;
     return -1;
   }
 }
