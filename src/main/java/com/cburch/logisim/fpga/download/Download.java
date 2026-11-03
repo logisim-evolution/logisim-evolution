@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
@@ -454,7 +455,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       return false;
     }
     final var projectPath = getProjDir(topLevelSheet);
-    final var sourcePath = projectPath + AppPreferences.HdlType.get().toLowerCase() + File.separator;
+    final var sourcePath = projectPath + AppPreferences.HdlType.get().toLowerCase(Locale.ROOT) + File.separator;
     getVhdlFiles(projectPath, sourcePath, entities, architectures, AppPreferences.HdlType.get());
     if (useGui) {
       progressBar.setValue(4);

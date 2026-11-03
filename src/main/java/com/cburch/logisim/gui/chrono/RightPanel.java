@@ -762,7 +762,8 @@ public class RightPanel extends JPanel {
       final var time0 = model.getStartTime();
       final var timeL = (time0 / divMajor) * divMajor;
       final var h = ChronoPanel.HEADER_HEIGHT - ChronoPanel.GAP;
-      g.setColor(Color.BLACK);
+      // The timeline is filled with the theme background in paintComponent().
+      g.setColor(getForeground());
       g.drawLine(0, height - 2, width, height - 2);
       for (var i = 0; true; i++) {
         final var t = timeL + divMinor * i;

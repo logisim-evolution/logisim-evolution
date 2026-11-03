@@ -33,6 +33,7 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.LinkedList;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -172,7 +173,7 @@ public class AttrTable extends JPanel implements LocaleListener {
       newVal = 1;
     }
 
-    final var finalValStr = isHex ? "0x" + Integer.toHexString(newVal).toUpperCase() : String.valueOf(newVal);
+    final var finalValStr = isHex ? "0x" + Integer.toHexString(newVal).toUpperCase(Locale.ROOT) : String.valueOf(newVal);
 
     if (scrollTimer == null) {
       scrollTimer = new Timer(500, evt -> finishMouseWheelScroll());

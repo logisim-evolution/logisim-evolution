@@ -19,6 +19,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class RV32imControlTransferInstructions implements AbstractExecutionUnitWithLabelSupport {
 
@@ -145,7 +146,7 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
     if (!valid)
       return null;
     StringBuilder s = new StringBuilder();
-    s.append(AsmOpcodes[operation].toLowerCase());
+    s.append(AsmOpcodes[operation].toLowerCase(Locale.ROOT));
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     switch (operation) {
@@ -185,7 +186,7 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
     if (!valid)
       return null;
     StringBuilder s = new StringBuilder();
-    s.append(AsmOpcodes[operation].toLowerCase());
+    s.append(AsmOpcodes[operation].toLowerCase(Locale.ROOT));
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
         s.append(" ");
 
@@ -288,7 +289,7 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    if (getInstructions().contains(instruction.toUpperCase(Locale.ROOT))) return 4;
     return -1;
   }
 
@@ -296,7 +297,7 @@ public class RV32imControlTransferInstructions implements AbstractExecutionUnitW
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT))) operation = i;
     if (operation < 0) {
       valid = false;
       return false;

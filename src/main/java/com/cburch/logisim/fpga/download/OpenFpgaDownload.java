@@ -26,6 +26,7 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.Locale;
 
 public class OpenFpgaDownload  implements VendorDownload {
 
@@ -152,7 +153,7 @@ public class OpenFpgaDownload  implements VendorDownload {
     if (rootNetList.numberOfClockTrees() > 0 || rootNetList.requiresGlobalClockConnection()) {
       content
           .add("LOCATE COMP \"{{1}}\" SITE \"{{2}}\";", TickComponentHdlGeneratorFactory.FPGA_CLOCK, boardInfo.fpga.getClockPinLocation())
-          .add("FREQUENCY PORT \"{{1}}\" {{2}};", TickComponentHdlGeneratorFactory.FPGA_CLOCK, Download.getClockFrequencyString(boardInfo).toUpperCase());
+          .add("FREQUENCY PORT \"{{1}}\" {{2}};", TickComponentHdlGeneratorFactory.FPGA_CLOCK, Download.getClockFrequencyString(boardInfo).toUpperCase(Locale.ROOT));
     }
     content.add(getPinLocations());
     return FileWriter.writeContents(constraintFile, content.get());
@@ -178,15 +179,15 @@ public class OpenFpgaDownload  implements VendorDownload {
           pinInfo.add("LOCATE COMP \"{{1}}{{2}}\" SITE \"{{3}}\";",
               map.isExternalInverted(pin) ? "n_" : "",
               map.getHdlString(pin),
-              map.getPinLocation(pin).toUpperCase());
+              map.getPinLocation(pin).toUpperCase(Locale.ROOT));
           final var info = map.getFpgaInfo(pin);
           if (info != null) {
             final var pullString = PullBehaviors.getPullString(info.getPullBehavior());
             final String pull = (pullString == null) ? " PULLMODE=NONE" :
-                LineBuffer.format(" PULLMODE={{1}}", pullString.toUpperCase());
+                LineBuffer.format(" PULLMODE={{1}}", pullString.toUpperCase(Locale.ROOT));
             final var ioTypeString = IoStandards.getIoString(info.getIoStandard());
             final String ioType = (ioTypeString == null) ? "" :
-                LineBuffer.format(" IO_TYPE={{1}}", ioTypeString.toUpperCase());
+                LineBuffer.format(" IO_TYPE={{1}}", ioTypeString.toUpperCase(Locale.ROOT));
             final var driveString = DriveStrength.getDriveString(info.getDrive());
             final String drive = (driveString == null) ? "" :
                 LineBuffer.format(" DRIVE={{1}}", driveString);
@@ -206,10 +207,10 @@ public class OpenFpgaDownload  implements VendorDownload {
       pinInfo.add("LOCATE COMP \"{{1}}\" SITE \"{{2}}\";", pin.hdlSignal(), pin.pinLocation());
       final var pullString = PullBehaviors.getPullString(pin.pullBehavior());
       final String pull = (pullString == null) ? " PULLMODE=NONE" :
-          LineBuffer.format(" PULLMODE={{1}}", pullString.toUpperCase());
+          LineBuffer.format(" PULLMODE={{1}}", pullString.toUpperCase(Locale.ROOT));
       final var ioTypeString = IoStandards.getIoString(pin.ioStandard());
       final String ioType = (ioTypeString == null) ? "" :
-          LineBuffer.format(" IO_TYPE={{1}}", ioTypeString.toUpperCase());
+          LineBuffer.format(" IO_TYPE={{1}}", ioTypeString.toUpperCase(Locale.ROOT));
       final var driveString = DriveStrength.getDriveString(pin.driveStrength());
       final String drive = (driveString == null) ? "" :
           LineBuffer.format(" DRIVE={{1}}", driveString);
@@ -259,7 +260,7 @@ public class OpenFpgaDownload  implements VendorDownload {
         .add(openfpgaVendor.getBinaryPath(2))
         .add("--{{1}}", boardInfo.fpga.getPart())
         .add("--package")
-        .add(boardInfo.fpga.getPackage().toUpperCase())
+        .add(boardInfo.fpga.getPackage().toUpperCase(Locale.ROOT))
         .add("--json")
         .add(JSON_FILE)
         .add("--lpf")

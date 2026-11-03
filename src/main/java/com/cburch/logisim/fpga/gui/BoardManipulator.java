@@ -45,6 +45,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -389,7 +390,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
         try {
           image = ImageIO.read(file);
           repaint();
-          boardName = file.getName().toUpperCase().replaceAll(".PNG", "")
+          boardName = file.getName().toUpperCase(Locale.ROOT).replaceAll(".PNG", "")
                           .replaceAll(".XML", "");
           for (BoardManipulatorListener l : listeners)
             l.boardNameChanged(boardName);
