@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an option to follow the system light or dark setting, on by default for new installations
+    [#3132] (@tejastagra).
   * Fixed the Multiplier VHDL/Verilog generators: the VHDL did not compile, and every numeric type
     (unsigned, signed/unsigned, signed) generated the wrong arithmetic [#3130] (@BhavayGoyal).
   * Fixed VHDL generation, HDL names and assembler opcodes when the default locale is Turkish
