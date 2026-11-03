@@ -427,6 +427,7 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   public static void paintClasicIcon(Graphics2D g2) {
+    final var outline = g2.getColor();
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.GRAY);
     g2.drawArc(
@@ -436,7 +437,7 @@ public class SubcircuitFactory extends InstanceFactory {
         AppPreferences.getScaled(6),
         180,
         180);
-    g2.setColor(Color.BLACK);
+    g2.setColor(outline);
     g2.drawRect(
         AppPreferences.getScaled(2),
         AppPreferences.getScaled(1),
@@ -455,7 +456,6 @@ public class SubcircuitFactory extends InstanceFactory {
 
   public static void paintHCIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
-    g2.setColor(Color.BLACK);
     g2.drawRect(
         AppPreferences.getScaled(1),
         AppPreferences.getScaled(1),
@@ -500,7 +500,8 @@ public class SubcircuitFactory extends InstanceFactory {
             AppPreferences.getScaled(15),
             AppPreferences.getScaled(y * 4 + 2));
     }
-    g2.setColor(Color.WHITE);
+    // The label sits on the bar filled with the outline color, so draw it in the inverse color.
+    g2.setColor(new Color(0xFFFFFF ^ (g2.getColor().getRGB() & 0xFFFFFF)));
     final var f = g2.getFont().deriveFont((float) AppPreferences.getIconSize() / 4);
     final var l = new TextLayout("main", f, g2.getFontRenderContext());
     l.draw(g2,

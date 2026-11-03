@@ -35,6 +35,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Locale;
 
 class NotGate extends InstanceFactory {
   /**
@@ -132,7 +133,7 @@ class NotGate extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     final var CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase(Locale.ROOT));
     final var width = attrs.getValue(StdAttr.WIDTH);
     if (width.getWidth() > 1) CompleteName.append("_BUS");
     return CompleteName.toString();

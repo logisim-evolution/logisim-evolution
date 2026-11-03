@@ -10,12 +10,13 @@
 package com.cburch.logisim.util;
 
 import java.awt.Desktop;
+import java.util.Locale;
 import javax.swing.JMenuBar;
 
 public final class MacCompatibility {
 
   private static final boolean runningOnMac =
-      System.getProperty("os.name").toLowerCase().contains("mac");
+      System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac");
   private static boolean usingScreenMenuBar = runningOnMac;
 
   private MacCompatibility() {

@@ -59,6 +59,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.font.TextLayout;
 import java.math.BigInteger;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -183,8 +184,8 @@ public class Pin extends InstanceFactory {
       String s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
-            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase(Locale.ROOT))
+            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase(Locale.ROOT))
             || s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
@@ -213,8 +214,8 @@ public class Pin extends InstanceFactory {
       s = s.trim();
       if (s.equals("")) return false;
       if (tristate
-          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
-              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase(Locale.ROOT))
+              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase(Locale.ROOT))
               || s.equals("???"))) return true;
       try {
         BigInteger n = new BigInteger(s);
@@ -344,8 +345,8 @@ public class Pin extends InstanceFactory {
       final var s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
-            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase(Locale.ROOT))
+            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase(Locale.ROOT))
             || s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
@@ -367,8 +368,8 @@ public class Pin extends InstanceFactory {
       s = s.trim();
       if (s.equals("")) return false;
       if (tristate
-          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
-              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase(Locale.ROOT))
+              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase(Locale.ROOT))
               || s.equals("???"))) return true;
       if (s.equalsIgnoreCase("nan")
           || s.equalsIgnoreCase("inf")
