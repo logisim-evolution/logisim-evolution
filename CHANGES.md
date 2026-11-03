@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added an optional Unified Header Bar component, which could be toggled via Window Preferences [#3166] (@friendsgamingyt611-sys).
   * Added an option to follow the system light or dark setting, on by default for new installations
     [#3132] (@tejastagra).
   * Fixed the Multiplier VHDL/Verilog generators: the VHDL did not compile, and every numeric type

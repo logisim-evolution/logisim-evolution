@@ -245,7 +245,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
-        headerBar = new UnifiedHeaderBar(this, project);
+    headerBar = new UnifiedHeaderBar(this, project);
     if (layoutZoomModel != null) {
       layoutZoomModel.addPropertyChangeListener(
           com.cburch.logisim.gui.generic.ZoomModel.ZOOM,
@@ -807,7 +807,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     getContentPane().validate();
   }
 
-    private void placeHeaderBar() {
+  private void placeHeaderBar() {
     getContentPane().remove(headerBar);
     if (AppPreferences.USE_HEADER_BAR.getBoolean()) {
       getContentPane().add(headerBar, BorderLayout.NORTH);

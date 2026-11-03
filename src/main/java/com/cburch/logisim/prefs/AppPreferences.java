@@ -692,7 +692,7 @@ public class AppPreferences {
                   Direction.WEST.toString()},
               Direction.EAST.toString()));
 
-  public static final PrefMonitor<Boolean> USE_HEADER_BAR = 
+  public static final PrefMonitor<Boolean> USE_HEADER_BAR =
       create(new PrefMonitorBoolean("useHeaderBar", false));
 
   public static final PrefMonitor<String> LookAndFeel =
