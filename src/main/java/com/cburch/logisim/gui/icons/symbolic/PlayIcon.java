@@ -13,6 +13,10 @@ public class PlayIcon extends SymbolicIcon {
     super();
   }
 
+  public PlayIcon(int baseSize) {
+    super(baseSize);
+  }
+
   @Override
   protected void paintSymbolic(Graphics2D g2, int size, Color color) {
     float s = size;

@@ -12,6 +12,8 @@ import com.cburch.logisim.gui.icons.symbolic.ResetIcon;
 import com.cburch.logisim.gui.icons.symbolic.SidebarToggleIcon;
 import com.cburch.logisim.gui.icons.symbolic.StepIcon;
 import com.cburch.logisim.gui.icons.symbolic.SymbolicIcon;
+import com.cburch.logisim.gui.icons.symbolic.TickFullIcon;
+import com.cburch.logisim.gui.icons.symbolic.TickHalfIcon;
 import com.cburch.logisim.gui.icons.symbolic.UndoIcon;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -24,6 +26,7 @@ import com.cburch.logisim.util.LocaleManager;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -67,9 +70,11 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   private final Frame frame;
   private final Project project;
 
+  private static final int SIM_ICON_SIZE = 18;
+
   // Icons
-  private final PlayIcon playIcon = new PlayIcon();
-  private final PauseIcon pauseIcon = new PauseIcon();
+  private final PlayIcon playIcon = new PlayIcon(SIM_ICON_SIZE);
+  private final PauseIcon pauseIcon = new PauseIcon(SIM_ICON_SIZE);
 
   // Left Controls
   private JButton sidebarButton;
@@ -77,18 +82,23 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   private JButton redoButton;
 
   // Center Controls
+  private JPanel centerPanel;
   private JButton circuitPickerButton;
 
   // Right Controls
+  private JPanel leftPanel;
+  private JPanel rightPanel;
   private JLabel simStatusLabel;
   private JToggleButton playPauseButton;
   private JButton stepButton;
-  private JButton resetButton;
+  private JButton tickHalfButton;
+  private JButton tickFullButton;
   private JButton freqButton;
   private JButton zoomButton;
 
   public UnifiedHeaderBar(Frame frame, Project project) {
-    super(new BorderLayout(8, 0));
+    super(null); // Custom absolute-centered layout manager
+    setLayout(new HeaderBarLayout());
     this.frame = frame;
     this.project = project;
 
@@ -124,14 +134,14 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     }
     setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor),
-        BorderFactory.createEmptyBorder(4, 10, 4, 10)));
+        BorderFactory.createEmptyBorder(4, 10, 4, 20)));
   }
 
   private void initComponents() {
     // -------------------------------------------------------------------------
     // LEFT: Sidebar toggle + Undo / Redo
     // -------------------------------------------------------------------------
-    JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
+    leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
     leftPanel.setOpaque(false);
 
     sidebarButton = createPillButton(new SidebarToggleIcon(), "Toggle Sidebar (Ctrl+B)");
@@ -153,12 +163,12 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     leftPanel.add(Box.createHorizontalStrut(6));
     leftPanel.add(undoButton);
     leftPanel.add(redoButton);
-    add(leftPanel, BorderLayout.WEST);
+    add(leftPanel);
 
     // -------------------------------------------------------------------------
     // CENTER: Circuit Hierarchy Breadcrumb & Switcher
     // -------------------------------------------------------------------------
-    JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     centerPanel.setOpaque(false);
 
     circuitPickerButton = new JButton("main", new ChevronDownIcon()) {
@@ -187,23 +197,23 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     circuitPickerButton.setHorizontalTextPosition(SwingConstants.LEFT);
     circuitPickerButton.setIconTextGap(AppPreferences.getScaled(14));
     circuitPickerButton.putClientProperty(FlatClientProperties.STYLE,
-        "arc: 999; margin: 3,12,3,8; borderWidth: 0; background: null;");
+        "arc: 6; margin: 3,12,3,8; borderWidth: 1; borderColor: $Component.borderColor; background: $Group.background;");
     circuitPickerButton.addActionListener(e -> showCircuitMenu(circuitPickerButton));
 
     centerPanel.add(circuitPickerButton);
-    add(centerPanel, BorderLayout.CENTER);
+    add(centerPanel);
 
     // -------------------------------------------------------------------------
     // RIGHT: Simulation Controls Pill, Zoom Pill, and Hamburger Menu
     // -------------------------------------------------------------------------
-    JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+    rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
     rightPanel.setOpaque(false);
 
-    // Simulation segmented pill
+    // Simulation segmented toolbar panel with subtle border and small corner radius
     JPanel simPill = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     simPill.setOpaque(false);
     simPill.putClientProperty(FlatClientProperties.STYLE,
-        "arc: 999; background: $Group.background; border: 1,1,1,1,$Component.borderColor,1,999;");
+        "arc: 6; background: $Group.background; border: 1,1,1,1,$Component.borderColor,1,6;");
 
     simStatusLabel = new JLabel("● Paused");
     simStatusLabel.setFont(simStatusLabel.getFont().deriveFont(Font.BOLD, (float) AppPreferences.getScaled(11)));
@@ -224,7 +234,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       }
     });
 
-    stepButton = new JButton(new StepIcon());
+    stepButton = new JButton(new StepIcon(SIM_ICON_SIZE));
     stylePillItem(stepButton);
     stepButton.setToolTipText("Single Step Propagation (F7)");
     stepButton.addActionListener(e -> {
@@ -233,13 +243,22 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
         sim.step();
     });
 
-    resetButton = new JButton(new ResetIcon());
-    stylePillItem(resetButton);
-    resetButton.setToolTipText("Reset Simulation (Ctrl+R)");
-    resetButton.addActionListener(e -> {
+    tickHalfButton = new JButton(new TickHalfIcon(SIM_ICON_SIZE));
+    stylePillItem(tickHalfButton);
+    tickHalfButton.setToolTipText("Step Half-Tick (Ctrl+Shift+T)");
+    tickHalfButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
-        sim.reset();
+        sim.tick(1);
+    });
+
+    tickFullButton = new JButton(new TickFullIcon(SIM_ICON_SIZE));
+    stylePillItem(tickFullButton);
+    tickFullButton.setToolTipText("Tick Clock Once (Ctrl+T)");
+    tickFullButton.addActionListener(e -> {
+      Simulator sim = project.getSimulator();
+      if (sim != null)
+        sim.tick(2);
     });
 
     freqButton = new JButton("16 Hz", new ChevronDownIcon());
@@ -251,19 +270,20 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     simPill.add(simStatusLabel);
     simPill.add(playPauseButton);
     simPill.add(stepButton);
-    simPill.add(resetButton);
+    simPill.add(tickHalfButton);
+    simPill.add(tickFullButton);
     simPill.add(freqButton);
 
-    // Zoom Popover Button
+    // Zoom Popover Button (matching 6px rounded rectangle)
     zoomButton = new JButton("100%", new ChevronDownIcon());
     zoomButton.setHorizontalTextPosition(SwingConstants.LEFT);
-    zoomButton.putClientProperty(FlatClientProperties.STYLE, "arc: 999; margin: 4,10,4,8; background: $Group.background;");
+    zoomButton.putClientProperty(FlatClientProperties.STYLE, "arc: 6; margin: 4,10,4,8; background: $Group.background; borderWidth: 1; borderColor: $Component.borderColor;");
     zoomButton.setToolTipText("Zoom Factor");
     zoomButton.addActionListener(e -> showZoomMenu(zoomButton));
 
     rightPanel.add(simPill);
     rightPanel.add(zoomButton);
-    add(rightPanel, BorderLayout.EAST);
+    add(rightPanel);
   }
 
   private Color getPausedColor() {
@@ -274,18 +294,18 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     JButton btn = new JButton(icon);
     btn.setToolTipText(tooltip);
     btn.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
-    btn.putClientProperty(FlatClientProperties.STYLE, "arc: 999; margin: 4,8,4,8; background: $Group.background;");
+    btn.putClientProperty(FlatClientProperties.STYLE, "arc: 6; margin: 4,8,4,8; background: $Group.background; borderWidth: 1; borderColor: $Component.borderColor;");
     return btn;
   }
 
   private void stylePillItem(JButton btn) {
     btn.putClientProperty(FlatClientProperties.STYLE,
-        "arc: 999; borderWidth: 0; background: null; margin: 4,8,4,8;");
+        "arc: 4; borderWidth: 0; background: null; margin: 4,8,4,8;");
   }
 
   private void stylePillItem(JToggleButton btn) {
     btn.putClientProperty(FlatClientProperties.STYLE,
-        "arc: 999; borderWidth: 0; background: null; margin: 4,8,4,8;");
+        "arc: 4; borderWidth: 0; background: null; margin: 4,8,4,8;");
   }
 
   private void handleResponsiveLayout() {
@@ -441,11 +461,20 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       return;
 
     // Clock Control Actions
-    JMenuItem tickFullItem = new JMenuItem("Tick Clock Once (Ctrl+T)");
+    JMenuItem resetItem = new JMenuItem("Reset Simulation (Ctrl+R)", new ResetIcon());
+    resetItem.addActionListener(e -> {
+      sim.reset();
+      updateSimControls();
+    });
+    menu.add(resetItem);
+
+    menu.add(new JSeparator());
+
+    JMenuItem tickFullItem = new JMenuItem("Tick Clock Once (Ctrl+T)", new TickFullIcon());
     tickFullItem.addActionListener(e -> sim.tick(2));
     menu.add(tickFullItem);
 
-    JMenuItem tickHalfItem = new JMenuItem("Step Half-Tick (Ctrl+Shift+T)");
+    JMenuItem tickHalfItem = new JMenuItem("Step Half-Tick (Ctrl+Shift+T)", new TickHalfIcon());
     tickHalfItem.addActionListener(e -> sim.tick(1));
     menu.add(tickHalfItem);
 
@@ -650,5 +679,77 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   @Override
   public void localeChanged() {
     updateState();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Custom Absolute-Centered Layout Manager
+  // ---------------------------------------------------------------------------
+  private class HeaderBarLayout implements java.awt.LayoutManager {
+    @Override
+    public void addLayoutComponent(String name, Component comp) {}
+
+    @Override
+    public void removeLayoutComponent(Component comp) {}
+
+    @Override
+    public Dimension preferredLayoutSize(java.awt.Container parent) {
+      Insets insets = parent.getInsets();
+      int leftW = leftPanel != null ? leftPanel.getPreferredSize().width : 0;
+      int centerW = centerPanel != null ? centerPanel.getPreferredSize().width : 0;
+      int rightW = rightPanel != null ? rightPanel.getPreferredSize().width : 0;
+      int h = Math.max(leftPanel != null ? leftPanel.getPreferredSize().height : 0,
+              Math.max(centerPanel != null ? centerPanel.getPreferredSize().height : 0,
+                       rightPanel != null ? rightPanel.getPreferredSize().height : 0));
+      return new Dimension(leftW + centerW + rightW + insets.left + insets.right + 40, h + insets.top + insets.bottom);
+    }
+
+    @Override
+    public Dimension minimumLayoutSize(java.awt.Container parent) {
+      return preferredLayoutSize(parent);
+    }
+
+    @Override
+    public void layoutContainer(java.awt.Container parent) {
+      Insets insets = parent.getInsets();
+      int totalW = parent.getWidth();
+      int totalH = parent.getHeight();
+      int availH = totalH - insets.top - insets.bottom;
+
+      // 1. Layout Left Panel
+      int leftW = 0;
+      if (leftPanel != null) {
+        Dimension ld = leftPanel.getPreferredSize();
+        leftW = ld.width;
+        int ly = insets.top + (availH - ld.height) / 2;
+        leftPanel.setBounds(insets.left, ly, leftW, ld.height);
+      }
+
+      // 2. Layout Right Panel (shifted slightly to the left from the right edge)
+      int rightW = 0;
+      if (rightPanel != null) {
+        Dimension rd = rightPanel.getPreferredSize();
+        rightW = rd.width;
+        int rx = totalW - insets.right - rightW;
+        int ry = insets.top + (availH - rd.height) / 2;
+        rightPanel.setBounds(rx, ry, rightW, rd.height);
+      }
+
+      // 3. Layout Center Panel (strictly centered relative to total bar length totalW)
+      if (centerPanel != null) {
+        Dimension cd = centerPanel.getPreferredSize();
+        int cx = (totalW - cd.width) / 2;
+        int cy = insets.top + (availH - cd.height) / 2;
+
+        // Prevent overlap if window gets too narrow
+        int minLeft = insets.left + leftW + 8;
+        int maxRight = totalW - insets.right - rightW - cd.width - 8;
+        if (cx < minLeft) {
+          cx = minLeft;
+        } else if (cx > maxRight) {
+          cx = maxRight;
+        }
+        centerPanel.setBounds(cx, cy, cd.width, cd.height);
+      }
+    }
   }
 }

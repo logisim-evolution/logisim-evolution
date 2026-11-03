@@ -2,11 +2,12 @@ package com.cburch.logisim.gui.icons.symbolic;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.RoundRectangle2D;
 
 /**
- * Modern vector Reset icon (circular arrow).
+ * Modern vector Reset icon: Rewind to Start (|◀).
+ * Visually mirrors StepIcon (▶|) and matches PlayIcon (▶).
  */
 public class ResetIcon extends SymbolicIcon {
 
@@ -16,21 +17,27 @@ public class ResetIcon extends SymbolicIcon {
 
   @Override
   protected void paintSymbolic(Graphics2D g2, int size, Color color) {
-    g2.setStroke(createStroke(1.8f));
-
     float s = size;
-    // Circular arc for 270 degrees
-    Arc2D.Float arc = new Arc2D.Float(s * 0.22f, s * 0.22f, s * 0.56f, s * 0.56f, 45, 270, Arc2D.OPEN);
-    g2.draw(arc);
 
-    // Arrowhead at top-right
-    Path2D.Float arrow = new Path2D.Float();
-    float tipX = s * 0.70f;
-    float tipY = s * 0.30f;
-    arrow.moveTo(tipX, tipY);
-    arrow.lineTo(tipX + s * 0.16f, tipY - s * 0.04f);
-    arrow.moveTo(tipX, tipY);
-    arrow.lineTo(tipX + s * 0.04f, tipY + s * 0.16f);
-    g2.draw(arrow);
+    // Left vertical bar (start barrier at t=0)
+    float barX = s * 0.18f;
+    float barW = s * 0.14f;
+    float barH = s * 0.52f;
+    float barY = s * 0.24f;
+    g2.fill(new RoundRectangle2D.Float(barX, barY, barW, barH, barW, barW));
+
+    // Rewind triangle pointing left
+    Path2D.Float triangle = new Path2D.Float();
+    float tipX = s * 0.40f;
+    float right = s * 0.78f;
+    float top = s * 0.24f;
+    float bottom = s * 0.76f;
+    float midY = s * 0.50f;
+
+    triangle.moveTo(right, top);
+    triangle.lineTo(tipX, midY);
+    triangle.lineTo(right, bottom);
+    triangle.closePath();
+    g2.fill(triangle);
   }
 }
