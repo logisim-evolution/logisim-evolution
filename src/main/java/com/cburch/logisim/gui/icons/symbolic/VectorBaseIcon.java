@@ -1,3 +1,12 @@
+/*
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ *
+ * https://github.com/logisim-evolution/
+ *
+ * This is free software released under GNU GPLv3 license
+ */
+
 package com.cburch.logisim.gui.icons.symbolic;
 
 import com.cburch.logisim.prefs.AppPreferences;
@@ -11,7 +20,7 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 /**
- * Base class for modern vector icons.
+ * Base class for resolution-independent vector icons.
  * Automatically adapts to light/dark themes and HiDPI display scaling.
  */
 public abstract class VectorBaseIcon implements Icon {
@@ -119,27 +128,5 @@ public abstract class VectorBaseIcon implements Icon {
 
   protected float scale(float val) {
     return val;
-  }
-
-  protected void drawKnockoutBadge(Graphics2D g2, float cx, float cy, float badgeRadius, float knockoutGap, Color fg, Component c) {
-    Color bg = null;
-    if (c != null) {
-      bg = c.getBackground();
-    }
-    if (bg == null) {
-      bg = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? new Color(0x2E, 0x2E, 0x2E) : Color.WHITE;
-    }
-
-    // 1. Fill knockout background circle
-    float kR = badgeRadius + knockoutGap;
-    g2.setColor(bg);
-    g2.fill(new java.awt.geom.Ellipse2D.Float(cx - kR, cy - kR, kR * 2, kR * 2));
-
-    // 2. Draw plus cross in badge
-    g2.setColor(fg);
-    g2.setStroke(createStroke(1.75f));
-    float arm = badgeRadius * 0.70f;
-    g2.draw(new java.awt.geom.Line2D.Float(cx - arm, cy, cx + arm, cy));
-    g2.draw(new java.awt.geom.Line2D.Float(cx, cy - arm, cx, cy + arm));
   }
 }

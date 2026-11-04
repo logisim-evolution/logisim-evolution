@@ -1,3 +1,12 @@
+/*
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ *
+ * https://github.com/logisim-evolution/
+ *
+ * This is free software released under GNU GPLv3 license
+ */
+
 package com.cburch.logisim.gui.icons.symbolic;
 
 import java.awt.Color;
@@ -5,7 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 
 /**
- * Modern vector Pause icon with rounded pill bars.
+ * Vector icon for pausing simulation auto-ticking.
  */
 public class PauseIcon extends VectorBaseIcon {
 
