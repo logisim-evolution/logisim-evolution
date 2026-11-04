@@ -20,6 +20,7 @@
     editor and in TikZ export [#2942] (@Vadimatorik).
   * Extended label formulas with modulus, comparisons, bare subscripts, and superscripts
     [#2942] (@Vadimatorik).
+  * Added TTL 74107: dual negative-edge J-K flip-flops with reset (@Vadimatorik).
   * Added TTL 744075: triple 3-input OR gate (@Vadimatorik).
   * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
   * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
