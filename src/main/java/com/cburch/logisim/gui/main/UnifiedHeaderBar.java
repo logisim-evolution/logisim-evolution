@@ -154,7 +154,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
     leftPanel.setOpaque(false);
 
-    sidebarButton = createPillButton(new SidebarToggleIcon(), S.get("headerToggleSidebar") + " (Ctrl+B)");
+    sidebarButton = createPillButton(new SidebarToggleIcon(), S.get("headerToggleSidebar"));
     sidebarButton.addActionListener(e -> frame.toggleSidebar());
 
     undoButton = createPillButton(new UndoIcon(), S.get("editCantUndoItem") + " (Ctrl+Z)");
@@ -246,7 +246,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     stepButton = new JButton(new StepIcon(SIM_ICON_SIZE));
     stylePillItem(stepButton);
-    stepButton.setToolTipText(S.get("simulateStepItem") + " (F7)");
+    stepButton.setToolTipText(S.get("simulateStepItem"));
     stepButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -255,7 +255,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickHalfButton = new JButton(new TickHalfIcon(SIM_ICON_SIZE));
     stylePillItem(tickHalfButton);
-    tickHalfButton.setToolTipText(S.get("simulateTickHalfItem") + " (Ctrl+Shift+T)");
+    tickHalfButton.setToolTipText(S.get("simulateTickHalfItem"));
     tickHalfButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -264,7 +264,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickFullButton = new JButton(new TickFullIcon(SIM_ICON_SIZE));
     stylePillItem(tickFullButton);
-    tickFullButton.setToolTipText(S.get("simulateTickFullItem") + " (Ctrl+T)");
+    tickFullButton.setToolTipText(S.get("simulateTickFullItem"));
     tickFullButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -480,11 +480,11 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     menu.add(new JSeparator());
 
-    JMenuItem tickFullItem = new JMenuItem(S.get("simulateTickFullItem") + " (Ctrl+T)", new TickFullIcon());
+    JMenuItem tickFullItem = new JMenuItem(S.get("simulateTickFullItem"), new TickFullIcon());
     tickFullItem.addActionListener(e -> sim.tick(2));
     menu.add(tickFullItem);
 
-    JMenuItem tickHalfItem = new JMenuItem(S.get("simulateTickHalfItem") + " (Ctrl+Shift+T)", new TickHalfIcon());
+    JMenuItem tickHalfItem = new JMenuItem(S.get("simulateTickHalfItem"), new TickHalfIcon());
     tickHalfItem.addActionListener(e -> sim.tick(1));
     menu.add(tickHalfItem);
 
@@ -583,37 +583,37 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     popover.add(panel);
     popover.add(new JSeparator());
 
-    // Presets with keyboard shortcuts
-    addZoomPresetItem(popover, S.get("headerZoomIn"), "Ctrl + +", () -> {
+    // Presets
+    addZoomPresetItem(popover, S.get("headerZoomIn"), () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(frame.getZoomModel().getZoomFactor() * 1.2);
         setZoomText(String.format("%.0f%%", frame.getZoomModel().getZoomFactor() * 100.0));
       }
     });
-    addZoomPresetItem(popover, S.get("headerZoomOut"), "Ctrl + -", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomOut"), () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(frame.getZoomModel().getZoomFactor() / 1.2);
         setZoomText(String.format("%.0f%%", frame.getZoomModel().getZoomFactor() * 100.0));
       }
     });
-    addZoomPresetItem(popover, S.get("headerZoomReset"), "Ctrl + 0", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomReset"), () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(1.0);
         setZoomText("100%");
       }
     });
-    addZoomPresetItem(popover, S.get("headerZoomFit"), "Ctrl + Shift + F", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomFit"), () -> {
       if (frame.getZoomControl() != null) {
         frame.getZoomControl().zoomButton.doClick();
       }
     });
-    addZoomPresetItem(popover, "50%", "", () -> {
+    addZoomPresetItem(popover, "50%", () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(0.5);
         setZoomText("50%");
       }
     });
-    addZoomPresetItem(popover, "200%", "", () -> {
+    addZoomPresetItem(popover, "200%", () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(2.0);
         setZoomText("200%");
@@ -625,23 +625,8 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     percentField.selectAll();
   }
 
-  private void addZoomPresetItem(JPopupMenu menu, String label, String shortcut, Runnable action) {
+  private void addZoomPresetItem(JPopupMenu menu, String label, Runnable action) {
     JMenuItem item = new JMenuItem(label);
-    if (!shortcut.isEmpty()) {
-      if (shortcut.equals("Ctrl + +")) {
-        item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_EQUALS,
-            java.awt.event.KeyEvent.CTRL_DOWN_MASK));
-      } else if (shortcut.equals("Ctrl + -")) {
-        item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_MINUS,
-            java.awt.event.KeyEvent.CTRL_DOWN_MASK));
-      } else if (shortcut.equals("Ctrl + 0")) {
-        item.setAccelerator(
-            javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_0, java.awt.event.KeyEvent.CTRL_DOWN_MASK));
-      } else if (shortcut.equals("Ctrl + Shift + F")) {
-        item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F,
-            java.awt.event.KeyEvent.CTRL_DOWN_MASK | java.awt.event.KeyEvent.SHIFT_DOWN_MASK));
-      }
-    }
     item.addActionListener(e -> action.run());
     menu.add(item);
   }
@@ -694,16 +679,16 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
   private void updateTooltips() {
     if (sidebarButton != null) {
-      sidebarButton.setToolTipText(S.get("headerToggleSidebar") + " (Ctrl+B)");
+      sidebarButton.setToolTipText(S.get("headerToggleSidebar"));
     }
     if (stepButton != null) {
-      stepButton.setToolTipText(S.get("simulateStepItem") + " (F7)");
+      stepButton.setToolTipText(S.get("simulateStepItem"));
     }
     if (tickHalfButton != null) {
-      tickHalfButton.setToolTipText(S.get("simulateTickHalfItem") + " (Ctrl+Shift+T)");
+      tickHalfButton.setToolTipText(S.get("simulateTickHalfItem"));
     }
     if (tickFullButton != null) {
-      tickFullButton.setToolTipText(S.get("simulateTickFullItem") + " (Ctrl+T)");
+      tickFullButton.setToolTipText(S.get("simulateTickFullItem"));
     }
     if (freqButton != null) {
       freqButton.setToolTipText(S.get("simulateTickFreqMenu"));
