@@ -174,6 +174,7 @@ public class DefaultHolyCrossAppearance {
 
     final var rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
+    rect.setValue(DrawAttr.STROKE_COLOR, new Color(AppPreferences.COMPONENT_COLOR.get()));
     final var ret = new ArrayList<CanvasObject>();
     ret.add(rect);
 

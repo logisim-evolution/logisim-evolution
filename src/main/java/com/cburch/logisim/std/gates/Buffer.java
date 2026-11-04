@@ -32,6 +32,7 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Locale;
 
 class Buffer extends InstanceFactory {
   /**
@@ -115,7 +116,7 @@ class Buffer extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     final var completeName = new StringBuilder();
-    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase(Locale.ROOT));
     completeName.append("_COMPONENT");
     final var width = attrs.getValue(StdAttr.WIDTH);
     if (width.getWidth() > 1) completeName.append("_BUS");
