@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -61,7 +62,7 @@ public class PioMenu implements ActionListener, MenuExtender {
       PioState myState = instance.getAttributeValue(PioAttributes.PIO_STATE);
       if (myState == null) throw new NullPointerException("BUG in PioMenu.java");
       String compName =
-          myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
+          myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase(Locale.ROOT);
       String headerFileName =
           fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".h";
       String cFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".c";

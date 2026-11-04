@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JFileChooser;
@@ -420,7 +421,7 @@ public class ProjectCircuitActions {
 
     var dest = chooser.getSelectedFile();
     if (dest == null) return;
-    if (!dest.getName().toLowerCase().endsWith(".circ")) {
+    if (!dest.getName().toLowerCase(Locale.ROOT).endsWith(".circ")) {
       dest = new File(dest.getParentFile(), dest.getName() + ".circ");
     }
 
