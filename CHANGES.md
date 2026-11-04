@@ -79,6 +79,7 @@
   * Added TTL 74190: synchronous presettable BCD up/down counter (@Vadimatorik).
   * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
   * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
+  * Added TTL 74393: dual 4-bit binary ripple counter (@Vadimatorik).
   * Added TTL 74640: octal inverting bus transceivers with three-state outputs (@Vadimatorik).
   * Added TTL 74688: 8-bit identity comparator (@Vadimatorik).
   * Fixed TTL 74173 clear operation. [#3146] (@davidhutchens)
