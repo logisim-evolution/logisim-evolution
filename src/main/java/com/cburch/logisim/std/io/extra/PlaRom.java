@@ -139,8 +139,11 @@ public class PlaRom extends InstanceFactory {
 
     @Override
     public BitWidth getBitWidth(InstanceState state, Object option) {
-      PlaRomData data = getPlaRomData(state);
-      return BitWidth.create(data.getOutputs());
+      // Clock discovery queries the bit width through an InstanceState that has no
+      // CircuitState, so avoid getPlaRomData(state), which would dereference it. The
+      // output width is carried by ATTR_OUTPUTS, the same attribute that sizes the
+      // output port, so read it directly. See issue #1247.
+      return BitWidth.create(state.getAttributeValue(ATTR_OUTPUTS));
     }
 
     @Override
