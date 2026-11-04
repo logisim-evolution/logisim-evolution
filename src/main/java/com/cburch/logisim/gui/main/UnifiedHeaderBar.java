@@ -534,8 +534,8 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     panel.add(topRow);
     panel.add(Box.createVerticalStrut(6));
 
-    // Continuous Slider: 20% to 500%
-    JSlider slider = new JSlider(20, 500, Math.min(500, Math.max(20, curPercent)));
+    // Zoom slider: 5% to 1000%
+    JSlider slider = new JSlider(5, 1000, Math.min(1000, Math.max(5, curPercent)));
     slider.putClientProperty(FlatClientProperties.STYLE, "thumbSize: 14,14;");
     panel.add(slider);
     panel.add(Box.createVerticalStrut(8));
@@ -545,7 +545,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       String text = percentField.getText().replace("%", "").trim();
       try {
         double val = Double.parseDouble(text);
-        if (val >= 20 && val <= 1000) {
+        if (val >= 5 && val <= 1000) {
           if (frame.getZoomModel() != null) {
             frame.getZoomModel().setZoomFactor(val / 100.0);
             setZoomText(String.format("%.0f%%", val));
