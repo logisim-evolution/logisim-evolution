@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed the simulation tree duplicating and leaking nodes, which made editing designs with nested
+    subcircuits slower and slower [#3152] (@iSlavok).
   * Added TTL 74594: 8-bit shift register with output register (@Vadimatorik).
   * Added an option to follow the system light or dark setting, on by default for new installations
     [#3132] (@tejastagra).
