@@ -22,6 +22,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -70,11 +71,14 @@ class WindowOptions extends OptionsPanel {
   private final JLabel zoomLabel;
   private final JTextArea zoomFactorImportant;
   private final JComboBox<String> lookAndFeel;
+  private final PrefBoolean followSystemTheme;
   private final JLabel editorThemeLabel;
   private final JComboBox<String> editorTheme;
   private final JComboBox<String> appFont;
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private int index = 0;
+  // Kept in a field because preference listeners are held weakly.
+  private final PropertyChangeListener lookAndFeelListener = event -> syncLookAndFeel();
 
   private String initialAppFont;
   private String initialLookAndFeel;
@@ -197,6 +201,10 @@ class WindowOptions extends OptionsPanel {
       }
     }
 
+    followSystemTheme =
+        new PrefBoolean(AppPreferences.FollowSystemTheme, S.getter("windowFollowSystemTheme"));
+    lookAndFeel.setEnabled(!followSystemTheme.isSelected());
+
     editorTheme = new JComboBox<>();
     editorTheme.addItem("Default");
     editorTheme.addItem("Dark");
@@ -224,6 +232,11 @@ class WindowOptions extends OptionsPanel {
     panel.add(lookfeelLabel);
     panel.add(lookAndFeel);
     lookAndFeel.addActionListener(listener);
+    AppPreferences.LookAndFeel.addPropertyChangeListener(lookAndFeelListener);
+
+    panel.add(new JLabel());
+    panel.add(followSystemTheme);
+    followSystemTheme.addActionListener(listener);
 
     panel.add(editorThemeLabel);
     panel.add(editorTheme);
@@ -256,7 +269,7 @@ class WindowOptions extends OptionsPanel {
     add(panel);
   }
 
-  private void applyLookAndFeelGlobally(String lafClassName) {
+  static void applyLookAndFeelGlobally(String lafClassName) {
     try {
       UIManager.setLookAndFeel(lafClassName);
       for (final var win : Window.getWindows()) {
@@ -276,6 +289,20 @@ class WindowOptions extends OptionsPanel {
         | InstantiationException
         | ClassNotFoundException ignored) {
     }
+  }
+
+  // The look and feel can change without the combo boxes, when following the system theme.
+  private void syncLookAndFeel() {
+    SwingUtilities.invokeLater(() -> {
+      final var current = AppPreferences.LookAndFeel.get();
+      for (var i = 0; i < lookAndFeelInfos.length; i++) {
+        if (lookAndFeelInfos[i].getClassName().equals(current) && i != index) {
+          index = i;
+          lookAndFeel.setSelectedIndex(i);
+        }
+      }
+      updateEditorThemeSelection();
+    });
   }
 
   private void updateEditorThemeSelection() {
@@ -310,6 +337,7 @@ class WindowOptions extends OptionsPanel {
     toolbarPlacement.localeChanged();
     zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
+    followSystemTheme.localeChanged();
     editorThemeLabel.setText(S.get("windowEditorTheme"));
     appFontLabel.setText(S.get("windowAppFont"));
     restartWarning.setText(S.get("windowRestartWarning"));
@@ -348,6 +376,7 @@ class WindowOptions extends OptionsPanel {
         int newIndex = lookAndFeel.getSelectedIndex();
         if (newIndex != index && newIndex >= 0 && newIndex < lookAndFeelInfos.length) {
           index = newIndex;
+          SystemThemeWatcher.remember(lookAndFeelInfos[index].getClassName());
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
           // The theme preference listeners have loaded this theme's colors before this refresh.
           AppPreferences.applyThemeColors();
@@ -355,6 +384,8 @@ class WindowOptions extends OptionsPanel {
           updateEditorThemeSelection();
         }
         checkRestartWarning();
+      } else if (e.getSource().equals(followSystemTheme)) {
+        lookAndFeel.setEnabled(!followSystemTheme.isSelected());
       } else if (e.getSource().equals(editorTheme)) {
         final var selectedIndex = editorTheme.getSelectedIndex();
         if (selectedIndex >= 0 && selectedIndex < AppPreferences.EDITOR_THEMES.length) {
