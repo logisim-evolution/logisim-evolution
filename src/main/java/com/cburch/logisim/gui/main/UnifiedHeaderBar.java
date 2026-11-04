@@ -13,6 +13,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Simulator;
+import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.gui.icons.symbolic.ChevronDownIcon;
 import com.cburch.logisim.gui.icons.symbolic.PauseIcon;
 import com.cburch.logisim.gui.icons.symbolic.PlayIcon;
@@ -153,16 +154,16 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
     leftPanel.setOpaque(false);
 
-    sidebarButton = createPillButton(new SidebarToggleIcon(), "Toggle Sidebar (Ctrl+B)");
+    sidebarButton = createPillButton(new SidebarToggleIcon(), S.get("headerToggleSidebar") + " (Ctrl+B)");
     sidebarButton.addActionListener(e -> frame.toggleSidebar());
 
-    undoButton = createPillButton(new UndoIcon(), "Undo (Ctrl+Z)");
+    undoButton = createPillButton(new UndoIcon(), S.get("editCantUndoItem") + " (Ctrl+Z)");
     undoButton.addActionListener(e -> {
       if (project != null)
         project.undoAction();
     });
 
-    redoButton = createPillButton(new RedoIcon(), "Redo (Ctrl+Y)");
+    redoButton = createPillButton(new RedoIcon(), S.get("editCantRedoItem") + " (Ctrl+Y)");
     redoButton.addActionListener(e -> {
       if (project != null)
         project.redoAction();
@@ -224,7 +225,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     simPill.putClientProperty(FlatClientProperties.STYLE,
         "arc: 6; background: $Group.background; border: 1,1,1,1,$Component.borderColor,1,6;");
 
-    simStatusLabel = new JLabel("● Paused");
+    simStatusLabel = new JLabel("● " + S.get("headerSimPaused"));
     simStatusLabel.setFont(simStatusLabel.getFont().deriveFont(Font.BOLD, (float) AppPreferences.getScaled(11)));
     simStatusLabel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 4));
     simStatusLabel.setForeground(getPausedColor());
@@ -234,7 +235,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     playPauseButton = new JToggleButton(playIcon);
     stylePillItem(playPauseButton);
-    playPauseButton.setToolTipText("Play / Pause Auto-Ticking (Ctrl+K)");
+    playPauseButton.setToolTipText(S.get("headerSimAutoTickRun") + " (Ctrl+K)");
     playPauseButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null) {
@@ -245,7 +246,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     stepButton = new JButton(new StepIcon(SIM_ICON_SIZE));
     stylePillItem(stepButton);
-    stepButton.setToolTipText("Single Step Propagation (F7)");
+    stepButton.setToolTipText(S.get("simulateStepItem") + " (F7)");
     stepButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -254,7 +255,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickHalfButton = new JButton(new TickHalfIcon(SIM_ICON_SIZE));
     stylePillItem(tickHalfButton);
-    tickHalfButton.setToolTipText("Step Half-Tick (Ctrl+Shift+T)");
+    tickHalfButton.setToolTipText(S.get("simulateTickHalfItem") + " (Ctrl+Shift+T)");
     tickHalfButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -263,7 +264,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickFullButton = new JButton(new TickFullIcon(SIM_ICON_SIZE));
     stylePillItem(tickFullButton);
-    tickFullButton.setToolTipText("Tick Clock Once (Ctrl+T)");
+    tickFullButton.setToolTipText(S.get("simulateTickFullItem") + " (Ctrl+T)");
     tickFullButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -273,7 +274,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     freqButton = new JButton("16 Hz", new ChevronDownIcon());
     freqButton.setHorizontalTextPosition(SwingConstants.LEFT);
     stylePillItem(freqButton);
-    freqButton.setToolTipText("Clock Frequency & Simulation Options");
+    freqButton.setToolTipText(S.get("simulateTickFreqMenu"));
     freqButton.addActionListener(e -> showFrequencyMenu(freqButton));
 
     simPill.add(simStatusLabel);
@@ -287,7 +288,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     zoomButton = new JButton("100%", new ChevronDownIcon());
     zoomButton.setHorizontalTextPosition(SwingConstants.LEFT);
     zoomButton.putClientProperty(FlatClientProperties.STYLE, "arc: 6; margin: 4,10,4,8; background: $Group.background; borderWidth: 1; borderColor: $Component.borderColor;");
-    zoomButton.setToolTipText("Zoom Factor");
+    zoomButton.setToolTipText(S.get("windowToolbarZoomfactor"));
     zoomButton.addActionListener(e -> showZoomMenu(zoomButton));
 
     rightPanel.add(simPill);
@@ -388,26 +389,26 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       if (ticking) {
         pauseIcon.setColor(COLOR_HALTED);
         playPauseButton.setIcon(pauseIcon);
-        playPauseButton.setToolTipText("Pause Auto-Ticking (Ctrl+K)");
+        playPauseButton.setToolTipText(S.get("headerSimAutoTickPause") + " (Ctrl+K)");
       } else {
         playIcon.setColor(COLOR_RUNNING);
         playPauseButton.setIcon(playIcon);
-        playPauseButton.setToolTipText("Run Auto-Ticking (Ctrl+K)");
+        playPauseButton.setToolTipText(S.get("headerSimAutoTickRun") + " (Ctrl+K)");
       }
 
       String detailedMsg = sim.getSingleStepMessage();
       if (oscillating) {
-        simStatusLabel.setText(getWidth() < 820 ? "●" : "● Oscillating");
+        simStatusLabel.setText(getWidth() < 820 ? "●" : "● " + S.get("headerSimOscillating"));
         simStatusLabel.setForeground(COLOR_HALTED);
-        simStatusLabel.setToolTipText(detailedMsg.isEmpty() ? "Circuit oscillation detected" : detailedMsg);
+        simStatusLabel.setToolTipText(detailedMsg.isEmpty() ? S.get("headerSimOscillationDetected") : detailedMsg);
       } else if (ticking) {
-        simStatusLabel.setText(getWidth() < 820 ? "●" : "● Running");
+        simStatusLabel.setText(getWidth() < 820 ? "●" : "● " + S.get("headerSimRunning"));
         simStatusLabel.setForeground(COLOR_RUNNING);
-        simStatusLabel.setToolTipText("Simulation clock is actively running");
+        simStatusLabel.setToolTipText(S.get("headerSimRunningTip"));
       } else {
-        simStatusLabel.setText(getWidth() < 820 ? "●" : "● Paused");
+        simStatusLabel.setText(getWidth() < 820 ? "●" : "● " + S.get("headerSimPaused"));
         simStatusLabel.setForeground(getPausedColor());
-        simStatusLabel.setToolTipText(detailedMsg.isEmpty() ? "Simulator paused: step with F7" : detailedMsg);
+        simStatusLabel.setToolTipText(detailedMsg.isEmpty() ? S.get("headerSimPausedTip") : detailedMsg);
       }
 
       if (getWidth() >= 820) {
@@ -428,18 +429,18 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     final boolean canUndo = (last != null);
     undoButton.setEnabled(canUndo);
     if (canUndo) {
-      undoButton.setToolTipText("Undo " + last.getName() + " · Ctrl+Z");
+      undoButton.setToolTipText(S.get("editUndoItem", last.getName()) + " · Ctrl+Z");
     } else {
-      undoButton.setToolTipText("Nothing to undo · Ctrl+Z");
+      undoButton.setToolTipText(S.get("editCantUndoItem") + " · Ctrl+Z");
     }
 
     final var next = project.getCanRedo() ? project.getLastRedoAction() : null;
     final boolean canRedo = (next != null);
     redoButton.setEnabled(canRedo);
     if (canRedo) {
-      redoButton.setToolTipText("Redo " + next.getName() + " · Ctrl+Y");
+      redoButton.setToolTipText(S.get("editRedoItem", next.getName()) + " · Ctrl+Y");
     } else {
-      redoButton.setToolTipText("Nothing to redo · Ctrl+Y");
+      redoButton.setToolTipText(S.get("editCantRedoItem") + " · Ctrl+Y");
     }
   }
 
@@ -470,7 +471,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       return;
 
     // Clock Control Actions
-    JMenuItem resetItem = new JMenuItem("Reset Simulation (Ctrl+R)", new ResetIcon());
+    JMenuItem resetItem = new JMenuItem(S.get("simulateResetItem") + " (Ctrl+R)", new ResetIcon());
     resetItem.addActionListener(e -> {
       sim.reset();
       updateSimControls();
@@ -479,15 +480,15 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     menu.add(new JSeparator());
 
-    JMenuItem tickFullItem = new JMenuItem("Tick Clock Once (Ctrl+T)", new TickFullIcon());
+    JMenuItem tickFullItem = new JMenuItem(S.get("simulateTickFullItem") + " (Ctrl+T)", new TickFullIcon());
     tickFullItem.addActionListener(e -> sim.tick(2));
     menu.add(tickFullItem);
 
-    JMenuItem tickHalfItem = new JMenuItem("Step Half-Tick (Ctrl+Shift+T)", new TickHalfIcon());
+    JMenuItem tickHalfItem = new JMenuItem(S.get("simulateTickHalfItem") + " (Ctrl+Shift+T)", new TickHalfIcon());
     tickHalfItem.addActionListener(e -> sim.tick(1));
     menu.add(tickHalfItem);
 
-    JCheckBoxMenuItem autoTickItem = new JCheckBoxMenuItem("Continuous Ticking (Ctrl+K)", sim.isAutoTicking());
+    JCheckBoxMenuItem autoTickItem = new JCheckBoxMenuItem(S.get("simulateTickItem") + " (Ctrl+K)", sim.isAutoTicking());
     autoTickItem.addActionListener(e -> {
       sim.setAutoTicking(!sim.isAutoTicking());
       updateSimControls();
@@ -528,7 +529,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     // Top: Editable Percentage Field
     JPanel topRow = new JPanel(new BorderLayout(6, 0));
     topRow.setOpaque(false);
-    JLabel zoomLabel = new JLabel("Zoom:");
+    JLabel zoomLabel = new JLabel(S.get("headerZoomLabel"));
     zoomLabel.putClientProperty(FlatClientProperties.STYLE, "foreground: $Label.disabledForeground;");
 
     double curFactor = (frame.getZoomModel() != null) ? frame.getZoomModel().getZoomFactor() : 1.0;
@@ -583,25 +584,25 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     popover.add(new JSeparator());
 
     // Presets with keyboard shortcuts
-    addZoomPresetItem(popover, "Zoom In", "Ctrl + +", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomIn"), "Ctrl + +", () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(frame.getZoomModel().getZoomFactor() * 1.2);
         setZoomText(String.format("%.0f%%", frame.getZoomModel().getZoomFactor() * 100.0));
       }
     });
-    addZoomPresetItem(popover, "Zoom Out", "Ctrl + -", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomOut"), "Ctrl + -", () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(frame.getZoomModel().getZoomFactor() / 1.2);
         setZoomText(String.format("%.0f%%", frame.getZoomModel().getZoomFactor() * 100.0));
       }
     });
-    addZoomPresetItem(popover, "100% (Reset)", "Ctrl + 0", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomReset"), "Ctrl + 0", () -> {
       if (frame.getZoomModel() != null) {
         frame.getZoomModel().setZoomFactor(1.0);
         setZoomText("100%");
       }
     });
-    addZoomPresetItem(popover, "Fit to Screen", "Ctrl + Shift + F", () -> {
+    addZoomPresetItem(popover, S.get("headerZoomFit"), "Ctrl + Shift + F", () -> {
       if (frame.getZoomControl() != null) {
         frame.getZoomControl().zoomButton.doClick();
       }
@@ -687,7 +688,29 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
   @Override
   public void localeChanged() {
+    updateTooltips();
     updateState();
+  }
+
+  private void updateTooltips() {
+    if (sidebarButton != null) {
+      sidebarButton.setToolTipText(S.get("headerToggleSidebar") + " (Ctrl+B)");
+    }
+    if (stepButton != null) {
+      stepButton.setToolTipText(S.get("simulateStepItem") + " (F7)");
+    }
+    if (tickHalfButton != null) {
+      tickHalfButton.setToolTipText(S.get("simulateTickHalfItem") + " (Ctrl+Shift+T)");
+    }
+    if (tickFullButton != null) {
+      tickFullButton.setToolTipText(S.get("simulateTickFullItem") + " (Ctrl+T)");
+    }
+    if (freqButton != null) {
+      freqButton.setToolTipText(S.get("simulateTickFreqMenu"));
+    }
+    if (zoomButton != null) {
+      zoomButton.setToolTipText(S.get("windowToolbarZoomfactor"));
+    }
   }
 
   // ---------------------------------------------------------------------------
