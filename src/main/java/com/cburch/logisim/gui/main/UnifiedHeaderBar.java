@@ -144,7 +144,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     }
     setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor),
-        BorderFactory.createEmptyBorder(4, 10, 4, 20)));
+        BorderFactory.createEmptyBorder(4, 10, 4, 110)));
   }
 
   private void initComponents() {
@@ -163,7 +163,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
         project.undoAction();
     });
 
-    redoButton = createPillButton(new RedoIcon(), S.get("editCantRedoItem") + " (Ctrl+Y)");
+    redoButton = createPillButton(new RedoIcon(), S.get("editCantRedoItem") + " (Ctrl+Shift+Z)");
     redoButton.addActionListener(e -> {
       if (project != null)
         project.redoAction();
@@ -246,7 +246,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     stepButton = new JButton(new StepIcon(SIM_ICON_SIZE));
     stylePillItem(stepButton);
-    stepButton.setToolTipText(S.get("simulateStepItem"));
+    stepButton.setToolTipText(S.get("simulateStepTip"));
     stepButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -255,7 +255,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickHalfButton = new JButton(new TickHalfIcon(SIM_ICON_SIZE));
     stylePillItem(tickHalfButton);
-    tickHalfButton.setToolTipText(S.get("simulateTickHalfItem"));
+    tickHalfButton.setToolTipText(S.get("simulateTickHalfTip"));
     tickHalfButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -264,7 +264,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickFullButton = new JButton(new TickFullIcon(SIM_ICON_SIZE));
     stylePillItem(tickFullButton);
-    tickFullButton.setToolTipText(S.get("simulateTickFullItem"));
+    tickFullButton.setToolTipText(S.get("simulateTickFullTip"));
     tickFullButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -438,9 +438,9 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     final boolean canRedo = (next != null);
     redoButton.setEnabled(canRedo);
     if (canRedo) {
-      redoButton.setToolTipText(S.get("editRedoItem", next.getName()) + " · Ctrl+Y");
+      redoButton.setToolTipText(S.get("editRedoItem", next.getName()) + " · Ctrl+Shift+Z");
     } else {
-      redoButton.setToolTipText(S.get("editCantRedoItem") + " · Ctrl+Y");
+      redoButton.setToolTipText(S.get("editCantRedoItem") + " · Ctrl+Shift+Z");
     }
   }
 
@@ -477,16 +477,6 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       updateSimControls();
     });
     menu.add(resetItem);
-
-    menu.add(new JSeparator());
-
-    JMenuItem tickFullItem = new JMenuItem(S.get("simulateTickFullItem"), new TickFullIcon());
-    tickFullItem.addActionListener(e -> sim.tick(2));
-    menu.add(tickFullItem);
-
-    JMenuItem tickHalfItem = new JMenuItem(S.get("simulateTickHalfItem"), new TickHalfIcon());
-    tickHalfItem.addActionListener(e -> sim.tick(1));
-    menu.add(tickHalfItem);
 
     JCheckBoxMenuItem autoTickItem = new JCheckBoxMenuItem(S.get("simulateTickItem") + " (Ctrl+K)", sim.isAutoTicking());
     autoTickItem.addActionListener(e -> {
@@ -682,13 +672,13 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       sidebarButton.setToolTipText(S.get("headerToggleSidebar"));
     }
     if (stepButton != null) {
-      stepButton.setToolTipText(S.get("simulateStepItem"));
+      stepButton.setToolTipText(S.get("simulateStepTip"));
     }
     if (tickHalfButton != null) {
-      tickHalfButton.setToolTipText(S.get("simulateTickHalfItem"));
+      tickHalfButton.setToolTipText(S.get("simulateTickHalfTip"));
     }
     if (tickFullButton != null) {
-      tickFullButton.setToolTipText(S.get("simulateTickFullItem"));
+      tickFullButton.setToolTipText(S.get("simulateTickFullTip"));
     }
     if (freqButton != null) {
       freqButton.setToolTipText(S.get("simulateTickFreqMenu"));
