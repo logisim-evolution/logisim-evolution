@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -457,7 +458,7 @@ public class Circuit {
     isAnnotated = true;
     /* Now annotate all circuits below me */
     for (final var subs : subCircuits) {
-      final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
+      final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase(Locale.ROOT));
       final var inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
       circ.annotate(proj, clearExistingLabels, inLibrary);
     }

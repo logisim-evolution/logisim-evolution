@@ -563,7 +563,7 @@ public class AppPreferences {
    * @return Font.PLAIN if the font name suggests a specific weight, otherwise Font.BOLD.
    */
   public static int getPreferredFontStyle(String fontName) {
-    String font = fontName.toLowerCase();
+    String font = fontName.toLowerCase(Locale.ROOT);
     if (font.contains("medium") || font.contains("light")
         || font.contains("thin") || font.contains("regular")
         || font.contains("semibold") || font.contains("extrabold")) {
@@ -670,6 +670,8 @@ public class AppPreferences {
   public static final String TOOLBAR_HIDDEN = "hidden";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =
       create(new PrefMonitorBoolean("showTickRate", false));
+  public static final PrefMonitor<Boolean> RECENTER_ON_DOUBLE_MIDDLE_MOUSE =
+      create(new PrefMonitorBoolean("recenterOnDoubleMiddleMouse", true));
   public static final PrefMonitor<String> TOOLBAR_PLACEMENT =
       create(
           new PrefMonitorStringOpts(
@@ -694,6 +696,15 @@ public class AppPreferences {
 
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
+
+  // Main writes this key for new installs before this class is loaded, so it must be a constant.
+  public static final String FOLLOW_SYSTEM_THEME_KEY = "FollowSystemTheme";
+  public static final PrefMonitor<Boolean> FollowSystemTheme =
+      create(new PrefMonitorBoolean(FOLLOW_SYSTEM_THEME_KEY, false));
+
+  // The user's own theme for each mode, used when following the system theme.
+  public static final String LIGHT_LOOK_AND_FEEL_KEY = "LightLookAndFeel";
+  public static final String DARK_LOOK_AND_FEEL_KEY = "DarkLookAndFeel";
 
   public static final String EDITOR_THEME_DEFAULT = "default";
   public static final String EDITOR_THEME_DARK = "dark";
@@ -917,6 +928,11 @@ public class AppPreferences {
       create(new PrefMonitorBooleanConvert("oldIO", true));
 
   public static double getAutoScaleFactor() {
+    if (System.getenv("GDK_SCALE") != null
+        || System.getenv("GDK_DPI_SCALE") != null
+        || System.getenv("QT_SCALE_FACTOR") != null) {
+      return 1.0;
+    }
     return (((!GraphicsEnvironment.isHeadless())
         ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
         : 0)

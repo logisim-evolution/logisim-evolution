@@ -5,11 +5,28 @@
 * @dev (????-??-??)
   * Sped up simulation by running a queued component once per step and caching which of its ports are connected
     [#3065] (@Kejoki).
+  * Made resetting the simulation of designs with many subcircuit instances faster and lighter on memory
+    [#3156] (@iSlavok).
+  * Fixed the simulation tree duplicating and leaking nodes, which made editing designs with nested
+    subcircuits slower and slower [#3152] (@iSlavok).
+  * Added TTL 74594: 8-bit shift register with output register (@Vadimatorik).
+  * Added an option to follow the system light or dark setting, on by default for new installations
+    [#3132] (@tejastagra).
+  * Fixed the Multiplier VHDL/Verilog generators: the VHDL did not compile, and every numeric type
+    (unsigned, signed/unsigned, signed) generated the wrong arithmetic [#3130] (@BhavayGoyal).
+  * Fixed VHDL generation, HDL names and assembler opcodes when the default locale is Turkish
+    (@emincan2000).
+  * Fixed elements drawn in black with dark themes: the subcircuit clock symbol, Classic and HolyCross
+    subcircuit outlines and icons, the Test Vector table, the timing diagram ruler and signal list, and
+    the zoom and compile icons [#3154] (@iSlavok).
+  * Fixed Shifter HDL generation bit selectors and VHDL arithmetic shift right sign extension [#3138] (@Hrushikesh-ramilla).
+  * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
   * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
   * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
     editor and in TikZ export [#2942] (@Vadimatorik).
   * Extended label formulas with modulus, comparisons, bare subscripts, and superscripts
     [#2942] (@Vadimatorik).
+  * Added TTL 74107: dual negative-edge J-K flip-flops with reset (@Vadimatorik).
   * Added TTL 744075: triple 3-input OR gate (@Vadimatorik).
   * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
   * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
@@ -40,6 +57,9 @@
   * Preserved pin and anchor edits in custom circuit appearances when saving [#3025] (@hewzhew).
   * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
     [#1247] (@hewzhew).
+  * Fixed a NullPointerException that stopped the clock when an I/O-extra PlaRom was placed in a
+    subcircuit, by reading its output width from the component attribute during clock discovery
+    [#1247] (@henriquejsza).
   * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
     deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
   * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
@@ -57,9 +77,19 @@
   * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
     [#3008] (@xjx06127).
   * Fixed French translation mistake for `selCutItem` (@LPe7).
-
+  * Added TTL 74257: quad 2-line to 1-line data selector with three-state outputs (@Vadimatorik).
+  * Added TTL 74374: octal positive-edge D flip-flop with three-state outputs (@Vadimatorik).
+  * Added TTL 744094: 8-bit shift-and-store register with three-state outputs (@Vadimatorik).
+  * Added TTL 744017: Johnson decade counter with 10 decoded outputs (@Vadimatorik).
+  * Added TTL 74595: 8-bit serial-in, parallel-out shift register with output latch (@Vadimatorik).
+  * Added TTL 74190: synchronous presettable BCD up/down counter (@Vadimatorik).
   * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
   * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
+  * Added TTL 74393: dual 4-bit binary ripple counter (@Vadimatorik).
+  * Added TTL 74640: octal inverting bus transceivers with three-state outputs (@Vadimatorik).
+  * Added TTL 74688: 8-bit identity comparator (@Vadimatorik).
+  * Fixed TTL 74173 clear operation. [#3146] (@davidhutchens)
+
 * v5.0.0 (2026-09-12)
   * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
   * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).

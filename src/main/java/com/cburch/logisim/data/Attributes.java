@@ -21,6 +21,7 @@ import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -208,7 +209,7 @@ public class Attributes {
     @Override
     public Integer parse(String value) {
       try {
-        final var raw = value.toLowerCase();
+        final var raw = value.toLowerCase(Locale.ROOT);
         if (raw.startsWith("-")) {
           final var s = raw.substring(1);
           if (s.startsWith("0x")) {
@@ -256,7 +257,7 @@ public class Attributes {
     @Override
     public Long parse(String value) {
       try {
-        final var raw = value.toLowerCase();
+        final var raw = value.toLowerCase(Locale.ROOT);
         if (raw.startsWith("-")) {
           final var s = raw.substring(1);
           if (s.startsWith("0x")) {

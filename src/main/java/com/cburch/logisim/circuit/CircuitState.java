@@ -29,6 +29,7 @@ import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -187,7 +188,13 @@ public class CircuitState implements InstanceData {
   /** values propagated in this circuit. Protected by valuesLock */
   private Map<Location, Value> slowpathValues = new HashMap<>();
   /** values propagated in this circuit. Protected by valuesLock */
-  private Value[][] fastpathValues = new Value[FASTPATH_GRID_HEIGHT][FASTPATH_GRID_WIDTH];
+  private Value[][] fastpathValues = new Value[FASTPATH_GRID_HEIGHT][];
+  /**
+   * Range of columns written in each row of fastpathValues since the last clear (min > max when
+   * none), so clearing touches only the cells a circuit uses. Protected by valuesLock.
+   */
+  private final int[] fastpathMin = newFastpathMin();
+  private final int[] fastpathMax = new int[FASTPATH_GRID_HEIGHT];
   /** Protects slowPathValues and fastPathValues */
   private final Object valuesLock = new Object();
 
@@ -294,8 +301,12 @@ public class CircuitState implements InstanceData {
     this.slowpathValues.clear(); // slow path
     synchronized (src.valuesLock) {
       this.slowpathValues.putAll(src.slowpathValues); // slow path
-      for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) { // fast path
-        System.arraycopy(src.fastpathValues[y], 0, this.fastpathValues[y], 0, FASTPATH_GRID_WIDTH);
+      clearFastpathGrid(); // fast path
+      for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
+        if (src.fastpathValues[y] == null) continue;
+        this.fastpathValues[y] = src.fastpathValues[y].clone();
+        this.fastpathMin[y] = src.fastpathMin[y];
+        this.fastpathMax[y] = src.fastpathMax[y];
       }
     }
     synchronized (src.dirtyLock) {
@@ -394,7 +405,8 @@ public class CircuitState implements InstanceData {
       final var x = p.x / 10;
       final var y = p.y / 10;
       synchronized (valuesLock) {
-        value = fastpathValues[y][x];
+        final var row = fastpathValues[y];
+        value = row == null ? null : row[x];
         if (value == null) {
           value = CircuitWires.getBusValue(this, p);
         }
@@ -616,10 +628,18 @@ public class CircuitState implements InstanceData {
   /** precondition: valuesLock held */
   private void clearFastpathGrid() {
     for (var y = 0; y < FASTPATH_GRID_HEIGHT; y++) {
-      for (var x = 0; x < FASTPATH_GRID_WIDTH; x++) {
-        fastpathValues[y][x] = null;
+      if (fastpathMin[y] <= fastpathMax[y]) {
+        Arrays.fill(fastpathValues[y], fastpathMin[y], fastpathMax[y] + 1, null);
+        fastpathMin[y] = FASTPATH_GRID_WIDTH;
+        fastpathMax[y] = -1;
       }
     }
+  }
+
+  private static int[] newFastpathMin() {
+    final var min = new int[FASTPATH_GRID_HEIGHT];
+    Arrays.fill(min, FASTPATH_GRID_WIDTH);
+    return min;
   }
 
   /** for CircuitWires - to set value at point */
@@ -658,16 +678,23 @@ public class CircuitState implements InstanceData {
   private boolean fastpath(Location p, Value v) {
     final var x = p.x / 10;
     final var y = p.y / 10;
+    var row = fastpathValues[y];
     if (v == Value.NIL) {
-      if (fastpathValues[y][x] != null) {
-        fastpathValues[y][x] = null;
+      if (row != null && row[x] != null) {
+        row[x] = null;
         return true;
       } else {
         return false;
       }
     } else {
-      if (!v.equals(fastpathValues[y][x])) {
-        fastpathValues[y][x] = v;
+      if (row == null) {
+        row = new Value[FASTPATH_GRID_WIDTH];
+        fastpathValues[y] = row;
+      }
+      if (!v.equals(row[x])) {
+        row[x] = v;
+        if (x < fastpathMin[y]) fastpathMin[y] = x;
+        if (x > fastpathMax[y]) fastpathMax[y] = x;
         return true;
       } else {
         return false;
