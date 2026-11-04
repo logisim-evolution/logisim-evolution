@@ -7,7 +7,7 @@ import java.awt.geom.Path2D;
 /**
  * Modern vector Downward Chevron icon (⌄).
  */
-public class ChevronDownIcon extends SymbolicIcon {
+public class ChevronDownIcon extends VectorBaseIcon {
 
   public ChevronDownIcon() {
     super(12);

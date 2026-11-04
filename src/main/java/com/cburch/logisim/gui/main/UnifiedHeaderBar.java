@@ -11,10 +11,10 @@ import com.cburch.logisim.gui.icons.symbolic.RedoIcon;
 import com.cburch.logisim.gui.icons.symbolic.ResetIcon;
 import com.cburch.logisim.gui.icons.symbolic.SidebarToggleIcon;
 import com.cburch.logisim.gui.icons.symbolic.StepIcon;
-import com.cburch.logisim.gui.icons.symbolic.SymbolicIcon;
 import com.cburch.logisim.gui.icons.symbolic.TickFullIcon;
 import com.cburch.logisim.gui.icons.symbolic.TickHalfIcon;
 import com.cburch.logisim.gui.icons.symbolic.UndoIcon;
+import com.cburch.logisim.gui.icons.symbolic.VectorBaseIcon;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -58,7 +58,7 @@ import com.cburch.logisim.proj.ProjectEvent;
 
 /**
  * Unified HeaderBar for Logisim-Evolution.
- * Unified control center for workspace state, simulation, zoom, and navigation.
+ * Unified control panel for workspace state, simulation, zoom, and navigation.
  */
 public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectListener {
 
@@ -204,12 +204,12 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     add(centerPanel);
 
     // -------------------------------------------------------------------------
-    // RIGHT: Simulation Controls Pill, Zoom Pill, and Hamburger Menu
+    // RIGHT: Simulation Controls, Frequency, and Zoom Controls
     // -------------------------------------------------------------------------
     rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
     rightPanel.setOpaque(false);
 
-    // Simulation segmented toolbar panel with subtle border and small corner radius
+    // Simulation controls container
     JPanel simPill = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     simPill.setOpaque(false);
     simPill.putClientProperty(FlatClientProperties.STYLE,
@@ -274,7 +274,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     simPill.add(tickFullButton);
     simPill.add(freqButton);
 
-    // Zoom Popover Button (matching 6px rounded rectangle)
+    // Zoom popover trigger button
     zoomButton = new JButton("100%", new ChevronDownIcon());
     zoomButton.setHorizontalTextPosition(SwingConstants.LEFT);
     zoomButton.putClientProperty(FlatClientProperties.STYLE, "arc: 6; margin: 4,10,4,8; background: $Group.background; borderWidth: 1; borderColor: $Component.borderColor;");
@@ -290,7 +290,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? COLOR_PAUSED_DARK : COLOR_PAUSED_LIGHT;
   }
 
-  private JButton createPillButton(SymbolicIcon icon, String tooltip) {
+  private JButton createPillButton(VectorBaseIcon icon, String tooltip) {
     JButton btn = new JButton(icon);
     btn.setToolTipText(tooltip);
     btn.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
@@ -724,7 +724,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
         leftPanel.setBounds(insets.left, ly, leftW, ld.height);
       }
 
-      // 2. Layout Right Panel (shifted slightly to the left from the right edge)
+      // 2. Layout Right Panel
       int rightW = 0;
       if (rightPanel != null) {
         Dimension rd = rightPanel.getPreferredSize();
@@ -734,7 +734,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
         rightPanel.setBounds(rx, ry, rightW, rd.height);
       }
 
-      // 3. Layout Center Panel (strictly centered relative to total bar length totalW)
+      // 3. Center circuit switcher across total bar width
       if (centerPanel != null) {
         Dimension cd = centerPanel.getPreferredSize();
         int cx = (totalW - cd.width) / 2;

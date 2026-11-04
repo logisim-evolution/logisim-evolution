@@ -9,7 +9,7 @@ import java.awt.geom.RoundRectangle2D;
  * Modern vector Reset icon: Rewind to Start (|◀).
  * Visually mirrors StepIcon (▶|) and matches PlayIcon (▶).
  */
-public class ResetIcon extends SymbolicIcon {
+public class ResetIcon extends VectorBaseIcon {
 
   public ResetIcon() {
     super();

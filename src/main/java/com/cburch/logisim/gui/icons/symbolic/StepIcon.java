@@ -8,7 +8,7 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Modern vector Step icon (play arrow + vertical bar).
  */
-public class StepIcon extends SymbolicIcon {
+public class StepIcon extends VectorBaseIcon {
 
   public StepIcon() {
     super();

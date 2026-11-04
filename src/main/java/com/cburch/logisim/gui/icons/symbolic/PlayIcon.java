@@ -7,7 +7,7 @@ import java.awt.geom.Path2D;
 /**
  * Modern vector Play icon with smooth vertices.
  */
-public class PlayIcon extends SymbolicIcon {
+public class PlayIcon extends VectorBaseIcon {
 
   public PlayIcon() {
     super();

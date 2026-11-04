@@ -7,7 +7,7 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Modern vector Pause icon with rounded pill bars.
  */
-public class PauseIcon extends SymbolicIcon {
+public class PauseIcon extends VectorBaseIcon {
 
   public PauseIcon() {
     super();

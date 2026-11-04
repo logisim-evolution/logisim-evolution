@@ -17,7 +17,7 @@ import java.awt.geom.Path2D;
  *   1) Purple arc with an arrowhead pointing straight UP at top-right.
  *   2) Magenta arc with an arrowhead pointing LEFT at bottom-left.
  */
-public class TickFullIcon extends SymbolicIcon {
+public class TickFullIcon extends VectorBaseIcon {
 
   public static final Color MAGENTA_ARROW = new Color(0xFF, 0x00, 0xCC); // Classic Logisim Magenta
   public static final Color PURPLE_ARROW  = new Color(0x66, 0x00, 0x99); // Classic Logisim Dark Purple/Violet

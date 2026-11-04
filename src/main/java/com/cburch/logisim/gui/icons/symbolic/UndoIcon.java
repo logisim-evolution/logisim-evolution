@@ -8,7 +8,7 @@ import java.awt.geom.Path2D;
 /**
  * Modern vector Undo icon with smooth arc and clean arrowhead.
  */
-public class UndoIcon extends SymbolicIcon {
+public class UndoIcon extends VectorBaseIcon {
 
   public UndoIcon() {
     super();

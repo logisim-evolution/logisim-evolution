@@ -8,7 +8,7 @@ import java.awt.geom.Path2D;
 /**
  * Modern vector Redo icon with smooth arc and clean arrowhead.
  */
-public class RedoIcon extends SymbolicIcon {
+public class RedoIcon extends VectorBaseIcon {
 
   public RedoIcon() {
     super();

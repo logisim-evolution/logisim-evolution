@@ -16,7 +16,7 @@ import java.awt.geom.Path2D;
  * - Vibrant Magenta arc along the right & bottom perimeter terminating in a solid,
  *   prominent arrowhead at the bottom-left pointing left.
  */
-public class TickHalfIcon extends SymbolicIcon {
+public class TickHalfIcon extends VectorBaseIcon {
 
   public static final Color MAGENTA_ARROW = new Color(0xFF, 0x00, 0xCC); // Classic vibrant Logisim Magenta
   public static final Color RED_HAND      = new Color(0xEE, 0x11, 0x11); // Classic Red Clock Hand

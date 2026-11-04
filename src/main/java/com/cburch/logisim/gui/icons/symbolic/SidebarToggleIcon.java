@@ -7,7 +7,7 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Modern Libadwaita-style sidebar toggle icon.
  */
-public class SidebarToggleIcon extends SymbolicIcon {
+public class SidebarToggleIcon extends VectorBaseIcon {
 
   public SidebarToggleIcon() {
     super();

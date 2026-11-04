@@ -11,19 +11,19 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 /**
- * Base class for modern symbolic vector icons.
+ * Base class for modern vector icons.
  * Automatically adapts to light/dark themes and HiDPI display scaling.
  */
-public abstract class SymbolicIcon implements Icon {
+public abstract class VectorBaseIcon implements Icon {
 
   private final int baseSize;
   private Color fixedColor = null;
 
-  public SymbolicIcon() {
+  public VectorBaseIcon() {
     this(AppPreferences.IconSize);
   }
 
-  public SymbolicIcon(int baseSize) {
+  public VectorBaseIcon(int baseSize) {
     this.baseSize = baseSize;
   }
 
