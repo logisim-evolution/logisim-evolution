@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Sped up simulation by running a queued component once per step and caching which of its ports are connected
+    [#3065] (@Kejoki).
   * Made resetting the simulation of designs with many subcircuit instances faster and lighter on memory
     [#3156] (@iSlavok).
   * Fixed the simulation tree duplicating and leaking nodes, which made editing designs with nested
