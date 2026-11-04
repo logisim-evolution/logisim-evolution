@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Made resetting the simulation of designs with many subcircuit instances faster and lighter on memory
+    [#3156] (@iSlavok).
   * Fixed the simulation tree duplicating and leaking nodes, which made editing designs with nested
     subcircuits slower and slower [#3152] (@iSlavok).
   * Added TTL 74594: 8-bit shift register with output register (@Vadimatorik).
