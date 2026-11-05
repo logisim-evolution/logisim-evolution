@@ -34,6 +34,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
+import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.LocaleManager;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.jar.JarFile;
 import javax.help.JHelp;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -91,6 +93,7 @@ public class Startup implements AWTEventListener {
   static final Logger logger = LoggerFactory.getLogger(Startup.class);
   private static Startup startupTemp = null;
   private final ArrayList<File> filesToOpen = new ArrayList<>();
+  private final ArrayList<File> librariesToLoad = new ArrayList<>();
   private final HashMap<File, File> substitutions = new HashMap<>();
   private final ArrayList<File> filesToPrint = new ArrayList<>();
   // based on command line
@@ -180,6 +183,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEST_VECTOR_LONG = "test-vector";
   private static final String ARG_NO_SPLASH_LONG = "no-splash";
   private static final String ARG_MAIN_CIRCUIT = "toplevel-circuit";
+  private static final String ARG_LOAD_LIBRARY_LONG = "load-library";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -341,6 +345,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
     addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argLoadLibraryOption", ARG_LOAD_LIBRARY_LONG, 1);
 
     CommandLine cmd;
     try {
@@ -409,6 +414,7 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
         case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
+        case ARG_LOAD_LIBRARY_LONG -> handleArgLoadLibrary(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       switch (optHandlerRc) {
@@ -676,6 +682,17 @@ public class Startup implements AWTEventListener {
     return RC.ERROR;
   }
 
+  private static RC handleArgLoadLibrary(Startup startup, Option opt) {
+    final var path = opt.getValue();
+    final var file = new File(path);
+    if (!file.exists() || !file.canRead()) {
+      logger.error(S.get("argLoadLibraryCannotReadError", path));
+      return RC.ERROR;
+    }
+    startup.librariesToLoad.add(file);
+    return RC.OK;
+  }
+
   private static RC handleArgNoSplash(Startup startup, Option opt) {
     startup.showSplash = false;
     return RC.OK;
@@ -900,6 +917,34 @@ public class Startup implements AWTEventListener {
     return downloader.runTty();
   }
 
+  // Loads a single library file passed via --load-library. Supports .circ (Logisim)
+  // libraries directly, and .jar libraries whose manifest declares a "Library-Class"
+  // attribute (as produced by the standard Logisim library project template).
+  private Library loadExplicitLibrary(Loader loader, File file) {
+    final var name = file.getName().toLowerCase();
+    try {
+      if (name.endsWith(".jar")) {
+        String className = null;
+        try (final var jarFile = new JarFile(file)) {
+          final var manifest = jarFile.getManifest();
+          if (manifest != null) {
+            className = manifest.getMainAttributes().getValue("Library-Class");
+          }
+        }
+        if (className == null) {
+          logger.error(S.get("argLoadLibraryJarNoClassError", file.getPath()));
+          return null;
+        }
+        return loader.loadJarLibrary(file, className);
+      } else {
+        return loader.loadLogisimLibrary(file);
+      }
+    } catch (Exception e) {
+      logger.error(S.get("argLoadLibraryLoadError", file.getPath(), e.toString()));
+      return null;
+    }
+  }
+
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
     if (showSplash) {
       monitor.setProgress(SplashScreen.TEMPLATE_OPEN);
@@ -975,6 +1020,20 @@ public class Startup implements AWTEventListener {
     // Load in any user-defined default circuit files
     var defaultLibraries = templLoader.loadCustomStartupLibraries(
             getProgramDirectory() + File.separator + "logisim-defaults");
+
+    // Load in any libraries requested explicitly via --load-library
+    if (!librariesToLoad.isEmpty()) {
+      final var explicitLibraries = new ArrayList<Library>();
+      for (final var libFile : librariesToLoad) {
+        final var library = loadExplicitLibrary(templLoader, libFile);
+        if (library != null) explicitLibraries.add(library);
+      }
+      if (!explicitLibraries.isEmpty()) {
+        final var merged = new ArrayList<>(List.of(defaultLibraries));
+        merged.addAll(explicitLibraries);
+        defaultLibraries = merged.toArray(new Library[0]);
+      }
+    }
 
     // load in template
     loadTemplate(templLoader, templFile, templEmpty);
