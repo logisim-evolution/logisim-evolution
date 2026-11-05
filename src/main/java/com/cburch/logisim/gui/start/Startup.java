@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarFile;
 import javax.help.JHelp;
@@ -201,7 +202,7 @@ public class Startup implements AWTEventListener {
   protected static boolean parseBool(String option) throws IllegalArgumentException {
     final var positives = List.of("yes", "y", "1", "true", "t");
     final var negatives = List.of("no", "n", "0", "false", "f");
-    final var flag = option.toLowerCase();
+    final var flag = option.toLowerCase(Locale.ROOT);
     if (positives.contains(flag)) return true;
     if (negatives.contains(flag)) return false;
     // FIXME: hardcoded string
@@ -599,7 +600,7 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgGates(Startup startup, Option opt) {
-    final var gateShape = opt.getValue().toLowerCase();
+    final var gateShape = opt.getValue().toLowerCase(Locale.ROOT);
     if ("ansi".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;

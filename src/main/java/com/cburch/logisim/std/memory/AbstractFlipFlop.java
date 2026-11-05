@@ -37,6 +37,7 @@ import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Locale;
 import javax.swing.Icon;
 
 abstract class AbstractFlipFlop extends InstanceFactory {
@@ -243,20 +244,20 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   public String getHDLName(AttributeSet attrs) {
     final var completeName = new StringBuilder();
     final var parts = this.getName().split(" ");
-    completeName.append(parts[0].replace("-", "_").toUpperCase());
+    completeName.append(parts[0].replace("-", "_").toUpperCase(Locale.ROOT));
     completeName.append("_");
     if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER)) {
-      completeName.append("FlipFlop".toUpperCase());
+      completeName.append("FlipFlop".toUpperCase(Locale.ROOT));
     } else {
       if (attrs.containsAttribute(StdAttr.TRIGGER)) {
         if ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
             || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)) {
-          completeName.append("FlipFlop".toUpperCase());
+          completeName.append("FlipFlop".toUpperCase(Locale.ROOT));
         } else {
-          completeName.append("Latch".toUpperCase());
+          completeName.append("Latch".toUpperCase(Locale.ROOT));
         }
       } else {
-        completeName.append("FlipFlop".toUpperCase());
+        completeName.append("FlipFlop".toUpperCase(Locale.ROOT));
       }
     }
     return completeName.toString();

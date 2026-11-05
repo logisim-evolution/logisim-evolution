@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecutionInterface {
 
@@ -90,7 +91,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
 
   public Nios2ArithmeticAndLogicalInstructions() {
     for (int i = 0; i < AsmOpcodes.length; i++) {
-      Opcodes.add(AsmOpcodes[i].toLowerCase());
+      Opcodes.add(AsmOpcodes[i].toLowerCase(Locale.ROOT));
       OpcCodes.add(AsmOpcs[i]);
       OpxCodes.add(AsmOpxs[i]);
     }
@@ -235,9 +236,9 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
   }
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
-    if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
+    if (!Opcodes.contains(instr.getOpcode().toLowerCase(Locale.ROOT))) return false;
     valid = true;
-    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase());
+    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase(Locale.ROOT));
     AssemblerToken[] param2, param3;
     if (operation == INSTR_NOP) {
       if (instr.getNrOfParameters() != 0) {
@@ -451,8 +452,8 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-    if (Opcodes.contains(instruction.toLowerCase())) {
-      int idx = Opcodes.indexOf(instruction.toLowerCase());
+    if (Opcodes.contains(instruction.toLowerCase(Locale.ROOT))) {
+      int idx = Opcodes.indexOf(instruction.toLowerCase(Locale.ROOT));
       return OpxCodes.get(idx) == DOUBLE_SIZE ? 8 : 4;
     }
     return -1;

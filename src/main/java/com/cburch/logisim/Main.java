@@ -11,8 +11,10 @@ package com.cburch.logisim;
 
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.prefs.SystemThemeWatcher;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.SystemTheme;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -23,6 +25,8 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
@@ -34,6 +38,13 @@ public class Main {
    * @param args Optional arguments.
    */
   public static void main(String[] args) {
+    // This must stay the first statement: AppPreferences writes themeColors keys when it first
+    // loads, and after that the node is never empty.
+    final var node = Preferences.userNodeForPackage(Main.class);
+    if (isNewInstall(node)) {
+      node.putBoolean(AppPreferences.FOLLOW_SYSTEM_THEME_KEY, true);
+    }
+
     // To print debug log level information, run with:
     //    java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug
     // or uncomment next line
@@ -49,24 +60,15 @@ public class Main {
         FlatMacLightLaf.installLafInfo();
         FlatMacDarkLaf.installLafInfo();
 
+        if (AppPreferences.FollowSystemTheme.get()) {
+          SystemThemeWatcher.useSystemTheme(SystemTheme.detect());
+        }
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
         AppPreferences.applyThemeColors();
+        SystemThemeWatcher.init();
 
         // Apply global font preference
-        final var appFont = AppPreferences.APP_FONT.get();
-        if (appFont != null && !appFont.isBlank()) {
-          updateGlobalFont(appFont);
-        } else {
-          UIManager.put(
-              "ToolTip.font",
-            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
-          UIManager.put(
-              "Tree.font",
-            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
-          UIManager.put(
-              "MenuItem.acceleratorFont",
-            new FontUIResource("SansSerif", Font.PLAIN, AppPreferences.getScaled(12)));
-        }
+        updateGlobalFont(AppPreferences.APP_FONT.get());
       }
     } catch (ClassNotFoundException
         | UnsupportedLookAndFeelException
@@ -90,6 +92,15 @@ public class Main {
     }
   }
 
+  // Treat a failure to read the node as an existing install, so the theme is left alone.
+  static boolean isNewInstall(Preferences node) {
+    try {
+      return node.keys().length == 0;
+    } catch (BackingStoreException e) {
+      return false;
+    }
+  }
+
   public static boolean headless = false;
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
@@ -103,8 +114,13 @@ public class Main {
    * Updates all UI defaults to use the specified font family.
    * It ensures that the preferred font is applied across
    * all Look and Feels (FlatLaf, Metal, Nimbus, etc.).
+   * A blank preference leaves the look-and-feel fonts unchanged.
    */
-  private static void updateGlobalFont(String appFont) {
+  static void updateGlobalFont(String appFont) {
+    if (appFont == null || appFont.isBlank()) {
+      return;
+    }
+
     try {
       com.formdev.flatlaf.FlatLaf.setPreferredFontFamily(appFont);
     } catch (Throwable ignored) {

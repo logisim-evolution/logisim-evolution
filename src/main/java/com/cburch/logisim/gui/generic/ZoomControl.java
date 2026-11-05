@@ -267,7 +267,8 @@ public class ZoomControl extends JPanel {
       }
       final var width = getWidth();
       final var height = getHeight();
-      g.setColor(state ? getBackground() : Color.BLACK);
+      final var color = new Color(AppPreferences.COMPONENT_ICON_COLOR.get());
+      g.setColor(state ? getBackground() : color);
       final var three = AppPreferences.getScaled(3);
       final var xdim = (width - AppPreferences.getScaled(4)) / three * three + 1;
       final var ydim = (height - AppPreferences.getScaled(4)) / three * three + 1;
@@ -278,7 +279,7 @@ public class ZoomControl extends JPanel {
           g.drawLine(x + xoff, y + yoff, x + xoff, y + yoff);
         }
       }
-      g.setColor(Color.BLACK);
+      g.setColor(color);
       g.drawLine(xoff, yoff, xoff + three, yoff);
       g.drawLine(xoff, yoff, xoff, yoff + three);
       g.drawLine(xoff, yoff + ydim, xoff, yoff + ydim - three);

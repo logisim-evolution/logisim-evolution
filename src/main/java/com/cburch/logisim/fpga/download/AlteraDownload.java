@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -463,7 +464,7 @@ public class AlteraDownload implements VendorDownload {
         + "programmer"
         + File.separator
         + "sfl_"
-        + FpgaDevice.toLowerCase()
+        + FpgaDevice.toLowerCase(Locale.ROOT)
         + ".sof";
     Reporter.report.print("==>");
     Reporter.report.print("==> " + S.get("AlteraProgSof"));

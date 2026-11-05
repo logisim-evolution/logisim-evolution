@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
@@ -176,7 +177,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addVhdlKeywords() {
-    for (final var keyword : Vhdl.getVhdlKeywords()) pair(keyword.toLowerCase(), keyword);
+    for (final var keyword : Vhdl.getVhdlKeywords()) pair(keyword.toLowerCase(Locale.ROOT), keyword);
     return this;
   }
 

@@ -9,6 +9,7 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.Locale;
 
 public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -115,7 +116,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
     final var realOp = (destination == 0)
           ? operation + 6
           : operation;
-    s.append(AsmOpcodes[realOp].toLowerCase());
+    s.append(AsmOpcodes[realOp].toLowerCase(Locale.ROOT));
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     if (destination != 0) {
@@ -138,7 +139,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
     int operation = -1;
     valid = true;
     for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT))) operation = i;
     if (operation < 0) {
       valid = false;
       return false;
@@ -348,7 +349,7 @@ public class RV32im_Zicsr_ExtensionInstructions implements AssemblerExecutionInt
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    if (getInstructions().contains(instruction.toUpperCase(Locale.ROOT))) return 4;
     return -1;
   }
 
