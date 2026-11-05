@@ -693,7 +693,7 @@ public class AppPreferences {
               Direction.EAST.toString()));
 
   public static final PrefMonitor<Boolean> USE_HEADER_BAR =
-      create(new PrefMonitorBoolean("useHeaderBar", false));
+      create(new PrefMonitorBoolean("useHeaderBar", true));
 
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
