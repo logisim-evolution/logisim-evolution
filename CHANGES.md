@@ -4,6 +4,14 @@
 
 * @dev (????-??-??)
   * Added an optional Unified Header Bar component, which could be toggled via Window Preferences [#3166] (@friendsgamingyt611-sys).
+  * Preserved look-and-feel UI fonts when the Application font is Default [#3162] (@mvanhorn).
+  * Sped up simulation by running a queued component once per step and caching which of its ports are connected
+    [#3065] (@Kejoki).
+  * Made resetting the simulation of designs with many subcircuit instances faster and lighter on memory
+    [#3156] (@iSlavok).
+  * Fixed the simulation tree duplicating and leaking nodes, which made editing designs with nested
+    subcircuits slower and slower [#3152] (@iSlavok).
+  * Added TTL 74594: 8-bit shift register with output register (@Vadimatorik).
   * Added an option to follow the system light or dark setting, on by default for new installations
     [#3132] (@tejastagra).
   * Fixed the Multiplier VHDL/Verilog generators: the VHDL did not compile, and every numeric type
@@ -20,6 +28,7 @@
     editor and in TikZ export [#2942] (@Vadimatorik).
   * Extended label formulas with modulus, comparisons, bare subscripts, and superscripts
     [#2942] (@Vadimatorik).
+  * Added TTL 74107: dual negative-edge J-K flip-flops with reset (@Vadimatorik).
   * Added TTL 744075: triple 3-input OR gate (@Vadimatorik).
   * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
   * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
@@ -78,6 +87,9 @@
   * Added TTL 74190: synchronous presettable BCD up/down counter (@Vadimatorik).
   * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
   * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
+  * Added TTL 74393: dual 4-bit binary ripple counter (@Vadimatorik).
+  * Added TTL 74640: octal inverting bus transceivers with three-state outputs (@Vadimatorik).
+  * Added TTL 74688: 8-bit identity comparator (@Vadimatorik).
   * Fixed TTL 74173 clear operation. [#3146] (@davidhutchens)
 
 * v5.0.0 (2026-09-12)

@@ -670,6 +670,8 @@ public class AppPreferences {
   public static final String TOOLBAR_HIDDEN = "hidden";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =
       create(new PrefMonitorBoolean("showTickRate", false));
+  public static final PrefMonitor<Boolean> RECENTER_ON_DOUBLE_MIDDLE_MOUSE =
+      create(new PrefMonitorBoolean("recenterOnDoubleMiddleMouse", true));
   public static final PrefMonitor<String> TOOLBAR_PLACEMENT =
       create(
           new PrefMonitorStringOpts(
