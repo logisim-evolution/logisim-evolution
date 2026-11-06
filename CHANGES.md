@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed custom window color preferences being reset when the application applies the selected theme
+    [#3147] (@kr1shnaakhurana).
   * Preserved look-and-feel UI fonts when the Application font is Default [#3162] (@mvanhorn).
   * Sped up simulation by running a queued component once per step and caching which of its ports are connected
     [#3065] (@Kejoki).
