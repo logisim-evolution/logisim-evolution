@@ -96,6 +96,7 @@ class WindowOptions extends OptionsPanel {
     checks =
         new PrefBoolean[] {
           new PrefBoolean(AppPreferences.UI_ANTIALIASING, S.getter("layoutAntiAliasing")),
+          new PrefBoolean(AppPreferences.USE_HEADER_BAR, S.getter("windowUseHeaderBar")),
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
           new PrefBoolean(
               AppPreferences.SEARCH_DOUBLE_SHIFT, S.getter("windowSearchDoubleShift")),
