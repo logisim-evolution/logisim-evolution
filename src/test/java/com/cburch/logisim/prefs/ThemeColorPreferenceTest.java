@@ -36,27 +36,38 @@ class ThemeColorPreferenceTest {
   }
 
   @Test
-  void customColorsStayWithTheirTheme() throws Exception {
+  void customColorsStayWithTheirThemeAfterThemeApplication() throws Exception {
     final var lightCustomColor = 0x00112233;
     final var darkCustomColor = 0x00445566;
 
     AppPreferences.LookAndFeel.set(lightTheme);
     assertEquals(AppPreferences.DEFAULT_GRID_BG_COLOR, AppPreferences.GRID_BG_COLOR.get());
     AppPreferences.GRID_BG_COLOR.set(lightCustomColor);
+    AppPreferences.applyThemeColors();
+    assertEquals(lightCustomColor, AppPreferences.GRID_BG_COLOR.get());
 
     AppPreferences.LookAndFeel.set(darkTheme);
+    AppPreferences.applyThemeColors();
     assertEquals(AppPreferences.DARK_GRID_BG_COLOR, AppPreferences.GRID_BG_COLOR.get());
     AppPreferences.GRID_BG_COLOR.set(darkCustomColor);
+    AppPreferences.applyThemeColors();
+    assertEquals(darkCustomColor, AppPreferences.GRID_BG_COLOR.get());
 
     AppPreferences.LookAndFeel.set(lightTheme);
+    AppPreferences.applyThemeColors();
     assertEquals(lightCustomColor, AppPreferences.GRID_BG_COLOR.get());
     AppPreferences.LookAndFeel.set(darkTheme);
+    AppPreferences.applyThemeColors();
     assertEquals(darkCustomColor, AppPreferences.GRID_BG_COLOR.get());
 
     assertEquals(AppPreferences.DEFAULT_GRID_BG_COLOR,
         preferences.getInt(defaultKey(lightTheme), Integer.MIN_VALUE));
     assertEquals(AppPreferences.DARK_GRID_BG_COLOR,
         preferences.getInt(defaultKey(darkTheme), Integer.MIN_VALUE));
+    assertEquals(lightCustomColor,
+        preferences.getInt(colorKey(lightTheme, AppPreferences.GRID_BG_COLOR), Integer.MIN_VALUE));
+    assertEquals(darkCustomColor,
+        preferences.getInt(colorKey(darkTheme, AppPreferences.GRID_BG_COLOR), Integer.MIN_VALUE));
   }
 
   @Test
@@ -71,9 +82,16 @@ class ThemeColorPreferenceTest {
 
     AppPreferences.setDefaultGridColors();
     assertEquals(AppPreferences.DARK_GRID_BG_COLOR, AppPreferences.GRID_BG_COLOR.get());
+    AppPreferences.applyThemeColors();
+    assertEquals(AppPreferences.DARK_GRID_BG_COLOR, AppPreferences.GRID_BG_COLOR.get());
+    assertEquals(AppPreferences.DARK_GRID_BG_COLOR,
+        preferences.getInt(colorKey(darkTheme, AppPreferences.GRID_BG_COLOR), Integer.MIN_VALUE));
 
     AppPreferences.LookAndFeel.set(lightTheme);
+    AppPreferences.applyThemeColors();
     assertEquals(lightCustomColor, AppPreferences.GRID_BG_COLOR.get());
+    assertEquals(lightCustomColor,
+        preferences.getInt(colorKey(lightTheme, AppPreferences.GRID_BG_COLOR), Integer.MIN_VALUE));
   }
 
   @Test
@@ -128,6 +146,10 @@ class ThemeColorPreferenceTest {
 
   private String defaultKey(String theme) {
     return "themeColors." + theme + ".defaults." + AppPreferences.GRID_BG_COLOR.getIdentifier();
+  }
+
+  private static String colorKey(String theme, PrefMonitor<Integer> color) {
+    return "themeColors." + theme + "." + color.getIdentifier();
   }
 
   private void removeThemePreferences(String theme) throws Exception {
