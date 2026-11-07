@@ -120,6 +120,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final JPanel rightPanel;
   private final JPanel mainPanelSuper;
   private final CardPanel mainPanel;
+  private final UnifiedHeaderBar headerBar;
+  private double savedSidebarFraction = 0.25;
   // left-side elements
   private final JTabbedPane topTab;
   private final JTabbedPane bottomTab;
@@ -181,14 +183,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     toolbox = new Toolbox(project, this, menuListener);
     simExplorer = new SimulationExplorer(project, menuListener);
     bottomTab = new JTabbedPane();
-    var fontName = "Dialog";
     final var appFont = AppPreferences.APP_FONT.get();
     if (appFont != null && !appFont.isBlank()) {
-      fontName = appFont;
+      final var fontStyle = AppPreferences.getPreferredFontStyle(appFont);
+      bottomTab.setFont(AppPreferences.getScaledFont(new Font(appFont, fontStyle, 9)));
     }
-
-    var fontStyle = AppPreferences.getPreferredFontStyle(fontName);
-    bottomTab.setFont(AppPreferences.getScaledFont(new Font(fontName, fontStyle, 9)));
     bottomTab.add(attrTable = new AttrTable(this));
     regTabContent = new RegTabContent(this);
     bottomTab.add(regTabContent);
@@ -213,7 +212,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     simPanel.add(simExplorer, BorderLayout.CENTER);
 
     topTab = new JTabbedPane();
-    topTab.setFont(new Font(fontName, fontStyle, 9));
+    if (appFont != null && !appFont.isBlank()) {
+      final var fontStyle = AppPreferences.getPreferredFontStyle(appFont);
+      topTab.setFont(new Font(appFont, fontStyle, 9));
+    }
     topTab.add(explPanel);
     topTab.add(simPanel);
 
@@ -243,8 +245,18 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
-    localeChanged();
+    headerBar = new UnifiedHeaderBar(this, project);
+    if (layoutZoomModel != null) {
+      layoutZoomModel.addPropertyChangeListener(
+          com.cburch.logisim.gui.generic.ZoomModel.ZOOM,
+          e -> headerBar.setZoomText((int) (layoutZoomModel.getZoomFactor() * 100) + "%"));
+      headerBar.setZoomText((int) (layoutZoomModel.getZoomFactor() * 100) + "%");
+    }
 
+    placeHeaderBar();
+    AppPreferences.USE_HEADER_BAR.addPropertyChangeListener(myProjectListener);
+
+    localeChanged();
     this.setSize(AppPreferences.WINDOW_WIDTH.get(), AppPreferences.WINDOW_HEIGHT.get());
     final var prefPoint = getInitialLocation();
     if (prefPoint != null) {
@@ -760,6 +772,16 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     bottomTab.setTitleAt(1, S.get("stateTab"));
   }
 
+  public void toggleSidebar() {
+    double current = mainRegion.getFraction();
+    if (current > 0.05) {
+      savedSidebarFraction = current;
+      mainRegion.setFraction(0.0);
+    } else {
+      mainRegion.setFraction(savedSidebarFraction > 0.05 ? savedSidebarFraction : 0.25);
+    }
+  }
+
   private void placeToolbar() {
     final var loc = AppPreferences.TOOLBAR_PLACEMENT.get();
     rightPanel.remove(toolbar);
@@ -784,6 +806,16 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     getContentPane().validate();
   }
+
+  private void placeHeaderBar() {
+    getContentPane().remove(headerBar);
+    if (AppPreferences.USE_HEADER_BAR.getBoolean()) {
+      getContentPane().add(headerBar, BorderLayout.NORTH);
+    }
+    getContentPane().validate();
+    getContentPane().repaint();
+  }
+
 
   public void savePreferences() {
     AppPreferences.TICK_FREQUENCY.set(project.getSimulator().getTickFrequency());
@@ -1046,6 +1078,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
         placeToolbar();
+      } else if (AppPreferences.USE_HEADER_BAR.isSource(event)) {
+        placeHeaderBar();
       }
     }
 
