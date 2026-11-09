@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Drew the internal logic diagram of TTL 7447 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7485 (@Vadimatorik).
   * Fixed 8-bit floats turning some NaN values into infinity, and an assertion in the conversion that failed
     whenever rounding carried into the exponent (@emincan2000).
