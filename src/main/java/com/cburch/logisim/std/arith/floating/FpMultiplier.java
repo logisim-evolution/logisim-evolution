@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -40,11 +41,11 @@ public class FpMultiplier extends InstanceFactory {
   public static final String _ID = "FPMultiplier";
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
-  private static final int IN2 = 4;
+  static final int IN0 = 0;
+  static final int IN1 = 1;
+  static final int OUT = 2;
+  static final int ERR = 3;
+  static final int IN2 = 4;
 
   static final AttributeOption MUL =
       new AttributeOption("multiply", S.getter("fpMultiplierModeMultiply"));
@@ -60,7 +61,7 @@ public class FpMultiplier extends InstanceFactory {
           });
 
   public FpMultiplier() {
-    super(_ID, S.getter("fpMultiplierComponent"));
+    super(_ID, S.getter("fpMultiplierComponent"), new FpMultiplierHdlGeneratorFactory());
     setAttributes(
       new Attribute[] {StdAttr.FP_WIDTH, MUL_MODE},
       new Object[] {BitWidth.create(32), MUL});
@@ -99,6 +100,11 @@ public class FpMultiplier extends InstanceFactory {
     ps[OUT].setToolTip(S.getter("fpMultiplierOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     instance.setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), FpMultiplierHdlGeneratorFactory.isFusedMultiplyAdd(attrs) ? "FMA" : "MUL");
   }
 
   @Override
