@@ -12,6 +12,7 @@ package com.cburch.logisim.std.arith.floating;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -40,17 +41,17 @@ public class FpToFp extends InstanceFactory {
   public static final String _ID = "FPToFP";
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
+  static final int IN = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
 
-  Attribute<BitWidth> FP_WIDTH_IN =
+  static final Attribute<BitWidth> FP_WIDTH_IN =
       Attributes.forOption(
           "fpwidthin",
           S.getter("fpToFpDataWidthIn"),
           new BitWidth[] {BitWidth.create(8), BitWidth.create(16), BitWidth.create(32),
             BitWidth.create(64)});
-  Attribute<BitWidth> FP_WIDTH_OUT =
+  static final Attribute<BitWidth> FP_WIDTH_OUT =
       Attributes.forOption(
           "fpwidthout",
           S.getter("fpToFpDataWidthOut"),
@@ -58,7 +59,7 @@ public class FpToFp extends InstanceFactory {
             BitWidth.create(64)});
 
   public FpToFp() {
-    super(_ID, S.getter("fpToFpComponent"));
+    super(_ID, S.getter("fpToFpComponent"), new FpToFpHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {FP_WIDTH_IN, FP_WIDTH_OUT},
         new Object[] {BitWidth.create(32), BitWidth.create(32)});
@@ -87,6 +88,11 @@ public class FpToFp extends InstanceFactory {
     ps[OUT].setToolTip(S.getter("fpToFpOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     instance.setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, FpToFpHdlGeneratorFactory.inputWidth(attrs), FpToFpHdlGeneratorFactory.outputWidth(attrs));
   }
 
   @Override
