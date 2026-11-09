@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed 8-bit floats turning some NaN values into infinity, and an assertion in the conversion that failed
+    whenever rounding carried into the exponent (@emincan2000).
   * Drew the internal logic diagram of TTL 7487 (@Vadimatorik).
   * Added an optional Unified Header Bar component, which could be toggled via Window Preferences [#3166] (@friendsgamingyt611-sys).
   * Preserved look-and-feel UI fonts when the Application font is Default [#3162] (@mvanhorn).

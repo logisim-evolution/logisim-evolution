@@ -74,6 +74,7 @@ public class MiniFloat {
       return (byte) (sign_bit
           | 0x78 // max exponent + 1 (4 bits exponent field)
           | ((doppel & 0x0070_0000) >> 20) // preserve bits 22..20
+          | ((doppel & 0x000f_ffff) != 0 ? 1 : 0) // still a NaN if only lower bits were set
           );
     }
 
@@ -123,7 +124,7 @@ public class MiniFloat {
     // No bits set in significand beyond the *first* exponent bit,
     // not just the significand; quantity is added to the exponent
     // to implement a carry out from rounding the significand.
-    assert (0xf8 & signif_bits) == 0x0;
+    assert (0xf0 & signif_bits) == 0x0;
 
     return (byte) (sign_bit | (((exp + 7) << 3) + signif_bits));
   }
