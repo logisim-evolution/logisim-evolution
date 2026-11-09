@@ -12,6 +12,7 @@ package com.cburch.logisim.std.arith.floating;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -38,12 +39,12 @@ public class IntToFp extends InstanceFactory {
   public static final String _ID = "IntToFP";
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
+  static final int IN = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
 
   public IntToFp() {
-    super(_ID, S.getter("intToFPComponent"));
+    super(_ID, S.getter("intToFPComponent"), new IntToFpHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, StdAttr.FP_WIDTH, Comparator.MODE_ATTR},
         new Object[] {BitWidth.create(8), BitWidth.create(32), Comparator.SIGNED_OPTION});
@@ -59,6 +60,11 @@ public class IntToFp extends InstanceFactory {
     ps[OUT].setToolTip(S.getter("intToFPOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), attrs.getValue(StdAttr.WIDTH).getWidth(), IntToFpHdlGeneratorFactory.isSigned(attrs) ? "S" : "U");
   }
 
   @Override
