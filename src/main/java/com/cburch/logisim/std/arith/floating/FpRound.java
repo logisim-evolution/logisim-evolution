@@ -12,6 +12,7 @@ package com.cburch.logisim.std.arith.floating;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -38,12 +39,12 @@ public class FpRound extends InstanceFactory {
   public static final String _ID = "FPRound";
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
+  static final int IN = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
 
   public FpRound() {
-    super(_ID, S.getter("fpRoundComponent"));
+    super(_ID, S.getter("fpRoundComponent"), new FpRoundHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.FP_WIDTH, FpToInt.MODE_ATTRIBUTE},
         new Object[] {BitWidth.create(32), FpToInt.ROUND_OPTION});
@@ -59,6 +60,11 @@ public class FpRound extends InstanceFactory {
     ps[OUT].setToolTip(S.getter("fpRoundOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), FpRoundHdlGeneratorFactory.mode(attrs));
   }
 
   @Override
