@@ -23,8 +23,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ThemeColorPreferenceTest {
   private final Preferences preferences = AppPreferences.getPrefs();
   private final String originalLookAndFeel = AppPreferences.LookAndFeel.get();
-  private final String lightTheme = "TestLightTheme-" + System.nanoTime();
-  private final String darkTheme = "TestDarkTheme-" + System.nanoTime();
+  // Keep preference keys within Preferences.MAX_KEY_LENGTH even for the longest nanoTime value.
+  private final String lightTheme = "Light-" + System.nanoTime();
+  private final String darkTheme = "Dark-" + System.nanoTime();
 
   @AfterEach
   void restorePreferences() throws Exception {

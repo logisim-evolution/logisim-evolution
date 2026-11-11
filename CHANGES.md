@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Drew the internal logic diagram of TTL 7493 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74283 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7447 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7485 (@Vadimatorik).
   * Fixed 8-bit floats turning some NaN values into infinity, and an assertion in the conversion that failed
