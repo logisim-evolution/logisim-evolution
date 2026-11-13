@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Drew the internal logic diagram of TTL 74123 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7476 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74390 (@Vadimatorik).
   * Added a Window preference to open circuits at the last-used zoom instead of always fitting
