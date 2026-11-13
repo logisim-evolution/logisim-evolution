@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added a Window preference to open circuits at the last-used zoom instead of always fitting
+    them to the window [#3070] (@LachlanMayes).
   * Drew the internal logic diagram of TTL 7493 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74283 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7447 (@Vadimatorik).
