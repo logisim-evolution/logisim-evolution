@@ -739,13 +739,22 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private void initializeLayoutView(Circuit circuit) {
     if (circuit == null || project.getCurrentCircuit() != circuit) return;
 
-    final var graphics = layoutCanvas.getGraphics();
-    final var bounds = graphics == null ? circuit.getBounds() : circuit.getBounds(graphics);
-    final var initialZoom =
-        ZoomControl.computeInitialZoomFactor(
-            bounds,
-            layoutCanvasPane.getViewport().getSize(),
-            layoutZoomModel.getZoomOptions());
+    double initialZoom;
+    if (AppPreferences.ZOOM_OPEN_LAST_USED.equals(AppPreferences.OPEN_CIRCUIT_ZOOM.get())) {
+      // Open at the zoom used when Logisim last exited, clamped to the zoom
+      // options offered by the zoom control, and still center the view.
+      initialZoom =
+          ZoomControl.clampZoomFactor(
+              layoutZoomModel.getZoomOptions(), AppPreferences.LAYOUT_ZOOM.get());
+    } else {
+      final var graphics = layoutCanvas.getGraphics();
+      final var bounds = graphics == null ? circuit.getBounds() : circuit.getBounds(graphics);
+      initialZoom =
+          ZoomControl.computeInitialZoomFactor(
+              bounds,
+              layoutCanvasPane.getViewport().getSize(),
+              layoutZoomModel.getZoomOptions());
+    }
     layoutZoomModel.setZoomFactor(initialZoom);
     SwingUtilities.invokeLater(
         () -> {
