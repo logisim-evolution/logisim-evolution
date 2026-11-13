@@ -578,11 +578,15 @@ public class Simulator {
       osc = prop != null && prop.isOscillating();
 
       var clockDied = false;
+      var autoPropagatingDisabled = false;
       exceptionEncountered = oops;
       oscillating = osc;
       simStateLock.lock();
       try {
         if (osc) {
+          if (autoPropagating) {
+            autoPropagatingDisabled = true;
+          }
           autoPropagating = false;
           autoPropagatingUnsynchronized = false;
           nudgeRequested = false;
@@ -605,7 +609,7 @@ public class Simulator {
       if (ticked || stepped || propagated || doNudge) {
         sim.firePropagationCompleted(ticked, stepped && !propagated, propagated);
       }
-      if (clockDied) {
+      if (clockDied || autoPropagatingDisabled) {
         sim.fireSimulatorStateChanged();
       }
       return true;
