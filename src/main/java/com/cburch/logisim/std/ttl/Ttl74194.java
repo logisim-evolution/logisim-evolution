@@ -15,10 +15,17 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 
 /**
  * TTL 74x194: 4-bit bidirectional universal shift register
- * Model based on <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf>74LS194 datasheet</a>.
+ * Model based on <a href="https://www.ti.com/lit/ds/symlink/sn74ls194a.pdf">74LS194 datasheet</a>.
  */
 public class Ttl74194 extends AbstractTtlGate {
   enum Mode {
@@ -64,26 +71,69 @@ public class Ttl74194 extends AbstractTtlGate {
   public static final byte GND = 8;
   public static final byte VCC = 16;
 
-  private static final byte[] DATA = new byte[] { D, C, B, A };
+  private static final byte[] DATA = new byte[] {D, C, B, A};
 
   private InstanceState _state;
 
   public Ttl74194() {
     super(
-            _ID,
-            (byte) 16,
-            new byte[] { QA, QB, QC, QD },
-            new String[] {
-              "nCLR", "SR", "A", "B", "C", "D", "SL",
-              "S0", "S1", "CLK", "QD", "QC", "QB", "QA"
-            },
-            null);
+        _ID,
+        (byte) 16,
+        new byte[] {QA, QB, QC, QD},
+        new String[] {
+          "MR", "DSR", "D0", "D1", "D2", "D3", "DSL", "S0", "S1", "CP", "Q3", "Q2", "Q1", "Q0"
+        },
+        null);
   }
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    super.paintBase(painter, true, false);
-    Drawgates.paintPortNames(painter, x, y, height, portNames);
+    final var g = painter.getGraphics();
+    super.paintBase(painter, false, false);
+    g.setColor(Color.BLACK);
+    drawStructure(g, x, y, height);
+  }
+
+  /**
+   * One register block. Q0–Q3 leave the top edge. Every input, including the clock and both mode
+   * bits, enters the bottom edge. D0–D3 share one bus.
+   */
+  private static void drawStructure(Graphics g, int x, int y, int height) {
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    final var ffLeft = x + 22;
+    final var rowTop = y + 11;
+    final var rowBottom = rowTop + 14;
+
+    g.drawRect(ffLeft, rowTop, 76, 14);
+    final var previousFont = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 7));
+    GraphicsUtil.drawText(
+        g, "COUNTER", ffLeft + 38, rowTop + 7, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+    g.setFont(previousFont);
+    drawClockWedge(g, x + 84, rowBottom);
+    drawBubble(g, x + 36, rowBottom + 1);
+
+    wire(g, pinX(x, QA), pinTop, pinX(x, QA), rowTop);
+    wire(g, pinX(x, QB), pinTop, pinX(x, QB), rowTop);
+    wire(g, pinX(x, QC), pinTop, pinX(x, QC), rowTop);
+    wire(g, pinX(x, QD), pinTop, pinX(x, QD), rowTop);
+
+    wire(g, pinX(x, CLK), pinTop, pinX(x, CLK), y + 29, x + 84, y + 29, x + 84, rowBottom);
+    wire(g, pinX(x, S1), pinTop, pinX(x, S1), y + 33, x + 76, y + 33, x + 76, rowBottom);
+    wire(g, pinX(x, S0), pinTop, pinX(x, S0), y + 37, x + 68, y + 37, x + 68, rowBottom);
+    wire(g, pinX(x, SL), pinBottom, pinX(x, SL), y + 41, x + 60, y + 41, x + 60, rowBottom);
+    final var busY = y + 45;
+    wire(g, pinX(x, A), busY, pinX(x, A), pinBottom);
+    wire(g, pinX(x, B), busY, pinX(x, B), pinBottom);
+    wire(g, pinX(x, C), busY, pinX(x, C), pinBottom);
+    wire(g, pinX(x, D), busY, pinX(x, D), pinBottom);
+    final var busLeft = pinX(x, A) - 0.5f;
+    final var busRight = pinX(x, D) + 0.5f;
+    drawBus(g, busLeft, busY, x + 52, busY, x + 52, rowBottom);
+    drawBus(g, x + 51f, busY, busRight, busY);
+    wire(g, pinX(x, SR), pinBottom, pinX(x, SR), y + 49, x + 44, y + 49, x + 44, rowBottom);
+    wire(g, pinX(x, nCLR), pinBottom, pinX(x, nCLR), y + 45, x + 36, y + 45, x + 36, rowBottom + 2);
   }
 
   /** IC pin indices are datasheet based (1-indexed), but ports are 0-indexed
@@ -200,6 +250,45 @@ public class Ttl74194 extends AbstractTtlGate {
 
   @Override
   public int[] clockPinIndex(netlistComponent comp) {
-    return new int[] { pinNrToPortNr(CLK) };
+    return new int[] {pinNrToPortNr(CLK)};
+  }
+
+  /** Orthogonal wire through the given points. */
+  private static void wire(Graphics g, int... points) {
+    for (var i = 2; i < points.length; i += 2) {
+      g.drawLine(points[i - 2], points[i - 1], points[i], points[i + 1]);
+    }
+  }
+
+  /** Datasheet pin column for the east-facing internal view. */
+  private static int pinX(int x, int pin) {
+    return pin <= GND ? x + (pin - 1) * 20 + 10 : x + (VCC - pin) * 20 + 10;
+  }
+
+  /** Active-low mark. Even 2×2 oval, center on the wire axis, touching the block. */
+  private static void drawBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  /** Thick bus. Ends may sit on a half pixel so the stroke meets the side of a tap. */
+  private static void drawBus(Graphics g, float... points) {
+    final var g2 = (Graphics2D) g;
+    final var previous = g2.getStroke();
+    g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+    final var path = new Path2D.Float();
+    path.moveTo(points[0], points[1]);
+    for (var i = 2; i < points.length; i += 2) {
+      path.lineTo(points[i], points[i + 1]);
+    }
+    g2.draw(path);
+    g2.setStroke(previous);
+  }
+
+  /** Clock mark on the bottom edge. Base is 4 pixels; the point is inside the block. */
+  private static void drawClockWedge(Graphics g, int centerX, int edgeY) {
+    g.drawPolygon(
+        new int[] {centerX - 2, centerX + 2, centerX},
+        new int[] {edgeY, edgeY, edgeY - 4},
+        3);
   }
 }
