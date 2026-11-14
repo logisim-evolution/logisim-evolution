@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
   * Added a `--load-lib` command line option to load JAR and Logisim libraries at startup [#2966] (@DhruviiPatell).
   * Add (v)hdl support for the floating point Absolute component (@zOnlyKroks)
   * Drew the internal logic diagram of TTL 74123 (@Vadimatorik).
