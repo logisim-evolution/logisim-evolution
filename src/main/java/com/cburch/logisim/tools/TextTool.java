@@ -80,6 +80,14 @@ public class TextTool extends Tool implements PropertyChangeListener {
       caretCreatingText = false;
       caret = null;
       caretCanvas = null;
+        if (caretCanvasSupplierCanvas != null) {
+          caretCanvasSupplierCanvas.setImeCaretBounds(null);
+          caretCanvasSupplierCanvas = null;
+        }
+        if (caretCanvasSupplierCanvas != null) {
+          caretCanvasSupplierCanvas.setImeCaretBounds(null);
+          caretCanvasSupplierCanvas = null;
+        }
 
       refreshEditMenu(canvas);
     }
@@ -133,6 +141,10 @@ public class TextTool extends Tool implements PropertyChangeListener {
       caretCreatingText = false;
       caret = null;
       caretCanvas = null;
+        if (caretCanvasSupplierCanvas != null) {
+          caretCanvasSupplierCanvas.setImeCaretBounds(null);
+          caretCanvasSupplierCanvas = null;
+        }
 
       if (a != null) proj.doAction(a);
       refreshEditMenu(canvas);
@@ -146,6 +158,7 @@ public class TextTool extends Tool implements PropertyChangeListener {
   private Caret caret = null;
   private boolean caretCreatingText = false;
   private Canvas caretCanvas = null;
+  private Canvas caretCanvasSupplierCanvas = null;
   private Circuit caretCircuit = null;
   private Component caretComponent = null;
 
@@ -335,6 +348,8 @@ public class TextTool extends Tool implements PropertyChangeListener {
 
     if (caret != null) {
       caretCanvas = canvas;
+        caretCanvasSupplierCanvas = canvas;
+        canvas.setImeCaretBounds(() -> caret == null ? null : caret.getBounds(null));
       caretCircuit = canvas.getCircuit();
       caret.addCaretListener(listener);
       caretCircuit.addCircuitListener(listener);
