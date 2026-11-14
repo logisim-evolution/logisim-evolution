@@ -7,6 +7,7 @@
 * [« Go back](../README.md)
 * **Additional information**
   * [Limitations](#limitations)
+  * [Appearance preferences](#appearance-preferences)
   * [History of Logisim](#project-history)
   * [External documentation](#external-reads)
   * [Legacy support](#legacy-support)
@@ -30,6 +31,13 @@ be aware of important limitations that may affect your work:
   simulation engine.
 
 If the above is crucial for your project, you may consider trying [alternative software](#alternatives).
+
+## Appearance preferences ##
+
+Custom canvas, grid, component, and simulation colors selected in the window preferences are stored
+separately for each look-and-feel. They remain available after restarting the application. Switching
+between light and dark themes restores the colors last selected for that theme; use **Reset Colors**
+to restore the built-in colors for the currently selected theme.
 
 ## Project history ##
 
