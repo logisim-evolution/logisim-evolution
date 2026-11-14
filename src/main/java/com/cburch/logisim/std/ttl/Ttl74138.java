@@ -22,7 +22,10 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.util.ArrayList;
+import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 
 /**
  * TTL 74x138 3-line to 8-line decoders/multiplexers
@@ -71,18 +74,122 @@ public class Ttl74138 extends AbstractTtlGate {
         null);
   }
 
+  /**
+   * One NAND for each active-low output. Rails carry A, B, C and the enable. A bubble on an
+   * address input is the bit that is 0 in that output's index, so Y0 decodes 000 and Y7 decodes
+   * 111. G2A and G2B (active low) join G1 in one AND; its output is the enable rail. Every block
+   * is marked {@code &}.
+   */
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    // As tooltips can be longer than what can fit as pin name while painting IC internals,
-    // we need to shorten it first to up to 4 characters to keep the diagram readable.
-    final var label_len_max = 4;
-    final var names = new ArrayList<String>();
-    for (final var name : portNames) {
-      final var tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0, label_len_max));
+    final var g = painter.getGraphics();
+    super.paintBase(painter, false, false);
+    g.setColor(Color.BLACK);
+    drawDecoder(g, x, y, height);
+  }
+
+  private static void drawDecoder(Graphics g, int x, int y, int height) {
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    final var gateTop = y + 14;
+    final var gateBottom = y + 22;
+    final var lowerTop = y + 42;
+    final var lowerBottom = y + 48;
+    final var rail = new int[] {y + 28, y + 32, y + 36, y + 40};
+    // A, B, C, enable, output attachment, pin, left edge, right edge.
+    // Y5's four inputs continue down into Y7; every other tap stops on its rail.
+    // nY1 is only as wide as the taps around its straight output. That lets the
+    // following gates sit further left, so the blocks on pins 11 and 10 do not share an edge.
+    final var outputs = new int[][] {
+      {20, 24, 34, 38, 30, 30, 18, 40},
+      {44, 48, 54, 58, 50, 50, 42, 60},
+      {64, 68, 72, 76, 70, 70, 62, 78},
+      {84, 88, 92, 96, 90, 90, 82, 98},
+      {104, 108, 112, 116, 110, 110, 102, 118},
+      {124, 128, 132, 136, 130, 130, 122, 138},
+      {144, 148, 156, 152, 150, 150, 142, 158},
+    };
+
+    g.drawLine(x + 10, rail[0], x + 144, rail[0]);
+    g.drawLine(x + 10, pinBottom, x + 10, rail[0]);
+    g.drawLine(x + 24, rail[1], x + 148, rail[1]);
+    g.drawLine(x + 30, pinBottom, x + 30, rail[1]);
+    g.drawLine(x + 34, rail[2], x + 156, rail[2]);
+    g.drawLine(x + 50, pinBottom, x + 50, rail[2]);
+    g.drawLine(x + 38, rail[3], x + 152, rail[3]);
+    // B and C meet their rails in the middle. A only turns the corner, so it has no dot.
+    drawNode(g, x + 30, rail[1]);
+    drawNode(g, x + 50, rail[2]);
+    // A rail ends on its last tap. B, C and enable start and end on a tap.
+    final var railStart = new int[] {10, 24, 34, 38};
+    final var railEnd = new int[] {144, 148, 156, 152};
+
+    for (var index = 0; index < outputs.length; index++) {
+      final var gate = outputs[index];
+      final var left = gate[6];
+      final var right = gate[7];
+      final var out = gate[4];
+      final var pin = gate[5];
+      g.drawRect(x + left, gateTop, right - left, gateBottom - gateTop);
+      drawAndMark(g, x + left, gateTop, x + right, gateBottom);
+      drawBubble(g, x + out, gateTop - 1);
+      g.drawLine(x + pin, pinTop, x + pin, gateTop - 2);
+      for (var bit = 0; bit < 4; bit++) {
+        final var ix = gate[bit];
+        final var bubbled = bit < 3 && (index & (1 << bit)) == 0;
+        final var from = bubbled ? gateBottom + 2 : gateBottom;
+        final var to = index == 5 ? lowerTop : rail[bit];
+        g.drawLine(x + ix, from, x + ix, to);
+        if (bubbled) {
+          drawBubble(g, x + ix, gateBottom + 1);
+        }
+        if (ix != railStart[bit] && ix != railEnd[bit]) {
+          drawNode(g, x + ix, rail[bit]);
+        }
+      }
     }
-    super.paintBase(painter, true, false);
-    Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
+
+    g.drawRect(x + 122, lowerTop, 16, lowerBottom - lowerTop);
+    drawAndMark(g, x + 122, lowerTop, x + 138, lowerBottom);
+    drawBubble(g, x + 130, lowerBottom + 1);
+    g.drawLine(x + 130, lowerBottom + 2, x + 130, pinBottom);
+
+    g.drawRect(x + 68, lowerTop, 44, lowerBottom - lowerTop);
+    drawAndMark(g, x + 68, lowerTop, x + 112, lowerBottom);
+    g.drawLine(x + 76, rail[3], x + 76, lowerTop);
+    drawNode(g, x + 76, rail[3]);
+    drawBubble(g, x + 70, lowerBottom + 1);
+    drawBubble(g, x + 90, lowerBottom + 1);
+    g.drawLine(x + 70, lowerBottom + 2, x + 70, pinBottom);
+    g.drawLine(x + 90, lowerBottom + 2, x + 90, pinBottom);
+    g.drawLine(x + 110, lowerBottom, x + 110, pinBottom);
+  }
+
+  /**
+   * IEC AND mark. The glyph hangs below the line box, so the anchor sits one pixel above the
+   * block center and the ink clears the lower edge.
+   */
+  private static void drawAndMark(Graphics g, int left, int top, int right, int bottom) {
+    final var previous = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 6));
+    GraphicsUtil.drawText(
+        g,
+        "&",
+        (left + right) / 2,
+        (top + bottom) / 2 - 1,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_CENTER_OVERALL);
+    g.setFont(previous);
+  }
+
+  /** Inversion bubble, 2×2, centered on the wire axis. */
+  private static void drawBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  /** Junction dot centered on the common point of the segments. */
+  private static void drawNode(Graphics g, int centerX, int centerY) {
+    g.fillOval(centerX - 1, centerY - 1, 2, 2);
   }
 
   // Port consts are datasheet based (1-indexed), but in code we have them 0-indexed
