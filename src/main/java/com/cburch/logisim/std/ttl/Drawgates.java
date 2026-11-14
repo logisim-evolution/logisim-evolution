@@ -17,6 +17,31 @@ import java.awt.Graphics;
 public class Drawgates {
   // x and y correspond to output port coordinates
   public static void paintAnd(Graphics g, int x, int y, int width, int height, boolean negated) {
+    paintAnd(g, x, y, width, height, negated, false);
+  }
+
+  /**
+   * Paints an AND gate. When {@code rightToLeft} is set the gate is mirrored: {@code x} is then the
+   * left edge, where the output is, and the shape extends to the right (like the 7402's OR gate).
+   */
+  static void paintAnd(
+      Graphics g, int x, int y, int width, int height, boolean negated, boolean rightToLeft) {
+    if (rightToLeft) {
+      if (negated) paintNegatedOutput(g, x - 4, y);
+      if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
+        g.drawRect(x, y - height / 2, width, height);
+        GraphicsUtil.drawCenteredText(g, "&", x + width / 2, y);
+      } else {
+        final var xp = new int[] {x + width / 2, x + width, x + width, x + width / 2};
+        final var yp = new int[] {y - width / 2, y - width / 2, y + width / 2, y + width / 2};
+        GraphicsUtil.drawCenteredArc(g, x + width / 2, y, width / 2, 90, 180);
+        g.drawPolyline(xp, yp, 4);
+        if (height > width) {
+          g.drawLine(x + width, y - height / 2, x + width, y + height / 2);
+        }
+      }
+      return;
+    }
     if (negated) paintNegatedOutput(g, x, y);
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
       g.drawRect(x - width, y - height / 2, width, height);
