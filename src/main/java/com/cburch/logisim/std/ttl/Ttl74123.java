@@ -25,8 +25,10 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -218,18 +220,11 @@ public class Ttl74123 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    final var gfx = (Graphics2D) painter.getGraphics();
+    final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
-    Drawgates.paintPortNamesByPin(
-        painter,
-        x,
-        y,
-        height,
-        new String[] {
-          "1A", "1B", "1RD", "1nQ", "2Q", "2C", "2RC", null,
-          "2A", "2B", "2RD", "2nQ", "1Q", "1C", "1RC", null
-        });
-    drawTiming(gfx, painter, x, y, height);
+    g.setColor(Color.BLACK);
+    drawStructure(g, x, y, height);
+    drawTiming(g, painter, x, y);
   }
 
   @Override
@@ -255,9 +250,66 @@ public class Ttl74123 extends AbstractTtlGate {
     return text.substring(0, end);
   }
 
-  private void drawTiming(Graphics2D gfx, InstancePainter painter, int x, int y, int height) {
+  /**
+   * Each half follows the 74HC123 functional diagram. Inverted A, B and reset meet on the input
+   * side of an AND, and that gate's only output triggers the monostable. Reset also clears the
+   * monostable through an active-low input. Q and the bubbled complement leave the side toward
+   * their pins. Timing pins stay unwired.
+   */
+  private static void drawStructure(Graphics g, int x, int y, int height) {
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    drawFirstHalf(g, x, y, pinTop, pinBottom);
+    drawSecondHalf(g, x, y, pinTop, pinBottom);
+  }
+
+  /** Section 1 flows left to right. It is the vertical mirror of section 2. */
+  private static void drawFirstHalf(Graphics g, int x, int y, int pinTop, int pinBottom) {
+    drawInverter(g, x + 16, x + 24, y + 36, 4);
+    drawAnd(g, x + 32, y + 28, 14, 16, true);
+    g.drawRect(x + 54, y + 26, 12, 16);
+    drawPulse(g, x + 56, x + 58, x + 61, x + 63, y + 34, y + 32);
+    drawBubble(g, x + 53, y + 30);
+    drawBubble(g, x + 67, y + 40);
+
+    wire(g, x + 10, pinBottom, x + 10, y + 36, x + 16, y + 36);
+    wire(g, x + 26, y + 36, x + 32, y + 36);
+    wire(g, x + 30, pinBottom, x + 30, y + 40, x + 32, y + 40);
+    wire(g, x + 46, y + 36, x + 54, y + 36);
+    wire(g, x + 50, pinBottom, x + 50, y + 24);
+    wire(g, x + 50, y + 24, x + 28, y + 24, x + 28, y + 32, x + 32, y + 32);
+    wire(g, x + 50, y + 30, x + 52, y + 30);
+    drawNode(g, x + 50, y + 30);
+    wire(g, x + 66, y + 28, x + 70, y + 28, x + 70, pinTop);
+    wire(g, x + 68, y + 40, x + 70, y + 40, x + 70, pinBottom);
+  }
+
+  /** Section 2 flows right to left. Inputs and Q-bar are on the top, Q is on the bottom. */
+  private static void drawSecondHalf(Graphics g, int x, int y, int pinTop, int pinBottom) {
+    drawInverter(g, x + 144, x + 136, y + 24, 4);
+    drawAnd(g, x + 114, y + 16, 14, 16, false);
+    g.drawRect(x + 94, y + 18, 12, 16);
+    drawPulse(g, x + 97, x + 99, x + 102, x + 104, y + 28, y + 26);
+    drawBubble(g, x + 107, y + 30);
+    drawBubble(g, x + 93, y + 20);
+
+    wire(g, x + 150, pinTop, x + 150, y + 24, x + 144, y + 24);
+    wire(g, x + 134, y + 24, x + 128, y + 24);
+    wire(g, x + 130, pinTop, x + 130, y + 20, x + 128, y + 20);
+    wire(g, x + 114, y + 24, x + 106, y + 24);
+    wire(g, x + 110, pinTop, x + 110, y + 36);
+    wire(g, x + 110, y + 36, x + 132, y + 36, x + 132, y + 28, x + 128, y + 28);
+    wire(g, x + 110, y + 30, x + 108, y + 30);
+    drawNode(g, x + 110, y + 30);
+    wire(g, x + 92, y + 20, x + 90, y + 20, x + 90, pinTop);
+    wire(g, x + 94, y + 32, x + 90, y + 32, x + 90, pinBottom);
+  }
+
+  private void drawTiming(Graphics gfx, InstancePainter painter, int x, int y) {
     final var data = (MonostableData) painter.getData();
     gfx.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 9));
+    final var centerX = new int[] {x + 42, x + 117};
+    final var centerY = new int[] {y + 14, y + 44};
     for (var half = 0; half < HALVES; half++) {
       final var label =
           formatWidth(
@@ -265,9 +317,73 @@ public class Ttl74123 extends AbstractTtlGate {
                   painter.getAttributeValue(rextAttribute(half)),
                   painter.getAttributeValue(cextAttribute(half))));
       gfx.setColor(data != null && data.isActive(half) ? Value.TRUE.getColor() : Color.BLACK);
-      GraphicsUtil.drawCenteredText(gfx, label, x + 48 + half * 64, y + height / 2 + 8);
+      GraphicsUtil.drawCenteredText(gfx, label, centerX[half], centerY[half]);
     }
     gfx.setColor(Color.BLACK);
+  }
+
+  /**
+   * Closed inverter triangle. The tip lies on the bubble arc. A bevel join keeps the corner from
+   * running into the bubble.
+   */
+  private static void drawInverter(Graphics g, int baseX, int tipX, int tipY, int halfHeight) {
+    final var g2 = (Graphics2D) g;
+    final var previous = g2.getStroke();
+    g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+    g.drawPolygon(
+        new int[] {baseX, baseX, tipX},
+        new int[] {tipY - halfHeight, tipY + halfHeight, tipY},
+        3);
+    g2.setStroke(previous);
+    if (tipX >= baseX) {
+      g.drawOval(tipX, tipY - 1, 2, 2);
+    } else {
+      g.drawOval(tipX - 2, tipY - 1, 2, 2);
+    }
+  }
+
+  /** Pulse mark with a shelf on both sides of the edges. */
+  private static void drawPulse(
+      Graphics g, int left, int rise, int fall, int right, int baseline, int top) {
+    g.drawPolyline(
+        new int[] {left, rise, rise, fall, fall, right},
+        new int[] {baseline, baseline, top, top, baseline, baseline},
+        6);
+  }
+
+  /** Junction. The oval center is the common point of the segments. */
+  private static void drawNode(Graphics g, int centerX, int centerY) {
+    g.fillOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  /** AND gate. {@code outputRight} is false when the output faces left. */
+  private static void drawAnd(
+      Graphics g, int left, int top, int width, int height, boolean outputRight) {
+    final var midX = left + width / 2;
+    final var bottom = top + height;
+    if (outputRight) {
+      g.drawLine(left, top, left, bottom);
+      g.drawLine(left, top, midX, top);
+      g.drawLine(left, bottom, midX, bottom);
+      g.drawArc(left, top, width, height, -90, 180);
+    } else {
+      g.drawLine(left + width, top, left + width, bottom);
+      g.drawLine(midX, top, left + width, top);
+      g.drawLine(midX, bottom, left + width, bottom);
+      g.drawArc(left, top, width, height, 90, 180);
+    }
+  }
+
+  /** Active-low mark. Even 2×2 oval, center on the wire axis, touching the gate face. */
+  private static void drawBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  /** Orthogonal wire through the given points. */
+  private static void wire(Graphics g, int... points) {
+    for (var i = 2; i < points.length; i += 2) {
+      g.drawLine(points[i - 2], points[i - 1], points[i], points[i + 1]);
+    }
   }
 
   private void updateHalf(InstanceState state, MonostableData data, int half) {

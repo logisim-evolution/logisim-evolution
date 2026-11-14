@@ -21,12 +21,15 @@ import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.Comparator;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreeNode;
 
 class SimulationTreeCircuitNode extends SimulationTreeNode
     implements CircuitListener, AttributeListener, Comparator<Component> {
   private final CircuitState circuitState;
   private final Component subcircComp;
+  private boolean disposed = false;
+  private boolean computingChildren = false;
 
   public SimulationTreeCircuitNode(
       SimulationTreeModel model,
@@ -49,6 +52,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   // AttributeListener methods
   @Override
   public void attributeValueChanged(AttributeEvent e) {
+    if (disposed) return;
     Object attr = e.getAttribute();
     if (attr == CircuitAttributes.CIRCUIT_LABEL_ATTR || attr == StdAttr.LABEL) {
       model.fireNodeChanged(this);
@@ -57,13 +61,42 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   @Override
   public void circuitChanged(CircuitEvent event) {
+    // Listeners are notified from a copy of the listener list, so a node dropped
+    // while an event is being dispatched may still receive that event.
+    if (disposed) return;
     final var action = event.getAction();
     if (action == CircuitEvent.ACTION_SET_NAME) {
       model.fireNodeChanged(this);
+    } else if (action == CircuitEvent.ACTION_INVALIDATE) {
+      // SubcircuitFactory.getSubstate() fires this event whenever it creates a substate.
+      // Recomputing all children here re-entered computeChildren() while the children
+      // were being built, which duplicated whole subtrees, and made every node of the
+      // circuit rebuild its children for each new substate. Only the child of the
+      // invalidated component can be affected: the simulator thread may have created
+      // the substate the component now uses.
+      if (event.getData() instanceof Component comp && comp.getFactory() instanceof SubcircuitFactory) {
+        if (SwingUtilities.isEventDispatchThread()) {
+          updateChildFor(comp);
+        } else {
+          SwingUtilities.invokeLater(() -> updateChildFor(comp));
+        }
+      }
     } else {
       if (computeChildren()) {
         model.fireStructureChanged(this);
       }
+    }
+  }
+
+  private void updateChildFor(Component comp) {
+    if (disposed || computingChildren) return;
+    final var state = circuitState.getData(comp);
+    if (state == null || !circuitState.getCircuit().contains(comp)) return;
+    for (final var child : children) {
+      if (child instanceof SimulationTreeCircuitNode node && node.circuitState == state) return;
+    }
+    if (computeChildren()) {
+      model.fireStructureChanged(this);
     }
   }
 
@@ -80,6 +113,15 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   // returns true if changed
   private boolean computeChildren() {
+    computingChildren = true;
+    try {
+      return computeChildrenInternal();
+    } finally {
+      computingChildren = false;
+    }
+  }
+
+  private boolean computeChildrenInternal() {
     final var newChildren = new ArrayList<TreeNode>();
     final var subcircs = new ArrayList<Component>();
     for (final var comp : circuitState.getCircuit().getNonWires()) {
@@ -113,10 +155,34 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
 
     if (!children.equals(newChildren)) {
+      for (final var oldChild : children) {
+        if (oldChild instanceof SimulationTreeCircuitNode node && !newChildren.contains(node)) {
+          node.dispose();
+        }
+      }
       children = newChildren;
       return true;
     } else {
       return false;
+    }
+  }
+
+  /**
+   * Detaches this node and its subtree from the listeners registered in the constructor. The
+   * attribute set keeps its listeners strongly, so a dropped node that is not detached is never
+   * collected and keeps reacting to every change of its circuit.
+   */
+  void dispose() {
+    if (disposed) return;
+    disposed = true;
+    circuitState.getCircuit().removeCircuitListener(this);
+    if (subcircComp != null) {
+      subcircComp.getAttributeSet().removeAttributeListener(this);
+    } else {
+      circuitState.getCircuit().getStaticAttributes().removeAttributeListener(this);
+    }
+    for (final var child : children) {
+      if (child instanceof SimulationTreeCircuitNode node) node.dispose();
     }
   }
 
