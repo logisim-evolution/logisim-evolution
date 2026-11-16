@@ -68,20 +68,7 @@ public class Main {
         SystemThemeWatcher.init();
 
         // Apply global font preference
-        final var appFont = AppPreferences.APP_FONT.get();
-        if (appFont != null && !appFont.isBlank()) {
-          updateGlobalFont(appFont);
-        } else {
-          UIManager.put(
-              "ToolTip.font",
-            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
-          UIManager.put(
-              "Tree.font",
-            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
-          UIManager.put(
-              "MenuItem.acceleratorFont",
-            new FontUIResource("SansSerif", Font.PLAIN, AppPreferences.getScaled(12)));
-        }
+        updateGlobalFont(AppPreferences.APP_FONT.get());
       }
     } catch (ClassNotFoundException
         | UnsupportedLookAndFeelException
@@ -127,8 +114,13 @@ public class Main {
    * Updates all UI defaults to use the specified font family.
    * It ensures that the preferred font is applied across
    * all Look and Feels (FlatLaf, Metal, Nimbus, etc.).
+   * A blank preference leaves the look-and-feel fonts unchanged.
    */
-  private static void updateGlobalFont(String appFont) {
+  static void updateGlobalFont(String appFont) {
+    if (appFont == null || appFont.isBlank()) {
+      return;
+    }
+
     try {
       com.formdev.flatlaf.FlatLaf.setPreferredFontFamily(appFont);
     } catch (Throwable ignored) {

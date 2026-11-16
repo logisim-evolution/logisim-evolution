@@ -670,6 +670,8 @@ public class AppPreferences {
   public static final String TOOLBAR_HIDDEN = "hidden";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =
       create(new PrefMonitorBoolean("showTickRate", false));
+  public static final PrefMonitor<Boolean> RECENTER_ON_DOUBLE_MIDDLE_MOUSE =
+      create(new PrefMonitorBoolean("recenterOnDoubleMiddleMouse", true));
   public static final PrefMonitor<String> TOOLBAR_PLACEMENT =
       create(
           new PrefMonitorStringOpts(
@@ -691,6 +693,18 @@ public class AppPreferences {
                   Direction.EAST.toString(),
                   Direction.WEST.toString()},
               Direction.EAST.toString()));
+
+  public static final String ZOOM_OPEN_FIT = "fit";
+  public static final String ZOOM_OPEN_LAST_USED = "lastUsed";
+  public static final PrefMonitor<String> OPEN_CIRCUIT_ZOOM =
+      create(
+          new PrefMonitorStringOpts(
+              "openCircuitZoom",
+              new String[] {ZOOM_OPEN_FIT, ZOOM_OPEN_LAST_USED},
+              ZOOM_OPEN_FIT));
+
+  public static final PrefMonitor<Boolean> USE_HEADER_BAR =
+      create(new PrefMonitorBoolean("useHeaderBar", true));
 
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));

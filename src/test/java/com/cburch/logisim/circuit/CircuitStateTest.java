@@ -145,9 +145,64 @@ class CircuitStateTest {
     assertEquals(Value.UNKNOWN, state.getValue(outputEnd.getLocation()));
   }
 
+  @Test
+  void removedWireNoLongerHoldsItsValue() {
+    final var fixture = new Fixture();
+    final var input = Pin.FACTORY.createComponent(Location.create(100, 100, true), Pin.FACTORY.createAttributeSet());
+    final var outputAttrs = Pin.FACTORY.createAttributeSet();
+    outputAttrs.setValue(Pin.ATTR_TYPE, Pin.OUTPUT);
+    final var output = Pin.FACTORY.createComponent(Location.create(300, 100, true), outputAttrs);
+    final var wire = Wire.create(input.getLocation(), output.getLocation());
+    add(fixture.circuit, input);
+    add(fixture.circuit, output);
+    add(fixture.circuit, wire);
+
+    final var state = CircuitState.createRootState(fixture.project, fixture.circuit, Thread.currentThread());
+    drive(state, input, Value.TRUE);
+    assertEquals(Value.TRUE, state.getValue(output.getLocation()));
+
+    remove(fixture.circuit, wire);
+    state.getPropagator().propagate();
+    assertEquals(Value.TRUE, state.getValue(input.getLocation()));
+    assertEquals(Value.NIL, state.getValue(output.getLocation())); // nothing drives the pin now
+  }
+
+  @Test
+  void clonedStateKeepsValuesOfTheOriginal() {
+    final var fixture = new Fixture();
+    final var input = Pin.FACTORY.createComponent(Location.create(100, 100, true), Pin.FACTORY.createAttributeSet());
+    final var outputAttrs = Pin.FACTORY.createAttributeSet();
+    outputAttrs.setValue(Pin.ATTR_TYPE, Pin.OUTPUT);
+    final var output = Pin.FACTORY.createComponent(Location.create(300, 100, true), outputAttrs);
+    add(fixture.circuit, input);
+    add(fixture.circuit, output);
+    add(fixture.circuit, Wire.create(input.getLocation(), output.getLocation()));
+
+    final var state = CircuitState.createRootState(fixture.project, fixture.circuit, Thread.currentThread());
+    drive(state, input, Value.TRUE);
+    final var clone = state.cloneAsNewRootState(Thread.currentThread());
+    assertEquals(Value.TRUE, clone.getValue(output.getLocation()));
+
+    drive(state, input, Value.FALSE);
+    assertEquals(Value.FALSE, state.getValue(output.getLocation()));
+    assertEquals(Value.TRUE, clone.getValue(output.getLocation()));
+  }
+
+  private static void drive(CircuitState state, Component pin, Value value) {
+    Pin.FACTORY.driveInputPin(state.getInstanceState(pin), value);
+    state.markComponentAsDirty(pin);
+    state.getPropagator().propagate();
+  }
+
   private static void add(Circuit circuit, Component component) {
     final var mutation = new CircuitMutation(circuit);
     mutation.add(component);
+    mutation.execute();
+  }
+
+  private static void remove(Circuit circuit, Component component) {
+    final var mutation = new CircuitMutation(circuit);
+    mutation.remove(component);
     mutation.execute();
   }
 
