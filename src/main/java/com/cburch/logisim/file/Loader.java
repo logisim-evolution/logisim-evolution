@@ -47,7 +47,7 @@ public class Loader implements LibraryLoader {
   private static class JarFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(".jar");
+      return JFileChoosers.isUsableDirectory(f) || f.getName().endsWith(".jar");
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Loader implements LibraryLoader {
   private static class TxtFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(".txt");
+      return JFileChoosers.isUsableDirectory(f) || f.getName().endsWith(".txt");
     }
 
     @Override
@@ -71,7 +71,9 @@ public class Loader implements LibraryLoader {
   private static class VhdlFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(".vhd") || f.getName().endsWith(".vhdl");
+      return JFileChoosers.isUsableDirectory(f)
+          || f.getName().endsWith(".vhd")
+          || f.getName().endsWith(".vhdl");
     }
 
     @Override
@@ -83,7 +85,7 @@ public class Loader implements LibraryLoader {
   private static class LogisimFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(LOGISIM_EXTENSION);
+      return JFileChoosers.isUsableDirectory(f) || f.getName().endsWith(LOGISIM_EXTENSION);
     }
 
     @Override
@@ -95,7 +97,8 @@ public class Loader implements LibraryLoader {
   private static class LogisimProjectBundleFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(LOGISIM_PROJECT_BUNDLE_EXTENSION);
+      return JFileChoosers.isUsableDirectory(f)
+          || f.getName().endsWith(LOGISIM_PROJECT_BUNDLE_EXTENSION);
     }
 
     @Override
@@ -107,7 +110,7 @@ public class Loader implements LibraryLoader {
   private static class LogisimDirectoryFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory();
+      return JFileChoosers.isUsableDirectory(f);
     }
 
     @Override
@@ -119,7 +122,7 @@ public class Loader implements LibraryLoader {
   private static class TclFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(".tcl");
+      return JFileChoosers.isUsableDirectory(f) || f.getName().endsWith(".tcl");
     }
 
     @Override
