@@ -408,6 +408,8 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.KMAP14_COLOR.set(0xE7BEFF);
     AppPreferences.KMAP15_COLOR.set(0xAAFFC4);
     AppPreferences.KMAP16_COLOR.set(0xF032E7);
+    AppPreferences.applyThemeColors();
+    for (final var proj : Projects.getOpenProjects()) proj.getFrame().repaint();
     repaint();
   }
 
@@ -440,6 +442,8 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.KMAP14_COLOR.set(0xFFFF6D);
     AppPreferences.KMAP15_COLOR.set(0x009292);
     AppPreferences.KMAP16_COLOR.set(0xFFB677);
+    AppPreferences.applyThemeColors();
+    for (final var proj : Projects.getOpenProjects()) proj.getFrame().repaint();
     repaint();
   }
 
