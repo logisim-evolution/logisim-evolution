@@ -19,7 +19,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 
-public class RV32inNiosVVendorSpecific implements AssemblerExecutionInterface {
+public class RV32imNiosVVendorSpecific implements AssemblerExecutionInterface {
 
   private static final int MISC_MEM = 0x0F;
   private static int fenceIIdx = 7;
