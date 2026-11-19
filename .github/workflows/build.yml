@@ -20,7 +20,7 @@ jobs:
     # Fork pull requests are built by fork-pr-build.yml and analyzed by
     # fork-pr-sonar.yml, so this only avoids building them twice. It is not a
     # security boundary: pull_request runs from forks never receive secrets.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     outputs:
       # Export 'filter' step check result so next step can use it.
       run_build: ${{ steps.filter.outputs.src }}

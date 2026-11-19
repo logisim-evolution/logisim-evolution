@@ -14,7 +14,7 @@ jobs:
   build:
     name: "Gradle builder"
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.fork == true
+    if: github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
     - name: "Checkout sources"
