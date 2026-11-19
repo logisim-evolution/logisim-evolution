@@ -17,10 +17,12 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_repository.full_name != github.repository
+    # Read-only on purpose: the artifacts expire on their own (retention-days in
+    # fork-pr-build), and SonarCloud's GitHub App, not this token, comments on the PR.
     permissions:
-      actions: write
+      actions: read
       contents: read
-      pull-requests: write
+      pull-requests: read
 
     steps:
     # The fork controls everything fork-pr-build uploads, so the PR is looked up
@@ -72,14 +74,23 @@ jobs:
         run-id: ${{ github.event.workflow_run.id }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
+    # The fork can add its own sonar-project.properties, or slip one into the build
+    # output, to change the scanner's settings (such as the server the token is sent
+    # to). The scan is pointed at an empty settings file instead, and the server URL
+    # is set on the command line, which takes precedence over any settings file.
+    - name: "Create empty Sonar settings file"
+      run: touch "$RUNNER_TEMP/empty-sonar.properties"
+
     # Do not replace this action with './gradlew sonar': it would execute
     # fork-provided Gradle code in a workflow that has access to secrets.
     - name: "Run SonarQube analysis"
-      uses: SonarSource/sonarqube-scan-action@v7
+      uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
+          -Dproject.settings=${{ runner.temp }}/empty-sonar.properties
+          -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.projectKey=logisim-evolution_logisim-evolution
           -Dsonar.organization=logisim-evolution
           -Dsonar.sources=src/main/java,build/generated/logisim/java
@@ -93,24 +104,3 @@ jobs:
           -Dsonar.pullrequest.provider=github
           -Dsonar.pullrequest.github.repository=${{ github.repository }}
           -Dsonar.scm.revision=${{ steps.pr-info.outputs.head-sha }}
-
-    - name: "Delete artifacts used in analysis"
-      if: always()
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            run_id: context.payload.workflow_run.id,
-          });
-          for (const artifact of artifacts.data.artifacts) {
-            if (artifact.name.startsWith("build-output-") || artifact.name.startsWith("pr-info-")) {
-              await github.rest.actions.deleteArtifact({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                artifact_id: artifact.id,
-              });
-            }
-          }
