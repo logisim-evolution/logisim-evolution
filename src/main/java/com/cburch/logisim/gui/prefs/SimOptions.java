@@ -66,8 +66,7 @@ public class SimOptions extends OptionsPanel {
   private final ColorChooserButton clockFrequencyColor;
   private final JLabel clockFrequencyColorTitle = new JLabel();
   private final ColorChooserButton widthErrorBackgroundColor;
-  private final JButton defaultButton = new JButton();
-  private final JButton colorBlindButton = new JButton();
+  private final JComboBox<String> colorPresetsCombo = new JComboBox<>();
   private final JLabel kmap1ColorTitle = new JLabel();
   private final JLabel kmap2ColorTitle = new JLabel();
   private final JLabel kmap3ColorTitle = new JLabel();
@@ -317,14 +316,12 @@ public class SimOptions extends OptionsPanel {
 
     gbc.gridx = 0;
     gbc.gridy++;
-    gbc.gridwidth = 2;
-    defaultButton.setActionCommand("default");
-    defaultButton.addActionListener(mcol);
-    add(defaultButton, gbc);
-    gbc.gridx += 2;
-    colorBlindButton.setActionCommand("colorblind");
-    colorBlindButton.addActionListener(mcol);
-    add(colorBlindButton, gbc);
+    gbc.gridwidth = 4;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    colorPresetsCombo.addActionListener(mcol);
+    add(colorPresetsCombo, gbc);
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.gridwidth = 1;
 
     localeChanged();
   }
@@ -358,8 +355,11 @@ public class SimOptions extends OptionsPanel {
     widthErrorHighlightColorTitle.setText(S.get("simWidthErrorHighlightTitle"));
     widthErrorBackgroundColorTitle.setText(S.get("simWidthErrorBackgroundTitle"));
     clockFrequencyColorTitle.setText(S.get("simClockFrequencyTitle"));
-    defaultButton.setText(S.get("simDefaultColors"));
-    colorBlindButton.setText(S.get("simColorBlindColors"));
+    colorPresetsCombo.removeActionListener(mcol);
+    colorPresetsCombo.removeAllItems();
+    colorPresetsCombo.addItem(S.get("simDefaultColors"));
+    colorPresetsCombo.addItem(S.get("simColorBlindColors"));
+    colorPresetsCombo.addActionListener(mcol);
     kmap1ColorTitle.setText(S.get("simKmapColors", 1));
     kmap2ColorTitle.setText(S.get("simKmapColors", 2));
     kmap3ColorTitle.setText(S.get("simKmapColors", 3));
@@ -513,9 +513,10 @@ public class SimOptions extends OptionsPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      if (e.getActionCommand().equals("default")) {
+      final var idx = colorPresetsCombo.getSelectedIndex();
+      if (idx == 0) {
         setDefaults();
-      } else if (e.getActionCommand().equals("colorblind")) {
+      } else if (idx == 1) {
         setColorBlind();
       }
     }

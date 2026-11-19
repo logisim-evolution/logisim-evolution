@@ -1012,17 +1012,6 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("MemStartUnknown", false));
 
   // Simulation preferences
-  public static final PrefMonitor<String> COLOR_SCHEME =
-      create(
-          new PrefMonitorStringOpts(
-              "colorScheme",
-              new String[] {
-                com.cburch.logisim.gui.theme.ColorSchemeRegistry.SCHEME_MODERN,
-                com.cburch.logisim.gui.theme.ColorSchemeRegistry.SCHEME_CLASSIC,
-                com.cburch.logisim.gui.theme.ColorSchemeRegistry.SCHEME_COLORBLIND,
-                com.cburch.logisim.gui.theme.ColorSchemeRegistry.SCHEME_CUSTOM
-              },
-              com.cburch.logisim.gui.theme.ColorSchemeRegistry.SCHEME_MODERN));
   public static final PrefMonitor<Integer> TRUE_COLOR =
       create(new ThemeColorPreference("SimTrueColor", DEFAULT_TRUE_COLOR, DARK_TRUE_COLOR));
   public static final PrefMonitor<String> TRUE_CHAR =
