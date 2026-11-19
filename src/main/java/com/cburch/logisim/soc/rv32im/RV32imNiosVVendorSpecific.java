@@ -45,8 +45,9 @@ public class RV32imNiosVVendorSpecific implements AssemblerExecutionInterface {
     final var s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase(Locale.ROOT));
     s.append(" ");
-    while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
-        s.append(" ");
+    while (s.length() < RV32imSupport.ASM_FIELD_SIZE) {
+      s.append(" ");
+    }
     s.append(RV32imState.registerABINames[source]);
     return s.toString();
   }
