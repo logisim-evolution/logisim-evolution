@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added missing cache instructions of the NIOS-V g CPU to be able to simulate the programs in the SOC environment (@ktt1).
   * Fixed the file browser reopening in the Windows Recent Items folder after creating a folder there
     [#3211] (@LachlanMayes).
   * Added a `--load-lib` command line option to load JAR and Logisim libraries at startup [#2966] (@DhruviiPatell).
