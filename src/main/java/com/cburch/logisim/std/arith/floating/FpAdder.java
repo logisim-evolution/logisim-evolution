@@ -12,6 +12,7 @@ package com.cburch.logisim.std.arith.floating;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
@@ -37,13 +38,13 @@ public class FpAdder extends InstanceFactory {
   public static final String _ID = "FPAdder";
 
   static final int PER_DELAY = 1;
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int ERR = 3;
+  static final int IN0 = 0;
+  static final int IN1 = 1;
+  static final int OUT = 2;
+  static final int ERR = 3;
 
   public FpAdder() {
-    super(_ID, S.getter("fpAdderComponent"));
+    super(_ID, S.getter("fpAdderComponent"), new FpAdderHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.FP_WIDTH}, new Object[] {BitWidth.create(32)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -59,6 +60,11 @@ public class FpAdder extends InstanceFactory {
     ps[OUT].setToolTip(S.getter("fpAdderOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth());
   }
 
   @Override
