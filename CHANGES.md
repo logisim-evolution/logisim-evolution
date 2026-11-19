@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Drew the internal logic diagram of TTL 744017 (@Vadimatorik).
   * Fixed the Exponentiator returning 1 or failing with an exception for exponents of 2^31 or more
     when it is unsigned or wider than 32 bits (@emincan2000).
   * Fixed the file browser reopening in the Windows Recent Items folder after creating a folder there
