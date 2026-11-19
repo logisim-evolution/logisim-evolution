@@ -1,7 +1,7 @@
 # This workflow triggers on workflow_run once fork-pr-build finishes, so it runs 
-# in the base repository's trusted context with secrets available. It downloads 
-# the build output and PR metadata, checks out the fork's code without executing 
-# it, and runs the scan:
+# in the base repository's trusted context with secrets available. It looks up the
+# PR, downloads the build output, checks out the fork's code without executing it,
+# and runs the scan.
 name: "Fork PR Sonar analysis"
 
 on:
@@ -15,37 +15,45 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name != github.repository
     permissions:
       actions: write
       contents: read
       pull-requests: write
 
     steps:
-    - name: "Download PR information"
-      uses: actions/download-artifact@v4.1.3
-      with:
-        pattern: pr-info-*
-        path: ${{ runner.temp }}/pr-info
-        merge-multiple: true
-        run-id: ${{ github.event.workflow_run.id }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: "Extract and validate PR information"
+    # The fork controls everything fork-pr-build uploads, so the PR is looked up
+    # from the workflow_run event, which GitHub fills in, rather than from an artifact.
+    - name: "Find the pull request"
       id: pr-info
-      run: |
-        HEAD_SHA=$(cat "${{ runner.temp }}/pr-info/head-sha")
-        HEAD_REF=$(cat "${{ runner.temp }}/pr-info/head-ref")
-        PR_NUMBER=$(cat "${{ runner.temp }}/pr-info/pr-number")
-        BASE_REF=$(cat "${{ runner.temp }}/pr-info/base-ref")
-        [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid HEAD_SHA"; exit 1; }
-        [[ "$HEAD_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]] || { echo "Invalid HEAD_REF"; exit 1; }
-        [[ "$PR_NUMBER" =~ ^[0-9]+$ ]] || { echo "Invalid PR_NUMBER"; exit 1; }
-        [[ "$BASE_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]] || { echo "Invalid BASE_REF"; exit 1; }
-        echo "head-sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
-        echo "head-ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
-        echo "pr-number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-        echo "base-ref=$BASE_REF" >> "$GITHUB_OUTPUT"
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const run = context.payload.workflow_run;
+          const { data: prs } = await github.rest.pulls.list({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: "open",
+            head: `${run.head_repository.owner.login}:${run.head_branch}`,
+          });
+          // If the fork pushed again since this build, the newer run handles it.
+          const pr = prs.find((p) => p.head.sha === run.head_sha);
+          if (!pr) {
+            core.setFailed(`No open pull request has ${run.head_sha} as its head`);
+            return;
+          }
+          // These values end up on the scanner's command line.
+          const safeRef = /^[A-Za-z0-9\/_.-]+$/;
+          if (!safeRef.test(pr.head.ref) || !safeRef.test(pr.base.ref)) {
+            core.setFailed("Unexpected characters in branch name");
+            return;
+          }
+          core.setOutput("pr-number", pr.number);
+          core.setOutput("head-sha", run.head_sha);
+          core.setOutput("head-ref", pr.head.ref);
+          core.setOutput("base-ref", pr.base.ref);
 
     - name: "Checkout sources"
       uses: actions/checkout@v7
