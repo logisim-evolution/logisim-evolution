@@ -11,7 +11,6 @@ package com.cburch.logisim.std.ttl;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -99,57 +98,78 @@ public class Ttl74365 extends AbstractTtlGate {
     return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
   }
 
+  /**
+   * Six non-inverting three-state buffers. Both active-low enables enter one AND gate on its left
+   * face; the gate output is the shared active-high enable and stops on each buffer slant.
+   */
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
-    g.drawLine((x + 30), (y + height - 7), (x + 30), (y + 30));
-    g.drawLine((x + 30), (y + 30), (x + 34), (y + 30));
-    g.drawLine((x + 34), (y + 24), (x + 46), (y + 30));
-    g.drawLine((x + 34), (y + 36), (x + 46), (y + 30));
-    g.drawLine((x + 34), (y + 24), (x + 34), (y + 36));
-    g.drawLine((x + 48), (y + 30), (x + 50), (y + 30));
-    g.drawLine((x + 50), (y + 30), (x + 50), (y + height - 7));
-    g.drawLine((x + 70), (y + height - 7), (x + 70), (y + 30));
-    g.drawLine((x + 70), (y + 30), (x + 74), (y + 30));
-    g.drawLine((x + 74), (y + 24), (x + 86), (y + 30));
-    g.drawLine((x + 74), (y + 36), (x + 86), (y + 30));
-    g.drawLine((x + 74), (y + 24), (x + 74), (y + 36));
-    g.drawLine((x + 88), (y + 30), (x + 90), (y + 30));
-    g.drawLine((x + 90), (y + 30), (x + 90), (y + height - 7));
-    g.drawLine((x + 110), (y + height - 7), (x + 110), (y + 30));
-    g.drawLine((x + 110), (y + 30), (x + 114), (y + 30));
-    g.drawLine((x + 114), (y + 24), (x + 126), (y + 30));
-    g.drawLine((x + 114), (y + 36), (x + 126), (y + 30));
-    g.drawLine((x + 114), (y + 24), (x + 114), (y + 36));
-    g.drawLine((x + 128), (y + 30), (x + 130), (y + 30));
-    g.drawLine((x + 130), (y + 30), (x + 130), (y + height - 7));
-    g.drawLine((x + 130), (y + 7), (x + 130), (y + 30));
-    g.drawLine((x + 130), (y + 30), (x + 134), (y + 30));
-    g.drawLine((x + 134), (y + 24), (x + 146), (y + 30));
-    g.drawLine((x + 134), (y + 36), (x + 146), (y + 30));
-    g.drawLine((x + 134), (y + 24), (x + 134), (y + 36));
-    g.drawLine((x + 148), (y + 30), (x + 150), (y + 30));
-    g.drawLine((x + 150), (y + 30), (x + 150), (y + 7));
-    g.drawLine((x + 90), (y + 7), (x + 90), (y + 30));
-    g.drawLine((x + 90), (y + 30), (x + 94), (y + 30));
-    g.drawLine((x + 94), (y + 24), (x + 106), (y + 30));
-    g.drawLine((x + 94), (y + 36), (x + 106), (y + 30));
-    g.drawLine((x + 94), (y + 24), (x + 94), (y + 36));
-    g.drawLine((x + 108), (y + 30), (x + 110), (y + 30));
-    g.drawLine((x + 110), (y + 30), (x + 110), (y + 7));
-    g.drawLine((x + 50), (y + 7), (x + 50), (y + 30));
-    g.drawLine((x + 50), (y + 30), (x + 54), (y + 30));
-    g.drawLine((x + 54), (y + 24), (x + 66), (y + 30));
-    g.drawLine((x + 54), (y + 36), (x + 66), (y + 30));
-    g.drawLine((x + 54), (y + 24), (x + 54), (y + 36));
-    g.drawLine((x + 68), (y + 30), (x + 70), (y + 30));
-    g.drawLine((x + 70), (y + 30), (x + 70), (y + 7));
-    g.drawLine((x + 10), (y + height - 7), (x + 10), (y + 22));
-    structureBubble(g, (x + 10), (y + height - 7));
-    g.drawLine((x + 30), (y + 7), (x + 30), (y + 22));
-    structureBubble(g, (x + 30), (y + 7));
+    final var pinTop = y + PIN_HEIGHT;
+    final var pinBottom = y + height - PIN_HEIGHT;
+    final var railY = y + height / 2;
+    final var topMid = pinTop + 11;
+    final var bottomMid = pinBottom - 11;
+    final var gateWidth = 12;
+    final var gateHeight = 16;
+    final var gateRight = x + 26;
+    final var inputFace = gateRight - gateWidth;
+    final var upperInput = railY - 2;
+    final var lowerInput = railY + 2;
+    Drawgates.paintAnd(g, gateRight, railY, gateWidth, gateHeight, false);
+    drawBubble(g, inputFace - 1, upperInput);
+    drawBubble(g, inputFace - 1, lowerInput);
+
+    final var oe2Elbow = railY - gateHeight / 2 - 4;
+    g.drawLine(x + 30, pinTop, x + 30, oe2Elbow);
+    g.drawLine(x + 30, oe2Elbow, x + 10, oe2Elbow);
+    g.drawLine(x + 10, oe2Elbow, x + 10, upperInput);
+    g.drawLine(x + 10, upperInput, inputFace - 2, upperInput);
+    g.drawLine(x + 10, pinBottom, x + 10, lowerInput);
+    g.drawLine(x + 10, lowerInput, inputFace - 2, lowerInput);
+
+    drawBuffer(g, x + 30, x + 50, pinBottom, bottomMid, railY);
+    drawBuffer(g, x + 70, x + 90, pinBottom, bottomMid, railY);
+    drawBuffer(g, x + 110, x + 130, pinBottom, bottomMid, railY);
+    drawBuffer(g, x + 50, x + 70, pinTop, topMid, railY);
+    drawBuffer(g, x + 90, x + 110, pinTop, topMid, railY);
+    drawBuffer(g, x + 130, x + 150, pinTop, topMid, railY);
+    g.drawLine(gateRight, railY, x + 140, railY);
+    drawNode(g, x + 40, railY);
+    drawNode(g, x + 60, railY);
+    drawNode(g, x + 80, railY);
+    drawNode(g, x + 100, railY);
+    drawNode(g, x + 120, railY);
+  }
+
+  /**
+   * One buffer, four pixels left of its output pin. The enable tap is six pixels in from the base.
+   * The output runs straight from the tip to the pin column, then turns into the pin.
+   */
+  private static void drawBuffer(
+      Graphics g, int inputX, int outputX, int pinY, int midY, int railY) {
+    final var tipX = outputX - 4;
+    final var baseX = tipX - 12;
+    final var towardRail = Integer.signum(railY - midY);
+    g.drawPolygon(
+        new int[] {baseX, tipX, baseX}, new int[] {midY - 4, midY, midY + 4}, 3);
+    g.drawLine(inputX, pinY, inputX, midY);
+    g.drawLine(inputX, midY, baseX, midY);
+    g.drawLine(tipX, midY, outputX, midY);
+    g.drawLine(outputX, midY, outputX, pinY);
+    g.drawLine(baseX + 6, railY, baseX + 6, midY + 2 * towardRail);
+  }
+
+  /** Inversion bubble, 2×2, centered on the wire axis and touching the gate face. */
+  private static void drawBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  /** Junction dot centered on the common point of the meeting wires. */
+  private static void drawNode(Graphics g, int centerX, int centerY) {
+    g.fillOval(centerX - 1, centerY - 1, 2, 2);
   }
 
   @Override
@@ -162,41 +182,6 @@ public class Ttl74365 extends AbstractTtlGate {
           enabled ? state.getPortValue(pinNrToPortNr(INPUTS[index])) : Value.UNKNOWN;
       state.setPort(pinNrToPortNr(OUTPUTS[index]), value, DELAY);
     }
-  }
-
-  private static int structureX(int originX, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originX + (pin - 1) * 20 + 10;
-    }
-    return originX + (pins - pin) * 20 + 10;
-  }
-
-  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
-    }
-    return originY + AbstractTtlGate.PIN_HEIGHT;
-  }
-
-  private static void structureBubble(Graphics g, int centerX, int centerY) {
-    g.drawOval(centerX - 2, centerY - 2, 4, 4);
-  }
-
-  private static void structureDot(
-      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
-    if (data == null) {
-      return;
-    }
-    final var value = data.getValue(word);
-    if (bit < 0 || bit >= value.getWidth()) {
-      return;
-    }
-    final var bitValue = value.get(bit);
-    g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 3, centerY - 3, 6, 6);
-    g.setColor(Color.WHITE);
-    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
-    g.setColor(Color.BLACK);
   }
 
 }
