@@ -13,6 +13,7 @@
   * Fixed the file browser reopening in the Windows Recent Items folder after creating a folder there
     [#3211] (@LachlanMayes).
   * Added a `--load-lib` command line option to load JAR and Logisim libraries at startup [#2966] (@DhruviiPatell).
+  * Add (v)hdl support for the floating point Trigonometry component (@zOnlyKroks)
   * Add (v)hdl support for the floating point Absolute component (@zOnlyKroks)
   * Drew the internal logic diagram of TTL 74123 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7476 (@Vadimatorik).
