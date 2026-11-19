@@ -67,15 +67,6 @@ public final class JFileChoosers {
       this.scope = (scope != null) ? scope : DirectoryScope.CIRCUITS;
     }
 
-    @Override
-    public File getSelectedFile() {
-      final var dir = getCurrentDirectory();
-      if (dir != null) {
-        JFileChoosers.setCurrentDirectory(scope, dir.toString());
-      }
-      return super.getSelectedFile();
-    }
-
     private boolean shouldUseMacNativeDialog() {
       if (!MacCompatibility.isRunningOnMac()) return false;
       // Fall back to Swing when multiple format-selection filters
@@ -127,7 +118,17 @@ public final class JFileChoosers {
         }
         return CANCEL_OPTION;
       }
-      return super.showDialog(parent, approveButtonText);
+      final int result = super.showDialog(parent, approveButtonText);
+      if (result == APPROVE_OPTION) {
+        rememberCurrentDirectory();
+      }
+      return result;
+    }
+
+    private void rememberCurrentDirectory() {
+      // Remember on close: Swing calls getSelectedFile() internally (for example while creating
+      // a new folder), so persisting from the getter pins the dialog to that directory.
+      JFileChoosers.setCurrentDirectory(scope, getCurrentDirectory());
     }
 
     private File showMacFileDialog(java.awt.Component parent, int mode) {
@@ -191,13 +192,13 @@ public final class JFileChoosers {
         final var folder = dirMode ? selected : selected.getParentFile();
         if (folder != null) {
           setCurrentDirectory(folder);
-          JFileChoosers.setCurrentDirectory(scope, folder.toString());
+          JFileChoosers.setCurrentDirectory(scope, folder);
         }
         return selected;
       } else if (dirMode && fileDialog.getDirectory() != null) {
         final var selected = new File(fileDialog.getDirectory());
         setCurrentDirectory(selected);
-        JFileChoosers.setCurrentDirectory(scope, selected.toString());
+        JFileChoosers.setCurrentDirectory(scope, selected);
         return selected;
       }
       return null;
@@ -215,27 +216,25 @@ public final class JFileChoosers {
     RuntimeException first = null;
     for (final var prop : PROP_NAMES) {
       try {
-        String dirname;
+        final String dirname;
         if (prop == null) {
           dirname = getCurrentDirectory(scope);
         } else {
           dirname = System.getProperty(prop);
         }
-        if (dirname == null || "".equals(dirname)) {
+        if (dirname == null || dirname.isEmpty()) {
           return new LogisimFileChooser(scope);
-        } else {
-          final var dir = new File(dirname);
-          if (dir.canRead()) {
-            return new LogisimFileChooser(dir, scope);
-          }
         }
-      } catch (RuntimeException t) {
-        if (first == null) first = t;
-        final var u = t.getCause();
-        if (!(u instanceof IOException)) throw t;
+        final var dir = new File(dirname);
+        if (isUsableDirectory(dir)) {
+          return new LogisimFileChooser(dir, scope);
+        }
+      } catch (RuntimeException e) {
+        if (first == null) first = e;
       }
     }
-    throw first;
+    if (first != null) throw first;
+    return new LogisimFileChooser(scope);
   }
 
   public static JFileChooser createFor(DirectoryScope scope) {
@@ -280,6 +279,23 @@ public final class JFileChoosers {
     }
   }
 
+  /**
+   * Determines whether the given file refers to a directory on the file system.
+   *
+   * <p>Platform-specific file objects, such as the shortcut entries in the Windows Recent Items
+   * folder, can report themselves as directories even though they cannot be entered as such. A
+   * plain {@link File} built from the same path does not, so it is used to reject these entries.
+   *
+   * @param file the file to check, possibly {@code null}
+   * @return {@code true} if the file is a readable directory on the file system
+   */
+  public static boolean isUsableDirectory(File file) {
+    return file != null
+        && file.isDirectory()
+        && file.canRead()
+        && new File(file.getPath()).isDirectory();
+  }
+
   public static String getCurrentDirectory() {
     return getCurrentDirectory(DirectoryScope.CIRCUITS);
   }
@@ -317,7 +333,7 @@ public final class JFileChoosers {
   }
 
   public static void setCurrentDirectory(DirectoryScope scope, File dir) {
-    if (dir != null) {
+    if (isUsableDirectory(dir)) {
       setCurrentDirectory(scope, dir.getAbsolutePath());
     }
   }
