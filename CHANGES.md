@@ -4,6 +4,24 @@
 
 * @dev (????-??-??)
   * Add (v)hdl support for the floating point Exponentiator component (@zOnlyKroks)
+  * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74194 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 744017 (@Vadimatorik).
+  * Fixed the Exponentiator returning 1 or failing with an exception for exponents of 2^31 or more
+    when it is unsigned or wider than 32 bits (@emincan2000).
+  * Fixed the file browser reopening in the Windows Recent Items folder after creating a folder there
+    [#3211] (@LachlanMayes).
+  * Added a `--load-lib` command line option to load JAR and Logisim libraries at startup [#2966] (@DhruviiPatell).
+  * Add (v)hdl support for the floating point Absolute component (@zOnlyKroks)
+  * Drew the internal logic diagram of TTL 74123 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 7476 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74390 (@Vadimatorik).
+  * Added a Window preference to open circuits at the last-used zoom instead of always fitting
+    them to the window [#3070] (@LachlanMayes).
+  * Drew the internal logic diagram of TTL 7493 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74283 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7447 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 7485 (@Vadimatorik).
   * Fixed 8-bit floats turning some NaN values into infinity, and an assertion in the conversion that failed
