@@ -90,6 +90,16 @@
             <a href="../verify/sub.html">Substituting libraries</a>.
           </p>
         </dd>
+        
+        <dt><tt>--load-lib <i>FILE</i></tt></dt>
+        <dd>
+          <p>
+            Loads a JAR library or a Logisim-evolution (<tt>.circ</tt>) library into the project
+            opened at startup, as <b>Project &gt; Load Library</b> does. A JAR library must name its
+            library class in the <tt>Library-Class</tt> attribute of its manifest. The option may
+            be repeated to load several libraries and cannot be combined with <tt>--tty</tt>.
+          </p>
+        </dd>
       </dl>
 
       <h2>TTY simulation options</h2>

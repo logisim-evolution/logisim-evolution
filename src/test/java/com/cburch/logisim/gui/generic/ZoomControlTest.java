@@ -100,4 +100,21 @@ class ZoomControlTest {
             ZoomControl.computeFitZoomFactor(
                 Bounds.create(0, 0, 300, 200), new Dimension(), ZOOM_OPTIONS)));
   }
+
+  @Test
+  void clampsLastUsedZoomToConfiguredRange() {
+    assertEquals(10.0, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, 50.0), ZOOM_DELTA);
+    assertEquals(0.05, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, 0.001), ZOOM_DELTA);
+    assertEquals(0.75, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, 0.75), ZOOM_DELTA);
+    assertEquals(0.05, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, 0.05), ZOOM_DELTA);
+    assertEquals(10.0, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, 10.0), ZOOM_DELTA);
+  }
+
+  @Test
+  void fallsBackToDefaultZoomForInvalidLastUsedZoom() {
+    assertEquals(1.0, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, Double.NaN), ZOOM_DELTA);
+    assertEquals(
+        1.0, ZoomControl.clampZoomFactor(ZOOM_OPTIONS, Double.NEGATIVE_INFINITY), ZOOM_DELTA);
+    assertEquals(1.0, ZoomControl.clampZoomFactor(List.of(), 1.5), ZOOM_DELTA);
+  }
 }
