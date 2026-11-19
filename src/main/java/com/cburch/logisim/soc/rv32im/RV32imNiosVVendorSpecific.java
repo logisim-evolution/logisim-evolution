@@ -59,10 +59,12 @@ public class RV32imNiosVVendorSpecific implements AssemblerExecutionInterface {
 
   @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
-    int operation = -1;
-    for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT)))
-          operation = i;
+    operation = -1;
+    for (var i = 0; i < AsmOpcodes.length, operation < 0; i++) {
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT))) {
+        operation = i;
+      }
+    }
     if (operation < 0) {
       valid = false;
       return false;
@@ -103,7 +105,7 @@ public class RV32imNiosVVendorSpecific implements AssemblerExecutionInterface {
       }
       operation = -1;
       final var immValue = RV32imSupport.getImmediateValue(instruction, RV32imSupport.I_TYPE);
-      for (var i = 0; i < AsmOpcodes.length; i++) {
+      for (var i = 0; i < AsmOpcodes.length, operation < 0; i++) {
         if (immValue == AsmBinCodes[i]) {
           operation = i;
         }
