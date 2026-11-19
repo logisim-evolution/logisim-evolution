@@ -188,7 +188,7 @@ public class Ttl74374 extends AbstractTtlGate {
 
   /** Isosceles triangle. The apex is the output toward the pin; the base is horizontal. */
   private static void drawBuffer(Graphics g, int x, int tipY, int baseY, Slice slice) {
-    final var tipX = x + slice.qColumn();
+    final var tipX = x + slice.outputColumn();
     g.drawPolygon(
         new int[] {tipX, x + slice.baseLeft(), x + slice.baseRight()},
         new int[] {tipY, baseY, baseY},
@@ -203,8 +203,8 @@ public class Ttl74374 extends AbstractTtlGate {
     final var pinTop = y + PIN_HEIGHT;
     final var pinBottom = y + height - PIN_HEIGHT;
     for (var slice : SLICES) {
-      final var column = x + slice.dColumn();
-      final var contact = x + slice.dX();
+      final var column = x + slice.dataColumn();
+      final var contact = x + slice.dataContact();
       g.drawLine(column, pinTop, column, y + DATA_TOP);
       g.drawLine(column, y + DATA_TOP, contact, y + DATA_TOP);
       g.drawLine(contact, y + DATA_TOP, contact, y + TOP_FLOP_EDGE);
@@ -228,7 +228,7 @@ public class Ttl74374 extends AbstractTtlGate {
     final var pinTop = y + PIN_HEIGHT;
     final var pinBottom = y + height - PIN_HEIGHT;
     for (var slice : SLICES) {
-      final var column = x + slice.qColumn();
+      final var column = x + slice.outputColumn();
       g.drawLine(column, pinTop, column, y + TOP_TIP);
       g.drawLine(column, y + BOT_TIP, column, pinBottom);
     }
@@ -343,42 +343,42 @@ public class Ttl74374 extends AbstractTtlGate {
    * One Q/D column pair. The flip-flop is shifted toward Q. The buffer is an isosceles triangle
    * centered on Q, with D on the base and output enable on the side that faces away from D.
    */
-  private record Slice(int qColumn, int dColumn) {
+  private record Slice(int outputColumn, int dataColumn) {
     private static final int HALF = 5;
 
-    private boolean qOnLeft() {
-      return qColumn < dColumn;
+    private boolean outputOnLeft() {
+      return outputColumn < dataColumn;
     }
 
     private int baseLeft() {
-      return qColumn - HALF;
+      return outputColumn - HALF;
     }
 
     private int baseRight() {
-      return qColumn + HALF;
+      return outputColumn + HALF;
     }
 
     /** Center of the base, on the same axis as the apex. The flip-flop output enters there. */
     private int dataX() {
-      return qColumn;
+      return outputColumn;
     }
 
     /** Point on the slant. */
     private int sideX() {
-      return qOnLeft() ? qColumn - 2 : qColumn + 2;
+      return outputOnLeft() ? outputColumn - 2 : outputColumn + 2;
     }
 
     /** Vertical run just outside the base corner. */
     private int riserX() {
-      return qOnLeft() ? qColumn - 7 : qColumn + 7;
+      return outputOnLeft() ? outputColumn - 7 : outputColumn + 7;
     }
 
     private int clockX() {
-      return qOnLeft() ? dataX() - 2 : dataX() + 2;
+      return outputOnLeft() ? dataX() - 2 : dataX() + 2;
     }
 
-    private int dX() {
-      return qOnLeft() ? dataX() + 2 : dataX() - 2;
+    private int dataContact() {
+      return outputOnLeft() ? dataX() + 2 : dataX() - 2;
     }
 
     private int flopLeft() {
