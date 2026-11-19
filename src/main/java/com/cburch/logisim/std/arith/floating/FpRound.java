@@ -38,9 +38,9 @@ public class FpRound extends InstanceFactory {
   public static final String _ID = "FPRound";
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
+  static final int IN = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
 
   public FpRound() {
     super(_ID, S.getter("fpRoundComponent"));

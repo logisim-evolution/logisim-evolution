@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -55,12 +56,12 @@ public class FpToInt extends InstanceFactory {
           new AttributeOption[] {CEILING_OPTION, FLOOR_OPTION, ROUND_OPTION, RINT_OPTION, TRUNCATE_OPTION});
 
   static final int PER_DELAY = 1;
-  private static final int IN = 0;
-  private static final int OUT = 1;
-  private static final int ERR = 2;
+  static final int IN = 0;
+  static final int OUT = 1;
+  static final int ERR = 2;
 
   public FpToInt() {
-    super(_ID, S.getter("fpToIntComponent"));
+    super(_ID, S.getter("fpToIntComponent"), new FpToIntHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, StdAttr.FP_WIDTH, MODE_ATTRIBUTE},
         new Object[] {BitWidth.create(8), BitWidth.create(32), ROUND_OPTION});
@@ -76,6 +77,11 @@ public class FpToInt extends InstanceFactory {
     ps[OUT].setToolTip(S.getter("fpToIntOutputTip"));
     ps[ERR].setToolTip(S.getter("fpErrorTip"));
     setPorts(ps);
+  }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return FpHdl.moduleName(_ID, attrs.getValue(StdAttr.FP_WIDTH).getWidth(), attrs.getValue(StdAttr.WIDTH).getWidth(), FpRoundHdlGeneratorFactory.mode(attrs));
   }
 
   @Override
