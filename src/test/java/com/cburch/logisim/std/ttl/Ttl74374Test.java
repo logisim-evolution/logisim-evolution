@@ -22,24 +22,24 @@ import org.junit.jupiter.api.Test;
 /** Functional tests for the 74HC374 octal positive-edge D flip-flop. */
 class Ttl74374Test {
   private static final int[] DATA = {
+    Ttl74374.PORT_INDEX_D0,
     Ttl74374.PORT_INDEX_D1,
     Ttl74374.PORT_INDEX_D2,
     Ttl74374.PORT_INDEX_D3,
     Ttl74374.PORT_INDEX_D4,
     Ttl74374.PORT_INDEX_D5,
     Ttl74374.PORT_INDEX_D6,
-    Ttl74374.PORT_INDEX_D7,
-    Ttl74374.PORT_INDEX_D8
+    Ttl74374.PORT_INDEX_D7
   };
   private static final int[] OUTPUTS = {
+    Ttl74374.PORT_INDEX_Q0,
     Ttl74374.PORT_INDEX_Q1,
     Ttl74374.PORT_INDEX_Q2,
     Ttl74374.PORT_INDEX_Q3,
     Ttl74374.PORT_INDEX_Q4,
     Ttl74374.PORT_INDEX_Q5,
     Ttl74374.PORT_INDEX_Q6,
-    Ttl74374.PORT_INDEX_Q7,
-    Ttl74374.PORT_INDEX_Q8
+    Ttl74374.PORT_INDEX_Q7
   };
 
   @Test
@@ -49,23 +49,23 @@ class Ttl74374Test {
 
     assertEquals(18, hiddenPower.getPorts().size());
     assertPort(hiddenPower, Ttl74374.PORT_INDEX_nOE, 10, 30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q1, 30, 30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D1, 50, 30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D2, 70, 30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q2, 90, 30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q3, 110, 30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D3, 130, 30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D4, 150, 30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q4, 170, 30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q0, 30, 30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D0, 50, 30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D1, 70, 30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q1, 90, 30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q2, 110, 30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D2, 130, 30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D3, 150, 30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q3, 170, 30, EndData.OUTPUT_ONLY);
     assertPort(hiddenPower, Ttl74374.PORT_INDEX_CLK, 190, -30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q5, 170, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D5, 150, -30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D6, 130, -30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q6, 110, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q7, 90, -30, EndData.OUTPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D7, 70, -30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D8, 50, -30, EndData.INPUT_ONLY);
-    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q8, 30, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q4, 170, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D4, 150, -30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D5, 130, -30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q5, 110, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q6, 90, -30, EndData.OUTPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D6, 70, -30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_D7, 50, -30, EndData.INPUT_ONLY);
+    assertPort(hiddenPower, Ttl74374.PORT_INDEX_Q7, 30, -30, EndData.OUTPUT_ONLY);
 
     final var shownPower = createInstance(gate, true);
     assertEquals(20, shownPower.getPorts().size());
@@ -200,12 +200,12 @@ class Ttl74374Test {
     final var state = new TtlTestInstanceState(gate, false);
     enable(state);
     setData(state, 0x00);
-    state.setPortValue(Ttl74374.PORT_INDEX_D4, Value.UNKNOWN);
+    state.setPortValue(Ttl74374.PORT_INDEX_D3, Value.UNKNOWN);
     rise(gate, state);
 
     for (var bit = 0; bit < OUTPUTS.length; bit++) {
       final var expected = bit == 3 ? Value.UNKNOWN : Value.FALSE;
-      assertEquals(expected, state.getPortValue(OUTPUTS[bit]), "Q" + (bit + 1));
+      assertEquals(expected, state.getPortValue(OUTPUTS[bit]), "Q" + bit);
     }
   }
 
@@ -215,12 +215,12 @@ class Ttl74374Test {
     final var state = new TtlTestInstanceState(gate, false);
     enable(state);
     setData(state, 0xFF);
-    state.setPortValue(Ttl74374.PORT_INDEX_D1, Value.ERROR);
+    state.setPortValue(Ttl74374.PORT_INDEX_D0, Value.ERROR);
     rise(gate, state);
 
-    assertEquals(Value.ERROR, state.getPortValue(Ttl74374.PORT_INDEX_Q1));
+    assertEquals(Value.ERROR, state.getPortValue(Ttl74374.PORT_INDEX_Q0));
     for (var bit = 1; bit < OUTPUTS.length; bit++) {
-      assertEquals(Value.TRUE, state.getPortValue(OUTPUTS[bit]), "Q" + (bit + 1));
+      assertEquals(Value.TRUE, state.getPortValue(OUTPUTS[bit]), "Q" + bit);
     }
   }
 
@@ -295,7 +295,7 @@ class Ttl74374Test {
   private static void assertOutputs(TtlTestInstanceState state, int pattern) {
     for (var bit = 0; bit < OUTPUTS.length; bit++) {
       final var expected = ((pattern >> bit) & 1) == 1 ? Value.TRUE : Value.FALSE;
-      assertEquals(expected, state.getPortValue(OUTPUTS[bit]), "Q" + (bit + 1));
+      assertEquals(expected, state.getPortValue(OUTPUTS[bit]), "Q" + bit);
     }
   }
 

@@ -32,9 +32,9 @@ class Ttl74374HdlGeneratorTest {
   void vhdlLoadsOnTheRisingEdgeAndReleasesWhenDisabled() {
     final var hdl = functionality(HdlGeneratorFactory.VHDL);
 
-    assertTrue(containsIgnoringCase(hdl, "next <= D8&D7&D6&D5&D4&D3&D2&D1 WHEN tick = '1' ELSE state;"));
-    assertTrue(containsIgnoringCase(hdl, "Q1   <= state(0) WHEN nOE = '0' ELSE 'Z';"));
-    assertTrue(containsIgnoringCase(hdl, "Q8   <= state(7) WHEN nOE = '0' ELSE 'Z';"));
+    assertTrue(containsIgnoringCase(hdl, "next <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN tick = '1' ELSE state;"));
+    assertTrue(containsIgnoringCase(hdl, "Q0   <= state(0) WHEN nOE = '0' ELSE 'Z';"));
+    assertTrue(containsIgnoringCase(hdl, "Q7   <= state(7) WHEN nOE = '0' ELSE 'Z';"));
     assertTrue(containsIgnoringCase(hdl, "IF (rising_edge(clock)) THEN state <= next;"));
     assertFalse(containsIgnoringCase(hdl, "nCLR"));
   }
@@ -43,9 +43,9 @@ class Ttl74374HdlGeneratorTest {
   void verilogLoadsOnTheRisingEdgeAndReleasesWhenDisabled() {
     final var hdl = functionality(HdlGeneratorFactory.VERILOG);
 
-    assertTrue(hdl.contains("assign next = (tick == 1) ? {D8, D7, D6, D5, D4, D3, D2, D1} : state;"));
-    assertTrue(hdl.contains("assign Q1 = (nOE == 0) ? state[0] : 1'bz;"));
-    assertTrue(hdl.contains("assign Q8 = (nOE == 0) ? state[7] : 1'bz;"));
+    assertTrue(hdl.contains("assign next = (tick == 1) ? {D7, D6, D5, D4, D3, D2, D1, D0} : state;"));
+    assertTrue(hdl.contains("assign Q0 = (nOE == 0) ? state[0] : 1'bz;"));
+    assertTrue(hdl.contains("assign Q7 = (nOE == 0) ? state[7] : 1'bz;"));
     assertTrue(hdl.contains("always @(posedge clock)"));
     assertTrue(hdl.contains("state <= next;"));
     assertFalse(hdl.contains("nCLR"));
