@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Add (v)hdl support for the floating point Logarithm component (@zOnlyKroks)
   * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
