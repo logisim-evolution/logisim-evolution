@@ -331,12 +331,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   private void attachListeners() {
     Simulator sim = project.getSimulator();
     if (sim != null) {
-      sim.addSimulatorListener(new Simulator.Listener() {
-        @Override
-        public void propagationCompleted(Simulator.Event e) {
-          SwingUtilities.invokeLater(UnifiedHeaderBar.this::updateSimControls);
-        }
-
+      sim.addSimulatorListener(new Simulator.StatusListener() {
         @Override
         public void simulatorReset(Simulator.Event e) {
           SwingUtilities.invokeLater(UnifiedHeaderBar.this::updateSimControls);
