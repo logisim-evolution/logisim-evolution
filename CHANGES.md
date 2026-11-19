@@ -4,6 +4,9 @@
 
 * @dev (????-??-??)
   * Drew the internal logic diagram of TTL 74148 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74194 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 744017 (@Vadimatorik).
   * Fixed the Exponentiator returning 1 or failing with an exception for exponents of 2^31 or more
