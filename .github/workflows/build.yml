@@ -17,8 +17,9 @@ jobs:
   analyze_sources:
     name: "Do we need to build the application?"
     runs-on: ubuntu-latest
-    # Fork pull requests are built by fork-pr-build.yml. Keeping this workflow in
-    # the trusted context prevents the Sonar token from being used for fork code.
+    # Fork pull requests are built by fork-pr-build.yml and analyzed by
+    # fork-pr-sonar.yml, so this only avoids building them twice. It is not a
+    # security boundary: pull_request runs from forks never receive secrets.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
     outputs:
       # Export 'filter' step check result so next step can use it.
