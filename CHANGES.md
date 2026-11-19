@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Drew the internal logic diagram of TTL 74670 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
