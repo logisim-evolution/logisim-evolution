@@ -169,15 +169,22 @@ public class ZoomControl extends JPanel {
     final var paddedHeight = bounds.getHeight() + 2.0 * AUTO_ZOOM_PADDING;
     final var fitZoom =
         Math.min(viewportSize.getWidth() / paddedWidth, viewportSize.getHeight() / paddedHeight);
-    final var minZoom = zoomOptions.get(0) / 100.0;
-    final var maxZoom = zoomOptions.get(zoomOptions.size() - 1) / 100.0;
-    return Math.max(minZoom, Math.min(fitZoom, maxZoom));
+    return clampZoomFactor(zoomOptions, fitZoom);
   }
 
   public static double computeInitialZoomFactor(
       Bounds bounds, Dimension viewportSize, List<Double> zoomOptions) {
     final var fitZoom = computeFitZoomFactor(bounds, viewportSize, zoomOptions);
     return Double.isNaN(fitZoom) ? 1.0 : Math.min(1.0, fitZoom);
+  }
+
+  public static double clampZoomFactor(List<Double> zoomOptions, double zoom) {
+    if (zoomOptions == null || zoomOptions.isEmpty() || !Double.isFinite(zoom)) {
+      return 1.0;
+    }
+    final var minZoom = zoomOptions.get(0) / 100.0;
+    final var maxZoom = zoomOptions.get(zoomOptions.size() - 1) / 100.0;
+    return Math.max(minZoom, Math.min(zoom, maxZoom));
   }
 
   public void setAutoZoomButtonEnabled(boolean val) {
