@@ -13,6 +13,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
+import com.cburch.logisim.comp.Palette;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -58,12 +59,23 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     final var y = bds.getY();
 
     final var g = painter.getGraphics();
+    final var palette = Palette.of(painter);
     final var onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
-    final var offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
+    var offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
     final var bgColor = painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND);
-    if (painter.shouldDrawColor() && bgColor.getAlpha() != 0) {
-      g.setColor(bgColor);
-      g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+
+    if (offColor.equals(DEFAULT_OFF) || (offColor.getRGB() & 0x00FFFFFF) == 0xDCDCDC) {
+      offColor = palette.displayOff();
+    }
+    if (painter.shouldDrawColor()) {
+      if (bgColor.getAlpha() != 0) {
+        g.setColor(bgColor);
+        g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      } 
+      else if (palette.displayRecess() != null) {
+        g.setColor(palette.displayRecess());
+        g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      }
     }
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
@@ -75,7 +87,8 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       if (i < 7) {
         Bounds seg = SEGMENTS[i];
         g.fillRect(x + seg.getX(), y + seg.getY(), seg.getWidth(), seg.getHeight());
-      } else {
+      } 
+      else {
         if (drawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
       }
     }

@@ -64,6 +64,10 @@ public interface Palette {
 
   Color raisedSurface();
 
+  Color displayOff();
+
+  Color displayRecess();
+
   Palette DARK = new DarkPalette();
   Palette LIGHT = new LightPalette();
   Palette PRINT = new PrintPalette();
@@ -146,6 +150,8 @@ public interface Palette {
     private static final Color SWITCH_RECESSED = new Color(0x141414);
     private static final Color SWITCH_ACTUATOR_ON = new Color(0xF0F0F0);
     private static final Color SWITCH_ACTUATOR_OFF = new Color(0x9E9E9E);
+    private static final Color DISPLAY_OFF = new Color(0x3A, 0x3A, 0x3A);
+    private static final Color DISPLAY_RECESS = new Color(0x26, 0x26, 0x26);
 
     @Override
     public boolean isDark() {
@@ -286,6 +292,16 @@ public interface Palette {
     public Color widthError() {
       return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), true).mismatchColor();
     }
+
+    @Override
+    public Color displayOff() {
+      return DISPLAY_OFF;
+    }
+
+    @Override
+    public Color displayRecess() {
+      return DISPLAY_RECESS;
+    }
   }
 
   class LightPalette implements Palette {
@@ -309,6 +325,7 @@ public interface Palette {
     private static final Color SWITCH_ACTUATOR_ON = new Color(0x4A, 0x53, 0x61);
     private static final Color SWITCH_ACTUATOR_OFF = new Color(0x8A, 0x90, 0x99);
     private static final Color RAISED_SURFACE = new Color(0xF2, 0xF3, 0xF5);
+    private static final Color DISPLAY_OFF = new Color(220, 220, 220);
 
     @Override
     public boolean isDark() {
@@ -441,6 +458,16 @@ public interface Palette {
     @Override
     public Color raisedSurface() {
       return RAISED_SURFACE;
+    }
+
+    @Override
+    public Color displayOff() {
+      return DISPLAY_OFF;
+    }
+
+    @Override
+    public Color displayRecess() {
+      return null;
     }
   }
 
@@ -623,6 +650,16 @@ public interface Palette {
         return MISMATCH;
       }
       return ColorSchemeRegistry.getActiveScheme().mismatchColor();
+    }
+
+    @Override
+    public Color displayOff() {
+      return LightPalette.DISPLAY_OFF;
+    }
+
+    @Override
+    public Color displayRecess() {
+      return null;
     }
   }
 }
