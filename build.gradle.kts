@@ -18,7 +18,7 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 
 plugins {
   checkstyle
-  id("io.github.ben-manes.versions") version "0.66.0"
+  id("io.github.ben-manes.versions") version "0.67.0"
   java
   application
   id("com.gradleup.shadow") version "9.6.1"
@@ -42,7 +42,6 @@ application {
 }
 
 dependencies {
-  implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
   implementation("com.fifesoft:rsyntaxtextarea:4.0.1")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
@@ -51,7 +50,7 @@ dependencies {
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.20")
   implementation("org.slf4j:slf4j-simple:2.0.20")
-  implementation("com.formdev:flatlaf:3.7.2")
+  implementation("com.formdev:flatlaf:3.8")
   implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
   implementation("org.apache.commons:commons-text:1.15.0")
@@ -63,6 +62,7 @@ dependencies {
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
   testImplementation("org.mockito:mockito-junit-jupiter:5.24.0")
+  testImplementation("org.hamcrest:hamcrest:3.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
