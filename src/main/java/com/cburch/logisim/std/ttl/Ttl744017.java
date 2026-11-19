@@ -16,9 +16,11 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  * TTL 74x4017: Johnson decade counter with 10 decoded outputs.
@@ -97,99 +99,87 @@ public class Ttl744017 extends AbstractTtlGate {
     super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
   }
 
+  /**
+   * Wide AND under CP0 and CP1, output downward. One counter block replaces the separate counter
+   * and decoder: clock and MR enter its left face, and the output bus leaves the vertical center
+   * of the right face into the half-ring.
+   */
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     g.setColor(Color.BLACK);
+    g.drawRect(x + 44, y + 13, 32, 16);
+    g.drawRect(x + 82, y + 30, 40, 14);
+    drawClockWedgeLeft(g, x + 82, y + 33);
     final var previousFont = g.getFont();
-    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 8));
-    g.drawRect(x + 5, y + 28, 10, 10);
-    g.drawRect(x + 25, y + 28, 10, 10);
-    g.drawRect(x + 45, y + 28, 10, 10);
-    g.drawRect(x + 65, y + 28, 10, 10);
-    g.drawRect(x + 85, y + 28, 10, 10);
-    g.drawRect(x + 105, y + 28, 10, 10);
-    g.drawRect(x + 125, y + 28, 10, 10);
-    g.drawRect(x + 145, y + 12, 10, 10);
-    g.drawRect(x + 125, y + 12, 10, 10);
-    g.drawRect(x + 105, y + 12, 10, 10);
-    g.drawRect(x + 85, y + 12, 10, 10);
-    g.drawLine(x + 10, y + height - 22, x + 10, y + height - 7);
-    g.drawLine(x + 30, y + height - 22, x + 30, y + height - 7);
-    g.drawLine(x + 50, y + height - 22, x + 50, y + height - 7);
-    g.drawLine(x + 70, y + height - 22, x + 70, y + height - 7);
-    g.drawLine(x + 90, y + height - 22, x + 90, y + height - 7);
-    g.drawLine(x + 110, y + height - 22, x + 110, y + height - 7);
-    g.drawLine(x + 130, y + height - 22, x + 130, y + height - 7);
-    g.drawLine(x + 150, y + 12, x + 150, y + 7);
-    g.drawLine(x + 130, y + 12, x + 130, y + 7);
-    g.drawLine(x + 110, y + 12, x + 110, y + 7);
-    g.drawLine(x + 90, y + 12, x + 90, y + 7);
-    g.drawLine(x + 5, y + 24, x + 155, y + 24);
-    g.drawLine(x + 70, y + 7, x + 70, y + 9);
-    g.drawLine(x + 70, y + 9, x + 1, y + 9);
-    g.drawLine(x + 1, y + 9, x + 1, y + 24);
-    g.drawLine(x + 1, y + 24, x + 5, y + 24);
-    g.drawLine(x + 7, y + 24, x + 7, y + 28);
-    g.drawLine(x + 27, y + 24, x + 27, y + 28);
-    g.drawLine(x + 47, y + 24, x + 47, y + 28);
-    g.drawLine(x + 67, y + 24, x + 67, y + 28);
-    g.drawLine(x + 87, y + 24, x + 87, y + 28);
-    g.drawLine(x + 107, y + 24, x + 107, y + 28);
-    g.drawLine(x + 127, y + 24, x + 127, y + 28);
-    g.drawLine(x + 147, y + 24, x + 147, y + 22);
-    g.drawLine(x + 127, y + 24, x + 127, y + 22);
-    g.drawLine(x + 107, y + 24, x + 107, y + 22);
-    g.drawLine(x + 87, y + 24, x + 87, y + 22);
-    g.drawLine(x + 5, y + 25, x + 155, y + 25);
-    g.drawLine(x + 50, y + 7, x + 50, y + 9);
-    g.drawLine(x + 50, y + 9, x + 1, y + 9);
-    g.drawLine(x + 1, y + 9, x + 1, y + 25);
-    g.drawLine(x + 1, y + 25, x + 5, y + 25);
-    g.drawLine(x + 10, y + 25, x + 10, y + 28);
-    g.drawLine(x + 30, y + 25, x + 30, y + 28);
-    g.drawLine(x + 50, y + 25, x + 50, y + 28);
-    g.drawLine(x + 70, y + 25, x + 70, y + 28);
-    g.drawLine(x + 90, y + 25, x + 90, y + 28);
-    g.drawLine(x + 110, y + 25, x + 110, y + 28);
-    g.drawLine(x + 130, y + 25, x + 130, y + 28);
-    g.drawLine(x + 150, y + 25, x + 150, y + 22);
-    g.drawLine(x + 130, y + 25, x + 130, y + 22);
-    g.drawLine(x + 110, y + 25, x + 110, y + 22);
-    g.drawLine(x + 90, y + 25, x + 90, y + 22);
-    g.drawLine(x + 5, y + 25, x + 155, y + 25);
-    g.drawLine(x + 30, y + 7, x + 30, y + 9);
-    g.drawLine(x + 30, y + 9, x + 1, y + 9);
-    g.drawLine(x + 1, y + 9, x + 1, y + 25);
-    g.drawLine(x + 1, y + 25, x + 5, y + 25);
-    g.drawLine(x + 13, y + 25, x + 13, y + 28);
-    g.drawLine(x + 33, y + 25, x + 33, y + 28);
-    g.drawLine(x + 53, y + 25, x + 53, y + 28);
-    g.drawLine(x + 73, y + 25, x + 73, y + 28);
-    g.drawLine(x + 93, y + 25, x + 93, y + 28);
-    g.drawLine(x + 113, y + 25, x + 113, y + 28);
-    g.drawLine(x + 133, y + 25, x + 133, y + 28);
-    g.drawLine(x + 153, y + 25, x + 153, y + 22);
-    g.drawLine(x + 133, y + 25, x + 133, y + 22);
-    g.drawLine(x + 113, y + 25, x + 113, y + 22);
-    g.drawLine(x + 93, y + 25, x + 93, y + 22);
-    g.drawOval(x + 88, y + 8, 4, 4);
-    GraphicsUtil.drawCenteredText(g, "5", x + 10, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "1", x + 30, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "0", x + 50, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "2", x + 70, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "6", x + 90, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "7", x + 110, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "3", x + 130, y + height - 27);
-    GraphicsUtil.drawCenteredText(g, "8", x + 150, y + 17);
-    GraphicsUtil.drawCenteredText(g, "4", x + 130, y + 17);
-    GraphicsUtil.drawCenteredText(g, "9", x + 110, y + 17);
-    GraphicsUtil.drawCenteredText(g, "9", x + 90, y + 17);
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 6));
+    GraphicsUtil.drawText(
+        g, "&", x + 60, y + 21, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+    GraphicsUtil.drawText(
+        g, "COUNTER", x + 102, y + 37, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
     g.setFont(previousFont);
+
+    wire(g, x, y, 50, 7, 50, 13);
+    wire(g, x, y, 70, 7, 70, 11);
+    drawBubble(g, x + 70, y + 12);
+    wire(g, x, y, 60, 29, 60, 33, 82, 33);
+    wire(g, x, y, 30, 7, 30, 41, 82, 41);
+
+    bus(g, x, y, 122, 37, 132, 37, 132, 48, 10, 48);
+    bus(g, x, y, 132, 37, 132, 14, 90, 14);
+    bus(g, x, y, 132, 14, 150, 14);
+
+    wire(g, x, y, 10, 48, 10, 53);
+    wire(g, x, y, 30, 48, 30, 53);
+    wire(g, x, y, 50, 48, 50, 53);
+    wire(g, x, y, 70, 48, 70, 53);
+    wire(g, x, y, 90, 48, 90, 53);
+    wire(g, x, y, 110, 48, 110, 53);
+    wire(g, x, y, 130, 48, 130, 53);
+    wire(g, x, y, 90, 7, 90, 14);
+    wire(g, x, y, 110, 7, 110, 14);
+    wire(g, x, y, 130, 7, 130, 14);
+    wire(g, x, y, 150, 7, 150, 14);
   }
 
+  /** Orthogonal polyline. Offsets are paired and measured from the package origin. */
+  private static void wire(Graphics g, int originX, int originY, int... xy) {
+    for (var i = 2; i < xy.length; i += 2) {
+      g.drawLine(
+          originX + xy[i - 2], originY + xy[i - 1], originX + xy[i], originY + xy[i + 1]);
+    }
+  }
 
+  /** Width-2 bus. One polyline keeps a mitered corner instead of a white gap. */
+  private static void bus(Graphics g, int originX, int originY, int... xy) {
+    if (!(g instanceof Graphics2D g2) || xy.length < 4) {
+      return;
+    }
+    final var previous = g2.getStroke();
+    g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+    final var count = xy.length / 2;
+    final var xs = new int[count];
+    final var ys = new int[count];
+    for (var i = 0; i < count; i++) {
+      xs[i] = originX + xy[i * 2];
+      ys[i] = originY + xy[i * 2 + 1];
+    }
+    g2.drawPolyline(xs, ys, count);
+    g2.setStroke(previous);
+  }
+
+  /** Clock wedge: 2px base on the left edge, point inside the counter. */
+  private static void drawClockWedgeLeft(Graphics g, int x, int y) {
+    g.drawLine(x, y - 1, x, y + 1);
+    g.drawLine(x, y - 1, x + 3, y);
+    g.drawLine(x, y + 1, x + 3, y);
+  }
+
+  /** Even 2×2 bubble. The center is the point the caller put on the wire axis. */
+  private static void drawBubble(Graphics g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
+  }
 
   private static Color stateColor(Value value) {
     if (containsBit(value, Value.ERROR)) return Value.ERROR.getColor();
@@ -267,41 +257,6 @@ public class Ttl744017 extends AbstractTtlGate {
   @Override
   public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {PORT_INDEX_CP0, PORT_INDEX_CP1};
-  }
-
-  private static int structureX(int originX, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originX + (pin - 1) * 20 + 10;
-    }
-    return originX + (pins - pin) * 20 + 10;
-  }
-
-  private static int structureY(int originY, int bodyHeight, int pins, int pin) {
-    if (pin <= pins / 2) {
-      return originY + bodyHeight - AbstractTtlGate.PIN_HEIGHT;
-    }
-    return originY + AbstractTtlGate.PIN_HEIGHT;
-  }
-
-  private static void structureBubble(Graphics g, int centerX, int centerY) {
-    g.drawOval(centerX - 2, centerY - 2, 4, 4);
-  }
-
-  private static void structureDot(
-      Graphics g, int centerX, int centerY, TtlRegisterData data, int word, int bit) {
-    if (data == null) {
-      return;
-    }
-    final var value = data.getValue(word);
-    if (bit < 0 || bit >= value.getWidth()) {
-      return;
-    }
-    final var bitValue = value.get(bit);
-    g.setColor(bitValue.getColor());
-    g.fillOval(centerX - 3, centerY - 3, 6, 6);
-    g.setColor(Color.WHITE);
-    GraphicsUtil.drawCenteredText(g, bitValue.toDisplayString(), centerX, centerY);
-    g.setColor(Color.BLACK);
   }
 
 }
