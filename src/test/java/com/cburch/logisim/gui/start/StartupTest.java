@@ -18,13 +18,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.util.LocaleManager;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Locale;
+import java.util.jar.Attributes;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -121,6 +131,66 @@ class StartupTest {
             new String[] {"--tty", "table", "--fpga-cable", "USB-Blaster [1-1]", "test.circ"}));
   }
 
+  @Test
+  void loadLibOptionCollectsEveryLibraryInOrder(@TempDir Path tempDir) throws IOException {
+    final var jarLib = Files.createFile(tempDir.resolve("components.jar")).toFile();
+    final var circLib = Files.createFile(tempDir.resolve("helpers.circ")).toFile();
+
+    final var startup =
+        parseWithoutOutput(
+            "--load-lib", jarLib.getPath(), "--load-lib", circLib.getPath(), "main.circ");
+
+    assertNotNull(startup);
+    assertEquals(List.of(jarLib, circLib), startup.getLibrariesToLoad());
+    assertEquals(List.of(new File("main.circ")), startup.getFilesToOpen());
+  }
+
+  @Test
+  void loadLibOptionIsEmptyByDefault() {
+    final var startup = parseWithoutOutput("--tty", "table", "test.circ");
+
+    assertNotNull(startup);
+    assertTrue(startup.getLibrariesToLoad().isEmpty());
+  }
+
+  @Test
+  void loadLibOptionRejectsUnsupportedFileType(@TempDir Path tempDir) throws IOException {
+    final var textFile = Files.createFile(tempDir.resolve("notes.txt")).toFile();
+
+    assertNull(parseWithoutOutput("--load-lib", textFile.getPath()));
+  }
+
+  @Test
+  void loadLibOptionCannotBeCombinedWithTty(@TempDir Path tempDir) throws IOException {
+    final var circLib = Files.createFile(tempDir.resolve("helpers.circ")).toFile();
+
+    assertNull(
+        parseWithoutOutput("--tty", "table", "--load-lib", circLib.getPath(), "test.circ"));
+  }
+
+  @Test
+  void jarLibraryClassNameIsReadFromManifest(@TempDir Path tempDir) throws IOException {
+    final var manifest = new Manifest();
+    manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+    manifest.getMainAttributes().putValue("Library-Class", "com.example.MyLibrary");
+    final var jarWithClass = tempDir.resolve("with-class.jar").toFile();
+    // An empty JAR containing only the manifest is enough for this test.
+    new JarOutputStream(new FileOutputStream(jarWithClass), manifest).close();
+
+    assertEquals("com.example.MyLibrary", Startup.getJarLibraryClassName(jarWithClass));
+  }
+
+  @Test
+  void jarLibraryClassNameIsNullWhenUnavailable(@TempDir Path tempDir) throws IOException {
+    final var jarWithoutManifest = tempDir.resolve("no-manifest.jar").toFile();
+    // No manifest, therefore no "Library-Class" attribute.
+    new JarOutputStream(new FileOutputStream(jarWithoutManifest)).close();
+    final var notAJar = Files.writeString(tempDir.resolve("broken.jar"), "not a jar").toFile();
+
+    assertNull(Startup.getJarLibraryClassName(jarWithoutManifest));
+    assertNull(Startup.getJarLibraryClassName(notAJar));
+  }
+
   private static Stream<Arguments> invalidOptionArguments() {
     return Stream.of(
         Arguments.of(
@@ -146,8 +216,11 @@ class StartupTest {
         Arguments.of(
             "invalid geometry", new String[] {"--tty", "table", "--geometry", "invalid"}),
         Arguments.of(
-            "invalid template",
-            new String[] {"--tty", "table", "--user-template", "missing-template.circ"}),
+            "invalid template", new String[] {"--tty", "table", "--user-template", "missing-template.circ"}),
+        Arguments.of(
+            "missing library file", new String[] {"--load-lib", "missing-library.jar"}),
+        Arguments.of(
+            "missing library argument", new String[] {"--load-lib"}),
         Arguments.of(
             "invalid FPGA flag",
             new String[] {"--test-fpga", "test.circ", "main", "board", "invalid"}));
