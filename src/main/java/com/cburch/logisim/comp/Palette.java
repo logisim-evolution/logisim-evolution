@@ -136,16 +136,9 @@ public interface Palette {
 
   class DarkPalette implements Palette {
     private static final Color STROKE = Color.WHITE;
-    private static final Color WIRE_0 = new Color(0x1B8458);
-    private static final Color WIRE_1 = new Color(0x55F08A);
-    private static final Color UNKNOWN = new Color(0x5B9BFF);
-    private static final Color ERROR = new Color(0xFF6B5E);
-    private static final Color MISMATCH = new Color(0xF0A030);
     private static final Color LABEL = new Color(0x7AA7FF);
-    private static final Color BUS = new Color(0x9F, 0xA9, 0xB8); // Variation B neutral cool grey
     private static final Color FILL = new Color(0x25, 0x28, 0x2C);
     private static final Color BG = new Color(0x1F1F1F);
-    private static final Color NIL = new Color(0x7C, 0x82, 0x8C);
     private static final Color SWITCH_RECESSED = new Color(0x141414);
     private static final Color SWITCH_ACTUATOR_ON = new Color(0xF0F0F0);
     private static final Color SWITCH_ACTUATOR_OFF = new Color(0x9E9E9E);
@@ -305,15 +298,8 @@ public interface Palette {
   class LightPalette implements Palette {
     private static final Color STROKE = new Color(0x26, 0x28, 0x2C);
     private static final Color BG = new Color(0xFF, 0xFF, 0xFF);
-    private static final Color WIRE_0 = new Color(0x0B, 0x4A, 0x2C);
-    private static final Color WIRE_1 = new Color(0x16, 0xA0, 0x5A);
-    private static final Color UNKNOWN = new Color(0x1C, 0x71, 0xD8);
-    private static final Color ERROR = new Color(0xC0, 0x1C, 0x28);
-    private static final Color MISMATCH = new Color(0xB3, 0x5C, 0x00);
-    private static final Color BUS = new Color(0x4A, 0x53, 0x61); // Variation B neutral cool grey
     private static final Color LABEL = new Color(0x1A, 0x5F, 0xB4);
     private static final Color FILL = Color.WHITE;
-    private static final Color NIL = new Color(0x8A, 0x90, 0x99);
     private static final Color HALO = new Color(0x91, 0x41, 0xAC);
     private static final Color ACCENT = new Color(0x1C, 0x71, 0xD8);
     private static final Color SELECTION_FILL = new Color(0x1C, 0x71, 0xD8, 36); // 14% alpha
@@ -404,7 +390,7 @@ public interface Palette {
 
     @Override
     public Color switchChannel(boolean on) {
-      return on ? WIRE_1 : Color.WHITE;
+      return on ? new Color(AppPreferences.TRUE_COLOR.get()) : Color.WHITE;
     }
 
     @Override
@@ -470,15 +456,9 @@ public interface Palette {
 
   class PrintPalette implements Palette {
     private static final Color STROKE = Color.BLACK;
-    private static final Color WIRE_0 = new Color(0x006400);
-    private static final Color WIRE_1 = new Color(0x00D200);
-    private static final Color UNKNOWN = new Color(0x2828FF);
-    private static final Color ERROR = new Color(0xC00000);
-    private static final Color MISMATCH = new Color(0xFF7B00);
     private static final Color LABEL = Color.BLACK;
     private static final Color FILL = Color.WHITE;
     private static final Color BG = Color.WHITE;
-    private static final Color NIL = Color.GRAY;
 
     @Override
     public Color stroke() {
@@ -495,16 +475,16 @@ public interface Palette {
 
     @Override
     public Color valueColor(Value v) {
-      if (v == null) return UNKNOWN;
-      if (v.isErrorValue()) return ERROR;
-      if (v.getWidth() == 0) return NIL;
+      if (v == null) return new Color(AppPreferences.UNKNOWN_COLOR.get());
+      if (v.isErrorValue()) return new Color(AppPreferences.ERROR_COLOR.get());
+      if (v.getWidth() == 0) return new Color(AppPreferences.NIL_COLOR.get());
       if (v.getWidth() == 1) {
-        if (v == Value.UNKNOWN) return UNKNOWN;
-        if (v == Value.TRUE) return WIRE_1;
-        if (v == Value.FALSE) return WIRE_0;
+        if (v == Value.UNKNOWN) return new Color(AppPreferences.UNKNOWN_COLOR.get());
+        if (v == Value.TRUE) return new Color(AppPreferences.TRUE_COLOR.get());
+        if (v == Value.FALSE) return new Color(AppPreferences.FALSE_COLOR.get());
       }
-      if (v.isFullyDefined()) return Color.BLACK;
-      return MISMATCH;
+      if (v.isFullyDefined()) return new Color(AppPreferences.BUS_COLOR.get());
+      return new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
     }
 
     @Override
@@ -611,12 +591,12 @@ public interface Palette {
 
     @Override
     public Color nil() {
-      return NIL;
+      return new Color(AppPreferences.NIL_COLOR.get());
     }
 
     @Override
     public Color widthError() {
-      return MISMATCH;
+      return new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
     }
 
     @Override
