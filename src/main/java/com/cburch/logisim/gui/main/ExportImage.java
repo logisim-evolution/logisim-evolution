@@ -13,6 +13,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.ComponentDrawContext;
+import com.cburch.logisim.comp.Palette;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -304,8 +305,10 @@ public class ExportImage {
 
     @Override
     public void run() {
-      for (final var circ : circuits) {
-        export(circ);
+      try (var scope = Palette.enterPrintScope()) {
+        for (final var circ : circuits) {
+          export(circ);
+        }
       }
     }
   }
