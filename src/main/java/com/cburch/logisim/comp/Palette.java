@@ -10,7 +10,6 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.theme.ColorSchemeRegistry;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
@@ -136,7 +135,7 @@ public interface Palette {
   }
 
   class DarkPalette implements Palette {
-    private static final Color STROKE = new Color(0xE6E6E6);
+    private static final Color STROKE = Color.WHITE;
     private static final Color WIRE_0 = new Color(0x1B8458);
     private static final Color WIRE_1 = new Color(0x55F08A);
     private static final Color UNKNOWN = new Color(0x5B9BFF);
@@ -205,22 +204,21 @@ public interface Palette {
 
     @Override
     public Color bus() {
-      return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), true).busColor();
+      return new Color(AppPreferences.BUS_COLOR.get());
     }
 
     @Override
     public Color valueColor(Value v) {
-      final var scheme = ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), true);
-      if (v == null) return scheme.unknownColor();
-      if (v.isErrorValue()) return scheme.errorColor();
-      if (v.getWidth() == 0) return scheme.unconnectedColor();
+      if (v == null) return new Color(AppPreferences.UNKNOWN_COLOR.get());
+      if (v.isErrorValue()) return new Color(AppPreferences.ERROR_COLOR.get());
+      if (v.getWidth() == 0) return new Color(AppPreferences.NIL_COLOR.get());
       if (v.getWidth() == 1) {
-        if (v == Value.UNKNOWN) return scheme.unknownColor();
-        if (v == Value.TRUE) return scheme.trueColor();
-        if (v == Value.FALSE) return scheme.falseColor();
+        if (v == Value.UNKNOWN) return new Color(AppPreferences.UNKNOWN_COLOR.get());
+        if (v == Value.TRUE) return new Color(AppPreferences.TRUE_COLOR.get());
+        if (v == Value.FALSE) return new Color(AppPreferences.FALSE_COLOR.get());
       }
-      if (v.isFullyDefined()) return scheme.busColor();
-      return scheme.mismatchColor();
+      if (v.isFullyDefined()) return new Color(AppPreferences.BUS_COLOR.get());
+      return new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
     }
 
     @Override
@@ -285,12 +283,12 @@ public interface Palette {
 
     @Override
     public Color nil() {
-      return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), true).unconnectedColor();
+      return new Color(AppPreferences.NIL_COLOR.get());
     }
 
     @Override
     public Color widthError() {
-      return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), true).mismatchColor();
+      return new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
     }
 
     @Override
@@ -342,22 +340,21 @@ public interface Palette {
 
     @Override
     public Color bus() {
-      return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), false).busColor();
+      return new Color(AppPreferences.BUS_COLOR.get());
     }
 
     @Override
     public Color valueColor(Value v) {
-      final var scheme = ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), false);
-      if (v == null) return scheme.unknownColor();
-      if (v.isErrorValue()) return scheme.errorColor();
-      if (v.getWidth() == 0) return scheme.unconnectedColor();
+      if (v == null) return new Color(AppPreferences.UNKNOWN_COLOR.get());
+      if (v.isErrorValue()) return new Color(AppPreferences.ERROR_COLOR.get());
+      if (v.getWidth() == 0) return new Color(AppPreferences.NIL_COLOR.get());
       if (v.getWidth() == 1) {
-        if (v == Value.UNKNOWN) return scheme.unknownColor();
-        if (v == Value.TRUE) return scheme.trueColor();
-        if (v == Value.FALSE) return scheme.falseColor();
+        if (v == Value.UNKNOWN) return new Color(AppPreferences.UNKNOWN_COLOR.get());
+        if (v == Value.TRUE) return new Color(AppPreferences.TRUE_COLOR.get());
+        if (v == Value.FALSE) return new Color(AppPreferences.FALSE_COLOR.get());
       }
-      if (v.isFullyDefined()) return scheme.busColor();
-      return scheme.mismatchColor();
+      if (v.isFullyDefined()) return new Color(AppPreferences.BUS_COLOR.get());
+      return new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
     }
 
     @Override
@@ -387,12 +384,12 @@ public interface Palette {
 
     @Override
     public Color nil() {
-      return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), false).unconnectedColor();
+      return new Color(AppPreferences.NIL_COLOR.get());
     }
 
     @Override
     public Color widthError() {
-      return ColorSchemeRegistry.getColorScheme(AppPreferences.COLOR_SCHEME.get(), false).mismatchColor();
+      return new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
     }
 
     @Override
@@ -493,41 +490,21 @@ public interface Palette {
 
     @Override
     public Color bus() {
-      final var schemeId = AppPreferences.COLOR_SCHEME.get();
-      if (ColorSchemeRegistry.SCHEME_MODERN.equalsIgnoreCase(schemeId)
-          || ColorSchemeRegistry.SCHEME_CLASSIC.equalsIgnoreCase(schemeId)) {
-        return stroke();
-      }
-      return ColorSchemeRegistry.getActiveScheme().busColor();
+      return stroke();
     }
 
     @Override
     public Color valueColor(Value v) {
-      final var schemeId = AppPreferences.COLOR_SCHEME.get();
-      if (ColorSchemeRegistry.SCHEME_MODERN.equalsIgnoreCase(schemeId)
-          || ColorSchemeRegistry.SCHEME_CLASSIC.equalsIgnoreCase(schemeId)) {
-        if (v == null) return UNKNOWN;
-        if (v.isErrorValue()) return ERROR;
-        if (v.getWidth() == 0) return NIL;
-        if (v.getWidth() == 1) {
-          if (v == Value.UNKNOWN) return UNKNOWN;
-          if (v == Value.TRUE) return WIRE_1;
-          if (v == Value.FALSE) return WIRE_0;
-        }
-        if (v.isFullyDefined()) return Color.BLACK;
-        return MISMATCH;
-      }
-      final var scheme = ColorSchemeRegistry.getActiveScheme();
-      if (v == null) return scheme.unknownColor();
-      if (v.isErrorValue()) return scheme.errorColor();
-      if (v.getWidth() == 0) return scheme.unconnectedColor();
+      if (v == null) return UNKNOWN;
+      if (v.isErrorValue()) return ERROR;
+      if (v.getWidth() == 0) return NIL;
       if (v.getWidth() == 1) {
-        if (v == Value.UNKNOWN) return scheme.unknownColor();
-        if (v == Value.TRUE) return scheme.trueColor();
-        if (v == Value.FALSE) return scheme.falseColor();
+        if (v == Value.UNKNOWN) return UNKNOWN;
+        if (v == Value.TRUE) return WIRE_1;
+        if (v == Value.FALSE) return WIRE_0;
       }
-      if (v.isFullyDefined()) return scheme.busColor();
-      return scheme.mismatchColor();
+      if (v.isFullyDefined()) return Color.BLACK;
+      return MISMATCH;
     }
 
     @Override
@@ -634,22 +611,12 @@ public interface Palette {
 
     @Override
     public Color nil() {
-      final var schemeId = AppPreferences.COLOR_SCHEME.get();
-      if (ColorSchemeRegistry.SCHEME_MODERN.equalsIgnoreCase(schemeId)
-          || ColorSchemeRegistry.SCHEME_CLASSIC.equalsIgnoreCase(schemeId)) {
-        return NIL;
-      }
-      return ColorSchemeRegistry.getActiveScheme().unconnectedColor();
+      return NIL;
     }
 
     @Override
     public Color widthError() {
-      final var schemeId = AppPreferences.COLOR_SCHEME.get();
-      if (ColorSchemeRegistry.SCHEME_MODERN.equalsIgnoreCase(schemeId)
-          || ColorSchemeRegistry.SCHEME_CLASSIC.equalsIgnoreCase(schemeId)) {
-        return MISMATCH;
-      }
-      return ColorSchemeRegistry.getActiveScheme().mismatchColor();
+      return MISMATCH;
     }
 
     @Override

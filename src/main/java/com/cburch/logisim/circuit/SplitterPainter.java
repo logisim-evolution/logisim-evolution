@@ -93,9 +93,8 @@ class SplitterPainter {
     final var fanout = attrs.fanout;
     final var parms = attrs.getParameters();
     final var strokeColor = Palette.of(context).stroke();
-    final var busColor = Palette.of(context).bus();
 
-    g.setColor(busColor);
+    g.setColor(strokeColor);
     final var x0 = origin.getX();
     final var y0 = origin.getY();
     final var x1 = x0 + parms.getEnd0X();
@@ -121,11 +120,11 @@ class SplitterPainter {
       }
       if (fanout > 3) {
         GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-        g.setColor(busColor);
+        g.setColor(strokeColor);
         g.drawLine(
             x1 + (dx > 0 ? 10 : -10), ySpine, x1 + (fanout - 1) * dx + (dx > 0 ? 10 : -10), ySpine);
       } else {
-        g.setColor(busColor);
+        g.setColor(strokeColor);
         g.fillOval(x0 - SPINE_DOT / 2, ySpine - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);
       }
     } else {
@@ -147,11 +146,11 @@ class SplitterPainter {
       }
       if (fanout >= 3) {
         GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-        g.setColor(busColor);
+        g.setColor(strokeColor);
         g.drawLine(
             xSpine, y1 + (dy > 0 ? 10 : -10), xSpine, y1 + (fanout - 1) * dy + (dy > 0 ? 10 : -10));
       } else {
-        g.setColor(busColor);
+        g.setColor(strokeColor);
         g.fillOval(xSpine - SPINE_DOT / 2, y0 - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);
       }
     }
@@ -182,7 +181,6 @@ class SplitterPainter {
     final var g = context.getGraphics();
     final var oldColor = g.getColor();
     final var strokeColor = Palette.of(context).stroke();
-    final var busColor = Palette.of(context).bus();
     
     GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     g.setColor(strokeColor);
@@ -200,7 +198,7 @@ class SplitterPainter {
       y += dy;
     }
     GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-    g.setColor(busColor);
+    g.setColor(strokeColor);
     var spine0x = x0 + parms.getSpine0X();
     var spine0y = y0 + parms.getSpine0Y();
     var spine1x = x0 + parms.getSpine1X();
