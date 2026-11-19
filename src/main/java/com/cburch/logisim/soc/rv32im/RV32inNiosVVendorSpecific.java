@@ -23,7 +23,7 @@ public class RV32inNiosVVendorSpecific implements AssemblerExecutionInterface {
 
   private static final int MISC_MEM = 0x0F;
   private static int fenceIIdx = 7;
-  private static final String[] AsmOpcodes = {"CBO.INVAL.IX", "CBO.CLEAN.IX", "CBO.FLUSH.IX", 
+  private static final String[] AsmOpcodes = {"CBO.INVAL.IX", "CBO.CLEAN.IX", "CBO.FLUSH.IX",
       "CBO.CLEAN", "CBO.FLUSH", "CBO.INVAL", "CBO.ZERO", "FENCE.I" };
   private static final int[] AsmBinCodes = {0x80, 0x81, 0x82, 0x1, 0x2, 0x0, 0x4, 0x0};
 
