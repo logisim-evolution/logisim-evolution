@@ -181,7 +181,7 @@ class SplitterPainter {
     final var g = context.getGraphics();
     final var oldColor = g.getColor();
     final var strokeColor = Palette.of(context).stroke();
-    
+
     GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     g.setColor(strokeColor);
     for (int i = 0, n = attrs.fanout; i < n; i++) {

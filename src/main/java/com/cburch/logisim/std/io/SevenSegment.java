@@ -71,8 +71,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       if (bgColor.getAlpha() != 0) {
         g.setColor(bgColor);
         g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-      } 
-      else if (palette.displayRecess() != null) {
+      } else if (palette.displayRecess() != null) {
         g.setColor(palette.displayRecess());
         g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       }
@@ -87,8 +86,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       if (i < 7) {
         Bounds seg = SEGMENTS[i];
         g.fillRect(x + seg.getX(), y + seg.getY(), seg.getWidth(), seg.getHeight());
-      } 
-      else {
+      } else {
         if (drawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
       }
     }
