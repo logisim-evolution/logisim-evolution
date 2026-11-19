@@ -98,6 +98,8 @@ jobs:
           -Dsonar.java.source=21
           -Dsonar.java.binaries=build/classes/java/main
           -Dsonar.java.test.binaries=build/classes/java/test
+          -Dsonar.java.libraries=build/sonar-libs/main/*.jar
+          -Dsonar.java.test.libraries=build/classes/java/main,build/classes/java/docgen,build/sonar-libs/test/*.jar
           -Dsonar.pullrequest.key=${{ steps.pr-info.outputs.pr-number }}
           -Dsonar.pullrequest.branch=${{ steps.pr-info.outputs.head-ref }}
           -Dsonar.pullrequest.base=${{ steps.pr-info.outputs.base-ref }}

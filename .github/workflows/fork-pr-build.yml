@@ -33,6 +33,21 @@ jobs:
         chmod +x gradlew
         ./gradlew build -x checkstyleMain -x checkstyleTest
 
+    # fork-pr-sonar must not run Gradle, so the jars the code compiles against are
+    # collected here and passed to Sonar as sonar.java.libraries.
+    - name: "Collect dependency jars for Sonar"
+      run: |
+        cat > "$RUNNER_TEMP/sonar-libs.gradle" <<'EOF'
+        allprojects {
+          tasks.register('copySonarLibs', Copy) {
+            into layout.buildDirectory.dir('sonar-libs')
+            into('main') { from configurations.compileClasspath; include '*.jar' }
+            into('test') { from configurations.testCompileClasspath; include '*.jar' }
+          }
+        }
+        EOF
+        ./gradlew --init-script "$RUNNER_TEMP/sonar-libs.gradle" copySonarLibs
+
     - name: "Save compiled classes"
       uses: actions/upload-artifact@v4
       with:
@@ -41,3 +56,4 @@ jobs:
         path: |
           build/classes/
           build/generated/
+          build/sonar-libs/
