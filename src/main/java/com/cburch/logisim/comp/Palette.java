@@ -16,10 +16,6 @@ import java.awt.Color;
 public interface Palette {
   Color stroke();
 
-  Color displayOff();
-
-  Color displayRecess();
-
   Palette DARK = new DarkPalette();
   Palette LIGHT = new LightPalette();
   Palette PRINT = new PrintPalette();
@@ -77,8 +73,6 @@ public interface Palette {
 
   class DarkPalette implements Palette {
     private static final Color STROKE = Color.WHITE;
-    private static final Color DISPLAY_OFF = new Color(0x3A, 0x3A, 0x3A);
-    private static final Color DISPLAY_RECESS = new Color(0x26, 0x26, 0x26);
 
     @Override
     public Color stroke() {
@@ -86,22 +80,11 @@ public interface Palette {
         return new Color(AppPreferences.COMPONENT_COLOR.get());
       }
       return STROKE;
-    }
-
-    @Override
-    public Color displayOff() {
-      return DISPLAY_OFF;
-    }
-
-    @Override
-    public Color displayRecess() {
-      return DISPLAY_RECESS;
     }
   }
 
   class LightPalette implements Palette {
     private static final Color STROKE = new Color(0x26, 0x28, 0x2C);
-    public static final Color DISPLAY_OFF = new Color(220, 220, 220);
 
     @Override
     public Color stroke() {
@@ -109,16 +92,6 @@ public interface Palette {
         return new Color(AppPreferences.COMPONENT_COLOR.get());
       }
       return STROKE;
-    }
-
-    @Override
-    public Color displayOff() {
-      return DISPLAY_OFF;
-    }
-
-    @Override
-    public Color displayRecess() {
-      return null;
     }
   }
 
@@ -131,16 +104,6 @@ public interface Palette {
         return new Color(AppPreferences.COMPONENT_COLOR.get());
       }
       return STROKE;
-    }
-
-    @Override
-    public Color displayOff() {
-      return LightPalette.DISPLAY_OFF;
-    }
-
-    @Override
-    public Color displayRecess() {
-      return null;
     }
   }
 }
