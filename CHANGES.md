@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added missing cache instructions of the NIOS-V g CPU to be able to simulate the programs in the SOC environment (@BFH-ktt1).
   * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
