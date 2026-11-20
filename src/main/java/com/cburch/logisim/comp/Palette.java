@@ -76,9 +76,6 @@ public interface Palette {
 
     @Override
     public Color stroke() {
-      if (!AppPreferences.isAdaptComponentColor()) {
-        return new Color(AppPreferences.COMPONENT_COLOR.get());
-      }
       return STROKE;
     }
   }
@@ -88,9 +85,6 @@ public interface Palette {
 
     @Override
     public Color stroke() {
-      if (!AppPreferences.isAdaptComponentColor()) {
-        return new Color(AppPreferences.COMPONENT_COLOR.get());
-      }
       return STROKE;
     }
   }
@@ -100,9 +94,6 @@ public interface Palette {
 
     @Override
     public Color stroke() {
-      if (!AppPreferences.isAdaptComponentColor()) {
-        return new Color(AppPreferences.COMPONENT_COLOR.get());
-      }
       return STROKE;
     }
   }

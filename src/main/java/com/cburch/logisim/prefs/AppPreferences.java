@@ -806,10 +806,6 @@ public class AppPreferences {
   public static final int DEFAULT_BUS_COLOR = 0x00000000;
   public static final int DEFAULT_STROKE_COLOR = 0x00FF00FF;
 
-  public static boolean isDarkTheme() {
-    return isDarkTheme(LookAndFeel.get());
-  }
-
   // returns true if the given LookAndFeel class name indicates a dark theme
   public static boolean isDarkTheme(String lafClassName) {
     return lafClassName != null && (
@@ -886,12 +882,6 @@ public class AppPreferences {
   public static final PrefMonitor<Integer> COMPONENT_COLOR =
       create(new ThemeColorPreference("componentColor", DEFAULT_COMPONENT_COLOR,
           DARK_COMPONENT_COLOR));
-  public static final PrefMonitor<Boolean> ADAPT_COMPONENT_COLOR =
-      create(new PrefMonitorBoolean("adaptComponentColor", true));
-
-  public static boolean isAdaptComponentColor() {
-    return ADAPT_COMPONENT_COLOR.getBoolean();
-  }
   public static final PrefMonitor<Integer> COMPONENT_SECONDARY_COLOR =
       create(
           new ThemeColorPreference(
