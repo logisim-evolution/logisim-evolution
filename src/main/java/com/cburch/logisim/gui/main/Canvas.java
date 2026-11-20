@@ -53,9 +53,13 @@ import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Rectangle;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.im.InputMethodRequests;
+import java.awt.font.TextHitInfo;
+import java.text.AttributedCharacterIterator;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -80,7 +84,9 @@ import javax.swing.Timer;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents, AdjustmentListener {
+public class Canvas
+    extends JPanel
+    implements LocaleListener, CanvasPaneContents, AdjustmentListener, InputMethodRequests {
 
   public static final byte ZOOM_BUTTON_SIZE = 52;
   public static final byte ZOOM_BUTTON_MARGIN = 30;
@@ -127,6 +133,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private volatile boolean inPaint = false; // only for within paintComponent
 
   public Canvas(Project proj) {
+    enableInputMethods(true);
     this.proj = proj;
     this.selection = new Selection(proj, this);
     this.painter = new CanvasPainter(this);
@@ -382,6 +389,72 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
   Tool getDragTool() {
     return dragTool;
+  }
+
+  /**
+   * The text caret whose on-screen bounds IME candidate windows should track, set by
+   * {@link com.cburch.logisim.tools.TextTool} while a canvas label is being edited. Null
+   * whenever no canvas label is being edited.
+   */
+  private volatile java.util.function.Supplier<Bounds> imeCaretBounds;
+
+  /** Registers the caret-bounds provider (or clears it with null) for input-method use. */
+  public void setImeCaretBounds(java.util.function.Supplier<Bounds> provider) {
+    this.imeCaretBounds = provider;
+  }
+
+  @Override
+  public java.awt.Rectangle getTextLocation(java.awt.font.TextHitInfo offset) {
+    var supplier = imeCaretBounds;
+    var bounds = supplier == null ? null : supplier.get();
+    if (bounds == null) {
+      return null; // passive-client fallback: IME parks at the client window corner
+    }
+    // Caret bounds are canvas coordinates; convert to on-screen coordinates.
+    var onScreen = getLocationOnScreen();
+    return new Rectangle(
+        onScreen.x + bounds.getX(), onScreen.y + bounds.getY(), bounds.getWidth(), bounds.getHeight());
+  }
+
+  @Override
+  public java.text.AttributedCharacterIterator cancelLatestCommittedText(
+      java.text.AttributedCharacterIterator.Attribute[] attributes) {
+    return null;
+  }
+
+  @Override
+  public java.text.AttributedCharacterIterator getCommittedText(
+      int beginIndex, int endIndex, java.text.AttributedCharacterIterator.Attribute[] attributes) {
+    return null;
+  }
+
+  @Override
+  public int getCommittedTextLength() {
+    return 0;
+  }
+
+  @Override
+  public int getInsertPositionOffset() {
+    return 0;
+  }
+
+  @Override
+  public java.awt.im.InputMethodRequests getInputMethodRequests() {
+    return this;
+  }
+
+  // getInputLocale is not part of InputMethodRequests; the input method
+  // decides its own locale.
+
+  @Override
+  public java.awt.font.TextHitInfo getLocationOffset(int x, int y) {
+    return null; // no composed text mapping; the IME keeps its own view
+  }
+
+  @Override
+  public java.text.AttributedCharacterIterator getSelectedText(
+      java.text.AttributedCharacterIterator.Attribute[] attributes) {
+    return null;
   }
 
   public StringGetter getErrorMessage() {
