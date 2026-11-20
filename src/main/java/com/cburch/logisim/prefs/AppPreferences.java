@@ -842,6 +842,11 @@ public class AppPreferences {
     resetThemeColor(TABLE_CURSOR_COLOR);
     resetThemeColor(TABLE_HIGHLIGHT_COLOR);
     resetThemeColor(TABLE_SELECTION_COLOR);
+    resetSimulationColors();
+  }
+
+  // Restores only the current theme's simulation colors.
+  public static void resetSimulationColors() {
     resetThemeColor(TRUE_COLOR);
     resetThemeColor(FALSE_COLOR);
     resetThemeColor(UNKNOWN_COLOR);
