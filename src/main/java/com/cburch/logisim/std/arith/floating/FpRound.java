@@ -105,9 +105,11 @@ public class FpRound extends InstanceFactory {
     final double roundedValue;
     if (roundMode.getValue().equals("ceil")) roundedValue = Math.ceil(a_val);
     else if (roundMode.getValue().equals("floor")) roundedValue = Math.floor(a_val);
-    else if (roundMode.getValue().equals("round")) roundedValue = Math.round(a_val);
+    else if (roundMode.getValue().equals("round"))
+      // Math.round returns a long, so values that are already integers are passed through
+      roundedValue = Math.abs(a_val) < 0x1p52 ? Math.copySign(Math.round(a_val), a_val) : a_val;
     else if (roundMode.getValue().equals("rint")) roundedValue = Math.rint(a_val);
-    else roundedValue = (long) a_val;
+    else roundedValue = a_val < 0 ? Math.ceil(a_val) : Math.floor(a_val);
 
     final var out = Value.createKnown(dataWidth, roundedValue);
 
