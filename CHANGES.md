@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed multi-bit buses turning black with dark themes when selecting simulation color presets,
+    and replaced the preset buttons with a dropdown in Simulation Preferences(@friendsgamingyt611-sys).
   * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
