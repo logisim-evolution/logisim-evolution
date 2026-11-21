@@ -12,6 +12,12 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 
 /**
  * TTL 74x148: 8-line to 3-line octal priority encoder
@@ -102,18 +108,90 @@ public class Ttl74148 extends AbstractTtlGate {
     return (byte) ((dsPinNr <= GND) ? dsPinNr - 1 : dsPinNr - 2);
   }
 
+  /**
+   * One priority-encoder block. EI and the data bus enter one face; GS, EO and the code bus leave
+   * the opposite face. The side faces stay empty.
+   */
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    super.paintBase(painter, true, false);
-    Drawgates.paintPortNamesByPin(
-        painter,
-        x,
-        y,
-        height,
-        new String[] {
-          "nI4", "nI5", "nI6", "nI7", "nEI", "nA2", "nA1", null,
-          "nA0", "nI0", "nI1", "nI2", "nI3", "nGS", "nEO", null
-        });
+    final var g = (Graphics2D) painter.getGraphics();
+    super.paintBase(painter, false, false);
+    g.setColor(Color.BLACK);
+    final int pinTop = y + PIN_HEIGHT;
+    final int pinBottom = y + height - PIN_HEIGHT;
+    drawBlock(g, x, y);
+    drawBuses(g, x, y);
+    drawServiceWires(g, x, y, pinTop, pinBottom);
+    drawDataTaps(g, x, y, pinTop, pinBottom);
+  }
+
+  /** Horizontal encoder. Contacts sit only on the top and bottom edges. */
+  private static void drawBlock(Graphics2D g, int x, int y) {
+    g.drawRect(x + 38, y + 22, 24, 16);
+    bubble(g, x + 42, y + 21);
+    bubble(g, x + 50, y + 21);
+    bubble(g, x + 54, y + 39);
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 7));
+    GraphicsUtil.drawText(
+        g, "PRI", x + 50, y + 30, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+  }
+
+  /**
+   * Data bus along both pin rows, joined by a thick riser, and the code bus. Each butt end stops
+   * on a block edge or half a pixel outside the outermost tap.
+   */
+  private static void drawBuses(Graphics2D g, int x, int y) {
+    bus(g, x + 69.5f, y + 12, x + 130.5f, y + 12);
+    bus(g, x + 9.5f, y + 49, x + 100, y + 49, x + 100, y + 13);
+    bus(g, x + 46, y + 38, x + 46, y + 48);
+    bus(g, x + 58, y + 22, x + 58, y + 18, x + 150.5f, y + 18);
+    bus(g, x + 110, y + 19, x + 110, y + 49, x + 130.5f, y + 49);
+  }
+
+  /** EI above the lower data bus; GS and EO leave the top edge. */
+  private static void drawServiceWires(Graphics2D g, int x, int y, int pinTop, int pinBottom) {
+    poly(g, x + 54, y + 40, x + 54, y + 45, x + 90, y + 45, x + 90, pinBottom);
+    vertical(g, x + 50, y + 20, pinTop);
+    poly(g, x + 42, y + 20, x + 42, y + 16, x + 30, y + 16, x + 30, pinTop);
+    vertical(g, x + 150, pinTop, y + 18);
+    vertical(g, x + 110, y + 49, pinBottom);
+    vertical(g, x + 130, y + 49, pinBottom);
+  }
+
+  private static void drawDataTaps(Graphics2D g, int x, int y, int pinTop, int pinBottom) {
+    for (var column : new int[] {70, 90, 110, 130}) {
+      vertical(g, x + column, pinTop, y + 12);
+    }
+    for (var column : new int[] {10, 30, 50, 70}) {
+      vertical(g, x + column, pinBottom, y + 49);
+    }
+  }
+
+  /** Width-2 bus. A corner is one polyline so the joint has no gap. */
+  private static void bus(Graphics2D g, float... points) {
+    final var previous = g.getStroke();
+    g.setStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+    final var path = new Path2D.Float();
+    path.moveTo(points[0], points[1]);
+    for (var i = 2; i < points.length; i += 2) {
+      path.lineTo(points[i], points[i + 1]);
+    }
+    g.draw(path);
+    g.setStroke(previous);
+  }
+
+  private static void bubble(Graphics2D g, int centerX, int centerY) {
+    g.drawOval(centerX - 1, centerY - 1, 2, 2);
+  }
+
+  private static void vertical(Graphics2D g, int x, int y1, int y2) {
+    g.drawLine(x, y1, x, y2);
+  }
+
+  private static void poly(Graphics2D g, int... points) {
+    for (var i = 2; i < points.length; i += 2) {
+      g.drawLine(points[i - 2], points[i - 1], points[i], points[i + 1]);
+    }
   }
 
   private static boolean isAsserted(InstanceState state, byte dsPinNr) {
