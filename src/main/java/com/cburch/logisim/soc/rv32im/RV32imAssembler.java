@@ -28,6 +28,8 @@ public class RV32imAssembler extends AbstractAssembler {
     super.addAssemblerExecutionUnit(new RV32im_M_ExtensionInstructions());
     /* Here we add the "Zicsr" standard extension for CSR instructions */
     super.addAssemblerExecutionUnit(new RV32im_Zicsr_ExtensionInstructions());
+    /* Here we add the "Altera NIOS V" instruction cache vendor instructions */
+    super.addAssemblerExecutionUnit(new RV32imNiosVVendorSpecific());
   }
 
   public boolean usesRoundedBrackets() {
