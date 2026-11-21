@@ -4,6 +4,9 @@
 
 * @dev (????-??-??)
   * Drew the internal logic diagram of TTL 74161 (@Vadimatorik).
+  * Fixed the FP Round component turning values beyond the long range, infinities and NaN into
+    9.223372036854776E18 or 0 in its truncate and round modes (@emincan2000).
+  * Added missing cache instructions of the NIOS-V g CPU to be able to simulate the programs in the SOC environment (@BFH-ktt1).
   * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
   * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
