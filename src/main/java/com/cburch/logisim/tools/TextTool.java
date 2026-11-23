@@ -324,8 +324,7 @@ public class TextTool extends Tool implements PropertyChangeListener {
     if (caret == null) {
       if (loc.getX() < 0 || loc.getY() < 0) return;
       final var copy = (AttributeSet) attrs.clone();
-      final var snapped = Location.create(Canvas.snapXToGrid(x), Canvas.snapYToGrid(y), false);
-      caretComponent = Text.FACTORY.createComponent(snapped, copy);
+      caretComponent = Text.FACTORY.createComponent(loc, copy);
       caretCreatingText = true;
       final var editable = (TextEditable) caretComponent.getFeature(TextEditable.class);
       if (editable != null) {

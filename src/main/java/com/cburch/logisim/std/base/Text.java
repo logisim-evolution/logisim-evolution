@@ -72,6 +72,7 @@ public class Text extends InstanceFactory {
 
   private Text() {
     super(_ID, S.getter("textComponent"));
+    setShouldSnap(false);
   }
 
   private void configureLabel(Instance instance) {
