@@ -42,6 +42,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -73,6 +74,9 @@ public class SelectTool extends Tool {
   private static final SelectIcon ICON = new SelectIcon();
 
   private Location start;
+  private int lastMouseX;
+  private int lastMouseY;
+  private Location snapAnchor;
   private int state;
   private int curDx;
   private int curDy;
@@ -141,24 +145,44 @@ public class SelectTool extends Tool {
 
 
   private void computeDxDy(Project proj, MouseEvent e, Graphics g) {
+    lastMouseX = e.getX();
+    lastMouseY = e.getY();
+    computeDxDy(proj, e.getModifiersEx(), g);
+  }
+
+  private void computeDxDy(Project proj, int modsEx, Graphics g) {
     final var bds = proj.getSelection().getBounds(g);
     int dx;
     int dy;
     if (bds == Bounds.EMPTY_BOUNDS) {
-      dx = e.getX() - start.getX();
-      dy = e.getY() - start.getY();
+      dx = lastMouseX - start.getX();
+      dy = lastMouseY - start.getY();
     } else {
-      dx = Math.max(e.getX() - start.getX(), -bds.getX());
-      dy = Math.max(e.getY() - start.getY(), -bds.getY());
+      dx = Math.max(lastMouseX - start.getX(), -bds.getX());
+      dy = Math.max(lastMouseY - start.getY(), -bds.getY());
     }
 
     final var sel = proj.getSelection();
     if (sel.shouldSnap()) {
       dx = Canvas.snapXToGrid(dx);
       dy = Canvas.snapYToGrid(dy);
+    } else if (snapAnchor != null && (modsEx & InputEvent.CTRL_DOWN_MASK) != 0) {
+      dx = Canvas.snapXToGrid(snapAnchor.getX() + dx) - snapAnchor.getX();
+      dy = Canvas.snapYToGrid(snapAnchor.getY() + dy) - snapAnchor.getY();
     }
     curDx = dx;
     curDy = dy;
+  }
+
+  private static Location findSnapAnchor(Collection<Component> candidates, Selection sel) {
+    final var selected = sel.getComponents();
+    for (final var comp : candidates) {
+      if (selected.contains(comp)) {
+        return comp.getLocation();
+      }
+    }
+
+    return null;
   }
 
   @Override
@@ -337,10 +361,19 @@ public class SelectTool extends Tool {
     return true;
   }
 
+  private static boolean isMoveModifierKey(int keyCode) {
+    return keyCode == KeyEvent.VK_SHIFT || keyCode == KeyEvent.VK_CONTROL;
+  }
+
+  private void updateMoveForModifiers(Canvas canvas, int modsEx) {
+    computeDxDy(canvas.getProject(), modsEx, canvas.getGraphics());
+    handleMoveDrag(canvas, curDx, curDy, modsEx);
+  }
+
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
-      handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
+    if (state == MOVING && isMoveModifierKey(e.getKeyCode())) {
+      updateMoveForModifiers(canvas, e.getModifiersEx());
     } else {
       final var comps = AutoLabel.sort(canvas.getProject().getSelection().getComponents());
       final var keybEvent = e.getKeyCode();
@@ -396,8 +429,8 @@ public class SelectTool extends Tool {
 
   @Override
   public void keyReleased(Canvas canvas, KeyEvent e) {
-    if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
-      handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
+    if (state == MOVING && isMoveModifierKey(e.getKeyCode())) {
+      updateMoveForModifiers(canvas, e.getModifiersEx());
     } else {
       processKeyEvent(canvas, e, KeyConfigurationEvent.KEY_RELEASED);
     }
@@ -428,6 +461,9 @@ public class SelectTool extends Tool {
     final var proj = canvas.getProject();
     final var sel = proj.getSelection();
     start = Location.create(e.getX(), e.getY(), false);
+    lastMouseX = e.getX();
+    lastMouseY = e.getY();
+    snapAnchor = null;
     curDx = 0;
     curDy = 0;
     moveGesture = null;
@@ -437,6 +473,7 @@ public class SelectTool extends Tool {
     final var inSel = sel.getComponentsContaining(start, g);
     if (!inSel.isEmpty()) {
       if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
+        snapAnchor = findSnapAnchor(inSel, sel);
         setState(proj, MOVING);
         proj.repaintCanvas();
         return;
@@ -465,6 +502,7 @@ public class SelectTool extends Tool {
           sel.add(comp);
         }
       }
+      snapAnchor = findSnapAnchor(clicked, sel);
       setState(proj, MOVING);
       proj.repaintCanvas();
       return;
