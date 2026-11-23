@@ -43,7 +43,7 @@ application {
 
 dependencies {
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:4.0.1")
+  implementation("com.fifesoft:rsyntaxtextarea:4.0.2")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
